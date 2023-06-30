@@ -118,14 +118,14 @@ void disp_editor_title_bar(void)
 #endif // ENABLE_DEBUG
 	// cut buffers
 	cut_bufs = count_cut_bufs();
-	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " Cut%s", nn_from_num(cut_bufs, buf_num));
+	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " Ct%s", nn_from_num(cut_bufs, buf_num));
 #ifdef ENABLE_UNDO
 	// undo buffers
 	undo_bufs = count_undo_bufs() / 2;
-	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " Undo%s", nn_from_num(undo_bufs, buf_num));
+	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " Ud%s", nn_from_num(undo_bufs, buf_num));
 	// redo buffers
 	redo_bufs = count_redo_bufs() / 2;
-	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " Redo%s", nn_from_num(redo_bufs, buf_num));
+	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " Rd%s", nn_from_num(redo_bufs, buf_num));
 #endif // ENABLE_UNDO
 
 #ifdef ENABLE_DEBUG
