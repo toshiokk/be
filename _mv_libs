@@ -1,0 +1,3 @@
+# move libraries neccesary for BE-EDITOR from /usr/local/lib to /usr/lib
+sudo mv /usr/local/lib/libslang* /usr/lib
+sudo mv /usr/local/lib/libpcre* /usr/lib

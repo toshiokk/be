@@ -1,0 +1,34 @@
+diff_last()
+{
+ echo $1 --------------------- >>../be/diff.txt
+ diff ../be/$1 $1 >>../be/diff.txt
+}
+
+rm ../be/diff.txt
+diff_last color.h
+diff_last config.h
+diff_last debug.h
+diff_last global.h
+diff_last headers.h
+diff_last keys.h
+diff_last main.h
+diff_last proto.h
+diff_last tio.h
+diff_last color.c
+diff_last cut.c
+diff_last fileman.c
+diff_last files.c
+diff_last global.c
+diff_last history.c
+diff_last keys.c
+diff_last kslinux.c
+diff_last ksxterm.c
+diff_last main.c
+diff_last move.c
+diff_last rcfile.c
+diff_last search.c
+diff_last test.c
+diff_last tio.c
+diff_last utils.c
+diff_last winio.c
+less <../be/diff.txt

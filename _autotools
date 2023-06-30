@@ -1,0 +1,44 @@
+# autoscan, autoheader, aclocal, automake, autoconf
+# make configure and Makefile.in from configure.ac and Makefile.am
+
+echo_run()
+{
+  echo Running $* ...
+  $*
+}
+
+{
+
+echo_run autoreconf -vfi
+
+# copy neccesary files --------------------------------------------------------
+echo_run automake --add-missing
+#cp -auv /usr/share/automake-1.9/install-sh .
+#cp -auv /usr/share/automake-1.9/depcomp .
+#cp -auv /usr/share/automake-1.9/missing .
+
+# by a package distributor ----------------------------------------------------
+if [ ! -f configure.scan ]; then
+  echo_run autoscan # scan platform dependent coding and generate configure.scan
+  if [ ! -f configure.ac ]; then
+    echo_run mv configure.scan configure.ac
+  fi
+  echo edit configure.ac # make your own configure.ac
+fi
+if [ ! -f Makefile.am ]; then
+  echo No Makefile.am. Write your own Makefile.am.
+  echo Rerun this script after writing your own Makefile.am.
+  exit
+fi
+if [ ! -f config.h.in ]; then
+  echo_run autoheader # generate config.h.in
+  echo config.h.in has been generated. Edit it to make your own config.h.in if necessary.
+fi
+echo_run aclocal # generate aclocal.m4
+echo_run automake # convert (Makefile.am and aclocal.m4) into Makefile.in
+echo_run autoconf # convert configure.ac to configure
+
+# by a user -------------------------------------------------------------------
+#./configure --enable-all
+
+} 2>&1 | tee _autotools.log

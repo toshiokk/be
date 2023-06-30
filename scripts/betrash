@@ -1,0 +1,9 @@
+# betrash - Not remove but move to ~/.betrash
+BETRASH=~/.betrash
+mkdir -p $BETRASH/files
+mkdir -p $BETRASH/dirs
+if [ -f "$1" ]; then
+  mv -fv "$1" $BETRASH/files
+else
+  mv -fv "$1" $BETRASH/dirs
+fi

@@ -1,0 +1,20 @@
+# configure, make, make install
+#sudo chown `whoami` *
+rm _build.log
+
+echo "#### BE build.log ####" >_build.log
+echo "## ./configure ##" >>_build.log
+./configure       2>>_build.log | tee -a _build.log
+
+echo "## make clean ##" >>_build.log
+make clean        2>>_build.log | tee -a _build.log
+
+echo "## make ##" >>_build.log
+make              2>>_build.log | tee -a _build.log
+
+echo "## sudo make install ##" >>_build.log
+./__mi            2>>_build.log | tee -a _build.log
+
+echo "#### End of build.log ####" >>_build.log
+./_c_debug
+./__m

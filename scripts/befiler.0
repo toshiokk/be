@@ -1,0 +1,2 @@
+be "$@" 2>/dev/null
+cd `cat ~/.beexit`

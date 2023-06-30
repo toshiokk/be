@@ -1,0 +1,4 @@
+echo make all
+LANG=C; export LANG
+make clean
+./__m

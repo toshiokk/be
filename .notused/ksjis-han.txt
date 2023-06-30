@@ -1,0 +1,46 @@
+ﾊﾟｯｹｰｼﾞ(ﾃﾞｨｽﾄﾘﾋﾞｭｰｼｮﾝ)です｡
+ｲﾝｽﾄｰﾙの直後から快適な日本語環境で作業ができるように､さまざまな配慮を行っております｡
+本製品｢Vine Linux 3.1 Commercial Release｣(以下､Vine Linux 3.1CR)は､かな漢字変換ｼｽﾃﾑにVJE-Deltaを標準IMとして採用し､商用ﾌｫﾝﾄ(ﾘｺｰ和文5書体およびﾀﾞｲﾅﾌｫﾝﾄ和文5書体)や各種拡張機能などを付加した､PC/AT互換機またはPowerPC Macintosh用の商用版ﾊﾟｯｹｰｼﾞです｡
+1.1. Vine Linux 3.1 の特徴
+●RPMﾍﾞｰｽのﾃﾞｨｽﾄﾘﾋﾞｭｰｼｮﾝ
+RPM ﾍﾞｰｽのﾃﾞｨｽﾄﾘﾋﾞｭｰｼｮﾝで安定性､ｺﾝﾊﾟｸﾄさ､使いやすさを追求
+●安定した Kernel 2.4.27 を採用
+一部 kernel-2.6 からの backport ﾄﾞﾗｲﾊﾞ､Software Suspendなどの新機能を追加
+●apt によるﾊﾟｯｹｰｼﾞ管理
+前ﾊﾞｰｼﾞｮﾝに引き続き Debian で使われているﾊﾟｯｹｰｼﾞ管理ｼｽﾃﾑの RPM 対応版を採用｡
+簡単かつ安全にｼｽﾃﾑのｱｯﾌﾟｸﾞﾚｰﾄﾞや運用､ﾊﾟｯｹｰｼﾞのｲﾝｽﾄｰﾙなどを行うことができる
+●apt ｸﾞﾗﾌｨｶﾙｲﾝﾀﾌｪｰｽ
+apt の gtk2 によるｸﾞﾗﾌｨｶﾙﾌﾛﾝﾄｴﾝﾄﾞである Synaptic を採用
+●X.Org X11R6.7.0 を採用
+2.6 の XFree86-4.2.1 に変わって X.Org X11R6.7.0 を採用により比較的最新のｸﾞﾗﾌｨｯｸｽｶｰﾄﾞに対応
+●標準ﾃﾞｽｸﾄｯﾌﾟ環境
+ﾃﾞｽｸﾄｯﾌﾟ環境として GNOME 2.4 を採用｡WindowMaker､KDE は VinePlus で提供｡
+●ｸﾞﾗﾌｨｶﾙなｼｽﾃﾑ管理ﾂｰﾙ
+gnome-system-tools を採用
+●印刷ｼｽﾃﾑ
+従来の LPRng に変わって CUPS を採用｡Web ｲﾝﾀﾌｪｰｽまたは Gnome-cups-manager による簡単な設定｡
+●ｱﾌﾟﾘｹｰｼｮﾝ
+GNOME-2.4､GTK+-2.4.10､Mozilla 1.7.3､GIMP-2.0.5､GGV-2.4.1､GImageView-0.2.25､Gaim-1.00､Dia-0.93､Grip-3.2.0､Sylpheed-0.9.12､Ghostscript-7.07､Emacs-21.3､Xpdf-3.00､perl-5.8.2､ruby-1.8.1 など
+●開発ﾂｰﾙ
+最小限の開発ﾂｰﾙ(build-essential)のみ収録｡gcc-3.3.2､glibc-2.3.3 など｡
+●各種ﾃﾞﾊﾞｲｽのﾎｯﾄﾌﾟﾗｸﾞ対応
+murasaki によるﾎｯﾄﾌﾟﾗｸﾞﾃﾞﾊﾞｲｽのﾌﾟﾗｸﾞｱﾝﾄﾞﾌﾟﾚｲに加え､murasaki-usb-mount と supermount-ng による USB ｽﾄﾚｰｼﾞﾃﾞﾊﾞｲｽの自動ﾏｳﾝﾄ/ｱﾝﾏｳﾝﾄ機能の提供
+●TeX ﾄﾞｷｭﾒﾝﾄﾌﾟﾛｾｯｼﾝｸﾞ環境
+teTeX-2.0.2 をﾍﾞｰｽに pTeX-3.1.3 を統合
+●最小限のｻｰﾊﾞ環境
+ｺｱｼｽﾃﾑとして Postfix-2.0.20､ProFTPd-1.2.10､OpenSSH-3.9.1p1､Apache-1.3.31 を収録｡
+Apache2､PostgreSQL､Samba 等は VinePlus で提供｡
+●Vine Linux / VinePlus のｶﾃｺﾞﾘを詳細に
+Vine Linux および VinePlus のｶﾃｺﾞﾘを再編成し､main､plus､extras､orphaned に分割された｡
+Vine Linux 3.1 ｲﾝｽﾄｰﾙCD は main の一部が含まれる
+追加ﾊﾟｯｹｰｼﾞのうちﾒﾝﾃﾅﾝｽﾚﾍﾞﾙの高いものは plus へ移動
+ﾒﾝﾃﾅﾝｽﾚﾍﾞﾙの低いものや滞っているものは extras へ移動
+これまでの VinePlus に相当するｶﾃｺﾞﾘは extras となり､plus は今後､よりﾒﾝﾃﾅﾝｽされることになる｡
+●VinePlus 収録のｱﾌﾟﾘｹｰｼｮﾝ(抜粋)
+OpenOffice.org-1.1.2
+KDE-3.2.3
+XFce4-4.0.6
+XEmacs-21.4.15
+Apache2-2.0.51
+Subversion-1.0.5
+

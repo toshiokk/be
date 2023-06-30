@@ -1,0 +1,7 @@
+# configure for release
+# make, make install
+LANG=C; export LANG
+#sudo chown `whoami` *
+echo "## ./configure ##" >>_conf.log
+./configure 2>&1 | tee -a _conf.log
+echo "#### End of ./configure ####" >>_conf.log

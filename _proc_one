@@ -1,0 +1,3 @@
+  echo $1 ======================= >>_diff.txt
+  echo "kdiff3 ../old/src/$1 $1 #========================" >>_diff.txt
+  diff ../old/src/$1 $1 >>_diff.txt

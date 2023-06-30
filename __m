@@ -1,0 +1,13 @@
+echo make
+LANG=C; export LANG
+mk_backup_file __error
+if [ ! -f Makefile ]; then
+  echo "!!!! No Makefile found !!!!"
+  echo "Running ./configure to make Makefile ..."
+  sleep 3
+  ./_c_debug
+#  ./_c_release
+fi
+make $1 2>&1 | tee __error
+strip be
+ls -l be

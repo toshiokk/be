@@ -1,0 +1,5 @@
+# Run autotools and then configure
+{
+  ./_autotools 2>&1
+  ./configure 2>&1
+} | tee _build.log

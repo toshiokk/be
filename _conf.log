@@ -1,0 +1,173 @@
+## ./configure ##
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+checking for a thread-safe mkdir -p... /usr/bin/mkdir -p
+checking for gawk... no
+checking for mawk... mawk
+checking whether make sets $(MAKE)... yes
+checking whether make supports nested variables... yes
+checking for gcc... gcc
+checking whether the C compiler works... yes
+checking for C compiler default output file name... a.out
+checking for suffix of executables... 
+checking whether we are cross compiling... no
+checking for suffix of object files... o
+checking whether we are using the GNU C compiler... yes
+checking whether gcc accepts -g... yes
+checking for gcc option to accept ISO C89... none needed
+checking whether gcc understands -c and -o together... yes
+checking whether make supports the include directive... yes (GNU style)
+checking dependency style of gcc... none
+checking how to run the C preprocessor... gcc -E
+checking for grep that handles long lines and -e... /usr/bin/grep
+checking for egrep... /usr/bin/grep -E
+checking for ANSI C header files... yes
+checking for sys/types.h... yes
+checking for sys/stat.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for memory.h... yes
+checking for strings.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for unistd.h... yes
+checking fcntl.h usability... yes
+checking fcntl.h presence... yes
+checking for fcntl.h... yes
+checking libintl.h usability... yes
+checking libintl.h presence... yes
+checking for libintl.h... yes
+checking limits.h usability... yes
+checking limits.h presence... yes
+checking for limits.h... yes
+checking locale.h usability... yes
+checking locale.h presence... yes
+checking for locale.h... yes
+checking for stdlib.h... (cached) yes
+checking for string.h... (cached) yes
+checking sys/ioctl.h usability... yes
+checking sys/ioctl.h presence... yes
+checking for sys/ioctl.h... yes
+checking sys/param.h usability... yes
+checking sys/param.h presence... yes
+checking for sys/param.h... yes
+checking sys/time.h usability... yes
+checking sys/time.h presence... yes
+checking for sys/time.h... yes
+checking termio.h usability... yes
+checking termio.h presence... yes
+checking for termio.h... yes
+checking termios.h usability... yes
+checking termios.h presence... yes
+checking for termios.h... yes
+checking for unistd.h... (cached) yes
+checking utime.h usability... yes
+checking utime.h presence... yes
+checking for utime.h... yes
+checking wchar.h usability... yes
+checking wchar.h presence... yes
+checking for wchar.h... yes
+checking for uid_t in sys/types.h... yes
+checking for pid_t... yes
+checking for size_t... yes
+checking for struct stat.st_rdev... yes
+checking vfork.h usability... no
+checking vfork.h presence... no
+checking for vfork.h... no
+checking for fork... yes
+checking for vfork... yes
+checking for working fork... yes
+checking for working vfork... (cached) yes
+checking whether lstat correctly handles trailing slash... yes
+checking for stdlib.h... (cached) yes
+checking for GNU libc compatible malloc... yes
+checking for stdlib.h... (cached) yes
+checking for GNU libc compatible realloc... yes
+checking for dup2... yes
+checking for endgrent... yes
+checking for endpwent... yes
+checking for getcwd... yes
+checking for gettimeofday... yes
+checking for mblen... yes
+checking for memmove... yes
+checking for memset... yes
+checking for mkdir... yes
+checking for realpath... yes
+checking for regcomp... yes
+checking for setenv... yes
+checking for setlocale... yes
+checking for strnlen... yes
+checking for strcasecmp... yes
+checking for strchr... yes
+checking for strerror... yes
+checking for strncasecmp... yes
+checking for strrchr... yes
+checking for strstr... yes
+checking for strtol... yes
+checking for wcwidth... yes
+Running manually described check -------------------------------------------
+checking regex.h usability... yes
+checking regex.h presence... yes
+checking for regex.h... yes
+checking curses.h usability... no
+checking curses.h presence... no
+checking for curses.h... no
+checking ncurses.h usability... no
+checking ncurses.h presence... no
+checking for ncurses.h... no
+checking ncurses/curses.h usability... no
+checking ncurses/curses.h presence... no
+checking for ncurses/curses.h... no
+checking ncursesw/curses.h usability... no
+checking ncursesw/curses.h presence... no
+checking for ncursesw/curses.h... no
+checking pcreposix.h usability... no
+checking pcreposix.h presence... no
+checking for pcreposix.h... no
+checking pcre/pcreposix.h usability... no
+checking pcre/pcreposix.h presence... no
+checking for pcre/pcreposix.h... no
+checking return type of signal handlers... void
+checking for getopt_long... yes
+enable_filer=yes
+enable_history=yes
+enable_undo=yes
+enable_nls=yes
+enable_utf8=yes
+enable_syntax=yes
+enable_rc=yes
+enable_regex=yes
+enable_ncurses=no
+enable_pcre=no
+enable_nkf=yes
+enable_busybox=no
+enable_help=yes
+enable_debug=yes
+checking for mblen... (cached) yes
+checking usability of NKF filter ...... yes
+enable_filer=yes
+enable_history=yes
+enable_undo=yes
+enable_nls=yes
+enable_utf8=yes
+enable_syntax=yes
+enable_rc=yes
+enable_regex=yes
+enable_help=yes
+enable_debug=yes
+enable_ncurses=no
+enable_pcre=no
+enable_nkf=yes
+enable_busybox=no
+have_ncurses=
+have_ncursesw=
+have_mblen=1
+use_ncurses=0
+use_ncursesw=0
+library option: LIBS=
+checking that generated files are newer than configure... done
+configure: creating ./config.status
+config.status: creating Makefile
+config.status: creating config.h
+config.status: executing depfiles commands
+#### End of ./configure ####

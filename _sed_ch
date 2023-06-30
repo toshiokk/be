@@ -1,0 +1,19 @@
+rm diff.txt
+grep $1 *.[ch] | less
+echo -n "replace ? (y):"
+read key
+echo "key = $key"
+if [ -z $key ] || [ $key != "y" ]; then
+  exit 0
+fi
+for file in *.[ch]
+do
+  echo processing $file
+  cp $file $file~~
+  echo sed "s/$1/$2/g" $file~~
+  sed "s/$1/$2/g" $file~~ >$file
+#  sed -f sed.scr $file~~ >$file
+  echo $file >>diff.txt
+  diff $file~~ $file >>diff.txt
+done
+less <diff.txt

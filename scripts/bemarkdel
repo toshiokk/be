@@ -1,0 +1,3 @@
+# bemarkdel - mark file to be deleted later
+touch -c "$1"
+chmod -v 606 "$1"

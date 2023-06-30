@@ -1,0 +1,4 @@
+cp -auv _cppcheck.out _cppcheck.out~
+cppcheck --enable=all --force . 2>_cppcheck.out | grep "done"
+cat _cppcheck.out
+diff _cppcheck.out~ _cppcheck.out

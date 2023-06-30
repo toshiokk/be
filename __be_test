@@ -1,0 +1,13 @@
+echo debugging be ...
+#export LANG=en
+rm -f $HOME/.beexit
+mk_backup_file __be_test.log
+if [ -f ./be ]; then
+  ./be -d "$@" 2>__be_test.log
+  if [ ! -f $HOME/.beexit ]; then
+    mv -f __be_test.log __be_crash.log
+  fi
+fi
+rt
+echo "be exited"
+#rm be

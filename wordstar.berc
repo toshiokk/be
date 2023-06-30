@@ -1,0 +1,13 @@
+[key bindings]
+do_up                             ^E
+do_down                           ^X
+do_left                           ^S
+do_right                          ^D
+do_page_up                        ^R
+do_page_down                      ^C
+do_prev_word                      ^A
+do_next_word                      ^F
+do_start_of_line                  ^T
+do_end_of_line                    ^B
+do_first_line                     @t
+do_last_line                      @b

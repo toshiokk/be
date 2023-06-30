@@ -1,0 +1,10 @@
+# configure for disable all
+# make, make install
+LANG=C; export LANG
+#sudo chown `whoami` *
+echo "## ./configure ##" >>_conf.log
+./configure \
+ --disable-nls --disable-utf8 --disable-nkf --disable-history --disable-rc\
+ --disable-syntax --disable-regex --disable-syntax --disable-pcre --disable-undo\
+ --disable-busybox --disable-help --disable-filer --enable-debug 2>&1 | tee -a _conf.log
+echo "#### End of ./configure ####" >>_conf.log

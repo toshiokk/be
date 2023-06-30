@@ -1,0 +1,7 @@
+echo debugging be ...
+#export LANG=en
+while : ; do
+  ./be -d $* 2>__be_test.log
+  echo "sleeping ..."
+  sleep 1
+done

@@ -1,0 +1,10 @@
+echo make and install
+./__m
+strip be
+ls -l be
+echo -n "To install this, hit Enter: "; read key
+sd sudo whoami
+sudo sh ./__m install
+sh _cp_be_scripts
+sh _cp_berc
+./_xi18n

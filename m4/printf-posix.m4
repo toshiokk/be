@@ -1,0 +1,1 @@
+/usr/share/aclocal/printf-posix.m4

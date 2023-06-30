@@ -1,0 +1,94 @@
+/**************************************************************************
+ *   filer2.h                                                             *
+ *                                                                        *
+ *   Copyright (C) 1999-2003 Chris Allegretta                             *
+ *                                                                        *
+ *   This program is free software; you can redistribute it and/or modify *
+ *   it under the terms of the GNU General Public License as published by *
+ *   the Free Software Foundation; either version 2, or (at your option)  *
+ *   any later version.                                                   *
+ *                                                                        *
+ *   This program is distributed in the hope that it will be useful,      *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of       *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        *
+ *   GNU General Public License for more details.                         *
+ *                                                                        *
+ *   You should have received a copy of the GNU General Public License    *
+ *   along with this program; if not, write to the Free Software          *
+ *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.            *
+ *                                                                        *
+ **************************************************************************/
+
+#ifndef filer2_h
+#define filer2_h
+
+#ifdef ENABLE_FILER
+
+#define _FILE_SEL_MAN_	0x02	// file selected manually
+#define _FILE_SEL_AUTO_	0x01	// file selected automatically on execution of a command
+typedef struct {
+	char *file_name;
+	struct stat st;
+	struct stat lst;
+	char *symlink;
+	char selected;
+} file_info_t;
+
+typedef struct {
+	char cur_dir[MAX_PATH_LEN+1];		// current directory
+	char cur_filter[MAX_PATH_LEN+1];	// file name or file filter
+	char listed_dir[MAX_PATH_LEN+1];	// directory file list gotten
+	int file_list_entries;
+	file_info_t *file_list;
+	int cur_sel_idx;
+	int top_idx;
+	char prev_dir[MAX_PATH_LEN+1];		// previous current directory
+	char next_file[MAX_PATH_LEN+1];		// next file to be current after changing dir
+} filer_view_t;
+
+void begin_fork_exec_repeat(void);
+void end_fork_exec_repeat(void);
+
+#define SETTERM0	0
+#define SETTERM1	1		// change terminal settings before executing sub process
+#define SEPARATE0	0
+#define SEPARATE1	1		// output separator line before executing sub process
+#define PAUSE0		0
+#define PAUSE1		1		// pause after execution of sub process
+int fork_exec_once_sh_c(int separate_bef_exec, int pause_aft_exec, const char *command);
+int fork_exec_repeat_sh_c(int separate_bef_exec, const char *command);
+int fork_exec_once(int separate_bef_exec, int pause_aft_exec, ...);
+int fork_exec_repeat(int separate_bef_exec, ...);
+
+void clear_fork_exec_counter(void);
+int get_fork_exec_counter(void);
+int inc_fork_exec_counter(void);
+
+void pause_after_exec(void);
+int restore_term_for_shell(void);
+int reinit_term_for_filer(void);
+
+#ifdef START_UP_TEST
+void test_get_file_size_str(void);
+#endif // START_UP_TEST
+char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, int selected);
+
+int make_file_list(filer_view_t *fv, const char *filter);
+void free_file_list(filer_view_t *fv);
+
+void sort_file_list(filer_view_t *fv);
+int get_files_selected_cfv(void);
+int get_files_selected(filer_view_t *fv);
+int select_and_get_first_file_idx_selected(void);
+int get_first_file_idx_selected(void);
+int get_next_file_idx_selected(int start_file_idx);
+int select_file_if_none_selected(void);
+void unselect_all_files_auto(char selection_bit);
+int research_file_name_in_file_list(filer_view_t *fv);
+int search_file_name_in_file_list(filer_view_t *fv, const char *file_name);
+
+#endif // ENABLE_FILER
+
+#endif // filer2_h
+
+// End of filer2.h

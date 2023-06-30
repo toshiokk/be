@@ -1,0 +1,12 @@
+echo "Compiling translation file ..."
+cd po
+xgettext -c -d beedit -k_ ../*.h ../*.c -o be.pot
+if [ ! -f ja.po ]; then
+  cp -auv be.pot ja.po
+fi
+msgmerge ja.po be.pot -o ja.po
+msgfmt -o ja.gmo ja.po
+if [ -x $HOME/bin/sd ]; then
+ sudo whoami
+fi
+sudo cp -av ja.gmo /usr/share/locale/ja/LC_MESSAGES/be.mo

@@ -1,0 +1,28 @@
+# test all patterns of ./configure and make
+
+rm -f _conf_make_all_patterns.log
+
+{
+sh _conf_make 0
+sh _conf_make 1
+sh _conf_make 2
+sh _conf_make 3
+sh _conf_make 4
+sh _conf_make 5
+sh _conf_make 6
+sh _conf_make 7
+sh _conf_make 8
+sh _conf_make 9
+sh _conf_make 10
+sh _conf_make 11
+sh _conf_make 12
+sh _conf_make 13
+sh _conf_make 14
+sh _conf_make 15
+sh _conf_make 16
+sh _conf_make 17
+sh _conf_make 18
+grep "Summary" _conf_make_all_patterns.log
+} | tee _conf_make_all_patterns.log
+
+./_c_debug

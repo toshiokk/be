@@ -1,0 +1,1009 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: be 0.500\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-14 11:38+0900\n"
+"PO-Revision-Date: 2006-11-04 22:00+0900\n"
+"Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
+"Language-Team: ja <toshiokk@hotmail.com>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../appmode.c:530
+msgid "Input key to show key code"
+msgstr ""
+
+#: ../appmode.c:532 ../editormove.c:283
+#, c-format
+msgid "Key code: %04x"
+msgstr "キーコード: %04x"
+
+#: ../buffers.c:353 ../buffers.c:361
+msgid "Calculating CRC..."
+msgstr "CRC を計算中..."
+
+#: ../buffers.c:554 ../buffers.c:561
+msgid "Tab size"
+msgstr "タブサイズ: %d"
+
+#: ../editor.c:108 ../filer.c:273
+#, c-format
+msgid "Key command not assigned: %04xh"
+msgstr "このキーコードにはコマンドが割り当てられていません: %04xh"
+
+#: ../editor.c:178
+msgid "Open existing file:"
+msgstr "既存ファイルを開く:"
+
+#: ../editor.c:203
+msgid "Open new file:"
+msgstr "新しいファイルを開く:"
+
+#: ../editor.c:261
+msgid "No project file found"
+msgstr ""
+
+#: ../editor.c:290
+msgid "Buffer is modified, Are you OK to reopen file ?"
+msgstr "バッファは変更されています。再オープンしますか ?"
+
+#: ../editor.c:315
+msgid "File re-opened"
+msgstr "ファイルを開き直しました"
+
+#: ../editor.c:349
+#, fuzzy, c-format
+msgid "Written to the file %s"
+msgstr "ファイルに書き込めません: %s"
+
+#: ../editor.c:392
+msgid "One file closed"
+msgstr "1 ファイルを閉じました"
+
+#: ../editor.c:524 ../editor.c:577 ../fileio.c:358 ../fileio.c:363
+#: ../winin.c:99
+msgid "Cancelled"
+msgstr "キャンセルされました"
+
+#: ../editor.c:530
+msgid "All files are closed"
+msgstr "全ファイルを閉じました"
+
+#: ../editor.c:535
+#, fuzzy
+msgid "Freeing buffers..."
+msgstr "全バッファを開放中..."
+
+#: ../editor.c:550
+msgid "Freeing all buffers..."
+msgstr "全バッファを開放中..."
+
+#: ../editor.c:565
+msgid "File is NOT modified"
+msgstr "ファイルは変更されていません"
+
+#: ../editor.c:574
+msgid "Save modified buffer ?"
+msgstr "変更されたバッファを書き込みますか ?"
+
+#: ../editor.c:575
+msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
+msgstr "変更されたバッファを書き込みますか (\"いいえ\" で変更は破棄されます) ?"
+
+#: ../editor.c:750
+#, c-format
+msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu CODE:%s ENC:%s EOL:%s"
+msgstr ""
+"行:%4lu/%-4lu 桁:%3lu/%-3lu サイズ:%6lu 文字コード:%s エンコード:%s 行末:%s"
+
+#: ../editor.c:802
+msgid "Modification not allowed in LIST mode"
+msgstr "LISTモードでは編集できません"
+
+#: ../editor.c:806
+msgid "Modification not allowed in VIEW mode"
+msgstr "VIEWモードでは編集できません"
+
+#: ../editor2.c:102 ../fileio.c:78
+msgid "New File"
+msgstr "新規ファイル"
+
+#: ../editor2.c:104
+msgid "[Modified] "
+msgstr ""
+
+#: ../editor2.c:106
+msgid "[VIEW mode] "
+msgstr ""
+
+#: ../editor2.c:108
+msgid "[WRITE-PROTECTED] "
+msgstr ""
+
+#: ../editorcut.c:63
+msgid "Cut-buffer cleared"
+msgstr "カットバッファをクリアしました"
+
+#: ../editorcut.c:69 ../editorcut.c:228 ../editorcut.c:268
+msgid "Cut-buffer empty !!"
+msgstr "カットバッファが空です"
+
+#: ../editorcut.c:71
+msgid "Cut-buffer popped"
+msgstr "カットバッファをポップしました"
+
+#: ../editorcut.c:95
+msgid "Cut to Head"
+msgstr "行頭までカットしました"
+
+#: ../editorcut.c:105
+msgid "Cut to Tail"
+msgstr "行末までカットしました"
+
+#: ../editorcut.c:125
+msgid "Mark Set"
+msgstr "マーク開始"
+
+#: ../editorcut.c:139
+msgid "Mark UNset"
+msgstr "マーク中止"
+
+#: ../editorcut.c:155
+msgid "Text Copied to Cut-buffer"
+msgstr "テキストをカットバッファにコピーしました"
+
+#: ../editorcut.c:164
+msgid "Text Deleted"
+msgstr "テキストを削除しました"
+
+#: ../editorcut.c:173
+msgid "Text Cut to Cut-buffer"
+msgstr "テキストをカットバッファにカットしました"
+
+#: ../editorcut.c:182
+msgid "Text Duplicated"
+msgstr "テキストを複製しました"
+
+#: ../editorcut.c:193
+msgid "Text Pasted with popping Cut-buffer"
+msgstr "テキストを張り付けました(カットバッファをポップ)"
+
+#: ../editorcut.c:203
+msgid "Text Pasted without popping Cut-buffer"
+msgstr "テキストを張り付けました(カットバッファは変化なし)"
+
+#: ../editorgoto.c:44
+msgid "Enter line number:"
+msgstr "行番号入力:"
+
+#: ../editorgoto.c:115
+msgid "No previous open files"
+msgstr "これ以上前にファイルがありません"
+
+#: ../editorgoto.c:119
+msgid "Previous file"
+msgstr "一つ前のファイルにスイッチしました"
+
+#: ../editorgoto.c:127
+msgid "No next open files"
+msgstr "これ以上後にファイルがありません"
+
+#: ../editorgoto.c:131
+msgid "Next file"
+msgstr "一つ後のファイルにスイッチしました"
+
+#: ../editorgoto.c:141
+msgid "Returned to previous pos"
+msgstr ""
+
+#: ../editorlist.c:35
+msgid "#List of Files currently loaded"
+msgstr "# 編集中のファイル一覧"
+
+#: ../editorlist.c:56
+msgid "File List"
+msgstr "ファイルリスト"
+
+#: ../editorlist.c:74
+msgid "#List of Editor Key Bindings"
+msgstr "# キー割り当て一覧"
+
+#: ../editorlist.c:93
+msgid "Key List"
+msgstr "キーリスト"
+
+#: ../editorlist.c:112
+msgid "#List of Editor Functions"
+msgstr "# ファンクション一覧"
+
+#: ../editorlist.c:136
+msgid "Function List"
+msgstr "ファンクションリスト"
+
+#: ../editorlist.c:153
+#, fuzzy
+msgid "#List of Key bindings"
+msgstr "# キー割り当て一覧"
+
+#: ../editorlist.c:173
+#, fuzzy
+msgid "Key bindings List"
+msgstr "キーリスト"
+
+#: ../editormove.c:281
+msgid "Input control character [^A-^Z,^[,^\\,^],^^,^_,]"
+msgstr "制御コードを入力してください [^A-^Z,^[,^\\,^],^^,^_,]:"
+
+#: ../editormove.c:302
+msgid "Enter Unicode number in hex:"
+msgstr "Unicode を16進数で入力してください:"
+
+#: ../editormove.c:332
+msgid "Select history string to paste:"
+msgstr "ヒストリー文字列を張り付けます:"
+
+#: ../editorundo.c:118
+msgid "!!!! No UNDO info pushed !!!!"
+msgstr ""
+
+#: ../editorundo.c:220
+msgid "Undo-buffer empty !!"
+msgstr "Undoバッファが空です"
+
+#: ../editorundo.c:229
+msgid "Redo-buffer empty !!"
+msgstr "Redoバッファが空です"
+
+#: ../fileio.c:53
+#, c-format
+msgid "%d line read %s"
+msgstr "%d 行を読み込みました %s"
+
+#: ../fileio.c:54
+#, c-format
+msgid "%d lines read %s"
+msgstr "%d 行を読み込みました %s"
+
+#: ../fileio.c:55
+#, c-format
+msgid "%d liness read %s"
+msgstr "%d 行を読み込みました %s"
+
+#: ../fileio.c:56
+#, c-format
+msgid "%d linesss read %s"
+msgstr "%d 行を読み込みました %s"
+
+#: ../fileio.c:73
+#, c-format
+msgid "File [%s] not found"
+msgstr "ファイル \"%s\" が見つかりません"
+
+#: ../fileio.c:85
+#, c-format
+msgid "[%s] is a directory"
+msgstr "\"%s\" はディレクトリです"
+
+#: ../fileio.c:85
+#, c-format
+msgid "[%s] is a special file"
+msgstr "\"%s\" はデバイスファイルです"
+
+#: ../fileio.c:93
+#, c-format
+msgid "[%s] is too large to read into buffer"
+msgstr "\"%s\" は大き過ぎてバッファに読み込めません"
+
+#. regular file
+#: ../fileio.c:99
+#, c-format
+msgid "Reading File %s ..."
+msgstr "ファイル %s を読み込み中..."
+
+#: ../fileio.c:130
+#, c-format
+msgid "BINARY file !! [%s]"
+msgstr ""
+
+#: ../fileio.c:175 ../fileio.c:196 ../fileio.c:233
+#, c-format
+msgid "Can not read-open file [%s]: %s"
+msgstr "ファイルを読込オープン出来ません [%s]: %s"
+
+#: ../fileio.c:356
+msgid "File was modified by another program, OVERWRITE ?"
+msgstr "ファイルは他のプログラムから書き換えられました。上書きしますか ?"
+
+#: ../fileio.c:368
+#, c-format
+msgid "File [%s] can NOT be written !!"
+msgstr ""
+
+#: ../fileio.c:391
+msgid "File Name to Write"
+msgstr "書き込みファイル名"
+
+#: ../fileio.c:408
+msgid "File exists, OVERWRITE it ?"
+msgstr "同名ファイルが存在します。上書きしますか ?"
+
+#: ../fileio.c:416
+msgid "Path is not file, can not WRITE it"
+msgstr "パスがファイルではありません。上書き出来ません"
+
+#: ../fileio.c:445
+#, c-format
+msgid "File [%s] is NOT regular file !!"
+msgstr ""
+
+#: ../fileio.c:448
+#, c-format
+msgid "Writing File %s ..."
+msgstr "ファイル %s を書き込み中..."
+
+#: ../fileio.c:461
+#, c-format
+msgid "Can not set permissions %1$o on [%2$s]: %3$s"
+msgstr "ファイル %2$s にパーミッション %1$o をセットできません, %3$s"
+
+#: ../fileio.c:470
+#, c-format
+msgid "%d line written"
+msgstr "%d 行を読み込みました"
+
+#: ../fileio.c:471
+#, c-format
+msgid "%d lines written"
+msgstr "%d 行を読み込みました"
+
+#: ../fileio.c:472
+#, c-format
+msgid "%d liness written"
+msgstr "%d 行を読み込みました"
+
+#: ../fileio.c:473
+#, c-format
+msgid "%d linesss written"
+msgstr "%d 行を読み込みました"
+
+#: ../fileio.c:560 ../fileio.c:585
+#, c-format
+msgid "Can not write-open file [%s]: %s"
+msgstr "ファイルを書込オープン出来ません [%s]: %s"
+
+#. -1: error
+#: ../fileio.c:568 ../fileio.c:593
+#, c-format
+msgid "Can not close file [%s]: %s"
+msgstr "ファイルがクローズできません: %s: %s"
+
+#: ../fileio.c:616
+#, c-format
+msgid "Can not write file [%s]: %s"
+msgstr "ファイルを書込オープン出来ません [%s]: %s"
+
+#: ../fileio.c:660
+#, c-format
+msgid "%d file loaded"
+msgstr "%d ファイルを読み込みました"
+
+#: ../fileio.c:661
+#, c-format
+msgid "%d files loaded"
+msgstr "%d ファイルを読み込みました"
+
+#: ../fileio.c:662
+#, c-format
+msgid "%d filess loaded"
+msgstr "%d ファイルを読み込みました"
+
+#: ../fileio.c:663
+#, c-format
+msgid "%d filesss loaded"
+msgstr "%d ファイルを読み込みました"
+
+#: ../filer2.c:481
+msgid " <<broken-link>>"
+msgstr ""
+
+#: ../filercmd.c:62
+#, fuzzy
+msgid "File view refreshed"
+msgstr "ファイルを開き直しました"
+
+#: ../filercmd.c:97
+msgid "Edit new file:"
+msgstr "編集ファイル:"
+
+#: ../filercmd.c:169
+msgid "Copy to:"
+msgstr "ファイルコピー先:"
+
+#: ../filercmd.c:206
+msgid "Copy to (Update):"
+msgstr "ファイルコピー先(新しいファイルのみ):"
+
+#: ../filercmd.c:241
+msgid "Rename to:"
+msgstr "変更後ファイル名:"
+
+#: ../filercmd.c:265
+msgid "Move to:"
+msgstr "ファイル移動先:"
+
+#: ../filercmd.c:300
+#, c-format
+msgid "Trash file %s ?"
+msgstr "ファイル %s をゴミ箱に移動しますか ?"
+
+#: ../filercmd.c:303
+#, c-format
+msgid "Trash %d files ?"
+msgstr "%d ファイルを削除しますか ?"
+
+#: ../filercmd.c:334
+#, c-format
+msgid "Delete file %s ?"
+msgstr "ファイル %s を削除しますか ?"
+
+#: ../filercmd.c:337
+#, c-format
+msgid "Delete %d files ?"
+msgstr "%d ファイルを削除しますか ?"
+
+#: ../filercmd.c:365
+#, c-format
+msgid "Mark file %s to be Deleted later ?"
+msgstr "ファイル %s を削除予約にマークしますか ?"
+
+#: ../filercmd.c:368
+#, c-format
+msgid "Mark %d files to be Deleted later ?"
+msgstr "%d ファイルを削除予約にマークしますか ?"
+
+#: ../filercmd.c:400
+#, c-format
+msgid "Make size of file %s 0 ?"
+msgstr "ファイル %s を削除しますか ?"
+
+#: ../filercmd.c:403
+#, c-format
+msgid "Make size of %d files 0 ?"
+msgstr "%d ファイルを削除しますか ?"
+
+#: ../filercmd.c:433
+msgid "Find:"
+msgstr ""
+
+#: ../filercmd.c:453
+msgid "Mkdir:"
+msgstr "作成ディレクトリ名:"
+
+#: ../filercmd.c:472
+msgid "Chdir to:"
+msgstr "カレントディレクトリ変更:"
+
+#: ../filercmd.c:524 ../filercmd.c:558
+#, c-format
+msgid "%d file selected"
+msgstr "%d ファイルを選択しました"
+
+#: ../filercmd.c:525 ../filercmd.c:559
+#, c-format
+msgid "%d files selected"
+msgstr "%d ファイルを選択しました"
+
+#: ../filercmd.c:526 ../filercmd.c:560
+#, c-format
+msgid "%d filess selected"
+msgstr "%d ファイルを選択しました"
+
+#: ../filercmd.c:527 ../filercmd.c:561
+#, c-format
+msgid "%d filesss selected"
+msgstr "%d ファイルを選択しました"
+
+#: ../filercmd.c:540
+msgid "File selection cleared"
+msgstr "ファイル選択をクリアしました"
+
+#. We can't open this dir for some reason. Complain.
+#: ../filercmd.c:752
+#, c-format
+msgid "Can not change current directory to [%s]: %s"
+msgstr "カレントディレクトリを変更できません [%s]: %s"
+
+#: ../filerrun.c:59
+msgid "Execute({} will be replaced with file-name):"
+msgstr "コマンド実行({}はファイル名に置換される):"
+
+#: ../filerrun.c:115
+msgid "Execute with files:"
+msgstr "コマンド実行(ファイル名引数付き):"
+
+#: ../filerrun.c:172
+msgid "Run (with file):"
+msgstr "コマンド実行(ファイル名引数付き):"
+
+#: ../filerrun.c:177
+msgid "Run (current-directory-file):"
+msgstr "コマンド実行(カレントディレクトリファイル):"
+
+#: ../filerrun.c:182
+msgid "Run (with real-path):"
+msgstr "コマンド実行(絶対パス):"
+
+#: ../filerrun.c:189
+msgid "Run (script):"
+msgstr "コマンド実行(スクリプト):"
+
+#: ../filerrun.c:194
+msgid "Run (script by shell):"
+msgstr "コマンド実行(シェルによるスクリプト):"
+
+#: ../filerrun.c:199
+msgid "Run (with SRC-path and DEST-path):"
+msgstr "コマンド実行(元ファイルパス、先ファイルパス付き):"
+
+#: ../history.c:65
+#, c-format
+msgid "Unable to create directory %s, %s"
+msgstr "ディレクトリを作成できません %s, %s"
+
+#: ../history.c:70
+#, c-format
+msgid "No application directory %s"
+msgstr "ディレクトリを作成できません %s"
+
+#: ../history.c:329
+#, c-format
+msgid "hist_type_idx out of range: %d"
+msgstr ""
+
+#: ../history.c:449
+#, c-format
+msgid "Unable to create history file: %s, %s"
+msgstr "ヒストリファイル %s を作成出来ません, %s"
+
+#: ../history.c:467
+#, c-format
+msgid "Unable to write history file: %s, %s"
+msgstr "ヒストリファイル %s に書き込めません, %s"
+
+#: ../history.c:499
+#, c-format
+msgid "Unable to open history file: %s, %s"
+msgstr "ヒストリファイル %s が読み込めません, %s"
+
+#: ../history.c:687
+msgid "#History List"
+msgstr ""
+
+#: ../keymacro.c:59
+msgid "Start key macro recording"
+msgstr ""
+
+#: ../keymacro.c:68
+msgid "Cancel key macro recording"
+msgstr ""
+
+#: ../keymacro.c:77
+msgid "End key macro recording"
+msgstr ""
+
+#: ../keymacro.c:91 ../keymacro.c:107
+msgid "Start key macro playback"
+msgstr ""
+
+#: ../main.c:545
+msgid ""
+"\n"
+"No file written\n"
+msgstr ""
+"\n"
+"書き込まれたファイルはありません\n"
+
+#: ../main.c:554
+#, c-format
+msgid ""
+"\n"
+"Buffer written to %s\n"
+msgstr ""
+"\n"
+"ファイル %s に書き込みました\n"
+
+#: ../main.c:585
+#, c-format
+msgid ""
+"\n"
+"Usage: "
+msgstr ""
+"\n"
+"使用法"
+
+#. 12345678901234567890 12345678901234567890 12345678901234567890
+#: ../main.c:587
+msgid "Option"
+msgstr ""
+
+#: ../main.c:587
+msgid "Long option"
+msgstr ""
+
+#: ../main.c:587
+#, fuzzy
+msgid "Meaning"
+msgstr "オプション\t意味----\n"
+
+#: ../main.c:589
+msgid "Read RCFILE"
+msgstr ""
+
+#: ../main.c:590
+msgid "Don't look at berc files"
+msgstr "bercファイルを無視"
+
+#: ../main.c:593
+msgid "Don't use history file"
+msgstr "ヒストリファイルを使用しない"
+
+#: ../main.c:595
+msgid "Set tab-size to NUM[1-15]"
+msgstr "タブサイズをNUM[1-15]に設定"
+
+#: ../main.c:596
+msgid "View mode(Read only mode)"
+msgstr "閲覧(読込専用)モード"
+
+#: ../main.c:598
+msgid "Don't use nkf"
+msgstr "nkf を使用しない"
+
+#: ../main.c:599
+msgid "ASCII character encoding"
+msgstr "ASCII エンコーディング"
+
+#: ../main.c:600
+msgid "JIS character encoding"
+msgstr "JIS エンコーディング"
+
+#: ../main.c:601
+msgid "EUCJP character encoding"
+msgstr "EUCJP エンコーディング"
+
+#: ../main.c:602
+msgid "SJIS character encoding"
+msgstr "SJIS エンコーディング"
+
+#: ../main.c:603
+msgid "UTF8 character encoding"
+msgstr "UTF8 エンコーディング"
+
+#: ../main.c:606
+msgid "Output debug log to stderr"
+msgstr "stderrにデバッグログを出力"
+
+#: ../main.c:608
+msgid "Show version information"
+msgstr "バージョン情報を表示"
+
+#: ../main.c:609
+msgid "Show this message"
+msgstr "このメッセージを表示"
+
+#: ../main.c:610
+msgid "Start at line number NUM"
+msgstr "NUM 行から開始"
+
+#: ../main.c:612
+msgid "Investigate keyboard escape sequence"
+msgstr ""
+
+#: ../main.c:629
+#, c-format
+msgid "%s editor version %s (compiled at %s, %s)\n"
+msgstr ""
+
+#: ../main.c:631
+#, c-format
+msgid " Build Options:\n"
+msgstr " ビルドオプション:\n"
+
+#: ../main.c:874
+#, fuzzy, c-format
+msgid "Screen size: %dx%d"
+msgstr "画面サイズ: %d, %d"
+
+#: ../main.c:879
+msgid "We're invincible with this !!"
+msgstr "これさえあれば俺達は無敵だ !!"
+
+#: ../rcfile.c:212
+#, c-format
+msgid "Unable to open config file: %s, %s\n"
+msgstr "コンフィグファイル %s が読み込めません, %s\n"
+
+#: ../rcfile.c:290
+#, c-format
+msgid "Not valid number: %s\n"
+msgstr "数値が異常です: %s\n"
+
+#: ../rcfile.c:408 ../rcfile.c:476
+#, c-format
+msgid "color %s not understood.\n"
+msgstr "不正な color %s です。\n"
+
+#: ../rcfile.c:602
+#, c-format
+msgid "color name %s not understood.\n"
+msgstr ""
+
+#: ../rcfile.c:644 ../rcfile.c:678 ../rcfile.c:686
+#, c-format
+msgid "Bad regexp: [%s]:%s\n"
+msgstr "不正な正規表現です: [%s]:%s\n"
+
+#: ../rcfile.c:801
+#, c-format
+msgid "Error in file: %s on line: %d"
+msgstr "ファイル: %s 行: %d でエラー"
+
+#: ../search.c:110
+#, c-format
+msgid "Replaced %d occurrence"
+msgstr "%d 箇所が置換されました"
+
+#: ../search.c:111
+#, c-format
+msgid "Replaced %d occurrences"
+msgstr "%d 箇所が置換されました"
+
+#: ../search.c:112
+#, c-format
+msgid "Replaced %d occurrencess"
+msgstr "%d 箇所が置換されました"
+
+#: ../search.c:113
+#, c-format
+msgid "Replaced %d occurrencesss"
+msgstr "%d 箇所が置換されました"
+
+#: ../search.c:139
+msgid "Search"
+msgstr "検索"
+
+#: ../search.c:139
+msgid "Replace"
+msgstr "検索文字列(置換)"
+
+#: ../search.c:140
+msgid "[Ignore-case]"
+msgstr "[大小文字無視]"
+
+#: ../search.c:142
+msgid "[Regexp]"
+msgstr "[正規表現]"
+
+#: ../search.c:146
+msgid "[Backward]"
+msgstr "[後方検索]"
+
+#: ../search.c:146
+msgid "[Forward]"
+msgstr "[前方検索]"
+
+#: ../search.c:161
+#, c-format
+msgid "Invalid regexp: [%s]:%s"
+msgstr "不正な正規表現です: [%s]:%s"
+
+#: ../search.c:174
+msgid "Replace with"
+msgstr "置換文字列"
+
+#: ../search.c:285
+msgid "Replace this instance ?"
+msgstr "置換しますか ?"
+
+#: ../search.c:447
+msgid "Not a bracket"
+msgstr "括弧ではありません"
+
+#: ../search.c:501
+msgid "Peer bracket found"
+msgstr ""
+
+#: ../search.c:506
+msgid "No peer bracket found"
+msgstr "括弧ではありません"
+
+#: ../search.c:511
+msgid "Bracket nesting too deep"
+msgstr ""
+
+#: ../search.c:527
+#, c-format
+msgid "Searching word: [%s]..."
+msgstr "文字列 [%s] を検索中..."
+
+#: ../search.c:600
+#, c-format
+msgid "\"%s\" not found"
+msgstr "\"%s\" が見つかりません"
+
+#: ../tio.c:246
+msgid "Window size is too small...\n"
+msgstr "画面サイズが小さすぎます...\n"
+
+#. Screen size may have changed.
+#: ../tio.c:252
+#, fuzzy, c-format
+msgid "Window size: (%d, %d)"
+msgstr "画面サイズ: %d, %d"
+
+#: ../utils.c:57 ../utils.c:68
+msgid "Out of memory!"
+msgstr "メモリ不足!"
+
+#: ../winin.c:339
+msgid ""
+"UP:history, DOWN:browser, PgUp:insert from history, PgDn:insert from browser"
+msgstr ""
+
+#: ../winin.c:419
+msgid "Yes"
+msgstr "はい"
+
+#: ../winin.c:422
+msgid "No"
+msgstr "いいえ"
+
+#: ../winin.c:425
+msgid "All"
+msgstr "全て"
+
+#: ../winin.c:428
+msgid "Backward"
+msgstr "後方へ"
+
+#: ../winin.c:430
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: ../winin.c:432
+msgid "End"
+msgstr ""
+
+#: ../winin.c:435
+msgid "Undo"
+msgstr ""
+
+#: ../winin.c:438
+msgid "Redo"
+msgstr ""
+
+#~ msgid "Aborted"
+#~ msgstr "中断されました"
+
+#, fuzzy
+#~ msgid "Open files in project file"
+#~ msgstr "既存ファイルを開く:"
+
+#, fuzzy
+#~ msgid "#List of Functions"
+#~ msgstr "# ファンクション一覧"
+
+#~ msgid "Search Cancelled"
+#~ msgstr "検索がキャンセルされました"
+
+#~ msgid "Replace Cancelled"
+#~ msgstr "置換がキャンセルされました"
+
+#~ msgid "Option\t\tLong option\t\tMeaning----\n"
+#~ msgstr "オプション\t長いオプション\t\t意味----\n"
+
+#~ msgid "All files re-opened"
+#~ msgstr "%d ファイルを読み込みました"
+
+#~ msgid "File to load into buffer:"
+#~ msgstr "読み込むファイルを指定してください:"
+
+#~ msgid "Run:"
+#~ msgstr "ファイル実行:"
+
+#~ msgid "Execute:"
+#~ msgstr "コマンド実行:"
+
+#~ msgid "keycode:%04x"
+#~ msgstr "キーコード: %04x"
+
+#~ msgid "Reading directory..."
+#~ msgstr "ディレクトリを読み込み中..."
+
+#~ msgid "Invalid regex \"%s\""
+#~ msgstr "不正な正規表現です \"%s\""
+
+#~ msgid "Text Pasted with popping of Cut-buffer"
+#~ msgstr "テキストを張り付けました(カットバッファをポップ)"
+
+#~ msgid "Guessing TAB size..."
+#~ msgstr "TAB サイズを推測中..."
+
+#~ msgid "(DOS format)"
+#~ msgstr "(DOSフォーマット)"
+
+#~ msgid "(Mac format)"
+#~ msgstr "(Macフォーマット)"
+
+#~ msgid "No valid file name found in line %d"
+#~ msgstr "この行 %d にファイル名がありません"
+
+#~ msgid "No matching bracket"
+#~ msgstr "対応する括弧が見つかりませんでした"
+
+#~ msgid "No more match"
+#~ msgstr "見つかりませんでした"
+
+#~ msgid "Are you sure to Quit filer ?"
+#~ msgstr "ファイラーを終了してよろしいですか ?"
+
+#~ msgid "File modified by another program. OVERWRITE it ?"
+#~ msgstr "ファイルは他のプログラムから書き換えられました。上書きしますか ?"
+
+#~ msgid ""
+#~ "File modified by another program. OVERWRITE it (ANSWERING \"No\" WILL "
+#~ "DISCARD CHANGES) ?"
+#~ msgstr ""
+#~ "変更されたバッファを書き込みますか (\"いいえ\" で変更は破棄されます) ?"
+
+#~ msgid "UP:history, DOWN:browser"
+#~ msgstr "UP:ヒストリー, DOWN:ブラウザー"
+
+#~ msgid "Line number must be greater than 0"
+#~ msgstr "行番号は1以上です"
+
+#~ msgid "Jumped to line: %1$d of file: [%2$s]"
+#~ msgstr "ファイル: [%2$s] 行: %1$d に移動"
+
+#~ msgid "Jumped to file: %s"
+#~ msgstr "ファイルに移動: %s"
+
+#~ msgid "No such file of the name: %s"
+#~ msgstr "ファイルがありません: %s"
+
+#~ msgid "Could not open file for writing: %s"
+#~ msgstr "ファイルが書き込みオープンできません: %s"
+
+#~ msgid "#List of History strings"
+#~ msgstr "# ヒストリー一覧"
+
+#~ msgid "%d file read"
+#~ msgstr "%d ファイルを読み込みました"
+
+#~ msgid "%d filess read"
+#~ msgstr "%d ファイルを読み込みました"
+
+#~ msgid "%d filesss read"
+#~ msgstr "%d ファイルを読み込みました"
+
+#~ msgid "Wrote %d line"
+#~ msgstr "%d 行を書き込みました"
+
+#~ msgid "Wrote %d lines"
+#~ msgstr "%d 行を書き込みました"
+
+#~ msgid "Wrote %d liness"
+#~ msgstr "%d 行を書き込みました"
+
+#~ msgid "Wrote %d linesss"
+#~ msgstr "%d 行を書き込みました"
+
+#~ msgid "Refusing 0 length regex match"
+#~ msgstr "長さ 0 の文字列は検索しません"

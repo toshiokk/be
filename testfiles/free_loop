@@ -1,0 +1,5 @@
+while :; do
+#  free
+  cat /proc/meminfo | grep MemFree
+  sleep 2
+done

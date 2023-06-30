@@ -1,0 +1,644 @@
+buffer.c:78:12: warning: Either the condition '(buf)==NULL' is redundant or there is possible null pointer dereference: buf. [nullPointerRedundantCheck]
+ strlcpy__(buf->file_path, file_path, MAX_PATH_LEN);
+           ^
+buffer.c:79:6: note: Assuming that condition '(buf)==NULL' is not redundant
+ if (IS_NODE_TOP_ANCH(buf)) {
+     ^
+buffer.c:78:12: note: Null pointer dereference
+ strlcpy__(buf->file_path, file_path, MAX_PATH_LEN);
+           ^
+buffer.c:80:13: warning: Either the condition '(buf)==NULL' is redundant or there is possible null pointer dereference: buf. [nullPointerRedundantCheck]
+  strlcpy__(buf->abs_path, file_path, MAX_PATH_LEN);
+            ^
+buffer.c:79:6: note: Assuming that condition '(buf)==NULL' is not redundant
+ if (IS_NODE_TOP_ANCH(buf)) {
+     ^
+buffer.c:80:13: note: Null pointer dereference
+  strlcpy__(buf->abs_path, file_path, MAX_PATH_LEN);
+            ^
+buffer.c:151:3: warning: Either the condition '(buf)==NULL' is redundant or there is possible null pointer dereference: buf. [nullPointerRedundantCheck]
+  progerr_printf("CANNOT free this buffer %s\n", buf->file_path);
+  ^
+buffer.c:150:6: note: Assuming that condition '(buf)==NULL' is not redundant
+ if (IS_NODE_VALID(buf) == 0) {
+     ^
+buffer.c:151:3: note: Null pointer dereference
+  progerr_printf("CANNOT free this buffer %s\n", buf->file_path);
+  ^
+buffer.c:201:6: style: The scope of the variable 'diff' can be reduced. [variableScope]
+ int diff;
+     ^
+buffer.c:320:13: style: The scope of the variable 'line' can be reduced. [variableScope]
+ be_line_t *line;
+            ^
+buffer.c:332:13: style: The scope of the variable 'line' can be reduced. [variableScope]
+ be_line_t *line;
+            ^
+buffers.c:141:17: warning: Either the condition '(*line_ptr)==NULL' is redundant or there is possible null pointer dereference: *line_ptr. [nullPointerRedundantCheck]
+   *line_ptr = (*line_ptr)->next;
+                ^
+buffers.c:138:7: note: Assuming that condition '(*line_ptr)==NULL' is not redundant
+  if (IS_NODE_TOP(*line_ptr) == 0) {
+      ^
+buffers.c:141:17: note: Null pointer dereference
+   *line_ptr = (*line_ptr)->next;
+                ^
+buffers.c:117:38: style: Parameter 'buf' can be declared with const [constParameter]
+void buffer_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr)
+                                     ^
+buffers.c:135:37: style: Parameter 'line' can be declared with const [constParameter]
+void line_avoid_wild_ptr(be_line_t *line, be_line_t **line_ptr)
+                                    ^
+buffers.c:229:41: style: Parameter 'edit_buf' can be declared with const [constParameter]
+int get_edit_buf_idx_from_buf(be_buf_t *edit_buf)
+                                        ^
+color.c:208:16: style: The scope of the variable 'item_color' can be reduced. [variableScope]
+ item_color_t *item_color;
+               ^
+cursesif.c:179:13: style: The scope of the variable 'key2' can be reduced. [variableScope]
+ key_code_t key2;
+            ^
+debug.c:53:6: style: Variable 'len' is assigned a value that is never used. [unreadVariable]
+ len = 0;
+     ^
+disp.c:110:7: style: The scope of the variable 'buf' can be reduced. [variableScope]
+ char buf[MAX_SCRN_LINE_BUF_LEN+1];
+      ^
+disp.c:112:14: style: The scope of the variable 'prev_msg' can be reduced. [variableScope]
+ static char prev_msg[MAX_SCRN_LINE_BUF_LEN+1];
+             ^
+disp.c:113:6: style: The scope of the variable 'color_idx' can be reduced. [variableScope]
+ int color_idx;
+     ^
+disp.c:115:6: style: The scope of the variable 'byte_idx' can be reduced. [variableScope]
+ int byte_idx;
+     ^
+editor.c:227:17: style: The scope of the variable 'dirent' can be reduced. [variableScope]
+ struct dirent *dirent;
+                ^
+editor.c:640:6: style: The scope of the variable 'pane_sel_idx' can be reduced. [variableScope]
+ int pane_sel_idx;  // 0: not current pane, 1: current pane
+     ^
+editor.c:641:6: style: The scope of the variable 'cur_pane_idx' can be reduced. [variableScope]
+ int cur_pane_idx;  // pane index
+     ^
+editor.c:642:6: style: The scope of the variable 'pane_idx' can be reduced. [variableScope]
+ int pane_idx;   // pane index
+     ^
+editor2.c:189:6: style: The scope of the variable 'buf_idx' can be reduced. [variableScope]
+ int buf_idx;
+     ^
+editor2.c:190:7: style: The scope of the variable 'buf_path' can be reduced. [variableScope]
+ char buf_path[MAX_SCRN_LINE_BUF_LEN+1];
+      ^
+editor2.c:191:7: style: The scope of the variable 'buf_line_num' can be reduced. [variableScope]
+ char buf_line_num[MAX_LINE_NUM_STR_LEN+1];
+      ^
+editor2.c:197:6: style: The scope of the variable 'max_wl_idx' can be reduced. [variableScope]
+ int max_wl_idx;
+     ^
+editor2.c:198:6: style: The scope of the variable 'wl_idx' can be reduced. [variableScope]
+ int wl_idx;
+     ^
+editor2.c:733:6: style: The scope of the variable 'col_num' can be reduced. [variableScope]
+ int col_num;
+     ^
+editor2.c:734:7: style: The scope of the variable 'col_num_str' can be reduced. [variableScope]
+ char col_num_str[4+1]; // "9999"
+      ^
+editor2.c:653:10: style: Variable 'right_x' is assigned a value that is never used. [unreadVariable]
+ right_x = end_col_idx_of_wrap_line(raw_code, wl_idx, right_byte_idx, -1);
+         ^
+editorcut.c:529:6: style: The scope of the variable 'min_byte_idx' can be reduced. [variableScope]
+ int min_byte_idx, max_byte_idx;
+     ^
+editorcut.c:529:20: style: The scope of the variable 'max_byte_idx' can be reduced. [variableScope]
+ int min_byte_idx, max_byte_idx;
+                   ^
+editorcut.c:551:6: style: The scope of the variable 'min_byte_idx' can be reduced. [variableScope]
+ int min_byte_idx, max_byte_idx;
+     ^
+editorcut.c:551:20: style: The scope of the variable 'max_byte_idx' can be reduced. [variableScope]
+ int min_byte_idx, max_byte_idx;
+                   ^
+editorcut2.c:49:6: style: The scope of the variable 'c_l_b_i' can be reduced. [variableScope]
+ int c_l_b_i;
+     ^
+editorgoto.c:215:6: style: The scope of the variable 'files' can be reduced. [variableScope]
+ int files;
+     ^
+editorgoto.c:216:14: style: The scope of the variable 'ptr' can be reduced. [variableScope]
+ const char *ptr;
+             ^
+editorlist.c:63:13: style: The scope of the variable 'key' can be reduced. [variableScope]
+ key_code_t key;
+            ^
+editorlist.c:64:20: style: The scope of the variable 'func_key_table' can be reduced. [variableScope]
+ func_key_table_t *func_key_table;
+                   ^
+editormove.c:96:6: style: The scope of the variable 'chr_type' can be reduced. [variableScope]
+ int chr_type;
+     ^
+editormove.c:194:6: style: The scope of the variable 'lines' can be reduced. [variableScope]
+ int lines;
+     ^
+editormove.c:195:6: style: The scope of the variable 'cnt' can be reduced. [variableScope]
+ int cnt;
+     ^
+editormove.c:234:6: style: The scope of the variable 'lines' can be reduced. [variableScope]
+ int lines;
+     ^
+editormove.c:235:6: style: The scope of the variable 'cnt' can be reduced. [variableScope]
+ int cnt;
+     ^
+editormove.c:610:6: style: The scope of the variable 'wl_idx' can be reduced. [variableScope]
+ int wl_idx;
+     ^
+editormove.c:640:6: style: The scope of the variable 'wl_idx' can be reduced. [variableScope]
+ int wl_idx;
+     ^
+editormove2.c:201:23: warning: Either the condition '(_cl_)==NULL' is redundant or there is possible null pointer dereference: _cl_. [nullPointerRedundantCheck]
+   te_concat_linefeed(_cl_->data);
+                      ^
+editormove2.c:199:8: note: Assuming that condition '(_cl_)==NULL' is not redundant
+   if (IS_NODE_TOP(_cl_) == 0)
+       ^
+editormove2.c:201:23: note: Null pointer dereference
+   te_concat_linefeed(_cl_->data);
+                      ^
+editormove2.c:219:6: style: The scope of the variable 'wl_idx' can be reduced. [variableScope]
+ int wl_idx;
+     ^
+editormove2.c:220:6: style: The scope of the variable 'cursor_x_in_text' can be reduced. [variableScope]
+ int cursor_x_in_text;
+     ^
+fileio.c:437:6: style: The scope of the variable 'mask' can be reduced. [variableScope]
+ int mask = 0;
+     ^
+fileio.c:605:6: style: The scope of the variable 'line_len' can be reduced. [variableScope]
+ int line_len;
+     ^
+fileio.c:606:7: style: The scope of the variable 'size' can be reduced. [variableScope]
+ long size;
+      ^
+fileio.c:195:32: style: A pointer can not be negative so it is either pointless or an error to check if it is. [pointerLessThanZero]
+ if ((fp = popen(buffer, "r")) <= 0) {
+                               ^
+fileio.c:232:32: style: A pointer can not be negative so it is either pointless or an error to check if it is. [pointerLessThanZero]
+ if ((fp = popen(buffer, "r")) <= 0) {
+                               ^
+fileio.c:584:32: style: A pointer can not be negative so it is either pointless or an error to check if it is. [pointerLessThanZero]
+ if ((fp = popen(buffer, "w")) <= 0) {
+                               ^
+fileio.c:386:10: style: Variable 'ret' is assigned a value that is never used. [unreadVariable]
+ int ret = 0;
+         ^
+fileio.c:437:11: style: Variable 'mask' is assigned a value that is never used. [unreadVariable]
+ int mask = 0;
+          ^
+filer.c:380:6: style: The scope of the variable 'pane_sel_idx' can be reduced. [variableScope]
+ int pane_sel_idx;  // 0: not current pane, 1: current pane
+     ^
+filer.c:381:6: style: The scope of the variable 'pane_idx' can be reduced. [variableScope]
+ int pane_idx;   // pane index
+     ^
+filer.c:483:7: style: The scope of the variable 'buffer' can be reduced. [variableScope]
+ char buffer[MAX_SCRN_LINE_BUF_LEN+1];
+      ^
+filer.c:484:8: style: The scope of the variable 'ptr' can be reduced. [variableScope]
+ char *ptr;
+       ^
+filer2.c:145:14: style: The scope of the variable 'arg' can be reduced. [variableScope]
+ const char *arg;
+             ^
+filer2.c:166:6: style: The scope of the variable 'ret' can be reduced. [variableScope]
+ int ret;
+     ^
+filer2.c:596:6: style: The scope of the variable 'file_idx' can be reduced. [variableScope]
+ int file_idx;
+     ^
+filer2.c:749:6: style: The scope of the variable 'diff' can be reduced. [variableScope]
+ int diff;
+     ^
+filercmd.c:180:16: style: Variable 'file_idx' is reassigned a value before the old one has been used. [redundantAssignment]
+ for (file_idx = select_and_get_first_file_idx_selected();
+               ^
+filercmd.c:165:11: note: file_idx is assigned
+ file_idx = get_first_file_idx_selected();
+          ^
+filercmd.c:180:16: note: file_idx is overwritten
+ for (file_idx = select_and_get_first_file_idx_selected();
+               ^
+filerrun.c:52:6: style: The scope of the variable 'file_idx' can be reduced. [variableScope]
+ int file_idx;
+     ^
+filerrun.c:53:8: style: The scope of the variable 'ptr_replace' can be reduced. [variableScope]
+ char *ptr_replace;
+       ^
+filerrun.c:54:7: style: The scope of the variable 'buffer' can be reduced. [variableScope]
+ char buffer[MAX_PATH_LEN+1];
+      ^
+filerrun.c:56:6: style: The scope of the variable 'cnt' can be reduced. [variableScope]
+ int cnt;
+     ^
+history.c:487:6: style: The scope of the variable 'lines' can be reduced. [variableScope]
+ int lines;
+     ^
+history.c:488:6: style: The scope of the variable 'skips' can be reduced. [variableScope]
+ int skips;
+     ^
+history.c:489:7: style: The scope of the variable 'str' can be reduced. [variableScope]
+ char str[MAX_EDIT_LINE_LEN+1];
+      ^
+history.c:657:14: style: The scope of the variable 'ptr' can be reduced. [variableScope]
+ const char *ptr;
+             ^
+keymacro.c:273:5: warning: %x in format string (no. 1) requires 'unsigned int *' but the argument type is 'signed int *'. [invalidScanfArgType_int]
+    sscanf(&str[1], "%04x", &int_key_code);
+    ^
+keys.c:717:14: warning: Either the condition 'key_code==-0x8000' is redundant or isgraph() argument nr 1 can have invalid value. The value is -32768 but the valid values are '0:255'. [invalidFunctionArg]
+ if (isgraph(key_code)) {
+             ^
+keys.c:727:22: note: Assuming that condition 'key_code==-0x8000' is not redundant
+ } else if (key_code == NKA) {
+                     ^
+keys.c:717:14: note: Invalid argument
+ if (isgraph(key_code)) {
+             ^
+keys.c:720:24: warning: Either the condition '0<=(key_code&0x00ff)' is redundant or isgraph() argument nr 1 can have invalid value. The value is -1 but the valid values are '0:255'. [invalidFunctionArg]
+  if (isgraph(key_code & 0x00ff)) {
+                       ^
+keys.c:722:16: note: Assuming that condition '0<=(key_code&0x00ff)' is not redundant
+  } else if (0 <= (key_code & 0x00ff) && (key_code & 0x00ff) < 0x20) {
+               ^
+keys.c:720:24: note: Invalid argument
+  if (isgraph(key_code & 0x00ff)) {
+                       ^
+keys.c:386:69: style: Parameter 'keys' can be declared with const [constParameter]
+void bind_key_to_func(func_key_table_t *func_key_table, key_code_t *keys)
+                                                                    ^
+line.c:298:10: warning: Either the condition '(line)==NULL' is redundant or there is possible null pointer dereference: line. [nullPointerRedundantCheck]
+  line = line->next;
+         ^
+line.c:297:6: note: Assuming that condition '(line)==NULL' is not redundant
+ if (IS_NODE_TOP_ANCH(line)) {
+     ^
+line.c:298:10: note: Null pointer dereference
+  line = line->next;
+         ^
+linewrap.c:437:15: style: Condition 'wl_idx>line_idx' is always false [knownConditionTrueFalse]
+   || (wl_idx > line_idx))
+              ^
+linewrap.c:432:15: note: Assuming that condition 'wl_idx>line_idx' is not redundant
+   || (wl_idx > line_idx))
+              ^
+linewrap.c:437:15: note: Condition 'wl_idx>line_idx' is always false
+   || (wl_idx > line_idx))
+              ^
+linewrap.c:261:2: style: The scope of the variable 'chr_cols' can be reduced. [variableScope]
+ DEFINE_WRAP_LINE_VARS
+ ^
+linewrap.c:285:2: style: The scope of the variable 'chr_cols' can be reduced. [variableScope]
+ DEFINE_WRAP_LINE_VARS
+ ^
+linewrap.c:313:2: style: The scope of the variable 'chr_cols' can be reduced. [variableScope]
+ DEFINE_WRAP_LINE_VARS
+ ^
+linewrap.c:364:2: style: The scope of the variable 'chr_cols' can be reduced. [variableScope]
+ DEFINE_WRAP_LINE_VARS
+ ^
+linewrap.c:420:2: style: The scope of the variable 'chr_cols' can be reduced. [variableScope]
+ DEFINE_WRAP_LINE_VARS
+ ^
+main.c:843:7: style: Variable 'cols' is reassigned a value before the old one has been used. [redundantAssignment]
+ cols = LIM_MAX(tio_get_columns(), strlen(splash_text[0]));
+      ^
+main.c:833:8: note: cols is assigned
+  cols = strlen(splash_text[0]);
+       ^
+main.c:843:7: note: cols is overwritten
+ cols = LIM_MAX(tio_get_columns(), strlen(splash_text[0]));
+      ^
+main.c:169:7: style: The scope of the variable 'file_name' can be reduced. [variableScope]
+ char file_name[MAX_PATH_LEN+1];
+      ^
+main.c:542:6: style: The scope of the variable 'ret' can be reduced. [variableScope]
+ int ret = 0;
+     ^
+main.c:542:10: style: Variable 'ret' is assigned a value that is never used. [unreadVariable]
+ int ret = 0;
+         ^
+main.c:101:0: information: Skipping configuration 'SCRN_COLS_TWO_PANES' since the value of 'SCRN_COLS_TWO_PANES' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked]
+ if (COLS >= SCRN_COLS_TWO_PANES) {
+^
+rcfile.c:505:16: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+   if (key_idx >= max_keys_bind) {
+               ^
+rcfile.c:494:28: note: outer condition: key_idx<max_keys_bind
+ for (key_idx = 0; key_idx < max_keys_bind; ) {
+                           ^
+rcfile.c:505:16: note: opposite inner condition: key_idx>=max_keys_bind
+   if (key_idx >= max_keys_bind) {
+               ^
+rcfile.c:433:7: style: The scope of the variable 'dir_part' can be reduced. [variableScope]
+ char dir_part[MAX_PATH_LEN+1];
+      ^
+rcfile.c:434:7: style: The scope of the variable 'file_part' can be reduced. [variableScope]
+ char file_part[MAX_PATH_LEN+1];
+      ^
+rcfile.c:435:7: style: The scope of the variable 'rc_file_path' can be reduced. [variableScope]
+ char rc_file_path[MAX_PATH_LEN+1];
+      ^
+rcfile.c:488:8: style: The scope of the variable 'key' can be reduced. [variableScope]
+ short key;
+       ^
+rcfile.c:64:0: information: Skipping configuration 'ENABLE_RC;SYSCONFDIR' since the value of 'SYSCONFDIR' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked]
+ snprintf_(rc_file_path, MAX_PATH_LEN+1, "%s/%s", SYSCONFDIR, rc_file_name);
+^
+regexp.c:120:6: style: The scope of the variable 'ret' can be reduced. [variableScope]
+ int ret;
+     ^
+regexp.c:121:6: style: The scope of the variable 'prev_match_byte_idx' can be reduced. [variableScope]
+ int prev_match_byte_idx;
+     ^
+regexp.c:575:6: style: The scope of the variable 'ret' can be reduced. [variableScope]
+ int ret;
+     ^
+regexp.c:214:22: style: Variable 'nn' is assigned a value that is never used. [unreadVariable]
+ const char *hh, *nn = needle;
+                     ^
+search.c:443:6: style: The scope of the variable 'match_len' can be reduced. [variableScope]
+ int match_len;
+     ^
+termif.c:198:2: portability: fflush() called on input stream 'stdin' may result in undefined behaviour on non-linux systems. [fflushOnInputStream]
+ fflush(stdin);
+ ^
+termif.c:195:14: style: The scope of the variable 'ptr' can be reduced. [variableScope]
+ const char *ptr;
+             ^
+termif.c:262:17: style: The scope of the variable 'ucs21' can be reduced. [variableScope]
+ vscreen_char_t ucs21;
+                ^
+termif.c:263:6: style: The scope of the variable 'width' can be reduced. [variableScope]
+ int width;
+     ^
+tio.c:402:0: information: Skipping configuration 'VDSUSP;_POSIX_VDISABLE' since the value of 'VDSUSP' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked]
+ term.c_cc[VDSUSP] = _POSIX_VDISABLE;
+^
+tio.c:396:0: information: Skipping configuration 'VDSUSP;_POSIX_VDISABLE' since the value of '_POSIX_VDISABLE' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked]
+ term.c_cc[VINTR] = _POSIX_VDISABLE;
+^
+tio.c:397:0: information: Skipping configuration 'VDSUSP;_POSIX_VDISABLE' since the value of '_POSIX_VDISABLE' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked]
+ term.c_cc[VQUIT] = _POSIX_VDISABLE;
+^
+tio.c:399:0: information: Skipping configuration 'VDSUSP;_POSIX_VDISABLE' since the value of '_POSIX_VDISABLE' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked]
+ term.c_cc[VSTOP] = _POSIX_VDISABLE;
+^
+tio.c:400:0: information: Skipping configuration 'VDSUSP;_POSIX_VDISABLE' since the value of '_POSIX_VDISABLE' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked]
+ term.c_cc[VSTART] = _POSIX_VDISABLE;
+^
+tio.c:402:0: information: Skipping configuration 'VDSUSP;_POSIX_VDISABLE' since the value of '_POSIX_VDISABLE' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked]
+ term.c_cc[VDSUSP] = _POSIX_VDISABLE;
+^
+tio.c:404:0: information: Skipping configuration 'VDSUSP;_POSIX_VDISABLE' since the value of '_POSIX_VDISABLE' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked]
+ term.c_cc[VSUSP] = _POSIX_VDISABLE;
+^
+tio.c:396:0: information: Skipping configuration '_POSIX_VDISABLE' since the value of '_POSIX_VDISABLE' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked]
+ term.c_cc[VINTR] = _POSIX_VDISABLE;
+^
+tio.c:397:0: information: Skipping configuration '_POSIX_VDISABLE' since the value of '_POSIX_VDISABLE' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked]
+ term.c_cc[VQUIT] = _POSIX_VDISABLE;
+^
+tio.c:399:0: information: Skipping configuration '_POSIX_VDISABLE' since the value of '_POSIX_VDISABLE' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked]
+ term.c_cc[VSTOP] = _POSIX_VDISABLE;
+^
+tio.c:400:0: information: Skipping configuration '_POSIX_VDISABLE' since the value of '_POSIX_VDISABLE' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked]
+ term.c_cc[VSTART] = _POSIX_VDISABLE;
+^
+tio.c:404:0: information: Skipping configuration '_POSIX_VDISABLE' since the value of '_POSIX_VDISABLE' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly. [ConfigurationNotChecked]
+ term.c_cc[VSUSP] = _POSIX_VDISABLE;
+^
+utf8.c:63:6: style: The scope of the variable 'columns' can be reduced. [variableScope]
+ int columns;
+     ^
+utilpath.c:196:8: style: The scope of the variable 'last_slash' can be reduced. [variableScope]
+ char *last_slash;
+       ^
+utilpath.c:600:32: style: Variable 'userdata' is assigned a value that is never used. [unreadVariable]
+ const struct passwd *userdata = 0;
+                               ^
+utils.c:248:14: warning: Either the condition '(fp=fopen("/proc/meminfo","r"))!=NULL' is redundant or there is possible null pointer dereference: fp. [nullPointerRedundantCheck]
+  if (fclose(fp) != 0) {
+             ^
+utils.c:238:42: note: Assuming that condition '(fp=fopen("/proc/meminfo","r"))!=NULL' is not redundant
+  if ((fp = fopen("/proc/meminfo", "r")) != NULL) {
+                                         ^
+utils.c:248:14: note: Null pointer dereference
+  if (fclose(fp) != 0) {
+             ^
+utilstr.c:32:15: style: Condition '0x00<=chr' is always true [knownConditionTrueFalse]
+ return (0x00 <= chr && chr < 0x20) || (0x7f <= chr && chr < 0x80);
+              ^
+utilstr.c:31:8: note: Assignment 'chr=uchar', assigned value is greater than -1
+ chr = uchar;
+       ^
+utilstr.c:32:15: note: Condition '0x00<=chr' is always true
+ return (0x00 <= chr && chr < 0x20) || (0x7f <= chr && chr < 0x80);
+              ^
+utilstr.c:199:7: style: The scope of the variable 'buf' can be reduced. [variableScope]
+ char buf[MAX_PATH_LEN+1];
+      ^
+utilstr.c:451:6: style: The scope of the variable 'bytes' can be reduced. [variableScope]
+ int bytes;
+     ^
+utilstr.c:631:7: style: The scope of the variable 'lang_names' can be reduced. [variableScope]
+ char lang_names[LANG_ZZ+1][LANG_STR_LEN+1] = {
+      ^
+utilstr.c:383:13: style: Variable 'space1' is assigned a value that is never used. [unreadVariable]
+ int space1 = 0, space2 = 0;
+            ^
+utilstr.c:383:25: style: Variable 'space2' is assigned a value that is never used. [unreadVariable]
+ int space1 = 0, space2 = 0;
+                        ^
+winin.c:332:6: style: The scope of the variable 'start_byte_idx' can be reduced. [variableScope]
+ int start_byte_idx;
+     ^
+winin.c:396:10: style: The scope of the variable 'ap' can be reduced. [variableScope]
+ va_list ap;
+         ^
+winin.c:397:7: style: The scope of the variable 'msg_buf' can be reduced. [variableScope]
+ char msg_buf[MAX_SCRN_LINE_BUF_LEN+1];
+      ^
+winin.c:406:13: style: The scope of the variable 'key_input' can be reduced. [variableScope]
+ key_code_t key_input;
+            ^
+winin.c:408:6: style: The scope of the variable 'byte_idx' can be reduced. [variableScope]
+ int byte_idx;
+     ^
+line.c:344:21: warning: Null pointer dereference: line [ctunullpointer]
+ return line_strlen(line->data);
+                    ^
+search.c:567:16: note: Assuming that condition '(line)==NULL' is not redundant
+
+               ^
+search.c:565:33: note: Calling function line_data_len, 1st argument is null
+    if (byte_idx < line_data_len(line)) {
+                                ^
+line.c:344:21: note: Dereferencing argument line that is null
+ return line_strlen(line->data);
+                    ^
+utilpath.c:300:0: style: The function 'add_last_slash_to_dir' is never used. [unusedFunction]
+
+^
+buffer.c:446:0: style: The function 'buffer_check_line_in_buf' is never used. [unusedFunction]
+
+^
+buffer.c:314:0: style: The function 'buffer_cur_line' is never used. [unusedFunction]
+
+^
+buffer.c:91:0: style: The function 'buffer_insert' is never used. [unusedFunction]
+
+^
+cursesif.c:157:0: style: The function 'curses_clear_screen' is never used. [unusedFunction]
+
+^
+rcfile.c:274:0: style: The function 'dump_app_mode' is never used. [unusedFunction]
+
+^
+buffers.c:648:0: style: The function 'dump_cur_edit_buf' is never used. [unusedFunction]
+
+^
+buffers.c:626:0: style: The function 'dump_cur_edit_buf_lines' is never used. [unusedFunction]
+
+^
+buffers.c:192:0: style: The function 'dump_cur_editor_views' is never used. [unusedFunction]
+
+^
+editor.c:815:0: style: The function 'dump_cur_pointers' is never used. [unusedFunction]
+
+^
+winout.c:149:0: style: The function 'dump_cur_win' is never used. [unusedFunction]
+
+^
+buffers.c:638:0: style: The function 'dump_cut_bufs' is never used. [unusedFunction]
+
+^
+buffers.c:642:0: style: The function 'dump_cut_bufs_lines' is never used. [unusedFunction]
+
+^
+buffers.c:630:0: style: The function 'dump_edit_bufs' is never used. [unusedFunction]
+
+^
+buffers.c:634:0: style: The function 'dump_edit_bufs_lines' is never used. [unusedFunction]
+
+^
+rcfile.c:748:0: style: The function 'dump_file_types' is never used. [unusedFunction]
+
+^
+history.c:734:0: style: The function 'dump_hist_bufs' is never used. [unusedFunction]
+
+^
+history.c:738:0: style: The function 'dump_hist_bufs_lines' is never used. [unusedFunction]
+
+^
+history.c:730:0: style: The function 'dump_history_ix' is never used. [unusedFunction]
+
+^
+debug.c:26:0: style: The function 'dump_memory' is never used. [unusedFunction]
+
+^
+editorundo.c:334:0: style: The function 'dump_redo_bufs_lines' is never used. [unusedFunction]
+
+^
+debug.c:45:0: style: The function 'dump_str' is never used. [unusedFunction]
+
+^
+utilstr.c:765:0: style: The function 'dump_str_w_caret2' is never used. [unusedFunction]
+
+^
+tio.c:365:0: style: The function 'dump_term_settings' is never used. [unusedFunction]
+
+^
+editorundo.c:330:0: style: The function 'dump_undo_bufs_lines' is never used. [unusedFunction]
+
+^
+keys.c:239:0: style: The function 'get_func_key_code' is never used. [unusedFunction]
+
+^
+utils.c:144:0: style: The function 'get_ssspuuuuuu' is never used. [unusedFunction]
+
+^
+buffers.c:519:0: style: The function 'get_str_encode' is never used. [unusedFunction]
+
+^
+utilpath.c:145:0: style: The function 'is_file_writable' is never used. [unusedFunction]
+
+^
+line.c:47:0: style: The function 'line_create_with_string' is never used. [unusedFunction]
+
+^
+line.c:362:0: style: The function 'line_dump' is never used. [unusedFunction]
+
+^
+line.c:352:0: style: The function 'line_dump_lines_from_top' is never used. [unusedFunction]
+
+^
+line.c:85:0: style: The function 'line_get_string' is never used. [unusedFunction]
+
+^
+regexp.c:105:0: style: The function 'matches_dump_matches' is never used. [unusedFunction]
+
+^
+regexp.c:563:0: style: The function 'regexec_1' is never used. [unusedFunction]
+
+^
+utils.c:90:0: style: The function 'remalloc_and_null_terminate_string' is never used. [unusedFunction]
+
+^
+utilstr.c:373:0: style: The function 'shrink_str_static' is never used. [unusedFunction]
+
+^
+utilstr.c:469:0: style: The function 'skip_chars' is never used. [unusedFunction]
+
+^
+utilstr.c:501:0: style: The function 'skip_separator' is never used. [unusedFunction]
+
+^
+utilstr.c:319:0: style: The function 'strncpy__' is never used. [unusedFunction]
+
+^
+editorgoto.c:371:0: style: The function 'switch_c_e_b_to_valid_buf' is never used. [unusedFunction]
+
+^
+termif.c:174:0: style: The function 'termif_clear_screen' is never used. [unusedFunction]
+
+^
+linewrap.c:592:0: style: The function 'test_get_intersection' is never used. [unusedFunction]
+
+^
+myutf8.c:22:0: style: The function 'test_my_mbwidth' is never used. [unusedFunction]
+
+^
+utils.c:268:0: style: The function 'test_nn_from_num' is never used. [unusedFunction]
+
+^
+utf8.c:25:0: style: The function 'test_utf8c_encode' is never used. [unusedFunction]
+
+^
+utf8.c:59:0: style: The function 'test_wcwidth' is never used. [unusedFunction]
+
+^
+linewrap.c:35:0: style: The function 'test_wrap_line' is never used. [unusedFunction]
+
+^
+tio.c:238:0: style: The function 'tio_check_win_size' is never used. [unusedFunction]
+
+^
+tio.c:27:0: style: The function 'tio_test' is never used. [unusedFunction]
+
+^
+utf8.c:82:0: style: The function 'utf8s_chars' is never used. [unusedFunction]
+
+^
+nofile:0:0: information: Cppcheck cannot find all the include files (use --check-config for details) [missingIncludeSystem]
+

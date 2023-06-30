@@ -1,0 +1,2 @@
+sh _autotools 2>/dev/stdout | tee error
+sh _conf 9 2>/dev/stdout | tee error

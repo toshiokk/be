@@ -1,0 +1,9 @@
+ext=${1##*.}
+case "$ext" in
+wav|WAV|wave|WAVE)
+  aplay "$1"
+  ;;
+*)
+  less "$1"
+  ;;
+esac

@@ -1,0 +1,365 @@
+[x]can not open file with file name including char-$
+[x]#bot_anchor
+[]avoid cur_line
+
+Editor 2 pane mode
+  initialize
+    pane-1		anchor		anchor
+  open
+    selected-pane	open-file	valid-bufferに補正
+  switch pane
+    pane-2		open-file	valid-bufferに補正
+  delete line
+    pane-1		delete-line	chose cur_line before unlinking line
+  close
+    selected-pane	chose valid-buffer before unlink	chose valid-buffer before unlink
+
+[]switch 1 pane when entering list-mode
+
+[]Undo後にカーソルが変更か所に移動しない。
+[]M-z (reopen_file) bug
+
+[ex]long sequence of key macro
+[d ]scroll back screen(input/output log)
+[e ]Open new file without file-name
+[dx]simple UNDO/REDO
+[ex]change current dir on start up
+[?x]Flash IMJ input line
+[dx]display ruler
+  12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567
+  1---5----10---15---20---25---30---35---40---45---50---55---60---65---70---75---80---85---90---95---100--105
+[dx]non-bit-map-based setting variables
+[ex]history ==> buffer
+[dx]display line number
+[dx]syntax highlighting with line wrapping
+[dx]multi search word highlighting
+[e-]periodically check opening file update by other apps
+[d-]keep files open until exiting be
+[d-]avoid corruption of kanji display using ncurses
+[dx]read binary file
+[x]force kanji encoding on read -ej(JIS) -ee(EUCJP) -es(SJIS) -eu(UTF8) -ea(ASCII:No nkf conversion)
+[]auto backup to filename.ext~~~~~~~~~~~
+[]M-x ==> ESC-x
+//[pe]cursor positioning to the previous on reopening file
+[pd]cursor position history
+//[pd]line wrapping
+//	avoid current line hopping
+//	marked segment highlighting
+//	line cut copy paste
+//	line end "<" - notation
+//	C comment syntax highlighting /* ... */
+//	do_down()
+//	tab display
+//[e]Prevent from reading too large file(>128MB).
+
+[]Wide char mode '#' ==> '＃'
+[]replace mode
+[pd]embedded/minimal environment(wo/curses ,termcap and termlib. only dumb terminal)
+[pe]display line number
+[pe]memorize line and return
+
+//[pe]write not to symlink but to realpath
+[pe]write as
+//[pe]readable key macro history
+//[pd]support Qt .pro as a project file
+[pe]#include <file.h> search path /usr/include, /usr/local/include
+[ d]output to history of all actions done
+[ d]open so many files in background (by thread)
+[pe]input from stdin
+//[nd]undo
+//[pe]select history from list displayed
+//[pe]search/exec/dir/open-file history
+//[pe]multi-line character cut
+//[pd]speed down on large file
+//[pd]consider vulnerability sprintf==>snprintf
+//truely change directory
+//break repeating execution of filer command by ^C
+//tab size selection of file type(c|h:4, text:8)
+//keep browsing directory and don't change filer directory
+//755 ==> rwsr-xr-x
+//funny color in super user
+//[pe]distinguish history types:
+// execution(x)/directory(d)/search-string(s)	2006/07/31>08/03
+//[pe]a command(select all files)		2006/07/31>08/01
+//don't change cur directory of the original filer
+//file selection by Enter in file open mode
+
+//not return beginning position after replacing
+//ChDir to ..
+//Shift-F4 hang-up on Slang-1.4.9
+//red screen for super user
+//libslang-utf8-1.4.9 + mbctowc
+//[pe]file sort by name or extension
+//[pd]box cut/paste
+//[nd]backward replace search yes/no/back/undo/cancel
+//[pd]preserve very long line 3200-->65536
+//[pd]ESC key handling on SLang
+//[pd]./configure, make, make install (adopt to autoconf/automake)
+//[pe]eliminate needless screen update
+//[pd]automatic euc/sjis/utf8 recognition and import/export using nkf
+//[pe]write current file (even though not modified)
+//[pe]usability in various terminals ==> SLkp_getkey() and SLkp_define_keysym()
+//[pd]make cursor movement reasonable after search, replace, move and page up/down
+//[pd]change direct calling to disp_edit_win() to set_update_ne...()
+//[nd]understand search.c
+//check file modification of original file on writing file
+//[pe]avoid double file open by comparing absolute path
+//[pe]avoid double file open by comparing real path of symbolic-link
+//[pe]reopen / undo (M-U)
+//cursor brought to the last line
+//[pd]cursor line highlighting
+//[pe]new file
+//[pe]do not open unexistent file on Goto file
+//extend key board macro strokes from 100 to 1000
+//screen update in do_close_all()
+//[pe]open project file(Alt-p)
+//[pe]display key bindings by key code order or by function order
+//[pd]file list currently open
+//[pd]speed up drawing
+//[pd]utf-8 support
+//[pd]use Slang instead of ncurses
+//[pd]abstruct a terminal abstruction layer
+//[nd]control code in regex keyword search/replace(\t, \x1b, ...) ==> PCRE
+//[nd]make winio.c comprehensive
+//[pa]re-ordering file classification
+//[pa]delete unused functions -- mouse/justification/spell
+//[pe]rename all user function to do_xxxx()
+//[pd]display key bindings
+// ==File======================
+// | Close file       C-Q     |
+// | Close all files  M-Q     |
+// | Save all files   M-S     |
+// | Read file        M-R     |
+// | Write file       M-W     |
+// | Tagged jump      M-J,F12 |
+// ============================
+//memory fault on paste when marking
+//[pd]Save only truelly modified files (CRC checksum)
+//[pd]select more than one files in file browser
+//[pe]save keyboard macro to file
+//[pd]history string ordering
+//[pd]paste on cursor position
+//[pe]tab size switch 8 <==> 4
+//cursor pos after region cut
+//[pe]beep on Memory fault (SIGSEGV)
+//[pe]preserve original file's permissions
+//[pd]vertical/horizontal scroll margin also at searching
+//[pe]switch between two previouslly selected files(Alt-/)
+//[pe]switch files(Alt-</Alt->)
+//[pe]current file highlighting when top file selected
+//[pe]input control code(like mifes ^V-c)
+//[pe]UPPER/lower case conversion(^W)
+//[pe]indicate new file on status bar
+//[pe]cursor position after pasting
+//[nd]project management file / listing files opened in editor
+//[pe]returning to original position after global search/replace
+//[nd]global keyword search/replace
+//[pe]screen scrolling after pasting
+//[ne]To be able to Load long-long line
+//[pe]Save all modified files(Alt-A)
+//[pe]Close all files(Alt-Q)
+//[pe]read .rc file from the current directory at start up
+//[pe]replace previous words
+//[bug]replace-string listing ordering
+//[p]make usable ESC key
+//[p]make usable Shift-Fx in Xterm
+//  Shift-Fx ==> Alt-x (ex. Shift-F4 ==> Alt-4)
+//[pe]Cancel key = ^Z
+//[p]make block cursor visible in Xterm
+//  Alt-C toggles block cursor on and off
+//[ne]action when window resized
+//[pe]make "previous word/next word" efficient
+//speed up file browser
+//[pe]TAB color, EOL color, normal color, cursor color
+//[pe]Charactor base cut / Line base cut
+//[pe]TAB character/end of line/double byte space indication
+//[pe]Cursor Inversion and Blinking
+//[bug]replace string history Not memoried
+//[bug]^L:cut to end of line
+//[pe]Function key help
+//  Menu1 Menu2 Replac Search  Mark- Cut-- Copy- Paste  ----- Jump- ----- -----
+//[pe]stack type cutbuffer
+//replace a word at the cursor pos
+//[pe]goto file - don't open pre-opened file. compare by full path
+//do_left bug
+//colorfull screen
+//keep previous search string
+//goto file
+//scroll horizontally
+//cut to the tail of the line
+//keyboard macro
+//quick keyword search
+//search forward/backward keys
+//display cutbuffer status
+//keyboard function mapping
+//expand editing area
+//previous word/next word
+//exit without asking file name
+//No confirmation of output file name at Exit
+//Two bytes key code
+//Copy function (Cut/Uncut) ==> (Cut/Copy/Uncut)
+//Not automatically add magicline(The last line).
+
+Change log by Koike -- n:neccesary,p:preferable,e:easy,d:difficult,a:always
+
+[Schedule]----------------------------------------------2006/07/10
+//[pd]own configuration file				2006/07/20
+//[pd]customizable key bindings				2006/07/25
+//[pe]define menu_color					2006/07/25
+//[pe]assign filer command to function keys		2006/07/25
+//[pe]determine nice color set				2006/07/25
+[pd]test building on various environments		2006/07/31
+[pd]make key mapping mifes/vz/ws			2006/07/31
+[pd]own comment						2006/08/06
+[pd]send nano author and be allowed to publish		2006/08/10
+[pd]upload sourceforge.net				2006/08/31
+
+[publishing]--------------------------------------------2013/07/10
+Change log -- n:neccesary,p:preferable,e:easy,d:difficult,a:always
+[x]avoid flickering in drop down menu.
+[]Scroll drop down menu.
+[d]Read text from the file.
+[]editor two pane mode.
+[]paste absolute or relative file or directory path.
+[]duplicate file if not modified when "write file" invoked.
+[]incorporate .bach_history
+[x]Delete Monocrome mode
+[x] 8 colors ==> 16 colors
+
+[BUGS]------------------------------------------------------------------------------
+//UTF8 directory/file name support
+
+[Crash/Fixes]-----------------------------------------------------------------------
+CFCFCFCFCFCFFF
+
+[Build and Running environments tested]
+RH8
+RH9
+FC1
+FC2
+FC3
+FC4
+FC5
+VINE
+TL10
+TL11	No-ncurses.h,slang.h,pcre.h libslang-utf8-1.4.9
+Ubuntu
+SUSE
+
+[Filer 2 pane mode]
+123456789012345678901234567890123456789012345678901234567890
+user@tl11fuji:tty1                                  23:59:59
+1:/home/user/dir1/dir2       |2:/home/user/dir3/dir4
+buffer.c                     |
+buffer.h                     |
+buffer.o                     |
+build.log                    |
+color.c                      |
+buffer.c     12345  rwxrwxrwx|buffer.c     12345  rwxrwxrwx
+
+[Editor 2 pane mode]
+123456789012345678901234567890123456789012345678901234567890
+1:/home/user/todo.txt                               23:59:59
+1:/home/user/todo.txt        |2:/home/user/todo2.txt
+config.status                |
+config.sub                   |
+configure                    |
+configure.ac                 |
+configure.log                |
+buffer.c     12345  rwxrwxrwx|buffer.c     12345  rwxrwxrwx
+
+[buffer type]
+	edit buffer
+	internal buffer
+		cut buffer
+		file list
+		key list
+		function list
+	history buffer
+		history list
+
+--------------------------------------------------------------------------------------
+Function	command-line	   config-file	    command
+--------------	------------	   -----------	    -------
+rcfile			O		-		-
+norcfile		O		-		-
+nohistory		O		-		-
+nonkf			O		-		-
+debug			O		-		-
+encoding		O		-		-
+tabsize			O		O		O
+view			O		-		-
+
+//monocrome		-		O		O
+draw_cursor		+		O		O
+key_list_lines		3		O		O
+key_code_7f_bs		-		O		O
+utf8
+show_ruler		+		O		O
+show_line_num		+		O		O
+cursor_center		-		O		O
+auto_indent		-		O		O
+backup_files		10		O		O
+ignore_case		-		O		O
+regexp			-		O		O
+syntax_hl		+		O		O
+tab_eol_notation	+		O		O
+show_dot_file		-		O		O
+show_file_info		6		O		O
+sort_by			0		O		O
+filer_panes		-		O		O
+
+//--------------------------------
+Maximum line length of the source code: 100.
+//--------------------------------
+int _abc; // not-recommended
+int main(void)
+{
+  int abc__def; // not-recommended
+  int _Abc; // not-recommended
+}
+//--------------------------------
+
+[BUGS]------------------------------------------------------------------------------
+//not return beginning position after replacing
+//ChDir to ..
+
+//[pe]distinguish history types:
+// execution(x)/directory(d)/search-string(s)		2006/07/31>08/03
+//[pe]a command(select all files)			2006/07/31>08/01
+
+[pe]emulate cursor blinking
+
+[pe]input from stdin
+//[pe]cursor positioning after reopening file
+
+--------------------------------------------------------------------------------------
+
+open/close(device)
+begin/end
+init/destroy
+init/finalize
+create/free(memory)
+construct/destruct(object)
+clear/set(value)
+show/hide(window)
+start/terminate(process)
+
+--------------------------------------------------------------------------------------
+USB bootable Linux can be a killer application to Windose.
+USB からブート可能なOS(Linux)は、きっとWindoseに対するキラーアプリになる。
+
+Linux は便利な利用法としてUSBディスクからのブートが可能である。
+しかし、Mirocsoft は Linux のこの利便性を真似する事が出来ない。
+
+なぜなら、そうすることは彼らのもっとも重要なソフトウエア製品の野放図なコピーを
+許すことになってしまうからである。
+
+M$のソフトウエアはPCにインストール後、ソフトウエア・アクティベーションを行う必要がある。
+アクティベートされたソフトウエアは異なるコンピュータ上で実行できない様になっている。
+LANチップ中のMACアドレスや、CPUやマザーボードのシリアルNo.などを記憶しておき、
+それらが変わった時は異なるPC上で実行されたと判断し、使用できなくしている。
+そうする事によって、彼らの製品の野放図なコピーを行えなくしているのだ。
+
+ソフトウエア・アクティベーションの回数はM$の社内でカウントされていて、
+可能なアクティベーションの回数は3回とか5回とかに制限されている。

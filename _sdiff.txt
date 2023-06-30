@@ -1,0 +1,139 @@
+(  \|  |  <  |  >  )
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt
+Usage: sdiff_ln width file1 file2 output-file
+   ex: sdiff_ln 237 file1.c file2.c output.txt

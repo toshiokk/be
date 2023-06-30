@@ -1,0 +1,11 @@
+mk_backup_file ~/be.log
+rm -f ~/.beexit
+#be "$@" 2>/dev/null
+be -d "$@" 2>~/be.log
+if [ -f ~/.beexit ]; then
+  cd `cat ~/.beexit`
+  cp ~/be.log ~/be.log~
+else
+  mk_backup_file ~/becrash.log
+  cp ~/be.log ~/becrash.log
+fi

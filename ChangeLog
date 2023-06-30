@@ -1,0 +1,28 @@
+BE-EDITOR 0.500 2006.9.30
+- General:
+	- First release.
+	- Simple text editor delived from nano 1.2.2
+	- Include simple file manager (filer).
+	- Support UTF8 terminal.
+	- Support Kanji code auto conversion from UTF8, EUCJP, SJIS and JIS.
+	- Support *nix, DOS and Mac line termination (LF, LF+CR, CR).
+	- Support monocrome display.
+	- Support UTF8 terminal.
+	- Support keyboard macro. (recording key strokes and playing back recorded key strokes)
+	- Support project file *.pro and *.bep
+	- Support global search/replace.
+	- Support enhanced regular expressions using PCRE(Perl Compatible Regular Expressions) library.
+	- Support stackable cut/copy/paste buffer.
+	- Support rectangular cut/copy/paste.
+	- Support key bindings definition by rc file.
+	- Support color customization by rc file.
+	- Support syntax highlighting by rc file.
+	- Support search/replace history, directory history and execution history.
+	- Support simple undo/redo.
+	- Support line number display
+	- Support column ruler display
+	- Small executable file size (striped debug information)
+		78KB  with all additional feature disabled
+		100KB with ncurses
+	- Spell checker is deleted from nano.
+	- Word wrapping is deleted from nano.

@@ -1,0 +1,2 @@
+rm -f ~/be.log
+be "$@" 2>~/be.log

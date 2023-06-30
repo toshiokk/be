@@ -1,0 +1,16 @@
+echo "Generating BE project file __be.bep ..."
+#ls *.h >__be.bep
+#ls *.c >>__be.bep
+wc *.c *.h >__be.bep
+wc berc emacs.berc wordstar.berc >>__be.bep
+#
+ wc po/*.po README.md >>__be.bep
+
+./_make_dep
+
+echo "Checking max line length ..."
+for file in *.c *.h; do
+  echo -n "$file "
+  expand -t 4 $file | wc -L
+done
+expand -t 4 *.c *.h | wc -L

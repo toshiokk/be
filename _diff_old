@@ -1,0 +1,8 @@
+cat <<EOF >_proc_one
+  echo \$1 ======================= >>_diff.txt
+  echo "kdiff3 ../old/src/\$1 \$1 #========================" >>_diff.txt
+  diff ../old/src/\$1 \$1 >>_diff.txt
+EOF
+
+rm _diff.txt
+sh _proc_all

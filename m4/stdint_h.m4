@@ -1,0 +1,1 @@
+/usr/share/aclocal/stdint_h.m4

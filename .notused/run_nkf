@@ -1,0 +1,8 @@
+nkf -g run_nkf
+echo "ASCII: $?"
+nkf -g keucjp.txt
+echo "EUC: $?"
+nkf -g ksjis.txt
+echo "SJIS: $?"
+nkf -g kutf8.txt
+echo "UTF8: $?"

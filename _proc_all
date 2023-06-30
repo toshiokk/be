@@ -1,0 +1,4 @@
+for fn in *.h *.c
+do
+  sh _proc_one $fn
+done

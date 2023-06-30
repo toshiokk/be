@@ -1,0 +1,1120 @@
+imjcuitest.cpp 43 main() start
+imj.cpp 106 im_open()
+imj.cpp 2691 test_imjatoh_functions()
+imj.cpp 2693 test_imjatoh_functions() roman1:[ hiragana] ==> pronun[　ひらがな]
+imj.cpp 2696 test_imjatoh_functions() imjatoh_romaji_offset([ hiragana], strlen([ひら])) ==> 3
+imj.cpp 2699 test_imjatoh_functions() imjatoh_romaji_offset([kanji], strlen([かん])) ==> 3
+imj.cpp 2702 test_imjatoh_functions() imjatoh_hira_offset([ hiragana], [ひらがな], 6) ==> 12
+imj.cpp 1176 imjdic_open() dic-file-path:[./.imj/imj.dic]
+imj.cpp 1917 imjhst_load() hst-file-path:[./.imj/imj.hst]
+imj.cpp 1928 imjhst_load() history entries: 1144
+imj.cpp 3114 test_hira_kata_han_conversion() 
+<[　 ／ ， ． ・ ： ； ？ ！ ’ ” ＼ ＾ ‾ ＿ （ ） ｛ ｝ ［ ］ ¥ ０ １ ２ ３ ４ ５ ６ ７ ８ ９ ＋ − ＄ ％ ＃ ＆ ＊ ＠ ＝ Ａ Ｂ Ｃ Ｄ Ｅ Ｆ Ｇ Ｈ Ｉ Ｊ Ｋ Ｌ Ｍ Ｎ Ｏ Ｐ Ｑ Ｒ Ｓ Ｔ Ｕ Ｖ Ｗ Ｘ Ｙ Ｚ ａ ｂ ｃ ｄ ｅ ｆ ｇ ｈ ｉ ｊ ｋ ｌ ｍ ｎ ｏ ｐ ｑ ｒ ｓ ｔ ｕ ｖ ｗ ｘ ｙ ｚ ガ ギ グ ゲ ゴ ザ ジ ズ ゼ ゾ ダ ヂ ヅ デ ド バ ビ ブ ベ ボ パ ピ プ ペ ポ ヴ ァ ア ィ イ ゥ ウ ェ エ ォ オ カ キ ク ケ コ サ シ ス セ ソ タ チ ッ ツ テ ト ナ ニ ヌ ネ ノ ハ ヒ フ ヘ ホ マ ミ ム メ モ ャ ヤ ュ ユ ョ ヨ ラ リ ル レ ロ ワ ヲ ン ヮ ヰ ヱ ヵ ヶ ゛ ゜ 、 「 」 ー 。 ]
+>[　　／　，　．　・　：　；　？　！　’　”　＼　＾　‾　＿　（　）　｛　｝　［　］　¥　０　１　２　３　４　５　６　７　８　９　＋　−　＄　％　＃　＆　＊　＠　＝　Ａ　Ｂ　Ｃ　Ｄ　Ｅ　Ｆ　Ｇ　Ｈ　Ｉ　Ｊ　Ｋ　Ｌ　Ｍ　Ｎ　Ｏ　Ｐ　Ｑ　Ｒ　Ｓ　Ｔ　Ｕ　Ｖ　Ｗ　Ｘ　Ｙ　Ｚ　ａ　ｂ　ｃ　ｄ　ｅ　ｆ　ｇ　ｈ　ｉ　ｊ　ｋ　ｌ　ｍ　ｎ　ｏ　ｐ　ｑ　ｒ　ｓ　ｔ　ｕ　ｖ　ｗ　ｘ　ｙ　ｚ　が　ぎ　ぐ　げ　ご　ざ　じ　ず　ぜ　ぞ　だ　ぢ　づ　で　ど　ば　び　ぶ　べ　ぼ　ぱ　ぴ　ぷ　ぺ　ぽ　う゛　ぁ　あ　ぃ　い　ぅ　う　ぇ　え　ぉ　お　か　き　く　け　こ　さ　し　す　せ　そ　た　ち　っ　つ　て　と　な　に　ぬ　ね　の　は　ひ　ふ　へ　ほ　ま　み　む　め　も　ゃ　や　ゅ　ゆ　ょ　よ　ら　り　る　れ　ろ　わ　を　ん　ヮ　ヰ　ヱ　ヵ　ヶ　゛　゜　、　「　」　ー　。　]
+imj.cpp 3116 test_hira_kata_han_conversion() 
+<[  / , . ･ : ; ? ! ' " \ ^ ~ _ ( ) { } [ ] \ 0 1 2 3 4 5 6 7 8 9 + - $ % # & * @ = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z ｶﾞ ｷﾞ ｸﾞ ｹﾞ ｺﾞ ｻﾞ ｼﾞ ｽﾞ ｾﾞ ｿﾞ ﾀﾞ ﾁﾞ ﾂﾞ ﾃﾞ ﾄﾞ ﾊﾞ ﾋﾞ ﾌﾞ ﾍﾞ ﾎﾞ ﾊﾟ ﾋﾟ ﾌﾟ ﾍﾟ ﾎﾟ ｳﾞ ｧ ｱ ｨ ｲ ｩ ｳ ｪ ｴ ｫ ｵ ｶ ｷ ｸ ｹ ｺ ｻ ｼ ｽ ｾ ｿ ﾀ ﾁ ｯ ﾂ ﾃ ﾄ ﾅ ﾆ ﾇ ﾈ ﾉ ﾊ ﾋ ﾌ ﾍ ﾎ ﾏ ﾐ ﾑ ﾒ ﾓ ｬ ﾔ ｭ ﾕ ｮ ﾖ ﾗ ﾘ ﾙ ﾚ ﾛ ﾜ ｦ ﾝ ヮ ヰ ヱ ヵ ヶ ﾞ ﾟ ､ ｢ ｣ ｰ ｡ ]
+>[　　／　，　．　・　：　；　？　！　’　”　＼　＾　‾　＿　（　）　｛　｝　［　］　＼　０　１　２　３　４　５　６　７　８　９　＋　−　＄　％　＃　＆　＊　＠　＝　Ａ　Ｂ　Ｃ　Ｄ　Ｅ　Ｆ　Ｇ　Ｈ　Ｉ　Ｊ　Ｋ　Ｌ　Ｍ　Ｎ　Ｏ　Ｐ　Ｑ　Ｒ　Ｓ　Ｔ　Ｕ　Ｖ　Ｗ　Ｘ　Ｙ　Ｚ　ａ　ｂ　ｃ　ｄ　ｅ　ｆ　ｇ　ｈ　ｉ　ｊ　ｋ　ｌ　ｍ　ｎ　ｏ　ｐ　ｑ　ｒ　ｓ　ｔ　ｕ　ｖ　ｗ　ｘ　ｙ　ｚ　が　ぎ　ぐ　げ　ご　ざ　じ　ず　ぜ　ぞ　だ　ぢ　づ　で　ど　ば　び　ぶ　べ　ぼ　ぱ　ぴ　ぷ　ぺ　ぽ　う゛　ぁ　あ　ぃ　い　ぅ　う　ぇ　え　ぉ　お　か　き　く　け　こ　さ　し　す　せ　そ　た　ち　っ　つ　て　と　な　に　ぬ　ね　の　は　ひ　ふ　へ　ほ　ま　み　む　め　も　ゃ　や　ゅ　ゆ　ょ　よ　ら　り　る　れ　ろ　わ　を　ん　ヮ　ヰ　ヱ　ヵ　ヶ　゛　゜　、　「　」　ー　。　]
+imj.cpp 3119 test_hira_kata_han_conversion() 
+<[　 ／ ， ． ・ ： ； ？ ！ ’ ” ＼ ＾ ‾ ＿ （ ） ｛ ｝ ［ ］ ¥ ０ １ ２ ３ ４ ５ ６ ７ ８ ９ ＋ − ＄ ％ ＃ ＆ ＊ ＠ ＝ Ａ Ｂ Ｃ Ｄ Ｅ Ｆ Ｇ Ｈ Ｉ Ｊ Ｋ Ｌ Ｍ Ｎ Ｏ Ｐ Ｑ Ｒ Ｓ Ｔ Ｕ Ｖ Ｗ Ｘ Ｙ Ｚ ａ ｂ ｃ ｄ ｅ ｆ ｇ ｈ ｉ ｊ ｋ ｌ ｍ ｎ ｏ ｐ ｑ ｒ ｓ ｔ ｕ ｖ ｗ ｘ ｙ ｚ が ぎ ぐ げ ご ざ じ ず ぜ ぞ だ ぢ づ で ど ば び ぶ べ ぼ ぱ ぴ ぷ ぺ ぽ う゛ ぁ あ ぃ い ぅ う ぇ え ぉ お か き く け こ さ し す せ そ た ち っ つ て と な に ぬ ね の は ひ ふ へ ほ ま み む め も ゃ や ゅ ゆ ょ よ ら り る れ ろ わ を ん ヮ ヰ ヱ ヵ ヶ ゛ ゜ 、 「 」 ー 。 ]
+>[　　／　，　．　・　：　；　？　！　’　”　＼　＾　‾　＿　（　）　｛　｝　［　］　¥　０　１　２　３　４　５　６　７　８　９　＋　−　＄　％　＃　＆　＊　＠　＝　Ａ　Ｂ　Ｃ　Ｄ　Ｅ　Ｆ　Ｇ　Ｈ　Ｉ　Ｊ　Ｋ　Ｌ　Ｍ　Ｎ　Ｏ　Ｐ　Ｑ　Ｒ　Ｓ　Ｔ　Ｕ　Ｖ　Ｗ　Ｘ　Ｙ　Ｚ　ａ　ｂ　ｃ　ｄ　ｅ　ｆ　ｇ　ｈ　ｉ　ｊ　ｋ　ｌ　ｍ　ｎ　ｏ　ｐ　ｑ　ｒ　ｓ　ｔ　ｕ　ｖ　ｗ　ｘ　ｙ　ｚ　ガ　ギ　グ　ゲ　ゴ　ザ　ジ　ズ　ゼ　ゾ　ダ　ヂ　ヅ　デ　ド　バ　ビ　ブ　ベ　ボ　パ　ピ　プ　ペ　ポ　ヴ　ァ　ア　ィ　イ　ゥ　ウ　ェ　エ　ォ　オ　カ　キ　ク　ケ　コ　サ　シ　ス　セ　ソ　タ　チ　ッ　ツ　テ　ト　ナ　ニ　ヌ　ネ　ノ　ハ　ヒ　フ　ヘ　ホ　マ　ミ　ム　メ　モ　ャ　ヤ　ュ　ユ　ョ　ヨ　ラ　リ　ル　レ　ロ　ワ　ヲ　ン　ヮ　ヰ　ヱ　ヵ　ヶ　゛　゜　、　「　」　ー　。　]
+imj.cpp 3122 test_hira_kata_han_conversion() 
+<[  / , . ･ : ; ? ! ' " \ ^ ~ _ ( ) { } [ ] \ 0 1 2 3 4 5 6 7 8 9 + - $ % # & * @ = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z ｶﾞ ｷﾞ ｸﾞ ｹﾞ ｺﾞ ｻﾞ ｼﾞ ｽﾞ ｾﾞ ｿﾞ ﾀﾞ ﾁﾞ ﾂﾞ ﾃﾞ ﾄﾞ ﾊﾞ ﾋﾞ ﾌﾞ ﾍﾞ ﾎﾞ ﾊﾟ ﾋﾟ ﾌﾟ ﾍﾟ ﾎﾟ ｳﾞ ｧ ｱ ｨ ｲ ｩ ｳ ｪ ｴ ｫ ｵ ｶ ｷ ｸ ｹ ｺ ｻ ｼ ｽ ｾ ｿ ﾀ ﾁ ｯ ﾂ ﾃ ﾄ ﾅ ﾆ ﾇ ﾈ ﾉ ﾊ ﾋ ﾌ ﾍ ﾎ ﾏ ﾐ ﾑ ﾒ ﾓ ｬ ﾔ ｭ ﾕ ｮ ﾖ ﾗ ﾘ ﾙ ﾚ ﾛ ﾜ ｦ ﾝ ヮ ヰ ヱ ヵ ヶ ﾞ ﾟ ､ ｢ ｣ ｰ ｡ ]
+>[　　／　，　．　・　：　；　？　！　’　”　＼　＾　‾　＿　（　）　｛　｝　［　］　＼　０　１　２　３　４　５　６　７　８　９　＋　−　＄　％　＃　＆　＊　＠　＝　Ａ　Ｂ　Ｃ　Ｄ　Ｅ　Ｆ　Ｇ　Ｈ　Ｉ　Ｊ　Ｋ　Ｌ　Ｍ　Ｎ　Ｏ　Ｐ　Ｑ　Ｒ　Ｓ　Ｔ　Ｕ　Ｖ　Ｗ　Ｘ　Ｙ　Ｚ　ａ　ｂ　ｃ　ｄ　ｅ　ｆ　ｇ　ｈ　ｉ　ｊ　ｋ　ｌ　ｍ　ｎ　ｏ　ｐ　ｑ　ｒ　ｓ　ｔ　ｕ　ｖ　ｗ　ｘ　ｙ　ｚ　ガ　ギ　グ　ゲ　ゴ　ザ　ジ　ズ　ゼ　ゾ　ダ　ヂ　ヅ　デ　ド　バ　ビ　ブ　ベ　ボ　パ　ピ　プ　ペ　ポ　ヴ　ァ　ア　ィ　イ　ゥ　ウ　ェ　エ　ォ　オ　カ　キ　ク　ケ　コ　サ　シ　ス　セ　ソ　タ　チ　ッ　ツ　テ　ト　ナ　ニ　ヌ　ネ　ノ　ハ　ヒ　フ　ヘ　ホ　マ　ミ　ム　メ　モ　ャ　ヤ　ュ　ユ　ョ　ヨ　ラ　リ　ル　レ　ロ　ワ　ヲ　ン　ヮ　ヰ　ヱ　ヵ　ヶ　゛　゜　、　「　」　ー　。　]
+imj.cpp 3125 test_hira_kata_han_conversion() 
+<[　 ／ ， ． ・ ： ； ？ ！ ’ ” ＼ ＾ ‾ ＿ （ ） ｛ ｝ ［ ］ ¥ ０ １ ２ ３ ４ ５ ６ ７ ８ ９ ＋ − ＄ ％ ＃ ＆ ＊ ＠ ＝ Ａ Ｂ Ｃ Ｄ Ｅ Ｆ Ｇ Ｈ Ｉ Ｊ Ｋ Ｌ Ｍ Ｎ Ｏ Ｐ Ｑ Ｒ Ｓ Ｔ Ｕ Ｖ Ｗ Ｘ Ｙ Ｚ ａ ｂ ｃ ｄ ｅ ｆ ｇ ｈ ｉ ｊ ｋ ｌ ｍ ｎ ｏ ｐ ｑ ｒ ｓ ｔ ｕ ｖ ｗ ｘ ｙ ｚ が ぎ ぐ げ ご ざ じ ず ぜ ぞ だ ぢ づ で ど ば び ぶ べ ぼ ぱ ぴ ぷ ぺ ぽ う゛ ぁ あ ぃ い ぅ う ぇ え ぉ お か き く け こ さ し す せ そ た ち っ つ て と な に ぬ ね の は ひ ふ へ ほ ま み む め も ゃ や ゅ ゆ ょ よ ら り る れ ろ わ を ん ヮ ヰ ヱ ヵ ヶ ゛ ゜ 、 「 」 ー 。 ]
+>[  / , . ･ : ; ? ! ' " \ ^ ~ _ ( ) { } [ ] \ 0 1 2 3 4 5 6 7 8 9 + - $ % # & * @ = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z ｶﾞ ｷﾞ ｸﾞ ｹﾞ ｺﾞ ｻﾞ ｼﾞ ｽﾞ ｾﾞ ｿﾞ ﾀﾞ ﾁﾞ ﾂﾞ ﾃﾞ ﾄﾞ ﾊﾞ ﾋﾞ ﾌﾞ ﾍﾞ ﾎﾞ ﾊﾟ ﾋﾟ ﾌﾟ ﾍﾟ ﾎﾟ ｳﾞ ｧ ｱ ｨ ｲ ｩ ｳ ｪ ｴ ｫ ｵ ｶ ｷ ｸ ｹ ｺ ｻ ｼ ｽ ｾ ｿ ﾀ ﾁ ｯ ﾂ ﾃ ﾄ ﾅ ﾆ ﾇ ﾈ ﾉ ﾊ ﾋ ﾌ ﾍ ﾎ ﾏ ﾐ ﾑ ﾒ ﾓ ｬ ﾔ ｭ ﾕ ｮ ﾖ ﾗ ﾘ ﾙ ﾚ ﾛ ﾜ ｦ ﾝ ヮ ヰ ヱ ヵ ヶ ﾞ ﾟ ､ ｢ ｣ ｰ ｡ ]
+imj.cpp 3127 test_hira_kata_han_conversion() 
+<[　 ／ ， ． ・ ： ； ？ ！ ’ ” ＼ ＾ ‾ ＿ （ ） ｛ ｝ ［ ］ ¥ ０ １ ２ ３ ４ ５ ６ ７ ８ ９ ＋ − ＄ ％ ＃ ＆ ＊ ＠ ＝ Ａ Ｂ Ｃ Ｄ Ｅ Ｆ Ｇ Ｈ Ｉ Ｊ Ｋ Ｌ Ｍ Ｎ Ｏ Ｐ Ｑ Ｒ Ｓ Ｔ Ｕ Ｖ Ｗ Ｘ Ｙ Ｚ ａ ｂ ｃ ｄ ｅ ｆ ｇ ｈ ｉ ｊ ｋ ｌ ｍ ｎ ｏ ｐ ｑ ｒ ｓ ｔ ｕ ｖ ｗ ｘ ｙ ｚ ガ ギ グ ゲ ゴ ザ ジ ズ ゼ ゾ ダ ヂ ヅ デ ド バ ビ ブ ベ ボ パ ピ プ ペ ポ ヴ ァ ア ィ イ ゥ ウ ェ エ ォ オ カ キ ク ケ コ サ シ ス セ ソ タ チ ッ ツ テ ト ナ ニ ヌ ネ ノ ハ ヒ フ ヘ ホ マ ミ ム メ モ ャ ヤ ュ ユ ョ ヨ ラ リ ル レ ロ ワ ヲ ン ヮ ヰ ヱ ヵ ヶ ゛ ゜ 、 「 」 ー 。 ]
+>[  / , . ･ : ; ? ! ' " \ ^ ~ _ ( ) { } [ ] \ 0 1 2 3 4 5 6 7 8 9 + - $ % # & * @ = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z ｶﾞ ｷﾞ ｸﾞ ｹﾞ ｺﾞ ｻﾞ ｼﾞ ｽﾞ ｾﾞ ｿﾞ ﾀﾞ ﾁﾞ ﾂﾞ ﾃﾞ ﾄﾞ ﾊﾞ ﾋﾞ ﾌﾞ ﾍﾞ ﾎﾞ ﾊﾟ ﾋﾟ ﾌﾟ ﾍﾟ ﾎﾟ ｳﾞ ｧ ｱ ｨ ｲ ｩ ｳ ｪ ｴ ｫ ｵ ｶ ｷ ｸ ｹ ｺ ｻ ｼ ｽ ｾ ｿ ﾀ ﾁ ｯ ﾂ ﾃ ﾄ ﾅ ﾆ ﾇ ﾈ ﾉ ﾊ ﾋ ﾌ ﾍ ﾎ ﾏ ﾐ ﾑ ﾒ ﾓ ｬ ﾔ ｭ ﾕ ｮ ﾖ ﾗ ﾘ ﾙ ﾚ ﾛ ﾜ ｦ ﾝ ヮ ヰ ヱ ヵ ヶ ﾞ ﾟ ､ ｢ ｣ ｰ ｡ ]
+imj.cpp 1705 imjdic_test_katsuyou() [K5    書]
+[書く 書くな 書か 書かな 書かない 書かなけれ 書かなければ 書かず 書かぬ 書かねば 書かん 書かれ 書かれる 書かるる 書き 書きた 書きたい 書きま 書きます 書きませ 書きまし 書け 書けば 書ける 書けな 書けない 書けぬ 書こ 書こう 書いた 書いちゃ 書いて 書いと ]
+imj.cpp 1705 imjdic_test_katsuyou() [C5r   行]
+[行く 行くな 行か 行かな 行かない 行かなけれ 行かなければ 行かず 行かぬ 行かねば 行かん 行かれ 行かれる 行かるる 行き 行きた 行きたい 行きま 行きます 行きませ 行きまし 行け 行けば 行ける 行けな 行けない 行けぬ 行こ 行こう 行った 行っちゃ 行って 行っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [G5    漕]
+[漕ぐ 漕ぐな 漕が 漕がな 漕がない 漕がなけれ 漕がなければ 漕がず 漕がぬ 漕がねば 漕がん 漕がれ 漕がれる 漕がるる 漕ぎ 漕ぎた 漕ぎたい 漕ぎま 漕ぎます 漕ぎませ 漕ぎまし 漕げ 漕げば 漕げる 漕げな 漕げない 漕げぬ 漕ご 漕ごう 漕いだ 漕いぢゃ 漕いじゃ 漕いで 漕いど ]
+imj.cpp 1705 imjdic_test_katsuyou() [S5    消]
+[消す 消すな 消さ 消さな 消さない 消さなけれ 消さなければ 消さず 消さぬ 消さねば 消さん 消され 消される 消さるる 消し 消した 消したい 消しま 消します 消しませ 消しまし 消せ 消せば 消せる 消せな 消せない 消せぬ 消そ 消そう 消した 消しちゃ 消して 消しと ]
+imj.cpp 1705 imjdic_test_katsuyou() [T5    勝]
+[勝つ 勝つな 勝た 勝たな 勝たない 勝たなけれ 勝たなければ 勝たず 勝たぬ 勝たねば 勝たん 勝たれ 勝たれる 勝たるる 勝ち 勝ちた 勝ちたい 勝ちま 勝ちます 勝ちませ 勝ちまし 勝て 勝てば 勝てる 勝てな 勝てない 勝てぬ 勝と 勝とう 勝った 勝っちゃ 勝って 勝っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [N5    死]
+[死ぬ 死ぬな 死な 死なな 死なない 死ななけれ 死ななければ 死なず 死なぬ 死なねば 死なん 死なれ 死なれる 死なるる 死に 死にた 死にたい 死にま 死にます 死にませ 死にまし 死ね 死ねば 死ねる 死ねな 死ねない 死ねぬ 死の 死のう 死んだ 死んぢゃ 死んじゃ 死んで 死んど ]
+imj.cpp 1705 imjdic_test_katsuyou() [B5    呼]
+[呼ぶ 呼ぶな 呼ば 呼ばな 呼ばない 呼ばなけれ 呼ばなければ 呼ばず 呼ばぬ 呼ばねば 呼ばん 呼ばれ 呼ばれる 呼ばるる 呼び 呼びた 呼びたい 呼びま 呼びます 呼びませ 呼びまし 呼べ 呼べば 呼べる 呼べな 呼べない 呼べぬ 呼ぼ 呼ぼう 呼んだ 呼んぢゃ 呼んじゃ 呼んで 呼んど ]
+imj.cpp 1705 imjdic_test_katsuyou() [M5    読]
+[読む 読むな 読ま 読まな 読まない 読まなけれ 読まなければ 読まず 読まぬ 読まねば 読まん 読まれ 読まれる 読まるる 読み 読みた 読みたい 読みま 読みます 読みませ 読みまし 読め 読めば 読める 読めな 読めない 読めぬ 読も 読もう 読んだ 読んぢゃ 読んじゃ 読んで 読んど ]
+imj.cpp 1705 imjdic_test_katsuyou() [R5    知]
+[知る 知るな 知ら 知らな 知らない 知らなけれ 知らなければ 知らず 知らぬ 知らねば 知らん 知られ 知られる 知らるる 知り 知りた 知りたい 知りま 知ります 知りませ 知りまし 知れ 知れば 知れる 知れな 知れない 知れぬ 知ろ 知ろう 知った 知っちゃ 知って 知っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [W5    笑]
+[笑う 笑うな 笑わ 笑わな 笑わない 笑わなけれ 笑わなければ 笑わず 笑わぬ 笑わねば 笑わん 笑われ 笑われる 笑わるる 笑い 笑いた 笑いたい 笑いま 笑います 笑いませ 笑いまし 笑え 笑えば 笑える 笑えな 笑えない 笑えぬ 笑お 笑おう 笑った 笑っちゃ 笑って 笑っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [KS    見]
+[見る 見るな 見な 見ない 見なけれ 見なければ 見ず 見ぬ 見ねば 見ん 見れ 見れる 見られ 見られる 見らるる 見た 見たい 見ま 見ます 見ませ 見まし 見れ 見れば 見れる 見れな 見れない 見れぬ 見よ 見よう 見た 見ちゃ 見て 見と 見ろ ]
+imj.cpp 1705 imjdic_test_katsuyou() [SX    資]
+[資する 資するな 資さ 資さな 資さない 資さなけれ 資さなければ 資さず 資さぬ 資さねば 資さん 資され 資される 資さるる 資し 資した 資したい 資しま 資します 資しませ 資しまし 資せ 資せば 資せる 資せな 資せない 資せぬ 資そ 資そう 資した 資しちゃ 資して 資しと 資すれば ]
+imj.cpp 1705 imjdic_test_katsuyou() [ZX    演]
+[演ずる 演ずるな 演じ 演じな 演じない 演じなけれ 演じなければ 演じず 演じぬ 演じねば 演じれ 演じれる 演じられ 演じられる 演じらるる 演じた 演じたい 演じま 演じます 演じませ 演じまし 演じれ 演じれば 演じれる 演じれな 演じれない 演じれぬ 演じよ 演じよう 演じた 演じちゃ 演じて 演じと 演じろ 演ずれば ]
+imj.cpp 1705 imjdic_test_katsuyou() [L5    なさ]
+[なさる なさるな なさら なさらな なさらない なさらなけれ なさらなければ なさらず なさらぬ なさらねば なさらん なさられ なさられる なさらるる なさり なさりた なさりたい なさりま なさります なさりませ なさりまし なされ なされば なされる なされな なされない なされぬ なさろ なさろう なさった なさっちゃ なさって なさっと なさい なさいま なさいます   ]
+imj.cpp 1705 imjdic_test_katsuyou() [U5    問]
+[問う 問うな 問わ 問わな 問わない 問わなけれ 問わなければ 問わず 問わぬ 問わねば 問わん 問われ 問われる 問わるる 問い 問いた 問いたい 問いま 問います 問いませ 問いまし 問え 問えば 問える 問えな 問えない 問えぬ 問お 問おう 問うた 問うちゃ 問うて 問うと ]
+imj.cpp 1705 imjdic_test_katsuyou() [aru   有]
+[有る 有るな 有ら 有らな 有らない 有らなけれ 有らなければ 有らず 有らぬ 有らねば 有らん 有られ 有られる 有らるる 有り 有りた 有りたい 有りま 有ります 有りませ 有りまし 有れ 有れば 有れる 有れな 有れない 有れぬ 有ろ 有ろう 有った 有っちゃ 有って 有っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [kxuru 見てくる]
+[見てくる 見てくるな ]
+imj.cpp 1705 imjdic_test_katsuyou() [kxure 見てくれ]
+[見てくれた 見てくれま 見てくれます 見てくれませ 見てくれまし 見てくれれば 見てくれる 見てくれな 見てくれない 見てくれぬ 見てくれちゃ 見てくれて 見てくれと ]
+imj.cpp 1705 imjdic_test_katsuyou() [kxi   来]
+[来た 来たい 来ま 来ます 来ませ 来まし 来た 来ちゃ 来て 来と ]
+imj.cpp 1705 imjdic_test_katsuyou() [kxo   来]
+[来な 来ない 来なけれ 来なければ 来ず 来ぬ 来ねば 来ん 来れ 来れる 来られ 来られる 来らるる 来よ 来よう 来い ]
+imj.cpp 1705 imjdic_test_katsuyou() [sxu2  す]
+[する するな すれば ]
+imj.cpp 1705 imjdic_test_katsuyou() [sxi   し]
+[しな しない しなけれ しなければ しず した したい しま します しませ しまし しよ しよう した しちゃ して しと しろ ]
+imj.cpp 1705 imjdic_test_katsuyou() [sxe   せ]
+[せず せぬ せねば せん せられ せられる せよ ]
+imj.cpp 1705 imjdic_test_katsuyou() [KY    美し]
+[美しい 美しく 美しくな 美しくない 美しかっ 美しかった 美しけれ 美しければ 美しかろ 美しかろう 美しき 美しかれ ]
+imj.cpp 1707 imjdic_test_katsuyou() max_katsuyou_len: 323
+imjcuitest.cpp 61 main() start auto conversion mode
+imj.cpp 952 im_get_committed_string() []
+COMMENT:[----.----|----.----|----.----|----.----|----.----|----.----|----.----|----.----|]
+INPUT:[TinySegmenterはこんぱくとなせっけいにするために、じしょをつかっていません。]
+imjcuitest.cpp 128 convert_auto() pronun: [TinySegmenterはこんぱくとなせっけいにするために、じしょをつかっていません。]
+imj.cpp 402 im_set_pronun() [TinySegmenterはこんぱくとなせっけいにするために、じしょをつかっていません。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [TinySegmenterはこんぱくとなせっけいにするために、じしょをつかっていません。]
+ANSWER: [TinySegmenterはコンパクトな設計にするために、辞書を使っていません。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [TinySegmenterはこんぱくとなせっけいにするために]:[TinySegmenterはコンパクトな設計にするために]
+imj.cpp 952 im_get_committed_string() [TinySegmenterはコンパクトな設計にするために]
+OUTPUT:[TinySegmenterはコンパクトな設計にするために]
+
+ANSWER: [、辞書を使っていません。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [、じしょをつかっていません。]:[、辞書を使っていません。]
+imj.cpp 952 im_get_committed_string() [、辞書を使っていません。]
+OUTPUT:[、辞書を使っていません。]
+
+INPUT:[じしょなしのわかちがきそふとうぇあといえば]
+imjcuitest.cpp 128 convert_auto() pronun: [じしょなしのわかちがきそふとうぇあといえば]
+imj.cpp 402 im_set_pronun() [じしょなしのわかちがきそふとうぇあといえば]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [じしょなしのわかちがきそふとうぇあといえば]
+ANSWER: [辞書無しの分かち書きソフトウェアといえば]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [じしょなしのわかちがきそふとうぇあといえば]:[辞書無しの分かち書きソフトウェアといえば]
+imj.cpp 952 im_get_committed_string() [辞書無しの分かち書きソフトウェアといえば]
+OUTPUT:[辞書無しの分かち書きソフトウェアといえば]
+
+INPUT:[まりもがありますが、まりもとはことなり、]
+imjcuitest.cpp 128 convert_auto() pronun: [まりもがありますが、まりもとはことなり、]
+imj.cpp 402 im_set_pronun() [まりもがありますが、まりもとはことなり、]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [まりもがありますが、まりもとはことなり、]
+ANSWER: [マリモがありますが、マリモとは異なり、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [まりもがありますが、まりもとはことなり]:[マリモがありますが、マリモとは異なり]
+imj.cpp 952 im_get_committed_string() [マリモがありますが、マリモとは異なり]
+OUTPUT:[マリモがありますが、マリモとは異なり]
+
+ANSWER: [、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [、]:[、]
+imj.cpp 952 im_get_committed_string() [、]
+OUTPUT:[、]
+
+INPUT:[TinySegmenterはきかいがくしゅうのみをつかってわかちがきをおこないます。]
+imjcuitest.cpp 128 convert_auto() pronun: [TinySegmenterはきかいがくしゅうのみをつかってわかちがきをおこないます。]
+imj.cpp 402 im_set_pronun() [TinySegmenterはきかいがくしゅうのみをつかってわかちがきをおこないます。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [TinySegmenterはきかいがくしゅうのみをつかってわかちがきをおこないます。]
+ANSWER: [TinySegmenterは機械学習のみを使って分かち書きを行います。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [TinySegmenterはきかいがくしゅうのみをつかってわかちがきをおこないます。]:[TinySegmenterは機械学習のみを使って分かち書きを行います。]
+imj.cpp 952 im_get_committed_string() [TinySegmenterは機械学習のみを使って分かち書きを行います。]
+OUTPUT:[TinySegmenterは機械学習のみを使って分かち書きを行います。]
+
+INPUT:[TinySegmenterはにゅうりょくぶんすべてのもじについて、]
+imjcuitest.cpp 128 convert_auto() pronun: [TinySegmenterはにゅうりょくぶんすべてのもじについて、]
+imj.cpp 402 im_set_pronun() [TinySegmenterはにゅうりょくぶんすべてのもじについて、]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [TinySegmenterはにゅうりょくぶんすべてのもじについて、]
+ANSWER: [TinySegmenterは入力文すべての文字について、文字の前が単語境界かどうかを、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [TinySegmenterはにゅうりょくぶんすべてのもじについて、]:[TinySegmenterは入力文すべての文字について、]
+imj.cpp 952 im_get_committed_string() [TinySegmenterは入力文すべての文字について、]
+OUTPUT:[TinySegmenterは入力文すべての文字について、]
+
+INPUT:[もじのまえがたんごきょうかいかどうかを、]
+imjcuitest.cpp 128 convert_auto() pronun: [もじのまえがたんごきょうかいかどうかを、]
+imj.cpp 402 im_set_pronun() [もじのまえがたんごきょうかいかどうかを、]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [もじのまえがたんごきょうかいかどうかを、]
+ANSWER: [文字の前が単語境界かどうかを、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [もじのまえがたんごきょうかいかどうか]:[文字の前が単語境界かどうか]
+imj.cpp 952 im_get_committed_string() [文字の前が単語境界かどうか]
+OUTPUT:[文字の前が単語境界かどうか]
+
+ANSWER: [を、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [を、]:[を、]
+imj.cpp 952 im_get_committed_string() [を、]
+OUTPUT:[を、]
+
+INPUT:[もじ、もじN-gram、ひらがな・かたかなといったもじしゅじょうほうと]
+imjcuitest.cpp 128 convert_auto() pronun: [もじ、もじN-gram、ひらがな・かたかなといったもじしゅじょうほうと]
+imj.cpp 402 im_set_pronun() [もじ、もじN-gram、ひらがな・かたかなといったもじしゅじょうほうと]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [もじ、もじN-gram、ひらがな・かたかなといったもじしゅじょうほうと]
+ANSWER: [文字、文字N-gram、ひらがな・カタカナといった文字種情報と]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [もじ、もじN-gram、ひらがな・かたかな]:[文字、文字N-gram、ひらがな・カタカナ]
+imj.cpp 952 im_get_committed_string() [文字、文字N-gram、ひらがな・カタカナ]
+OUTPUT:[文字、文字N-gram、ひらがな・カタカナ]
+
+ANSWER: [といった文字種情報と]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [といったもじしゅじょうほうと]:[といった文字種情報と]
+imj.cpp 952 im_get_committed_string() [といった文字種情報と]
+OUTPUT:[といった文字種情報と]
+
+INPUT:[そのくみあわせをとくちょうりょうとしてつかいながら、がくしゅう・ぶんるいしています。]
+imjcuitest.cpp 128 convert_auto() pronun: [そのくみあわせをとくちょうりょうとしてつかいながら、がくしゅう・ぶんるいしています。]
+imj.cpp 402 im_set_pronun() [そのくみあわせをとくちょうりょうとしてつかいながら、がくしゅう・ぶんるいしています。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [そのくみあわせをとくちょうりょうとしてつかいながら、がくしゅう・ぶんるいしています。]
+ANSWER: [その組み合わせを特徴量として使いながら、学習・分類しています。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [そのくみあわせをとくちょうりょうとしてつかいながら]:[その組み合わせを特徴量として使いながら]
+imj.cpp 952 im_get_committed_string() [その組み合わせを特徴量として使いながら]
+OUTPUT:[その組み合わせを特徴量として使いながら]
+
+ANSWER: [、学習・分類しています。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [、がくしゅう・ぶんるいしています。]:[、学習・分類しています。]
+imj.cpp 952 im_get_committed_string() [、学習・分類しています。]
+OUTPUT:[、学習・分類しています。]
+
+INPUT:[がくしゅうでーたにRWCPこーぱすをつかっているので、しんぶんきじにはつよいですが]
+imjcuitest.cpp 128 convert_auto() pronun: [がくしゅうでーたにRWCPこーぱすをつかっているので、しんぶんきじにはつよいですが]
+imj.cpp 402 im_set_pronun() [がくしゅうでーたにRWCPこーぱすをつかっているので、しんぶんきじにはつよいですが]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [がくしゅうでーたにRWCPこーぱすをつかっているので、しんぶんきじにはつよいですが]
+ANSWER: [学習データにRWCPコーパスを使っているので、新聞記事には強いですが]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [がくしゅうでーたにRWCPこーぱすをつかっているので]:[学習データにRWCPコーパスを使っているので]
+imj.cpp 952 im_get_committed_string() [学習データにRWCPコーパスを使っているので]
+OUTPUT:[学習データにRWCPコーパスを使っているので]
+
+ANSWER: [、新聞記事には強いですが]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [、しんぶんきじにはつよいですが]:[、新聞記事には強いですが]
+imj.cpp 952 im_get_committed_string() [、新聞記事には強いですが]
+OUTPUT:[、新聞記事には強いですが]
+
+INPUT:[ちゃっとやぶろぐといったくだけたぶん、ひらがなだけのぶんのかいせきせいどはたかくありません。]
+imjcuitest.cpp 128 convert_auto() pronun: [ちゃっとやぶろぐといったくだけたぶん、ひらがなだけのぶんのかいせきせいどはたかくありません。]
+imj.cpp 402 im_set_pronun() [ちゃっとやぶろぐといったくだけたぶん、ひらがなだけのぶんのかいせきせいどはたかくありません。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [ちゃっとやぶろぐといったくだけたぶん、ひらがなだけのぶんのかいせきせいどはたかくありません。]
+ANSWER: [チャットやブログといったくだけた文、ひらがなだけの文の解析精度は高くありません。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [ちゃっとやぶろぐといったくだけたぶん、ひらがなだけ]:[チャットやブログといったくだけた文、ひらがなだけ]
+imj.cpp 952 im_get_committed_string() [チャットやブログといったくだけた文、ひらがなだけ]
+OUTPUT:[チャットやブログといったくだけた文、ひらがなだけ]
+
+ANSWER: [の文の解析精度は高くありません。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [のぶんのかいせきせいどはたかくありません。]:[の文の解析精度は高くありません。]
+imj.cpp 952 im_get_committed_string() [の文の解析精度は高くありません。]
+OUTPUT:[の文の解析精度は高くありません。]
+
+INPUT:[しかし、じしょをつかっていないぶん、みちごのかいせきせいどはMeCabよりよいばあいがあります。]
+imjcuitest.cpp 128 convert_auto() pronun: [しかし、じしょをつかっていないぶん、みちごのかいせきせいどはMeCabよりよいばあいがあります。]
+imj.cpp 402 im_set_pronun() [しかし、じしょをつかっていないぶん、みちごのかいせきせいどはMeCabよりよいばあいがあります。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [しかし、じしょをつかっていないぶん、みちごのかいせきせいどはMeCabよりよいばあいがあります。]
+ANSWER: [しかし、辞書を使っていないぶん、未知語の解析精度はMeCabより良い場合があります。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [しかし、じしょをつかっていないぶん、みちごのかいせき]:[しかし、辞書を使っていないぶん、未知語の解析]
+imj.cpp 952 im_get_committed_string() [しかし、辞書を使っていないぶん、未知語の解析]
+OUTPUT:[しかし、辞書を使っていないぶん、未知語の解析]
+
+ANSWER: [精度はMeCabより良い場合があります。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [せいどはMeCabよりよいばあいがあります。]:[精度はMeCabより良い場合があります。]
+imj.cpp 952 im_get_committed_string() [精度はMeCabより良い場合があります。]
+OUTPUT:[精度はMeCabより良い場合があります。]
+
+INPUT:[きほんてきにげんごひいぞんなわかちがきなので、ただしくわかちがきされたぶんがたいりょうにあれば、]
+imjcuitest.cpp 128 convert_auto() pronun: [きほんてきにげんごひいぞんなわかちがきなので、ただしくわかちがきされたぶんがたいりょうにあれば、]
+imj.cpp 402 im_set_pronun() [きほんてきにげんごひいぞんなわかちがきなので、ただしくわかちがきされたぶんがたいりょうにあれば、]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [きほんてきにげんごひいぞんなわかちがきなので、ただしくわかちがきされたぶんがたいりょうにあれば、]
+ANSWER: [基本的に言語非依存な分かち書きなので、正しく分かち書きされた文が大量にあれば、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [きほんてきにげんごひいぞんなわかちがきなので]:[基本的に言語非依存な分かち書きなので]
+imj.cpp 952 im_get_committed_string() [基本的に言語非依存な分かち書きなので]
+OUTPUT:[基本的に言語非依存な分かち書きなので]
+
+ANSWER: [、正しく分かち書きされた文が大量にあれば、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [、ただしくわかちがきされたぶんがたいりょうにあ]:[、正しく分かち書きされた文が大量にあ]
+imj.cpp 952 im_get_committed_string() [、正しく分かち書きされた文が大量にあ]
+OUTPUT:[、正しく分かち書きされた文が大量にあ]
+
+ANSWER: [れば、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [れば、]:[れば、]
+imj.cpp 952 im_get_committed_string() [れば、]
+OUTPUT:[れば、]
+
+INPUT:[げんごをとわずわかちがきのもでるをこうちくすることができます。]
+imjcuitest.cpp 128 convert_auto() pronun: [げんごをとわずわかちがきのもでるをこうちくすることができます。]
+imj.cpp 402 im_set_pronun() [げんごをとわずわかちがきのもでるをこうちくすることができます。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [げんごをとわずわかちがきのもでるをこうちくすることができます。]
+ANSWER: [言語を問わず分かち書きのモデルを構築することができます。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [げんごをとわずわかちがきのもでるをこうちく]:[言語を問わず分かち書きのモデルを構築]
+imj.cpp 952 im_get_committed_string() [言語を問わず分かち書きのモデルを構築]
+OUTPUT:[言語を問わず分かち書きのモデルを構築]
+
+ANSWER: [することができます。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [することができます。]:[することができます。]
+imj.cpp 952 im_get_committed_string() [することができます。]
+OUTPUT:[することができます。]
+
+INPUT:[きかいがくしゅうをつかううえでも、できあがったもでるのこんぱくとさがじゅうようになります。]
+imjcuitest.cpp 128 convert_auto() pronun: [きかいがくしゅうをつかううえでも、できあがったもでるのこんぱくとさがじゅうようになります。]
+imj.cpp 402 im_set_pronun() [きかいがくしゅうをつかううえでも、できあがったもでるのこんぱくとさがじゅうようになります。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [きかいがくしゅうをつかううえでも、できあがったもでるのこんぱくとさがじゅうようになります。]
+ANSWER: [機械学習を使ううえでも、できあがったモデルのコンパクトさが重要になります。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [きかいがくしゅうをつかううえでも、できあがったもでる]:[機械学習を使ううえでも、できあがったモデル]
+imj.cpp 952 im_get_committed_string() [機械学習を使ううえでも、できあがったモデル]
+OUTPUT:[機械学習を使ううえでも、できあがったモデル]
+
+ANSWER: [のコンパクトさが重要になります。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [のこんぱくとさがじゅうようになります。]:[のコンパクトさが重要になります。]
+imj.cpp 952 im_get_committed_string() [のコンパクトさが重要になります。]
+OUTPUT:[のコンパクトさが重要になります。]
+
+INPUT:[SVMやNaive Bayes(べいじあんふぃるたー)といった]
+imjcuitest.cpp 128 convert_auto() pronun: [SVMやNaive Bayes(べいじあんふぃるたー)といった]
+imj.cpp 402 im_set_pronun() [SVMやNaive Bayes(べいじあんふぃるたー)といった]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [SVMやNaive Bayes(べいじあんふぃるたー)といった]
+ANSWER: [SVMやNaive Bayes(ベイジアンフィルター)といった]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [SVMやNaive Bayes(べいじあんふぃるたー)といった]:[SVMやNaive Bayes(ベイジアンフィルター)といった]
+imj.cpp 952 im_get_committed_string() [SVMやNaive Bayes(ベイジアンフィルター)といった]
+OUTPUT:[SVMやNaive Bayes(ベイジアンフィルター)といった]
+
+INPUT:[きかいがくしゅうあるごりずむをつかうことはかのうですが、]
+imjcuitest.cpp 128 convert_auto() pronun: [きかいがくしゅうあるごりずむをつかうことはかのうですが、]
+imj.cpp 402 im_set_pronun() [きかいがくしゅうあるごりずむをつかうことはかのうですが、]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [きかいがくしゅうあるごりずむをつかうことはかのうですが、]
+ANSWER: [機械学習アルゴリズムを使うことは可能ですが、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [きかいがくしゅうあるごりずむをつかうことはかのうですが、]:[機械学習アルゴリズムを使うことは可能ですが、]
+imj.cpp 952 im_get_committed_string() [機械学習アルゴリズムを使うことは可能ですが、]
+OUTPUT:[機械学習アルゴリズムを使うことは可能ですが、]
+
+INPUT:[これらがしゅつりょくするもでるはこんぱくとではありません。]
+imjcuitest.cpp 128 convert_auto() pronun: [これらがしゅつりょくするもでるはこんぱくとではありません。]
+imj.cpp 402 im_set_pronun() [これらがしゅつりょくするもでるはこんぱくとではありません。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [これらがしゅつりょくするもでるはこんぱくとではありません。]
+ANSWER: [これらが出力するモデルはコンパクトではありません。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [これらがしゅつりょくするもでるはこんぱくとではありません。]:[これらが出力するモデルはコンパクトではありません。]
+imj.cpp 952 im_get_committed_string() [これらが出力するモデルはコンパクトではありません。]
+OUTPUT:[これらが出力するモデルはコンパクトではありません。]
+
+INPUT:[いっぽう、じょうちょうなとくちょうりょうをきょくりょくつかわずに]
+imjcuitest.cpp 128 convert_auto() pronun: [いっぽう、じょうちょうなとくちょうりょうをきょくりょくつかわずに]
+imj.cpp 402 im_set_pronun() [いっぽう、じょうちょうなとくちょうりょうをきょくりょくつかわずに]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [いっぽう、じょうちょうなとくちょうりょうをきょくりょくつかわずに]
+ANSWER: [一方、冗長な特徴量を極力使わずに]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [いっぽう、じょうちょうなとくちょうりょうをきょくりょくつかわず]:[一方、冗長な特徴量を極力使わず]
+imj.cpp 952 im_get_committed_string() [一方、冗長な特徴量を極力使わず]
+OUTPUT:[一方、冗長な特徴量を極力使わず]
+
+ANSWER: [に]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [に]:[に]
+imj.cpp 952 im_get_committed_string() [に]
+OUTPUT:[に]
+
+INPUT:[もでるをこんぱくとにひょうげんできるとりっくに]
+imjcuitest.cpp 128 convert_auto() pronun: [もでるをこんぱくとにひょうげんできるとりっくに]
+imj.cpp 402 im_set_pronun() [もでるをこんぱくとにひょうげんできるとりっくに]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [もでるをこんぱくとにひょうげんできるとりっくに]
+ANSWER: [モデルをコンパクトに表現できるトリックに]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [もでるをこんぱくとにひょうげんできるとりっくに]:[モデルをコンパクトに表現できるトリックに]
+imj.cpp 952 im_get_committed_string() [モデルをコンパクトに表現できるトリックに]
+OUTPUT:[モデルをコンパクトに表現できるトリックに]
+
+INPUT:[L1のるむせいそくかがあります。]
+imjcuitest.cpp 128 convert_auto() pronun: [L1のるむせいそくかがあります。]
+imj.cpp 402 im_set_pronun() [L1のるむせいそくかがあります。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [L1のるむせいそくかがあります。]
+ANSWER: [L1ノルム正則化があります。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [L1のるむせいそくかがあります。]:[L1ノルム正則化があります。]
+imj.cpp 952 im_get_committed_string() [L1ノルム正則化があります。]
+OUTPUT:[L1ノルム正則化があります。]
+
+INPUT:[L1のるむせいそくかもいろいろなあるごりずむがありますが(たとえばLog-Linearだとこれ)、]
+imjcuitest.cpp 128 convert_auto() pronun: [L1のるむせいそくかもいろいろなあるごりずむがありますが(たとえばLog-Linearだとこれ)、]
+imj.cpp 402 im_set_pronun() [L1のるむせいそくかもいろいろなあるごりずむがありますが(たとえばLog-Linearだとこれ)、]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [L1のるむせいそくかもいろいろなあるごりずむがありますが(たとえばLog-Linearだとこれ)、]
+ANSWER: [L1ノルム正則化もいろいろなアルゴリズムがありますが(たとえばLog-Linearだとこれ)、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [L1のるむせいそくかもいろいろなあるごりずむがありますが]:[L1ノルム正則化もいろいろなアルゴリズムがありますが]
+imj.cpp 952 im_get_committed_string() [L1ノルム正則化もいろいろなアルゴリズムがありますが]
+OUTPUT:[L1ノルム正則化もいろいろなアルゴリズムがありますが]
+
+ANSWER: [(たとえばLog-Linearだとこれ)、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [(たとえばLog-Linearだとこれ)、]:[(たとえばLog-Linearだとこれ)、]
+imj.cpp 952 im_get_committed_string() [(たとえばLog-Linearだとこれ)、]
+OUTPUT:[(たとえばLog-Linearだとこれ)、]
+
+INPUT:[TinySegmenterは、じっそうもよういでもでるのあっしゅくりつもいい]
+imjcuitest.cpp 128 convert_auto() pronun: [TinySegmenterは、じっそうもよういでもでるのあっしゅくりつもいい]
+imj.cpp 402 im_set_pronun() [TinySegmenterは、じっそうもよういでもでるのあっしゅくりつもいい]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [TinySegmenterは、じっそうもよういでもでるのあっしゅくりつもいい]
+ANSWER: [TinySegmenterは、実装も容易でモデルの圧縮率もいいBoostingを使っています。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [TinySegmenterは、じっそうもよういでもでるのあっしゅくりつ]:[TinySegmenterは、実装も容易でモデルの圧縮率]
+imj.cpp 952 im_get_committed_string() [TinySegmenterは、実装も容易でモデルの圧縮率]
+OUTPUT:[TinySegmenterは、実装も容易でモデルの圧縮率]
+
+ANSWER: [もいいBoostingを使っています。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [もいい]:[もいい]
+imj.cpp 952 im_get_committed_string() [もいい]
+OUTPUT:[もいい]
+
+INPUT:[Boostingをつかっています。]
+imjcuitest.cpp 128 convert_auto() pronun: [Boostingをつかっています。]
+imj.cpp 402 im_set_pronun() [Boostingをつかっています。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [Boostingをつかっています。]
+ANSWER: [Boostingを使っています。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [Boostingをつかっています。]:[Boostingを使っています。]
+imj.cpp 952 im_get_committed_string() [Boostingを使っています。]
+OUTPUT:[Boostingを使っています。]
+
+imjcuitest.cpp 90 main() auto conversion mode complete
+imjcuitest.cpp 235 dump_key_count() ---------------------------------------------------------
+NO_MATCH count: 0
+TOTAL_KEY count: 61
+IM_KE_SEPARATE_LEFT count: 0
+IM_KE_SELECT_NEXT count: 0
+IM_KE_COMMIT_ONE count: 38
+imjcuitest.cpp 241 dump_key_count() ---------------------------------------------------------
+imj.cpp 148 im_close()
+imj.cpp 1960 imjhst_save() hst-file-path:[./.imj/imj.hst]
+imj.cpp 1980 imjhst_save() input      history entries: 82
+imj.cpp 1980 imjhst_save() conversion history entries: 1159
+imjcuitest.cpp 96 main() exit
+imjcuitest.cpp 43 main() start
+imj.cpp 106 im_open()
+imj.cpp 2691 test_imjatoh_functions()
+imj.cpp 2693 test_imjatoh_functions() roman1:[ hiragana] ==> pronun[　ひらがな]
+imj.cpp 2696 test_imjatoh_functions() imjatoh_romaji_offset([ hiragana], strlen([ひら])) ==> 3
+imj.cpp 2699 test_imjatoh_functions() imjatoh_romaji_offset([kanji], strlen([かん])) ==> 3
+imj.cpp 2702 test_imjatoh_functions() imjatoh_hira_offset([ hiragana], [ひらがな], 6) ==> 12
+imj.cpp 1176 imjdic_open() dic-file-path:[./.imj/imj.dic]
+imj.cpp 1917 imjhst_load() hst-file-path:[./.imj/imj.hst]
+imj.cpp 1928 imjhst_load() history entries: 1159
+imj.cpp 3114 test_hira_kata_han_conversion() 
+<[　 ／ ， ． ・ ： ； ？ ！ ’ ” ＼ ＾ ‾ ＿ （ ） ｛ ｝ ［ ］ ¥ ０ １ ２ ３ ４ ５ ６ ７ ８ ９ ＋ − ＄ ％ ＃ ＆ ＊ ＠ ＝ Ａ Ｂ Ｃ Ｄ Ｅ Ｆ Ｇ Ｈ Ｉ Ｊ Ｋ Ｌ Ｍ Ｎ Ｏ Ｐ Ｑ Ｒ Ｓ Ｔ Ｕ Ｖ Ｗ Ｘ Ｙ Ｚ ａ ｂ ｃ ｄ ｅ ｆ ｇ ｈ ｉ ｊ ｋ ｌ ｍ ｎ ｏ ｐ ｑ ｒ ｓ ｔ ｕ ｖ ｗ ｘ ｙ ｚ ガ ギ グ ゲ ゴ ザ ジ ズ ゼ ゾ ダ ヂ ヅ デ ド バ ビ ブ ベ ボ パ ピ プ ペ ポ ヴ ァ ア ィ イ ゥ ウ ェ エ ォ オ カ キ ク ケ コ サ シ ス セ ソ タ チ ッ ツ テ ト ナ ニ ヌ ネ ノ ハ ヒ フ ヘ ホ マ ミ ム メ モ ャ ヤ ュ ユ ョ ヨ ラ リ ル レ ロ ワ ヲ ン ヮ ヰ ヱ ヵ ヶ ゛ ゜ 、 「 」 ー 。 ]
+>[　　／　，　．　・　：　；　？　！　’　”　＼　＾　‾　＿　（　）　｛　｝　［　］　¥　０　１　２　３　４　５　６　７　８　９　＋　−　＄　％　＃　＆　＊　＠　＝　Ａ　Ｂ　Ｃ　Ｄ　Ｅ　Ｆ　Ｇ　Ｈ　Ｉ　Ｊ　Ｋ　Ｌ　Ｍ　Ｎ　Ｏ　Ｐ　Ｑ　Ｒ　Ｓ　Ｔ　Ｕ　Ｖ　Ｗ　Ｘ　Ｙ　Ｚ　ａ　ｂ　ｃ　ｄ　ｅ　ｆ　ｇ　ｈ　ｉ　ｊ　ｋ　ｌ　ｍ　ｎ　ｏ　ｐ　ｑ　ｒ　ｓ　ｔ　ｕ　ｖ　ｗ　ｘ　ｙ　ｚ　が　ぎ　ぐ　げ　ご　ざ　じ　ず　ぜ　ぞ　だ　ぢ　づ　で　ど　ば　び　ぶ　べ　ぼ　ぱ　ぴ　ぷ　ぺ　ぽ　う゛　ぁ　あ　ぃ　い　ぅ　う　ぇ　え　ぉ　お　か　き　く　け　こ　さ　し　す　せ　そ　た　ち　っ　つ　て　と　な　に　ぬ　ね　の　は　ひ　ふ　へ　ほ　ま　み　む　め　も　ゃ　や　ゅ　ゆ　ょ　よ　ら　り　る　れ　ろ　わ　を　ん　ヮ　ヰ　ヱ　ヵ　ヶ　゛　゜　、　「　」　ー　。　]
+imj.cpp 3116 test_hira_kata_han_conversion() 
+<[  / , . ･ : ; ? ! ' " \ ^ ~ _ ( ) { } [ ] \ 0 1 2 3 4 5 6 7 8 9 + - $ % # & * @ = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z ｶﾞ ｷﾞ ｸﾞ ｹﾞ ｺﾞ ｻﾞ ｼﾞ ｽﾞ ｾﾞ ｿﾞ ﾀﾞ ﾁﾞ ﾂﾞ ﾃﾞ ﾄﾞ ﾊﾞ ﾋﾞ ﾌﾞ ﾍﾞ ﾎﾞ ﾊﾟ ﾋﾟ ﾌﾟ ﾍﾟ ﾎﾟ ｳﾞ ｧ ｱ ｨ ｲ ｩ ｳ ｪ ｴ ｫ ｵ ｶ ｷ ｸ ｹ ｺ ｻ ｼ ｽ ｾ ｿ ﾀ ﾁ ｯ ﾂ ﾃ ﾄ ﾅ ﾆ ﾇ ﾈ ﾉ ﾊ ﾋ ﾌ ﾍ ﾎ ﾏ ﾐ ﾑ ﾒ ﾓ ｬ ﾔ ｭ ﾕ ｮ ﾖ ﾗ ﾘ ﾙ ﾚ ﾛ ﾜ ｦ ﾝ ヮ ヰ ヱ ヵ ヶ ﾞ ﾟ ､ ｢ ｣ ｰ ｡ ]
+>[　　／　，　．　・　：　；　？　！　’　”　＼　＾　‾　＿　（　）　｛　｝　［　］　＼　０　１　２　３　４　５　６　７　８　９　＋　−　＄　％　＃　＆　＊　＠　＝　Ａ　Ｂ　Ｃ　Ｄ　Ｅ　Ｆ　Ｇ　Ｈ　Ｉ　Ｊ　Ｋ　Ｌ　Ｍ　Ｎ　Ｏ　Ｐ　Ｑ　Ｒ　Ｓ　Ｔ　Ｕ　Ｖ　Ｗ　Ｘ　Ｙ　Ｚ　ａ　ｂ　ｃ　ｄ　ｅ　ｆ　ｇ　ｈ　ｉ　ｊ　ｋ　ｌ　ｍ　ｎ　ｏ　ｐ　ｑ　ｒ　ｓ　ｔ　ｕ　ｖ　ｗ　ｘ　ｙ　ｚ　が　ぎ　ぐ　げ　ご　ざ　じ　ず　ぜ　ぞ　だ　ぢ　づ　で　ど　ば　び　ぶ　べ　ぼ　ぱ　ぴ　ぷ　ぺ　ぽ　う゛　ぁ　あ　ぃ　い　ぅ　う　ぇ　え　ぉ　お　か　き　く　け　こ　さ　し　す　せ　そ　た　ち　っ　つ　て　と　な　に　ぬ　ね　の　は　ひ　ふ　へ　ほ　ま　み　む　め　も　ゃ　や　ゅ　ゆ　ょ　よ　ら　り　る　れ　ろ　わ　を　ん　ヮ　ヰ　ヱ　ヵ　ヶ　゛　゜　、　「　」　ー　。　]
+imj.cpp 3119 test_hira_kata_han_conversion() 
+<[　 ／ ， ． ・ ： ； ？ ！ ’ ” ＼ ＾ ‾ ＿ （ ） ｛ ｝ ［ ］ ¥ ０ １ ２ ３ ４ ５ ６ ７ ８ ９ ＋ − ＄ ％ ＃ ＆ ＊ ＠ ＝ Ａ Ｂ Ｃ Ｄ Ｅ Ｆ Ｇ Ｈ Ｉ Ｊ Ｋ Ｌ Ｍ Ｎ Ｏ Ｐ Ｑ Ｒ Ｓ Ｔ Ｕ Ｖ Ｗ Ｘ Ｙ Ｚ ａ ｂ ｃ ｄ ｅ ｆ ｇ ｈ ｉ ｊ ｋ ｌ ｍ ｎ ｏ ｐ ｑ ｒ ｓ ｔ ｕ ｖ ｗ ｘ ｙ ｚ が ぎ ぐ げ ご ざ じ ず ぜ ぞ だ ぢ づ で ど ば び ぶ べ ぼ ぱ ぴ ぷ ぺ ぽ う゛ ぁ あ ぃ い ぅ う ぇ え ぉ お か き く け こ さ し す せ そ た ち っ つ て と な に ぬ ね の は ひ ふ へ ほ ま み む め も ゃ や ゅ ゆ ょ よ ら り る れ ろ わ を ん ヮ ヰ ヱ ヵ ヶ ゛ ゜ 、 「 」 ー 。 ]
+>[　　／　，　．　・　：　；　？　！　’　”　＼　＾　‾　＿　（　）　｛　｝　［　］　¥　０　１　２　３　４　５　６　７　８　９　＋　−　＄　％　＃　＆　＊　＠　＝　Ａ　Ｂ　Ｃ　Ｄ　Ｅ　Ｆ　Ｇ　Ｈ　Ｉ　Ｊ　Ｋ　Ｌ　Ｍ　Ｎ　Ｏ　Ｐ　Ｑ　Ｒ　Ｓ　Ｔ　Ｕ　Ｖ　Ｗ　Ｘ　Ｙ　Ｚ　ａ　ｂ　ｃ　ｄ　ｅ　ｆ　ｇ　ｈ　ｉ　ｊ　ｋ　ｌ　ｍ　ｎ　ｏ　ｐ　ｑ　ｒ　ｓ　ｔ　ｕ　ｖ　ｗ　ｘ　ｙ　ｚ　ガ　ギ　グ　ゲ　ゴ　ザ　ジ　ズ　ゼ　ゾ　ダ　ヂ　ヅ　デ　ド　バ　ビ　ブ　ベ　ボ　パ　ピ　プ　ペ　ポ　ヴ　ァ　ア　ィ　イ　ゥ　ウ　ェ　エ　ォ　オ　カ　キ　ク　ケ　コ　サ　シ　ス　セ　ソ　タ　チ　ッ　ツ　テ　ト　ナ　ニ　ヌ　ネ　ノ　ハ　ヒ　フ　ヘ　ホ　マ　ミ　ム　メ　モ　ャ　ヤ　ュ　ユ　ョ　ヨ　ラ　リ　ル　レ　ロ　ワ　ヲ　ン　ヮ　ヰ　ヱ　ヵ　ヶ　゛　゜　、　「　」　ー　。　]
+imj.cpp 3122 test_hira_kata_han_conversion() 
+<[  / , . ･ : ; ? ! ' " \ ^ ~ _ ( ) { } [ ] \ 0 1 2 3 4 5 6 7 8 9 + - $ % # & * @ = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z ｶﾞ ｷﾞ ｸﾞ ｹﾞ ｺﾞ ｻﾞ ｼﾞ ｽﾞ ｾﾞ ｿﾞ ﾀﾞ ﾁﾞ ﾂﾞ ﾃﾞ ﾄﾞ ﾊﾞ ﾋﾞ ﾌﾞ ﾍﾞ ﾎﾞ ﾊﾟ ﾋﾟ ﾌﾟ ﾍﾟ ﾎﾟ ｳﾞ ｧ ｱ ｨ ｲ ｩ ｳ ｪ ｴ ｫ ｵ ｶ ｷ ｸ ｹ ｺ ｻ ｼ ｽ ｾ ｿ ﾀ ﾁ ｯ ﾂ ﾃ ﾄ ﾅ ﾆ ﾇ ﾈ ﾉ ﾊ ﾋ ﾌ ﾍ ﾎ ﾏ ﾐ ﾑ ﾒ ﾓ ｬ ﾔ ｭ ﾕ ｮ ﾖ ﾗ ﾘ ﾙ ﾚ ﾛ ﾜ ｦ ﾝ ヮ ヰ ヱ ヵ ヶ ﾞ ﾟ ､ ｢ ｣ ｰ ｡ ]
+>[　　／　，　．　・　：　；　？　！　’　”　＼　＾　‾　＿　（　）　｛　｝　［　］　＼　０　１　２　３　４　５　６　７　８　９　＋　−　＄　％　＃　＆　＊　＠　＝　Ａ　Ｂ　Ｃ　Ｄ　Ｅ　Ｆ　Ｇ　Ｈ　Ｉ　Ｊ　Ｋ　Ｌ　Ｍ　Ｎ　Ｏ　Ｐ　Ｑ　Ｒ　Ｓ　Ｔ　Ｕ　Ｖ　Ｗ　Ｘ　Ｙ　Ｚ　ａ　ｂ　ｃ　ｄ　ｅ　ｆ　ｇ　ｈ　ｉ　ｊ　ｋ　ｌ　ｍ　ｎ　ｏ　ｐ　ｑ　ｒ　ｓ　ｔ　ｕ　ｖ　ｗ　ｘ　ｙ　ｚ　ガ　ギ　グ　ゲ　ゴ　ザ　ジ　ズ　ゼ　ゾ　ダ　ヂ　ヅ　デ　ド　バ　ビ　ブ　ベ　ボ　パ　ピ　プ　ペ　ポ　ヴ　ァ　ア　ィ　イ　ゥ　ウ　ェ　エ　ォ　オ　カ　キ　ク　ケ　コ　サ　シ　ス　セ　ソ　タ　チ　ッ　ツ　テ　ト　ナ　ニ　ヌ　ネ　ノ　ハ　ヒ　フ　ヘ　ホ　マ　ミ　ム　メ　モ　ャ　ヤ　ュ　ユ　ョ　ヨ　ラ　リ　ル　レ　ロ　ワ　ヲ　ン　ヮ　ヰ　ヱ　ヵ　ヶ　゛　゜　、　「　」　ー　。　]
+imj.cpp 3125 test_hira_kata_han_conversion() 
+<[　 ／ ， ． ・ ： ； ？ ！ ’ ” ＼ ＾ ‾ ＿ （ ） ｛ ｝ ［ ］ ¥ ０ １ ２ ３ ４ ５ ６ ７ ８ ９ ＋ − ＄ ％ ＃ ＆ ＊ ＠ ＝ Ａ Ｂ Ｃ Ｄ Ｅ Ｆ Ｇ Ｈ Ｉ Ｊ Ｋ Ｌ Ｍ Ｎ Ｏ Ｐ Ｑ Ｒ Ｓ Ｔ Ｕ Ｖ Ｗ Ｘ Ｙ Ｚ ａ ｂ ｃ ｄ ｅ ｆ ｇ ｈ ｉ ｊ ｋ ｌ ｍ ｎ ｏ ｐ ｑ ｒ ｓ ｔ ｕ ｖ ｗ ｘ ｙ ｚ が ぎ ぐ げ ご ざ じ ず ぜ ぞ だ ぢ づ で ど ば び ぶ べ ぼ ぱ ぴ ぷ ぺ ぽ う゛ ぁ あ ぃ い ぅ う ぇ え ぉ お か き く け こ さ し す せ そ た ち っ つ て と な に ぬ ね の は ひ ふ へ ほ ま み む め も ゃ や ゅ ゆ ょ よ ら り る れ ろ わ を ん ヮ ヰ ヱ ヵ ヶ ゛ ゜ 、 「 」 ー 。 ]
+>[  / , . ･ : ; ? ! ' " \ ^ ~ _ ( ) { } [ ] \ 0 1 2 3 4 5 6 7 8 9 + - $ % # & * @ = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z ｶﾞ ｷﾞ ｸﾞ ｹﾞ ｺﾞ ｻﾞ ｼﾞ ｽﾞ ｾﾞ ｿﾞ ﾀﾞ ﾁﾞ ﾂﾞ ﾃﾞ ﾄﾞ ﾊﾞ ﾋﾞ ﾌﾞ ﾍﾞ ﾎﾞ ﾊﾟ ﾋﾟ ﾌﾟ ﾍﾟ ﾎﾟ ｳﾞ ｧ ｱ ｨ ｲ ｩ ｳ ｪ ｴ ｫ ｵ ｶ ｷ ｸ ｹ ｺ ｻ ｼ ｽ ｾ ｿ ﾀ ﾁ ｯ ﾂ ﾃ ﾄ ﾅ ﾆ ﾇ ﾈ ﾉ ﾊ ﾋ ﾌ ﾍ ﾎ ﾏ ﾐ ﾑ ﾒ ﾓ ｬ ﾔ ｭ ﾕ ｮ ﾖ ﾗ ﾘ ﾙ ﾚ ﾛ ﾜ ｦ ﾝ ヮ ヰ ヱ ヵ ヶ ﾞ ﾟ ､ ｢ ｣ ｰ ｡ ]
+imj.cpp 3127 test_hira_kata_han_conversion() 
+<[　 ／ ， ． ・ ： ； ？ ！ ’ ” ＼ ＾ ‾ ＿ （ ） ｛ ｝ ［ ］ ¥ ０ １ ２ ３ ４ ５ ６ ７ ８ ９ ＋ − ＄ ％ ＃ ＆ ＊ ＠ ＝ Ａ Ｂ Ｃ Ｄ Ｅ Ｆ Ｇ Ｈ Ｉ Ｊ Ｋ Ｌ Ｍ Ｎ Ｏ Ｐ Ｑ Ｒ Ｓ Ｔ Ｕ Ｖ Ｗ Ｘ Ｙ Ｚ ａ ｂ ｃ ｄ ｅ ｆ ｇ ｈ ｉ ｊ ｋ ｌ ｍ ｎ ｏ ｐ ｑ ｒ ｓ ｔ ｕ ｖ ｗ ｘ ｙ ｚ ガ ギ グ ゲ ゴ ザ ジ ズ ゼ ゾ ダ ヂ ヅ デ ド バ ビ ブ ベ ボ パ ピ プ ペ ポ ヴ ァ ア ィ イ ゥ ウ ェ エ ォ オ カ キ ク ケ コ サ シ ス セ ソ タ チ ッ ツ テ ト ナ ニ ヌ ネ ノ ハ ヒ フ ヘ ホ マ ミ ム メ モ ャ ヤ ュ ユ ョ ヨ ラ リ ル レ ロ ワ ヲ ン ヮ ヰ ヱ ヵ ヶ ゛ ゜ 、 「 」 ー 。 ]
+>[  / , . ･ : ; ? ! ' " \ ^ ~ _ ( ) { } [ ] \ 0 1 2 3 4 5 6 7 8 9 + - $ % # & * @ = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z ｶﾞ ｷﾞ ｸﾞ ｹﾞ ｺﾞ ｻﾞ ｼﾞ ｽﾞ ｾﾞ ｿﾞ ﾀﾞ ﾁﾞ ﾂﾞ ﾃﾞ ﾄﾞ ﾊﾞ ﾋﾞ ﾌﾞ ﾍﾞ ﾎﾞ ﾊﾟ ﾋﾟ ﾌﾟ ﾍﾟ ﾎﾟ ｳﾞ ｧ ｱ ｨ ｲ ｩ ｳ ｪ ｴ ｫ ｵ ｶ ｷ ｸ ｹ ｺ ｻ ｼ ｽ ｾ ｿ ﾀ ﾁ ｯ ﾂ ﾃ ﾄ ﾅ ﾆ ﾇ ﾈ ﾉ ﾊ ﾋ ﾌ ﾍ ﾎ ﾏ ﾐ ﾑ ﾒ ﾓ ｬ ﾔ ｭ ﾕ ｮ ﾖ ﾗ ﾘ ﾙ ﾚ ﾛ ﾜ ｦ ﾝ ヮ ヰ ヱ ヵ ヶ ﾞ ﾟ ､ ｢ ｣ ｰ ｡ ]
+imj.cpp 1705 imjdic_test_katsuyou() [K5    書]
+[書く 書くな 書か 書かな 書かない 書かなけれ 書かなければ 書かず 書かぬ 書かねば 書かん 書かれ 書かれる 書かるる 書き 書きた 書きたい 書きま 書きます 書きませ 書きまし 書け 書けば 書ける 書けな 書けない 書けぬ 書こ 書こう 書いた 書いちゃ 書いて 書いと ]
+imj.cpp 1705 imjdic_test_katsuyou() [C5r   行]
+[行く 行くな 行か 行かな 行かない 行かなけれ 行かなければ 行かず 行かぬ 行かねば 行かん 行かれ 行かれる 行かるる 行き 行きた 行きたい 行きま 行きます 行きませ 行きまし 行け 行けば 行ける 行けな 行けない 行けぬ 行こ 行こう 行った 行っちゃ 行って 行っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [G5    漕]
+[漕ぐ 漕ぐな 漕が 漕がな 漕がない 漕がなけれ 漕がなければ 漕がず 漕がぬ 漕がねば 漕がん 漕がれ 漕がれる 漕がるる 漕ぎ 漕ぎた 漕ぎたい 漕ぎま 漕ぎます 漕ぎませ 漕ぎまし 漕げ 漕げば 漕げる 漕げな 漕げない 漕げぬ 漕ご 漕ごう 漕いだ 漕いぢゃ 漕いじゃ 漕いで 漕いど ]
+imj.cpp 1705 imjdic_test_katsuyou() [S5    消]
+[消す 消すな 消さ 消さな 消さない 消さなけれ 消さなければ 消さず 消さぬ 消さねば 消さん 消され 消される 消さるる 消し 消した 消したい 消しま 消します 消しませ 消しまし 消せ 消せば 消せる 消せな 消せない 消せぬ 消そ 消そう 消した 消しちゃ 消して 消しと ]
+imj.cpp 1705 imjdic_test_katsuyou() [T5    勝]
+[勝つ 勝つな 勝た 勝たな 勝たない 勝たなけれ 勝たなければ 勝たず 勝たぬ 勝たねば 勝たん 勝たれ 勝たれる 勝たるる 勝ち 勝ちた 勝ちたい 勝ちま 勝ちます 勝ちませ 勝ちまし 勝て 勝てば 勝てる 勝てな 勝てない 勝てぬ 勝と 勝とう 勝った 勝っちゃ 勝って 勝っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [N5    死]
+[死ぬ 死ぬな 死な 死なな 死なない 死ななけれ 死ななければ 死なず 死なぬ 死なねば 死なん 死なれ 死なれる 死なるる 死に 死にた 死にたい 死にま 死にます 死にませ 死にまし 死ね 死ねば 死ねる 死ねな 死ねない 死ねぬ 死の 死のう 死んだ 死んぢゃ 死んじゃ 死んで 死んど ]
+imj.cpp 1705 imjdic_test_katsuyou() [B5    呼]
+[呼ぶ 呼ぶな 呼ば 呼ばな 呼ばない 呼ばなけれ 呼ばなければ 呼ばず 呼ばぬ 呼ばねば 呼ばん 呼ばれ 呼ばれる 呼ばるる 呼び 呼びた 呼びたい 呼びま 呼びます 呼びませ 呼びまし 呼べ 呼べば 呼べる 呼べな 呼べない 呼べぬ 呼ぼ 呼ぼう 呼んだ 呼んぢゃ 呼んじゃ 呼んで 呼んど ]
+imj.cpp 1705 imjdic_test_katsuyou() [M5    読]
+[読む 読むな 読ま 読まな 読まない 読まなけれ 読まなければ 読まず 読まぬ 読まねば 読まん 読まれ 読まれる 読まるる 読み 読みた 読みたい 読みま 読みます 読みませ 読みまし 読め 読めば 読める 読めな 読めない 読めぬ 読も 読もう 読んだ 読んぢゃ 読んじゃ 読んで 読んど ]
+imj.cpp 1705 imjdic_test_katsuyou() [R5    知]
+[知る 知るな 知ら 知らな 知らない 知らなけれ 知らなければ 知らず 知らぬ 知らねば 知らん 知られ 知られる 知らるる 知り 知りた 知りたい 知りま 知ります 知りませ 知りまし 知れ 知れば 知れる 知れな 知れない 知れぬ 知ろ 知ろう 知った 知っちゃ 知って 知っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [W5    笑]
+[笑う 笑うな 笑わ 笑わな 笑わない 笑わなけれ 笑わなければ 笑わず 笑わぬ 笑わねば 笑わん 笑われ 笑われる 笑わるる 笑い 笑いた 笑いたい 笑いま 笑います 笑いませ 笑いまし 笑え 笑えば 笑える 笑えな 笑えない 笑えぬ 笑お 笑おう 笑った 笑っちゃ 笑って 笑っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [KS    見]
+[見る 見るな 見な 見ない 見なけれ 見なければ 見ず 見ぬ 見ねば 見ん 見れ 見れる 見られ 見られる 見らるる 見た 見たい 見ま 見ます 見ませ 見まし 見れ 見れば 見れる 見れな 見れない 見れぬ 見よ 見よう 見た 見ちゃ 見て 見と 見ろ ]
+imj.cpp 1705 imjdic_test_katsuyou() [SX    資]
+[資する 資するな 資さ 資さな 資さない 資さなけれ 資さなければ 資さず 資さぬ 資さねば 資さん 資され 資される 資さるる 資し 資した 資したい 資しま 資します 資しませ 資しまし 資せ 資せば 資せる 資せな 資せない 資せぬ 資そ 資そう 資した 資しちゃ 資して 資しと 資すれば ]
+imj.cpp 1705 imjdic_test_katsuyou() [ZX    演]
+[演ずる 演ずるな 演じ 演じな 演じない 演じなけれ 演じなければ 演じず 演じぬ 演じねば 演じれ 演じれる 演じられ 演じられる 演じらるる 演じた 演じたい 演じま 演じます 演じませ 演じまし 演じれ 演じれば 演じれる 演じれな 演じれない 演じれぬ 演じよ 演じよう 演じた 演じちゃ 演じて 演じと 演じろ 演ずれば ]
+imj.cpp 1705 imjdic_test_katsuyou() [L5    なさ]
+[なさる なさるな なさら なさらな なさらない なさらなけれ なさらなければ なさらず なさらぬ なさらねば なさらん なさられ なさられる なさらるる なさり なさりた なさりたい なさりま なさります なさりませ なさりまし なされ なされば なされる なされな なされない なされぬ なさろ なさろう なさった なさっちゃ なさって なさっと なさい なさいま なさいます   ]
+imj.cpp 1705 imjdic_test_katsuyou() [U5    問]
+[問う 問うな 問わ 問わな 問わない 問わなけれ 問わなければ 問わず 問わぬ 問わねば 問わん 問われ 問われる 問わるる 問い 問いた 問いたい 問いま 問います 問いませ 問いまし 問え 問えば 問える 問えな 問えない 問えぬ 問お 問おう 問うた 問うちゃ 問うて 問うと ]
+imj.cpp 1705 imjdic_test_katsuyou() [aru   有]
+[有る 有るな 有ら 有らな 有らない 有らなけれ 有らなければ 有らず 有らぬ 有らねば 有らん 有られ 有られる 有らるる 有り 有りた 有りたい 有りま 有ります 有りませ 有りまし 有れ 有れば 有れる 有れな 有れない 有れぬ 有ろ 有ろう 有った 有っちゃ 有って 有っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [kxuru 見てくる]
+[見てくる 見てくるな ]
+imj.cpp 1705 imjdic_test_katsuyou() [kxure 見てくれ]
+[見てくれた 見てくれま 見てくれます 見てくれませ 見てくれまし 見てくれれば 見てくれる 見てくれな 見てくれない 見てくれぬ 見てくれちゃ 見てくれて 見てくれと ]
+imj.cpp 1705 imjdic_test_katsuyou() [kxi   来]
+[来た 来たい 来ま 来ます 来ませ 来まし 来た 来ちゃ 来て 来と ]
+imj.cpp 1705 imjdic_test_katsuyou() [kxo   来]
+[来な 来ない 来なけれ 来なければ 来ず 来ぬ 来ねば 来ん 来れ 来れる 来られ 来られる 来らるる 来よ 来よう 来い ]
+imj.cpp 1705 imjdic_test_katsuyou() [sxu2  す]
+[する するな すれば ]
+imj.cpp 1705 imjdic_test_katsuyou() [sxi   し]
+[しな しない しなけれ しなければ しず した したい しま します しませ しまし しよ しよう した しちゃ して しと しろ ]
+imj.cpp 1705 imjdic_test_katsuyou() [sxe   せ]
+[せず せぬ せねば せん せられ せられる せよ ]
+imj.cpp 1705 imjdic_test_katsuyou() [KY    美し]
+[美しい 美しく 美しくな 美しくない 美しかっ 美しかった 美しけれ 美しければ 美しかろ 美しかろう 美しき 美しかれ ]
+imj.cpp 1707 imjdic_test_katsuyou() max_katsuyou_len: 323
+imjcuitest.cpp 61 main() start auto conversion mode
+imj.cpp 952 im_get_committed_string() []
+COMMENT:[----.----|----.----|----.----|----.----|----.----|----.----|----.----|----.----|]
+INPUT:[Vine Linux は、]
+imjcuitest.cpp 128 convert_auto() pronun: [Vine Linux は、]
+imj.cpp 402 im_set_pronun() [Vine Linux は、]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [Vine Linux は、]
+ANSWER: [Vine Linux は、Project Vine および多くの協力者によって開発が行われている、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [Vine Linux は、]:[Vine Linux は、]
+imj.cpp 952 im_get_committed_string() [Vine Linux は、]
+OUTPUT:[Vine Linux は、]
+
+INPUT:[Project Vine およびおおくのきょうりょくしゃによって]
+imjcuitest.cpp 128 convert_auto() pronun: [Project Vine およびおおくのきょうりょくしゃによって]
+imj.cpp 402 im_set_pronun() [Project Vine およびおおくのきょうりょくしゃによって]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [Project Vine およびおおくのきょうりょくしゃによって]
+ANSWER: [Project Vine および多くの協力者によって開発が行われている、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [Project Vine およびおおくのきょうりょくしゃによって]:[Project Vine および多くの協力者によって]
+imj.cpp 952 im_get_committed_string() [Project Vine および多くの協力者によって]
+OUTPUT:[Project Vine および多くの協力者によって]
+
+INPUT:[かいはつがおこなわれている、]
+imjcuitest.cpp 128 convert_auto() pronun: [かいはつがおこなわれている、]
+imj.cpp 402 im_set_pronun() [かいはつがおこなわれている、]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [かいはつがおこなわれている、]
+ANSWER: [開発が行われている、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [かいはつがおこなわれている、]:[開発が行われている、]
+imj.cpp 952 im_get_committed_string() [開発が行われている、]
+OUTPUT:[開発が行われている、]
+
+INPUT:[こんぱくとでけいりょうな]
+imjcuitest.cpp 128 convert_auto() pronun: [こんぱくとでけいりょうな]
+imj.cpp 402 im_set_pronun() [こんぱくとでけいりょうな]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [こんぱくとでけいりょうな]
+ANSWER: [コンパクトで軽量な日本語 Linux ディストリビューションです。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [こんぱくとでけいりょうな]:[コンパクトで軽量な]
+imj.cpp 952 im_get_committed_string() [コンパクトで軽量な]
+OUTPUT:[コンパクトで軽量な]
+
+INPUT:[にほんご Linux でぃすとりびゅーしょんです。]
+imjcuitest.cpp 128 convert_auto() pronun: [にほんご Linux でぃすとりびゅーしょんです。]
+imj.cpp 402 im_set_pronun() [にほんご Linux でぃすとりびゅーしょんです。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [にほんご Linux でぃすとりびゅーしょんです。]
+ANSWER: [日本語 Linux ディストリビューションです。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [にほんご Linux でぃすとりびゅーしょんです。]:[日本語 Linux ディストリビューションです。]
+imj.cpp 952 im_get_committed_string() [日本語 Linux ディストリビューションです。]
+OUTPUT:[日本語 Linux ディストリビューションです。]
+
+INPUT:[いんすとーるのちょくごから]
+imjcuitest.cpp 128 convert_auto() pronun: [いんすとーるのちょくごから]
+imj.cpp 402 im_set_pronun() [いんすとーるのちょくごから]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [いんすとーるのちょくごから]
+ANSWER: [インストールの直後から快適な日本語環境で作業ができるように、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [いんすとーるのちょくごから]:[インストールの直後から]
+imj.cpp 952 im_get_committed_string() [インストールの直後から]
+OUTPUT:[インストールの直後から]
+
+INPUT:[かいてきなにほんごかんきょうでさぎょうができるように、]
+imjcuitest.cpp 128 convert_auto() pronun: [かいてきなにほんごかんきょうでさぎょうができるように、]
+imj.cpp 402 im_set_pronun() [かいてきなにほんごかんきょうでさぎょうができるように、]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [かいてきなにほんごかんきょうでさぎょうができるように、]
+ANSWER: [快適な日本語環境で作業ができるように、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [かいてきなにほんごかんきょうでさぎょうができるよう]:[快適な日本語環境で作業ができるよう]
+imj.cpp 952 im_get_committed_string() [快適な日本語環境で作業ができるよう]
+OUTPUT:[快適な日本語環境で作業ができるよう]
+
+ANSWER: [に、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [に、]:[に、]
+imj.cpp 952 im_get_committed_string() [に、]
+OUTPUT:[に、]
+
+INPUT:[さまざまなはいりょをいっており、]
+imjcuitest.cpp 128 convert_auto() pronun: [さまざまなはいりょをいっており、]
+imj.cpp 402 im_set_pronun() [さまざまなはいりょをいっており、]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [さまざまなはいりょをいっており、]
+ANSWER: [さまざまな配慮を行っており、2GBのUSBメモリに収まるコアオペレーティングシステムと]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [さまざまなはいりょをいっており、]:[さまざまな配慮を行っており、]
+imj.cpp 952 im_get_committed_string() [さまざまな配慮を行っており、]
+OUTPUT:[さまざまな配慮を行っており、]
+
+INPUT:[2GBのUSBめもりにおさまるこあおぺれーてぃんぐしすてむと]
+imjcuitest.cpp 128 convert_auto() pronun: [2GBのUSBめもりにおさまるこあおぺれーてぃんぐしすてむと]
+imj.cpp 402 im_set_pronun() [2GBのUSBめもりにおさまるこあおぺれーてぃんぐしすてむと]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [2GBのUSBめもりにおさまるこあおぺれーてぃんぐしすてむと]
+ANSWER: [2GBのUSBメモリに収まるコアオペレーティングシステムと]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [2GBのUSBめもりにおさまるこあ]:[2GBのUSBメモリに収まるコア]
+imj.cpp 952 im_get_committed_string() [2GBのUSBメモリに収まるコア]
+OUTPUT:[2GBのUSBメモリに収まるコア]
+
+ANSWER: [オペレーティングシステムと]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [おぺれーてぃんぐしすてむと]:[オペレーティングシステムと]
+imj.cpp 952 im_get_committed_string() [オペレーティングシステムと]
+OUTPUT:[オペレーティングシステムと]
+
+INPUT:[VinePlus とよぶついかぱっけーじしゅうにより、]
+imjcuitest.cpp 128 convert_auto() pronun: [VinePlus とよぶついかぱっけーじしゅうにより、]
+imj.cpp 402 im_set_pronun() [VinePlus とよぶついかぱっけーじしゅうにより、]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [VinePlus とよぶついかぱっけーじしゅうにより、]
+ANSWER: [VinePlus と呼ぶ追加パッケージ集により、必要に応じたオペレーティングシステムを構築することができます。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [VinePlus とよぶついかぱっけーじしゅうにより、]:[VinePlus と呼ぶ追加パッケージ集により、]
+imj.cpp 952 im_get_committed_string() [VinePlus と呼ぶ追加パッケージ集により、]
+OUTPUT:[VinePlus と呼ぶ追加パッケージ集により、]
+
+INPUT:[ひつようにおうじたおぺれーてぃんぐしすてむを]
+imjcuitest.cpp 128 convert_auto() pronun: [ひつようにおうじたおぺれーてぃんぐしすてむを]
+imj.cpp 402 im_set_pronun() [ひつようにおうじたおぺれーてぃんぐしすてむを]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [ひつようにおうじたおぺれーてぃんぐしすてむを]
+ANSWER: [必要に応じたオペレーティングシステムを構築することができます。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [ひつようにおうじたおぺれーてぃんぐしすてむを]:[必要に応じたオペレーティングシステムを]
+imj.cpp 952 im_get_committed_string() [必要に応じたオペレーティングシステムを]
+OUTPUT:[必要に応じたオペレーティングシステムを]
+
+INPUT:[こうちくすることができます。]
+imjcuitest.cpp 128 convert_auto() pronun: [こうちくすることができます。]
+imj.cpp 402 im_set_pronun() [こうちくすることができます。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [こうちくすることができます。]
+ANSWER: [構築することができます。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [こうちくすることができます。]:[構築することができます。]
+imj.cpp 952 im_get_committed_string() [構築することができます。]
+OUTPUT:[構築することができます。]
+
+INPUT:[ていひょうあるぱっけーじまねーじゃ APT ]
+imjcuitest.cpp 128 convert_auto() pronun: [ていひょうあるぱっけーじまねーじゃ APT ]
+imj.cpp 402 im_set_pronun() [ていひょうあるぱっけーじまねーじゃ APT ]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [ていひょうあるぱっけーじまねーじゃ APT ]
+ANSWER: [定評あるパッケージマネージャ APT とその簡単なユーザインタフェースにより、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [ていひょうあるぱっけーじまねーじゃ APT ]:[定評あるパッケージマネージャ APT ]
+imj.cpp 952 im_get_committed_string() [定評あるパッケージマネージャ APT ]
+OUTPUT:[定評あるパッケージマネージャ APT ]
+
+INPUT:[とそのかんたんなゆーざいんたふぇーすにより、]
+imjcuitest.cpp 128 convert_auto() pronun: [とそのかんたんなゆーざいんたふぇーすにより、]
+imj.cpp 402 im_set_pronun() [とそのかんたんなゆーざいんたふぇーすにより、]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [とそのかんたんなゆーざいんたふぇーすにより、]
+ANSWER: [とその簡単なユーザインタフェースにより、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [とそのかんたんなゆーざいんたふぇーすにより、]:[とその簡単なユーザインタフェースにより、]
+imj.cpp 952 im_get_committed_string() [とその簡単なユーザインタフェースにより、]
+OUTPUT:[とその簡単なユーザインタフェースにより、]
+
+INPUT:[そふとうえあのついかやこうしんが]
+imjcuitest.cpp 128 convert_auto() pronun: [そふとうえあのついかやこうしんが]
+imj.cpp 402 im_set_pronun() [そふとうえあのついかやこうしんが]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [そふとうえあのついかやこうしんが]
+ANSWER: [ソフトウエアの追加や更新が簡単に行うことができます。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [そふとうえあのついかやこうしんが]:[ソフトウエアの追加や更新が]
+imj.cpp 952 im_get_committed_string() [ソフトウエアの追加や更新が]
+OUTPUT:[ソフトウエアの追加や更新が]
+
+INPUT:[かんたんにおこなうことができます。]
+imjcuitest.cpp 128 convert_auto() pronun: [かんたんにおこなうことができます。]
+imj.cpp 402 im_set_pronun() [かんたんにおこなうことができます。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [かんたんにおこなうことができます。]
+ANSWER: [簡単に行うことができます。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [かんたんにおこなうことができます。]:[簡単に行うことができます。]
+imj.cpp 952 im_get_committed_string() [簡単に行うことができます。]
+OUTPUT:[簡単に行うことができます。]
+
+INPUT:[Vine Linux 6 はいわゆるぱそこん]
+imjcuitest.cpp 128 convert_auto() pronun: [Vine Linux 6 はいわゆるぱそこん]
+imj.cpp 402 im_set_pronun() [Vine Linux 6 はいわゆるぱそこん]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [Vine Linux 6 はいわゆるぱそこん]
+ANSWER: [Vine Linux 6 はいわゆるパソコン(Intel x86 互換の 32bit システムと]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [Vine Linux 6 はいわゆるぱそこん]:[Vine Linux 6 はいわゆるパソコン]
+imj.cpp 952 im_get_committed_string() [Vine Linux 6 はいわゆるパソコン]
+OUTPUT:[Vine Linux 6 はいわゆるパソコン]
+
+INPUT:[(Intel x86 ごかんの 32bit しすてむと]
+imjcuitest.cpp 128 convert_auto() pronun: [(Intel x86 ごかんの 32bit しすてむと]
+imj.cpp 402 im_set_pronun() [(Intel x86 ごかんの 32bit しすてむと]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [(Intel x86 ごかんの 32bit しすてむと]
+ANSWER: [(Intel x86 互換の 32bit システムと]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [(Intel x86 ごかんの 32bit ]:[(Intel x86 互換の 32bit ]
+imj.cpp 952 im_get_committed_string() [(Intel x86 互換の 32bit ]
+OUTPUT:[(Intel x86 互換の 32bit ]
+
+ANSWER: [システムと]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [しすてむと]:[システムと]
+imj.cpp 952 im_get_committed_string() [システムと]
+OUTPUT:[システムと]
+
+INPUT:[ AMD64/Intel64 ごかんの64bitしすてむ)]
+imjcuitest.cpp 128 convert_auto() pronun: [ AMD64/Intel64 ごかんの64bitしすてむ)]
+imj.cpp 402 im_set_pronun() [ AMD64/Intel64 ごかんの64bitしすてむ)]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [ AMD64/Intel64 ごかんの64bitしすてむ)]
+ANSWER: [ AMD64/Intel64 互換の64bitシステム)で動作し、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [ AMD64/Intel64 ]:[ AMD64/Intel64 ]
+imj.cpp 952 im_get_committed_string() [ AMD64/Intel64 ]
+OUTPUT:[ AMD64/Intel64 ]
+
+ANSWER: [互換の64bitシステム)で動作し、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [ごかんの64bitしすてむ)]:[互換の64bitシステム)]
+imj.cpp 952 im_get_committed_string() [互換の64bitシステム)]
+OUTPUT:[互換の64bitシステム)]
+
+INPUT:[でどうさし、]
+imjcuitest.cpp 128 convert_auto() pronun: [でどうさし、]
+imj.cpp 402 im_set_pronun() [でどうさし、]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [でどうさし、]
+ANSWER: [で動作し、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [でどうさし、]:[で動作し、]
+imj.cpp 952 im_get_committed_string() [で動作し、]
+OUTPUT:[で動作し、]
+
+INPUT:[どのかんきょうでもおなじように]
+imjcuitest.cpp 128 convert_auto() pronun: [どのかんきょうでもおなじように]
+imj.cpp 402 im_set_pronun() [どのかんきょうでもおなじように]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [どのかんきょうでもおなじように]
+ANSWER: [どの環境でも同じように利用することができます。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [どのかんきょうでもおなじように]:[どの環境でも同じように]
+imj.cpp 952 im_get_committed_string() [どの環境でも同じように]
+OUTPUT:[どの環境でも同じように]
+
+INPUT:[りようすることができます。]
+imjcuitest.cpp 128 convert_auto() pronun: [りようすることができます。]
+imj.cpp 402 im_set_pronun() [りようすることができます。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [りようすることができます。]
+ANSWER: [利用することができます。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [りようすることができます。]:[利用することができます。]
+imj.cpp 952 im_get_committed_string() [利用することができます。]
+OUTPUT:[利用することができます。]
+
+INPUT:[Vine Linux のかいはつには]
+imjcuitest.cpp 128 convert_auto() pronun: [Vine Linux のかいはつには]
+imj.cpp 402 im_set_pronun() [Vine Linux のかいはつには]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [Vine Linux のかいはつには]
+ANSWER: [Vine Linux の開発にはだれでも自由に参加することができ、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [Vine Linux のかいはつには]:[Vine Linux の開発には]
+imj.cpp 952 im_get_committed_string() [Vine Linux の開発には]
+OUTPUT:[Vine Linux の開発には]
+
+INPUT:[だれでもじゆうにさんかすることができ、]
+imjcuitest.cpp 128 convert_auto() pronun: [だれでもじゆうにさんかすることができ、]
+imj.cpp 402 im_set_pronun() [だれでもじゆうにさんかすることができ、]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [だれでもじゆうにさんかすることができ、]
+ANSWER: [だれでも自由に参加することができ、]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [だれでもじゆうにさんかすることができ、]:[だれでも自由に参加することができ、]
+imj.cpp 952 im_get_committed_string() [だれでも自由に参加することができ、]
+OUTPUT:[だれでも自由に参加することができ、]
+
+INPUT:[ひつようとするひとがひつようとするものを]
+imjcuitest.cpp 128 convert_auto() pronun: [ひつようとするひとがひつようとするものを]
+imj.cpp 402 im_set_pronun() [ひつようとするひとがひつようとするものを]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [ひつようとするひとがひつようとするものを]
+ANSWER: [必要とする人が必要とするものを作り上げる自由なオペレーティングシステムです。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [ひつようとするひとがひつようとするものを]:[必要とする人が必要とするものを]
+imj.cpp 952 im_get_committed_string() [必要とする人が必要とするものを]
+OUTPUT:[必要とする人が必要とするものを]
+
+INPUT:[つくりあげるじゆうなおぺれーてぃんぐしすてむです。]
+imjcuitest.cpp 128 convert_auto() pronun: [つくりあげるじゆうなおぺれーてぃんぐしすてむです。]
+imj.cpp 402 im_set_pronun() [つくりあげるじゆうなおぺれーてぃんぐしすてむです。]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [つくりあげるじゆうなおぺれーてぃんぐしすてむです。]
+ANSWER: [作り上げる自由なオペレーティングシステムです。]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [つくりあげるじゆうなおぺれーてぃんぐしすてむです。]:[作り上げる自由なオペレーティングシステムです。]
+imj.cpp 952 im_get_committed_string() [作り上げる自由なオペレーティングシステムです。]
+OUTPUT:[作り上げる自由なオペレーティングシステムです。]
+
+imjcuitest.cpp 90 main() auto conversion mode complete
+imjcuitest.cpp 235 dump_key_count() ---------------------------------------------------------
+NO_MATCH count: 0
+TOTAL_KEY count: 56
+IM_KE_SEPARATE_LEFT count: 0
+IM_KE_SELECT_NEXT count: 0
+IM_KE_COMMIT_ONE count: 30
+imjcuitest.cpp 241 dump_key_count() ---------------------------------------------------------
+imj.cpp 148 im_close()
+imj.cpp 1960 imjhst_save() hst-file-path:[./.imj/imj.hst]
+imj.cpp 1980 imjhst_save() input      history entries: 82
+imj.cpp 1980 imjhst_save() conversion history entries: 1162
+imjcuitest.cpp 96 main() exit
+imjcuitest.cpp 43 main() start
+imj.cpp 106 im_open()
+imj.cpp 2691 test_imjatoh_functions()
+imj.cpp 2693 test_imjatoh_functions() roman1:[ hiragana] ==> pronun[　ひらがな]
+imj.cpp 2696 test_imjatoh_functions() imjatoh_romaji_offset([ hiragana], strlen([ひら])) ==> 3
+imj.cpp 2699 test_imjatoh_functions() imjatoh_romaji_offset([kanji], strlen([かん])) ==> 3
+imj.cpp 2702 test_imjatoh_functions() imjatoh_hira_offset([ hiragana], [ひらがな], 6) ==> 12
+imj.cpp 1176 imjdic_open() dic-file-path:[./.imj/imj.dic]
+imj.cpp 1917 imjhst_load() hst-file-path:[./.imj/imj.hst]
+imj.cpp 1928 imjhst_load() history entries: 1162
+imj.cpp 3114 test_hira_kata_han_conversion() 
+<[　 ／ ， ． ・ ： ； ？ ！ ’ ” ＼ ＾ ‾ ＿ （ ） ｛ ｝ ［ ］ ¥ ０ １ ２ ３ ４ ５ ６ ７ ８ ９ ＋ − ＄ ％ ＃ ＆ ＊ ＠ ＝ Ａ Ｂ Ｃ Ｄ Ｅ Ｆ Ｇ Ｈ Ｉ Ｊ Ｋ Ｌ Ｍ Ｎ Ｏ Ｐ Ｑ Ｒ Ｓ Ｔ Ｕ Ｖ Ｗ Ｘ Ｙ Ｚ ａ ｂ ｃ ｄ ｅ ｆ ｇ ｈ ｉ ｊ ｋ ｌ ｍ ｎ ｏ ｐ ｑ ｒ ｓ ｔ ｕ ｖ ｗ ｘ ｙ ｚ ガ ギ グ ゲ ゴ ザ ジ ズ ゼ ゾ ダ ヂ ヅ デ ド バ ビ ブ ベ ボ パ ピ プ ペ ポ ヴ ァ ア ィ イ ゥ ウ ェ エ ォ オ カ キ ク ケ コ サ シ ス セ ソ タ チ ッ ツ テ ト ナ ニ ヌ ネ ノ ハ ヒ フ ヘ ホ マ ミ ム メ モ ャ ヤ ュ ユ ョ ヨ ラ リ ル レ ロ ワ ヲ ン ヮ ヰ ヱ ヵ ヶ ゛ ゜ 、 「 」 ー 。 ]
+>[　　／　，　．　・　：　；　？　！　’　”　＼　＾　‾　＿　（　）　｛　｝　［　］　¥　０　１　２　３　４　５　６　７　８　９　＋　−　＄　％　＃　＆　＊　＠　＝　Ａ　Ｂ　Ｃ　Ｄ　Ｅ　Ｆ　Ｇ　Ｈ　Ｉ　Ｊ　Ｋ　Ｌ　Ｍ　Ｎ　Ｏ　Ｐ　Ｑ　Ｒ　Ｓ　Ｔ　Ｕ　Ｖ　Ｗ　Ｘ　Ｙ　Ｚ　ａ　ｂ　ｃ　ｄ　ｅ　ｆ　ｇ　ｈ　ｉ　ｊ　ｋ　ｌ　ｍ　ｎ　ｏ　ｐ　ｑ　ｒ　ｓ　ｔ　ｕ　ｖ　ｗ　ｘ　ｙ　ｚ　が　ぎ　ぐ　げ　ご　ざ　じ　ず　ぜ　ぞ　だ　ぢ　づ　で　ど　ば　び　ぶ　べ　ぼ　ぱ　ぴ　ぷ　ぺ　ぽ　う゛　ぁ　あ　ぃ　い　ぅ　う　ぇ　え　ぉ　お　か　き　く　け　こ　さ　し　す　せ　そ　た　ち　っ　つ　て　と　な　に　ぬ　ね　の　は　ひ　ふ　へ　ほ　ま　み　む　め　も　ゃ　や　ゅ　ゆ　ょ　よ　ら　り　る　れ　ろ　わ　を　ん　ヮ　ヰ　ヱ　ヵ　ヶ　゛　゜　、　「　」　ー　。　]
+imj.cpp 3116 test_hira_kata_han_conversion() 
+<[  / , . ･ : ; ? ! ' " \ ^ ~ _ ( ) { } [ ] \ 0 1 2 3 4 5 6 7 8 9 + - $ % # & * @ = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z ｶﾞ ｷﾞ ｸﾞ ｹﾞ ｺﾞ ｻﾞ ｼﾞ ｽﾞ ｾﾞ ｿﾞ ﾀﾞ ﾁﾞ ﾂﾞ ﾃﾞ ﾄﾞ ﾊﾞ ﾋﾞ ﾌﾞ ﾍﾞ ﾎﾞ ﾊﾟ ﾋﾟ ﾌﾟ ﾍﾟ ﾎﾟ ｳﾞ ｧ ｱ ｨ ｲ ｩ ｳ ｪ ｴ ｫ ｵ ｶ ｷ ｸ ｹ ｺ ｻ ｼ ｽ ｾ ｿ ﾀ ﾁ ｯ ﾂ ﾃ ﾄ ﾅ ﾆ ﾇ ﾈ ﾉ ﾊ ﾋ ﾌ ﾍ ﾎ ﾏ ﾐ ﾑ ﾒ ﾓ ｬ ﾔ ｭ ﾕ ｮ ﾖ ﾗ ﾘ ﾙ ﾚ ﾛ ﾜ ｦ ﾝ ヮ ヰ ヱ ヵ ヶ ﾞ ﾟ ､ ｢ ｣ ｰ ｡ ]
+>[　　／　，　．　・　：　；　？　！　’　”　＼　＾　‾　＿　（　）　｛　｝　［　］　＼　０　１　２　３　４　５　６　７　８　９　＋　−　＄　％　＃　＆　＊　＠　＝　Ａ　Ｂ　Ｃ　Ｄ　Ｅ　Ｆ　Ｇ　Ｈ　Ｉ　Ｊ　Ｋ　Ｌ　Ｍ　Ｎ　Ｏ　Ｐ　Ｑ　Ｒ　Ｓ　Ｔ　Ｕ　Ｖ　Ｗ　Ｘ　Ｙ　Ｚ　ａ　ｂ　ｃ　ｄ　ｅ　ｆ　ｇ　ｈ　ｉ　ｊ　ｋ　ｌ　ｍ　ｎ　ｏ　ｐ　ｑ　ｒ　ｓ　ｔ　ｕ　ｖ　ｗ　ｘ　ｙ　ｚ　が　ぎ　ぐ　げ　ご　ざ　じ　ず　ぜ　ぞ　だ　ぢ　づ　で　ど　ば　び　ぶ　べ　ぼ　ぱ　ぴ　ぷ　ぺ　ぽ　う゛　ぁ　あ　ぃ　い　ぅ　う　ぇ　え　ぉ　お　か　き　く　け　こ　さ　し　す　せ　そ　た　ち　っ　つ　て　と　な　に　ぬ　ね　の　は　ひ　ふ　へ　ほ　ま　み　む　め　も　ゃ　や　ゅ　ゆ　ょ　よ　ら　り　る　れ　ろ　わ　を　ん　ヮ　ヰ　ヱ　ヵ　ヶ　゛　゜　、　「　」　ー　。　]
+imj.cpp 3119 test_hira_kata_han_conversion() 
+<[　 ／ ， ． ・ ： ； ？ ！ ’ ” ＼ ＾ ‾ ＿ （ ） ｛ ｝ ［ ］ ¥ ０ １ ２ ３ ４ ５ ６ ７ ８ ９ ＋ − ＄ ％ ＃ ＆ ＊ ＠ ＝ Ａ Ｂ Ｃ Ｄ Ｅ Ｆ Ｇ Ｈ Ｉ Ｊ Ｋ Ｌ Ｍ Ｎ Ｏ Ｐ Ｑ Ｒ Ｓ Ｔ Ｕ Ｖ Ｗ Ｘ Ｙ Ｚ ａ ｂ ｃ ｄ ｅ ｆ ｇ ｈ ｉ ｊ ｋ ｌ ｍ ｎ ｏ ｐ ｑ ｒ ｓ ｔ ｕ ｖ ｗ ｘ ｙ ｚ が ぎ ぐ げ ご ざ じ ず ぜ ぞ だ ぢ づ で ど ば び ぶ べ ぼ ぱ ぴ ぷ ぺ ぽ う゛ ぁ あ ぃ い ぅ う ぇ え ぉ お か き く け こ さ し す せ そ た ち っ つ て と な に ぬ ね の は ひ ふ へ ほ ま み む め も ゃ や ゅ ゆ ょ よ ら り る れ ろ わ を ん ヮ ヰ ヱ ヵ ヶ ゛ ゜ 、 「 」 ー 。 ]
+>[　　／　，　．　・　：　；　？　！　’　”　＼　＾　‾　＿　（　）　｛　｝　［　］　¥　０　１　２　３　４　５　６　７　８　９　＋　−　＄　％　＃　＆　＊　＠　＝　Ａ　Ｂ　Ｃ　Ｄ　Ｅ　Ｆ　Ｇ　Ｈ　Ｉ　Ｊ　Ｋ　Ｌ　Ｍ　Ｎ　Ｏ　Ｐ　Ｑ　Ｒ　Ｓ　Ｔ　Ｕ　Ｖ　Ｗ　Ｘ　Ｙ　Ｚ　ａ　ｂ　ｃ　ｄ　ｅ　ｆ　ｇ　ｈ　ｉ　ｊ　ｋ　ｌ　ｍ　ｎ　ｏ　ｐ　ｑ　ｒ　ｓ　ｔ　ｕ　ｖ　ｗ　ｘ　ｙ　ｚ　ガ　ギ　グ　ゲ　ゴ　ザ　ジ　ズ　ゼ　ゾ　ダ　ヂ　ヅ　デ　ド　バ　ビ　ブ　ベ　ボ　パ　ピ　プ　ペ　ポ　ヴ　ァ　ア　ィ　イ　ゥ　ウ　ェ　エ　ォ　オ　カ　キ　ク　ケ　コ　サ　シ　ス　セ　ソ　タ　チ　ッ　ツ　テ　ト　ナ　ニ　ヌ　ネ　ノ　ハ　ヒ　フ　ヘ　ホ　マ　ミ　ム　メ　モ　ャ　ヤ　ュ　ユ　ョ　ヨ　ラ　リ　ル　レ　ロ　ワ　ヲ　ン　ヮ　ヰ　ヱ　ヵ　ヶ　゛　゜　、　「　」　ー　。　]
+imj.cpp 3122 test_hira_kata_han_conversion() 
+<[  / , . ･ : ; ? ! ' " \ ^ ~ _ ( ) { } [ ] \ 0 1 2 3 4 5 6 7 8 9 + - $ % # & * @ = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z ｶﾞ ｷﾞ ｸﾞ ｹﾞ ｺﾞ ｻﾞ ｼﾞ ｽﾞ ｾﾞ ｿﾞ ﾀﾞ ﾁﾞ ﾂﾞ ﾃﾞ ﾄﾞ ﾊﾞ ﾋﾞ ﾌﾞ ﾍﾞ ﾎﾞ ﾊﾟ ﾋﾟ ﾌﾟ ﾍﾟ ﾎﾟ ｳﾞ ｧ ｱ ｨ ｲ ｩ ｳ ｪ ｴ ｫ ｵ ｶ ｷ ｸ ｹ ｺ ｻ ｼ ｽ ｾ ｿ ﾀ ﾁ ｯ ﾂ ﾃ ﾄ ﾅ ﾆ ﾇ ﾈ ﾉ ﾊ ﾋ ﾌ ﾍ ﾎ ﾏ ﾐ ﾑ ﾒ ﾓ ｬ ﾔ ｭ ﾕ ｮ ﾖ ﾗ ﾘ ﾙ ﾚ ﾛ ﾜ ｦ ﾝ ヮ ヰ ヱ ヵ ヶ ﾞ ﾟ ､ ｢ ｣ ｰ ｡ ]
+>[　　／　，　．　・　：　；　？　！　’　”　＼　＾　‾　＿　（　）　｛　｝　［　］　＼　０　１　２　３　４　５　６　７　８　９　＋　−　＄　％　＃　＆　＊　＠　＝　Ａ　Ｂ　Ｃ　Ｄ　Ｅ　Ｆ　Ｇ　Ｈ　Ｉ　Ｊ　Ｋ　Ｌ　Ｍ　Ｎ　Ｏ　Ｐ　Ｑ　Ｒ　Ｓ　Ｔ　Ｕ　Ｖ　Ｗ　Ｘ　Ｙ　Ｚ　ａ　ｂ　ｃ　ｄ　ｅ　ｆ　ｇ　ｈ　ｉ　ｊ　ｋ　ｌ　ｍ　ｎ　ｏ　ｐ　ｑ　ｒ　ｓ　ｔ　ｕ　ｖ　ｗ　ｘ　ｙ　ｚ　ガ　ギ　グ　ゲ　ゴ　ザ　ジ　ズ　ゼ　ゾ　ダ　ヂ　ヅ　デ　ド　バ　ビ　ブ　ベ　ボ　パ　ピ　プ　ペ　ポ　ヴ　ァ　ア　ィ　イ　ゥ　ウ　ェ　エ　ォ　オ　カ　キ　ク　ケ　コ　サ　シ　ス　セ　ソ　タ　チ　ッ　ツ　テ　ト　ナ　ニ　ヌ　ネ　ノ　ハ　ヒ　フ　ヘ　ホ　マ　ミ　ム　メ　モ　ャ　ヤ　ュ　ユ　ョ　ヨ　ラ　リ　ル　レ　ロ　ワ　ヲ　ン　ヮ　ヰ　ヱ　ヵ　ヶ　゛　゜　、　「　」　ー　。　]
+imj.cpp 3125 test_hira_kata_han_conversion() 
+<[　 ／ ， ． ・ ： ； ？ ！ ’ ” ＼ ＾ ‾ ＿ （ ） ｛ ｝ ［ ］ ¥ ０ １ ２ ３ ４ ５ ６ ７ ８ ９ ＋ − ＄ ％ ＃ ＆ ＊ ＠ ＝ Ａ Ｂ Ｃ Ｄ Ｅ Ｆ Ｇ Ｈ Ｉ Ｊ Ｋ Ｌ Ｍ Ｎ Ｏ Ｐ Ｑ Ｒ Ｓ Ｔ Ｕ Ｖ Ｗ Ｘ Ｙ Ｚ ａ ｂ ｃ ｄ ｅ ｆ ｇ ｈ ｉ ｊ ｋ ｌ ｍ ｎ ｏ ｐ ｑ ｒ ｓ ｔ ｕ ｖ ｗ ｘ ｙ ｚ が ぎ ぐ げ ご ざ じ ず ぜ ぞ だ ぢ づ で ど ば び ぶ べ ぼ ぱ ぴ ぷ ぺ ぽ う゛ ぁ あ ぃ い ぅ う ぇ え ぉ お か き く け こ さ し す せ そ た ち っ つ て と な に ぬ ね の は ひ ふ へ ほ ま み む め も ゃ や ゅ ゆ ょ よ ら り る れ ろ わ を ん ヮ ヰ ヱ ヵ ヶ ゛ ゜ 、 「 」 ー 。 ]
+>[  / , . ･ : ; ? ! ' " \ ^ ~ _ ( ) { } [ ] \ 0 1 2 3 4 5 6 7 8 9 + - $ % # & * @ = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z ｶﾞ ｷﾞ ｸﾞ ｹﾞ ｺﾞ ｻﾞ ｼﾞ ｽﾞ ｾﾞ ｿﾞ ﾀﾞ ﾁﾞ ﾂﾞ ﾃﾞ ﾄﾞ ﾊﾞ ﾋﾞ ﾌﾞ ﾍﾞ ﾎﾞ ﾊﾟ ﾋﾟ ﾌﾟ ﾍﾟ ﾎﾟ ｳﾞ ｧ ｱ ｨ ｲ ｩ ｳ ｪ ｴ ｫ ｵ ｶ ｷ ｸ ｹ ｺ ｻ ｼ ｽ ｾ ｿ ﾀ ﾁ ｯ ﾂ ﾃ ﾄ ﾅ ﾆ ﾇ ﾈ ﾉ ﾊ ﾋ ﾌ ﾍ ﾎ ﾏ ﾐ ﾑ ﾒ ﾓ ｬ ﾔ ｭ ﾕ ｮ ﾖ ﾗ ﾘ ﾙ ﾚ ﾛ ﾜ ｦ ﾝ ヮ ヰ ヱ ヵ ヶ ﾞ ﾟ ､ ｢ ｣ ｰ ｡ ]
+imj.cpp 3127 test_hira_kata_han_conversion() 
+<[　 ／ ， ． ・ ： ； ？ ！ ’ ” ＼ ＾ ‾ ＿ （ ） ｛ ｝ ［ ］ ¥ ０ １ ２ ３ ４ ５ ６ ７ ８ ９ ＋ − ＄ ％ ＃ ＆ ＊ ＠ ＝ Ａ Ｂ Ｃ Ｄ Ｅ Ｆ Ｇ Ｈ Ｉ Ｊ Ｋ Ｌ Ｍ Ｎ Ｏ Ｐ Ｑ Ｒ Ｓ Ｔ Ｕ Ｖ Ｗ Ｘ Ｙ Ｚ ａ ｂ ｃ ｄ ｅ ｆ ｇ ｈ ｉ ｊ ｋ ｌ ｍ ｎ ｏ ｐ ｑ ｒ ｓ ｔ ｕ ｖ ｗ ｘ ｙ ｚ ガ ギ グ ゲ ゴ ザ ジ ズ ゼ ゾ ダ ヂ ヅ デ ド バ ビ ブ ベ ボ パ ピ プ ペ ポ ヴ ァ ア ィ イ ゥ ウ ェ エ ォ オ カ キ ク ケ コ サ シ ス セ ソ タ チ ッ ツ テ ト ナ ニ ヌ ネ ノ ハ ヒ フ ヘ ホ マ ミ ム メ モ ャ ヤ ュ ユ ョ ヨ ラ リ ル レ ロ ワ ヲ ン ヮ ヰ ヱ ヵ ヶ ゛ ゜ 、 「 」 ー 。 ]
+>[  / , . ･ : ; ? ! ' " \ ^ ~ _ ( ) { } [ ] \ 0 1 2 3 4 5 6 7 8 9 + - $ % # & * @ = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z ｶﾞ ｷﾞ ｸﾞ ｹﾞ ｺﾞ ｻﾞ ｼﾞ ｽﾞ ｾﾞ ｿﾞ ﾀﾞ ﾁﾞ ﾂﾞ ﾃﾞ ﾄﾞ ﾊﾞ ﾋﾞ ﾌﾞ ﾍﾞ ﾎﾞ ﾊﾟ ﾋﾟ ﾌﾟ ﾍﾟ ﾎﾟ ｳﾞ ｧ ｱ ｨ ｲ ｩ ｳ ｪ ｴ ｫ ｵ ｶ ｷ ｸ ｹ ｺ ｻ ｼ ｽ ｾ ｿ ﾀ ﾁ ｯ ﾂ ﾃ ﾄ ﾅ ﾆ ﾇ ﾈ ﾉ ﾊ ﾋ ﾌ ﾍ ﾎ ﾏ ﾐ ﾑ ﾒ ﾓ ｬ ﾔ ｭ ﾕ ｮ ﾖ ﾗ ﾘ ﾙ ﾚ ﾛ ﾜ ｦ ﾝ ヮ ヰ ヱ ヵ ヶ ﾞ ﾟ ､ ｢ ｣ ｰ ｡ ]
+imj.cpp 1705 imjdic_test_katsuyou() [K5    書]
+[書く 書くな 書か 書かな 書かない 書かなけれ 書かなければ 書かず 書かぬ 書かねば 書かん 書かれ 書かれる 書かるる 書き 書きた 書きたい 書きま 書きます 書きませ 書きまし 書け 書けば 書ける 書けな 書けない 書けぬ 書こ 書こう 書いた 書いちゃ 書いて 書いと ]
+imj.cpp 1705 imjdic_test_katsuyou() [C5r   行]
+[行く 行くな 行か 行かな 行かない 行かなけれ 行かなければ 行かず 行かぬ 行かねば 行かん 行かれ 行かれる 行かるる 行き 行きた 行きたい 行きま 行きます 行きませ 行きまし 行け 行けば 行ける 行けな 行けない 行けぬ 行こ 行こう 行った 行っちゃ 行って 行っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [G5    漕]
+[漕ぐ 漕ぐな 漕が 漕がな 漕がない 漕がなけれ 漕がなければ 漕がず 漕がぬ 漕がねば 漕がん 漕がれ 漕がれる 漕がるる 漕ぎ 漕ぎた 漕ぎたい 漕ぎま 漕ぎます 漕ぎませ 漕ぎまし 漕げ 漕げば 漕げる 漕げな 漕げない 漕げぬ 漕ご 漕ごう 漕いだ 漕いぢゃ 漕いじゃ 漕いで 漕いど ]
+imj.cpp 1705 imjdic_test_katsuyou() [S5    消]
+[消す 消すな 消さ 消さな 消さない 消さなけれ 消さなければ 消さず 消さぬ 消さねば 消さん 消され 消される 消さるる 消し 消した 消したい 消しま 消します 消しませ 消しまし 消せ 消せば 消せる 消せな 消せない 消せぬ 消そ 消そう 消した 消しちゃ 消して 消しと ]
+imj.cpp 1705 imjdic_test_katsuyou() [T5    勝]
+[勝つ 勝つな 勝た 勝たな 勝たない 勝たなけれ 勝たなければ 勝たず 勝たぬ 勝たねば 勝たん 勝たれ 勝たれる 勝たるる 勝ち 勝ちた 勝ちたい 勝ちま 勝ちます 勝ちませ 勝ちまし 勝て 勝てば 勝てる 勝てな 勝てない 勝てぬ 勝と 勝とう 勝った 勝っちゃ 勝って 勝っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [N5    死]
+[死ぬ 死ぬな 死な 死なな 死なない 死ななけれ 死ななければ 死なず 死なぬ 死なねば 死なん 死なれ 死なれる 死なるる 死に 死にた 死にたい 死にま 死にます 死にませ 死にまし 死ね 死ねば 死ねる 死ねな 死ねない 死ねぬ 死の 死のう 死んだ 死んぢゃ 死んじゃ 死んで 死んど ]
+imj.cpp 1705 imjdic_test_katsuyou() [B5    呼]
+[呼ぶ 呼ぶな 呼ば 呼ばな 呼ばない 呼ばなけれ 呼ばなければ 呼ばず 呼ばぬ 呼ばねば 呼ばん 呼ばれ 呼ばれる 呼ばるる 呼び 呼びた 呼びたい 呼びま 呼びます 呼びませ 呼びまし 呼べ 呼べば 呼べる 呼べな 呼べない 呼べぬ 呼ぼ 呼ぼう 呼んだ 呼んぢゃ 呼んじゃ 呼んで 呼んど ]
+imj.cpp 1705 imjdic_test_katsuyou() [M5    読]
+[読む 読むな 読ま 読まな 読まない 読まなけれ 読まなければ 読まず 読まぬ 読まねば 読まん 読まれ 読まれる 読まるる 読み 読みた 読みたい 読みま 読みます 読みませ 読みまし 読め 読めば 読める 読めな 読めない 読めぬ 読も 読もう 読んだ 読んぢゃ 読んじゃ 読んで 読んど ]
+imj.cpp 1705 imjdic_test_katsuyou() [R5    知]
+[知る 知るな 知ら 知らな 知らない 知らなけれ 知らなければ 知らず 知らぬ 知らねば 知らん 知られ 知られる 知らるる 知り 知りた 知りたい 知りま 知ります 知りませ 知りまし 知れ 知れば 知れる 知れな 知れない 知れぬ 知ろ 知ろう 知った 知っちゃ 知って 知っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [W5    笑]
+[笑う 笑うな 笑わ 笑わな 笑わない 笑わなけれ 笑わなければ 笑わず 笑わぬ 笑わねば 笑わん 笑われ 笑われる 笑わるる 笑い 笑いた 笑いたい 笑いま 笑います 笑いませ 笑いまし 笑え 笑えば 笑える 笑えな 笑えない 笑えぬ 笑お 笑おう 笑った 笑っちゃ 笑って 笑っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [KS    見]
+[見る 見るな 見な 見ない 見なけれ 見なければ 見ず 見ぬ 見ねば 見ん 見れ 見れる 見られ 見られる 見らるる 見た 見たい 見ま 見ます 見ませ 見まし 見れ 見れば 見れる 見れな 見れない 見れぬ 見よ 見よう 見た 見ちゃ 見て 見と 見ろ ]
+imj.cpp 1705 imjdic_test_katsuyou() [SX    資]
+[資する 資するな 資さ 資さな 資さない 資さなけれ 資さなければ 資さず 資さぬ 資さねば 資さん 資され 資される 資さるる 資し 資した 資したい 資しま 資します 資しませ 資しまし 資せ 資せば 資せる 資せな 資せない 資せぬ 資そ 資そう 資した 資しちゃ 資して 資しと 資すれば ]
+imj.cpp 1705 imjdic_test_katsuyou() [ZX    演]
+[演ずる 演ずるな 演じ 演じな 演じない 演じなけれ 演じなければ 演じず 演じぬ 演じねば 演じれ 演じれる 演じられ 演じられる 演じらるる 演じた 演じたい 演じま 演じます 演じませ 演じまし 演じれ 演じれば 演じれる 演じれな 演じれない 演じれぬ 演じよ 演じよう 演じた 演じちゃ 演じて 演じと 演じろ 演ずれば ]
+imj.cpp 1705 imjdic_test_katsuyou() [L5    なさ]
+[なさる なさるな なさら なさらな なさらない なさらなけれ なさらなければ なさらず なさらぬ なさらねば なさらん なさられ なさられる なさらるる なさり なさりた なさりたい なさりま なさります なさりませ なさりまし なされ なされば なされる なされな なされない なされぬ なさろ なさろう なさった なさっちゃ なさって なさっと なさい なさいま なさいます   ]
+imj.cpp 1705 imjdic_test_katsuyou() [U5    問]
+[問う 問うな 問わ 問わな 問わない 問わなけれ 問わなければ 問わず 問わぬ 問わねば 問わん 問われ 問われる 問わるる 問い 問いた 問いたい 問いま 問います 問いませ 問いまし 問え 問えば 問える 問えな 問えない 問えぬ 問お 問おう 問うた 問うちゃ 問うて 問うと ]
+imj.cpp 1705 imjdic_test_katsuyou() [aru   有]
+[有る 有るな 有ら 有らな 有らない 有らなけれ 有らなければ 有らず 有らぬ 有らねば 有らん 有られ 有られる 有らるる 有り 有りた 有りたい 有りま 有ります 有りませ 有りまし 有れ 有れば 有れる 有れな 有れない 有れぬ 有ろ 有ろう 有った 有っちゃ 有って 有っと ]
+imj.cpp 1705 imjdic_test_katsuyou() [kxuru 見てくる]
+[見てくる 見てくるな ]
+imj.cpp 1705 imjdic_test_katsuyou() [kxure 見てくれ]
+[見てくれた 見てくれま 見てくれます 見てくれませ 見てくれまし 見てくれれば 見てくれる 見てくれな 見てくれない 見てくれぬ 見てくれちゃ 見てくれて 見てくれと ]
+imj.cpp 1705 imjdic_test_katsuyou() [kxi   来]
+[来た 来たい 来ま 来ます 来ませ 来まし 来た 来ちゃ 来て 来と ]
+imj.cpp 1705 imjdic_test_katsuyou() [kxo   来]
+[来な 来ない 来なけれ 来なければ 来ず 来ぬ 来ねば 来ん 来れ 来れる 来られ 来られる 来らるる 来よ 来よう 来い ]
+imj.cpp 1705 imjdic_test_katsuyou() [sxu2  す]
+[する するな すれば ]
+imj.cpp 1705 imjdic_test_katsuyou() [sxi   し]
+[しな しない しなけれ しなければ しず した したい しま します しませ しまし しよ しよう した しちゃ して しと しろ ]
+imj.cpp 1705 imjdic_test_katsuyou() [sxe   せ]
+[せず せぬ せねば せん せられ せられる せよ ]
+imj.cpp 1705 imjdic_test_katsuyou() [KY    美し]
+[美しい 美しく 美しくな 美しくない 美しかっ 美しかった 美しけれ 美しければ 美しかろ 美しかろう 美しき 美しかれ ]
+imj.cpp 1707 imjdic_test_katsuyou() max_katsuyou_len: 323
+imjcuitest.cpp 61 main() start auto conversion mode
+imj.cpp 952 im_get_committed_string() []
+INPUT:[あめにもまけず]
+imjcuitest.cpp 128 convert_auto() pronun: [あめにもまけず]
+imj.cpp 402 im_set_pronun() [あめにもまけず]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [あめにもまけず]
+ANSWER: [雨にも負けず]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [あめにもまけず]:[雨にも負けず]
+imj.cpp 952 im_get_committed_string() [雨にも負けず]
+OUTPUT:[雨にも負けず]
+
+INPUT:[みやざわけんじ]
+imjcuitest.cpp 128 convert_auto() pronun: [みやざわけんじ]
+imj.cpp 402 im_set_pronun() [みやざわけんじ]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [みやざわけんじ]
+ANSWER: [宮沢賢治]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [みやざわけんじ]:[宮沢賢治]
+imj.cpp 952 im_get_committed_string() [宮沢賢治]
+OUTPUT:[宮沢賢治]
+
+INPUT:[｢あめニモマケズ｣]
+imjcuitest.cpp 128 convert_auto() pronun: [｢あめニモマケズ｣]
+imj.cpp 402 im_set_pronun() [｢あめニモマケズ｣]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [｢あめニモマケズ｣]
+ANSWER: [｢雨ニモマケズ｣]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [｢あめニモマケズ｣]:[｢雨ニモマケズ｣]
+imj.cpp 952 im_get_committed_string() [｢雨ニモマケズ｣]
+OUTPUT:[｢雨ニモマケズ｣]
+
+INPUT:[あめにもまけず]
+imjcuitest.cpp 128 convert_auto() pronun: [あめにもまけず]
+imj.cpp 402 im_set_pronun() [あめにもまけず]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [あめにもまけず]
+ANSWER: [雨にも負けず]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [あめにもまけず]:[雨にも負けず]
+imj.cpp 952 im_get_committed_string() [雨にも負けず]
+OUTPUT:[雨にも負けず]
+
+INPUT:[かぜにもまけず]
+imjcuitest.cpp 128 convert_auto() pronun: [かぜにもまけず]
+imj.cpp 402 im_set_pronun() [かぜにもまけず]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [かぜにもまけず]
+ANSWER: [風にも負けず]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [かぜにもまけず]:[風にも負けず]
+imj.cpp 952 im_get_committed_string() [風にも負けず]
+OUTPUT:[風にも負けず]
+
+INPUT:[ゆきにもなつのあつさにもまけぬ]
+imjcuitest.cpp 128 convert_auto() pronun: [ゆきにもなつのあつさにもまけぬ]
+imj.cpp 402 im_set_pronun() [ゆきにもなつのあつさにもまけぬ]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [ゆきにもなつのあつさにもまけぬ]
+ANSWER: [雪にも夏の暑さにも負けぬ]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [ゆきにもなつのあつさにもまけぬ]:[雪にも夏の暑さにも負けぬ]
+imj.cpp 952 im_get_committed_string() [雪にも夏の暑さにも負けぬ]
+OUTPUT:[雪にも夏の暑さにも負けぬ]
+
+INPUT:[じょうぶなからだをもち]
+imjcuitest.cpp 128 convert_auto() pronun: [じょうぶなからだをもち]
+imj.cpp 402 im_set_pronun() [じょうぶなからだをもち]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [じょうぶなからだをもち]
+ANSWER: [丈夫なからだをもち]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [じょうぶなからだをもち]:[丈夫なからだをもち]
+imj.cpp 952 im_get_committed_string() [丈夫なからだをもち]
+OUTPUT:[丈夫なからだをもち]
+
+INPUT:[よくはなく]
+imjcuitest.cpp 128 convert_auto() pronun: [よくはなく]
+imj.cpp 402 im_set_pronun() [よくはなく]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [よくはなく]
+ANSWER: [慾はなく]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [よくはなく]:[慾はなく]
+imj.cpp 952 im_get_committed_string() [慾はなく]
+OUTPUT:[慾はなく]
+
+INPUT:[けっしていからず]
+imjcuitest.cpp 128 convert_auto() pronun: [けっしていからず]
+imj.cpp 402 im_set_pronun() [けっしていからず]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [けっしていからず]
+ANSWER: [決して怒らず]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [けっしていからず]:[決して怒らず]
+imj.cpp 952 im_get_committed_string() [決して怒らず]
+OUTPUT:[決して怒らず]
+
+INPUT:[いつもしずかにわらっている]
+imjcuitest.cpp 128 convert_auto() pronun: [いつもしずかにわらっている]
+imj.cpp 402 im_set_pronun() [いつもしずかにわらっている]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [いつもしずかにわらっている]
+ANSWER: [いつも静かに笑っている]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [いつもしずかにわらっている]:[いつも静かに笑っている]
+imj.cpp 952 im_get_committed_string() [いつも静かに笑っている]
+OUTPUT:[いつも静かに笑っている]
+
+INPUT:[1にちにげんまい4ごうと]
+imjcuitest.cpp 128 convert_auto() pronun: [1にちにげんまい4ごうと]
+imj.cpp 402 im_set_pronun() [1にちにげんまい4ごうと]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [1にちにげんまい4ごうと]
+ANSWER: [一日に玄米四合と]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [1にちにげんまい4ごうと]:[一日に玄米四合と]
+imj.cpp 952 im_get_committed_string() [一日に玄米四合と]
+OUTPUT:[一日に玄米四合と]
+
+INPUT:[みそとすこしのやさいをたべ]
+imjcuitest.cpp 128 convert_auto() pronun: [みそとすこしのやさいをたべ]
+imj.cpp 402 im_set_pronun() [みそとすこしのやさいをたべ]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [みそとすこしのやさいをたべ]
+ANSWER: [味噌と少しの野菜を食べ]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [みそとすこしのやさいをたべ]:[味噌と少しの野菜を食べ]
+imj.cpp 952 im_get_committed_string() [味噌と少しの野菜を食べ]
+OUTPUT:[味噌と少しの野菜を食べ]
+
+INPUT:[あらゆることを]
+imjcuitest.cpp 128 convert_auto() pronun: [あらゆることを]
+imj.cpp 402 im_set_pronun() [あらゆることを]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [あらゆることを]
+ANSWER: [あらゆることを]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [あらゆることを]:[あらゆることを]
+imj.cpp 952 im_get_committed_string() [あらゆることを]
+OUTPUT:[あらゆることを]
+
+INPUT:[じぶんをかんじょうにいれずに]
+imjcuitest.cpp 128 convert_auto() pronun: [じぶんをかんじょうにいれずに]
+imj.cpp 402 im_set_pronun() [じぶんをかんじょうにいれずに]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [じぶんをかんじょうにいれずに]
+ANSWER: [自分を勘定に入れずに]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [じぶんをかんじょうにいれずに]:[自分を勘定に入れずに]
+imj.cpp 952 im_get_committed_string() [自分を勘定に入れずに]
+OUTPUT:[自分を勘定に入れずに]
+
+INPUT:[よくみききしわかり]
+imjcuitest.cpp 128 convert_auto() pronun: [よくみききしわかり]
+imj.cpp 402 im_set_pronun() [よくみききしわかり]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [よくみききしわかり]
+ANSWER: [よく見聞きし分かり]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [よくみききしわかり]:[よく見聞きし分かり]
+imj.cpp 952 im_get_committed_string() [よく見聞きし分かり]
+OUTPUT:[よく見聞きし分かり]
+
+INPUT:[そしてわすれず]
+imjcuitest.cpp 128 convert_auto() pronun: [そしてわすれず]
+imj.cpp 402 im_set_pronun() [そしてわすれず]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [そしてわすれず]
+ANSWER: [そして忘れず]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [そしてわすれず]:[そして忘れず]
+imj.cpp 952 im_get_committed_string() [そして忘れず]
+OUTPUT:[そして忘れず]
+
+INPUT:[のはらのまつのはやしのかげの]
+imjcuitest.cpp 128 convert_auto() pronun: [のはらのまつのはやしのかげの]
+imj.cpp 402 im_set_pronun() [のはらのまつのはやしのかげの]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [のはらのまつのはやしのかげの]
+ANSWER: [野原の松の林の陰の]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [のはらのまつのはやしのかげの]:[野原の松の林の陰の]
+imj.cpp 952 im_get_committed_string() [野原の松の林の陰の]
+OUTPUT:[野原の松の林の陰の]
+
+INPUT:[ちいさなかやぶきのこやにいて]
+imjcuitest.cpp 128 convert_auto() pronun: [ちいさなかやぶきのこやにいて]
+imj.cpp 402 im_set_pronun() [ちいさなかやぶきのこやにいて]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [ちいさなかやぶきのこやにいて]
+ANSWER: [小さな萱ぶきの小屋にいて]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [ちいさなかやぶきのこやにいて]:[小さな萱ぶきの小屋にいて]
+imj.cpp 952 im_get_committed_string() [小さな萱ぶきの小屋にいて]
+OUTPUT:[小さな萱ぶきの小屋にいて]
+
+INPUT:[ひがしにびょうきのこどもあれば]
+imjcuitest.cpp 128 convert_auto() pronun: [ひがしにびょうきのこどもあれば]
+imj.cpp 402 im_set_pronun() [ひがしにびょうきのこどもあれば]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [ひがしにびょうきのこどもあれば]
+ANSWER: [東に病気の子供あれば]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [ひがしにびょうきのこどもあれば]:[東に病気の子供あれば]
+imj.cpp 952 im_get_committed_string() [東に病気の子供あれば]
+OUTPUT:[東に病気の子供あれば]
+
+INPUT:[いってかんびょうしてやり]
+imjcuitest.cpp 128 convert_auto() pronun: [いってかんびょうしてやり]
+imj.cpp 402 im_set_pronun() [いってかんびょうしてやり]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [いってかんびょうしてやり]
+ANSWER: [行って看病してやり]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [いってかんびょうしてやり]:[行って看病してやり]
+imj.cpp 952 im_get_committed_string() [行って看病してやり]
+OUTPUT:[行って看病してやり]
+
+INPUT:[にしにつかれたははあれば]
+imjcuitest.cpp 128 convert_auto() pronun: [にしにつかれたははあれば]
+imj.cpp 402 im_set_pronun() [にしにつかれたははあれば]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [にしにつかれたははあれば]
+ANSWER: [西に疲れた母あれば]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [にしにつかれたははあれば]:[西に疲れた母あれば]
+imj.cpp 952 im_get_committed_string() [西に疲れた母あれば]
+OUTPUT:[西に疲れた母あれば]
+
+INPUT:[いってそのいねのたばをおい]
+imjcuitest.cpp 128 convert_auto() pronun: [いってそのいねのたばをおい]
+imj.cpp 402 im_set_pronun() [いってそのいねのたばをおい]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [いってそのいねのたばをおい]
+ANSWER: [行ってその稲の束を負い]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [いってそのいねのたばをおい]:[行ってその稲の束を負い]
+imj.cpp 952 im_get_committed_string() [行ってその稲の束を負い]
+OUTPUT:[行ってその稲の束を負い]
+
+INPUT:[みなみにしにそうなひとあれば]
+imjcuitest.cpp 128 convert_auto() pronun: [みなみにしにそうなひとあれば]
+imj.cpp 402 im_set_pronun() [みなみにしにそうなひとあれば]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [みなみにしにそうなひとあれば]
+ANSWER: [南に死にそうな人あれば]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [みなみにしにそうなひとあれば]:[南に死にそうな人あれば]
+imj.cpp 952 im_get_committed_string() [南に死にそうな人あれば]
+OUTPUT:[南に死にそうな人あれば]
+
+INPUT:[いってこわがらなくてもいいといい]
+imjcuitest.cpp 128 convert_auto() pronun: [いってこわがらなくてもいいといい]
+imj.cpp 402 im_set_pronun() [いってこわがらなくてもいいといい]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [いってこわがらなくてもいいといい]
+ANSWER: [行ってこわがらなくてもいいといい]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [いってこわがらなくてもいいといい]:[行ってこわがらなくてもいいといい]
+imj.cpp 952 im_get_committed_string() [行ってこわがらなくてもいいといい]
+OUTPUT:[行ってこわがらなくてもいいといい]
+
+INPUT:[きたにけんかやそしょうがあれば]
+imjcuitest.cpp 128 convert_auto() pronun: [きたにけんかやそしょうがあれば]
+imj.cpp 402 im_set_pronun() [きたにけんかやそしょうがあれば]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [きたにけんかやそしょうがあれば]
+ANSWER: [北に喧嘩や訴訟があれば]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [きたにけんかやそしょうがあれば]:[北に喧嘩や訴訟があれば]
+imj.cpp 952 im_get_committed_string() [北に喧嘩や訴訟があれば]
+OUTPUT:[北に喧嘩や訴訟があれば]
+
+INPUT:[つまらないからやめろといい]
+imjcuitest.cpp 128 convert_auto() pronun: [つまらないからやめろといい]
+imj.cpp 402 im_set_pronun() [つまらないからやめろといい]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [つまらないからやめろといい]
+ANSWER: [つまらないからやめろといい]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [つまらないからやめろといい]:[つまらないからやめろといい]
+imj.cpp 952 im_get_committed_string() [つまらないからやめろといい]
+OUTPUT:[つまらないからやめろといい]
+
+INPUT:[ひでりのときはなみだをながし]
+imjcuitest.cpp 128 convert_auto() pronun: [ひでりのときはなみだをながし]
+imj.cpp 402 im_set_pronun() [ひでりのときはなみだをながし]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [ひでりのときはなみだをながし]
+ANSWER: [日照りの時は涙を流し]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [ひでりのときはなみだをながし]:[日照りの時は涙を流し]
+imj.cpp 952 im_get_committed_string() [日照りの時は涙を流し]
+OUTPUT:[日照りの時は涙を流し]
+
+INPUT:[さむさのなつはおろおろあるき]
+imjcuitest.cpp 128 convert_auto() pronun: [さむさのなつはおろおろあるき]
+imj.cpp 402 im_set_pronun() [さむさのなつはおろおろあるき]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [さむさのなつはおろおろあるき]
+ANSWER: [寒さの夏はおろおろ歩き]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [さむさのなつはおろおろあるき]:[寒さの夏はおろおろ歩き]
+imj.cpp 952 im_get_committed_string() [寒さの夏はおろおろ歩き]
+OUTPUT:[寒さの夏はおろおろ歩き]
+
+INPUT:[みんなにでくのぼーとよばれ]
+imjcuitest.cpp 128 convert_auto() pronun: [みんなにでくのぼーとよばれ]
+imj.cpp 402 im_set_pronun() [みんなにでくのぼーとよばれ]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [みんなにでくのぼーとよばれ]
+ANSWER: [みんなにでくのぼーと呼ばれ]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [みんなにでくのぼーとよばれ]:[みんなにでくのぼーと呼ばれ]
+imj.cpp 952 im_get_committed_string() [みんなにでくのぼーと呼ばれ]
+OUTPUT:[みんなにでくのぼーと呼ばれ]
+
+INPUT:[ほめられもせず]
+imjcuitest.cpp 128 convert_auto() pronun: [ほめられもせず]
+imj.cpp 402 im_set_pronun() [ほめられもせず]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [ほめられもせず]
+ANSWER: [褒められもせず]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [ほめられもせず]:[褒められもせず]
+imj.cpp 952 im_get_committed_string() [褒められもせず]
+OUTPUT:[褒められもせず]
+
+INPUT:[くにもされず]
+imjcuitest.cpp 128 convert_auto() pronun: [くにもされず]
+imj.cpp 402 im_set_pronun() [くにもされず]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [くにもされず]
+ANSWER: [苦にもされず]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [くにもされず]:[苦にもされず]
+imj.cpp 952 im_get_committed_string() [苦にもされず]
+OUTPUT:[苦にもされず]
+
+INPUT:[そういうものに]
+imjcuitest.cpp 128 convert_auto() pronun: [そういうものに]
+imj.cpp 402 im_set_pronun() [そういうものに]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [そういうものに]
+ANSWER: [そういうものに]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [そういうものに]:[そういうものに]
+imj.cpp 952 im_get_committed_string() [そういうものに]
+OUTPUT:[そういうものに]
+
+INPUT:[わたしは]
+imjcuitest.cpp 128 convert_auto() pronun: [わたしは]
+imj.cpp 402 im_set_pronun() [わたしは]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [わたしは]
+ANSWER: [わたしは]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [わたしは]:[わたしは]
+imj.cpp 952 im_get_committed_string() [わたしは]
+OUTPUT:[わたしは]
+
+INPUT:[なりたい]
+imjcuitest.cpp 128 convert_auto() pronun: [なりたい]
+imj.cpp 402 im_set_pronun() [なりたい]
+IM_KE_CONVERTimj.cpp 654 im_c_start_conversion() [なりたい]
+ANSWER: [なりたい]
+IM_KE_COMMIT_ONEimj.cpp 941 im_c_commit_string() [なりたい]:[なりたい]
+imj.cpp 952 im_get_committed_string() [なりたい]
+OUTPUT:[なりたい]
+
+imjcuitest.cpp 90 main() auto conversion mode complete
+imjcuitest.cpp 235 dump_key_count() ---------------------------------------------------------
+NO_MATCH count: 0
+TOTAL_KEY count: 68
+IM_KE_SEPARATE_LEFT count: 0
+IM_KE_SELECT_NEXT count: 0
+IM_KE_COMMIT_ONE count: 34
+imjcuitest.cpp 241 dump_key_count() ---------------------------------------------------------
+imj.cpp 148 im_close()
+imj.cpp 1960 imjhst_save() hst-file-path:[./.imj/imj.hst]
+imj.cpp 1980 imjhst_save() input      history entries: 82
+imj.cpp 1980 imjhst_save() conversion history entries: 1162
+imjcuitest.cpp 96 main() exit

@@ -1,0 +1,12 @@
+# besize0 - move to ~/.betrash and make 0 sized entry
+BETRASH=~/.betrash
+mkdir -p $BETRASH/files
+mkdir -p $BETRASH/dirs
+if [ -f "$1" ]; then
+  mv -fv "$1" $BETRASH/files
+else
+  mv -fv "$1" $BETRASH/dirs
+fi
+rm -f "$1"
+touch "$1"
+chmod -v 606 "$1"

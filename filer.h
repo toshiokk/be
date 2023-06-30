@@ -1,0 +1,64 @@
+/**************************************************************************
+ *   filer.h                                                              *
+ *                                                                        *
+ *   Copyright (C) 1999-2003 Chris Allegretta                             *
+ *                                                                        *
+ *   This program is free software; you can redistribute it and/or modify *
+ *   it under the terms of the GNU General Public License as published by *
+ *   the Free Software Foundation; either version 2, or (at your option)  *
+ *   any later version.                                                   *
+ *                                                                        *
+ *   This program is distributed in the hope that it will be useful,      *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of       *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        *
+ *   GNU General Public License for more details.                         *
+ *                                                                        *
+ *   You should have received a copy of the GNU General Public License    *
+ *   along with this program; if not, write to the Free Software          *
+ *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.            *
+ *                                                                        *
+ **************************************************************************/
+
+#ifndef filer_h
+#define filer_h
+
+#ifdef ENABLE_FILER
+
+#define FILER_VIEWS		MAX_APP_PANES
+
+typedef struct {
+	char org_cur_dir[MAX_PATH_LEN+1];	// original current directory
+	int view_idx;						// -1: filer_views not initialized
+	filer_view_t views[FILER_VIEWS];
+} filer_views_t;
+
+extern filer_views_t *cur_filer_views;	// Current Filer ViewS
+extern filer_view_t *cur_fv;	// Current Filer View
+
+#define FILER_DO_NOTHING		0
+#define FILER_UPDATE_SCREEN		1
+#define FILER_REFRESH_AUTO		2	// periodic file list update
+#define FILER_REFRESH_FORCED	3	// file list update needed
+
+#define FILER_QUIT				5
+#define FILER_ABORT				6
+#define FILER_LOADED_FILE		7
+#define FILER_ENTERED_FILE		8	// file, dir
+#define FILER_ENTERED_FILE_PATH	9	// /home/user/.bashrc
+#define FILER_ENTERED_DIR_PATH	10	// /home/user/bin
+extern int filer_do_next;
+
+void init_filer_views(filer_views_t *fvs, const char *cur_dir);
+void set_cur_filer_view(void);
+filer_view_t *get_other_filer_view(void);
+
+int call_filer(int push_win, int list_mode,
+ char *dir, char *filter, char *file_path, int buf_len);
+
+int update_screen_filer(int title_bar, int status_bar, int refresh);
+
+#endif // ENABLE_FILER
+
+#endif // filer_h
+
+// End of filer.h

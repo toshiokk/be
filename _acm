@@ -1,0 +1,6 @@
+# Run autotools, configure and make all
+{
+  ./_autotools 2>&1
+  ./configure 2>&1
+  ./__ma 2>&1
+} | tee -a _build.log

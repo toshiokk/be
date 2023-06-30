@@ -1,0 +1,12 @@
+/^.*$/{
+s/\bcreate_buffer\b/buffer_create/g
+s/\binit_buffer\b/buffer_init/g
+s/\bset_buffer_file_path\b/buffer_set_file_path/g
+s/\bsplice_buffer\b/buffer_splice/g
+s/\bconnect_buffer\b/buffer_connect/g
+s/\bunlink__free_buffer\b/buffer_unlink__free/g
+s/\bunlink_buffer\b/buffer_unlink/g
+s/\bfree_buffer\b/buffer_free/g
+s/\bguess_buffer_tab_size\b/buffer_guess_tab_size/g
+s/\bcount_buffers\b/buffer_count_buffers/g
+}

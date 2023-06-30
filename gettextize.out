@@ -1,0 +1,60 @@
+Symlinking file ABOUT-NLS
+Symlinking file config.rpath
+Symlinking file mkinstalldirs
+Not copying intl/ directory.
+Symlinking file po/Makefile.in.in
+Symlinking file po/Makevars.template
+Symlinking file po/Rules-quot
+Symlinking file po/boldquot.sed
+Symlinking file po/en@boldquot.header
+Symlinking file po/en@quot.header
+Symlinking file po/insert-header.sin
+Symlinking file po/quot.sed
+Symlinking file po/remove-potcdate.sin
+Symlinking file m4/codeset.m4
+Symlinking file m4/gettext.m4
+Symlinking file m4/glibc2.m4
+Symlinking file m4/glibc21.m4
+Symlinking file m4/iconv.m4
+Symlinking file m4/intdiv0.m4
+Symlinking file m4/intmax.m4
+Symlinking file m4/inttypes.m4
+Symlinking file m4/inttypes_h.m4
+Symlinking file m4/inttypes-pri.m4
+Symlinking file m4/isc-posix.m4
+Symlinking file m4/lcmessage.m4
+Symlinking file m4/lib-ld.m4
+Symlinking file m4/lib-link.m4
+Symlinking file m4/lib-prefix.m4
+Symlinking file m4/longdouble.m4
+Symlinking file m4/longlong.m4
+Symlinking file m4/nls.m4
+Symlinking file m4/po.m4
+Symlinking file m4/printf-posix.m4
+Symlinking file m4/progtest.m4
+Symlinking file m4/signed.m4
+Symlinking file m4/size_max.m4
+Symlinking file m4/stdint_h.m4
+Symlinking file m4/uintmax_t.m4
+Symlinking file m4/ulonglong.m4
+Symlinking file m4/wchar_t.m4
+Symlinking file m4/wint_t.m4
+Symlinking file m4/xsize.m4
+
+Please use AM_GNU_GETTEXT([external]) in order to cause autoconfiguration
+to look for an external libintl.
+
+Please update po/Makevars so that it defines all the variables mentioned
+in po/Makevars.template.
+You can then remove po/Makevars.template.
+
+Please run 'aclocal -I m4' to regenerate the aclocal.m4 file.
+You need aclocal from GNU automake 1.5 (or newer) to do this.
+Then run 'autoconf' to regenerate the configure file.
+
+You might also want to copy the convenience header file gettext.h
+from the /usr/share/gettext directory into your package.
+It is a wrapper around <libintl.h> that implements the configure --disable-nls
+option.
+
+Press Return to acknowledge the previous four paragraphs.

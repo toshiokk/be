@@ -1,0 +1,10 @@
+rm diff.txt
+for file in *.[ch]; do
+  echo processing $file
+  cp -av $file $file~~
+  sed -f _sed.scr $file >$file~
+  if ! diff $file $file~; then
+    cp -av $file~ $file
+  fi
+done >_diff.txt
+less <_diff.txt
