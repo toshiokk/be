@@ -1,0 +1,280 @@
+#### BE build.log ####
+## ./configure ##
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+checking for a thread-safe mkdir -p... /usr/bin/mkdir -p
+checking for gawk... no
+checking for mawk... mawk
+checking whether make sets $(MAKE)... yes
+checking whether make supports nested variables... yes
+checking for gcc... gcc
+checking whether the C compiler works... yes
+checking for C compiler default output file name... a.out
+checking for suffix of executables... 
+checking whether we are cross compiling... no
+checking for suffix of object files... o
+checking whether we are using the GNU C compiler... yes
+checking whether gcc accepts -g... yes
+checking for gcc option to accept ISO C89... none needed
+checking whether gcc understands -c and -o together... yes
+checking whether make supports the include directive... yes (GNU style)
+checking dependency style of gcc... none
+checking how to run the C preprocessor... gcc -E
+checking for grep that handles long lines and -e... /usr/bin/grep
+checking for egrep... /usr/bin/grep -E
+checking for ANSI C header files... yes
+checking for sys/types.h... yes
+checking for sys/stat.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for memory.h... yes
+checking for strings.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for unistd.h... yes
+checking fcntl.h usability... yes
+checking fcntl.h presence... yes
+checking for fcntl.h... yes
+checking libintl.h usability... yes
+checking libintl.h presence... yes
+checking for libintl.h... yes
+checking limits.h usability... yes
+checking limits.h presence... yes
+checking for limits.h... yes
+checking locale.h usability... yes
+checking locale.h presence... yes
+checking for locale.h... yes
+checking for stdlib.h... (cached) yes
+checking for string.h... (cached) yes
+checking sys/ioctl.h usability... yes
+checking sys/ioctl.h presence... yes
+checking for sys/ioctl.h... yes
+checking sys/param.h usability... yes
+checking sys/param.h presence... yes
+checking for sys/param.h... yes
+checking sys/time.h usability... yes
+checking sys/time.h presence... yes
+checking for sys/time.h... yes
+checking termio.h usability... yes
+checking termio.h presence... yes
+checking for termio.h... yes
+checking termios.h usability... yes
+checking termios.h presence... yes
+checking for termios.h... yes
+checking for unistd.h... (cached) yes
+checking utime.h usability... yes
+checking utime.h presence... yes
+checking for utime.h... yes
+checking wchar.h usability... yes
+checking wchar.h presence... yes
+checking for wchar.h... yes
+checking for uid_t in sys/types.h... yes
+checking for pid_t... yes
+checking for size_t... yes
+checking for struct stat.st_rdev... yes
+checking vfork.h usability... no
+checking vfork.h presence... no
+checking for vfork.h... no
+checking for fork... yes
+checking for vfork... yes
+checking for working fork... yes
+checking for working vfork... (cached) yes
+checking whether lstat correctly handles trailing slash... yes
+checking for stdlib.h... (cached) yes
+checking for GNU libc compatible malloc... yes
+checking for stdlib.h... (cached) yes
+checking for GNU libc compatible realloc... yes
+checking for dup2... yes
+checking for endgrent... yes
+checking for endpwent... yes
+checking for getcwd... yes
+checking for gettimeofday... yes
+checking for mblen... yes
+checking for memmove... yes
+checking for memset... yes
+checking for mkdir... yes
+checking for realpath... yes
+checking for regcomp... yes
+checking for setenv... yes
+checking for setlocale... yes
+checking for strnlen... yes
+checking for strcasecmp... yes
+checking for strchr... yes
+checking for strerror... yes
+checking for strncasecmp... yes
+checking for strrchr... yes
+checking for strstr... yes
+checking for strtol... yes
+checking for wcwidth... yes
+Running manually described check -------------------------------------------
+checking regex.h usability... yes
+checking regex.h presence... yes
+checking for regex.h... yes
+checking curses.h usability... no
+checking curses.h presence... no
+checking for curses.h... no
+checking ncurses.h usability... no
+checking ncurses.h presence... no
+checking for ncurses.h... no
+checking ncurses/curses.h usability... no
+checking ncurses/curses.h presence... no
+checking for ncurses/curses.h... no
+checking ncursesw/curses.h usability... no
+checking ncursesw/curses.h presence... no
+checking for ncursesw/curses.h... no
+checking pcreposix.h usability... no
+checking pcreposix.h presence... no
+checking for pcreposix.h... no
+checking pcre/pcreposix.h usability... no
+checking pcre/pcreposix.h presence... no
+checking for pcre/pcreposix.h... no
+checking return type of signal handlers... void
+checking for getopt_long... yes
+enable_filer=yes
+enable_history=yes
+enable_undo=yes
+enable_nls=yes
+enable_utf8=yes
+enable_syntax=yes
+enable_rc=yes
+enable_regex=yes
+enable_ncurses=no
+enable_pcre=no
+enable_nkf=yes
+enable_busybox=no
+enable_help=yes
+enable_debug=no
+checking for mblen... (cached) yes
+checking usability of NKF filter ...... yes
+enable_filer=yes
+enable_history=yes
+enable_undo=yes
+enable_nls=yes
+enable_utf8=yes
+enable_syntax=yes
+enable_rc=yes
+enable_regex=yes
+enable_help=yes
+enable_debug=no
+enable_ncurses=no
+enable_pcre=no
+enable_nkf=yes
+enable_busybox=no
+have_ncurses=
+have_ncursesw=
+have_mblen=1
+use_ncurses=0
+use_ncursesw=0
+library option: LIBS=
+checking that generated files are newer than configure... done
+configure: creating ./config.status
+config.status: creating Makefile
+config.status: creating config.h
+config.status: executing depfiles commands
+## make clean ##
+test -z "be" || rm -f be
+rm -f *.o
+## make ##
+make  all-am
+make[1]: ディレクトリ '/home/user/tools/be/src' に入ります
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:35:2: warning: #warning "Terminal control via own terminal interface library (termif_...)" [-Wcpp]
+   35 | #warning "Terminal control via own terminal interface library (termif_...)"
+      |  ^~~~~~~
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor2.o editor2.c
+editor2.c:478:9: warning: "/*" within comment [-Wcomment]
+  478 |         /* comment (Compiler outputs warning error to this NESTED comment. DO NOT care !)
+      |          
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editormove.o editormove.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editormove2.o editormove2.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorgoto.o editorgoto.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorcut.o editorcut.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorcut2.o editorcut2.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorlist.o editorlist.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorkeys.o editorkeys.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer2.o filer2.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o history.o history.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o keymacro.o keymacro.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o keys.o keys.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o rcfile.o rcfile.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o regexp.o regexp.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o search.o search.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o sig.o sig.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o termif.o termif.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o cursesif.o cursesif.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o tio.o tio.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editor2.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o editorlist.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filer2.o filercmd.o filerrun.o filerkeys.o history.o keymacro.o keys.o rcfile.o regexp.o search.o sig.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o winin.o winout.o  
+make[1]: ディレクトリ '/home/user/tools/be/src' から出ます
+## sudo make install ##
+make and install
+make
+renamed '__error~~~' -> '__error~~~~'
+renamed '__error~~' -> '__error~~~'
+renamed '__error~' -> '__error~~'
+'__error' -> '__error~'
+make  all-am
+make[1]: Entering directory '/home/user/tools/be/src'
+make[1]: Leaving directory '/home/user/tools/be/src'
+-rwxrwxr-x 1 user user 273912 Jul  1 00:11 be
+-rwxrwxr-x 1 user user 273912  7月  1 00:11 be
+To install this, hit Enter: [sudo] user のパスワード: root
+make
+./__m: 3: mk_backup_file: not found
+make[1]: Entering directory '/home/user/tools/be/src'
+ /usr/bin/mkdir -p '/usr/local/bin'
+  /usr/bin/install -c be '/usr/local/bin'
+make[1]: Nothing to be done for 'install-data-am'.
+make[1]: Leaving directory '/home/user/tools/be/src'
+-rwxrwxr-x 1 user user 273912 Jul  1 00:11 be
+'scripts/becmd1' -> '/home/user/bin/becmd1'
+'scripts/becmd2' -> '/home/user/bin/becmd2'
+'scripts/becmd3' -> '/home/user/bin/becmd3'
+'scripts/becmd4' -> '/home/user/bin/becmd4'
+'scripts/becmdi' -> '/home/user/bin/becmdi'
+'scripts/becmdo' -> '/home/user/bin/becmdo'
+'scripts/becmdu' -> '/home/user/bin/becmdu'
+'scripts/becmdy' -> '/home/user/bin/becmdy'
+'scripts/beedit' -> '/home/user/bin/beedit'
+'scripts/beexit' -> '/home/user/bin/beexit'
+'scripts/befiler' -> '/home/user/bin/befiler'
+'scripts/befiler.0' -> '/home/user/bin/befiler.0'
+'scripts/bemarkdel' -> '/home/user/bin/bemarkdel'
+'scripts/bepager' -> '/home/user/bin/bepager'
+'scripts/besize0' -> '/home/user/bin/besize0'
+'scripts/betail' -> '/home/user/bin/betail'
+'scripts/betrash' -> '/home/user/bin/betrash'
+'berc' -> '.berc'
+'emacs.berc' -> '.emacs.berc'
+'wordstar.berc' -> '.wordstar.berc'
+'berc' -> '/home/user/.berc'
+'emacs.berc' -> '/home/user/.emacs.berc'
+'wordstar.berc' -> '/home/user/.wordstar.berc'
+Compiling translation file ...
+./_xi18n: 3: xgettext: not found
+./_xi18n: 7: msgmerge: not found
+./_xi18n: 8: msgfmt: not found
+root
+'ja.gmo' -> '/usr/share/locale/ja/LC_MESSAGES/be.mo'
+#### End of build.log ####

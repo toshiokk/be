@@ -32,3 +32,24 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer2.o filer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o history.o history.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o keymacro.o keymacro.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o keys.o keys.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o rcfile.o rcfile.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o regexp.o regexp.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o search.o search.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o sig.o sig.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o termif.o termif.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o cursesif.o cursesif.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o tio.o tio.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editor2.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o editorlist.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filer2.o filercmd.o filerrun.o filerkeys.o history.o keymacro.o keys.o rcfile.o regexp.o search.o sig.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o winin.o winout.o  
+make[1]: Leaving directory '/home/user/tools/be/src'
