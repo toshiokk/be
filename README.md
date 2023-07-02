@@ -197,14 +197,6 @@ Execute commands.
 
 PCR
 
-## Overview
-
-## Web Page
-
-## Mailing List and Bug Reports
-
-## Current Status
-
 ## Default Editor key bindings:
 
 | Key | Function |
@@ -224,14 +216,14 @@ PCR
 
 ## rc file:
 
-| file path | contents |
+| File path | contents |
 | ------------------- | -------- |
 | $PWD/.berc          | 1st candidate of rc-file. |
 | $HOME/.berc         | 2nd candidate of rc-file. |
 
 ## Application direcoty:
 
-| directory path | contents |
+| Directory path | contents |
 | -------------------- | --------------------|
 | $HOME/.be            | 5 history files are saved here. |
 | $HOME/.betrash/dirs  | Directories trashed by Filer are moved here. |
@@ -261,5 +253,13 @@ Qt project file (Ex. my_proj.pro) can be used as BE project file.
 ## The largest file editable:
 
 BE editor loads files on memory.
-The size of the largest editable file is limited by the memory available.
-The maximum file size loadable is half of the free memory.
+The size of the largest editable file depends on the memory available.
+The maximum file size loadable is half the memory available.
+
+## Overview
+
+## Web Page
+
+## Mailing List and Bug Reports
+
+## Current Status
