@@ -259,9 +259,12 @@ mflf_d_printf("input%ckey:0x%04x================================================
 		case K_END:
 			do_bottom_of_list();
 			break;
-///		case K_ESC:
-///			filer_do_next = FILER_ABORT;
-///			break;
+///
+		case K_ESC:
+///
+			filer_do_next = FILER_ABORT;
+///
+			break;
 		default:
 			filer_do_next = FILER_DO_NOTHING;
 			if ((func_key_table = get_func_key_table_from_key(filer_func_key_table,
