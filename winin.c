@@ -53,7 +53,7 @@ int input_string_pos(const char *default__, char *input_buf, int curs_byte_idx,
 	return ret;
 }
 
-// return -1: recursive called
+// return -1: recursively called
 // return 0 : cancelled
 // return 1 : input normally
 PRIVATE int input_str_pos_(const char *default__, char *input_buf, int curs_byte_idx,
