@@ -509,6 +509,8 @@ void test_get_full_path(void)
 	test_get_full_path_("aaa/../bbb");
 	test_get_full_path_("./aaa/../bbb");
 	test_get_full_path_("../aaa/../bbb");
+
+	test_get_full_path_(" abc ");	// filename includes space in head or tail
 }
 PRIVATE void test_get_full_path_(const char *path)
 {

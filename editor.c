@@ -186,7 +186,7 @@ _FLF_
 			continue;
 #endif // ENABLE_FILER
 		// CURDIR: changed in editor
-		if (load_file_in_string(file_name, TUL0, OOE0, WOE1, recursive) <= 0) {
+		if (load_file_name_upp_low(file_name, TUL0, OOE0, WOE1, recursive) <= 0) {
 			tio_beep();
 		}
 		break;
@@ -210,7 +210,7 @@ int do_open_new_file(void)
 	}
 	clear_files_loaded();
 	// CURDIR: changed in editor
-	if (load_file_in_string(file_name, TUL0, OOE1, WOE0, RECURSIVE0) <= 0) {
+	if (load_file_name_upp_low(file_name, TUL0, OOE1, WOE0, RECURSIVE0) <= 0) {
 		tio_beep();
 		return 0;
 	}

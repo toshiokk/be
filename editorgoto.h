@@ -39,8 +39,11 @@ int do_return_to_prev_file_pos(void);
 int do_switch_editor_pane(void);
 void do_switch_editor_pane_(void);
 
-int load_file_in_string(const char *string, int try_upp_low,
- int open_on_err, int msg_on_err, int recursive);
+int load_file_in_string(const char *string,
+ int try_upp_low, int open_on_err, int msg_on_err, int recursive);
+
+int load_file_name_upp_low(const char *file_name,
+ int try_upp_low, int open_on_err, int msg_on_err, int recursive);
 
 int load_file_name(const char *file_name, int open_on_err, int msg_on_err, int recursive);
 

@@ -207,8 +207,8 @@ int load_files_in_cur_buf(void)
 //  <location filename="fileio.h" line="10"/>	// Qt-lupdate
 //  diff fileio.h fileio.h~
 //  SOURCES += fileio.h
-PRIVATE int load_files_in_string(const char *string, int files_to_load, int try_upp_low,
- int open_on_err, int msg_on_err, int recursive)
+PRIVATE int load_files_in_string(const char *string,
+ int files_to_load, int try_upp_low, int open_on_err, int msg_on_err, int recursive)
 {
 	int field_idx;
 	int files_loaded = 0;
@@ -232,8 +232,8 @@ flf_d_printf("[%s]\n", string);
 ////flf_d_printf("files_loaded: %d\n", files_loaded);
 	return files_loaded;
 }
-int load_file_in_string(const char *string, int try_upp_low,
- int open_on_err, int msg_on_err, int recursive)
+int load_file_in_string(const char *string,
+ int try_upp_low, int open_on_err, int msg_on_err, int recursive)
 {
 	char file_name[MAX_PATH_LEN+1];
 	int files;
@@ -245,27 +245,32 @@ flf_d_printf("string:[%s]\n", string);
 	}
 ////
 flf_d_printf("file_name:[%s]\n", file_name);
-	// try to open specified file name (FileName.Ext)
-	if ((files = load_file_name(file_name, open_on_err, msg_on_err, recursive)) > 0)
-		goto load_file_in_string_goto;
-	if (try_upp_low) {
-		// try to open in upper case file name (FILENAME.EXT)
-		strupper(file_name);
-		if ((files = load_file_name(file_name, open_on_err, msg_on_err, recursive)) > 0)
-			goto load_file_in_string_goto;
-		// try to open in lower case file name (filename.ext)
-		strlower(file_name);
-		if ((files = load_file_name(file_name, open_on_err, msg_on_err, recursive)) > 0)
-			goto load_file_in_string_goto;
-	}
-////
-flf_d_printf("not-loaded:[%s]\n", file_name);
-	return 0;
-
-load_file_in_string_goto:;
-	goto_str_line_col_in_cur_buf(string);
+	files = load_file_name_upp_low(file_name, try_upp_low, open_on_err, msg_on_err, recursive);
 ////
 flf_d_printf("loaded:[%s]\n", file_name);
+	return files;
+}
+int load_file_name_upp_low(const char *file_name,
+ int try_upp_low, int open_on_err, int msg_on_err, int recursive)
+{
+	char file_name_buf[MAX_PATH_LEN+1];
+	int files;
+
+	// try to open specified file name (FileName.Ext)
+	if ((files = load_file_name(file_name, open_on_err, msg_on_err, recursive)) > 0)
+		goto load_file_name_upp_low_goto;
+	if (try_upp_low) {
+		strlcpy__(file_name_buf, file_name, MAX_PATH_LEN);
+		// try to open in upper case file name (FILENAME.EXT)
+		strupper(file_name_buf);
+		if ((files = load_file_name(file_name_buf, open_on_err, msg_on_err, recursive)) > 0)
+			goto load_file_name_upp_low_goto;
+		// try to open in lower case file name (filename.ext)
+		strlower(file_name_buf);
+		if ((files = load_file_name(file_name_buf, open_on_err, msg_on_err, recursive)) > 0)
+			goto load_file_name_upp_low_goto;
+	}
+load_file_name_upp_low_goto:;
 	return files;
 }
 // Open file. If it is a project file, open file(s) described in it.
@@ -478,15 +483,6 @@ int goto_line_col_in_cur_buf(int line_num, int col_num)
 #endif // CURSOR_POS_COLUMN
 	return 2;
 }
-PRIVATE int get_file_line_col_from_str(const char *ptr, char *file_path,
- int *line_num_, int *col_num_);
-const char *get_file_line_col_from_str_null(const char *str, char *file_path,
- int *line_num, int *col_num)
-{
-	str = str ? str : memorized_file_pos_str;
-	get_file_line_col_from_str(str, file_path, line_num, col_num);
-	return file_path;
-}
 //-----------------------------------------------------------------------------
 char *mk_cur_file_pos_str_static(void)
 {
@@ -523,6 +519,15 @@ char *mk_file_pos_str(char *buffer, char *file_path, int line_num, int col_num)
 	return buffer;
 }
 //-----------------------------------------------------------------------------
+PRIVATE int get_file_line_col_from_str(const char *ptr, char *file_path,
+ int *line_num_, int *col_num_);
+const char *get_file_line_col_from_str_null(const char *str, char *file_path,
+ int *line_num, int *col_num)
+{
+	str = str ? str : memorized_file_pos_str;
+	get_file_line_col_from_str(str, file_path, line_num, col_num);
+	return file_path;
+}
 // /home/user/tools/be/src/editorgoto.c:400:10
 PRIVATE int get_file_line_col_from_str(const char *str, char *file_path,
  int *line_num_, int *col_num_)

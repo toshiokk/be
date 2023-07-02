@@ -1,5 +1,0 @@
-make[1]: Entering directory '/home/user/tools/be/src'
- /usr/bin/mkdir -p '/usr/local/bin'
-  /usr/bin/install -c be '/usr/local/bin'
-make[1]: Nothing to be done for 'install-data-am'.
-make[1]: Leaving directory '/home/user/tools/be/src'

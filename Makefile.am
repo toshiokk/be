@@ -5,6 +5,8 @@ AUTOMAKE_OPTIONS = gnu no-dependencies
 DEFS= -DSYSCONFDIR=\"$(sysconfdir)\"
 AM_CFLAGS = -Wall -D_FILE_OFFSET_BITS=64
 
+BUILD_DIR = ./.build
+
 bin_PROGRAMS = be
 be_SOURCES = \
 	main.c \

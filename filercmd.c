@@ -105,7 +105,7 @@ int do_edit_new_file(void)
 		return 0;
 	}
 	clear_files_loaded();
-	if (load_file_in_string(file_name, TUL0, OOE1, WOE0, RECURSIVE0) <= 0) {
+	if (load_file_name_upp_low(file_name, TUL0, OOE1, WOE0, RECURSIVE0) <= 0) {
 		tio_beep();
 		return 0;
 	}
@@ -684,7 +684,7 @@ PRIVATE int do_edit_file_(int recursive)
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if (cur_fv->file_list[file_idx].selected
 		 && S_ISREG(cur_fv->file_list[file_idx].st.st_mode)) {
-			if (load_file_in_string(cur_fv->file_list[file_idx].file_name,
+			if (load_file_name_upp_low(cur_fv->file_list[file_idx].file_name,
 			 TUL0, OOE0, WOE1, recursive) <= 0) {
 				tio_beep();
 			}
