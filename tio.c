@@ -452,7 +452,7 @@ int differ_fgc_to_bgc(int bgc, int fgc)
 		case CL_WH:		fgc = CL_GY;	break;
 		}
 	}
-#if 1 // Avoid similar color
+#if 1 // Avoid similar fgc/bgc
 	if ((bgc == CL_CY) && (fgc == CL_GR)) {
 		fgc = CL_LGR;
 	}

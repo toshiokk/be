@@ -236,18 +236,22 @@ int load_file_in_string(const char *string,
  int try_upp_low, int open_on_err, int msg_on_err, int recursive)
 {
 	char file_name[MAX_PATH_LEN+1];
+	int line_num, col_num;
 	int files;
 
 ////
 flf_d_printf("string:[%s]\n", string);
-	if (get_file_line_col_from_str_null(string, file_name, NULL, NULL) == 0) {
+	if (get_file_line_col_from_str_null(string, file_name, &line_num, &col_num) == 0) {
 		return 0;
 	}
 ////
 flf_d_printf("file_name:[%s]\n", file_name);
-	files = load_file_name_upp_low(file_name, try_upp_low, open_on_err, msg_on_err, recursive);
+	if ((files = load_file_name_upp_low(file_name,
+	 try_upp_low, open_on_err, msg_on_err, recursive)) > 0) {
 ////
 flf_d_printf("loaded:[%s]\n", file_name);
+		goto_line_col_in_cur_buf(line_num, col_num);
+	}
 	return files;
 }
 int load_file_name_upp_low(const char *file_name,
@@ -519,7 +523,7 @@ char *mk_file_pos_str(char *buffer, char *file_path, int line_num, int col_num)
 	return buffer;
 }
 //-----------------------------------------------------------------------------
-PRIVATE int get_file_line_col_from_str(const char *ptr, char *file_path,
+PRIVATE int get_file_line_col_from_str(const char *str, char *file_path,
  int *line_num_, int *col_num_);
 const char *get_file_line_col_from_str_null(const char *str, char *file_path,
  int *line_num, int *col_num)

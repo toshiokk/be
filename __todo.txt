@@ -1,5 +1,6 @@
 [x]can not open file with file name including ' ' in head or tail.
-[x]#bot_anchor
+ (Ex. " filename.exe" or "filename.ext ")
+ [x]#bot_anchor
 []avoid cur_line
 
 Editor 2 pane mode
