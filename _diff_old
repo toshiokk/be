@@ -1,8 +1,10 @@
-cat <<EOF >_proc_one
-  echo \$1 ======================= >>_diff.txt
-  echo "kdiff3 ../old/src/\$1 \$1 #========================" >>_diff.txt
-  diff ../old/src/\$1 \$1 >>_diff.txt
-EOF
+proc_one()
+{
+OLD_DIR=../old/src/
+  echo "kdiff3 ${OLD_DIR}/$1 $1 #========================"
+  diff ${OLD_DIR}$1 $1
+}
 
-rm _diff.txt
-sh _proc_all
+for fn in *.h *.c *.cpp; do
+  proc_one $fn
+done | tee _diff.txt

@@ -1,11 +1,14 @@
-cat <<EOF >_proc_one
-  echo "kdiff3 ../old/src/\$1 \$1 #========================" >>_sdiff.txt
-  diff ../old/src/\$1 \$1 >/dev/null
-  if [ "\$?" != 0 ]; then
-    sdiff-ln 189 ../old/src/\$1 \$1 >>_sdiff.txt
+proc_one()
+{
+OLD_DIR=../old/src/
+  diff ${OLD_DIR}/$1 $1 >/dev/null
+  if [ "$?" != 0 ]; then
+    echo "(  \|  |  <  |  >  )"
+    echo "kdiff3 ${OLD_DIR}/$1 $1 #========================"
+    sdiff-ln 189 ${OLD_DIR}/$1 $1
   fi
-EOF
+}
 
-rm -f _sdiff.txt
-echo "(  \|  |  <  |  >  )" >_sdiff.txt
-sh _proc_all
+for fn in *.h *.c *.cpp; do
+  proc_one $fn
+done | tee _diff.txt

@@ -1,7 +1,7 @@
 # BE - Small console based Text Editor with Filer.
 
 ## Overview
-## What is BE editor:
+## What is BE editor
 - Simple console based (CUI) text editor.
 - Based on and forked from GNU NANO editor 1.2.2 (2003).
 - Filer (File Manager).
@@ -43,8 +43,8 @@ Filer selecting from execution history
 Splash screen (en)  
 ![](demo/181115_211310.png)
 
-## Features:
-### Text editor.
+## Features
+### Text editor
 - Multiple buffer. (load multiple files)
 - Two pane mode support. (edit different files in each pane)
 - Syntax highlighting. (C, C++, asm, ruby, verilog-hdl, vhdl, html)
@@ -71,7 +71,7 @@ Splash screen (en)
 - Tab, EOL(End of Line), Wide-space notation.
 - Pull down menu.
 
-### Filer.
+### Filer
 - Two pane mode support. (good to copy and move files between directories.)
 - Similar operation to Japanese DOS based filer "FD" and "FILMTN".
 - Copy, delete, move and rename files.
@@ -86,43 +86,49 @@ Splash screen (en)
 
 ## Usage
 
-### Filer.
+### Filer
 
-`$ be [Enter]`  Start Filer.  
+~~~
+$ be [Enter]
+~~~
+Start Filer.  
 Select file by UP and DOWN key and hit 'e' to edit the file.
-'d' to detele, 'm' to move and 'c' to copy the file.  
-'h' to change current working directory.  
+'d' to detele, 'm' to move and 'c' to copy the file.
+'h' to change current working directory.
 'q' to quit filer.
 
-### Text editor.
+### Text editor
 
-`$ be filename1 filename2 [Enter]`  Start Editor loading files.  
+~~~
+$ be filename1 filename2 [Enter]
+~~~
+Start Editor loading files.  
 You can start editor by passing file(s).
 ^q to quit editor saving modified text.
 
-### Command line option:
+### Command line option
 
-    Option               Long option          Meaning
-    -C RCFILE            --rcfile=RCFILE      Read RCFILE
-    -c                   --norcfile           Don't look at berc files
-    -h                   --nohistory          Don't use history file
-    -t NUM               --tabsize=NUM        Set tab-size to NUM[1-15]
-    -r                   --view               View mode(Read only mode)
-    -n                   --nonkf              Don't use nkf
-    -ea                  --encoding=a         ASCII character encoding
-    -ej                  --encoding=j         JIS character encoding
-    -ee                  --encoding=e         EUCJP character encoding
-    -es                  --encoding=s         SJIS character encoding
-    -eu                  --encoding=u         UTF8 character encoding
-    -d                   --debug              Output debug log to stderr
-    -v                   --version            Show version information
-    -?                   --help               Show this message
-    +NUM                                      Start at line number NUM
+    Option       Long option          Meaning
+    -C RCFILE    --rcfile=RCFILE      Read RCFILE
+    -c           --norcfile           Don't look at berc files
+    -h           --nohistory          Don't use history file
+    -t NUM       --tabsize=NUM        Set tab-size to NUM[1-15]
+    -r           --view               View mode(Read only mode)
+    -n           --nonkf              Don't use nkf
+    -ea          --encoding=a         ASCII character encoding
+    -ej          --encoding=j         JIS character encoding
+    -ee          --encoding=e         EUCJP character encoding
+    -es          --encoding=s         SJIS character encoding
+    -eu          --encoding=u         UTF8 character encoding
+    -d           --debug              Output debug log to stderr
+    -v           --version            Show version information
+    -?           --help               Show this message
+    +NUM                              Start at line number NUM
 
 ## Naming
 
-In Japanese, BE ("微", pronouced as "bi") has a meaning "Micro".
-So BE editor is 微 editor having a meaning of Small-editor.
+In Japanese, BE ("微", pronouced as "bi") means "Micro".
+So BE editor is 微 editor, is Small-editor.
 
 ## VS.(Feature comparison)
 | name　　　　　　　　　 | Nano editor | Jed editor | BE editor　 |
@@ -157,8 +163,9 @@ So BE editor is 微 editor having a meaning of Small-editor.
 ## Requirement
 ### Build and execution requirements:
 - Linux OS
+- nkf (for Japanese character encoding converter between EUCJP, SJIS and UTF8)
+
 - ncurses/ncursesw
-- nkf (for Japanese character encoding conversion between EUCJP, SJIS and UTF8)
 - PCRE (Perl Compatible Regular Expression library)
 
 ## Build and execution environments tested:
@@ -197,7 +204,7 @@ Execute commands.
 
 PCR
 
-## Default Editor key bindings:
+## Default Editor key bindings
 
 | Key | Function |
 | --- | -------- |
@@ -214,7 +221,7 @@ PCR
 | ^J | Cut to line head |
 | ^L | Cut to line tail |
 
-## rc file:
+## rc file
 
 | File path | contents |
 | ------------------- | -------- |
@@ -229,18 +236,18 @@ PCR
 | $HOME/.betrash/dirs  | Directories trashed by Filer are moved here. |
 | $HOME/.betrash/files | Files trashed by Filer are moved here. |
 
-## Project file:
+## Project file
 
 A project file is the file in which all of the files attending to the project are listed.
 Files having extension .bep or .pro are recognized as a project file by BE editor.
 
-### How to generate project file:
+### How to generate project file
 
 You can easily make project file.
 
     $ ls *.h *.c *.cpp >my_proj.bep
 
-### How to use Project file:
+### How to use Project file
 
 You can load all of the files in your project by passing project file to BE editor like:
 
@@ -250,7 +257,7 @@ Qt project file (Ex. my_proj.pro) can be used as BE project file.
 
     $ be my_proj.pro
 
-## The largest file editable:
+## The largest file editable
 
 BE editor loads files on memory.
 The size of the largest editable file depends on the memory available.
