@@ -131,7 +131,7 @@ In Japanese, BE ("微", pronouced as "bi") means "Micro".
 So BE editor is 微 editor, is Small-editor.
 
 ## VS.(Feature comparison)
-| name　　　　　　　　　 | Nano editor | Jed editor | BE editor　 |
+| Name                   | Nano editor | Jed editor | BE editor |
 | ----                   | ---- | ---- | ---- |
 | Multi-buffer           | Yes | Yes | Yes |
 | File browser           | Yes | ??  | Yes |
@@ -194,8 +194,6 @@ Execute commands.
     $ make
     $ sudo make install
 
-## Contribution
-
 ## Licence
 
 [GPL](COPYING)
@@ -208,25 +206,31 @@ PCR
 
 | Key | Function |
 | --- | -------- |
-| ^Q | quit editor |
+| ^Q | Quit editor |
 | ^S | Move Cursor LEFT |
 | ^D | Move Cursor RIGHT |
 | ^E | Move Cursor UP |
 | ^X | Move Cursor DOWN |
 | ^A | goto previous word |
 | ^F | goto next word |
-| ^T | goto top of the file |
-| ^B | goto bottom of the file |
-| ^K | Cut line |
+| ^T | goto top of the line |
+| ^B | goto bottom of the line |
+| Alt-T | goto top of the file |
+| Alt-B | goto bottom of the file |
+| ^K | Cut line into cut buffer |
 | ^J | Cut to line head |
 | ^L | Cut to line tail |
+| ^Y | Copy current line into cut buffer |
+| ^P | Paste from cut buffer with popinig-up cut buffer |
+| ^O | Paste from cut buffer without popinig-up cut buffer |
+| ^U | Duplicate current line (^Y and ^P) |
 
 ## rc file
 
-| File path | contents |
-| ------------------- | -------- |
-| $PWD/.berc          | 1st candidate of rc-file. |
-| $HOME/.berc         | 2nd candidate of rc-file. |
+| File path   | contents |
+| ------------| -------- |
+| $PWD/.berc  | 1st candidate of rc-file. |
+| $HOME/.berc | 2nd candidate of rc-file. |
 
 ## Application direcoty:
 
@@ -257,16 +261,10 @@ Qt project file (Ex. my_proj.pro) can be used as BE project file.
 
     $ be my_proj.pro
 
-## The largest file editable
+## The largest file size editable
 
 BE editor loads files on memory.
 The size of the largest editable file depends on the memory available.
 The maximum file size loadable is half the memory available.
 
-## Overview
-
-## Web Page
-
-## Mailing List and Bug Reports
-
-## Current Status
+## EOF
