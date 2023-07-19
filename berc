@@ -176,7 +176,8 @@ tab_size	4
 # MD mark down file
 file_type "MD" "\.(md|MD)$"
 color_syntax ="#" +blue
-tab_size	4
+color_syntax ="~~~" +blue
+tab_size	8
 
 [key bindings]
 #include .emacs.berc

@@ -1,3 +1,4 @@
 make clean
-rm -v __error _autotools.log _build.log __be_test.log _conf.log config.log
+rm -v __error _autotools.log _build.log __be_test.log _conf.log config.log _cppcheck.out _doxygen.log
+rm -rv html
 rmbak

@@ -488,6 +488,7 @@ int goto_line_col_in_cur_buf(int line_num, int col_num)
 	return 2;
 }
 //-----------------------------------------------------------------------------
+#define	FILE_PATH_SEPARATOR		"|"		// candidates are "|", "//", ""\\"
 char *mk_cur_file_pos_str_static(void)
 {
 	static char buffer[MAX_PATH_LEN+1];
@@ -513,12 +514,12 @@ char *mk_file_pos_str(char *buffer, char *file_path, int line_num, int col_num)
 			// /path/to/file.ext
 			snprintf_(buffer, MAX_PATH_LEN+1, "%s", file_path);
 		} else {
-			// /path/to/file.ext:999
-			snprintf_(buffer, MAX_PATH_LEN+1, "%s:%d", file_path, line_num);
+			// /path/to/file.ext|999
+			snprintf_(buffer, MAX_PATH_LEN+1, "%s%s%d", file_path, FILE_PATH_SEPARATOR, line_num);
 		}
 	} else {
-		// /path/to/file.ext:999:99
-		snprintf_(buffer, MAX_PATH_LEN+1, "%s:%d:%d", file_path, line_num, col_num);
+		// /path/to/file.ext|999:99
+		snprintf_(buffer, MAX_PATH_LEN+1, "%s%s%d:%d", file_path, FILE_PATH_SEPARATOR, line_num, col_num);
 	}
 	return buffer;
 }

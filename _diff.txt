@@ -1,29 +1,5 @@
 (  \|  |  <  |  >  )
-kdiff3 ../old/src//config.h config.h #========================
-(  \|  |  <  |  >  )
-kdiff3 ../old/src//debug.h debug.h #========================
-(  \|  |  <  |  >  )
-kdiff3 ../old/src//editorgoto.h editorgoto.h #========================
-(  \|  |  <  |  >  )
-kdiff3 ../old/src//editor.c editor.c #========================
-(  \|  |  <  |  >  )
-kdiff3 ../old/src//editor2.c editor2.c #========================
-(  \|  |  <  |  >  )
 kdiff3 ../old/src//editorgoto.c editorgoto.c #========================
-(  \|  |  <  |  >  )
-kdiff3 ../old/src//filer.c filer.c #========================
-(  \|  |  <  |  >  )
-kdiff3 ../old/src//filercmd.c filercmd.c #========================
-(  \|  |  <  |  >  )
-kdiff3 ../old/src//filerrun.c filerrun.c #========================
-(  \|  |  <  |  >  )
-kdiff3 ../old/src//main.c main.c #========================
-(  \|  |  <  |  >  )
-kdiff3 ../old/src//tio.c tio.c #========================
-(  \|  |  <  |  >  )
-kdiff3 ../old/src//utilpath.c utilpath.c #========================
-(  \|  |  <  |  >  )
-kdiff3 ../old/src//winin.c winin.c #========================
 (  \|  |  <  |  >  )
 kdiff3 ../old/src//*.cpp *.cpp #========================
 Usage: sdiff_ln width file1 file2 output-file
