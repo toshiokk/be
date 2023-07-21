@@ -519,7 +519,8 @@ char *mk_file_pos_str(char *buffer, char *file_path, int line_num, int col_num)
 		}
 	} else {
 		// /path/to/file.ext|999:99
-		snprintf_(buffer, MAX_PATH_LEN+1, "%s%s%d:%d", file_path, FILE_PATH_SEPARATOR, line_num, col_num);
+		snprintf_(buffer, MAX_PATH_LEN+1, "%s%s%d:%d",
+		 file_path, FILE_PATH_SEPARATOR, line_num, col_num);
 	}
 	return buffer;
 }
@@ -533,7 +534,10 @@ const char *get_file_line_col_from_str_null(const char *str, char *file_path,
 	get_file_line_col_from_str(str, file_path, line_num, col_num);
 	return file_path;
 }
-// /home/user/tools/be/src/editorgoto.c:400:10
+// /home/user/tools/be/src/editorgoto.c|400:10
+//  => "/home/user/tools/be/src/editorgoto.c", 400, 10
+// /home/user/tools/be/src/ file name.txt |400:10
+//  => "/home/user/tools/be/src/ file name.txt ", 400, 10
 PRIVATE int get_file_line_col_from_str(const char *str, char *file_path,
  int *line_num_, int *col_num_)
 {
@@ -576,5 +580,19 @@ flf_d_printf("str:[%s] ==> path:[%s] line:%d col:%d\n",
  str, file_path, line_num, col_num);
 	return strnlen(file_path, MAX_PATH_LEN);
 }
+
+// supported file names:
+//  |No.| file type                                                | command line | file list   |
+//  |---|----------------------------------------------------------|--------------|-------------|
+//  | 1 |" file name.txt "(includes spaces in head, middle or tail)| supported    | supported   |
+//  | 2 |'"filename".txt' (includes '"')                           | supported    | unsupported |
+//  | 3 |"file|name.txt"  (includes special chars [|'])            | supported    | unsupported |
+// workaround:
+//  |No.| command line      | file list                 | project file             |
+//  |---|-------------------|---------------------------|--------------------------|
+//  | 1 | " file name.txt " | " file name.txt ",100,10  | 100,10," file name.txt " |
+//  | 2 | "filename".txt    | "\"filename.txt\"",100,10 | 100,10,"\"filename.txt\""|
+//  | 2 | "file|name.txt"   | "file|name.txt",100,10    | 100,10,"file|name.txt"   |
+//  | 2 | "file'name.txt"   | "file'name.txt",100,10    | 100,10,"file|name.txt"   |
 
 // End of editorgoto.c

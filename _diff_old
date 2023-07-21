@@ -1,6 +1,6 @@
 proc_one()
 {
-OLD_DIR=../old/src/
+OLD_DIR=../old/src
   echo "kdiff3 ${OLD_DIR}/$1 $1 #========================"
   diff ${OLD_DIR}$1 $1
 }

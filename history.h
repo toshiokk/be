@@ -56,7 +56,7 @@
 // Maximum number of search/execution/directory history strings saved
 ///#define MAX_HISTORY_LINES		5
 //
-#define MAX_HISTORY_LINES		100
+#define MAX_HISTORY_LINES		200
 ///#define MAX_HISTORY_LINES		1000
 
 void init_histories(void);

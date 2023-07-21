@@ -1,5 +1,8 @@
 [x]can not open file with file name including ' ' in head or tail.
  (Ex. " filename.exe" or "filename.ext ")
+  - own file list: separate by '|'. Ex. /home/user/tmp/ file name.txt |100:20
+  - command line: enclose by '"' or "'". Ex. " file name.txt " or ' file name.txt '
+
  [x]#bot_anchor
 []avoid cur_line
 

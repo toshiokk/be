@@ -263,7 +263,8 @@ void test_get_file_size_str(void)
 	char buf_size[20+1];
 #endif // ENABLE_DEBUG
 
-	for (bits = 1; bits <= 64; bits++) {	// 0x01, 0x02, ... 0x7fffffffffffffff, 0xffffffffffffffff
+	for (bits = 1; bits <= 64; bits++) {
+		// 0x01, 0x03, ... 0x7fffffffffffffff, 0xffffffffffffffff
 		size = 0;
 		for (bit = 0; bit < bits; bit++) {
 			size |= ((loff_t)1) << bit;

@@ -1,6 +1,0 @@
-(  \|  |  <  |  >  )
-kdiff3 ../old/src//editorgoto.c editorgoto.c #========================
-(  \|  |  <  |  >  )
-kdiff3 ../old/src//*.cpp *.cpp #========================
-Usage: sdiff_ln width file1 file2 output-file
-   ex: sdiff_ln 237 file1.c file2.c output.txt

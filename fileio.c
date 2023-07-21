@@ -82,7 +82,8 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 		// special file
 		if (msg_on_err) {
 			disp_status_bar_err(S_ISDIR(fileinfo.st_mode)
-			 ? _("[%s] is a directory") : _("[%s] is a special file"), shrink_str_scr_static(full_path));
+			 ? _("[%s] is a directory") : _("[%s] is a special file"),
+			 shrink_str_scr_static(full_path));
 		}
 		return -2;		// open error
 	}
@@ -127,7 +128,8 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file
 			guess_encoding_by_nkf(full_path);
 			if (CUR_EBUF_STATE(buf_ENCODE) == ENCODE_BINARY && load_binary_file == 0) {
 				if (msg_on_err) {
-					disp_status_bar_err(_("BINARY file !! [%s]"), shrink_str_scr_static(full_path));
+					disp_status_bar_err(_("BINARY file !! [%s]"),
+					 shrink_str_scr_static(full_path));
 				}
 				return -1;		// do not load binary file
 			}
@@ -365,7 +367,8 @@ flf_d_printf("[%s]\n", file_path);
 	}
 flf_d_printf("[%s]\n", file_path);
 	if ((ret = backup_and_save_cur_buf(file_path)) < 0) {
-		disp_status_bar_err(_("File [%s] can NOT be written !!"), shrink_str_scr_static(file_path));
+		disp_status_bar_err(_("File [%s] can NOT be written !!"),
+		 shrink_str_scr_static(file_path));
 	}
 	return ret;
 }
@@ -442,7 +445,8 @@ flf_d_printf("[%s]\n", file_path);
 	// TODO: do minimum check
 	//  file_path is regular file and not dir and special file
 	if (is_path_regular_file(file_path) == 0) {
-		disp_status_bar_err(_("File [%s] is NOT regular file !!"), shrink_str_scr_static(file_path));
+		disp_status_bar_err(_("File [%s] is NOT regular file !!"),
+		 shrink_str_scr_static(file_path));
 		return -1;
 	}
 	disp_status_bar_ing(_("Writing File %s ..."), shrink_str_scr_static(get_c_e_b()->abs_path));
