@@ -1,9 +1,17 @@
 [x]can not open file with file name including ' ' in head or tail.
  (Ex. " filename.exe" or "filename.ext ")
-  - own file list: separate by '|'. Ex. /home/user/tmp/ file name.txt |100:20
+  - own file list: enclose by '|'. Ex. '/home/user/tmp/ file name.txt '|100:20
   - command line: enclose by '"' or "'". Ex. " file name.txt " or ' file name.txt '
 
- [x]#bot_anchor
+Improbe page-up, page-down cursow movement.
+
+Self investigate which is Charactor width in Zenkaku or Hankaku charactors.
+  ==> Impossible. OS library does not treat Zenkaku char correctly.
+  ==> Workaround: Treat all unbiguous char as a Zenkaku char. and
+                  increment display position by 2 selfly not depending on
+                  terminal display capability.
+
+[x]#bot_anchor
 []avoid cur_line
 
 Editor 2 pane mode

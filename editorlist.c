@@ -35,11 +35,10 @@ _FLF_
 	buffer_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Files currently loaded"));
 	for (edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_BOT_ANCH(edit_buf) == 0;
 	 edit_buf = edit_buf->next) {
-		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-40s %-5s %s %s %s",
-		 edit_buf->file_path,
+		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-60s %-5s %s %s",
+		 quote_file_name(edit_buf->abs_path),
 		 buffer_encode_str(edit_buf), buffer_eol_str(edit_buf),
-		 BUF_STATE(edit_buf, buf_MODIFIED) ? "Mo" : "--",
-		 edit_buf->abs_path);
+		 BUF_STATE(edit_buf, buf_MODIFIED) ? "Mo" : "--");
 		append_string_to_cur_edit_buf(buffer);
 		if (edit_buf == prev_cur_edit_buf)
 			line_to_go = CUR_EDIT_BUF_BOT_LINE;

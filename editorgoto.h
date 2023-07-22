@@ -63,7 +63,7 @@ int goto_line_col_in_cur_buf(int line_num, int col_no);
 
 char *mk_cur_file_pos_str_static(void);
 char *mk_cur_file_pos_str(char *buffer);
-char *mk_file_pos_str(char *buffer, char *file_path, int line_num, int col_no);
+char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col_no);
 const char *get_file_line_col_from_str_null(const char *str, char *file_path,
  int *line_num, int *col_num);
 

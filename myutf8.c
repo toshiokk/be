@@ -7,9 +7,9 @@
 #ifdef ENABLE_UTF8
 #define WIDE_CHARS		(12 + 20 + 14 + 1)
 const char *my_wide_utf8c[WIDE_CHARS] = {
- "■", "□", "◆", "◇", "○", "◎", "●", "★", "☆", "☐", "☑", "☒",
  "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩",
  "⑪", "⑫", "⑬", "⑭", "⑮", "⑯", "⑰", "⑱", "⑲", "⑳",
+ "■", "□", "◆", "◇", "○", "◎", "●", "★", "☆", "☐", "☑", "☒",
  "", "", "", "", "", "", "", "", "", "", "", "", "", "",
  "" };
 PRIVATE wchar_t my_wide_wchar[WIDE_CHARS] = { 0 };
@@ -130,8 +130,9 @@ PRIVATE int my_mbtowc__(wchar_t *pwc, const char *utf8c, int max_len)
 			break;
 		wc = (wc << 6) | (utf8c[idx] & 0x3f);
 	}
+	len = idx;
 	*pwc = wc;
-	return len;
+	return len;		// return length
 #endif
 }
 

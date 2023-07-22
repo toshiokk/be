@@ -29,6 +29,9 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 
 PRIVATE int is_file_name_proj_file(const char *file_name);
 PRIVATE const char *skip_n_file_names(const char *line, int field_idx);
+#ifdef START_UP_TEST
+void test_get_n_th_file_name(void);
+#endif // START_UP_TEST
 #ifdef ENABLE_HISTORY
 PRIVATE void goto_pos_by_history(const char *full_path);
 #endif // ENABLE_HISTORY
@@ -242,6 +245,7 @@ int load_file_in_string(const char *string,
 ////
 flf_d_printf("string:[%s]\n", string);
 	if (get_file_line_col_from_str_null(string, file_name, &line_num, &col_num) == 0) {
+_FLF_
 		return 0;
 	}
 ////
@@ -283,7 +287,8 @@ int load_file_name(const char *file_name, int open_on_err, int msg_on_err, int r
 	static int recursive_call_count = 0;
 	int files;
 
-////flf_d_printf("[%s], %d, %d, %d\n", file_name, open_on_err, msg_on_err, recursive);
+////
+flf_d_printf("[%s], %d, %d, %d\n", file_name, open_on_err, msg_on_err, recursive);
 	if (load_file_name__(file_name, open_on_err, msg_on_err) <= 0) {
 		return 0;
 	}
@@ -308,12 +313,14 @@ flf_d_printf("[%s]\n", file_name);
 ////
 flf_d_printf("[%s]\n", abs_path);
 	if (switch_c_e_b_to_file_name(abs_path)) {
+flf_d_printf("already loaded:[%s]\n", abs_path);
 		// already loaded
 		return 1;
 	}
 	if (load_file_into_new_buf(abs_path, open_on_err, msg_on_err) < 0) {
 		return 0;
 	}
+flf_d_printf("loaded:[%s]\n", abs_path);
 #ifdef ENABLE_HISTORY
 	goto_pos_by_history(abs_path);
 #endif // ENABLE_HISTORY
@@ -409,19 +416,48 @@ PRIVATE const char *skip_n_file_names(const char *line, int field_idx)
 	const char *ptr;
 	int field_cnt;
 
-////flf_d_printf("[%s], %d\n", line, field_idx);
+////
+flf_d_printf("[%s], %d\n", line, field_idx);
 	ptr = line;
 	for (field_cnt = 0; ; field_cnt++) {
 		ptr = skip_to_file_path(ptr);
-		if (*ptr == 0)
+		if (*ptr == '\0')
 			break;		// EOL
 		if (field_cnt >= field_idx)
 			break;
+		const char *prev_ptr = ptr;
 		ptr = skip_file_path(ptr);
+		if (ptr == prev_ptr)
+			// not progressed
+			break;
 	}
-////flf_d_printf("file: [%s]\n", ptr);
+////
+flf_d_printf("file: [%s]\n", ptr);
 	return ptr;
 }
+
+#ifdef START_UP_TEST
+void test_get_n_th_file_name(void)
+{
+	char test_str[] =
+	 "history.c 345 hist_type_idx:3:['/home/user/ filename including space .txt '|1:1]";
+	int field_idx;
+	const char *ptr;
+	char file_name[MAX_PATH_LEN+1];
+	int line_num, col_num;
+
+_FLF_
+	for (field_idx = 0; field_idx < 10; field_idx++) {
+		ptr = skip_n_file_names(test_str, field_idx);
+		if (*ptr == '\0')
+			break;
+		if (get_file_line_col_from_str_null(ptr, file_name, &line_num, &col_num)) {
+			flf_d_printf("%d: file_name:[%s],%d,%d\n", field_idx, file_name, line_num, col_num);
+		}
+	}
+}
+#endif // START_UP_TEST
+
 //-----------------------------------------------------------------------------
 #ifdef ENABLE_HISTORY
 PRIVATE void goto_pos_by_history(const char *full_path)
@@ -507,8 +543,9 @@ char *mk_cur_file_pos_str(char *buffer)
 	 CEBV_CL->data ? col_idx_from_byte_idx(CEBV_CL->data, 0, CEBV_CLBI)+1 : 0);
 #endif // CURSOR_POS_COLUMN
 }
-char *mk_file_pos_str(char *buffer, char *file_path, int line_num, int col_num)
+char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col_num)
 {
+	file_path = quote_file_name(file_path);
 	if (col_num <= 0) {
 		if (line_num <= 0) {
 			// /path/to/file.ext
@@ -536,7 +573,7 @@ const char *get_file_line_col_from_str_null(const char *str, char *file_path,
 }
 // /home/user/tools/be/src/editorgoto.c|400:10
 //  => "/home/user/tools/be/src/editorgoto.c", 400, 10
-// /home/user/tools/be/src/ file name.txt |400:10
+// '/home/user/tools/be/src/ file name.txt '|400:10
 //  => "/home/user/tools/be/src/ file name.txt ", 400, 10
 PRIVATE int get_file_line_col_from_str(const char *str, char *file_path,
  int *line_num_, int *col_num_)
@@ -558,6 +595,7 @@ PRIVATE int get_file_line_col_from_str(const char *str, char *file_path,
 	ptr = skip_file_path(ptr);
 	fn_end = ptr;
 	strlcpy__(file_path, fn_begin, LIM_MAX(MAX_PATH_LEN, fn_end - fn_begin));
+	unquote_string(file_path);
 	// skip to beginning of a line number
 	ptr = skip_to_digit(ptr);
 	if (isdigit(*ptr)) {
@@ -582,11 +620,11 @@ flf_d_printf("str:[%s] ==> path:[%s] line:%d col:%d\n",
 }
 
 // supported file names:
-//  |No.| file type                                                | command line | file list   |
-//  |---|----------------------------------------------------------|--------------|-------------|
-//  | 1 |" file name.txt "(includes spaces in head, middle or tail)| supported    | supported   |
-//  | 2 |'"filename".txt' (includes '"')                           | supported    | unsupported |
-//  | 3 |"file|name.txt"  (includes special chars [|'])            | supported    | unsupported |
+//  |No.| file type                                                | command line | file list |
+//  |---|----------------------------------------------------------|--------------|-----------|
+//  | 1 |" file name.txt "(includes spaces in head, middle or tail)| supported    | supported |
+//  | 2 |'"filename".txt' (includes '"')                           | supported    | supported |
+//  | 3 |"file|name.txt"  (includes special chars [|'])            | supported    | supported |
 // workaround:
 //  |No.| command line      | file list                 | project file             |
 //  |---|-------------------|---------------------------|--------------------------|

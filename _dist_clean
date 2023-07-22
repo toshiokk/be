@@ -1,6 +1,5 @@
 make clean
 make distclean
-rm -v __error _autotools.log _build.log __be_test.log _conf.log config.log _doxygen.log
-rm -v _diff.txt _sdiff.txt _cppcheck.out
+rm -v __error *.log _diff.txt _sdiff.txt _cppcheck.out
 rm -rv html
 rmbak

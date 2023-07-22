@@ -196,12 +196,14 @@ void dump_cur_editor_views(void)
 	buffer_dump_state(cur_editor_views->bufs[0]);
 	buffer_dump_state(cur_editor_views->bufs[1]);
 
-	flf_d_printf("get_c_e_b(): %p, &(get_c_e_b()->views[0]): %p\n", get_c_e_b(), &(get_c_e_b()->views[0]));
+	flf_d_printf("get_c_e_b(): %p, &(get_c_e_b()->views[0]): %p\n",
+	 get_c_e_b(), &(get_c_e_b()->views[0]));
 	line_dump_byte_idx(CEBV0_CL, CEBV0_CLBI);
 	flf_d_printf("CEBV0_CURSOR_Y: %d, CEBV0_CURSOR_X_TO_KEEP: %d\n",
 	 CEBV0_CURSOR_Y, CEBV0_CURSOR_X_TO_KEEP);
 
-	flf_d_printf("get_c_e_b(): %p, &(get_c_e_b()->views[1]): %p\n", get_c_e_b(), &(get_c_e_b()->views[1]));
+	flf_d_printf("get_c_e_b(): %p, &(get_c_e_b()->views[1]): %p\n",
+	 get_c_e_b(), &(get_c_e_b()->views[1]));
 	line_dump_byte_idx(CEBV1_CL, CEBV1_CLBI);
 	flf_d_printf("CEBV1_CURSOR_Y: %d, CEBV1_CURSOR_X_TO_KEEP: %d\n",
 	 CEBV1_CURSOR_Y, CEBV1_CURSOR_X_TO_KEEP);
@@ -361,7 +363,7 @@ int check_cur_buf_modified(void)
 		disp_status_bar_ing(_("Calculating CRC..."));
 		modified = buffer_check_crc(get_c_e_b());
 	}
-flf_d_printf("modified: %d\n", modified);
+///flf_d_printf("modified: %d\n", modified);
 	return modified;
 }
 

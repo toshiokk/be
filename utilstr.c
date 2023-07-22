@@ -202,7 +202,7 @@ char *concat_file_name_separating_by_space(char *buffer, size_t buf_len,
 		strlcat__(buffer, buf_len, " ");
 	}
 	if (quote_chr) {
-		string = quote_file_name_if_contains_space(buf, string, quote_chr);
+		string = quote_file_name_if_necessary(buf, string, quote_chr);
 	}
 	if (strnlen(buffer, buf_len) + strnlen(string, buf_len) <= buf_len) {
 		strlcat__(buffer, buf_len, string);
@@ -213,18 +213,19 @@ const char *quote_file_name(const char *string)
 {
 	static char buf[MAX_PATH_LEN+1];
 
-	return quote_file_name_if_contains_space(buf, string, '\'');
+	return quote_file_name_if_necessary(buf, string, '\'');
 }
 const char *quote_file_name_buf(char *buf, const char *string)
 {
-	return quote_file_name_if_contains_space(buf, string, '\'');
+	return quote_file_name_if_necessary(buf, string, '\'');
 }
-const char *quote_file_name_if_contains_space(char *buf, const char *string, char quote_chr)
+const char *quote_file_name_if_necessary(char *buf, const char *string, char quote_chr)
 {
-	if (quote_chr && is_quoted(string) == 0 && contain_space(string)) {
+	if (quote_chr && is_quoted(string, quote_chr) == 0
+	 && (contain_chr(string, ' ') || contain_chr(string, '\''))) {
 		return quote_string(buf, string, quote_chr);
 	}
-	return strlcpy__(buf, string, MAX_PATH_LEN);
+	return string;
 }
 
 int is_strlen_0(const char *str)
@@ -329,6 +330,11 @@ char *strncpy__(char *dest, const char *src, size_t buf_len)
 void *memcpy__(void *dest, const void *src, size_t len)
 {
 	return memmove(dest, src, len);
+}
+
+size_t str_path_len(const char *str)
+{
+	return strnlen(str, MAX_PATH_LEN);
 }
 
 int tolower_if_alpha(int chr)
@@ -484,9 +490,27 @@ const char *skip_to_file_path(const char *ptr)
 }
 const char *skip_file_path(const char *ptr)
 {
-	while (is_file_path_char(ptr)) {
-		// skip file path
-		ptr += utf8c_bytes(ptr);
+	if (*ptr == '\'' || *ptr == '"') {
+		// '\'abcdefg\'hijklmn.txt'
+		//  --       --
+		char beginning_chr = *ptr;
+		ptr++;	// skip beginning_chr
+		while (*ptr) {
+			if (*ptr == beginning_chr) {
+				ptr++;		// skip closing '\'' or '"'
+				break;
+			}
+			if (ptr[0] == '\\') {
+				if (ptr[1])
+					ptr++;		// skip '\\'
+			}
+			ptr++;		// skip the next char of '\\'
+		}
+	} else {
+		// filename.txt
+		while (is_file_path_char(ptr)) {
+			ptr += utf8c_bytes(ptr);
+		}
 	}
 	return ptr;
 }
@@ -498,6 +522,7 @@ char *skip_file_name(char *ptr)
 	}
 	return ptr;
 }
+#if 0
 const char *skip_separator(const char *ptr)
 {
 	for ( ; is_separator(*ptr); ) {
@@ -506,6 +531,7 @@ const char *skip_separator(const char *ptr)
 	}
 	return ptr;
 }
+#endif
 const char *skip_to_digit(const char *ptr)
 {
 	for ( ; *ptr && isdigit(*ptr) == 0; ) {
@@ -539,32 +565,72 @@ int is_file_path_char(const char *ptr)
 }
 int is_file_name_char(const char *ptr)
 {
-	return isalnum(*ptr) || (utf8c_bytes(ptr) >= 2) || strchr__("_-+.~$%&=", *ptr);
+	return isalnum(*ptr) || (utf8c_bytes(ptr) >= 2) || strchr__("_-+.~$%&=\"\'", *ptr);
 }
 int is_separator(char chr)
 {
 	return strchr__(" \t,:", chr) != NULL;
 }
-int contain_space(const char *file_name)
+int contain_chr(const char *file_name, char chr)
 {
-	return strchr(file_name, ' ') != NULL;
+	return strchr(file_name, chr) != NULL;
 }
-char *quote_string(char *buf, const char *string, char quote_chr)
+char *quote_string(char *buffer, const char *string, char quote_chr)
 {
+	char buf[MAX_PATH_LEN+1];
 	// file name ==> "file name" or 'file name'
-	snprintf(buf, MAX_PATH_LEN+1, "%c%s%c", quote_chr, string, quote_chr);
-	return buf;
+	if (contain_chr(string, '\'')) {
+		// "'file'name'" ==> "'\'file\'name\''"
+		escape_quote_chr(buf, string, quote_chr);
+		snprintf(buffer, MAX_PATH_LEN+1, "%c%s%c", quote_chr, buf, quote_chr);
+	} else {
+		// "filename" ==> "'filename'"
+		snprintf(buffer, MAX_PATH_LEN+1, "%c%s%c", quote_chr, string, quote_chr);
+	}
+	return buffer;
 }
-char is_quoted(const char *str)
+// "'file'name'" ==> "\'file\'name\'"
+char *escape_quote_chr(char *buffer, const char *string, char quote_chr)
 {
-	if (strlen(str) >= 2) {
-		if (*str == '"' && str[strnlen(str, MAX_PATH_LEN) - 1] == '"') {
-			// "string-quoted"
-			return '"';
+	char buf[2+1];	// "\'"
+	buffer[0] = '\0';
+	for ( ; *string; string++) {
+		if (*string == quote_chr) {
+			snprintf(buf, 2+1, "%c%c", '\\', quote_chr);
+		} else {
+			snprintf(buf, 1+1, "%c", *string);
 		}
-		if (*str == '\'' && str[strnlen(str, MAX_PATH_LEN) - 1] == '\'') {
-			// 'string-quoted'
-			return '\'';
+		strlcat__(buffer, MAX_PATH_LEN+1, buf);
+	}
+	return buffer;
+}
+
+char *unquote_string(char *buffer)
+{
+flf_d_printf("     [%s] ==>\n", buffer);
+	if (is_quoted(buffer, '\'') || is_quoted(buffer, '"')) {
+		char quote_chr = buffer[0];
+		size_t len = str_path_len(buffer);
+		char *ptr = buffer;
+		for (int idx = 1; idx < len-1; idx++) {
+			if (buffer[idx] == '\\' && buffer[idx+1] == quote_chr) {
+				*ptr++ = buffer[idx+1];	// "\'" ==> "'", '\"' ==> '"'
+				idx++;
+			} else {
+				*ptr++ = buffer[idx];
+			}
+		}
+		*ptr = '\0';	// NUL terminate
+	}
+flf_d_printf(" ==> [%s]\n", buffer);
+	return buffer;
+}
+char is_quoted(const char *str, char quote_chr)
+{
+	if (str_path_len(str) >= 2) {
+		if (str[0] == quote_chr && str[str_path_len(str) - 1] == quote_chr) {
+			// 'string-quoted' or "string-quoted"
+			return quote_chr;
 		}
 	}
 	return '\0';
@@ -572,8 +638,7 @@ char is_quoted(const char *str)
 
 //-----------------------------------------------------------------------------------
 
-char *select_plural_form(char *singular, char *plural, char *type3, char *type4,
- int number)
+char *select_plural_form(char *singular, char *plural, char *type3, char *type4, int number)
 {
 ///flf_d_printf("number:%d ==> plural_form_index:%d\n", number, get_plural_form_index(number));
 	switch(get_plural_form_index(number)) {
