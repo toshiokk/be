@@ -5,7 +5,7 @@
 #include "utilincs.h"
 
 #ifdef ENABLE_UTF8
-#define WIDE_CHARS		(12 + 20 + 14 + 1)
+#define WIDE_CHARS		(20 + 12 + 14 + 1)
 const char *my_wide_utf8c[WIDE_CHARS] = {
  "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩",
  "⑪", "⑫", "⑬", "⑭", "⑮", "⑯", "⑰", "⑱", "⑲", "⑳",
