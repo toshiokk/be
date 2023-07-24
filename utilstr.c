@@ -194,16 +194,14 @@ char *insert_str(char *buffer, size_t buf_len, size_t offset,
 	return buffer;
 }
 char *concat_file_name_separating_by_space(char *buffer, size_t buf_len,
- const char *string, char quote_chr)
+ const char *string)
 {
 	char buf[MAX_PATH_LEN+1];
 
-	if (is_strlen_not_0(buffer)) {
+	if (is_strlen_not_0(buffer) && buffer[strlen(buffer)-1] == ' ') {
 		strlcat__(buffer, buf_len, " ");
 	}
-	if (quote_chr) {
-		string = quote_file_name_if_necessary(buf, string, quote_chr);
-	}
+	string = quote_file_name(string);
 	if (strnlen(buffer, buf_len) + strnlen(string, buf_len) <= buf_len) {
 		strlcat__(buffer, buf_len, string);
 	}
@@ -213,17 +211,23 @@ const char *quote_file_name(const char *string)
 {
 	static char buf[MAX_PATH_LEN+1];
 
-	return quote_file_name_if_necessary(buf, string, '\'');
+	return quote_file_name_if_necessary(buf, string);
 }
 const char *quote_file_name_buf(char *buf, const char *string)
 {
-	return quote_file_name_if_necessary(buf, string, '\'');
+	return quote_file_name_if_necessary(buf, string);
 }
-const char *quote_file_name_if_necessary(char *buf, const char *string, char quote_chr)
+const char *quote_file_name_if_necessary(char *buf, const char *string)
 {
-	if (quote_chr && is_quoted(string, quote_chr) == 0
-	 && (contain_chr(string, ' ') || contain_chr(string, '\''))) {
-		return quote_string(buf, string, quote_chr);
+	if (contain_chr(string, ' ')
+	 || contain_chr(string, '\'') || contain_chr(string, '"')) {
+		if (contain_chr(string, '\'')) {
+			// abc'def.txt ==> "abc'def.txt"
+			return quote_string(buf, string, '"');
+		} else {
+			// abc"def.txt ==> 'abc"def.txt'
+			return quote_string(buf, string, '\'');
+		}
 	}
 	return string;
 }
@@ -235,6 +239,11 @@ int is_strlen_0(const char *str)
 int is_strlen_not_0(const char *str)
 {
 	return *str;
+}
+
+size_t str_path_len(const char *str)
+{
+	return strnlen(str, MAX_PATH_LEN);
 }
 
 char *strcat_printf(char *buffer, size_t buf_len, const char *format, ...)
@@ -330,11 +339,6 @@ char *strncpy__(char *dest, const char *src, size_t buf_len)
 void *memcpy__(void *dest, const void *src, size_t len)
 {
 	return memmove(dest, src, len);
-}
-
-size_t str_path_len(const char *str)
-{
-	return strnlen(str, MAX_PATH_LEN);
 }
 
 int tolower_if_alpha(int chr)

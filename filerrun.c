@@ -108,7 +108,7 @@ int do_exec_command_with_files(void)
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		concat_file_name_separating_by_space(command_str, MAX_PATH_LEN,
-		 cur_fv->file_list[file_idx].file_name, '\'');
+		 cur_fv->file_list[file_idx].file_name);
 	}
 
 	ret = input_string_pos(command_str, command_str, 0,

@@ -151,7 +151,7 @@ PRIVATE void output_exec_args_history(char * const *args)
 flf_d_printf("[%s]\n", arg);
 		if (arg == NULL)
 			break;
-		concat_file_name_separating_by_space(buffer, MAX_PATH_LEN, arg, '\'');
+		concat_file_name_separating_by_space(buffer, MAX_PATH_LEN, arg);
 	}
 flf_d_printf("[%s]\n", buffer);
 	update_history(HISTORY_TYPE_IDX_EXEC, buffer);

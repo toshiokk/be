@@ -309,14 +309,14 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 			if (filer_do_next == FILER_ENTERED_FILE) {
 				// file-1 "file name 2" "file name 3"
 				concat_file_name_separating_by_space(file_path, buf_len,
-				 cur_fv->file_list[file_idx].file_name, '\'');
+				 cur_fv->file_list[file_idx].file_name);
 			} else {
 				// file-path-1 "file path 2" "file path 3"
 				char path[MAX_PATH_LEN];
 
 				cat_dir_and_file(path, MAX_PATH_LEN,
 				 cur_fv->cur_dir, cur_fv->file_list[file_idx].file_name);
-				concat_file_name_separating_by_space(file_path, buf_len, path, '\'');
+				concat_file_name_separating_by_space(file_path, buf_len, path);
 			}
 		}
 	}

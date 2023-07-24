@@ -46,13 +46,14 @@ char *delete_str(char *buffer, size_t start, len_t delete_len);
 char *insert_str(char *buffer, size_t buf_len, size_t offset,
  const char *string, len_t insert_len);
 char *concat_file_name_separating_by_space(char *buffer, size_t buf_len,
- const char *string, char quote_chr);
+ const char *string);
 const char *quote_file_name(const char *string);
 const char *quote_file_name_buf(char *buf, const char *string);
-const char *quote_file_name_if_necessary(char *buf, const char *string, char quote_chr);
+const char *quote_file_name_if_necessary(char *buf, const char *string);
 
 int is_strlen_0(const char *str);
 int is_strlen_not_0(const char *str);
+size_t str_path_len(const char *str);
 
 char *strcat_printf(char *buffer, size_t buf_len, const char *format, ...);
 int snprintf_(char *buffer, size_t buf_len, const char *format, ...);
@@ -68,7 +69,6 @@ char *strchr__(const char *str, char chr);
 char *strnset__(char *buf, char chr, size_t len);
 char *strncpy__(char *dest, const char *src, size_t buf_len);
 void *memcpy__(void *dest, const void *src, size_t len);
-size_t str_path_len(const char *str);
 
 int tolower_if_alpha(int chr);
 char *strupper(char *buffer);

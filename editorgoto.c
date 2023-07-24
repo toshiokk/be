@@ -242,17 +242,17 @@ int load_file_in_string(const char *string,
 	int line_num, col_num;
 	int files;
 
-////
+///
 flf_d_printf("string:[%s]\n", string);
 	if (get_file_line_col_from_str_null(string, file_name, &line_num, &col_num) == 0) {
 _FLF_
 		return 0;
 	}
-////
+///
 flf_d_printf("file_name:[%s]\n", file_name);
 	if ((files = load_file_name_upp_low(file_name,
 	 try_upp_low, open_on_err, msg_on_err, recursive)) > 0) {
-////
+///
 flf_d_printf("loaded:[%s]\n", file_name);
 		goto_line_col_in_cur_buf(line_num, col_num);
 	}
@@ -287,7 +287,7 @@ int load_file_name(const char *file_name, int open_on_err, int msg_on_err, int r
 	static int recursive_call_count = 0;
 	int files;
 
-////
+///
 flf_d_printf("[%s], %d, %d, %d\n", file_name, open_on_err, msg_on_err, recursive);
 	if (load_file_name__(file_name, open_on_err, msg_on_err) <= 0) {
 		return 0;
@@ -295,7 +295,7 @@ flf_d_printf("[%s], %d, %d, %d\n", file_name, open_on_err, msg_on_err, recursive
 ///_FLF_
 	files = 1;
 	if (recursive && recursive_call_count == 0 && is_file_name_proj_file(file_name)) {
-////flf_d_printf("recursive_call_count:%d\n", recursive_call_count);
+///flf_d_printf("recursive_call_count:%d\n", recursive_call_count);
 		recursive_call_count++;
 		files += load_files_in_cur_buf();		// recursive call
 		recursive_call_count--;
@@ -307,10 +307,10 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 {
 	char abs_path[MAX_PATH_LEN+1];
 
-////
+///
 flf_d_printf("[%s]\n", file_name);
 	get_abs_path(file_name, abs_path);
-////
+///
 flf_d_printf("[%s]\n", abs_path);
 	if (switch_c_e_b_to_file_name(abs_path)) {
 flf_d_printf("already loaded:[%s]\n", abs_path);
