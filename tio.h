@@ -22,7 +22,8 @@
 #ifndef tio_h
 #define tio_h
 
-#define MAX_SCRN_COLS			384		// = 1920[pixels] / 5[pixels/char] (full HD)
+///#define MAX_SCRN_COLS			384		// = 1920[pixels] / 5[pixels/char] (full HD)
+#define MAX_SCRN_COLS			512		// = 2560[pixels] / 5[pixels/char] (WQXGA)
 #define MAX_SCRN_LINE_BUF_LEN	(MAX_SCRN_COLS * MAX_UTF8C_BYTES)	// = 1536
 
 typedef short key_code_t;
