@@ -164,7 +164,6 @@ int do_copy_file(void)
 
 	file_idx = get_first_file_idx_selected();
 
-///	ret = input_string(cur_fv->file_list[file_idx].file_name, file_path,
 	ret = input_string(get_other_filer_view()->cur_dir, file_path,
 	 HISTORY_TYPE_IDX_DIR, _("Copy to:"));
 

@@ -196,7 +196,8 @@ char *insert_str(char *buffer, size_t buf_len, size_t offset,
 char *concat_file_name_separating_by_space(char *buffer, size_t buf_len,
  const char *string)
 {
-	if (is_strlen_not_0(buffer) && buffer[strlen(buffer)-1] == ' ') {
+	if (is_strlen_not_0(buffer) && buffer[strlen(buffer)-1] != ' ') {
+		// "command" ==> "command "
 		strlcat__(buffer, buf_len, " ");
 	}
 	string = quote_file_name(string);
