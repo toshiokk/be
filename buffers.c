@@ -70,9 +70,9 @@ _FLF_
 
 void init_edit_bufs(void)
 {
-	buffer_init(EDIT_BUFS_TOP_ANCH, "#Edit-buffer top_anchor");
-	buffer_init(EDIT_BUFS_BOT_ANCH, "#Edit-buffer bot_anchor");
-	buffer_link(EDIT_BUFS_TOP_ANCH, EDIT_BUFS_BOT_ANCH);
+	init_bufs_top_bot_anchor(
+	 EDIT_BUFS_TOP_ANCH, "#Edit-bufs-top_anchor",
+	 EDIT_BUFS_BOT_ANCH, "#Edit-bufs-bot_anchor");
 	init_editor_views(&editor_views);
 }
 // Free all memory associated with all edit buffers
@@ -294,9 +294,9 @@ int is_c_e_b_valid(void)
 
 void init_cut_bufs(void)
 {
-	buffer_init(CUT_BUFS_TOP_ANCH, "#Cut-buffer top_anchor");
-	buffer_init(CUT_BUFS_BOT_ANCH, "#Cut-buffer bot_anchor");
-	buffer_link(CUT_BUFS_TOP_ANCH, CUT_BUFS_BOT_ANCH);
+	init_bufs_top_bot_anchor(
+	 CUT_BUFS_TOP_ANCH, "#Cut-bufs-top_anchor",
+	 CUT_BUFS_BOT_ANCH, "#Cut-bufs-bot_anchor");
 }
 void free_all_cut_bufs(void)
 {
@@ -334,6 +334,17 @@ int count_cut_bufs(void)
 int count_cur_cut_buf_lines(void)
 {
 	return buffer_count_lines(CUR_CUT_BUF);
+}
+
+//-----------------------------------------------------------------------------
+
+void init_bufs_top_bot_anchor(
+ be_buf_t *buf_top, const char *full_path_top,
+ be_buf_t *buf_bot, const char *full_path_bot)
+{
+	buffer_init(buf_top, full_path_top);
+	buffer_init(buf_bot, full_path_bot);
+	buffer_link(buf_top, buf_bot);
 }
 
 //-----------------------------------------------------------------------------

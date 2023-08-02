@@ -73,9 +73,9 @@ void init_histories(void)
 	}
 ////_FLF_
 	// history_buffers
-	buffer_init(HIST_BUFS_TOP_ANCH, "#History-buffer top_anchor");
-	buffer_init(HIST_BUFS_BOT_ANCH, "#History-buffer bot_anchor");
-	buffer_link(HIST_BUFS_TOP_ANCH, HIST_BUFS_BOT_ANCH);
+	init_bufs_top_bot_anchor(
+	 HIST_BUFS_TOP_ANCH, "#History-bufs-top_anchor",
+	 HIST_BUFS_BOT_ANCH, "#History-bufs-bot_anchor");
 	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
 		snprintf_(buf_name, MAX_PATH_LEN, "#%d:%s",
 		 hist_type_idx, get_history_file_path(hist_type_idx));
