@@ -309,14 +309,14 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 			if (filer_do_next == FILER_ENTERED_FILE) {
 				// file-1 "file name 2" "file name 3"
 				concat_file_name_separating_by_space(file_path, buf_len,
-				 cur_fv->file_list[file_idx].file_name, '\'');
+				 cur_fv->file_list[file_idx].file_name);
 			} else {
 				// file-path-1 "file path 2" "file path 3"
 				char path[MAX_PATH_LEN];
 
 				cat_dir_and_file(path, MAX_PATH_LEN,
 				 cur_fv->cur_dir, cur_fv->file_list[file_idx].file_name);
-				concat_file_name_separating_by_space(file_path, buf_len, path, '\'');
+				concat_file_name_separating_by_space(file_path, buf_len, path);
 			}
 		}
 	}
@@ -455,12 +455,14 @@ PRIVATE void disp_filer_title_bar(const char *path,
 	if (is_app_list_mode()) {
 		separator_char = '.';
 	}
+#ifdef ENABLE_DEBUG
 	if (GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF) {
 		separator_char = ';';
 		if (is_app_list_mode()) {
 			separator_char = ',';
 		}
 	}
+#endif // ENABLE_DEBUG
 	snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%d%c%s",
 	 cur_filer_views->view_idx+1, separator_char, path);
 

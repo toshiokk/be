@@ -588,6 +588,7 @@ char *my_realpath(const char *path, char *buf, int buf_len)
 #endif // HAVE_REALPATH
 
 // get full path (path begins from "/") but do not resolve symlink
+//                                            (may contain symlink)
 // ~     ==> /home/user
 // ~user ==> /home/user
 // ~/tools/src/filename.ext     ==> /home/user/tools/src/filename.ext

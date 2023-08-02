@@ -92,14 +92,17 @@ void disp_editor_title_bar(void)
 	if (is_app_list_mode()) {
 		separator_char = '.';
 	}
+#ifdef ENABLE_DEBUG
 	if (GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF) {
 		separator_char = ';';
 		if (is_app_list_mode()) {
 			separator_char = ',';
 		}
 	}
+#endif // ENABLE_DEBUG
 	snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%d%c%d:%s",
-	 cur_editor_views->view_idx+1, separator_char, buf_idx+1, (path[0] == '\0') ? _("New File") : path);
+	 cur_editor_views->view_idx+1, separator_char, buf_idx+1,
+	 (path[0] == '\0') ? _("New File") : path);
 	if (CUR_EBUF_STATE(buf_MODIFIED)) {
 		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[Modified] "));
 	} else if (CUR_EBUF_STATE(buf_VIEW_MODE)) {

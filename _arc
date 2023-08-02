@@ -7,4 +7,4 @@ rm_tildes
 tar -czvf be`yymmdd-hhmm`.tgz src
 
 cd src
-./__m
+#./__m

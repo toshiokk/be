@@ -88,11 +88,11 @@ PRIVATE int editor_main_loop(void)
 		//----------------------------------
 		key_input = input_key_wait_return();
 		//----------------------------------
-mflf_d_printf("input%ckey:0x%04x===================================================\n",
- '_', key_input);
 		if (key_input < 0) {
 			// no key input
 		} else {
+mflf_d_printf("input%ckey:0x%04x===================================================\n",
+ '_', key_input);
 #ifdef ENABLE_REGEX
 			matches_clear(&matches__);
 #endif // ENABLE_REGEX

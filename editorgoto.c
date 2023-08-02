@@ -29,6 +29,9 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 
 PRIVATE int is_file_name_proj_file(const char *file_name);
 PRIVATE const char *skip_n_file_names(const char *line, int field_idx);
+#ifdef START_UP_TEST
+void test_get_n_th_file_name(void);
+#endif // START_UP_TEST
 #ifdef ENABLE_HISTORY
 PRIVATE void goto_pos_by_history(const char *full_path);
 #endif // ENABLE_HISTORY
@@ -239,16 +242,17 @@ int load_file_in_string(const char *string,
 	int line_num, col_num;
 	int files;
 
-////
+///
 flf_d_printf("string:[%s]\n", string);
 	if (get_file_line_col_from_str_null(string, file_name, &line_num, &col_num) == 0) {
+_FLF_
 		return 0;
 	}
-////
+///
 flf_d_printf("file_name:[%s]\n", file_name);
 	if ((files = load_file_name_upp_low(file_name,
 	 try_upp_low, open_on_err, msg_on_err, recursive)) > 0) {
-////
+///
 flf_d_printf("loaded:[%s]\n", file_name);
 		goto_line_col_in_cur_buf(line_num, col_num);
 	}
@@ -283,14 +287,15 @@ int load_file_name(const char *file_name, int open_on_err, int msg_on_err, int r
 	static int recursive_call_count = 0;
 	int files;
 
-////flf_d_printf("[%s], %d, %d, %d\n", file_name, open_on_err, msg_on_err, recursive);
+///
+flf_d_printf("[%s], %d, %d, %d\n", file_name, open_on_err, msg_on_err, recursive);
 	if (load_file_name__(file_name, open_on_err, msg_on_err) <= 0) {
 		return 0;
 	}
 ///_FLF_
 	files = 1;
 	if (recursive && recursive_call_count == 0 && is_file_name_proj_file(file_name)) {
-////flf_d_printf("recursive_call_count:%d\n", recursive_call_count);
+///flf_d_printf("recursive_call_count:%d\n", recursive_call_count);
 		recursive_call_count++;
 		files += load_files_in_cur_buf();		// recursive call
 		recursive_call_count--;
@@ -302,18 +307,20 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 {
 	char abs_path[MAX_PATH_LEN+1];
 
-////
+///
 flf_d_printf("[%s]\n", file_name);
 	get_abs_path(file_name, abs_path);
-////
+///
 flf_d_printf("[%s]\n", abs_path);
 	if (switch_c_e_b_to_file_name(abs_path)) {
+flf_d_printf("already loaded:[%s]\n", abs_path);
 		// already loaded
 		return 1;
 	}
 	if (load_file_into_new_buf(abs_path, open_on_err, msg_on_err) < 0) {
 		return 0;
 	}
+flf_d_printf("loaded:[%s]\n", abs_path);
 #ifdef ENABLE_HISTORY
 	goto_pos_by_history(abs_path);
 #endif // ENABLE_HISTORY
@@ -409,19 +416,48 @@ PRIVATE const char *skip_n_file_names(const char *line, int field_idx)
 	const char *ptr;
 	int field_cnt;
 
-////flf_d_printf("[%s], %d\n", line, field_idx);
+////
+flf_d_printf("[%s], %d\n", line, field_idx);
 	ptr = line;
 	for (field_cnt = 0; ; field_cnt++) {
 		ptr = skip_to_file_path(ptr);
-		if (*ptr == 0)
+		if (*ptr == '\0')
 			break;		// EOL
 		if (field_cnt >= field_idx)
 			break;
+		const char *prev_ptr = ptr;
 		ptr = skip_file_path(ptr);
+		if (ptr == prev_ptr)
+			// not progressed
+			break;
 	}
-////flf_d_printf("file: [%s]\n", ptr);
+////
+flf_d_printf("file: [%s]\n", ptr);
 	return ptr;
 }
+
+#ifdef START_UP_TEST
+void test_get_n_th_file_name(void)
+{
+	char test_str[] =
+	 "history.c 345 hist_type_idx:3:['/home/user/ filename including space .txt '|1:1]";
+	int field_idx;
+	const char *ptr;
+	char file_name[MAX_PATH_LEN+1];
+	int line_num, col_num;
+
+_FLF_
+	for (field_idx = 0; field_idx < 10; field_idx++) {
+		ptr = skip_n_file_names(test_str, field_idx);
+		if (*ptr == '\0')
+			break;
+		if (get_file_line_col_from_str_null(ptr, file_name, &line_num, &col_num)) {
+			flf_d_printf("%d: file_name:[%s],%d,%d\n", field_idx, file_name, line_num, col_num);
+		}
+	}
+}
+#endif // START_UP_TEST
+
 //-----------------------------------------------------------------------------
 #ifdef ENABLE_HISTORY
 PRIVATE void goto_pos_by_history(const char *full_path)
@@ -488,6 +524,7 @@ int goto_line_col_in_cur_buf(int line_num, int col_num)
 	return 2;
 }
 //-----------------------------------------------------------------------------
+#define	FILE_PATH_SEPARATOR		"|"		// candidates are "|", "//", ""\\"
 char *mk_cur_file_pos_str_static(void)
 {
 	static char buffer[MAX_PATH_LEN+1];
@@ -506,19 +543,21 @@ char *mk_cur_file_pos_str(char *buffer)
 	 CEBV_CL->data ? col_idx_from_byte_idx(CEBV_CL->data, 0, CEBV_CLBI)+1 : 0);
 #endif // CURSOR_POS_COLUMN
 }
-char *mk_file_pos_str(char *buffer, char *file_path, int line_num, int col_num)
+char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col_num)
 {
+	file_path = quote_file_name(file_path);
 	if (col_num <= 0) {
 		if (line_num <= 0) {
 			// /path/to/file.ext
 			snprintf_(buffer, MAX_PATH_LEN+1, "%s", file_path);
 		} else {
-			// /path/to/file.ext:999
-			snprintf_(buffer, MAX_PATH_LEN+1, "%s:%d", file_path, line_num);
+			// /path/to/file.ext|999
+			snprintf_(buffer, MAX_PATH_LEN+1, "%s%s%d", file_path, FILE_PATH_SEPARATOR, line_num);
 		}
 	} else {
-		// /path/to/file.ext:999:99
-		snprintf_(buffer, MAX_PATH_LEN+1, "%s:%d:%d", file_path, line_num, col_num);
+		// /path/to/file.ext|999:99
+		snprintf_(buffer, MAX_PATH_LEN+1, "%s%s%d:%d",
+		 file_path, FILE_PATH_SEPARATOR, line_num, col_num);
 	}
 	return buffer;
 }
@@ -532,7 +571,10 @@ const char *get_file_line_col_from_str_null(const char *str, char *file_path,
 	get_file_line_col_from_str(str, file_path, line_num, col_num);
 	return file_path;
 }
-// /home/user/tools/be/src/editorgoto.c:400:10
+// /home/user/tools/be/src/editorgoto.c|400:10
+//  => "/home/user/tools/be/src/editorgoto.c", 400, 10
+// '/home/user/tools/be/src/ file name.txt '|400:10
+//  => "/home/user/tools/be/src/ file name.txt ", 400, 10
 PRIVATE int get_file_line_col_from_str(const char *str, char *file_path,
  int *line_num_, int *col_num_)
 {
@@ -553,6 +595,7 @@ PRIVATE int get_file_line_col_from_str(const char *str, char *file_path,
 	ptr = skip_file_path(ptr);
 	fn_end = ptr;
 	strlcpy__(file_path, fn_begin, LIM_MAX(MAX_PATH_LEN, fn_end - fn_begin));
+	unquote_string(file_path);
 	// skip to beginning of a line number
 	ptr = skip_to_digit(ptr);
 	if (isdigit(*ptr)) {
@@ -575,5 +618,19 @@ flf_d_printf("str:[%s] ==> path:[%s] line:%d col:%d\n",
  str, file_path, line_num, col_num);
 	return strnlen(file_path, MAX_PATH_LEN);
 }
+
+// supported file names:
+//  |No.| file type                                                | command line | file list |
+//  |---|----------------------------------------------------------|--------------|-----------|
+//  | 1 |" file name.txt "(includes spaces in head, middle or tail)| supported    | supported |
+//  | 2 |'"filename".txt' (includes '"')                           | supported    | supported |
+//  | 3 |"file|name.txt"  (includes special chars [|'])            | supported    | supported |
+// workaround:
+//  |No.| command line      | file list                 | project file             |
+//  |---|-------------------|---------------------------|--------------------------|
+//  | 1 | " file name.txt " | " file name.txt ",100,10  | 100,10," file name.txt " |
+//  | 2 | "filename".txt    | "\"filename.txt\"",100,10 | 100,10,"\"filename.txt\""|
+//  | 2 | "file|name.txt"   | "file|name.txt",100,10    | 100,10,"file|name.txt"   |
+//  | 2 | "file'name.txt"   | "file'name.txt",100,10    | 100,10,"file|name.txt"   |
 
 // End of editorgoto.c

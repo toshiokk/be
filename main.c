@@ -463,6 +463,8 @@ PRIVATE void start_up_test(void)
 	test_get_file_size_str();
 #endif // ENABLE_FILER
 	test_replace_str();
+
+	test_get_n_th_file_name();
 }
 PRIVATE void start_up_test2(void)
 {

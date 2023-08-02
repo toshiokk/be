@@ -30,14 +30,14 @@
  (S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH)
 
 typedef struct be_buf_view_t {
-	be_line_t *cur_line;			//!< pointer to current line (be_line_t)
-	int cur_line_byte_idx;			//!< current line byte index
-	int cursor_y;					//! display y to which cur-line to be displayed
-	int cursor_x_to_keep;			//!< cursor X to keep when moving cursor vertically
-	int min_text_x_to_be_disp;		// text x to be displayed on the left edge of the screen
+	be_line_t *cur_line;		//!< pointer to current line (be_line_t)
+	int cur_line_byte_idx;		//!< current line byte index
+	int cursor_y;				//! display y to which cur-line to be displayed
+	int cursor_x_to_keep;		//!< cursor X to keep when moving cursor vertically
+	int min_text_x_to_be_disp;	// text x to be displayed on the left edge of the screen
 } be_buf_view_t;
 
-#define BUF_VIEWS		2			// NOTE: must be the same as MAX_APP_PANES
+#define BUF_VIEWS		2		// NOTE: must be the same as MAX_APP_PANES
 
 //! buffer, correction of lines
 typedef struct be_buf_t {
@@ -49,19 +49,19 @@ typedef struct be_buf_t {
 	struct stat orig_file_stat;		//!< original file status
 	unsigned short orig_file_crc;	//!< file CRC before modification
 
-	be_line_t top_anchor;			//!< top line
-	be_line_t bot_anchor;			//!< bottom line
+	be_line_t top_anchor;		//!< top line
+	be_line_t bot_anchor;		//!< bottom line
 	be_buf_view_t views[BUF_VIEWS];
-	be_line_t *mark_line;			//!< 
-	int mark_line_byte_idx;			//!< 
-	int buf_lines;					//!< line count
-	size_t buf_size;				//!< buffer size
-	buf_state_t buf_state;			//!< buffer state
+	be_line_t *mark_line;		//!< 
+	int mark_line_byte_idx;		//!< 
+	int buf_lines;				//!< line count
+	size_t buf_size;			//!< buffer size
+	buf_state_t buf_state;		//!< buffer state
 } be_buf_t;
 
 typedef struct /*be_bufs_t*/ {
-	be_buf_t top_anchor;	//< top buffer
-	be_buf_t bot_anchor;	//< bottom buffer
+	be_buf_t top_anchor;		//< top buffer
+	be_buf_t bot_anchor;		//< bottom buffer
 } be_bufs_t;
 
 // buffers ==> buffer

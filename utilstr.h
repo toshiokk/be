@@ -46,13 +46,14 @@ char *delete_str(char *buffer, size_t start, len_t delete_len);
 char *insert_str(char *buffer, size_t buf_len, size_t offset,
  const char *string, len_t insert_len);
 char *concat_file_name_separating_by_space(char *buffer, size_t buf_len,
- const char *string, char quote_chr);
+ const char *string);
 const char *quote_file_name(const char *string);
 const char *quote_file_name_buf(char *buf, const char *string);
-const char *quote_file_name_if_contains_space(char *buf, const char *string, char quote_chr);
+const char *quote_file_name_if_necessary(char *buf, const char *string);
 
 int is_strlen_0(const char *str);
 int is_strlen_not_0(const char *str);
+size_t str_path_len(const char *str);
 
 char *strcat_printf(char *buffer, size_t buf_len, const char *format, ...);
 int snprintf_(char *buffer, size_t buf_len, const char *format, ...);
@@ -90,7 +91,9 @@ const char *skip_chars(const char *ptr, const char *chars);
 const char *skip_to_file_path(const char *ptr);
 const char *skip_file_path(const char *ptr);
 char *skip_file_name(char *ptr);
+#if 0
 const char *skip_separator(const char *ptr);
+#endif
 const char *skip_to_digit(const char *ptr);
 const char *skip_digits(const char *ptr);
 
@@ -98,12 +101,13 @@ char *remove_line_tail_lf(char *line);
 int is_file_path_char(const char *ptr);
 int is_file_name_char(const char *ptr);
 int is_separator(char chr);
-int contain_space(const char *file_name);
+int contain_chr(const char *file_name, char chr);
 char *quote_string(char *buf, const char *string, char quote_chr);
-char is_quoted(const char *str);
+char *escape_quote_chr(char *buffer, const char *string, char quote_chr);
+char *unquote_string(char *buffer);
+char is_quoted(const char *str, char quote_chr);
 
-char *select_plural_form(char *singular, char *plural, char *type3, char *type4,
- int number);
+char *select_plural_form(char *singular, char *plural, char *type3, char *type4, int number);
 int get_plural_form_index(int number);
 
 //-----------------------------------------------------------------------------

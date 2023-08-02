@@ -32,7 +32,8 @@
 //   ESC [ {n} m				// set attributes
 //     n : 0, 1, 7, 30--37, 40--47
 
-#define TERMIF_MAX_SCRN_COLS		384		// = 1920[pixels] / 5[pixels/char] (Full HD)
+///#define TERMIF_MAX_SCRN_COLS		384		// = 1920[pixels] / 5[pixels/char] (Full HD)
+#define TERMIF_MAX_SCRN_COLS		512		// = 2560[pixels] / 5[pixels/char] (WQXGA)
 #define TERMIF_MAX_SCRN_LINES		108		// = 1080[pixels] / 10[pixels/char] (Full HD)
 #define TERMIF_LINE_BUF_LEN			(TERMIF_MAX_SCRN_COLS * MAX_UTF8C_BYTES)
 
@@ -286,7 +287,7 @@ PRIVATE void put_narrow_char_to_vscreen(vscreen_char_t ucs21)
 		if ((0 <= termif_cursor_xx-1)
 		 && VSCR_IS_WIDE_CHAR_COL1(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx-1])) {
 			// putting narrow char. to the 2nd byte of wide char.
-			//                         clear 1st byte of wide char.
+			//                       clear 1st byte of wide char.
 			//  v      v
 			// [] ==> _A
 			VSCR_CHAR_REPLACE_WIDTH_UCS21(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx-1],
@@ -295,7 +296,7 @@ PRIVATE void put_narrow_char_to_vscreen(vscreen_char_t ucs21)
 		if (VSCR_IS_WIDE_CHAR_COL1(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx])
 		 && (termif_cursor_xx+1 < termif_columns)) {
 			// putting narrow char. to the 1st byte of wide char.
-			//                         clear 2nd byte of wide char.
+			//                       clear 2nd byte of wide char.
 			// v      v
 			// [] ==> A_
 			VSCR_CHAR_REPLACE_WIDTH_UCS21(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx+1],
@@ -315,8 +316,8 @@ PRIVATE void put_wide_char_to_vscreen(vscreen_char_t ucs21)
 #ifdef CHECK_AND_CORRECT_INCONSISTENCY
 		if ((0 <= termif_cursor_xx-1)
 		 && VSCR_IS_WIDE_CHAR_COL1(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx-1])) {
-			// putting wide char. to the 2nd byte of wide char prev. placed.
-			//                       clear 1st byte of wide char prev. placed.
+			// putting 1st byte of wide char to the 2nd byte of wide char which is prevly placed.
+			//                                clear 1st byte of wide char which is prevly placed.
 			//  v      v
 			// [] ==> _[]
 			VSCR_CHAR_REPLACE_WIDTH_UCS21(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx-1],
@@ -324,8 +325,8 @@ PRIVATE void put_wide_char_to_vscreen(vscreen_char_t ucs21)
 		}
 		if (VSCR_IS_WIDE_CHAR_COL1(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx+1])
 		 && (termif_cursor_xx+2 < termif_columns)) {
-			// putting wide char. to the prev. byte of prev. placed wide char.
-			//                       clear 2nd byte of prev. placed wide char.
+			// putting 2nd byte of wide char to the 1st byte of prevly placed wide char.
+			//                                clear 2nd byte of prevly placed wide char.
 			//  v       v
 			//   [] ==> []_
 			VSCR_CHAR_REPLACE_WIDTH_UCS21(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx+2],

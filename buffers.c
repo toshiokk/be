@@ -70,9 +70,9 @@ _FLF_
 
 void init_edit_bufs(void)
 {
-	buffer_init(EDIT_BUFS_TOP_ANCH, "#Edit-buffer top_anchor");
-	buffer_init(EDIT_BUFS_BOT_ANCH, "#Edit-buffer bot_anchor");
-	buffer_link(EDIT_BUFS_TOP_ANCH, EDIT_BUFS_BOT_ANCH);
+	init_bufs_top_bot_anchor(
+	 EDIT_BUFS_TOP_ANCH, "#Edit-bufs-top_anchor",
+	 EDIT_BUFS_BOT_ANCH, "#Edit-bufs-bot_anchor");
 	init_editor_views(&editor_views);
 }
 // Free all memory associated with all edit buffers
@@ -196,12 +196,14 @@ void dump_cur_editor_views(void)
 	buffer_dump_state(cur_editor_views->bufs[0]);
 	buffer_dump_state(cur_editor_views->bufs[1]);
 
-	flf_d_printf("get_c_e_b(): %p, &(get_c_e_b()->views[0]): %p\n", get_c_e_b(), &(get_c_e_b()->views[0]));
+	flf_d_printf("get_c_e_b(): %p, &(get_c_e_b()->views[0]): %p\n",
+	 get_c_e_b(), &(get_c_e_b()->views[0]));
 	line_dump_byte_idx(CEBV0_CL, CEBV0_CLBI);
 	flf_d_printf("CEBV0_CURSOR_Y: %d, CEBV0_CURSOR_X_TO_KEEP: %d\n",
 	 CEBV0_CURSOR_Y, CEBV0_CURSOR_X_TO_KEEP);
 
-	flf_d_printf("get_c_e_b(): %p, &(get_c_e_b()->views[1]): %p\n", get_c_e_b(), &(get_c_e_b()->views[1]));
+	flf_d_printf("get_c_e_b(): %p, &(get_c_e_b()->views[1]): %p\n",
+	 get_c_e_b(), &(get_c_e_b()->views[1]));
 	line_dump_byte_idx(CEBV1_CL, CEBV1_CLBI);
 	flf_d_printf("CEBV1_CURSOR_Y: %d, CEBV1_CURSOR_X_TO_KEEP: %d\n",
 	 CEBV1_CURSOR_Y, CEBV1_CURSOR_X_TO_KEEP);
@@ -292,9 +294,9 @@ int is_c_e_b_valid(void)
 
 void init_cut_bufs(void)
 {
-	buffer_init(CUT_BUFS_TOP_ANCH, "#Cut-buffer top_anchor");
-	buffer_init(CUT_BUFS_BOT_ANCH, "#Cut-buffer bot_anchor");
-	buffer_link(CUT_BUFS_TOP_ANCH, CUT_BUFS_BOT_ANCH);
+	init_bufs_top_bot_anchor(
+	 CUT_BUFS_TOP_ANCH, "#Cut-bufs-top_anchor",
+	 CUT_BUFS_BOT_ANCH, "#Cut-bufs-bot_anchor");
 }
 void free_all_cut_bufs(void)
 {
@@ -336,6 +338,17 @@ int count_cur_cut_buf_lines(void)
 
 //-----------------------------------------------------------------------------
 
+void init_bufs_top_bot_anchor(
+ be_buf_t *buf_top, const char *full_path_top,
+ be_buf_t *buf_bot, const char *full_path_bot)
+{
+	buffer_init(buf_top, full_path_top);
+	buffer_init(buf_bot, full_path_bot);
+	buffer_link(buf_top, buf_bot);
+}
+
+//-----------------------------------------------------------------------------
+
 void renumber_cur_buf_from_top(void)
 {
 	buffer_renumber_from_line(get_c_e_b(), CUR_EDIT_BUF_TOP_LINE);
@@ -361,7 +374,7 @@ int check_cur_buf_modified(void)
 		disp_status_bar_ing(_("Calculating CRC..."));
 		modified = buffer_check_crc(get_c_e_b());
 	}
-flf_d_printf("modified: %d\n", modified);
+///flf_d_printf("modified: %d\n", modified);
 	return modified;
 }
 

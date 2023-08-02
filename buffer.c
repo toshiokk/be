@@ -68,8 +68,8 @@ be_buf_t *buffer_init(be_buf_t *buf, const char *full_path)
 }
 be_buf_t *buffer_init_line_anchors(be_buf_t *buf)
 {
-	line_init(&buf->top_anchor, "#line_top_anchor");
-	line_init(&buf->bot_anchor, "#line_bot_anchor");
+	line_init(&buf->top_anchor, "#BUF-top_anchor");
+	line_init(&buf->bot_anchor, "#BUF-bot_anchor");
 	line_link(&buf->top_anchor, &buf->bot_anchor);
 	return buf;
 }

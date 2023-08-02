@@ -27,13 +27,13 @@
 
 void init_undo_bufs(void)
 {
-	buffer_init(UNDO_BUFS_TOP_ANCH, "#Undo-buffer top_anchor");
-	buffer_init(UNDO_BUFS_BOT_ANCH, "#Undo-buffer bot_anchor");
-	buffer_link(UNDO_BUFS_TOP_ANCH, UNDO_BUFS_BOT_ANCH);
+	init_bufs_top_bot_anchor(
+	 UNDO_BUFS_TOP_ANCH, "#Undo-bufs-top_anchor",
+	 UNDO_BUFS_BOT_ANCH, "#Undo-bufs-bot_anchor");
 
-	buffer_init(REDO_BUFS_TOP_ANCH, "#Redo-buffer top_anchor");
-	buffer_init(REDO_BUFS_BOT_ANCH, "#Redo-buffer bot_anchor");
-	buffer_link(REDO_BUFS_TOP_ANCH, REDO_BUFS_BOT_ANCH);
+	init_bufs_top_bot_anchor(
+	 REDO_BUFS_TOP_ANCH, "#Redo-bufs-top_anchor",
+	 REDO_BUFS_BOT_ANCH, "#Redo-bufs-bot_anchor");
 }
 void free_all_undo_bufs(void)
 {

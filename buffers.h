@@ -191,6 +191,12 @@ int count_cur_cut_buf_lines(void);
 
 //-----------------------------------------------------------------------------
 
+void init_bufs_top_bot_anchor(
+ be_buf_t *buf_top, const char *full_path_top,
+ be_buf_t *buf_bot, const char *full_path_bot);
+
+//-----------------------------------------------------------------------------
+
 void renumber_cur_buf_from_top(void);
 struct be_line_t *get_line_ptr_from_cur_buf_line_num(int line_num);
 

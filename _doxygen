@@ -1,0 +1,9 @@
+## install
+# sudo apt install doxygen
+# sudo apt install graphviz
+
+## generate doxygen config file
+# doxygen -g _be.doxygen
+
+## generate documents
+doxygen __be.doxygen 2>&1 | tee _doxygen.log

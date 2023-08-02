@@ -37,10 +37,10 @@
 #define NODES_BOT_ANCH(nodes)		(&(nodes)->bot_anchor)
 // "NODE" is "BUFFER" or "LINE"
 #define IS_PTR_NULL(ptr)		((ptr) == NULL)
-#define IS_NODE_TOP_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL((node)->prev))	// no previous node
+#define IS_NODE_TOP_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL((node)->prev))	// no prev.
 #define IS_NODE_TOP(node)			(IS_NODE_TOP_ANCH(node) || IS_PTR_NULL((node)->prev->prev))
 #define IS_NODE_BOT(node)			(IS_NODE_BOT_ANCH(node) || IS_PTR_NULL((node)->next->next))
-#define IS_NODE_BOT_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL((node)->next))	// no next node
+#define IS_NODE_BOT_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL((node)->next))	// no next
 #define IS_NODE_VALID(node)			((IS_NODE_TOP_ANCH(node) || IS_NODE_BOT_ANCH(node)) == 0)
 
 typedef struct be_line_t {
