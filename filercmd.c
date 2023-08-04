@@ -136,7 +136,7 @@ int do_view_file(void)
 	}
 	return 0;
 }
-int do_tail_file(void)
+int do_tail_file(void)	// view file with "tail" command
 {
 	int file_idx;
 	char *file_name;
@@ -478,7 +478,7 @@ int do_change_directory(void)
 	if (ret <= 0) {
 		return 0;
 	}
-	return filer_change_dir(file_path);
+	return filer_change_dir_parent(file_path);
 }
 int do_parent_directory(void)
 {
@@ -723,6 +723,20 @@ PRIVATE int filer_change_prev_dir(void)
 		return filer_change_dir(cur_fv->prev_dir);
 	}
 	return 0;
+}
+// try changing to parent dir
+int filer_change_dir_parent(const char *dir)
+{
+	char chg_dir[MAX_PATH_LEN+1];
+
+	while(filer_change_dir(dir)) {
+		if (strcmp(dir, "/") == 0) {
+			return -1;	// error
+		}
+		strip_one_dir(dir, chg_dir);
+		dir = chg_dir;
+	}
+	return 0;	// changed
 }
 int filer_change_dir(const char *dir)
 {

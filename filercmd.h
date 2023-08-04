@@ -76,6 +76,7 @@ int do_filer_menu_3(void);
 int do_filer_menu_4(void);
 int do_filer_menu_5(void);
 
+int filer_change_dir_parent(const char *dir);
 int filer_change_dir(const char *dir);
 
 #endif // ENABLE_FILER
