@@ -724,7 +724,6 @@ PRIVATE int filer_change_prev_dir(void)
 	}
 	return 0;
 }
-// try changing to parent dir
 int filer_change_dir_parent(const char *dir)
 {
 	char chg_dir[MAX_PATH_LEN+1];
@@ -733,6 +732,8 @@ int filer_change_dir_parent(const char *dir)
 		if (strcmp(dir, "/") == 0) {
 			return -1;	// error
 		}
+		// If can not change to dir, try parent dir
+		// /try/to/change/dir/file ==> /try/to/change/dir
 		strip_one_dir(dir, chg_dir);
 		dir = chg_dir;
 	}
