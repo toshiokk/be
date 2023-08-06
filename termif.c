@@ -90,7 +90,9 @@ PRIVATE void set_string_to_vscreen(const char *string, int bytes);
 PRIVATE void put_narrow_char_to_vscreen(vscreen_char_t ucs21);
 PRIVATE void put_wide_char_to_vscreen(vscreen_char_t ucs21);
 
+#ifdef ENABLE_DEBUG
 PRIVATE void dump_vscreen(int yy, int len);
+#endif // ENABLE_DEBUG
 
 PRIVATE void send_cursor_pos_string_to_term(int yy, int xx, const char *string, int bytes);
 PRIVATE void send_cursor_on_to_term(int on_off);
@@ -344,6 +346,7 @@ PRIVATE void put_wide_char_to_vscreen(vscreen_char_t ucs21)
 		termif_cursor_xx++;
 	}
 }
+#ifdef ENABLE_DEBUG
 PRIVATE void dump_vscreen(int yy, int len)
 {
 	char utf8c[MAX_UTF8C_BYTES + 1];
@@ -357,6 +360,7 @@ PRIVATE void dump_vscreen(int yy, int len)
 		d_printf("\n");
 	}
 }
+#endif // ENABLE_DEBUG
 //-----------------------------------------------------------------------------
 // If narrow char, compare 1st place.
 // If wide   char, compare 1st and 2nd place.
