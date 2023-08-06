@@ -52,9 +52,9 @@
 #define VSCR_CHAR_BOLD		0x00400000UL
 #define VSCR_CHAR_WIDTH1	0x00000000UL	// narrow char. or 2nd place of wide char.
 #define VSCR_CHAR_WIDTH2	0x00200000UL	// 1st place of wide char.
-#define VSCR_IS_WIDE_CHAR_COL1(vscr_char)		((vscr_char) & VSCR_CHAR_WIDTH2)
+#define VSCR_IS_WIDE_CHAR_COL1(vscr_char)	((vscr_char) & VSCR_CHAR_WIDTH2)
 #define VSCR_CHAR_UCS21		0x001fffffUL	// 21 bits
-#define VSCR_CHAR_UCS21_SPACE		' '			// space
+#define VSCR_CHAR_UCS21_SPACE		' '		// space
 #define VSCR_CHAR_ATTRS		(VSCR_CHAR_BGC | VSCR_CHAR_FGC | VSCR_CHAR_REV | VSCR_CHAR_BOLD)
 #define VSCR_CHAR_ATTRS_DEFAULT		0x07000000UL
 #define VSCR_CHAR_ATTRS_FROM_BGC(bgc)		(((bgc) << 28) & VSCR_CHAR_BGC)	// 0x0f ==> 0xf0000000
@@ -68,6 +68,7 @@
 #define VSCR_CHAR_REPLACE_WIDTH_UCS21(vscr_char, width, ucs21)	\
 	(vscr_char) = ((vscr_char) & VSCR_CHAR_ATTRS) | (width) | (ucs21)
 typedef unsigned long vscreen_char_t;
+typedef vscreen_char_t vscreen_buf_t[TERMIF_MAX_SCRN_LINES][TERMIF_MAX_SCRN_COLS];
 PRIVATE vscreen_char_t vscreen_to_paint[TERMIF_MAX_SCRN_LINES][TERMIF_MAX_SCRN_COLS];
 PRIVATE vscreen_char_t vscreen_painted[TERMIF_MAX_SCRN_LINES][TERMIF_MAX_SCRN_COLS];
 
@@ -89,9 +90,12 @@ PRIVATE void set_string_to_vscreen(const char *string, int bytes);
 PRIVATE void put_narrow_char_to_vscreen(vscreen_char_t ucs21);
 PRIVATE void put_wide_char_to_vscreen(vscreen_char_t ucs21);
 
-PRIVATE vscreen_char_t attrs_sent = VSCR_CHAR_ATTRS_DEFAULT;	// attributes sent to terminal
+PRIVATE void dump_vscreen(int yy, int len);
+
+PRIVATE void send_cursor_pos_string_to_term(int yy, int xx, const char *string, int bytes);
 PRIVATE void send_cursor_on_to_term(int on_off);
 PRIVATE void send_cursor_pos_to_term(int yy, int xx);
+PRIVATE vscreen_char_t attrs_sent = VSCR_CHAR_ATTRS_DEFAULT;	// attributes sent to terminal
 PRIVATE void send_attrs_to_term(vscreen_char_t attrs);
 PRIVATE void send_all_off_to_term(void);
 PRIVATE void send_bold_to_term(int bold);
@@ -121,8 +125,7 @@ int termif_begin(void)
 	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in getchar()
 	termif_get_screen_size_from_term();
 	termif_attrs = VSCR_CHAR_ATTRS_DEFAULT;
-	memset((void *)vscreen_to_paint, 0x00, sizeof(vscreen_to_paint));
-	memset((void *)vscreen_painted, 0x00, sizeof(vscreen_painted));
+	termif_clear_screen();
 	return 0;
 }
 int termif_end(void)
@@ -341,79 +344,118 @@ PRIVATE void put_wide_char_to_vscreen(vscreen_char_t ucs21)
 		termif_cursor_xx++;
 	}
 }
+PRIVATE void dump_vscreen(int yy, int len)
+{
+	char utf8c[MAX_UTF8C_BYTES + 1];
+	for (int vscr_idx = 0; vscr_idx < 2; vscr_idx++) {
+		vscreen_buf_t *buf = (vscr_idx == 0) ? &vscreen_to_paint : &vscreen_painted;
+		flf_d_printf("%s(%d): ", (vscr_idx == 0) ? "topaint" : "painted", yy);
+		for (int idx = 0; idx < len; idx++) {
+			utf8c_encode((*buf)[yy][idx] & VSCR_CHAR_UCS21, utf8c);
+			d_printf(" %s", utf8c);
+		}
+		d_printf("\n");
+	}
+}
 //-----------------------------------------------------------------------------
+// If narrow char, compare 1st place.
+// If wide   char, compare 1st and 2nd place.
 #define CMP_NARR_OR_WIDE_CHR()										\
 	(VSCR_IS_WIDE_CHAR_COL1(vscreen_to_paint[yy][xx]) == 0			\
 	 ? (vscreen_painted[yy][xx] != vscreen_to_paint[yy][xx])		\
 	 : (vscreen_painted[yy][xx] != vscreen_to_paint[yy][xx]			\
 	  || vscreen_painted[yy][xx+1] != vscreen_to_paint[yy][xx+1]))
 
-// refresh screen by sending pending data in vscreen_to_paint
+// If is_vague_wide_chr(), display this char as if wide char.
+// (display "  " and display this wide char to 1st place)
+// Expected effect:
+//   If this char is narrow char, displayed "N ".
+//   If this char is wide   char, displayed "WW".
+
+// refresh screen by sending pending data in vscreen_to_paint to the screen.
 void termif_refresh(void)
 {
 	int cursor_on = 1;
 	int yy, xx;
-	int start_xx, end_xx;
+	int start_xx;
 	vscreen_char_t start_attrs;
 	char utf8c[MAX_UTF8C_BYTES + 1];
- 	wchar_t ucs21;
+	wchar_t ucs21;
 	char line_buf[TERMIF_LINE_BUF_LEN + 1];
 
 	for (yy = 0; yy < termif_lines; yy++) {
 		for (xx = 0; xx < termif_columns; ) {
+			start_attrs = (vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS);
 			if (CMP_NARR_OR_WIDE_CHR()) {
-				start_xx = xx;
-				start_attrs = (vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS);
-				for (xx = start_xx ; xx < termif_columns; xx++) {
-					if (((vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS) == start_attrs)
-					 && CMP_NARR_OR_WIDE_CHR()) {
-						continue;
-					} else {
-						break;
+#ifdef VAGUE_WIDE_CHR
+				ucs21 = vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21;
+				if (is_vague_wide_chr(ucs21)) {
+					if (cursor_on) {
+						// erase cursor before painting
+						send_cursor_on_to_term(0);
+						cursor_on = 0;
 					}
-				}
-				end_xx = xx;
-				strcpy(line_buf, "");
-				for (xx = start_xx ; xx < end_xx; xx++) {
-					ucs21 = vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21;
-///					if (VSCR_IS_WIDE_CHAR_COL1(vscreen_to_paint[yy][xx])) {
-///						// wide char.
-///						if ((vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21)
-///						  != (vscreen_to_paint[yy][xx+1] & VSCR_CHAR_UCS21)) {
-///							// (1st place) != (2nd place), display only ' '
-///							ucs21 = VSCR_CHAR_UCS21_SPACE;
-///						}
-///					}
+					send_attrs_to_term(start_attrs);
+					send_cursor_pos_string_to_term(yy, xx, "  ", -1);	// "  "
 					utf8c_encode(ucs21, utf8c);
-					strlcat__(line_buf, TERMIF_LINE_BUF_LEN, utf8c);
-					if (VSCR_IS_WIDE_CHAR_COL1(vscreen_to_paint[yy][xx])
-					 && ((vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21)
-					  == (vscreen_to_paint[yy][xx+1] & VSCR_CHAR_UCS21))) {
-						// wide char and, 1st and 2nd UCS are the same.
+					send_cursor_pos_string_to_term(yy, xx, utf8c, -1);	// "H " or "WW"
+					vscreen_painted[yy][xx] = vscreen_to_paint[yy][xx];
+					xx++;
+					vscreen_painted[yy][xx] = vscreen_to_paint[yy][xx];
+					xx++;
+				} else {
+#endif // VAGUE_WIDE_CHR
+					start_xx = xx;
+					strcpy(line_buf, "");
+					for ( ; xx < termif_columns; ) {
+						ucs21 = vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21;
+						if (((vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS) != start_attrs)
+						 || CMP_NARR_OR_WIDE_CHR() == 0
+#ifdef VAGUE_WIDE_CHR
+						 || is_vague_wide_chr(ucs21)
+#endif // VAGUE_WIDE_CHR
+													) {
+							break;
+						}
+						utf8c_encode(ucs21, utf8c);
+						strlcat__(line_buf, TERMIF_LINE_BUF_LEN, utf8c);
+						if (VSCR_IS_WIDE_CHAR_COL1(vscreen_to_paint[yy][xx])
+						 && ((vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21)
+						  == (vscreen_to_paint[yy][xx+1] & VSCR_CHAR_UCS21))) {
+							// wide char and, 1st and 2nd UCS are the same.
+							vscreen_painted[yy][xx] = vscreen_to_paint[yy][xx];
+							xx++;
+						}
 						vscreen_painted[yy][xx] = vscreen_to_paint[yy][xx];
 						xx++;
 					}
-					vscreen_painted[yy][xx] = vscreen_to_paint[yy][xx];
+					if (cursor_on) {
+						// erase cursor before painting
+						send_cursor_on_to_term(0);
+						cursor_on = 0;
+					}
+					send_attrs_to_term(start_attrs);
+					send_cursor_pos_string_to_term(yy, start_xx, line_buf, -1);
+#ifdef VAGUE_WIDE_CHR
 				}
-				if (cursor_on) {
-					send_cursor_on_to_term(0);
-					cursor_on = 0;
-				}
-				send_cursor_pos_to_term(yy, start_xx);
-				send_attrs_to_term(start_attrs);
-				send_string_to_term(line_buf, -1);
+#endif // VAGUE_WIDE_CHR
 			} else {
 				xx++;
 			}
 		}
 	}
 	if (cursor_on == 0) {
-///mflf_d_printf("(%d, %d)\n", termif_cursor_yy, termif_cursor_xx);
+		// If cursor erased in this func, restore cursor.
 		send_cursor_pos_to_term(termif_cursor_yy, termif_cursor_xx);
-///mflf_d_printf("termif_cursor_on: %d\n", termif_cursor_on);
 		send_cursor_on_to_term(termif_cursor_on);
 	}
 ///_FLF_
+}
+
+PRIVATE void send_cursor_pos_string_to_term(int yy, int xx, const char *string, int bytes)
+{
+	send_cursor_pos_to_term(yy, xx);
+	send_string_to_term(string, bytes);
 }
 
 PRIVATE void send_cursor_on_to_term(int on_off)
@@ -441,16 +483,15 @@ mflf_d_printf("(%d, %d)\n", termif_columns, termif_lines);
 PRIVATE void send_attrs_to_term(vscreen_char_t attrs)
 {
 	vscreen_char_t attrs_xor;
-	int bgc;
-	int fgc;
-	int real_bgc;
-	int real_fgc;
-
 	attrs_xor = (attrs_sent ^ attrs) & VSCR_CHAR_ATTRS;
 	if (attrs_xor == 0) {		// attributes changed ?
 		return;
 	}
 
+	int bgc;
+	int fgc;
+	int real_bgc;
+	int real_fgc;
 	bgc = BGC_FROM_VSCR_CHAR_ATTRS(attrs);
 	fgc = FGC_FROM_VSCR_CHAR_ATTRS(attrs);
 	if ((attrs & VSCR_CHAR_REV) == 0) {
@@ -515,7 +556,6 @@ PRIVATE void send_printf_to_term(const char *format, ...)
 }
 PRIVATE void send_string_to_term(const char *string, int bytes)
 {
-///d_printf("YYY{%s}\n", string);
 	send_string_to_term__(string, bytes);
 }
 PRIVATE void send_string_to_term__(const char *string, int bytes)
@@ -679,7 +719,7 @@ PRIVATE key_code_t input_key(void)
 	if (read(STDIN_FILENO, buf, 1) >= 1) {
 		key = buf[0];
 	}
-////	flfd_printf("getch():%04x %d\n", key, key);
+////	flf_d_printf("getch():%04x %d\n", key, key);
 	return key;
 }
 

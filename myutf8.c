@@ -45,7 +45,12 @@ PRIVATE int make_my_wcwidth_table(void)
 #endif // ENABLE_UTF8
 int my_mbwidth(const char *utf8c, int max_len)
 {
+#ifndef VAGUE_WIDE_CHR
 	return my_wcwidth(my_mbtowc(utf8c, max_len));
+#else // VAGUE_WIDE_CHR
+	wchar_t wc = my_mbtowc(utf8c, max_len);
+	return is_vague_wide_chr(wc) ? 2 : my_wcwidth(wc);
+#endif // VAGUE_WIDE_CHR
 }
 int my_wcwidth(wchar_t wc)
 {
@@ -69,6 +74,13 @@ int my_wcwidth(wchar_t wc)
 	return columns;
 #endif // ENABLE_UTF8
 }
+
+#ifdef VAGUE_WIDE_CHR
+int is_vague_wide_chr(wchar_t wc)
+{
+	return (0x2000 <= wc && wc < 0x2800);
+}
+#endif // VAGUE_WIDE_CHR
 
 // UTF8 character byte length
 int my_mblen(const char *utf8c, int max_len)

@@ -724,7 +724,7 @@ PRIVATE int filer_change_prev_dir(void)
 	}
 	return 0;
 }
-int filer_change_dir_parent(const char *dir)
+int filer_change_dir_parent(char *dir)
 {
 	char chg_dir[MAX_PATH_LEN+1];
 
