@@ -78,7 +78,7 @@ int my_wcwidth(wchar_t wc)
 #ifdef VAGUE_WIDE_CHR
 int is_vague_wide_chr(wchar_t wc)
 {
-	return (0x2000 <= wc && wc < 0x2800);
+	return (0x2000 <= wc && wc < 0x33e0);
 }
 #endif // VAGUE_WIDE_CHR
 

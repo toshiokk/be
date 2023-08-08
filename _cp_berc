@@ -1,7 +1,7 @@
 # copy berc to .berc and ~/.berc
-cp -av berc .berc
+#cp -av berc .berc
 cp -av emacs.berc .emacs.berc
 cp -av wordstar.berc .wordstar.berc
-cp -av berc ~/.berc
+#cp -av berc ~/.berc
 cp -av emacs.berc ~/.emacs.berc
 cp -av wordstar.berc ~/.wordstar.berc

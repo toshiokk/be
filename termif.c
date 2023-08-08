@@ -56,7 +56,7 @@
 #define VSCR_CHAR_UCS21		0x001fffffUL	// 21 bits
 #define VSCR_CHAR_UCS21_SPACE		' '		// space
 #define VSCR_CHAR_ATTRS		(VSCR_CHAR_BGC | VSCR_CHAR_FGC | VSCR_CHAR_REV | VSCR_CHAR_BOLD)
-#define VSCR_CHAR_ATTRS_DEFAULT		0x07000000UL
+#define VSCR_CHAR_ATTRS_DEFAULT				0x07000000UL
 #define VSCR_CHAR_ATTRS_FROM_BGC(bgc)		(((bgc) << 28) & VSCR_CHAR_BGC)	// 0x0f ==> 0xf0000000
 #define VSCR_CHAR_ATTRS_FROM_FGC(fgc)		(((fgc) << 24) & VSCR_CHAR_FGC)	// 0x0f ==> 0x0f000000
 #define SET_ATTRS_FROM_BGC(attrs, bgc)		\
@@ -90,7 +90,9 @@ PRIVATE void set_string_to_vscreen(const char *string, int bytes);
 PRIVATE void put_narrow_char_to_vscreen(vscreen_char_t ucs21);
 PRIVATE void put_wide_char_to_vscreen(vscreen_char_t ucs21);
 
+#ifdef ENABLE_DEBUG
 PRIVATE void dump_vscreen(int yy, int len);
+#endif // ENABLE_DEBUG
 
 PRIVATE void send_cursor_pos_string_to_term(int yy, int xx, const char *string, int bytes);
 PRIVATE void send_cursor_on_to_term(int on_off);
@@ -344,6 +346,7 @@ PRIVATE void put_wide_char_to_vscreen(vscreen_char_t ucs21)
 		termif_cursor_xx++;
 	}
 }
+#ifdef ENABLE_DEBUG
 PRIVATE void dump_vscreen(int yy, int len)
 {
 	char utf8c[MAX_UTF8C_BYTES + 1];
@@ -357,6 +360,7 @@ PRIVATE void dump_vscreen(int yy, int len)
 		d_printf("\n");
 	}
 }
+#endif // ENABLE_DEBUG
 //-----------------------------------------------------------------------------
 // If narrow char, compare 1st place.
 // If wide   char, compare 1st and 2nd place.
@@ -366,11 +370,16 @@ PRIVATE void dump_vscreen(int yy, int len)
 	 : (vscreen_painted[yy][xx] != vscreen_to_paint[yy][xx]			\
 	  || vscreen_painted[yy][xx+1] != vscreen_to_paint[yy][xx+1]))
 
+#ifdef VAGUE_WIDE_CHR
+///#define OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
+#endif // VAGUE_WIDE_CHR
+#ifdef OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
 // If is_vague_wide_chr(), display this char as if wide char.
 // (display "  " and display this wide char to 1st place)
 // Expected effect:
 //   If this char is narrow char, displayed "N ".
 //   If this char is wide   char, displayed "WW".
+#endif // OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
 
 // refresh screen by sending pending data in vscreen_to_paint to the screen.
 void termif_refresh(void)
@@ -387,7 +396,7 @@ void termif_refresh(void)
 		for (xx = 0; xx < termif_columns; ) {
 			start_attrs = (vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS);
 			if (CMP_NARR_OR_WIDE_CHR()) {
-#ifdef VAGUE_WIDE_CHR
+#ifdef OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
 				ucs21 = vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21;
 				if (is_vague_wide_chr(ucs21)) {
 					if (cursor_on) {
@@ -404,16 +413,16 @@ void termif_refresh(void)
 					vscreen_painted[yy][xx] = vscreen_to_paint[yy][xx];
 					xx++;
 				} else {
-#endif // VAGUE_WIDE_CHR
+#endif // OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
 					start_xx = xx;
 					strcpy(line_buf, "");
 					for ( ; xx < termif_columns; ) {
 						ucs21 = vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21;
 						if (((vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS) != start_attrs)
 						 || CMP_NARR_OR_WIDE_CHR() == 0
-#ifdef VAGUE_WIDE_CHR
+#ifdef OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
 						 || is_vague_wide_chr(ucs21)
-#endif // VAGUE_WIDE_CHR
+#endif // OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
 													) {
 							break;
 						}
@@ -436,9 +445,9 @@ void termif_refresh(void)
 					}
 					send_attrs_to_term(start_attrs);
 					send_cursor_pos_string_to_term(yy, start_xx, line_buf, -1);
-#ifdef VAGUE_WIDE_CHR
+#ifdef OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
 				}
-#endif // VAGUE_WIDE_CHR
+#endif // OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
 			} else {
 				xx++;
 			}
