@@ -31,6 +31,8 @@
 #define HISTORY_TYPES_APP			5	// types of app histories (5)
 #define HISTORY_TYPES_APP_AND_SHELL	6	// types of app and shell histories (5+1)
 
+#define FILE_PATH_SEPARATOR		"|"		// candidates are "|", "//", ""\\"
+
 #ifdef ENABLE_HISTORY
 
 #define _SEARCH_HISTORY_FILE_NAME		"search_history"
@@ -77,7 +79,7 @@ const char *get_joined_history_next(void);
 void update_history(int hist_type_idx, const char *str);
 const char *get_history_newest(int hist_type_idx, int last_n);
 const char *get_history_completion(int hist_type_idx, const char *str);
-const char *search_history_file_path(int hist_type_idx, const char *str);
+const char *search_history_file_path(int hist_type_idx, const char *path);
 
 int select_from_history_list(int hist_type_idx, char *buffer);
 

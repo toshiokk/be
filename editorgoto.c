@@ -524,7 +524,6 @@ int goto_line_col_in_cur_buf(int line_num, int col_num)
 	return 2;
 }
 //-----------------------------------------------------------------------------
-#define	FILE_PATH_SEPARATOR		"|"		// candidates are "|", "//", ""\\"
 char *mk_cur_file_pos_str_static(void)
 {
 	static char buffer[MAX_PATH_LEN+1];

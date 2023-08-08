@@ -681,8 +681,9 @@ PRIVATE int do_edit_file_(int recursive)
 	for (file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
-		if (cur_fv->file_list[file_idx].selected
-		 && S_ISREG(cur_fv->file_list[file_idx].st.st_mode)) {
+		if (S_ISREG(cur_fv->file_list[file_idx].st.st_mode)) {
+///		if (cur_fv->file_list[file_idx].selected
+///		 && S_ISREG(cur_fv->file_list[file_idx].st.st_mode)) {
 			if (load_file_name_upp_low(cur_fv->file_list[file_idx].file_name,
 			 TUL0, OOE0, WOE1, recursive) <= 0) {
 				tio_beep();

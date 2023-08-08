@@ -650,23 +650,28 @@ PRIVATE be_line_t *search_history_str_partial(int hist_type_idx, const char *str
 	}
 	return NULL;
 }
-const char *search_history_file_path(int hist_type_idx, const char *str)
+const char *search_history_file_path(int hist_type_idx, const char *path)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
 	const char *ptr;
+	size_t len;
 
+	path = quote_file_name(path);
 	// search from the newest to the oldest
 	for (line = BUF_BOT_LINE(buf); IS_NODE_TOP_ANCH(line) == 0; line = line->prev) {
-		// /home/user/filename.exp:1234
-		if ((ptr = strchr__(line->data, ':')) == NULL) {
-			ptr = line->data + line_data_len(line);
+		// /home/user/filename.exp|1234
+		// '/home/user/ filename.exp '|1234
+		if ((ptr = strstr(line->data, FILE_PATH_SEPARATOR)) != NULL) {
+			len = ptr - line->data;
+		} else {
+			len = line_data_len(line);
 		}
-		if (strncmp(line->data, str, ptr - line->data) == 0) {
+		if (strncmp(line->data, path, len) == 0) {
 			return line->data;
 		}
 	}
-	return str;		// return orginal string
+	return path;		// return orginal string
 }
 
 //-----------------------------------------------------------------------------
