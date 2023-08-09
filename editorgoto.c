@@ -265,24 +265,24 @@ int load_file_name_upp_low(const char *file_name,
 	int files;
 
 	// try to open specified file name (FileName.Ext)
-	if ((files = load_file_name(file_name, open_on_err, msg_on_err, recursive)) > 0)
+	if ((files = load_file_name_recursive(file_name, open_on_err, msg_on_err, recursive)) > 0)
 		goto load_file_name_upp_low_goto;
 	if (try_upp_low) {
 		strlcpy__(file_name_buf, file_name, MAX_PATH_LEN);
 		// try to open in upper case file name (FILENAME.EXT)
 		strupper(file_name_buf);
-		if ((files = load_file_name(file_name_buf, open_on_err, msg_on_err, recursive)) > 0)
+		if ((files = load_file_name_recursive(file_name_buf, open_on_err, msg_on_err, recursive)) > 0)
 			goto load_file_name_upp_low_goto;
 		// try to open in lower case file name (filename.ext)
 		strlower(file_name_buf);
-		if ((files = load_file_name(file_name_buf, open_on_err, msg_on_err, recursive)) > 0)
+		if ((files = load_file_name_recursive(file_name_buf, open_on_err, msg_on_err, recursive)) > 0)
 			goto load_file_name_upp_low_goto;
 	}
 load_file_name_upp_low_goto:;
 	return files;
 }
 // Open file. If it is a project file, open file(s) described in it.
-int load_file_name(const char *file_name, int open_on_err, int msg_on_err, int recursive)
+int load_file_name_recursive(const char *file_name, int open_on_err, int msg_on_err, int recursive)
 {
 	static int recursive_call_count = 0;
 	int files;

@@ -371,7 +371,8 @@ PRIVATE void dump_vscreen(int yy, int len)
 	  || vscreen_painted[yy][xx+1] != vscreen_to_paint[yy][xx+1]))
 
 #ifdef VAGUE_WIDE_CHR
-///#define OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
+///
+#define OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
 #endif // VAGUE_WIDE_CHR
 #ifdef OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
 // If is_vague_wide_chr(), display this char as if wide char.

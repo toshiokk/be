@@ -74,7 +74,7 @@ PRIVATE int editor_main_loop(void)
 	matches_clear(&matches__);
 #endif // ENABLE_REGEX
 
-	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL_SOON);
 
 	// Main input loop
 	key_input = 0;
@@ -263,7 +263,7 @@ int do_open_proj_file(void)
 	}
 
 	// CURDIR: changed in editor
-	if (load_file_name(file_name, OOE0, WOE1, RECURSIVE1) <= 0) {
+	if (load_file_name_recursive(file_name, OOE0, WOE1, RECURSIVE1) <= 0) {
 		tio_beep();
 		return 0;
 	}
@@ -297,7 +297,7 @@ int do_reopen_file(void)
 	free_cur_edit_buf();
 ///_FLF_
 	// CURDIR: abs-path is specified
-	if (load_file_name(get_file_line_col_from_str_null(NULL, file_path, NULL, NULL),
+	if (load_file_name_recursive(get_file_line_col_from_str_null(NULL, file_path, NULL, NULL),
 	 OOE0, WOE1, RECURSIVE1) <= 0) {
 ///_FLF_
 		tio_beep();

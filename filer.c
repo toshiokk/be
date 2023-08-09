@@ -139,7 +139,7 @@ PRIVATE void dump_filer_views(void)
 //-----------------------------------------------------------------------------
 
 int call_filer(int push_win, int list_mode,
-char *dir, char *filter, char *file_path, int buf_len)
+ char *dir, char *filter, char *file_path, int buf_len)
 {
 	filer_views_t *prev_fvs = NULL;
 	filer_views_t new_filer_views;

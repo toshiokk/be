@@ -60,9 +60,6 @@ int my_wcwidth(wchar_t wc)
 	int chr_idx;
 	int columns;
 
-///	if (wc == 0x0000) {		// U+0000
-///		return 0;
-///	}
 	make_my_wcwidth_table();
 	for (chr_idx = 0; *my_wide_utf8c[chr_idx]; chr_idx++) {
 		if (my_wide_wchar[chr_idx] == wc)
