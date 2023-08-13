@@ -106,7 +106,7 @@ void disp_status_bar_percent_filer(int dividend, int divisor, const char *msg, .
 PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
  int dividend, int divisor, const char *msg, va_list ap)
 {
-	int display = 0;
+	int update = 0;
 	char buf[MAX_SCRN_LINE_BUF_LEN+1];
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 	static char prev_msg[MAX_SCRN_LINE_BUF_LEN+1];
@@ -123,23 +123,23 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 ///		if (status_bar_to_display >= status_bar_displayed) {
 			// display this if higher or the same priority
 			status_bar_displayed = status_bar_to_display;
-			display = 1;
+			update = 1;
 ///		}
 		break;
 	case S_B_D_ERR:
 		if (status_bar_to_display > status_bar_displayed) {
 			// display this if higher priority
 			status_bar_displayed = status_bar_to_display;
-			display = 1;
+			update = 1;
 		}
 		break;
 	case S_B_D_PERCENT_EDITOR:
-		display = 1;
+		update = 1;
 		break;
 	}
 
 ///mflf_d_printf("SBD: %d,%d [%s]\n", status_bar_displayed, status_bar_to_display, prev_msg);
-	if (display) {
+	if (update) {
 ///mflf_d_printf("%d:[%s]\n", status_bar_displayed, buffer);
 		vsnprintf(buf, MAX_SCRN_LINE_BUF_LEN+1, msg, ap);
 ///mflf_d_printf("msg:[%s]\n", msg);
@@ -147,8 +147,8 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		switch (status_bar_to_display) {
 		default:
 		case S_B_D_NONE:
-		case S_B_D_ING:
 		case S_B_D_PERCENT_FILER:
+		case S_B_D_ING:
 			// this time: "NEW_MSG"
 			strlcpy__(buffer, buf, MAX_SCRN_LINE_BUF_LEN);
 			strcpy__(prev_msg, "");
@@ -177,10 +177,10 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		switch (status_bar_displayed) {
 		default:
 		case S_B_D_NONE:
+		case S_B_D_PERCENT_FILER:
 		case S_B_D_ING:
 		case S_B_D_DONE:
 		case S_B_D_PERCENT_EDITOR:
-		case S_B_D_PERCENT_FILER:
 			color_idx = ITEM_COLOR_IDX_STATUS;
 			break;
 		case S_B_D_ERR:

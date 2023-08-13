@@ -454,8 +454,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 
 	tio_refresh();
 
-	answer = ANSWER_NONE;
-	do {
+	for (answer = ANSWER_NONE; answer == ANSWER_NONE; ) {
 		tio_set_cursor_on(1);
 		//---------------------------
 		key_input = input_key_loop();
@@ -477,7 +476,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 			answer = ANSWER_UNDO;
 		else if ((flags & ASK_REDO) && strchr__(chars_redo, key_input) != NULL)
 			answer = ANSWER_REDO;
-	} while (answer == ANSWER_NONE);
+	}
 
 	// Then blank the status_bar.
 	set_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);

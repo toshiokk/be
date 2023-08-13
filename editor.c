@@ -83,7 +83,7 @@ PRIVATE int editor_main_loop(void)
 		if (key_macro_is_playing_back()) {
 			// When playing back key-macro, do not update screen.
 		} else {
-			update_screen_editor(1, key_input >= 0, key_input >= 0);
+			update_screen_editor(1, key_input >= 0, 1);
 		}
 		//----------------------------------
 		key_input = input_key_wait_return();
@@ -696,11 +696,11 @@ flf_d_printf("pane_sel_idx: %d, pane_idx: %d\n", pane_sel_idx, pane_idx);
 	// status bar
 	if (status_bar) {
 		disp_status_bar_editor();
+///_FLF_
+		// key list
+		disp_key_list_editor();
 	}
 ///  }
-///_FLF_
-	// key list
-	disp_key_list_editor();
 
 ///_FLF_
 ///  if (count_edit_bufs()) {

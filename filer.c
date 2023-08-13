@@ -346,7 +346,6 @@ PRIVATE int check_filer_cur_dir(void)
 
 PRIVATE int update_all_file_list(const char *filter, int force_update)
 {
-////	disp_status_bar_ing(_("Reading directory..."));
 	if (GET_APPMD(fl_FILER_PANES) == 0) {
 		update_file_list(cur_fv, filter, force_update);
 	} else {
@@ -365,9 +364,9 @@ PRIVATE int update_file_list(filer_view_t *fv, const char *filter, int force_upd
 	 || force_update >= 2) {
 		files = make_file_list(fv, filter);
 		strcpy__(fv->listed_dir, fv->cur_dir);
-		force_update = 1;
-	}
-	if (force_update) {
+///		force_update = 1;
+///	}
+///	if (force_update) {
 		sort_file_list(fv);
 		research_file_name_in_file_list(fv);
 	}

@@ -170,6 +170,7 @@ const color_syntax_t *get_default_color_syntax_head(void)
 PRIVATE void display_color_pattern(int yy, int xx, int reverse);
 int display_color_pairs(int yy, int xx)
 {
+	tio_clear_flash_screen(1);
 	display_color_pattern(yy, xx, 0);
 	display_color_pattern(yy, xx+40, 1);
 	tio_refresh();
