@@ -120,15 +120,15 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 	case S_B_D_PERCENT_FILER:
 	case S_B_D_ING:
 	case S_B_D_DONE:
-		if (status_bar_to_display >= status_bar_displayed) {
-			// higher or the same priority message, display this
+///		if (status_bar_to_display >= status_bar_displayed) {
+			// display this if higher or the same priority
 			status_bar_displayed = status_bar_to_display;
 			display = 1;
-		}
+///		}
 		break;
 	case S_B_D_ERR:
 		if (status_bar_to_display > status_bar_displayed) {
-			// higher priority message, display this
+			// display this if higher priority
 			status_bar_displayed = status_bar_to_display;
 			display = 1;
 		}

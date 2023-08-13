@@ -186,7 +186,7 @@ _FLF_
 			continue;
 #endif // ENABLE_FILER
 		// CURDIR: changed in editor
-		if (load_file_name_upp_low(file_name, TUL0, OOE0, WOE1, recursive) <= 0) {
+		if (load_file_name_upp_low(file_name, TUL0, OOE0, MOE1, recursive) <= 0) {
 			tio_beep();
 		}
 		break;
@@ -197,10 +197,10 @@ _FLF_
 }
 int do_open_new_file(void)
 {
-	char file_name[MAX_PATH_LEN+1];
+	char file_path[MAX_PATH_LEN+1];
 	int ret;
 
-	ret = input_string("", file_name, HISTORY_TYPE_IDX_DIR, _("Open new file:"));
+	ret = input_string("", file_path, HISTORY_TYPE_IDX_DIR, _("Open new file:"));
 
 	if (ret < 0) {
 		return 0;
@@ -210,7 +210,7 @@ int do_open_new_file(void)
 	}
 	clear_files_loaded();
 	// CURDIR: changed in editor
-	if (load_file_name_upp_low(file_name, TUL0, OOE1, WOE0, RECURSIVE0) <= 0) {
+	if (load_file_name_upp_low(file_path, TUL0, OOE1, MOE0, RECURSIVE0) <= 0) {
 		tio_beep();
 		return 0;
 	}
@@ -263,7 +263,7 @@ int do_open_proj_file(void)
 	}
 
 	// CURDIR: changed in editor
-	if (load_file_name_recursive(file_name, OOE0, WOE1, RECURSIVE1) <= 0) {
+	if (load_file_name_recursive(file_name, OOE0, MOE1, RECURSIVE1) <= 0) {
 		tio_beep();
 		return 0;
 	}
@@ -298,7 +298,7 @@ int do_reopen_file(void)
 ///_FLF_
 	// CURDIR: abs-path is specified
 	if (load_file_name_recursive(get_file_line_col_from_str_null(NULL, file_path, NULL, NULL),
-	 OOE0, WOE1, RECURSIVE1) <= 0) {
+	 OOE0, MOE1, RECURSIVE1) <= 0) {
 ///_FLF_
 		tio_beep();
 		return 0;

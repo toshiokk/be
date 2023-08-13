@@ -574,9 +574,9 @@ int is_separator(char chr)
 {
 	return strchr__(" \t,:", chr) != NULL;
 }
-int contain_chr(const char *file_name, char chr)
+int contain_chr(const char *string, char chr)
 {
-	return strchr(file_name, chr) != NULL;
+	return strchr(string, chr) != NULL;
 }
 char *quote_string(char *buffer, const char *string, char quote_chr)
 {

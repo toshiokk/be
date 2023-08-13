@@ -140,7 +140,7 @@ _FLF_
 		for ( ; optind < argc; optind++) {
 flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 			// CURDIR: changed in editor
-			if (load_file_name_upp_low(argv[optind], TUL0, OOE1, WOE0, RECURSIVE1) <= 0) {
+			if (load_file_name_upp_low(argv[optind], TUL0, OOE1, MOE0, RECURSIVE1) <= 0) {
 				tio_beep();
 			}
 			tio_refresh();

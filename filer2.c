@@ -528,7 +528,7 @@ int make_file_list(filer_view_t *fv, const char *filter)
 	DIR *dir;
 	struct dirent *dirent;
 	char symlink[MAX_PATH_LEN+1];
-	file_info_t *file_list_ptr;
+	file_info_t *ent_ptr;	// file entry
 	struct stat st;
 	struct stat lst;
 	int entries;
@@ -569,18 +569,18 @@ int make_file_list(filer_view_t *fv, const char *filter)
 			  || ((st.st_mode & RWXRWXRWX) == RW0000RW0)))
 				// ".", ".????" or (mode == 000)
 				continue;
-			file_list_ptr = &fv->file_list[file_idx];
+			ent_ptr = &fv->file_list[file_idx];
 			// fill file_info_t
-			file_list_ptr->file_name = malloc_strcpy(dirent->d_name);
-			memcpy__(&file_list_ptr->st, &st, sizeof(struct stat));
-			memcpy__(&file_list_ptr->lst, &lst, sizeof(struct stat));
-			file_list_ptr->symlink = NULL;
+			ent_ptr->file_name = malloc_strcpy(dirent->d_name);
+			memcpy__(&ent_ptr->st, &st, sizeof(struct stat));
+			memcpy__(&ent_ptr->lst, &lst, sizeof(struct stat));
+			ent_ptr->symlink = NULL;
 			if (S_ISLNK(lst.st_mode)) {
 				if ((len = readlink__(dirent->d_name, symlink, MAX_PATH_LEN)) > 0) {
-					file_list_ptr->symlink = malloc_strcpy(symlink);
+					ent_ptr->symlink = malloc_strcpy(symlink);
 				}
 			}
-			file_list_ptr->selected = 0;
+			ent_ptr->selected = 0;
 			file_idx++;
 		}
 	}

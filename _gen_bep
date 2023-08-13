@@ -1,7 +1,8 @@
 echo "Generating BE project file __be.bep ..."
 #ls *.h >__be.bep
 #ls *.c >>__be.bep
-wc *.c *.h >__be.bep
+wc *.h *.c >__be.bep
+#wc *.c *.h >__be.bep
 wc berc emacs.berc wordstar.berc >>__be.bep
 wc po/*.po README.md >>__be.bep
 
