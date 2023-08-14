@@ -179,14 +179,16 @@ int load_files_in_cur_buf(void)
 		if (is_handler_sigint_called())
 			break;
 		if (line_data_len(CEBV_CL)) {
-			memorize_cur_file_pos_null(NULL);
-			save_change_cur_dir(dir_save, strip_file_from_path(get_c_e_b()->abs_path));
-			// CURDIR: changed to cur-file's abs-dir
-			files += load_files_in_string(CEBV_CL->data, 10, TUL1, OOE0, MOE0, RECURSIVE0);
-			change_cur_dir(dir_save);
-			disp_editor_title_bar();
-			tio_refresh();
-			recall_cur_file_pos_null(NULL);
+			if (CEBV_CL->data[0] != '#') {
+				memorize_cur_file_pos_null(NULL);
+				save_change_cur_dir(dir_save, strip_file_from_path(get_c_e_b()->abs_path));
+				// CURDIR: changed to cur-file's abs-dir
+				files += load_files_in_string(CEBV_CL->data, 10, TUL1, OOE0, MOE0, RECURSIVE0);
+				change_cur_dir(dir_save);
+				disp_editor_title_bar();
+				tio_refresh();
+				recall_cur_file_pos_null(NULL);
+			}
 		}
 		if (cursor_next_line() == 0)
 			break;

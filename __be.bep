@@ -3,6 +3,7 @@
    141    602   5973 buffer.h
    304    903  11830 buffers.h
    108    419   4196 color.h
+   294   1393   8034 config.h
     63    253   2523 cursesif.h
     91    362   3774 debug.h
     52    258   2495 disp.h
@@ -55,7 +56,7 @@
    925   3187  32836 editor2.c
    697   1735  17041 editorcut.c
    379   1109  10654 editorcut2.c
-   634   1904  19262 editorgoto.c
+   636   1910  19309 editorgoto.c
    299   1627  16418 editorkeys.c
    177    554   6929 editorlist.c
    734   1892  18309 editormove.c
@@ -86,11 +87,11 @@
    853   2632  20868 utilstr.c
    561   1830  19509 winin.c
    295    972  10354 winout.c
- 25662  80373 795896 合計
- 184  489 8185 berc
-  13   26  459 emacs.berc
-  13   26  459 wordstar.berc
+ 25958  81772 803977 合計
+# 184  489 8185 berc
+#  13   26  459 emacs.berc
+#  13   26  459 wordstar.berc
  210  541 9103 合計
- 1009  2490 23475 po/ja.po
+# 1009  2490 23475 po/ja.po
   270  1286  7769 README.md
  1279  3776 31244 合計
