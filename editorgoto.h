@@ -45,7 +45,7 @@ int load_file_in_string(const char *string,
 int load_file_name_upp_low(const char *file_name,
  int try_upp_low, int open_on_err, int msg_on_err, int recursive);
 
-int load_file_name_recursive(const char *file_name, int open_on_err, int msg_on_err, int recursive);
+int load_file_name_recurs(const char *file_name, int open_on_err, int msg_on_err, int recursive);
 
 int switch_c_e_b_to_file_name(const char *file_name);
 int switch_c_e_b_to_abs_path(const char *abs_path);

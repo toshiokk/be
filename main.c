@@ -612,7 +612,7 @@ void show_usage(void)
 	show_one_option("-?",                "--help",            _("Show this message"));
 	show_one_option("+NUM",              "",                  _("Start at line number NUM"));
 #ifndef ENABLE_NCURSES
-	show_one_option("-k",                "--keyseq",          _("Investigate keyboard escape sequence"));
+	show_one_option("-k",                "--keyseq",          _("Investigate key codes"));
 #endif // ENABLE_NCURSES
 }
 

@@ -263,7 +263,7 @@ int do_open_proj_file(void)
 	}
 
 	// CURDIR: changed in editor
-	if (load_file_name_recursive(file_name, OOE0, MOE1, RECURSIVE1) <= 0) {
+	if (load_file_name_recurs(file_name, OOE0, MOE1, RECURSIVE1) <= 0) {
 		tio_beep();
 		return 0;
 	}
@@ -297,7 +297,7 @@ int do_reopen_file(void)
 	free_cur_edit_buf();
 ///_FLF_
 	// CURDIR: abs-path is specified
-	if (load_file_name_recursive(get_file_line_col_from_str_null(NULL, file_path, NULL, NULL),
+	if (load_file_name_recurs(get_file_line_col_from_str_null(NULL, file_path, NULL, NULL),
 	 OOE0, MOE1, RECURSIVE1) <= 0) {
 ///_FLF_
 		tio_beep();
@@ -750,7 +750,8 @@ int disp_status_bar_editor(void)
 	 _("LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu CODE:%s ENC:%s EOL:%s"));
 	disp_status_bar_percent_editor(CEBV_CL->line_num-1, get_c_e_b()->buf_lines-1,
 	 buffer, CEBV_CL->line_num, get_c_e_b()->buf_lines, xx, disp_len,
-	 get_c_e_b()->buf_size, buf_char_code, buffer_encode_str(get_c_e_b()), buffer_eol_str(get_c_e_b()));
+	 get_c_e_b()->buf_size, buf_char_code,
+	 buffer_encode_str(get_c_e_b()), buffer_eol_str(get_c_e_b()));
 	return 1;
 }
 

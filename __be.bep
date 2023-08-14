@@ -10,14 +10,14 @@
     70    287   3090 editor2.h
     47    195   2045 editorcut.h
     41    194   2031 editorcut2.h
-    72    312   3282 editorgoto.h
+    72    312   3279 editorgoto.h
     30    172   1738 editorkeys.h
     34    176   1797 editorlist.h
     64    229   2400 editormove.h
     85    373   3961 editormove2.h
     67    239   2825 editorundo.h
     49    233   2290 fileio.h
-    64    285   2719 filer.h
+    64    285   2746 filer.h
     94    389   3904 filer2.h
     86    270   3078 filercmd.h
     30    172   1733 filerkeys.h
@@ -47,46 +47,46 @@
    536   1039  11898 appmode.c
    459   1291  12266 buffer.c
    681   1443  17330 buffers.c
-   223    763   7116 color.c
+   224    764   7144 color.c
    203    615   5321 cursesif.c
    170    562   4731 debug.c
-   243    761   7691 disp.c
-   825   1933  20536 editor.c
+   243    761   7686 disp.c
+   826   1931  20521 editor.c
    925   3187  32836 editor2.c
    697   1735  17041 editorcut.c
    379   1109  10654 editorcut2.c
-   634   1904  19274 editorgoto.c
-   299   1627  16303 editorkeys.c
+   634   1904  19262 editorgoto.c
+   299   1627  16418 editorkeys.c
    177    554   6929 editorlist.c
    734   1892  18309 editormove.c
    273    864   8893 editormove2.c
    342    984  10052 editorundo.c
    671   2040  18674 fileio.c
-   604   1665  19068 filer.c
-   901   3013  27643 filer2.c
-   788   1896  19819 filercmd.c
-   158    855   8716 filerkeys.c
-   278    750   8042 filerrun.c
+   600   1662  19055 filer.c
+   901   3016  27609 filer2.c
+   786   1889  19840 filercmd.c
+   158    855   8775 filerkeys.c
+   278    750   8074 filerrun.c
    751   2091  21851 history.c
    287    815   8679 keymacro.c
    781   2460  20308 keys.c
    387   1158  10671 line.c
    653   2368  27189 linewrap.c
-   889   2596  26766 main.c
-   153    523   3838 myutf8.c
+   889   2595  26751 main.c
+   153    523   3826 myutf8.c
    810   2279  22601 rcfile.c
    640   2078  20072 regexp.c
    604   1828  17746 search.c
    170    501   4774 sig.c
-   771   2676  24933 termif.c
-   466   1253  11076 tio.c
+   771   2668  24885 termif.c
+   471   1280  11214 tio.c
    200    665   5085 utf8.c
    689   1993  18327 utilpath.c
    401   1171   9968 utils.c
    853   2632  20868 utilstr.c
-   562   1830  19514 winin.c
+   561   1830  19509 winin.c
    295    972  10354 winout.c
- 25662  80363 795638 合計
+ 25662  80373 795896 合計
  184  489 8185 berc
   13   26  459 emacs.berc
   13   26  459 wordstar.berc
