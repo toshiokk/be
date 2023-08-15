@@ -175,7 +175,7 @@ _FLF_
 _FLF_
 	} else {
 		// application was started as a FILER
-		while(1) {
+		while (1) {
 _FLF_
 			call_filer(0, 0, "", "", file_name, MAX_PATH_LEN);
 _FLF_

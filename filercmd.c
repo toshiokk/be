@@ -80,13 +80,13 @@ int do_enter_file(void)
 }
 int do_edit_file(void)
 {
-	do_edit_file_(1);
+	do_edit_file_(RECURSIVE1);
 	return 1;
 }
 int do_edit_file_non_recursive(void)
 {
 ///_FLF_
-	do_edit_file_(0);
+	do_edit_file_(RECURSIVE0);
 	return 1;
 }
 int do_edit_new_file(void)
@@ -729,7 +729,9 @@ int filer_change_dir_parent(char *dir)
 {
 	char chg_dir[MAX_PATH_LEN+1];
 
-	while(filer_change_dir(dir)) {
+flf_d_printf("try to chdir[%s]\n", dir);
+	while (filer_change_dir(dir)) {
+flf_d_printf("try to chdir[%s]\n", dir);
 		if (strcmp(dir, "/") == 0) {
 			return -1;	// error
 		}

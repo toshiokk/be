@@ -74,7 +74,7 @@ PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_)
 	int entry_idx = *entry_idx_;
 
 app_menu_n_again:;
-	while(1) {
+	while (1) {
 		again_ret = 0;
 ////_FLF_
 		update_screen_app(1, 1, 0);
@@ -441,7 +441,7 @@ key_code_t input_key_loop(void)
 {
 	key_code_t key;
 
-	while((key = input_key_wait_return()) < 0) {
+	while ((key = input_key_wait_return()) < 0) {
 	}
 	return key;
 }
@@ -457,7 +457,7 @@ PRIVATE key_code_t input_key_timeout(void)
 	long usec_enter;
 
 	usec_enter = get_usec();
-	while((key = input_key_macro()) < 0) {
+	while ((key = input_key_macro()) < 0) {
 		if (win_check_term_resized()) {
 			update_screen_app(1, 1, 1);
 		}

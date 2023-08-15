@@ -202,7 +202,7 @@ PRIVATE int filer_main_loop(const char *directory, const char *filter,
 
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 
-	while(1) {
+	while (1) {
 		check_filer_cur_dir();
 		cat_dir_and_file(filer_cur_path, MAX_PATH_LEN, cur_fv->cur_dir, filter);
 #ifdef ENABLE_HISTORY

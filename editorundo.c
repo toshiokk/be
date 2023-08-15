@@ -37,10 +37,10 @@ void init_undo_bufs(void)
 }
 void free_all_undo_bufs(void)
 {
-	while(IS_NODE_BOT_ANCH(CUR_REDO_BUF) == 0) {
+	while (IS_NODE_BOT_ANCH(CUR_REDO_BUF) == 0) {
 		buffer_free(pop_redo_buf());
 	}
-	while(IS_NODE_BOT_ANCH(CUR_UNDO_BUF) == 0) {
+	while (IS_NODE_BOT_ANCH(CUR_UNDO_BUF) == 0) {
 		buffer_free(pop_undo_buf());
 	}
 }

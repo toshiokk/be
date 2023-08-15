@@ -280,7 +280,8 @@ int load_file_name_upp_low(const char *file_name,
 		if ((files = load_file_name_recurs(file_name_buf, open_on_err, msg_on_err, recursive)) > 0)
 			return files;
 	}
-	return files;	// 0
+///	return files;	// 0
+	return 0;	// 0
 }
 // Open file. If it is a project file, open file(s) described in it.
 int load_file_name_recurs(const char *file_name, int open_on_err, int msg_on_err, int recursive)
@@ -405,12 +406,17 @@ int switch_c_e_b_to_another_buf(void)
 //-----------------------------------------------------------------------------
 PRIVATE int is_file_name_proj_file(const char *file_name)
 {
-	return (strcasecmp(&file_name[
-	   LIM_MIN(0, strnlen(file_name, MAX_PATH_LEN) - strlen(PROJ_FILE_EXTENSION1))],
-	  PROJ_FILE_EXTENSION1) == 0)
-	 || (strcasecmp(&file_name[
-	   LIM_MIN(0, strnlen(file_name, MAX_PATH_LEN) - strlen(PROJ_FILE_EXTENSION2))],
-	  PROJ_FILE_EXTENSION2) == 0);	// 1: project file
+	if (strnlen(file_name, MAX_PATH_LEN) >= strlen(PROJ_FILE_EXTENSION1)) {
+		return strcasecmp(
+		 &file_name[strnlen(file_name, MAX_PATH_LEN) - strlen(PROJ_FILE_EXTENSION1)],
+	     PROJ_FILE_EXTENSION1) == 0;
+	}
+	if (strnlen(file_name, MAX_PATH_LEN) >= strlen(PROJ_FILE_EXTENSION2)) {
+		return strcasecmp(
+		 &file_name[strnlen(file_name, MAX_PATH_LEN) - strlen(PROJ_FILE_EXTENSION2)],
+		 PROJ_FILE_EXTENSION2) == 0;
+	}
+	return 0;	// not project file
 }
 PRIVATE const char *skip_n_file_names(const char *line, int field_idx)
 {

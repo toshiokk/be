@@ -518,7 +518,7 @@ int write_all(int yes, close_after_save_t discard)
 	int ret = yes;
 
 	switch_c_e_b_to_top();
-	while(is_c_e_b_valid()) {
+	while (is_c_e_b_valid()) {
 		ret = write_file_ask(ret, discard);
 		if (ret <= ANSWER_CANCEL) {
 			disp_status_bar_done(_("Cancelled"));
@@ -534,7 +534,7 @@ int close_all_not_modified(void)
 {
 	disp_status_bar_ing(_("Freeing buffers..."));
 	switch_c_e_b_to_top();
-	while(is_c_e_b_valid()) {
+	while (is_c_e_b_valid()) {
 		if (check_cur_buf_modified()) {
 			if (switch_c_e_b_to_next(0, 0) == 0)
 				break;
@@ -549,7 +549,7 @@ int close_all(void)
 {
 	disp_status_bar_ing(_("Freeing all buffers..."));
 	switch_c_e_b_to_top();
-	while(free_cur_edit_buf()) {
+	while (free_cur_edit_buf()) {
 		// loop
 		tio_refresh();
 	}

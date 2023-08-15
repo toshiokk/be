@@ -300,7 +300,7 @@ void init_cut_bufs(void)
 }
 void free_all_cut_bufs(void)
 {
-	while(IS_NODE_BOT_ANCH(CUR_CUT_BUF) == 0) {
+	while (IS_NODE_BOT_ANCH(CUR_CUT_BUF) == 0) {
 		pop_cut_buf();
 	}
 }

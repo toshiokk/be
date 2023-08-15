@@ -580,7 +580,7 @@ int do_conv_upp_low_letter(void)
 		undo_set_region_save_before_change(CEBV_CL, CEBV_CL->next, 1);
 #endif // ENABLE_UNDO
 		first_chr = data[byte_idx];
-		while((chr = data[byte_idx]) != '\0') {
+		while ((chr = data[byte_idx]) != '\0') {
 			if ((isalpha(chr) || chr == '_' || isalnum(chr)) == 0)
 				break;
 			if (isalpha(chr)) {
