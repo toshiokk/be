@@ -1,0 +1,35 @@
+ filename including space .txt 
+"abc""def.txt"
+"abc''def.txt"
+'abc""def.txt'
+'abc''def.txt'
+Screenshot from 2018-10-20 17-39-43.png
+Screenshot from 2018-10-20 17-39-59.png
+Screenshot_from_2016-12-03 08:52:12.png
+__EVENT171222.LOG
+_debug.log
+_knjutf8.txt
+_utf8.txt
+becrash.log
+dos.txt
+filename|including|.txt
+free_loop
+java_keywords.java
+longline.txt
+mac.txt
+nix.txt
+null.txt
+sample.asm
+sample.html
+scale
+verylonglongline1000.txt
+verylonglongline10000.txt
+verylonglongline65536.txt
+verylongtabline.txt
+長い全角文字ファイル名.txt
+低EMI基板作成の秘訣sjis-crlf.txt
+低EMI基板作成の秘訣utf8-lf.txt
+杜子春eucjp.txt
+杜子春jis.txt
+杜子春sjis.txt
+杜子春utf8.txt

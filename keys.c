@@ -76,7 +76,6 @@ PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_)
 app_menu_n_again:;
 	while (1) {
 		again_ret = 0;
-////_FLF_
 		update_screen_app(1, 1, 0);
 		disp_drop_down_menu(group_idx, entry_idx, main_win_get_mid_win_y(), group_idx * 2);
 		tio_refresh();
@@ -150,7 +149,6 @@ do_menu_n_up_down:;
 	if (again_ret == 1)
 		goto app_menu_n_again;
 
-////_FLF_
 #ifndef ENABLE_FILER
 	if (count_edit_bufs())
 #else // ENABLE_FILER
@@ -460,6 +458,10 @@ PRIVATE key_code_t input_key_timeout(void)
 	while ((key = input_key_macro()) < 0) {
 		if (win_check_term_resized()) {
 			update_screen_app(1, 1, 1);
+#ifdef ENABLE_HELP
+			disp_splash(0);
+			MSLEEP(1000);
+#endif // ENABLE_HELP
 		}
 		if (get_usec() - usec_enter >= KEY_WAIT_TIME_USEC)
 			break;

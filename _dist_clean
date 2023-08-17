@@ -1,5 +1,5 @@
 make clean
 make distclean
-rm -fv __error *.log _diff.txt _sdiff.txt _cppcheck.out autom4te.cache/* Makefile.in
+rm -fv __error *.log _diff.txt _sdiff.txt _cppcheck.out autom4te.cache/*
 rm -rv html
 rmbak

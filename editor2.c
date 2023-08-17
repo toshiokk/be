@@ -295,8 +295,10 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 	// output line number -----------------------------------------------------
 	if (byte_idx_1 == 0) {
 		// first line of line wrapping, display line number
-		output_edit_line_num(yy, buf, line);
+		output_edit_line_num(yy, buf, line);	// "9999 "
 ///_FLF_
+	} else {
+		output_edit_line_num(yy, buf, NULL);	// "     "
 	}
 
 	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
@@ -717,10 +719,9 @@ flf_d_printf("[%s]\n", make_ruler_text__(100, 40));
 #define RULER_NUM_INTERVAL	5
 #define R_N_I				RULER_NUM_INTERVAL
 #define MAX_RULER_STR_LEN	(MAX_SCRN_LINE_BUF_LEN + R_N_I)
-//01234567890123456789012345678901234567890123456789012345678901234567890123456789
 //12345678901234567890123456789012345678901234567890123456789012345678901234567890
-//----5---10---15---20---25---30---35---40---45---50---55---60---65---70---75---80
-//-9920-9925-9930-9935-9940-9945-9950-9955-9960-9965-9970-9975-9980-9985-9990-9995
+//1---5----10---15---20---25---30---35---40---45---50---55---60---65---70---75---80
+//915-9920-9925-9930-9935-9940-9945-9950-9955-9960-9965-9970-9975-9980-9985-9990-9995
 PRIVATE const char *make_ruler_text(int col_idx)
 {
 	const char *str;
@@ -791,8 +792,15 @@ PRIVATE const char *make_ruler_text__(int start_col_idx, int columns)
 PRIVATE const char *get_line_num_string(const be_buf_t *buf, const be_line_t *line,
  char *buf_line_num)
 {
-	snprintf_(buf_line_num, MAX_LINE_NUM_STR_LEN+1, "%*d" LINE_NUM_SEPARATOR,
-	 get_buf_line_num_digits(buf), line->line_num);
+	if (line) {
+		// "9999 "
+		snprintf_(buf_line_num, MAX_LINE_NUM_STR_LEN+1,
+		 "%*d" LINE_NUM_SEPARATOR, get_buf_line_num_digits(buf), line->line_num);
+	} else {
+		// "     "
+		snprintf_(buf_line_num, MAX_LINE_NUM_STR_LEN+1,
+		 "%*s" LINE_NUM_SEPARATOR, get_buf_line_num_digits(buf), "");
+	}
 	return buf_line_num;
 }
 PRIVATE int get_buf_line_num_columns(const be_buf_t *buf)

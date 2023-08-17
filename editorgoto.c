@@ -27,7 +27,6 @@ PRIVATE int load_files_in_string(const char *string, int files_to_load, int try_
 
 PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_err);
 
-PRIVATE int is_file_name_proj_file(const char *file_name);
 PRIVATE const char *skip_n_file_names(const char *line, int field_idx);
 #ifdef START_UP_TEST
 void test_get_n_th_file_name(void);
@@ -296,7 +295,7 @@ flf_d_printf("[%s], %d, %d, %d\n", file_name, open_on_err, msg_on_err, recursive
 	}
 ///_FLF_
 	files = 1;
-	if (recursive && recursive_call_count == 0 && is_file_name_proj_file(file_name)) {
+	if (recursive && recursive_call_count == 0 && is_file_name_proj_file(file_name, 0)) {
 ///flf_d_printf("recursive_call_count:%d\n", recursive_call_count);
 		recursive_call_count++;
 		files += load_files_in_cur_buf();		// recursive call
@@ -404,17 +403,23 @@ int switch_c_e_b_to_another_buf(void)
 	return 1;
 }
 //-----------------------------------------------------------------------------
-PRIVATE int is_file_name_proj_file(const char *file_name)
+int is_file_name_proj_file(const char *file_name, int type)
 {
-	if (strnlen(file_name, MAX_PATH_LEN) >= strlen(PROJ_FILE_EXTENSION1)) {
-		return strcasecmp(
+	if ((type == 0 || type == 1)
+	 && strnlen(file_name, MAX_PATH_LEN) >= strlen(PROJ_FILE_EXTENSION1)) {
+		if (strcasecmp(
 		 &file_name[strnlen(file_name, MAX_PATH_LEN) - strlen(PROJ_FILE_EXTENSION1)],
-	     PROJ_FILE_EXTENSION1) == 0;
+	     PROJ_FILE_EXTENSION1) == 0) {
+			return 1;
+		}
 	}
-	if (strnlen(file_name, MAX_PATH_LEN) >= strlen(PROJ_FILE_EXTENSION2)) {
-		return strcasecmp(
+	if ((type == 0 || type == 2)
+	 && strnlen(file_name, MAX_PATH_LEN) >= strlen(PROJ_FILE_EXTENSION2)) {
+		if (strcasecmp(
 		 &file_name[strnlen(file_name, MAX_PATH_LEN) - strlen(PROJ_FILE_EXTENSION2)],
-		 PROJ_FILE_EXTENSION2) == 0;
+	     PROJ_FILE_EXTENSION2) == 0) {
+			return 1;
+		}
 	}
 	return 0;	// not project file
 }
