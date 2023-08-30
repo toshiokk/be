@@ -63,7 +63,7 @@ int do_goto_input_line(void)
 	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
 }
-// do tag jump
+// do_tag_jump()
 int do_goto_file_in_cur_line(void)
 {
 	char dir_save[MAX_PATH_LEN+1];
@@ -77,12 +77,17 @@ int do_goto_file_in_cur_line(void)
 	ret = load_files_in_string(CEBV_CL->data, 10, TUL1, OOE0, MOE1, RECURSIVE1);
 	change_cur_dir(dir_save);
 	if (ret <= 0) {
-		// error
-		return 0;
+		return chdir_in_string(CEBV_CL->data) == 0;
 	}
 	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
 }
+
+int chdir_in_string(const char *string)
+{
+	return filer_change_dir(string);
+}
+
 int do_open_files_in_buf(void)
 {
 	clear_files_loaded();

@@ -482,14 +482,12 @@ int do_change_directory(void)
 	}
 	return filer_change_dir_parent(file_path);
 }
+
 int do_parent_directory(void)
 {
-	char chg_dir[MAX_PATH_LEN+1];
-
 	if (filer_change_dir("..") == 0)
 		return 0;
-	strlcpy__(cur_fv->next_file, strip_one_dir(cur_fv->cur_dir, chg_dir), MAX_PATH_LEN);
-	strlcpy__(cur_fv->cur_dir, chg_dir, MAX_PATH_LEN);
+	separate_dir_and_file(cur_fv->cur_dir, cur_fv->next_file);
 	return 1;
 }
 int do_beginning_directory(void)
@@ -725,20 +723,21 @@ PRIVATE int filer_change_prev_dir(void)
 	}
 	return 0;
 }
-int filer_change_dir_parent(char *dir)
+int filer_change_dir_parent(const char *dir)
 {
 	char chg_dir[MAX_PATH_LEN+1];
+	char file[MAX_PATH_LEN+1];
 
+	strlcpy__(chg_dir, dir, MAX_PATH_LEN);
 flf_d_printf("try to chdir[%s]\n", dir);
-	while (filer_change_dir(dir)) {
+	while (filer_change_dir(chg_dir)) {
 flf_d_printf("try to chdir[%s]\n", dir);
-		if (strcmp(dir, "/") == 0) {
+		if (strcmp(chg_dir, "/") == 0) {
 			return -1;	// error
 		}
 		// If can not change to dir, try parent dir
 		// /try/to/change/dir/file ==> /try/to/change/dir
-		strip_one_dir(dir, chg_dir);
-		dir = chg_dir;
+		separate_dir_and_file(chg_dir, file);
 	}
 	return 0;	// changed
 }
@@ -746,14 +745,16 @@ int filer_change_dir(const char *dir)
 {
 	char buf[MAX_PATH_LEN+1];
 	char chg_dir[MAX_PATH_LEN+1];
+	char file[MAX_PATH_LEN+1];
 
 	if (strcmp(dir, ".") == 0) {
 		return 0;
 	} else if (strcmp(dir, "..") == 0) {
-		strlcpy__(cur_fv->next_file, strip_one_dir(cur_fv->cur_dir, chg_dir), MAX_PATH_LEN);
+		strlcpy__(chg_dir, cur_fv->cur_dir, MAX_PATH_LEN);
+		strlcpy__(cur_fv->next_file, separate_dir_and_file(chg_dir, file), MAX_PATH_LEN);
 	} else if (strcmp(dir, "~") == 0) {
 		strcpy__(cur_fv->next_file, "..");
-		strlcpy__(chg_dir, get_abs_path("~", buf), MAX_PATH_LEN);
+		get_abs_path("~", chg_dir);
 	} else if (dir[0] == '/') {
 		// absolute path
 		strcpy__(cur_fv->next_file, "..");

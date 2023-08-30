@@ -61,8 +61,8 @@ char *get_last_slash(char *path);
 char *separate_dir_part_and_file_part(const char *path,
  char *dir_part, char *file_part);
 
-char *strip_one_dir(char *path, char *dir);
-char *strip_file_from_path(char *path);
+///char *strip_one_dir(char *path, char *dir);
+char *strip_file_from_path(const char *path);
 char *separate_dir_and_file(char *path, char *dir);
 char *normalize_root_dir(char *dir);
 

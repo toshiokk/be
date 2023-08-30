@@ -29,6 +29,7 @@
 
 int do_goto_input_line(void);
 int do_goto_file_in_cur_line(void);
+int chdir_in_string(const char *string);
 int do_open_files_in_buf(void);
 int do_switch_to_top_file(void);
 int do_switch_to_bot_file(void);
