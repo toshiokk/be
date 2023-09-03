@@ -75,9 +75,6 @@ flf_d_printf("recursively_called\n");
 	byte_idx = byte_idx_from_col_idx(msg_buf, main_win_get_columns(), CHAR_LEFT, NULL);
 	msg_buf[byte_idx] = '\0';		// limit message length
 
-#ifdef ENABLE_HISTORY
-	begin_joined_history(hist_type_idx);
-#endif
 	set_work_space_color_low();
 	update_screen_app(1, 1, 1);
 	set_work_space_color_normal();

@@ -97,7 +97,7 @@ be_line_t *line_concat_with_next(be_line_t *line);
 
 be_line_t *line_separate(be_line_t *line, int byte_idx, insert_before_after_t before_after);
 
-int line_renumber(be_line_t *line, size_t *_buf_size_);
+int line_renumber_from_line(be_line_t *line, size_t *_buf_size_);
 int line_count_lines(be_line_t *line);
 const be_line_t *line_get_top_anch(const be_line_t *line);
 

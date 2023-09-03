@@ -131,195 +131,6 @@ void load_last_searched_needle(void)
 
 //-----------------------------------------------------------------------------
 
-// at the beginning, cur_hist_type_idx points center of all histories
-#define HISTORY_TYPE_TABLE_IDX_BEGIN	((HISTORY_TYPES_APP_AND_SHELL-1)/2)	// (6-1)/2 ==> 2
-
-PRIVATE int joined_hist_table_order_type_idx = HISTORY_TYPE_IDX_SEARCH;
-PRIVATE int joined_hist_table_type_idx = HISTORY_TYPE_TABLE_IDX_BEGIN;
-PRIVATE int joined_hist_cur_type_idx = 0;
-
-// [history listing example]
-//	history type				line
-//	------------------------	--------------------
-//	HISTORY_TYPE_IDX_SHELL		oldest line(0)
-//									:
-//								newest line(99)
-//	HISTORY_TYPE_IDX_EXEC		oldest line(0)
-//									:
-//								newest line(99)
-//	HISTORY_TYPE_IDX_SEARCH		oldest line(0)
-//									:
-//								newest line(99)		<== current line
-//								----				separator line
-//	HISTORY_TYPE_IDX_DIR		oldest line(99)
-//									:
-//								newest line(0)
-//	HISTORY_TYPE_IDX_CURSPOS	newest line(99)
-//									:
-//								oldest line(0)
-//	HISTORY_TYPE_IDX_KEYMACRO	newest line(99)
-//									:
-//								oldest line(0)
-int joined_hist_table[HISTORY_TYPES_APP][HISTORY_TYPES_APP_AND_SHELL] = {
-	{
-		// joined_hist_table_order_type_idx = HISTORY_TYPE_IDX_SEARCH
-		// older
-		HISTORY_TYPE_IDX_SHELL,		// 0
-		HISTORY_TYPE_IDX_EXEC,		// 1
-		HISTORY_TYPE_IDX_SEARCH,	// 2
-		// at the beginning, joined_hist_table_type_idx points here
-		HISTORY_TYPE_IDX_DIR,		// 3
-		HISTORY_TYPE_IDX_CURSPOS,	// 4
-		HISTORY_TYPE_IDX_KEYMACRO,	// 5
-		// newer
-	}, {
-		// joined_hist_table_order_type_idx = HISTORY_TYPE_IDX_EXEC
-		HISTORY_TYPE_IDX_CURSPOS,
-		HISTORY_TYPE_IDX_DIR,
-		HISTORY_TYPE_IDX_EXEC,
-		// at the beginning, joined_hist_table_type_idx points here
-		HISTORY_TYPE_IDX_SHELL,
-		HISTORY_TYPE_IDX_SEARCH,
-		HISTORY_TYPE_IDX_KEYMACRO,
-	}, {
-		// joined_hist_table_order_type_idx = HISTORY_TYPE_IDX_DIR
-		HISTORY_TYPE_IDX_SHELL,
-		HISTORY_TYPE_IDX_EXEC,
-		HISTORY_TYPE_IDX_DIR,
-		// at the beginning, joined_hist_table_type_idx points here
-		HISTORY_TYPE_IDX_CURSPOS,
-		HISTORY_TYPE_IDX_SEARCH,
-		HISTORY_TYPE_IDX_KEYMACRO,
-	}, {
-		// joined_hist_table_order_type_idx = HISTORY_TYPE_IDX_CURSPOS
-		HISTORY_TYPE_IDX_SHELL,
-		HISTORY_TYPE_IDX_EXEC,
-		HISTORY_TYPE_IDX_CURSPOS,
-		// at the beginning, joined_hist_table_type_idx points here
-		HISTORY_TYPE_IDX_DIR,
-		HISTORY_TYPE_IDX_SEARCH,
-		HISTORY_TYPE_IDX_KEYMACRO,
-	}, {
-		// joined_hist_table_order_type_idx = HISTORY_TYPE_IDX_KEYMACRO
-		HISTORY_TYPE_IDX_DIR,
-		HISTORY_TYPE_IDX_SEARCH,
-		HISTORY_TYPE_IDX_KEYMACRO,
-		// at the beginning, joined_hist_table_type_idx points here
-		HISTORY_TYPE_IDX_CURSPOS,
-		HISTORY_TYPE_IDX_EXEC,
-		HISTORY_TYPE_IDX_SHELL,
-	},
-};
-
-#ifdef START_UP_TEST
-void test_joined_history(int hist_type_idx)
-{
-	int lines_ascended;
-	int lines_descended;
-	const char *ptr;
-
-flf_d_printf("{{{{{{{{\n");
-	begin_joined_history(hist_type_idx);
-	// ascend to top of joined history
-	for (lines_ascended = 0; ; lines_ascended++) {
-		ptr = get_joined_history_prev();
-		if (ptr == NULL) {
-			// reached to top of joined history
-			break;
-		}
-		flf_d_printf("(%s)\n", ptr);
-	}
-	get_joined_history_next();
-	// descend from top to bottom of joined history
-	for (lines_descended = 0; ; lines_descended++) {
-		ptr = get_joined_history_next();
-		if (ptr == NULL) {
-			// reached to bottom of joined history
-			break;
-		}
-		flf_d_printf("[%s]\n", ptr);
-	}
-flf_d_printf("}}}}}}}}\n");
-}
-#endif // START_UP_TEST
-
-// History must be shared among multiple BE editor processes.
-// Reload recent history.
-void begin_joined_history(int hist_type_idx)
-{
-////_FLF_
-	joined_hist_table_order_type_idx = hist_type_idx;
-	joined_hist_table_type_idx = HISTORY_TYPE_TABLE_IDX_BEGIN;
-	joined_hist_cur_type_idx = joined_hist_table
-	 [joined_hist_table_order_type_idx][joined_hist_table_type_idx];
-#if 0
-flf_d_printf("%d,%d ==> %d\n", joined_hist_table_order_type_idx, joined_hist_table_type_idx,
- joined_hist_cur_type_idx);
-flf_d_printf("%d,%d,%d,%d,%d,%d\n",
- joined_hist_table[joined_hist_table_order_type_idx][0],
- joined_hist_table[joined_hist_table_order_type_idx][1],
- joined_hist_table[joined_hist_table_order_type_idx][2],
- joined_hist_table[joined_hist_table_order_type_idx][3],
- joined_hist_table[joined_hist_table_order_type_idx][4],
- joined_hist_table[joined_hist_table_order_type_idx][5]);
-#endif
-	load_histories();	// reload updated history
-	set_history_newest(joined_hist_cur_type_idx);
-}
-
-// return a pointer to the history string or NULL if no more
-const char *get_joined_history_prev(void)
-{
-	const char *ptr;
-
-	for ( ; ; ) {
-		if (joined_hist_table_type_idx <= HISTORY_TYPE_TABLE_IDX_BEGIN)
-			ptr = get_history_older(joined_hist_cur_type_idx);
-		else
-			ptr = get_history_newer(joined_hist_cur_type_idx);
-		if (*ptr)
-			return ptr;
-		if (joined_hist_table_type_idx <= 0) {
-			// no prev history
-			return NULL;
-		}
-		joined_hist_table_type_idx--;
-		joined_hist_cur_type_idx = joined_hist_table
-		 [joined_hist_table_order_type_idx][joined_hist_table_type_idx];
-		if (joined_hist_table_type_idx <= HISTORY_TYPE_TABLE_IDX_BEGIN)
-			set_history_newest(joined_hist_cur_type_idx);
-		else
-			set_history_oldest(joined_hist_cur_type_idx);
-		return "";
-	}
-}
-// return a pointer to the history string or NULL if no more
-const char *get_joined_history_next(void)
-{
-	const char *ptr;
-
-	for ( ; ; ) {
-		if (joined_hist_table_type_idx <= HISTORY_TYPE_TABLE_IDX_BEGIN)
-			ptr = get_history_newer(joined_hist_cur_type_idx);
-		else
-			ptr = get_history_older(joined_hist_cur_type_idx);
-		if (*ptr)
-			return ptr;
-		if (joined_hist_table_type_idx >= HISTORY_TYPES_APP_AND_SHELL-1) {
-			// no next history
-			return NULL;
-		}
-		joined_hist_table_type_idx++;
-		joined_hist_cur_type_idx = joined_hist_table
-		 [joined_hist_table_order_type_idx][joined_hist_table_type_idx];
-		if (joined_hist_table_type_idx <= HISTORY_TYPE_TABLE_IDX_BEGIN)
-			set_history_oldest(joined_hist_cur_type_idx);
-		else
-			set_history_newest(joined_hist_cur_type_idx);
-		return "";
-	}
-}
-
 PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 {
 	be_buf_t *buf;
@@ -679,41 +490,13 @@ const char *search_history_file_path(int hist_type_idx, const char *path)
 int select_from_history_list(int hist_type_idx, char *buffer)
 {
 	be_buf_t *edit_buf_save;
-	int lines_ascended;
-	int lines_descended;
-	const char *ptr;
 	int ret;
 
 	edit_buf_save = get_c_e_b();
-
 _FLF_
-	set_cur_edit_buf(EDIT_BUFS_TOP_ANCH);
-	buffer_free_lines(EDIT_BUFS_TOP_ANCH);
-	buffer_set_file_path(EDIT_BUFS_TOP_ANCH, _("#History List"));
-
-	begin_joined_history(hist_type_idx);
-	// ascend to top of joined history
-	for (lines_ascended = 0; ; lines_ascended++) {
-		ptr = get_joined_history_prev();
-		if (ptr == NULL) {
-			// reached to top of joined history
-			break;
-		}
-	}
-	get_joined_history_next();		// skip top_anchor
-	// descend from top to bottom of joined history
-	for (lines_descended = 0; ; lines_descended++) {
-		ptr = get_joined_history_next();
-		if (ptr == NULL) {
-			// reached to bottom of joined history
-			break;
-		}
-		append_string_to_cur_edit_buf(ptr);
-	}
-	CEBV_CL = CUR_EDIT_BUF_TOP_LINE;
-	renumber_cur_buf_from_top();
-
-	goto_line_col_in_cur_buf(lines_ascended, 1);
+	renumber_all_bufs_from_top(&history_buffers);
+	set_cur_edit_buf(get_history_buf(hist_type_idx));
+	CEBV_CL = CUR_EDIT_BUF_BOT_LINE;
 	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 
 	ret = call_editor(1, 1);
@@ -722,7 +505,6 @@ _FLF_
 		strcpy__(buffer, "");
 	else
 		strlcpy__(buffer, CEBV_CL->data, MAX_EDIT_LINE_LEN);
-
 _FLF_
 	set_cur_edit_buf(edit_buf_save);
 

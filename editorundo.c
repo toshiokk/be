@@ -25,7 +25,7 @@
 
 // Undo-buffers manipulation routines -----------------------------------------
 
-void init_undo_bufs(void)
+void init_undo_redo_bufs(void)
 {
 	init_bufs_top_bot_anchor(
 	 UNDO_BUFS_TOP_ANCH, "#Undo-bufs-top_anchor",
@@ -35,7 +35,7 @@ void init_undo_bufs(void)
 	 REDO_BUFS_TOP_ANCH, "#Redo-bufs-top_anchor",
 	 REDO_BUFS_BOT_ANCH, "#Redo-bufs-bot_anchor");
 }
-void free_all_undo_bufs(void)
+void free_all_undo_redo_bufs(void)
 {
 	while (IS_NODE_BOT_ANCH(CUR_REDO_BUF) == 0) {
 		buffer_free(pop_redo_buf());

@@ -1,3 +1,6 @@
+[] History list ==> multi-buffer accessible from editor as edit buffers.
+
+
 [x]can not open file with file name including ' ' in head or tail.
  (Ex. " filename.exe" or "filename.ext ")
   - own file list: enclose by '|'. Ex. '/home/user/tmp/ file name.txt '|100:20

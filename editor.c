@@ -136,10 +136,10 @@ flf_d_printf("CALL_EDITOR_FUNC [%s]\n", func_key_table->func_id);
 			}
 		} else {
 			// list mode
-			if (get_c_e_b() != EDIT_BUFS_TOP_ANCH) {
-				// get_c_e_b() does not point list buffer in list-mode, exit editor to avoid crash
-				break;
-			}
+///			if (get_c_e_b() != EDIT_BUFS_TOP_ANCH) {
+///				// get_c_e_b() does not point list buffer in list-mode, exit editor to avoid crash
+///				break;
+///			}
 		}
 		if (editor_quit) {
 			break;

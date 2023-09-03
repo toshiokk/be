@@ -57,9 +57,9 @@
 
 // Maximum number of search/execution/directory history strings saved
 ///#define MAX_HISTORY_LINES		5
-//
-#define MAX_HISTORY_LINES		200
-///#define MAX_HISTORY_LINES		1000
+///#define MAX_HISTORY_LINES		200
+///
+#define MAX_HISTORY_LINES		1000
 
 void init_histories(void);
 void free_histories(void);
@@ -68,13 +68,6 @@ void load_histories(void);
 void save_histories(void);
 
 void load_last_searched_needle(void);
-
-#ifdef START_UP_TEST
-void test_joined_history(int hist_type_idx);
-#endif // START_UP_TEST
-void begin_joined_history(int hist_type_idx);
-const char *get_joined_history_prev(void);
-const char *get_joined_history_next(void);
 
 void update_history(int hist_type_idx, const char *str);
 const char *get_history_newest(int hist_type_idx, int last_n);

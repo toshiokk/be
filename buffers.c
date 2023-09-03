@@ -21,6 +21,9 @@
 
 #include "headers.h"
 
+// collection of buffers
+be_bufs_t* heads_bufs[HEADS_BUFS];
+
 // collection of edit buffers--------------------------------------------------
 be_bufs_t edit_buffers;
 editor_views_t editor_views;
@@ -31,15 +34,15 @@ be_buf_view_t *c_e_b_v = NULL;	// pointer to the current edit buffer view
 // collection of Cut-buffers---------------------------------------------------
 be_bufs_t cut_buffers;
 
+// history buffers ------------------------------------------------------------
+be_bufs_t history_buffers;
+
 #ifdef ENABLE_UNDO
 // undo buffers ---------------------------------------------------------------
 be_bufs_t undo_buffers;
 // redo buffers ---------------------------------------------------------------
 be_bufs_t redo_buffers;
 #endif // ENABLE_UNDO
-
-// history buffers ------------------------------------------------------------
-be_bufs_t history_buffers;
 
 //=============================================================================
 
@@ -50,15 +53,27 @@ void init_buffers(void)
 _FLF_
 	init_cut_bufs();
 #ifdef ENABLE_UNDO
-	init_undo_bufs();
+	init_undo_redo_bufs();
 #endif // ENABLE_UNDO
+}
+void init_heads_bufs(void)
+{
+	heads_bufs[BUFS_IDX_edit] = &edit_buffers;
+	heads_bufs[BUFS_IDX_cut] = &cut_buffers;
+	heads_bufs[BUFS_IDX_history] = &history_buffers;
+///	heads_bufs[BUFS_IDX_tmp] = &temp_buffers;
+#ifdef ENABLE_UNDO
+#endif // ENABLE_UNDO
+	heads_bufs[BUFS_IDX_undo] = &undo_buffers;
+	heads_bufs[BUFS_IDX_redo] = &redo_buffers;
+	heads_bufs[BUFS_IDX_SIZE] = NULL;	// end of list
 }
 
 void free_all_buffers(void)
 {
 #ifdef ENABLE_UNDO
 _FLF_
-	free_all_undo_bufs();
+	free_all_undo_redo_bufs();
 #endif // ENABLE_UNDO
 _FLF_
 	free_all_cut_bufs();
@@ -348,6 +363,13 @@ void init_bufs_top_bot_anchor(
 }
 
 //-----------------------------------------------------------------------------
+
+void renumber_all_bufs_from_top(be_bufs_t *bufs)
+{
+	for (be_buf_t *buf = BUFS_TOP_BUF(bufs); IS_NODE_BOT_ANCH(buf) == 0; buf = buf->next) {
+		buffer_renumber_from_top(buf);
+	}
+}
 
 void renumber_cur_buf_from_top(void)
 {

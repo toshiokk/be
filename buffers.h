@@ -27,6 +27,26 @@ typedef struct {
 	be_buf_t *bufs[BUF_VIEWS];	// edit-buffers shown in the left and the right pane
 } editor_views_t;
 
+//-----------------------------------------------------------------------------
+
+enum BUFS_IDX {
+	BUFS_IDX_edit,		// 0
+	BUFS_IDX_cut,		// 1
+	BUFS_IDX_history,	// 2
+	BUFS_IDX_tmp,		// 3
+#ifdef ENABLE_UNDO
+	BUFS_IDX_undo,		// 4
+	BUFS_IDX_redo,		// 5
+#endif // ENABLE_UNDO
+	BUFS_IDX_SIZE,		// 6
+};
+#define HEADS_BUFS		BUFS_IDX_SIZE+1		// add 1 for end of list (NULL-ptr)
+
+// collection of buffers
+extern be_bufs_t* heads_bufs[HEADS_BUFS];
+
+void init_heads_bufs(void);
+
 // Edit buffers ---------------------------------------------------------------
 extern be_bufs_t edit_buffers;
 extern editor_views_t editor_views;
@@ -93,6 +113,13 @@ extern be_bufs_t cut_buffers;
 #define CUR_CUT_BUF_TOP_LINE	BUF_TOP_LINE(CUR_CUT_BUF)
 #define CUR_CUT_BUF_BOT_ANCH	BUF_BOT_ANCH(CUR_CUT_BUF)
 
+// History buffers ------------------------------------------------------------
+extern be_bufs_t history_buffers;
+#define HIST_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&history_buffers)
+#define HIST_BUFS_TOP_BUF		BUFS_TOP_BUF(&history_buffers)
+#define HIST_BUFS_BOT_BUF		BUFS_BOT_BUF(&history_buffers)
+#define HIST_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&history_buffers)
+
 #ifdef ENABLE_UNDO
 // Undo buffers ---------------------------------------------------------------
 extern be_bufs_t undo_buffers;
@@ -112,13 +139,6 @@ extern be_bufs_t redo_buffers;
 // current redo buffer --------------------------------------------------------
 #define CUR_REDO_BUF			REDO_BUFS_TOP_BUF
 #endif // ENABLE_UNDO
-
-// History buffers ------------------------------------------------------------
-extern be_bufs_t history_buffers;
-#define HIST_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&history_buffers)
-#define HIST_BUFS_TOP_BUF		BUFS_TOP_BUF(&history_buffers)
-#define HIST_BUFS_BOT_BUF		BUFS_BOT_BUF(&history_buffers)
-#define HIST_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&history_buffers)
 
 //=============================================================================
 
@@ -196,6 +216,8 @@ void init_bufs_top_bot_anchor(
  be_buf_t *buf_bot, const char *full_path_bot);
 
 //-----------------------------------------------------------------------------
+
+void renumber_all_bufs_from_top(be_bufs_t *bufs);
 
 void renumber_cur_buf_from_top(void);
 struct be_line_t *get_line_ptr_from_cur_buf_line_num(int line_num);
