@@ -627,7 +627,7 @@ int register_default_color_syntax(void)
 #endif // ENABLE_UTF8
 	add_color_syntax("[\\t]", "", -1, CL_TAB_EOL);		// TAB
 	add_color_syntax("[\\n]", "", -1, CL_TAB_EOL);		// EOL(End of line)
-	default_color_syntax = cur_file_type;	// momorize this color syntax
+	default_color_syntax = cur_file_type;	// memorize this color syntax
 	return 0;
 }
 

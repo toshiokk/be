@@ -57,8 +57,8 @@ PRIVATE int get_char_type(char chr)
 /* '\0':0, space:1, alpha-numeric:2, others:3, UTF-8:4 */
 #define CHR_TYPE(chr)	((chr) == '\0' ? 0 :								\
 						 (((chr) == ' ' || (chr) == '\t') ? 1 :				\
-						  ((isalnum(chr) || (chr) == '_') ? 2 :		\
-						    (((unsigned char)(chr)) < 0x80 ? 3 : 4)						\
+						  ((isalnum(chr) || (chr) == '_') ? 2 :				\
+						    (((unsigned char)(chr)) < 0x80 ? 3 : 4)			\
 						  )													\
 						 )													\
 						)
@@ -196,7 +196,7 @@ PRIVATE void do_page_up_(void)
 
 	if (c_l_up(&CEBV_CL, &CEBV_CLBI) == 0) {
 		if (top_bottom_of_file == TBF_TOP) {
-			// already top of buffer, go to the prevous buffer's last line
+			// already top of buffer, go to the previous buffer's last line
 			top_bottom_of_file = TBF_NONE;
 			tio_beep();
 			if (switch_c_e_b_to_prev(1, 1)) {

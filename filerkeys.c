@@ -29,7 +29,7 @@ func_key_table_t filer_func_key_table[] = {
 //       12345678901234567890
  { "",                "Filer Menu-1",                   K_ESC, K_M_1,      NKA,
    1,F_I(do_filer_menu_1), NULL },
- { "Prev.Menu",       "Previous Menu",                  K_M_ESC, K_M_BACKQUATE, NKA,
+ { "Prev.Menu",       "Previous Menu",                  K_M_ESC, K_M_BACKQUOTE, NKA,
    0,F_I(do_filer_menu_0), NULL },
  { "Quit",            "Quit filer",                     'q', K_C_Q, K_M_q,
    1,F_I(do_quit_filer), NULL },

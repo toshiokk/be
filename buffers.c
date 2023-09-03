@@ -158,7 +158,7 @@ void line_avoid_wild_ptr(be_line_t *line, be_line_t **line_ptr)
 	}
 }
 //-----------------------------------------------------------------------------
-// Editor view manegement
+// Editor view management
 
 void init_editor_views(editor_views_t *editor_views)
 {

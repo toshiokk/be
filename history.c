@@ -186,7 +186,7 @@ const char *get_history_completion(int hist_type_idx, const char *str)
 	if ((line = search_history_str_partial(hist_type_idx, str)) != NULL) {
 		return line->data;
 	}
-	return str;		// return orginal string
+	return str;		// return original string
 }
 
 //------------------------------------------------------------------------------------
@@ -482,7 +482,7 @@ const char *search_history_file_path(int hist_type_idx, const char *path)
 			return line->data;
 		}
 	}
-	return path;		// return orginal string
+	return path;		// return original string
 }
 
 //-----------------------------------------------------------------------------

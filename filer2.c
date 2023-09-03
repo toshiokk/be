@@ -865,7 +865,7 @@ int search_file_name_in_file_list(filer_view_t *fv, const char *file_name)
 			return file_idx;
 		}
 	}
-	// pertial match in regular file
+	// partial match in regular file
 	for (cmp_type = 0; cmp_type < 4; cmp_type++) {
 		for (file_name_len = strlen(file_name); file_name_len; file_name_len--) {
 			for (file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {

@@ -39,7 +39,7 @@ func_key_table_t editor_func_key_table[] = {
 //      12345678901234567890
  { "",                "File Menu",                      K_ESC, K_M_1,      NKA,
    1,F_I(do_editor_menu_1), NULL },
- { "Prev.Menu",       "Previous Menu",                  K_M_ESC, K_M_BACKQUATE, NKA,
+ { "Prev.Menu",       "Previous Menu",                  K_M_ESC, K_M_BACKQUOTE, NKA,
    0,F_I(do_editor_menu_0), NULL },
  { "Open File",       "Open file",                      K_M_e,        NKA, NKA,
    0,F_I(do_open_file), NULL },

@@ -182,7 +182,7 @@
 #define K_M_RBRACKET		K_M(']')	// 5d
 #define K_M_CARET			K_M('^')	// 5e
 #define K_M_UNDERLINE		K_M('_')	// 5f
-#define K_M_BACKQUATE		K_M('`')	// 60
+#define K_M_BACKQUOTE		K_M('`')	// 60
 #define K_M_LBRACE			K_M('{')	// 7b
 #define K_M_VERTBAR			K_M('|')	// 7c
 #define K_M_RBRACE			K_M('}')	// 7d

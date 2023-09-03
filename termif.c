@@ -545,7 +545,7 @@ PRIVATE void send_bgc_to_term(int bgc)
 {
 	send_printf_to_term("\x1b[%dm", 40 + (bgc % COLORS));
 	// NOTE: Linux console supports highlight only for foreground
-	//       and does not support highlight for backgound
+	//       and does not support highlight for background
 }
 PRIVATE void send_fgc_to_term(int fgc)
 {
