@@ -287,7 +287,7 @@ be_line_t *line_separate(be_line_t *line, int byte_idx, insert_before_after_t be
 	return new_line;			// return newly created(inserted) line
 }
 //-----------------------------------------------------------------------------
-int line_renumber(be_line_t *line, size_t *_buf_size_)
+int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 {
 	int line_num = 0;
 	size_t buf_size = 0;

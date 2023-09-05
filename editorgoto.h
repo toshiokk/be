@@ -29,6 +29,7 @@
 
 int do_goto_input_line(void);
 int do_goto_file_in_cur_line(void);
+int chdir_in_string(const char *string);
 int do_open_files_in_buf(void);
 int do_switch_to_top_file(void);
 int do_switch_to_bot_file(void);
@@ -45,7 +46,7 @@ int load_file_in_string(const char *string,
 int load_file_name_upp_low(const char *file_name,
  int try_upp_low, int open_on_err, int msg_on_err, int recursive);
 
-int load_file_name(const char *file_name, int open_on_err, int msg_on_err, int recursive);
+int load_file_name_recurs(const char *file_name, int open_on_err, int msg_on_err, int recursive);
 
 int switch_c_e_b_to_file_name(const char *file_name);
 int switch_c_e_b_to_abs_path(const char *abs_path);
@@ -55,6 +56,8 @@ int switch_c_e_b_to_next(int beep_at_end, int goto_top);
 int switch_c_e_b_to_prev(int beep_at_end, int goto_bottom);
 int switch_c_e_b_to_valid_buf(void);
 int switch_c_e_b_to_another_buf(void);
+
+int is_file_name_proj_file(const char *file_name, int type);
 
 char *memorize_cur_file_pos_null(char *buffer);
 int recall_cur_file_pos_null(const char *str);

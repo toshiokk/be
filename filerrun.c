@@ -43,8 +43,8 @@ int do_run_line(void)
 	return 0;
 }
 
-#define MARK_TO_BE_REPLACED_WITH_FILE_NAME		"{}"
-#define MARK_TO_BE_REPLACED_WITH_FILE_NAME_LEN	strlen(MARK_TO_BE_REPLACED_WITH_FILE_NAME)
+#define STR_TO_BE_REPLACED_WITH_FILE_NAME		"{}"
+#define STR_TO_BE_REPLACED_WITH_FILE_NAME_LEN	strlen(STR_TO_BE_REPLACED_WITH_FILE_NAME)
 int do_exec_command_with_file(void)
 {
 	char command_str[MAX_PATH_LEN+1];
@@ -59,8 +59,8 @@ int do_exec_command_with_file(void)
 	 HISTORY_TYPE_IDX_EXEC, _("Execute({} will be replaced with file-name):"));
 
 	if (ret < 0) {
-		// do_exec_command_with_file -> FILER_ENTERED_FILE_PATH
-		filer_do_next = FILER_ENTERED_FILE_PATH;
+		// do_exec_command_with_file -> FILER_DO_ENTERED_FILE_PATH
+		filer_do_next = FILER_DO_ENTERED_FILE_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -71,7 +71,7 @@ int do_exec_command_with_file(void)
 	}
 	if (get_files_selected_cfv() == 0) {
 		fork_exec_once_sh_c(SEPARATE1, PAUSE1, command_str);
-		filer_do_next = FILER_REFRESH_FORCED;
+		filer_do_next = FILER_DO_REFRESH_FORCE;
 	} else {
 		begin_fork_exec_repeat();
 		for (file_idx = select_and_get_first_file_idx_selected();
@@ -83,17 +83,17 @@ int do_exec_command_with_file(void)
 			// Ex. "cp -auv {} dir/{}" ==> "cp -auv filename dir/filename"
 			strlcpy__(buffer, command_str, MAX_PATH_LEN);
 			for (cnt = 0; cnt < MAX_REPLACEMENTS; cnt++) {
-				if ((ptr_replace = strstr(buffer, MARK_TO_BE_REPLACED_WITH_FILE_NAME))
+				if ((ptr_replace = strstr(buffer, STR_TO_BE_REPLACED_WITH_FILE_NAME))
 				 == NULL)
 					break;
 				replace_str(buffer, MAX_PATH_LEN,
-				 ptr_replace - buffer, MARK_TO_BE_REPLACED_WITH_FILE_NAME_LEN,
+				 ptr_replace - buffer, STR_TO_BE_REPLACED_WITH_FILE_NAME_LEN,
 				 quote_file_name(cur_fv->file_list[file_idx].file_name), -1);
 			}
 			fork_exec_repeat_sh_c(SEPARATE1, buffer);
 		}
 		end_fork_exec_repeat();
-		filer_do_next = FILER_REFRESH_FORCED;
+		filer_do_next = FILER_DO_REFRESH_FORCE;
 	}
 	return 0;
 }
@@ -115,15 +115,15 @@ int do_exec_command_with_files(void)
 	 HISTORY_TYPE_IDX_EXEC, _("Execute with files:"));
 
 	if (ret < 0) {
-		// do_exec_command_with_files -> FILER_ENTERED_FILE_PATH
-		filer_do_next = FILER_ENTERED_FILE_PATH;
+		// do_exec_command_with_files -> FILER_DO_ENTERED_FILE_PATH
+		filer_do_next = FILER_DO_ENTERED_FILE_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
 		return 0;
 	}
 	fork_exec_once_sh_c(SEPARATE1, PAUSE1, command_str);
-	filer_do_next = FILER_REFRESH_FORCED;
+	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 0;
 }
 int do_run_command_rel(void)
@@ -222,8 +222,8 @@ PRIVATE int do_run_command_(int mode)
 	 HISTORY_TYPE_IDX_EXEC, explanation);
 
 	if (ret < 0) {
-		// do_run_command_ -> FILER_ENTERED_FILE_PATH
-		filer_do_next = FILER_ENTERED_FILE_PATH;
+		// do_run_command_ -> FILER_DO_ENTERED_FILE_PATH
+		filer_do_next = FILER_DO_ENTERED_FILE_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -233,7 +233,7 @@ PRIVATE int do_run_command_(int mode)
 		return filer_change_dir(command_str);
 	}
 	fork_exec_once_sh_c(SEPARATE1, PAUSE1, command_str);
-	filer_do_next = FILER_REFRESH_FORCED;
+	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 0;
 }
 
@@ -262,8 +262,8 @@ PRIVATE int do_filer_cmd_(char *cmd_file)
 	file_idx = cur_fv->cur_sel_idx;
 	file_name = cur_fv->file_list[file_idx].file_name;
 	if (is_app_list_mode()) {
-		// do_filer_cmd -> FILER_ENTERED_FILE_PATH
-		filer_do_next = FILER_ENTERED_FILE_PATH;
+		// do_filer_cmd -> FILER_DO_ENTERED_FILE_PATH
+		filer_do_next = FILER_DO_ENTERED_FILE_PATH;
 		return 0;
 	}
 	if (S_ISREG(cur_fv->file_list[file_idx].st.st_mode)) {

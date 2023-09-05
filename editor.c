@@ -74,7 +74,7 @@ PRIVATE int editor_main_loop(void)
 	matches_clear(&matches__);
 #endif // ENABLE_REGEX
 
-	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL_SOON);
 
 	// Main input loop
 	key_input = 0;
@@ -83,7 +83,7 @@ PRIVATE int editor_main_loop(void)
 		if (key_macro_is_playing_back()) {
 			// When playing back key-macro, do not update screen.
 		} else {
-			update_screen_editor(1, key_input >= 0, key_input >= 0);
+			update_screen_editor(1, key_input >= 0, 1);
 		}
 		//----------------------------------
 		key_input = input_key_wait_return();
@@ -136,10 +136,10 @@ flf_d_printf("CALL_EDITOR_FUNC [%s]\n", func_key_table->func_id);
 			}
 		} else {
 			// list mode
-			if (get_c_e_b() != EDIT_BUFS_TOP_ANCH) {
-				// get_c_e_b() does not point list buffer in list-mode, exit editor to avoid crash
-				break;
-			}
+///			if (get_c_e_b() != EDIT_BUFS_TOP_ANCH) {
+///				// get_c_e_b() does not point list buffer in list-mode, exit editor to avoid crash
+///				break;
+///			}
 		}
 		if (editor_quit) {
 			break;
@@ -186,7 +186,7 @@ _FLF_
 			continue;
 #endif // ENABLE_FILER
 		// CURDIR: changed in editor
-		if (load_file_name_upp_low(file_name, TUL0, OOE0, WOE1, recursive) <= 0) {
+		if (load_file_name_upp_low(file_name, TUL0, OOE0, MOE1, recursive) <= 0) {
 			tio_beep();
 		}
 		break;
@@ -197,10 +197,10 @@ _FLF_
 }
 int do_open_new_file(void)
 {
-	char file_name[MAX_PATH_LEN+1];
+	char file_path[MAX_PATH_LEN+1];
 	int ret;
 
-	ret = input_string("", file_name, HISTORY_TYPE_IDX_DIR, _("Open new file:"));
+	ret = input_string("", file_path, HISTORY_TYPE_IDX_DIR, _("Open new file:"));
 
 	if (ret < 0) {
 		return 0;
@@ -210,7 +210,7 @@ int do_open_new_file(void)
 	}
 	clear_files_loaded();
 	// CURDIR: changed in editor
-	if (load_file_name_upp_low(file_name, TUL0, OOE1, WOE0, RECURSIVE0) <= 0) {
+	if (load_file_name_upp_low(file_path, TUL0, OOE1, MOE0, RECURSIVE0) <= 0) {
 		tio_beep();
 		return 0;
 	}
@@ -231,6 +231,7 @@ int do_open_proj_file(void)
 
 	strcpy__(file_name, "");
 	dir = opendir(".");
+#if 0
 	for (loop = 0; loop < 4; loop++) {
 		switch(loop) {
 		case 0:		strcpy__(filter, PROJ_FILE_FILTER1);	break;
@@ -245,9 +246,9 @@ int do_open_proj_file(void)
 				stat(dirent->d_name, &st);
 			else
 				memcpy__(&st, &lst, sizeof(struct stat));
-			if (S_ISDIR(st.st_mode) == 0
-			 && fnmatch(filter, dirent->d_name, 0) == 0) {
+			if (S_ISREG(st.st_mode) && fnmatch(filter, dirent->d_name, 0) == 0) {
 				strlcpy__(file_name, dirent->d_name, MAX_PATH_LEN);
+				break;
 			}
 		}
 		if (is_strlen_not_0(file_name)) {
@@ -255,6 +256,26 @@ int do_open_proj_file(void)
 			break;
 		}
 	}
+#else
+	for (loop = 0; loop < 2; loop++) {
+		rewinddir(dir);
+		while ((dirent = readdir(dir)) != NULL) {
+			lstat(dirent->d_name, &lst);
+			if (S_ISLNK(lst.st_mode))
+				stat(dirent->d_name, &st);
+			else
+				memcpy__(&st, &lst, sizeof(struct stat));
+			if (S_ISREG(st.st_mode) && is_file_name_proj_file(dirent->d_name, 1+loop)) {
+				strlcpy__(file_name, dirent->d_name, MAX_PATH_LEN);
+				break;
+			}
+		}
+		if (is_strlen_not_0(file_name)) {
+			// file matched
+			break;
+		}
+	}
+#endif
 	closedir(dir);
 
 	if (is_strlen_0(file_name)) {
@@ -263,7 +284,7 @@ int do_open_proj_file(void)
 	}
 
 	// CURDIR: changed in editor
-	if (load_file_name(file_name, OOE0, WOE1, RECURSIVE1) <= 0) {
+	if (load_file_name_recurs(file_name, OOE0, MOE1, RECURSIVE1) <= 0) {
 		tio_beep();
 		return 0;
 	}
@@ -297,8 +318,8 @@ int do_reopen_file(void)
 	free_cur_edit_buf();
 ///_FLF_
 	// CURDIR: abs-path is specified
-	if (load_file_name(get_file_line_col_from_str_null(NULL, file_path, NULL, NULL),
-	 OOE0, WOE1, RECURSIVE1) <= 0) {
+	if (load_file_name_recurs(get_file_line_col_from_str_null(NULL, file_path, NULL, NULL),
+	 OOE0, MOE1, RECURSIVE1) <= 0) {
 ///_FLF_
 		tio_beep();
 		return 0;
@@ -518,7 +539,7 @@ int write_all(int yes, close_after_save_t discard)
 	int ret = yes;
 
 	switch_c_e_b_to_top();
-	while(is_c_e_b_valid()) {
+	while (is_c_e_b_valid()) {
 		ret = write_file_ask(ret, discard);
 		if (ret <= ANSWER_CANCEL) {
 			disp_status_bar_done(_("Cancelled"));
@@ -534,7 +555,7 @@ int close_all_not_modified(void)
 {
 	disp_status_bar_ing(_("Freeing buffers..."));
 	switch_c_e_b_to_top();
-	while(is_c_e_b_valid()) {
+	while (is_c_e_b_valid()) {
 		if (check_cur_buf_modified()) {
 			if (switch_c_e_b_to_next(0, 0) == 0)
 				break;
@@ -549,7 +570,7 @@ int close_all(void)
 {
 	disp_status_bar_ing(_("Freeing all buffers..."));
 	switch_c_e_b_to_top();
-	while(free_cur_edit_buf()) {
+	while (free_cur_edit_buf()) {
 		// loop
 		tio_refresh();
 	}
@@ -696,11 +717,11 @@ flf_d_printf("pane_sel_idx: %d, pane_idx: %d\n", pane_sel_idx, pane_idx);
 	// status bar
 	if (status_bar) {
 		disp_status_bar_editor();
+///_FLF_
+		// key list
+		disp_key_list_editor();
 	}
 ///  }
-///_FLF_
-	// key list
-	disp_key_list_editor();
 
 ///_FLF_
 ///  if (count_edit_bufs()) {
@@ -750,7 +771,8 @@ int disp_status_bar_editor(void)
 	 _("LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu CODE:%s ENC:%s EOL:%s"));
 	disp_status_bar_percent_editor(CEBV_CL->line_num-1, get_c_e_b()->buf_lines-1,
 	 buffer, CEBV_CL->line_num, get_c_e_b()->buf_lines, xx, disp_len,
-	 get_c_e_b()->buf_size, buf_char_code, buffer_encode_str(get_c_e_b()), buffer_eol_str(get_c_e_b()));
+	 get_c_e_b()->buf_size, buf_char_code,
+	 buffer_encode_str(get_c_e_b()), buffer_eol_str(get_c_e_b()));
 	return 1;
 }
 

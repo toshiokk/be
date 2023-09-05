@@ -35,17 +35,17 @@ typedef struct {
 extern filer_views_t *cur_filer_views;	// Current Filer ViewS
 extern filer_view_t *cur_fv;	// Current Filer View
 
-#define FILER_DO_NOTHING		0
-#define FILER_UPDATE_SCREEN		1
-#define FILER_REFRESH_AUTO		2	// periodic file list update
-#define FILER_REFRESH_FORCED	3	// file list update needed
+#define FILER_DO_NOTHING			0
+#define FILER_DO_UPDATE_SCREEN		1
+#define FILER_DO_REFRESH_AUTO		2	// periodic file list update
+#define FILER_DO_REFRESH_FORCE		3	// force file list update
 
-#define FILER_QUIT				5
-#define FILER_ABORT				6
-#define FILER_LOADED_FILE		7
-#define FILER_ENTERED_FILE		8	// file, dir
-#define FILER_ENTERED_FILE_PATH	9	// /home/user/.bashrc
-#define FILER_ENTERED_DIR_PATH	10	// /home/user/bin
+#define FILER_DO_QUIT				5
+#define FILER_DO_ABORT				6
+#define FILER_DO_LOADED_FILE		7
+#define FILER_DO_ENTERED_FILE		8	// file, dir
+#define FILER_DO_ENTERED_FILE_PATH	9	// /home/user/.bashrc
+#define FILER_DO_ENTERED_DIR_PATH	10	// /home/user/bin
 extern int filer_do_next;
 
 void init_filer_views(filer_views_t *fvs, const char *cur_dir);

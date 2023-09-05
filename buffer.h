@@ -99,6 +99,7 @@ void buffer_free_lines(be_buf_t *buf);
 
 int buffer_compare(be_buf_t *buf1, be_buf_t *buf2);
 
+int buffer_renumber_from_top(be_buf_t *buf);
 int buffer_renumber_from_line(be_buf_t *buf, be_line_t *line);
 int buffer_guess_tab_size(be_buf_t *buf);
 

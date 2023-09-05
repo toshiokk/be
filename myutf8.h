@@ -19,6 +19,12 @@ void test_my_mbwidth(void);
 
 int my_mbwidth(const char *utf8c, int max_len);
 int my_wcwidth(wchar_t wc);
+
+#define VAGUE_WIDE_CHR	// treat characters which width(narrow/wide) is vague as to be wide
+#ifdef VAGUE_WIDE_CHR
+int is_vague_wide_chr(wchar_t wc);
+#endif // VAGUE_WIDE_CHR
+
 int my_mblen(const char *utf8c, int max_len);
 int my_mbtowc(const char *utf8c, int max_len);
 

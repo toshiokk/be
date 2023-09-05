@@ -43,6 +43,9 @@
 #define IS_NODE_BOT_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL((node)->next))	// no next
 #define IS_NODE_VALID(node)			((IS_NODE_TOP_ANCH(node) || IS_NODE_BOT_ANCH(node)) == 0)
 
+#define NEXT_NODE(node)			((node)->next)
+#define PREV_NODE(node)			((node)->prev)
+
 typedef struct be_line_t {
 	struct be_line_t *prev;		//!< Previous line
 	struct be_line_t *next;		//!< Next line
@@ -97,7 +100,7 @@ be_line_t *line_concat_with_next(be_line_t *line);
 
 be_line_t *line_separate(be_line_t *line, int byte_idx, insert_before_after_t before_after);
 
-int line_renumber(be_line_t *line, size_t *_buf_size_);
+int line_renumber_from_line(be_line_t *line, size_t *_buf_size_);
 int line_count_lines(be_line_t *line);
 const be_line_t *line_get_top_anch(const be_line_t *line);
 

@@ -494,7 +494,7 @@ const char *skip_to_file_path(const char *ptr)
 const char *skip_file_path(const char *ptr)
 {
 	if (*ptr == '\'' || *ptr == '"') {
-		// '\'abcdefg\'hijklmn.txt'
+		// '\'abc/def\'ghi jkl.txt\''
 		//  --       --
 		char beginning_chr = *ptr;
 		ptr++;	// skip beginning_chr
@@ -568,15 +568,16 @@ int is_file_path_char(const char *ptr)
 }
 int is_file_name_char(const char *ptr)
 {
-	return isalnum(*ptr) || (utf8c_bytes(ptr) >= 2) || strchr__("_-+.~$%&=\"\'", *ptr);
+///	return (((' ' < *ptr) && (*ptr < 0x80) && (*ptr != '/')) || (utf8c_bytes(ptr) >= 2));
+	return isalnum(*ptr) || strchr__("_-+.~$%&@=\"\'", *ptr) || (utf8c_bytes(ptr) >= 2);
 }
 int is_separator(char chr)
 {
 	return strchr__(" \t,:", chr) != NULL;
 }
-int contain_chr(const char *file_name, char chr)
+int contain_chr(const char *string, char chr)
 {
-	return strchr(file_name, chr) != NULL;
+	return strchr(string, chr) != NULL;
 }
 char *quote_string(char *buffer, const char *string, char quote_chr)
 {

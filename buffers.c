@@ -21,6 +21,9 @@
 
 #include "headers.h"
 
+// collection of buffers
+be_bufs_t* heads_bufs[HEADS_BUFS];
+
 // collection of edit buffers--------------------------------------------------
 be_bufs_t edit_buffers;
 editor_views_t editor_views;
@@ -31,15 +34,18 @@ be_buf_view_t *c_e_b_v = NULL;	// pointer to the current edit buffer view
 // collection of Cut-buffers---------------------------------------------------
 be_bufs_t cut_buffers;
 
+// history buffers ------------------------------------------------------------
+be_bufs_t history_buffers;
+
+// help buffers ------------------------------------------------------------
+be_bufs_t help_buffers;
+
 #ifdef ENABLE_UNDO
 // undo buffers ---------------------------------------------------------------
 be_bufs_t undo_buffers;
 // redo buffers ---------------------------------------------------------------
 be_bufs_t redo_buffers;
 #endif // ENABLE_UNDO
-
-// history buffers ------------------------------------------------------------
-be_bufs_t history_buffers;
 
 //=============================================================================
 
@@ -50,15 +56,33 @@ void init_buffers(void)
 _FLF_
 	init_cut_bufs();
 #ifdef ENABLE_UNDO
-	init_undo_bufs();
+	init_undo_redo_bufs();
 #endif // ENABLE_UNDO
+#ifdef ENABLE_HELP
+	init_help_bufs();
+#endif // ENABLE_HELP
+}
+void init_heads_bufs(void)
+{
+	heads_bufs[BUFS_IDX_EDIT] = &edit_buffers;
+	heads_bufs[BUFS_IDX_CUT] = &cut_buffers;
+	heads_bufs[BUFS_IDX_HISTORY] = &history_buffers;
+	heads_bufs[BUFS_IDX_HELP] = &help_buffers;
+#ifdef ENABLE_UNDO
+	heads_bufs[BUFS_IDX_UNDO] = &undo_buffers;
+	heads_bufs[BUFS_IDX_REDO] = &redo_buffers;
+#endif // ENABLE_UNDO
+	heads_bufs[BUFS_IDX_SIZE] = NULL;	// end of list
 }
 
 void free_all_buffers(void)
 {
+#ifdef ENABLE_HELP
+	free_help_bufs();
+#endif // ENABLE_HELP
 #ifdef ENABLE_UNDO
 _FLF_
-	free_all_undo_bufs();
+	free_all_undo_redo_bufs();
 #endif // ENABLE_UNDO
 _FLF_
 	free_all_cut_bufs();
@@ -143,7 +167,7 @@ void line_avoid_wild_ptr(be_line_t *line, be_line_t **line_ptr)
 	}
 }
 //-----------------------------------------------------------------------------
-// Editor view manegement
+// Editor view management
 
 void init_editor_views(editor_views_t *editor_views)
 {
@@ -219,27 +243,11 @@ void dump_cur_editor_views(void)
 
 be_buf_t *get_edit_buf_from_abs_path(const char *abs_path)
 {
-	be_buf_t *buf;
-
-	for (buf = EDIT_BUFS_TOP_BUF; IS_NODE_BOT_ANCH(buf) == 0; buf = buf->next) {
-		if (strcmp(buf->abs_path, abs_path) == 0) {
-			return buf;
-		}
-	}
-	return NULL;		// not found
+	return get_buf_from_bufs_by_abs_path(EDIT_BUFS_TOP_BUF, abs_path);
 }
 int get_edit_buf_idx_from_buf(be_buf_t *edit_buf)
 {
-	int buf_idx;
-	be_buf_t *buf;
-
-	for (buf_idx = 0, buf = EDIT_BUFS_TOP_BUF;
-	 IS_NODE_BOT_ANCH(buf) == 0;
-	 buf_idx++, buf = buf->next) {
-		if (buf == edit_buf)
-			return buf_idx;
-	}
-	return -1;	// not found
+	return get_buf_idx_in_bufs(EDIT_BUFS_TOP_BUF, edit_buf);
 }
 
 //-----------------------------------------------------------------------------
@@ -300,7 +308,7 @@ void init_cut_bufs(void)
 }
 void free_all_cut_bufs(void)
 {
-	while(IS_NODE_BOT_ANCH(CUR_CUT_BUF) == 0) {
+	while (IS_NODE_BOT_ANCH(CUR_CUT_BUF) == 0) {
 		pop_cut_buf();
 	}
 }
@@ -347,7 +355,54 @@ void init_bufs_top_bot_anchor(
 	buffer_link(buf_top, buf_bot);
 }
 
+PRIVATE be_buf_t *make_sure_buf_is_top_buf(be_buf_t *bufs)
+{
+	if (IS_NODE_TOP_ANCH(bufs)) {
+		bufs = NEXT_NODE(bufs);
+	}
+	while (IS_NODE_TOP(bufs) == 0) {
+		bufs = PREV_NODE(bufs);
+	}
+	return bufs;
+}
+
+be_buf_t *get_buf_from_bufs_by_idx(be_buf_t *bufs, int buf_idx)
+{
+	// making sure that bufs is TOP_BUF
+	bufs = make_sure_buf_is_top_buf(bufs);
+	for ( ; IS_NODE_BOT_ANCH(bufs) == 0 && buf_idx > 0; buf_idx--) {
+		bufs = NEXT_NODE(bufs);
+	}
+	return bufs;	// bufs may be top/bottom anchor
+}
+int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf)
+{
+	bufs = make_sure_buf_is_top_buf(bufs);
+	for (int buf_idx = 0; IS_NODE_BOT_ANCH(bufs) == 0; buf_idx++, bufs = bufs->next) {
+		if (bufs == buf)
+			return buf_idx;	// found
+	}
+	return -1;	// not found
+}
+be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *bufs, const char *abs_path)
+{
+	bufs = make_sure_buf_is_top_buf(bufs);
+	for ( ; IS_NODE_BOT_ANCH(bufs) == 0; bufs = bufs->next) {
+		if (strcmp(bufs->abs_path, abs_path) == 0) {
+			return bufs;	// found
+		}
+	}
+	return NULL;		// not found
+}
+
 //-----------------------------------------------------------------------------
+
+void renumber_all_bufs_from_top(be_bufs_t *bufs)
+{
+	for (be_buf_t *buf = BUFS_TOP_BUF(bufs); IS_NODE_BOT_ANCH(buf) == 0; buf = buf->next) {
+		buffer_renumber_from_top(buf);
+	}
+}
 
 void renumber_cur_buf_from_top(void)
 {

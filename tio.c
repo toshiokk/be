@@ -441,7 +441,8 @@ int differ_fgc_to_bgc(int bgc, int fgc)
 		case CL_BL:		fgc = CL_LBL;	break;
 		case CL_MG:		fgc = CL_LMG;	break;
 		case CL_CY:		fgc = CL_LCY;	break;
-		case CL_GY:		fgc = CL_WH;	break;
+///		case CL_GY:		fgc = CL_WH;	break;
+		case CL_GY:		fgc = CL_DGY;	break;
 		case CL_DGY:	fgc = CL_BK;	break;
 		case CL_LRD:	fgc = CL_RD;	break;
 		case CL_LGR:	fgc = CL_GR;	break;
@@ -449,7 +450,8 @@ int differ_fgc_to_bgc(int bgc, int fgc)
 		case CL_LBL:	fgc = CL_BL;	break;
 		case CL_LMG:	fgc = CL_MG;	break;
 		case CL_LCY:	fgc = CL_CY;	break;
-		case CL_WH:		fgc = CL_GY;	break;
+///		case CL_WH:		fgc = CL_GY;	break;
+		case CL_WH:		fgc = CL_DGY;	break;
 		}
 	}
 #if 1 // Avoid similar fgc/bgc
@@ -458,6 +460,9 @@ int differ_fgc_to_bgc(int bgc, int fgc)
 	}
 	if ((bgc == CL_GR) && (fgc == CL_CY)) {
 		fgc = CL_LCY;
+	}
+	if ((bgc == CL_BR) && (fgc == CL_DGY)) {
+		fgc = CL_GY;
 	}
 #endif
 	return fgc;

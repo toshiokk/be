@@ -25,45 +25,48 @@
 // /dir1/dir2/file ==> /dir1/dir2
 // /dir1/dir2/ ==> /dir1/dir2
 // /dir1 ==> /
-char *strip_one_dir(char *path, char *dir)
-{
-	char *ptr;
-
-///flf_d_printf("strip_one_dir(%s)\n", path);
-	if (strcmp(path, "/") != 0 && strlen(path)) {
-		if (path[strlen(path)-1] == '/')
-			// "/dir1/dir2/" ==> "/dir1/dir2"
-			path[strlen(path)-1] = '\0';
-	}
-	ptr = separate_dir_and_file(path, dir);
-///flf_d_printf(" ==> return:[%s], path:[%s], dir:[%s]\n", ptr, path, dir);
-	return ptr;							// return stripped dir
-}
+///char *strip_one_dir(char *path, char *dir)
+///{
+///	char *ptr;
+///
+//////flf_d_printf("strip_one_dir(%s)\n", path);
+///	if (strcmp(path, "/") != 0 && strlen(path)) {
+///		if (path[strlen(path)-1] == '/')
+///			// "/dir1/dir2/" ==> "/dir1/dir2"
+///			path[strlen(path)-1] = '\0';
+///	}
+///	ptr = separate_dir_and_file(path, dir);
+//////flf_d_printf(" ==> return:[%s], path:[%s], dir:[%s]\n", ptr, path, dir);
+///	return ptr;							// return stripped dir or file
+///}
 // /dir1/dir2/file ==> /dir1/dir2
-char *strip_file_from_path(char *path)
+char *strip_file_from_path(const char *path)
 {
 	static char dir[MAX_PATH_LEN+1];
+	char file[MAX_PATH_LEN+1];
 
-	separate_dir_and_file(path, dir);
+	strlcpy__(dir, path, MAX_PATH_LEN);
+	separate_dir_and_file(dir, file);
 	return dir;
 }
 // /dir1/dir2/file ==> /dir1/dir2  file
 // /dir1/dir2 ==> /dir1  dir2
-// /file ==> /  file
-// file ==> ""  file
-// / ==> /  ""
-// "" ==> ""  ""
-char *separate_dir_and_file(char *path, char *dir)
+// /file      ==> /  file
+// file       ==> /  file
+// /          ==> /  ""
+// ""         ==> /  ""
+char *separate_dir_and_file(char *path, char *file)
 {
-	char *file;
+	char *ptr;
 
-	file = get_last_slash(path);
-	if (*file == '/') {
-		strlcpy__(dir, path, file - path);
-		normalize_root_dir(dir);
-		file++;
+	ptr = get_last_slash(path);
+	if (*ptr == '/') {
+		*ptr++ = '\0';	// NUL terminate ("/dir/file" ==> "/dir")
+		strlcpy__(file, ptr, MAX_PATH_LEN);	// "file"
+		normalize_root_dir(path);			// "" ==> "/"
 	} else {
-		strcpy__(dir, "");
+		strcpy__(path, "/");				// "file" ==> "/"
+		strlcpy__(file, ptr, MAX_PATH_LEN);	// "file" ==> "file"
 	}
 ///flf_d_printf("separate_dir_and_file(%s)\n", path);
 ///flf_d_printf(" ==> dir/file:[%s]/[%s]\n", dir, file);
@@ -91,6 +94,9 @@ char *normalize_root_dir(char *dir)
 ///	return ptr;
 ///}
 
+// /dir1/dir2/file ==> /dir1/dir2
+// /file           ==> /file
+// file            ==> file
 char *remove_last_slash(char *path)
 {
 	char *ptr;
@@ -104,8 +110,8 @@ char *remove_last_slash(char *path)
 }
 
 // point to the last '/'
-// /dir1/dir2/file
-//           ^
+// /dir1/dir2/file    file
+//           ^        ^
 char *get_last_slash(char *path)
 {
 	char *ptr;

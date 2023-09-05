@@ -140,7 +140,7 @@ _FLF_
 		for ( ; optind < argc; optind++) {
 flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 			// CURDIR: changed in editor
-			if (load_file_name_upp_low(argv[optind], TUL0, OOE1, WOE0, RECURSIVE1) <= 0) {
+			if (load_file_name_upp_low(argv[optind], TUL0, OOE1, MOE0, RECURSIVE1) <= 0) {
 				tio_beep();
 			}
 			tio_refresh();
@@ -175,7 +175,7 @@ _FLF_
 _FLF_
 	} else {
 		// application was started as a FILER
-		while(1) {
+		while (1) {
 _FLF_
 			call_filer(0, 0, "", "", file_name, MAX_PATH_LEN);
 _FLF_
@@ -612,7 +612,7 @@ void show_usage(void)
 	show_one_option("-?",                "--help",            _("Show this message"));
 	show_one_option("+NUM",              "",                  _("Start at line number NUM"));
 #ifndef ENABLE_NCURSES
-	show_one_option("-k",                "--keyseq",          _("Investigate keyboard escape sequence"));
+	show_one_option("-k",                "--keyseq",          _("Investigate key codes"));
 #endif // ENABLE_NCURSES
 }
 

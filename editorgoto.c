@@ -27,7 +27,6 @@ PRIVATE int load_files_in_string(const char *string, int files_to_load, int try_
 
 PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_err);
 
-PRIVATE int is_file_name_proj_file(const char *file_name);
 PRIVATE const char *skip_n_file_names(const char *line, int field_idx);
 #ifdef START_UP_TEST
 void test_get_n_th_file_name(void);
@@ -60,11 +59,11 @@ int do_goto_input_line(void)
 	}
 	// go to file
 	// CURDIR: changed in editor
-	load_files_in_string(string, 1, TUL0, OOE0, WOE1, RECURSIVE0);	// file.ext:123:45
+	load_files_in_string(string, 1, TUL0, OOE0, MOE1, RECURSIVE0);	// file.ext:123:45
 	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
 }
-// do tag jump
+// do_tag_jump()
 int do_goto_file_in_cur_line(void)
 {
 	char dir_save[MAX_PATH_LEN+1];
@@ -75,15 +74,20 @@ int do_goto_file_in_cur_line(void)
 	clear_files_loaded();
 	save_change_cur_dir(dir_save, strip_file_from_path(get_c_e_b()->abs_path));
 	// CURDIR: changed to cur-file's abs-dir
-	ret = load_files_in_string(CEBV_CL->data, 10, TUL1, OOE0, WOE1, RECURSIVE1);
+	ret = load_files_in_string(CEBV_CL->data, 10, TUL1, OOE0, MOE1, RECURSIVE1);
 	change_cur_dir(dir_save);
 	if (ret <= 0) {
-		// error
-		return 0;
+		return chdir_in_string(CEBV_CL->data) == 0;
 	}
 	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
 }
+
+int chdir_in_string(const char *string)
+{
+	return filer_change_dir(string);
+}
+
 int do_open_files_in_buf(void)
 {
 	clear_files_loaded();
@@ -179,14 +183,16 @@ int load_files_in_cur_buf(void)
 		if (is_handler_sigint_called())
 			break;
 		if (line_data_len(CEBV_CL)) {
-			memorize_cur_file_pos_null(NULL);
-			save_change_cur_dir(dir_save, strip_file_from_path(get_c_e_b()->abs_path));
-			// CURDIR: changed to cur-file's abs-dir
-			files += load_files_in_string(CEBV_CL->data, 10, TUL1, OOE0, WOE0, RECURSIVE0);
-			change_cur_dir(dir_save);
-			disp_editor_title_bar();
-			tio_refresh();
-			recall_cur_file_pos_null(NULL);
+			if (CEBV_CL->data[0] != '#') {
+				memorize_cur_file_pos_null(NULL);
+				save_change_cur_dir(dir_save, strip_file_from_path(get_c_e_b()->abs_path));
+				// CURDIR: changed to cur-file's abs-dir
+				files += load_files_in_string(CEBV_CL->data, 10, TUL1, OOE0, MOE0, RECURSIVE0);
+				change_cur_dir(dir_save);
+				disp_editor_title_bar();
+				tio_refresh();
+				recall_cur_file_pos_null(NULL);
+			}
 		}
 		if (cursor_next_line() == 0)
 			break;
@@ -238,22 +244,22 @@ flf_d_printf("[%s]\n", string);
 int load_file_in_string(const char *string,
  int try_upp_low, int open_on_err, int msg_on_err, int recursive)
 {
-	char file_name[MAX_PATH_LEN+1];
+	char file_path[MAX_PATH_LEN+1];
 	int line_num, col_num;
 	int files;
 
 ///
 flf_d_printf("string:[%s]\n", string);
-	if (get_file_line_col_from_str_null(string, file_name, &line_num, &col_num) == 0) {
+	if (get_file_line_col_from_str_null(string, file_path, &line_num, &col_num) == 0) {
 _FLF_
 		return 0;
 	}
 ///
-flf_d_printf("file_name:[%s]\n", file_name);
-	if ((files = load_file_name_upp_low(file_name,
+flf_d_printf("file_path:[%s]\n", file_path);
+	if ((files = load_file_name_upp_low(file_path,
 	 try_upp_low, open_on_err, msg_on_err, recursive)) > 0) {
 ///
-flf_d_printf("loaded:[%s]\n", file_name);
+flf_d_printf("loaded:[%s]\n", file_path);
 		goto_line_col_in_cur_buf(line_num, col_num);
 	}
 	return files;
@@ -265,24 +271,24 @@ int load_file_name_upp_low(const char *file_name,
 	int files;
 
 	// try to open specified file name (FileName.Ext)
-	if ((files = load_file_name(file_name, open_on_err, msg_on_err, recursive)) > 0)
-		goto load_file_name_upp_low_goto;
+	if ((files = load_file_name_recurs(file_name, open_on_err, msg_on_err, recursive)) > 0)
+		return files;
 	if (try_upp_low) {
 		strlcpy__(file_name_buf, file_name, MAX_PATH_LEN);
 		// try to open in upper case file name (FILENAME.EXT)
 		strupper(file_name_buf);
-		if ((files = load_file_name(file_name_buf, open_on_err, msg_on_err, recursive)) > 0)
-			goto load_file_name_upp_low_goto;
+		if ((files = load_file_name_recurs(file_name_buf, open_on_err, msg_on_err, recursive)) > 0)
+			return files;
 		// try to open in lower case file name (filename.ext)
 		strlower(file_name_buf);
-		if ((files = load_file_name(file_name_buf, open_on_err, msg_on_err, recursive)) > 0)
-			goto load_file_name_upp_low_goto;
+		if ((files = load_file_name_recurs(file_name_buf, open_on_err, msg_on_err, recursive)) > 0)
+			return files;
 	}
-load_file_name_upp_low_goto:;
-	return files;
+///	return files;	// 0
+	return 0;	// 0
 }
 // Open file. If it is a project file, open file(s) described in it.
-int load_file_name(const char *file_name, int open_on_err, int msg_on_err, int recursive)
+int load_file_name_recurs(const char *file_name, int open_on_err, int msg_on_err, int recursive)
 {
 	static int recursive_call_count = 0;
 	int files;
@@ -294,7 +300,7 @@ flf_d_printf("[%s], %d, %d, %d\n", file_name, open_on_err, msg_on_err, recursive
 	}
 ///_FLF_
 	files = 1;
-	if (recursive && recursive_call_count == 0 && is_file_name_proj_file(file_name)) {
+	if (recursive && recursive_call_count == 0 && is_file_name_proj_file(file_name, 0)) {
 ///flf_d_printf("recursive_call_count:%d\n", recursive_call_count);
 		recursive_call_count++;
 		files += load_files_in_cur_buf();		// recursive call
@@ -402,14 +408,25 @@ int switch_c_e_b_to_another_buf(void)
 	return 1;
 }
 //-----------------------------------------------------------------------------
-PRIVATE int is_file_name_proj_file(const char *file_name)
+int is_file_name_proj_file(const char *file_name, int type)
 {
-	return (strcasecmp(&file_name[
-	   LIM_MIN(0, strnlen(file_name, MAX_PATH_LEN) - strlen(PROJ_FILE_EXTENSION1))],
-	  PROJ_FILE_EXTENSION1) == 0)
-	 || (strcasecmp(&file_name[
-	   LIM_MIN(0, strnlen(file_name, MAX_PATH_LEN) - strlen(PROJ_FILE_EXTENSION2))],
-	  PROJ_FILE_EXTENSION2) == 0);	// 1: project file
+	if ((type == 0 || type == 1)
+	 && strnlen(file_name, MAX_PATH_LEN) >= strlen(PROJ_FILE_EXTENSION1)) {
+		if (strcasecmp(
+		 &file_name[strnlen(file_name, MAX_PATH_LEN) - strlen(PROJ_FILE_EXTENSION1)],
+	     PROJ_FILE_EXTENSION1) == 0) {
+			return 1;
+		}
+	}
+	if ((type == 0 || type == 2)
+	 && strnlen(file_name, MAX_PATH_LEN) >= strlen(PROJ_FILE_EXTENSION2)) {
+		if (strcasecmp(
+		 &file_name[strnlen(file_name, MAX_PATH_LEN) - strlen(PROJ_FILE_EXTENSION2)],
+	     PROJ_FILE_EXTENSION2) == 0) {
+			return 1;
+		}
+	}
+	return 0;	// not project file
 }
 PRIVATE const char *skip_n_file_names(const char *line, int field_idx)
 {
@@ -443,7 +460,7 @@ void test_get_n_th_file_name(void)
 	 "history.c 345 hist_type_idx:3:['/home/user/ filename including space .txt '|1:1]";
 	int field_idx;
 	const char *ptr;
-	char file_name[MAX_PATH_LEN+1];
+	char file_path[MAX_PATH_LEN+1];
 	int line_num, col_num;
 
 _FLF_
@@ -451,8 +468,8 @@ _FLF_
 		ptr = skip_n_file_names(test_str, field_idx);
 		if (*ptr == '\0')
 			break;
-		if (get_file_line_col_from_str_null(ptr, file_name, &line_num, &col_num)) {
-			flf_d_printf("%d: file_name:[%s],%d,%d\n", field_idx, file_name, line_num, col_num);
+		if (get_file_line_col_from_str_null(ptr, file_path, &line_num, &col_num)) {
+			flf_d_printf("%d: file_path:[%s],%d,%d\n", field_idx, file_path, line_num, col_num);
 		}
 	}
 }
@@ -524,7 +541,6 @@ int goto_line_col_in_cur_buf(int line_num, int col_num)
 	return 2;
 }
 //-----------------------------------------------------------------------------
-#define	FILE_PATH_SEPARATOR		"|"		// candidates are "|", "//", ""\\"
 char *mk_cur_file_pos_str_static(void)
 {
 	static char buffer[MAX_PATH_LEN+1];

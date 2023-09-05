@@ -3,7 +3,8 @@
 AUTOMAKE_OPTIONS = gnu no-dependencies
 
 DEFS= -DSYSCONFDIR=\"$(sysconfdir)\"
-AM_CFLAGS = -Wall -D_FILE_OFFSET_BITS=64
+AM_CFLAGS = -Wformat-truncation=0 -D_FILE_OFFSET_BITS=64
+#AM_CFLAGS = -Wall -D_FILE_OFFSET_BITS=64
 
 BUILD_DIR = ./.build
 

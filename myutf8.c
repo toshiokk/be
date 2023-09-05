@@ -45,7 +45,12 @@ PRIVATE int make_my_wcwidth_table(void)
 #endif // ENABLE_UTF8
 int my_mbwidth(const char *utf8c, int max_len)
 {
+#ifndef VAGUE_WIDE_CHR
 	return my_wcwidth(my_mbtowc(utf8c, max_len));
+#else // VAGUE_WIDE_CHR
+	wchar_t wc = my_mbtowc(utf8c, max_len);
+	return is_vague_wide_chr(wc) ? 2 : my_wcwidth(wc);
+#endif // VAGUE_WIDE_CHR
 }
 int my_wcwidth(wchar_t wc)
 {
@@ -55,9 +60,6 @@ int my_wcwidth(wchar_t wc)
 	int chr_idx;
 	int columns;
 
-///	if (wc == 0x0000) {		// U+0000
-///		return 0;
-///	}
 	make_my_wcwidth_table();
 	for (chr_idx = 0; *my_wide_utf8c[chr_idx]; chr_idx++) {
 		if (my_wide_wchar[chr_idx] == wc)
@@ -69,6 +71,18 @@ int my_wcwidth(wchar_t wc)
 	return columns;
 #endif // ENABLE_UTF8
 }
+
+#ifdef VAGUE_WIDE_CHR
+int is_vague_wide_chr(wchar_t wc)
+{
+	return 0
+	// WIDE_CHAR_LIST
+	 || (0x2000 <= wc && wc < 0x33e0)
+	 || (0xa000 <= wc && wc < 0xac00)
+	 || (0xe000 <= wc && wc < 0xf900)
+	;
+}
+#endif // VAGUE_WIDE_CHR
 
 // UTF8 character byte length
 int my_mblen(const char *utf8c, int max_len)
@@ -99,28 +113,28 @@ PRIVATE int my_mbtowc__(wchar_t *pwc, const char *utf8c, int max_len)
 		return 0;
 	}
 	wc = utf8c[0];
-	if ((utf8c[0] & 0x80) == 0x00) {		// 0xxxxxxx
-		wc = utf8c[0] & 0x7f;				// 0xxxxxxx
+	if ((utf8c[0] & 0x80) == 0x00) {	// 0xxxxxxx
+		wc = utf8c[0] & 0x7f;			// 0xxxxxxx
 		len = 1;
 	} else
-	if ((utf8c[0] & 0xe0) == 0xc0) {		// 110xxxxx-10xxxxxx
-		wc = utf8c[0] & 0x1f;				// 110xxxxx
+	if ((utf8c[0] & 0xe0) == 0xc0) {	// 110xxxxx-10xxxxxx
+		wc = utf8c[0] & 0x1f;			// 110xxxxx
 		len = 2;
 	} else
-	if ((utf8c[0] & 0xf0) == 0xe0) {		// 1110xxxx-10xxxxxx-10xxxxxx
-		wc = utf8c[0] & 0x0f;				// 1110xxxx
+	if ((utf8c[0] & 0xf0) == 0xe0) {	// 1110xxxx-10xxxxxx-10xxxxxx
+		wc = utf8c[0] & 0x0f;			// 1110xxxx
 		len = 3;
 	} else
-	if ((utf8c[0] & 0xf8) == 0xf0) {		// 11110xxx-10xxxxxx-10xxxxxx-10xxxxxx
-		wc = utf8c[0] & 0x07;				// 11110xxx
+	if ((utf8c[0] & 0xf8) == 0xf0) {	// 11110xxx-10xxxxxx-10xxxxxx-10xxxxxx
+		wc = utf8c[0] & 0x07;			// 11110xxx
 		len = 4;
 	} else
-	if ((utf8c[0] & 0xfc) == 0xf8) {		// 111110xx-10xxxxxx-10xxxxxx-10xxxxxx-10xxxxxx
-		wc = utf8c[0] & 0x03;				// 111110xx
+	if ((utf8c[0] & 0xfc) == 0xf8) {	// 111110xx-10xxxxxx-10xxxxxx-10xxxxxx-10xxxxxx
+		wc = utf8c[0] & 0x03;			// 111110xx
 		len = 5;
 	} else
-	if ((utf8c[0] & 0xfe) == 0xfc) {		// 1111110x-10xxxxxx-10xxxxxx-10xxxxxx-10xxxxxx-10xxxxxx
-		wc = utf8c[0] & 0x01;				// 1111110x
+	if ((utf8c[0] & 0xfe) == 0xfc) {	// 1111110x-10xxxxxx-10xxxxxx-10xxxxxx-10xxxxxx-10xxxxxx
+		wc = utf8c[0] & 0x01;			// 1111110x
 		len = 6;
 	}
 	for (idx = 1; idx < max_len; idx++) {

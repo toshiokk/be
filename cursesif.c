@@ -135,7 +135,7 @@ void curses_set_attrs(int bgc, int fgc, int rev)
 	fgc = LIMIT_FGC(fgc);
 	fgc = differ_fgc_to_bgc(bgc, fgc);
 	if (fgc >= CL_HI) {
-		wattron(curses_win, A_BOLD);	// only foregound(character) color will be lighted
+		wattron(curses_win, A_BOLD);	// only foreground(character) color will be lighted
 	} else {
 		wattroff(curses_win, A_BOLD);
 	}

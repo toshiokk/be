@@ -139,7 +139,7 @@ PRIVATE void dump_filer_views(void)
 //-----------------------------------------------------------------------------
 
 int call_filer(int push_win, int list_mode,
-char *dir, char *filter, char *file_path, int buf_len)
+ char *dir, char *filter, char *file_path, int buf_len)
 {
 	filer_views_t *prev_fvs = NULL;
 	filer_views_t new_filer_views;
@@ -200,9 +200,9 @@ PRIVATE int filer_main_loop(const char *directory, const char *filter,
 		strlcpy__(cur_fv->cur_dir, directory, MAX_PATH_LEN);
 	}
 
-	filer_do_next = FILER_REFRESH_FORCED;
+	filer_do_next = FILER_DO_REFRESH_FORCE;
 
-	while(1) {
+	while (1) {
 		check_filer_cur_dir();
 		cat_dir_and_file(filer_cur_path, MAX_PATH_LEN, cur_fv->cur_dir, filter);
 #ifdef ENABLE_HISTORY
@@ -211,11 +211,11 @@ PRIVATE int filer_main_loop(const char *directory, const char *filter,
 			strlcpy__(prev_cur_dir, cur_fv->cur_dir, MAX_PATH_LEN);
 		}
 #endif // ENABLE_HISTORY
-		if (filer_do_next >= FILER_UPDATE_SCREEN) {
-			update_all_file_list(filter, filer_do_next == FILER_REFRESH_FORCED ? 2
-			 : (filer_do_next == FILER_REFRESH_AUTO ? 1 : 0));
+		if (filer_do_next >= FILER_DO_UPDATE_SCREEN) {
+			update_all_file_list(filter, filer_do_next == FILER_DO_REFRESH_FORCE ? 2
+			 : (filer_do_next == FILER_DO_REFRESH_AUTO ? 1 : 0));
 		}
-		update_screen_filer(1, filer_do_next >= FILER_UPDATE_SCREEN, 1);
+		update_screen_filer(1, filer_do_next >= FILER_DO_UPDATE_SCREEN, 1);
 		//----------------------------------
 		key_input = input_key_wait_return();
 		//----------------------------------
@@ -228,10 +228,10 @@ mflf_d_printf("input%ckey:0x%04x================================================
 
 		strcpy__(cur_fv->next_file, "");
 
-		filer_do_next = FILER_UPDATE_SCREEN;
+		filer_do_next = FILER_DO_UPDATE_SCREEN;
 		switch (key_input) {
 		case K_NONE:
-			filer_do_next = FILER_REFRESH_AUTO;
+			filer_do_next = FILER_DO_REFRESH_AUTO;
 			break;
 		case K_UP:
 			cur_fv->cur_sel_idx = MIN_MAX_(0, cur_fv->cur_sel_idx - 1,
@@ -259,11 +259,8 @@ mflf_d_printf("input%ckey:0x%04x================================================
 		case K_END:
 			do_bottom_of_list();
 			break;
-///
 		case K_ESC:
-///
-			filer_do_next = FILER_ABORT;
-///
+			filer_do_next = FILER_DO_ABORT;
 			break;
 		default:
 			filer_do_next = FILER_DO_NOTHING;
@@ -288,30 +285,30 @@ flf_d_printf("CALL_FILER_FUNC [%s]\n", func_key_table->func_id);
 			}
 			break;
 		}
-		if (filer_do_next >= FILER_QUIT) {
+		if (filer_do_next >= FILER_DO_QUIT) {
 			break;
 		}
 	}
 
 flf_d_printf("filer_do_next: %d\n", filer_do_next);
 	strcpy__(file_path, "");
-	if (filer_do_next == FILER_ABORT) {
+	if (filer_do_next == FILER_DO_ABORT) {
 		return -1;		// aborted
 	}
-	if (filer_do_next == FILER_QUIT) {
+	if (filer_do_next == FILER_DO_QUIT) {
 		return 0;		// quitted
 	}
-	if (filer_do_next == FILER_ENTERED_FILE
-	 || filer_do_next == FILER_ENTERED_FILE_PATH) {
+	if (filer_do_next == FILER_DO_ENTERED_FILE
+	 || filer_do_next == FILER_DO_ENTERED_FILE_PATH) {
 		for (file_idx = select_and_get_first_file_idx_selected();
 		 file_idx >= 0;
 		 file_idx = get_next_file_idx_selected(file_idx)) {
-			if (filer_do_next == FILER_ENTERED_FILE) {
+			if (filer_do_next == FILER_DO_ENTERED_FILE) {
 				// file-1 "file name 2" "file name 3"
 				concat_file_name_separating_by_space(file_path, buf_len,
 				 cur_fv->file_list[file_idx].file_name);
 			} else {
-				// file-path-1 "file path 2" "file path 3"
+				// /dir/to/file-path-1 "/dir/to/file path 2" "/dir/to/file path 3"
 				char path[MAX_PATH_LEN];
 
 				cat_dir_and_file(path, MAX_PATH_LEN,
@@ -320,7 +317,7 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 			}
 		}
 	}
-	if (filer_do_next == FILER_ENTERED_DIR_PATH) {
+	if (filer_do_next == FILER_DO_ENTERED_DIR_PATH) {
 		strlcpy__(file_path, cur_fv->cur_dir, MAX_PATH_LEN);
 	}
 flf_d_printf("[%s]\n", file_path);
@@ -349,7 +346,6 @@ PRIVATE int check_filer_cur_dir(void)
 
 PRIVATE int update_all_file_list(const char *filter, int force_update)
 {
-////	disp_status_bar_ing(_("Reading directory..."));
 	if (GET_APPMD(fl_FILER_PANES) == 0) {
 		update_file_list(cur_fv, filter, force_update);
 	} else {
@@ -368,9 +364,9 @@ PRIVATE int update_file_list(filer_view_t *fv, const char *filter, int force_upd
 	 || force_update >= 2) {
 		files = make_file_list(fv, filter);
 		strcpy__(fv->listed_dir, fv->cur_dir);
-		force_update = 1;
-	}
-	if (force_update) {
+///		force_update = 1;
+///	}
+///	if (force_update) {
 		sort_file_list(fv);
 		research_file_name_in_file_list(fv);
 	}

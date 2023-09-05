@@ -15,7 +15,7 @@ regexp			1
 tab_eol_notation	1
 map_key_7f_bs		0
 
-key_list_lines		3
+key_list_lines		1
 tab_size		8
 
 [color]

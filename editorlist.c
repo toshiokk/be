@@ -55,8 +55,91 @@ _FLF_
 	disp_status_bar_done(_("File List"));
 	return 1;
 }
+
 #ifdef ENABLE_HELP
+
+#define HELP_BUF_IDX_KEY_LIST		0
+#define HELP_BUF_IDX_FUNC_LIST		1
+#define HELP_BUFS					2
+
+void init_help_bufs(void)
+{
+	init_bufs_top_bot_anchor(
+	 HELP_BUFS_TOP_ANCH, "#Help-bufs-top_anchor",
+	 HELP_BUFS_BOT_ANCH, "#Help-bufs-bot_anchor");
+	buffer_insert_before(HELP_BUFS_BOT_ANCH, buffer_create(_("#List of Editor Key Bindings")));
+	buffer_insert_before(HELP_BUFS_BOT_ANCH, buffer_create(_("#List of Editor Functions")));
+}
+be_buf_t *get_help_buf(int help_buf_idx)
+{
+	return get_buf_from_bufs_by_idx(HELP_BUFS_TOP_BUF, help_buf_idx);
+}
+void free_help_bufs(void)
+{
+	for (int help_buf_idx = 0; help_buf_idx < HELP_BUFS; help_buf_idx++) {
+		buffer_unlink_free(HELP_BUFS_TOP_BUF);
+	}
+}
+
+//-----------------------------------------------------------------------------
+int make_help_buf_call_editor(int help_idx);
+void make_help_buf(int help_idx);
+void make_help_key_list(void);
+void make_help_func_list(void);
+
 int do_switch_to_key_list(void)
+{
+	make_help_buf_call_editor(HELP_BUF_IDX_KEY_LIST);
+	return 1;
+}
+int do_switch_to_func_list(void)
+{
+	make_help_buf_call_editor(HELP_BUF_IDX_FUNC_LIST);
+	return 1;
+}
+
+int make_help_buf_call_editor(int help_idx)
+{
+	be_buf_t *edit_buf_save = get_c_e_b();
+
+	make_help_buf(HELP_BUF_IDX_KEY_LIST);
+	make_help_buf(HELP_BUF_IDX_FUNC_LIST);
+
+	set_cur_edit_buf(get_help_buf(help_idx));
+	switch(help_idx) {
+	case HELP_BUF_IDX_KEY_LIST:
+		disp_status_bar_done(_("Key List"));
+		break;
+	case HELP_BUF_IDX_FUNC_LIST:
+		disp_status_bar_done(_("Function List"));
+		break;
+	}
+
+	int ret = call_editor(1, 1);
+
+	set_cur_edit_buf(edit_buf_save);
+	return ret;
+}
+void make_help_buf(int help_idx)
+{
+	be_buf_t *buf = get_help_buf(help_idx);
+	set_cur_edit_buf(buf);
+	buffer_free_lines(buf);
+	switch(help_idx) {
+	case HELP_BUF_IDX_KEY_LIST:
+		make_help_key_list();
+		break;
+	case HELP_BUF_IDX_FUNC_LIST:
+		make_help_func_list();
+		break;
+	}
+	append_magic_line();
+	CEBV_CL = CUR_EDIT_BUF_TOP_LINE;
+	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
+	post_cmd_processing(CEBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+}
+
+void make_help_key_list(void)
 {
 	int key_idx;
 	key_code_t key;
@@ -67,10 +150,7 @@ int do_switch_to_key_list(void)
 	char *func_ = "--------------------------------";
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
-_FLF_
-	set_cur_edit_buf(EDIT_BUFS_TOP_ANCH);
-	buffer_free_lines(EDIT_BUFS_TOP_ANCH);
-	buffer_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Editor Key Bindings"));
+	buffer_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Editor Functions"));
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, "Key", "Function", "func_id");
 	append_string_to_cur_edit_buf(buffer);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, key_, func_, func_);
@@ -84,15 +164,8 @@ _FLF_
 		 func_key_table ? func_key_table->func_id : "-- None --");
 		append_string_to_cur_edit_buf(buffer);
 	}
-	append_magic_line();
-	CEBV_CL = CUR_EDIT_BUF_TOP_LINE;
-	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
-
-	post_cmd_processing(CEBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
-	disp_status_bar_done(_("Key List"));
-	return 1;
 }
-int do_switch_to_func_list(void)
+void make_help_func_list(void)
 {
 	func_key_table_t *table;
 	int idx;
@@ -106,9 +179,6 @@ int do_switch_to_func_list(void)
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
 _FLF_
-	set_cur_edit_buf(EDIT_BUFS_TOP_ANCH);
-	buffer_free_lines(EDIT_BUFS_TOP_ANCH);
-	buffer_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Editor Functions"));
 	table = get_func_key_table_from_key_group(0);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
 	 "Function", "Key1", "Key2", "Key3", "func_id");
@@ -127,51 +197,8 @@ _FLF_
 		 table[idx].func_id);
 		append_string_to_cur_edit_buf(buffer);
 	}
-	append_magic_line();
-	CEBV_CL = CUR_EDIT_BUF_TOP_LINE;
-	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
-
-	post_cmd_processing(CEBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
-	disp_status_bar_done(_("Function List"));
-	return 1;
 }
-int do_switch_to_key_bindings_list(void)
-{
-	func_key_table_t *table;
-	int idx;
-	static char buf1[MAX_KEY_NAME_LEN+1];
-	char *template_ = "%-32s  %s";
-	//			   12345678901234567890123456789012
-	char *func_ = "--------------------------------";
-	char *key_  = "-----";
-	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
-_FLF_
-	set_cur_edit_buf(EDIT_BUFS_TOP_ANCH);
-	buffer_free_lines(EDIT_BUFS_TOP_ANCH);
-	buffer_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Key bindings"));
-	table = get_func_key_table_from_key_group(0);
-	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, "func_id", "key");
-	append_string_to_cur_edit_buf(buffer);
-	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, func_, key_);
-	append_string_to_cur_edit_buf(buffer);
-	for (idx = 0; table[idx].help[0]; idx++) {
-		if (idx != 0 && table[idx].desc[0] == 0) {
-			append_string_to_cur_edit_buf("");
-		}
-		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
-		 table[idx].func_id,
-		 short_key_name_from_key_code(table[idx].key1, buf1));
-		append_string_to_cur_edit_buf(buffer);
-	}
-	append_magic_line();
-	CEBV_CL = CUR_EDIT_BUF_TOP_LINE;
-	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
-
-	post_cmd_processing(CEBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
-	disp_status_bar_done(_("Key bindings List"));
-	return 1;
-}
 #endif // ENABLE_HELP
 
 // End of list.c

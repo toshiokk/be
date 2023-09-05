@@ -210,9 +210,14 @@ int buffer_compare(be_buf_t *buf1, be_buf_t *buf2)
 	return IS_NODE_BOT_ANCH(line1) - IS_NODE_BOT_ANCH(line2);	// 0: exactly the same
 }
 
+int buffer_renumber_from_top(be_buf_t *buf)
+{
+	return buf->buf_lines = buffer_renumber_from_line(buf, NODES_TOP_NODE(buf));
+}
+
 int buffer_renumber_from_line(be_buf_t *buf, be_line_t *line)
 {
-	return buf->buf_lines = line_renumber(line, &buf->buf_size);
+	return buf->buf_lines = line_renumber_from_line(line, &buf->buf_size);
 }
 
 int buffer_guess_tab_size(be_buf_t *buf)
@@ -425,7 +430,7 @@ void buffer_dump_ptrs(be_buf_t *buf)
 {
 	flf_d_printf("%saddr:%08lx,prev:%08lx,next:%08lx,line:%08lx\n",
 	 buf == get_c_e_b() ? ">" : " ",
-	 buf, buf->prev, buf->next, buf->top_anchor.next);
+	 buf, buf->prev, buf->next, NODES_TOP_NODE(buf));
 	line_dump_lines(BUF_TOP_ANCH(buf), 3, BUFV0_CL(buf));
 }
 void buffer_dump_state(be_buf_t *buf)

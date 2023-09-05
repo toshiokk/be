@@ -74,9 +74,8 @@ PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_)
 	int entry_idx = *entry_idx_;
 
 app_menu_n_again:;
-	while(1) {
+	while (1) {
 		again_ret = 0;
-////_FLF_
 		update_screen_app(1, 1, 0);
 		disp_drop_down_menu(group_idx, entry_idx, main_win_get_mid_win_y(), group_idx * 2);
 		tio_refresh();
@@ -150,7 +149,6 @@ do_menu_n_up_down:;
 	if (again_ret == 1)
 		goto app_menu_n_again;
 
-////_FLF_
 #ifndef ENABLE_FILER
 	if (count_edit_bufs())
 #else // ENABLE_FILER
@@ -441,13 +439,19 @@ key_code_t input_key_loop(void)
 {
 	key_code_t key;
 
-	while((key = input_key_wait_return()) < 0) {
+	while ((key = input_key_wait_return()) < 0) {
 	}
 	return key;
 }
 key_code_t input_key_wait_return(void)
 {
-	return input_key_timeout();
+	static key_code_t prev_key = -1;
+	key_code_t key = input_key_timeout();
+	if (key < 0 && prev_key >= 0) {
+		termif_clear_vscreen_painted();
+	}
+	prev_key = key;
+	return key;
 }
 
 PRIVATE key_code_t input_key_timeout(void)
@@ -457,9 +461,13 @@ PRIVATE key_code_t input_key_timeout(void)
 	long usec_enter;
 
 	usec_enter = get_usec();
-	while((key = input_key_macro()) < 0) {
+	while ((key = input_key_macro()) < 0) {
 		if (win_check_term_resized()) {
 			update_screen_app(1, 1, 1);
+#ifdef ENABLE_HELP
+			disp_splash(0);
+			MSLEEP(1000);
+#endif // ENABLE_HELP
 		}
 		if (get_usec() - usec_enter >= KEY_WAIT_TIME_USEC)
 			break;

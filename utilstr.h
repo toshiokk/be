@@ -101,7 +101,7 @@ char *remove_line_tail_lf(char *line);
 int is_file_path_char(const char *ptr);
 int is_file_name_char(const char *ptr);
 int is_separator(char chr);
-int contain_chr(const char *file_name, char chr);
+int contain_chr(const char *string, char chr);
 char *quote_string(char *buf, const char *string, char quote_chr);
 char *escape_quote_chr(char *buffer, const char *string, char quote_chr);
 char *unquote_string(char *buffer);

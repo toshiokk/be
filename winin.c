@@ -75,9 +75,6 @@ flf_d_printf("recursively_called\n");
 	byte_idx = byte_idx_from_col_idx(msg_buf, main_win_get_columns(), CHAR_LEFT, NULL);
 	msg_buf[byte_idx] = '\0';		// limit message length
 
-#ifdef ENABLE_HISTORY
-	begin_joined_history(hist_type_idx);
-#endif
 	set_work_space_color_low();
 	update_screen_app(1, 1, 1);
 	set_work_space_color_normal();
@@ -454,8 +451,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 
 	tio_refresh();
 
-	answer = ANSWER_NONE;
-	do {
+	for (answer = ANSWER_NONE; answer == ANSWER_NONE; ) {
 		tio_set_cursor_on(1);
 		//---------------------------
 		key_input = input_key_loop();
@@ -477,7 +473,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 			answer = ANSWER_UNDO;
 		else if ((flags & ASK_REDO) && strchr__(chars_redo, key_input) != NULL)
 			answer = ANSWER_REDO;
-	} while (answer == ANSWER_NONE);
+	}
 
 	// Then blank the status_bar.
 	set_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);

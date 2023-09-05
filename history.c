@@ -96,6 +96,7 @@ void free_histories(void)
 
 //-----------------------------------------------------------------------------
 
+// load history files into buffers
 void load_histories(void)
 {
 	int hist_type_idx;
@@ -103,10 +104,10 @@ void load_histories(void)
 ////_FLF_
 	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
 		load_history(get_history_file_path(hist_type_idx), hist_type_idx);
-		if (get_history_lines(hist_type_idx) > MAX_HISTORY_LINES) {
-			// force write back to the file
-			set_history_modified(hist_type_idx);
-		}
+///		if (get_history_lines(hist_type_idx) > MAX_HISTORY_LINES) {
+///			// force write back to the file
+///			set_history_modified(hist_type_idx);
+///		}
 	}
 ////_D_(set_history_modified(hist_type_idx));
 ////_D_(dump_hist_bufs_lines());
@@ -131,195 +132,6 @@ void load_last_searched_needle(void)
 
 //-----------------------------------------------------------------------------
 
-// at the beginning, cur_hist_type_idx points center of all histories
-#define HISTORY_TYPE_TABLE_IDX_BEGIN	((HISTORY_TYPES_APP_AND_SHELL-1)/2)	// (6-1)/2 ==> 2
-
-PRIVATE int joined_hist_table_order_type_idx = HISTORY_TYPE_IDX_SEARCH;
-PRIVATE int joined_hist_table_type_idx = HISTORY_TYPE_TABLE_IDX_BEGIN;
-PRIVATE int joined_hist_cur_type_idx = 0;
-
-// [history listing example]
-//	history type				line
-//	------------------------	--------------------
-//	HISTORY_TYPE_IDX_SHELL		oldest line(0)
-//									:
-//								newest line(99)
-//	HISTORY_TYPE_IDX_EXEC		oldest line(0)
-//									:
-//								newest line(99)
-//	HISTORY_TYPE_IDX_SEARCH		oldest line(0)
-//									:
-//								newest line(99)		<== current line
-//								----				separator line
-//	HISTORY_TYPE_IDX_DIR		oldest line(99)
-//									:
-//								newest line(0)
-//	HISTORY_TYPE_IDX_CURSPOS	newest line(99)
-//									:
-//								oldest line(0)
-//	HISTORY_TYPE_IDX_KEYMACRO	newest line(99)
-//									:
-//								oldest line(0)
-int joined_hist_table[HISTORY_TYPES_APP][HISTORY_TYPES_APP_AND_SHELL] = {
-	{
-		// joined_hist_table_order_type_idx = HISTORY_TYPE_IDX_SEARCH
-		// older
-		HISTORY_TYPE_IDX_SHELL,		// 0
-		HISTORY_TYPE_IDX_EXEC,		// 1
-		HISTORY_TYPE_IDX_SEARCH,	// 2
-		// at the beginning, joined_hist_table_type_idx points here
-		HISTORY_TYPE_IDX_DIR,		// 3
-		HISTORY_TYPE_IDX_CURSPOS,	// 4
-		HISTORY_TYPE_IDX_KEYMACRO,	// 5
-		// newer
-	}, {
-		// joined_hist_table_order_type_idx = HISTORY_TYPE_IDX_EXEC
-		HISTORY_TYPE_IDX_CURSPOS,
-		HISTORY_TYPE_IDX_DIR,
-		HISTORY_TYPE_IDX_EXEC,
-		// at the beginning, joined_hist_table_type_idx points here
-		HISTORY_TYPE_IDX_SHELL,
-		HISTORY_TYPE_IDX_SEARCH,
-		HISTORY_TYPE_IDX_KEYMACRO,
-	}, {
-		// joined_hist_table_order_type_idx = HISTORY_TYPE_IDX_DIR
-		HISTORY_TYPE_IDX_SHELL,
-		HISTORY_TYPE_IDX_EXEC,
-		HISTORY_TYPE_IDX_DIR,
-		// at the beginning, joined_hist_table_type_idx points here
-		HISTORY_TYPE_IDX_CURSPOS,
-		HISTORY_TYPE_IDX_SEARCH,
-		HISTORY_TYPE_IDX_KEYMACRO,
-	}, {
-		// joined_hist_table_order_type_idx = HISTORY_TYPE_IDX_CURSPOS
-		HISTORY_TYPE_IDX_SHELL,
-		HISTORY_TYPE_IDX_EXEC,
-		HISTORY_TYPE_IDX_CURSPOS,
-		// at the beginning, joined_hist_table_type_idx points here
-		HISTORY_TYPE_IDX_DIR,
-		HISTORY_TYPE_IDX_SEARCH,
-		HISTORY_TYPE_IDX_KEYMACRO,
-	}, {
-		// joined_hist_table_order_type_idx = HISTORY_TYPE_IDX_KEYMACRO
-		HISTORY_TYPE_IDX_DIR,
-		HISTORY_TYPE_IDX_SEARCH,
-		HISTORY_TYPE_IDX_KEYMACRO,
-		// at the beginning, joined_hist_table_type_idx points here
-		HISTORY_TYPE_IDX_CURSPOS,
-		HISTORY_TYPE_IDX_EXEC,
-		HISTORY_TYPE_IDX_SHELL,
-	},
-};
-
-#ifdef START_UP_TEST
-void test_joined_history(int hist_type_idx)
-{
-	int lines_ascended;
-	int lines_descended;
-	const char *ptr;
-
-flf_d_printf("{{{{{{{{\n");
-	begin_joined_history(hist_type_idx);
-	// ascend to top of joined history
-	for (lines_ascended = 0; ; lines_ascended++) {
-		ptr = get_joined_history_prev();
-		if (ptr == NULL) {
-			// reached to top of joined history
-			break;
-		}
-		flf_d_printf("(%s)\n", ptr);
-	}
-	get_joined_history_next();
-	// descend from top to bottom of joined history
-	for (lines_descended = 0; ; lines_descended++) {
-		ptr = get_joined_history_next();
-		if (ptr == NULL) {
-			// reached to bottom of joined history
-			break;
-		}
-		flf_d_printf("[%s]\n", ptr);
-	}
-flf_d_printf("}}}}}}}}\n");
-}
-#endif // START_UP_TEST
-
-// History must be shared among multiple BE editor processes.
-// Reload recent history.
-void begin_joined_history(int hist_type_idx)
-{
-////_FLF_
-	joined_hist_table_order_type_idx = hist_type_idx;
-	joined_hist_table_type_idx = HISTORY_TYPE_TABLE_IDX_BEGIN;
-	joined_hist_cur_type_idx = joined_hist_table
-	 [joined_hist_table_order_type_idx][joined_hist_table_type_idx];
-#if 0
-flf_d_printf("%d,%d ==> %d\n", joined_hist_table_order_type_idx, joined_hist_table_type_idx,
- joined_hist_cur_type_idx);
-flf_d_printf("%d,%d,%d,%d,%d,%d\n",
- joined_hist_table[joined_hist_table_order_type_idx][0],
- joined_hist_table[joined_hist_table_order_type_idx][1],
- joined_hist_table[joined_hist_table_order_type_idx][2],
- joined_hist_table[joined_hist_table_order_type_idx][3],
- joined_hist_table[joined_hist_table_order_type_idx][4],
- joined_hist_table[joined_hist_table_order_type_idx][5]);
-#endif
-	load_histories();	// reload updated history
-	set_history_newest(joined_hist_cur_type_idx);
-}
-
-// return a pointer to the history string or NULL if no more
-const char *get_joined_history_prev(void)
-{
-	const char *ptr;
-
-	for ( ; ; ) {
-		if (joined_hist_table_type_idx <= HISTORY_TYPE_TABLE_IDX_BEGIN)
-			ptr = get_history_older(joined_hist_cur_type_idx);
-		else
-			ptr = get_history_newer(joined_hist_cur_type_idx);
-		if (*ptr)
-			return ptr;
-		if (joined_hist_table_type_idx <= 0) {
-			// no prev history
-			return NULL;
-		}
-		joined_hist_table_type_idx--;
-		joined_hist_cur_type_idx = joined_hist_table
-		 [joined_hist_table_order_type_idx][joined_hist_table_type_idx];
-		if (joined_hist_table_type_idx <= HISTORY_TYPE_TABLE_IDX_BEGIN)
-			set_history_newest(joined_hist_cur_type_idx);
-		else
-			set_history_oldest(joined_hist_cur_type_idx);
-		return "";
-	}
-}
-// return a pointer to the history string or NULL if no more
-const char *get_joined_history_next(void)
-{
-	const char *ptr;
-
-	for ( ; ; ) {
-		if (joined_hist_table_type_idx <= HISTORY_TYPE_TABLE_IDX_BEGIN)
-			ptr = get_history_newer(joined_hist_cur_type_idx);
-		else
-			ptr = get_history_older(joined_hist_cur_type_idx);
-		if (*ptr)
-			return ptr;
-		if (joined_hist_table_type_idx >= HISTORY_TYPES_APP_AND_SHELL-1) {
-			// no next history
-			return NULL;
-		}
-		joined_hist_table_type_idx++;
-		joined_hist_cur_type_idx = joined_hist_table
-		 [joined_hist_table_order_type_idx][joined_hist_table_type_idx];
-		if (joined_hist_table_type_idx <= HISTORY_TYPE_TABLE_IDX_BEGIN)
-			set_history_oldest(joined_hist_cur_type_idx);
-		else
-			set_history_newest(joined_hist_cur_type_idx);
-		return "";
-	}
-}
-
 PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 {
 	be_buf_t *buf;
@@ -329,11 +141,7 @@ PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 		e_printf(_("hist_type_idx out of range: %d"), hist_type_idx);
 		hist_type_idx = 0;
 	}
-	for (idx = 0, buf = HIST_BUFS_TOP_BUF; idx < hist_type_idx && IS_NODE_BOT_ANCH(buf) == 0;
-	 idx++, buf = buf->next) {
-		// nothing to do
-	}
-	return buf;
+	return get_buf_from_bufs_by_idx(HIST_BUFS_TOP_BUF, hist_type_idx);
 }
 
 // update history list
@@ -375,7 +183,7 @@ const char *get_history_completion(int hist_type_idx, const char *str)
 	if ((line = search_history_str_partial(hist_type_idx, str)) != NULL) {
 		return line->data;
 	}
-	return str;		// return orginal string
+	return str;		// return original string
 }
 
 //------------------------------------------------------------------------------------
@@ -438,7 +246,6 @@ PRIVATE int save_history(char *file_path, int hist_type_idx)
 {
 	FILE *fp;
 	int lines;
-	int skips;
 	const char *str;
 	char buf[MAX_EDIT_LINE_LEN+1];
 	int error = 0;
@@ -451,16 +258,14 @@ PRIVATE int save_history(char *file_path, int hist_type_idx)
 		error = 1;
 		goto save_history_2;
 	}
-	lines = 0;
-	for (set_history_oldest(hist_type_idx); *(str = get_history_newer(hist_type_idx)); ) {
-		// count history lines
+	for (lines = 0, set_history_oldest(hist_type_idx); *(str = get_history_newer(hist_type_idx)); ) {
+		// count lines
 		lines++;
 	}
-	skips = LIM_MIN(0, lines - MAX_HISTORY_LINES);
-	lines = 0;
+	lines = LIM_MIN(0, lines - MAX_HISTORY_LINES); // lines to skip
 	// write oldest first
 	for (set_history_oldest(hist_type_idx); *(str = get_history_newer(hist_type_idx)); ) {
-		if (lines++ < skips)
+		if (lines-- > 0)
 			continue;
 		snprintf_(buf, MAX_EDIT_LINE_LEN+1, "%s\n", str);
 		if (fputs(buf, fp) == EOF) {
@@ -485,7 +290,6 @@ PRIVATE int load_history(char *file_path, int hist_type_idx)
 {
 	FILE *fp;
 	int lines;
-	int skips;
 	char str[MAX_EDIT_LINE_LEN+1];
 	int error = 0;
 
@@ -501,21 +305,17 @@ flf_d_printf("%s\n", file_path);
 		}
 	} else {
 		// count total lines
-		for (lines = 0; ; lines++) {
-			if (fgets(str, MAX_EDIT_LINE_LEN, fp) == NULL)
-				break;
+		for (lines = 0; fgets(str, MAX_EDIT_LINE_LEN, fp) != NULL; ) {
+			// count lines
+			lines++;
 		}
-		skips = LIM_MIN(0, lines - MAX_HISTORY_LINES);
+		lines = LIM_MIN(0, lines - MAX_HISTORY_LINES);
 		fseek(fp, 0, SEEK_SET);
 		// skip lines
-		for (lines = 0; lines < skips; lines++) {
-			if (fgets(str, MAX_EDIT_LINE_LEN, fp) == NULL)
-				break;
-		}
-		// load the last MAX_HISTORY_LINES lines
-		for ( ; ; lines++) {
-			if (fgets(str, MAX_EDIT_LINE_LEN, fp) == NULL)
-				break;
+		for ( ; fgets(str, MAX_EDIT_LINE_LEN, fp) != NULL; ) {
+			if (lines-- > 0)
+				continue;
+			// load the last MAX_HISTORY_LINES lines
 			str[MAX_EDIT_LINE_LEN] = '\0';
 			remove_line_tail_lf(str);
 			if (strlen(str) > 0) {
@@ -650,23 +450,28 @@ PRIVATE be_line_t *search_history_str_partial(int hist_type_idx, const char *str
 	}
 	return NULL;
 }
-const char *search_history_file_path(int hist_type_idx, const char *str)
+const char *search_history_file_path(int hist_type_idx, const char *path)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
 	const char *ptr;
+	size_t len;
 
+	path = quote_file_name(path);
 	// search from the newest to the oldest
 	for (line = BUF_BOT_LINE(buf); IS_NODE_TOP_ANCH(line) == 0; line = line->prev) {
-		// /home/user/filename.exp:1234
-		if ((ptr = strchr__(line->data, ':')) == NULL) {
-			ptr = line->data + line_data_len(line);
+		// /home/user/filename.exp|1234
+		// '/home/user/ filename.exp '|1234
+		if ((ptr = strstr(line->data, FILE_PATH_SEPARATOR)) != NULL) {
+			len = ptr - line->data;
+		} else {
+			len = line_data_len(line);
 		}
-		if (strncmp(line->data, str, ptr - line->data) == 0) {
+		if (strncmp(line->data, path, len) == 0) {
 			return line->data;
 		}
 	}
-	return str;		// return orginal string
+	return path;		// return original string
 }
 
 //-----------------------------------------------------------------------------
@@ -674,41 +479,14 @@ const char *search_history_file_path(int hist_type_idx, const char *str)
 int select_from_history_list(int hist_type_idx, char *buffer)
 {
 	be_buf_t *edit_buf_save;
-	int lines_ascended;
-	int lines_descended;
-	const char *ptr;
 	int ret;
 
 	edit_buf_save = get_c_e_b();
-
 _FLF_
-	set_cur_edit_buf(EDIT_BUFS_TOP_ANCH);
-	buffer_free_lines(EDIT_BUFS_TOP_ANCH);
-	buffer_set_file_path(EDIT_BUFS_TOP_ANCH, _("#History List"));
-
-	begin_joined_history(hist_type_idx);
-	// ascend to top of joined history
-	for (lines_ascended = 0; ; lines_ascended++) {
-		ptr = get_joined_history_prev();
-		if (ptr == NULL) {
-			// reached to top of joined history
-			break;
-		}
-	}
-	get_joined_history_next();		// skip top_anchor
-	// descend from top to bottom of joined history
-	for (lines_descended = 0; ; lines_descended++) {
-		ptr = get_joined_history_next();
-		if (ptr == NULL) {
-			// reached to bottom of joined history
-			break;
-		}
-		append_string_to_cur_edit_buf(ptr);
-	}
-	CEBV_CL = CUR_EDIT_BUF_TOP_LINE;
-	renumber_cur_buf_from_top();
-
-	goto_line_col_in_cur_buf(lines_ascended, 1);
+	load_histories();
+	renumber_all_bufs_from_top(&history_buffers);
+	set_cur_edit_buf(get_history_buf(hist_type_idx));
+	CEBV_CL = CUR_EDIT_BUF_BOT_LINE;
 	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 
 	ret = call_editor(1, 1);
@@ -717,7 +495,6 @@ _FLF_
 		strcpy__(buffer, "");
 	else
 		strlcpy__(buffer, CEBV_CL->data, MAX_EDIT_LINE_LEN);
-
 _FLF_
 	set_cur_edit_buf(edit_buf_save);
 
