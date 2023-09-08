@@ -22,7 +22,7 @@
 #include "headers.h"
 
 // collection of buffers
-be_bufs_t* heads_bufs[HEADS_BUFS];
+be_bufs_t* head_of_bufs[HEADS_BUFS];
 
 // collection of edit buffers--------------------------------------------------
 be_bufs_t edit_buffers;
@@ -49,30 +49,37 @@ be_bufs_t redo_buffers;
 
 //=============================================================================
 
+void init_head_of_bufs(void)
+{
+	head_of_bufs[BUFS_IDX_EDIT] = &edit_buffers;
+	head_of_bufs[BUFS_IDX_CUT] = &cut_buffers;
+	head_of_bufs[BUFS_IDX_HISTORY] = &history_buffers;
+	head_of_bufs[BUFS_IDX_HELP] = &help_buffers;
+#ifdef ENABLE_UNDO
+	head_of_bufs[BUFS_IDX_UNDO] = &undo_buffers;
+	head_of_bufs[BUFS_IDX_REDO] = &redo_buffers;
+#endif // ENABLE_UNDO
+	head_of_bufs[BUFS_IDX_SIZE] = NULL;	// end of list
+}
+
 // Initialize global variables.
 void init_buffers(void)
 {
+	init_head_of_bufs();
+
 	init_edit_bufs();
 _FLF_
 	init_cut_bufs();
+
+#ifdef ENABLE_HISTORY
+	init_hist_bufs();
+#endif // ENABLE_HISTORY
 #ifdef ENABLE_UNDO
 	init_undo_redo_bufs();
 #endif // ENABLE_UNDO
 #ifdef ENABLE_HELP
 	init_help_bufs();
 #endif // ENABLE_HELP
-}
-void init_heads_bufs(void)
-{
-	heads_bufs[BUFS_IDX_EDIT] = &edit_buffers;
-	heads_bufs[BUFS_IDX_CUT] = &cut_buffers;
-	heads_bufs[BUFS_IDX_HISTORY] = &history_buffers;
-	heads_bufs[BUFS_IDX_HELP] = &help_buffers;
-#ifdef ENABLE_UNDO
-	heads_bufs[BUFS_IDX_UNDO] = &undo_buffers;
-	heads_bufs[BUFS_IDX_REDO] = &redo_buffers;
-#endif // ENABLE_UNDO
-	heads_bufs[BUFS_IDX_SIZE] = NULL;	// end of list
 }
 
 void free_all_buffers(void)
@@ -84,6 +91,9 @@ void free_all_buffers(void)
 _FLF_
 	free_all_undo_redo_bufs();
 #endif // ENABLE_UNDO
+#ifdef ENABLE_HISTORY
+	free_hist_bufs();
+#endif // ENABLE_HISTORY
 _FLF_
 	free_all_cut_bufs();
 _FLF_
@@ -396,13 +406,13 @@ be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *bufs, const char *abs_path)
 }
 
 //-----------------------------------------------------------------------------
-
 void renumber_all_bufs_from_top(be_bufs_t *bufs)
 {
 	for (be_buf_t *buf = BUFS_TOP_BUF(bufs); IS_NODE_BOT_ANCH(buf) == 0; buf = buf->next) {
 		buffer_renumber_from_top(buf);
 	}
 }
+//-----------------------------------------------------------------------------
 
 void renumber_cur_buf_from_top(void)
 {

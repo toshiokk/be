@@ -61,6 +61,9 @@
 ///
 #define MAX_HISTORY_LINES		1000
 
+void init_hist_bufs(void);
+void free_hist_bufs(void);
+
 void init_histories(void);
 void free_histories(void);
 

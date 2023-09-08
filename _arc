@@ -4,7 +4,7 @@ make distclean
 rm -f *.log
 cd ..
 rm_tildes
-tar -czvf be`yymmdd-hhmm`.tgz src/*
+tar -czvf be`yymmdd-hhmm`.tgz be/*
 
-cd src
+cd be
 #./__m

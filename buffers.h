@@ -43,9 +43,7 @@ enum BUFS_IDX {
 #define HEADS_BUFS		BUFS_IDX_SIZE+1		// add 1 for end of list (NULL-ptr)
 
 // collection of buffers
-extern be_bufs_t* heads_bufs[HEADS_BUFS];
-
-void init_heads_bufs(void);
+extern be_bufs_t* head_of_bufs[HEADS_BUFS];
 
 // Edit buffers ---------------------------------------------------------------
 extern be_bufs_t edit_buffers;
@@ -149,6 +147,7 @@ extern be_bufs_t redo_buffers;
 
 //=============================================================================
 
+void init_head_of_bufs(void);
 void init_buffers(void);
 void free_all_buffers(void);
 

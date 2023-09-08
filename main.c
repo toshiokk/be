@@ -564,18 +564,18 @@ PRIVATE void die_save_file(const char *die_file_path)
 
 void free_all_allocated_memory(void)
 {
-	free_all_buffers();
-
-#ifdef ENABLE_SYNTAX
-_FLF_
-	free_file_types();
-#endif // ENABLE_SYNTAX
 #ifdef ENABLE_HISTORY
 _FLF_
 ///	save_key_macro();
 	// free history lists
 	free_histories();
 #endif // ENABLE_HISTORY
+	free_all_buffers();
+
+#ifdef ENABLE_SYNTAX
+_FLF_
+	free_file_types();
+#endif // ENABLE_SYNTAX
 _FLF_
 }
 

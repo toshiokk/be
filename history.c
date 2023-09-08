@@ -53,6 +53,21 @@ PRIVATE be_line_t *search_history_str_partial(int hist_type_idx, const char *str
 
 // search/replace(directory and execution) history support functions
 
+void init_hist_bufs(void)
+{
+	// history_buffers
+	init_bufs_top_bot_anchor(
+	 HIST_BUFS_TOP_ANCH, "#History-bufs-top_anchor",
+	 HIST_BUFS_BOT_ANCH, "#History-bufs-bot_anchor");
+}
+
+void free_hist_bufs(void)
+{
+	while (IS_NODE_BOT_ANCH(HIST_BUFS_TOP_BUF) == 0) {
+		buffer_unlink_free(HIST_BUFS_TOP_BUF);
+	}
+}
+
 void init_histories(void)
 {
 	int hist_type_idx;
@@ -72,10 +87,6 @@ void init_histories(void)
 		}
 	}
 ////_FLF_
-	// history_buffers
-	init_bufs_top_bot_anchor(
-	 HIST_BUFS_TOP_ANCH, "#History-bufs-top_anchor",
-	 HIST_BUFS_BOT_ANCH, "#History-bufs-bot_anchor");
 	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
 		snprintf_(buf_name, MAX_PATH_LEN, "#%d:%s",
 		 hist_type_idx, get_history_file_path(hist_type_idx));
