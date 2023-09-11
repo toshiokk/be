@@ -31,9 +31,14 @@ int is_handler_sigint_called(void);
 RETSIGTYPE handler_sighup(int signal);
 RETSIGTYPE handler_sigterm(int signal);
 RETSIGTYPE handler_sigsegv(int signal);
-extern int sigwinch_ws_col;
-extern int sigwinch_ws_row;
+
+void clear_sigwinch_signaled(void);
 RETSIGTYPE handle_sigwinch(int signal);
+int is_sigwinch_signaled(void);
+
+extern int ioctl_ws_col;
+extern int ioctl_ws_row;
+int ioctl_get_win_size(void);
 
 #endif // sig_h
 

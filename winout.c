@@ -34,6 +34,8 @@ PRIVATE void win_clear_lines(win_rect_t *win, int line_1, int line_2);
 PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *string, int bytes);
 
 //-----------------------------------------------------------------------------
+int win_lines = -1;
+int win_columns = -1;
 
 void win_init_win_size(void)
 {
@@ -41,19 +43,25 @@ void win_init_win_size(void)
 	win_reinit_win_size();
 }
 
-int win_check_term_resized(void)
-{
-	if (tio_is_term_size_signalled()) {
-mflf_d_printf("term resized (%d, %d) ==> (%d, %d)\n",
- tio_get_columns(), tio_get_lines(), sigwinch_ws_col, sigwinch_ws_row);
-		tio_resize();
-		win_reinit_win_size();
-		return 1;
-	}
-	return 0;
-}
+///int win_show_win_size(void)
+///{
+////* Minimum editor window rows required to work properly */
+///#define MIN_WIN_LINES		(TITLE_LINES+5+STATUS_LINES+MAX_KEY_LINES)	// 10
+////* Minimum editor window cols required to work properly */
+///#define MIN_WIN_COLS		40
+///	if (tio_get_lines() < MIN_WIN_LINES
+///	 || tio_get_columns() < MIN_WIN_COLS) {
+///		disp_status_bar_done(_("Window size too small: (%d, %d)"),
+///		 tio_get_columns(), tio_get_lines());
+///		return 1;
+///	}
+///	disp_status_bar_done(_("Window size: (%d, %d)"),
+///	 tio_get_columns(), tio_get_lines());
+///	return 0;
+///}
 
 //-----------------------------------------------------------------------------
+
 void inc_win_depth(void)
 {
 	win_depth++;
@@ -63,6 +71,11 @@ void dec_win_depth(void)
 	if (win_depth > 0) {
 		win_depth--;
 	}
+}
+
+int win_terminal_resized(void)
+{
+	return win_lines != tio_get_lines() || win_columns != tio_get_columns();
 }
 
 // editor window sectioning
@@ -99,6 +112,9 @@ void dec_win_depth(void)
 void win_reinit_win_size(void)
 {
 	int sub_win_idx;
+
+	win_lines = tio_get_lines();
+	win_columns = tio_get_columns();
 
 	win_select_win(WIN_IDX_MAIN);
 	main_win = cur_win;		// &sub_win_rects[WIN_IDX_MAIN];

@@ -174,19 +174,10 @@ int tio_end(void)
 	return 0;
 }
 
-int tio_is_term_size_signalled(void)
-{
-	// check if change of the terminal size signalled
-	return (sigwinch_ws_col >= 0 && sigwinch_ws_row >= 0)
-	 && (tio_get_columns() != sigwinch_ws_col || tio_get_lines() != sigwinch_ws_row);
-}
 int tio_resize(void)
 {
-#define UPDATE_CURSES_COLS_LINES
-#ifdef UPDATE_CURSES_COLS_LINES
 	// update screen size
-	tio_set_screen_size(sigwinch_ws_row, sigwinch_ws_col);
-#endif // UPDATE_CURSES_COLS_LINES
+///	tio_set_screen_size(lines, cols);
 	// re-initialize terminal interface to reflect new terminal size
 	tio_end();
 	tio_begin();
@@ -204,11 +195,60 @@ int tio_resume(void)
 }
 
 //-----------------------------------------------------------------------------
+///int tio_get_screen_size_from_term(void)
+///{
+///	int lines = tio_get_lines();
+///	int cols = tio_get_columns();
+///#ifdef ENABLE_NCURSES
+///#else // ENABLE_NCURSES
+///	termif_get_screen_size_from_term();
+///#endif // ENABLE_NCURSES
+///	return (lines != tio_get_lines()) || (cols != tio_get_columns());
+///}
+
+int tio_check_update_terminal_size(void)
+{
+	if (tio_check_terminal_resized()) {
+		tio_resize();
+		return 1;
+	}
+	return 0;
+}
+
+// How to know win size changed:
+//  1. signal sigwinch()
+// How to get win size:
+//  1. ioctl TIOCGWINSZ
+//  2. terminal set ("0x1b[999;999R") and get("\x1b[6n") cursor pos.
+int tio_check_terminal_resized(void)
+{
+#if 0
+	if ((ioctl_ws_col >= 0 && ioctl_ws_row >= 0)
+	 && (tio_get_columns() != ioctl_ws_col || tio_get_lines() != ioctl_ws_row)) {
+flf_d_printf("cols: %d, lines: %d\n", ioctl_ws_col, ioctl_ws_row);
+		tio_set_screen_size(ioctl_ws_col, ioctl_ws_row);
+		return 1;
+	}
+	return 0;
+#else
+	if (is_sigwinch_signaled()) {
+		clear_sigwinch_signaled();
+flf_d_printf("cols: %d, lines: %d\n", ioctl_ws_col, ioctl_ws_row);
+		return 1;
+	}
+	return 0;
+#endif
+}
+
+//-----------------------------------------------------------------------------
 
 void tio_set_screen_size(int lines, int columns)
 {
 #ifdef ENABLE_NCURSES
+#define UPDATE_CURSES_COLS_LINES
+#ifdef UPDATE_CURSES_COLS_LINES
 	curses_set_screen_size(lines, columns);
+#endif // UPDATE_CURSES_COLS_LINES
 #else // ENABLE_NCURSES
 	termif_set_screen_size(lines, columns);
 #endif // ENABLE_NCURSES
@@ -228,30 +268,6 @@ int tio_get_columns(void)
 #else // ENABLE_NCURSES
 	return termif_get_columns();
 #endif // ENABLE_NCURSES
-}
-
-/* Minimum editor window rows required to work correctly */
-#define MIN_WIN_LINES		(TITLE_LINES+5+STATUS_LINES+MAX_KEY_LINES)	// 10
-/* Minimum editor window cols required to work correctly */
-#define MIN_WIN_COLS		40
-
-void tio_check_win_size(void)
-{
-	static int columns = 0;
-	static int lines = 0;
-
-	if (tio_get_lines() < MIN_WIN_LINES
-	 || tio_get_columns() < MIN_WIN_COLS) {
-		_FATALERR_
-		die_on(_("Window size is too small...\n"));
-	}
-	if (columns != tio_get_columns() || lines != tio_get_lines()) {
-		columns = tio_get_columns();
-		lines = tio_get_lines();
-		// Screen size may have changed.
-		disp_status_bar_done(_("Window size: (%d, %d)"),
-		 tio_get_columns(), tio_get_lines());
-	}
 }
 
 //-----------------------------------------------------------------------------

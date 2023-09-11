@@ -141,30 +141,54 @@ RETSIGTYPE handler_sigsegv(int signal)
 	exit(255);
 }
 
-int sigwinch_ws_col = -1;
-int sigwinch_ws_row = -1;
+PRIVATE int sigwinch_signaled = 0;
+void clear_sigwinch_signaled(void)
+{
+	sigwinch_signaled = 0;
+}
 RETSIGTYPE handle_sigwinch(int signal)
+{
+	sigwinch_signaled = 1;
+	ioctl_get_win_size();
+}
+int is_sigwinch_signaled(void)
+{
+	return sigwinch_signaled;
+}
+
+int ioctl_ws_col = -1;
+int ioctl_ws_row = -1;
+int ioctl_get_win_size(void)
 {
 	const char *tty;
 	int fd;
 	int result = 0;
-	struct winsize win;
+	struct winsize winsz;
 
 	tty = ttyname(0);
-	if (tty == NULL)
-		return;
+	if (tty == NULL) {
+		///_FLF_
+		return -1;
+	}
 	fd = open(tty, O_RDWR);
-	if (fd == -1)
-		return;
-	result = ioctl(fd, TIOCGWINSZ, &win);
+	if (fd < 0) {
+		///flf_d_printf("%s: tty: [%s]\n", strerror(errno), tty);
+		///_FLF_
+		return -2;
+	}
+	result = ioctl(fd, TIOCGWINSZ, &winsz);
 	close(fd);
-	if (result == -1)
-		return;
-
+	if (result < 0) {
+		///flf_d_printf("%s: tty: [%s]\n", strerror(errno), tty);
+		///_FLF_
+		return -3;
+	}
 	// screen size gotten.
 	// in some cases ncurses has already updated them but not in all cases.
-	sigwinch_ws_col = win.ws_col;
-	sigwinch_ws_row = win.ws_row;
+	ioctl_ws_col = winsz.ws_col;
+	ioctl_ws_row = winsz.ws_row;
+///flf_d_printf("cols: %d, lines: %d\n", ioctl_ws_col, ioctl_ws_row);
+	return 0;
 }
 
 // End of sig.c

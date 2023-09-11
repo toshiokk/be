@@ -76,15 +76,19 @@ int tio_init(void);
 int tio_destroy(void);
 int tio_begin(void);
 int tio_end(void);
-int tio_is_term_size_signalled(void);
+
 int tio_resize(void);
 int tio_suspend(void);
 int tio_resume(void);
 
+///int tio_get_screen_size_from_term(void);
+
+int tio_check_update_terminal_size(void);
+int tio_check_terminal_resized(void);
+
 void tio_set_screen_size(int lines, int columns);
 int tio_get_lines(void);
 int tio_get_columns(void);
-void tio_check_win_size(void);
 
 void tio_set_attrs(int bgc, int fgc, int rev);
 

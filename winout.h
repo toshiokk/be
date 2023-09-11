@@ -42,10 +42,12 @@ extern win_rect_t *main_win, *cur_win;
 extern int cur_win_idx;
 
 void win_init_win_size(void);
-int win_check_term_resized(void);
+
+///int win_show_win_size(void);
 
 void inc_win_depth(void);
 void dec_win_depth(void);
+int win_terminal_resized(void);
 void win_reinit_win_size(void);
 void win_select_win(int sub_win_idx);
 void dump_cur_win(void);

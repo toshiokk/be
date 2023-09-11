@@ -462,7 +462,9 @@ PRIVATE key_code_t input_key_timeout(void)
 
 	usec_enter = get_usec();
 	while ((key = input_key_macro()) < 0) {
-		if (win_check_term_resized()) {
+		if (tio_check_update_terminal_size()) {
+			win_reinit_win_size();
+			///win_show_win_size();
 			update_screen_app(1, 1, 1);
 #ifdef ENABLE_HELP
 			disp_splash(0);
