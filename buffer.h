@@ -59,10 +59,38 @@ typedef struct be_buf_t {
 	buf_state_t buf_state;		//!< buffer state
 } be_buf_t;
 
-typedef struct /*be_bufs_t*/ {
+#define MAX_NAME_LEN	80
+typedef struct be_bufs_t {
+	struct be_bufs_t *prev;		//!< Previous be_bufs_t
+	struct be_bufs_t *next;		//!< Next be_bufs_t
+	char name[MAX_NAME_LEN+1];	// name
 	be_buf_t top_anchor;		//< top buffer
 	be_buf_t bot_anchor;		//< bottom buffer
 } be_bufs_t;
+
+// Structure of buffers:
+//   edit_bufs
+//     buf - main.c
+//     buf - headers.h
+//   cut_bufs
+//     buf - cut-1
+//     buf - cut-2
+//   hist_bufs
+//     buf - exec_hist
+//     buf - dir_hist
+//     buf - key_macro_hist
+//     buf - shell_hist
+//     buf - file_pos_hist
+//   temp-bufs
+//     buf - file_list
+//     buf - key_binding_list
+//     buf - func_list
+//   undo_bufs
+//     buf - undo-1
+//     buf - undo-2
+//   redo_bufs
+//     buf - redo-1
+//     buf - redo-2
 
 // buffers ==> buffer
 #define BUFS_TOP_ANCH(bufs)		NODES_TOP_ANCH(bufs)
@@ -94,6 +122,10 @@ be_buf_t *buffer_copy(be_buf_t *dest, be_buf_t *src);
 be_buf_t *buffer_unlink_free(be_buf_t *buf);
 be_buf_t *buffer_unlink(be_buf_t *buf);
 void buffer_clear_link(be_buf_t *buf);
+
+be_buf_t *goto_top_buf(be_buf_t *buf);
+be_buf_t *goto_bottom_buf(be_buf_t *buf);
+
 void buffer_free(be_buf_t *buf);
 void buffer_free_lines(be_buf_t *buf);
 
@@ -115,8 +147,8 @@ const char *buffer_cut_mode_str(be_buf_t *buf);
 
 be_line_t *buffer_set_cur_line(be_buf_t *buf, be_line_t *line);
 be_line_t *buffer_cur_line(be_buf_t *buf);
-be_line_t *buffer_get_cur_line__move_prev(be_buf_t *buf);
-be_line_t *buffer_get_cur_line__move_next(be_buf_t *buf);
+be_line_t *buffer_move_cur_line_to_prev(be_buf_t *buf);
+be_line_t *buffer_move_cur_line_to_next(be_buf_t *buf);
 
 be_line_t *buffer_get_line_ptr_from_line_num(be_buf_t *buf, int line_num);
 

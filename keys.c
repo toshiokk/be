@@ -465,11 +465,11 @@ PRIVATE key_code_t input_key_timeout(void)
 		if (tio_check_update_terminal_size()) {
 			win_reinit_win_size();
 			///win_show_win_size();
-			update_screen_app(1, 1, 1);
 #ifdef ENABLE_HELP
 			disp_splash(0);
 			MSLEEP(1000);
 #endif // ENABLE_HELP
+			update_screen_app(1, 1, 1);
 		}
 		if (get_usec() - usec_enter >= KEY_WAIT_TIME_USEC)
 			break;

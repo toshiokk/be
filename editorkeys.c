@@ -169,6 +169,10 @@ func_key_table_t editor_func_key_table[] = {
    0,F_I(do_switch_to_bot_file), NULL },
  { "File List",       "Display File List",              K_M_SEMICOLON,   K_F11, NKA,
    0,F_I(do_switch_to_file_list), NULL },
+ { "Previous buffers","Goto previous buffers",          K_M_LPARENTHESIS, NKA, NKA,
+   0,F_I(do_switch_to_prev_buffers), NULL },
+ { "Next buffers",    "Goto next buffers",              K_M_RPARENTHESIS, NKA, NKA,
+   0,F_I(do_switch_to_next_buffers), NULL },
 #ifdef ENABLE_HELP
  { "Key List",        "Display Key List",               K_M_k,        NKA, NKA,
    0,F_I(do_switch_to_key_list), NULL },

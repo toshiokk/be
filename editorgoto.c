@@ -76,16 +76,13 @@ int do_goto_file_in_cur_line(void)
 	// CURDIR: changed to cur-file's abs-dir
 	ret = load_files_in_string(CEBV_CL->data, 10, TUL1, OOE0, MOE1, RECURSIVE1);
 	change_cur_dir(dir_save);
+#ifdef ENABLE_FILER
 	if (ret <= 0) {
-		return chdir_in_string(CEBV_CL->data) == 0;
+		return filer_change_dir(CEBV_CL->data) == 0;
 	}
+#endif // ENABLE_FILER
 	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
-}
-
-int chdir_in_string(const char *string)
-{
-	return filer_change_dir(string);
 }
 
 int do_open_files_in_buf(void)
@@ -136,6 +133,16 @@ int do_switch_to_next_file(void)
 	}
 	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	disp_status_bar_done(_("Next file"));
+	return ret;
+}
+int do_switch_to_prev_buffers(void)
+{
+	int ret = 0;
+	return ret;
+}
+int do_switch_to_next_buffers(void)
+{
+	int ret = 0;
 	return ret;
 }
 //-----------------------------------------------------------------------------

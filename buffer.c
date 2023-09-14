@@ -176,6 +176,19 @@ void buffer_clear_link(be_buf_t *buf)
 	buf->next = NULL;
 }
 
+be_buf_t *goto_top_buf(be_buf_t *buf)
+{
+	for ( ; IS_NODE_TOP_ANCH(buf) == 0; buf = buf->prev) {
+	}
+	return buf;
+}
+be_buf_t *goto_bottom_buf(be_buf_t *buf)
+{
+	for ( ; IS_NODE_BOT_ANCH(buf) == 0; buf = buf->next) {
+	}
+	return buf;
+}
+
 // Free a buffer
 void buffer_free(be_buf_t *buf)
 {
@@ -320,7 +333,7 @@ be_line_t *buffer_cur_line(be_buf_t *buf)
 {
 	return BUFV0_CL(buf);
 }
-be_line_t *buffer_get_cur_line__move_prev(be_buf_t *buf)
+be_line_t *buffer_move_cur_line_to_prev(be_buf_t *buf)
 {
 	be_line_t *line;
 
@@ -332,7 +345,7 @@ be_line_t *buffer_get_cur_line__move_prev(be_buf_t *buf)
 	// do not move and return NULL
 	return NULL;
 }
-be_line_t *buffer_get_cur_line__move_next(be_buf_t *buf)
+be_line_t *buffer_move_cur_line_to_next(be_buf_t *buf)
 {
 	be_line_t *line;
 

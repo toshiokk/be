@@ -81,7 +81,7 @@ PRIVATE int editor_main_loop(void)
 	while (1) {
 		editor_quit = EDITOR_NONE;
 		if (key_macro_is_playing_back()) {
-			// When playing back key-macro, do not update screen.
+			// When playing back key-macro, do not update screen for speed up.
 		} else {
 			update_screen_editor(1, key_input >= 0, 1);
 		}
@@ -669,20 +669,15 @@ flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 		disp_editor_title_bar();
 	}
 
-///  if (count_edit_bufs()) {
+///if (count_edit_bufs()) {
 	if (GET_APPMD(ed_EDITOR_PANES) == 0) {		// 1 pane
 		win_select_win(WIN_IDX_SUB_WHOLE);
-///_FLF_
 		if (get_edit_win_update_needed()) {
-///_FLF_
 			disp_edit_win(1);
 		}
-///_FLF_
 	} else {									// 2 panes
-///_FLF_
 		cur_pane_idx = get_cur_editor_view_idx();
 		for (pane_sel_idx = 0; pane_sel_idx < BUF_VIEWS; pane_sel_idx++) {
-///_FLF_
 			// 1st, update not current pane.
 			// 2nd, update current pane.
 			if (pane_sel_idx == 0) {
@@ -692,9 +687,7 @@ flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 				// current pane
 				pane_idx = cur_pane_idx;
 			}
-///_FLF_
 			win_select_win(WIN_IDX_SUB_LEFT + pane_idx);
-///_FLF_
 			if (pane_sel_idx == 0) {
 				// not current pane
 				set_work_space_color_low();
@@ -702,39 +695,30 @@ flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 				// current pane
 				set_work_space_color_normal();
 			}
-///_FLF_
 flf_d_printf("pane_sel_idx: %d, pane_idx: %d\n", pane_sel_idx, pane_idx);
 			set_cur_editor_view_idx(pane_idx);
-///_FLF_
 			if (get_edit_win_update_needed()) {
 				disp_edit_win(pane_sel_idx);
 			}
-///_FLF_
 		}
 	}
-///_FLF_
 
 	// status bar
 	if (status_bar) {
 		disp_status_bar_editor();
-///_FLF_
 		// key list
 		disp_key_list_editor();
 	}
-///  }
+///}
 
-///_FLF_
-///  if (count_edit_bufs()) {
+///if (count_edit_bufs()) {
 	set_edit_cursor_pos();
-///  }
+///}
 
-///_FLF_
 	if (refresh) {
 		tio_refresh();
 	}
-///_FLF_
 	clear_edit_win_update_needed();
-///_FLF_
 flf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}\n");
 	return 0;
 }
@@ -805,6 +789,8 @@ void disp_key_list_editor(void)
  "<do_switch_to_file_list>FileList "
  "<do_switch_to_prev_file>PrevFile "
  "<do_switch_to_next_file>NextFile "
+ "<do_switch_to_prev_buffers>PrevBufs "
+ "<do_switch_to_next_buffers>NextBufs "
  "<do_switch_to_key_list>KeyList "
  "<do_switch_to_func_list>FuncList ",
 	};

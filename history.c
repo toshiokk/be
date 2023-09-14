@@ -406,7 +406,7 @@ PRIVATE const char *get_history_older(int hist_type_idx)
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
 
-	if ((line = buffer_get_cur_line__move_prev(buf)) != NULL) {
+	if ((line = buffer_move_cur_line_to_prev(buf)) != NULL) {
 		if (line->data) {
 			return line->data;
 		}
@@ -418,7 +418,7 @@ PRIVATE const char *get_history_newer(int hist_type_idx)
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
 
-	if ((line = buffer_get_cur_line__move_next(buf)) != NULL) {
+	if ((line = buffer_move_cur_line_to_next(buf)) != NULL) {
 		if (line->data) {
 			return line->data;
 		}

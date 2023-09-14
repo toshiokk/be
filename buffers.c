@@ -22,7 +22,8 @@
 #include "headers.h"
 
 // collection of buffers
-be_bufs_t* head_of_bufs[HEADS_BUFS];
+be_bufs_t bufs_top_anchor;		//< top buffers
+be_bufs_t bufs_bot_anchor;		//< bottom buffers
 
 // collection of edit buffers--------------------------------------------------
 be_bufs_t edit_buffers;
@@ -51,15 +52,18 @@ be_bufs_t redo_buffers;
 
 void init_head_of_bufs(void)
 {
-	head_of_bufs[BUFS_IDX_EDIT] = &edit_buffers;
-	head_of_bufs[BUFS_IDX_CUT] = &cut_buffers;
-	head_of_bufs[BUFS_IDX_HISTORY] = &history_buffers;
-	head_of_bufs[BUFS_IDX_HELP] = &help_buffers;
+	bufs_init(&bufs_top_anchor, "#BUFS-top_anchor");
+	bufs_init(&bufs_bot_anchor, "#BUFS-bot_anchor");
+	bufs_link(&bufs_top_anchor, &bufs_bot_anchor);
+
+	bufs_insert_before(&bufs_bot_anchor, bufs_init(&edit_buffers, "#edit-buffers"));
+	bufs_insert_before(&bufs_bot_anchor, bufs_init(&cut_buffers, "#cut-buffers"));
+	bufs_insert_before(&bufs_bot_anchor, bufs_init(&history_buffers, "#history-buffers"));
+	bufs_insert_before(&bufs_bot_anchor, bufs_init(&help_buffers, "#help-buffers"));
 #ifdef ENABLE_UNDO
-	head_of_bufs[BUFS_IDX_UNDO] = &undo_buffers;
-	head_of_bufs[BUFS_IDX_REDO] = &redo_buffers;
+	bufs_insert_before(&bufs_bot_anchor, bufs_init(&undo_buffers, "#undo-buffers"));
+	bufs_insert_before(&bufs_bot_anchor, bufs_init(&redo_buffers, "#redo-buffers"));
 #endif // ENABLE_UNDO
-	head_of_bufs[BUFS_IDX_SIZE] = NULL;	// end of list
 }
 
 // Initialize global variables.
@@ -441,6 +445,42 @@ int check_cur_buf_modified(void)
 	}
 ///flf_d_printf("modified: %d\n", modified);
 	return modified;
+}
+
+//-----------------------------------------------------------------------------
+
+be_bufs_t *bufs_init(be_bufs_t *bufs, const char* buf_name)
+{
+	bufs->prev = bufs->next = NULL;
+	strlcpy__(bufs->name, buf_name, MAX_NAME_LEN);
+	buffer_init(&(bufs->top_anchor), "#top-anchor");
+	buffer_init(&(bufs->bot_anchor), "#bottom-anchor");
+	return bufs;
+}
+be_bufs_t *bufs_link(be_bufs_t *top_anchor, be_bufs_t *bot_anchor)
+{
+	top_anchor->next = bot_anchor;
+	return bot_anchor->prev = top_anchor;
+}
+be_bufs_t *bufs_insert_before(be_bufs_t *bufs, be_bufs_t *other)
+{
+	return bufs_insert_between(bufs->prev, other, bufs);
+}
+be_bufs_t *bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next)
+{
+	bufs_link(prev, mid);
+	return bufs_link(mid, next);
+}
+
+be_bufs_t *get_bufs_buf_contained(be_buf_t *buf)
+{
+	buf = goto_top_buf(buf);
+	for (be_bufs_t *bufs = bufs_top_anchor.next; IS_NODE_BOT_ANCH(bufs) == 0; bufs = bufs->next) {
+		if (bufs->top_anchor.next == buf) {
+			return bufs;
+		}
+	}
+	return NULL;
 }
 
 //-----------------------------------------------------------------------------

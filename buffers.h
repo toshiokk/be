@@ -42,8 +42,9 @@ enum BUFS_IDX {
 };
 #define HEADS_BUFS		BUFS_IDX_SIZE+1		// add 1 for end of list (NULL-ptr)
 
-// collection of buffers
-extern be_bufs_t* head_of_bufs[HEADS_BUFS];
+// collection of buffers (Root of all buffers)
+extern be_bufs_t bufs_top_anchor;		//< top buffers
+extern be_bufs_t bufs_bot_anchor;		//< bottom buffers
 
 // Edit buffers ---------------------------------------------------------------
 extern be_bufs_t edit_buffers;
@@ -234,6 +235,14 @@ struct be_line_t *get_line_ptr_from_cur_buf_line_num(int line_num);
 
 void update_cur_buf_crc(void);
 int check_cur_buf_modified(void);
+
+//-----------------------------------------------------------------------------
+
+be_bufs_t *bufs_init(be_bufs_t *bufs, const char* buf_name);
+be_bufs_t *bufs_link(be_bufs_t *top_anchor, be_bufs_t *bot_anchor);
+be_bufs_t *bufs_insert_before(be_bufs_t *bufs, be_bufs_t *other);
+be_bufs_t *bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next);
+be_bufs_t *get_bufs_buf_contained(be_buf_t *buf);
 
 //-----------------------------------------------------------------------------
 

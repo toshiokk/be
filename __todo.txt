@@ -1,5 +1,8 @@
 [v] History list ==> multi-buffer accessible from editor as edit buffers.
+[v] Link all buffers
+[ ] Switch all buffers
 
+[v] Screen auto resizing allong to terminal resizing
 [v] Refresh all screen to clear scam.
 
 [x]can not open file with file name including ' ' in head or tail.
