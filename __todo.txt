@@ -2,6 +2,8 @@
 [v] Link all buffers
 [ ] Switch all buffers
 
+[v] Show line tail pos on ruler.
+
 [v] Screen auto resizing allong to terminal resizing
 [v] Refresh all screen to clear scam.
 

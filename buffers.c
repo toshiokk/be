@@ -527,7 +527,7 @@ const char *get_str_tab_size(void)
 }
 int get_cur_buf_tab_size(void)
 {
-	// to avoid divided-by-0, check 0 and replace non-zero-value
+	// to avoid divided-by-0, check 0 and replace with non-zero-value
 	return CUR_EBUF_STATE(buf_TAB_SIZE) == 0
 	 ? DEFAULT_TAB_SIZE : CUR_EBUF_STATE(buf_TAB_SIZE);
 }

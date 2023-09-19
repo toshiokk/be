@@ -682,7 +682,7 @@ flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 			// 2nd, update current pane.
 			if (pane_sel_idx == 0) {
 				// not current pane
-				pane_idx = cur_pane_idx ? 0 : 1;	// 0 ==> 1, 1 ==> 0
+				pane_idx = 1 - cur_pane_idx;	// 0 ==> 1, 1 ==> 0
 			} else {
 				// current pane
 				pane_idx = cur_pane_idx;
