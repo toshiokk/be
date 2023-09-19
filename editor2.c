@@ -269,7 +269,8 @@ void disp_edit_win(int cur_pane)
 		// display line tail column indicator in reverse text on ruler
 		if (get_cursor_line_right_x() >= 0) {
 			sub_win_output_string(edit_win_get_ruler_y(),
-			 get_buf_line_num_columns(get_c_e_b()) + get_cursor_line_right_x()-1,
+			 get_buf_line_num_columns(get_c_e_b()) + get_cursor_line_right_x()-1
+			  - get_min_text_x_to_be_disp(),
 			 make_ruler_text(get_cursor_line_right_x()-1 - get_min_text_x_to_be_disp()), 1);
 		}
 	}
