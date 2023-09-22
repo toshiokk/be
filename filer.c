@@ -59,7 +59,7 @@ PRIVATE void disp_key_list_filer(void);
 
 #define FILER_VERT_SCROLL_MARGIN_LINES	LIM_MAX(5, filer_win_get_file_list_lines()/3)
 #define FILER_VERT_SCROLL_LINES			\
-	LIM_MIN(1, filer_win_get_file_list_lines()-1 - FILER_VERT_SCROLL_MARGIN_LINES)
+	LIM_MIN_MAX(1, filer_win_get_file_list_lines()-1 - FILER_VERT_SCROLL_MARGIN_LINES, 50)
 
 void init_filer_views(filer_views_t *fvs, const char *cur_dir)
 {
@@ -221,8 +221,8 @@ PRIVATE int filer_main_loop(const char *directory, const char *filter,
 		//----------------------------------
 		if (key_input >= 0) {
 			// some key input
-mflf_d_printf("input%ckey:0x%04x===================================================\n",
- '_', key_input);
+mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
+ '_', key_input, short_key_name_from_key_code(key_input, NULL));
 			clear_status_bar_displayed();
 		}
 

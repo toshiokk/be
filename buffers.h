@@ -42,7 +42,7 @@ enum BUFS_IDX {
 };
 #define HEADS_BUFS		BUFS_IDX_SIZE+1		// add 1 for end of list (NULL-ptr)
 
-// collection of buffers (Root of all buffers)
+// collection of collections of buffers (Root of all buffers)
 extern be_bufs_t bufs_top_anchor;		//< top buffers
 extern be_bufs_t bufs_bot_anchor;		//< bottom buffers
 
@@ -157,8 +157,8 @@ void free_all_edit_bufs(void);
 int free_cur_edit_buf(void);
 int free_edit_buf(be_buf_t *edit_buf);
 
-void buffer_avoid_wild_ptr_cur(be_buf_t *buf);
-void buffer_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr);
+void buf_avoid_wild_ptr_cur(be_buf_t *buf);
+void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr);
 
 void line_avoid_wild_ptr_cur(be_line_t *line);
 void line_avoid_wild_ptr(be_line_t *line, be_line_t **line_ptr);
@@ -208,6 +208,7 @@ int count_edit_bufs(void);
 int is_c_e_b_valid(void);
 
 //-----------------------------------------------------------------------------
+
 void init_cut_bufs(void);
 void free_all_cut_bufs(void);
 be_buf_t *push_cut_buf(void);
@@ -216,33 +217,11 @@ be_line_t *append_string_to_cur_cut_buf(const char *string);
 int count_cut_bufs(void);
 int count_cur_cut_buf_lines(void);
 
-//-----------------------------------------------------------------------------
-
-void init_bufs_top_bot_anchor(
- be_buf_t *buf_top, const char *full_path_top,
- be_buf_t *buf_bot, const char *full_path_bot);
-
-be_buf_t *get_buf_from_bufs_by_idx(be_buf_t *bufs, int buf_idx);
-int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf);
-be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *bufs, const char *abs_path);
-
-//-----------------------------------------------------------------------------
-
-void renumber_all_bufs_from_top(be_bufs_t *bufs);
-
 void renumber_cur_buf_from_top(void);
 struct be_line_t *get_line_ptr_from_cur_buf_line_num(int line_num);
 
 void update_cur_buf_crc(void);
 int check_cur_buf_modified(void);
-
-//-----------------------------------------------------------------------------
-
-be_bufs_t *bufs_init(be_bufs_t *bufs, const char* buf_name);
-be_bufs_t *bufs_link(be_bufs_t *top_anchor, be_bufs_t *bot_anchor);
-be_bufs_t *bufs_insert_before(be_bufs_t *bufs, be_bufs_t *other);
-be_bufs_t *bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next);
-be_bufs_t *get_bufs_buf_contained(be_buf_t *buf);
 
 //-----------------------------------------------------------------------------
 

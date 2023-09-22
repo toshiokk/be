@@ -47,14 +47,14 @@ int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_er
 	renumber_cur_buf_from_top();
 	update_cur_buf_crc();
 
-	if ((tab_size = buffer_guess_tab_size(get_c_e_b())) != 0) {
+	if ((tab_size = buf_guess_tab_size(get_c_e_b())) != 0) {
 		CUR_EBUF_STATE(buf_TAB_SIZE) = tab_size;
 	}
 	disp_status_bar_ing(P_(_("%d line read %s"),
 						   _("%d lines read %s"),
 						   _("%d liness read %s"),
 						   _("%d linesss read %s"),
-	 lines), lines, buffer_eol_str(get_c_e_b()));
+	 lines), lines, buf_eol_str(get_c_e_b()));
 	return lines;
 }
 PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int msg_on_err)
@@ -309,7 +309,7 @@ append_line:;
 		break;
 	}
 ////flf_d_printf("file_format_idx: %d\n", file_format_idx);
-////flf_d_printf("CUR_EBUF_STATE(buf_EOL) => [%s]\n", buffer_eol_str(get_c_e_b()));
+////flf_d_printf("CUR_EBUF_STATE(buf_EOL) => [%s]\n", buf_eol_str(get_c_e_b()));
 	return lines_read;
 }
 
@@ -353,7 +353,7 @@ int backup_and_save_cur_buf_ask(void)
 		}
 	}
 flf_d_printf("[%s]\n", file_path);
-	if (buffer_is_orig_file_updated(get_c_e_b()) > 0) {
+	if (buf_is_orig_file_updated(get_c_e_b()) > 0) {
 		ret = ask_yes_no(ASK_YES_NO,
 		 _("File was modified by another program, OVERWRITE ?"));
 		if (ret < 0) {

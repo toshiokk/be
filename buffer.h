@@ -39,7 +39,7 @@ typedef struct be_buf_view_t {
 
 #define BUF_VIEWS		2		// NOTE: must be the same as MAX_APP_PANES
 
-//! buffer, correction of lines
+//! buffer, collection of lines
 typedef struct be_buf_t {
 	struct be_buf_t *prev;		//!< Previous be_buf_t
 	struct be_buf_t *next;		//!< Next be_buf_t
@@ -60,37 +60,41 @@ typedef struct be_buf_t {
 } be_buf_t;
 
 #define MAX_NAME_LEN	80
+//! buffers, collection of buffers
 typedef struct be_bufs_t {
 	struct be_bufs_t *prev;		//!< Previous be_bufs_t
 	struct be_bufs_t *next;		//!< Next be_bufs_t
-	char name[MAX_NAME_LEN+1];	// name
-	be_buf_t top_anchor;		//< top buffer
-	be_buf_t bot_anchor;		//< bottom buffer
+	char name[MAX_NAME_LEN+1];	//! name
+	be_buf_t top_anchor;		//!< top buffer
+	be_buf_t bot_anchor;		//!< bottom buffer
+	be_buf_t *cur_buf;			//!< current buffer
 } be_bufs_t;
 
-// Structure of buffers:
-//   edit_bufs
-//     buf - main.c
-//     buf - headers.h
-//   cut_bufs
-//     buf - cut-1
-//     buf - cut-2
-//   hist_bufs
-//     buf - exec_hist
-//     buf - dir_hist
-//     buf - key_macro_hist
-//     buf - shell_hist
-//     buf - file_pos_hist
-//   temp-bufs
-//     buf - file_list
-//     buf - key_binding_list
-//     buf - func_list
-//   undo_bufs
-//     buf - undo-1
-//     buf - undo-2
-//   redo_bufs
-//     buf - redo-1
-//     buf - redo-2
+// Structure of collections of buffers:
+//   be_bufs_t bufs_top_anchor
+//   be_bufs_t edit_bufs
+//     be_buf_t main.c
+//     be_buf_t headers.h
+//   be_bufs_t cut_bufs
+//     be_buf_t cut-1
+//     be_buf_t cut-2
+//   be_bufs_t hist_bufs
+//     be_buf_t exec_hist
+//     be_buf_t dir_hist
+//     be_buf_t key_macro_hist
+//     be_buf_t shell_hist
+//     be_buf_t file_pos_hist
+//   be_bufs_t temp-bufs
+//     be_buf_t file_list
+//     be_buf_t key_binding_list
+//     be_buf_t func_list
+//   be_bufs_t undo_bufs
+//     be_buf_t undo-1
+//     be_buf_t undo-2
+//   be_bufs_t redo_bufs
+//     be_buf_t redo-1
+//     be_buf_t redo-2
+//   be_bufs_t bufs_bot_anchor
 
 // buffers ==> buffer
 #define BUFS_TOP_ANCH(bufs)		NODES_TOP_ANCH(bufs)
@@ -104,69 +108,92 @@ typedef struct be_bufs_t {
 #define BUF_BOT_LINE(buf)		NODES_BOT_NODE(buf)
 #define BUF_BOT_ANCH(buf)		NODES_BOT_ANCH(buf)
 
-be_buf_t *buffer_create(const char *file_path);
-be_buf_t *buffer_init(be_buf_t *buf, const char *file_path);
-be_buf_t *buffer_init_line_anchors(be_buf_t *buf);
-void buffer_set_file_path(be_buf_t *buf, const char *file_path);
-void buffer_get_file_path(be_buf_t *buf, char *file_path);
-be_buf_t *buffer_insert(be_buf_t *buf, be_buf_t *new_buf,
+be_buf_t *buf_create(const char *file_path);
+be_buf_t *buf_init(be_buf_t *buf, const char *file_path);
+be_buf_t *buf_init_line_anchors(be_buf_t *buf);
+void buf_set_file_path(be_buf_t *buf, const char *file_path);
+void buf_get_file_path(be_buf_t *buf, char *file_path);
+be_buf_t *buf_insert(be_buf_t *buf, be_buf_t *new_buf,
  insert_before_after_t before_after);
-be_buf_t *buffer_insert_before(be_buf_t *buf, be_buf_t *new_buf);
-be_buf_t *buffer_insert_after(be_buf_t *buf, be_buf_t *new_buf);
-be_buf_t *buffer_insert_between(be_buf_t *prev, be_buf_t *new_buf, be_buf_t *next);
-be_buf_t *buffer_link(be_buf_t *prev, be_buf_t *next);
+be_buf_t *buf_insert_before(be_buf_t *buf, be_buf_t *new_buf);
+be_buf_t *buf_insert_after(be_buf_t *buf, be_buf_t *new_buf);
+be_buf_t *buf_insert_between(be_buf_t *prev, be_buf_t *new_buf, be_buf_t *next);
+be_buf_t *buf_link(be_buf_t *prev, be_buf_t *next);
 
-be_buf_t *buffer_create_copy(be_buf_t *src);
-be_buf_t *buffer_copy(be_buf_t *dest, be_buf_t *src);
+be_buf_t *buf_create_copy(be_buf_t *src);
+be_buf_t *buf_copy(be_buf_t *dest, be_buf_t *src);
 
-be_buf_t *buffer_unlink_free(be_buf_t *buf);
-be_buf_t *buffer_unlink(be_buf_t *buf);
-void buffer_clear_link(be_buf_t *buf);
+be_buf_t *buf_unlink_free(be_buf_t *buf);
+be_buf_t *buf_unlink(be_buf_t *buf);
+void buf_clear_link(be_buf_t *buf);
 
 be_buf_t *goto_top_buf(be_buf_t *buf);
 be_buf_t *goto_bottom_buf(be_buf_t *buf);
 
-void buffer_free(be_buf_t *buf);
-void buffer_free_lines(be_buf_t *buf);
+void buf_free(be_buf_t *buf);
+void buf_free_lines(be_buf_t *buf);
 
-int buffer_compare(be_buf_t *buf1, be_buf_t *buf2);
+int buf_compare(be_buf_t *buf1, be_buf_t *buf2);
 
-int buffer_renumber_from_top(be_buf_t *buf);
-int buffer_renumber_from_line(be_buf_t *buf, be_line_t *line);
-int buffer_guess_tab_size(be_buf_t *buf);
+int buf_renumber_from_top(be_buf_t *buf);
+int buf_renumber_from_line(be_buf_t *buf, be_line_t *line);
+int buf_guess_tab_size(be_buf_t *buf);
 
-int buffer_count_bufs(be_buf_t *buf);
-int buffer_count_lines(be_buf_t *buf);
-int buffer_is_orig_file_updated(be_buf_t *buf);
+int buf_count_bufs(be_buf_t *buf);
+int buf_count_lines(be_buf_t *buf);
+int buf_is_orig_file_updated(be_buf_t *buf);
 
-const char *buffer_eol_str(be_buf_t *buf);
-const char *buffer_encode_str(be_buf_t *buf);
-const char *buffer_cut_mode_str(be_buf_t *buf);
+const char *buf_eol_str(be_buf_t *buf);
+const char *buf_encode_str(be_buf_t *buf);
+const char *buf_cut_mode_str(be_buf_t *buf);
+
+//-----------------------------------------------------------------------------
+
+be_line_t *buf_set_cur_line(be_buf_t *buf, be_line_t *line);
+be_line_t *buf_cur_line(be_buf_t *buf);
+be_line_t *buf_move_cur_line_to_prev(be_buf_t *buf);
+be_line_t *buf_move_cur_line_to_next(be_buf_t *buf);
+
+be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num);
+
+void buf_update_crc(be_buf_t *buf);
+int buf_check_crc(be_buf_t *buf);
+unsigned short buf_calc_crc(be_buf_t *buf);
+
+const char *buf_get_enc_str(be_buf_t *buf);
+const char *buf_get_eol_str(be_buf_t *buf);
 
 //-----------------------------------------------------------------------------
 
-be_line_t *buffer_set_cur_line(be_buf_t *buf, be_line_t *line);
-be_line_t *buffer_cur_line(be_buf_t *buf);
-be_line_t *buffer_move_cur_line_to_prev(be_buf_t *buf);
-be_line_t *buffer_move_cur_line_to_next(be_buf_t *buf);
-
-be_line_t *buffer_get_line_ptr_from_line_num(be_buf_t *buf, int line_num);
-
-void buffer_update_crc(be_buf_t *buf);
-int buffer_check_crc(be_buf_t *buf);
-unsigned short buffer_calc_crc(be_buf_t *buf);
-
-const char *buffer_get_enc_str(be_buf_t *buf);
-const char *buffer_get_eol_str(be_buf_t *buf);
+be_bufs_t *bufs_init(be_bufs_t *bufs, const char* buf_name);
+be_bufs_t *bufs_link(be_bufs_t *top_anchor, be_bufs_t *bot_anchor);
+be_bufs_t *bufs_insert_before(be_bufs_t *bufs, be_bufs_t *other);
+be_bufs_t *bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next);
+be_bufs_t *get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf);
 
 //-----------------------------------------------------------------------------
+
+void init_bufs_top_bot_anchor(
+ be_buf_t *buf_top, const char *full_path_top,
+ be_buf_t *buf_bot, const char *full_path_bot);
+
+be_buf_t *get_buf_from_bufs_by_idx(be_buf_t *bufs, int buf_idx);
+int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf);
+be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *bufs, const char *abs_path);
+
+void renumber_all_bufs_from_top(be_bufs_t *bufs);
+
+//-----------------------------------------------------------------------------
+
 #ifdef ENABLE_DEBUG
-void buffer_dump_bufs(be_buf_t *buf);
-void buffer_dump_bufs_lines(be_buf_t *buf, const char *label);
-void buffer_dump_lines(be_buf_t *buf, int lines);
-void buffer_dump_ptrs(be_buf_t *buf);
-void buffer_dump_state(be_buf_t *buf);
-be_line_t *buffer_check_line_in_buf(be_buf_t *buf, be_line_t *line_);
+void buf_dump_bufs(be_buf_t *buf);
+void buf_dump_bufs_lines(be_buf_t *buf, const char *label);
+void buf_dump_lines(be_buf_t *buf, int lines);
+void buf_dump_ptrs(be_buf_t *buf);
+void buf_dump_state(be_buf_t *buf);
+be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_);
+
+void bufs_dump_all_bufs(be_bufs_t *buf);
 #endif // ENABLE_DEBUG
 
 #endif // buffer_h

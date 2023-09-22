@@ -21,7 +21,7 @@
 
 #include "headers.h"
 
-// collection of buffers
+// collection of collections of buffers
 be_bufs_t bufs_top_anchor;		//< top buffers
 be_bufs_t bufs_bot_anchor;		//< bottom buffers
 
@@ -32,7 +32,7 @@ editor_views_t *cur_editor_views;
 be_buf_t *c_e_b = NULL;			// pointer to the current edit buffer
 be_buf_view_t *c_e_b_v = NULL;	// pointer to the current edit buffer view
 
-// collection of Cut-buffers---------------------------------------------------
+// collection of cut-buffers---------------------------------------------------
 be_bufs_t cut_buffers;
 
 // history buffers ------------------------------------------------------------
@@ -141,18 +141,18 @@ int free_edit_buf(be_buf_t *edit_buf)
 #ifdef ENABLE_UNDO
 	delete_undo_redo_buf(edit_buf);
 #endif // ENABLE_UNDO
-	buffer_unlink_free(edit_buf);
+	buf_unlink_free(edit_buf);
 	return ret;		// 0: no buffer remains
 }
 //-----------------------------------------------------------------------------
-void buffer_avoid_wild_ptr_cur(be_buf_t *buf)
+void buf_avoid_wild_ptr_cur(be_buf_t *buf)
 {
 	// avoid cur_editor_views->bufs[0] becoming wild-pointer 
-	buffer_avoid_wild_ptr(buf, &(cur_editor_views->bufs[0]));
+	buf_avoid_wild_ptr(buf, &(cur_editor_views->bufs[0]));
 	// avoid cur_editor_views->bufs[1] becoming wild-pointer 
-	buffer_avoid_wild_ptr(buf, &(cur_editor_views->bufs[1]));
+	buf_avoid_wild_ptr(buf, &(cur_editor_views->bufs[1]));
 }
-void buffer_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr)
+void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr)
 {
 	if (*buf_ptr == buf) {
 		if (IS_NODE_BOT_ANCH((*buf_ptr)->next) == 0) {
@@ -231,8 +231,8 @@ void dump_cur_editor_views(void)
 {
 	flf_d_printf("cur_editor_views->view_idx: %d\n", cur_editor_views->view_idx);
 
-	buffer_dump_state(cur_editor_views->bufs[0]);
-	buffer_dump_state(cur_editor_views->bufs[1]);
+	buf_dump_state(cur_editor_views->bufs[0]);
+	buf_dump_state(cur_editor_views->bufs[1]);
 
 	flf_d_printf("get_c_e_b(): %p, &(get_c_e_b()->views[0]): %p\n",
 	 get_c_e_b(), &(get_c_e_b()->views[0]));
@@ -270,8 +270,8 @@ void create_edit_buf(const char *full_path)
 {
 	be_buf_t *buf;
 
-	buf = buffer_create(full_path);
-	buffer_insert_before(EDIT_BUFS_BOT_ANCH, buf);
+	buf = buf_create(full_path);
+	buf_insert_before(EDIT_BUFS_BOT_ANCH, buf);
 ///_FLF_
 	set_cur_edit_buf(buf);
 	if (IS_NODE_VALID(cur_editor_views->bufs[0]) == 0) {
@@ -297,14 +297,14 @@ be_line_t *append_string_to_cur_edit_buf(const char *string)
 // Append a new magic-line to the bottom of the current buffer
 void append_magic_line(void)
 {
-	if (buffer_count_lines(get_c_e_b()) == 0 || line_data_len(CUR_EDIT_BUF_BOT_LINE)) {
+	if (buf_count_lines(get_c_e_b()) == 0 || line_data_len(CUR_EDIT_BUF_BOT_LINE)) {
 		append_string_to_cur_edit_buf("");
 	}
 }
 
 int count_edit_bufs(void)
 {
-	return buffer_count_bufs(EDIT_BUFS_TOP_BUF);
+	return buf_count_bufs(EDIT_BUFS_TOP_BUF);
 }
 
 int is_c_e_b_valid(void)
@@ -332,8 +332,8 @@ be_buf_t *push_cut_buf(void)
 	char buf_name[MAX_PATH_LEN+1];
 
 	snprintf(buf_name, MAX_PATH_LEN, "#cut-buffer-%02d", count_cut_bufs());
-	cut_buf = buffer_create(buf_name);
-	buffer_insert_after(CUT_BUFS_TOP_ANCH, cut_buf);
+	cut_buf = buf_create(buf_name);
+	buf_insert_after(CUT_BUFS_TOP_ANCH, cut_buf);
 	// copy cut-mode to cut-buffer
 	SET_CUR_CBUF_STATE(buf_CUT_MODE, CUR_EBUF_STATE(buf_CUT_MODE));
 	return cut_buf;
@@ -342,7 +342,7 @@ int pop_cut_buf(void)
 {
 	if (IS_NODE_BOT_ANCH(CUR_CUT_BUF))
 		return 0;
-	buffer_unlink_free(CUR_CUT_BUF);
+	buf_unlink_free(CUR_CUT_BUF);
 	return 1;
 }
 be_line_t *append_string_to_cur_cut_buf(const char *string)
@@ -351,81 +351,23 @@ be_line_t *append_string_to_cur_cut_buf(const char *string)
 }
 int count_cut_bufs(void)
 {
-	return buffer_count_bufs(CUR_CUT_BUF);
+	return buf_count_bufs(CUR_CUT_BUF);
 }
 int count_cur_cut_buf_lines(void)
 {
-	return buffer_count_lines(CUR_CUT_BUF);
+	return buf_count_lines(CUR_CUT_BUF);
 }
 
-//-----------------------------------------------------------------------------
-
-void init_bufs_top_bot_anchor(
- be_buf_t *buf_top, const char *full_path_top,
- be_buf_t *buf_bot, const char *full_path_bot)
-{
-	buffer_init(buf_top, full_path_top);
-	buffer_init(buf_bot, full_path_bot);
-	buffer_link(buf_top, buf_bot);
-}
-
-PRIVATE be_buf_t *make_sure_buf_is_top_buf(be_buf_t *bufs)
-{
-	if (IS_NODE_TOP_ANCH(bufs)) {
-		bufs = NEXT_NODE(bufs);
-	}
-	while (IS_NODE_TOP(bufs) == 0) {
-		bufs = PREV_NODE(bufs);
-	}
-	return bufs;
-}
-
-be_buf_t *get_buf_from_bufs_by_idx(be_buf_t *bufs, int buf_idx)
-{
-	// making sure that bufs is TOP_BUF
-	bufs = make_sure_buf_is_top_buf(bufs);
-	for ( ; IS_NODE_BOT_ANCH(bufs) == 0 && buf_idx > 0; buf_idx--) {
-		bufs = NEXT_NODE(bufs);
-	}
-	return bufs;	// bufs may be top/bottom anchor
-}
-int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf)
-{
-	bufs = make_sure_buf_is_top_buf(bufs);
-	for (int buf_idx = 0; IS_NODE_BOT_ANCH(bufs) == 0; buf_idx++, bufs = bufs->next) {
-		if (bufs == buf)
-			return buf_idx;	// found
-	}
-	return -1;	// not found
-}
-be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *bufs, const char *abs_path)
-{
-	bufs = make_sure_buf_is_top_buf(bufs);
-	for ( ; IS_NODE_BOT_ANCH(bufs) == 0; bufs = bufs->next) {
-		if (strcmp(bufs->abs_path, abs_path) == 0) {
-			return bufs;	// found
-		}
-	}
-	return NULL;		// not found
-}
-
-//-----------------------------------------------------------------------------
-void renumber_all_bufs_from_top(be_bufs_t *bufs)
-{
-	for (be_buf_t *buf = BUFS_TOP_BUF(bufs); IS_NODE_BOT_ANCH(buf) == 0; buf = buf->next) {
-		buffer_renumber_from_top(buf);
-	}
-}
 //-----------------------------------------------------------------------------
 
 void renumber_cur_buf_from_top(void)
 {
-	buffer_renumber_from_line(get_c_e_b(), CUR_EDIT_BUF_TOP_LINE);
+	buf_renumber_from_line(get_c_e_b(), CUR_EDIT_BUF_TOP_LINE);
 }
 
 be_line_t *get_line_ptr_from_cur_buf_line_num(int line_num)
 {
-	return buffer_get_line_ptr_from_line_num(get_c_e_b(), line_num);
+	return buf_get_line_ptr_from_line_num(get_c_e_b(), line_num);
 }
 
 //-----------------------------------------------------------------------------
@@ -433,7 +375,7 @@ be_line_t *get_line_ptr_from_cur_buf_line_num(int line_num)
 void update_cur_buf_crc(void)
 {
 	disp_status_bar_ing(_("Calculating CRC..."));
-	buffer_update_crc(get_c_e_b());
+	buf_update_crc(get_c_e_b());
 }
 int check_cur_buf_modified(void)
 {
@@ -441,46 +383,10 @@ int check_cur_buf_modified(void)
 
 	if (CUR_EBUF_STATE(buf_MODIFIED)) {
 		disp_status_bar_ing(_("Calculating CRC..."));
-		modified = buffer_check_crc(get_c_e_b());
+		modified = buf_check_crc(get_c_e_b());
 	}
 ///flf_d_printf("modified: %d\n", modified);
 	return modified;
-}
-
-//-----------------------------------------------------------------------------
-
-be_bufs_t *bufs_init(be_bufs_t *bufs, const char* buf_name)
-{
-	bufs->prev = bufs->next = NULL;
-	strlcpy__(bufs->name, buf_name, MAX_NAME_LEN);
-	buffer_init(&(bufs->top_anchor), "#top-anchor");
-	buffer_init(&(bufs->bot_anchor), "#bottom-anchor");
-	return bufs;
-}
-be_bufs_t *bufs_link(be_bufs_t *top_anchor, be_bufs_t *bot_anchor)
-{
-	top_anchor->next = bot_anchor;
-	return bot_anchor->prev = top_anchor;
-}
-be_bufs_t *bufs_insert_before(be_bufs_t *bufs, be_bufs_t *other)
-{
-	return bufs_insert_between(bufs->prev, other, bufs);
-}
-be_bufs_t *bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next)
-{
-	bufs_link(prev, mid);
-	return bufs_link(mid, next);
-}
-
-be_bufs_t *get_bufs_buf_contained(be_buf_t *buf)
-{
-	buf = goto_top_buf(buf);
-	for (be_bufs_t *bufs = bufs_top_anchor.next; IS_NODE_BOT_ANCH(bufs) == 0; bufs = bufs->next) {
-		if (bufs->top_anchor.next == buf) {
-			return bufs;
-		}
-	}
-	return NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -570,7 +476,7 @@ int set_eol(int eol)
 }
 const char *get_str_eol(void)
 {
-	return buffer_eol_str(get_c_e_b());
+	return buf_eol_str(get_c_e_b());
 }
 
 #ifdef USE_NKF
@@ -636,7 +542,7 @@ int set_encode(int encode)
 }
 const char *get_str_encode(void)
 {
-	return buffer_encode_str(get_c_e_b());
+	return buf_encode_str(get_c_e_b());
 }
 #endif // USE_NKF
 
@@ -743,23 +649,23 @@ int do_set_encode_binary(void)
 #ifdef ENABLE_DEBUG
 void dump_cur_edit_buf_lines(void)
 {
-	buffer_dump_lines(get_c_e_b(), 3);
+	buf_dump_lines(get_c_e_b(), 3);
 }
 void dump_edit_bufs(void)
 {
-	buffer_dump_bufs(EDIT_BUFS_TOP_ANCH);
+	buf_dump_bufs(EDIT_BUFS_TOP_ANCH);
 }
 void dump_edit_bufs_lines(void)
 {
-	buffer_dump_bufs_lines(EDIT_BUFS_TOP_ANCH, "edit-bufs");
+	buf_dump_bufs_lines(EDIT_BUFS_TOP_ANCH, "edit-bufs");
 }
 void dump_cut_bufs(void)
 {
-	buffer_dump_bufs(CUT_BUFS_TOP_ANCH);
+	buf_dump_bufs(CUT_BUFS_TOP_ANCH);
 }
 void dump_cut_bufs_lines(void)
 {
-	buffer_dump_bufs_lines(CUT_BUFS_TOP_ANCH, "cut-bufs");
+	buf_dump_bufs_lines(CUT_BUFS_TOP_ANCH, "cut-bufs");
 }
 
 // dump current buffer

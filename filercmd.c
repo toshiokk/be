@@ -621,7 +621,7 @@ int do_filer_display_color_pairs(void)
 #ifdef ENABLE_HELP
 int do_filer_splash(void)
 {
-	disp_splash(200);
+	disp_splash(100);
 	input_key_loop();
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 0;

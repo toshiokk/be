@@ -31,13 +31,13 @@ int do_switch_to_file_list(void)
 _FLF_
 	prev_cur_edit_buf = get_c_e_b();
 	set_cur_edit_buf(EDIT_BUFS_TOP_ANCH);
-	buffer_free_lines(EDIT_BUFS_TOP_ANCH);
-	buffer_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Files currently loaded"));
+	buf_free_lines(EDIT_BUFS_TOP_ANCH);
+	buf_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Files currently loaded"));
 	for (edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_BOT_ANCH(edit_buf) == 0;
 	 edit_buf = edit_buf->next) {
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-60s %-5s %s %s",
 		 quote_file_name(edit_buf->abs_path),
-		 buffer_encode_str(edit_buf), buffer_eol_str(edit_buf),
+		 buf_encode_str(edit_buf), buf_eol_str(edit_buf),
 		 BUF_STATE(edit_buf, buf_MODIFIED) ? "Mo" : "--");
 		append_string_to_cur_edit_buf(buffer);
 		if (edit_buf == prev_cur_edit_buf)
@@ -67,8 +67,8 @@ void init_help_bufs(void)
 	init_bufs_top_bot_anchor(
 	 HELP_BUFS_TOP_ANCH, "#Help-bufs-top_anchor",
 	 HELP_BUFS_BOT_ANCH, "#Help-bufs-bot_anchor");
-	buffer_insert_before(HELP_BUFS_BOT_ANCH, buffer_create(_("#List of Editor Key Bindings")));
-	buffer_insert_before(HELP_BUFS_BOT_ANCH, buffer_create(_("#List of Editor Functions")));
+	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create(_("#List of Editor Key Bindings")));
+	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create(_("#List of Editor Functions")));
 }
 be_buf_t *get_help_buf(int help_buf_idx)
 {
@@ -77,7 +77,7 @@ be_buf_t *get_help_buf(int help_buf_idx)
 void free_help_bufs(void)
 {
 	for (int help_buf_idx = 0; help_buf_idx < HELP_BUFS; help_buf_idx++) {
-		buffer_unlink_free(HELP_BUFS_TOP_BUF);
+		buf_unlink_free(HELP_BUFS_TOP_BUF);
 	}
 }
 
@@ -124,7 +124,7 @@ void make_help_buf(int help_idx)
 {
 	be_buf_t *buf = get_help_buf(help_idx);
 	set_cur_edit_buf(buf);
-	buffer_free_lines(buf);
+	buf_free_lines(buf);
 	switch(help_idx) {
 	case HELP_BUF_IDX_KEY_LIST:
 		make_help_key_list();
@@ -150,7 +150,7 @@ void make_help_key_list(void)
 	char *func_ = "--------------------------------";
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
-	buffer_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Editor Functions"));
+	buf_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Editor Functions"));
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, "Key", "Function", "func_id");
 	append_string_to_cur_edit_buf(buffer);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, key_, func_, func_);

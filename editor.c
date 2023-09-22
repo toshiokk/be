@@ -91,8 +91,9 @@ PRIVATE int editor_main_loop(void)
 		if (key_input < 0) {
 			// no key input
 		} else {
-mflf_d_printf("input%ckey:0x%04x===================================================\n",
- '_', key_input);
+mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
+ '_', key_input, short_key_name_from_key_code(key_input, NULL));
+
 #ifdef ENABLE_REGEX
 			matches_clear(&matches__);
 #endif // ENABLE_REGEX
@@ -356,11 +357,11 @@ flf_d_printf("[%s]\n", file_path);
 			continue;
 #endif // ENABLE_FILER
 flf_d_printf("[%s]\n", file_path);
-		buffer_get_file_path(get_c_e_b(), org_file_path);
-		buffer_set_file_path(get_c_e_b(), file_path);	// set new file name
+		buf_get_file_path(get_c_e_b(), org_file_path);
+		buf_set_file_path(get_c_e_b(), file_path);	// set new file name
 		if (backup_and_save_cur_buf(file_path) < 0) {
 flf_d_printf("[%s]\n", file_path);
-			buffer_set_file_path(get_c_e_b(), org_file_path);
+			buf_set_file_path(get_c_e_b(), org_file_path);
 			return -1;
 		}
 flf_d_printf("[%s]\n", file_path);
@@ -452,7 +453,7 @@ int do_read_file_into_cur_pos(void)
 #ifdef ENABLE_HELP
 int do_editor_splash(void)
 {
-	disp_splash(200);
+	disp_splash(100);
 	input_key_loop();
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	return 0;
@@ -662,7 +663,7 @@ int update_screen_editor(int title_bar, int status_bar, int refresh)
 	int cur_pane_idx;		// pane index
 	int pane_idx;			// pane index
 
-flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
+///mflf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 ///_FLF_
 	// title bar
 	if (title_bar) {
@@ -719,7 +720,7 @@ flf_d_printf("pane_sel_idx: %d, pane_idx: %d\n", pane_sel_idx, pane_idx);
 		tio_refresh();
 	}
 	clear_edit_win_update_needed();
-flf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}\n");
+///mflf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}\n");
 	return 0;
 }
 
@@ -756,7 +757,7 @@ int disp_status_bar_editor(void)
 	disp_status_bar_percent_editor(CEBV_CL->line_num-1, get_c_e_b()->buf_lines-1,
 	 buffer, CEBV_CL->line_num, get_c_e_b()->buf_lines, xx, disp_len,
 	 get_c_e_b()->buf_size, buf_char_code,
-	 buffer_encode_str(get_c_e_b()), buffer_eol_str(get_c_e_b()));
+	 buf_encode_str(get_c_e_b()), buf_eol_str(get_c_e_b()));
 	return 1;
 }
 

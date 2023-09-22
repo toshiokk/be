@@ -118,10 +118,10 @@ void disp_editor_title_bar(void)
 	//-------------------------------------------------------------------------
 	buf_buf[0] = '\0';
 	// edit buffer cut mode
-	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, "%s", buffer_cut_mode_str(get_c_e_b()));
+	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, "%s", buf_cut_mode_str(get_c_e_b()));
 #ifdef ENABLE_DEBUG
 ///	// cut buffer cut mode
-///	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " %s", buffer_cut_mode_str(CUR_CUT_BUF));
+///	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " %s", buf_cut_mode_str(CUR_CUT_BUF));
 #endif // ENABLE_DEBUG
 	// cut buffers
 	cut_bufs = count_cut_bufs();
@@ -408,7 +408,7 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 ///_FLF_
 #if 1
 	if (search_is_needle_set(&search__)) {
-		// display all text matched ===============================================
+		// display all text matched in the screen =======================================
 		for (byte_idx = 0; byte_idx < byte_idx_2; ) {
 			if (search_str_in_line(&search__, &matches, NULL,
 			 FORWARD_SEARCH, DISTINGUISH_CASE, line->data, byte_idx) == 0) {
@@ -427,7 +427,7 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 	}
 #endif
 	if (cur_pane && line == CEBV_CL && search_is_needle_set(&search__)) {
-		// display matched text at cursor pos ===============================================
+		// display matched text at cursor pos ===========================================
 		if (search_str_in_line(&search__, &matches, NULL,
 		 FORWARD_SEARCH, DISTINGUISH_CASE, line->data, CEBV_CLBI)) {
 			// found
@@ -440,7 +440,7 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 				}
 			}
 		}
-		// draw cursor myself ======================================================
+		// draw cursor myself ===========================================================
 		if (GET_APPMD(app_DRAW_CURSOR)) {
 			set_color_by_idx(ITEM_COLOR_IDX_CURSOR_CHAR, 0);
 			vis_idx = vis_idx_from_byte_idx(CEBV_CL->data, CEBV_CLBI);

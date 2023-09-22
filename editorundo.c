@@ -38,36 +38,36 @@ void init_undo_redo_bufs(void)
 void free_all_undo_redo_bufs(void)
 {
 	while (IS_NODE_BOT_ANCH(CUR_REDO_BUF) == 0) {
-		buffer_free(pop_redo_buf());
+		buf_free(pop_redo_buf());
 	}
 	while (IS_NODE_BOT_ANCH(CUR_UNDO_BUF) == 0) {
-		buffer_free(pop_undo_buf());
+		buf_free(pop_undo_buf());
 	}
 }
 
 be_buf_t *push_undo_buf(be_buf_t *buf)
 {
-	buf = buffer_create_copy(buf);
+	buf = buf_create_copy(buf);
 	snprintf(buf->file_path, MAX_PATH_LEN, "undo-buf-%02d", count_undo_bufs());
-	return buffer_insert_after(UNDO_BUFS_TOP_ANCH, buf);
+	return buf_insert_after(UNDO_BUFS_TOP_ANCH, buf);
 }
 be_buf_t *pop_undo_buf(void)
 {
 	if (IS_NODE_BOT_ANCH(CUR_UNDO_BUF))
 		return NULL;
-	return buffer_unlink(CUR_UNDO_BUF);
+	return buf_unlink(CUR_UNDO_BUF);
 }
 be_buf_t *push_redo_buf(be_buf_t *buf)
 {
-	buf = buffer_create_copy(buf);
+	buf = buf_create_copy(buf);
 	snprintf(buf->file_path, MAX_PATH_LEN, "redo-buf-%02d", count_redo_bufs());
-	return buffer_insert_after(REDO_BUFS_TOP_ANCH, buf);
+	return buf_insert_after(REDO_BUFS_TOP_ANCH, buf);
 }
 be_buf_t *pop_redo_buf(void)
 {
 	if (IS_NODE_BOT_ANCH(CUR_REDO_BUF))
 		return NULL;
-	return buffer_unlink(CUR_REDO_BUF);
+	return buf_unlink(CUR_REDO_BUF);
 }
 int delete_undo_redo_buf(be_buf_t *edit_buf)
 {
@@ -81,7 +81,7 @@ int delete_do_buf(be_buf_t *edit_buf, be_buf_t *do_buf)
 
 	for ( ; IS_NODE_BOT_ANCH(do_buf) == 0; do_buf = do_buf->next) {
 		if (strcmp(do_buf->abs_path, edit_buf->abs_path) == 0) {
-			do_buf = buffer_unlink_free(do_buf);
+			do_buf = buf_unlink_free(do_buf);
 			deleted++;
 		}
 	}
@@ -89,11 +89,11 @@ int delete_do_buf(be_buf_t *edit_buf, be_buf_t *do_buf)
 }
 int count_undo_bufs(void)
 {
-	return buffer_count_bufs(CUR_UNDO_BUF);
+	return buf_count_bufs(CUR_UNDO_BUF);
 }
 int count_redo_bufs(void)
 {
-	return buffer_count_bufs(CUR_REDO_BUF);
+	return buf_count_bufs(CUR_REDO_BUF);
 }
 
 #ifdef ENABLE_DEBUG
@@ -181,10 +181,10 @@ void undo_save_after_change(void)
 		save_region_to_undo_buf();	// save the state after change
 		if (count_undo_bufs() >= 2) {
 			// compare before and after
-			if (buffer_compare(CUR_UNDO_BUF, CUR_UNDO_BUF->next) == 0) {
+			if (buf_compare(CUR_UNDO_BUF, CUR_UNDO_BUF->next) == 0) {
 				// not changed, pop two buffer (after and before)
-				buffer_free(pop_undo_buf());
-				buffer_free(pop_undo_buf());
+				buf_free(pop_undo_buf());
+				buf_free(pop_undo_buf());
 			}
 		}
 	}
@@ -329,11 +329,11 @@ PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 #ifdef ENABLE_DEBUG
 void dump_undo_bufs_lines(void)
 {
-	buffer_dump_bufs_lines(UNDO_BUFS_TOP_ANCH, "undo-bufs");
+	buf_dump_bufs_lines(UNDO_BUFS_TOP_ANCH, "undo-bufs");
 }
 void dump_redo_bufs_lines(void)
 {
-	buffer_dump_bufs_lines(REDO_BUFS_TOP_ANCH, "redo-bufs");
+	buf_dump_bufs_lines(REDO_BUFS_TOP_ANCH, "redo-bufs");
 }
 #endif // ENABLE_DEBUG
 

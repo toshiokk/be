@@ -137,13 +137,25 @@ int do_switch_to_next_file(void)
 }
 int do_switch_to_prev_buffers(void)
 {
-	int ret = 0;
-	return ret;
+	be_bufs_t *bufs = get_bufs_contains_buf(bufs_top_anchor.next, get_c_e_b());
+flf_d_printf("bufs: %s\n", bufs->name);
+	if (IS_NODE_TOP_ANCH(bufs))
+		return 0;
+flf_d_printf("PREV_NODE(bufs)->name: %s\n", PREV_NODE(bufs)->name);
+flf_d_printf("PREV_NODE(bufs)->cur_buf->name: %s\n", PREV_NODE(bufs)->cur_buf->file_path);
+	set_c_e_b(PREV_NODE(bufs)->cur_buf);
+	return 1;
 }
 int do_switch_to_next_buffers(void)
 {
-	int ret = 0;
-	return ret;
+	be_bufs_t *bufs = get_bufs_contains_buf(bufs_top_anchor.next, get_c_e_b());
+flf_d_printf("bufs: %s\n", bufs->name);
+	if (IS_NODE_BOT_ANCH(bufs))
+		return 0;
+flf_d_printf("PREV_NODE(bufs)->name: %s\n", PREV_NODE(bufs)->name);
+flf_d_printf("PREV_NODE(bufs)->cur_buf->name: %s\n", PREV_NODE(bufs)->cur_buf->file_path);
+	set_c_e_b(NEXT_NODE(bufs)->cur_buf);
+	return 1;
 }
 //-----------------------------------------------------------------------------
 int do_return_to_prev_file_pos(void)

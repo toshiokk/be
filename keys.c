@@ -84,8 +84,8 @@ app_menu_n_again:;
 		//---------------------------
 		key_input = input_key_loop();
 		//---------------------------
-mflf_d_printf("input%ckey:0x%04x===================================================\n",
- '_', key_input);
+mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
+ '_', key_input, short_key_name_from_key_code(key_input, NULL));
 
 		switch (key_input) {
 		case K_LEFT:
@@ -448,7 +448,7 @@ key_code_t input_key_wait_return(void)
 	static key_code_t prev_key = -1;
 	key_code_t key = input_key_timeout();
 	if (key < 0 && prev_key >= 0) {
-		termif_clear_vscreen_painted();
+		tio_repaint_all();
 	}
 	prev_key = key;
 	return key;
@@ -711,8 +711,12 @@ key_name_table_t key_name_table[] = {
 
 const char *short_key_name_from_key_code(key_code_t key_code, char *buf)
 {
+	static char buf_s_[MAX_KEY_NAME_LEN+1];
 	char buf_key_name[MAX_KEY_NAME_LEN+1];		// "RIGHT"
 
+	if (buf == NULL) {
+		buf = buf_s_;
+	}
 	return short_key_name_from_key_name(key_name_from_key_code(key_code, buf_key_name), buf);
 }
 const char *key_name_from_key_code(key_code_t key_code, char *buf)

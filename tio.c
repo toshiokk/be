@@ -365,6 +365,14 @@ void tio_refresh(void)
 	termif_refresh();
 #endif // ENABLE_NCURSES
 }
+void tio_repaint_all(void)
+{
+#ifdef ENABLE_NCURSES
+	// no function
+#else // ENABLE_NCURSES
+	termif_clear_vscreen_painted();
+#endif // ENABLE_NCURSES
+}
 
 key_code_t tio_input_key(void)
 {

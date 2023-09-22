@@ -45,7 +45,7 @@ int post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_m
 	}
 	if (renum_from) {
 ///_FLF_
-		buffer_renumber_from_line(get_c_e_b(), renum_from);
+		buf_renumber_from_line(get_c_e_b(), renum_from);
 	}
 ///_FLF_
 	fix_buf_state_after_cursor_horiz_vert_move(cursor_move);

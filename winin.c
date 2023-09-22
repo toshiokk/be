@@ -130,8 +130,8 @@ PRIVATE int input_str_pos__(const char *default__, char *input_buf, int curs_byt
 		//---------------------------
 		key_input = input_key_loop();
 		//---------------------------
-mflf_d_printf("input%ckey:0x%04x===================================================\n",
- '_', key_input);
+mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
+ '_', key_input, short_key_name_from_key_code(key_input, NULL));
 
 		if (IS_CHAR_KEY(key_input)) {
 			// character key

@@ -103,6 +103,7 @@ const char *tio_blank_line(void);
 void tio_output_string(int yy, int xx, const char *string, int bytes);
 void tio_beep(void);
 void tio_refresh(void);
+void tio_repaint_all(void);
 
 key_code_t tio_input_key(void);
 
