@@ -36,17 +36,13 @@ PRIVATE int output_edit_line_num(int yy, const be_buf_t *buf, const be_line_t *l
 PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
  int byte_idx_1, int byte_idx_2, const char *vis_code);
 
-PRIVATE void clear_cursor_line_right_x(void);
-PRIVATE void set_cursor_line_right_x(int right_x);
-PRIVATE int get_cursor_line_right_x(void);
-
 PRIVATE int get_cursor_x_in_edit_win(void);
 PRIVATE int get_cursor_x_in_text(void);
 PRIVATE int get_max_text_x_to_be_displayed(void);
-PRIVATE int get_x_in_edit_win_for_text_x(int text_x);
-PRIVATE int get_x_in_edit_win_for_text(void);
+PRIVATE int get_edit_win_x_in_text(int text_x);
+PRIVATE int get_edit_win_text_x(void);
 
-PRIVATE const char *make_ruler_text(int col_idx);
+PRIVATE const char *get_ruler_text(int col_idx);
 PRIVATE const char *make_ruler_text__(int col_x, int columns);
 
 #define MAX_LINE_NUM_STR_LEN		10	// 4000000000
@@ -104,7 +100,8 @@ void disp_editor_title_bar(void)
 		}
 	}
 #endif // ENABLE_DEBUG
-	snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%d%c%d:%s",
+	snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%s%d%c%d:%s",
+	 root_notation(),
 	 cur_editor_views->view_idx+1, separator_char, buf_idx+1,
 	 (path[0] == '\0') ? _("New File") : path);
 	if (CUR_EBUF_STATE(buf_MODIFIED)) {
@@ -203,6 +200,7 @@ void disp_edit_win(int cur_pane)
 	int yy;
 	int max_wl_idx;
 	int wl_idx;
+	int cursor_line_text_right_x = -1;
 
 ///_FLF_
 	// Don't make the cursor jump around the screen while updating
@@ -220,8 +218,6 @@ void disp_edit_win(int cur_pane)
 		sub_win_output_string(edit_win_get_path_y(), 0, buf_path, -1);
 	}
 
-	clear_cursor_line_right_x();
-///_FLF_
 ///_FLF_
 	get_cur_screen_top(&line, &byte_idx);
 	for (yy = 0; yy < edit_win_get_text_lines(); ) {
@@ -237,6 +233,10 @@ void disp_edit_win(int cur_pane)
 			byte_idx_1 = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, 0, -1);
 			byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx, INT_MAX, -1);
 			disp_edit_line(cur_pane, yy, get_c_e_b(), line, byte_idx_1, byte_idx_2);
+			if (yy == CEBV_CURSOR_Y) {
+				cursor_line_text_right_x = end_col_idx_of_wrap_line(te_line_concat_linefeed,
+				 wl_idx, byte_idx_2, -1);
+			}
 			yy++;
 			if (yy >= edit_win_get_text_lines())
 				break;
@@ -251,27 +251,27 @@ void disp_edit_win(int cur_pane)
 	 edit_win_get_text_y() + edit_win_get_text_lines());
 
 	if (GET_APPMD(ed_SHOW_RULER)) {
+		int edit_win_text_x = get_edit_win_text_x();
 		if (GET_APPMD(ed_SHOW_LINE_NUMBER)) {
 			// display buffer total lines ("999 ")
 			set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 			sub_win_output_string(edit_win_get_ruler_y(), 0,
 			 get_line_num_string(get_c_e_b(), CUR_EDIT_BUF_BOT_LINE, buf_line_num),
-			 get_buf_line_num_columns(get_c_e_b()));
+			 edit_win_text_x);
 		}
 		// display ruler("----5----10---15---20---25---30---35---40---45---50---55---60---65---70")
 		set_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 0);
-		sub_win_output_string(edit_win_get_ruler_y(), get_x_in_edit_win_for_text(),
-		 make_ruler_text(0), -1);
+		sub_win_output_string(edit_win_get_ruler_y(), edit_win_text_x,
+		 get_ruler_text(0), -1);
 		// display cursor column indicator in reverse text on ruler
 		set_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 1);
 		sub_win_output_string(edit_win_get_ruler_y(), get_cursor_x_in_edit_win(),
-		 make_ruler_text(get_cursor_x_in_text() - get_min_text_x_to_be_disp()), 1);
+		 get_ruler_text(get_cursor_x_in_text() - get_cebv_min_text_x_to_be_disp()), 1);
 		// display line tail column indicator in reverse text on ruler
-		if (get_cursor_line_right_x() >= 0) {
+		if (cursor_line_text_right_x >= 0) {
 			sub_win_output_string(edit_win_get_ruler_y(),
-			 get_buf_line_num_columns(get_c_e_b()) + get_cursor_line_right_x()-1
-			  - get_min_text_x_to_be_disp(),
-			 make_ruler_text(get_cursor_line_right_x()-1 - get_min_text_x_to_be_disp()), 1);
+			 edit_win_text_x + (cursor_line_text_right_x-1 - get_cebv_min_text_x_to_be_disp()),
+			 get_ruler_text(cursor_line_text_right_x-1 - get_cebv_min_text_x_to_be_disp()), 1);
 		}
 	}
 
@@ -661,7 +661,7 @@ PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
 	wl_idx = start_wl_idx_of_wrap_line(raw_code, byte_idx_1, -1);
 	left_x = start_col_idx_of_wrap_line(raw_code, byte_idx_1, -1);
 	right_x = end_col_idx_of_wrap_line(raw_code, wl_idx, byte_idx_2, -1);
-	left_x = LIM_MIN(left_x, get_min_text_x_to_be_disp());
+	left_x = LIM_MIN(left_x, get_cebv_min_text_x_to_be_disp());
 	right_x = LIM_MAX(right_x, get_max_text_x_to_be_displayed());
 	left_byte_idx = end_byte_idx_of_wrap_line_ge(raw_code, wl_idx, left_x, -1);
 	right_byte_idx = end_byte_idx_of_wrap_line_le(raw_code, wl_idx, right_x, -1);
@@ -676,32 +676,15 @@ PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
 	if (bytes > 0) {	// if (bytes <= 0), no output neccesary
 ///_FLF_
 		sub_win_output_string(edit_win_get_text_y() + yy,
-		 get_x_in_edit_win_for_text_x(left_x), &vis_code[left_vis_idx], bytes);
-	}
-	if (yy == CEBV_CURSOR_Y) {
-		set_cursor_line_right_x(right_x);
+		 get_edit_win_x_in_text(left_x), &vis_code[left_vis_idx], bytes);
 	}
 ///_FLF_
 	return bytes;
 }
 
-PRIVATE int cursor_line_right_x = -1;
-PRIVATE void clear_cursor_line_right_x(void)
-{
-	cursor_line_right_x = -1;
-}
-PRIVATE void set_cursor_line_right_x(int right_x)
-{
-	cursor_line_right_x = right_x;
-}
-PRIVATE int get_cursor_line_right_x(void)
-{
-	return cursor_line_right_x;
-}
-
 PRIVATE int get_cursor_x_in_edit_win(void)
 {
-	return get_x_in_edit_win_for_text_x(get_cursor_x_in_text());
+	return get_edit_win_x_in_text(get_cursor_x_in_text());
 }
 PRIVATE int get_cursor_x_in_text(void)
 {
@@ -709,21 +692,21 @@ PRIVATE int get_cursor_x_in_text(void)
 }
 PRIVATE int get_max_text_x_to_be_displayed(void)
 {
-	return get_min_text_x_to_be_disp() + get_edit_win_columns_for_text();
+	return get_cebv_min_text_x_to_be_disp() + get_edit_win_columns_for_text();
 }
-PRIVATE int get_x_in_edit_win_for_text_x(int text_x)
+PRIVATE int get_edit_win_x_in_text(int text_x)
 {
-	return get_x_in_edit_win_for_text() + text_x - get_min_text_x_to_be_disp();
+	return get_edit_win_text_x() + (text_x - get_cebv_min_text_x_to_be_disp());
 }
 // width of text view area (window-width - line-number-width)
 int get_edit_win_columns_for_text(void)
 {
 	// <text-to-edit................................>
 	// 999 <text-to-edit............................>
-	return sub_win_get_columns() - get_x_in_edit_win_for_text();
+	return sub_win_get_columns() - get_edit_win_text_x();
 }
-// text x position (window-width - line-number-width)
-PRIVATE int get_x_in_edit_win_for_text(void)
+// text x position (line-number-width)
+PRIVATE int get_edit_win_text_x(void)
 {
 	return GET_APPMD(ed_SHOW_LINE_NUMBER) == 0
 	// ^text-to-edit
@@ -750,12 +733,18 @@ flf_d_printf("[%s]\n", make_ruler_text__(100, 40));
 #define MAX_RULER_STR_LEN	(MAX_SCRN_LINE_BUF_LEN + R_N_I)
 //12345678901234567890123456789012345678901234567890123456789012345678901234567890
 //1---5----10---15---20---25---30---35---40---45---50---55---60---65---70---75---80
+//9910-9915-9920-9925-9930-9935-9940-9945-9950-9955-9960-9965-9970-9975-9980-9985-9990
+//----9915-9920-9925-9930-9935-9940-9945-9950-9955-9960-9965-9970-9975-9980-9985-9990
+//---9915-9920-9925-9930-9935-9940-9945-9950-9955-9960-9965-9970-9975-9980-9985-9990
+//--9915-9920-9925-9930-9935-9940-9945-9950-9955-9960-9965-9970-9975-9980-9985-9990
+//-9915-9920-9925-9930-9935-9940-9945-9950-9955-9960-9965-9970-9975-9980-9985-9990-9995
+//9915-9920-9925-9930-9935-9940-9945-9950-9955-9960-9965-9970-9975-9980-9985-9990-9995
 //915-9920-9925-9930-9935-9940-9945-9950-9955-9960-9965-9970-9975-9980-9985-9990-9995
-PRIVATE const char *make_ruler_text(int col_idx)
+PRIVATE const char *get_ruler_text(int col_idx)
 {
 	const char *str;
 
-	str = make_ruler_text__(get_min_text_x_to_be_disp(), get_edit_win_columns_for_text());
+	str = make_ruler_text__(get_cebv_min_text_x_to_be_disp(), get_edit_win_columns_for_text());
 	col_idx = MK_IN_RANGE(0, col_idx, strnlen(str, MAX_RULER_STR_LEN));
 	return &str[col_idx];
 }
@@ -763,7 +752,7 @@ PRIVATE const char *make_ruler_text__(int start_col_idx, int columns)
 {
 	static int start_col_idx__ = -1;
 	static int columns__ = -1;
-	static char tio_ruler_line_buf[MAX_RULER_STR_LEN+1] = "";	// ruler line
+	static char ruler_line_buf[MAX_RULER_STR_LEN+1] = "";	// ruler line
 	int col_num;
 	char col_num_str[4+1];	// "9999"
 
@@ -771,30 +760,31 @@ PRIVATE const char *make_ruler_text__(int start_col_idx, int columns)
 		start_col_idx__ = start_col_idx;
 		columns__ = columns;
 
-		strcpy__(tio_ruler_line_buf, "");
+		strcpy__(ruler_line_buf, "");
 		// 0, 5, 10, 15, 20, ...
 		for (col_num = (start_col_idx / R_N_I) * R_N_I;
 		 col_num <= MAX_EDIT_LINE_LEN * get_cur_buf_tab_size();
 		 col_num = ((col_num / R_N_I) + 1) * R_N_I) {
 			snprintf_(col_num_str, 4+1, "%d", col_num);
 			if (col_num - 1 - start_col_idx < 0) {
+				// line head
 				if (start_col_idx == 0) {
-					snprintf_(tio_ruler_line_buf, R_N_I+1, "1----");
+					snprintf_(ruler_line_buf, R_N_I+1, "1----");
 				} else {
-					snprintf_(tio_ruler_line_buf, R_N_I+1, "-----");
+					snprintf_(ruler_line_buf, R_N_I+1, "-----");
 				}
 			} else {
-				snprintf_(&tio_ruler_line_buf[col_num - 1 - start_col_idx], R_N_I+1,
+				snprintf_(&ruler_line_buf[col_num - 1 - start_col_idx], R_N_I+1,
 				 "%s----", col_num_str);
 			}
-			if (strnlen(tio_ruler_line_buf, MAX_RULER_STR_LEN) >= columns)
+			if (strnlen(ruler_line_buf, MAX_RULER_STR_LEN) >= columns)
 				break;
 		}
-///flf_d_printf("[%s]\n", tio_ruler_line_buf);
-		tio_ruler_line_buf[columns] = '\0';
-///flf_d_printf("[%s]\n", tio_ruler_line_buf);
+///flf_d_printf("[%s]\n", ruler_line_buf);
+		ruler_line_buf[columns] = '\0';
+///flf_d_printf("[%s]\n", ruler_line_buf);
 	}
-	return tio_ruler_line_buf;
+	return ruler_line_buf;
 }
 
 // line number ================================================================
@@ -854,8 +844,8 @@ PRIVATE int get_line_num_digits(int max_line_num)
 	}
 	return digits;
 }
-//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 int edit_win_get_path_lines(void)
 {
 	if (GET_APPMD(ed_EDITOR_PANES) == 0) {
@@ -892,11 +882,11 @@ char te_line_visible_code[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];	// tab-expanded-
 /* original:     "TabcdCefghZZijkl" */
 /* control_code: "TabcdCefghZZijklL" */
 /* visible_code: ">   abcd^?efgh[]ijkl<" */
-char *te_tab_expand_line(char *original)
+const char *te_tab_expand_line(const char *original)
 {
 	int col_idx;
 	int bytes;
-	char *orig_ptr;
+	const char *orig_ptr;
 	char *vis_ptr;
 #ifdef ENABLE_SYNTAX
 	int notation = 0;		// is visible Tab/EOL/Zenkaku-space notation
@@ -952,7 +942,7 @@ char *te_tab_expand_line(char *original)
 	te_line_concat_linefeed_bytes = orig_ptr - original + 1;
 	return te_line_visible_code;
 }
-char *te_concat_linefeed(char *original)
+const char *te_concat_linefeed(const char *original)
 {
 	strlcpy__(te_line_concat_linefeed, original, MAX_EDIT_LINE_LEN * 2);
 	strlcat__(te_line_concat_linefeed, MAX_EDIT_LINE_LEN * 2, "\n");

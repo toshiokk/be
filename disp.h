@@ -23,6 +23,7 @@
 #define disp_h
 
 void set_title_bar_color_by_state(int c_e_b_cut_mode);
+const char *root_notation(void);
 
 //! priority to display on the status bar
 typedef enum /*s_b_d*/ {	// Status Bar Displayed

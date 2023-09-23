@@ -23,11 +23,7 @@
 #define line_h
 
 // Max line length of text editable
-//
 #define MAX_EDIT_LINE_LEN	4096
-///#define MAX_EDIT_LINE_LEN	2048
-///#define MAX_EDIT_LINE_LEN	1024
-///#define MAX_EDIT_LINE_LEN	256
 
 // "NODES" are "BUFFERs" or "LINEs"
 // get BUFFER from BUFFERs or get LINE from BUFFER

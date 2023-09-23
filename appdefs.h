@@ -65,7 +65,7 @@
 //// code obsolete and to be deleted
 
 // NOTE: length of string buffer must be categorized into three types
-//	MAX_SCRN_LINE_BUF_LEN		384*3 = 1152
+//	MAX_SCRN_LINE_BUF_LEN	384*3 = 1152
 //	MAX_PATH_LEN			4096
 //	MAX_EDIT_LINE_LEN		4096
 

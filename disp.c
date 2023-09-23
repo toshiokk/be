@@ -40,6 +40,11 @@ void set_title_bar_color_by_state(int c_e_b_cut_mode)
 	}
 }
 
+const char *root_notation(void)
+{
+	return (geteuid() == 0) ? "[ROOT] " : "";
+}
+
 //-----------------------------------------------------------------------------
 PRIVATE s_b_d_t status_bar_displayed = S_B_D_NONE;
 

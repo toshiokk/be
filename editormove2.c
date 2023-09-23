@@ -241,7 +241,7 @@ void update_min_text_x_to_be_disp(int text_x)
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
 	}
 }
-int get_min_text_x_to_be_disp(void)
+int get_cebv_min_text_x_to_be_disp(void)
 {
 	return CEBV_MIN_TEXT_X_TO_BE_DISP;
 }

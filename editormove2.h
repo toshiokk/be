@@ -77,7 +77,7 @@ void fix_buf_state_after_cursor_horiz_move(void);
 void fix_buf_state_after_cursor_vert_move(void);
 
 void update_min_text_x_to_be_disp(int text_x);
-int get_min_text_x_to_be_disp(void);
+int get_cebv_min_text_x_to_be_disp(void);
 int calc_min_text_x_to_be_disp(int text_x);
 
 #endif // editormove2_h

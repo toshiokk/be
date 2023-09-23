@@ -459,7 +459,8 @@ PRIVATE void disp_filer_title_bar(const char *path,
 		}
 	}
 #endif // ENABLE_DEBUG
-	snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%d%c%s",
+	snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%s%d%c%s",
+	 root_notation(),
 	 cur_filer_views->view_idx+1, separator_char, path);
 
 	// current time
