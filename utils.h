@@ -80,7 +80,6 @@ const char *cur_hhcmmcss_uuuuuu(void);
 #define MAX_(aa, bb)		int_max((aa), (bb))
 #define LIM_MAX(aa, bb)		int_min((aa), (bb))
 #define LIM_MIN(aa, bb)		int_max((aa), (bb))
-#define LIM_MIN_MAX(min, value, max)	MIN_MAX_((min), (value), (max))
 #define MIN_MAX_(min, value, max)	MAX_((min), MIN_((max), (value)))
 
 #define IS_IN_RANGE(min, value, max)	((min) <= (value) && (value) < (max))

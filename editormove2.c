@@ -222,52 +222,89 @@ void fix_buf_state_after_cursor_horiz_vert_move(cursor_horiz_vert_move_t move)
 ////_D_(line_dump_byte_idx(CEBV_CL, CEBV_CLBI));
 	if (move == HORIZ_MOVE) {
 		CEBV_CURSOR_X_TO_KEEP = start_col_idx_of_wrap_line(CEBV_CL->data, CEBV_CLBI, -1);
-		update_min_text_x_to_be_disp(CEBV_CURSOR_X_TO_KEEP);
+		update_min_text_x_to_keep(CEBV_CURSOR_X_TO_KEEP);
 	} else {
 		wl_idx = start_wl_idx_of_wrap_line(CEBV_CL->data, CEBV_CLBI, -1);
 		CEBV_CLBI = end_byte_idx_of_wrap_line_le(CEBV_CL->data, wl_idx,
 		 CEBV_CURSOR_X_TO_KEEP, -1);
 		cursor_x_in_text = start_col_idx_of_wrap_line(CEBV_CL->data, CEBV_CLBI, -1);
-		update_min_text_x_to_be_disp(cursor_x_in_text);
+		update_min_text_x_to_keep(cursor_x_in_text);
 	}
 	setup_cut_region_after_cursor_horiz_vert_move(move);
 }
 
-void update_min_text_x_to_be_disp(int text_x)
+PRIVATE int calc_min_text_x_to_keep();
+PRIVATE int recalc_min_text_x_to_keep(int disp_width, int text_width, int horiz_margin,
+ int cursor_x, int cur_min_text_x);
+
+// sample long line:
+// 00000000001111111111222222222233333333334444444444
+// 00000000001111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990000000000
+
+void update_min_text_x_to_keep(int text_x)
 {
-	int min_text_x_to_be_disp = calc_min_text_x_to_be_disp(text_x);
-	if (min_text_x_to_be_disp != CEBV_MIN_TEXT_X_TO_BE_DISP) {
-		CEBV_MIN_TEXT_X_TO_BE_DISP = min_text_x_to_be_disp;
+	int min_text_x_to_keep = calc_min_text_x_to_keep(text_x);
+	if (min_text_x_to_keep != CEBV_MIN_TEXT_X_TO_KEEP) {
+		CEBV_MIN_TEXT_X_TO_KEEP = min_text_x_to_keep;
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
 	}
 }
-int get_cebv_min_text_x_to_be_disp(void)
+PRIVATE int calc_min_text_x_to_keep()
 {
-	return CEBV_MIN_TEXT_X_TO_BE_DISP;
+	te_concat_linefeed(CEBV_CL->data);
+	return recalc_min_text_x_to_keep(get_edit_win_columns_for_text(),
+	 end_col_idx_of_wrap_line(te_line_concat_linefeed, 0, INT_MAX, -1),
+	 HORIZ_SCROLL_MARGIN,
+	 start_col_idx_of_wrap_line(CEBV_CL->data, CEBV_CLBI, -1),
+	 CEBV_MIN_TEXT_X_TO_KEEP);
 }
 
-// sample very long line
-// 00000000001111111111222222222233333333334444444444
-// 000000000011111111112222222222333333333344444444445555555555666666666677777777778888888888
-
-// Scrolls horizontally within a line in chunks.  This function
-// returns the column number of the first character displayed left most
+// Calculate the column number of the first character displayed left most
 // in window when the cursor is at the given column.
-int calc_min_text_x_to_be_disp(int text_x)
+// c: cursor-pos, <: left-most, >: right-most
+PRIVATE int recalc_min_text_x_to_keep(int disp_width, int text_width, int margin,
+ int cursor_text_x, int cur_min_text_x)
 {
-	int end_col_idx;
+	return MIN_MAX_(
+	 LIM_MAX(text_width - disp_width, cursor_text_x - (disp_width - margin)),
+	 cur_min_text_x,
+	 LIM_MIN(0, cursor_text_x - margin));
+//      cccccccccccccccccccccccccccccccccccccccc
+//      0000000000111111111122222222223333333333
+//      <--disp_width-------------------------->
+//      <--->                              <---> horizontal-margin
 
-	te_concat_linefeed(CEBV_CL->data);
-	end_col_idx = end_col_idx_of_wrap_line(te_line_concat_linefeed, 0, INT_MAX, -1);
-///flf_d_printf("%d <== [%s]\n", end_col_idx, te_line_concat_linefeed);
-flf_d_printf("%d\n", get_edit_win_columns_for_text());
-	if (end_col_idx <= get_edit_win_columns_for_text())
-		return 0;
-	if (text_x < get_edit_win_columns_for_text() - HORIZ_SCROLL_MARGIN)
-		return 0;
-	if (end_col_idx - text_x <= HORIZ_SCROLL_MARGIN)
-		return end_col_idx - get_edit_win_columns_for_text();
-	return text_x - (get_edit_win_columns_for_text() - 1 - HORIZ_SCROLL_MARGIN);
+//      ccccc
+//      000000000011111111112222222222333333333344444444445555555555
+//      <--disp_width-------------------------->
+//      <--->                              <---> margin
+
+//           cccccccccccccccccccccccccccccc
+//      000000000011111111112222222222333333333344444444445555555555
+//      <--disp_width-------------------------->
+//      <--->                              <---> margin
+
+//                     cccccccccccccccccccccccccccccccccccccccc
+//      000000000011111111112222222222333333333344444444445555555555
+//                          <--disp_width-------------------------->
+//                                                             <---> margin
+
+//                                                             ccccc
+//      000000000011111111112222222222333333333344444444445555555555
+//                          <--disp_width-------------------------->
+//                          <--->                              <---> margin
+}
+
+// min_text_x_to_keep = 0
+// |<-- display width ----------------------------->|
+// 00000000001111111111222222222233333333334444444444555555555566666666667777777777
+//
+//           min_text_x_to_keep = 10
+//           |<-- display width ----------------------------->|
+// 00000000001111111111222222222233333333334444444444555555555566666666667777777777
+int get_cebv_min_text_x_to_keep(void)
+{
+	return CEBV_MIN_TEXT_X_TO_KEEP;
 }
 
 // End of editormove2.c

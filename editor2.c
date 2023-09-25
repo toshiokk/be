@@ -38,9 +38,9 @@ PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
 
 PRIVATE int get_cursor_x_in_edit_win(void);
 PRIVATE int get_cursor_x_in_text(void);
-PRIVATE int get_max_text_x_to_be_displayed(void);
+PRIVATE int get_max_text_x_to_be_disp(void);
 PRIVATE int get_edit_win_x_in_text(int text_x);
-PRIVATE int get_edit_win_text_x(void);
+PRIVATE int get_line_num_columns(void);
 
 PRIVATE const char *get_ruler_text(int col_idx);
 PRIVATE const char *make_ruler_text__(int col_x, int columns);
@@ -234,8 +234,8 @@ void disp_edit_win(int cur_pane)
 			byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx, INT_MAX, -1);
 			disp_edit_line(cur_pane, yy, get_c_e_b(), line, byte_idx_1, byte_idx_2);
 			if (yy == CEBV_CURSOR_Y) {
-				cursor_line_text_right_x = end_col_idx_of_wrap_line(te_line_concat_linefeed,
-				 wl_idx, byte_idx_2, -1);
+				cursor_line_text_right_x = LIM_MAX(get_edit_win_columns_for_text(),
+				 end_col_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, byte_idx_2, -1));
 			}
 			yy++;
 			if (yy >= edit_win_get_text_lines())
@@ -251,7 +251,7 @@ void disp_edit_win(int cur_pane)
 	 edit_win_get_text_y() + edit_win_get_text_lines());
 
 	if (GET_APPMD(ed_SHOW_RULER)) {
-		int edit_win_text_x = get_edit_win_text_x();
+		int edit_win_text_x = get_line_num_columns();
 		if (GET_APPMD(ed_SHOW_LINE_NUMBER)) {
 			// display buffer total lines ("999 ")
 			set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
@@ -266,12 +266,12 @@ void disp_edit_win(int cur_pane)
 		// display cursor column indicator in reverse text on ruler
 		set_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 1);
 		sub_win_output_string(edit_win_get_ruler_y(), get_cursor_x_in_edit_win(),
-		 get_ruler_text(get_cursor_x_in_text() - get_cebv_min_text_x_to_be_disp()), 1);
+		 get_ruler_text(get_cursor_x_in_text() - get_cebv_min_text_x_to_keep()), 1);
 		// display line tail column indicator in reverse text on ruler
 		if (cursor_line_text_right_x >= 0) {
 			sub_win_output_string(edit_win_get_ruler_y(),
-			 edit_win_text_x + (cursor_line_text_right_x-1 - get_cebv_min_text_x_to_be_disp()),
-			 get_ruler_text(cursor_line_text_right_x-1 - get_cebv_min_text_x_to_be_disp()), 1);
+			 edit_win_text_x + (cursor_line_text_right_x-1 - get_cebv_min_text_x_to_keep()),
+			 get_ruler_text(cursor_line_text_right_x-1 - get_cebv_min_text_x_to_keep()), 1);
 		}
 	}
 
@@ -606,7 +606,7 @@ step_two:
 
 // display output routines ----------------------------------------------------
 /*
-          |min_text_x_to_be_disp
+          |min_text_x_to_keep
 qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
 rrrrrrrrrr+----------------------------------------------------+rrrrrrrrrrrrrrr
 ssOUTPUTss+ssssssssssssssssssssssssssssssssssssssssssssssssssss+sssssssssssssss
@@ -661,8 +661,8 @@ PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
 	wl_idx = start_wl_idx_of_wrap_line(raw_code, byte_idx_1, -1);
 	left_x = start_col_idx_of_wrap_line(raw_code, byte_idx_1, -1);
 	right_x = end_col_idx_of_wrap_line(raw_code, wl_idx, byte_idx_2, -1);
-	left_x = LIM_MIN(left_x, get_cebv_min_text_x_to_be_disp());
-	right_x = LIM_MAX(right_x, get_max_text_x_to_be_displayed());
+	left_x = LIM_MIN(left_x, get_cebv_min_text_x_to_keep());
+	right_x = LIM_MAX(right_x, get_max_text_x_to_be_disp());
 	left_byte_idx = end_byte_idx_of_wrap_line_ge(raw_code, wl_idx, left_x, -1);
 	right_byte_idx = end_byte_idx_of_wrap_line_le(raw_code, wl_idx, right_x, -1);
 
@@ -690,23 +690,23 @@ PRIVATE int get_cursor_x_in_text(void)
 {
 	return start_col_idx_of_wrap_line(CEBV_CL->data, CEBV_CLBI, -1);
 }
-PRIVATE int get_max_text_x_to_be_displayed(void)
+PRIVATE int get_max_text_x_to_be_disp(void)
 {
-	return get_cebv_min_text_x_to_be_disp() + get_edit_win_columns_for_text();
+	return get_cebv_min_text_x_to_keep() + get_edit_win_columns_for_text();
 }
 PRIVATE int get_edit_win_x_in_text(int text_x)
 {
-	return get_edit_win_text_x() + (text_x - get_cebv_min_text_x_to_be_disp());
+	return get_line_num_columns() + (text_x - get_cebv_min_text_x_to_keep());
 }
 // width of text view area (window-width - line-number-width)
 int get_edit_win_columns_for_text(void)
 {
 	// <text-to-edit................................>
 	// 999 <text-to-edit............................>
-	return sub_win_get_columns() - get_edit_win_text_x();
+	return sub_win_get_columns() - get_line_num_columns();
 }
 // text x position (line-number-width)
-PRIVATE int get_edit_win_text_x(void)
+PRIVATE int get_line_num_columns(void)
 {
 	return GET_APPMD(ed_SHOW_LINE_NUMBER) == 0
 	// ^text-to-edit
@@ -744,7 +744,7 @@ PRIVATE const char *get_ruler_text(int col_idx)
 {
 	const char *str;
 
-	str = make_ruler_text__(get_cebv_min_text_x_to_be_disp(), get_edit_win_columns_for_text());
+	str = make_ruler_text__(get_cebv_min_text_x_to_keep(), get_edit_win_columns_for_text());
 	col_idx = MK_IN_RANGE(0, col_idx, strnlen(str, MAX_RULER_STR_LEN));
 	return &str[col_idx];
 }
@@ -858,6 +858,7 @@ int edit_win_get_text_lines(void)
 {
 	return sub_win_get_lines() - edit_win_get_path_lines() - get_ruler_lines();
 }
+
 int edit_win_get_path_y(void)
 {
 	return 0;

@@ -52,13 +52,13 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path)
 	BUFV0_CLBI(buf) = 0;
 	BUFV0_CURSOR_Y(buf) = 0;
 	BUFV0_CURSOR_X_TO_KEEP(buf) = 0;
-	BUFV0_MIN_TEXT_X_TO_BE_DISP(buf) = 0;
+	BUFV0_MIN_TEXT_X_TO_KEEP(buf) = 0;
 
 	BUFV1_CL(buf) = BUF_TOP_ANCH(buf);
 	BUFV1_CLBI(buf) = 0;
 	BUFV1_CURSOR_Y(buf) = 0;
 	BUFV1_CURSOR_X_TO_KEEP(buf) = 0;
-	BUFV1_MIN_TEXT_X_TO_BE_DISP(buf) = 0;
+	BUFV1_MIN_TEXT_X_TO_KEEP(buf) = 0;
 
 	buf->mark_line = BUF_TOP_ANCH(buf);
 	buf->mark_line_byte_idx = 0;

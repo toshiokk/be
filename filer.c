@@ -59,7 +59,7 @@ PRIVATE void disp_key_list_filer(void);
 
 #define FILER_VERT_SCROLL_MARGIN_LINES	LIM_MAX(5, filer_win_get_file_list_lines()/3)
 #define FILER_VERT_SCROLL_LINES			\
-	LIM_MIN_MAX(1, filer_win_get_file_list_lines()-1 - FILER_VERT_SCROLL_MARGIN_LINES, 50)
+	MIN_MAX_(1, filer_win_get_file_list_lines()-1 - FILER_VERT_SCROLL_MARGIN_LINES, 50)
 
 void init_filer_views(filer_views_t *fvs, const char *cur_dir)
 {

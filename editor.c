@@ -827,7 +827,7 @@ void dump_cur_pointers(void)
 	flf_d_printf("CEBV_CLBI:%d\n", CEBV_CLBI);
 	flf_d_printf("cursor_y:%d\n", CEBV_CURSOR_Y);
 	flf_d_printf("cursor_x_to_keep:%d\n", CEBV_CURSOR_X_TO_KEEP);
-	flf_d_printf("min_text_x_to_be_disp:%d\n", CEBV_MIN_TEXT_X_TO_BE_DISP);
+	flf_d_printf("min_text_x_to_keep:%d\n", CEBV_MIN_TEXT_X_TO_KEEP);
 }
 #endif // ENABLE_DEBUG
 

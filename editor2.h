@@ -52,7 +52,6 @@ void test_make_ruler_text(void);
 int edit_win_get_path_lines(void);
 int edit_win_get_path_columns(void);
 int edit_win_get_text_lines(void);
-int edit_win_get_text_columns(void);
 
 int edit_win_get_path_y(void);
 int edit_win_get_ruler_y(void);

@@ -51,7 +51,6 @@
 
 #define CURSOR_POS_BYTE		// col_num is byte count
 ///#define CURSOR_POS_COLUMN	// col_num is column in view
-
 #if (!defined(CURSOR_POS_BYTE) && !defined(CURSOR_POS_COLUMN)) \
  || (defined(CURSOR_POS_BYTE) && defined(CURSOR_POS_COLUMN))
 #warning "!!!! both of CURSOR_POS_BYTE and CURSOR_POS_COLUMN are defined !!!!"
@@ -61,8 +60,10 @@
 
 // NOTE: how to use single line comment "//", "///" and "////"
 //   simple comment
-///  code commented out
-//// code obsolete and to be deleted
+//! !! doxygen comment !!
+/// !! doxygen comment !!
+////  code commented out
+///// code obsolete and to be deleted
 
 // NOTE: length of string buffer must be categorized into three types
 //	MAX_SCRN_LINE_BUF_LEN	384*3 = 1152

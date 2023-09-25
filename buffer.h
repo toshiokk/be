@@ -34,7 +34,7 @@ typedef struct be_buf_view_t {
 	int cur_line_byte_idx;		//!< current line byte index
 	int cursor_y;				//! display y to which cur-line to be displayed
 	int cursor_x_to_keep;		//!< cursor X to keep when moving cursor vertically
-	int min_text_x_to_be_disp;	// text x to be displayed on the left edge of the screen
+	int min_text_x_to_keep;		//! text x to be displayed on the left edge of the screen
 } be_buf_view_t;
 
 #define BUF_VIEWS		2		// NOTE: must be the same as MAX_APP_PANES
