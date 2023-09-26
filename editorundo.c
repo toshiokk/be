@@ -28,12 +28,12 @@
 void init_undo_redo_bufs(void)
 {
 	init_bufs_top_bot_anchor(
-	 UNDO_BUFS_TOP_ANCH, "#Undo-bufs-top_anchor",
-	 UNDO_BUFS_BOT_ANCH, "#Undo-bufs-bot_anchor");
+	 UNDO_BUFS_TOP_ANCH, "#Undo-bufs-top-anchor",
+	 UNDO_BUFS_BOT_ANCH, "#Undo-bufs-bot-anchor");
 
 	init_bufs_top_bot_anchor(
-	 REDO_BUFS_TOP_ANCH, "#Redo-bufs-top_anchor",
-	 REDO_BUFS_BOT_ANCH, "#Redo-bufs-bot_anchor");
+	 REDO_BUFS_TOP_ANCH, "#Redo-bufs-top-anchor",
+	 REDO_BUFS_BOT_ANCH, "#Redo-bufs-bot-anchor");
 }
 void free_all_undo_redo_bufs(void)
 {

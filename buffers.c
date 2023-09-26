@@ -52,8 +52,8 @@ be_bufs_t redo_buffers;
 
 void init_head_of_bufs(void)
 {
-	bufs_init(&bufs_top_anchor, "#BUFS-top_anchor");
-	bufs_init(&bufs_bot_anchor, "#BUFS-bot_anchor");
+	bufs_init(&bufs_top_anchor, "#BUFS-top-anchor");
+	bufs_init(&bufs_bot_anchor, "#BUFS-bot-anchor");
 	bufs_link(&bufs_top_anchor, &bufs_bot_anchor);
 
 	bufs_insert_before(&bufs_bot_anchor, bufs_init(&edit_buffers, "#edit-buffers"));
@@ -109,8 +109,8 @@ _FLF_
 void init_edit_bufs(void)
 {
 	init_bufs_top_bot_anchor(
-	 EDIT_BUFS_TOP_ANCH, "#Edit-bufs-top_anchor",
-	 EDIT_BUFS_BOT_ANCH, "#Edit-bufs-bot_anchor");
+	 EDIT_BUFS_TOP_ANCH, "#Edit-bufs-top-anchor",
+	 EDIT_BUFS_BOT_ANCH, "#Edit-bufs-bot-anchor");
 	init_editor_views(&editor_views);
 }
 // Free all memory associated with all edit buffers
@@ -317,8 +317,8 @@ int is_c_e_b_valid(void)
 void init_cut_bufs(void)
 {
 	init_bufs_top_bot_anchor(
-	 CUT_BUFS_TOP_ANCH, "#Cut-bufs-top_anchor",
-	 CUT_BUFS_BOT_ANCH, "#Cut-bufs-bot_anchor");
+	 CUT_BUFS_TOP_ANCH, "#Cut-bufs-top-anchor",
+	 CUT_BUFS_BOT_ANCH, "#Cut-bufs-bot-anchor");
 }
 void free_all_cut_bufs(void)
 {

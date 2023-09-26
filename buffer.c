@@ -48,17 +48,8 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path)
 
 	buf_init_line_anchors(buf);
 
-	BUFV0_CL(buf) = BUF_TOP_ANCH(buf);
-	BUFV0_CLBI(buf) = 0;
-	BUFV0_CURSOR_Y(buf) = 0;
-	BUFV0_CURSOR_X_TO_KEEP(buf) = 0;
-	BUFV0_MIN_TEXT_X_TO_KEEP(buf) = 0;
-
-	BUFV1_CL(buf) = BUF_TOP_ANCH(buf);
-	BUFV1_CLBI(buf) = 0;
-	BUFV1_CURSOR_Y(buf) = 0;
-	BUFV1_CURSOR_X_TO_KEEP(buf) = 0;
-	BUFV1_MIN_TEXT_X_TO_KEEP(buf) = 0;
+	buf_view_init(&(buf->views[0]), buf);
+	buf_view_init(&(buf->views[1]), buf);
 
 	buf->mark_line = BUF_TOP_ANCH(buf);
 	buf->mark_line_byte_idx = 0;
@@ -66,10 +57,18 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path)
 	buf->buf_size = 0;
 	return buf;
 }
+void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf)
+{
+	BUFV_CL(b_v) = BUF_TOP_ANCH(buf);
+	BUFV_CLBI(b_v) = 0;
+	BUFV_CURSOR_Y(b_v) = 0;
+	BUFV_CURSOR_X_TO_KEEP(b_v) = 0;
+	BUFV_MIN_TEXT_X_TO_KEEP(b_v) = 0;
+}
 be_buf_t *buf_init_line_anchors(be_buf_t *buf)
 {
-	line_init(&buf->top_anchor, "#BUF-top_anchor");
-	line_init(&buf->bot_anchor, "#BUF-bot_anchor");
+	line_init(&buf->top_anchor, "#LINE-top-anchor");
+	line_init(&buf->bot_anchor, "#LINE-bot-anchor");
 	line_link(&buf->top_anchor, &buf->bot_anchor);
 	return buf;
 }
@@ -410,8 +409,8 @@ be_bufs_t *bufs_init(be_bufs_t *bufs, const char* buf_name)
 	bufs->prev = bufs->next = NULL;
 	strlcpy__(bufs->name, buf_name, MAX_NAME_LEN);
 	init_bufs_top_bot_anchor(
-	 &(bufs->top_anchor), "#top-anchor",
-	 &(bufs->bot_anchor), "#bottom-anchor");
+	 &(bufs->top_anchor), "#BUF-top-anchor",
+	 &(bufs->bot_anchor), "#BUF-bot-anchor");
 	bufs->cur_buf = &(bufs->bot_anchor);
 	return bufs;
 }
@@ -432,9 +431,8 @@ be_bufs_t *bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next)
 
 be_bufs_t *get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf)
 {
-	for ( ; IS_NODE_BOT_ANCH(bufs) == 0; bufs = NEXT_NODE(bufs)) {
-		for (be_buf_t *buf = bufs->top_anchor.next; IS_NODE_BOT_ANCH(buf) == 0;
-		 buf = NEXT_NODE(buf)) {
+	for ( ; IS_PTR_VALID(bufs); bufs = NEXT_NODE(bufs)) {
+		for (be_buf_t *buf = &(bufs->top_anchor); IS_PTR_VALID(buf); buf = NEXT_NODE(buf)) {
 			if (buf == cur_buf) {
 				return bufs;
 			}
@@ -576,12 +574,15 @@ be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
 void bufs_dump_all_bufs(be_bufs_t *bufs)
 {
 _FLF_
-	for ( ; IS_NODE_BOT_ANCH(bufs) == 0; bufs = NEXT_NODE(bufs)) {
+	for ( ; IS_PTR_VALID(bufs); bufs = NEXT_NODE(bufs)) {
 		flf_d_printf("bufs: %s\n", bufs->name);
-		for (be_buf_t *buf = bufs->top_anchor.next; IS_NODE_BOT_ANCH(buf) == 0; buf = NEXT_NODE(buf)) {
+		for (be_buf_t *buf = &(bufs->top_anchor); IS_PTR_VALID(buf); buf = NEXT_NODE(buf)) {
 			flf_d_printf("  buf: %s\n", buf->file_path);
+			flf_d_printf("  buf->v0_str: %s\n", buf->views[0].cur_line->data);
+			flf_d_printf("  buf->v1_str: %s\n", buf->views[1].cur_line->data);
 		}
 	}
+_FLF_
 }
 
 #endif // ENABLE_DEBUG

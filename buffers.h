@@ -38,9 +38,7 @@ enum BUFS_IDX {
 	BUFS_IDX_UNDO,		// 4
 	BUFS_IDX_REDO,		// 5
 #endif // ENABLE_UNDO
-	BUFS_IDX_SIZE,		// 6
 };
-#define HEADS_BUFS		BUFS_IDX_SIZE+1		// add 1 for end of list (NULL-ptr)
 
 // collection of collections of buffers (Root of all buffers)
 extern be_bufs_t bufs_top_anchor;		//< top buffers

@@ -3,6 +3,9 @@
 /* Define this to use DEBUG. */
 #undef ENABLE_DEBUG
 
+/* Define this to use experimental feature. */
+#undef ENABLE_EXPERIMENTAL
+
 /* Define this to enable filer. */
 #undef ENABLE_FILER
 

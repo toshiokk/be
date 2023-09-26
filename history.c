@@ -56,8 +56,8 @@ void init_hist_bufs(void)
 {
 	// history_buffers
 	init_bufs_top_bot_anchor(
-	 HIST_BUFS_TOP_ANCH, "#History-bufs-top_anchor",
-	 HIST_BUFS_BOT_ANCH, "#History-bufs-bot_anchor");
+	 HIST_BUFS_TOP_ANCH, "#History-bufs-top-anchor",
+	 HIST_BUFS_BOT_ANCH, "#History-bufs-bot-anchor");
 }
 
 void free_hist_bufs(void)

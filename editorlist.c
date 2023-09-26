@@ -65,8 +65,8 @@ _FLF_
 void init_help_bufs(void)
 {
 	init_bufs_top_bot_anchor(
-	 HELP_BUFS_TOP_ANCH, "#Help-bufs-top_anchor",
-	 HELP_BUFS_BOT_ANCH, "#Help-bufs-bot_anchor");
+	 HELP_BUFS_TOP_ANCH, "#Help-bufs-top-anchor",
+	 HELP_BUFS_BOT_ANCH, "#Help-bufs-bot-anchor");
 	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create(_("#List of Editor Key Bindings")));
 	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create(_("#List of Editor Functions")));
 }

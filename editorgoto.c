@@ -137,24 +137,32 @@ int do_switch_to_next_file(void)
 }
 int do_switch_to_prev_buffers(void)
 {
-	be_bufs_t *bufs = get_bufs_contains_buf(bufs_top_anchor.next, get_c_e_b());
-flf_d_printf("bufs: %s\n", bufs->name);
-	if (IS_NODE_TOP_ANCH(bufs))
+#ifdef ENABLE_EXPERIMENTAL
+	be_bufs_t *bufs = get_bufs_contains_buf(&bufs_top_anchor, get_c_e_b());
+	if (IS_NODE_TOP(bufs))
 		return 0;
+flf_d_printf("bufs: %s\n", bufs->name);
 flf_d_printf("PREV_NODE(bufs)->name: %s\n", PREV_NODE(bufs)->name);
 flf_d_printf("PREV_NODE(bufs)->cur_buf->name: %s\n", PREV_NODE(bufs)->cur_buf->file_path);
-	set_c_e_b(PREV_NODE(bufs)->cur_buf);
+	set_cur_edit_buf(PREV_NODE(bufs)->cur_buf);
+///TTT	set_c_e_b(PREV_NODE(bufs)->cur_buf);
+#endif // ENABLE_EXPERIMENTAL
+	post_cmd_processing(CEBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 int do_switch_to_next_buffers(void)
 {
-	be_bufs_t *bufs = get_bufs_contains_buf(bufs_top_anchor.next, get_c_e_b());
-flf_d_printf("bufs: %s\n", bufs->name);
-	if (IS_NODE_BOT_ANCH(bufs))
+#ifdef ENABLE_EXPERIMENTAL
+	be_bufs_t *bufs = get_bufs_contains_buf(&bufs_top_anchor, get_c_e_b());
+	if (IS_NODE_BOT(bufs))
 		return 0;
-flf_d_printf("PREV_NODE(bufs)->name: %s\n", PREV_NODE(bufs)->name);
-flf_d_printf("PREV_NODE(bufs)->cur_buf->name: %s\n", PREV_NODE(bufs)->cur_buf->file_path);
-	set_c_e_b(NEXT_NODE(bufs)->cur_buf);
+flf_d_printf("bufs: %s\n", bufs->name);
+flf_d_printf("NEXT_NODE(bufs)->name: %s\n", NEXT_NODE(bufs)->name);
+flf_d_printf("NEXT_NODE(bufs)->cur_buf->name: %s\n", NEXT_NODE(bufs)->cur_buf->file_path);
+	set_cur_edit_buf(NEXT_NODE(bufs)->cur_buf);
+///TTT	set_c_e_b(NEXT_NODE(bufs)->cur_buf);
+#endif // ENABLE_EXPERIMENTAL
+	post_cmd_processing(CEBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 //-----------------------------------------------------------------------------

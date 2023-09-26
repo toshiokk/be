@@ -695,6 +695,7 @@ PRIVATE int do_edit_file_(int recursive)
 		filer_do_next = FILER_DO_LOADED_FILE;
 	}
 	unselect_all_files_auto(_FILE_SEL_MAN_ | _FILE_SEL_AUTO_);
+_D_(bufs_dump_all_bufs(&bufs_top_anchor));
 	return 0;
 }
 

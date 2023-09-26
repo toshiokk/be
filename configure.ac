@@ -62,6 +62,7 @@ yes)
 	enable_regex=yes
 	enable_help=yes
 	enable_debug=no
+	enable_experimental=no
 	enable_nkf=yes
 	enable_ncurses=yes
 	enable_pcre=yes
@@ -78,6 +79,7 @@ no)
 	enable_regex=no
 	enable_help=no
 	enable_debug=no
+	enable_experimental=no
 	enable_nkf=no
 	enable_ncurses=no
 	enable_pcre=no
@@ -147,6 +149,12 @@ yes|no)		;;
 *)	enable_debug=no		;;
 esac
 
+AC_ARG_ENABLE(experimental, [  --enable-experimental  Enable experimental feature (disabled by default)])
+case "$enable_experimental" in
+yes|no)		;;
+*)	enable_experimental=no		;;
+esac
+
 AC_ARG_ENABLE(ncurses, [  --enable-ncurses  Use the ncurses library instead of own library])
 case "$enable_ncurses" in
 yes|no)		;;
@@ -185,6 +193,7 @@ echo "enable_nkf=$enable_nkf"
 echo "enable_busybox=$enable_busybox"
 echo "enable_help=$enable_help"
 echo "enable_debug=$enable_debug"
+echo "enable_experimental=$enable_experimental"
 
 AC_CHECK_FUNC(mblen, have_mblen=1, have_mblen=0)
 
@@ -320,6 +329,9 @@ fi
 if test "$enable_debug" = yes ; then
 	AC_DEFINE(ENABLE_DEBUG, 1, [Define this to use DEBUG.])
 fi
+if test "$enable_experimental" = yes ; then
+	AC_DEFINE(ENABLE_EXPERIMENTAL, 1, [Define this to use experimental feature.])
+fi
 if test "$enable_ncurses" = yes ; then
 	AC_DEFINE(ENABLE_NCURSES, 1, [Define this to use ncurses library instead of own library.])
 fi
@@ -344,6 +356,7 @@ echo "enable_rc=$enable_rc"
 echo "enable_regex=$enable_regex"
 echo "enable_help=$enable_help"
 echo "enable_debug=$enable_debug"
+echo "enable_experimental=$enable_experimental"
 echo "enable_ncurses=$enable_ncurses"
 echo "enable_pcre=$enable_pcre"
 echo "enable_nkf=$enable_nkf"
