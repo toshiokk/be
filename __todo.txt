@@ -1,7 +1,7 @@
 [v] avoid cursor to jump around the line tail
 [v] History list ==> multi-buffer accessible from editor as edit buffers.
 [v] Link all buffers
-[ ] Switch all buffers
+[v] Switch all buffers
 
 [v] Show line tail pos on ruler.
 

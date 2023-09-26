@@ -145,9 +145,8 @@ flf_d_printf("bufs: %s\n", bufs->name);
 flf_d_printf("PREV_NODE(bufs)->name: %s\n", PREV_NODE(bufs)->name);
 flf_d_printf("PREV_NODE(bufs)->cur_buf->name: %s\n", PREV_NODE(bufs)->cur_buf->file_path);
 	set_cur_edit_buf(PREV_NODE(bufs)->cur_buf);
-///TTT	set_c_e_b(PREV_NODE(bufs)->cur_buf);
-#endif // ENABLE_EXPERIMENTAL
 	post_cmd_processing(CEBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+#endif // ENABLE_EXPERIMENTAL
 	return 1;
 }
 int do_switch_to_next_buffers(void)
@@ -160,9 +159,8 @@ flf_d_printf("bufs: %s\n", bufs->name);
 flf_d_printf("NEXT_NODE(bufs)->name: %s\n", NEXT_NODE(bufs)->name);
 flf_d_printf("NEXT_NODE(bufs)->cur_buf->name: %s\n", NEXT_NODE(bufs)->cur_buf->file_path);
 	set_cur_edit_buf(NEXT_NODE(bufs)->cur_buf);
-///TTT	set_c_e_b(NEXT_NODE(bufs)->cur_buf);
-#endif // ENABLE_EXPERIMENTAL
 	post_cmd_processing(CEBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+#endif // ENABLE_EXPERIMENTAL
 	return 1;
 }
 //-----------------------------------------------------------------------------
