@@ -63,7 +63,7 @@ int do_goto_input_line(void)
 	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
 }
-// do_tag_jump()
+// do_tag_jump() and change directory
 int do_goto_file_in_cur_line(void)
 {
 	char dir_save[MAX_PATH_LEN+1];
@@ -77,13 +77,15 @@ int do_goto_file_in_cur_line(void)
 	ret = load_files_in_string(CEBV_CL->data, 10, TUL1, OOE0, MOE1, RECURSIVE1);
 	change_cur_dir(dir_save);
 #ifdef ENABLE_FILER
-	if (ret <= 0) {
-		return filer_change_dir(CEBV_CL->data) == 0;
-	}
+	filer_change_dir(CEBV_CL->data);
 #endif // ENABLE_FILER
 	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
 }
+////int do_goto_directory_in_cur_line(void)
+////{
+////	return filer_change_dir_parent(CEBV_CL->data) == 0;
+////}
 
 int do_open_files_in_buf(void)
 {

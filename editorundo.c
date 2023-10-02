@@ -35,15 +35,15 @@ void init_undo_redo_bufs(void)
 	 REDO_BUFS_TOP_ANCH, "#Redo-bufs-top-anchor",
 	 REDO_BUFS_BOT_ANCH, "#Redo-bufs-bot-anchor");
 }
-void free_all_undo_redo_bufs(void)
-{
-	while (IS_NODE_BOT_ANCH(CUR_REDO_BUF) == 0) {
-		buf_free(pop_redo_buf());
-	}
-	while (IS_NODE_BOT_ANCH(CUR_UNDO_BUF) == 0) {
-		buf_free(pop_undo_buf());
-	}
-}
+////void free_all_undo_redo_bufs(void)
+////{
+////	while (IS_NODE_BOT_ANCH(CUR_REDO_BUF) == 0) {
+////		buf_free(pop_redo_buf());
+////	}
+////	while (IS_NODE_BOT_ANCH(CUR_UNDO_BUF) == 0) {
+////		buf_free(pop_undo_buf());
+////	}
+////}
 
 be_buf_t *push_undo_buf(be_buf_t *buf)
 {
@@ -79,7 +79,7 @@ int delete_do_buf(be_buf_t *edit_buf, be_buf_t *do_buf)
 {
 	int deleted = 0;
 
-	for ( ; IS_NODE_BOT_ANCH(do_buf) == 0; do_buf = do_buf->next) {
+	for ( ; IS_NODE_BOT_ANCH(do_buf) == 0; do_buf = NEXT_NODE(do_buf)) {
 		if (strcmp(do_buf->abs_path, edit_buf->abs_path) == 0) {
 			do_buf = buf_unlink_free(do_buf);
 			deleted++;
@@ -166,7 +166,7 @@ void undo_adjust_max_line(void)
 		if (lines >= undo_lines && past_max_line) {
 			break;
 		}
-		line = line->next;
+		line = NEXT_NODE(line);
 	}
 	undo_max_line = line;	// adjust max line
 }
@@ -194,7 +194,7 @@ PRIVATE void save_region_to_undo_buf(void)
 	be_line_t *line;
 
 	push_undo_buf(get_c_e_b());
-	for (line = undo_min_line->next; line != undo_max_line; line = line->next) {
+	for (line = undo_min_line->next; line != undo_max_line; line = NEXT_NODE(line)) {
 		append_line_to_cur_undo_buf(line_create_copy(line));
 	}
 }
@@ -298,7 +298,7 @@ PRIVATE be_line_t *delete_region_in_buf(be_buf_t *buf)
 	}
 	edit_line = get_line_ptr_from_cur_buf_line_num(BUF_TOP_LINE(buf)->line_num);
 	for (undo_line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(undo_line) == 0;
-	 undo_line = undo_line->next) {
+	 undo_line = NEXT_NODE(undo_line)) {
 		edit_line = line_unlink_free(edit_line);	// delete line
 	}
 	return edit_line;
@@ -314,9 +314,9 @@ PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 	for (undo_line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(undo_line) == 0; ) {
 #if 1
 		line_insert(edit_line, line_create_copy(undo_line), INSERT_BEFORE);
-		undo_line = undo_line->next;
+		undo_line = NEXT_NODE(undo_line);
 #else
-		undo_line = undo_line->next;
+		undo_line = NEXT_NODE(undo_line);
 		line_insert(edit_line, line_create_copy(undo_line->prev), INSERT_BEFORE);
 #endif
 	}

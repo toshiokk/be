@@ -88,20 +88,26 @@ _FLF_
 
 void free_all_buffers(void)
 {
-#ifdef ENABLE_HELP
-	free_help_bufs();
-#endif // ENABLE_HELP
-#ifdef ENABLE_UNDO
-_FLF_
-	free_all_undo_redo_bufs();
-#endif // ENABLE_UNDO
-#ifdef ENABLE_HISTORY
-	free_hist_bufs();
-#endif // ENABLE_HISTORY
-_FLF_
-	free_all_cut_bufs();
-_FLF_
-	free_all_edit_bufs();
+	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
+#if 1 //----------------------------------
+	bufs_free_all_bufss(&bufs_top_anchor);
+#else //----------------------------------
+///#ifdef ENABLE_HELP
+///	free_help_bufs();
+///#endif // ENABLE_HELP
+///#ifdef ENABLE_UNDO
+///_FLF_
+///	free_all_undo_redo_bufs();
+///#endif // ENABLE_UNDO
+///#ifdef ENABLE_HISTORY
+///	free_hist_bufs();
+///#endif // ENABLE_HISTORY
+///_FLF_
+///	free_all_cut_bufs();
+///_FLF_
+///	free_all_edit_bufs();
+#endif //---------------------------------
+	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
 }
 
 // Edit-buffer manipulation routines
@@ -114,13 +120,13 @@ void init_edit_bufs(void)
 	init_editor_views(&editor_views);
 }
 // Free all memory associated with all edit buffers
-void free_all_edit_bufs(void)
-{
-	while (IS_NODE_BOT_ANCH(EDIT_BUFS_TOP_BUF) == 0) {
-		free_edit_buf(EDIT_BUFS_TOP_BUF);
-	}
-	set_c_e_b(EDIT_BUFS_TOP_BUF);
-}
+////void free_all_edit_bufs(void)
+////{
+////	while (IS_NODE_BOT_ANCH(EDIT_BUFS_TOP_BUF) == 0) {
+////		free_edit_buf(EDIT_BUFS_TOP_BUF);
+////	}
+////	set_c_e_b(EDIT_BUFS_TOP_BUF);
+////}
 // free current be_buf_t
 // the next or previous buffer will be set to current
 int free_cur_edit_buf(void)
@@ -139,6 +145,7 @@ int free_edit_buf(be_buf_t *edit_buf)
 		ret = switch_c_e_b_to_another_buf();
 	}
 #ifdef ENABLE_UNDO
+	// free undo/redo buffers related to this edit_buf
 	delete_undo_redo_buf(edit_buf);
 #endif // ENABLE_UNDO
 	buf_unlink_free(edit_buf);

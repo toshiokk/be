@@ -170,6 +170,7 @@ be_bufs_t *bufs_init(be_bufs_t *bufs, const char* buf_name);
 be_bufs_t *bufs_link(be_bufs_t *top_anchor, be_bufs_t *bot_anchor);
 be_bufs_t *bufs_insert_before(be_bufs_t *bufs, be_bufs_t *other);
 be_bufs_t *bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next);
+be_bufs_t *bufs_free_all_bufss(be_bufs_t *bufs);
 be_bufs_t *get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf);
 
 //-----------------------------------------------------------------------------

@@ -100,6 +100,8 @@ func_key_table_t editor_func_key_table[] = {
    0,F_I(do_goto_input_line), NULL },
  { "TagJump",         "Tagged jump",                    K_M_j, K_F12,      NKA,
    1,F_I(do_goto_file_in_cur_line), NULL },
+//// { "Change directory", "Goto directory",                K_M_DEL,      NKA, NKA,
+////   1,F_I(do_goto_directory_in_cur_line), NULL },
 
  { "",                "Edit Menu",                      K_M_3,        NKA, NKA,
    0,F_I(do_editor_menu_3), NULL },

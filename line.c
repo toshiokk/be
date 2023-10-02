@@ -223,7 +223,7 @@ be_line_t *line_concat_with_next(be_line_t *line)
 	line_insert_string(line, line_data_len(line), line->next->data, -1);
 	// >aaaabbbb
 	//  bbbb
-	line_unlink_free(line->next);
+	line_unlink_free(NEXT_NODE(line));
 	// >aaaabbbb
 	return line;
 }
@@ -295,7 +295,7 @@ int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 ///_FLF_
 ///_D_(line_dump(line));
 	if (IS_NODE_TOP_ANCH(line)) {
-		line = line->next;
+		line = NEXT_NODE(line);
 	} else if (IS_NODE_TOP(line)) {
 		// nothing to do
 	} else {
@@ -304,7 +304,7 @@ int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 		buf_size = line->prev->buf_size;
 	}
 ///_FLF_
-	for ( ; line && IS_NODE_BOT_ANCH(line) == 0; line = line->next) {
+	for ( ; line && IS_NODE_BOT_ANCH(line) == 0; line = NEXT_NODE(line)) {
 		line->line_num = ++line_num;
 		if (line->size <= 0) {
 			if (line->data)
@@ -326,7 +326,7 @@ int line_count_lines(be_line_t *line)
 	int count;
 
 	for (count = 0; IS_NODE_BOT_ANCH(line) == 0; count++) {
-		line = line->next;
+		line = NEXT_NODE(line);
 	}
 	return count;
 }
@@ -334,7 +334,7 @@ int line_count_lines(be_line_t *line)
 const be_line_t *line_get_top_anch(const be_line_t *line)
 {
 	for ( ; IS_NODE_TOP_ANCH(line) == 0; ) {
-		line = line->prev;
+		line = PREV_NODE(line);
 	}
 	return line;
 }
@@ -355,7 +355,7 @@ void line_dump_lines_from_top(const be_line_t *line, int lines, const be_line_t 
 }
 void line_dump_lines(const be_line_t *line, int lines, const be_line_t *cur_line)
 {
-	for ( ; line && lines > 0; line = line->next, lines--) {
+	for ( ; line && lines > 0; line = NEXT_NODE(line), lines--) {
 		line_dump_cur(line, cur_line);
 	}
 }
@@ -369,12 +369,12 @@ void line_dump_cur(const be_line_t *line, const be_line_t *cur_line)
 		progerr_printf("line == NULL\n");
 		return;
 	}
-///	flf_d_printf("%08lx,<%08lx,>%08lx\n", line, line->prev, line->next);
+///	flf_d_printf("%08lx,<%08lx,>%08lx\n", line, line->prev, NEXT_NODE(line));
 ///	flf_d_printf(":%08lx\n", line->data);
 	flf_d_printf("%s%03d,%08lx,<%08lx,>%08lx,%04d,%06d,%08lx[%s]\n",
 	 line == cur_line ? ">" : " ",
 	 line->line_num,
-	 line, line->prev, line->next,
+	 line, line->prev, NEXT_NODE(line),
 	 line->size, line->buf_size,
 	 line->data, line->data);
 }

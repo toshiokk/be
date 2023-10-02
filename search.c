@@ -565,7 +565,7 @@ int search_str_in_buffer(const char *needle,
 				if (byte_idx < line_data_len(line)) {
 					byte_idx++;
 				} else if (IS_NODE_BOT(line) == 0) {
-					line = line->next;
+					line = NEXT_NODE(line);
 					byte_idx = 0;
 				} else if (global_search && switch_c_e_b_to_next(0, 0)) {
 					line = CUR_EDIT_BUF_TOP_LINE;

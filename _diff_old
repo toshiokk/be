@@ -1,7 +1,7 @@
 proc_one()
 {
-OLD_DIR=../old/src
-#OLD_DIR=../old/be
+#OLD_DIR=../old/src
+OLD_DIR=../old/be
   echo "kdiff3 ${OLD_DIR}/$1 $1 #========================" >>_diff.txt
   diff ${OLD_DIR}/$1 $1 >>_diff.txt
   echo "kdiff3 ${OLD_DIR}/$1 $1 #========================" >>_sdiff.txt
@@ -10,6 +10,7 @@ OLD_DIR=../old/src
 
 rm -f _diff.txt _sdiff.txt
 
-for fn in *.h *.c *.cpp; do
+for fn in *.h *.c ; do
+#for fn in *.h *.c *.cpp; do
   proc_one $fn
 done

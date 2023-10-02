@@ -610,8 +610,7 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 	long size;
 
 	lines_written = 0;
-	for (line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_BOT_ANCH(line) == 0;
-	 line = line->next) {
+	for (line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_BOT_ANCH(line) == 0; line = NEXT_NODE(line)) {
 		if (IS_NODE_BOT(line) && line_data_len(line) == 0)
 			break;			// do not output the magic line
 		line_len = line_data_len(line);

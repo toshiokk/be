@@ -34,7 +34,7 @@ _FLF_
 	buf_free_lines(EDIT_BUFS_TOP_ANCH);
 	buf_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Files currently loaded"));
 	for (edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_BOT_ANCH(edit_buf) == 0;
-	 edit_buf = edit_buf->next) {
+	 edit_buf = NEXT_NODE(edit_buf)) {
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-60s %-5s %s %s",
 		 quote_file_name(edit_buf->abs_path),
 		 buf_encode_str(edit_buf), buf_eol_str(edit_buf),
@@ -74,12 +74,13 @@ be_buf_t *get_help_buf(int help_buf_idx)
 {
 	return get_buf_from_bufs_by_idx(HELP_BUFS_TOP_BUF, help_buf_idx);
 }
-void free_help_bufs(void)
-{
-	for (int help_buf_idx = 0; help_buf_idx < HELP_BUFS; help_buf_idx++) {
-		buf_unlink_free(HELP_BUFS_TOP_BUF);
-	}
-}
+////void free_help_bufs(void)
+////{
+////	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create(_("#List of Editor Key Bindings")));
+////	for (int help_buf_idx = 0; help_buf_idx < HELP_BUFS; help_buf_idx++) {
+////		buf_unlink_free(HELP_BUFS_TOP_BUF);
+////	}
+////}
 
 //-----------------------------------------------------------------------------
 int make_help_buf_call_editor(int help_idx);

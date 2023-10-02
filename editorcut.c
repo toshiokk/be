@@ -417,7 +417,7 @@ PRIVATE void copy_region_to_cut_buf(
 		return;
 
 	push_cut_buf();
-	for (line = min_line; IS_NODE_BOT_ANCH(line) == 0; line = line->next) {
+	for (line = min_line; IS_NODE_BOT_ANCH(line) == 0; line = NEXT_NODE(line)) {
 		if (line != max_line) {
 			// first and intermediate line
 ////_D_(line_dump_byte_idx(line, min_byte_idx));
@@ -478,7 +478,7 @@ PRIVATE void delete_region(
 	CEBV_CL = min_line;
 	CEBV_CLBI = min_byte_idx;
 	for (line = min_line; ; line = next) {
-		next = line->next;
+		next = NEXT_NODE(line);
 		if (line == min_line) {
 			if (line == max_line) {
 				// first and last line
@@ -533,7 +533,7 @@ PRIVATE void copy_rect_region_to_cut_buf(
 		return;
 
 	push_cut_buf();
-	for (line = min_line; ; line = line->next) {
+	for (line = min_line; ; line = NEXT_NODE(line)) {
 		min_byte_idx = byte_idx_from_col_idx(line->data, min_col_idx, CHAR_RIGHT, NULL);
 		max_byte_idx = byte_idx_from_col_idx(line->data, max_col_idx, CHAR_LEFT, NULL);
 		append_string_to_cur_cut_buf(
@@ -553,7 +553,7 @@ PRIVATE void delete_rect_region(
 	if (min_col_idx == max_col_idx)
 		return;
 
-	for (line = min_line; ; line = line->next) {
+	for (line = min_line; ; line = NEXT_NODE(line)) {
 		min_byte_idx = byte_idx_from_col_idx(line->data, min_col_idx, CHAR_RIGHT, NULL);
 		max_byte_idx = byte_idx_from_col_idx(line->data, max_col_idx, CHAR_LEFT, NULL);
 		if (CEBV_CL == line) {
@@ -601,7 +601,7 @@ PRIVATE int paste_cut_buf_char(void)
 	//  aaaaAAAA
 	// >bbbb
 	for ( ; ; ) {
-		cut_line = cut_line->next;
+		cut_line = NEXT_NODE(cut_line);
 		if (IS_NODE_BOT_ANCH(cut_line))
 			break;
 		inserted_line = line_insert_with_string(CEBV_CL, INSERT_BEFORE, cut_line->data);
@@ -636,7 +636,7 @@ PRIVATE int paste_cut_buf_line(void)
 	cut_line = CUR_CUT_BUF_TOP_LINE;
 	for ( ; IS_NODE_BOT_ANCH(cut_line) == 0; ) {
 		line_insert_with_string(CEBV_CL, INSERT_BEFORE, cut_line->data);
-		cut_line = cut_line->next;
+		cut_line = NEXT_NODE(cut_line);
 		if (IS_MARK_SET(CUR_CBUF_STATE(buf_CUT_MODE))) {
 			// marked cut/copy
 			CEBV_CURSOR_Y++;
@@ -686,7 +686,7 @@ PRIVATE int paste_cut_buf_rect(void)
 		 CHAR_LEFT, NULL);
 		line_replace_string(CEBV_CL, CEBV_CLBI, 0, cut_line->data, -1);
 		CEBV_CLBI += line_data_len(cut_line);
-		cut_line = cut_line->next;
+		cut_line = NEXT_NODE(cut_line);
 		if (IS_NODE_BOT_ANCH(cut_line))
 			break;
 		CEBV_CL = CEBV_CL->next;

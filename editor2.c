@@ -242,7 +242,7 @@ void disp_edit_win(int cur_pane)
 				break;
 		}
 ///_FLF_
-		line = line->next;
+		line = NEXT_NODE(line);
 		byte_idx = 0;
 	}
 	// clear remaining edit-win lines

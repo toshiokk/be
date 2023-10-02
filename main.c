@@ -516,17 +516,16 @@ PRIVATE int write_cur_dir_to_exit_file(void)
 // Die (gracefully?)
 void app_die_on(const char *msg)
 {
-	be_buf_t *edit_buf;
+	be_buf_t *buf;
 
 	tio_destroy();
 
 	e_printf("%s", msg);
 
 	// then save all of the modified buffers, if any
-	for (edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_BOT_ANCH(edit_buf) == 0;
-	 edit_buf = edit_buf->next) {
+	for (buf = EDIT_BUFS_TOP_BUF; IS_NODE_BOT_ANCH(buf) == 0; buf = NEXT_NODE(buf)) {
 _FLF_
-		set_cur_edit_buf(edit_buf);
+		set_cur_edit_buf(buf);
 		if (check_cur_buf_modified()) {
 			// save the file if it's been modified
 			die_save_file(get_c_e_b()->abs_path);
@@ -564,8 +563,6 @@ PRIVATE void die_save_file(const char *die_file_path)
 
 void free_all_allocated_memory(void)
 {
-_FLF_
-	_D_(bufs_dump_all_bufs(bufs_top_anchor.next));
 #ifdef ENABLE_HISTORY
 _FLF_
 ///	save_key_macro();
@@ -577,7 +574,6 @@ _FLF_
 	free_file_types();
 #endif // ENABLE_SYNTAX
 _FLF_
-	_D_(bufs_dump_all_bufs(bufs_top_anchor.next));
 }
 
 //-----------------------------------------------------------------------------

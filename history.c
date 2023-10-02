@@ -26,9 +26,9 @@
 PRIVATE int save_history_if_modified(int hist_type_idx);
 PRIVATE be_buf_t *get_history_buf(int hist_type_idx);
 
+PRIVATE int save_history_idx(int hist_type_idx);
+PRIVATE int load_history_idx(int hist_type_idx);
 PRIVATE char *get_history_file_path(int hist_type_idx);
-PRIVATE int save_history(char *file_path, int hist_type_idx);
-PRIVATE int load_history(char *file_path, int hist_type_idx);
 
 PRIVATE char *get_app_dir(void);
 
@@ -42,7 +42,7 @@ PRIVATE int is_history_modified(int hist_type_idx);
 
 PRIVATE void set_history_oldest(int hist_type_idx);
 PRIVATE void set_history_newest(int hist_type_idx);
-PRIVATE int get_history_lines(int hist_type_idx);
+////PRIVATE int get_history_lines(int hist_type_idx);
 PRIVATE const char *get_history_older(int hist_type_idx);
 PRIVATE const char *get_history_newer(int hist_type_idx);
 
@@ -60,12 +60,12 @@ void init_hist_bufs(void)
 	 HIST_BUFS_BOT_ANCH, "#History-bufs-bot-anchor");
 }
 
-void free_hist_bufs(void)
-{
-	while (IS_NODE_BOT_ANCH(HIST_BUFS_TOP_BUF) == 0) {
-		buf_unlink_free(HIST_BUFS_TOP_BUF);
-	}
-}
+////void free_hist_bufs(void)
+////{
+////	while (IS_NODE_BOT_ANCH(HIST_BUFS_TOP_BUF) == 0) {
+////		buf_unlink_free(HIST_BUFS_TOP_BUF);
+////	}
+////}
 
 void init_histories(void)
 {
@@ -103,11 +103,7 @@ void load_histories(void)
 
 ////_FLF_
 	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
-		load_history(get_history_file_path(hist_type_idx), hist_type_idx);
-///		if (get_history_lines(hist_type_idx) > MAX_HISTORY_LINES) {
-///			// force write back to the file
-///			set_history_modified(hist_type_idx);
-///		}
+		load_history_idx(hist_type_idx);
 	}
 ////_D_(set_history_modified(hist_type_idx));
 ////_D_(dump_hist_bufs_lines());
@@ -144,11 +140,12 @@ PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 	return get_buf_from_bufs_by_idx(HIST_BUFS_TOP_BUF, hist_type_idx);
 }
 
-// update history list
+// update history list (load, modify, save)
 void update_history(int hist_type_idx, const char *str)
 {
 	be_line_t *line;
 
+	load_history_idx(hist_type_idx);
 ////
 flf_d_printf("hist_type_idx:%d:[%s]\n", hist_type_idx, str);
 	if (is_the_last_line(hist_type_idx, str) != NULL) {
@@ -187,40 +184,6 @@ const char *get_history_completion(int hist_type_idx, const char *str)
 }
 
 //------------------------------------------------------------------------------------
-
-PRIVATE char *get_history_file_path(int hist_type_idx)
-{
-	static char file_path[MAX_PATH_LEN+1];
-
-	switch(hist_type_idx) {
-	default:
-	case HISTORY_TYPE_IDX_SEARCH:
-		snprintf_(file_path, MAX_PATH_LEN+1, "%s/%s",
-		 get_app_dir(), SEARCH_HISTORY_FILE_NAME);
-		break;
-	case HISTORY_TYPE_IDX_EXEC:
-		snprintf_(file_path, MAX_PATH_LEN+1, "%s/%s",
-		 get_app_dir(), EXEC_HISTORY_FILE_NAME);
-		break;
-	case HISTORY_TYPE_IDX_DIR:
-		snprintf_(file_path, MAX_PATH_LEN+1, "%s/%s",
-		 get_app_dir(), DIR_HISTORY_FILE_NAME);
-		break;
-	case HISTORY_TYPE_IDX_CURSPOS:
-		snprintf_(file_path, MAX_PATH_LEN+1, "%s/%s",
-		 get_app_dir(), OPENFILE_HISTORY_FILE_NAME);
-		break;
-	case HISTORY_TYPE_IDX_KEYMACRO:
-		snprintf_(file_path, MAX_PATH_LEN+1, "%s/%s",
-		 get_app_dir(), KEYMACRO_HISTORY_FILE_NAME);
-		break;
-	case HISTORY_TYPE_IDX_SHELL:
-		snprintf_(file_path, MAX_PATH_LEN+1, "%s/%s",
-		 get_home_dir(), BASH_HISTORY_FILE_NAME);
-		break;
-	}
-	return file_path;
-}
 PRIVATE char *get_app_dir(void)
 {
 	static char dir[MAX_PATH_LEN+1];
@@ -239,19 +202,23 @@ PRIVATE int save_history_if_modified(int hist_type_idx)
 {
 	if (is_history_modified(hist_type_idx) == 0)
 		return -1;
-	return save_history(get_history_file_path(hist_type_idx), hist_type_idx);
+	return save_history_idx(hist_type_idx);
 }
 
-PRIVATE int save_history(char *file_path, int hist_type_idx)
+PRIVATE int save_history_idx(int hist_type_idx)
 {
+	const char *file_path;
 	FILE *fp;
 	int lines;
 	const char *str;
 	char buf[MAX_EDIT_LINE_LEN+1];
 	int error = 0;
 
+	file_path = get_history_file_path(hist_type_idx);
 	if (GET_APPMD(app_HISTORY) == 0)
 		return 0;
+flf_d_printf("hist_type_idx:%d\n", hist_type_idx);
+flf_d_printf("%s\n", file_path);
 	if ((fp = fopen(file_path, "w")) == NULL) {
 		e_printf(_("Unable to create history file: %s, %s"),
 		 file_path, strerror(errno));
@@ -286,18 +253,21 @@ save_history_2:;
 	return error;
 }
 
-PRIVATE int load_history(char *file_path, int hist_type_idx)
+PRIVATE int load_history_idx(int hist_type_idx)
 {
+	const char *file_path;
 	FILE *fp;
 	int lines;
 	char str[MAX_EDIT_LINE_LEN+1];
 	int error = 0;
 
+	file_path = get_history_file_path(hist_type_idx);
 	if (GET_APPMD(app_HISTORY) == 0)
 		return 0;
-////
+flf_d_printf("hist_type_idx:%d\n", hist_type_idx);
 flf_d_printf("%s\n", file_path);
 	clear_history(hist_type_idx);
+
 	if ((fp = fopen(file_path, "r")) == NULL) {
 		if (errno != ENOENT) {
 			e_printf(_("Unable to open history file: %s, %s"),
@@ -330,6 +300,42 @@ flf_d_printf("%s\n", file_path);
 ///_D_(dump_history_ix(hist_type_idx));
 	return error;
 }
+PRIVATE char *get_history_file_path(int hist_type_idx)
+{
+	const char *dir;
+	const char *file;
+	static char file_path[MAX_PATH_LEN+1];
+
+	switch(hist_type_idx) {
+	default:
+	case HISTORY_TYPE_IDX_SEARCH:
+		dir = get_app_dir();
+		file = SEARCH_HISTORY_FILE_NAME;
+		break;
+	case HISTORY_TYPE_IDX_EXEC:
+		dir = get_app_dir();
+		file = EXEC_HISTORY_FILE_NAME;
+		break;
+	case HISTORY_TYPE_IDX_DIR:
+		dir = get_app_dir();
+		file = DIR_HISTORY_FILE_NAME;
+		break;
+	case HISTORY_TYPE_IDX_CURSPOS:
+		dir = get_app_dir();
+		file = OPENFILE_HISTORY_FILE_NAME;
+		break;
+	case HISTORY_TYPE_IDX_KEYMACRO:
+		dir = get_app_dir();
+		file = KEYMACRO_HISTORY_FILE_NAME;
+		break;
+	case HISTORY_TYPE_IDX_SHELL:
+		dir = get_home_dir();
+		file = BASH_HISTORY_FILE_NAME;
+		break;
+	}
+	snprintf_(file_path, MAX_PATH_LEN+1, "%s/%s", dir, file);
+	return file_path;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -351,7 +357,6 @@ PRIVATE void clear_history(int hist_type_idx)
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	buf_free_lines(buf);
 }
-
 PRIVATE void clear_history_modified(int hist_type_idx)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
@@ -368,11 +373,11 @@ PRIVATE int is_history_modified(int hist_type_idx)
 	return BUF_STATE(buf, buf_MODIFIED);
 }
 
-PRIVATE int get_history_lines(int hist_type_idx)
-{
-	be_buf_t *buf = get_history_buf(hist_type_idx);
-	return buf_count_lines(buf);
-}
+////PRIVATE int get_history_lines(int hist_type_idx)
+////{
+////	be_buf_t *buf = get_history_buf(hist_type_idx);
+////	return buf_count_lines(buf);
+////}
 PRIVATE void set_history_oldest(int hist_type_idx)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
@@ -428,7 +433,7 @@ PRIVATE be_line_t *search_history_str_complete(int hist_type_idx, const char *st
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
 
-	for (line = BUF_BOT_LINE(buf); IS_NODE_TOP_ANCH(line) == 0; line = line->prev) {
+	for (line = BUF_BOT_LINE(buf); IS_NODE_TOP_ANCH(line) == 0; line = PREV_NODE(line)) {
 		if (strcmp(str, line->data) == 0)	// exact match
 			return line;
 	}
@@ -439,7 +444,7 @@ PRIVATE be_line_t *search_history_str_partial(int hist_type_idx, const char *str
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
 
-	for (line = BUF_BOT_LINE(buf); IS_NODE_TOP_ANCH(line) == 0; line = line->prev) {
+	for (line = BUF_BOT_LINE(buf); IS_NODE_TOP_ANCH(line) == 0; line = PREV_NODE(line)) {
 		if (strlcmp__(line->data, str) == 0)	// partial match
 			return line;
 	}
@@ -454,7 +459,7 @@ const char *search_history_file_path(int hist_type_idx, const char *path)
 
 	path = quote_file_name(path);
 	// search from the newest to the oldest
-	for (line = BUF_BOT_LINE(buf); IS_NODE_TOP_ANCH(line) == 0; line = line->prev) {
+	for (line = BUF_BOT_LINE(buf); IS_NODE_TOP_ANCH(line) == 0; line = PREV_NODE(line)) {
 		// /home/user/filename.exp|1234
 		// '/home/user/ filename.exp '|1234
 		if ((ptr = strstr(line->data, FILE_PATH_SEPARATOR)) != NULL) {
