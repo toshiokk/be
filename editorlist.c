@@ -45,9 +45,9 @@ _FLF_
 	}
 	append_magic_line();
 	if (line_to_go) {
-		CEBV_CL = line_to_go;
+		CBV_CL = line_to_go;
 	} else {
-		CEBV_CL = CUR_EDIT_BUF_TOP_LINE;
+		CBV_CL = CUR_EDIT_BUF_TOP_LINE;
 	}
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
 
@@ -135,9 +135,9 @@ void make_help_buf(int help_idx)
 		break;
 	}
 	append_magic_line();
-	CEBV_CL = CUR_EDIT_BUF_TOP_LINE;
+	CBV_CL = CUR_EDIT_BUF_TOP_LINE;
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
-	post_cmd_processing(CEBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(CBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 
 void make_help_key_list(void)

@@ -77,7 +77,7 @@ void fix_buf_state_after_cursor_horiz_move(void);
 void fix_buf_state_after_cursor_vert_move(void);
 
 void update_min_text_x_to_keep(int text_x);
-int get_cebv_min_text_x_to_keep(void);
+int get_c_b_v_min_text_x_to_keep(void);
 
 #endif // editormove2_h
 

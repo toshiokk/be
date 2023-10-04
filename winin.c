@@ -275,9 +275,9 @@ flf_d_printf("[%s]\n", buffer);
 				int line_byte_idx;
 
 ////flf_d_printf("input_buf:%s\n", input_buf);
-				line = CEBV_CL->data;
+				line = CBV_CL->data;
 				line_byte_idx = byte_idx_from_byte_idx(line,
-				 CEBV_CLBI + strnlen(input_buf, MAX_PATH_LEN));
+				 CBV_CLBI + strnlen(input_buf, MAX_PATH_LEN));
 				// copy one token (at least copy one character)
 				curs_byte_idx = 0;
 				for ( ;

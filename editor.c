@@ -733,29 +733,29 @@ int disp_status_bar_editor(void)
 	unsigned long disp_len;
 	char buffer[MAX_EDIT_LINE_LEN+1];
 
-	xx = col_idx_from_byte_idx(CEBV_CL->data, 0, CEBV_CLBI) + 1;
-	disp_len = col_idx_from_byte_idx(CEBV_CL->data, 0, MAX_EDIT_LINE_LEN) + 1;
+	xx = col_idx_from_byte_idx(CBV_CL->data, 0, CBV_CLBI) + 1;
+	disp_len = col_idx_from_byte_idx(CBV_CL->data, 0, MAX_EDIT_LINE_LEN) + 1;
 
 	strcpy__(buf_char_code, "");
-	bytes = utf8c_bytes(&CEBV_CL->data[CEBV_CLBI]);
+	bytes = utf8c_bytes(&CBV_CL->data[CBV_CLBI]);
 	for (byte_idx = 0; byte_idx < bytes; byte_idx++) {
 		snprintf(&buf_char_code[strnlen(buf_char_code, UTF8_CODE_LEN)], 3+1,
 		 byte_idx == 0 ? "%02x" : "-%02x",
-		 (unsigned char)CEBV_CL->data[CEBV_CLBI + byte_idx]);
+		 (unsigned char)CBV_CL->data[CBV_CLBI + byte_idx]);
 	}
 #ifdef ENABLE_UTF8
 	// show Unicode
 	if (bytes >= 2) {
 		snprintf(&buf_char_code[strnlen(buf_char_code, UTF8_CODE_LEN)], 8+1, "(U+%04x)",
-		 (unsigned int)utf8c_decode(&CEBV_CL->data[CEBV_CLBI]));
+		 (unsigned int)utf8c_decode(&CBV_CL->data[CBV_CLBI]));
 	}
 #endif // ENABLE_UTF8
 
 	strcpy__(buffer, "");
 	strlcat__(buffer, MAX_EDIT_LINE_LEN,
 	 _("LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu CODE:%s ENC:%s EOL:%s"));
-	disp_status_bar_percent_editor(CEBV_CL->line_num-1, get_c_e_b()->buf_lines-1,
-	 buffer, CEBV_CL->line_num, get_c_e_b()->buf_lines, xx, disp_len,
+	disp_status_bar_percent_editor(CBV_CL->line_num-1, get_c_e_b()->buf_lines-1,
+	 buffer, CBV_CL->line_num, get_c_e_b()->buf_lines, xx, disp_len,
 	 get_c_e_b()->buf_size, buf_char_code,
 	 buf_encode_str(get_c_e_b()), buf_eol_str(get_c_e_b()));
 	return 1;
@@ -831,11 +831,11 @@ int is_view_mode_then_warn_it(void)
 #ifdef ENABLE_DEBUG
 void dump_cur_pointers(void)
 {
-	flf_d_printf("%d:[%s]\n", CEBV_CL->line_num, CEBV_CL->data);
-	flf_d_printf("CEBV_CLBI:%d\n", CEBV_CLBI);
-	flf_d_printf("cursor_y:%d\n", CEBV_CURSOR_Y);
-	flf_d_printf("cursor_x_to_keep:%d\n", CEBV_CURSOR_X_TO_KEEP);
-	flf_d_printf("min_text_x_to_keep:%d\n", CEBV_MIN_TEXT_X_TO_KEEP);
+	flf_d_printf("%d:[%s]\n", CBV_CL->line_num, CBV_CL->data);
+	flf_d_printf("CBV_CLBI:%d\n", CBV_CLBI);
+	flf_d_printf("cursor_y:%d\n", CBV_CURSOR_Y);
+	flf_d_printf("cursor_x_to_keep:%d\n", CBV_CURSOR_X_TO_KEEP);
+	flf_d_printf("min_text_x_to_keep:%d\n", CBV_MIN_TEXT_X_TO_KEEP);
 }
 #endif // ENABLE_DEBUG
 

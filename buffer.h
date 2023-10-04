@@ -51,7 +51,7 @@ typedef struct be_buf_t {
 
 	be_line_t top_anchor;		//!< top line
 	be_line_t bot_anchor;		//!< bottom line
-	be_buf_view_t views[BUF_VIEWS];
+	be_buf_view_t buf_views[BUF_VIEWS];
 	be_line_t *mark_line;		//!< 
 	int mark_line_byte_idx;		//!< 
 	int buf_lines;				//!< line count
@@ -128,8 +128,8 @@ be_buf_t *buf_unlink_free(be_buf_t *buf);
 be_buf_t *buf_unlink(be_buf_t *buf);
 void buf_clear_link(be_buf_t *buf);
 
-be_buf_t *goto_top_buf(be_buf_t *buf);
-be_buf_t *goto_bottom_buf(be_buf_t *buf);
+///be_buf_t *goto_top_buf(be_buf_t *buf);
+///be_buf_t *goto_bottom_buf(be_buf_t *buf);
 
 void buf_free(be_buf_t *buf);
 void buf_free_lines(be_buf_t *buf);

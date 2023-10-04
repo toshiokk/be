@@ -145,19 +145,20 @@ void update_history(int hist_type_idx, const char *str)
 {
 	be_line_t *line;
 
-	load_history_idx(hist_type_idx);
 ////
 flf_d_printf("hist_type_idx:%d:[%s]\n", hist_type_idx, str);
 	if (is_the_last_line(hist_type_idx, str) != NULL) {
 		// str is registered in the last line, no need update
 		return;
 	}
+	load_history_idx(hist_type_idx);
 	if ((line = search_history_str_complete(hist_type_idx, str)) != NULL) {
 		line_unlink_free(line);	// delete older line
 	}
 	append_history(hist_type_idx, str);
 	set_history_modified(hist_type_idx);
-	save_histories();
+	save_history_if_modified(hist_type_idx);
+	////save_histories();
 }
 
 const char *get_history_newest(int hist_type_idx, int last_n)
@@ -214,9 +215,9 @@ PRIVATE int save_history_idx(int hist_type_idx)
 	char buf[MAX_EDIT_LINE_LEN+1];
 	int error = 0;
 
-	file_path = get_history_file_path(hist_type_idx);
 	if (GET_APPMD(app_HISTORY) == 0)
 		return 0;
+	file_path = get_history_file_path(hist_type_idx);
 flf_d_printf("hist_type_idx:%d\n", hist_type_idx);
 flf_d_printf("%s\n", file_path);
 	if ((fp = fopen(file_path, "w")) == NULL) {
@@ -225,7 +226,8 @@ flf_d_printf("%s\n", file_path);
 		error = 1;
 		goto save_history_2;
 	}
-	for (lines = 0, set_history_oldest(hist_type_idx); *(str = get_history_newer(hist_type_idx)); ) {
+	lines = 0;
+	for (set_history_oldest(hist_type_idx); *(str = get_history_newer(hist_type_idx)); ) {
 		// count lines
 		lines++;
 	}
@@ -261,9 +263,9 @@ PRIVATE int load_history_idx(int hist_type_idx)
 	char str[MAX_EDIT_LINE_LEN+1];
 	int error = 0;
 
-	file_path = get_history_file_path(hist_type_idx);
 	if (GET_APPMD(app_HISTORY) == 0)
 		return 0;
+	file_path = get_history_file_path(hist_type_idx);
 flf_d_printf("hist_type_idx:%d\n", hist_type_idx);
 flf_d_printf("%s\n", file_path);
 	clear_history(hist_type_idx);
@@ -486,7 +488,7 @@ _FLF_
 	load_histories();
 	renumber_all_bufs_from_top(&history_buffers);
 	set_cur_edit_buf(get_history_buf(hist_type_idx));
-	CEBV_CL = CUR_EDIT_BUF_BOT_LINE;
+	CBV_CL = CUR_EDIT_BUF_BOT_LINE;
 	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 
 	ret = call_editor(1, 1);
@@ -494,7 +496,7 @@ _FLF_
 	if (ret == 0)
 		strcpy__(buffer, "");
 	else
-		strlcpy__(buffer, CEBV_CL->data, MAX_EDIT_LINE_LEN);
+		strlcpy__(buffer, CBV_CL->data, MAX_EDIT_LINE_LEN);
 _FLF_
 	set_cur_edit_buf(edit_buf_save);
 

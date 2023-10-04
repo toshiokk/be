@@ -27,10 +27,9 @@ be_bufs_t bufs_bot_anchor;		//< bottom buffers
 
 // collection of edit buffers--------------------------------------------------
 be_bufs_t edit_buffers;
-editor_views_t editor_views;
-editor_views_t *cur_editor_views;
+editor_panes_t editor_panes;
 be_buf_t *c_e_b = NULL;			// pointer to the current edit buffer
-be_buf_view_t *c_e_b_v = NULL;	// pointer to the current edit buffer view
+be_buf_view_t *c_b_v = NULL;	// pointer to the current edit buffer view
 
 // collection of cut-buffers---------------------------------------------------
 be_bufs_t cut_buffers;
@@ -88,7 +87,7 @@ _FLF_
 
 void free_all_buffers(void)
 {
-	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
+	////_D_(bufs_dump_all_bufs(&bufs_top_anchor));
 #if 1 //----------------------------------
 	bufs_free_all_bufss(&bufs_top_anchor);
 #else //----------------------------------
@@ -107,7 +106,7 @@ void free_all_buffers(void)
 ///_FLF_
 ///	free_all_edit_bufs();
 #endif //---------------------------------
-	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
+	////_D_(bufs_dump_all_bufs(&bufs_top_anchor));
 }
 
 // Edit-buffer manipulation routines
@@ -117,7 +116,7 @@ void init_edit_bufs(void)
 	init_bufs_top_bot_anchor(
 	 EDIT_BUFS_TOP_ANCH, "#Edit-bufs-top-anchor",
 	 EDIT_BUFS_BOT_ANCH, "#Edit-bufs-bot-anchor");
-	init_editor_views(&editor_views);
+	init_editor_panes(&editor_panes);
 }
 // Free all memory associated with all edit buffers
 ////void free_all_edit_bufs(void)
@@ -154,10 +153,10 @@ int free_edit_buf(be_buf_t *edit_buf)
 //-----------------------------------------------------------------------------
 void buf_avoid_wild_ptr_cur(be_buf_t *buf)
 {
-	// avoid cur_editor_views->bufs[0] becoming wild-pointer 
-	buf_avoid_wild_ptr(buf, &(cur_editor_views->bufs[0]));
-	// avoid cur_editor_views->bufs[1] becoming wild-pointer 
-	buf_avoid_wild_ptr(buf, &(cur_editor_views->bufs[1]));
+	// avoid editor_panes.bufs[0] becoming wild-pointer 
+	buf_avoid_wild_ptr(buf, &(editor_panes.bufs[0]));
+	// avoid editor_panes.bufs[1] becoming wild-pointer 
+	buf_avoid_wild_ptr(buf, &(editor_panes.bufs[1]));
 }
 void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr)
 {
@@ -172,10 +171,10 @@ void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr)
 //-----------------------------------------------------------------------------
 void line_avoid_wild_ptr_cur(be_line_t *line)
 {
-	// avoid CEBV0_CL becoming wild-pointer
-	line_avoid_wild_ptr(line, &CEBV0_CL);
-	// avoid CEBV1_CL becoming wild-pointer
-	line_avoid_wild_ptr(line, &CEBV1_CL);
+	// avoid CBV0_CL becoming wild-pointer
+	line_avoid_wild_ptr(line, &CBV0_CL);
+	// avoid CBV1_CL becoming wild-pointer
+	line_avoid_wild_ptr(line, &CBV1_CL);
 }
 void line_avoid_wild_ptr(be_line_t *line, be_line_t **line_ptr)
 {
@@ -190,11 +189,10 @@ void line_avoid_wild_ptr(be_line_t *line, be_line_t **line_ptr)
 //-----------------------------------------------------------------------------
 // Editor view management
 
-void init_editor_views(editor_views_t *editor_views)
+void init_editor_panes(editor_panes_t *editor_panes)
 {
 	int view_idx;
 
-	cur_editor_views = editor_views;
 	for (view_idx = 0; view_idx < BUF_VIEWS; view_idx++) {
 		set_cur_editor_view_buf(view_idx, EDIT_BUFS_TOP_ANCH);
 	}
@@ -207,7 +205,7 @@ void set_cur_editor_view_idx(int view_idx)
 }
 int get_cur_editor_view_idx(void)
 {
-	return cur_editor_views->view_idx;
+	return editor_panes.view_idx;
 }
 
 void set_cur_edit_buf(be_buf_t *buf)
@@ -218,14 +216,14 @@ void set_cur_editor_view_buf(int view_idx, be_buf_t *buf)
 {
 ///flf_d_printf("view_idx: %d ------------\n", view_idx);
 	if (view_idx >= 0) {
-		cur_editor_views->view_idx = view_idx;
+		editor_panes.view_idx = view_idx;
 	}
 	if (buf) {
-		cur_editor_views->bufs[cur_editor_views->view_idx] = buf;
+		editor_panes.bufs[editor_panes.view_idx] = buf;
 	}
-	set_c_e_b(cur_editor_views->bufs[cur_editor_views->view_idx]);
-	set_c_e_b_v(&(get_c_e_b()->views[cur_editor_views->view_idx]));
-///_D_(dump_cur_editor_views());
+	set_c_e_b(editor_panes.bufs[editor_panes.view_idx]);
+	set_c_b_v(&(get_c_e_b()->buf_views[editor_panes.view_idx]));
+///_D_(dump_editor_panes());
 
 #ifdef ENABLE_SYNTAX
 	set_file_type_by_cur_file_path();
@@ -234,29 +232,29 @@ void set_cur_editor_view_buf(int view_idx, be_buf_t *buf)
 }
 
 #ifdef ENABLE_DEBUG
-void dump_cur_editor_views(void)
+void dump_editor_panes(void)
 {
-	flf_d_printf("cur_editor_views->view_idx: %d\n", cur_editor_views->view_idx);
+	flf_d_printf("editor_panes.view_idx: %d\n", editor_panes.view_idx);
 
-	buf_dump_state(cur_editor_views->bufs[0]);
-	buf_dump_state(cur_editor_views->bufs[1]);
+	buf_dump_state(editor_panes.bufs[0]);
+	buf_dump_state(editor_panes.bufs[1]);
 
-	flf_d_printf("get_c_e_b(): %p, &(get_c_e_b()->views[0]): %p\n",
-	 get_c_e_b(), &(get_c_e_b()->views[0]));
-	line_dump_byte_idx(CEBV0_CL, CEBV0_CLBI);
-	flf_d_printf("CEBV0_CURSOR_Y: %d, CEBV0_CURSOR_X_TO_KEEP: %d\n",
-	 CEBV0_CURSOR_Y, CEBV0_CURSOR_X_TO_KEEP);
+	flf_d_printf("get_c_e_b(): %p, &(get_c_e_b()->buf_views[0]): %p\n",
+	 get_c_e_b(), &(get_c_e_b()->buf_views[0]));
+	line_dump_byte_idx(CBV0_CL, CBV0_CLBI);
+	flf_d_printf("CBV0_CURSOR_Y: %d, CBV0_CURSOR_X_TO_KEEP: %d\n",
+	 CBV0_CURSOR_Y, CBV0_CURSOR_X_TO_KEEP);
 
-	flf_d_printf("get_c_e_b(): %p, &(get_c_e_b()->views[1]): %p\n",
-	 get_c_e_b(), &(get_c_e_b()->views[1]));
-	line_dump_byte_idx(CEBV1_CL, CEBV1_CLBI);
-	flf_d_printf("CEBV1_CURSOR_Y: %d, CEBV1_CURSOR_X_TO_KEEP: %d\n",
-	 CEBV1_CURSOR_Y, CEBV1_CURSOR_X_TO_KEEP);
+	flf_d_printf("get_c_e_b(): %p, &(get_c_e_b()->buf_views[1]): %p\n",
+	 get_c_e_b(), &(get_c_e_b()->buf_views[1]));
+	line_dump_byte_idx(CBV1_CL, CBV1_CLBI);
+	flf_d_printf("CBV1_CURSOR_Y: %d, CBV1_CURSOR_X_TO_KEEP: %d\n",
+	 CBV1_CURSOR_Y, CBV1_CURSOR_X_TO_KEEP);
 
-	flf_d_printf("get_c_e_b(): %p, get_c_e_b_v(): %p\n", get_c_e_b(), get_c_e_b_v());
-	line_dump_byte_idx(CEBV_CL, CEBV_CLBI);
-	flf_d_printf("CEBV_CURSOR_Y: %d, CEBV_CURSOR_X_TO_KEEP: %d\n",
-	 CEBV_CURSOR_Y, CEBV_CURSOR_X_TO_KEEP);
+	flf_d_printf("get_c_e_b(): %p, get_c_b_v(): %p\n", get_c_e_b(), get_c_b_v());
+	line_dump_byte_idx(CBV_CL, CBV_CLBI);
+	flf_d_printf("CBV_CURSOR_Y: %d, CBV_CURSOR_X_TO_KEEP: %d\n",
+	 CBV_CURSOR_Y, CBV_CURSOR_X_TO_KEEP);
 }
 #endif // ENABLE_DEBUG
 
@@ -281,13 +279,13 @@ void create_edit_buf(const char *full_path)
 	buf_insert_before(EDIT_BUFS_BOT_ANCH, buf);
 ///_FLF_
 	set_cur_edit_buf(buf);
-	if (IS_NODE_VALID(cur_editor_views->bufs[0]) == 0) {
+	if (IS_NODE_VALID(editor_panes.bufs[0]) == 0) {
 		// make view-0 buffer valid
-		cur_editor_views->bufs[0] = buf;
+		editor_panes.bufs[0] = buf;
 	}
-	if (IS_NODE_VALID(cur_editor_views->bufs[1]) == 0) {
+	if (IS_NODE_VALID(editor_panes.bufs[1]) == 0) {
 		// make view-1 buffer valid
-		cur_editor_views->bufs[1] = buf;
+		editor_panes.bufs[1] = buf;
 	}
 }
 
@@ -296,9 +294,9 @@ void create_edit_buf(const char *full_path)
 // Append a new line to the bottom of the current buffer
 be_line_t *append_string_to_cur_edit_buf(const char *string)
 {
-	CEBV0_CL = CEBV1_CL = line_insert_with_string(CUR_EDIT_BUF_BOT_ANCH, INSERT_BEFORE, string);
-	CEBV0_CLBI = CEBV1_CLBI = 0;
-	return CEBV_CL;
+	CBV0_CL = CBV1_CL = line_insert_with_string(CUR_EDIT_BUF_BOT_ANCH, INSERT_BEFORE, string);
+	CBV0_CLBI = CBV1_CLBI = 0;
+	return CBV_CL;
 }
 
 // Append a new magic-line to the bottom of the current buffer
@@ -687,11 +685,11 @@ flf_d_printf("CUR_EDIT_BUF_BOT_LINE:%08lx\n", CUR_EDIT_BUF_BOT_LINE);
 	if (CUR_EDIT_BUF_BOT_LINE) {
 		flf_d_printf("CUR_EDIT_BUF_BOT_LINE->data:%08lx\n", CUR_EDIT_BUF_BOT_LINE->data);
 	}
-flf_d_printf("cur_line:%08lx\n", CEBV_CL);
-	if (CEBV_CL) {
-		flf_d_printf("cur_line->data:%08lx\n", CEBV_CL->data);
+flf_d_printf("cur_line:%08lx\n", CBV_CL);
+	if (CBV_CL) {
+		flf_d_printf("cur_line->data:%08lx\n", CBV_CL->data);
 	}
-	line_dump_lines(CUR_EDIT_BUF_TOP_ANCH, INT_MAX, CEBV_CL);
+	line_dump_lines(CUR_EDIT_BUF_TOP_ANCH, INT_MAX, CBV_CL);
 flf_d_printf(">>>>>>>>>>>>>>>>>>>\n");
 }
 #endif // ENABLE_DEBUG

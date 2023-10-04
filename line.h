@@ -26,6 +26,7 @@
 #define MAX_EDIT_LINE_LEN	4096
 
 #define IS_PTR_VALID(ptr)			((ptr) != NULL)
+#define IS_PTR_INVALID(ptr)			IS_PTR_NULL(ptr)
 #define IS_PTR_NULL(ptr)			((ptr) == NULL)
 
 // "NODES" are "BUFFERs" or "LINEs"
@@ -35,10 +36,10 @@
 #define NODES_BOT_NODE(nodes)		((nodes)->bot_anchor.prev)
 #define NODES_BOT_ANCH(nodes)		(&(nodes)->bot_anchor)
 // "NODE" is "BUFFER" or "LINE"
-#define IS_NODE_TOP_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL((node)->prev))	// no prev.
+#define IS_NODE_TOP_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL((node)->prev))
 #define IS_NODE_TOP(node)			(IS_PTR_NULL(node) || IS_NODE_TOP_ANCH((node)->prev))
 #define IS_NODE_BOT(node)			(IS_PTR_NULL(node) || IS_NODE_BOT_ANCH((node)->next))
-#define IS_NODE_BOT_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL((node)->next))	// no next
+#define IS_NODE_BOT_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL((node)->next))
 #define IS_NODE_INVALID(node)		(IS_NODE_TOP_ANCH(node) || IS_NODE_BOT_ANCH(node))
 #define IS_NODE_VALID(node)			(IS_NODE_INVALID(node) == 0)
 

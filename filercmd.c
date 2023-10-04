@@ -50,8 +50,8 @@ int do_bottom_of_list(void)
 
 int do_switch_filer_pane(void)
 {
-	if (++(cur_filer_views->view_idx) >= FILER_VIEWS) {
-		cur_filer_views->view_idx = 0;
+	if (++(cur_filer_panes->view_idx) >= FILER_VIEWS) {
+		cur_filer_panes->view_idx = 0;
 	}
 	set_cur_filer_view();
 	filer_do_next = FILER_DO_REFRESH_FORCE;
@@ -492,7 +492,7 @@ int do_parent_directory(void)
 }
 int do_beginning_directory(void)
 {
-	return filer_change_dir_if_not_yet(cur_filer_views->org_cur_dir);
+	return filer_change_dir_if_not_yet(cur_filer_panes->org_cur_dir);
 }
 int do_home_directory(void)
 {
@@ -777,9 +777,9 @@ int filer_change_dir(const char *dir)
 	change_cur_dir(chg_dir);
 	strlcpy__(cur_fv->cur_dir, chg_dir, MAX_PATH_LEN);
 	cur_fv->top_idx = 0;
-///#ifdef ENABLE_HISTORY
-///	update_history(HISTORY_TYPE_IDX_DIR, chg_dir);
-///#endif // ENABLE_HISTORY
+#ifdef ENABLE_HISTORY
+	update_history(HISTORY_TYPE_IDX_DIR, chg_dir);
+#endif // ENABLE_HISTORY
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	disp_status_bar_done("Changed to directory [%s]", chg_dir);
 	return 0;

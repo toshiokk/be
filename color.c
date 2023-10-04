@@ -134,8 +134,8 @@ int set_file_type_by_file_name(const char *file_path)
 	for (file_type = last_file_type = file_types_head; file_type != NULL;
 	 last_file_type = file_type, file_type = file_type->next) {
 		// set cur_file_type if match the file name regexp
-		if (regexp_search_compiled(file_type->regexp, file_path, 0, REG_NONE,
-		 &regexp_matches, 1) == 0) {
+		if (regexp_search_compiled(file_type->regexp, file_path, 0,
+		 REG_NONE, &regexp_matches, 1) == 0) {
 			cur_file_type = file_type;
 			break;
 		}

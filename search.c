@@ -211,16 +211,20 @@ int search_string_once(const char *needle)
 	 GET_APPMD(ed_IGNORE_CASE),
 	 SKIP,
 	 INTER_FILE_SEARCH);
+_FLF_
 
 	if (match_len == 0) {
+_FLF_
 		recall_cur_file_pos_null(NULL);
 ////		post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_KEEP, UPDATE_SCRN_ALL);
 	} else {
+_FLF_
 		if (GET_APPMD(ed_CURS_POSITIONING) == 0)
 			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_KEEP, UPDATE_SCRN_ALL);
 		else
 			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	}
+_FLF_
 
 	found_in_prev_search = match_len;
 	return match_len;
@@ -317,7 +321,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 #ifdef ENABLE_DEBUG
 				memorize_undo_state_before_change();
 #endif // ENABLE_DEBUG
-				undo_set_region_save_before_change(CEBV_CL, CEBV_CL, 1);
+				undo_set_region_save_before_change(CBV_CL, CBV_CL, 1);
 #endif // ENABLE_UNDO
 				length_change = replace_str_in_buffer(&search__, &matches__, replace_to);
 #ifdef ENABLE_UNDO
@@ -330,8 +334,8 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 				// text, so searching will resume after the replacement text. */
 				if (GET_APPMD(ed_REVERSE_SEARCH) == 0) {
 					// forward search
-					CEBV_CLBI += matches_match_len(&matches__) + length_change;
-					skip_here = NO_SKIP;	// CEBV_CLBI already forwarded to skip word
+					CBV_CLBI += matches_match_len(&matches__) + length_change;
+					skip_here = NO_SKIP;	// CBV_CLBI already forwarded to skip word
 				} else {
 					// backward search
 					skip_here = SKIP;		// skip
@@ -372,8 +376,8 @@ int replace_str_in_buffer(search_t *search, matches_t *matches, const char *repl
 	char before[MAX_EDIT_LINE_LEN+1];
 	char after[MAX_EDIT_LINE_LEN+1];
 
-	strlcpy__(before, CEBV_CL->data, MAX_EDIT_LINE_LEN);
-	strlcpy__(after, CEBV_CL->data, MAX_EDIT_LINE_LEN);
+	strlcpy__(before, CBV_CL->data, MAX_EDIT_LINE_LEN);
+	strlcpy__(after, CBV_CL->data, MAX_EDIT_LINE_LEN);
 	// replace in buffer
 #ifdef ENABLE_REGEX
 	if (GET_APPMD(ed_USE_REGEXP) == 0) {
@@ -387,7 +391,7 @@ int replace_str_in_buffer(search_t *search, matches_t *matches, const char *repl
 		 after, MAX_EDIT_LINE_LEN, replace_to);
 	}
 #endif // ENABLE_REGEX
-	line_set_string(CEBV_CL, after);		// replace whole of the line
+	line_set_string(CBV_CL, after);		// replace whole of the line
 	return strlen(after) - strlen(before);
 }
 
@@ -442,7 +446,7 @@ PRIVATE int do_find_bracket_(int reverse)
 	int depth;
 	int match_len;
 
-	char_under_cursor = CEBV_CL->data[CEBV_CLBI];
+	char_under_cursor = CBV_CL->data[CBV_CLBI];
 	if ((ptr = strchr__(brackets, char_under_cursor)) == NULL) {
 		disp_status_bar_done(_("Not a bracket"));
 		return 1;
@@ -453,8 +457,8 @@ PRIVATE int do_find_bracket_(int reverse)
 	set_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);
 	blank_status_bar();
 
-	cur_line_save = CEBV_CL;
-	cur_line_byte_idx_save = CEBV_CLBI;
+	cur_line_save = CBV_CL;
+	cur_line_byte_idx_save = CBV_CLBI;
 	SET_APPMD(ed_USE_REGEXP);
 
 	// apparent near redundancy with regexp_str[] here is needed,
@@ -483,7 +487,7 @@ PRIVATE int do_find_bracket_(int reverse)
 
 		if (match_len) {
 			// found bracket
-			if (CEBV_CL->data[CEBV_CLBI] == char_under_cursor) {
+			if (CBV_CL->data[CBV_CLBI] == char_under_cursor) {
 				depth++;
 				if (depth > MAX_NESTING) {
 					break;
@@ -501,13 +505,13 @@ PRIVATE int do_find_bracket_(int reverse)
 		disp_status_bar_done(_("Peer bracket found"));
 	} else if (depth < MAX_NESTING) {
 		// didn't find peer bracket
-		CEBV_CL = cur_line_save;
-		CEBV_CLBI = cur_line_byte_idx_save;
+		CBV_CL = cur_line_save;
+		CBV_CLBI = cur_line_byte_idx_save;
 		disp_status_bar_err(_("No peer bracket found"));
 	} else {
 		// didn't find peer bracket
-		CEBV_CL = cur_line_save;
-		CEBV_CLBI = cur_line_byte_idx_save;
+		CBV_CL = cur_line_save;
+		CBV_CLBI = cur_line_byte_idx_save;
 		disp_status_bar_err(_("Bracket nesting too deep"));
 	}
 	regexp_free_regex_compiled(&search__.regexp);
@@ -525,9 +529,10 @@ int search_str_in_buffer(const char *needle,
 	int match_len;
 
 	disp_status_bar_ing(_("Searching word: [%s]..."), needle);
+_FLF_
 
-	line = CEBV_CL;
-	byte_idx = CEBV_CLBI;
+	line = CBV_CL;
+	byte_idx = CBV_CLBI;
 	match_len = 0;
 	if (search_dir <= BACKWARD_SEARCH) {
 		// search backward -----------------------------------------------------
@@ -556,6 +561,7 @@ int search_str_in_buffer(const char *needle,
 			byte_idx = 0;
 			skip_here = 1;
 		}
+_FLF_
 	} else {
 		// search forward ------------------------------------------------------
 		while (1) {
@@ -583,15 +589,19 @@ int search_str_in_buffer(const char *needle,
 			byte_idx = line_data_len(line);
 			skip_here = 1;
 		}
+_FLF_
 	}
+_FLF_
 	if (match_len) {
 		// found and update current line pointer
-		CEBV_CL = line;
-		CEBV_CLBI = matches_start_idx(&matches__);
+		CBV_CL = line;
+		CBV_CLBI = matches_start_idx(&matches__);
+_FLF_
 		return match_len;
 	}
 	tio_beep();
 	not_found_msg(needle);
+_FLF_
 	return 0;
 }
 

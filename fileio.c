@@ -43,7 +43,7 @@ int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_er
 		return lines;
 	}
 	append_magic_line();
-	CEBV_CL = CUR_EDIT_BUF_TOP_LINE;
+	CBV_CL = CUR_EDIT_BUF_TOP_LINE;
 	renumber_cur_buf_from_top();
 	update_cur_buf_crc();
 

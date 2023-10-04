@@ -108,8 +108,8 @@ int regexp_free(regexp_t *regexp);
 int regexp_search(regexp_t *regexp, regexp_matches_t *regexp_matches, const char *needle,
  const char *haystack, int byte_idx, int cflags, int eflags, size_t max_matches);
 int regexp_compile(regexp_t *regexp, const char *needle, int cflags);
-int regexp_search_compiled(regexp_t *regexp, const char *haystack, int byte_idx, int eflags,
- regexp_matches_t *regexp_matches, size_t max_matches);
+int regexp_search_compiled(regexp_t *regexp, const char *haystack, int byte_idx,
+ int eflags, regexp_matches_t *regexp_matches, size_t max_matches);
 #ifdef ENABLE_DEBUG
 void regexp_dump_matches(regexp_t *regexp, regexp_matches_t *regexp_matches,
  const char *haystack);

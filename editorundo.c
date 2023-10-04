@@ -321,8 +321,8 @@ PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 #endif
 	}
 	// restore pointers
-	CEBV_CLBI = buf->views[0].cur_line_byte_idx;
-	CEBV_CL = get_line_ptr_from_cur_buf_line_num(BUF_TOP_LINE(buf)->line_num);
+	CBV_CLBI = buf->buf_views[0].cur_line_byte_idx;
+	CBV_CL = get_line_ptr_from_cur_buf_line_num(BUF_TOP_LINE(buf)->line_num);
 	return edit_line;
 }
 

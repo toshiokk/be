@@ -28,11 +28,11 @@
 
 typedef struct {
 	char org_cur_dir[MAX_PATH_LEN+1];	// original current directory
-	int view_idx;						// -1: filer_views not initialized
-	filer_view_t views[FILER_VIEWS];
-} filer_views_t;
+	int view_idx;						// -1: filer_panes not initialized
+	filer_view_t filer_views[FILER_VIEWS];
+} filer_panes_t;
 
-extern filer_views_t *cur_filer_views;	// Current Filer ViewS
+extern filer_panes_t *cur_filer_panes;	// Current Filer ViewS
 extern filer_view_t *cur_fv;	// Current Filer View
 
 #define FILER_DO_NOTHING			0
@@ -48,7 +48,7 @@ extern filer_view_t *cur_fv;	// Current Filer View
 #define FILER_DO_ENTERED_DIR_PATH	10	// /home/user/bin
 extern int filer_do_next;
 
-void init_filer_views(filer_views_t *fvs, const char *cur_dir);
+void init_filer_panes(filer_panes_t *fvs, const char *cur_dir);
 void set_cur_filer_view(void);
 filer_view_t *get_other_filer_view(void);
 

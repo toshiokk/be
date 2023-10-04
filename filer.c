@@ -23,20 +23,20 @@
 
 #ifdef ENABLE_FILER
 
-filer_views_t *cur_filer_views;		// Current Filer ViewS
+filer_panes_t *cur_filer_panes;		// Current Filer Views
 filer_view_t *cur_fv;				// Current Filer View
 
 PRIVATE char filer_cur_path[MAX_PATH_LEN+1];	// /directory/filter.*
 int filer_do_next = FILER_DO_NOTHING;
 
 PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir);
-PRIVATE filer_views_t *inherit_filer_views(filer_views_t *new_fvs);
-PRIVATE void discard_filer_views(filer_views_t *new_fvs, filer_views_t *prev_fvs);
+PRIVATE filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps);
+PRIVATE void free_filer_panes(filer_panes_t *cur_fvs, filer_panes_t *prev_fps);
 PRIVATE int get_other_view_idx(int filer_view_idx);
 #if 0
 #ifdef ENABLE_DEBUG
 PRIVATE void dump_filer_view(filer_view_t *fv);
-PRIVATE void dump_filer_views(void);
+PRIVATE void dump_filer_panes(void);
 #endif // ENABLE_DEBUG
 #endif // 0
 
@@ -61,16 +61,16 @@ PRIVATE void disp_key_list_filer(void);
 #define FILER_VERT_SCROLL_LINES			\
 	MIN_MAX_(1, filer_win_get_file_list_lines()-1 - FILER_VERT_SCROLL_MARGIN_LINES, 50)
 
-void init_filer_views(filer_views_t *fvs, const char *cur_dir)
+void init_filer_panes(filer_panes_t *fvs, const char *cur_dir)
 {
 	int filer_view_idx;
 
-	cur_filer_views = fvs;
-	strlcpy__(cur_filer_views->org_cur_dir, cur_dir, MAX_PATH_LEN);
-	cur_filer_views->view_idx = 0;
+	cur_filer_panes = fvs;
+	strlcpy__(cur_filer_panes->org_cur_dir, cur_dir, MAX_PATH_LEN);
+	cur_filer_panes->view_idx = 0;
 	for (filer_view_idx = 0; filer_view_idx < FILER_VIEWS; filer_view_idx++) {
 		// set initial value
-		init_filer_view(&cur_filer_views->views[filer_view_idx], cur_dir);
+		init_filer_view(&cur_filer_panes->filer_views[filer_view_idx], cur_dir);
 	}
 }
 PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir)
@@ -87,28 +87,28 @@ PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir)
 }
 void set_cur_filer_view(void)
 {
-	cur_fv = &cur_filer_views->views[cur_filer_views->view_idx];
+	cur_fv = &cur_filer_panes->filer_views[cur_filer_panes->view_idx];
 }
 
-PRIVATE filer_views_t *inherit_filer_views(filer_views_t *new_fvs)
+PRIVATE filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps)
 {
-	filer_views_t *prev_fvs = cur_filer_views;
+	filer_panes_t *prev_fps = cur_filer_panes;	// previous file panes
 
-	init_filer_views(new_fvs, prev_fvs->views[prev_fvs->view_idx].cur_dir);
-	return prev_fvs;
+	init_filer_panes(next_fps, prev_fps->filer_views[prev_fps->view_idx].cur_dir);
+	return prev_fps;
 }
-PRIVATE void discard_filer_views(filer_views_t *new_fvs, filer_views_t *prev_fvs)
+PRIVATE void free_filer_panes(filer_panes_t *cur_fvs, filer_panes_t *prev_fps)
 {
 	int filer_view_idx;
 
 	for (filer_view_idx = 0; filer_view_idx < FILER_VIEWS; filer_view_idx++) {
-		free_file_list(&new_fvs->views[filer_view_idx]);
+		free_file_list(&cur_fvs->filer_views[filer_view_idx]);
 	}
-	cur_filer_views = prev_fvs;
+	cur_filer_panes = prev_fps;
 }
 filer_view_t *get_other_filer_view(void)
 {
-	return &cur_filer_views->views[get_other_view_idx(cur_filer_views->view_idx)];
+	return &cur_filer_panes->filer_views[get_other_view_idx(cur_filer_panes->view_idx)];
 }
 PRIVATE int get_other_view_idx(int filer_view_idx)
 {
@@ -127,10 +127,10 @@ flf_d_printf("top_idx:[%d]\n", fv->top_idx);
 flf_d_printf("cur_sel_idx:[%d]\n", fv->cur_sel_idx);
 flf_d_printf("next_file:[%s]\n", fv->next_file);
 }
-PRIVATE void dump_filer_views(void)
+PRIVATE void dump_filer_panes(void)
 {
-	flf_d_printf("cur_filer_views: %p\n", cur_filer_views);
-	flf_d_printf("view_idx: %d\n", cur_filer_views->view_idx);
+	flf_d_printf("cur_filer_panes: %p\n", cur_filer_panes);
+	flf_d_printf("view_idx: %d\n", cur_filer_panes->view_idx);
 	flf_d_printf("cur_fv: %p\n", cur_fv);
 }
 #endif // ENABLE_DEBUG
@@ -141,15 +141,15 @@ PRIVATE void dump_filer_views(void)
 int call_filer(int push_win, int list_mode,
  char *dir, char *filter, char *file_path, int buf_len)
 {
-	filer_views_t *prev_fvs = NULL;
-	filer_views_t new_filer_views;
+	filer_panes_t *prev_fps = NULL;
+	filer_panes_t next_filer_panes;
 	app_mode_t appmode_save;
 	int ret;
 
 	if (push_win) {
 		win_push_win_size();
 
-		prev_fvs = inherit_filer_views(&new_filer_views);
+		prev_fps = inherit_filer_panes(&next_filer_panes);
 		set_cur_filer_view();
 	}
 
@@ -171,7 +171,7 @@ flf_d_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 	set_app_func_key_table();
 
 	if (push_win) {
-		discard_filer_views(&new_filer_views, prev_fvs);
+		free_filer_panes(&next_filer_panes, prev_fps);
 		set_cur_filer_view();
 		change_cur_dir(cur_fv->cur_dir);
 
@@ -349,8 +349,8 @@ PRIVATE int update_all_file_list(const char *filter, int force_update)
 	if (GET_APPMD(fl_FILER_PANES) == 0) {
 		update_file_list(cur_fv, filter, force_update);
 	} else {
-		update_file_list(&cur_filer_views->views[0], filter, force_update);
-		update_file_list(&cur_filer_views->views[1], filter, force_update);
+		update_file_list(&cur_filer_panes->filer_views[0], filter, force_update);
+		update_file_list(&cur_filer_panes->filer_views[1], filter, force_update);
 	}
 	return 0;
 }
@@ -395,9 +395,9 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 			// 1st, update not current pane.
 			// 2nd, update current pane.
 			if (pane_sel_idx == 0) {
-				pane_idx = cur_filer_views->view_idx == 0 ? 1 : 0;	// not current pane
+				pane_idx = cur_filer_panes->view_idx == 0 ? 1 : 0;	// not current pane
 			} else {
-				pane_idx = cur_filer_views->view_idx;				// current pane
+				pane_idx = cur_filer_panes->view_idx;				// current pane
 			}
 			win_select_win(WIN_IDX_SUB_LEFT + pane_idx);
 			if (pane_sel_idx == 0) {
@@ -407,7 +407,7 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 				// current pane
 				set_work_space_color_normal();
 			}
-			disp_file_list(&cur_filer_views->views[pane_idx], pane_sel_idx);
+			disp_file_list(&cur_filer_panes->filer_views[pane_idx], pane_sel_idx);
 		}
 	}
 	// status bar
@@ -461,7 +461,7 @@ PRIVATE void disp_filer_title_bar(const char *path,
 #endif // ENABLE_DEBUG
 	snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%s%d%c%s",
 	 root_notation(),
-	 cur_filer_views->view_idx+1, separator_char, path);
+	 cur_filer_panes->view_idx+1, separator_char, path);
 
 	// current time
 	strlcpy__(buf_time, cur_ctime(), HHCMMCSS_LEN);

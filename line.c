@@ -374,7 +374,7 @@ void line_dump_cur(const be_line_t *line, const be_line_t *cur_line)
 	flf_d_printf("%s%03d,%08lx,<%08lx,>%08lx,%04d,%06d,%08lx[%s]\n",
 	 line == cur_line ? ">" : " ",
 	 line->line_num,
-	 line, line->prev, NEXT_NODE(line),
+	 line, PREV_NODE(line), NEXT_NODE(line),
 	 line->size, line->buf_size,
 	 line->data, line->data);
 }

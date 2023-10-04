@@ -29,7 +29,7 @@
 
 int do_goto_input_line(void);
 int do_goto_file_in_cur_line(void);
-////int do_goto_directory_in_cur_line(void);
+int do_goto_directory_in_cur_line(void);
 
 int do_open_files_in_buf(void);
 int do_switch_to_top_file(void);

@@ -38,7 +38,7 @@ PRIVATE int do_filer_cmd_(char *cmd_file);
 
 int do_run_line(void)
 {
-	fork_exec_once_sh_c(SEPARATE1, PAUSE1, CEBV_CL->data);
+	fork_exec_once_sh_c(SEPARATE1, PAUSE1, CBV_CL->data);
 	do_refresh_editor();
 	return 0;
 }
@@ -197,7 +197,7 @@ PRIVATE int do_run_command_(int mode)
 		break;
 	case 5:
 		explanation = _("Run (with SRC-path and DEST-path):");
-		if (cur_filer_views->view_idx == 0) {
+		if (cur_filer_panes->view_idx == 0) {
 			src_fv_idx = 0;
 			dst_fv_idx = 1;
 		} else {
@@ -205,10 +205,10 @@ PRIVATE int do_run_command_(int mode)
 			dst_fv_idx = 0;
 		}
 		snprintf_(buf_s, MAX_PATH_LEN+1, "%s/%s",
-		 cur_filer_views->views[src_fv_idx].cur_dir,
+		 cur_filer_panes->filer_views[src_fv_idx].cur_dir,
 		 cur_fv->file_list[cur_fv->cur_sel_idx].file_name);
 		snprintf_(buf_d, MAX_PATH_LEN+1, "%s/%s",
-		 cur_filer_views->views[dst_fv_idx].cur_dir,
+		 cur_filer_panes->filer_views[dst_fv_idx].cur_dir,
 		 cur_fv->file_list[cur_fv->cur_sel_idx].file_name);
 		snprintf_(command_str, MAX_PATH_LEN+1, " %s %s",
 		 quote_file_name_buf(buf1, buf_s),

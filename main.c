@@ -51,7 +51,7 @@ char *main_rc_file_name = RC_FILE_NAME;	// standard rc file
 int main(int argc, char *argv[])
 {
 #ifdef ENABLE_FILER
-	filer_views_t filer_views;
+	filer_panes_t filer_panes;
 #endif // ENABLE_FILER
 	int start_line_num = 0;			// Line to start at
 
@@ -65,7 +65,7 @@ _FLF_
 _FLF_
 	init_buffers();		// parse_options() needs c_e_b. So do here.
 #ifdef ENABLE_FILER
-	init_filer_views(&filer_views, get_start_dir());
+	init_filer_panes(&filer_panes, get_start_dir());
 	set_cur_filer_view();
 #endif // ENABLE_FILER
 _FLF_

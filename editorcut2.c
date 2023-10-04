@@ -40,18 +40,18 @@ void clear_mark_pos(void)
 }
 void set_mark_pos(void)
 {
-	CEB_ML = CEBV_CL;
-	CEB_MLBI = CEBV_CLBI;
+	CEB_ML = CBV_CL;
+	CEB_MLBI = CBV_CLBI;
 }
-// CEB_MLBI <==> CEBV_CLBI
+// CEB_MLBI <==> CBV_CLBI
 void swap_m_l_b_i_with_c_l_b_i(void)
 {
 	int c_l_b_i;
 
-	if (CEB_ML == CEBV_CL) {
+	if (CEB_ML == CBV_CL) {
 		c_l_b_i = CEB_MLBI;
-		CEB_MLBI = CEBV_CLBI;
-		CEBV_CLBI = c_l_b_i;
+		CEB_MLBI = CBV_CLBI;
+		CBV_CLBI = c_l_b_i;
 	}
 }
 
@@ -175,11 +175,11 @@ PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move
 }
 PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 {
-	if (CEBV_CL == CEB_ML) {
+	if (CBV_CL == CEB_ML) {
 		// current == begin
-		mark_min_line = CEBV_CL;
-		mark_max_line = CEBV_CL;
-		if (CEBV_CLBI == CEB_MLBI) {
+		mark_min_line = CBV_CL;
+		mark_max_line = CBV_CL;
+		if (CBV_CLBI == CEB_MLBI) {
 			// the same line, the same column
 			// change cut-mode to initial mode
 ///			// cut-mode is not initial mode, set to initial mode
@@ -254,19 +254,19 @@ void setup_cut_region(void)
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
-		if (IS_NODE_BOT(CEBV_CL)) {
+		if (IS_NODE_BOT(CBV_CL)) {
 			// No next line
 			// {aaaaaaaaaaaaaaaaaa}
-			mark_min_line = CEBV_CL;
-			mark_max_line = CEBV_CL;
+			mark_min_line = CBV_CL;
+			mark_max_line = CBV_CL;
 			mark_min_byte_idx = 0;
-			mark_max_byte_idx = line_data_len(CEBV_CL);
+			mark_max_byte_idx = line_data_len(CBV_CL);
 		} else {
 			// There is next line
 			// {aaaaaaaaaaaaaaaaaaa
 			// }bbbbbbbbbbbbbbbbbbb
-			mark_min_line = CEBV_CL;
-			mark_max_line = CEBV_CL->next;
+			mark_min_line = CBV_CL;
+			mark_max_line = CBV_CL->next;
 			mark_min_byte_idx = 0;
 			mark_max_byte_idx = 0;
 		}
@@ -275,36 +275,36 @@ void setup_cut_region(void)
 	case CUT_MODE_VH_CHAR:
 	case CUT_MODE_HV_BOX:
 	case CUT_MODE_VH_BOX:
-		if (CEBV_CL == CEB_ML) {
+		if (CBV_CL == CEB_ML) {
 			// current == begin
-			mark_min_line = CEBV_CL;
-			mark_max_line = CEBV_CL;
-			if (CEBV_CLBI == CEB_MLBI) {
+			mark_min_line = CBV_CL;
+			mark_max_line = CBV_CL;
+			if (CBV_CLBI == CEB_MLBI) {
 				// the same line, the same column
-				mark_min_byte_idx = CEBV_CLBI;
-				mark_max_byte_idx = CEBV_CLBI;
+				mark_min_byte_idx = CBV_CLBI;
+				mark_max_byte_idx = CBV_CLBI;
 			} else {
 				// the same line, different column
-				if (CEBV_CLBI < CEB_MLBI) {
-					mark_min_byte_idx = CEBV_CLBI;
+				if (CBV_CLBI < CEB_MLBI) {
+					mark_min_byte_idx = CBV_CLBI;
 					mark_max_byte_idx = CEB_MLBI;
 				} else {
 					mark_min_byte_idx = CEB_MLBI;
-					mark_max_byte_idx = CEBV_CLBI;
+					mark_max_byte_idx = CBV_CLBI;
 				}
 			}
 		} else {
 			// different line
-			if (CEB_ML->line_num < CEBV_CL->line_num) {
+			if (CEB_ML->line_num < CBV_CL->line_num) {
 				// begin < current
 				mark_min_line = CEB_ML;
 				mark_min_byte_idx = CEB_MLBI;
-				mark_max_line = CEBV_CL;
-				mark_max_byte_idx = CEBV_CLBI;
+				mark_max_line = CBV_CL;
+				mark_max_byte_idx = CBV_CLBI;
 			} else {
 				// current < begin
-				mark_min_line = CEBV_CL;
-				mark_min_byte_idx = CEBV_CLBI;
+				mark_min_line = CBV_CL;
+				mark_min_byte_idx = CBV_CLBI;
 				mark_max_line = CEB_ML;
 				mark_max_byte_idx = CEB_MLBI;
 			}
@@ -312,19 +312,19 @@ void setup_cut_region(void)
 		break;
 	case CUT_MODE_V_LINE:
 	case CUT_MODE_HV_LINE:
-		if (CEBV_CL == CEB_ML) {
+		if (CBV_CL == CEB_ML) {
 			// current == begin
-			mark_min_line = CEBV_CL;
-			mark_max_line = CEBV_CL;
+			mark_min_line = CBV_CL;
+			mark_max_line = CBV_CL;
 		} else {
 			// different line
-			if (CEB_ML->line_num < CEBV_CL->line_num) {
+			if (CEB_ML->line_num < CBV_CL->line_num) {
 				// begin < current
 				mark_min_line = CEB_ML;
-				mark_max_line = CEBV_CL;
+				mark_max_line = CBV_CL;
 			} else {
 				// current < begin
-				mark_min_line = CEBV_CL;
+				mark_min_line = CBV_CL;
 				mark_max_line = CEB_ML;
 			}
 		}
@@ -361,8 +361,8 @@ void setup_cut_region(void)
 	}
 flf_d_printf("CEB_ML: [%s]\n", CEB_ML->data);
 flf_d_printf("CEB_MLBI: %d\n", CEB_MLBI);
-flf_d_printf("CEBV_CL: [%s]\n", CEBV_CL->data);
-flf_d_printf("CEBV_CLBI: %d\n", CEBV_CLBI);
+flf_d_printf("CBV_CL: [%s]\n", CBV_CL->data);
+flf_d_printf("CBV_CLBI: %d\n", CBV_CLBI);
 flf_d_printf("mark_min_line: [%s]\n", mark_min_line->data);
 flf_d_printf("mark_min_byte_idx: %d\n", mark_min_byte_idx);
 flf_d_printf("mark_max_line: [%s]\n", mark_max_line->data);

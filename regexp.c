@@ -351,8 +351,8 @@ int regexp_search(regexp_t *regexp, regexp_matches_t *regexp_matches, const char
 		if (regexp_compile(regexp, needle, cflags))
 			return -2;		// -2: compilation error
 	}
-	ret = regexp_search_compiled(regexp, haystack, byte_idx, eflags,
-	 regexp_matches, max_matches);
+	ret = regexp_search_compiled(regexp, haystack, byte_idx,
+	 eflags, regexp_matches, max_matches);
 	return ret;		// 0: match, -1:no match
 }
 int regexp_compile(regexp_t *regexp, const char *needle, int cflags)
@@ -377,8 +377,8 @@ int regexp_compile(regexp_t *regexp, const char *needle, int cflags)
 	}
 	return regexp->is_compiled == 2 ? 0 : -1;	// 0: compilation succeeded, -1: compilation error
 }
-int regexp_search_compiled(regexp_t *regexp, const char *haystack, int byte_idx, int eflags,
- regexp_matches_t *regexp_matches, size_t max_matches)
+int regexp_search_compiled(regexp_t *regexp, const char *haystack, int byte_idx,
+ int eflags, regexp_matches_t *regexp_matches, size_t max_matches)
 {
 	int ret;
 
