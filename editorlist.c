@@ -137,6 +137,7 @@ void make_help_buf(int help_idx)
 	append_magic_line();
 	CBV_CL = CUR_EDIT_BUF_TOP_LINE;
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
+	// renumber
 	post_cmd_processing(CBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 

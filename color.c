@@ -32,8 +32,9 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	{ CL_WH, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
 	{ CL_BK, CL_BR, S(ITEM_COLOR_IDX_KEY_LIST2)			},
 	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL)		},
-	{ CL_RD, CL_BK, S(ITEM_COLOR_IDX_TEXT_SELECTED)		},
-	{ CL_WH, CL_MG, S(ITEM_COLOR_IDX_TEXT_SELECTED2)	},
+	{ CL_RD, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED)		},
+	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED2)	},
+///	{ CL_MG, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED2)	},
 	{ CL_RD, CL_GR, S(ITEM_COLOR_IDX_WARNING)			},
 	{ CL_BK, CL_WH, S(ITEM_COLOR_IDX_CURSOR_CHAR)		},
 	{ CL_CY, CL_DF, S(ITEM_COLOR_IDX_CURSOR_LINE)		},
@@ -171,8 +172,8 @@ PRIVATE void display_color_pattern(int yy, int xx, int reverse);
 int display_color_pairs(int yy, int xx)
 {
 	tio_clear_flash_screen(1);
-	display_color_pattern(yy, xx, 0);
-	display_color_pattern(yy, xx+40, 1);
+	display_color_pattern(yy, xx+ 0, 0);
+	display_color_pattern(yy, xx+34, 1);
 	tio_refresh();
 	return 0;
 }

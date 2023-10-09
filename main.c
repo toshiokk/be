@@ -32,7 +32,7 @@
 #ifdef ENABLE_NCURSES
 #warning "Terminal control via ncurses (curses_...)"
 #else // ENABLE_NCURSES
-#warning "Terminal control via own terminal interface library (termif_...)"
+///#warning "Terminal control via own terminal interface library (termif_...)"
 #endif // ENABLE_NCURSES
 
 PRIVATE int init_locale(void);
@@ -170,15 +170,15 @@ int app_main_loop(void)
 
 	if (count_edit_bufs()) {
 		// application was started as a EDITOR
-_FLF_
+///_FLF_
 		call_editor(0, 0);
-_FLF_
+///_FLF_
 	} else {
 		// application was started as a FILER
 		while (1) {
-_FLF_
+///_FLF_
 			call_filer(0, 0, "", "", file_name, MAX_PATH_LEN);
-_FLF_
+///_FLF_
 			if (count_edit_bufs() == 0) {
 				// no file loaded in filer
 				break;
@@ -188,10 +188,10 @@ _FLF_
 	}
 #else // ENABLE_FILER
 	if (count_edit_bufs() == 0) {
-_FLF_
+///_FLF_
 		do_switch_to_file_list();
 		do_open_file();
-_FLF_
+///_FLF_
 	}
 	if (count_edit_bufs()) {
 		call_editor(0, 0);
@@ -405,6 +405,7 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 PRIVATE void start_up_test(void)
 {
 	char buf[MAX_PATH_LEN+1];
+	void *allocated;
 
 ///	tio_test();
 	get_cwd(buf);
@@ -426,6 +427,14 @@ PRIVATE void start_up_test(void)
 	flf_d_printf("MAX_PATH_LEN: %d\n", MAX_PATH_LEN);
 	flf_d_printf("MAX_SCRN_LINE_BUF_LEN: %d\n", MAX_SCRN_LINE_BUF_LEN);
 	flf_d_printf("MAX_EDIT_LINE_LEN: %d\n", MAX_EDIT_LINE_LEN);
+
+	// memory address of various object
+	flf_d_printf("mem type: 0x1234567890123456\n");
+	flf_d_printf("auto buf: %p\n", buf);
+	flf_d_printf("\"string\": %p\n", "string");
+	allocated = malloc(100);
+	flf_d_printf("malloc  : %p\n", allocated);
+	free(allocated);
 
 	flf_d_printf("#define KEY_RESIZE	0x%04x\n", KEY_RESIZE);
 	flf_d_printf("#define KEY_HOME		0x%04x\n", KEY_HOME);
@@ -468,10 +477,6 @@ PRIVATE void start_up_test(void)
 }
 PRIVATE void start_up_test2(void)
 {
-#ifdef ENABLE_HISTORY
-///
-	_D_(test_joined_history(HISTORY_TYPE_IDX_SEARCH));
-#endif // ENABLE_HISTORY
 }
 #endif // START_UP_TEST
 //-----------------------------------------------------------------------------
@@ -564,16 +569,16 @@ PRIVATE void die_save_file(const char *die_file_path)
 void free_all_allocated_memory(void)
 {
 #ifdef ENABLE_HISTORY
-_FLF_
+///_FLF_
 ///	save_key_macro();
 #endif // ENABLE_HISTORY
 	free_all_buffers();
 
 #ifdef ENABLE_SYNTAX
-_FLF_
+///_FLF_
 	free_file_types();
 #endif // ENABLE_SYNTAX
-_FLF_
+///_FLF_
 }
 
 //-----------------------------------------------------------------------------
@@ -705,8 +710,20 @@ void show_version(void)
 //-----------------------------------------------------------------------------
 #ifdef ENABLE_HELP
 ///#define DEBUG_SPLASH
+const char *splash_text_b[] = {
+//012345678901234567890123456789
+ "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+ "b                            b",
+ "b                            b",
+ "b                            b",
+ "b                            b",
+ "b                            b",
+ "b                            b",
+ "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+ "",
+};
 const char *splash_text_s[] = {
-//0123456789012345678901234567890123456789012345678901234567
+//0123456789012345678901234567890123456789012345678
 #ifndef	DEBUG_SPLASH
  "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
 #else // DEBUG_SPLASH
@@ -785,69 +802,90 @@ const char *splash_text_l[] = {
 
 void disp_splash(int delay)
 {
+	int splash_size_idx;
 	const char **splash_text;
 	int top_y;
 	int left_x;
-	int msg1_x;
-	int msg2_x;
-	int msg3_x;
+	int msg1_x, msg2_x, msg3_x, msg4_x, msg5_x;
+	int msg1_y, msg2_y, msg3_y, msg4_y, msg5_y;
 	int cols;
 	int lines;
 	int yy;
 	int xx;
 	char buffer[100+1];
-#define MSG1_X_S	26
-#define MSG1_X_M	34
-#define MSG2_X_M	34
-#define MSG3_X_M	26
-#define MSG_X_L		49
 
 	tio_set_cursor_on(0);
 	if (delay >= 0) {
 		// refresh whole screen
 		tio_clear_flash_screen(delay);
 	}
-	splash_text = splash_text_l;
-	cols = strlen(splash_text[0]);
-	for (lines = 0; *splash_text[lines]; lines++) {
-		// nothing to do
-	}
-	msg1_x = MSG_X_L;
-	msg2_x = MSG_X_L;
-	msg3_x = MSG_X_L;
-	if (cols > tio_get_columns()
-	 || lines > tio_get_lines()) {
-		splash_text = splash_text_m;
+	for (splash_size_idx = 3; splash_size_idx >= 0; splash_size_idx--) {
+		switch (splash_size_idx) {
+		case 3:
+			splash_text = splash_text_l;
+			msg1_y = 1;
+			msg2_y = 2;
+			msg3_y = 3;
+			msg4_y = 12;
+			msg5_y = 21;
+			msg1_x = 49;
+			msg2_x = 49;
+			msg3_x = 49;
+			msg4_x = 49;
+			msg5_x = 49;
+			break;
+		case 2:
+			splash_text = splash_text_m;
+			msg1_y = 1;
+			msg2_y = 1;
+			msg3_y = 2;
+			msg4_y = 8;
+			msg5_y = 14;
+			msg1_x = 32;
+			msg2_x = 42;
+			msg3_x = 34;
+			msg4_x = 34;
+			msg5_x = 28;
+			break;
+		case 1:
+			splash_text = splash_text_s;
+			msg1_y = 1;
+			msg2_y = 1;
+			msg3_y = 2;
+			msg4_y = 7;
+			msg5_y = 12;
+			msg1_x = 24;
+			msg2_x = 34;
+			msg3_x = 26;
+			msg4_x = 26;
+			msg5_x = 20;
+			break;
+		default:
+		case 0:
+			splash_text = splash_text_b;
+			msg1_y = 1;
+			msg2_y = 2;
+			msg3_y = 3;
+			msg4_y = 4;
+			msg5_y = 6;
+			msg1_x = 3;
+			msg2_x = 3;
+			msg3_x = 3;
+			msg4_x = 3;
+			msg5_x = 1;
+			break;
+		}
 		cols = strlen(splash_text[0]);
 		for (lines = 0; *splash_text[lines]; lines++) {
 			// nothing to do
 		}
-		msg1_x = MSG1_X_M;
-		msg2_x = MSG2_X_M;
-		msg3_x = MSG3_X_M;
-	}
-	if (cols > tio_get_columns()
-	 || lines > tio_get_lines()) {
-		splash_text = splash_text_s;
-		cols = strlen(splash_text[0]);
-		for (lines = 0; *splash_text[lines]; lines++) {
-			// nothing to do
+		if (cols <= tio_get_columns() - 2
+		 && lines <= tio_get_lines()) {
+			break;	// splash frame is smaller than window
 		}
-		msg1_x = MSG1_X_S;
-		msg2_x = -1;
-		msg3_x = -1;
 	}
-
 	top_y = (tio_get_lines() - lines) / 2;
-	cols = LIM_MAX(tio_get_columns(), strlen(splash_text[0]));
 	left_x = (tio_get_columns() - cols) / 2;
-	msg1_x = left_x + msg1_x;
-	if (msg2_x >= 0) {
-		msg2_x = left_x + msg2_x;
-	}
-	if (msg3_x >= 0) {
-		msg3_x = left_x + msg3_x;
-	}
 	for (yy = 0; yy < lines; yy++) {
 		for (xx = 0; xx < cols; xx++) {
 			switch(splash_text[yy][xx]) {
@@ -869,17 +907,17 @@ void disp_splash(int delay)
 		}
 	}
 	tio_set_attrs(CL_CY, CL_BK, 0);
-	tio_output_string(top_y + 1, msg1_x, "Version " VERSION, -1);
-	tio_output_string(top_y + 2, msg1_x, __DATE__ " " __TIME__, -1);
+	tio_output_string(top_y + msg1_y, left_x + msg1_x, "BE-editor", -1);
+	tio_output_string(top_y + msg2_y, left_x + msg2_x, "Version " VERSION, -1);
+	tio_output_string(top_y + msg3_y, left_x + msg3_x, __DATE__ " " __TIME__, -1);
 	snprintf(buffer, 100+1, _("Screen size: %dx%d"), tio_get_columns(), tio_get_lines());
 	if (msg2_x >= 0) {
-		tio_output_string(top_y + lines / 2, msg2_x, buffer, -1);
+	tio_output_string(top_y + msg4_y, left_x + msg4_x, buffer, -1);
 	}
 	if (msg3_x >= 0) {
-		tio_output_string(top_y + lines - 2, msg3_x, _("We're invincible with this !!"), -1);
+	tio_output_string(top_y + msg5_y, left_x + msg5_x, _("We're invincible with this!!"), -1);
 	}
 	tio_refresh();
-///	tio_set_cursor_on(1);
 }
 #endif // ENABLE_HELP
 

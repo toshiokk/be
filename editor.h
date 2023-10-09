@@ -44,7 +44,6 @@ int do_reopen_file(void);
 
 int do_write_file_to(void);
 int do_write_file_ask(void);
-int do_write_file_ask(void);
 int do_write_file_always(void);
 int do_write_all_ask(void);
 int do_write_all_modified(void);
@@ -75,15 +74,16 @@ int do_editor_menu_8(void);
 int do_editor_menu_9(void);
 
 typedef enum {
-	_NOT_CLOSE_AFTER_SAVE_0,	// 0: File will be kept opened.
-	_CLOSE_AFTER_SAVE_1			// 1: File will be discarded after save.
+	NO_CLOSE_AFTER_SAVE_0,	// 0: File will be kept opened.
+	CLOSE_AFTER_SAVE_1		// 1: File will be closed after save.
+							//    (ANSWERING No WILL DISCARD CHANGES)
 } close_after_save_t;
 
 int write_close_all(int yes);
-int write_all(int yes, close_after_save_t discard);
+int write_all_ask(int yes, close_after_save_t close);
 int close_all_not_modified(void);
 int close_all();
-int write_file_ask(int yes, close_after_save_t discard);
+int write_file_ask(int yes, close_after_save_t close);
 
 int do_editor_inc_key_list_lines(void);
 

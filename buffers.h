@@ -47,7 +47,6 @@ extern be_bufs_t bufs_bot_anchor;		//< bottom buffers
 // Edit buffers ---------------------------------------------------------------
 extern be_bufs_t edit_buffers;
 extern editor_panes_t editor_panes;
-////#define editor_panes	(&editor_panes)
 extern be_buf_t *c_e_b;
 extern be_buf_view_t *c_b_v;
 #define EDIT_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&edit_buffers)
@@ -62,16 +61,16 @@ extern be_buf_view_t *c_b_v;
 
 #define BUF_VX(buf, idx)					(&((buf)->buf_views[idx]))
 
-#define BUFV_CL(b_v)						((b_v)->cur_line)
-#define BUFV_CLBI(b_v)						((b_v)->cur_line_byte_idx)
-#define BUFV_CURSOR_Y(b_v)					((b_v)->cursor_y)
-#define BUFV_CURSOR_X_TO_KEEP(b_v)			((b_v)->cursor_x_to_keep)
-#define BUFV_MIN_TEXT_X_TO_KEEP(b_v)		((b_v)->min_text_x_to_keep)
-#define BUF_VX_CL(buf, idx)					BUFV_CL(BUF_VX((buf), (idx)))
-#define BUF_VX_CLBI(buf, idx)				BUFV_CLBI(BUF_VX((buf), (idx)))
-#define BUF_VX_CURSOR_Y(buf, idx)			BUFV_CURSOR_Y(BUF_VX((buf), (idx)))
-#define BUF_VX_CURSOR_X_TO_KEEP(buf, idx)	BUFV_CURSOR_X_TO_KEEP(BUF_VX((buf), (idx)))
-#define BUF_VX_MIN_TEXT_X_TO_KEEP(buf, idx)	BUFV_MIN_TEXT_X_TO_KEEP(BUF_VX((buf), (idx)))
+#define BUF_V_CL(b_v)						((b_v)->cur_line)
+#define BUF_V_CLBI(b_v)						((b_v)->cur_line_byte_idx)
+#define BUF_V_CURSOR_Y(b_v)					((b_v)->cursor_y)
+#define BUF_V_CURSOR_X_TO_KEEP(b_v)			((b_v)->cursor_x_to_keep)
+#define BUF_V_MIN_TEXT_X_TO_KEEP(b_v)		((b_v)->min_text_x_to_keep)
+#define BUF_VX_CL(buf, idx)					BUF_V_CL(BUF_VX((buf), (idx)))
+#define BUF_VX_CLBI(buf, idx)				BUF_V_CLBI(BUF_VX((buf), (idx)))
+#define BUF_VX_CURSOR_Y(buf, idx)			BUF_V_CURSOR_Y(BUF_VX((buf), (idx)))
+#define BUF_VX_CURSOR_X_TO_KEEP(buf, idx)	BUF_V_CURSOR_X_TO_KEEP(BUF_VX((buf), (idx)))
+#define BUF_VX_MIN_TEXT_X_TO_KEEP(buf, idx)	BUF_V_MIN_TEXT_X_TO_KEEP(BUF_VX((buf), (idx)))
 #define BUF_V0_CL(buf)						BUF_VX_CL((buf), 0)
 #define BUF_V0_CLBI(buf)					BUF_VX_CLBI((buf), 0)
 #define BUF_V0_CURSOR_Y(buf)				BUF_VX_CURSOR_Y((buf), 0)
@@ -82,11 +81,11 @@ extern be_buf_view_t *c_b_v;
 #define BUF_V1_CURSOR_Y(buf)				BUF_VX_CURSOR_Y((buf), 1)
 #define BUF_V1_CURSOR_X_TO_KEEP(buf)		BUF_VX_CURSOR_X_TO_KEEP((buf), 1)
 #define BUF_V1_MIN_TEXT_X_TO_KEEP(buf)		BUF_VX_MIN_TEXT_X_TO_KEEP((buf), 1)
-#define CBV_CL							BUFV_CL(c_b_v)
-#define CBV_CLBI						BUFV_CLBI(c_b_v)
-#define CBV_CURSOR_Y					BUFV_CURSOR_Y(c_b_v)
-#define CBV_CURSOR_X_TO_KEEP			BUFV_CURSOR_X_TO_KEEP(c_b_v)
-#define CBV_MIN_TEXT_X_TO_KEEP			BUFV_MIN_TEXT_X_TO_KEEP(c_b_v)
+#define CBV_CL							BUF_V_CL(c_b_v)
+#define CBV_CLBI						BUF_V_CLBI(c_b_v)
+#define CBV_CURSOR_Y					BUF_V_CURSOR_Y(c_b_v)
+#define CBV_CURSOR_X_TO_KEEP			BUF_V_CURSOR_X_TO_KEEP(c_b_v)
+#define CBV_MIN_TEXT_X_TO_KEEP			BUF_V_MIN_TEXT_X_TO_KEEP(c_b_v)
 #define CBV0_CL							BUF_VX_CL(c_e_b, 0)
 #define CBV0_CLBI						BUF_VX_CLBI(c_e_b, 0)
 #define CBV0_CURSOR_Y					BUF_VX_CURSOR_Y(c_e_b, 0)

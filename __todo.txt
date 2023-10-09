@@ -1,11 +1,22 @@
+#### BE-editor to do list
+
+[vv ] Fix editor crash problem
+[v] avoid view shift at cut_to_tail
+[v] Save all modified buffer with ask, without ask.
+[v] Play back key macro when recording key macro.
+   - separate two key assigns of stop-rec-key-macro and play-back-key-macro[K_M_2].
+[ ] counter bracket highlighting {[(< >)]}
+[v] Color of selection
 [v] avoid cursor to jump around the line tail
 [v] History list ==> multi-buffer accessible from editor as edit buffers.
 [v] Link all buffers
 [v] Switch all buffers
+[v] When playbacking key-macro, do-not jump cursor.(any side effect ?)
+[v] Show lines selected on status bar.
+[v] Try to read more than 1000 lines in proj-file.
 
 [v] Show line tail pos on ruler.
-
-[v] Screen auto resizing allong to terminal resizing
+[v] Screen auto resizing allong with terminal resizing
 [v] Refresh all screen to clear scam.
 
 [x]can not open file with file name including ' ' in head or tail.

@@ -261,7 +261,6 @@ int start_wl_idx_of_wrap_line(const char *line, int byte_idx, int width)
 	DEFINE_WRAP_LINE_VARS
 
 	width = wrap_line_length(width);
-////flf_d_printf("[%s]\n", line);
 ////flf_d_printf("byte_idx:%d width:%d\n", byte_idx, width);
 //// if (byte_idx < strlen(line)) {
 ////  flf_d_printf("[%s]\n", &line[byte_idx]);

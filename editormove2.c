@@ -36,7 +36,6 @@
 int post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_move,
  locate_cursor_to_t locate_cursor, int update_needed)
 {
-///_D_(dump_editor_panes());
 	switch (GET_APPMD(ed_CURS_POSITIONING)) {
 	case CURS_POSITIONING_NONE:		break;
 	case CURS_POSITIONING_TOP:		locate_cursor = LOCATE_CURS_TOP;		break;
@@ -44,24 +43,15 @@ int post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_m
 	case CURS_POSITIONING_BOTTOM:	locate_cursor = LOCATE_CURS_BOTTOM;		break;
 	}
 	if (renum_from) {
-///
-_FLF_
 		buf_renumber_from_line(get_c_e_b(), renum_from);
 	}
-///
-_FLF_
-	fix_buf_state_after_cursor_horiz_vert_move(cursor_move);
-///
-_FLF_
+	fix_buf_state_after_cursor_move(cursor_move);
+	setup_cut_region_after_cursor_move(cursor_move);
 	locate_cursor_in_edit_win(locate_cursor);
-_FLF_
 	set_edit_win_update_needed(update_needed);
 #ifdef ENABLE_UNDO
-_FLF_
 	undo_save_after_change();
 #endif // ENABLE_UNDO
-///
-_FLF_
 	return 0;
 }
 
@@ -84,41 +74,49 @@ void locate_cursor_in_edit_win(locate_cursor_to_t location)
 {
 	int disp_y_preferred;
 
-_FLF_
 	switch(location) {
 	default:
 	case LOCATE_CURS_NONE:
-_FLF_
 		disp_y_preferred = CBV_CURSOR_Y;
 		break;
-	case LOCATE_CURS_KEEP:
-_FLF_
-		if ((disp_y_preferred = get_disp_y_after_cursor_move()) < 0) {
-_FLF_
+	case LOCATE_CURS_JUMP:	// locate cursor keeping screen if possible.
+		// In search string,
+		// Case-A: When the next cursor position is in screen,
+		//         it does not move contents and locate cursor in it.
+		// Case-B: When the next cursor position is out of screen,
+		//         it does move contents and locate cursor at the center of screen.
+		if ((disp_y_preferred = get_disp_y_after_cursor_move()) >= 0) {
+			// Case-A: current line is in previous screen
+		} else {
+			// Case-B: current line is out of previous screen
+			// LOCATE_CURS_CENTER
 			disp_y_preferred = edit_win_get_text_lines() / 2;
-_FLF_
 		}
 		break;
 	case LOCATE_CURS_TOP:
-_FLF_
 		disp_y_preferred = 0;
 		break;
 	case LOCATE_CURS_CENTER:
-_FLF_
 		disp_y_preferred = edit_win_get_text_lines() / 2;
 		break;
 	case LOCATE_CURS_BOTTOM:
-_FLF_
 		disp_y_preferred = edit_win_get_text_lines() - 1;
 		break;
 	}
-_FLF_
 	CBV_CURSOR_Y = disp_y_preferred;
-_FLF_
 	fix_cursor_y_keeping_vert_scroll_margin();
-_FLF_
 }
 
+//	+---------------------------------+
+//	| top-of-screen                   | ^
+//	|                                 | |
+//	|                                 | | cursor_y
+//	|                                 | |
+//	|                                 | v
+//	|                                 | <= prev_cur_line, prev_cur_line_byte_idx
+//	|                                 |
+//	|                                 |
+//	+---------------------------------+
 void fix_cursor_y_keeping_vert_scroll_margin(void)
 {
 	int disp_y_preferred;
@@ -142,80 +140,59 @@ void fix_cursor_y_keeping_vert_scroll_margin(void)
 	CBV_CURSOR_Y = lines_go_up;
 }
 
-PRIVATE be_line_t *prev_cur_line;		// Previous CBV_CL
-PRIVATE int prev_cur_line_byte_idx;		// Previous CBV_CLBI
-PRIVATE int prev_cursor_y;				// Previous cursor_y
-void memorize_cur_cursor_pos_before_cursor_move(void)
+PRIVATE be_line_t *prev_cur_line = NULL;	// Previous CBV_CL
+PRIVATE int prev_cur_line_byte_idx = 0;		// Previous CBV_CLBI
+PRIVATE int prev_cursor_y = 0;				// Previous cursor_y
+void memorize_cursor_pos_before_move(void)
 {
-///_FLF_
 	prev_cur_line = CBV_CL;
 	prev_cur_line_byte_idx = CBV_CLBI;
 	prev_cursor_y = CBV_CURSOR_Y;
-tflf_d_printf("[%s](%d)\n", prev_cur_line, prev_cur_line_byte_idx);
 }
 int get_disp_y_after_cursor_move(void)
 {
-	int _cl_wl_idx;
+	int cur_wl_idx;
 	be_line_t *line;
 	int byte_idx;
 	int wl_idx;
 	int yy;
 
-_FLF_
-	if (IS_PTR_NULL(prev_cur_line)) {	// workaround (Avoid editor crash !!!!)
+	if (IS_PTR_NULL(prev_cur_line) || IS_PTR_NULL(prev_cur_line->data)) {
+		// Avoid editor crash !!!!
+		_PROGERR_
 		return -1;
 	}
-	if (IS_PTR_NULL(prev_cur_line->data)) {	// workaround (Avoid editor crash !!!!)
-		return -1;
-	}
-	_cl_wl_idx = start_wl_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1);
-_FLF_
+	cur_wl_idx = start_wl_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1);
 
-	// check [0 -- prev_cursor_y]
+	// check if cur_line is in [0, prev_cursor_y]
 	line = prev_cur_line;
 	byte_idx = prev_cur_line_byte_idx;
 	for (yy = prev_cursor_y; yy >= 0; yy--) {
-_FLF_
-tflf_d_printf("[%s](%d)\n", line->data, byte_idx);
-		if (IS_PTR_NULL(line)) {	// workaround (Avoid editor crash !!!!)
-			return -1;
-		}
-		if (IS_PTR_NULL(line->data)) {	// workaround (Avoid editor crash !!!!)
-			return -1;
-		}
 		wl_idx = start_wl_idx_of_wrap_line(line->data, byte_idx, -1);
-_FLF_
-		if (line == CBV_CL && wl_idx == _cl_wl_idx) {
-_FLF_
+		if (line == CBV_CL && wl_idx == cur_wl_idx) {
 			// found in screen
 			return yy;
 		}
-_FLF_
 		if (c_l_up(&line, &byte_idx) == 0) {
-_FLF_
 			break;
 		}
-_FLF_
 	}
-_FLF_
-	// check [prev_cursor_y -- edit_win_get_text_lines()]
+
+	// check if cur_line is in [prev_cursor_y, edit_win_get_text_lines()]
 	line = prev_cur_line;
 	byte_idx = prev_cur_line_byte_idx;
 	for (yy = prev_cursor_y; yy < edit_win_get_text_lines(); yy++) {
-_FLF_
 		wl_idx = start_wl_idx_of_wrap_line(line->data, byte_idx, -1);
-_FLF_
-		if (line == CBV_CL && wl_idx == _cl_wl_idx) {
+		if (line == CBV_CL && wl_idx == cur_wl_idx) {
 			// found in screen
-			return yy;
+			return yy;	// current line is in previous screen
 		}
 		if (c_l_down(&line, &byte_idx) == 0) {
 			break;
 		}
-_FLF_
 	}
-_FLF_
-	return -1;
+
+	return -1;	// current line is out of previous screen
 }
 
 int get_cur_screen_top(be_line_t **line, int *byte_idx)
@@ -258,23 +235,23 @@ int get_screen_top(be_line_t *_cl_, int _clbi_, int yy,
 //-----------------------------------------------------------------------------
 
 // adjust pointers after moving horizontally or vertically
-void fix_buf_state_after_cursor_horiz_vert_move(cursor_horiz_vert_move_t move)
+void fix_buf_state_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 {
 	int wl_idx;
 	int cursor_x_in_text;
 
-////_D_(line_dump_byte_idx(CBV_CL, CBV_CLBI));
-	if (move == HORIZ_MOVE) {
-		CBV_CURSOR_X_TO_KEEP = start_col_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1);
-		update_min_text_x_to_keep(CBV_CURSOR_X_TO_KEEP);
-	} else {
-		wl_idx = start_wl_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1);
-		CBV_CLBI = end_byte_idx_of_wrap_line_le(CBV_CL->data, wl_idx,
-		 CBV_CURSOR_X_TO_KEEP, -1);
-		cursor_x_in_text = start_col_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1);
-		update_min_text_x_to_keep(cursor_x_in_text);
+	if (is_disable_update_min_x_to_keep() == 0) {
+		if (cursor_move == HORIZ_MOVE) {
+			CBV_CURSOR_X_TO_KEEP = start_col_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1);
+			update_min_text_x_to_keep(CBV_CURSOR_X_TO_KEEP);
+		} else {
+			wl_idx = start_wl_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1);
+			CBV_CLBI = end_byte_idx_of_wrap_line_le(CBV_CL->data, wl_idx,
+			 CBV_CURSOR_X_TO_KEEP, -1);
+			cursor_x_in_text = start_col_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1);
+			update_min_text_x_to_keep(cursor_x_in_text);
+		}
 	}
-	setup_cut_region_after_cursor_horiz_vert_move(move);
 }
 
 PRIVATE int calc_min_text_x_to_keep();
@@ -349,6 +326,22 @@ PRIVATE int recalc_min_text_x_to_keep(int disp_width, int text_width, int margin
 int get_c_b_v_min_text_x_to_keep(void)
 {
 	return CBV_MIN_TEXT_X_TO_KEEP;
+}
+
+//-----------------------------------------------------------------------------
+
+PRIVATE char disable_update_min_x_to_keep = 0;
+void set_disable_update_min_x_to_keep()
+{
+	disable_update_min_x_to_keep = 1;
+}
+void clear_disable_update_min_x_to_keep()
+{
+	disable_update_min_x_to_keep = 0;
+}
+char is_disable_update_min_x_to_keep()
+{
+	return disable_update_min_x_to_keep;
 }
 
 // End of editormove2.c

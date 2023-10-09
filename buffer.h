@@ -30,11 +30,11 @@
  (S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH)
 
 typedef struct be_buf_view_t {
-	be_line_t *cur_line;		//!< pointer to current line (be_line_t)
-	int cur_line_byte_idx;		//!< current line byte index
-	int cursor_y;				//! display y to which cur-line to be displayed
-	int cursor_x_to_keep;		//!< cursor X to keep when moving cursor vertically
-	int min_text_x_to_keep;		//! text x to be displayed on the left edge of the screen
+	be_line_t *cur_line;		// current line (be_line_t)
+	int cur_line_byte_idx;		// current line byte index
+	int cursor_y;				// display Y in screen to which cur-line to be displayed
+	int min_text_x_to_keep;		// text x to be displayed on the left edge of the screen
+	int cursor_x_to_keep;		// cursor X in text to keep when moving cursor vertically
 } be_buf_view_t;
 
 #define BUF_VIEWS		2		// NOTE: must be the same as MAX_APP_PANES

@@ -74,7 +74,7 @@ void sub_win_clear_screen(void);
 void sub_win_clear_lines(int line_1, int line_2);
 void sub_win_output_string(int yy, int xx, const char *string, int bytes);
 
-const char *shrink_str_scr_static(const char *str);
+const char *shrink_str_to_scr_static(const char *str);
 
 #endif // winout_h
 

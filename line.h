@@ -38,6 +38,8 @@
 // "NODE" is "BUFFER" or "LINE"
 #define IS_NODE_TOP_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL((node)->prev))
 #define IS_NODE_TOP(node)			(IS_PTR_NULL(node) || IS_NODE_TOP_ANCH((node)->prev))
+#define IS_NODE_INT(node)			IS_NODE_INTERMEDIATE(node)
+#define IS_NODE_INTERMEDIATE(node)	(!IS_NODE_TOP_ANCH(node) && !IS_NODE_BOT_ANCH(node))
 #define IS_NODE_BOT(node)			(IS_PTR_NULL(node) || IS_NODE_BOT_ANCH((node)->next))
 #define IS_NODE_BOT_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL((node)->next))
 #define IS_NODE_INVALID(node)		(IS_NODE_TOP_ANCH(node) || IS_NODE_BOT_ANCH(node))

@@ -28,9 +28,6 @@ PRIVATE int load_files_in_string(const char *string, int files_to_load, int try_
 PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_err);
 
 PRIVATE const char *skip_n_file_names(const char *line, int field_idx);
-#ifdef START_UP_TEST
-void test_get_n_th_file_name(void);
-#endif // START_UP_TEST
 #ifdef ENABLE_HISTORY
 PRIVATE void goto_pos_by_history(const char *full_path);
 #endif // ENABLE_HISTORY
@@ -140,9 +137,9 @@ int do_switch_to_next_file(void)
 	disp_status_bar_done(_("Next file"));
 	return ret;
 }
+#ifdef ENABLE_EXPERIMENTAL
 int do_switch_to_prev_buffers(void)
 {
-#ifdef ENABLE_EXPERIMENTAL
 	be_bufs_t *bufs = get_bufs_contains_buf(&bufs_top_anchor, get_c_e_b());
 	if (IS_NODE_TOP(bufs))
 		return 0;
@@ -151,12 +148,10 @@ flf_d_printf("PREV_NODE(bufs)->name: %s\n", PREV_NODE(bufs)->name);
 flf_d_printf("PREV_NODE(bufs)->cur_buf->name: %s\n", PREV_NODE(bufs)->cur_buf->file_path);
 	set_cur_edit_buf(PREV_NODE(bufs)->cur_buf);
 	post_cmd_processing(CBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
-#endif // ENABLE_EXPERIMENTAL
 	return 1;
 }
 int do_switch_to_next_buffers(void)
 {
-#ifdef ENABLE_EXPERIMENTAL
 	be_bufs_t *bufs = get_bufs_contains_buf(&bufs_top_anchor, get_c_e_b());
 	if (IS_NODE_BOT(bufs))
 		return 0;
@@ -165,9 +160,9 @@ flf_d_printf("NEXT_NODE(bufs)->name: %s\n", NEXT_NODE(bufs)->name);
 flf_d_printf("NEXT_NODE(bufs)->cur_buf->name: %s\n", NEXT_NODE(bufs)->cur_buf->file_path);
 	set_cur_edit_buf(NEXT_NODE(bufs)->cur_buf);
 	post_cmd_processing(CBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
-#endif // ENABLE_EXPERIMENTAL
 	return 1;
 }
+#endif // ENABLE_EXPERIMENTAL
 //-----------------------------------------------------------------------------
 int do_return_to_prev_file_pos(void)
 {
@@ -208,7 +203,9 @@ int load_files_in_cur_buf(void)
 	memorize_cur_file_pos_null(file_pos_str);
 	first_line();
 	clear_handler_sigint_called();
-#define MAX_LINES_TO_TRY_TO_LOAD		1000
+#define MAX_LINES_TO_TRY_TO_LOAD		10000
+#define MAX_FILES_TO_LOAD				2000
+#define MIN_FREE_MEM_KB					(100 * 1000)	// 100 MB
 	for (lines = 0; lines < MAX_LINES_TO_TRY_TO_LOAD; lines++) {
 		if (is_handler_sigint_called())
 			break;
@@ -225,6 +222,10 @@ int load_files_in_cur_buf(void)
 			}
 		}
 		if (cursor_next_line() == 0)
+			break;
+		if (files >= MAX_FILES_TO_LOAD)
+			break;
+		if (get_mem_free_in_kb(1) <= MIN_FREE_MEM_KB)
 			break;
 	}
 	recall_cur_file_pos_null(file_pos_str);
@@ -254,8 +255,7 @@ PRIVATE int load_files_in_string(const char *string,
 	int files;
 	const char *ptr;
 
-////
-flf_d_printf("[%s]\n", string);
+////flf_d_printf("[%s]\n", string);
 	for (field_idx = 0; files_loaded < files_to_load; field_idx++) {
 		ptr = skip_n_file_names(string, field_idx);
 		if (*ptr == '\0')
@@ -278,18 +278,15 @@ int load_file_in_string(const char *string,
 	int line_num, col_num;
 	int files;
 
-///
-flf_d_printf("string:[%s]\n", string);
+///flf_d_printf("string:[%s]\n", string);
 	if (get_file_line_col_from_str_null(string, file_path, &line_num, &col_num) == 0) {
-_FLF_
+///_FLF_
 		return 0;
 	}
-///
-flf_d_printf("file_path:[%s]\n", file_path);
+///flf_d_printf("file_path:[%s]\n", file_path);
 	if ((files = load_file_name_upp_low(file_path,
 	 try_upp_low, open_on_err, msg_on_err, recursive)) > 0) {
-///
-flf_d_printf("loaded:[%s]\n", file_path);
+///flf_d_printf("loaded:[%s]\n", file_path);
 		goto_line_col_in_cur_buf(line_num, col_num);
 	}
 	return files;
@@ -323,8 +320,7 @@ int load_file_name_recurs(const char *file_name, int open_on_err, int msg_on_err
 	static int recursive_call_count = 0;
 	int files;
 
-///
-flf_d_printf("[%s], %d, %d, %d\n", file_name, open_on_err, msg_on_err, recursive);
+///flf_d_printf("[%s], %d, %d, %d\n", file_name, open_on_err, msg_on_err, recursive);
 	if (load_file_name__(file_name, open_on_err, msg_on_err) <= 0) {
 		return 0;
 	}
@@ -343,20 +339,18 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 {
 	char abs_path[MAX_PATH_LEN+1];
 
-///
-flf_d_printf("[%s]\n", file_name);
+///flf_d_printf("[%s]\n", file_name);
 	get_abs_path(file_name, abs_path);
-///
-flf_d_printf("[%s]\n", abs_path);
+///flf_d_printf("[%s]\n", abs_path);
 	if (switch_c_e_b_to_file_name(abs_path)) {
-flf_d_printf("already loaded:[%s]\n", abs_path);
+///flf_d_printf("already loaded:[%s]\n", abs_path);
 		// already loaded
 		return 1;
 	}
 	if (load_file_into_new_buf(abs_path, open_on_err, msg_on_err) < 0) {
 		return 0;
 	}
-flf_d_printf("loaded:[%s]\n", abs_path);
+///flf_d_printf("loaded:[%s]\n", abs_path);
 #ifdef ENABLE_HISTORY
 	goto_pos_by_history(abs_path);
 #endif // ENABLE_HISTORY

@@ -87,7 +87,7 @@ _FLF_
 
 void free_all_buffers(void)
 {
-	////_D_(bufs_dump_all_bufs(&bufs_top_anchor));
+	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
 #if 1 //----------------------------------
 	bufs_free_all_bufss(&bufs_top_anchor);
 #else //----------------------------------
@@ -106,7 +106,7 @@ void free_all_buffers(void)
 ///_FLF_
 ///	free_all_edit_bufs();
 #endif //---------------------------------
-	////_D_(bufs_dump_all_bufs(&bufs_top_anchor));
+	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
 }
 
 // Edit-buffer manipulation routines

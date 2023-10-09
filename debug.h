@@ -39,11 +39,11 @@
 #define __FN__		__FUNCTION__
 
 #define _D_(debug)						_FLF_;	debug;
+#define flf_d_printf(args...)			tflfl_d_printf_(0, __FILE__, __LINE__, __FN__, "", args)
 #define tflf_d_printf(args...)			tflfl_d_printf_(1, __FILE__, __LINE__, __FN__, "", args)
 #define mflf_d_printf(args...)			tflfl_d_printf_(3, __FILE__, __LINE__, __FN__, "", args)
 #define uflf_d_printf(args...)			tflfl_d_printf_(6, __FILE__, __LINE__, __FN__, "", args)
 #define flfl_d_printf(label, args...)	tflfl_d_printf_(0, __FILE__, __LINE__, __FN__, label, args)
-#define flf_d_printf(args...)			tflfl_d_printf_(0, __FILE__, __LINE__, __FN__, "", args)
 #define d_printf(args...)				tflfl_d_printf_(0, "", 0, "", "", args)
 #define e_printf(args...)				debug_printf(args)
 #define e_vprintf(args...)				debug_vprintf(args)
@@ -51,11 +51,11 @@
 #else // ENABLE_DEBUG
 
 #define _D_(debug)
+#define flf_d_printf(args...)
 #define tflf_d_printf(args...)
 #define mflf_d_printf(args...)
 #define uflf_d_printf(args...)
 #define flfl_d_printf(label, args...)
-#define flf_d_printf(args...)
 #define d_printf(args...)
 #define e_printf(args...)
 #define e_vprintf(args...)

@@ -301,7 +301,7 @@ PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *stri
 
 //-----------------------------------------------------------------------------
 
-const char *shrink_str_scr_static(const char *str)
+const char *shrink_str_to_scr_static(const char *str)
 {
 	static char buf[MAX_PATH_LEN+1];
 

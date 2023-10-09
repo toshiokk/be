@@ -205,26 +205,22 @@ int search_string_once(const char *needle)
 	}
 
 	memorize_cur_file_pos_null(NULL);
+	memorize_cursor_pos_before_move();
 
 	match_len = search_str_in_buffer(needle,
 	 GET_APPMD(ed_REVERSE_SEARCH) ? BACKWARD_SEARCH : FORWARD_SEARCH,
 	 GET_APPMD(ed_IGNORE_CASE),
 	 SKIP,
 	 INTER_FILE_SEARCH);
-_FLF_
 
 	if (match_len == 0) {
-_FLF_
 		recall_cur_file_pos_null(NULL);
-////		post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_KEEP, UPDATE_SCRN_ALL);
 	} else {
-_FLF_
 		if (GET_APPMD(ed_CURS_POSITIONING) == 0)
-			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_KEEP, UPDATE_SCRN_ALL);
+			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP, UPDATE_SCRN_ALL);
 		else
 			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	}
-_FLF_
 
 	found_in_prev_search = match_len;
 	return match_len;
@@ -263,7 +259,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			skip_here = NO_SKIP;
 		}
 		memorize_cur_file_pos_null(NULL);
-		memorize_cur_cursor_pos_before_cursor_move();
+		memorize_cursor_pos_before_move();
 
 		match_len = search_str_in_buffer(needle,
 		 GET_APPMD(ed_REVERSE_SEARCH) ? BACKWARD_SEARCH : FORWARD_SEARCH,
@@ -275,8 +271,10 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			// not found
 			recall_cur_file_pos_null(NULL);
 		}
-		post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_KEEP, UPDATE_SCRN_ALL);
+		post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP, UPDATE_SCRN_ALL);
+
 		update_screen_editor(1, 1, 1);
+
 		if (match_len) {
 			// found
 			if (ret < ANSWER_ALL) {
@@ -323,7 +321,9 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 #endif // ENABLE_DEBUG
 				undo_set_region_save_before_change(CBV_CL, CBV_CL, 1);
 #endif // ENABLE_UNDO
+
 				length_change = replace_str_in_buffer(&search__, &matches__, replace_to);
+
 #ifdef ENABLE_UNDO
 				undo_save_after_change();
 #ifdef ENABLE_DEBUG
@@ -529,7 +529,7 @@ int search_str_in_buffer(const char *needle,
 	int match_len;
 
 	disp_status_bar_ing(_("Searching word: [%s]..."), needle);
-_FLF_
+///_FLF_
 
 	line = CBV_CL;
 	byte_idx = CBV_CLBI;
@@ -561,7 +561,7 @@ _FLF_
 			byte_idx = 0;
 			skip_here = 1;
 		}
-_FLF_
+///_FLF_
 	} else {
 		// search forward ------------------------------------------------------
 		while (1) {
@@ -589,25 +589,25 @@ _FLF_
 			byte_idx = line_data_len(line);
 			skip_here = 1;
 		}
-_FLF_
+///_FLF_
 	}
-_FLF_
+///_FLF_
 	if (match_len) {
 		// found and update current line pointer
 		CBV_CL = line;
 		CBV_CLBI = matches_start_idx(&matches__);
-_FLF_
+///_FLF_
 		return match_len;
 	}
 	tio_beep();
 	not_found_msg(needle);
-_FLF_
+///_FLF_
 	return 0;
 }
 
 void not_found_msg(const char *str)
 {
-	disp_status_bar_err(_("\"%s\" not found"), shrink_str_scr_static(str));
+	disp_status_bar_err(_("\"%s\" not found"), shrink_str_to_scr_static(str));
 	set_edit_win_update_needed(UPDATE_SCRN_ALL);
 }
 

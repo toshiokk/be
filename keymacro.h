@@ -27,25 +27,24 @@ void load_key_macro(int last_n);
 void save_key_macro(void);
 #endif // ENABLE_HISTORY
 
-int do_record(void);
-int do_playback(void);
+int do_start_rec__cancel_rec(void);
+int do_end_rec__playback(void);
 
 int do_start_recording(void);
 int do_cancel_recording(void);
 int do_end_recording(void);
-int do_start_playback(void);
-int do_start_playback_last_1(void);
-int do_start_playback_last_2(void);
-int start_playback_last_n(int last_n);
+int do_playback(void);
+int do_playback_last_1(void);
+int do_playback_last_2(void);
 
 void key_macro_start_recording(void);
-void key_macro_put_recording(key_code_t key);
+void key_macro_put_key(key_code_t key);
+int key_macro_is_recording(void);
 void key_macro_cancel_recording(void);
 void key_macro_end_recording(void);
-int key_macro_is_recording(void);
 
-void key_macro_start_playback(void);
-key_code_t key_macro_get_playing_back(void);
+int key_macro_start_playback(void);
+key_code_t key_macro_get_key(void);
 void key_macro_end_playback(void);
 int key_macro_is_playing_back(void);
 

@@ -332,8 +332,8 @@ PRIVATE int check_filer_cur_dir(void)
 		while (is_dir_readable(cur_fv->cur_dir) == 0) {
 			// go up to the root dir
 			do_parent_directory();
-////			if (strcmp(cur_fv->cur_dir, cur_fv->next_file) == 0)
-////				break;		// the same dir
+///			if (strcmp(cur_fv->cur_dir, cur_fv->next_file) == 0)
+///				break;		// the same dir
 		}
 		tio_beep();
 	}
@@ -364,9 +364,6 @@ PRIVATE int update_file_list(filer_view_t *fv, const char *filter, int force_upd
 	 || force_update >= 2) {
 		files = make_file_list(fv, filter);
 		strcpy__(fv->listed_dir, fv->cur_dir);
-///		force_update = 1;
-///	}
-///	if (force_update) {
 		sort_file_list(fv);
 		research_file_name_in_file_list(fv);
 	}
@@ -495,7 +492,6 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 		 cur_sel_idx) + FILER_VERT_SCROLL_MARGIN_LINES;
 		fv->top_idx = LIM_MIN(0, bottom_idx - (filer_win_get_file_list_lines()-1));
 	}
-///flf_d_printf("%d ==> %d\n", cur_sel_idx, fv->top_idx);
 
 	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 	sub_win_clear_screen();

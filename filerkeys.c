@@ -25,9 +25,9 @@
 #ifdef ENABLE_FILER
 
 func_key_table_t filer_func_key_table[] = {
-//  1234567890123456   123456789012345678901234567890   12345678901234567890   
+//  1234567890123456   123456789012345678901234567890   123456789012345678901234567890
 //       12345678901234567890
- { "",                "Filer Menu-1",                   K_ESC, K_M_1,      NKA,
+ { "",                "Filer Menu-1",                   K_ESC,        NKA, NKA,
    1,F_I(do_filer_menu_1), NULL },
  { "Prev.Menu",       "Previous Menu",                  K_M_ESC, K_M_BACKQUOTE, NKA,
    0,F_I(do_filer_menu_0), NULL },
@@ -46,7 +46,7 @@ func_key_table_t filer_func_key_table[] = {
  { "Parent directory","Parent directory",               K_BS, K_C_H,       NKA,
    1,F_I(do_parent_directory), NULL },
 
- { "",                "Filer Menu-2",                   K_M_2,        NKA, NKA,
+ { "",                "Filer Menu-2",                   NKA,          NKA, NKA,
    1,F_I(do_filer_menu_2), NULL },
  { "Copy file",       "Copy file",                      'c', K_F02,        NKA,
    1,F_I(do_copy_file), NULL },
@@ -71,7 +71,7 @@ func_key_table_t filer_func_key_table[] = {
  { "Find file",       "Find file",                      'j',          NKA, NKA,
    0,F_I(do_find_file), NULL },
 
- { "",                "Filer Menu-3",                   K_M_3,        NKA, NKA,
+ { "",                "Filer Menu-3",                   NKA,          NKA, NKA,
    0,F_I(do_filer_menu_3), NULL },
  { "Top",             "Top of list",                    K_C_T,        K_M_t, NKA,
    1,F_I(do_top_of_list), NULL },
@@ -96,7 +96,7 @@ func_key_table_t filer_func_key_table[] = {
  { "Previous dir.",   "Previous directory",             'b',          NKA, NKA,
    1,F_I(do_prev_directory), NULL },
 
- { "",                "Filer Menu-4",                   K_M_4,        NKA, NKA,
+ { "",                "Filer Menu-4",                   NKA,          NKA, NKA,
    0,F_I(do_filer_menu_4), NULL },
  { "Execute command", "Execute command",                'x', K_F10,        NKA,
    1,F_I(do_exec_command_with_file), NULL },
@@ -119,9 +119,9 @@ func_key_table_t filer_func_key_table[] = {
  { "Color pairs",     "Display color pairs",            K_M_c,        NKA, NKA,
    0,F_I(do_filer_display_color_pairs), NULL },
 
- { "",                "Filer Menu-5",                   K_M_5,        NKA, NKA,
+ { "",                "Filer Menu-5",                   NKA,          NKA, NKA,
    0,F_I(do_filer_menu_5), NULL },
- { "Split pane",      "Split screen into panes",        '\\', K_M_BACKSLASH,   NKA,
+ { "Split pane",      "Split screen into panes",        '\\', K_M_BACKSLASH, NKA,
    0,F_I(do_tog_filer_panes), get_str_filer_panes },
  { "Switch pane",     "Switch filer pane",              K_TAB, K_M_TAB, NKA,
    1,F_I(do_switch_filer_pane), NULL },

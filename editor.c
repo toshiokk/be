@@ -97,7 +97,6 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 #ifdef ENABLE_REGEX
 			matches_clear(&matches__);
 #endif // ENABLE_REGEX
-			memorize_cur_cursor_pos_before_cursor_move();
 #ifdef ENABLE_UNDO
 #ifdef ENABLE_DEBUG
 			memorize_undo_state_before_change();
@@ -340,6 +339,17 @@ int do_reopen_file(void)
 
 //-----------------------------------------------------------------------------
 
+// | Func name               |files|close|un-modified|ask Y/N|file-name|
+// | ----------------------- |-----|-----|-----------|-------|---------|
+// | do_write_file_to()      | one |none | Yes       | none  |New-name |write to new file
+// | do_write_file_ask()     | one |none | no        | Ask   |cur-name |
+// | do_write_file_always()  | one |none | Yes       | none  |cur-name |ask if not modified
+// | do_write_all_ask()      | All |none | no        | Ask   |cur-name |
+// | do_write_all_modified() | All |none | no        | none  |cur-name |
+// | do_close_file_ask()     | one |Close| no        | Ask   |cur-name |
+// | do_close_all_ask()      | All |Close| no        | Ask   |cur-name |
+// | do_close_all_modified() | All |Close| no        | none  |cur-name |
+
 int do_write_file_to(void)
 {
 	char file_path[MAX_PATH_LEN+1] = "";
@@ -348,7 +358,7 @@ int do_write_file_to(void)
 	strlcpy__(file_path, get_c_e_b()->file_path, MAX_PATH_LEN);
 flf_d_printf("[%s]\n", file_path);
 	while (1) {
-		if (input_new_file_name(file_path) <= 0) {
+		if (input_new_file_name_n_ask(file_path) <= 0) {
 			return -1;
 		}
 flf_d_printf("[%s]\n", file_path);
@@ -373,23 +383,23 @@ flf_d_printf("[%s]\n", file_path);
 }
 int do_write_file_ask(void)
 {
-	return write_file_ask(ANSWER_NO, _NOT_CLOSE_AFTER_SAVE_0);
+	return write_file_ask(ANSWER_NO, NO_CLOSE_AFTER_SAVE_0);
 }
 int do_write_file_always(void)
 {
-	return write_file_ask(ANSWER_FORCE, _NOT_CLOSE_AFTER_SAVE_0);
+	return write_file_ask(ANSWER_FORCE, NO_CLOSE_AFTER_SAVE_0);
 }
 int do_write_all_ask(void)
 {
 	memorize_cur_file_pos_null(NULL);
-	write_all(ANSWER_NO, _NOT_CLOSE_AFTER_SAVE_0);
+	write_all_ask(ANSWER_NO, NO_CLOSE_AFTER_SAVE_0);
 	recall_cur_file_pos_null(NULL);
 	return 1;
 }
 int do_write_all_modified(void)
 {
 	memorize_cur_file_pos_null(NULL);
-	write_all(ANSWER_ALL, _NOT_CLOSE_AFTER_SAVE_0);
+	write_all_ask(ANSWER_ALL, NO_CLOSE_AFTER_SAVE_0);
 	recall_cur_file_pos_null(NULL);
 	return 1;
 }
@@ -402,7 +412,7 @@ int do_close_file_ask(void)
 		editor_quit = EDITOR_ABORT;
 		return 0;
 	}
-	ret = write_file_ask(ANSWER_NO, _CLOSE_AFTER_SAVE_1);
+	ret = write_file_ask(ANSWER_NO, CLOSE_AFTER_SAVE_1);
 	if (ret <= ANSWER_CANCEL) {
 		// Cancel/Error
 		return -1;
@@ -530,18 +540,18 @@ int do_editor_menu_9(void)
 int write_close_all(int yes)
 {
 	close_all_not_modified();
-	if (write_all(yes, _CLOSE_AFTER_SAVE_1) < 0)
+	if (write_all_ask(yes, CLOSE_AFTER_SAVE_1) < 0)
 		return -1;
 	close_all();
 	return 0;
 }
-int write_all(int yes, close_after_save_t discard)
+int write_all_ask(int yes, close_after_save_t close)
 {
 	int ret = yes;
 
 	switch_c_e_b_to_top();
 	while (is_c_e_b_valid()) {
-		ret = write_file_ask(ret, discard);
+		ret = write_file_ask(ret, close);
 		if (ret <= ANSWER_CANCEL) {
 			disp_status_bar_done(_("Cancelled"));
 			return -1;
@@ -549,7 +559,7 @@ int write_all(int yes, close_after_save_t discard)
 		if (switch_c_e_b_to_next(0, 0) == 0)
 			break;
 	}
-	disp_status_bar_done(_("All files are closed"));
+	disp_status_bar_done(_("All files are checked"));
 	return 1;
 }
 int close_all_not_modified(void)
@@ -578,21 +588,27 @@ int close_all(void)
 	return 0;
 }
 
-int write_file_ask(int yes, close_after_save_t discard)
+int write_file_ask(int yes, close_after_save_t close)
 {
 	int ret = yes;
 
-	if (yes < ANSWER_FORCE) {
-		if (check_cur_buf_modified() == 0) {
-			disp_status_bar_done(_("File is NOT modified"));
-			return ANSWER_YES;
+	if (yes < ANSWER_FORCE && check_cur_buf_modified() == 0) {
+		disp_status_bar_done(_("File is NOT modified"));
+		return ANSWER_NO;
+	}
+	if (yes == ANSWER_FORCE && check_cur_buf_modified() == 0) {
+		ret = ask_yes_no(ASK_YES_NO | ASK_ALL, _("Save unmodified buffer ?"));
+		if (ret < 0) {
+			disp_status_bar_done(_("Cancelled"));
+			return ANSWER_CANCEL;
 		}
+		ret = ANSWER_FORCE;
 	}
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	update_screen_editor(1, 1, 1);
 	if (ret < ANSWER_ALL) {
 		ret = ask_yes_no(ASK_YES_NO | ASK_ALL,
-		 discard == 0
+		 close == 0
 		  ? _("Save modified buffer ?")
 		  : _("Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"));
 		if (ret < 0) {
@@ -727,10 +743,12 @@ flf_d_printf("pane_sel_idx: %d, pane_idx: %d\n", pane_sel_idx, pane_idx);
 int disp_status_bar_editor(void)
 {
 	int bytes, byte_idx;
-#define UTF8_CODE_LEN		(17+1+8+1)		// "00-00-00-00-00-00(U+xxxx)"
-	char buf_char_code[UTF8_CODE_LEN+1];	// "00-00-00-00-00-00(U+xxxx)"
+#define UTF8_CODE_LEN		(17+1+8+1)		// "00-00-00-00-00-00(U+xxxxxx)"
+	char buf_char_code[UTF8_CODE_LEN+1];	// "00-00-00-00-00-00(U+xxxxxx)"
 	unsigned long xx;
 	unsigned long disp_len;
+#define SEL_LINES_LEN		(1+4+10+1)		// " LNS:9999999999"
+	char buf_lines_sel[SEL_LINES_LEN] = "";
 	char buffer[MAX_EDIT_LINE_LEN+1];
 
 	xx = col_idx_from_byte_idx(CBV_CL->data, 0, CBV_CLBI) + 1;
@@ -751,12 +769,16 @@ int disp_status_bar_editor(void)
 	}
 #endif // ENABLE_UTF8
 
+	if (IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE))) {
+		snprintf(buf_lines_sel, SEL_LINES_LEN, " LNS:%2d", lines_selected());
+	}
+
 	strcpy__(buffer, "");
 	strlcat__(buffer, MAX_EDIT_LINE_LEN,
-	 _("LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu CODE:%s ENC:%s EOL:%s"));
+	 _("LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"));
 	disp_status_bar_percent_editor(CBV_CL->line_num-1, get_c_e_b()->buf_lines-1,
 	 buffer, CBV_CL->line_num, get_c_e_b()->buf_lines, xx, disp_len,
-	 get_c_e_b()->buf_size, buf_char_code,
+	 get_c_e_b()->buf_size, buf_lines_sel, buf_char_code,
 	 buf_encode_str(get_c_e_b()), buf_eol_str(get_c_e_b()));
 	return 1;
 }
@@ -790,8 +812,10 @@ void disp_key_list_editor(void)
  "<do_switch_to_file_list>FileList "
  "<do_switch_to_prev_file>PrevFile "
  "<do_switch_to_next_file>NextFile "
+#ifdef ENABLE_EXPERIMENTAL
  "<do_switch_to_prev_buffers>PrevBufs "
  "<do_switch_to_next_buffers>NextBufs "
+#endif // ENABLE_EXPERIMENTAL
  "<do_switch_to_key_list>KeyList "
  "<do_switch_to_func_list>FuncList ",
 	};

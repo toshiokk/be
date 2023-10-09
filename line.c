@@ -333,7 +333,7 @@ int line_count_lines(be_line_t *line)
 
 const be_line_t *line_get_top_anch(const be_line_t *line)
 {
-	for ( ; IS_NODE_TOP_ANCH(line) == 0; ) {
+	for ( ; IS_NODE_INT(line); ) {
 		line = PREV_NODE(line);
 	}
 	return line;

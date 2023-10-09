@@ -36,8 +36,10 @@ int do_switch_to_top_file(void);
 int do_switch_to_bot_file(void);
 int do_switch_to_prev_file(void);
 int do_switch_to_next_file(void);
+#ifdef ENABLE_EXPERIMENTAL
 int do_switch_to_prev_buffers(void);
 int do_switch_to_next_buffers(void);
+#endif // ENABLE_EXPERIMENTAL
 int do_return_to_prev_file_pos(void);
 
 int do_switch_editor_pane(void);
@@ -61,6 +63,10 @@ int switch_c_e_b_to_valid_buf(void);
 int switch_c_e_b_to_another_buf(void);
 
 int is_file_name_proj_file(const char *file_name, int type);
+
+#ifdef START_UP_TEST
+void test_get_n_th_file_name(void);
+#endif // START_UP_TEST
 
 char *memorize_cur_file_pos_null(char *buffer);
 int recall_cur_file_pos_null(const char *str);

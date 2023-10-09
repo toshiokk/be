@@ -22,22 +22,10 @@
 
 #include "headers.h"
 
-#if 1
-#define K_REC		K_F01	// Record
-#define K_PLB		K_F02	// Playback
-#define K_PB1		K_SF01	// Playback 1st newest macro
-#define K_PB2		K_SF02	// Playback 2nd newest macro
-#else
-#define K_REC		K_SF01
-#define K_PLB		K_SF02
-#define K_PB1		K_F01
-#define K_PB2		K_F02
-#endif
-
 func_key_table_t editor_func_key_table[] = {
-//  1234567890123456   123456789012345678901234567890   12345678901234567890
+//  1234567890123456   123456789012345678901234567890   123456789012345678901234567890
 //      12345678901234567890
- { "",                "File Menu",                      K_ESC, K_M_1,      NKA,
+ { "",                "File Menu",                      K_ESC,        NKA, NKA,
    1,F_I(do_editor_menu_1), NULL },
  { "Prev.Menu",       "Previous Menu",                  K_M_ESC, K_M_BACKQUOTE, NKA,
    0,F_I(do_editor_menu_0), NULL },
@@ -70,27 +58,27 @@ func_key_table_t editor_func_key_table[] = {
  { "Read into buffer","Read file into current pos",     K_M_i,        NKA, NKA,
    0,F_I(do_read_file_into_cur_pos), NULL },
 
- { "",                "Cursor Menu",                    K_M_2,        NKA, NKA,
+ { "",                "Cursor Menu",                    NKA,          NKA, NKA,
    1,F_I(do_editor_menu_2), NULL },
- { "Up",              "Move cursor UP",                 K_C_E, NKA,    K_UP,
+ { "Up",              "Move cursor UP",                 K_C_E, NKA,   K_UP,
    1,F_I(do_up), NULL },
- { "Down",            "Move cursor DOWN",               K_C_X, NKA,    K_DOWN,
+ { "Down",            "Move cursor DOWN",               K_C_X, NKA,   K_DOWN,
    1,F_I(do_down), NULL },
- { "Back",            "Move cursor LEFT",               K_C_S, NKA,    K_LEFT,
+ { "Back",            "Move cursor LEFT",               K_C_S, NKA,   K_LEFT,
    1,F_I(do_left), NULL },
- { "Forward",         "Move cursor RIGHT",              K_C_D, NKA,    K_RIGHT,
+ { "Forward",         "Move cursor RIGHT",              K_C_D, NKA,   K_RIGHT,
    1,F_I(do_right), NULL },
- { "Prev Page",       "Page UP",                        K_C_R, NKA,    K_PPAGE,
+ { "Prev Page",       "Page UP",                        K_C_R, NKA,   K_PPAGE,
    1,F_I(do_page_up), NULL },
- { "Next Page",       "Page DOWN",                      K_C_C, NKA,    K_NPAGE,
+ { "Next Page",       "Page DOWN",                      K_C_C, NKA,   K_NPAGE,
    1,F_I(do_page_down), NULL },
  { "Prev Word",       "Move backward one word",         K_C_A,        NKA, NKA,
    1,F_I(do_prev_word), NULL },
  { "Next Word",       "Move forward one word",          K_C_F,        NKA, NKA,
    1,F_I(do_next_word), NULL },
- { "Start of line",   "Start of the line",              K_C_T, NKA,    K_HOME,
+ { "Start of line",   "Start of the line",              K_C_T, NKA,   K_HOME,
    1,F_I(do_start_of_line), NULL },
- { "End of line",     "End of the line",                K_C_B, K_C_V,  K_END,
+ { "End of line",     "End of the line",                K_C_B, K_C_V, K_END,
    1,F_I(do_end_of_line), NULL },
  { "First line",      "Top of the file",                K_M_t,        NKA, NKA,
    1,F_I(do_first_line), NULL },
@@ -103,15 +91,15 @@ func_key_table_t editor_func_key_table[] = {
  { "Change directory", "Goto directory",                K_M_J, K_SF12,     NKA,
    1,F_I(do_goto_directory_in_cur_line), NULL },
 
- { "",                "Edit Menu",                      K_M_3,        NKA, NKA,
+ { "",                "Edit Menu",                      NKA,          NKA, NKA,
    0,F_I(do_editor_menu_3), NULL },
  { "Tab",             "Insert a TAB character",         K_TAB,        NKA, NKA,
    0,F_I(do_tab), NULL },
- { "Enter",           "Insert a carriage return",       K_C_M, NKA,    K_ENTER,
+ { "Enter",           "Insert a carriage return",       K_C_M, NKA,   K_ENTER,
    1,F_I(do_carriage_return), NULL },
- { "Backspace",       "Backspace",                      K_C_H, NKA,    K_BS,
+ { "Backspace",       "Backspace",                      K_C_H, NKA,   K_BS,
    0,F_I(do_backspace), NULL },
- { "Delete",          "Delete a character",             K_C_G, K_DEL,  K_DC,
+ { "Delete",          "Delete a character",             K_C_G, K_DEL, K_DC,
    0,F_I(do_delete_char), NULL },
  { "UpperLower",      "Invert upper/lower letter",      K_C_W,        NKA, NKA,
    0,F_I(do_conv_upp_low_letter), NULL },
@@ -121,14 +109,16 @@ func_key_table_t editor_func_key_table[] = {
    0,F_I(do_charcode), NULL },
  { "Paste history",   "Paste from history",             K_M_h,        NKA, NKA,
    0,F_I(do_paste_history), NULL },
- { "Record/Stop-rec", "Start/Stop recording key-macro", K_REC, K_M_r     , NKA,
-   0,F_I(do_record), NULL },
- { "End-rec/Playback","End-rec/Playback key-macro",     K_PLB, K_M_p     , NKA,
+ { "Record/Stop-rec", "Start/Stop recording key-macro", K_F01, K_M_r     , NKA,
+   0,F_I(do_start_rec__cancel_rec), NULL },
+ { "End-rec/Playback","End-rec/Playback key-macro",     K_F02, K_M_p     , NKA,
+   0,F_I(do_end_rec__playback), NULL },
+ { "Playback",        "Playback key-macro",             K_M_2,         NKA, NKA,
    0,F_I(do_playback), NULL },
- { "Playback-1",      "Playback 1st newest key-macro",  K_PB1,        NKA, NKA,
-   0,F_I(do_start_playback_last_1), NULL },
- { "Playback-2",      "Playback 2nd newest key-macro",  K_PB2,        NKA, NKA,
-   0,F_I(do_start_playback_last_2), NULL },
+ { "Playback-1",      "Playback 1st newest key-macro",  K_SF01,        NKA, NKA,
+   0,F_I(do_playback_last_1), NULL },
+ { "Playback-2",      "Playback 2nd newest key-macro",  K_SF02,        NKA, NKA,
+   0,F_I(do_playback_last_2), NULL },
 #ifdef ENABLE_FILER
  { "Run line",        "Run current line as command",    K_M_x,        NKA, NKA,
    0,F_I(do_run_line), NULL },
@@ -140,7 +130,7 @@ func_key_table_t editor_func_key_table[] = {
    0,F_I(do_redo), NULL },
 #endif // ENABLE_UNDO
 
- { "",                "Search/Replace Menu",            K_M_4,        NKA, NKA,
+ { "",                "Search/Replace Menu",            NKA,          NKA, NKA,
    0,F_I(do_editor_menu_4), NULL },
  { "Search Bw",       "Search keyword forward",         K_SF03, K_C_RBRACKET, NKA,
    0,F_I(do_search_backward), NULL },
@@ -153,28 +143,30 @@ func_key_table_t editor_func_key_table[] = {
  { "Replace",         "Replace keyword",                K_C_CARET,    NKA, NKA,
    0,F_I(do_replace), NULL },
 #ifdef ENABLE_REGEX
- { "Find Bracket()",  "Find counterpart bracket()",     K_M_RBRACKET,     NKA, NKA,
+ { "Find Bracket()",  "Find counterpart bracket()",     K_M_RBRACKET, NKA, NKA,
    0,F_I(do_find_bracket), NULL },
- { "Find Bracket)(",  "Find counterpart bracket)(",     K_M_RBRACE,     NKA, NKA,
+ { "Find Bracket)(",  "Find counterpart bracket)(",     K_M_RBRACE,   NKA, NKA,
    0,F_I(do_find_bracket_reverse), NULL },
 #endif // ENABLE_REGEX
 
- { "",                "Buffer Menu",                    K_M_5,        NKA, NKA,
+ { "",                "Buffer Menu",                    NKA,          NKA, NKA,
    0,F_I(do_editor_menu_5), NULL },
- { "Previous File",   "Open previous file",             K_M_COMMA,     NKA, NKA,
+ { "Previous File",   "Open previous file",             K_M_COMMA,    NKA, NKA,
    1,F_I(do_switch_to_prev_file), NULL },
- { "Next File",       "Open next file",                 K_M_PERIOD,     NKA, NKA,
+ { "Next File",       "Open next file",                 K_M_PERIOD,   NKA, NKA,
    1,F_I(do_switch_to_next_file), NULL },
- { "Top File",        "Open top file",                  K_M_LESSTHAN,     NKA, NKA,
+ { "Top File",        "Open top file",                  K_M_LESSTHAN, NKA, NKA,
    0,F_I(do_switch_to_top_file), NULL },
- { "Bottom File",     "Open bottom file",               K_M_GREATERTHAN,     NKA, NKA,
+ { "Bottom File",     "Open bottom file",               K_M_GREATERTHAN, NKA, NKA,
    0,F_I(do_switch_to_bot_file), NULL },
- { "File List",       "Display File List",              K_M_SEMICOLON,   K_F11, NKA,
+ { "File List",       "Display File List",              K_M_SEMICOLON, K_F11, NKA,
    0,F_I(do_switch_to_file_list), NULL },
+#ifdef ENABLE_EXPERIMENTAL
  { "Previous buffers","Goto previous buffers",          K_M_LPARENTHESIS, NKA, NKA,
    0,F_I(do_switch_to_prev_buffers), NULL },
  { "Next buffers",    "Goto next buffers",              K_M_RPARENTHESIS, NKA, NKA,
    0,F_I(do_switch_to_next_buffers), NULL },
+#endif // ENABLE_EXPERIMENTAL
 #ifdef ENABLE_HELP
  { "Key List",        "Display Key List",               K_M_k,        NKA, NKA,
    0,F_I(do_switch_to_key_list), NULL },
@@ -183,14 +175,14 @@ func_key_table_t editor_func_key_table[] = {
 #endif // ENABLE_HELP
  { "Open Proj File",  "Open Project file",              K_M_l,        NKA, NKA,
    0,F_I(do_open_proj_file), NULL },
- { "Goto prev. pos",  "Goto previous pos.",             K_M_SLASH,     NKA, NKA,
+ { "Goto prev. pos",  "Goto previous pos.",             K_M_SLASH,    NKA, NKA,
    0,F_I(do_return_to_prev_file_pos), NULL },
  { "Split pane",      "Split screen into panes",        K_M_BACKSLASH, K_M_VERTBAR, NKA,
    0,F_I(do_tog_editor_panes), get_editor_panes },
- { "Switch pane",     "Switch editor pane",             K_M_TAB,   NKA, NKA,
+ { "Switch pane",     "Switch editor pane",             K_M_TAB,      NKA, NKA,
    0,F_I(do_switch_editor_pane), NULL },
 
- { "",                "Cut-buffer Menu",                K_M_6,        NKA, NKA,
+ { "",                "Cut-buffer Menu",                NKA,          NKA, NKA,
    0,F_I(do_editor_menu_6), NULL },
  { "Mark Text",       "Mark text",                      K_C_N, K_F05,      NKA,
    0,F_I(do_tog_mark), NULL },
@@ -217,55 +209,55 @@ func_key_table_t editor_func_key_table[] = {
  { "CutToTail",       "Cut to tail of the line",        K_C_L,        NKA, NKA,
    0,F_I(do_cut_to_tail), NULL },
 
- { "",                "Settings Menu-1",                K_M_7,        NKA, NKA,
+ { "",                "Settings Menu-1",                NKA,          NKA, NKA,
    0,F_I(do_editor_menu_7), NULL },
- { "Tab size",        "Toggle Tab size",                K_MC_T,        NKA, NKA,
+ { "Tab size",        "Toggle Tab size",                K_MC_T,       NKA, NKA,
    0,F_I(do_tog_tab_size),       get_str_tab_size },
- { "Tab size",        "Incurement Tab size",            K_MC_Y,        NKA, NKA,
+ { "Tab size",        "Incurement Tab size",            K_MC_Y,       NKA, NKA,
    0,F_I(do_inc_tab_size),       get_str_tab_size },
- { "Draw cursor",     "Toggle Drawing cursor",          K_MC_C,        NKA, NKA,
+ { "Draw cursor",     "Toggle Drawing cursor",          K_MC_C,       NKA, NKA,
    0,F_I(do_tog_draw_cursor),    get_str_draw_cursor },
- { "Ignore case",     "Toggle Ignore case",             K_MC_I,        NKA, NKA,
+ { "Ignore case",     "Toggle Ignore case",             K_MC_I,       NKA, NKA,
    0,F_I(do_tog_ignore_case),    get_str_ignore_case },
- { "Auto indent",     "Toggle Auto indent",             K_MC_O,        NKA, NKA,
+ { "Auto indent",     "Toggle Auto indent",             K_MC_O,       NKA, NKA,
    0,F_I(do_tog_auto_indent),    get_str_auto_indent },
- { "Display key list","Toggle Displaying key list",     K_MC_K,        NKA, NKA,
+ { "Display key list","Toggle Displaying key list",     K_MC_K,       NKA, NKA,
    0,F_I(do_editor_inc_key_list_lines), get_str_key_list_lines },
- { "Back up files",   "Increment Back up files",        K_MC_B,        NKA, NKA,
+ { "Back up files",   "Increment Back up files",        K_MC_B,       NKA, NKA,
    0,F_I(do_inc_backup_files),   get_str_backup_files },
 #ifdef ENABLE_REGEX
- { "RegExp",          "Toggle Regex search/replace",    K_MC_X,        NKA, NKA,
+ { "RegExp",          "Toggle Regex search/replace",    K_MC_X,       NKA, NKA,
    0,F_I(do_tog_regexp),         get_str_regexp },
 #endif // ENABLE_REGEX
 #ifdef ENABLE_UTF8
- { "UTF-8",           "Toggle Display/Input UTF-8 code",K_MC_U,        NKA, NKA,
+ { "UTF-8",           "Toggle Display/Input UTF-8 code",K_MC_U,       NKA, NKA,
    0,F_I(do_tog_utf8),           get_str_utf8 },
 #endif // ENABLE_UTF8
 
- { "",                "Settings Menu-2",                K_M_8,        NKA, NKA,
+ { "",                "Settings Menu-2",                NKA,          NKA, NKA,
    0,F_I(do_editor_menu_8), NULL },
- { "Cursor center",   "Toggle Cursor-center mode",      K_MC_S,        NKA, NKA,
+ { "Cursor center",   "Toggle Cursor-center mode",      K_MC_S,       NKA, NKA,
    0,F_I(do_inc_curs_positioning),  get_str_curs_positioning },
- { "Dual scroll",     "Toggle Dual scroll",             K_MC_D,        NKA, NKA,
+ { "Dual scroll",     "Toggle Dual scroll",             K_MC_D,       NKA, NKA,
    0,F_I(do_tog_dual_scroll),    get_str_dual_scroll },
- { "View mode",       "Toggle View mode",               K_MC_V,        NKA, NKA,
+ { "View mode",       "Toggle View mode",               K_MC_V,       NKA, NKA,
    0,F_I(do_tog_view_mode),      get_str_view_mode },
- { "Show ruler",      "Toggle Show Ruler",              K_MC_R,        NKA, NKA,
+ { "Show ruler",      "Toggle Show Ruler",              K_MC_R,       NKA, NKA,
    0,F_I(do_tog_show_ruler),     get_str_show_ruler },
- { "Show line number","Toggle Show Line number",        K_MC_N,        NKA, NKA,
+ { "Show line number","Toggle Show Line number",        K_MC_N,       NKA, NKA,
    0,F_I(do_tog_show_line_num),  get_str_show_line_num },
- { "Line-wrap mode",  "Toggle Line-wrap mode",          K_MC_L,        NKA, NKA,
+ { "Line-wrap mode",  "Toggle Line-wrap mode",          K_MC_L,       NKA, NKA,
    0,F_I(do_tog_line_wrap_mode), get_str_line_wrap_mode },
 #ifdef ENABLE_SYNTAX
- { "Syntax HL",       "Toggle Syntax Highlighting",     K_MC_H,        NKA, NKA,
+ { "Syntax HL",       "Toggle Syntax Highlighting",     K_MC_H,       NKA, NKA,
    0,F_I(do_tog_syntax_hl),      get_str_syntax_hl },
- { "TAB/EOL notation","Toggle TAB/EOL notation",        K_MC_Z,        NKA, NKA,
+ { "TAB/EOL notation","Toggle TAB/EOL notation",        K_MC_Z,       NKA, NKA,
    0,F_I(do_tog_tab_eol_notation), get_str_tab_eol_notation },
 #endif // ENABLE_SYNTAX
- { "Code-7F Key-BS",  "Toggle Code-7F Key-BS",          K_M_DEL,        NKA, NKA,
+ { "Code-7F Key-BS",  "Toggle Code-7F Key-BS",          K_M_DEL,      NKA, NKA,
    0,F_I(do_tog_map_key_7f_bs), get_str_map_key_7f_bs },
 
- { "",                "File type Menu",                 K_M_9,        NKA, NKA,
+ { "",                "File type Menu",                 NKA,          NKA, NKA,
    0,F_I(do_editor_menu_9), NULL },
  { "nix format",      "Set nix format (LF)",            NKA,          NKA, NKA,
    0,F_I(do_set_nix_file),       get_str_nix_file },
@@ -293,7 +285,7 @@ func_key_table_t editor_func_key_table[] = {
 #endif // ENABLE_HELP
  { "Color pairs",     "Display color pairs",            K_M_c,        NKA, NKA,
    0,F_I(do_editor_display_color_pairs), NULL },
- { "Refresh",         "Refresh editor screen",          K_M_ASTERISK,     NKA, NKA,
+ { "Refresh",         "Refresh editor screen",          K_M_ASTERISK, NKA, NKA,
    1,F_I(do_refresh_editor), NULL },
 
  { "",                "",                               NKA,          NKA, NKA,

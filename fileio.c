@@ -70,7 +70,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 		// New file
 		if (open_on_err == 0) {
 			if (msg_on_err) {
-				disp_status_bar_err(_("File [%s] not found"), shrink_str_scr_static(full_path));
+				disp_status_bar_err(_("File [%s] not found"), shrink_str_to_scr_static(full_path));
 			}
 			return -1;	// open error
 		}
@@ -83,7 +83,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 		if (msg_on_err) {
 			disp_status_bar_err(S_ISDIR(fileinfo.st_mode)
 			 ? _("[%s] is a directory") : _("[%s] is a special file"),
-			 shrink_str_scr_static(full_path));
+			 shrink_str_to_scr_static(full_path));
 		}
 		return -2;		// open error
 	}
@@ -92,12 +92,12 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 		// file size too large
 		if (msg_on_err) {
 			disp_status_bar_err(_("[%s] is too large to read into buffer"),
-			 shrink_str_scr_static(full_path));
+			 shrink_str_to_scr_static(full_path));
 		}
 		return -3;		// open error
 	}
 	// regular file
-	disp_status_bar_ing(_("Reading File %s ..."), shrink_str_scr_static(full_path));
+	disp_status_bar_ing(_("Reading File %s ..."), shrink_str_to_scr_static(full_path));
 	create_edit_buf(full_path);
 	memcpy__(&get_c_e_b()->orig_file_stat, &fileinfo, sizeof(fileinfo));
 
@@ -129,7 +129,7 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file
 			if (CUR_EBUF_STATE(buf_ENCODE) == ENCODE_BINARY && load_binary_file == 0) {
 				if (msg_on_err) {
 					disp_status_bar_err(_("BINARY file !! [%s]"),
-					 shrink_str_scr_static(full_path));
+					 shrink_str_to_scr_static(full_path));
 				}
 				return -1;		// do not load binary file
 			}
@@ -175,7 +175,7 @@ PRIVATE int load_file_into_cur_buf_ascii(const char *full_path)
 ///_FLF_
 	if ((fp = fopen(full_path, "rb")) == NULL) {
 		disp_status_bar_err(_("Can not read-open file [%s]: %s"),
-		 shrink_str_scr_static(full_path), strerror(errno));
+		 shrink_str_to_scr_static(full_path), strerror(errno));
 		return -1;
 	}
 	lines = load_fp_into_cur_buf(fp);
@@ -196,7 +196,7 @@ PRIVATE int guess_encoding_by_nkf(const char *full_path)
 	snprintf_(buffer, MAX_PATH_LEN+1, "nkf -g \"%s\"", full_path);
 	if ((fp = popen(buffer, "r")) <= 0) {
 		disp_status_bar_err(_("Can not read-open file [%s]: %s"),
-		 shrink_str_scr_static(full_path), strerror(errno));
+		 shrink_str_to_scr_static(full_path), strerror(errno));
 		return -1;
 	}
 	if (fgets(buffer, MAX_PATH_LEN, fp) == NULL)
@@ -233,7 +233,7 @@ PRIVATE int load_file_into_cur_buf_nkf(const char *full_path, const char *nkf_op
 ////flf_d_printf("[%s]\n", buffer);
 	if ((fp = popen(buffer, "r")) <= 0) {
 		disp_status_bar_err(_("Can not read-open file [%s]: %s"),
-		 shrink_str_scr_static(full_path), strerror(errno));
+		 shrink_str_to_scr_static(full_path), strerror(errno));
 		return -1;
 	}
 	lines = load_fp_into_cur_buf(fp);
@@ -348,12 +348,13 @@ int backup_and_save_cur_buf_ask(void)
 
 	strlcpy__(file_path, get_c_e_b()->abs_path, MAX_PATH_LEN);
 	if (is_strlen_0(file_path)) {
-		if (input_new_file_name(file_path) <= 0) {
+		if (input_new_file_name_n_ask(file_path) <= 0) {
 			return -1;
 		}
 	}
 flf_d_printf("[%s]\n", file_path);
 	if (buf_is_orig_file_updated(get_c_e_b()) > 0) {
+		// file is modified by others
 		ret = ask_yes_no(ASK_YES_NO,
 		 _("File was modified by another program, OVERWRITE ?"));
 		if (ret < 0) {
@@ -368,23 +369,12 @@ flf_d_printf("[%s]\n", file_path);
 flf_d_printf("[%s]\n", file_path);
 	if ((ret = backup_and_save_cur_buf(file_path)) < 0) {
 		disp_status_bar_err(_("File [%s] can NOT be written !!"),
-		 shrink_str_scr_static(file_path));
+		 shrink_str_to_scr_static(file_path));
 	}
 	return ret;
 }
 
-PRIVATE int input_new_file_name__(char *file_path);
-int input_new_file_name(char *file_path)
-{
-	int ret;
-
-	if ((ret = input_new_file_name__(file_path)) <= 0) {
-		return 0;
-	}
-flf_d_printf("[%s]\n", file_path);
-	return ret;
-}
-PRIVATE int input_new_file_name__(char *file_path)
+int input_new_file_name_n_ask(char *file_path)
 {
 	int ret = 0;
 
@@ -407,6 +397,7 @@ PRIVATE int input_new_file_name__(char *file_path)
 #endif // ENABLE_FILER
 		if (is_path_exist(file_path)) {
 			if (is_path_regular_file(file_path) > 0) {
+				// ask Overwrite
 				ret = ask_yes_no(ASK_YES_NO,
 				 _("File exists, OVERWRITE it ?"));
 				if (ret < 0) {
@@ -415,6 +406,7 @@ PRIVATE int input_new_file_name__(char *file_path)
 				if (ret == 0)
 					continue;
 			} else {
+				// ask non regular file
 				ret = ask_yes_no(ASK_YES_NO,
 				 _("Path is not file, can not WRITE it"));
 				if (ret < 0) {
@@ -425,6 +417,7 @@ PRIVATE int input_new_file_name__(char *file_path)
 		}
 		break;
 	}
+flf_d_printf("[%s]\n", file_path);
 	return 1;		// input
 }
 
@@ -446,10 +439,10 @@ flf_d_printf("[%s]\n", file_path);
 	//  file_path is regular file and not dir and special file
 	if (is_path_regular_file(file_path) == 0) {
 		disp_status_bar_err(_("File [%s] is NOT regular file !!"),
-		 shrink_str_scr_static(file_path));
+		 shrink_str_to_scr_static(file_path));
 		return -1;
 	}
-	disp_status_bar_ing(_("Writing File %s ..."), shrink_str_scr_static(get_c_e_b()->abs_path));
+	disp_status_bar_ing(_("Writing File %s ..."), shrink_str_to_scr_static(get_c_e_b()->abs_path));
 	if (GET_APPMD(ed_BACKUP_FILES)) {
 		if (backup_files(file_path, get_backup_files()) < 0) {
 			return -1;
@@ -463,7 +456,7 @@ flf_d_printf("[%s]\n", file_path);
 ////flf_d_printf("chmod([%s], %05o)\n", abs_path, mask);
 		if (chmod(abs_path, mask) < 0) {
 			disp_status_bar_err(_("Can not set permissions %1$o on [%2$s]: %3$s"),
-			 mask, shrink_str_scr_static(abs_path), strerror(errno));
+			 mask, shrink_str_to_scr_static(abs_path), strerror(errno));
 		}
 	}
 
@@ -562,7 +555,7 @@ PRIVATE int save_cur_buf_to_file_ascii(const char *file_path)
 
 	if ((fp = fopen(file_path, "wb")) == NULL) {
 		disp_status_bar_err(_("Can not write-open file [%s]: %s"),
-		 shrink_str_scr_static(file_path), strerror(errno));
+		 shrink_str_to_scr_static(file_path), strerror(errno));
 		return -1;
 	}
 	if ((lines = save_cur_buf_to_fp(file_path, fp)) < 0) {
@@ -570,7 +563,7 @@ PRIVATE int save_cur_buf_to_file_ascii(const char *file_path)
 	}
 	if (fclose(fp) != 0) {
 		disp_status_bar_err(_("Can not close file [%s]: %s"),
-		 shrink_str_scr_static(file_path), strerror(errno));
+		 shrink_str_to_scr_static(file_path), strerror(errno));
 		lines = -3;
 	}
 	return lines;
@@ -587,7 +580,7 @@ PRIVATE int save_cur_buf_to_file_nkf(const char *file_path, const char *nkf_opti
 ////flf_d_printf("[%s]\n", buffer);
 	if ((fp = popen(buffer, "w")) <= 0) {
 		disp_status_bar_err(_("Can not write-open file [%s]: %s"),
-		 shrink_str_scr_static(file_path), strerror(errno));
+		 shrink_str_to_scr_static(file_path), strerror(errno));
 		return -1;
 	}
 	if ((lines = save_cur_buf_to_fp(file_path, fp)) < 0) {
@@ -595,7 +588,7 @@ PRIVATE int save_cur_buf_to_file_nkf(const char *file_path, const char *nkf_opti
 	}
 	if (pclose(fp) == -1) {	// -1: error
 		disp_status_bar_err(_("Can not close file [%s]: %s"),
-		 shrink_str_scr_static(file_path), strerror(errno));
+		 shrink_str_to_scr_static(file_path), strerror(errno));
 		return -3;
 	}
 	return lines;
@@ -617,7 +610,7 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 		size = fwrite(line->data, 1, line_len, fp);
 		if (size < line_len) {
 			disp_status_bar_err(_("Can not write file [%s]: %s"),
-			 shrink_str_scr_static(file_path), strerror(errno));
+			 shrink_str_to_scr_static(file_path), strerror(errno));
 			return -1;
 		}
 		switch (CUR_EBUF_STATE(buf_EOL)) {

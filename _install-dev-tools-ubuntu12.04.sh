@@ -20,6 +20,9 @@ echo "pausing ..."; read key
 sudo apt-get install nkf
 echo "pausing ..."; read key
 
+sudo apt-get install gettext
+echo "pausing ..."; read key
+
 #sudo apt-get install console-data
 #echo "pausing ..."; read key
 

@@ -487,10 +487,11 @@ PRIVATE key_code_t input_key_macro(void)
 #ifndef ENABLE_HISTORY
 	key = input_key_bs_del();
 #else
-	key = key_macro_get_playing_back();
-	if (key < 0)
+	key = key_macro_get_key();
+	if (key < 0) {
 		key = input_key_bs_del();
-	key_macro_put_recording(key);
+	}
+	key_macro_put_key(key);
 #endif // ENABLE_HISTORY
 	return key;
 }

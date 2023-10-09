@@ -402,7 +402,7 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 		}
 		if (get_intersection(byte_idx_1, byte_idx_2,
 		 left_byte_idx, right_byte_idx, &left_byte_idx, &right_byte_idx) > 0) {
-			set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, 0);
+			set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 0);
 			output_edit_line_text(yy, te_line_concat_linefeed, left_byte_idx, right_byte_idx);
 		}
 	}
@@ -876,7 +876,7 @@ int edit_win_get_text_y(void)
 
 #define TAB_NOTATION	'>'
 #define EOL_NOTATION	'<'
-int te_line_concat_linefeed_bytes;							// bytes of (raw_byte + line-feed)
+int te_line_concat_linefeed_bytes = 0;							// bytes of (raw_byte + line-feed)
 char te_line_concat_linefeed[MAX_EDIT_LINE_LEN * 2 +1];		// raw_byte + line-feed
 int te_line_visible_code_columns;							// length of tab-expanded line
 char te_line_visible_code[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];	// tab-expanded-visible-code
@@ -942,13 +942,14 @@ const char *te_tab_expand_line(const char *original)
 #endif // ENABLE_SYNTAX
 	*vis_ptr = '\0';
 	te_line_visible_code_columns = col_idx + 1;
-	te_line_concat_linefeed_bytes = orig_ptr - original + 1;
 	return te_line_visible_code;
 }
 const char *te_concat_linefeed(const char *original)
 {
+///flf_d_printf("[%s]\n", original);
 	strlcpy__(te_line_concat_linefeed, original, MAX_EDIT_LINE_LEN * 2);
 	strlcat__(te_line_concat_linefeed, MAX_EDIT_LINE_LEN * 2, "\n");
+	te_line_concat_linefeed_bytes = strnlen(te_line_concat_linefeed, MAX_EDIT_LINE_LEN * 2);
 	return te_line_concat_linefeed;
 }
 

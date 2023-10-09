@@ -89,7 +89,7 @@ int do_cut_to_head(void)
 {
 	do_set_mark();
 	do_start_of_line();
-	swap_m_l_b_i_with_c_l_b_i();
+	//TTTswap_m_l_b_i_with_c_l_b_i();
 	do_cut_text();
 
 	disp_status_bar_done(_("Cut to Head"));
@@ -97,9 +97,10 @@ int do_cut_to_head(void)
 }
 int do_cut_to_tail(void)
 {
+	set_disable_update_min_x_to_keep();
 	do_set_mark();
 	do_end_of_line();
-	swap_m_l_b_i_with_c_l_b_i();
+	//TTTswap_m_l_b_i_with_c_l_b_i();
 	do_cut_text();
 
 	disp_status_bar_done(_("Cut to Tail"));
@@ -276,6 +277,9 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 		}
 	}
 ///_FLF_
+
+	clear_disable_update_min_x_to_keep();
+
 	if (cp_del_paste_pop & CDPP_REPLACE) {
 		switch(CUR_CBUF_STATE(buf_CUT_MODE)) {
 		default:

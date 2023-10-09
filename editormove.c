@@ -23,8 +23,8 @@
 
 typedef enum {
 	TBF_NONE,
-	TBF_TOP,
-	TBF_BOTTOM,
+	TBF_TOP,		// cursor positioned previously top of buffer
+	TBF_BOTTOM,		// cursor positioned previously bottom of buffer
 } top_bottom_of_file_t;
 PRIVATE top_bottom_of_file_t top_bottom_of_file = 0;
 
@@ -676,7 +676,7 @@ int c_l_up(be_line_t **line, int *byte_idx)
 		line_byte_idx = end_byte_idx_of_wrap_line_le(te_line_concat_linefeed, wl_idx, col_idx, -1);
 	} else {
 		if (IS_NODE_TOP(*line)) {
-			return 0;
+			return 0;	// no move
 		}
 		*line = (*line)->prev;
 		te_concat_linefeed((*line)->data);
@@ -703,7 +703,7 @@ int c_l_down(be_line_t **line, int *byte_idx)
 		line_byte_idx = end_byte_idx_of_wrap_line_le(te_line_concat_linefeed, wl_idx, col_idx, -1);
 	} else {
 		if (IS_NODE_BOT(*line)) {
-			return 0;
+			return 0;	// no move
 		}
 		*line = (*line)->next;
 		te_concat_linefeed((*line)->data);

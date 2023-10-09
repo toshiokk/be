@@ -218,8 +218,7 @@ PRIVATE int save_history_idx(int hist_type_idx)
 	if (GET_APPMD(app_HISTORY) == 0)
 		return 0;
 	file_path = get_history_file_path(hist_type_idx);
-flf_d_printf("hist_type_idx:%d\n", hist_type_idx);
-flf_d_printf("%s\n", file_path);
+flf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, file_path);
 	if ((fp = fopen(file_path, "w")) == NULL) {
 		e_printf(_("Unable to create history file: %s, %s"),
 		 file_path, strerror(errno));
@@ -266,8 +265,7 @@ PRIVATE int load_history_idx(int hist_type_idx)
 	if (GET_APPMD(app_HISTORY) == 0)
 		return 0;
 	file_path = get_history_file_path(hist_type_idx);
-flf_d_printf("hist_type_idx:%d\n", hist_type_idx);
-flf_d_printf("%s\n", file_path);
+flf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, file_path);
 	clear_history(hist_type_idx);
 
 	if ((fp = fopen(file_path, "r")) == NULL) {

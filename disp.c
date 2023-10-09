@@ -25,11 +25,11 @@ void set_title_bar_color_by_state(int c_e_b_cut_mode)
 {
 	if (key_macro_is_recording()) {
 		// Recording key macro, you see strange color on title bar.
-		set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 0);
+		set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, 0);
 	} else
 	if (c_e_b_cut_mode) {
 		// Marking text, you see strange color on title bar.
-		set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, 0);
+		set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 0);
 	} else
 	if (geteuid() == 0) {
 		// If you are super user, you see strange color on title bar.

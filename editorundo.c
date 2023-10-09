@@ -149,7 +149,6 @@ void undo_set_region(be_line_t *min_line, be_line_t *max_line, int cut_buf_lines
 // save undo info before change
 void undo_save_before_change(void)
 {
-///_FLF_
 	save_region_to_undo_buf();
 }
 void undo_adjust_max_line(void)
@@ -173,7 +172,6 @@ void undo_adjust_max_line(void)
 // save undo info after change
 void undo_save_after_change(void)
 {
-///_FLF_
 	if (count_undo_bufs() % 2) {
 		// count_undo_bufs() is odd.
 		// The state before change was saved.

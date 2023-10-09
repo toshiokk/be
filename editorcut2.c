@@ -44,27 +44,27 @@ void set_mark_pos(void)
 	CEB_MLBI = CBV_CLBI;
 }
 // CEB_MLBI <==> CBV_CLBI
-void swap_m_l_b_i_with_c_l_b_i(void)
-{
-	int c_l_b_i;
+///void swap_m_l_b_i_with_c_l_b_i(void)
+///{
+///	int c_l_b_i;
+///
+///	if (CEB_ML == CBV_CL) {
+///		c_l_b_i = CEB_MLBI;
+///		CEB_MLBI = CBV_CLBI;
+///		CBV_CLBI = c_l_b_i;
+///	}
+///}
 
-	if (CEB_ML == CBV_CL) {
-		c_l_b_i = CEB_MLBI;
-		CEB_MLBI = CBV_CLBI;
-		CBV_CLBI = c_l_b_i;
-	}
-}
-
-PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move_t move);
+PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move_t cursor_move);
 PRIVATE void change_cut_mode_on_mark_region_special_cases(void);
 
-void setup_cut_region_after_cursor_horiz_vert_move(cursor_horiz_vert_move_t move)
+void setup_cut_region_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 {
 	if (IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
 		// no mark set
 		return;
 	}
-	change_cut_mode_after_cursor_horiz_vert_move(move);
+	change_cut_mode_after_cursor_horiz_vert_move(cursor_move);
 	setup_cut_region();
 	change_cut_mode_on_mark_region_special_cases();
 	setup_cut_region();	// cut-mode may be changed, setup mark region again
@@ -108,23 +108,23 @@ void setup_cut_region_after_cursor_horiz_vert_move(cursor_horiz_vert_move_t move
 //      |
 //      v
 //
-PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move_t move)
+PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move_t cursor_move)
 {
 	switch(CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
 		break;
 	case CUT_MODE_N_LINE:
-		if (move == HORIZ_MOVE) {
+		if (cursor_move == HORIZ_MOVE) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
-		} else if (move == VERT_MOVE) {
+		} else if (cursor_move == VERT_MOVE) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 		}
 		break;
 	case CUT_MODE_H_CHAR:
-		if (move == HORIZ_MOVE) {
+		if (cursor_move == HORIZ_MOVE) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
-		} else if (move == VERT_MOVE) {
+		} else if (cursor_move == VERT_MOVE) {
 #ifdef HV_IS_BOX_VH_IS_CHAR
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_BOX;
 #else
@@ -133,41 +133,41 @@ PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move
 		}
 		break;
 	case CUT_MODE_HV_LINE:
-		if (move == HORIZ_MOVE) {
+		if (cursor_move == HORIZ_MOVE) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
-		} else if (move == VERT_MOVE) {
+		} else if (cursor_move == VERT_MOVE) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_LINE;
 		}
 		break;
 	case CUT_MODE_V_LINE:
-		if (move == HORIZ_MOVE) {
+		if (cursor_move == HORIZ_MOVE) {
 #ifdef HV_IS_BOX_VH_IS_CHAR
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_CHAR;
 #else
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_BOX;
 #endif
-		} else if (move == VERT_MOVE) {
+		} else if (cursor_move == VERT_MOVE) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 		}
 		break;
 	case CUT_MODE_VH_CHAR:
-		if (move == HORIZ_MOVE) {
+		if (cursor_move == HORIZ_MOVE) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_CHAR;
-		} else if (move == VERT_MOVE) {
+		} else if (cursor_move == VERT_MOVE) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 		}
 		break;
 	case CUT_MODE_HV_BOX:
-		if (move == HORIZ_MOVE) {
+		if (cursor_move == HORIZ_MOVE) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
-		} else if (move == VERT_MOVE) {
+		} else if (cursor_move == VERT_MOVE) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_BOX;
 		}
 		break;
 	case CUT_MODE_VH_BOX:
-		if (move == HORIZ_MOVE) {
+		if (cursor_move == HORIZ_MOVE) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_BOX;
-		} else if (move == VERT_MOVE) {
+		} else if (cursor_move == VERT_MOVE) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 		}
 		break;
@@ -374,6 +374,26 @@ flf_d_printf("mark_max_col_idx: %d\n", mark_max_col_idx);
 int is_there_cut_region(void)
 {
 	return (mark_max_line - mark_min_line) | (mark_max_byte_idx - mark_min_byte_idx);
+}
+
+int lines_selected(void)
+{
+	int lines = abs(CEB_ML->line_num - CBV_CL->line_num);
+	switch(CUR_EBUF_STATE(buf_CUT_MODE)) {
+	default:
+	case CUT_MODE_0_LINE:
+	case CUT_MODE_N_LINE:
+	case CUT_MODE_H_CHAR:
+	case CUT_MODE_VH_CHAR:
+	case CUT_MODE_HV_BOX:
+	case CUT_MODE_VH_BOX:
+		lines++;
+		break;
+	case CUT_MODE_V_LINE:
+	case CUT_MODE_HV_LINE:
+		break;
+	}
+	return lines;
 }
 
 // End of editorcut2.c

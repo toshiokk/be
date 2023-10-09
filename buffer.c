@@ -59,11 +59,11 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path)
 }
 void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf)
 {
-	BUFV_CL(b_v) = BUF_TOP_ANCH(buf);
-	BUFV_CLBI(b_v) = 0;
-	BUFV_CURSOR_Y(b_v) = 0;
-	BUFV_CURSOR_X_TO_KEEP(b_v) = 0;
-	BUFV_MIN_TEXT_X_TO_KEEP(b_v) = 0;
+	BUF_V_CL(b_v) = BUF_TOP_ANCH(buf);
+	BUF_V_CLBI(b_v) = 0;
+	BUF_V_CURSOR_Y(b_v) = 0;
+	BUF_V_CURSOR_X_TO_KEEP(b_v) = 0;
+	BUF_V_MIN_TEXT_X_TO_KEEP(b_v) = 0;
 }
 be_buf_t *buf_init_line_anchors(be_buf_t *buf)
 {
@@ -592,7 +592,7 @@ be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
 
 void bufs_dump_all_bufs(be_bufs_t *bufs)
 {
-_FLF_
+flf_d_printf("00============================================\n");
 	for ( ; IS_PTR_VALID(bufs); bufs = NEXT_NODE(bufs)) {
 		flf_d_printf("bufs: %s\n", bufs->name);
 		for (be_buf_t *buf = &(bufs->top_anchor); IS_PTR_VALID(buf); buf = NEXT_NODE(buf)) {
@@ -601,7 +601,7 @@ _FLF_
 			flf_d_printf("   buf->v1_str: %s\n", buf->buf_views[1].cur_line->data);
 		}
 	}
-_FLF_
+flf_d_printf("99============================================\n");
 }
 
 #endif // ENABLE_DEBUG

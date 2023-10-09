@@ -141,7 +141,7 @@ PRIVATE int my_mbtowc__(wchar_t *pwc, const char *utf8c, int max_len)
 		if (idx >= len)
 			break;
 		if (IS_UTF8_2ND_BYTE(utf8c[idx]) == 0)
-			break;
+			break;		// UTF8 sequence trancated !!
 		wc = (wc << 6) | (utf8c[idx] & 0x3f);
 	}
 	len = idx;

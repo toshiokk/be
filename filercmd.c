@@ -68,7 +68,6 @@ int do_enter_file(void)
 	if (if_dir_change_dir()) {
 		return 0;
 	}
-///_FLF_
 	if (S_ISREG(cur_fv->file_list[cur_fv->cur_sel_idx].st.st_mode)) {
 		if (count_edit_bufs() == 0) {
 			return do_view_file();
@@ -85,7 +84,6 @@ int do_edit_file(void)
 }
 int do_edit_file_non_recursive(void)
 {
-///_FLF_
 	do_edit_file_(RECURSIVE0);
 	return 1;
 }
@@ -118,7 +116,6 @@ int do_view_file(void)
 	int file_idx;
 	char *file_name;
 
-///_FLF_
 	if (if_dir_change_dir()) {
 		return 0;
 	}
@@ -730,11 +727,13 @@ int filer_change_dir_parent(const char *dir)
 	char file[MAX_PATH_LEN+1];
 
 	strlcpy__(chg_dir, dir, MAX_PATH_LEN);
-flf_d_printf("try to chdir[%s]\n", dir);
-	while (filer_change_dir(chg_dir)) {
-flf_d_printf("try to chdir[%s]\n", dir);
+	for ( ; ; ) {
+flf_d_printf("try to chdir[%s]\n", chg_dir);
 		if (strcmp(chg_dir, "/") == 0) {
 			return -1;	// error
+		}
+		if (filer_change_dir(chg_dir) == 0) {
+			break;
 		}
 		// If can not change to dir, try parent dir
 		// /try/to/change/dir/file ==> /try/to/change/dir
@@ -769,7 +768,7 @@ int filer_change_dir(const char *dir)
 	if (is_dir_readable(chg_dir) == 0) {
 		// We can't open this dir for some reason. Complain.
 		disp_status_bar_err(_("Can not change current directory to [%s]: %s"),
-		 shrink_str_scr_static(chg_dir), strerror(errno));
+		 shrink_str_to_scr_static(chg_dir), strerror(errno));
 		filer_do_next = FILER_DO_NOTHING;
 		return 1;
 	}

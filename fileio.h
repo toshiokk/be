@@ -35,7 +35,7 @@
 int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_err);
 
 int backup_and_save_cur_buf_ask(void);
-int input_new_file_name(char *file_path);
+int input_new_file_name_n_ask(char *file_path);
 int backup_and_save_cur_buf(const char *file_path);
 
 void clear_files_loaded(void);
