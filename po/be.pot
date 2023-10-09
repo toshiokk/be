@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-09 21:12+0900\n"
+"POT-Creation-Date: 2023-10-09 21:36+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -122,19 +122,19 @@ msgstr ""
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 
-#: ../editor2.c:106 ../fileio.c:78
+#: ../editor2.c:107 ../fileio.c:78
 msgid "New File"
 msgstr ""
 
-#: ../editor2.c:108
+#: ../editor2.c:109
 msgid "[Modified] "
 msgstr ""
 
-#: ../editor2.c:110
+#: ../editor2.c:111
 msgid "[VIEW mode] "
 msgstr ""
 
-#: ../editor2.c:112
+#: ../editor2.c:113
 msgid "[WRITE-PROTECTED] "
 msgstr ""
 

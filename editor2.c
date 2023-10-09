@@ -67,6 +67,7 @@ void disp_editor_title_bar(void)
 	char buf_path[MAX_SCRN_LINE_BUF_LEN+1];
 	char buf_status[MAX_SCRN_LINE_BUF_LEN+1];
 	char buf_num[2+1];
+	int edit_bufs;
 	int cut_bufs;
 #ifdef ENABLE_UNDO
 	int undo_bufs;
@@ -120,6 +121,9 @@ void disp_editor_title_bar(void)
 ///	// cut buffer cut mode
 ///	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " %s", buf_cut_mode_str(CUR_CUT_BUF));
 #endif // ENABLE_DEBUG
+	// edit buffers
+	edit_bufs = count_edit_bufs();
+	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " Ed%s", nn_from_num(edit_bufs, buf_num));
 	// cut buffers
 	cut_bufs = count_cut_bufs();
 	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " Ct%s", nn_from_num(cut_bufs, buf_num));
