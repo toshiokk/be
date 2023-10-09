@@ -227,13 +227,6 @@ int search_string_once(const char *needle)
 }
 
 //------------------------------------------------------------------------------
-// Step through each replace word and prompt user before replacing
-// it.  Return -1 if the string to replace isn't found at all.
-// Otherwise, return the number of replacements done.
-// [test string]
-//
-// StringStringStringString
-//
 int replace_string_loop(const char *needle, const char *replace_to, int *num_replaced_)
 {
 	int num_replaced = 0;

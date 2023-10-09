@@ -132,7 +132,7 @@ int regexp_matches_match_len(regexp_matches_t *regexp_matches, int match_idx);
 
 //------------------------------------------------------------------------------
 
-#define REG_NONE	0	// for cflags and eflags
+#define REG_NONE	0	// for cflags(compile) and eflags(execute)
 
 int regcomp__(regex_t *preg, const char *regexp, int cflags);
 int regexec_1(const regex_t *preg, const char *haystack,

@@ -512,7 +512,7 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 		 1, file_idx != cur_sel_idx, fv->file_list[file_idx].selected);
 		adjust_utf8s_columns(ptr, main_win_get_columns());
 		if (fv->file_list[file_idx].selected) {
-			set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 1);
+			set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 0);
 		} else {
 			set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 		}
