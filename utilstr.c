@@ -611,7 +611,7 @@ char *escape_quote_chr(char *buffer, const char *string, char quote_chr)
 
 char *unquote_string(char *buffer)
 {
-flf_d_printf("     [%s] ==>\n", buffer);
+///flf_d_printf("     [%s] ==>\n", buffer);
 	if (is_quoted(buffer, '\'') || is_quoted(buffer, '"')) {
 		char quote_chr = buffer[0];
 		size_t len = str_path_len(buffer);
@@ -626,7 +626,7 @@ flf_d_printf("     [%s] ==>\n", buffer);
 		}
 		*ptr = '\0';	// NUL terminate
 	}
-flf_d_printf(" ==> [%s]\n", buffer);
+///flf_d_printf(" ==> [%s]\n", buffer);
 	return buffer;
 }
 char is_quoted(const char *str, char quote_chr)
@@ -738,7 +738,7 @@ int get_plural_form_index(int number)
 	if (cur_lang[0] == '\0') {
 		// current language is not set, set cur_lang_idx by env "LANG"
 		strlcpy__(cur_lang, getenv__("LANG"), LANG_STR_LEN);	// "ja_JP.UTF-8"
-flf_d_printf("cur_lang:[%s]\n", cur_lang);
+///flf_d_printf("cur_lang:[%s]\n", cur_lang);
 		for (cur_lang_idx = 0; cur_lang_idx < LANG_ZZ; cur_lang_idx++) {
 			if (strncmp(cur_lang, lang_names[cur_lang_idx], LANG_STR_LEN) == 0)
 				break;
@@ -746,7 +746,7 @@ flf_d_printf("cur_lang:[%s]\n", cur_lang);
 		if (cur_lang_idx == LANG_ZZ) {
 			cur_lang_idx = LANG_EN;
 		}
-flf_d_printf("cur_lang:[%s] ==> cur_lang_idx:%d\n", cur_lang, cur_lang_idx);
+///flf_d_printf("cur_lang:[%s] ==> cur_lang_idx:%d\n", cur_lang, cur_lang_idx);
 	}
 
 	switch(cur_lang_idx) {

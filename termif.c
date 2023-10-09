@@ -213,15 +213,15 @@ int termif_get_cursor_pos(int *yy, int *xx)
 	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in read()
 	if ((len = read(STDIN_FILENO, buf, MAX_REPORT_LEN)) >= MIN_REPORT_LEN) {
 		buf[len] = '\0';
-flf_d_printf("report:[%s]\n", buf);
+///flf_d_printf("report:[%s]\n", buf);
 		for (ptr = buf; *ptr; ptr++) {
 			if (isdigit(*ptr))
 				break;
 		}
-flf_d_printf("report:[%s]\n", ptr);
+///flf_d_printf("report:[%s]\n", ptr);
 		// ESC [ lines ; cols R
 		if (sscanf(ptr, "%d;%d", &lines, &cols) >= 2) {
-flf_d_printf("cursor-pos: %d, %d\n", lines, cols);
+///flf_d_printf("cursor-pos: %d, %d\n", lines, cols);
 			*yy = lines;
 			*xx = cols;
 			return 1;
@@ -735,7 +735,7 @@ PRIVATE key_code_t input_key(void)
 	if (read(STDIN_FILENO, buf, 1) >= 1) {
 		key = buf[0];
 	}
-////	flf_d_printf("getch():%04x %d\n", key, key);
+///	flf_d_printf("getch():%04x %d\n", key, key);
 	return key;
 }
 

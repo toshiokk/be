@@ -104,9 +104,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 	ret = load_file_into_cur_buf__(full_path, 1, msg_on_err);
 
 	if (ret < 0) {
-///_FLF_
 		free_cur_edit_buf();
-///_FLF_
 		return -1;
 	}
 	return ret;				// loaded
@@ -172,7 +170,6 @@ PRIVATE int load_file_into_cur_buf_ascii(const char *full_path)
 	FILE *fp;
 	int lines;
 
-///_FLF_
 	if ((fp = fopen(full_path, "rb")) == NULL) {
 		disp_status_bar_err(_("Can not read-open file [%s]: %s"),
 		 shrink_str_to_scr_static(full_path), strerror(errno));
@@ -228,9 +225,9 @@ PRIVATE int load_file_into_cur_buf_nkf(const char *full_path, const char *nkf_op
 	FILE *fp;
 	int lines;
 
-////flf_d_printf("nkf_options[%s]\n", nkf_options);
+///flf_d_printf("nkf_options[%s]\n", nkf_options);
 	snprintf_(buffer, MAX_PATH_LEN+1, "nkf %s \"%s\"", nkf_options, full_path);
-////flf_d_printf("[%s]\n", buffer);
+///flf_d_printf("[%s]\n", buffer);
 	if ((fp = popen(buffer, "r")) <= 0) {
 		disp_status_bar_err(_("Can not read-open file [%s]: %s"),
 		 shrink_str_to_scr_static(full_path), strerror(errno));
@@ -352,7 +349,7 @@ int backup_and_save_cur_buf_ask(void)
 			return -1;
 		}
 	}
-flf_d_printf("[%s]\n", file_path);
+///flf_d_printf("[%s]\n", file_path);
 	if (buf_is_orig_file_updated(get_c_e_b()) > 0) {
 		// file is modified by others
 		ret = ask_yes_no(ASK_YES_NO,
@@ -366,7 +363,7 @@ flf_d_printf("[%s]\n", file_path);
 		disp_status_bar_done(_("Cancelled"));
 		return -1;
 	}
-flf_d_printf("[%s]\n", file_path);
+///flf_d_printf("[%s]\n", file_path);
 	if ((ret = backup_and_save_cur_buf(file_path)) < 0) {
 		disp_status_bar_err(_("File [%s] can NOT be written !!"),
 		 shrink_str_to_scr_static(file_path));
@@ -378,7 +375,6 @@ int input_new_file_name_n_ask(char *file_path)
 {
 	int ret = 0;
 
-	// no file name then input
 	while (1) {
 		ret = input_string(file_path, file_path,
 		 HISTORY_TYPE_IDX_DIR, "%s:", _("File Name to Write"));
@@ -417,7 +413,7 @@ int input_new_file_name_n_ask(char *file_path)
 		}
 		break;
 	}
-flf_d_printf("[%s]\n", file_path);
+///flf_d_printf("[%s]\n", file_path);
 	return 1;		// input
 }
 
@@ -433,7 +429,7 @@ int backup_and_save_cur_buf(const char *file_path)
 	int mask = 0;
 	int lines_written;
 
-flf_d_printf("[%s]\n", file_path);
+///flf_d_printf("[%s]\n", file_path);
 	get_abs_path(file_path, abs_path);
 	// TODO: do minimum check
 	//  file_path is regular file and not dir and special file
@@ -453,7 +449,7 @@ flf_d_printf("[%s]\n", file_path);
 
 	if (S_ISREG(get_c_e_b()->orig_file_stat.st_mode)) {
 		mask = get_c_e_b()->orig_file_stat.st_mode & 07777;
-////flf_d_printf("chmod([%s], %05o)\n", abs_path, mask);
+///flf_d_printf("chmod([%s], %05o)\n", abs_path, mask);
 		if (chmod(abs_path, mask) < 0) {
 			disp_status_bar_err(_("Can not set permissions %1$o on [%2$s]: %3$s"),
 			 mask, shrink_str_to_scr_static(abs_path), strerror(errno));
@@ -575,9 +571,9 @@ PRIVATE int save_cur_buf_to_file_nkf(const char *file_path, const char *nkf_opti
 	FILE *fp = 0;
 	int lines;
 
-////flf_d_printf("nkf_options[%s]\n", nkf_options);
+///flf_d_printf("nkf_options[%s]\n", nkf_options);
 	snprintf_(buffer, MAX_PATH_LEN+1, "nkf %s >\"%s\"", nkf_options, file_path);
-////flf_d_printf("[%s]\n", buffer);
+///flf_d_printf("[%s]\n", buffer);
 	if ((fp = popen(buffer, "w")) <= 0) {
 		disp_status_bar_err(_("Can not write-open file [%s]: %s"),
 		 shrink_str_to_scr_static(file_path), strerror(errno));

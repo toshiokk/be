@@ -105,9 +105,6 @@ PRIVATE int my_mbtowc__(wchar_t *pwc, const char *utf8c, int max_len)
 	int len = 1;
 	int idx;
 
-#if 0
-	return mbtowc(pwc, utf8c, max_len);
-#else
 	if (max_len < 1) {
 		*pwc = wc;
 		return 0;
@@ -147,7 +144,6 @@ PRIVATE int my_mbtowc__(wchar_t *pwc, const char *utf8c, int max_len)
 	len = idx;
 	*pwc = wc;
 	return len;		// return length
-#endif
 }
 
 // End of myutf8.c

@@ -292,8 +292,6 @@ int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 	int line_num = 0;
 	size_t buf_size = 0;
 
-///_FLF_
-///_D_(line_dump(line));
 	if (IS_NODE_TOP_ANCH(line)) {
 		line = NEXT_NODE(line);
 	} else if (IS_NODE_TOP(line)) {
@@ -303,7 +301,6 @@ int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 		line_num = line->prev->line_num;
 		buf_size = line->prev->buf_size;
 	}
-///_FLF_
 	for ( ; line && IS_NODE_BOT_ANCH(line) == 0; line = NEXT_NODE(line)) {
 		line->line_num = ++line_num;
 		if (line->size <= 0) {
@@ -313,11 +310,9 @@ int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 		buf_size += line->size;
 		line->buf_size = buf_size;
 	}
-///_FLF_
 	if (_buf_size_) {
 		*_buf_size_ = buf_size;
 	}
-///_FLF_
 	return line_num;
 }
 
@@ -369,8 +364,6 @@ void line_dump_cur(const be_line_t *line, const be_line_t *cur_line)
 		progerr_printf("line == NULL\n");
 		return;
 	}
-///	flf_d_printf("%08lx,<%08lx,>%08lx\n", line, line->prev, NEXT_NODE(line));
-///	flf_d_printf(":%08lx\n", line->data);
 	flf_d_printf("%s%03d,%08lx,<%08lx,>%08lx,%04d,%06d,%08lx[%s]\n",
 	 line == cur_line ? ">" : " ",
 	 line->line_num,

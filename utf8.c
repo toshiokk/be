@@ -52,7 +52,7 @@ void test_utf8c_bytes(void)
 	const char *ptr;
 
 	for (ptr = str; *ptr; ) {
-flf_d_printf("%d\n", ptr - str);
+		flf_d_printf("%d\n", ptr - str);
 		ptr += utf8c_bytes(ptr);
 	}
 }

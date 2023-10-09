@@ -500,12 +500,8 @@ PRIVATE key_code_t input_key_bs_del(void)
 	key_code_t key;
 
 	key = tio_input_key();
-//// if (key >= 0) {
-////  flf_d_printf("%04x\n", key);
-//// }
 	switch(key) {
 	case 0x7f:
-///
 #define MAP_KEY_7F_BS
 #ifdef MAP_KEY_7F_BS
 		if (GET_APPMD(app_MAP_KEY_7F_BS)) {
@@ -538,9 +534,6 @@ flf_d_printf("K_DC\n");
 		SET_APPMD(app_MAP_KEY_7F_BS);	// DEL(0x7f) key code ==> BS
 		break;
 	}
-//// if (key >= 0) {
-////  flf_d_printf("%04x\n", key);
-//// }
 	return key;
 }
 
@@ -728,7 +721,7 @@ const char *key_name_from_key_code(key_code_t key_code, char *buf)
 		if (key_name_table[idx].key_code == key_code)
 			return key_name_table[idx].key_name;
 	}
-////flf_d_printf("key_code:[%d]\n", key_code);
+///flf_d_printf("key_code:[%d]\n", key_code);
 	if (isgraph(key_code)) {
 		snprintf(buf, MAX_KEY_NAME_LEN+1, "%c", key_code);
 	} else if ((key_code & 0xff00) == K_M(0)) {	// 0x1bxx

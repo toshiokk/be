@@ -72,7 +72,7 @@ void init_histories(void)
 	int hist_type_idx;
 	char buf_name[MAX_PATH_LEN+1];
 
-////_FLF_
+///_FLF_
 	// prepare ~/.be directory
 	if (is_path_exist(get_app_dir()) == 0) {
 		if (mkdir(get_app_dir(), S_IRUSR | S_IWUSR | S_IXUSR) < 0) {
@@ -85,7 +85,7 @@ void init_histories(void)
 			 get_app_dir());
 		}
 	}
-////_FLF_
+///_FLF_
 	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
 		snprintf_(buf_name, MAX_PATH_LEN, "#%d:%s",
 		 hist_type_idx, get_history_file_path(hist_type_idx));
@@ -482,7 +482,7 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 	int ret;
 
 	edit_buf_save = get_c_e_b();
-_FLF_
+///_FLF_
 	load_histories();
 	renumber_all_bufs_from_top(&history_buffers);
 	set_cur_edit_buf(get_history_buf(hist_type_idx));
@@ -495,7 +495,7 @@ _FLF_
 		strcpy__(buffer, "");
 	else
 		strlcpy__(buffer, CBV_CL->data, MAX_EDIT_LINE_LEN);
-_FLF_
+///_FLF_
 	set_cur_edit_buf(edit_buf_save);
 
 	return ret;

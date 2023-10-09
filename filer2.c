@@ -88,10 +88,6 @@ int fork_exec_once(int separate_bef_exec, int pause_aft_exec, ...)
 	args_from_va_list(args, ap);
 	va_end(ap);
 
-flf_d_printf("%016p\n", &separate_bef_exec);
-flf_d_printf("%016p\n", &pause_aft_exec);
-flf_d_printf("%016p\n", &args[0]);
-flf_d_printf("%016p\n", &args[1]);
 	return fork_execv_hist(SETTERM1, separate_bef_exec, pause_aft_exec, args);
 }
 int fork_exec_repeat(int separate_bef_exec, ...)
@@ -103,11 +99,6 @@ int fork_exec_repeat(int separate_bef_exec, ...)
 	args_from_va_list(args, ap);
 	va_end(ap);
 
-flf_d_printf("%016p\n", &separate_bef_exec);
-flf_d_printf("%016p\n", &args[0]);
-flf_d_printf("%016p\n", &args[1]);
-flf_d_printf("[%s]\n", args[0]);
-flf_d_printf("[%s]\n", args[1]);
 	return fork_execv_hist(SETTERM0, separate_bef_exec, PAUSE0, args);
 }
 
@@ -129,8 +120,6 @@ PRIVATE int fork_execv_hist(int set_term, int separate_bef_exec, int pause_aft_e
  char * const *args)
 {
 #ifdef ENABLE_HISTORY
-flf_d_printf("[%s]\n", args[0]);
-flf_d_printf("[%s]\n", args[1]);
 	if (get_fork_exec_counter() == 0) {
 		output_exec_args_history(args);
 	}
@@ -148,12 +137,10 @@ PRIVATE void output_exec_args_history(char * const *args)
 	buffer[0] = '\0';
 	for (arg_idx = 0; arg_idx < MAX_EXECV_ARGS; arg_idx++) {
 		arg = args[arg_idx];
-flf_d_printf("[%s]\n", arg);
 		if (arg == NULL)
 			break;
 		concat_file_name_separating_by_space(buffer, MAX_PATH_LEN, arg);
 	}
-flf_d_printf("[%s]\n", buffer);
 	update_history(HISTORY_TYPE_IDX_EXEC, buffer);
 }
 #endif // ENABLE_HISTORY
@@ -217,10 +204,8 @@ int inc_fork_exec_counter(void)
 
 void pause_after_exec(void)
 {
-///	set_term_no_intr();
 	set_term_raw();
 	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in getchar()
-//	fflush(stdin);
 	getchar();	getchar();	getchar();	getchar();	getchar();
 	getchar();	getchar();	getchar();	getchar();	getchar();
 	fcntl(STDIN_FILENO, F_SETFL, 0);				// block in getchar()
@@ -643,7 +628,7 @@ void sort_file_list(filer_view_t *fv)
 	}
 }
 
-// Sorting routine for file listings ------------------------------------------
+// Comparison functions for file listings ------------------------------------------
 
 // sort directories before files,
 // sort by file name.

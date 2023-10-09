@@ -64,9 +64,6 @@ void signal_fork(void)
 	// Trap SIGWINCH.
 	sigact.sa_handler = handle_sigwinch;
 	sigaction(SIGWINCH, &sigact, NULL);
-///	// Ignore SIGWINCH.
-///	sigact.sa_handler = SIG_IGN;
-///	sigaction(SIGWINCH, &sigact, NULL);
 }
 
 void signal_clear(void)

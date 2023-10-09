@@ -529,7 +529,6 @@ void app_die_on(const char *msg)
 
 	// then save all of the modified buffers, if any
 	for (buf = EDIT_BUFS_TOP_BUF; IS_NODE_BOT_ANCH(buf) == 0; buf = NEXT_NODE(buf)) {
-_FLF_
 		set_cur_edit_buf(buf);
 		if (check_cur_buf_modified()) {
 			// save the file if it's been modified
@@ -709,7 +708,6 @@ void show_version(void)
 
 //-----------------------------------------------------------------------------
 #ifdef ENABLE_HELP
-///#define DEBUG_SPLASH
 const char *splash_text_b[] = {
 //012345678901234567890123456789
  "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -724,11 +722,7 @@ const char *splash_text_b[] = {
 };
 const char *splash_text_s[] = {
 //0123456789012345678901234567890123456789012345678
-#ifndef	DEBUG_SPLASH
  "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-#else // DEBUG_SPLASH
- "bdbdbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-#endif // DEBUG_SPLASH
  "b    FFs   FFs     FFs                          d",
  "b    FFs   FFs     FFs                          d",
  "b  FFs FFs FFs FFs FFs    BBBBBBBs   BBBBBBBs   d",
@@ -746,11 +740,7 @@ const char *splash_text_s[] = {
 };
 const char *splash_text_m[] = {
 //0123456789012345678901234567890123456789012345678901234567
-#ifndef	DEBUG_SPLASH
  "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-#else // DEBUG_SPLASH
- "bdbdbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-#endif // DEBUG_SPLASH
  "b      FFs    FFFs       FFs                            d",
  "b    FFFFs    FFs        FFFs                           d",
  "b  FFFs   FFs FFs FFFs  FFs       BBBBBBBs  BBBBBBBs    d",
@@ -770,11 +760,7 @@ const char *splash_text_m[] = {
 };
 const char *splash_text_l[] = {
 //01234567890123456789012345678901234567890123456789012345678901234567890123456789
-#ifndef	DEBUG_SPLASH
  "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-#else // DEBUG_SPLASH
- "bdbdbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-#endif // DEBUG_SPLASH
  "b         FFFs      FFFFFs      FFFFs                                          d",
  "b       FFFFFFs     FFFFs       FFFFFs                                         d",
  "b      FFFFFs  FFFs FFFFs FFFFs FFFFs                                          d",
@@ -897,13 +883,7 @@ void disp_splash(int delay)
 			case 'd':	tio_set_attrs(CL_BK, CL_RD, 1);		break;
 			case 's':	tio_set_attrs(CL_BL, CL_BK, 0);		break;
 			}
-#ifndef	DEBUG_SPLASH
 			tio_output_string(top_y + yy, left_x + xx, " ", -1);
-#else // DEBUG_SPLASH
-			buffer[0] = splash_text[yy][xx];
-			buffer[1] = '\0';
-			tio_output_string(top_y + yy, left_x + xx, buffer, -1);
-#endif // DEBUG_SPLASH
 		}
 	}
 	tio_set_attrs(CL_CY, CL_BK, 0);

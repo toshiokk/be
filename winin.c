@@ -66,7 +66,7 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int curs_byte
 	int ret;
 
 	if (recursively_called) {
-flf_d_printf("recursively_called\n");
+///flf_d_printf("recursively_called\n");
 		return -1;				// -1: recursive called
 	}
 	recursively_called = 1;
@@ -101,7 +101,7 @@ flf_d_printf("recursively_called\n");
 		update_history(hist_type_idx, input_buf);
 	}
 #endif
-////flf_d_printf("-9 input_buf:[%s] default__:[%s] ret:%d\n", input_buf, default__, ret);
+///flf_d_printf("-9 input_buf:[%s] default__:[%s] ret:%d\n", input_buf, default__, ret);
 	return 1;					// 1: input normally
 }
 
@@ -145,7 +145,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		} else {
 			// function key
 			func_id = get_func_id_from_key(key_input);
-flf_d_printf("func_id:[%s]\n", func_id);
+///flf_d_printf("func_id:[%s]\n", func_id);
 		}
 		if (key_input == K_ESC || key_input == K_M_ESC
 		 || cmp_func_id(func_id, "do_close_file_ask")
@@ -253,7 +253,7 @@ flf_d_printf("func_id:[%s]\n", func_id);
 		 || cmp_func_id(func_id, "do_last_line")) {
 			ret = call_filer(1, 1, "", "", buffer, MAX_PATH_LEN);
 			if (ret > 0) {
-flf_d_printf("[%s]\n", buffer);
+///flf_d_printf("[%s]\n", buffer);
 #if 1
 				if (cmp_func_id(func_id, "do_down")) {
 					// clear input buffer
@@ -274,7 +274,7 @@ flf_d_printf("[%s]\n", buffer);
 				char *line;
 				int line_byte_idx;
 
-////flf_d_printf("input_buf:%s\n", input_buf);
+////flf_d_printf("input_buf:[%s]\n", input_buf);
 				line = CBV_CL->data;
 				line_byte_idx = byte_idx_from_byte_idx(line,
 				 CBV_CLBI + strnlen(input_buf, MAX_PATH_LEN));
@@ -522,7 +522,6 @@ void display_reverse_text(int yy, char *text)
 	int xx;
 	char delimiter = 0;
 
-///flf_d_printf("(%d, [%s])\n", yy, text);
 	set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
 	main_win_clear_lines(yy, -1);
 	xx = 0;
@@ -535,15 +534,12 @@ void display_reverse_text(int yy, char *text)
 		}
 		if (ptr > begin) {
 			strlcpy__(buf, begin, ptr - begin);
-///flf_d_printf("display_normal_text([%s])\n", buf);
 			if (delimiter == '<') {
-///flf_d_printf("[%s]\n", buf);
 				strlcpy__(buf, short_key_name_from_func_id(buf), MAX_SCRN_LINE_BUF_LEN);
 			}
 			columns = LIM_MAX(main_win_get_columns() - xx, utf8s_columns(buf, INT_MAX));
 			truncate_tail_utf8s_columns(buf, columns);
 			expand_utf8s_columns(buf, columns);
-///flf_d_printf("([%s])\n", buf);
 			if (delimiter == '{' || delimiter == '<') {
 				set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST, 0);
 			}

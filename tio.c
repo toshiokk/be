@@ -222,22 +222,12 @@ int tio_check_update_terminal_size(void)
 //  2. terminal set ("0x1b[999;999R") and get("\x1b[6n") cursor pos.
 int tio_check_terminal_resized(void)
 {
-#if 0
-	if ((ioctl_ws_col >= 0 && ioctl_ws_row >= 0)
-	 && (tio_get_columns() != ioctl_ws_col || tio_get_lines() != ioctl_ws_row)) {
-flf_d_printf("cols: %d, lines: %d\n", ioctl_ws_col, ioctl_ws_row);
-		tio_set_screen_size(ioctl_ws_col, ioctl_ws_row);
-		return 1;
-	}
-	return 0;
-#else
 	if (is_sigwinch_signaled()) {
 		clear_sigwinch_signaled();
-flf_d_printf("cols: %d, lines: %d\n", ioctl_ws_col, ioctl_ws_row);
+///flf_d_printf("cols: %d, lines: %d\n", ioctl_ws_col, ioctl_ws_row);
 		return 1;
 	}
 	return 0;
-#endif
 }
 
 //-----------------------------------------------------------------------------

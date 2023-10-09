@@ -149,17 +149,12 @@ void win_reinit_win_size(void)
 			cur_win->columns = main_win->columns - main_win->columns / 2;
 			break;
 		}
-////		win_select_win(sub_win_idx);
 	}
-///	for (sub_win_idx = 0; sub_win_idx < SUB_WINS; sub_win_idx++) {
-///		win_select_win(sub_win_idx);
-///	}
 }
 void win_select_win(int sub_win_idx)
 {
 	cur_win_idx = MIN_MAX_(0, sub_win_idx, SUB_WINS-1);
 	cur_win = &sub_win_rects[cur_win_idx];
-///dump_cur_win();
 }
 
 void dump_cur_win(void)
@@ -274,7 +269,7 @@ PRIVATE void win_clear_lines(win_rect_t *win, int line_1, int line_2)
 	if (line_2 < 0) {
 		line_2 = line_1 + 1;
 	}
-////flf_d_printf("win_clear_lines(%d, %d)\n", line_1, line_2);
+///flf_d_printf("win_clear_lines(%d, %d)\n", line_1, line_2);
 	for (yy = line_1; yy < line_2; yy++) {
 		win_output_string(win, yy, 0, tio_blank_line(), win_get_columns(win));
 	}
