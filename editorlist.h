@@ -26,7 +26,6 @@ int do_switch_to_file_list(void);
 
 void init_help_bufs(void);
 be_buf_t *get_help_buf(int help_buf_idx);
-////void free_help_bufs(void);
 
 #ifdef ENABLE_HELP
 int do_switch_to_key_list(void);

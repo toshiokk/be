@@ -88,24 +88,7 @@ _FLF_
 void free_all_buffers(void)
 {
 	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
-#if 1 //----------------------------------
 	bufs_free_all_bufss(&bufs_top_anchor);
-#else //----------------------------------
-///#ifdef ENABLE_HELP
-///	free_help_bufs();
-///#endif // ENABLE_HELP
-///#ifdef ENABLE_UNDO
-///_FLF_
-///	free_all_undo_redo_bufs();
-///#endif // ENABLE_UNDO
-///#ifdef ENABLE_HISTORY
-///	free_hist_bufs();
-///#endif // ENABLE_HISTORY
-///_FLF_
-///	free_all_cut_bufs();
-///_FLF_
-///	free_all_edit_bufs();
-#endif //---------------------------------
 	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
 }
 
@@ -118,14 +101,7 @@ void init_edit_bufs(void)
 	 EDIT_BUFS_BOT_ANCH, "#Edit-bufs-bot-anchor");
 	init_editor_panes(&editor_panes);
 }
-// Free all memory associated with all edit buffers
-////void free_all_edit_bufs(void)
-////{
-////	while (IS_NODE_BOT_ANCH(EDIT_BUFS_TOP_BUF) == 0) {
-////		free_edit_buf(EDIT_BUFS_TOP_BUF);
-////	}
-////	set_c_e_b(EDIT_BUFS_TOP_BUF);
-////}
+
 // free current be_buf_t
 // the next or previous buffer will be set to current
 int free_cur_edit_buf(void)

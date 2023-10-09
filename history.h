@@ -56,16 +56,11 @@
 #define BASH_HISTORY_FILE_NAME			".bash_history"
 
 // Maximum number of search/execution/directory history strings saved
-///#define MAX_HISTORY_LINES		5
-///#define MAX_HISTORY_LINES		200
-///
 #define MAX_HISTORY_LINES		1000
 
 void init_hist_bufs(void);
-////void free_hist_bufs(void);
 
 void init_histories(void);
-///void free_histories(void);
 
 void load_histories(void);
 void save_histories(void);

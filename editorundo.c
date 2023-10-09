@@ -35,15 +35,6 @@ void init_undo_redo_bufs(void)
 	 REDO_BUFS_TOP_ANCH, "#Redo-bufs-top-anchor",
 	 REDO_BUFS_BOT_ANCH, "#Redo-bufs-bot-anchor");
 }
-////void free_all_undo_redo_bufs(void)
-////{
-////	while (IS_NODE_BOT_ANCH(CUR_REDO_BUF) == 0) {
-////		buf_free(pop_redo_buf());
-////	}
-////	while (IS_NODE_BOT_ANCH(CUR_UNDO_BUF) == 0) {
-////		buf_free(pop_undo_buf());
-////	}
-////}
 
 be_buf_t *push_undo_buf(be_buf_t *buf)
 {

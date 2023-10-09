@@ -74,13 +74,6 @@ be_buf_t *get_help_buf(int help_buf_idx)
 {
 	return get_buf_from_bufs_by_idx(HELP_BUFS_TOP_BUF, help_buf_idx);
 }
-////void free_help_bufs(void)
-////{
-////	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create(_("#List of Editor Key Bindings")));
-////	for (int help_buf_idx = 0; help_buf_idx < HELP_BUFS; help_buf_idx++) {
-////		buf_unlink_free(HELP_BUFS_TOP_BUF);
-////	}
-////}
 
 //-----------------------------------------------------------------------------
 int make_help_buf_call_editor(int help_idx);

@@ -151,7 +151,6 @@ void init_buffers(void);
 void free_all_buffers(void);
 
 void init_edit_bufs(void);
-////void free_all_edit_bufs(void);
 int free_cur_edit_buf(void);
 int free_edit_buf(be_buf_t *edit_buf);
 

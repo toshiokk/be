@@ -333,11 +333,9 @@ be_line_t *buf_cur_line(be_buf_t *buf)
 }
 be_line_t *buf_move_cur_line_to_prev(be_buf_t *buf)
 {
-	be_line_t *line;
-
-	if (IS_NODE_TOP_ANCH(BUF_V0_CL(buf)) == 0) {
-		line = BUF_V0_CL(buf);
-		BUF_V0_CL(buf) = BUF_V0_CL(buf)->prev;
+	be_line_t *line = BUF_V0_CL(buf);
+	if (IS_NODE_TOP_ANCH(line) == 0) {
+		BUF_V0_CL(buf) = line->prev;
 		return line;
 	}
 	// do not move and return NULL

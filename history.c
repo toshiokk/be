@@ -60,13 +60,6 @@ void init_hist_bufs(void)
 	 HIST_BUFS_BOT_ANCH, "#History-bufs-bot-anchor");
 }
 
-////void free_hist_bufs(void)
-////{
-////	while (IS_NODE_BOT_ANCH(HIST_BUFS_TOP_BUF) == 0) {
-////		buf_unlink_free(HIST_BUFS_TOP_BUF);
-////	}
-////}
-
 void init_histories(void)
 {
 	int hist_type_idx;
