@@ -29,6 +29,9 @@ PRIVATE int input_replace_str(char *input_buf);
 
 char last_searched_needle[MAX_PATH_LEN+1] = "";	// Last search string
 
+PRIVATE int found_in_prev_search = 1;
+PRIVATE int direction_of_prev_search = 0;
+
 int do_search_backward_first(void)
 {
 	char needle[MAX_PATH_LEN+1];
@@ -37,6 +40,7 @@ int do_search_backward_first(void)
 	if (input_search_str(SEARCH0, needle) <= 0) {
 		return -1;
 	}
+	found_in_prev_search = 1;
 	if (search_string_once(needle))
 		return 1;
 	TOGGLE_APPMD(ed_REVERSE_SEARCH);
@@ -50,6 +54,7 @@ int do_search_forward_first(void)
 	if (input_search_str(SEARCH0, needle) <= 0) {
 		return -1;
 	}
+	found_in_prev_search = 1;
 	if (search_string_once(needle))
 		return 1;
 	TOGGLE_APPMD(ed_REVERSE_SEARCH);
@@ -188,7 +193,7 @@ matches_t matches__;
 
 //------------------------------------------------------------------------------
 
-PRIVATE int found_in_prev_search = 1;
+#define SEARCH_DIR()	(GET_APPMD(ed_REVERSE_SEARCH) ? (BACKWARD_SEARCH) : (FORWARD_SEARCH))
 
 // Search for a string
 int search_string_once(const char *needle)
@@ -197,7 +202,7 @@ int search_string_once(const char *needle)
 
 ////flf_d_printf("last_searched_needle[%s], needle[%s]\n", last_searched_needle, needle);
 ////flf_d_printf("%04x %04x %d\n", key_executed, prev_key_executed, found_in_prev_search);
-	if (key_executed == prev_key_executed && found_in_prev_search == 0
+	if (direction_of_prev_search == SEARCH_DIR() && found_in_prev_search == 0
 	 && strcmp(last_searched_needle, needle) == 0) {
 		not_found_msg(needle);
 		return 0;
@@ -230,6 +235,7 @@ int search_string_once(const char *needle)
 		 GET_APPMD(ed_REVERSE_SEARCH) ? _("backward") : _("forward"));
 	}
 
+	direction_of_prev_search = SEARCH_DIR();
 	found_in_prev_search = match_len;
 	return match_len;
 }
