@@ -215,10 +215,7 @@ int search_string_once(const char *needle)
 	memorize_cursor_pos_before_move();
 
 	match_len = search_str_in_buffer(needle,
-	 GET_APPMD(ed_REVERSE_SEARCH) ? BACKWARD_SEARCH : FORWARD_SEARCH,
-	 GET_APPMD(ed_IGNORE_CASE),
-	 SKIP,
-	 INTER_BUFFER_SEARCH);
+	 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), SKIP, INTER_BUFFER_SEARCH);
 
 	if (match_len == 0) {
 		recall_cur_file_pos_null(NULL);
@@ -269,10 +266,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 		memorize_cursor_pos_before_move();
 
 		match_len = search_str_in_buffer(needle,
-		 GET_APPMD(ed_REVERSE_SEARCH) ? BACKWARD_SEARCH : FORWARD_SEARCH,
-		 GET_APPMD(ed_IGNORE_CASE),
-		 skip_here,
-		 INTER_BUFFER_SEARCH);
+		 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), skip_here, INTER_BUFFER_SEARCH);
 
 		if (match_len == 0) {
 			// not found

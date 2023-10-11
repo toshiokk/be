@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-11 23:08+0900\n"
+"POT-Creation-Date: 2023-10-11 23:35+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -752,71 +752,71 @@ msgstr ""
 msgid "Error in file: %s on line: %d"
 msgstr ""
 
-#: ../search.c:112
+#: ../search.c:117
 #, c-format
 msgid "Replaced %d occurrence"
 msgstr ""
 
-#: ../search.c:113
+#: ../search.c:118
 #, c-format
 msgid "Replaced %d occurrences"
 msgstr ""
 
-#: ../search.c:114
+#: ../search.c:119
 #, c-format
 msgid "Replaced %d occurrencess"
 msgstr ""
 
-#: ../search.c:115
+#: ../search.c:120
 #, c-format
 msgid "Replaced %d occurrencesss"
 msgstr ""
 
-#: ../search.c:141
+#: ../search.c:146
 msgid "Search"
 msgstr ""
 
-#: ../search.c:141
+#: ../search.c:146
 msgid "Replace"
 msgstr ""
 
-#: ../search.c:142
+#: ../search.c:147
 msgid "[Ignore-case]"
 msgstr ""
 
-#: ../search.c:144
+#: ../search.c:149
 msgid "[Regexp]"
 msgstr ""
 
-#: ../search.c:148
+#: ../search.c:153
 msgid "[Backward]"
 msgstr ""
 
-#: ../search.c:148
+#: ../search.c:153
 msgid "[Forward]"
 msgstr ""
 
-#: ../search.c:163
+#: ../search.c:168
 #, c-format
 msgid "Invalid regexp: [%s]:%s"
 msgstr ""
 
-#: ../search.c:176
+#: ../search.c:181
 msgid "Replace with"
 msgstr ""
 
 #. /		else
 #. /			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
-#: ../search.c:229
+#: ../search.c:231
 #, c-format
 msgid "\"%s\" found in %s search"
 msgstr ""
 
-#: ../search.c:230
+#: ../search.c:232
 msgid "backward"
 msgstr ""
 
-#: ../search.c:230
+#: ../search.c:232
 msgid "forward"
 msgstr ""
 

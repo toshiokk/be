@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-11 23:08+0900\n"
+"POT-Creation-Date: 2023-10-11 23:35+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -771,72 +771,72 @@ msgstr "不正な正規表現です: [%s]:%s\n"
 msgid "Error in file: %s on line: %d"
 msgstr "ファイル: %s 行: %d でエラー"
 
-#: ../search.c:112
+#: ../search.c:117
 #, c-format
 msgid "Replaced %d occurrence"
 msgstr "%d 箇所が置換されました"
 
-#: ../search.c:113
+#: ../search.c:118
 #, c-format
 msgid "Replaced %d occurrences"
 msgstr "%d 箇所が置換されました"
 
-#: ../search.c:114
+#: ../search.c:119
 #, c-format
 msgid "Replaced %d occurrencess"
 msgstr "%d 箇所が置換されました"
 
-#: ../search.c:115
+#: ../search.c:120
 #, c-format
 msgid "Replaced %d occurrencesss"
 msgstr "%d 箇所が置換されました"
 
-#: ../search.c:141
+#: ../search.c:146
 msgid "Search"
 msgstr "検索"
 
-#: ../search.c:141
+#: ../search.c:146
 msgid "Replace"
 msgstr "検索文字列(置換)"
 
-#: ../search.c:142
+#: ../search.c:147
 msgid "[Ignore-case]"
 msgstr "[大小文字無視]"
 
-#: ../search.c:144
+#: ../search.c:149
 msgid "[Regexp]"
 msgstr "[正規表現]"
 
-#: ../search.c:148
+#: ../search.c:153
 msgid "[Backward]"
 msgstr "[後方検索]"
 
-#: ../search.c:148
+#: ../search.c:153
 msgid "[Forward]"
 msgstr "[前方検索]"
 
-#: ../search.c:163
+#: ../search.c:168
 #, c-format
 msgid "Invalid regexp: [%s]:%s"
 msgstr "不正な正規表現です: [%s]:%s"
 
-#: ../search.c:176
+#: ../search.c:181
 msgid "Replace with"
 msgstr "置換文字列"
 
 #. /		else
 #. /			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
-#: ../search.c:229
+#: ../search.c:231
 #, c-format
 msgid "\"%s\" found in %s search"
 msgstr ""
 
-#: ../search.c:230
+#: ../search.c:232
 #, fuzzy
 msgid "backward"
 msgstr "後方へ"
 
-#: ../search.c:230
+#: ../search.c:232
 #, fuzzy
 msgid "forward"
 msgstr "[前方検索]"
