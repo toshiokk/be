@@ -780,7 +780,7 @@ int filer_change_dir(const char *dir)
 	update_history(HISTORY_TYPE_IDX_DIR, chg_dir);
 #endif // ENABLE_HISTORY
 	filer_do_next = FILER_DO_REFRESH_FORCE;
-	disp_status_bar_done("Changed to directory [%s]", chg_dir);
+	disp_status_bar_done("Changed current directory to [%s]", chg_dir);
 	return 0;
 }
 

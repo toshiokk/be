@@ -27,10 +27,10 @@ extern char last_searched_needle[MAX_PATH_LEN+1];
 extern search_t search__;
 extern matches_t matches__;
 
-int do_search_backward(void);
-int do_search_forward(void);
-int do_search_next_backward(void);
-int do_search_next_forward(void);
+int do_search_backward_first(void);
+int do_search_forward_first(void);
+int do_search_backward_next(void);
+int do_search_forward_next(void);
 
 int do_replace(void);
 
@@ -43,6 +43,8 @@ int search_string_once(const char *string_find);
 int replace_string_loop(const char *replace_from, const char *replace_to, int *num_replaced_);
 int replace_str_in_buffer(search_t *search, matches_t *matches, const char *replace_to);
 
+#define INNER_BUFFER_SEARCH		0
+#define INTER_BUFFER_SEARCH		1
 int search_str_in_buffer(const char *needle,
  int search_dir, int ignore_case, int skip_here, int global_search);
 

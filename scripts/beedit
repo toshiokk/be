@@ -1,2 +1,2 @@
-rm -f ~/be.log
-be "$@" 2>~/be.log
+rm -f ~/__be.log
+be "$@" 2>~/__be.log

@@ -266,8 +266,8 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			}
 #endif // ENABLE_FILER
 		} else
-		if (cmp_func_id(func_id, "do_search_backward")
-		 || cmp_func_id(func_id, "do_search_forward")
+		if (cmp_func_id(func_id, "do_search_backward_first")
+		 || cmp_func_id(func_id, "do_search_forward_first")
 		 || cmp_func_id(func_id, "do_replace")) {
 			// get string from edit buffer current cursor position
 			if (count_edit_bufs()) {

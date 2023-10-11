@@ -29,39 +29,41 @@ PRIVATE int input_replace_str(char *input_buf);
 
 char last_searched_needle[MAX_PATH_LEN+1] = "";	// Last search string
 
-int do_search_backward(void)
+int do_search_backward_first(void)
 {
 	char needle[MAX_PATH_LEN+1];
 
 	SET_APPMD(ed_REVERSE_SEARCH);
 	if (input_search_str(SEARCH0, needle) <= 0) {
-		return 0;
+		return -1;
 	}
-	search_string_once(needle);
-	return 0;
+	if (search_string_once(needle))
+		return 1;
+	TOGGLE_APPMD(ed_REVERSE_SEARCH);
+	return search_string_once(needle);
 }
-int do_search_forward(void)
+int do_search_forward_first(void)
 {
 	char needle[MAX_PATH_LEN+1];
 
 	CLR_APPMD(ed_REVERSE_SEARCH);
 	if (input_search_str(SEARCH0, needle) <= 0) {
-		return 0;
+		return -1;
 	}
-	search_string_once(needle);
-	return 0;
+	if (search_string_once(needle))
+		return 1;
+	TOGGLE_APPMD(ed_REVERSE_SEARCH);
+	return search_string_once(needle);
 }
-int do_search_next_backward(void)
+int do_search_backward_next(void)
 {
 	SET_APPMD(ed_REVERSE_SEARCH);
-	search_string_once(last_searched_needle);
-	return 0;
+	return search_string_once(last_searched_needle);
 }
-int do_search_next_forward(void)
+int do_search_forward_next(void)
 {
 	CLR_APPMD(ed_REVERSE_SEARCH);
-	search_string_once(last_searched_needle);
-	return 0;
+	return search_string_once(last_searched_needle);
 }
 
 //------------------------------------------------------------------------------
@@ -211,15 +213,21 @@ int search_string_once(const char *needle)
 	 GET_APPMD(ed_REVERSE_SEARCH) ? BACKWARD_SEARCH : FORWARD_SEARCH,
 	 GET_APPMD(ed_IGNORE_CASE),
 	 SKIP,
-	 INTER_FILE_SEARCH);
+	 INTER_BUFFER_SEARCH);
 
 	if (match_len == 0) {
 		recall_cur_file_pos_null(NULL);
 	} else {
-		if (GET_APPMD(ed_CURS_POSITIONING) == 0)
-			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP, UPDATE_SCRN_ALL);
-		else
-			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
+///		if (GET_APPMD(ed_CURS_POSITIONING) == 0)
+		if (GET_APPMD(ed_REVERSE_SEARCH)) {
+			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP_BACKWARD, UPDATE_SCRN_ALL);
+		} else {
+			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP_FORWARD, UPDATE_SCRN_ALL);
+		}
+///		else
+///			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
+		disp_status_bar_done(_("\"%s\" found in %s search"), needle,
+		 GET_APPMD(ed_REVERSE_SEARCH) ? _("backward") : _("forward"));
 	}
 
 	found_in_prev_search = match_len;
@@ -258,13 +266,13 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 		 GET_APPMD(ed_REVERSE_SEARCH) ? BACKWARD_SEARCH : FORWARD_SEARCH,
 		 GET_APPMD(ed_IGNORE_CASE),
 		 skip_here,
-		 INTER_FILE_SEARCH);
+		 INTER_BUFFER_SEARCH);
 
 		if (match_len == 0) {
 			// not found
 			recall_cur_file_pos_null(NULL);
 		}
-		post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP, UPDATE_SCRN_ALL);
+		post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP_CENTER, UPDATE_SCRN_ALL);
 
 		update_screen_editor(1, 1, 1);
 
@@ -406,7 +414,7 @@ PRIVATE int do_find_bracket_(int reverse);
 // {{{}}
 int do_find_bracket(void)
 {
-	return do_find_bracket_(1);
+	return do_find_bracket_(+1);
 }
 // [test string]
 // 12345678901234567890123456789012345678901234567890
@@ -457,16 +465,16 @@ PRIVATE int do_find_bracket_(int reverse)
 	// apparent near redundancy with regexp_str[] here is needed,
 	// [][] works, [[]] doesn't
 	if (offset < (strlen(brackets) / 2)) {	// on a left bracket
-		regexp_str[1] = char_wanted;
-		regexp_str[2] = char_under_cursor;
+		regexp_str[1] = char_wanted;		// '>'
+		regexp_str[2] = char_under_cursor;	// '<'
 		if (reverse > 0) {
 			search_dir = FORWARD_SEARCH;		// forward
 		} else {
 			search_dir = BACKWARD_SEARCH;		// backward
 		}
 	} else {								// on a right bracket
-		regexp_str[1] = char_under_cursor;
-		regexp_str[2] = char_wanted;
+		regexp_str[1] = char_under_cursor;	// '>'
+		regexp_str[2] = char_wanted;		// '<'
 		if (reverse > 0) {
 			search_dir = BACKWARD_SEARCH;		// backward
 		} else {
@@ -476,7 +484,7 @@ PRIVATE int do_find_bracket_(int reverse)
 
 	for (depth = 1; depth > 0; ) {
 		match_len = search_str_in_buffer(regexp_str,
-		 search_dir, DISTINGUISH_CASE, SKIP, INNER_FILE_SEARCH);
+		 search_dir, DISTINGUISH_CASE, SKIP, INNER_BUFFER_SEARCH);
 
 		if (match_len) {
 			// found bracket
@@ -507,7 +515,7 @@ PRIVATE int do_find_bracket_(int reverse)
 		CBV_CLBI = cur_line_byte_idx_save;
 		disp_status_bar_err(_("Bracket nesting too deep"));
 	}
-	regexp_free_regex_compiled(&search__.regexp);
+///TTT	regexp_free_regex_compiled(&search__.regexp);
 	return 0;
 }
 #endif // ENABLE_REGEX

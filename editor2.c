@@ -447,11 +447,18 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 			}
 		}
 		// draw cursor myself ===========================================================
+///TTT
 		if (GET_APPMD(app_DRAW_CURSOR)) {
-			set_color_by_idx(ITEM_COLOR_IDX_CURSOR_CHAR, 0);
+//DDD		if (1) {
+///TTT			set_color_by_idx(ITEM_COLOR_IDX_CURSOR_CHAR, 0);
+			set_color_by_idx(ITEM_COLOR_IDX_CURSOR_CHAR, 1);
 			vis_idx = vis_idx_from_byte_idx(CBV_CL->data, CBV_CLBI);
+///TTT
 			output_edit_line_text(CBV_CURSOR_Y, te_line_visible_code,
+///TTT
 			 vis_idx, vis_idx+utf8c_bytes(&te_line_visible_code[vis_idx]));
+//DDD			output_edit_line_text(CBV_CURSOR_Y, tio_blank_line(),
+//DDD			 vis_idx, vis_idx+1);
 		}
 	}
 }

@@ -79,7 +79,9 @@ void locate_cursor_in_edit_win(locate_cursor_to_t location)
 	case LOCATE_CURS_NONE:
 		disp_y_preferred = CBV_CURSOR_Y;
 		break;
-	case LOCATE_CURS_JUMP:	// locate cursor keeping screen if possible.
+	case LOCATE_CURS_JUMP_BACKWARD:	// locate cursor keeping screen if possible.
+	case LOCATE_CURS_JUMP_CENTER:	// locate cursor keeping screen if possible.
+	case LOCATE_CURS_JUMP_FORWARD:	// locate cursor keeping screen if possible.
 		// In search string,
 		// Case-A: When the next cursor position is in screen,
 		//         it does not move contents and locate cursor in it.
@@ -90,7 +92,19 @@ void locate_cursor_in_edit_win(locate_cursor_to_t location)
 		} else {
 			// Case-B: current line is out of previous screen
 			// LOCATE_CURS_CENTER
-			disp_y_preferred = edit_win_get_text_lines() / 2;
+			switch(location) {
+			default:
+			case LOCATE_CURS_JUMP_BACKWARD:	// 2 line upper than center
+				disp_y_preferred = edit_win_get_text_lines() / 2 - 2;
+				break;
+			case LOCATE_CURS_JUMP_CENTER:	// center
+				disp_y_preferred = edit_win_get_text_lines() / 2;
+				break;
+			case LOCATE_CURS_JUMP_FORWARD:	// 2 line lower than center
+				disp_y_preferred = edit_win_get_text_lines() / 2 + 2;
+				break;
+			}
+			disp_y_preferred = MK_IN_RANGE(0, disp_y_preferred, edit_win_get_text_lines());
 		}
 		break;
 	case LOCATE_CURS_TOP:

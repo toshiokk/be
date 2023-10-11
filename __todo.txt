@@ -1,6 +1,22 @@
 #### BE-editor to do list
 
-[vv ] Fix editor crash problem
+[] Node policy
+- When visit all nodes (including top/bottom-anchor)
+    for (node = &(nodes.top_anchor);	// for (node = NODE_TOP_ANCH(nodes);
+     IS_PTR_VALID(node);
+     node = NEXT_NODE(nodes)) {		// node = node->next;
+      // do something to "node"
+    }
+- When visit all intermediate nodes (excluding top/bottom-anchor)
+    for (node = NODE_TOP_NODE(nodes);	// for (node = &(nodes.top_anchor.next);
+     IS_NODE_INT(node);
+     node = NEXT_NODE(nodes)) {		// node = node->next;
+      // do something to "node"
+    }
+
+[v] Draw cursor off
+[v ] If no keyword found on first search, search reverse direction.
+[vv] Fix editor crash problem
 [v] avoid view shift at cut_to_tail
 [v] Save all modified buffer with ask, without ask.
 [v] Play back key macro when recording key macro.

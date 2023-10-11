@@ -92,7 +92,7 @@ int do_cut_to_head(void)
 	//TTTswap_m_l_b_i_with_c_l_b_i();
 	do_cut_text();
 
-	disp_status_bar_done(_("Cut to Head"));
+	disp_status_bar_done(_("Cut to line head"));
 	return 1;
 }
 int do_cut_to_tail(void)
@@ -103,7 +103,7 @@ int do_cut_to_tail(void)
 	//TTTswap_m_l_b_i_with_c_l_b_i();
 	do_cut_text();
 
-	disp_status_bar_done(_("Cut to Tail"));
+	disp_status_bar_done(_("Cut to line tail"));
 	return 1;
 }
 

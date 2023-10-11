@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-09 21:36+0900\n"
+"POT-Creation-Date: 2023-10-11 22:14+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -56,16 +56,16 @@ msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr ""
 
 #: ../editor.c:336
-msgid "File re-opened"
+msgid "File re-loaded"
 msgstr ""
 
 #: ../editor.c:381
 #, c-format
-msgid "Written to the file %s"
+msgid "Written to the file: %s"
 msgstr ""
 
 #: ../editor.c:424
-msgid "One file closed"
+msgid "One buffer closed"
 msgstr ""
 
 #: ../editor.c:556 ../editor.c:602 ../editor.c:615 ../fileio.c:358
@@ -74,7 +74,7 @@ msgid "Cancelled"
 msgstr ""
 
 #: ../editor.c:562
-msgid "All files are checked"
+msgid "All buffers are checked"
 msgstr ""
 
 #: ../editor.c:567
@@ -86,7 +86,7 @@ msgid "Freeing all buffers..."
 msgstr ""
 
 #: ../editor.c:596
-msgid "File is NOT modified"
+msgid "Buffer is NOT modified"
 msgstr ""
 
 #: ../editor.c:600
@@ -101,24 +101,28 @@ msgstr ""
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr ""
 
-#: ../editor.c:778
+#: ../editor.c:623
+msgid "Buffer saved to file"
+msgstr ""
+
+#: ../editor.c:775
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:835
+#: ../editor.c:832
 msgid "Modification not allowed in Anchor line"
 msgstr ""
 
-#: ../editor.c:839
+#: ../editor.c:836
 msgid "Modification not allowed in Anchor buffer"
 msgstr ""
 
-#: ../editor.c:843
+#: ../editor.c:840
 msgid "Modification not allowed in LIST mode"
 msgstr ""
 
-#: ../editor.c:847
+#: ../editor.c:844
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 
@@ -151,11 +155,11 @@ msgid "Cut-buffer popped"
 msgstr ""
 
 #: ../editorcut.c:95
-msgid "Cut to Head"
+msgid "Cut to line head"
 msgstr ""
 
 #: ../editorcut.c:106
-msgid "Cut to Tail"
+msgid "Cut to line tail"
 msgstr ""
 
 #: ../editorcut.c:126
@@ -748,85 +752,98 @@ msgstr ""
 msgid "Error in file: %s on line: %d"
 msgstr ""
 
-#: ../search.c:110
+#: ../search.c:112
 #, c-format
 msgid "Replaced %d occurrence"
 msgstr ""
 
-#: ../search.c:111
+#: ../search.c:113
 #, c-format
 msgid "Replaced %d occurrences"
 msgstr ""
 
-#: ../search.c:112
+#: ../search.c:114
 #, c-format
 msgid "Replaced %d occurrencess"
 msgstr ""
 
-#: ../search.c:113
+#: ../search.c:115
 #, c-format
 msgid "Replaced %d occurrencesss"
 msgstr ""
 
-#: ../search.c:139
+#: ../search.c:141
 msgid "Search"
 msgstr ""
 
-#: ../search.c:139
+#: ../search.c:141
 msgid "Replace"
 msgstr ""
 
-#: ../search.c:140
+#: ../search.c:142
 msgid "[Ignore-case]"
 msgstr ""
 
-#: ../search.c:142
+#: ../search.c:144
 msgid "[Regexp]"
 msgstr ""
 
-#: ../search.c:146
+#: ../search.c:148
 msgid "[Backward]"
 msgstr ""
 
-#: ../search.c:146
+#: ../search.c:148
 msgid "[Forward]"
 msgstr ""
 
-#: ../search.c:161
+#: ../search.c:163
 #, c-format
 msgid "Invalid regexp: [%s]:%s"
 msgstr ""
 
-#: ../search.c:174
+#: ../search.c:176
 msgid "Replace with"
 msgstr ""
 
-#: ../search.c:280
+#: ../search.c:225
+#, c-format
+msgid "\"%s\" found in %s search"
+msgstr ""
+
+#: ../search.c:226
+msgid "backward"
+msgstr ""
+
+#: ../search.c:226
+msgid "forward"
+msgstr ""
+
+#: ../search.c:284
 msgid "Replace this instance ?"
 msgstr ""
 
-#: ../search.c:444
+#: ../search.c:448
 msgid "Not a bracket"
 msgstr ""
 
-#: ../search.c:498
+#: ../search.c:502
 msgid "Peer bracket found"
 msgstr ""
 
-#: ../search.c:503
+#: ../search.c:507
 msgid "No peer bracket found"
 msgstr ""
 
-#: ../search.c:508
+#: ../search.c:512
 msgid "Bracket nesting too deep"
 msgstr ""
 
-#: ../search.c:524
+#: ../search.c:528
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr ""
 
-#: ../search.c:603
+#: ../search.c:607
 #, c-format
 msgid "\"%s\" not found"
 msgstr ""

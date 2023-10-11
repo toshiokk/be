@@ -48,6 +48,21 @@
 #define NEXT_NODE(node)			((node)->next)
 #define PREV_NODE(node)			((node)->prev)
 
+// Node handling policy =======================================================
+//   NODES_TOP_ANCH(nodes).prev = NULL;
+//   NODES_TOP_ANCH(nodes).next ==> top-node
+//                                     :
+//                                     :
+//   NODES_TOP_ANCH(nodes).prev ==> bottom-node
+//   NODES_BOT_ANCH(nodes).next = NULL;
+// 
+// Insert to top:
+//   insert between NODES_TOP_ANCH(nodes) and NODES_TOP_ANCH(nodes).next
+//   insert_after(NODES_TOP_ANCH(nodes))
+// Insert to bottom:
+//   insert between NODES_BOT_ANCH(nodes) and NODES_TOP_ANCH(nodes).prev
+//   insert_before(NODES_BOT_ANCH(nodes))
+
 typedef struct be_line_t {
 	struct be_line_t *prev;		//!< Previous line
 	struct be_line_t *next;		//!< Next line

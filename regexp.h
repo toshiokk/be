@@ -31,9 +31,6 @@
 #define NO_SKIP				0
 #define SKIP				1
 
-#define INNER_FILE_SEARCH	0
-#define INTER_FILE_SEARCH	1
-
 #ifdef ENABLE_REGEX
 
 typedef struct {

@@ -9,7 +9,7 @@ sort_by			0
 ignore_case		0
 draw_cursor		0
 backup_files		9
-draw_cursor		1
+draw_cursor		0
 history			1
 regexp			1
 tab_eol_notation	1

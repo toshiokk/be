@@ -333,7 +333,7 @@ int do_reopen_file(void)
 #endif // ENABLE_DEBUG
 #endif // ENABLE_UNDO
 	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL_SOON);
-	disp_status_bar_done(_("File re-opened"));
+	disp_status_bar_done(_("File re-loaded"));
 	return 1;
 }
 
@@ -378,7 +378,7 @@ flf_d_printf("[%s]\n", file_path);
 		break;
 	}
 	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
-	disp_status_bar_done(_("Written to the file %s"), file_path);
+	disp_status_bar_done(_("Written to the file: %s"), file_path);
 	return 0;
 }
 int do_write_file_ask(void)
@@ -421,7 +421,7 @@ int do_close_file_ask(void)
 	if (free_cur_edit_buf() == 0)
 		return 1;
 	do_refresh_editor();
-	disp_status_bar_done(_("One file closed"));
+	disp_status_bar_done(_("One buffer closed"));
 	return 2;
 }
 int do_close_all_ask(void)
@@ -559,7 +559,7 @@ int write_all_ask(int yes, close_after_save_t close)
 		if (switch_c_e_b_to_next(0, 0) == 0)
 			break;
 	}
-	disp_status_bar_done(_("All files are checked"));
+	disp_status_bar_done(_("All buffers are checked"));
 	return 1;
 }
 int close_all_not_modified(void)
@@ -593,7 +593,7 @@ int write_file_ask(int yes, close_after_save_t close)
 	int ret = yes;
 
 	if (yes < ANSWER_FORCE && check_cur_buf_modified() == 0) {
-		disp_status_bar_done(_("File is NOT modified"));
+		disp_status_bar_done(_("Buffer is NOT modified"));
 		return ANSWER_NO;
 	}
 	if (yes == ANSWER_FORCE && check_cur_buf_modified() == 0) {
@@ -620,6 +620,7 @@ int write_file_ask(int yes, close_after_save_t close)
 		if (backup_and_save_cur_buf_ask() < 0) {
 			return ANSWER_CANCEL;
 		}
+		disp_status_bar_done(_("Buffer saved to file"));
 	}
 	return ret;		// all:2, yes:1
 }
@@ -686,7 +687,6 @@ int update_screen_editor(int title_bar, int status_bar, int refresh)
 		disp_editor_title_bar();
 	}
 
-///if (count_edit_bufs()) {
 	if (GET_APPMD(ed_EDITOR_PANES) == 0) {		// 1 pane
 		win_select_win(WIN_IDX_SUB_WHOLE);
 		if (get_edit_win_update_needed()) {
@@ -712,7 +712,7 @@ int update_screen_editor(int title_bar, int status_bar, int refresh)
 				// current pane
 				set_work_space_color_normal();
 			}
-flf_d_printf("pane_sel_idx: %d, pane_idx: %d\n", pane_sel_idx, pane_idx);
+///flf_d_printf("pane_sel_idx: %d, pane_idx: %d\n", pane_sel_idx, pane_idx);
 			set_cur_editor_view_idx(pane_idx);
 			if (get_edit_win_update_needed()) {
 				disp_edit_win(pane_sel_idx);
@@ -726,11 +726,8 @@ flf_d_printf("pane_sel_idx: %d, pane_idx: %d\n", pane_sel_idx, pane_idx);
 		// key list
 		disp_key_list_editor();
 	}
-///}
 
-///if (count_edit_bufs()) {
 	set_edit_cursor_pos();
-///}
 
 	if (refresh) {
 		tio_refresh();
@@ -806,8 +803,8 @@ void disp_key_list_editor(void)
  "<do_close_all_ask>CloseAll "
  "<do_open_file>OpenFile "
  "<do_write_file_ask>WriteFile "
- "<do_search_backward>Search BW "
- "<do_search_forward>Search FW "
+ "<do_search_backward_first>Search BW "
+ "<do_search_forward_first>Search FW "
  "<do_replace>Replace "
  "<do_switch_to_file_list>FileList "
  "<do_switch_to_prev_file>PrevFile "

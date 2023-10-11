@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-09 21:36+0900\n"
+"POT-Creation-Date: 2023-10-11 22:14+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -55,16 +55,18 @@ msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr "バッファは変更されています。再オープンしますか ?"
 
 #: ../editor.c:336
-msgid "File re-opened"
+#, fuzzy
+msgid "File re-loaded"
 msgstr "ファイルを開き直しました"
 
 #: ../editor.c:381
 #, fuzzy, c-format
-msgid "Written to the file %s"
-msgstr "ファイルに書き込めません: %s"
+msgid "Written to the file: %s"
+msgstr "ファイルに書き込みました: %s"
 
 #: ../editor.c:424
-msgid "One file closed"
+#, fuzzy
+msgid "One buffer closed"
 msgstr "1 ファイルを閉じました"
 
 #: ../editor.c:556 ../editor.c:602 ../editor.c:615 ../fileio.c:358
@@ -74,7 +76,7 @@ msgstr "キャンセルされました"
 
 #: ../editor.c:562
 #, fuzzy
-msgid "All files are checked"
+msgid "All buffers are checked"
 msgstr "全ファイルをチェックしました"
 
 #: ../editor.c:567
@@ -87,7 +89,8 @@ msgid "Freeing all buffers..."
 msgstr "全バッファを開放中..."
 
 #: ../editor.c:596
-msgid "File is NOT modified"
+#, fuzzy
+msgid "Buffer is NOT modified"
 msgstr "ファイルは変更されていません"
 
 #: ../editor.c:600
@@ -103,27 +106,31 @@ msgstr "変更されたバッファを書き込みますか ?"
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr "変更されたバッファを書き込みますか (\"いいえ\" で変更は破棄されます) ?"
 
-#: ../editor.c:778
+#: ../editor.c:623
+msgid "Buffer saved to file"
+msgstr "バッファを書き込みました"
+
+#: ../editor.c:775
 #, fuzzy, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 "行:%4lu/%-4lu 桁:%3lu/%-3lu サイズ:%6lu%s 文字コード:%s エンコード:%s 行末:%s"
 
-#: ../editor.c:835
+#: ../editor.c:832
 #, fuzzy
 msgid "Modification not allowed in Anchor line"
 msgstr "LISTモードでは編集できません"
 
-#: ../editor.c:839
+#: ../editor.c:836
 #, fuzzy
 msgid "Modification not allowed in Anchor buffer"
 msgstr "LISTモードでは編集できません"
 
-#: ../editor.c:843
+#: ../editor.c:840
 msgid "Modification not allowed in LIST mode"
 msgstr "LISTモードでは編集できません"
 
-#: ../editor.c:847
+#: ../editor.c:844
 msgid "Modification not allowed in VIEW mode"
 msgstr "VIEWモードでは編集できません"
 
@@ -156,11 +163,13 @@ msgid "Cut-buffer popped"
 msgstr "カットバッファをポップしました"
 
 #: ../editorcut.c:95
-msgid "Cut to Head"
+#, fuzzy
+msgid "Cut to line head"
 msgstr "行頭までカットしました"
 
 #: ../editorcut.c:106
-msgid "Cut to Tail"
+#, fuzzy
+msgid "Cut to line tail"
 msgstr "行末までカットしました"
 
 #: ../editorcut.c:126
@@ -324,6 +333,7 @@ msgid "Can not read-open file [%s]: %s"
 msgstr "ファイルを読込オープン出来ません [%s]: %s"
 
 #: ../fileio.c:356
+#, fuzzy
 msgid "File was modified by another program, OVERWRITE ?"
 msgstr "ファイルは他のプログラムから書き換えられました。上書きしますか ?"
 
@@ -761,85 +771,100 @@ msgstr "不正な正規表現です: [%s]:%s\n"
 msgid "Error in file: %s on line: %d"
 msgstr "ファイル: %s 行: %d でエラー"
 
-#: ../search.c:110
+#: ../search.c:112
 #, c-format
 msgid "Replaced %d occurrence"
 msgstr "%d 箇所が置換されました"
 
-#: ../search.c:111
+#: ../search.c:113
 #, c-format
 msgid "Replaced %d occurrences"
 msgstr "%d 箇所が置換されました"
 
-#: ../search.c:112
+#: ../search.c:114
 #, c-format
 msgid "Replaced %d occurrencess"
 msgstr "%d 箇所が置換されました"
 
-#: ../search.c:113
+#: ../search.c:115
 #, c-format
 msgid "Replaced %d occurrencesss"
 msgstr "%d 箇所が置換されました"
 
-#: ../search.c:139
+#: ../search.c:141
 msgid "Search"
 msgstr "検索"
 
-#: ../search.c:139
+#: ../search.c:141
 msgid "Replace"
 msgstr "検索文字列(置換)"
 
-#: ../search.c:140
+#: ../search.c:142
 msgid "[Ignore-case]"
 msgstr "[大小文字無視]"
 
-#: ../search.c:142
+#: ../search.c:144
 msgid "[Regexp]"
 msgstr "[正規表現]"
 
-#: ../search.c:146
+#: ../search.c:148
 msgid "[Backward]"
 msgstr "[後方検索]"
 
-#: ../search.c:146
+#: ../search.c:148
 msgid "[Forward]"
 msgstr "[前方検索]"
 
-#: ../search.c:161
+#: ../search.c:163
 #, c-format
 msgid "Invalid regexp: [%s]:%s"
 msgstr "不正な正規表現です: [%s]:%s"
 
-#: ../search.c:174
+#: ../search.c:176
 msgid "Replace with"
 msgstr "置換文字列"
 
-#: ../search.c:280
+#: ../search.c:225
+#, c-format
+msgid "\"%s\" found in %s search"
+msgstr ""
+
+#: ../search.c:226
+#, fuzzy
+msgid "backward"
+msgstr "後方へ"
+
+#: ../search.c:226
+#, fuzzy
+msgid "forward"
+msgstr "[前方検索]"
+
+#: ../search.c:284
 msgid "Replace this instance ?"
 msgstr "置換しますか ?"
 
-#: ../search.c:444
+#: ../search.c:448
 msgid "Not a bracket"
 msgstr "括弧ではありません"
 
-#: ../search.c:498
+#: ../search.c:502
 msgid "Peer bracket found"
 msgstr ""
 
-#: ../search.c:503
+#: ../search.c:507
 msgid "No peer bracket found"
 msgstr "括弧ではありません"
 
-#: ../search.c:508
+#: ../search.c:512
 msgid "Bracket nesting too deep"
 msgstr ""
 
-#: ../search.c:524
+#: ../search.c:528
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr "文字列 [%s] を検索中..."
 
-#: ../search.c:603
+#: ../search.c:607
 #, c-format
 msgid "\"%s\" not found"
 msgstr "\"%s\" が見つかりません"
@@ -977,7 +1002,7 @@ msgstr ""
 #~ msgid "UP:history, DOWN:browser"
 #~ msgstr "UP:ヒストリー, DOWN:ブラウザー"
 
-#~ msgid "Line number must be greater than 0"
+#~ msgid "Line number must be 1 or more"
 #~ msgstr "行番号は1以上です"
 
 #~ msgid "Jumped to line: %1$d of file: [%2$s]"
