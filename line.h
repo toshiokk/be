@@ -49,19 +49,35 @@
 #define PREV_NODE(node)			((node)->prev)
 
 // Node handling policy =======================================================
+// ## Node structure ----------------------------------------------------------
 //   NODES_TOP_ANCH(nodes).prev = NULL;
 //   NODES_TOP_ANCH(nodes).next ==> top-node
 //                                     :
 //                                     :
 //   NODES_TOP_ANCH(nodes).prev ==> bottom-node
 //   NODES_BOT_ANCH(nodes).next = NULL;
-// 
-// Insert to top:
-//   insert between NODES_TOP_ANCH(nodes) and NODES_TOP_ANCH(nodes).next
-//   insert_after(NODES_TOP_ANCH(nodes))
-// Insert to bottom:
-//   insert between NODES_BOT_ANCH(nodes) and NODES_TOP_ANCH(nodes).prev
-//   insert_before(NODES_BOT_ANCH(nodes))
+//
+// ## Node insertion ----------------------------------------------------------
+// - Insert to top:
+//     insert between NODES_TOP_ANCH(nodes) and NODES_TOP_ANCH(nodes).next
+//     insert_after(NODES_TOP_ANCH(nodes))
+// - Insert to bottom:
+//     insert between NODES_BOT_ANCH(nodes) and NODES_TOP_ANCH(nodes).prev
+//     insert_before(NODES_BOT_ANCH(nodes))
+//
+// ## Node iteration ----------------------------------------------------------
+// - When visit all nodes (including top/bottom-anchor)
+//     for (node = NODES_TOP_ANCH(nodes);   // for (node = &(nodes.top_anchor);
+//      IS_PTR_VALID(node);
+//      node = NEXT_NODE(nodes)) {		// node = node->next;
+//         // do something to "node"
+//     }
+// - When visit all intermediate nodes (excluding top/bottom-anchor)
+//     for (node = NODES_TOP_NODE(nodes);	// for (node = &(nodes.top_anchor.next);
+//      IS_NODE_INT(node);
+//      node = NEXT_NODE(nodes)) {		// node = node->next;
+//         // do something to "node"
+//     }
 
 typedef struct be_line_t {
 	struct be_line_t *prev;		//!< Previous line

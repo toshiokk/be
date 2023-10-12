@@ -220,14 +220,11 @@ int search_string_once(const char *needle)
 	if (match_len == 0) {
 		recall_cur_file_pos_null(NULL);
 	} else {
-///		if (GET_APPMD(ed_CURS_POSITIONING) == 0)
 		if (GET_APPMD(ed_REVERSE_SEARCH)) {
 			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP_BACKWARD, UPDATE_SCRN_ALL);
 		} else {
 			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP_FORWARD, UPDATE_SCRN_ALL);
 		}
-///		else
-///			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 		disp_status_bar_done(_("\"%s\" found in %s search"), needle,
 		 GET_APPMD(ed_REVERSE_SEARCH) ? _("backward") : _("forward"));
 	}

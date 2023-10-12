@@ -96,10 +96,12 @@ void line_free(be_line_t *line)
 	}
 }
 
+// This is deep-copy.
 be_line_t *line_create_copy(be_line_t *src)
 {
 	return line_copy(line_create(), src);
 }
+// This is deep-copy.
 be_line_t *line_copy(be_line_t *dest, be_line_t *src)
 {
 	memcpy__(dest, src, sizeof(*src));

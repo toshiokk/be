@@ -25,7 +25,6 @@
 #ifdef ENABLE_UNDO
 
 void init_undo_redo_bufs(void);
-////void free_all_undo_redo_bufs(void);
 be_buf_t *push_undo_buf(be_buf_t *buf);
 be_buf_t *pop_undo_buf(void);
 be_buf_t *push_redo_buf(be_buf_t *buf);

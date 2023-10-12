@@ -31,8 +31,6 @@
 //
 // set edit_win_update_needed		update screen of cur-line or whole win
 //
-// memorize prev positions			for the next update
-//
 int post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_move,
  locate_cursor_to_t locate_cursor, int update_needed)
 {
