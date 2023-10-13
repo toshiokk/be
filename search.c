@@ -31,6 +31,8 @@ char last_searched_needle[MAX_PATH_LEN+1] = "";	// Last search string
 
 PRIVATE int found_in_prev_search = 1;
 PRIVATE int direction_of_prev_search = 0;
+PRIVATE be_line_t *line_of_prev_search = NULL;
+PRIVATE int byte_idx_of_prev_search = 0;
 
 int do_search_backward_first(void)
 {
@@ -120,7 +122,7 @@ int do_replace(void)
 								_("Replaced %d occurrencesss"),
 		 num_replaced), num_replaced);
 	else
-		not_found_msg(replace_from);
+		disp_status_bar_not_found_msg(replace_from);
 
 	return 0;
 }
@@ -200,11 +202,10 @@ int search_string_once(const char *needle)
 {
 	int match_len;
 
-////flf_d_printf("last_searched_needle[%s], needle[%s]\n", last_searched_needle, needle);
-////flf_d_printf("%04x %04x %d\n", key_executed, prev_key_executed, found_in_prev_search);
-	if (direction_of_prev_search == SEARCH_DIR() && found_in_prev_search == 0
+	if (found_in_prev_search == 0 && direction_of_prev_search == SEARCH_DIR()
+	 && line_of_prev_search == CBV_CL && byte_idx_of_prev_search == CBV_CLBI
 	 && strcmp(last_searched_needle, needle) == 0) {
-		not_found_msg(needle);
+		disp_status_bar_not_found_msg(needle);
 		return 0;
 	}
 	if (strlen(needle)) {
@@ -229,8 +230,10 @@ int search_string_once(const char *needle)
 		 GET_APPMD(ed_REVERSE_SEARCH) ? _("backward") : _("forward"));
 	}
 
-	direction_of_prev_search = SEARCH_DIR();
 	found_in_prev_search = match_len;
+	direction_of_prev_search = SEARCH_DIR();
+	line_of_prev_search = CBV_CL;
+	byte_idx_of_prev_search = CBV_CLBI;
 	return match_len;
 }
 
@@ -364,6 +367,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 	}
 	*num_replaced_ = num_replaced;
 	if (num_replaced && strlen(replace_to)) {
+		// copy [string replace_to] ==> [next string to search]
 		strlcpy__(last_searched_needle, replace_to, MAX_PATH_LEN);
 	}
 	return ret;
@@ -512,7 +516,6 @@ PRIVATE int do_find_bracket_(int reverse)
 		CBV_CLBI = cur_line_byte_idx_save;
 		disp_status_bar_err(_("Bracket nesting too deep"));
 	}
-///TTT	regexp_free_regex_compiled(&search__.regexp);
 	return 0;
 }
 #endif // ENABLE_REGEX
@@ -527,7 +530,6 @@ int search_str_in_buffer(const char *needle,
 	int match_len;
 
 	disp_status_bar_ing(_("Searching word: [%s]..."), needle);
-///_FLF_
 
 	line = CBV_CL;
 	byte_idx = CBV_CLBI;
@@ -559,7 +561,6 @@ int search_str_in_buffer(const char *needle,
 			byte_idx = 0;
 			skip_here = 1;
 		}
-///_FLF_
 	} else {
 		// search forward ------------------------------------------------------
 		while (1) {
@@ -587,23 +588,19 @@ int search_str_in_buffer(const char *needle,
 			byte_idx = line_data_len(line);
 			skip_here = 1;
 		}
-///_FLF_
 	}
-///_FLF_
 	if (match_len) {
 		// found and update current line pointer
 		CBV_CL = line;
 		CBV_CLBI = matches_start_idx(&matches__);
-///_FLF_
 		return match_len;
 	}
 	tio_beep();
-	not_found_msg(needle);
-///_FLF_
+	disp_status_bar_not_found_msg(needle);
 	return 0;
 }
 
-void not_found_msg(const char *str)
+void disp_status_bar_not_found_msg(const char *str)
 {
 	disp_status_bar_err(_("\"%s\" not found"), shrink_str_to_scr_static(str));
 	set_edit_win_update_needed(UPDATE_SCRN_ALL);

@@ -48,7 +48,7 @@ int replace_str_in_buffer(search_t *search, matches_t *matches, const char *repl
 int search_str_in_buffer(const char *needle,
  int search_dir, int ignore_case, int skip_here, int global_search);
 
-void not_found_msg(const char *str);
+void disp_status_bar_not_found_msg(const char *str);
 
 #endif // search_h
 

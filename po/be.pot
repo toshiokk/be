@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-12 22:11+0900\n"
+"POT-Creation-Date: 2023-10-13 23:34+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -752,98 +752,98 @@ msgstr ""
 msgid "Error in file: %s on line: %d"
 msgstr ""
 
-#: ../search.c:117
+#: ../search.c:119
 #, c-format
 msgid "Replaced %d occurrence"
 msgstr ""
 
-#: ../search.c:118
+#: ../search.c:120
 #, c-format
 msgid "Replaced %d occurrences"
 msgstr ""
 
-#: ../search.c:119
+#: ../search.c:121
 #, c-format
 msgid "Replaced %d occurrencess"
 msgstr ""
 
-#: ../search.c:120
+#: ../search.c:122
 #, c-format
 msgid "Replaced %d occurrencesss"
 msgstr ""
 
-#: ../search.c:146
+#: ../search.c:148
 msgid "Search"
 msgstr ""
 
-#: ../search.c:146
+#: ../search.c:148
 msgid "Replace"
 msgstr ""
 
-#: ../search.c:147
+#: ../search.c:149
 msgid "[Ignore-case]"
 msgstr ""
 
-#: ../search.c:149
+#: ../search.c:151
 msgid "[Regexp]"
 msgstr ""
 
-#: ../search.c:153
+#: ../search.c:155
 msgid "[Backward]"
 msgstr ""
 
-#: ../search.c:153
+#: ../search.c:155
 msgid "[Forward]"
 msgstr ""
 
-#: ../search.c:168
+#: ../search.c:170
 #, c-format
 msgid "Invalid regexp: [%s]:%s"
 msgstr ""
 
-#: ../search.c:181
+#: ../search.c:183
 msgid "Replace with"
 msgstr ""
 
-#: ../search.c:228
+#: ../search.c:229
 #, c-format
 msgid "\"%s\" found in %s search"
 msgstr ""
 
-#: ../search.c:229
+#: ../search.c:230
 msgid "backward"
 msgstr ""
 
-#: ../search.c:229
+#: ../search.c:230
 msgid "forward"
 msgstr ""
 
-#: ../search.c:285
+#: ../search.c:288
 msgid "Replace this instance ?"
 msgstr ""
 
-#: ../search.c:449
+#: ../search.c:453
 msgid "Not a bracket"
 msgstr ""
 
-#: ../search.c:503
+#: ../search.c:507
 msgid "Peer bracket found"
 msgstr ""
 
-#: ../search.c:508
+#: ../search.c:512
 msgid "No peer bracket found"
 msgstr ""
 
-#: ../search.c:513
+#: ../search.c:517
 msgid "Bracket nesting too deep"
 msgstr ""
 
-#: ../search.c:529
+#: ../search.c:532
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr ""
 
-#: ../search.c:608
+#: ../search.c:605
 #, c-format
 msgid "\"%s\" not found"
 msgstr ""

@@ -1,7 +1,7 @@
 proc_one()
 {
-#OLD_DIR=../old/src
 OLD_DIR=../old/be
+#OLD_DIR=../clone/be
   echo "kdiff3 ${OLD_DIR}/$1 $1 #========================" >>_diff.txt
   diff ${OLD_DIR}/$1 $1 >>_diff.txt
   echo "kdiff3 ${OLD_DIR}/$1 $1 #========================" >>_sdiff.txt

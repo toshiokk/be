@@ -54,10 +54,10 @@ extern be_buf_view_t *c_b_v;
 #define EDIT_BUFS_BOT_BUF		BUFS_BOT_BUF(&edit_buffers)
 #define EDIT_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&edit_buffers)
 // current edit buffer --------------------------------------------------------
-#define CUR_EDIT_BUF_TOP_ANCH	BUFS_TOP_ANCH(c_e_b)
-#define CUR_EDIT_BUF_TOP_LINE	BUFS_TOP_BUF(c_e_b)
-#define CUR_EDIT_BUF_BOT_LINE	BUFS_BOT_BUF(c_e_b)
-#define CUR_EDIT_BUF_BOT_ANCH	BUFS_BOT_ANCH(c_e_b)
+#define CUR_EDIT_BUF_TOP_ANCH	BUF_TOP_ANCH(c_e_b)
+#define CUR_EDIT_BUF_TOP_LINE	BUF_TOP_LINE(c_e_b)
+#define CUR_EDIT_BUF_BOT_LINE	BUF_BOT_LINE(c_e_b)
+#define CUR_EDIT_BUF_BOT_ANCH	BUF_BOT_ANCH(c_e_b)
 
 #define BUF_VX(buf, idx)					(&((buf)->buf_views[idx]))
 
