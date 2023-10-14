@@ -160,7 +160,7 @@ int search_str_in_line_regexp(regexp_t *regexp, regexp_matches_t *regexp_matches
 }
 #endif // ENABLE_REGEX
 
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 PRIVATE const char *revstrstr(const char *haystack, const char *tail_of_haystack,
  const char *needle);

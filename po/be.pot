@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-13 23:34+0900\n"
+"POT-Creation-Date: 2023-10-14 20:45+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -146,7 +146,7 @@ msgstr ""
 msgid "Cut-buffer cleared"
 msgstr ""
 
-#: ../editorcut.c:69 ../editorcut.c:229 ../editorcut.c:269
+#: ../editorcut.c:69 ../editorcut.c:229 ../editorcut.c:260
 msgid "Cut-buffer empty !!"
 msgstr ""
 
@@ -556,32 +556,32 @@ msgstr ""
 msgid "Run (with SRC-path and DEST-path):"
 msgstr ""
 
-#: ../history.c:72
+#: ../history.c:71
 #, c-format
 msgid "Unable to create directory %s, %s"
 msgstr ""
 
-#: ../history.c:77
+#: ../history.c:76
 #, c-format
 msgid "No application directory %s"
 msgstr ""
 
-#: ../history.c:130
+#: ../history.c:129
 #, c-format
 msgid "hist_type_idx out of range: %d"
 msgstr ""
 
-#: ../history.c:216
+#: ../history.c:215
 #, c-format
 msgid "Unable to create history file: %s, %s"
 msgstr ""
 
-#: ../history.c:233
+#: ../history.c:232
 #, c-format
 msgid "Unable to write history file: %s, %s"
 msgstr ""
 
-#: ../history.c:266
+#: ../history.c:265
 #, c-format
 msgid "Unable to open history file: %s, %s"
 msgstr ""
@@ -782,6 +782,10 @@ msgstr ""
 
 #: ../search.c:149
 msgid "[Ignore-case]"
+msgstr ""
+
+#: ../search.c:149
+msgid "[Differenciate-case]"
 msgstr ""
 
 #: ../search.c:151

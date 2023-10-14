@@ -24,15 +24,15 @@
 #define SEARCH0		0
 #define REPLACE1	1
 
-PRIVATE int input_search_str(int search0_replace1, char *input_buf);
-PRIVATE int input_replace_str(char *input_buf);
-
 char last_searched_needle[MAX_PATH_LEN+1] = "";	// Last search string
 
 PRIVATE int found_in_prev_search = 1;
 PRIVATE int direction_of_prev_search = 0;
 PRIVATE be_line_t *line_of_prev_search = NULL;
 PRIVATE int byte_idx_of_prev_search = 0;
+
+PRIVATE int input_search_str(int search0_replace1, char *input_buf);
+PRIVATE int input_replace_str(char *input_buf);
 
 int do_search_backward_first(void)
 {
@@ -146,7 +146,7 @@ int input_search_str(int search0_replace1, char *input_buf)
 
 	ret = input_string("", input_buf, HISTORY_TYPE_IDX_SEARCH, "%s%s%s%s%s:",
 	 search0_replace1 == 0 ? _("Search") : _("Replace"),
-	 GET_APPMD(ed_IGNORE_CASE) ? _("[Ignore-case]") : "",
+	 GET_APPMD(ed_IGNORE_CASE) ? _("[Ignore-case]") : _("[Differenciate-case]"),
 #ifdef ENABLE_REGEX
 	 GET_APPMD(ed_USE_REGEXP) ? _("[Regexp]") : "",
 #else // ENABLE_REGEX
@@ -188,12 +188,12 @@ int input_replace_str(char *input_buf)
 	return ret;
 }
 
-//==============================================================================
+//=============================================================================
 
 search_t search__;
 matches_t matches__;
 
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 #define SEARCH_DIR()	(GET_APPMD(ed_REVERSE_SEARCH) ? (BACKWARD_SEARCH) : (FORWARD_SEARCH))
 

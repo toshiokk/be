@@ -335,7 +335,6 @@ void tio_output_string(int yy, int xx, const char *string, int bytes)
 #else // ENABLE_NCURSES
 	termif_output_string(yy, xx, string, bytes);
 #endif // ENABLE_NCURSES
-///_FLF_
 }
 
 void tio_beep(void)
@@ -447,7 +446,6 @@ int differ_fgc_to_bgc(int bgc, int fgc)
 		// so that you can recognize character
 		switch(fgc) {
 		default:
-///		case CL_BK:		fgc = CL_GY;	break;
 		case CL_BK:		fgc = CL_DGY;	break;
 		case CL_RD:		fgc = CL_LRD;	break;
 		case CL_GR:		fgc = CL_LGR;	break;
@@ -455,7 +453,6 @@ int differ_fgc_to_bgc(int bgc, int fgc)
 		case CL_BL:		fgc = CL_LBL;	break;
 		case CL_MG:		fgc = CL_LMG;	break;
 		case CL_CY:		fgc = CL_LCY;	break;
-///		case CL_GY:		fgc = CL_WH;	break;
 		case CL_GY:		fgc = CL_DGY;	break;
 		case CL_DGY:	fgc = CL_BK;	break;
 		case CL_LRD:	fgc = CL_RD;	break;

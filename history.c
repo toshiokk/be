@@ -42,7 +42,6 @@ PRIVATE int is_history_modified(int hist_type_idx);
 
 PRIVATE void set_history_oldest(int hist_type_idx);
 PRIVATE void set_history_newest(int hist_type_idx);
-////PRIVATE int get_history_lines(int hist_type_idx);
 PRIVATE const char *get_history_older(int hist_type_idx);
 PRIVATE const char *get_history_newer(int hist_type_idx);
 
@@ -366,11 +365,6 @@ PRIVATE int is_history_modified(int hist_type_idx)
 	return BUF_STATE(buf, buf_MODIFIED);
 }
 
-////PRIVATE int get_history_lines(int hist_type_idx)
-////{
-////	be_buf_t *buf = get_history_buf(hist_type_idx);
-////	return buf_count_lines(buf);
-////}
 PRIVATE void set_history_oldest(int hist_type_idx)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);

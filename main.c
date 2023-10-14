@@ -724,12 +724,12 @@ const char *splash_text_s[] = {
 //0123456789012345678901234567890123456789012345678
  "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
  "b    FFs   FFs     FFs                          d",
- "b    FFs   FFs     FFs                          d",
- "b  FFs FFs FFs FFs FFs    BBBBBBBs   BBBBBBBs   d",
- "bFFs   FFs FFs FFs FFFFFFsBBs   BBs  BBs        d",
- "b    FFFFFFFFFFFFsFFsFFs  BBBBBBBs   BBBBBBs    d",
- "b  FFs           FFs FFs  BBs   BBs  BBs        d",
- "bFFFFs FFFFFFFFFFFFs FFs  BBBBBBBs   BBBBBBBs   d",
+ "b    FFs   FFs     FFs    BBBBBBBs   BBBBBBBs   d",
+ "b  FFs FFs FFs FFs FFs    BBs   BBs  BBs        d",
+ "bFFs   FFs FFs FFs FFFFFFsBBBBBBBs   BBBBBBs    d",
+ "b    FFFFFFFFFFFFsFFsFFs  BBs   BBs  BBs        d",
+ "b  FFs           FFs FFs  BBBBBBBs   BBBBBBBs   d",
+ "bFFFFs FFFFFFFFFFFFs FFs                        d",
  "b  FFs   FFs FFs   FFs    EEEEs  EsEs           d",
  "b  FFs   FFs FFs   FFs    Es     Es   Es        d",
  "b  FFs   FFs FFs FFs FFs  EEEs EEEsEsEEEsEEEsEEsd",
@@ -835,11 +835,11 @@ void disp_splash(int delay)
 			break;
 		case 1:
 			splash_text = splash_text_s;
-			msg1_y = 1;
-			msg2_y = 1;
-			msg3_y = 2;
+			msg1_y = 0;
+			msg2_y = 0;
+			msg3_y = 1;
 			msg4_y = 7;
-			msg5_y = 12;
+			msg5_y = 13;
 			msg1_x = 24;
 			msg2_x = 34;
 			msg3_x = 26;
