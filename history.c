@@ -426,7 +426,7 @@ PRIVATE be_line_t *search_history_str_complete(int hist_type_idx, const char *st
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
 
-	for (line = BUF_BOT_LINE(buf); IS_NODE_TOP_ANCH(line) == 0; line = PREV_NODE(line)) {
+	for (line = BUF_BOT_LINE(buf); IS_NODE_TOP_ANCH(line) == 0; line = NODE_PREV(line)) {
 		if (strcmp(str, line->data) == 0)	// exact match
 			return line;
 	}
@@ -437,7 +437,7 @@ PRIVATE be_line_t *search_history_str_partial(int hist_type_idx, const char *str
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
 
-	for (line = BUF_BOT_LINE(buf); IS_NODE_TOP_ANCH(line) == 0; line = PREV_NODE(line)) {
+	for (line = BUF_BOT_LINE(buf); IS_NODE_TOP_ANCH(line) == 0; line = NODE_PREV(line)) {
 		if (strlcmp__(line->data, str) == 0)	// partial match
 			return line;
 	}
@@ -452,7 +452,7 @@ const char *search_history_file_path(int hist_type_idx, const char *path)
 
 	path = quote_file_name(path);
 	// search from the newest to the oldest
-	for (line = BUF_BOT_LINE(buf); IS_NODE_TOP_ANCH(line) == 0; line = PREV_NODE(line)) {
+	for (line = BUF_BOT_LINE(buf); IS_NODE_TOP_ANCH(line) == 0; line = NODE_PREV(line)) {
 		// /home/user/filename.exp|1234
 		// '/home/user/ filename.exp '|1234
 		if ((ptr = strstr(line->data, FILE_PATH_SEPARATOR)) != NULL) {

@@ -70,7 +70,7 @@ int delete_do_buf(be_buf_t *edit_buf, be_buf_t *do_buf)
 {
 	int deleted = 0;
 
-	for ( ; IS_NODE_BOT_ANCH(do_buf) == 0; do_buf = NEXT_NODE(do_buf)) {
+	for ( ; IS_NODE_BOT_ANCH(do_buf) == 0; do_buf = NODE_NEXT(do_buf)) {
 		if (strcmp(do_buf->abs_path, edit_buf->abs_path) == 0) {
 			do_buf = buf_unlink_free(do_buf);
 			deleted++;
@@ -131,8 +131,8 @@ void undo_set_region_save_before_change(be_line_t *min_line, be_line_t *max_line
 }
 void undo_set_region(be_line_t *min_line, be_line_t *max_line, int cut_buf_lines)
 {
-	undo_min_line = min_line->prev;
-	undo_max_line = max_line->next;
+	undo_min_line = NODE_PREV(min_line);
+	undo_max_line = NODE_NEXT(max_line);
 	undo_lines = cut_buf_lines;
 
 	undo_adjust_max_line();
@@ -148,7 +148,7 @@ void undo_adjust_max_line(void)
 	int lines;
 	int past_max_line = 0;
 
-	line = undo_min_line->next;
+	line = NODE_NEXT(undo_min_line);
 	for (lines = 0 ; IS_NODE_VALID(line); lines++) {
 		if (line == undo_max_line) {
 			past_max_line = 1;
@@ -156,7 +156,7 @@ void undo_adjust_max_line(void)
 		if (lines >= undo_lines && past_max_line) {
 			break;
 		}
-		line = NEXT_NODE(line);
+		line = NODE_NEXT(line);
 	}
 	undo_max_line = line;	// adjust max line
 }
@@ -170,7 +170,7 @@ void undo_save_after_change(void)
 		save_region_to_undo_buf();	// save the state after change
 		if (count_undo_bufs() >= 2) {
 			// compare before and after
-			if (buf_compare(CUR_UNDO_BUF, CUR_UNDO_BUF->next) == 0) {
+			if (buf_compare(CUR_UNDO_BUF, NODE_NEXT(CUR_UNDO_BUF)) == 0) {
 				// not changed, pop two buffer (after and before)
 				buf_free(pop_undo_buf());
 				buf_free(pop_undo_buf());
@@ -183,7 +183,7 @@ PRIVATE void save_region_to_undo_buf(void)
 	be_line_t *line;
 
 	push_undo_buf(get_c_e_b());
-	for (line = undo_min_line->next; line != undo_max_line; line = NEXT_NODE(line)) {
+	for (line = NODE_NEXT(undo_min_line); line != undo_max_line; line = NODE_NEXT(line)) {
 		append_line_to_cur_undo_buf(line_create_copy(line));
 	}
 }
@@ -271,7 +271,7 @@ PRIVATE be_line_t *restore_region_from_buffer(undo0_redo1_t undo0_redo1)
 
 	// delete modified lines
 	edit_line = delete_region_in_buf(buf_after);
-	top_line = edit_line->prev;
+	top_line = NODE_PREV(edit_line);
 	// insert unmodified lines
 	insert_region_from_buf(edit_line, buf_before);
 	return top_line;
@@ -287,7 +287,7 @@ PRIVATE be_line_t *delete_region_in_buf(be_buf_t *buf)
 	}
 	edit_line = get_line_ptr_from_cur_buf_line_num(BUF_TOP_LINE(buf)->line_num);
 	for (undo_line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(undo_line) == 0;
-	 undo_line = NEXT_NODE(undo_line)) {
+	 undo_line = NODE_NEXT(undo_line)) {
 		edit_line = line_unlink_free(edit_line);	// delete line
 	}
 	return edit_line;
@@ -300,14 +300,9 @@ PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 		progerr_printf("No such buffer: %s\n", buf->abs_path);
 		return CUR_EDIT_BUF_BOT_LINE;
 	}
-	for (undo_line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(undo_line) == 0; ) {
-#if 1
+	for (undo_line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(undo_line) == 0;
+	 undo_line = NODE_NEXT(undo_line)) {
 		line_insert(edit_line, line_create_copy(undo_line), INSERT_BEFORE);
-		undo_line = NEXT_NODE(undo_line);
-#else
-		undo_line = NEXT_NODE(undo_line);
-		line_insert(edit_line, line_create_copy(undo_line->prev), INSERT_BEFORE);
-#endif
 	}
 	// restore pointers
 	CBV_CLBI = buf->buf_views[0].cur_line_byte_idx;

@@ -101,11 +101,11 @@ void buf_get_file_path(be_buf_t *buf, char *file_path)
 PRIVATE be_buf_t *buf_insert_between(be_buf_t *prev, be_buf_t *new_buf, be_buf_t *next);
 be_buf_t *buf_insert_before(be_buf_t *buf, be_buf_t *new_buf)
 {
-	return buf_insert_between(PREV_NODE(buf), new_buf, buf);
+	return buf_insert_between(NODE_PREV(buf), new_buf, buf);
 }
 be_buf_t *buf_insert_after(be_buf_t *buf, be_buf_t *new_buf)
 {
-	return buf_insert_between(buf, new_buf, NEXT_NODE(buf));
+	return buf_insert_between(buf, new_buf, NODE_NEXT(buf));
 }
 PRIVATE be_buf_t *buf_insert_between(be_buf_t *prev, be_buf_t *new_buf, be_buf_t *next)
 {
@@ -134,7 +134,7 @@ be_buf_t *buf_create_copy(be_buf_t *src)
 be_buf_t *buf_copy(be_buf_t *dest, be_buf_t *src)
 {
 	memcpy__(dest, src, sizeof(*src));
-	if (dest->prev != NULL && dest->next != NULL) {
+	if (NODE_PREV(dest) != NULL && NODE_NEXT(dest) != NULL) {
 		// buffer is linked.
 		// clear link and anchors to avoid double linking
 		buf_clear_link(dest);
@@ -154,7 +154,7 @@ be_buf_t *buf_unlink_free(be_buf_t *buf)
 		progerr_printf("CANNOT free this buffer %s\n", buf->file_path);
 		return NULL;
 	}
-	prev_buf = buf->prev;
+	prev_buf = NODE_PREV(buf);
 	buf_unlink(buf);
 	buf_free(buf);
 	return prev_buf;
@@ -164,11 +164,11 @@ be_buf_t *buf_unlink_free(be_buf_t *buf)
 be_buf_t *buf_unlink(be_buf_t *buf)
 {
 	buf_avoid_wild_ptr_cur(buf);
-	if (buf->prev) {
-		buf->prev->next = NEXT_NODE(buf);
+	if (NODE_PREV(buf)) {
+		buf->prev->next = NODE_NEXT(buf);
 	}
-	if (NEXT_NODE(buf)) {
-		buf->next->prev = PREV_NODE(buf);
+	if (NODE_NEXT(buf)) {
+		buf->next->prev = NODE_PREV(buf);
 	}
 	buf_clear_link(buf);
 	return buf;
@@ -181,13 +181,13 @@ void buf_clear_link(be_buf_t *buf)
 
 ///be_buf_t *goto_top_buf(be_buf_t *buf)
 ///{
-///	for ( ; IS_NODE_TOP_ANCH(buf) == 0; buf = PREV_NODE(buf)) {
+///	for ( ; IS_NODE_TOP_ANCH(buf) == 0; buf = NODE_PREV(buf)) {
 ///	}
 ///	return buf;
 ///}
 ///be_buf_t *goto_bottom_buf(be_buf_t *buf)
 ///{
-///	for ( ; IS_NODE_BOT_ANCH(buf) == 0; buf = NEXT_NODE(buf)) {
+///	for ( ; IS_NODE_BOT_ANCH(buf) == 0; buf = NODE_NEXT(buf)) {
 ///	}
 ///	return buf;
 ///}
@@ -218,7 +218,7 @@ int buf_compare(be_buf_t *buf1, be_buf_t *buf2)
 
 	for (line1 = BUF_TOP_LINE(buf1), line2 = BUF_TOP_LINE(buf2);
 	 IS_NODE_BOT_ANCH(line1) == 0 && IS_NODE_BOT_ANCH(line2) == 0; 
-	 line1 = NEXT_NODE(line1), line2 = NEXT_NODE(line2)) {
+	 line1 = NODE_NEXT(line1), line2 = NODE_NEXT(line2)) {
 		diff = strncmp(line1->data, line2->data, MAX_EDIT_LINE_LEN);
 		if (diff)
 			return diff;
@@ -243,7 +243,7 @@ int buf_guess_tab_size(be_buf_t *buf)
 	int lines_space4 = 0;
 	be_line_t *line;
 
-	for (line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(line) == 0; line = NEXT_NODE(line)) {
+	for (line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(line) == 0; line = NODE_NEXT(line)) {
 		if (line_data_len(line) > 4) {
 			if (strlcmp__(line->data, "    ") == 0 && line->data[4] != ' ')
 				lines_space4++;
@@ -262,7 +262,7 @@ int buf_count_bufs(be_buf_t *buf)
 	int count;
 
 	for (count = 0; IS_NODE_BOT_ANCH(buf) == 0; count++) {
-		buf = NEXT_NODE(buf);
+		buf = NODE_NEXT(buf);
 	}
 	return count;
 }
@@ -339,7 +339,7 @@ be_line_t *buf_move_cur_line_to_prev(be_buf_t *buf)
 {
 	be_line_t *line = BUF_V0_CL(buf);
 	if (IS_NODE_TOP_ANCH(line) == 0) {
-		BUF_V0_CL(buf) = line->prev;
+		BUF_V0_CL(buf) = NODE_PREV(line);
 		return line;
 	}
 	// do not move and return NULL
@@ -351,7 +351,7 @@ be_line_t *buf_move_cur_line_to_next(be_buf_t *buf)
 
 	if (IS_NODE_BOT_ANCH(BUF_V0_CL(buf)) == 0) {
 		line = BUF_V0_CL(buf);
-		BUF_V0_CL(buf) = BUF_V0_CL(buf)->next;
+		BUF_V0_CL(buf) = NODE_NEXT(BUF_V0_CL(buf));
 		return line;
 	}
 	// do not move and return NULL
@@ -365,7 +365,7 @@ be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num)
 	for (line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(line) == 0 && line_num > 1; line_num--) {
 		if (IS_NODE_BOT(line))
 			break;
-		line = NEXT_NODE(line);
+		line = NODE_NEXT(line);
 	}
 	return line;
 }
@@ -390,7 +390,7 @@ unsigned short buf_calc_crc(be_buf_t *buf)
 
 	file_size = 0;
 	clear_crc16ccitt();
-	for (line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(line) == 0; line = NEXT_NODE(line)) {
+	for (line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(line) == 0; line = NODE_NEXT(line)) {
 		file_size += line_data_len(line) + 1;
 		for (ptr = line->data; ; ptr++) {
 			file_crc = calc_crc16ccitt(*ptr);
@@ -420,7 +420,7 @@ be_bufs_t *bufs_link(be_bufs_t *top_anchor, be_bufs_t *bot_anchor)
 }
 be_bufs_t *bufs_insert_before(be_bufs_t *bufs, be_bufs_t *other)
 {
-	return bufs_insert_between(bufs->prev, other, bufs);
+	return bufs_insert_between(NODE_PREV(bufs), other, bufs);
 }
 be_bufs_t *bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next)
 {
@@ -431,7 +431,7 @@ be_bufs_t *bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next)
 be_bufs_t *bufs_free_all_bufss(be_bufs_t *bufs)
 {
 	flf_d_printf("bufs: %s\n", bufs->name);
-	for ( ; IS_PTR_VALID(bufs); bufs = NEXT_NODE(bufs)) {
+	for ( ; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs)) {
 		flf_d_printf("bufs: %s\n", bufs->name);
 		for ( ; ; ) {
 			be_buf_t *buf = BUFS_TOP_BUF(bufs);
@@ -443,7 +443,7 @@ be_bufs_t *bufs_free_all_bufss(be_bufs_t *bufs)
 			flf_d_printf("    unlink_free %cbuf:[%s]\n",
 			 (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
 			if (bufs->cur_buf == buf) {
-				bufs->cur_buf = buf->next;
+				bufs->cur_buf = NODE_NEXT(buf);
 			}
 			buf_unlink_free(buf);
 		}
@@ -453,8 +453,8 @@ be_bufs_t *bufs_free_all_bufss(be_bufs_t *bufs)
 
 be_bufs_t *get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf)
 {
-	for ( ; IS_PTR_VALID(bufs); bufs = NEXT_NODE(bufs)) {
-		for (be_buf_t *buf = BUFS_TOP_ANCH(bufs); IS_PTR_VALID(buf); buf = NEXT_NODE(buf)) {
+	for ( ; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs)) {
+		for (be_buf_t *buf = BUFS_TOP_ANCH(bufs); IS_PTR_VALID(buf); buf = NODE_NEXT(buf)) {
 			if (buf == cur_buf) {
 				return bufs;
 			}
@@ -477,10 +477,10 @@ void init_bufs_top_bot_anchor(
 PRIVATE be_buf_t *make_sure_buf_is_top_buf(be_buf_t *bufs)
 {
 	if (IS_NODE_TOP_ANCH(bufs)) {
-		bufs = NEXT_NODE(bufs);
+		bufs = NODE_NEXT(bufs);
 	}
 	while (IS_NODE_TOP(bufs) == 0) {
-		bufs = PREV_NODE(bufs);
+		bufs = NODE_PREV(bufs);
 	}
 	return bufs;
 }
@@ -490,14 +490,14 @@ be_buf_t *get_buf_from_bufs_by_idx(be_buf_t *bufs, int buf_idx)
 	// making sure that bufs is TOP_BUF
 	bufs = make_sure_buf_is_top_buf(bufs);
 	for ( ; IS_NODE_BOT_ANCH(bufs) == 0 && buf_idx > 0; buf_idx--) {
-		bufs = NEXT_NODE(bufs);
+		bufs = NODE_NEXT(bufs);
 	}
 	return bufs;	// bufs may be top/bottom anchor
 }
 int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf)
 {
 	bufs = make_sure_buf_is_top_buf(bufs);
-	for (int buf_idx = 0; IS_NODE_BOT_ANCH(bufs) == 0; buf_idx++, bufs = NEXT_NODE(bufs)) {
+	for (int buf_idx = 0; IS_NODE_BOT_ANCH(bufs) == 0; buf_idx++, bufs = NODE_NEXT(bufs)) {
 		if (bufs == buf)
 			return buf_idx;	// found
 	}
@@ -506,7 +506,7 @@ int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf)
 be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *bufs, const char *abs_path)
 {
 	bufs = make_sure_buf_is_top_buf(bufs);
-	for ( ; IS_NODE_BOT_ANCH(bufs) == 0; bufs = NEXT_NODE(bufs)) {
+	for ( ; IS_NODE_BOT_ANCH(bufs) == 0; bufs = NODE_NEXT(bufs)) {
 		if (strcmp(bufs->abs_path, abs_path) == 0) {
 			return bufs;	// found
 		}
@@ -517,7 +517,7 @@ be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *bufs, const char *abs_path)
 //-----------------------------------------------------------------------------
 void renumber_all_bufs_from_top(be_bufs_t *bufs)
 {
-	for (be_buf_t *buf = BUFS_TOP_BUF(bufs); IS_NODE_BOT_ANCH(buf) == 0; buf = NEXT_NODE(buf)) {
+	for (be_buf_t *buf = BUFS_TOP_BUF(bufs); IS_NODE_BOT_ANCH(buf) == 0; buf = NODE_NEXT(buf)) {
 		buf_renumber_from_top(buf);
 	}
 }
@@ -530,7 +530,7 @@ void buf_dump_bufs(be_buf_t *buf)
 	int cnt;
 
 flf_d_printf("0============================================\n");
-	for (cnt = 0; cnt < 100 && IS_PTR_VALID(buf); cnt++, buf = NEXT_NODE(buf)) {
+	for (cnt = 0; cnt < 100 && IS_PTR_VALID(buf); cnt++, buf = NODE_NEXT(buf)) {
 		buf_dump_ptrs(buf);
 		if (IS_NODE_BOT_ANCH(buf))
 			break;
@@ -542,7 +542,7 @@ void buf_dump_bufs_lines(be_buf_t *buf, const char *label)
 	int cnt;
 
 flf_d_printf("%s {{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n", label);
-	for (cnt = 0; cnt < 100 && IS_PTR_VALID(buf); cnt++, buf = NEXT_NODE(buf)) {
+	for (cnt = 0; cnt < 100 && IS_PTR_VALID(buf); cnt++, buf = NODE_NEXT(buf)) {
 		if (buf_count_lines(buf)) {
 			buf_dump_lines(buf, 3);
 		}
@@ -563,7 +563,7 @@ void buf_dump_ptrs(be_buf_t *buf)
 {
 	flf_d_printf("%saddr:%08lx,prev:%08lx,next:%08lx,line:%08lx\n",
 	 buf == get_c_e_b() ? ">" : " ",
-	 buf, buf->prev, buf->next, NODES_TOP_NODE(buf));
+	 buf, NODE_PREV(buf), NODE_NEXT(buf), NODES_TOP_NODE(buf));
 	line_dump_lines(BUF_TOP_ANCH(buf), 3, BUF_V0_CL(buf));
 }
 void buf_dump_state(be_buf_t *buf)
@@ -585,7 +585,7 @@ be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
 {
 	be_line_t *line;
 
-	for (line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(line) == 0; line = NEXT_NODE(line)) {
+	for (line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(line) == 0; line = NODE_NEXT(line)) {
 		if (line == line_)
 			return line_;
 	}
@@ -595,9 +595,9 @@ be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
 void bufs_dump_all_bufs(be_bufs_t *bufs)
 {
 flf_d_printf("00============================================\n");
-	for ( ; IS_PTR_VALID(bufs); bufs = NEXT_NODE(bufs)) {
+	for ( ; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs)) {
 		flf_d_printf("bufs: %s\n", bufs->name);
-		for (be_buf_t *buf = BUFS_TOP_ANCH(bufs); IS_PTR_VALID(buf); buf = NEXT_NODE(buf)) {
+		for (be_buf_t *buf = BUFS_TOP_ANCH(bufs); IS_PTR_VALID(buf); buf = NODE_NEXT(buf)) {
 			flf_d_printf(" %cbuf: %s\n", (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
 			flf_d_printf("   buf->v0_str: %s\n", buf->buf_views[0].cur_line->data);
 			flf_d_printf("   buf->v1_str: %s\n", buf->buf_views[1].cur_line->data);

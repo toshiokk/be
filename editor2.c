@@ -248,7 +248,7 @@ void disp_edit_win(int cur_pane)
 				break;
 		}
 ///_FLF_
-		line = NEXT_NODE(line);
+		line = NODE_NEXT(line);
 		byte_idx = 0;
 	}
 	// clear remaining edit-win lines
@@ -529,8 +529,8 @@ PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
 
 	set_color_attrs_ptr(&clr_syntax->color);
 	// First, search start or end syntax on earlier lines.
-	for (line_cnt = 0, start_line = line->prev; ;
-	 line_cnt++, start_line = start_line->prev) {
+	for (line_cnt = 0, start_line = NODE_PREV(line); ;
+	 line_cnt++, start_line = NODE_PREV(start_line)) {
 #define MAX_SYNTAX_SEARCH_LINES		LIM_MIN(25, edit_win_get_text_lines() * 2)
 		if (line_cnt >= MAX_SYNTAX_SEARCH_LINES || IS_NODE_TOP_ANCH(start_line)) {
 			// No syntax found, so skip to the next step.

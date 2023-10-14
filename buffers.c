@@ -137,10 +137,10 @@ void buf_avoid_wild_ptr_cur(be_buf_t *buf)
 void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr)
 {
 	if (*buf_ptr == buf) {
-		if (IS_NODE_BOT_ANCH((*buf_ptr)->next) == 0) {
-			*buf_ptr = (*buf_ptr)->next;
+		if (IS_NODE_BOT_ANCH(NODE_NEXT(*buf_ptr)) == 0) {
+			*buf_ptr = NODE_NEXT(*buf_ptr);
 		} else {
-			*buf_ptr = (*buf_ptr)->prev;
+			*buf_ptr = NODE_PREV(*buf_ptr);
 		}
 	}
 }
@@ -156,9 +156,9 @@ void line_avoid_wild_ptr(be_line_t *line, be_line_t **line_ptr)
 {
 	if (*line_ptr == line) {
 		if (IS_NODE_TOP(*line_ptr) == 0) {
-			*line_ptr = (*line_ptr)->prev;
+			*line_ptr = NODE_PREV(*line_ptr);
 		} else {
-			*line_ptr = (*line_ptr)->next;
+			*line_ptr = NODE_NEXT(*line_ptr);
 		}
 	}
 }

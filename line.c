@@ -122,11 +122,11 @@ be_line_t *line_insert(be_line_t *line, be_line_t *new_line,
 }
 be_line_t *line_insert_before(be_line_t *line, be_line_t *new_line)
 {
-	return line_insert_between(line->prev, new_line, line);
+	return line_insert_between(NODE_PREV(line), new_line, line);
 }
 be_line_t *line_insert_after(be_line_t *line, be_line_t *new_line)
 {
-	return line_insert_between(line, new_line, line->next);
+	return line_insert_between(line, new_line, NODE_NEXT(line));
 }
 // Splice a line into an existing be_line_t
 be_line_t *line_insert_between(be_line_t *prev, be_line_t *new_line, be_line_t *next)
@@ -151,7 +151,7 @@ be_line_t *line_unlink_free(be_line_t *line)
 {
 	be_line_t *next_line;
 
-	next_line = line->next;
+	next_line = NODE_NEXT(line);
 	line_unlink(line);
 	line_free(line);
 	return next_line;	// return the next line
@@ -161,10 +161,10 @@ be_line_t *line_unlink(be_line_t *line)
 {
 	line_avoid_wild_ptr_cur(line);
 	if (line->prev) {
-		line->prev->next = line->next;
+		line->prev->next = NODE_NEXT(line);
 	}
 	if (line->next) {
-		line->next->prev = line->prev;
+		line->next->prev = NODE_PREV(line);
 	}
 	line->prev = NULL;
 	line->next = NULL;
@@ -191,16 +191,16 @@ be_line_t *line_concat_with_prev(be_line_t *line)
 		_PROGERR_
 		return line;
 	}
-	if (IS_NODE_BOT_ANCH(line->prev)) {
+	if (IS_NODE_BOT_ANCH(NODE_PREV(line))) {
 		_PROGERR_
 		return line;
 	}
 	//  aaaa
 	// >bbbb
-	line_insert_string(line, 0, line->prev->data, -1);
+	line_insert_string(line, 0, NODE_PREV(line)->data, -1);
 	//  aaaa
 	// >aaaabbbb
-	line_unlink_free(line->prev);
+	line_unlink_free(NODE_PREV(line));
 	// >aaaabbbb
 	return line;
 }
@@ -216,16 +216,16 @@ be_line_t *line_concat_with_next(be_line_t *line)
 		_PROGERR_
 		return line;
 	}
-	if (IS_NODE_BOT_ANCH(line->next)) {
+	if (IS_NODE_BOT_ANCH(NODE_NEXT(line))) {
 		_PROGERR_
 		return line;
 	}
 	// >aaaa
 	//  bbbb
-	line_insert_string(line, line_data_len(line), line->next->data, -1);
+	line_insert_string(line, line_data_len(line), NODE_NEXT(line)->data, -1);
 	// >aaaabbbb
 	//  bbbb
-	line_unlink_free(NEXT_NODE(line));
+	line_unlink_free(NODE_NEXT(line));
 	// >aaaabbbb
 	return line;
 }
@@ -295,15 +295,15 @@ int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 	size_t buf_size = 0;
 
 	if (IS_NODE_TOP_ANCH(line)) {
-		line = NEXT_NODE(line);
+		line = NODE_NEXT(line);
 	} else if (IS_NODE_TOP(line)) {
 		// nothing to do
 	} else {
 		// continue renumbering from middle line
-		line_num = line->prev->line_num;
-		buf_size = line->prev->buf_size;
+		line_num = NODE_PREV(line)->line_num;
+		buf_size = NODE_PREV(line)->buf_size;
 	}
-	for ( ; line && IS_NODE_BOT_ANCH(line) == 0; line = NEXT_NODE(line)) {
+	for ( ; line && IS_NODE_BOT_ANCH(line) == 0; line = NODE_NEXT(line)) {
 		line->line_num = ++line_num;
 		if (line->size <= 0) {
 			if (line->data)
@@ -323,7 +323,7 @@ int line_count_lines(be_line_t *line)
 	int count;
 
 	for (count = 0; IS_NODE_BOT_ANCH(line) == 0; count++) {
-		line = NEXT_NODE(line);
+		line = NODE_NEXT(line);
 	}
 	return count;
 }
@@ -331,7 +331,7 @@ int line_count_lines(be_line_t *line)
 const be_line_t *line_get_top_anch(const be_line_t *line)
 {
 	for ( ; IS_NODE_INT(line); ) {
-		line = PREV_NODE(line);
+		line = NODE_PREV(line);
 	}
 	return line;
 }
@@ -352,7 +352,7 @@ void line_dump_lines_from_top(const be_line_t *line, int lines, const be_line_t 
 }
 void line_dump_lines(const be_line_t *line, int lines, const be_line_t *cur_line)
 {
-	for ( ; line && lines > 0; line = NEXT_NODE(line), lines--) {
+	for ( ; line && lines > 0; line = NODE_NEXT(line), lines--) {
 		line_dump_cur(line, cur_line);
 	}
 }
@@ -369,7 +369,7 @@ void line_dump_cur(const be_line_t *line, const be_line_t *cur_line)
 	flf_d_printf("%s%03d,%08lx,<%08lx,>%08lx,%04d,%06d,%08lx[%s]\n",
 	 line == cur_line ? ">" : " ",
 	 line->line_num,
-	 line, PREV_NODE(line), NEXT_NODE(line),
+	 line, NODE_PREV(line), NODE_NEXT(line),
 	 line->size, line->buf_size,
 	 line->data, line->data);
 }

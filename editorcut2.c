@@ -266,7 +266,7 @@ void setup_cut_region(void)
 			// {aaaaaaaaaaaaaaaaaaa
 			// }bbbbbbbbbbbbbbbbbbb
 			mark_min_line = CBV_CL;
-			mark_max_line = CBV_CL->next;
+			mark_max_line = NODE_NEXT(CBV_CL);
 			mark_min_byte_idx = 0;
 			mark_max_byte_idx = 0;
 		}

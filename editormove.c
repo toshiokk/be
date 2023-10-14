@@ -460,21 +460,21 @@ int do_carriage_return(void)
 
 	if (GET_APPMD(ed_AUTO_INDENT)) {
 		// autoindent: auto insert the previous lines preceeding spaces to the next line
-		ptr_s = CBV_CL->prev->data;
+		ptr_s = NODE_PREV(CBV_CL)->data;
 		SKIP_SPACE(ptr_s);
 		ptr_d = CBV_CL->data; 
 		SKIP_SPACE(ptr_d);
-		len_s = ptr_s - CBV_CL->prev->data;
+		len_s = ptr_s - NODE_PREV(CBV_CL)->data;
 		len_d = ptr_d - CBV_CL->data;
-		line_replace_string(CBV_CL, 0, len_d, CBV_CL->prev->data, len_s);
+		line_replace_string(CBV_CL, 0, len_d, NODE_PREV(CBV_CL)->data, len_s);
 		CBV_CLBI = len_s;
 	}
 
 	if (CBV_CURSOR_Y < BOTTOM_SCROLL_MARGIN_IDX) {
 		CBV_CURSOR_Y++;
-		post_cmd_processing(CBV_CL->prev, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
+		post_cmd_processing(NODE_PREV(CBV_CL), HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
 	} else {
-		post_cmd_processing(CBV_CL->prev, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+		post_cmd_processing(NODE_PREV(CBV_CL), HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	}
 	return 1;
 }
@@ -494,9 +494,9 @@ int do_backspace(void)
 		}
 		// line top, concatenate to the previous line
 #ifdef ENABLE_UNDO
-		undo_set_region_save_before_change(CBV_CL->prev, CBV_CL, 1);
+		undo_set_region_save_before_change(NODE_PREV(CBV_CL), CBV_CL, 1);
 #endif // ENABLE_UNDO
-		CBV_CLBI = line_data_len(CBV_CL->prev);
+		CBV_CLBI = line_data_len(NODE_PREV(CBV_CL));
 		CBV_CL = line_concat_with_prev(CBV_CL);
 		if (CBV_CURSOR_Y > 0) {
 			CBV_CURSOR_Y--;
@@ -546,9 +546,9 @@ int do_delete_char(void)
 		}
 		// line end, concatenate with the next line
 #ifdef ENABLE_UNDO
-		undo_set_region_save_before_change(CBV_CL, CBV_CL->next, 1);
+		undo_set_region_save_before_change(CBV_CL, NODE_NEXT(CBV_CL), 1);
 #endif // ENABLE_UNDO
-		if (CEB_ML == CBV_CL->next) {
+		if (CEB_ML == NODE_NEXT(CBV_CL)) {
 			// next line will be freed, adjust mark position
 			CEB_ML = CBV_CL;
 			CEB_MLBI += line_data_len(CEB_ML);
@@ -577,7 +577,7 @@ int do_conv_upp_low_letter(void)
 	data = CBV_CL->data;
 	if (isalpha(data[byte_idx])) {
 #ifdef ENABLE_UNDO
-		undo_set_region_save_before_change(CBV_CL, CBV_CL->next, 1);
+		undo_set_region_save_before_change(CBV_CL, NODE_NEXT(CBV_CL), 1);
 #endif // ENABLE_UNDO
 		first_chr = data[byte_idx];
 		while ((chr = data[byte_idx]) != '\0') {
@@ -614,7 +614,7 @@ int move_cursor_left(int move_disp_y)
 		if (IS_NODE_TOP(CBV_CL)) {
 			return 0;
 		}
-		CBV_CL = CBV_CL->prev;
+		CBV_CL = NODE_PREV(CBV_CL);
 		CBV_CLBI = line_data_len(CBV_CL);
 		if (move_disp_y) {
 			if (CBV_CURSOR_Y > EDITOR_VERT_SCROLL_MARGIN_LINES) {
@@ -650,7 +650,7 @@ int move_cursor_right(void)
 		if (IS_NODE_BOT(CBV_CL)) {
 			return 0;
 		}
-		CBV_CL = CBV_CL->next;
+		CBV_CL = NODE_NEXT(CBV_CL);
 		CBV_CLBI = 0;
 		if (CBV_CURSOR_Y < BOTTOM_SCROLL_MARGIN_IDX) {
 			CBV_CURSOR_Y++;
@@ -678,7 +678,7 @@ int c_l_up(be_line_t **line, int *byte_idx)
 		if (IS_NODE_TOP(*line)) {
 			return 0;	// no move
 		}
-		*line = (*line)->prev;
+		*line = NODE_PREV(*line);
 		te_concat_linefeed((*line)->data);
 		wl_idx = max_wrap_line_idx(te_line_concat_linefeed, -1);
 		line_byte_idx = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, col_idx, -1);
@@ -705,7 +705,7 @@ int c_l_down(be_line_t **line, int *byte_idx)
 		if (IS_NODE_BOT(*line)) {
 			return 0;	// no move
 		}
-		*line = (*line)->next;
+		*line = NODE_NEXT(*line);
 		te_concat_linefeed((*line)->data);
 		wl_idx = 0;
 		line_byte_idx = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx, col_idx, -1);
@@ -718,7 +718,7 @@ int cursor_next_line(void)
 {
 	if (IS_NODE_BOT(CBV_CL))
 		return 0;
-	CBV_CL = CBV_CL->next;
+	CBV_CL = NODE_NEXT(CBV_CL);
 	CBV_CLBI = 0;
 	return IS_NODE_BOT(CBV_CL) ? 1 : 2;
 }

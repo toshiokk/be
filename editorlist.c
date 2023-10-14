@@ -34,7 +34,7 @@ _FLF_
 	buf_free_lines(EDIT_BUFS_TOP_ANCH);
 	buf_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Files currently loaded"));
 	for (edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_BOT_ANCH(edit_buf) == 0;
-	 edit_buf = NEXT_NODE(edit_buf)) {
+	 edit_buf = NODE_NEXT(edit_buf)) {
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-60s %-5s %s %s",
 		 quote_file_name(edit_buf->abs_path),
 		 buf_encode_str(edit_buf), buf_eol_str(edit_buf),

@@ -230,7 +230,7 @@ int get_screen_top(be_line_t *_cl_, int _clbi_, int yy,
 			break;
 		if (wl_idx <= 0) {
 			if (IS_NODE_TOP(_cl_) == 0)
-				_cl_ = PREV_NODE(_cl_);
+				_cl_ = NODE_PREV(_cl_);
 			te_concat_linefeed(_cl_->data);
 			wl_idx = max_wrap_line_idx(te_line_concat_linefeed, -1);
 		} else {

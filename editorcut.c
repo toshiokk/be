@@ -231,52 +231,40 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 		}
 	}
 
-///_FLF_
 	if (IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
-///_FLF_
 		// no mark set, setup cut-region
 		set_mark_pos();
 		setup_cut_region();
 	}
-///_FLF_
-	top_line = mark_min_line->prev;
+	top_line = NODE_PREV(mark_min_line);
 ///_D_(line_dump_lines(top_line, 10, NULL));
 	// ====  COPY  ====
 	if (cp_del_paste_pop & CDPP_COPY) {
-///_FLF_
 		copy_text_to_cut_buf();
 	}
-///_FLF_
 #ifdef ENABLE_UNDO
 	if (((cp_del_paste_pop & CDPP_DELETE) && is_there_cut_region())
 	 || ((cp_del_paste_pop & CDPP_PASTE) && count_cut_bufs())) {
-///_FLF_
 		// buffer will be modified
 		undo_set_region_save_before_change(mark_min_line, mark_max_line,
 		 count_cur_cut_buf_lines());
 	}
 #endif // ENABLE_UNDO
-///_FLF_
 	// ====  DELETE  ====
 	if (cp_del_paste_pop & CDPP_DELETE) {
-///_FLF_
 		delete_text_in_cut_region();
 	}
-///_FLF_
 	// ====  PASTE  ====
 	if (cp_del_paste_pop & CDPP_PASTE) {
 		if (count_cut_bufs() == 0) {
 			disp_status_bar_err(_("Cut-buffer empty !!"));
 		} else {
-///_FLF_
 			paste_text_from_cut_buf();
 #ifdef ENABLE_UNDO
-///_FLF_
 ///PPP			undo_adjust_max_line();
 #endif // ENABLE_UNDO
 		}
 	}
-///_FLF_
 
 	clear_disable_update_min_x_to_keep();
 
@@ -301,13 +289,10 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 			break;
 		}
 	}
-///_FLF_
 	// ====  POP  ====
 	if (cp_del_paste_pop & CDPP_POP) {
-///_FLF_
 		pop_cut_buf();
 	}
-///_FLF_
 	return 1;		// done
 }
 
@@ -421,7 +406,7 @@ PRIVATE void copy_region_to_cut_buf(
 		return;
 
 	push_cut_buf();
-	for (line = min_line; IS_NODE_BOT_ANCH(line) == 0; line = NEXT_NODE(line)) {
+	for (line = min_line; IS_NODE_BOT_ANCH(line) == 0; line = NODE_NEXT(line)) {
 		if (line != max_line) {
 			// first and intermediate line
 ////_D_(line_dump_byte_idx(line, min_byte_idx));
@@ -482,7 +467,7 @@ PRIVATE void delete_region(
 	CBV_CL = min_line;
 	CBV_CLBI = min_byte_idx;
 	for (line = min_line; ; line = next) {
-		next = NEXT_NODE(line);
+		next = NODE_NEXT(line);
 		if (line == min_line) {
 			if (line == max_line) {
 				// first and last line
@@ -537,7 +522,7 @@ PRIVATE void copy_rect_region_to_cut_buf(
 		return;
 
 	push_cut_buf();
-	for (line = min_line; ; line = NEXT_NODE(line)) {
+	for (line = min_line; ; line = NODE_NEXT(line)) {
 		min_byte_idx = byte_idx_from_col_idx(line->data, min_col_idx, CHAR_RIGHT, NULL);
 		max_byte_idx = byte_idx_from_col_idx(line->data, max_col_idx, CHAR_LEFT, NULL);
 		append_string_to_cur_cut_buf(
@@ -557,7 +542,7 @@ PRIVATE void delete_rect_region(
 	if (min_col_idx == max_col_idx)
 		return;
 
-	for (line = min_line; ; line = NEXT_NODE(line)) {
+	for (line = min_line; ; line = NODE_NEXT(line)) {
 		min_byte_idx = byte_idx_from_col_idx(line->data, min_col_idx, CHAR_RIGHT, NULL);
 		max_byte_idx = byte_idx_from_col_idx(line->data, max_col_idx, CHAR_LEFT, NULL);
 		if (CBV_CL == line) {
@@ -605,7 +590,7 @@ PRIVATE int paste_cut_buf_char(void)
 	//  aaaaAAAA
 	// >bbbb
 	for ( ; ; ) {
-		cut_line = NEXT_NODE(cut_line);
+		cut_line = NODE_NEXT(cut_line);
 		if (IS_NODE_BOT_ANCH(cut_line))
 			break;
 		inserted_line = line_insert_with_string(CBV_CL, INSERT_BEFORE, cut_line->data);
@@ -640,7 +625,7 @@ PRIVATE int paste_cut_buf_line(void)
 	cut_line = CUR_CUT_BUF_TOP_LINE;
 	for ( ; IS_NODE_BOT_ANCH(cut_line) == 0; ) {
 		line_insert_with_string(CBV_CL, INSERT_BEFORE, cut_line->data);
-		cut_line = NEXT_NODE(cut_line);
+		cut_line = NODE_NEXT(cut_line);
 		if (IS_MARK_SET(CUR_CBUF_STATE(buf_CUT_MODE))) {
 			// marked cut/copy
 			CBV_CURSOR_Y++;
@@ -648,7 +633,7 @@ PRIVATE int paste_cut_buf_line(void)
 	}
 	if (IS_MARK_SET(CUR_CBUF_STATE(buf_CUT_MODE)) == 0) {
 		// unmarked cut/copy
-		CBV_CL = CBV_CL->prev;
+		CBV_CL = NODE_PREV(CBV_CL);
 		CBV_CLBI = LIM_MAX(CBV_CLBI, line_data_len(CBV_CL));	// limit cursor pos
 	}
 	return 1;		// pasted
@@ -690,10 +675,10 @@ PRIVATE int paste_cut_buf_rect(void)
 		 CHAR_LEFT, NULL);
 		line_replace_string(CBV_CL, CBV_CLBI, 0, cut_line->data, -1);
 		CBV_CLBI += line_data_len(cut_line);
-		cut_line = NEXT_NODE(cut_line);
+		cut_line = NODE_NEXT(cut_line);
 		if (IS_NODE_BOT_ANCH(cut_line))
 			break;
-		CBV_CL = CBV_CL->next;
+		CBV_CL = NODE_NEXT(CBV_CL);
 	}
 	return 1;		// pasted
 }

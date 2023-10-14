@@ -144,9 +144,9 @@ int do_switch_to_prev_buffers(void)
 	if (IS_NODE_TOP(bufs))
 		return 0;
 flf_d_printf("bufs: %s\n", bufs->name);
-flf_d_printf("PREV_NODE(bufs)->name: %s\n", PREV_NODE(bufs)->name);
-flf_d_printf("PREV_NODE(bufs)->cur_buf->name: %s\n", PREV_NODE(bufs)->cur_buf->file_path);
-	set_cur_edit_buf(PREV_NODE(bufs)->cur_buf);
+flf_d_printf("NODE_PREV(bufs)->name: %s\n", NODE_PREV(bufs)->name);
+flf_d_printf("NODE_PREV(bufs)->cur_buf->name: %s\n", NODE_PREV(bufs)->cur_buf->file_path);
+	set_cur_edit_buf(NODE_PREV(bufs)->cur_buf);
 	post_cmd_processing(CBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
@@ -156,9 +156,9 @@ int do_switch_to_next_buffers(void)
 	if (IS_NODE_BOT(bufs))
 		return 0;
 flf_d_printf("bufs: %s\n", bufs->name);
-flf_d_printf("NEXT_NODE(bufs)->name: %s\n", NEXT_NODE(bufs)->name);
-flf_d_printf("NEXT_NODE(bufs)->cur_buf->name: %s\n", NEXT_NODE(bufs)->cur_buf->file_path);
-	set_cur_edit_buf(NEXT_NODE(bufs)->cur_buf);
+flf_d_printf("NODE_NEXT(bufs)->name: %s\n", NODE_NEXT(bufs)->name);
+flf_d_printf("NODE_NEXT(bufs)->cur_buf->name: %s\n", NODE_NEXT(bufs)->cur_buf->file_path);
+	set_cur_edit_buf(NODE_NEXT(bufs)->cur_buf);
 	post_cmd_processing(CBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
@@ -397,7 +397,7 @@ int switch_c_e_b_to_prev(int beep_at_end, int goto_bottom)
 			tio_beep();
 		return 0;
 	}
-	set_cur_edit_buf(get_c_e_b()->prev);
+	set_cur_edit_buf(NODE_PREV(get_c_e_b()));
 	if (goto_bottom)
 		CBV_CL = CUR_EDIT_BUF_BOT_LINE;
 	return 1;
@@ -409,7 +409,7 @@ int switch_c_e_b_to_next(int beep_at_end, int goto_top)
 			tio_beep();
 		return 0;
 	}
-	set_cur_edit_buf(get_c_e_b()->next);
+	set_cur_edit_buf(NODE_NEXT(get_c_e_b()));
 	if (goto_top)
 		CBV_CL = CUR_EDIT_BUF_TOP_LINE;
 	return 1;

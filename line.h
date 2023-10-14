@@ -29,35 +29,49 @@
 #define IS_PTR_INVALID(ptr)		IS_PTR_NULL(ptr)
 #define IS_PTR_NULL(ptr)		((ptr) == NULL)
 
-#define NEXT_NODE(node)			((node)->next)
-#define PREV_NODE(node)			((node)->prev)
+#define NODE_NEXT(node)			((node)->next)
+#define NODE_PREV(node)			((node)->prev)
 
 // "NODES" are "BUFFERs" or "LINEs"
 // get BUFFER from BUFFERs or get LINE from BUFFER
 #define NODES_TOP_ANCH(nodes)		(&((nodes)->top_anchor))
-#define NODES_TOP_NODE(nodes)		(NEXT_NODE(NODES_TOP_ANCH(nodes)))
-#define NODES_BOT_NODE(nodes)		(PREV_NODE(NODES_BOT_ANCH(nodes)))
+#define NODES_TOP_NODE(nodes)		(NODE_NEXT(NODES_TOP_ANCH(nodes)))
+#define NODES_BOT_NODE(nodes)		(NODE_PREV(NODES_BOT_ANCH(nodes)))
 #define NODES_BOT_ANCH(nodes)		(&((nodes)->bot_anchor))
 // "NODE" is "BUFFER" or "LINE"
-#define IS_NODE_TOP_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL((node)->prev))
-#define IS_NODE_TOP(node)			(IS_PTR_NULL(node) || IS_NODE_TOP_ANCH((node)->prev))
+#define IS_NODE_TOP_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL(NODE_PREV(node)))
+#define IS_NODE_TOP(node)			(IS_PTR_NULL(node) || IS_NODE_TOP_ANCH(NODE_PREV(node)))
 #define IS_NODE_INT(node)			IS_NODE_INTERMEDIATE(node)
 #define IS_NODE_INTERMEDIATE(node)	(!IS_NODE_TOP_ANCH(node) && !IS_NODE_BOT_ANCH(node))
-#define IS_NODE_BOT(node)			(IS_PTR_NULL(node) || IS_NODE_BOT_ANCH((node)->next))
-#define IS_NODE_BOT_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL((node)->next))
+#define IS_NODE_BOT(node)			(IS_PTR_NULL(node) || IS_NODE_BOT_ANCH(NODE_NEXT(node)))
+#define IS_NODE_BOT_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL(NODE_NEXT(node)))
 #define IS_NODE_INVALID(node)		(IS_NODE_TOP_ANCH(node) || IS_NODE_BOT_ANCH(node))
 #define IS_NODE_VALID(node)			(IS_NODE_INVALID(node) == 0)
 
-// Node handling policy =======================================================
 // ## Node structure ----------------------------------------------------------
-//   NODES_TOP_ANCH(nodes).prev = NULL;
-//   NODES_TOP_ANCH(nodes).next ==> top-node
-//                                     :
-//                                     :
-//   NODES_TOP_ANCH(nodes).prev ==> bottom-node
-//   NODES_BOT_ANCH(nodes).next = NULL;
+//   top-anch
+//     top-anch.prev = NULL
+//     top-anch.next ==> node(1)
+//   node(1)
+//     node(1).prev ==> top-anch
+//     node(1).next ==> node(2)
+//   node(2)
+//     node(2).prev ==> node(1)
+//     node(2).next ==> node(3)
+//                        :
+//                        :
+//   node(N-1)
+//     node(N-1).prev ==> node(N-2)
+//     node(N-1).prev ==> node(N)
+//   node(N)
+//     node(N).prev ==> node(N-1)
+//     node(N).prev ==> bottom-anch
+//   bottom-anch
+//     bottom-anch.prev ==> node(N)
+//     bottom-anch.next = NULL
 //
-// ## Node insertion ----------------------------------------------------------
+// ## Node handling policy =======================================================
+// ### Node insertion ----------------------------------------------------------
 // - Insert to top:
 //     insert between NODES_TOP_ANCH(nodes) and NODES_TOP_ANCH(nodes).next
 //     insert_after(NODES_TOP_ANCH(nodes))
@@ -65,17 +79,17 @@
 //     insert between NODES_BOT_ANCH(nodes) and NODES_TOP_ANCH(nodes).prev
 //     insert_before(NODES_BOT_ANCH(nodes))
 //
-// ## Node iteration ----------------------------------------------------------
+// ### Node iteration ----------------------------------------------------------
 // - When visit all nodes (including top/bottom-anchor)
-//     for (node = NODES_TOP_ANCH(nodes);   // for (node = &(nodes.top_anchor);
+//     for (node = NODES_TOP_ANCH(nodes);	// for (node = &(nodes.top_anchor);
 //      IS_PTR_VALID(node);
-//      node = NEXT_NODE(nodes)) {		// node = node->next;
+//      node = NODE_NEXT(nodes)) {			// node = node->next;
 //         // do something to "node"
 //     }
 // - When visit all intermediate nodes (excluding top/bottom-anchor)
 //     for (node = NODES_TOP_NODE(nodes);	// for (node = &(nodes.top_anchor.next);
 //      IS_NODE_INT(node);
-//      node = NEXT_NODE(nodes)) {		// node = node->next;
+//      node = NODE_NEXT(nodes)) {			// node = node->next;
 //         // do something to "node"
 //     }
 
