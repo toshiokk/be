@@ -50,13 +50,13 @@ extern editor_panes_t editor_panes;
 extern be_buf_t *c_e_b;
 extern be_buf_view_t *c_b_v;
 #define EDIT_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&edit_buffers)
-#define EDIT_BUFS_TOP_BUF		BUFS_TOP_BUF(&edit_buffers)
-#define EDIT_BUFS_BOT_BUF		BUFS_BOT_BUF(&edit_buffers)
+#define EDIT_BUFS_TOP_NODE		BUFS_TOP_NODE(&edit_buffers)
+#define EDIT_BUFS_BOT_NODE		BUFS_BOT_NODE(&edit_buffers)
 #define EDIT_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&edit_buffers)
 // current edit buffer --------------------------------------------------------
 #define CUR_EDIT_BUF_TOP_ANCH	BUF_TOP_ANCH(c_e_b)
-#define CUR_EDIT_BUF_TOP_LINE	BUF_TOP_LINE(c_e_b)
-#define CUR_EDIT_BUF_BOT_LINE	BUF_BOT_LINE(c_e_b)
+#define CUR_EDIT_BUF_TOP_NODE	BUF_TOP_NODE(c_e_b)
+#define CUR_EDIT_BUF_BOT_NODE	BUF_BOT_NODE(c_e_b)
 #define CUR_EDIT_BUF_BOT_ANCH	BUF_BOT_ANCH(c_e_b)
 
 #define BUF_VX(buf, idx)					(&((buf)->buf_views[idx]))
@@ -102,46 +102,46 @@ extern be_buf_view_t *c_b_v;
 // Cut buffers ----------------------------------------------------------------
 extern be_bufs_t cut_buffers;
 #define CUT_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&cut_buffers)
-#define CUT_BUFS_TOP_BUF		BUFS_TOP_BUF(&cut_buffers)
-#define CUT_BUFS_BOT_BUF		BUFS_BOT_BUF(&cut_buffers)
+#define CUT_BUFS_TOP_NODE		BUFS_TOP_NODE(&cut_buffers)
+#define CUT_BUFS_BOT_NODE		BUFS_BOT_NODE(&cut_buffers)
 #define CUT_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&cut_buffers)
 // current cut buffer ---------------------------------------------------------
-#define CUR_CUT_BUF				CUT_BUFS_TOP_BUF
-#define CUR_CUT_BUF_TOP_LINE	BUF_TOP_LINE(CUR_CUT_BUF)
+#define CUR_CUT_BUF				CUT_BUFS_TOP_NODE
+#define CUR_CUT_BUF_TOP_NODE	BUF_TOP_NODE(CUR_CUT_BUF)
 #define CUR_CUT_BUF_BOT_ANCH	BUF_BOT_ANCH(CUR_CUT_BUF)
 
 // History buffers ------------------------------------------------------------
 extern be_bufs_t history_buffers;
 #define HIST_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&history_buffers)
-#define HIST_BUFS_TOP_BUF		BUFS_TOP_BUF(&history_buffers)
-#define HIST_BUFS_BOT_BUF		BUFS_BOT_BUF(&history_buffers)
+#define HIST_BUFS_TOP_NODE		BUFS_TOP_NODE(&history_buffers)
+#define HIST_BUFS_BOT_NODE		BUFS_BOT_NODE(&history_buffers)
 #define HIST_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&history_buffers)
 
 // Help buffers ------------------------------------------------------------
 extern be_bufs_t help_buffers;
 #define HELP_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&help_buffers)
-#define HELP_BUFS_TOP_BUF		BUFS_TOP_BUF(&help_buffers)
-#define HELP_BUFS_BOT_BUF		BUFS_BOT_BUF(&help_buffers)
+#define HELP_BUFS_TOP_NODE		BUFS_TOP_NODE(&help_buffers)
+#define HELP_BUFS_BOT_NODE		BUFS_BOT_NODE(&help_buffers)
 #define HELP_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&help_buffers)
 
 #ifdef ENABLE_UNDO
 // Undo buffers ---------------------------------------------------------------
 extern be_bufs_t undo_buffers;
 #define UNDO_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&undo_buffers)
-#define UNDO_BUFS_TOP_BUF		BUFS_TOP_BUF(&undo_buffers)
-#define UNDO_BUFS_BOT_BUF		BUFS_BOT_BUF(&undo_buffers)
+#define UNDO_BUFS_TOP_NODE		BUFS_TOP_NODE(&undo_buffers)
+#define UNDO_BUFS_BOT_NODE		BUFS_BOT_NODE(&undo_buffers)
 #define UNDO_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&undo_buffers)
 // current undo buffer --------------------------------------------------------
-#define CUR_UNDO_BUF			UNDO_BUFS_TOP_BUF
+#define CUR_UNDO_BUF			UNDO_BUFS_TOP_NODE
 #define CUR_UNDO_BUF_BOT_ANCH	BUF_BOT_ANCH(CUR_UNDO_BUF)
 // Redo buffers ---------------------------------------------------------------
 extern be_bufs_t redo_buffers;
 #define REDO_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&redo_buffers)
-#define REDO_BUFS_TOP_BUF		BUFS_TOP_BUF(&redo_buffers)
-#define REDO_BUFS_BOT_BUF		BUFS_BOT_BUF(&redo_buffers)
+#define REDO_BUFS_TOP_NODE		BUFS_TOP_NODE(&redo_buffers)
+#define REDO_BUFS_BOT_NODE		BUFS_BOT_NODE(&redo_buffers)
 #define REDO_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&redo_buffers)
 // current redo buffer --------------------------------------------------------
-#define CUR_REDO_BUF			REDO_BUFS_TOP_BUF
+#define CUR_REDO_BUF			REDO_BUFS_TOP_NODE
 #endif // ENABLE_UNDO
 
 //=============================================================================

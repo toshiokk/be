@@ -829,10 +829,6 @@ int is_app_list_mode(void)
 int is_view_mode_then_warn_it(void)
 {
 	if (IS_NODE_TOP_ANCH(c_e_b) || IS_NODE_BOT_ANCH(c_e_b)) {
-		disp_status_bar_done(_("Modification not allowed in Anchor line"));
-		return 1;
-	}
-	if (IS_NODE_TOP_ANCH(c_e_b) || IS_NODE_BOT_ANCH(c_e_b)) {
 		disp_status_bar_done(_("Modification not allowed in Anchor buffer"));
 		return 1;
 	}

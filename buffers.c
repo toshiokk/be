@@ -238,11 +238,11 @@ void dump_editor_panes(void)
 
 be_buf_t *get_edit_buf_from_abs_path(const char *abs_path)
 {
-	return get_buf_from_bufs_by_abs_path(EDIT_BUFS_TOP_BUF, abs_path);
+	return get_buf_from_bufs_by_abs_path(EDIT_BUFS_TOP_NODE, abs_path);
 }
 int get_edit_buf_idx_from_buf(be_buf_t *edit_buf)
 {
-	return get_buf_idx_in_bufs(EDIT_BUFS_TOP_BUF, edit_buf);
+	return get_buf_idx_in_bufs(EDIT_BUFS_TOP_NODE, edit_buf);
 }
 
 //-----------------------------------------------------------------------------
@@ -278,14 +278,14 @@ be_line_t *append_string_to_cur_edit_buf(const char *string)
 // Append a new magic-line to the bottom of the current buffer
 void append_magic_line(void)
 {
-	if (buf_count_lines(get_c_e_b()) == 0 || line_data_len(CUR_EDIT_BUF_BOT_LINE)) {
+	if (buf_count_lines(get_c_e_b()) == 0 || line_data_len(CUR_EDIT_BUF_BOT_NODE)) {
 		append_string_to_cur_edit_buf("");
 	}
 }
 
 int count_edit_bufs(void)
 {
-	return buf_count_bufs(EDIT_BUFS_TOP_BUF);
+	return buf_count_bufs(EDIT_BUFS_TOP_NODE);
 }
 
 int is_c_e_b_valid(void)
@@ -303,7 +303,7 @@ void init_cut_bufs(void)
 }
 void free_all_cut_bufs(void)
 {
-	while (IS_NODE_BOT_ANCH(CUR_CUT_BUF) == 0) {
+	while (IS_NODE_INT(CUR_CUT_BUF)) {
 		pop_cut_buf();
 	}
 }
@@ -343,7 +343,7 @@ int count_cur_cut_buf_lines(void)
 
 void renumber_cur_buf_from_top(void)
 {
-	buf_renumber_from_line(get_c_e_b(), CUR_EDIT_BUF_TOP_LINE);
+	buf_renumber_from_line(get_c_e_b(), CUR_EDIT_BUF_TOP_NODE);
 }
 
 be_line_t *get_line_ptr_from_cur_buf_line_num(int line_num)
@@ -653,13 +653,13 @@ void dump_cut_bufs_lines(void)
 void dump_cur_edit_buf(void)
 {
 flf_d_printf("<<<<<<<<<<<<<<<<<<<\n");
-flf_d_printf("CUR_EDIT_BUF_TOP_LINE:%08lx\n", CUR_EDIT_BUF_TOP_LINE);
-	if (CUR_EDIT_BUF_TOP_LINE) {
-		flf_d_printf("CUR_EDIT_BUF_TOP_LINE->data:%08lx\n", CUR_EDIT_BUF_TOP_LINE->data);
+flf_d_printf("CUR_EDIT_BUF_TOP_NODE:%08lx\n", CUR_EDIT_BUF_TOP_NODE);
+	if (CUR_EDIT_BUF_TOP_NODE) {
+		flf_d_printf("CUR_EDIT_BUF_TOP_NODE->data:%08lx\n", CUR_EDIT_BUF_TOP_NODE->data);
 	}
-flf_d_printf("CUR_EDIT_BUF_BOT_LINE:%08lx\n", CUR_EDIT_BUF_BOT_LINE);
-	if (CUR_EDIT_BUF_BOT_LINE) {
-		flf_d_printf("CUR_EDIT_BUF_BOT_LINE->data:%08lx\n", CUR_EDIT_BUF_BOT_LINE->data);
+flf_d_printf("CUR_EDIT_BUF_BOT_NODE:%08lx\n", CUR_EDIT_BUF_BOT_NODE);
+	if (CUR_EDIT_BUF_BOT_NODE) {
+		flf_d_printf("CUR_EDIT_BUF_BOT_NODE->data:%08lx\n", CUR_EDIT_BUF_BOT_NODE->data);
 	}
 flf_d_printf("cur_line:%08lx\n", CBV_CL);
 	if (CBV_CL) {

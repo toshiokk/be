@@ -204,7 +204,7 @@ void buf_free_lines(be_buf_t *buf)
 	be_line_t *line;
 
 	// free all lines from top to bottom
-	for (line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(line) == 0; ) {
+	for (line = BUF_TOP_NODE(buf); IS_NODE_INT(line); ) {
 		line = line_unlink_free(line);
 	}
 }
@@ -216,8 +216,8 @@ int buf_compare(be_buf_t *buf1, be_buf_t *buf2)
 	be_line_t *line2;
 	int diff;
 
-	for (line1 = BUF_TOP_LINE(buf1), line2 = BUF_TOP_LINE(buf2);
-	 IS_NODE_BOT_ANCH(line1) == 0 && IS_NODE_BOT_ANCH(line2) == 0; 
+	for (line1 = BUF_TOP_NODE(buf1), line2 = BUF_TOP_NODE(buf2);
+	 IS_NODE_INT(line1) && IS_NODE_INT(line2); 
 	 line1 = NODE_NEXT(line1), line2 = NODE_NEXT(line2)) {
 		diff = strncmp(line1->data, line2->data, MAX_EDIT_LINE_LEN);
 		if (diff)
@@ -243,7 +243,7 @@ int buf_guess_tab_size(be_buf_t *buf)
 	int lines_space4 = 0;
 	be_line_t *line;
 
-	for (line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(line) == 0; line = NODE_NEXT(line)) {
+	for (line = BUF_TOP_NODE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		if (line_data_len(line) > 4) {
 			if (strlcmp__(line->data, "    ") == 0 && line->data[4] != ' ')
 				lines_space4++;
@@ -261,14 +261,14 @@ int buf_count_bufs(be_buf_t *buf)
 {
 	int count;
 
-	for (count = 0; IS_NODE_BOT_ANCH(buf) == 0; count++) {
+	for (count = 0; IS_NODE_INT(buf); count++) {
 		buf = NODE_NEXT(buf);
 	}
 	return count;
 }
 int buf_count_lines(be_buf_t *buf)
 {
-	return line_count_lines(BUF_TOP_LINE(buf));
+	return line_count_lines(BUF_TOP_NODE(buf));
 }
 
 int buf_is_orig_file_updated(be_buf_t *buf)
@@ -347,11 +347,9 @@ be_line_t *buf_move_cur_line_to_prev(be_buf_t *buf)
 }
 be_line_t *buf_move_cur_line_to_next(be_buf_t *buf)
 {
-	be_line_t *line;
-
-	if (IS_NODE_BOT_ANCH(BUF_V0_CL(buf)) == 0) {
-		line = BUF_V0_CL(buf);
-		BUF_V0_CL(buf) = NODE_NEXT(BUF_V0_CL(buf));
+	be_line_t *line = BUF_V0_CL(buf);
+	if (IS_NODE_BOT_ANCH(line) == 0) {
+		BUF_V0_CL(buf) = NODE_NEXT(line);
 		return line;
 	}
 	// do not move and return NULL
@@ -362,7 +360,7 @@ be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num)
 {
 	be_line_t *line;
 
-	for (line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(line) == 0 && line_num > 1; line_num--) {
+	for (line = BUF_TOP_NODE(buf); line_num > 1; line_num--) {
 		if (IS_NODE_BOT(line))
 			break;
 		line = NODE_NEXT(line);
@@ -390,7 +388,7 @@ unsigned short buf_calc_crc(be_buf_t *buf)
 
 	file_size = 0;
 	clear_crc16ccitt();
-	for (line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(line) == 0; line = NODE_NEXT(line)) {
+	for (line = BUF_TOP_NODE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		file_size += line_data_len(line) + 1;
 		for (ptr = line->data; ; ptr++) {
 			file_crc = calc_crc16ccitt(*ptr);
@@ -434,7 +432,7 @@ be_bufs_t *bufs_free_all_bufss(be_bufs_t *bufs)
 	for ( ; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs)) {
 		flf_d_printf("bufs: %s\n", bufs->name);
 		for ( ; ; ) {
-			be_buf_t *buf = BUFS_TOP_BUF(bufs);
+			be_buf_t *buf = BUFS_TOP_NODE(bufs);
 			flf_d_printf(" %cbuf:[%s]\n",
 			 (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
 			if (IS_NODE_VALID(buf) == 0) {
@@ -489,7 +487,7 @@ be_buf_t *get_buf_from_bufs_by_idx(be_buf_t *bufs, int buf_idx)
 {
 	// making sure that bufs is TOP_BUF
 	bufs = make_sure_buf_is_top_buf(bufs);
-	for ( ; IS_NODE_BOT_ANCH(bufs) == 0 && buf_idx > 0; buf_idx--) {
+	for ( ; IS_NODE_INT(bufs) && buf_idx > 0; buf_idx--) {
 		bufs = NODE_NEXT(bufs);
 	}
 	return bufs;	// bufs may be top/bottom anchor
@@ -497,7 +495,7 @@ be_buf_t *get_buf_from_bufs_by_idx(be_buf_t *bufs, int buf_idx)
 int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf)
 {
 	bufs = make_sure_buf_is_top_buf(bufs);
-	for (int buf_idx = 0; IS_NODE_BOT_ANCH(bufs) == 0; buf_idx++, bufs = NODE_NEXT(bufs)) {
+	for (int buf_idx = 0; IS_NODE_INT(bufs); buf_idx++, bufs = NODE_NEXT(bufs)) {
 		if (bufs == buf)
 			return buf_idx;	// found
 	}
@@ -506,7 +504,7 @@ int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf)
 be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *bufs, const char *abs_path)
 {
 	bufs = make_sure_buf_is_top_buf(bufs);
-	for ( ; IS_NODE_BOT_ANCH(bufs) == 0; bufs = NODE_NEXT(bufs)) {
+	for ( ; IS_NODE_INT(bufs); bufs = NODE_NEXT(bufs)) {
 		if (strcmp(bufs->abs_path, abs_path) == 0) {
 			return bufs;	// found
 		}
@@ -517,7 +515,7 @@ be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *bufs, const char *abs_path)
 //-----------------------------------------------------------------------------
 void renumber_all_bufs_from_top(be_bufs_t *bufs)
 {
-	for (be_buf_t *buf = BUFS_TOP_BUF(bufs); IS_NODE_BOT_ANCH(buf) == 0; buf = NODE_NEXT(buf)) {
+	for (be_buf_t *buf = BUFS_TOP_NODE(bufs); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
 		buf_renumber_from_top(buf);
 	}
 }
@@ -585,7 +583,7 @@ be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
 {
 	be_line_t *line;
 
-	for (line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(line) == 0; line = NODE_NEXT(line)) {
+	for (line = BUF_TOP_NODE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		if (line == line_)
 			return line_;
 	}

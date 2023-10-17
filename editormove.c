@@ -265,7 +265,7 @@ int do_first_line(void)
 }
 int do_last_line(void)
 {
-	CBV_CL = CUR_EDIT_BUF_BOT_LINE;
+	CBV_CL = CUR_EDIT_BUF_BOT_NODE;
 	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_BOTTOM, UPDATE_SCRN_ALL);
 	return 1;
 }
@@ -727,7 +727,7 @@ int cursor_next_line(void)
 
 int first_line(void)
 {
-	CBV_CL = CUR_EDIT_BUF_TOP_LINE;
+	CBV_CL = CUR_EDIT_BUF_TOP_NODE;
 	return 1;
 }
 

@@ -406,7 +406,7 @@ PRIVATE void copy_region_to_cut_buf(
 		return;
 
 	push_cut_buf();
-	for (line = min_line; IS_NODE_BOT_ANCH(line) == 0; line = NODE_NEXT(line)) {
+	for (line = min_line; IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		if (line != max_line) {
 			// first and intermediate line
 ////_D_(line_dump_byte_idx(line, min_byte_idx));
@@ -576,7 +576,7 @@ PRIVATE int paste_cut_buf_char(void)
 	set_cur_buf_modified();
 
 	cur_byte_idx = CBV_CLBI;
-	cut_line = CUR_CUT_BUF_TOP_LINE;
+	cut_line = CUR_CUT_BUF_TOP_NODE;
 	// Paste the first line of the cut-buffer
 	// >aaaa^bbbb
 	inserted_line = line_separate(CBV_CL, cur_byte_idx, INSERT_BEFORE);
@@ -622,8 +622,7 @@ PRIVATE int paste_cut_buf_line(void)
 
 	set_cur_buf_modified();
 
-	cut_line = CUR_CUT_BUF_TOP_LINE;
-	for ( ; IS_NODE_BOT_ANCH(cut_line) == 0; ) {
+	for (cut_line = CUR_CUT_BUF_TOP_NODE; IS_NODE_INT(cut_line); ) {
 		line_insert_with_string(CBV_CL, INSERT_BEFORE, cut_line->data);
 		cut_line = NODE_NEXT(cut_line);
 		if (IS_MARK_SET(CUR_CBUF_STATE(buf_CUT_MODE))) {
@@ -666,7 +665,7 @@ PRIVATE int paste_cut_buf_rect(void)
 	set_cur_buf_modified();
 
 	cur_line_col_idx = col_idx_from_byte_idx(CBV_CL->data, 0, CBV_CLBI);
-	for (cut_line = CUR_CUT_BUF_TOP_LINE; IS_NODE_BOT_ANCH(cut_line) == 0; ) {
+	for (cut_line = CUR_CUT_BUF_TOP_NODE; IS_NODE_INT(cut_line); ) {
 		if (IS_NODE_BOT_ANCH(CBV_CL)) {
 			// if no more lines in edit buffer, append line automatically
 			CBV_CL = line_insert_with_string(CBV_CL, INSERT_BEFORE, "");

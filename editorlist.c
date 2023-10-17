@@ -33,7 +33,7 @@ _FLF_
 	set_cur_edit_buf(EDIT_BUFS_TOP_ANCH);
 	buf_free_lines(EDIT_BUFS_TOP_ANCH);
 	buf_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Files currently loaded"));
-	for (edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_BOT_ANCH(edit_buf) == 0;
+	for (edit_buf = EDIT_BUFS_TOP_NODE; IS_NODE_INT(edit_buf);
 	 edit_buf = NODE_NEXT(edit_buf)) {
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-60s %-5s %s %s",
 		 quote_file_name(edit_buf->abs_path),
@@ -41,17 +41,17 @@ _FLF_
 		 BUF_STATE(edit_buf, buf_MODIFIED) ? "Mo" : "--");
 		append_string_to_cur_edit_buf(buffer);
 		if (edit_buf == prev_cur_edit_buf)
-			line_to_go = CUR_EDIT_BUF_BOT_LINE;
+			line_to_go = CUR_EDIT_BUF_BOT_NODE;
 	}
 	append_magic_line();
 	if (line_to_go) {
 		CBV_CL = line_to_go;
 	} else {
-		CBV_CL = CUR_EDIT_BUF_TOP_LINE;
+		CBV_CL = CUR_EDIT_BUF_TOP_NODE;
 	}
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
 
-	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(CUR_EDIT_BUF_TOP_NODE, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	disp_status_bar_done(_("File List"));
 	return 1;
 }
@@ -72,7 +72,7 @@ void init_help_bufs(void)
 }
 be_buf_t *get_help_buf(int help_buf_idx)
 {
-	return get_buf_from_bufs_by_idx(HELP_BUFS_TOP_BUF, help_buf_idx);
+	return get_buf_from_bufs_by_idx(HELP_BUFS_TOP_NODE, help_buf_idx);
 }
 
 //-----------------------------------------------------------------------------
@@ -128,7 +128,7 @@ void make_help_buf(int help_idx)
 		break;
 	}
 	append_magic_line();
-	CBV_CL = CUR_EDIT_BUF_TOP_LINE;
+	CBV_CL = CUR_EDIT_BUF_TOP_NODE;
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
 	// renumber
 	post_cmd_processing(CBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);

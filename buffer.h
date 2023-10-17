@@ -98,14 +98,14 @@ typedef struct be_bufs_t {
 
 // buffers ==> buffer
 #define BUFS_TOP_ANCH(bufs)		NODES_TOP_ANCH(bufs)
-#define BUFS_TOP_BUF(bufs)		NODES_TOP_NODE(bufs)
-#define BUFS_BOT_BUF(bufs)		NODES_BOT_NODE(bufs)
+#define BUFS_TOP_NODE(bufs)		NODES_TOP_NODE(bufs)
+#define BUFS_BOT_NODE(bufs)		NODES_BOT_NODE(bufs)
 #define BUFS_BOT_ANCH(bufs)		NODES_BOT_ANCH(bufs)
 
 // buffer ==> line
 #define BUF_TOP_ANCH(buf)		NODES_TOP_ANCH(buf)
-#define BUF_TOP_LINE(buf)		NODES_TOP_NODE(buf)
-#define BUF_BOT_LINE(buf)		NODES_BOT_NODE(buf)
+#define BUF_TOP_NODE(buf)		NODES_TOP_NODE(buf)
+#define BUF_BOT_NODE(buf)		NODES_BOT_NODE(buf)
 #define BUF_BOT_ANCH(buf)		NODES_BOT_ANCH(buf)
 
 be_buf_t *buf_create(const char *file_path);

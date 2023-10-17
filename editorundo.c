@@ -63,14 +63,14 @@ be_buf_t *pop_redo_buf(void)
 int delete_undo_redo_buf(be_buf_t *edit_buf)
 {
 	// delete undo, redo buffers related to edit_buf
-	return delete_do_buf(edit_buf, UNDO_BUFS_TOP_BUF)
-	 + delete_do_buf(edit_buf, REDO_BUFS_TOP_BUF);
+	return delete_do_buf(edit_buf, UNDO_BUFS_TOP_NODE)
+	 + delete_do_buf(edit_buf, REDO_BUFS_TOP_NODE);
 }
 int delete_do_buf(be_buf_t *edit_buf, be_buf_t *do_buf)
 {
 	int deleted = 0;
 
-	for ( ; IS_NODE_BOT_ANCH(do_buf) == 0; do_buf = NODE_NEXT(do_buf)) {
+	for ( ; IS_NODE_INT(do_buf); do_buf = NODE_NEXT(do_buf)) {
 		if (strcmp(do_buf->abs_path, edit_buf->abs_path) == 0) {
 			do_buf = buf_unlink_free(do_buf);
 			deleted++;
@@ -283,10 +283,10 @@ PRIVATE be_line_t *delete_region_in_buf(be_buf_t *buf)
 
 	if (switch_c_e_b_to_abs_path(buf->abs_path) == 0) {
 		progerr_printf("No such buffer: %s\n", buf->abs_path);
-		return CUR_EDIT_BUF_BOT_LINE;
+		return CUR_EDIT_BUF_BOT_NODE;
 	}
-	edit_line = get_line_ptr_from_cur_buf_line_num(BUF_TOP_LINE(buf)->line_num);
-	for (undo_line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(undo_line) == 0;
+	edit_line = get_line_ptr_from_cur_buf_line_num(BUF_TOP_NODE(buf)->line_num);
+	for (undo_line = BUF_TOP_NODE(buf); IS_NODE_INT(undo_line);
 	 undo_line = NODE_NEXT(undo_line)) {
 		edit_line = line_unlink_free(edit_line);	// delete line
 	}
@@ -298,15 +298,15 @@ PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 
 	if (switch_c_e_b_to_abs_path(buf->abs_path) == 0) {
 		progerr_printf("No such buffer: %s\n", buf->abs_path);
-		return CUR_EDIT_BUF_BOT_LINE;
+		return CUR_EDIT_BUF_BOT_NODE;
 	}
-	for (undo_line = BUF_TOP_LINE(buf); IS_NODE_BOT_ANCH(undo_line) == 0;
+	for (undo_line = BUF_TOP_NODE(buf); IS_NODE_INT(undo_line);
 	 undo_line = NODE_NEXT(undo_line)) {
 		line_insert(edit_line, line_create_copy(undo_line), INSERT_BEFORE);
 	}
 	// restore pointers
 	CBV_CLBI = buf->buf_views[0].cur_line_byte_idx;
-	CBV_CL = get_line_ptr_from_cur_buf_line_num(BUF_TOP_LINE(buf)->line_num);
+	CBV_CL = get_line_ptr_from_cur_buf_line_num(BUF_TOP_NODE(buf)->line_num);
 	return edit_line;
 }
 

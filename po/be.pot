@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-14 20:45+0900\n"
+"POT-Creation-Date: 2023-10-16 23:48+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -111,18 +111,14 @@ msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
 #: ../editor.c:832
-msgid "Modification not allowed in Anchor line"
-msgstr ""
-
-#: ../editor.c:836
 msgid "Modification not allowed in Anchor buffer"
 msgstr ""
 
-#: ../editor.c:840
+#: ../editor.c:836
 msgid "Modification not allowed in LIST mode"
 msgstr ""
 
-#: ../editor.c:844
+#: ../editor.c:840
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 

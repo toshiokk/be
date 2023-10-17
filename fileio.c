@@ -43,7 +43,7 @@ int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_er
 		return lines;
 	}
 	append_magic_line();
-	CBV_CL = CUR_EDIT_BUF_TOP_LINE;
+	CBV_CL = CUR_EDIT_BUF_TOP_NODE;
 	renumber_cur_buf_from_top();
 	update_cur_buf_crc();
 
@@ -599,7 +599,7 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 	long size;
 
 	lines_written = 0;
-	for (line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_BOT_ANCH(line) == 0; line = NODE_NEXT(line)) {
+	for (line = CUR_EDIT_BUF_TOP_NODE; IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		if (IS_NODE_BOT(line) && line_data_len(line) == 0)
 			break;			// do not output the magic line
 		line_len = line_data_len(line);

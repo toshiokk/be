@@ -303,7 +303,7 @@ int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 		line_num = NODE_PREV(line)->line_num;
 		buf_size = NODE_PREV(line)->buf_size;
 	}
-	for ( ; line && IS_NODE_BOT_ANCH(line) == 0; line = NODE_NEXT(line)) {
+	for ( ; line && IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		line->line_num = ++line_num;
 		if (line->size <= 0) {
 			if (line->data)
@@ -322,7 +322,7 @@ int line_count_lines(be_line_t *line)
 {
 	int count;
 
-	for (count = 0; IS_NODE_BOT_ANCH(line) == 0; count++) {
+	for (count = 0; IS_NODE_INT(line); count++) {
 		line = NODE_NEXT(line);
 	}
 	return count;

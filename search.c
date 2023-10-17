@@ -546,7 +546,7 @@ int search_str_in_buffer(const char *needle,
 					line = NODE_PREV(line);
 					byte_idx = line_data_len(line);
 				} else if (global_search && switch_c_e_b_to_prev(0, 0)) {
-					line = CUR_EDIT_BUF_BOT_LINE;
+					line = CUR_EDIT_BUF_BOT_NODE;
 					byte_idx = line_data_len(line);
 				} else {
 					break;
@@ -573,7 +573,7 @@ int search_str_in_buffer(const char *needle,
 					line = NODE_NEXT(line);
 					byte_idx = 0;
 				} else if (global_search && switch_c_e_b_to_next(0, 0)) {
-					line = CUR_EDIT_BUF_TOP_LINE;
+					line = CUR_EDIT_BUF_TOP_NODE;
 					byte_idx = 0;
 				} else {
 					break;

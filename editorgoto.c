@@ -378,16 +378,16 @@ int switch_c_e_b_to_abs_path(const char *abs_path)
 //-----------------------------------------------------------------------------
 int switch_c_e_b_to_top(void)
 {
-	if (IS_NODE_BOT_ANCH(EDIT_BUFS_TOP_BUF))
+	if (IS_NODE_BOT_ANCH(EDIT_BUFS_TOP_NODE))
 		return 0;
-	set_cur_edit_buf(EDIT_BUFS_TOP_BUF);
+	set_cur_edit_buf(EDIT_BUFS_TOP_NODE);
 	return 1;
 }
 int switch_c_e_b_to_bot(void)
 {
-	if (IS_NODE_TOP_ANCH(EDIT_BUFS_BOT_BUF))
+	if (IS_NODE_TOP_ANCH(EDIT_BUFS_BOT_NODE))
 		return 0;
-	set_cur_edit_buf(EDIT_BUFS_BOT_BUF);
+	set_cur_edit_buf(EDIT_BUFS_BOT_NODE);
 	return 1;
 }
 int switch_c_e_b_to_prev(int beep_at_end, int goto_bottom)
@@ -399,7 +399,7 @@ int switch_c_e_b_to_prev(int beep_at_end, int goto_bottom)
 	}
 	set_cur_edit_buf(NODE_PREV(get_c_e_b()));
 	if (goto_bottom)
-		CBV_CL = CUR_EDIT_BUF_BOT_LINE;
+		CBV_CL = CUR_EDIT_BUF_BOT_NODE;
 	return 1;
 }
 int switch_c_e_b_to_next(int beep_at_end, int goto_top)
@@ -411,7 +411,7 @@ int switch_c_e_b_to_next(int beep_at_end, int goto_top)
 	}
 	set_cur_edit_buf(NODE_NEXT(get_c_e_b()));
 	if (goto_top)
-		CBV_CL = CUR_EDIT_BUF_TOP_LINE;
+		CBV_CL = CUR_EDIT_BUF_TOP_NODE;
 	return 1;
 }
 int switch_c_e_b_to_valid_buf(void)

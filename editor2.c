@@ -262,7 +262,7 @@ void disp_edit_win(int cur_pane)
 			// display buffer total lines ("999 ")
 			set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 			sub_win_output_string(edit_win_get_ruler_y(), 0,
-			 get_line_num_string(get_c_e_b(), CUR_EDIT_BUF_BOT_LINE, buf_line_num),
+			 get_line_num_string(get_c_e_b(), CUR_EDIT_BUF_BOT_NODE, buf_line_num),
 			 edit_win_text_x);
 		}
 		// display ruler("1---5----10---15---20---25---30---35---40---45---50---55---60---65")
@@ -841,7 +841,7 @@ PRIVATE int get_buf_line_num_columns(const be_buf_t *buf)
 }
 PRIVATE int get_buf_line_num_digits(const be_buf_t *buf)
 {
-	return get_line_num_digits(BUF_BOT_LINE(buf)->line_num);
+	return get_line_num_digits(BUF_BOT_NODE(buf)->line_num);
 }
 PRIVATE int get_line_num_digits(int max_line_num)
 {
