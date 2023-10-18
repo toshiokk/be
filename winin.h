@@ -31,15 +31,17 @@ int input_string_pos(const char *default__, char *input_buf, int curs_byte_idx,
 #define ASK_REDO		0x40
 #define ASK_UNDO		0x20
 #define ASK_END			0x10
-#define ASK_BACKWARD	0x04
+#define ASK_BACKWARD	0x08
+#define ASK_FORWARD		0x04
 #define ASK_YES			0x02
 #define ASK_NO			0x01
 #define ASK_YES_NO		(ASK_YES | ASK_NO)
 
 #define ANSWER_FORCE	9	// force save even if not-modified
 #define ANSWER_ALL		8	// save or replace all
-#define ANSWER_REDO		4	// Redo replace
-#define ANSWER_UNDO		3	// Undo replace
+#define ANSWER_REDO		5	// Redo replace
+#define ANSWER_UNDO		4	// Undo replace
+#define ANSWER_FORWARD	3	// search Backward
 #define ANSWER_BACKWARD	2	// search Backward
 #define ANSWER_YES		1	// Yes (save or replace)
 #define ANSWER_NO		0	// No (save or replace) / search Forward

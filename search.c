@@ -284,10 +284,10 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			// found
 			if (ret < ANSWER_ALL) {
 #ifdef ENABLE_UNDO
-				ret = ask_yes_no(ASK_YES_NO | ASK_ALL | ASK_BACKWARD | ASK_END
+				ret = ask_yes_no(ASK_YES_NO | ASK_ALL | ASK_BACKWARD | ASK_FORWARD | ASK_END
 				 | (num_replaced ? ASK_UNDO : 0) | (num_undone ? ASK_REDO : 0),
 #else // ENABLE_UNDO
-				ret = ask_yes_no(ASK_YES_NO | ASK_ALL | ASK_BACKWARD | ASK_END,
+				ret = ask_yes_no(ASK_YES_NO | ASK_ALL | ASK_BACKWARD | ASK_FORWARD | ASK_END,
 #endif // ENABLE_UNDO
 				 _("Replace this instance ?"));
 			} else {
@@ -302,13 +302,16 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 		} else {
 			// not found message has been displayed
 #ifdef ENABLE_UNDO
-			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_END
+			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_FORWARD | ASK_END
 			 | (num_replaced ? ASK_UNDO : 0) | (num_undone ? ASK_REDO : 0), "");
 #else // ENABLE_UNDO
-			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_END, "");
+			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_FORWARD | ASK_END, "");
 #endif // ENABLE_UNDO
 		}
 		if (ret == ANSWER_NO) {
+			skip_here = SKIP;
+			continue;
+		} else if (ret == ANSWER_FORWARD) {
 			// forward search
 			CLR_APPMD(ed_REVERSE_SEARCH);
 			skip_here = SKIP;

@@ -392,17 +392,19 @@ int ask_yes_no(int flags, const char *msg, ...)
 	int key_lines_save;
 	va_list ap;
 	char msg_buf[MAX_SCRN_LINE_BUF_LEN+1];
-	const char *chars_yes = "Yy";				// characters accepted as yes
-	const char *chars_no = "Nn ";				// no
-	const char *chars_all = "Aa";				// all
-	const char *chars_backward = "Bb";			// backward replace
-	const char *chars_cancel = "Qq\x1b" S_C_Q;	// cancel
-	const char *chars_end = "EeSs";				// end/stop
-	const char *chars_undo = "Uu";				// undo
-	const char *chars_redo = "Oo";				// redo
+	const char *chars_yes = "Yy";				// Yes(replace)
+	const char *chars_no = "Nn";				// No
+	const char *chars_all = "Aa";				// All
+	const char *chars_backward = "Bb";			// Backward search
+	const char *chars_forward = "Ff ";			// Forward search
+	const char *chars_cancel = "Qq\x1b" S_C_Q;	// cancel/Quit
+	const char *chars_end = "EeSsXx";			// End/Stop/eXit
+	const char *chars_undo = "Uu";				// Undo
+	const char *chars_redo = "Oo";				// redO
 	key_code_t key_input;
 	int answer;
 	int byte_idx;
+	const char *func_id;
 
 	key_lines_save = GET_APPMD(app_KEY_LINES);		// save KEY_LINES
 	SET_APPMD_VAL(app_KEY_LINES, LIM_MIN(1, key_lines_save));	// set lines more than 1
@@ -423,6 +425,9 @@ int ask_yes_no(int flags, const char *msg, ...)
 		}
 		if (flags & ASK_BACKWARD) {
 			list_one_key(chars_backward[0], _("Backward"));
+		}
+		if (flags & ASK_FORWARD) {
+			list_one_key(chars_forward[0], _("Forward"));
 		}
 		list_one_key(chars_cancel[0], _("Cancel"));
 		if (flags & ASK_END) {
@@ -455,6 +460,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 		tio_set_cursor_on(1);
 		//---------------------------
 		key_input = input_key_loop();
+		func_id = get_func_id_from_key(key_input);
 		//---------------------------
 		// Look for the key_input in yes/no/all
 		if (strchr__(chars_yes, key_input) != NULL)
@@ -463,8 +469,12 @@ int ask_yes_no(int flags, const char *msg, ...)
 			answer = ANSWER_NO;
 		else if ((flags & ASK_ALL) && strchr__(chars_all, key_input) != NULL)
 			answer = ANSWER_ALL;
-		else if ((flags & ASK_BACKWARD) && strchr__(chars_backward, key_input) != NULL)
+		else if ((flags & ASK_BACKWARD) && (strchr__(chars_backward, key_input) != NULL)
+		 || cmp_func_id(func_id, "do_search_backward_next"))
 			answer = ANSWER_BACKWARD;
+		else if ((flags & ASK_FORWARD) && (strchr__(chars_forward, key_input) != NULL)
+		 || cmp_func_id(func_id, "do_search_forward_next"))
+			answer = ANSWER_FORWARD;
 		else if (strchr__(chars_cancel, key_input) != NULL)
 			answer = ANSWER_CANCEL;
 		else if ((flags & ASK_END) && strchr__(chars_end, key_input) != NULL)
