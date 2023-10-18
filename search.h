@@ -39,7 +39,7 @@ int do_find_bracket(void);
 int do_find_bracket_reverse(void);
 #endif // ENABLE_REGEX
 
-int search_string_once(const char *string_find);
+int search_string_once(const char *needle, int search_count);
 int replace_string_loop(const char *replace_from, const char *replace_to, int *num_replaced_);
 int replace_str_in_buffer(search_t *search, matches_t *matches, const char *replace_to);
 

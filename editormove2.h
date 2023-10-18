@@ -50,11 +50,11 @@
 typedef enum {
 	LOCATE_CURS_NONE,	// not adjust cursor pos
 	LOCATE_CURS_JUMP_BACKWARD,	// keep contents pos if possible after jumping cursor pos,
-								//  otherwise locate center-1
+								//  otherwise locate center - 2 lines
 	LOCATE_CURS_JUMP_CENTER,	// keep contents pos if possible after jumping cursor pos,
-								//  otherwise locate center
+								//  otherwise locate center line
 	LOCATE_CURS_JUMP_FORWARD,	// keep contents pos if possible after jumping cursor pos,
-								//  otherwise locate center+1
+								//  otherwise locate center + 2 lines
 	LOCATE_CURS_TOP,	// locate top    of screen
 	LOCATE_CURS_CENTER,	// locate center of screen
 	LOCATE_CURS_BOTTOM	// locate bottom of screen

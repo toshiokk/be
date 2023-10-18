@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-16 23:48+0900\n"
+"POT-Creation-Date: 2023-10-18 22:19+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -823,47 +823,47 @@ msgstr "不正な正規表現です: [%s]:%s"
 msgid "Replace with"
 msgstr "置換文字列"
 
-#: ../search.c:229
+#: ../search.c:233
 #, c-format
 msgid "\"%s\" found in %s search"
 msgstr ""
 
-#: ../search.c:230
+#: ../search.c:234
 #, fuzzy
 msgid "backward"
 msgstr "後方へ"
 
-#: ../search.c:230
+#: ../search.c:234
 #, fuzzy
 msgid "forward"
 msgstr "[前方検索]"
 
-#: ../search.c:288
+#: ../search.c:292
 msgid "Replace this instance ?"
 msgstr "置換しますか ?"
 
-#: ../search.c:453
+#: ../search.c:457
 msgid "Not a bracket"
 msgstr "括弧ではありません"
 
-#: ../search.c:507
+#: ../search.c:511
 msgid "Peer bracket found"
 msgstr ""
 
-#: ../search.c:512
+#: ../search.c:516
 msgid "No peer bracket found"
 msgstr "括弧ではありません"
 
-#: ../search.c:517
+#: ../search.c:521
 msgid "Bracket nesting too deep"
 msgstr ""
 
-#: ../search.c:532
+#: ../search.c:536
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr "文字列 [%s] を検索中..."
 
-#: ../search.c:605
+#: ../search.c:609
 #, c-format
 msgid "\"%s\" not found"
 msgstr "\"%s\" が見つかりません"

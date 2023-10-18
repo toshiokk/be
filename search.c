@@ -43,10 +43,10 @@ int do_search_backward_first(void)
 		return -1;
 	}
 	found_in_prev_search = 1;
-	if (search_string_once(needle))
+	if (search_string_once(needle, 0))
 		return 1;
 	TOGGLE_APPMD(ed_REVERSE_SEARCH);
-	return search_string_once(needle);
+	return search_string_once(needle, 0);
 }
 int do_search_forward_first(void)
 {
@@ -57,20 +57,20 @@ int do_search_forward_first(void)
 		return -1;
 	}
 	found_in_prev_search = 1;
-	if (search_string_once(needle))
+	if (search_string_once(needle, 0))
 		return 1;
 	TOGGLE_APPMD(ed_REVERSE_SEARCH);
-	return search_string_once(needle);
+	return search_string_once(needle, 0);
 }
 int do_search_backward_next(void)
 {
 	SET_APPMD(ed_REVERSE_SEARCH);
-	return search_string_once(last_searched_needle);
+	return search_string_once(last_searched_needle, 1);
 }
 int do_search_forward_next(void)
 {
 	CLR_APPMD(ed_REVERSE_SEARCH);
-	return search_string_once(last_searched_needle);
+	return search_string_once(last_searched_needle, 1);
 }
 
 //------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ matches_t matches__;
 #define SEARCH_DIR()	(GET_APPMD(ed_REVERSE_SEARCH) ? (BACKWARD_SEARCH) : (FORWARD_SEARCH))
 
 // Search for a string
-int search_string_once(const char *needle)
+int search_string_once(const char *needle, int search_count)
 {
 	int match_len;
 
@@ -221,10 +221,14 @@ int search_string_once(const char *needle)
 	if (match_len == 0) {
 		recall_cur_file_pos_null(NULL);
 	} else {
-		if (GET_APPMD(ed_REVERSE_SEARCH)) {
-			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP_BACKWARD, UPDATE_SCRN_ALL);
+		if (search_count == 0) {
+			if (GET_APPMD(ed_REVERSE_SEARCH)) {
+				post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP_BACKWARD, UPDATE_SCRN_ALL);
+			} else {
+				post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP_FORWARD, UPDATE_SCRN_ALL);
+			}
 		} else {
-			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP_FORWARD, UPDATE_SCRN_ALL);
+			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP_CENTER, UPDATE_SCRN_ALL);
 		}
 		disp_status_bar_done(_("\"%s\" found in %s search"), needle,
 		 GET_APPMD(ed_REVERSE_SEARCH) ? _("backward") : _("forward"));
