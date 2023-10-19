@@ -107,11 +107,11 @@ int do_replace(void)
 
 	ret = replace_string_loop(replace_from, replace_to, &num_replaced);
 
-	if (ret == ANSWER_CANCEL) {
-		// not return to original file pos
-	} else {
+	if (ret == ANSWER_END) {
 		// return to original file pos
 		recall_cur_file_pos_null(prev_file_pos);
+	} else {
+		// not return to original file pos
 	}
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 
@@ -291,6 +291,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 #endif // ENABLE_UNDO
 				 _("Replace this instance ?"));
 			} else {
+				// break ALL-replacing loop
 				if ((key = tio_input_key()) >= 0) {
 					if (key == K_M_ESC) {
 						ret = ANSWER_END;
@@ -450,7 +451,7 @@ PRIVATE int do_find_bracket_(int reverse)
 	int search_dir;			// search direction (FORWARD_SEARCH/BACKWARD_SEARCH)
 	be_line_t *cur_line_save;
 	int cur_line_byte_idx_save;
-#define MAX_NESTING	100
+#define MAX_BRACKET_NESTING		100
 	int depth;
 	int match_len;
 
@@ -498,7 +499,7 @@ PRIVATE int do_find_bracket_(int reverse)
 			// found bracket
 			if (CBV_CL->data[CBV_CLBI] == char_under_cursor) {
 				depth++;
-				if (depth > MAX_NESTING) {
+				if (depth > MAX_BRACKET_NESTING) {
 					break;
 				}
 			} else {
@@ -516,7 +517,7 @@ PRIVATE int do_find_bracket_(int reverse)
 			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_FORWARD, UPDATE_SCRN_ALL);
 		}
 		disp_status_bar_done(_("Peer bracket found"));
-	} else if (depth < MAX_NESTING) {
+	} else if (depth < MAX_BRACKET_NESTING) {
 		// didn't find peer bracket
 		CBV_CL = cur_line_save;
 		CBV_CLBI = cur_line_byte_idx_save;

@@ -397,8 +397,8 @@ int ask_yes_no(int flags, const char *msg, ...)
 	const char *chars_all = "Aa";				// All
 	const char *chars_backward = "Bb";			// Backward search
 	const char *chars_forward = "Ff ";			// Forward search
-	const char *chars_cancel = "Qq\x1b" S_C_Q;	// cancel/Quit
-	const char *chars_end = "EeSsXx";			// End/Stop/eXit
+	const char *chars_cancel = "EeSsXx";		// End/Stop/eXit
+	const char *chars_end = "QqRr\x1b" S_C_Q;	// Quit/Return/cancel
 	const char *chars_undo = "Uu";				// Undo
 	const char *chars_redo = "Oo";				// redO
 	key_code_t key_input;
