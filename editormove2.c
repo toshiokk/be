@@ -68,11 +68,11 @@ int post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_m
 //	|                                 |
 //	|       LOCATE_CURS_BOTTOM        |
 //	+---------------------------------+
-void locate_cursor_in_edit_win(locate_cursor_to_t location)
+void locate_cursor_in_edit_win(locate_cursor_to_t locate_curs)
 {
 	int disp_y_preferred;
 
-	switch(location) {
+	switch(locate_curs) {
 	default:
 	case LOCATE_CURS_NONE:
 		disp_y_preferred = CBV_CURSOR_Y;
@@ -90,7 +90,7 @@ void locate_cursor_in_edit_win(locate_cursor_to_t location)
 		} else {
 			// Case-B: current line is out of previous screen
 			// LOCATE_CURS_CENTER
-			switch(location) {
+			switch(locate_curs) {
 			default:
 			case LOCATE_CURS_JUMP_BACKWARD:	// 2 line upper than center
 				disp_y_preferred = edit_win_get_text_lines() / 2 - 2;
@@ -169,11 +169,11 @@ int get_disp_y_after_cursor_move(void)
 	int wl_idx;
 	int yy;
 
-	if (IS_PTR_NULL(prev_cur_line) || IS_PTR_NULL(prev_cur_line->data)) {
-		// Avoid editor crash !!!!
-		_PROGERR_
-		return -1;
-	}
+	///if (IS_PTR_NULL(prev_cur_line) || IS_PTR_NULL(prev_cur_line->data)) {
+	///	// Avoid editor crash !!!!
+	///	_PROGERR_
+	///	return -1;
+	///}
 	cur_wl_idx = start_wl_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1);
 
 	// check if cur_line is in [0, prev_cursor_y]
@@ -253,7 +253,7 @@ void fix_buf_state_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 	int cursor_x_in_text;
 
 	if (is_disable_update_min_x_to_keep() == 0) {
-		if (cursor_move == HORIZ_MOVE) {
+		if (cursor_move == CURS_MOVE_HORIZ) {
 			CBV_CURSOR_X_TO_KEEP = start_col_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1);
 			update_min_text_x_to_keep(CBV_CURSOR_X_TO_KEEP);
 		} else {

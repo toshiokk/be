@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-18 23:09+0900\n"
+"POT-Creation-Date: 2023-10-18 23:23+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -842,28 +842,28 @@ msgstr "[前方検索]"
 msgid "Replace this instance ?"
 msgstr "置換しますか ?"
 
-#: ../search.c:460
+#: ../search.c:457
 msgid "Not a bracket"
 msgstr "括弧ではありません"
 
-#: ../search.c:514
+#: ../search.c:511
 msgid "Peer bracket found"
 msgstr ""
 
-#: ../search.c:519
+#: ../search.c:516
 msgid "No peer bracket found"
 msgstr "括弧ではありません"
 
-#: ../search.c:524
+#: ../search.c:521
 msgid "Bracket nesting too deep"
 msgstr ""
 
-#: ../search.c:539
+#: ../search.c:536
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr "文字列 [%s] を検索中..."
 
-#: ../search.c:612
+#: ../search.c:609
 #, c-format
 msgid "\"%s\" not found"
 msgstr "\"%s\" が見つかりません"
@@ -891,12 +891,11 @@ msgstr "全て"
 
 #: ../winin.c:427
 msgid "Backward"
-msgstr "後方へ"
+msgstr "後方検索"
 
 #: ../winin.c:430
-#, fuzzy
 msgid "Forward"
-msgstr "[前方検索]"
+msgstr "前方検索"
 
 #: ../winin.c:432
 msgid "Cancel"

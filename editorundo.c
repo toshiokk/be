@@ -226,7 +226,7 @@ PRIVATE int do_undo_redo_(undo0_redo1_t undo0_redo1)
 
 	set_cur_buf_modified();
 	top_line = restore_region_from_buffer(undo0_redo1);
-	post_cmd_processing(top_line, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(top_line, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 

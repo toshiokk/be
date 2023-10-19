@@ -41,10 +41,10 @@ int input_string_pos(const char *default__, char *input_buf, int curs_byte_idx,
 #define ANSWER_ALL		8	// save or replace all
 #define ANSWER_REDO		5	// Redo replace
 #define ANSWER_UNDO		4	// Undo replace
-#define ANSWER_FORWARD	3	// search Backward
+#define ANSWER_FORWARD	3	// search Forward
 #define ANSWER_BACKWARD	2	// search Backward
 #define ANSWER_YES		1	// Yes (save or replace)
-#define ANSWER_NO		0	// No (save or replace) / search Forward
+#define ANSWER_NO		0	// No (save or replace)
 #define ANSWER_CANCEL	-1	// cancel replace and not-return to beginning pos
 #define ANSWER_END		-2	// cancel replace and return to beginning pos
 #define ANSWER_NONE		-9

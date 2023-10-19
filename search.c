@@ -113,7 +113,7 @@ int do_replace(void)
 		// return to original file pos
 		recall_cur_file_pos_null(prev_file_pos);
 	}
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 
 	if (num_replaced >= 0)
 		disp_status_bar_done(P_(_("Replaced %d occurrence"),
@@ -223,12 +223,12 @@ int search_string_once(const char *needle, int search_count)
 	} else {
 		if (search_count == 0) {
 			if (GET_APPMD(ed_REVERSE_SEARCH)) {
-				post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP_BACKWARD, UPDATE_SCRN_ALL);
+				post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_BACKWARD, UPDATE_SCRN_ALL);
 			} else {
-				post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP_FORWARD, UPDATE_SCRN_ALL);
+				post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_FORWARD, UPDATE_SCRN_ALL);
 			}
 		} else {
-			post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP_CENTER, UPDATE_SCRN_ALL);
+			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_CENTER, UPDATE_SCRN_ALL);
 		}
 		disp_status_bar_done(_("\"%s\" found in %s search"), needle,
 		 GET_APPMD(ed_REVERSE_SEARCH) ? _("backward") : _("forward"));
@@ -276,7 +276,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			// not found
 			recall_cur_file_pos_null(NULL);
 		}
-		post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_JUMP_CENTER, UPDATE_SCRN_ALL);
+		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_CENTER, UPDATE_SCRN_ALL);
 
 		update_screen_editor(1, 1, 1);
 
@@ -308,10 +308,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_FORWARD | ASK_END, "");
 #endif // ENABLE_UNDO
 		}
-		if (ret == ANSWER_NO) {
-			skip_here = SKIP;
-			continue;
-		} else if (ret == ANSWER_FORWARD) {
+		if (ret == ANSWER_NO || ret == ANSWER_FORWARD) {
 			// forward search
 			CLR_APPMD(ed_REVERSE_SEARCH);
 			skip_here = SKIP;
@@ -408,6 +405,7 @@ int replace_str_in_buffer(search_t *search, matches_t *matches, const char *repl
 
 #ifdef ENABLE_REGEX
 PRIVATE int do_find_bracket_(int reverse);
+
 // [test string]
 // 12345678901234567890123456789012345678901234567890
 // {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
@@ -424,6 +422,7 @@ int do_find_bracket(void)
 {
 	return do_find_bracket_(+1);
 }
+
 // [test string]
 // 12345678901234567890123456789012345678901234567890
 // }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
@@ -471,7 +470,7 @@ PRIVATE int do_find_bracket_(int reverse)
 	SET_APPMD(ed_USE_REGEXP);
 
 	// apparent near redundancy with regexp_str[] here is needed,
-	// [][] works, [[]] doesn't
+	// "[][]" works, "[[]]" doesn't
 	if (offset < (strlen(brackets) / 2)) {	// on a left bracket
 		regexp_str[1] = char_wanted;		// '>'
 		regexp_str[2] = char_under_cursor;	// '<'
@@ -490,6 +489,7 @@ PRIVATE int do_find_bracket_(int reverse)
 		}
 	}
 
+	memorize_cursor_pos_before_move();
 	for (depth = 1; depth > 0; ) {
 		match_len = search_str_in_buffer(regexp_str,
 		 search_dir, DISTINGUISH_CASE, SKIP, INNER_BUFFER_SEARCH);
@@ -510,7 +510,11 @@ PRIVATE int do_find_bracket_(int reverse)
 		}
 	}
 	if (depth == 0) {
-		post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+		if (search_dir < 0) {
+			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_BACKWARD, UPDATE_SCRN_ALL);
+		} else {
+			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_FORWARD, UPDATE_SCRN_ALL);
+		}
 		disp_status_bar_done(_("Peer bracket found"));
 	} else if (depth < MAX_NESTING) {
 		// didn't find peer bracket

@@ -22,8 +22,8 @@
 #ifndef regexp_h
 #define regexp_h
 
-#define BACKWARD_SEARCH		-1
-#define FORWARD_SEARCH		+1
+#define BACKWARD_SEARCH		(-1)
+#define FORWARD_SEARCH		(+1)
 
 #define IGNORE_CASE			1
 #define DISTINGUISH_CASE	0

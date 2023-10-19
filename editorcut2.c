@@ -115,16 +115,16 @@ PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move
 	case CUT_MODE_0_LINE:
 		break;
 	case CUT_MODE_N_LINE:
-		if (cursor_move == HORIZ_MOVE) {
+		if (cursor_move == CURS_MOVE_HORIZ) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
-		} else if (cursor_move == VERT_MOVE) {
+		} else if (cursor_move == CURS_MOVE_VERT) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 		}
 		break;
 	case CUT_MODE_H_CHAR:
-		if (cursor_move == HORIZ_MOVE) {
+		if (cursor_move == CURS_MOVE_HORIZ) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
-		} else if (cursor_move == VERT_MOVE) {
+		} else if (cursor_move == CURS_MOVE_VERT) {
 #ifdef HV_IS_BOX_VH_IS_CHAR
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_BOX;
 #else
@@ -133,41 +133,41 @@ PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move
 		}
 		break;
 	case CUT_MODE_HV_LINE:
-		if (cursor_move == HORIZ_MOVE) {
+		if (cursor_move == CURS_MOVE_HORIZ) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
-		} else if (cursor_move == VERT_MOVE) {
+		} else if (cursor_move == CURS_MOVE_VERT) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_LINE;
 		}
 		break;
 	case CUT_MODE_V_LINE:
-		if (cursor_move == HORIZ_MOVE) {
+		if (cursor_move == CURS_MOVE_HORIZ) {
 #ifdef HV_IS_BOX_VH_IS_CHAR
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_CHAR;
 #else
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_BOX;
 #endif
-		} else if (cursor_move == VERT_MOVE) {
+		} else if (cursor_move == CURS_MOVE_VERT) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 		}
 		break;
 	case CUT_MODE_VH_CHAR:
-		if (cursor_move == HORIZ_MOVE) {
+		if (cursor_move == CURS_MOVE_HORIZ) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_CHAR;
-		} else if (cursor_move == VERT_MOVE) {
+		} else if (cursor_move == CURS_MOVE_VERT) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 		}
 		break;
 	case CUT_MODE_HV_BOX:
-		if (cursor_move == HORIZ_MOVE) {
+		if (cursor_move == CURS_MOVE_HORIZ) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
-		} else if (cursor_move == VERT_MOVE) {
+		} else if (cursor_move == CURS_MOVE_VERT) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_BOX;
 		}
 		break;
 	case CUT_MODE_VH_BOX:
-		if (cursor_move == HORIZ_MOVE) {
+		if (cursor_move == CURS_MOVE_HORIZ) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_BOX;
-		} else if (cursor_move == VERT_MOVE) {
+		} else if (cursor_move == CURS_MOVE_VERT) {
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 		}
 		break;

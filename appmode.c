@@ -327,7 +327,7 @@ int get_backup_files(void)
 int do_tog_editor_panes(void)
 {
 	TOGGLE_APPMD(ed_EDITOR_PANES);
-	post_cmd_processing(NULL, NO_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
 const char *get_editor_panes(void)
@@ -470,14 +470,14 @@ int do_tog_syntax_hl(void)
 {
 	tog_syntax_hl();
 	SHOW_MODE("Syntax Highlighting", get_str_syntax_hl());
-	post_cmd_processing(NULL, NO_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
 int do_tog_tab_eol_notation(void)
 {
 	tog_tab_eol_notation();
 	SHOW_MODE("Visible TAB/EOL", get_str_tab_eol_notation());
-	post_cmd_processing(NULL, NO_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
 #endif // ENABLE_SYNTAX
@@ -486,14 +486,14 @@ int do_tog_show_ruler(void)
 {
 	tog_show_ruler();
 	SHOW_MODE("Show ruler", get_str_show_ruler());
-	post_cmd_processing(NULL, NO_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
 int do_tog_show_line_num(void)
 {
 	tog_show_line_num();
 	SHOW_MODE("Show line number", get_str_show_line_num());
-	post_cmd_processing(NULL, NO_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
 

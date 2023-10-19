@@ -37,7 +37,7 @@ int do_left(void)
 	}
 	move_cursor_left(1);
 
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	return 1;
 }
 
@@ -48,7 +48,7 @@ int do_right(void)
 	}
 	move_cursor_right();
 
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	return 1;
 }
 
@@ -87,7 +87,7 @@ int do_prev_word(void)
 		move_cursor_left(1);
 	}
 
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	return 0;
 }
 // go to next word
@@ -107,7 +107,7 @@ int do_next_word(void)
 		move_cursor_right();
 	}
 
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	return 0;
 }
 
@@ -115,7 +115,7 @@ int do_start_of_line(void)
 {
 	CBV_CLBI = 0;
 
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	return 1;
 }
 
@@ -123,7 +123,7 @@ int do_end_of_line(void)
 {
 	CBV_CLBI = line_data_len(CBV_CL);
 
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	return 1;
 }
 
@@ -150,7 +150,7 @@ PRIVATE void do_up_(void)
 	} else {
 		top_bottom_of_file = TBF_TOP;
 	}
-	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 PRIVATE void do_down_(void);
 int do_down(void)
@@ -173,7 +173,7 @@ PRIVATE void do_down_(void)
 	} else {
 		top_bottom_of_file = TBF_BOTTOM;
 	}
-	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 
 PRIVATE void do_page_up_(void);
@@ -200,7 +200,7 @@ PRIVATE void do_page_up_(void)
 			top_bottom_of_file = TBF_NONE;
 			tio_beep();
 			if (switch_c_e_b_to_prev(1, 1)) {
-				post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 			}
 		}
 	} else {
@@ -212,7 +212,7 @@ PRIVATE void do_page_up_(void)
 				break;
 			}
 		}
-		post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+		post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	}
 }
 
@@ -240,7 +240,7 @@ PRIVATE int do_page_down_(void)
 			top_bottom_of_file = TBF_NONE;
 			tio_beep();
 			if (switch_c_e_b_to_next(1, 1)) {
-				post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_TOP, UPDATE_SCRN_ALL);
+				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_TOP, UPDATE_SCRN_ALL);
 			}
 		}
 	} else {
@@ -252,7 +252,7 @@ PRIVATE int do_page_down_(void)
 				break;
 			}
 		}
-		post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+		post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	}
 	return 1;
 }
@@ -260,13 +260,13 @@ PRIVATE int do_page_down_(void)
 int do_first_line(void)
 {
 	first_line();
-	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_TOP, UPDATE_SCRN_ALL);
+	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_TOP, UPDATE_SCRN_ALL);
 	return 1;
 }
 int do_last_line(void)
 {
 	CBV_CL = CUR_EDIT_BUF_BOT_NODE;
-	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_BOTTOM, UPDATE_SCRN_ALL);
+	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_BOTTOM, UPDATE_SCRN_ALL);
 	return 1;
 }
 
@@ -411,7 +411,7 @@ flf_d_printf("[%s]\n", utf8s);
 		do_enter_utf8c(utf8c);
 	}
 #endif // ENABLE_UTF8
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	return 1;
 }
 PRIVATE int do_enter_utf8c(const char *utf8c)
@@ -429,7 +429,7 @@ flf_d_printf("[%s]\n", utf8c);
 	get_c_e_b()->buf_size += bytes_insert;
 
 	set_cur_buf_modified();
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	return 1;
 }
 
@@ -472,9 +472,9 @@ int do_carriage_return(void)
 
 	if (CBV_CURSOR_Y < BOTTOM_SCROLL_MARGIN_IDX) {
 		CBV_CURSOR_Y++;
-		post_cmd_processing(NODE_PREV(CBV_CL), HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
+		post_cmd_processing(NODE_PREV(CBV_CL), CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
 	} else {
-		post_cmd_processing(NODE_PREV(CBV_CL), HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+		post_cmd_processing(NODE_PREV(CBV_CL), CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	}
 	return 1;
 }
@@ -501,7 +501,7 @@ int do_backspace(void)
 		if (CBV_CURSOR_Y > 0) {
 			CBV_CURSOR_Y--;
 		}
-		post_cmd_processing(CBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
+		post_cmd_processing(CBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
 	} else {
 #ifdef ENABLE_UNDO
 		undo_set_region_save_before_change(CBV_CL, CBV_CL, 1);
@@ -511,7 +511,7 @@ int do_backspace(void)
 		CBV_CLBI -= bytes;
 		line_delete_string(CBV_CL, CBV_CLBI, bytes);
 		get_c_e_b()->buf_size -= bytes;
-		post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	}
 	set_cur_buf_modified();
 	return 1;
@@ -538,7 +538,7 @@ int do_delete_char(void)
 		}
 
 		get_c_e_b()->buf_size -= bytes;
-		post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	} else {
 		if (IS_NODE_BOT(CBV_CL)) {
 			// line end and the last line
@@ -557,7 +557,7 @@ int do_delete_char(void)
 
 		get_c_e_b()->buf_lines--;
 		get_c_e_b()->buf_size--;
-		post_cmd_processing(CBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
+		post_cmd_processing(CBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
 	}
 	set_cur_buf_modified();
 	return 1;
@@ -591,7 +591,7 @@ int do_conv_upp_low_letter(void)
 			byte_idx++;
 		}
 	}
-	post_cmd_processing(NULL, NO_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	return 1;
 }
 
@@ -599,7 +599,7 @@ int do_conv_upp_low_letter(void)
 
 int do_refresh_editor(void)
 {
-	post_cmd_processing(NULL, NO_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 

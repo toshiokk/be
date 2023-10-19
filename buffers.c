@@ -550,21 +550,21 @@ int do_tog_line_wrap_mode(void)
 {
 	tog_line_wrap_mode();
 	SHOW_MODE("Line-wrap mode", get_str_line_wrap_mode());
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
 int do_tog_tab_size(void)
 {
 	tog_tab_size();
 	SHOW_MODE(_("Tab size"), get_str_tab_size());
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
 int do_inc_tab_size(void)
 {
 	inc_tab_size();
 	SHOW_MODE(_("Tab size"), get_str_tab_size());
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
 int do_set_nix_file(void)

@@ -74,7 +74,7 @@ PRIVATE int editor_main_loop(void)
 	matches_clear(&matches__);
 #endif // ENABLE_REGEX
 
-	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL_SOON);
 
 	// Main input loop
 	key_input = 0;
@@ -192,7 +192,7 @@ _FLF_
 		break;
 	}
 	disp_files_loaded_ifnon0();
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
 int do_open_new_file(void)
@@ -215,7 +215,7 @@ int do_open_new_file(void)
 		return 0;
 	}
 	disp_files_loaded_ifnon0();
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 
@@ -289,7 +289,7 @@ int do_open_proj_file(void)
 		return 0;
 	}
 	disp_files_loaded();
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 
@@ -332,7 +332,7 @@ int do_reopen_file(void)
 	memorize_undo_state_before_change();
 #endif // ENABLE_DEBUG
 #endif // ENABLE_UNDO
-	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL_SOON);
 	disp_status_bar_done(_("File re-loaded"));
 	return 1;
 }
@@ -377,7 +377,7 @@ flf_d_printf("[%s]\n", file_path);
 flf_d_printf("[%s]\n", file_path);
 		break;
 	}
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	disp_status_bar_done(_("Written to the file: %s"), file_path);
 	return 0;
 }
@@ -628,7 +628,7 @@ int write_file_ask(int yes, close_after_save_t close)
 int do_editor_inc_key_list_lines(void)
 {
 	do_inc_key_list_lines_();
-	post_cmd_processing(NULL, NO_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
 //-----------------------------------------------------------------------------

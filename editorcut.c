@@ -122,7 +122,7 @@ int do_set_mark(void)
 {
 	do_set_mark_();
 
-	post_cmd_processing(NULL, NO_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	disp_status_bar_done(_("Mark Set"));
 	return 1;
 }
@@ -136,7 +136,7 @@ int do_clear_mark(void)
 {
 	do_clear_mark_();
 
-	post_cmd_processing(NULL, NO_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	disp_status_bar_done(_("Mark UNset"));
 	return 1;
 }
@@ -152,7 +152,7 @@ int do_copy_text(void)
 	if (copy_delete_paste_pop(CDPP_COPY) <= 0) {
 		return 0;
 	}
-	post_cmd_processing(NULL, NO_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	disp_status_bar_done(_("Text Copied to Cut-buffer"));
 	return 1;
 }
@@ -272,20 +272,20 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 		switch(CUR_CBUF_STATE(buf_CUT_MODE)) {
 		default:
 		case CUT_MODE_0_LINE:
-			post_cmd_processing(top_line, VERT_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+			post_cmd_processing(top_line, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 			break;
 		case CUT_MODE_H_CHAR:
 		case CUT_MODE_VH_CHAR:
-			post_cmd_processing(top_line, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+			post_cmd_processing(top_line, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 			break;
 		case CUT_MODE_N_LINE:
 		case CUT_MODE_V_LINE:
 		case CUT_MODE_HV_LINE:
-			post_cmd_processing(top_line, VERT_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+			post_cmd_processing(top_line, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 			break;
 		case CUT_MODE_HV_BOX:
 		case CUT_MODE_VH_BOX:
-			post_cmd_processing(top_line, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+			post_cmd_processing(top_line, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 			break;
 		}
 	}

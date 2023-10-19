@@ -51,13 +51,13 @@ int do_goto_input_line(void)
 	if (sscanf(string, "%d", &line_num) > 0) {
 		// go to line
 		goto_line_col_in_cur_buf(line_num, 1);
-		post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
+		post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 		return 1;
 	}
 	// go to file
 	// CURDIR: changed in editor
 	load_files_in_string(string, 1, TUL0, OOE0, MOE1, RECURSIVE0);	// file.ext:123:45
-	post_cmd_processing(NULL, VERT_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
+	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
 }
 // do_tag_jump() and change directory
@@ -73,7 +73,7 @@ int do_goto_file_in_cur_line(void)
 	// CURDIR: changed to cur-file's abs-dir
 	ret = load_files_in_string(CBV_CL->data, 10, TUL1, OOE0, MOE1, RECURSIVE1);
 	change_cur_dir(dir_save);
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
 }
 int do_goto_directory_in_cur_line(void)
@@ -92,7 +92,7 @@ int do_open_files_in_buf(void)
 	clear_files_loaded();
 	load_files_in_cur_buf();
 	disp_files_loaded();
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
 //-----------------------------------------------------------------------------
@@ -101,7 +101,7 @@ int do_switch_to_top_file(void)
 	if (switch_c_e_b_to_top() == 0) {
 		return 0;
 	}
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 int do_switch_to_bot_file(void)
@@ -109,7 +109,7 @@ int do_switch_to_bot_file(void)
 	if (switch_c_e_b_to_bot() == 0) {
 		return 0;
 	}
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 //-----------------------------------------------------------------------------
@@ -121,7 +121,7 @@ int do_switch_to_prev_file(void)
 		disp_status_bar_err(_("No previous open files"));
 		return ret;
 	}
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	disp_status_bar_done(_("Previous file"));
 	return ret;
 }
@@ -133,7 +133,7 @@ int do_switch_to_next_file(void)
 		disp_status_bar_err(_("No next open files"));
 		return ret;
 	}
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	disp_status_bar_done(_("Next file"));
 	return ret;
 }
@@ -147,7 +147,7 @@ flf_d_printf("bufs: %s\n", bufs->name);
 flf_d_printf("NODE_PREV(bufs)->name: %s\n", NODE_PREV(bufs)->name);
 flf_d_printf("NODE_PREV(bufs)->cur_buf->name: %s\n", NODE_PREV(bufs)->cur_buf->file_path);
 	set_cur_edit_buf(NODE_PREV(bufs)->cur_buf);
-	post_cmd_processing(CBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(CBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 int do_switch_to_next_buffers(void)
@@ -159,7 +159,7 @@ flf_d_printf("bufs: %s\n", bufs->name);
 flf_d_printf("NODE_NEXT(bufs)->name: %s\n", NODE_NEXT(bufs)->name);
 flf_d_printf("NODE_NEXT(bufs)->cur_buf->name: %s\n", NODE_NEXT(bufs)->cur_buf->file_path);
 	set_cur_edit_buf(NODE_NEXT(bufs)->cur_buf);
-	post_cmd_processing(CBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(CBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 #endif // ENABLE_EXPERIMENTAL
@@ -168,7 +168,7 @@ int do_return_to_prev_file_pos(void)
 {
 	recall_cur_file_pos_null(NULL);
 
-	post_cmd_processing(NULL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	do_refresh_editor();
 	disp_status_bar_done(_("Returned to previous pos"));
 	return 1;
@@ -178,7 +178,7 @@ int do_switch_editor_pane(void)
 {
 	do_switch_editor_pane_();
 ///_FLF_
-	post_cmd_processing(NULL, NO_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 ///_FLF_
 	return 1;
 }

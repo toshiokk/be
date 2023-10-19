@@ -51,7 +51,7 @@ _FLF_
 	}
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
 
-	post_cmd_processing(CUR_EDIT_BUF_TOP_NODE, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(CUR_EDIT_BUF_TOP_NODE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	disp_status_bar_done(_("File List"));
 	return 1;
 }
@@ -131,7 +131,7 @@ void make_help_buf(int help_idx)
 	CBV_CL = CUR_EDIT_BUF_TOP_NODE;
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
 	// renumber
-	post_cmd_processing(CBV_CL, HORIZ_MOVE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(CBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 
 void make_help_key_list(void)
