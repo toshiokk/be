@@ -1,5 +1,24 @@
 #### BE-editor to do list
 
+
+#### thinking
+- Which is the better practice
+	1. strict type specification uint8_t, int8_t, int16_t, int32_t
+	2. vague type specification unsigned char, char ...
+	3. typedef char color_idx, items_idx, ...
+	May be 3. is the better.
+
+Reconsideration of editor/filer 2 panes:
+  Editor 2 panes
+    - each pane has buffer refrence.
+    - current pane selector (cur_pane_idx)
+  Filer 2 panes
+    - each pane has directory refrence.
+    - current pane selector (cur_pane_idx)
+  Buffer has 2 views which is referenced from editor 2 panes
+    - each view has current position in buffer
+
+[v ] If not-modified in write_file_modified, clear [Modified] flag.
 [ ] Check object copy
 [v] Write Node policy
 [ ] Adopt Node policy
@@ -32,14 +51,14 @@
 
 [-]Improbe page-up, page-down cursow movement.
 
-[-]Self investigate which is Charactor width in Zenkaku or Hankaku charactors.
+[-]Self investigate which Charactor width in Zenkaku or Hankaku charactors.
   ==> Impossible. OS library does not treat Zenkaku char correctly.
   ==> Workaround: Treat all unbiguous char as a Zenkaku char. and
                   increment display position by 2 selfly not depending on
                   terminal display capability.
 
 [x]#bot_anchor
-[]avoid cur_line
+[]avoid cur_line became wild pointer
 
 Editor 2 pane mode
   initialize
@@ -55,7 +74,7 @@ Editor 2 pane mode
 
 []switch 1 pane when entering list-mode
 
-[]Undo後にカーソルが変更か所に移動しない。
+[v]Undo後にカーソルが変更か所に移動しない。
 []M-z (reopen_file) bug
 
 [ex]long sequence of key macro

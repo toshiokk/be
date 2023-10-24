@@ -26,7 +26,7 @@
 #define FORWARD_SEARCH		(+1)
 
 #define IGNORE_CASE			1
-#define DISTINGUISH_CASE	0
+#define CASE_SENSITIVE		0
 
 #define NO_SKIP				0
 #define SKIP				1
@@ -71,11 +71,9 @@ typedef struct {
 void search_clear(search_t *search);
 int search_is_needle_set(search_t *search);
 int search_str_in_line(search_t *search, matches_t *matches,
- const char *needle, int search_dir, int ignore_case,
- const char *haystack, int byte_idx);
+ const char *needle, int search_dir, int ignore_case, const char *haystack, int byte_idx);
 int search_str_in_line_strstr(const char *needle, matches_t *matches,
- int search_dir, int ignore_case,
- const char *haystack, int byte_idx);
+ int search_dir, int ignore_case, const char *haystack, int byte_idx);
 #ifdef ENABLE_REGEX
 int search_str_in_line_regexp(regexp_t *regexp, regexp_matches_t *regexp_matches,
  const char *needle, int search_dir, int ignore_case,

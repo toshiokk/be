@@ -45,7 +45,7 @@ func_key_table_t editor_func_key_table[] = {
    0,F_I(do_write_file_always), NULL },
  { "Write All",       "Write all files",                K_M_a,        NKA, NKA,
    0,F_I(do_write_all_ask), NULL },
- { "Write All Modif.","Write all files modified",       K_M_A,        NKA, NKA,
+ { "Write All Modif.","Write all files modified",       K_M_A, K_M_S,      NKA,
    0,F_I(do_write_all_modified), NULL },
  { "Close",           "Close file",                     K_C_Q,        NKA, NKA,
    1,F_I(do_close_file_ask), NULL },

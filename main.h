@@ -25,7 +25,7 @@
 // space for displaying one func key
 #define KEY_LIST_LEN		(1 + 10 + 1)
 
-// columns to set two panes mode at start up
+// If screen columns is wider than this value, set two panes mode at start up
 ///#define SCRN_COLS_TWO_PANES		120
 
 #if 0

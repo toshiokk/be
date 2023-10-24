@@ -27,8 +27,13 @@ item_color_t item_colors[MAX_ITEM_COLORS];
 item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	//  bgc, fgc
 	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_DEFAULT)			},
+#ifndef ENABLE_EXPERIMENTAL
 	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_TITLE)				},
 	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_STATUS)			},
+#else // ENABLE_EXPERIMENTAL
+	{ CL_GR, CL_BL, S(ITEM_COLOR_IDX_TITLE)				},
+	{ CL_GR, CL_BL, S(ITEM_COLOR_IDX_STATUS)			},
+#endif // ENABLE_EXPERIMENTAL
 	{ CL_WH, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
 	{ CL_BK, CL_BR, S(ITEM_COLOR_IDX_KEY_LIST2)			},
 	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL)		},
@@ -67,7 +72,7 @@ int is_work_space_color_low(void)
 
 //-----------------------------------------------------------------------------
 
-// register color
+// register item color
 void register_item_color(item_color_idx_t color_idx, int bgc, int fgc)
 {
 flf_d_printf("(%d bgc:%d, fgc:%d)\n", color_idx, bgc, fgc);
@@ -77,7 +82,15 @@ flf_d_printf("(%d bgc:%d, fgc:%d)\n", color_idx, bgc, fgc);
 	}
 }
 
-// set current color
+// get item color
+void get_color_by_idx(item_color_idx_t color_idx, char *fgc, char *bgc)
+{
+	if (0 <= color_idx && color_idx < MAX_ITEM_COLORS) {
+		*bgc = item_colors[color_idx].bgc;
+		*fgc = item_colors[color_idx].fgc;
+	}
+}
+// set current color by item_idx
 void set_color_by_idx(item_color_idx_t color_idx, int reverse)
 {
 	int bgc;
@@ -97,13 +110,9 @@ void set_color_by_idx(item_color_idx_t color_idx, int reverse)
 	}
 }
 
-void set_color_attrs_ptr(const item_color_t *color)
+void set_item_color(const item_color_t *item_color)
 {
-	tio_set_attrs(color->bgc, color->fgc, 0);
-}
-void set_color_attrs_rev(int rev)
-{
-	tio_set_attrs(-1, -1, rev);
+	tio_set_attrs(item_color->bgc, item_color->fgc, 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -119,7 +128,7 @@ int set_file_type_by_cur_file_path(void)
 {
 	int ret;
 
-	if ((ret = set_file_type_by_file_name(get_c_e_b()->file_path)) != 0) {
+	if ((ret = set_file_type_by_file_name(get_cep_buf()->file_path)) != 0) {
 		CUR_EBUF_STATE(buf_TAB_SIZE) = cur_file_type->tab_size;
 	}
 	return ret;
@@ -206,15 +215,27 @@ PRIVATE void display_color_pattern(int yy, int xx, int reverse)
 int display_item_colors(int yy, int xx)
 {
 	int item_idx;
-	item_color_t *item_color;
 	char buffer[MAX_PATH_LEN+1];
 
 	for (item_idx = 0; item_idx < MAX_ITEM_COLORS; item_idx++) {
-		item_color = &item_colors[item_idx];
-		tio_set_attrs(item_color->bgc, item_color->fgc, 0);
+		set_color_by_idx(item_idx, 0);
 		snprintf(buffer, MAX_PATH_LEN, "%2d: %-40s",
 		 item_idx, default_item_colors[item_idx].item_name);
 		tio_output_string(main_win_get_mid_win_y() + yy + item_idx, xx + 0, buffer, -1);
+	}
+	tio_refresh();
+	return 0;
+}
+int display_bracket_hl_colors(int yy, int xx)
+{
+	int color_idx;
+	char fgc, bgc;
+	char buffer[MAX_PATH_LEN+1];
+
+	for (color_idx = 0; color_idx < get_colors_for_bracket_hl(); color_idx++) {
+		set_color_for_bracket_hl(color_idx);
+		snprintf(buffer, MAX_PATH_LEN, "%2d: ([{<>}])", color_idx);
+		tio_output_string(main_win_get_mid_win_y() + yy + color_idx, xx + 0, buffer, -1);
 	}
 	tio_refresh();
 	return 0;

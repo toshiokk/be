@@ -31,8 +31,7 @@ int search_is_needle_set(search_t *search)
 }
 
 int search_str_in_line(search_t *search, matches_t *matches,
- const char *needle, int search_dir, int ignore_case,
- const char *haystack, int byte_idx)
+ const char *needle, int search_dir, int ignore_case, const char *haystack, int byte_idx)
 {
 	int match_len;
 
@@ -55,6 +54,7 @@ int search_str_in_line(search_t *search, matches_t *matches,
 		 regexp_matches_end_idx(&matches->regexp_matches, 0));
 	}
 #endif // ENABLE_REGEX
+////flf_d_printf("haystack: [%s], needle: [%s], dir: %d ==> match_len: %d\n", &haystack[byte_idx], needle, search_dir, match_len);
 	return match_len;	// >0: match
 }
 
@@ -113,8 +113,7 @@ void matches_dump_matches(matches_t *matches)
 
 #ifdef ENABLE_REGEX
 int search_str_in_line_regexp(regexp_t *regexp, regexp_matches_t *regexp_matches,
- const char *needle, int search_dir, int ignore_case,
- const char *haystack, int byte_idx)
+ const char *needle, int search_dir, int ignore_case, const char *haystack, int byte_idx)
 {
 	int cflags = ignore_case ? REG_ICASE : 0;
 	int ret;
@@ -169,8 +168,7 @@ PRIVATE const char *revstristr(const char *haystack, const char *tail_of_haystac
 PRIVATE const char *stristr(const char *haystack, const char *needle);
 
 int search_str_in_line_strstr(const char *needle, matches_t *matches,
- int search_dir, int ignore_case,
- const char *haystack, int byte_idx)
+ int search_dir, int ignore_case, const char *haystack, int byte_idx)
 {
 	const char *match_start;
 
@@ -269,30 +267,31 @@ void test_regexp(void)
 	flf_d_printf("regexp library: glibc POSIX ERE(Extended Regular Expression)\n");
 #endif // USE_PCRE
 
+	regexp_init(&regexp);
+
 	// test tab, EOL match
 	needle = "\\t\\n";
 	haystack = "aaa\t\nbbbtnccc";
-	regexp_init(&regexp);
 	ret = regexp_search(&regexp, &regexp_matches, needle, haystack, 0, REG_NONE, REG_NONE, 3);
 	flf_d_printf("ret: %d\n", ret);
 	regexp_dump_matches(&regexp, &regexp_matches, haystack);
 
 	needle = "\\t";
 	haystack = "aaa\t\nbbbtnccc";
-	regexp_init(&regexp);
+	////regexp_init(&regexp);
 	ret = regexp_search(&regexp, &regexp_matches, needle, haystack, 0, REG_NONE, REG_NONE, 3);
 	flf_d_printf("ret: %d\n", ret);
 	regexp_dump_matches(&regexp, &regexp_matches, haystack);
 
 	needle = "\\n";
 	haystack = "aaa\t\nbbbtnccc";
-	regexp_init(&regexp);
+	////regexp_init(&regexp);
 	ret = regexp_search(&regexp, &regexp_matches, needle, haystack, 0, REG_NONE, REG_NONE, 3);
 	flf_d_printf("ret: %d\n", ret);
 	regexp_dump_matches(&regexp, &regexp_matches, haystack);
 
 	// test replacement in sub-expression
-	regexp_init(&regexp);
+	////regexp_init(&regexp);
 // REGEX: "abc(def|ghi)(jkl|mno)pqr" REPLACE-TO: "123\\2\\1456"
 // INPUT-TEXT: "abcghijklpqr" OUTPUT-TEXT: "123jklghi456"
 	needle = "abc(def|ghi)(jkl|mno)pqr";

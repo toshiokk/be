@@ -24,16 +24,16 @@
 
 #ifdef ENABLE_FILER
 
-#define FILER_VIEWS		MAX_APP_PANES
+#define FILER_PANES		MAX_APP_PANES_2
 
 typedef struct {
 	char org_cur_dir[MAX_PATH_LEN+1];	// original current directory
-	int view_idx;						// -1: filer_panes not initialized
-	filer_view_t filer_views[FILER_VIEWS];
+	int cur_pane_idx;					// 0: Left, 1: Right
+	filer_view_t filer_views[FILER_PANES];
 } filer_panes_t;
 
-extern filer_panes_t *cur_filer_panes;	// Current Filer ViewS
-extern filer_view_t *cur_fv;	// Current Filer View
+extern filer_panes_t *cur_filer_panes;	// Current Filer ViewS (instance is allocated locally)
+/////extern filer_view_t *cur_fv;	// Current Filer View
 
 #define FILER_DO_NOTHING			0
 #define FILER_DO_UPDATE_SCREEN		1
@@ -48,8 +48,11 @@ extern filer_view_t *cur_fv;	// Current Filer View
 #define FILER_DO_ENTERED_DIR_PATH	10	// /home/user/bin
 extern int filer_do_next;
 
-void init_filer_panes(filer_panes_t *fvs, const char *cur_dir);
-void set_cur_filer_view(void);
+void init_filer_panes(filer_panes_t *fps, const char *cur_dir);
+void set_filer_cur_pane_idx(int cur_pane_idx);
+int get_filer_cur_pane_idx();
+filer_view_t *get_filer_view(int pane_idx);
+filer_view_t *get_cur_filer_view(void);
 filer_view_t *get_other_filer_view(void);
 
 int call_filer(int push_win, int list_mode,

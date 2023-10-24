@@ -270,6 +270,10 @@ void tio_set_attrs(int bgc, int fgc, int rev)
 	termif_set_attrs(bgc, fgc, rev);
 #endif // ENABLE_NCURSES
 }
+void tio_set_attr_rev(int rev)
+{
+	tio_set_attrs(-1, -1, rev);
+}
 
 void tio_set_cursor_on(int on_off)
 {

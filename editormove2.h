@@ -82,7 +82,7 @@ void fix_buf_state_after_cursor_horiz_move(void);
 void fix_buf_state_after_cursor_vert_move(void);
 
 void update_min_text_x_to_keep(int text_x);
-int get_c_b_v_min_text_x_to_keep(void);
+int get_cep_buf_view_min_text_x_to_keep(void);
 
 void set_disable_update_min_x_to_keep();
 void clear_disable_update_min_x_to_keep();

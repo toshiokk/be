@@ -134,12 +134,6 @@ flf_d_printf("CALL_EDITOR_FUNC [%s]\n", func_key_table->func_id);
 				// all files closed on edit mode, exit editor
 				break;
 			}
-		} else {
-			// list mode
-///			if (get_c_e_b() != EDIT_BUFS_TOP_ANCH) {
-///				// get_c_e_b() does not point list buffer in list-mode, exit editor to avoid crash
-///				break;
-///			}
 		}
 		if (editor_quit) {
 			break;
@@ -355,7 +349,7 @@ int do_write_file_to(void)
 	char file_path[MAX_PATH_LEN+1] = "";
 	char org_file_path[MAX_PATH_LEN+1] = "";
 
-	strlcpy__(file_path, get_c_e_b()->file_path, MAX_PATH_LEN);
+	strlcpy__(file_path, get_cep_buf()->file_path, MAX_PATH_LEN);
 flf_d_printf("[%s]\n", file_path);
 	while (1) {
 		if (input_new_file_name_n_ask(file_path) <= 0) {
@@ -367,11 +361,11 @@ flf_d_printf("[%s]\n", file_path);
 			continue;
 #endif // ENABLE_FILER
 flf_d_printf("[%s]\n", file_path);
-		buf_get_file_path(get_c_e_b(), org_file_path);
-		buf_set_file_path(get_c_e_b(), file_path);	// set new file name
+		buf_get_file_path(get_cep_buf(), org_file_path);
+		buf_set_file_path(get_cep_buf(), file_path);	// set new file name
 		if (backup_and_save_cur_buf(file_path) < 0) {
 flf_d_printf("[%s]\n", file_path);
-			buf_set_file_path(get_c_e_b(), org_file_path);
+			buf_set_file_path(get_cep_buf(), org_file_path);
 			return -1;
 		}
 flf_d_printf("[%s]\n", file_path);
@@ -476,6 +470,7 @@ int do_editor_display_color_pairs(void)
 #ifdef ENABLE_DEBUG
 	input_key_loop();
 	display_item_colors(0, 0);
+	display_bracket_hl_colors(0, 40);
 #endif // ENABLE_DEBUG
 	return 0;
 }
@@ -593,6 +588,7 @@ int write_file_ask(int yes, close_after_save_t close)
 	int ret = yes;
 
 	if (yes < ANSWER_FORCE && check_cur_buf_modified() == 0) {
+		clear_cur_buf_modified();	// buffer is acctually NOT modified, so clear "modified" flag
 		disp_status_bar_done(_("Buffer is NOT modified"));
 		return ANSWER_NO;
 	}
@@ -693,8 +689,8 @@ int update_screen_editor(int title_bar, int status_bar, int refresh)
 			disp_edit_win(1);
 		}
 	} else {									// 2 panes
-		cur_pane_idx = get_cur_editor_view_idx();
-		for (pane_sel_idx = 0; pane_sel_idx < BUF_VIEWS; pane_sel_idx++) {
+		cur_pane_idx = get_editor_cur_pane_idx();
+		for (pane_sel_idx = 0; pane_sel_idx < EDITOR_PANES; pane_sel_idx++) {
 			// 1st, update not current pane.
 			// 2nd, update current pane.
 			if (pane_sel_idx == 0) {
@@ -713,7 +709,7 @@ int update_screen_editor(int title_bar, int status_bar, int refresh)
 				set_work_space_color_normal();
 			}
 ///flf_d_printf("pane_sel_idx: %d, pane_idx: %d\n", pane_sel_idx, pane_idx);
-			set_cur_editor_view_idx(pane_idx);
+			set_editor_cur_pane_idx(pane_idx);
 			if (get_edit_win_update_needed()) {
 				disp_edit_win(pane_sel_idx);
 			}
@@ -748,21 +744,21 @@ int disp_status_bar_editor(void)
 	char buf_lines_sel[SEL_LINES_LEN] = "";
 	char buffer[MAX_EDIT_LINE_LEN+1];
 
-	xx = col_idx_from_byte_idx(CBV_CL->data, 0, CBV_CLBI) + 1;
-	disp_len = col_idx_from_byte_idx(CBV_CL->data, 0, MAX_EDIT_LINE_LEN) + 1;
+	xx = col_idx_from_byte_idx(CEPBV_CL->data, 0, CEPBV_CLBI) + 1;
+	disp_len = col_idx_from_byte_idx(CEPBV_CL->data, 0, MAX_EDIT_LINE_LEN) + 1;
 
 	strcpy__(buf_char_code, "");
-	bytes = utf8c_bytes(&CBV_CL->data[CBV_CLBI]);
+	bytes = utf8c_bytes(&CEPBV_CL->data[CEPBV_CLBI]);
 	for (byte_idx = 0; byte_idx < bytes; byte_idx++) {
 		snprintf(&buf_char_code[strnlen(buf_char_code, UTF8_CODE_LEN)], 3+1,
 		 byte_idx == 0 ? "%02x" : "-%02x",
-		 (unsigned char)CBV_CL->data[CBV_CLBI + byte_idx]);
+		 (unsigned char)CEPBV_CL->data[CEPBV_CLBI + byte_idx]);
 	}
 #ifdef ENABLE_UTF8
 	// show Unicode
 	if (bytes >= 2) {
 		snprintf(&buf_char_code[strnlen(buf_char_code, UTF8_CODE_LEN)], 8+1, "(U+%04x)",
-		 (unsigned int)utf8c_decode(&CBV_CL->data[CBV_CLBI]));
+		 (unsigned int)utf8c_decode(&CEPBV_CL->data[CEPBV_CLBI]));
 	}
 #endif // ENABLE_UTF8
 
@@ -773,10 +769,10 @@ int disp_status_bar_editor(void)
 	strcpy__(buffer, "");
 	strlcat__(buffer, MAX_EDIT_LINE_LEN,
 	 _("LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"));
-	disp_status_bar_percent_editor(CBV_CL->line_num-1, get_c_e_b()->buf_lines-1,
-	 buffer, CBV_CL->line_num, get_c_e_b()->buf_lines, xx, disp_len,
-	 get_c_e_b()->buf_size, buf_lines_sel, buf_char_code,
-	 buf_encode_str(get_c_e_b()), buf_eol_str(get_c_e_b()));
+	disp_status_bar_percent_editor(CEPBV_CL->line_num-1, get_cep_buf()->buf_lines-1,
+	 buffer, CEPBV_CL->line_num, get_cep_buf()->buf_lines, xx, disp_len,
+	 get_cep_buf()->buf_size, buf_lines_sel, buf_char_code,
+	 buf_encode_str(get_cep_buf()), buf_eol_str(get_cep_buf()));
 	return 1;
 }
 
@@ -828,7 +824,7 @@ int is_app_list_mode(void)
 
 int is_view_mode_then_warn_it(void)
 {
-	if (IS_NODE_TOP_ANCH(c_e_b) || IS_NODE_BOT_ANCH(c_e_b)) {
+	if (IS_NODE_TOP_ANCH(get_cep_buf()) || IS_NODE_BOT_ANCH(get_cep_buf())) {
 		disp_status_bar_done(_("Modification not allowed in Anchor buffer"));
 		return 1;
 	}
@@ -848,11 +844,11 @@ int is_view_mode_then_warn_it(void)
 #ifdef ENABLE_DEBUG
 void dump_cur_pointers(void)
 {
-	flf_d_printf("%d:[%s]\n", CBV_CL->line_num, CBV_CL->data);
-	flf_d_printf("CBV_CLBI:%d\n", CBV_CLBI);
-	flf_d_printf("cursor_y:%d\n", CBV_CURSOR_Y);
-	flf_d_printf("cursor_x_to_keep:%d\n", CBV_CURSOR_X_TO_KEEP);
-	flf_d_printf("min_text_x_to_keep:%d\n", CBV_MIN_TEXT_X_TO_KEEP);
+	flf_d_printf("%d:[%s]\n", CEPBV_CL->line_num, CEPBV_CL->data);
+	flf_d_printf("CEPBV_CLBI:%d\n", CEPBV_CLBI);
+	flf_d_printf("cursor_y:%d\n", CEPBV_CURSOR_Y);
+	flf_d_printf("cursor_x_to_keep:%d\n", CEPBV_CURSOR_X_TO_KEEP);
+	flf_d_printf("min_text_x_to_keep:%d\n", CEPBV_MIN_TEXT_X_TO_KEEP);
 }
 #endif // ENABLE_DEBUG
 

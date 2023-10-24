@@ -46,7 +46,7 @@ Splash screen (en)
 ## Features
 ### Text editor
 - Multiple buffer. (load multiple files)
-- Two pane mode support. (edit different files in each pane)
+- Two panes mode support. (edit different files in each pane)
 - Syntax highlighting. (C, C++, asm, ruby, verilog-hdl, vhdl, html)
 - Global key word Search and Replace (within multiple files).
 - Project file support. (load many files by opening one project file)

@@ -66,7 +66,7 @@ _FLF_
 	init_buffers();		// parse_options() needs c_e_b. So do here.
 #ifdef ENABLE_FILER
 	init_filer_panes(&filer_panes, get_start_dir());
-	set_cur_filer_view();
+	////set_cur_filer_view();
 #endif // ENABLE_FILER
 _FLF_
 	parse_options(argc, argv);		// parse command line options
@@ -529,10 +529,10 @@ void app_die_on(const char *msg)
 
 	// then save all of the modified buffers, if any
 	for (buf = EDIT_BUFS_TOP_NODE; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
-		set_cur_edit_buf(buf);
+		set_cep_buf(buf);
 		if (check_cur_buf_modified()) {
 			// save the file if it's been modified
-			die_save_file(get_c_e_b()->abs_path);
+			die_save_file(get_cep_buf()->abs_path);
 		}
 	}
 

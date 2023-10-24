@@ -68,18 +68,18 @@ PRIVATE int get_char_type(char chr)
 // go to previous word
 int do_prev_word(void)
 {
-	if (CBV_CLBI > 0) {
+	if (CEPBV_CLBI > 0) {
 		// is head of the word ?
-		if (get_char_type(CBV_CL->data[CBV_CLBI-1])
-		  == get_char_type(CBV_CL->data[CBV_CLBI])) {
+		if (get_char_type(CEPBV_CL->data[CEPBV_CLBI-1])
+		  == get_char_type(CEPBV_CL->data[CEPBV_CLBI])) {
 			// not head of the word
 		} else {
 			// head of the word
 			move_cursor_left(1);
 		}
-		while (CBV_CLBI > 0
-		 && (get_char_type(CBV_CL->data[CBV_CLBI-1])
-		  == get_char_type(CBV_CL->data[CBV_CLBI])) ) {
+		while (CEPBV_CLBI > 0
+		 && (get_char_type(CEPBV_CL->data[CEPBV_CLBI-1])
+		  == get_char_type(CEPBV_CL->data[CEPBV_CLBI])) ) {
 			move_cursor_left(1);
 		}
 	} else {
@@ -95,12 +95,12 @@ int do_next_word(void)
 {
 	int chr_type;
 
-	if (CBV_CL->data[CBV_CLBI]) {
+	if (CEPBV_CL->data[CEPBV_CLBI]) {
 		// skip current block
-		chr_type = get_char_type(CBV_CL->data[CBV_CLBI]);
+		chr_type = get_char_type(CEPBV_CL->data[CEPBV_CLBI]);
 		// move to the beginning of the next block
-		while (CBV_CL->data[CBV_CLBI]
-		 && chr_type == get_char_type(CBV_CL->data[CBV_CLBI]))
+		while (CEPBV_CL->data[CEPBV_CLBI]
+		 && chr_type == get_char_type(CEPBV_CL->data[CEPBV_CLBI]))
 			move_cursor_right();
 	} else {
 		// if end of the line, move to the top of the next line
@@ -113,7 +113,7 @@ int do_next_word(void)
 
 int do_start_of_line(void)
 {
-	CBV_CLBI = 0;
+	CEPBV_CLBI = 0;
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	return 1;
@@ -121,7 +121,7 @@ int do_start_of_line(void)
 
 int do_end_of_line(void)
 {
-	CBV_CLBI = line_data_len(CBV_CL);
+	CEPBV_CLBI = line_data_len(CEPBV_CL);
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	return 1;
@@ -144,8 +144,8 @@ int do_up(void)
 }
 PRIVATE void do_up_(void)
 {
-	if (c_l_up(&CBV_CL, &CBV_CLBI)) {
-		CBV_CURSOR_Y--;
+	if (c_l_up(&CEPBV_CL, &CEPBV_CLBI)) {
+		CEPBV_CURSOR_Y--;
 		top_bottom_of_file = TBF_NONE;
 	} else {
 		top_bottom_of_file = TBF_TOP;
@@ -167,8 +167,8 @@ int do_down(void)
 }
 PRIVATE void do_down_(void)
 {
-	if (c_l_down(&CBV_CL, &CBV_CLBI)) {
-		CBV_CURSOR_Y++;
+	if (c_l_down(&CEPBV_CL, &CEPBV_CLBI)) {
+		CEPBV_CURSOR_Y++;
 		top_bottom_of_file = TBF_NONE;
 	} else {
 		top_bottom_of_file = TBF_BOTTOM;
@@ -194,7 +194,7 @@ PRIVATE void do_page_up_(void)
 	int lines;
 	int cnt;
 
-	if (c_l_up(&CBV_CL, &CBV_CLBI) == 0) {
+	if (c_l_up(&CEPBV_CL, &CEPBV_CLBI) == 0) {
 		if (top_bottom_of_file == TBF_TOP) {
 			// already top of buffer, go to the previous buffer's last line
 			top_bottom_of_file = TBF_NONE;
@@ -204,11 +204,11 @@ PRIVATE void do_page_up_(void)
 			}
 		}
 	} else {
-///		lines = (CBV_CURSOR_Y - TOP_SCROLL_MARGIN_IDX) + EDITOR_VERT_SCROLL_LINES - 1;
+///		lines = (CEPBV_CURSOR_Y - TOP_SCROLL_MARGIN_IDX) + EDITOR_VERT_SCROLL_LINES - 1;
 		lines = EDITOR_VERT_SCROLL_LINES - 1;
 		for (cnt = 0; cnt < lines; cnt++) {
-			CBV_CURSOR_Y--;
-			if (c_l_up(&CBV_CL, &CBV_CLBI) == 0) {
+			CEPBV_CURSOR_Y--;
+			if (c_l_up(&CEPBV_CL, &CEPBV_CLBI) == 0) {
 				break;
 			}
 		}
@@ -234,7 +234,7 @@ PRIVATE int do_page_down_(void)
 	int lines;
 	int cnt;
 
-	if (c_l_down(&CBV_CL, &CBV_CLBI) == 0) {
+	if (c_l_down(&CEPBV_CL, &CEPBV_CLBI) == 0) {
 		if (top_bottom_of_file == TBF_BOTTOM) {
 			// already bottom of buffer, go to the next buffer's top line
 			top_bottom_of_file = TBF_NONE;
@@ -244,11 +244,11 @@ PRIVATE int do_page_down_(void)
 			}
 		}
 	} else {
-///		lines = (BOTTOM_SCROLL_MARGIN_IDX - CBV_CURSOR_Y) + EDITOR_VERT_SCROLL_LINES - 1;
+///		lines = (BOTTOM_SCROLL_MARGIN_IDX - CEPBV_CURSOR_Y) + EDITOR_VERT_SCROLL_LINES - 1;
 		lines = EDITOR_VERT_SCROLL_LINES - 1;
 		for (cnt = 0; cnt < lines; cnt++) {
-			CBV_CURSOR_Y++;
-			if (c_l_down(&CBV_CL, &CBV_CLBI) == 0) {
+			CEPBV_CURSOR_Y++;
+			if (c_l_down(&CEPBV_CL, &CEPBV_CLBI) == 0) {
 				break;
 			}
 		}
@@ -265,7 +265,7 @@ int do_first_line(void)
 }
 int do_last_line(void)
 {
-	CBV_CL = CUR_EDIT_BUF_BOT_NODE;
+	CEPBV_CL = CUR_EDIT_BUF_BOT_NODE;
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_BOTTOM, UPDATE_SCRN_ALL);
 	return 1;
 }
@@ -394,7 +394,7 @@ flf_d_printf("[%s]\n", utf8s);
 	}
 ///_FLF_
 #ifdef ENABLE_UNDO
-	undo_set_region_save_before_change(CBV_CL, CBV_CL, 1);
+	undo_set_region_save_before_change(CEPBV_CL, CEPBV_CL, 1);
 #endif // ENABLE_UNDO
 
 	bytes_str = strnlen(utf8s, MAX_PATH_LEN);
@@ -420,13 +420,13 @@ PRIVATE int do_enter_utf8c(const char *utf8c)
 
 flf_d_printf("[%s]\n", utf8c);
 	bytes_insert = strnlen(utf8c, MAX_UTF8C_BYTES);
-	if (line_data_len(CBV_CL) + bytes_insert > MAX_EDIT_LINE_LEN) {
+	if (line_data_len(CEPBV_CL) + bytes_insert > MAX_EDIT_LINE_LEN) {
 		// exceeds MAX_EDIT_LINE_LEN, do not enter
 		return 0;
 	}
-	line_insert_string(CBV_CL, CBV_CLBI, utf8c, bytes_insert);
-	CBV_CLBI += bytes_insert;
-	get_c_e_b()->buf_size += bytes_insert;
+	line_insert_string(CEPBV_CL, CEPBV_CLBI, utf8c, bytes_insert);
+	CEPBV_CLBI += bytes_insert;
+	get_cep_buf()->buf_size += bytes_insert;
 
 	set_cur_buf_modified();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
@@ -448,33 +448,33 @@ int do_carriage_return(void)
 		return 0;
 
 #ifdef ENABLE_UNDO
-	undo_set_region_save_before_change(CBV_CL, CBV_CL, 1);
+	undo_set_region_save_before_change(CEPBV_CL, CEPBV_CL, 1);
 #endif // ENABLE_UNDO
 
 	set_cur_buf_modified();
 	// >aaaa^bbbb
-	line_separate(CBV_CL, CBV_CLBI, INSERT_BEFORE);
-	CBV_CLBI = 0;
+	line_separate(CEPBV_CL, CEPBV_CLBI, INSERT_BEFORE);
+	CEPBV_CLBI = 0;
 	//  aaaa
 	// >^bbbb
 
 	if (GET_APPMD(ed_AUTO_INDENT)) {
 		// autoindent: auto insert the previous lines preceeding spaces to the next line
-		ptr_s = NODE_PREV(CBV_CL)->data;
+		ptr_s = NODE_PREV(CEPBV_CL)->data;
 		SKIP_SPACE(ptr_s);
-		ptr_d = CBV_CL->data; 
+		ptr_d = CEPBV_CL->data; 
 		SKIP_SPACE(ptr_d);
-		len_s = ptr_s - NODE_PREV(CBV_CL)->data;
-		len_d = ptr_d - CBV_CL->data;
-		line_replace_string(CBV_CL, 0, len_d, NODE_PREV(CBV_CL)->data, len_s);
-		CBV_CLBI = len_s;
+		len_s = ptr_s - NODE_PREV(CEPBV_CL)->data;
+		len_d = ptr_d - CEPBV_CL->data;
+		line_replace_string(CEPBV_CL, 0, len_d, NODE_PREV(CEPBV_CL)->data, len_s);
+		CEPBV_CLBI = len_s;
 	}
 
-	if (CBV_CURSOR_Y < BOTTOM_SCROLL_MARGIN_IDX) {
-		CBV_CURSOR_Y++;
-		post_cmd_processing(NODE_PREV(CBV_CL), CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
+	if (CEPBV_CURSOR_Y < BOTTOM_SCROLL_MARGIN_IDX) {
+		CEPBV_CURSOR_Y++;
+		post_cmd_processing(NODE_PREV(CEPBV_CL), CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
 	} else {
-		post_cmd_processing(NODE_PREV(CBV_CL), CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+		post_cmd_processing(NODE_PREV(CEPBV_CL), CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	}
 	return 1;
 }
@@ -487,30 +487,30 @@ int do_backspace(void)
 	if (is_view_mode_then_warn_it())
 		return 0;
 ///_D_(dump_editor_panes());
-	if (CBV_CLBI <= 0) {
-		if (IS_NODE_TOP(CBV_CL)) {
+	if (CEPBV_CLBI <= 0) {
+		if (IS_NODE_TOP(CEPBV_CL)) {
 			// top of file, can not backspace
 			return 0;
 		}
 		// line top, concatenate to the previous line
 #ifdef ENABLE_UNDO
-		undo_set_region_save_before_change(NODE_PREV(CBV_CL), CBV_CL, 1);
+		undo_set_region_save_before_change(NODE_PREV(CEPBV_CL), CEPBV_CL, 1);
 #endif // ENABLE_UNDO
-		CBV_CLBI = line_data_len(NODE_PREV(CBV_CL));
-		CBV_CL = line_concat_with_prev(CBV_CL);
-		if (CBV_CURSOR_Y > 0) {
-			CBV_CURSOR_Y--;
+		CEPBV_CLBI = line_data_len(NODE_PREV(CEPBV_CL));
+		CEPBV_CL = line_concat_with_prev(CEPBV_CL);
+		if (CEPBV_CURSOR_Y > 0) {
+			CEPBV_CURSOR_Y--;
 		}
-		post_cmd_processing(CBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
+		post_cmd_processing(CEPBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
 	} else {
 #ifdef ENABLE_UNDO
-		undo_set_region_save_before_change(CBV_CL, CBV_CL, 1);
+		undo_set_region_save_before_change(CEPBV_CL, CEPBV_CL, 1);
 #endif // ENABLE_UNDO
 		// not line top, delete character
-		bytes = utf8c_prev_bytes(CBV_CL->data, &CBV_CL->data[CBV_CLBI]);
-		CBV_CLBI -= bytes;
-		line_delete_string(CBV_CL, CBV_CLBI, bytes);
-		get_c_e_b()->buf_size -= bytes;
+		bytes = utf8c_prev_bytes(CEPBV_CL->data, &CEPBV_CL->data[CEPBV_CLBI]);
+		CEPBV_CLBI -= bytes;
+		line_delete_string(CEPBV_CL, CEPBV_CLBI, bytes);
+		get_cep_buf()->buf_size -= bytes;
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	}
 	set_cur_buf_modified();
@@ -525,39 +525,39 @@ int do_delete_char(void)
 	if (is_view_mode_then_warn_it())
 		return 0;
 
-	if (CBV_CLBI < line_data_len(CBV_CL)) {
+	if (CEPBV_CLBI < line_data_len(CEPBV_CL)) {
 		// not line end
 #ifdef ENABLE_UNDO
-		undo_set_region_save_before_change(CBV_CL, CBV_CL, 1);
+		undo_set_region_save_before_change(CEPBV_CL, CEPBV_CL, 1);
 #endif // ENABLE_UNDO
-		bytes = utf8c_bytes(&CBV_CL->data[CBV_CLBI]);
-		line_delete_string(CBV_CL, CBV_CLBI, bytes);
-		if (CEB_ML == CBV_CL && CBV_CLBI < CEB_MLBI) {
+		bytes = utf8c_bytes(&CEPBV_CL->data[CEPBV_CLBI]);
+		line_delete_string(CEPBV_CL, CEPBV_CLBI, bytes);
+		if (CEPB_ML == CEPBV_CL && CEPBV_CLBI < CEPB_MLBI) {
 			// adjust mark position
-			CEB_MLBI -= bytes;
+			CEPB_MLBI -= bytes;
 		}
 
-		get_c_e_b()->buf_size -= bytes;
+		get_cep_buf()->buf_size -= bytes;
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	} else {
-		if (IS_NODE_BOT(CBV_CL)) {
+		if (IS_NODE_BOT(CEPBV_CL)) {
 			// line end and the last line
 			return 0;
 		}
 		// line end, concatenate with the next line
 #ifdef ENABLE_UNDO
-		undo_set_region_save_before_change(CBV_CL, NODE_NEXT(CBV_CL), 1);
+		undo_set_region_save_before_change(CEPBV_CL, NODE_NEXT(CEPBV_CL), 1);
 #endif // ENABLE_UNDO
-		if (CEB_ML == NODE_NEXT(CBV_CL)) {
+		if (CEPB_ML == NODE_NEXT(CEPBV_CL)) {
 			// next line will be freed, adjust mark position
-			CEB_ML = CBV_CL;
-			CEB_MLBI += line_data_len(CEB_ML);
+			CEPB_ML = CEPBV_CL;
+			CEPB_MLBI += line_data_len(CEPB_ML);
 		}
-		line_concat_with_next(CBV_CL);
+		line_concat_with_next(CEPBV_CL);
 
-		get_c_e_b()->buf_lines--;
-		get_c_e_b()->buf_size--;
-		post_cmd_processing(CBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
+		get_cep_buf()->buf_lines--;
+		get_cep_buf()->buf_size--;
+		post_cmd_processing(CEPBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
 	}
 	set_cur_buf_modified();
 	return 1;
@@ -573,11 +573,11 @@ int do_conv_upp_low_letter(void)
 	do_clear_mark_();
 	if (is_view_mode_then_warn_it())
 		return 0;
-	byte_idx = CBV_CLBI;
-	data = CBV_CL->data;
+	byte_idx = CEPBV_CLBI;
+	data = CEPBV_CL->data;
 	if (isalpha(data[byte_idx])) {
 #ifdef ENABLE_UNDO
-		undo_set_region_save_before_change(CBV_CL, NODE_NEXT(CBV_CL), 1);
+		undo_set_region_save_before_change(CEPBV_CL, NODE_NEXT(CEPBV_CL), 1);
 #endif // ENABLE_UNDO
 		first_chr = data[byte_idx];
 		while ((chr = data[byte_idx]) != '\0') {
@@ -609,25 +609,25 @@ int move_cursor_left(int move_disp_y)
 {
 	int wl_idx;
 
-	if (CBV_CLBI <= 0) {
+	if (CEPBV_CLBI <= 0) {
 		// line top
-		if (IS_NODE_TOP(CBV_CL)) {
+		if (IS_NODE_TOP(CEPBV_CL)) {
 			return 0;
 		}
-		CBV_CL = NODE_PREV(CBV_CL);
-		CBV_CLBI = line_data_len(CBV_CL);
+		CEPBV_CL = NODE_PREV(CEPBV_CL);
+		CEPBV_CLBI = line_data_len(CEPBV_CL);
 		if (move_disp_y) {
-			if (CBV_CURSOR_Y > EDITOR_VERT_SCROLL_MARGIN_LINES) {
-				CBV_CURSOR_Y--;
+			if (CEPBV_CURSOR_Y > EDITOR_VERT_SCROLL_MARGIN_LINES) {
+				CEPBV_CURSOR_Y--;
 				set_edit_win_update_needed(UPDATE_SCRN_CUR_NEXT);
 			}
 		}
 	} else {
-		wl_idx = start_wl_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1);
-		CBV_CLBI -= utf8c_prev_bytes(CBV_CL->data, &CBV_CL->data[CBV_CLBI]);
+		wl_idx = start_wl_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1);
+		CEPBV_CLBI -= utf8c_prev_bytes(CEPBV_CL->data, &CEPBV_CL->data[CEPBV_CLBI]);
 		if (move_disp_y) {
-			if (start_wl_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1) < wl_idx) {
-				CBV_CURSOR_Y--;
+			if (start_wl_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1) < wl_idx) {
+				CEPBV_CURSOR_Y--;
 			}
 		}
 		set_edit_win_update_needed(UPDATE_SCRN_CUR_NEXT);
@@ -639,21 +639,21 @@ int move_cursor_right(void)
 {
 	int wl_idx;
 
-	if (CBV_CLBI < line_data_len(CBV_CL)) {
-		wl_idx = start_wl_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1);
-		CBV_CLBI += utf8c_bytes(&CBV_CL->data[CBV_CLBI]);
-		if (start_wl_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1) > wl_idx) {
-			CBV_CURSOR_Y++;
+	if (CEPBV_CLBI < line_data_len(CEPBV_CL)) {
+		wl_idx = start_wl_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1);
+		CEPBV_CLBI += utf8c_bytes(&CEPBV_CL->data[CEPBV_CLBI]);
+		if (start_wl_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1) > wl_idx) {
+			CEPBV_CURSOR_Y++;
 		}
 		set_edit_win_update_needed(UPDATE_SCRN_CUR_PREV);
 	} else {
-		if (IS_NODE_BOT(CBV_CL)) {
+		if (IS_NODE_BOT(CEPBV_CL)) {
 			return 0;
 		}
-		CBV_CL = NODE_NEXT(CBV_CL);
-		CBV_CLBI = 0;
-		if (CBV_CURSOR_Y < BOTTOM_SCROLL_MARGIN_IDX) {
-			CBV_CURSOR_Y++;
+		CEPBV_CL = NODE_NEXT(CEPBV_CL);
+		CEPBV_CLBI = 0;
+		if (CEPBV_CURSOR_Y < BOTTOM_SCROLL_MARGIN_IDX) {
+			CEPBV_CURSOR_Y++;
 			set_edit_win_update_needed(UPDATE_SCRN_CUR_PREV);
 		}
 	}
@@ -716,18 +716,18 @@ int c_l_down(be_line_t **line, int *byte_idx)
 }
 int cursor_next_line(void)
 {
-	if (IS_NODE_BOT(CBV_CL))
+	if (IS_NODE_BOT(CEPBV_CL))
 		return 0;
-	CBV_CL = NODE_NEXT(CBV_CL);
-	CBV_CLBI = 0;
-	return IS_NODE_BOT(CBV_CL) ? 1 : 2;
+	CEPBV_CL = NODE_NEXT(CEPBV_CL);
+	CEPBV_CLBI = 0;
+	return IS_NODE_BOT(CEPBV_CL) ? 1 : 2;
 }
 
 //-----------------------------------------------------------------------------
 
 int first_line(void)
 {
-	CBV_CL = CUR_EDIT_BUF_TOP_NODE;
+	CEPBV_CL = CUR_EDIT_BUF_TOP_NODE;
 	return 1;
 }
 

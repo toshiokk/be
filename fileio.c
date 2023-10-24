@@ -43,18 +43,18 @@ int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_er
 		return lines;
 	}
 	append_magic_line();
-	CBV_CL = CUR_EDIT_BUF_TOP_NODE;
+	CEPBV_CL = CUR_EDIT_BUF_TOP_NODE;
 	renumber_cur_buf_from_top();
 	update_cur_buf_crc();
 
-	if ((tab_size = buf_guess_tab_size(get_c_e_b())) != 0) {
+	if ((tab_size = buf_guess_tab_size(get_cep_buf())) != 0) {
 		CUR_EBUF_STATE(buf_TAB_SIZE) = tab_size;
 	}
 	disp_status_bar_ing(P_(_("%d line read %s"),
 						   _("%d lines read %s"),
 						   _("%d liness read %s"),
 						   _("%d linesss read %s"),
-	 lines), lines, buf_eol_str(get_c_e_b()));
+	 lines), lines, buf_eol_str(get_cep_buf()));
 	return lines;
 }
 PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int msg_on_err)
@@ -99,7 +99,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 	// regular file
 	disp_status_bar_ing(_("Reading File %s ..."), shrink_str_to_scr_static(full_path));
 	create_edit_buf(full_path);
-	memcpy__(&get_c_e_b()->orig_file_stat, &fileinfo, sizeof(fileinfo));
+	memcpy__(&get_cep_buf()->orig_file_stat, &fileinfo, sizeof(fileinfo));
 
 	ret = load_file_into_cur_buf__(full_path, 1, msg_on_err);
 
@@ -306,7 +306,7 @@ append_line:;
 		break;
 	}
 ////flf_d_printf("file_format_idx: %d\n", file_format_idx);
-////flf_d_printf("CUR_EBUF_STATE(buf_EOL) => [%s]\n", buf_eol_str(get_c_e_b()));
+////flf_d_printf("CUR_EBUF_STATE(buf_EOL) => [%s]\n", buf_eol_str(get_cep_buf()));
 	return lines_read;
 }
 
@@ -343,14 +343,14 @@ int backup_and_save_cur_buf_ask(void)
 	char file_path[MAX_PATH_LEN+1];
 	int ret = 0;
 
-	strlcpy__(file_path, get_c_e_b()->abs_path, MAX_PATH_LEN);
+	strlcpy__(file_path, get_cep_buf()->abs_path, MAX_PATH_LEN);
 	if (is_strlen_0(file_path)) {
 		if (input_new_file_name_n_ask(file_path) <= 0) {
 			return -1;
 		}
 	}
 ///flf_d_printf("[%s]\n", file_path);
-	if (buf_is_orig_file_updated(get_c_e_b()) > 0) {
+	if (buf_is_orig_file_updated(get_cep_buf()) > 0) {
 		// file is modified by others
 		ret = ask_yes_no(ASK_YES_NO,
 		 _("File was modified by another program, OVERWRITE ?"));
@@ -438,7 +438,7 @@ int backup_and_save_cur_buf(const char *file_path)
 		 shrink_str_to_scr_static(file_path));
 		return -1;
 	}
-	disp_status_bar_ing(_("Writing File %s ..."), shrink_str_to_scr_static(get_c_e_b()->abs_path));
+	disp_status_bar_ing(_("Writing File %s ..."), shrink_str_to_scr_static(get_cep_buf()->abs_path));
 	if (GET_APPMD(ed_BACKUP_FILES)) {
 		if (backup_files(file_path, get_backup_files()) < 0) {
 			return -1;
@@ -447,8 +447,8 @@ int backup_and_save_cur_buf(const char *file_path)
 
 	lines_written = save_cur_buf_to_file__(abs_path);
 
-	if (S_ISREG(get_c_e_b()->orig_file_stat.st_mode)) {
-		mask = get_c_e_b()->orig_file_stat.st_mode & 07777;
+	if (S_ISREG(get_cep_buf()->orig_file_stat.st_mode)) {
+		mask = get_cep_buf()->orig_file_stat.st_mode & 07777;
 ///flf_d_printf("chmod([%s], %05o)\n", abs_path, mask);
 		if (chmod(abs_path, mask) < 0) {
 			disp_status_bar_err(_("Can not set permissions %1$o on [%2$s]: %3$s"),
@@ -457,7 +457,7 @@ int backup_and_save_cur_buf(const char *file_path)
 	}
 
 	// get current file stat in orig_file_stat
-	stat(get_c_e_b()->file_path, &get_c_e_b()->orig_file_stat);
+	stat(get_cep_buf()->file_path, &get_cep_buf()->orig_file_stat);
 	update_cur_buf_crc();
 
 	disp_status_bar_ing(P_(_("%d line written"),

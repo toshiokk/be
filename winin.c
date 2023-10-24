@@ -272,23 +272,23 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			// get string from edit buffer current cursor position
 			if (count_edit_bufs()) {
 				char *line;
-				int line_byte_idx;
+				int byte_idx;
 
 ////flf_d_printf("input_buf:[%s]\n", input_buf);
-				line = CBV_CL->data;
-				line_byte_idx = byte_idx_from_byte_idx(line,
-				 CBV_CLBI + strnlen(input_buf, MAX_PATH_LEN));
+				line = CEPBV_CL->data;
+				byte_idx = byte_idx_from_byte_idx(line,
+				 CEPBV_CLBI + strnlen(input_buf, MAX_PATH_LEN));
 				// copy one token (at least copy one character)
 				curs_byte_idx = 0;
 				for ( ;
 				 (strnlen(input_buf, MAX_PATH_LEN) < MAX_PATH_LEN - MAX_UTF8C_BYTES)
-				  && (line_byte_idx < strnlen(line, MAX_PATH_LEN))
+				  && (byte_idx < strnlen(line, MAX_PATH_LEN))
 				  && (curs_byte_idx == 0
-				   || (isalnum(line[line_byte_idx]) || line[line_byte_idx] == '_')); ) {
-					strlncat__(input_buf, MAX_PATH_LEN, &line[line_byte_idx],
-					 utf8c_bytes(&line[line_byte_idx]));
+				   || (isalnum(line[byte_idx]) || line[byte_idx] == '_')); ) {
+					strlncat__(input_buf, MAX_PATH_LEN, &line[byte_idx],
+					 utf8c_bytes(&line[byte_idx]));
 					curs_byte_idx++;
-					line_byte_idx += utf8c_bytes(&line[line_byte_idx]);
+					byte_idx += utf8c_bytes(&line[byte_idx]);
 				}
 				curs_byte_idx = strnlen(input_buf, MAX_PATH_LEN);
 			}
@@ -430,7 +430,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 			list_one_key(chars_forward[0], _("Forward"));
 		}
 		list_one_key(chars_cancel[0], _("Cancel"));
-		if (flags & ASK_END) {
+		if (flags & ASK_END || flags & ASK_NO) {
 			list_one_key(chars_end[0], _("End"));
 		}
 		if (flags & ASK_UNDO) {
@@ -477,7 +477,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 			answer = ANSWER_FORWARD;
 		else if (strchr__(chars_cancel, key_input) != NULL)
 			answer = ANSWER_CANCEL;
-		else if ((flags & ASK_END) && strchr__(chars_end, key_input) != NULL)
+		else if ((flags & ASK_END || flags & ASK_NO) && strchr__(chars_end, key_input) != NULL)
 			answer = ANSWER_END;
 		else if ((flags & ASK_UNDO) && strchr__(chars_undo, key_input) != NULL)
 			answer = ANSWER_UNDO;

@@ -35,18 +35,26 @@ int do_search_forward_next(void);
 int do_replace(void);
 
 #ifdef ENABLE_REGEX
+
 int do_find_bracket(void);
 int do_find_bracket_reverse(void);
+#define MAX_BRACKET_NESTING		100
+int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
+ char char_under_cursor, const char *needle, int search_dir, int *ptr_depth);
+
+#define BRACKET_SEARCH_REGEXP_STR_LEN	4	// "[<>]"
+int setup_bracket_search(char char_under_cursor, int reverse, char *char_wanted, char *needle);
+
+void prepare_colors_for_bracket_hl();
+int get_colors_for_bracket_hl();
+void get_color_for_bracket_hl(int color_idx, char *fgc, char *bgc);
+void set_color_for_bracket_hl(int color_idx);
+
 #endif // ENABLE_REGEX
 
 int search_string_once(const char *needle, int search_count);
 int replace_string_loop(const char *replace_from, const char *replace_to, int *num_replaced_);
 int replace_str_in_buffer(search_t *search, matches_t *matches, const char *replace_to);
-
-#define INNER_BUFFER_SEARCH		0
-#define INTER_BUFFER_SEARCH		1
-int search_str_in_buffer(const char *needle,
- int search_dir, int ignore_case, int skip_here, int global_search);
 
 void disp_status_bar_not_found_msg(const char *str);
 

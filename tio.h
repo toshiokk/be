@@ -92,6 +92,7 @@ int tio_get_lines(void);
 int tio_get_columns(void);
 
 void tio_set_attrs(int bgc, int fgc, int rev);
+void tio_set_attr_rev(int rev);
 
 void tio_set_cursor_on(int on_off);
 void tio_set_cursor_pos(int yy, int xx);

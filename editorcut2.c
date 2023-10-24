@@ -35,23 +35,23 @@ int mark_max_col_idx;			// col_idx right most in the marked area
 //-----------------------------------------------------------------------------
 void clear_mark_pos(void)
 {
-	CEB_ML = BUF_TOP_ANCH(get_c_e_b());
-	CEB_MLBI = 0;
+	CEPB_ML = BUF_TOP_ANCH(get_cep_buf());
+	CEPB_MLBI = 0;
 }
 void set_mark_pos(void)
 {
-	CEB_ML = CBV_CL;
-	CEB_MLBI = CBV_CLBI;
+	CEPB_ML = CEPBV_CL;
+	CEPB_MLBI = CEPBV_CLBI;
 }
-// CEB_MLBI <==> CBV_CLBI
+// CEPB_MLBI <==> CEPBV_CLBI
 ///void swap_m_l_b_i_with_c_l_b_i(void)
 ///{
 ///	int c_l_b_i;
 ///
-///	if (CEB_ML == CBV_CL) {
-///		c_l_b_i = CEB_MLBI;
-///		CEB_MLBI = CBV_CLBI;
-///		CBV_CLBI = c_l_b_i;
+///	if (CEPB_ML == CEPBV_CL) {
+///		c_l_b_i = CEPB_MLBI;
+///		CEPB_MLBI = CEPBV_CLBI;
+///		CEPBV_CLBI = c_l_b_i;
 ///	}
 ///}
 
@@ -175,11 +175,11 @@ PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move
 }
 PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 {
-	if (CBV_CL == CEB_ML) {
+	if (CEPBV_CL == CEPB_ML) {
 		// current == begin
-		mark_min_line = CBV_CL;
-		mark_max_line = CBV_CL;
-		if (CBV_CLBI == CEB_MLBI) {
+		mark_min_line = CEPBV_CL;
+		mark_max_line = CEPBV_CL;
+		if (CEPBV_CLBI == CEPB_MLBI) {
 			// the same line, the same column
 			// change cut-mode to initial mode
 ///			// cut-mode is not initial mode, set to initial mode
@@ -254,19 +254,19 @@ void setup_cut_region(void)
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
-		if (IS_NODE_BOT(CBV_CL)) {
+		if (IS_NODE_BOT(CEPBV_CL)) {
 			// No next line
 			// {aaaaaaaaaaaaaaaaaa}
-			mark_min_line = CBV_CL;
-			mark_max_line = CBV_CL;
+			mark_min_line = CEPBV_CL;
+			mark_max_line = CEPBV_CL;
 			mark_min_byte_idx = 0;
-			mark_max_byte_idx = line_data_len(CBV_CL);
+			mark_max_byte_idx = line_data_len(CEPBV_CL);
 		} else {
 			// There is next line
 			// {aaaaaaaaaaaaaaaaaaa
 			// }bbbbbbbbbbbbbbbbbbb
-			mark_min_line = CBV_CL;
-			mark_max_line = NODE_NEXT(CBV_CL);
+			mark_min_line = CEPBV_CL;
+			mark_max_line = NODE_NEXT(CEPBV_CL);
 			mark_min_byte_idx = 0;
 			mark_max_byte_idx = 0;
 		}
@@ -275,57 +275,57 @@ void setup_cut_region(void)
 	case CUT_MODE_VH_CHAR:
 	case CUT_MODE_HV_BOX:
 	case CUT_MODE_VH_BOX:
-		if (CBV_CL == CEB_ML) {
+		if (CEPBV_CL == CEPB_ML) {
 			// current == begin
-			mark_min_line = CBV_CL;
-			mark_max_line = CBV_CL;
-			if (CBV_CLBI == CEB_MLBI) {
+			mark_min_line = CEPBV_CL;
+			mark_max_line = CEPBV_CL;
+			if (CEPBV_CLBI == CEPB_MLBI) {
 				// the same line, the same column
-				mark_min_byte_idx = CBV_CLBI;
-				mark_max_byte_idx = CBV_CLBI;
+				mark_min_byte_idx = CEPBV_CLBI;
+				mark_max_byte_idx = CEPBV_CLBI;
 			} else {
 				// the same line, different column
-				if (CBV_CLBI < CEB_MLBI) {
-					mark_min_byte_idx = CBV_CLBI;
-					mark_max_byte_idx = CEB_MLBI;
+				if (CEPBV_CLBI < CEPB_MLBI) {
+					mark_min_byte_idx = CEPBV_CLBI;
+					mark_max_byte_idx = CEPB_MLBI;
 				} else {
-					mark_min_byte_idx = CEB_MLBI;
-					mark_max_byte_idx = CBV_CLBI;
+					mark_min_byte_idx = CEPB_MLBI;
+					mark_max_byte_idx = CEPBV_CLBI;
 				}
 			}
 		} else {
 			// different line
-			if (CEB_ML->line_num < CBV_CL->line_num) {
+			if (CEPB_ML->line_num < CEPBV_CL->line_num) {
 				// begin < current
-				mark_min_line = CEB_ML;
-				mark_min_byte_idx = CEB_MLBI;
-				mark_max_line = CBV_CL;
-				mark_max_byte_idx = CBV_CLBI;
+				mark_min_line = CEPB_ML;
+				mark_min_byte_idx = CEPB_MLBI;
+				mark_max_line = CEPBV_CL;
+				mark_max_byte_idx = CEPBV_CLBI;
 			} else {
 				// current < begin
-				mark_min_line = CBV_CL;
-				mark_min_byte_idx = CBV_CLBI;
-				mark_max_line = CEB_ML;
-				mark_max_byte_idx = CEB_MLBI;
+				mark_min_line = CEPBV_CL;
+				mark_min_byte_idx = CEPBV_CLBI;
+				mark_max_line = CEPB_ML;
+				mark_max_byte_idx = CEPB_MLBI;
 			}
 		}
 		break;
 	case CUT_MODE_V_LINE:
 	case CUT_MODE_HV_LINE:
-		if (CBV_CL == CEB_ML) {
+		if (CEPBV_CL == CEPB_ML) {
 			// current == begin
-			mark_min_line = CBV_CL;
-			mark_max_line = CBV_CL;
+			mark_min_line = CEPBV_CL;
+			mark_max_line = CEPBV_CL;
 		} else {
 			// different line
-			if (CEB_ML->line_num < CBV_CL->line_num) {
+			if (CEPB_ML->line_num < CEPBV_CL->line_num) {
 				// begin < current
-				mark_min_line = CEB_ML;
-				mark_max_line = CBV_CL;
+				mark_min_line = CEPB_ML;
+				mark_max_line = CEPBV_CL;
 			} else {
 				// current < begin
-				mark_min_line = CBV_CL;
-				mark_max_line = CEB_ML;
+				mark_min_line = CEPBV_CL;
+				mark_max_line = CEPB_ML;
 			}
 		}
 		mark_min_byte_idx = 0;
@@ -359,10 +359,10 @@ void setup_cut_region(void)
 		}
 		break;
 	}
-flf_d_printf("CEB_ML: [%s]\n", CEB_ML->data);
-flf_d_printf("CEB_MLBI: %d\n", CEB_MLBI);
-flf_d_printf("CBV_CL: [%s]\n", CBV_CL->data);
-flf_d_printf("CBV_CLBI: %d\n", CBV_CLBI);
+flf_d_printf("CEPB_ML: [%s]\n", CEPB_ML->data);
+flf_d_printf("CEPB_MLBI: %d\n", CEPB_MLBI);
+flf_d_printf("CEPBV_CL: [%s]\n", CEPBV_CL->data);
+flf_d_printf("CEPBV_CLBI: %d\n", CEPBV_CLBI);
 flf_d_printf("mark_min_line: [%s]\n", mark_min_line->data);
 flf_d_printf("mark_min_byte_idx: %d\n", mark_min_byte_idx);
 flf_d_printf("mark_max_line: [%s]\n", mark_max_line->data);
@@ -378,7 +378,7 @@ int is_there_cut_region(void)
 
 int lines_selected(void)
 {
-	int lines = abs(CEB_ML->line_num - CBV_CL->line_num);
+	int lines = abs(CEPB_ML->line_num - CEPBV_CL->line_num);
 	switch(CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:

@@ -464,8 +464,8 @@ PRIVATE void delete_region(
 		return;
 
 	// adjust current line
-	CBV_CL = min_line;
-	CBV_CLBI = min_byte_idx;
+	CEPBV_CL = min_line;
+	CEPBV_CLBI = min_byte_idx;
 	for (line = min_line; ; line = next) {
 		next = NODE_NEXT(line);
 		if (line == min_line) {
@@ -545,10 +545,10 @@ PRIVATE void delete_rect_region(
 	for (line = min_line; ; line = NODE_NEXT(line)) {
 		min_byte_idx = byte_idx_from_col_idx(line->data, min_col_idx, CHAR_RIGHT, NULL);
 		max_byte_idx = byte_idx_from_col_idx(line->data, max_col_idx, CHAR_LEFT, NULL);
-		if (CBV_CL == line) {
-			CBV_CLBI = min_byte_idx;
+		if (CEPBV_CL == line) {
+			CEPBV_CLBI = min_byte_idx;
 		}
-		get_c_e_b()->buf_size -= (max_byte_idx - min_byte_idx);
+		get_cep_buf()->buf_size -= (max_byte_idx - min_byte_idx);
 		line_delete_string(line, min_byte_idx, max_byte_idx - min_byte_idx);
 		if (line == max_line) {
 			break;		// delete till the selection bottom ?
@@ -575,14 +575,14 @@ PRIVATE int paste_cut_buf_char(void)
 
 	set_cur_buf_modified();
 
-	cur_byte_idx = CBV_CLBI;
+	cur_byte_idx = CEPBV_CLBI;
 	cut_line = CUR_CUT_BUF_TOP_NODE;
 	// Paste the first line of the cut-buffer
 	// >aaaa^bbbb
-	inserted_line = line_separate(CBV_CL, cur_byte_idx, INSERT_BEFORE);
+	inserted_line = line_separate(CEPBV_CL, cur_byte_idx, INSERT_BEFORE);
 	//  aaaa
 	// >bbbb
-	line_insert_with_string(CBV_CL, INSERT_BEFORE, cut_line->data);
+	line_insert_with_string(CEPBV_CL, INSERT_BEFORE, cut_line->data);
 	//  aaaa
 	//  AAAA
 	// >bbbb
@@ -593,14 +593,14 @@ PRIVATE int paste_cut_buf_char(void)
 		cut_line = NODE_NEXT(cut_line);
 		if (IS_NODE_BOT_ANCH(cut_line))
 			break;
-		inserted_line = line_insert_with_string(CBV_CL, INSERT_BEFORE, cut_line->data);
+		inserted_line = line_insert_with_string(CEPBV_CL, INSERT_BEFORE, cut_line->data);
 		//  aaaaAAAA
 		//  BBBB
 		// >bbbb
-		CBV_CURSOR_Y++;
+		CEPBV_CURSOR_Y++;
 	}
-	CBV_CLBI = line_data_len(inserted_line);
-	line_concat(CBV_CL, WITH_PREV);
+	CEPBV_CLBI = line_data_len(inserted_line);
+	line_concat(CEPBV_CL, WITH_PREV);
 	//  aaaaAAAA
 	// >BBBB^bbbb
 	return 1;		// pasted
@@ -623,17 +623,17 @@ PRIVATE int paste_cut_buf_line(void)
 	set_cur_buf_modified();
 
 	for (cut_line = CUR_CUT_BUF_TOP_NODE; IS_NODE_INT(cut_line); ) {
-		line_insert_with_string(CBV_CL, INSERT_BEFORE, cut_line->data);
+		line_insert_with_string(CEPBV_CL, INSERT_BEFORE, cut_line->data);
 		cut_line = NODE_NEXT(cut_line);
 		if (IS_MARK_SET(CUR_CBUF_STATE(buf_CUT_MODE))) {
 			// marked cut/copy
-			CBV_CURSOR_Y++;
+			CEPBV_CURSOR_Y++;
 		}
 	}
 	if (IS_MARK_SET(CUR_CBUF_STATE(buf_CUT_MODE)) == 0) {
 		// unmarked cut/copy
-		CBV_CL = NODE_PREV(CBV_CL);
-		CBV_CLBI = LIM_MAX(CBV_CLBI, line_data_len(CBV_CL));	// limit cursor pos
+		CEPBV_CL = NODE_PREV(CEPBV_CL);
+		CEPBV_CLBI = LIM_MAX(CEPBV_CLBI, line_data_len(CEPBV_CL));	// limit cursor pos
 	}
 	return 1;		// pasted
 }
@@ -664,20 +664,20 @@ PRIVATE int paste_cut_buf_rect(void)
 
 	set_cur_buf_modified();
 
-	cur_line_col_idx = col_idx_from_byte_idx(CBV_CL->data, 0, CBV_CLBI);
+	cur_line_col_idx = col_idx_from_byte_idx(CEPBV_CL->data, 0, CEPBV_CLBI);
 	for (cut_line = CUR_CUT_BUF_TOP_NODE; IS_NODE_INT(cut_line); ) {
-		if (IS_NODE_BOT_ANCH(CBV_CL)) {
+		if (IS_NODE_BOT_ANCH(CEPBV_CL)) {
 			// if no more lines in edit buffer, append line automatically
-			CBV_CL = line_insert_with_string(CBV_CL, INSERT_BEFORE, "");
+			CEPBV_CL = line_insert_with_string(CEPBV_CL, INSERT_BEFORE, "");
 		}
-		CBV_CLBI = byte_idx_from_col_idx(CBV_CL->data, cur_line_col_idx,
+		CEPBV_CLBI = byte_idx_from_col_idx(CEPBV_CL->data, cur_line_col_idx,
 		 CHAR_LEFT, NULL);
-		line_replace_string(CBV_CL, CBV_CLBI, 0, cut_line->data, -1);
-		CBV_CLBI += line_data_len(cut_line);
+		line_replace_string(CEPBV_CL, CEPBV_CLBI, 0, cut_line->data, -1);
+		CEPBV_CLBI += line_data_len(cut_line);
 		cut_line = NODE_NEXT(cut_line);
 		if (IS_NODE_BOT_ANCH(cut_line))
 			break;
-		CBV_CL = NODE_NEXT(CBV_CL);
+		CEPBV_CL = NODE_NEXT(CEPBV_CL);
 	}
 	return 1;		// pasted
 }

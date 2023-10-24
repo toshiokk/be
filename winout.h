@@ -29,14 +29,13 @@ typedef struct win_rect {
 	int columns;		// Columns
 } win_rect_t;
 
-#define MAX_APP_PANES	2
-#define SUB_WINS		4
 // window				win_idx
 // --------------------	-----------
 #define WIN_IDX_MAIN		0	// sub_win_rects[0]
 #define WIN_IDX_SUB_WHOLE	1	// sub_win_rects[1]
 #define WIN_IDX_SUB_LEFT	2	// sub_win_rects[2]
 #define WIN_IDX_SUB_RIGHT	3	// sub_win_rects[3]
+#define SUB_WINS			4
 extern win_rect_t sub_win_rects[SUB_WINS];
 extern win_rect_t *main_win, *cur_win;
 extern int cur_win_idx;

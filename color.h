@@ -86,9 +86,9 @@ void set_work_space_color_normal(void);
 int is_work_space_color_low(void);
 
 void register_item_color(item_color_idx_t color_idx, int bgc, int fgc);
+void get_color_by_idx(item_color_idx_t color_idx, char *fgc, char *bgc);
 void set_color_by_idx(item_color_idx_t color_idx, int reverse);
-void set_color_attrs_ptr(const item_color_t *color);
-void set_color_attrs_rev(int rev);
+void set_item_color(const item_color_t *item_color);
 
 #ifdef ENABLE_SYNTAX
 int set_file_type_by_cur_file_path(void);
@@ -101,6 +101,7 @@ int display_color_pairs(int yy, int xx);
 
 #ifdef ENABLE_DEBUG
 int display_item_colors(int yy, int xx);
+int display_bracket_hl_colors(int yy, int xx);
 #endif // ENABLE_DEBUG
 
 #endif // color_h

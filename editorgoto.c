@@ -66,12 +66,12 @@ int do_goto_file_in_cur_line(void)
 	char dir_save[MAX_PATH_LEN+1];
 	int ret;
 
-////flf_d_printf("[%s]\n", CBV_CL->data);
+////flf_d_printf("[%s]\n", CEPBV_CL->data);
 	memorize_cur_file_pos_null(NULL);
 	clear_files_loaded();
-	save_change_cur_dir(dir_save, strip_file_from_path(get_c_e_b()->abs_path));
+	save_change_cur_dir(dir_save, strip_file_from_path(get_cep_buf()->abs_path));
 	// CURDIR: changed to cur-file's abs-dir
-	ret = load_files_in_string(CBV_CL->data, 10, TUL1, OOE0, MOE1, RECURSIVE1);
+	ret = load_files_in_string(CEPBV_CL->data, 10, TUL1, OOE0, MOE1, RECURSIVE1);
 	change_cur_dir(dir_save);
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
@@ -80,7 +80,7 @@ int do_goto_directory_in_cur_line(void)
 {
 #ifdef ENABLE_FILER
 	char file_path[MAX_PATH_LEN+1];
-	if (get_file_line_col_from_str_null(CBV_CL->data, file_path, NULL, NULL) == 0) {
+	if (get_file_line_col_from_str_null(CEPBV_CL->data, file_path, NULL, NULL) == 0) {
 		return 0;
 	}
 	return filer_change_dir_parent(file_path) == 0;
@@ -140,26 +140,26 @@ int do_switch_to_next_file(void)
 #ifdef ENABLE_EXPERIMENTAL
 int do_switch_to_prev_buffers(void)
 {
-	be_bufs_t *bufs = get_bufs_contains_buf(&bufs_top_anchor, get_c_e_b());
+	be_bufs_t *bufs = get_bufs_contains_buf(&bufs_top_anchor, get_cep_buf());
 	if (IS_NODE_TOP(bufs))
 		return 0;
 flf_d_printf("bufs: %s\n", bufs->name);
 flf_d_printf("NODE_PREV(bufs)->name: %s\n", NODE_PREV(bufs)->name);
 flf_d_printf("NODE_PREV(bufs)->cur_buf->name: %s\n", NODE_PREV(bufs)->cur_buf->file_path);
-	set_cur_edit_buf(NODE_PREV(bufs)->cur_buf);
-	post_cmd_processing(CBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	set_cep_buf(NODE_PREV(bufs)->cur_buf);
+	post_cmd_processing(CEPBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 int do_switch_to_next_buffers(void)
 {
-	be_bufs_t *bufs = get_bufs_contains_buf(&bufs_top_anchor, get_c_e_b());
+	be_bufs_t *bufs = get_bufs_contains_buf(&bufs_top_anchor, get_cep_buf());
 	if (IS_NODE_BOT(bufs))
 		return 0;
 flf_d_printf("bufs: %s\n", bufs->name);
 flf_d_printf("NODE_NEXT(bufs)->name: %s\n", NODE_NEXT(bufs)->name);
 flf_d_printf("NODE_NEXT(bufs)->cur_buf->name: %s\n", NODE_NEXT(bufs)->cur_buf->file_path);
-	set_cur_edit_buf(NODE_NEXT(bufs)->cur_buf);
-	post_cmd_processing(CBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	set_cep_buf(NODE_NEXT(bufs)->cur_buf);
+	post_cmd_processing(CEPBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 #endif // ENABLE_EXPERIMENTAL
@@ -186,9 +186,9 @@ void do_switch_editor_pane_(void)
 {
 	int pane_idx;			// pane index
 
-	pane_idx = get_cur_editor_view_idx() ? 0 : 1;
+	pane_idx = get_editor_cur_pane_idx() ? 0 : 1;
 flf_d_printf("pane_idx: %d\n", pane_idx);
-	set_cur_editor_view_idx(pane_idx);
+	set_editor_cur_pane_idx(pane_idx);
 }
 
 //-----------------------------------------------------------------------------
@@ -209,12 +209,12 @@ int load_files_in_cur_buf(void)
 	for (lines = 0; lines < MAX_LINES_TO_TRY_TO_LOAD; lines++) {
 		if (is_handler_sigint_called())
 			break;
-		if (line_data_len(CBV_CL)) {
-			if (CBV_CL->data[0] != '#') {
+		if (line_data_len(CEPBV_CL)) {
+			if (CEPBV_CL->data[0] != '#') {
 				memorize_cur_file_pos_null(NULL);
-				save_change_cur_dir(dir_save, strip_file_from_path(get_c_e_b()->abs_path));
+				save_change_cur_dir(dir_save, strip_file_from_path(get_cep_buf()->abs_path));
 				// CURDIR: changed to cur-file's abs-dir
-				files += load_files_in_string(CBV_CL->data, 10, TUL1, OOE0, MOE0, RECURSIVE0);
+				files += load_files_in_string(CEPBV_CL->data, 10, TUL1, OOE0, MOE0, RECURSIVE0);
 				change_cur_dir(dir_save);
 				disp_editor_title_bar();
 				tio_refresh();
@@ -370,7 +370,7 @@ int switch_c_e_b_to_abs_path(const char *abs_path)
 
 	buf = get_edit_buf_from_abs_path(abs_path);
 	if (buf) {
-		set_cur_edit_buf(buf);
+		set_cep_buf(buf);
 		return 1;	// switched
 	}
 	return 0;		// not found
@@ -380,43 +380,45 @@ int switch_c_e_b_to_top(void)
 {
 	if (IS_NODE_BOT_ANCH(EDIT_BUFS_TOP_NODE))
 		return 0;
-	set_cur_edit_buf(EDIT_BUFS_TOP_NODE);
+	set_cep_buf(EDIT_BUFS_TOP_NODE);
 	return 1;
 }
 int switch_c_e_b_to_bot(void)
 {
 	if (IS_NODE_TOP_ANCH(EDIT_BUFS_BOT_NODE))
 		return 0;
-	set_cur_edit_buf(EDIT_BUFS_BOT_NODE);
+	set_cep_buf(EDIT_BUFS_BOT_NODE);
 	return 1;
 }
 int switch_c_e_b_to_prev(int beep_at_end, int goto_bottom)
 {
-	if (IS_NODE_TOP(get_c_e_b())) {
+	if (IS_NODE_TOP(get_cep_buf())) {
 		if (beep_at_end)
 			tio_beep();
 		return 0;
 	}
-	set_cur_edit_buf(NODE_PREV(get_c_e_b()));
-	if (goto_bottom)
-		CBV_CL = CUR_EDIT_BUF_BOT_NODE;
+	set_cep_buf(NODE_PREV(get_cep_buf()));
+	if (goto_bottom) {
+		CEPBV_CL = CUR_EDIT_BUF_BOT_NODE;
+	}
 	return 1;
 }
 int switch_c_e_b_to_next(int beep_at_end, int goto_top)
 {
-	if (IS_NODE_BOT(get_c_e_b())) {
+	if (IS_NODE_BOT(get_cep_buf())) {
 		if (beep_at_end)
 			tio_beep();
 		return 0;
 	}
-	set_cur_edit_buf(NODE_NEXT(get_c_e_b()));
-	if (goto_top)
-		CBV_CL = CUR_EDIT_BUF_TOP_NODE;
+	set_cep_buf(NODE_NEXT(get_cep_buf()));
+	if (goto_top) {
+		CEPBV_CL = CUR_EDIT_BUF_TOP_NODE;
+	}
 	return 1;
 }
 int switch_c_e_b_to_valid_buf(void)
 {
-	if (IS_NODE_VALID(get_c_e_b()) == 0) {
+	if (IS_NODE_VALID(get_cep_buf()) == 0) {
 		return switch_c_e_b_to_another_buf();
 	}
 	return 1;
@@ -425,7 +427,7 @@ int switch_c_e_b_to_another_buf(void)
 {
 	if (switch_c_e_b_to_next(0, 0) == 0) {
 		if (switch_c_e_b_to_prev(0, 0) == 0) {
-			set_cur_edit_buf(EDIT_BUFS_TOP_ANCH);
+			set_cep_buf(EDIT_BUFS_TOP_ANCH);
 			return 0;
 		}
 	}
@@ -509,8 +511,8 @@ PRIVATE void goto_pos_by_history(const char *full_path)
 	str = search_history_file_path(HISTORY_TYPE_IDX_CURSPOS, full_path);
 	// get line-num and col-num
 	if (goto_str_line_col_in_cur_buf(str)) {
-		CBV0_CL = CBV1_CL = CBV_CL;
-		CBV0_CLBI = CBV1_CLBI = CBV_CLBI;
+		EPBVX_CL(0) = EPBVX_CL(1) = CEPBV_CL;
+		EPBVX_CLBI(0) = EPBVX_CLBI(1) = CEPBV_CLBI;
 	}
 }
 #endif // ENABLE_HISTORY
@@ -550,17 +552,17 @@ int goto_line_col_in_cur_buf(int line_num, int col_num)
 	if (line_num <= 0) {
 		return 0;
 	}
-	CBV_CL = get_line_ptr_from_cur_buf_line_num(line_num);
+	CEPBV_CL = get_line_ptr_from_cur_buf_line_num(line_num);
 	if (col_num <= 0) {
 		return 1;
 	}
 #ifdef CURSOR_POS_BYTE
 	// col_num is byte count
-	CBV_CLBI = byte_idx_from_byte_idx(CBV_CL->data, col_num-1);
+	CEPBV_CLBI = byte_idx_from_byte_idx(CEPBV_CL->data, col_num-1);
 #endif // CURSOR_POS_BYTE
 #ifdef CURSOR_POS_COLUMN
 	// col_num is column in view
-	CBV_CLBI = byte_idx_from_col_idx(CBV_CL->data, col_num-1, CHAR_LEFT, NULL);
+	CEPBV_CLBI = byte_idx_from_col_idx(CEPBV_CL->data, col_num-1, CHAR_LEFT, NULL);
 #endif // CURSOR_POS_COLUMN
 	return 2;
 }
@@ -574,13 +576,13 @@ char *mk_cur_file_pos_str(char *buffer)
 {
 #ifdef CURSOR_POS_BYTE
 	// memorize byte number
-	return mk_file_pos_str(buffer, get_c_e_b()->file_path, CBV_CL->line_num,
-	 CBV_CL->data ? byte_idx_from_byte_idx(CBV_CL->data, CBV_CLBI)+1 : 0);
+	return mk_file_pos_str(buffer, get_cep_buf()->file_path, CEPBV_CL->line_num,
+	 CEPBV_CL->data ? byte_idx_from_byte_idx(CEPBV_CL->data, CEPBV_CLBI)+1 : 0);
 #endif // CURSOR_POS_BYTE
 #ifdef CURSOR_POS_COLUMN
 	// memorize column number
-	return mk_file_pos_str(buffer, get_c_e_b()->file_path, CBV_CL->line_num,
-	 CBV_CL->data ? col_idx_from_byte_idx(CBV_CL->data, 0, CBV_CLBI)+1 : 0);
+	return mk_file_pos_str(buffer, get_cep_buf()->file_path, CEPBV_CL->line_num,
+	 CEPBV_CL->data ? col_idx_from_byte_idx(CEPBV_CL->data, 0, CEPBV_CLBI)+1 : 0);
 #endif // CURSOR_POS_COLUMN
 }
 char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col_num)

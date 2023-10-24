@@ -338,9 +338,9 @@ const be_line_t *line_get_top_anch(const be_line_t *line)
 
 size_t line_data_len(const be_line_t *line)
 {
-	return line_strlen(line->data);
+	return line_data_strlen(line->data);
 }
-size_t line_strlen(const char *str)
+size_t line_data_strlen(const char *str)
 {
 	return strnlen(str, MAX_EDIT_LINE_LEN);
 }

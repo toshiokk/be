@@ -29,8 +29,8 @@ int do_switch_to_file_list(void)
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
 _FLF_
-	prev_cur_edit_buf = get_c_e_b();
-	set_cur_edit_buf(EDIT_BUFS_TOP_ANCH);
+	prev_cur_edit_buf = get_cep_buf();
+	set_cep_buf(EDIT_BUFS_TOP_ANCH);
 	buf_free_lines(EDIT_BUFS_TOP_ANCH);
 	buf_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Files currently loaded"));
 	for (edit_buf = EDIT_BUFS_TOP_NODE; IS_NODE_INT(edit_buf);
@@ -45,9 +45,9 @@ _FLF_
 	}
 	append_magic_line();
 	if (line_to_go) {
-		CBV_CL = line_to_go;
+		CEPBV_CL = line_to_go;
 	} else {
-		CBV_CL = CUR_EDIT_BUF_TOP_NODE;
+		CEPBV_CL = CUR_EDIT_BUF_TOP_NODE;
 	}
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
 
@@ -94,12 +94,12 @@ int do_switch_to_func_list(void)
 
 int make_help_buf_call_editor(int help_idx)
 {
-	be_buf_t *edit_buf_save = get_c_e_b();
+	be_buf_t *edit_buf_save = get_cep_buf();
 
 	make_help_buf(HELP_BUF_IDX_KEY_LIST);
 	make_help_buf(HELP_BUF_IDX_FUNC_LIST);
 
-	set_cur_edit_buf(get_help_buf(help_idx));
+	set_cep_buf(get_help_buf(help_idx));
 	switch(help_idx) {
 	case HELP_BUF_IDX_KEY_LIST:
 		disp_status_bar_done(_("Key List"));
@@ -111,13 +111,13 @@ int make_help_buf_call_editor(int help_idx)
 
 	int ret = call_editor(1, 1);
 
-	set_cur_edit_buf(edit_buf_save);
+	set_cep_buf(edit_buf_save);
 	return ret;
 }
 void make_help_buf(int help_idx)
 {
 	be_buf_t *buf = get_help_buf(help_idx);
-	set_cur_edit_buf(buf);
+	set_cep_buf(buf);
 	buf_free_lines(buf);
 	switch(help_idx) {
 	case HELP_BUF_IDX_KEY_LIST:
@@ -128,10 +128,10 @@ void make_help_buf(int help_idx)
 		break;
 	}
 	append_magic_line();
-	CBV_CL = CUR_EDIT_BUF_TOP_NODE;
+	CEPBV_CL = CUR_EDIT_BUF_TOP_NODE;
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
 	// renumber
-	post_cmd_processing(CBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(CEPBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 
 void make_help_key_list(void)

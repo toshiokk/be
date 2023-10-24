@@ -32,12 +32,12 @@
 typedef struct be_buf_view_t {
 	be_line_t *cur_line;		// current line (be_line_t)
 	int cur_line_byte_idx;		// current line byte index
-	int cursor_y;				// display Y in screen to which cur-line to be displayed
-	int min_text_x_to_keep;		// text x to be displayed on the left edge of the screen
+	int cursor_y;				// display Y in screen to which cur-line displayed
 	int cursor_x_to_keep;		// cursor X in text to keep when moving cursor vertically
+	int min_text_x_to_keep;		// text X to be displayed on the left edge of the screen
 } be_buf_view_t;
 
-#define BUF_VIEWS		2		// NOTE: must be the same as MAX_APP_PANES
+#define EDITOR_PANES		MAX_APP_PANES_2
 
 //! buffer, collection of lines
 typedef struct be_buf_t {
@@ -51,7 +51,7 @@ typedef struct be_buf_t {
 
 	be_line_t top_anchor;		//!< top line
 	be_line_t bot_anchor;		//!< bottom line
-	be_buf_view_t buf_views[BUF_VIEWS];
+	be_buf_view_t buf_views[EDITOR_PANES];
 	be_line_t *mark_line;		//!< 
 	int mark_line_byte_idx;		//!< 
 	int buf_lines;				//!< line count

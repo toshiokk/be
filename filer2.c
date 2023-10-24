@@ -748,7 +748,7 @@ PRIVATE int strtypecasecmp(const char *s1, const char *s2)
 
 int get_files_selected_cfv(void)
 {
-	return get_files_selected(cur_fv);
+	return get_files_selected(get_cur_filer_view());
 }
 int get_files_selected(filer_view_t *fv)
 {
@@ -772,35 +772,35 @@ int get_first_file_idx_selected(void)
 {
 	int file_idx;
 
-	for (file_idx = 0; file_idx < cur_fv->file_list_entries; file_idx++) {
-		if (cur_fv->file_list[file_idx].selected)
+	for (file_idx = 0; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
+		if (get_cur_filer_view()->file_list[file_idx].selected)
 			break;
 	}
-	if (file_idx < cur_fv->file_list_entries)
+	if (file_idx < get_cur_filer_view()->file_list_entries)
 		return file_idx;
 	// no file selected, return current file
-	return cur_fv->cur_sel_idx;
+	return get_cur_filer_view()->cur_sel_idx;
 }
 int get_next_file_idx_selected(int start_file_idx)
 {
 	int file_idx = start_file_idx < 0 ? 0 : start_file_idx+1;
 
-	for ( ; file_idx < cur_fv->file_list_entries; file_idx++) {
-		if (cur_fv->file_list[file_idx].selected)
+	for ( ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
+		if (get_cur_filer_view()->file_list[file_idx].selected)
 			break;
 	}
-	if (file_idx < cur_fv->file_list_entries)
+	if (file_idx < get_cur_filer_view()->file_list_entries)
 		return file_idx;
 	return -1;	// no selected file found
 }
 int select_file_if_none_selected(void)
 {
 	int files_selected;
-	int sel_idx = cur_fv->cur_sel_idx;
+	int sel_idx = get_cur_filer_view()->cur_sel_idx;
 
 	files_selected = get_files_selected_cfv();
 	if (files_selected == 0) {
-		cur_fv->file_list[sel_idx].selected = _FILE_SEL_AUTO_;
+		get_cur_filer_view()->file_list[sel_idx].selected = _FILE_SEL_AUTO_;
 	}
 	return files_selected;
 }
@@ -808,9 +808,9 @@ void unselect_all_files_auto(char selection_bit)
 {
 	int file_idx;
 
-	for (file_idx = 0 ; file_idx < cur_fv->file_list_entries; file_idx++) {
-		cur_fv->file_list[file_idx].selected
-		 = cur_fv->file_list[file_idx].selected & ~selection_bit;
+	for (file_idx = 0 ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
+		get_cur_filer_view()->file_list[file_idx].selected
+		 = get_cur_filer_view()->file_list[file_idx].selected & ~selection_bit;
 	}
 }
 
@@ -855,8 +855,10 @@ int search_file_name_in_file_list(filer_view_t *fv, const char *file_name)
 		for (file_name_len = strlen(file_name); file_name_len; file_name_len--) {
 			for (file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
 				if (cmp_type < 2) {		// cmp_type = 0, 1
-					if ((S_ISREG(cur_fv->file_list[cur_fv->cur_sel_idx].st.st_mode)
-					  == S_ISREG(cur_fv->file_list[file_idx].st.st_mode))
+					if ((S_ISREG(get_cur_filer_view()
+					   ->file_list[get_cur_filer_view()->cur_sel_idx].st.st_mode)
+					  == S_ISREG(get_cur_filer_view()
+					   ->file_list[file_idx].st.st_mode))
 					 && (cmp_type == 0
 						// case sensitive
 					  ? strncmp(fv->file_list[file_idx].file_name, file_name, file_name_len) == 0

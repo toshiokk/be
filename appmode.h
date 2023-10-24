@@ -57,7 +57,7 @@ typedef struct /*app_mode*/ {
 	unsigned char app_LIST_MODE:1;
 
 	// editor settings
-	unsigned char ed_EDITOR_PANES:1;
+	unsigned char ed_EDITOR_PANES:1;	// 0: 1 pane,   1: 2 panes
 	unsigned char ed_DUAL_SCROLL:1;
 	unsigned char ed_CONT_VIEW:1;
 	unsigned char ed_SHOW_RULER:1;
@@ -105,7 +105,7 @@ typedef struct /*app_mode*/ {
 #define SHOW_FILE_INFO_5				5	// Size Time lrwxrwxrwx User:group
 #define SHOW_FILE_INFO_MAX				SHOW_FILE_INFO_5
 	unsigned char fl_SHOW_FILE_INFO:3;
-	unsigned char fl_FILER_PANES:1;
+	unsigned char fl_FILER_PANES:1;		// 0: 1 pane,   1: 2 panes
 } app_mode_t;
 
 typedef struct /*buf_state*/ {

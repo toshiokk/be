@@ -93,14 +93,14 @@ PRIVATE size_t prev_buf_size;
 PRIVATE int prev_count_undo_bufs;
 void memorize_undo_state_before_change(void)
 {
-	prev_c_e_b = get_c_e_b();
-	prev_buf_size = get_c_e_b()->buf_size;
+	prev_c_e_b = get_cep_buf();
+	prev_buf_size = get_cep_buf()->buf_size;
 	prev_count_undo_bufs = count_undo_bufs();
 }
 void check_undo_state_after_change(void)
 {
-	if (get_c_e_b() != EDIT_BUFS_TOP_ANCH
-	 && get_c_e_b() == prev_c_e_b && get_c_e_b()->buf_size != prev_buf_size
+	if (get_cep_buf() != EDIT_BUFS_TOP_ANCH
+	 && get_cep_buf() == prev_c_e_b && get_cep_buf()->buf_size != prev_buf_size
 		// edit buffer has been modified
 	 && count_undo_bufs() == prev_count_undo_bufs) {
 		// but no undo info pushed
@@ -182,7 +182,7 @@ PRIVATE void save_region_to_undo_buf(void)
 {
 	be_line_t *line;
 
-	push_undo_buf(get_c_e_b());
+	push_undo_buf(get_cep_buf());
 	for (line = NODE_NEXT(undo_min_line); line != undo_max_line; line = NODE_NEXT(line)) {
 		append_line_to_cur_undo_buf(line_create_copy(line));
 	}
@@ -305,8 +305,8 @@ PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 		line_insert(edit_line, line_create_copy(undo_line), INSERT_BEFORE);
 	}
 	// restore pointers
-	CBV_CLBI = buf->buf_views[0].cur_line_byte_idx;
-	CBV_CL = get_line_ptr_from_cur_buf_line_num(BUF_TOP_NODE(buf)->line_num);
+	CEPBV_CLBI = buf->buf_views[0].cur_line_byte_idx;
+	CEPBV_CL = get_line_ptr_from_cur_buf_line_num(BUF_TOP_NODE(buf)->line_num);
 	return edit_line;
 }
 

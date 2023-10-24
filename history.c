@@ -468,11 +468,11 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 	be_buf_t *edit_buf_save;
 	int ret;
 
-	edit_buf_save = get_c_e_b();
+	edit_buf_save = get_cep_buf();
 	load_histories();
 	renumber_all_bufs_from_top(&history_buffers);
-	set_cur_edit_buf(get_history_buf(hist_type_idx));
-	CBV_CL = CUR_EDIT_BUF_BOT_NODE;
+	set_cep_buf(get_history_buf(hist_type_idx));
+	CEPBV_CL = CUR_EDIT_BUF_BOT_NODE;
 	post_cmd_processing(CUR_EDIT_BUF_TOP_NODE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 
 	ret = call_editor(1, 1);
@@ -480,9 +480,9 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 	if (ret == 0)
 		strcpy__(buffer, "");
 	else
-		strlcpy__(buffer, CBV_CL->data, MAX_EDIT_LINE_LEN);
+		strlcpy__(buffer, CEPBV_CL->data, MAX_EDIT_LINE_LEN);
 ///_FLF_
-	set_cur_edit_buf(edit_buf_save);
+	set_cep_buf(edit_buf_save);
 
 	return ret;
 }

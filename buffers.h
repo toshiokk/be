@@ -23,9 +23,13 @@
 #define buffers_h
 
 typedef struct {
-	int view_idx;				// 0: left pane, 1: right pane
-	be_buf_t *bufs[BUF_VIEWS];	// edit-buffers shown in the left and the right pane
+	int cur_pane_idx;				// 0: left pane, 1: right pane
+	be_buf_t *bufs[EDITOR_PANES];	// edit-buffers shown in the left and the right pane
 } editor_panes_t;
+/////extern editor_panes_t editor_panes;
+
+/////extern be_buf_t *c_e_b;			
+/////extern be_buf_view_t *c_b_v;	// c_b_v = c_e_v->views[editor_panes.cur_pane_idx]
 
 //-----------------------------------------------------------------------------
 
@@ -46,18 +50,15 @@ extern be_bufs_t bufs_bot_anchor;		//< bottom buffers
 
 // Edit buffers ---------------------------------------------------------------
 extern be_bufs_t edit_buffers;
-extern editor_panes_t editor_panes;
-extern be_buf_t *c_e_b;
-extern be_buf_view_t *c_b_v;
 #define EDIT_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&edit_buffers)
 #define EDIT_BUFS_TOP_NODE		BUFS_TOP_NODE(&edit_buffers)
 #define EDIT_BUFS_BOT_NODE		BUFS_BOT_NODE(&edit_buffers)
 #define EDIT_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&edit_buffers)
 // current edit buffer --------------------------------------------------------
-#define CUR_EDIT_BUF_TOP_ANCH	BUF_TOP_ANCH(c_e_b)
-#define CUR_EDIT_BUF_TOP_NODE	BUF_TOP_NODE(c_e_b)
-#define CUR_EDIT_BUF_BOT_NODE	BUF_BOT_NODE(c_e_b)
-#define CUR_EDIT_BUF_BOT_ANCH	BUF_BOT_ANCH(c_e_b)
+#define CUR_EDIT_BUF_TOP_ANCH	BUF_TOP_ANCH(get_cep_buf())
+#define CUR_EDIT_BUF_TOP_NODE	BUF_TOP_NODE(get_cep_buf())
+#define CUR_EDIT_BUF_BOT_NODE	BUF_BOT_NODE(get_cep_buf())
+#define CUR_EDIT_BUF_BOT_ANCH	BUF_BOT_ANCH(get_cep_buf())
 
 #define BUF_VX(buf, idx)					(&((buf)->buf_views[idx]))
 
@@ -72,32 +73,23 @@ extern be_buf_view_t *c_b_v;
 #define BUF_VX_CURSOR_X_TO_KEEP(buf, idx)	BUF_V_CURSOR_X_TO_KEEP(BUF_VX((buf), (idx)))
 #define BUF_VX_MIN_TEXT_X_TO_KEEP(buf, idx)	BUF_V_MIN_TEXT_X_TO_KEEP(BUF_VX((buf), (idx)))
 #define BUF_V0_CL(buf)						BUF_VX_CL((buf), 0)
-#define BUF_V0_CLBI(buf)					BUF_VX_CLBI((buf), 0)
-#define BUF_V0_CURSOR_Y(buf)				BUF_VX_CURSOR_Y((buf), 0)
-#define BUF_V0_CURSOR_X_TO_KEEP(buf)		BUF_VX_CURSOR_X_TO_KEEP((buf), 0)
-#define BUF_V0_MIN_TEXT_X_TO_KEEP(buf)		BUF_VX_MIN_TEXT_X_TO_KEEP((buf), 0)
 #define BUF_V1_CL(buf)						BUF_VX_CL((buf), 1)
-#define BUF_V1_CLBI(buf)					BUF_VX_CLBI((buf), 1)
-#define BUF_V1_CURSOR_Y(buf)				BUF_VX_CURSOR_Y((buf), 1)
-#define BUF_V1_CURSOR_X_TO_KEEP(buf)		BUF_VX_CURSOR_X_TO_KEEP((buf), 1)
-#define BUF_V1_MIN_TEXT_X_TO_KEEP(buf)		BUF_VX_MIN_TEXT_X_TO_KEEP((buf), 1)
-#define CBV_CL							BUF_V_CL(c_b_v)
-#define CBV_CLBI						BUF_V_CLBI(c_b_v)
-#define CBV_CURSOR_Y					BUF_V_CURSOR_Y(c_b_v)
-#define CBV_CURSOR_X_TO_KEEP			BUF_V_CURSOR_X_TO_KEEP(c_b_v)
-#define CBV_MIN_TEXT_X_TO_KEEP			BUF_V_MIN_TEXT_X_TO_KEEP(c_b_v)
-#define CBV0_CL							BUF_VX_CL(c_e_b, 0)
-#define CBV0_CLBI						BUF_VX_CLBI(c_e_b, 0)
-#define CBV0_CURSOR_Y					BUF_VX_CURSOR_Y(c_e_b, 0)
-#define CBV0_CURSOR_X_TO_KEEP			BUF_VX_CURSOR_X_TO_KEEP(c_e_b, 0)
-#define CBV0_MIN_TEXT_X_TO_KEEP			BUF_VX_MIN_TEXT_X_TO_KEEP(c_e_b, 0)
-#define CBV1_CL							BUF_VX_CL(c_e_b, 1)
-#define CBV1_CLBI						BUF_VX_CLBI(c_e_b, 1)
-#define CBV1_CURSOR_Y					BUF_VX_CURSOR_Y(c_e_b, 1)
-#define CBV1_CURSOR_X_TO_KEEP			BUF_VX_CURSOR_X_TO_KEEP(c_e_b, 1)
-#define CBV1_MIN_TEXT_X_TO_KEEP			BUF_VX_MIN_TEXT_X_TO_KEEP(c_e_b, 1)
-#define CEB_ML				(c_e_b->mark_line)
-#define CEB_MLBI			(c_e_b->mark_line_byte_idx)
+
+#define CEPBV_CL						BUF_V_CL(get_cep_buf_view())
+#define CEPBV_CLBI						BUF_V_CLBI(get_cep_buf_view())
+#define CEPBV_CURSOR_Y					BUF_V_CURSOR_Y(get_cep_buf_view())
+#define CEPBV_CURSOR_X_TO_KEEP			BUF_V_CURSOR_X_TO_KEEP(get_cep_buf_view())
+#define CEPBV_MIN_TEXT_X_TO_KEEP		BUF_V_MIN_TEXT_X_TO_KEEP(get_cep_buf_view())
+#define CEPBV_CL_CEPBV_CLBI				(&(CEPBV_CL->data[CEPBV_CLBI]))
+
+#define EPBVX_CL(idx)					BUF_VX_CL(get_editor_pane_buf(idx), idx)
+#define EPBVX_CLBI(idx)					BUF_VX_CLBI(get_editor_pane_buf(idx), idx)
+#define EPBVX_CURSOR_Y(idx)				BUF_VX_CURSOR_Y(get_editor_pane_buf(idx), idx)
+#define EPBVX_CURSOR_X_TO_KEEP(idx)		BUF_VX_CURSOR_X_TO_KEEP(get_editor_pane_buf(idx), idx)
+#define EPBVX_MIN_TEXT_X_TO_KEEP(idx)	BUF_VX_MIN_TEXT_X_TO_KEEP(get_editor_pane_buf(idx), idx)
+
+#define CEPB_ML						(get_cep_buf()->mark_line)
+#define CEPB_MLBI					(get_cep_buf()->mark_line_byte_idx)
 
 // Cut buffers ----------------------------------------------------------------
 extern be_bufs_t cut_buffers;
@@ -165,35 +157,20 @@ int get_edit_buf_idx_from_buf(be_buf_t *edit_buf);
 
 void create_edit_buf(const char *file_path);
 
-void init_editor_panes(editor_panes_t *editor_panes);
-void set_cur_editor_view_idx(int view_idx);
-int get_cur_editor_view_idx(void);
-void set_cur_edit_buf(be_buf_t *buf);
-void set_cur_editor_view_buf(int view_idx, be_buf_t *buf);
+void init_editor_panes();
+void set_editor_cur_pane_idx(int pane_idx);
+int get_editor_cur_pane_idx(void);
 
-// current edit buffer
-// Some compiler needs "static"
-inline static void set_c_e_b(be_buf_t *ceb);
-inline static be_buf_t *get_c_e_b(void);
-inline static void set_c_b_v(be_buf_view_t *cbv);
-inline static be_buf_view_t *get_c_b_v(void);
-inline static void set_c_e_b(be_buf_t *ceb)
-{
-	c_e_b = ceb;
-}
-inline static be_buf_t *get_c_e_b(void)
-{
-	return c_e_b;
-}
-// current line
-inline static void set_c_b_v(be_buf_view_t *cbv)
-{
-	c_b_v = cbv;
-}
-inline static be_buf_view_t *get_c_b_v(void)
-{
-	return c_b_v;
-}
+void set_cep_buf(be_buf_t *buf);
+be_buf_t *get_cep_buf(void);
+be_buf_t **get_cep_buf_ptr(void);
+be_buf_view_t *get_cep_buf_view(void);
+
+void set_editor_pane_n_buf(int pane_idx, be_buf_t *buf);
+be_buf_t *get_editor_pane_buf(int pane_idx);
+be_buf_t **get_editor_pane_buf_ptr(int pane_idx);
+
+// Some compiler needs "inline static" for inline functions
 
 #ifdef ENABLE_DEBUG
 void dump_editor_panes(void);
@@ -219,6 +196,7 @@ struct be_line_t *get_line_ptr_from_cur_buf_line_num(int line_num);
 
 void update_cur_buf_crc(void);
 int check_cur_buf_modified(void);
+void clear_cur_buf_modified(void);
 
 //-----------------------------------------------------------------------------
 
@@ -230,11 +208,11 @@ int check_cur_buf_modified(void);
 #define CMP_BUF_STATE(buf, var, val)		(BUF_STATE(buf, var) == val)
 
 // current edit buffer state
-#define CUR_EBUF_STATE(var)					BUF_STATE(c_e_b, var)
-#define SET_CUR_EBUF_STATE(var, val)		SET_BUF_STATE(c_e_b, var, val)
-#define TOGGLE_CUR_EBUF_STATE(var)			TOGGLE_BUF_STATE(c_e_b, var)
-#define INC_CUR_EBUF_STATE(var, min, max)	INC_BUF_STATE(c_e_b, var, min, max)
-#define CMP_CUR_EBUF_STATE(var, val)		CMP_BUF_STATE(c_e_b, var, val)
+#define CUR_EBUF_STATE(var)					BUF_STATE(get_cep_buf(), var)
+#define SET_CUR_EBUF_STATE(var, val)		SET_BUF_STATE(get_cep_buf(), var, val)
+#define TOGGLE_CUR_EBUF_STATE(var)			TOGGLE_BUF_STATE(get_cep_buf(), var)
+#define INC_CUR_EBUF_STATE(var, min, max)	INC_BUF_STATE(get_cep_buf(), var, min, max)
+#define CMP_CUR_EBUF_STATE(var, val)		CMP_BUF_STATE(get_cep_buf(), var, val)
 
 // current cut buffer state
 #define CUR_CBUF_STATE(var)					BUF_STATE(CUR_CUT_BUF, var)

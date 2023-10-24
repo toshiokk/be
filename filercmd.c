@@ -39,21 +39,19 @@ PRIVATE int filer_change_prev_dir(void);
 
 int do_top_of_list(void)
 {
-	cur_fv->cur_sel_idx = 0;
+	get_cur_filer_view()->cur_sel_idx = 0;
 	return 1;
 }
 int do_bottom_of_list(void)
 {
-	cur_fv->cur_sel_idx = cur_fv->file_list_entries-1;
+	get_cur_filer_view()->cur_sel_idx = get_cur_filer_view()->file_list_entries-1;
 	return 1;
 }
 
 int do_switch_filer_pane(void)
 {
-	if (++(cur_filer_panes->view_idx) >= FILER_VIEWS) {
-		cur_filer_panes->view_idx = 0;
-	}
-	set_cur_filer_view();
+	set_filer_cur_pane_idx((get_filer_cur_pane_idx() + 1) % FILER_PANES);
+	////set_cur_filer_view();
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 1;
 }
@@ -68,7 +66,7 @@ int do_enter_file(void)
 	if (if_dir_change_dir()) {
 		return 0;
 	}
-	if (S_ISREG(cur_fv->file_list[cur_fv->cur_sel_idx].st.st_mode)) {
+	if (S_ISREG(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st.st_mode)) {
 		if (count_edit_bufs() == 0) {
 			return do_view_file();
 		} else {
@@ -124,9 +122,9 @@ int do_view_file(void)
 		filer_do_next = FILER_DO_ENTERED_FILE;
 		return 0;
 	}
-	file_idx = cur_fv->cur_sel_idx;
-	file_name = cur_fv->file_list[file_idx].file_name;
-	if (S_ISREG(cur_fv->file_list[file_idx].st.st_mode)) {
+	file_idx = get_cur_filer_view()->cur_sel_idx;
+	file_name = get_cur_filer_view()->file_list[file_idx].file_name;
+	if (S_ISREG(get_cur_filer_view()->file_list[file_idx].st.st_mode)) {
 		if (fork_exec_once(SEPARATE1, PAUSE0, BEPAGER, file_name, 0))
 			if (fork_exec_once(SEPARATE1, PAUSE0, "less", file_name, 0))
 				fork_exec_once(SEPARATE1, PAUSE0, "more", file_name, 0);
@@ -146,9 +144,9 @@ int do_tail_file(void)	// view file with "tail" command
 		filer_do_next = FILER_DO_ENTERED_FILE;
 		return 0;
 	}
-	file_idx = cur_fv->cur_sel_idx;
-	file_name = cur_fv->file_list[file_idx].file_name;
-	if (S_ISREG(cur_fv->file_list[file_idx].st.st_mode)) {
+	file_idx = get_cur_filer_view()->cur_sel_idx;
+	file_name = get_cur_filer_view()->file_list[file_idx].file_name;
+	if (S_ISREG(get_cur_filer_view()->file_list[file_idx].st.st_mode)) {
 		fork_exec_once(SEPARATE1, PAUSE0, BETAIL, file_name, 0);
 	}
 	return 0;
@@ -180,12 +178,10 @@ int do_copy_file(void)
 			break;
 #ifndef	USE_BUSYBOX
 		fork_exec_repeat(SEPARATE1, "cp", "-afv",
-		 cur_fv->file_list[file_idx].file_name,
-		 file_path, 0);
+		 get_cur_filer_view()->file_list[file_idx].file_name, file_path, 0);
 #else
 		fork_exec_repeat(SEPARATE1, "cp", "-a",
-		 cur_fv->file_list[file_idx].file_name,
-		 file_path, 0);
+		 get_cur_filer_view()->file_list[file_idx].file_name, file_path, 0);
 #endif
 	}
 	end_fork_exec_repeat();
@@ -217,10 +213,10 @@ int do_copy_file_update(void)
 			break;
 #ifndef	USE_BUSYBOX
 		fork_exec_repeat(SEPARATE1, "cp", "-aufv",
-		 cur_fv->file_list[file_idx].file_name, file_path, 0);
+		 get_cur_filer_view()->file_list[file_idx].file_name, file_path, 0);
 #else
 		fork_exec_repeat(SEPARATE1, "cp", "-a",
-		 cur_fv->file_list[file_idx].file_name, file_path, 0);
+		 get_cur_filer_view()->file_list[file_idx].file_name, file_path, 0);
 #endif
 	}
 	end_fork_exec_repeat();
@@ -232,7 +228,8 @@ int do_rename_file(void)
 	char file_name[MAX_PATH_LEN+1];
 	int ret;
 
-	strlcpy__(file_name, cur_fv->file_list[cur_fv->cur_sel_idx].file_name, MAX_PATH_LEN);
+	strlcpy__(file_name, get_cur_filer_view()
+	 ->file_list[get_cur_filer_view()->cur_sel_idx].file_name, MAX_PATH_LEN);
 
 	ret = input_string(file_name, file_name, HISTORY_TYPE_IDX_EXEC, _("Rename to:"));
 
@@ -245,8 +242,9 @@ int do_rename_file(void)
 		return 0;
 	}
 	if (fork_exec_once(SEPARATE1, PAUSE1, "mv", "-i",
-	 cur_fv->file_list[cur_fv->cur_sel_idx].file_name, file_name, 0) == 0) {
-		strlcpy__(cur_fv->next_file, file_name, MAX_PATH_LEN);
+	 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name,
+	 file_name, 0) == 0) {
+		strlcpy__(get_cur_filer_view()->next_file, file_name, MAX_PATH_LEN);
 		filer_do_next = FILER_DO_REFRESH_FORCE;
 	}
 	return 0;
@@ -276,10 +274,10 @@ int do_move_file(void)
 			break;
 #ifndef	USE_BUSYBOX
 		fork_exec_repeat(SEPARATE1, "mv", "-ufv",
-		 cur_fv->file_list[file_idx].file_name, file_path, 0);
+		 get_cur_filer_view()->file_list[file_idx].file_name, file_path, 0);
 #else
 		fork_exec_repeat(SEPARATE1, "mv",
-		 cur_fv->file_list[file_idx].file_name, file_path, 0);
+		 get_cur_filer_view()->file_list[file_idx].file_name, file_path, 0);
 #endif
 	}
 	end_fork_exec_repeat();
@@ -294,7 +292,7 @@ int do_trash_file(void)
 
 	if ((files_selected = get_files_selected_cfv()) == 0)
 		ret = ask_yes_no(ASK_YES_NO, _("Trash file %s ?"),
-		 cur_fv->file_list[cur_fv->cur_sel_idx].file_name);
+		 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name);
 	else
 		ret = ask_yes_no(ASK_YES_NO, _("Trash %d files ?"), files_selected);
 	if (ret > 0) {
@@ -305,13 +303,13 @@ int do_trash_file(void)
 			if (is_handler_sigint_called())
 				break;
 			if (fork_exec_repeat(SEPARATE1, BETRASH,
-			 cur_fv->file_list[file_idx].file_name, 0)) {
+			 get_cur_filer_view()->file_list[file_idx].file_name, 0)) {
 #ifndef	USE_BUSYBOX
 				fork_exec_repeat(SEPARATE1, "rm", "-rv",
-				 cur_fv->file_list[file_idx].file_name, 0);
+				 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #else
 				fork_exec_repeat(SEPARATE1, "rm", "-r",
-				 cur_fv->file_list[file_idx].file_name, 0);
+				 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #endif
 			}
 		}
@@ -328,7 +326,7 @@ int do_delete_file(void)
 
 	if ((files_selected = get_files_selected_cfv()) == 0)
 		ret = ask_yes_no(ASK_YES_NO, _("Delete file %s ?"),
-		 cur_fv->file_list[cur_fv->cur_sel_idx].file_name);
+		 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name);
 	else
 		ret = ask_yes_no(ASK_YES_NO, _("Delete %d files ?"), files_selected);
 	if (ret > 0) {
@@ -340,10 +338,10 @@ int do_delete_file(void)
 				break;
 #ifndef	USE_BUSYBOX
 			fork_exec_repeat(SEPARATE1, "rm", "-rv",
-			 cur_fv->file_list[file_idx].file_name, 0);
+			 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #else
 			fork_exec_repeat(SEPARATE1, "rm", "-r",
-			 cur_fv->file_list[file_idx].file_name, 0);
+			 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #endif
 		}
 		end_fork_exec_repeat();
@@ -359,7 +357,7 @@ int do_mark_to_delete_file(void)
 
 	if ((files_selected = get_files_selected_cfv()) == 0)
 		ret = ask_yes_no(ASK_YES_NO, _("Mark file %s to be Deleted later ?"),
-		 cur_fv->file_list[cur_fv->cur_sel_idx].file_name);
+		 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name);
 	else
 		ret = ask_yes_no(ASK_YES_NO, _("Mark %d files to be Deleted later ?"),
 		 files_selected);
@@ -371,13 +369,13 @@ int do_mark_to_delete_file(void)
 			if (is_handler_sigint_called())
 				break;
 			if (fork_exec_repeat(SEPARATE1, BEMARKDEL,
-			 cur_fv->file_list[file_idx].file_name, 0)) {
+			 get_cur_filer_view()->file_list[file_idx].file_name, 0)) {
 #ifndef	USE_BUSYBOX
 				fork_exec_repeat(SEPARATE1, "chmod", "-v", "606",
-				 cur_fv->file_list[file_idx].file_name, 0);
+				 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #else
 				fork_exec_repeat(SEPARATE1, "chmod", "606",
-				 cur_fv->file_list[file_idx].file_name, 0);
+				 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #endif
 			}
 		}
@@ -394,7 +392,7 @@ int do_size_zero_file(void)
 
 	if ((files_selected = get_files_selected_cfv()) == 0)
 		ret = ask_yes_no(ASK_YES_NO, _("Make size of file %s 0 ?"),
-		 cur_fv->file_list[cur_fv->cur_sel_idx].file_name);
+		 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name);
 	else
 		ret = ask_yes_no(ASK_YES_NO, _("Make size of %d files 0 ?"),
 		 files_selected);
@@ -406,13 +404,13 @@ int do_size_zero_file(void)
 			if (is_handler_sigint_called())
 				break;
 			if (fork_exec_repeat(SEPARATE1, BESIZE0,
-			 cur_fv->file_list[file_idx].file_name, 0)) {
+			 get_cur_filer_view()->file_list[file_idx].file_name, 0)) {
 #ifndef	USE_BUSYBOX
 				fork_exec_repeat(SEPARATE1, "chmod", "-v", "000",
-				 cur_fv->file_list[file_idx].file_name, 0);
+				 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #else
 				fork_exec_repeat(SEPARATE1, "chmod", "000",
-				 cur_fv->file_list[file_idx].file_name, 0);
+				 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #endif
 			}
 		}
@@ -436,8 +434,8 @@ int do_find_file(void)
 	if (ret <= 0) {
 		return 0;
 	}
-	strlcpy__(cur_fv->next_file, file_path, MAX_PATH_LEN);
-	cur_fv->top_idx = 0;
+	strlcpy__(get_cur_filer_view()->next_file, file_path, MAX_PATH_LEN);
+	get_cur_filer_view()->top_idx = 0;
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 0;
 }
@@ -484,7 +482,7 @@ int do_parent_directory(void)
 {
 	if (filer_change_dir("..") == 0)
 		return 0;
-	separate_dir_and_file(cur_fv->cur_dir, cur_fv->next_file);
+	separate_dir_and_file(get_cur_filer_view()->cur_dir, get_cur_filer_view()->next_file);
 	return 1;
 }
 int do_beginning_directory(void)
@@ -514,15 +512,17 @@ int do_select_file(void)
 {
 	int files_selected;
 
-	cur_fv->file_list[cur_fv->cur_sel_idx].selected
-	 = cur_fv->file_list[cur_fv->cur_sel_idx].selected ^ _FILE_SEL_MAN_;
+	get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].selected
+	 = get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].selected
+	  ^ _FILE_SEL_MAN_;
 	files_selected = get_files_selected_cfv();
 	disp_status_bar_done(P_(_("%d file selected"),
 							_("%d files selected"),
 							_("%d filess selected"),
 							_("%d filesss selected"),
 	 files_selected), files_selected);
-	cur_fv->cur_sel_idx = MIN_MAX_(0, cur_fv->cur_sel_idx + 1, cur_fv->file_list_entries-1);
+	get_cur_filer_view()->cur_sel_idx = MIN_MAX_(0,
+	 get_cur_filer_view()->cur_sel_idx + 1, get_cur_filer_view()->file_list_entries-1);
 //	filer_do_next = FILER_DO_UPDATE_SCREEN;
 	return 0;
 }
@@ -530,8 +530,8 @@ int do_select_no_file(void)
 {
 	int file_idx;
 
-	for (file_idx = 0 ; file_idx < cur_fv->file_list_entries; file_idx++) {
-		cur_fv->file_list[file_idx].selected = 0;
+	for (file_idx = 0 ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
+		get_cur_filer_view()->file_list[file_idx].selected = 0;
 	}
 	disp_status_bar_done(_("File selection cleared"));
 //	filer_do_next = FILER_DO_UPDATE_SCREEN;
@@ -542,13 +542,13 @@ int do_select_all_files(void)
 	int file_idx;
 	int files_selected;
 
-	for (file_idx = 0 ; file_idx < cur_fv->file_list_entries; file_idx++) {
-		if (strcmp(cur_fv->file_list[file_idx].file_name, ".") == 0
-		 || strcmp(cur_fv->file_list[file_idx].file_name, "..") == 0)
-			cur_fv->file_list[file_idx].selected = 0;
+	for (file_idx = 0 ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
+		if (strcmp(get_cur_filer_view()->file_list[file_idx].file_name, ".") == 0
+		 || strcmp(get_cur_filer_view()->file_list[file_idx].file_name, "..") == 0)
+			get_cur_filer_view()->file_list[file_idx].selected = 0;
 		else
-			cur_fv->file_list[file_idx].selected
-			 = cur_fv->file_list[file_idx].selected ^ _FILE_SEL_MAN_;
+			get_cur_filer_view()->file_list[file_idx].selected
+			 = get_cur_filer_view()->file_list[file_idx].selected ^ _FILE_SEL_MAN_;
 	}
 	files_selected = get_files_selected_cfv();
 	disp_status_bar_done(P_(_("%d file selected"),
@@ -609,6 +609,7 @@ int do_filer_display_color_pairs(void)
 	input_key_loop();
 #ifdef ENABLE_DEBUG
 	display_item_colors(0, 0);
+	display_bracket_hl_colors(0, 40);
 	input_key_loop();
 #endif // ENABLE_DEBUG
 	filer_do_next = FILER_DO_NOTHING;
@@ -678,8 +679,8 @@ PRIVATE int do_edit_file_(int recursive)
 	for (file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
-		if (S_ISREG(cur_fv->file_list[file_idx].st.st_mode)) {
-			if (load_file_name_upp_low(cur_fv->file_list[file_idx].file_name,
+		if (S_ISREG(get_cur_filer_view()->file_list[file_idx].st.st_mode)) {
+			if (load_file_name_upp_low(get_cur_filer_view()->file_list[file_idx].file_name,
 			 TUL0, OOE0, MOE1, recursive) <= 0) {
 				tio_beep();
 			}
@@ -698,8 +699,9 @@ PRIVATE int do_edit_file_(int recursive)
 
 PRIVATE int if_dir_change_dir(void)
 {
-	if (S_ISDIR(cur_fv->file_list[cur_fv->cur_sel_idx].st.st_mode)) {
-		filer_change_dir(cur_fv->file_list[cur_fv->cur_sel_idx].file_name);
+	if (S_ISDIR(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st.st_mode)) {
+		filer_change_dir(get_cur_filer_view()
+		 ->file_list[get_cur_filer_view()->cur_sel_idx].file_name);
 		return 1;
 	}
 	return 0;
@@ -708,7 +710,7 @@ PRIVATE int filer_change_dir_if_not_yet(const char *dir)
 {
 	char buf[MAX_PATH_LEN+1];
 
-	if (strcmp(cur_fv->cur_dir, get_abs_path(dir, buf)) == 0) {
+	if (strcmp(get_cur_filer_view()->cur_dir, get_abs_path(dir, buf)) == 0) {
 		return filer_change_prev_dir();
 	} else {
 		return filer_change_dir(dir);
@@ -716,8 +718,8 @@ PRIVATE int filer_change_dir_if_not_yet(const char *dir)
 }
 PRIVATE int filer_change_prev_dir(void)
 {
-	if (strlen(cur_fv->prev_dir)) {
-		return filer_change_dir(cur_fv->prev_dir);
+	if (strlen(get_cur_filer_view()->prev_dir)) {
+		return filer_change_dir(get_cur_filer_view()->prev_dir);
 	}
 	return 0;
 }
@@ -750,19 +752,19 @@ int filer_change_dir(const char *dir)
 	if (strcmp(dir, ".") == 0) {
 		return 0;
 	} else if (strcmp(dir, "..") == 0) {
-		strlcpy__(chg_dir, cur_fv->cur_dir, MAX_PATH_LEN);
-		strlcpy__(cur_fv->next_file, separate_dir_and_file(chg_dir, file), MAX_PATH_LEN);
+		strlcpy__(chg_dir, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
+		strlcpy__(get_cur_filer_view()->next_file, separate_dir_and_file(chg_dir, file), MAX_PATH_LEN);
 	} else if (strcmp(dir, "~") == 0) {
-		strcpy__(cur_fv->next_file, "..");
+		strcpy__(get_cur_filer_view()->next_file, "..");
 		get_abs_path("~", chg_dir);
 	} else if (dir[0] == '/') {
 		// absolute path
-		strcpy__(cur_fv->next_file, "..");
+		strcpy__(get_cur_filer_view()->next_file, "..");
 		strlcpy__(chg_dir, dir, MAX_PATH_LEN);
 	} else {
 		// relative path
-		strcpy__(cur_fv->next_file, "..");
-		cat_dir_and_file(chg_dir, MAX_PATH_LEN, cur_fv->cur_dir, dir);	// /dir1 ==> /dir1/dir2
+		strcpy__(get_cur_filer_view()->next_file, "..");
+		cat_dir_and_file(chg_dir, MAX_PATH_LEN, get_cur_filer_view()->cur_dir, dir);	// /dir1 ==> /dir1/dir2
 	}
 	normalize_full_path(chg_dir);
 	if (is_dir_readable(chg_dir) == 0) {
@@ -772,10 +774,10 @@ int filer_change_dir(const char *dir)
 		filer_do_next = FILER_DO_NOTHING;
 		return 1;
 	}
-	strlcpy__(cur_fv->prev_dir, cur_fv->cur_dir, MAX_PATH_LEN);
+	strlcpy__(get_cur_filer_view()->prev_dir, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
 	change_cur_dir(chg_dir);
-	strlcpy__(cur_fv->cur_dir, chg_dir, MAX_PATH_LEN);
-	cur_fv->top_idx = 0;
+	strlcpy__(get_cur_filer_view()->cur_dir, chg_dir, MAX_PATH_LEN);
+	get_cur_filer_view()->top_idx = 0;
 #ifdef ENABLE_HISTORY
 	update_history(HISTORY_TYPE_IDX_DIR, chg_dir);
 #endif // ENABLE_HISTORY

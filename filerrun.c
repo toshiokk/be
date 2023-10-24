@@ -38,7 +38,7 @@ PRIVATE int do_filer_cmd_(char *cmd_file);
 
 int do_run_line(void)
 {
-	fork_exec_once_sh_c(SEPARATE1, PAUSE1, CBV_CL->data);
+	fork_exec_once_sh_c(SEPARATE1, PAUSE1, CEPBV_CL->data);
 	do_refresh_editor();
 	return 0;
 }
@@ -88,7 +88,7 @@ int do_exec_command_with_file(void)
 					break;
 				replace_str(buffer, MAX_PATH_LEN,
 				 ptr_replace - buffer, STR_TO_BE_REPLACED_WITH_FILE_NAME_LEN,
-				 quote_file_name(cur_fv->file_list[file_idx].file_name), -1);
+				 quote_file_name(get_cur_filer_view()->file_list[file_idx].file_name), -1);
 			}
 			fork_exec_repeat_sh_c(SEPARATE1, buffer);
 		}
@@ -108,7 +108,7 @@ int do_exec_command_with_files(void)
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		concat_file_name_separating_by_space(command_str, MAX_PATH_LEN,
-		 cur_fv->file_list[file_idx].file_name);
+		 get_cur_filer_view()->file_list[file_idx].file_name);
 	}
 
 	ret = input_string_pos(command_str, command_str, 0,
@@ -130,7 +130,7 @@ int do_run_command_rel(void)
 {
 	struct stat *st_ptr;
 
-	st_ptr = &cur_fv->file_list[cur_fv->cur_sel_idx].st;
+	st_ptr = &get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st;
 	if ((st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) == 0)
 		do_run_command_(0);
 	else
@@ -165,39 +165,39 @@ PRIVATE int do_run_command_(int mode)
 	int dst_fv_idx = 1;
 	int ret;
 
-	st_ptr = &cur_fv->file_list[cur_fv->cur_sel_idx].st;
+	st_ptr = &get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st;
 	switch(mode) {
 	default:
 	case 0:
 		explanation = _("Run (with file):");
 		snprintf_(command_str, MAX_PATH_LEN+1, " %s",
-		 quote_file_name(cur_fv->file_list[cur_fv->cur_sel_idx].file_name));
+		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name));
 		break;
 	case 1:
 		explanation = _("Run (current-directory-file):");
 		snprintf_(command_str, MAX_PATH_LEN+1, "./%s ",
-		 quote_file_name(cur_fv->file_list[cur_fv->cur_sel_idx].file_name));
+		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name));
 		break;
 	case 2:
 		explanation = _("Run (with real-path):");
 		snprintf_(buf_s, MAX_PATH_LEN+1, "%s/%s",
-		 cur_fv->cur_dir,
-		 cur_fv->file_list[cur_fv->cur_sel_idx].file_name);
+		 get_cur_filer_view()->cur_dir,
+		 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name);
 		quote_file_name_buf(command_str, buf_s);
 		break;
 	case 3:
 		explanation = _("Run (script):");
 		snprintf_(command_str, MAX_PATH_LEN+1, ". %s",
-		 quote_file_name(cur_fv->file_list[cur_fv->cur_sel_idx].file_name));
+		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name));
 		break;
 	case 4:
 		explanation = _("Run (script by shell):");
 		snprintf_(command_str, MAX_PATH_LEN+1, "sh %s",
-		 quote_file_name(cur_fv->file_list[cur_fv->cur_sel_idx].file_name));
+		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name));
 		break;
 	case 5:
 		explanation = _("Run (with SRC-path and DEST-path):");
-		if (cur_filer_panes->view_idx == 0) {
+		if (get_filer_cur_pane_idx() == 0) {
 			src_fv_idx = 0;
 			dst_fv_idx = 1;
 		} else {
@@ -206,10 +206,10 @@ PRIVATE int do_run_command_(int mode)
 		}
 		snprintf_(buf_s, MAX_PATH_LEN+1, "%s/%s",
 		 cur_filer_panes->filer_views[src_fv_idx].cur_dir,
-		 cur_fv->file_list[cur_fv->cur_sel_idx].file_name);
+		 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name);
 		snprintf_(buf_d, MAX_PATH_LEN+1, "%s/%s",
 		 cur_filer_panes->filer_views[dst_fv_idx].cur_dir,
-		 cur_fv->file_list[cur_fv->cur_sel_idx].file_name);
+		 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name);
 		snprintf_(command_str, MAX_PATH_LEN+1, " %s %s",
 		 quote_file_name_buf(buf1, buf_s),
 		 quote_file_name_buf(buf2, buf_d));
@@ -259,14 +259,14 @@ PRIVATE int do_filer_cmd_(char *cmd_file)
 	int file_idx;
 	char *file_name;
 
-	file_idx = cur_fv->cur_sel_idx;
-	file_name = cur_fv->file_list[file_idx].file_name;
+	file_idx = get_cur_filer_view()->cur_sel_idx;
+	file_name = get_cur_filer_view()->file_list[file_idx].file_name;
 	if (is_app_list_mode()) {
 		// do_filer_cmd -> FILER_DO_ENTERED_FILE_PATH
 		filer_do_next = FILER_DO_ENTERED_FILE_PATH;
 		return 0;
 	}
-	if (S_ISREG(cur_fv->file_list[file_idx].st.st_mode)) {
+	if (S_ISREG(get_cur_filer_view()->file_list[file_idx].st.st_mode)) {
 		fork_exec_once(SEPARATE1, PAUSE0, cmd_file, file_name, 0);
 		return 0;
 	}

@@ -560,7 +560,7 @@ void buf_dump_lines(be_buf_t *buf, int lines)
 void buf_dump_ptrs(be_buf_t *buf)
 {
 	flf_d_printf("%saddr:%08lx,prev:%08lx,next:%08lx,line:%08lx\n",
-	 buf == get_c_e_b() ? ">" : " ",
+	 buf == get_cep_buf() ? ">" : " ",
 	 buf, NODE_PREV(buf), NODE_NEXT(buf), NODES_TOP_NODE(buf));
 	line_dump_lines(BUF_TOP_ANCH(buf), 3, BUF_V0_CL(buf));
 }

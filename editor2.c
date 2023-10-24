@@ -79,12 +79,12 @@ void disp_editor_title_bar(void)
 #endif // ENABLE_DEBUG
 	char buf_time[HHCMMCSS_LEN+1];
 
-	buf_idx = get_edit_buf_idx_from_buf(get_c_e_b());
-	path = get_c_e_b()->abs_path;
+	buf_idx = get_edit_buf_idx_from_buf(get_cep_buf());
+	path = get_cep_buf()->abs_path;
 
 	tio_set_cursor_on(0);
 
-	set_title_bar_color_by_state(BUF_STATE(get_c_e_b(), buf_CUT_MODE));
+	set_title_bar_color_by_state(BUF_STATE(get_cep_buf(), buf_CUT_MODE));
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0,
 	 tio_blank_line(), main_win_get_columns());
 
@@ -103,20 +103,20 @@ void disp_editor_title_bar(void)
 #endif // ENABLE_DEBUG
 	snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%s%d%c%d:%s",
 	 root_notation(),
-	 editor_panes.view_idx+1, separator_char, buf_idx+1,
+	 get_editor_cur_pane_idx()+1, separator_char, buf_idx+1,
 	 (path[0] == '\0') ? _("New File") : path);
 	if (CUR_EBUF_STATE(buf_MODIFIED)) {
 		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[Modified] "));
 	} else if (CUR_EBUF_STATE(buf_VIEW_MODE)) {
 		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[VIEW mode] "));
-	} else if (is_st_writable(&get_c_e_b()->orig_file_stat) == 0) {
+	} else if (is_st_writable(&get_cep_buf()->orig_file_stat) == 0) {
 		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[WRITE-PROTECTED] "));
 	}
 
 	//-------------------------------------------------------------------------
 	buf_buf[0] = '\0';
 	// edit buffer cut mode
-	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, "%s", buf_cut_mode_str(get_c_e_b()));
+	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, "%s", buf_cut_mode_str(get_cep_buf()));
 #ifdef ENABLE_DEBUG
 ///	// cut buffer cut mode
 ///	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " %s", buf_cut_mode_str(CUR_CUT_BUF));
@@ -166,7 +166,6 @@ void disp_editor_title_bar(void)
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0, buffer, -1);
 
 	tio_set_cursor_on(1);
-///_FLF_
 }
 //-----------------------------------------------------------------------------
 PRIVATE int edit_win_update_needed = UPDATE_SCRN_NONE;
@@ -184,6 +183,10 @@ void clear_edit_win_update_needed(void)
 {
 	edit_win_update_needed = UPDATE_SCRN_NONE;
 }
+
+#ifdef ENABLE_REGEX
+PRIVATE void disp_edit_win_bracket_hl(int cur_pane);
+#endif // ENABLE_REGEX
 
 //-111111111111<   |
 //22222222222222222|
@@ -207,23 +210,20 @@ void disp_edit_win(int cur_pane)
 	int wl_idx;
 	int cursor_line_text_right_x = -1;
 
-///_FLF_
 	// Don't make the cursor jump around the screen while updating
 	tio_set_cursor_on(0);
 
-///_FLF_
 	if (edit_win_get_path_lines()) {
 		// file path per pane
 		set_color_by_idx(ITEM_COLOR_IDX_TITLE, cur_pane);
 		sub_win_clear_lines(edit_win_get_path_y(), -1);
-		buf_idx = get_edit_buf_idx_from_buf(get_c_e_b());
+		buf_idx = get_edit_buf_idx_from_buf(get_cep_buf());
 		snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%d%c%s",
-		 buf_idx+1, ':', get_c_e_b()->abs_path);
+		 buf_idx+1, ':', get_cep_buf()->abs_path);
 		shrink_str(buf_path, sub_win_get_columns());
 		sub_win_output_string(edit_win_get_path_y(), 0, buf_path, -1);
 	}
 
-///_FLF_
 	get_cur_screen_top(&line, &byte_idx);
 	for (yy = 0; yy < edit_win_get_text_lines(); ) {
 		if (IS_NODE_BOT_ANCH(line))
@@ -234,12 +234,11 @@ void disp_edit_win(int cur_pane)
 ///flf_d_printf("max_wl_idx: %d\n", max_wl_idx);
 		wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, byte_idx, -1);
 		for ( ; wl_idx <= max_wl_idx; wl_idx++) {
-///_FLF_
 			byte_idx_1 = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, 0, -1);
 			byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx,
 			 INT_MAX, -1);
-			disp_edit_line(cur_pane, yy, get_c_e_b(), line, byte_idx_1, byte_idx_2);
-			if (yy == CBV_CURSOR_Y) {
+			disp_edit_line(cur_pane, yy, get_cep_buf(), line, byte_idx_1, byte_idx_2);
+			if (yy == CEPBV_CURSOR_Y) {
 				cursor_line_text_right_x = LIM_MAX(get_edit_win_columns_for_text(),
 				 end_col_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, byte_idx_2, -1));
 			}
@@ -247,7 +246,6 @@ void disp_edit_win(int cur_pane)
 			if (yy >= edit_win_get_text_lines())
 				break;
 		}
-///_FLF_
 		line = NODE_NEXT(line);
 		byte_idx = 0;
 	}
@@ -256,13 +254,27 @@ void disp_edit_win(int cur_pane)
 	sub_win_clear_lines(edit_win_get_text_y() + yy,
 	 edit_win_get_text_y() + edit_win_get_text_lines());
 
+#ifdef ENABLE_REGEX
+#define HL_SEARCH_CURSOR
+///#define HL_SEARCH_OTHER
+///
+#define HL_BRACKET_BW
+///
+#define HL_BRACKET_FW
+#if defined(HL_BRACKET_BW) || defined(HL_BRACKET_FW)
+	if (search_is_needle_set(&search__) && cur_pane) {
+		disp_edit_win_bracket_hl(cur_pane);
+	}
+#endif // defined(HL_BRACKET_BW) || defined(HL_BRACKET_FW)
+#endif // ENABLE_REGEX
+
 	if (GET_APPMD(ed_SHOW_RULER)) {
 		int edit_win_text_x = get_line_num_columns();
 		if (GET_APPMD(ed_SHOW_LINE_NUMBER)) {
 			// display buffer total lines ("999 ")
 			set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 			sub_win_output_string(edit_win_get_ruler_y(), 0,
-			 get_line_num_string(get_c_e_b(), CUR_EDIT_BUF_BOT_NODE, buf_line_num),
+			 get_line_num_string(get_cep_buf(), CUR_EDIT_BUF_BOT_NODE, buf_line_num),
 			 edit_win_text_x);
 		}
 		// display ruler("1---5----10---15---20---25---30---35---40---45---50---55---60---65")
@@ -272,16 +284,15 @@ void disp_edit_win(int cur_pane)
 		// display cursor column indicator in reverse text on ruler
 		set_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 1);
 		sub_win_output_string(edit_win_get_ruler_y(), get_cursor_x_in_edit_win(),
-		 get_ruler_text(get_cursor_x_in_text() - get_c_b_v_min_text_x_to_keep()), 1);
+		 get_ruler_text(get_cursor_x_in_text() - get_cep_buf_view_min_text_x_to_keep()), 1);
 		// display line tail column indicator in reverse text on ruler
 		if (cursor_line_text_right_x >= 0) {
 			sub_win_output_string(edit_win_get_ruler_y(),
-			 edit_win_text_x + (cursor_line_text_right_x-1 - get_c_b_v_min_text_x_to_keep()),
-			 get_ruler_text(cursor_line_text_right_x-1 - get_c_b_v_min_text_x_to_keep()), 1);
+			 edit_win_text_x + (cursor_line_text_right_x-1 - get_cep_buf_view_min_text_x_to_keep()),
+			 get_ruler_text(cursor_line_text_right_x-1 - get_cep_buf_view_min_text_x_to_keep()), 1);
 		}
 	}
 
-///_FLF_
 	tio_set_cursor_on(1);
 }
 
@@ -303,7 +314,7 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 ///flf_d_printf("%d, [%d, %d]\n", yy, byte_idx_1, byte_idx_2);
 ///flf_d_printf("[%s]\n", te_line_concat_linefeed);
 	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
-	if (line == CBV_CL) {
+	if (line == CEPBV_CL) {
 		// highlight current line by painting background
 		set_color_by_idx(ITEM_COLOR_IDX_CURSOR_LINE, 0);
 	}
@@ -314,18 +325,16 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 	if (byte_idx_1 == 0) {
 		// first line of line wrapping, display line number
 		output_edit_line_num(yy, buf, line);	// "9999 "
-///_FLF_
 	} else {
 		output_edit_line_num(yy, buf, NULL);	// "     "
 	}
 
 	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
-	if (line == CBV_CL) {
+	if (line == CEPBV_CL) {
 		set_color_by_idx(ITEM_COLOR_IDX_CURSOR_LINE, 0);
 	}
 	// display text simply =====================================================
 	output_edit_line_text(yy, line->data, byte_idx_1, byte_idx_2);
-///_FLF_
 
 #ifdef ENABLE_SYNTAX
 	// display syntax color highlighting =======================================
@@ -345,12 +354,10 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 			for ( ; clr_syntax; clr_syntax = clr_syntax->next) {
 ///dump_color_syntax(clr_syntax);
 				if (clr_syntax->regexp_end == NULL) {
-///_FLF_
 					// single-line regexp
 					disp_edit_line_single_line_regexp(yy, line,
 					 byte_idx_1, byte_idx_2, clr_syntax);
 				} else {
-///_FLF_
 					// multi-line regexp
 					disp_edit_line_multi_line_regexp(yy, line,
 					 byte_idx_1, byte_idx_2, clr_syntax);
@@ -359,7 +366,6 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 		}
 	}
 #endif // ENABLE_SYNTAX
-///_FLF_
 
 #if 1
 	// highlight marked segment ================================================
@@ -411,13 +417,12 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 		}
 	}
 #endif
-///_FLF_
-#if 1
+#ifdef HL_SEARCH_OTHER
 	if (search_is_needle_set(&search__)) {
 		// display all text matched in the screen =======================================
 		for (byte_idx = 0; byte_idx < byte_idx_2; ) {
 			if (search_str_in_line(&search__, &matches, NULL,
-			 FORWARD_SEARCH, DISTINGUISH_CASE, line->data, byte_idx) == 0) {
+			 FORWARD_SEARCH, CASE_SENSITIVE, line->data, byte_idx) == 0) {
 				// not found
 				break;
 			}
@@ -431,34 +436,31 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 			byte_idx = matches_end_idx(&matches);
 		}
 	}
-#endif
-	if (cur_pane && line == CBV_CL && search_is_needle_set(&search__)) {
-		// display matched text at cursor pos ===========================================
-		if (search_str_in_line(&search__, &matches, NULL,
-		 FORWARD_SEARCH, DISTINGUISH_CASE, line->data, CBV_CLBI)) {
-			// found
-			if (matches_start_idx(&matches) == CBV_CLBI) {
-				if (get_intersection(byte_idx_1, byte_idx_2,
-				 CBV_CLBI, CBV_CLBI + matches_match_len(&matches),
-				 &left_byte_idx, &right_byte_idx) > 0) {
-					set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, 0);
-					output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
+#endif // HL_SEARCH_OTHER
+	if (cur_pane) {
+#ifdef HL_SEARCH_CURSOR
+		if (search_is_needle_set(&search__) && line == CEPBV_CL) {
+			// display matched text at cursor pos ===========================================
+			if (search_str_in_line(&search__, &matches, NULL,
+			 FORWARD_SEARCH, CASE_SENSITIVE, line->data, CEPBV_CLBI)) {
+				// found
+				if (matches_start_idx(&matches) == CEPBV_CLBI) {
+					if (get_intersection(byte_idx_1, byte_idx_2,
+					 CEPBV_CLBI, CEPBV_CLBI + matches_match_len(&matches),
+					 &left_byte_idx, &right_byte_idx) > 0) {
+						set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, 0);
+						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
+					}
 				}
 			}
 		}
+#endif // HL_SEARCH_CURSOR
 		// draw cursor myself ===========================================================
-///TTT
 		if (GET_APPMD(app_DRAW_CURSOR)) {
-//DDD		if (1) {
-///TTT			set_color_by_idx(ITEM_COLOR_IDX_CURSOR_CHAR, 0);
 			set_color_by_idx(ITEM_COLOR_IDX_CURSOR_CHAR, 1);
-			vis_idx = vis_idx_from_byte_idx(CBV_CL->data, CBV_CLBI);
-///TTT
-			output_edit_line_text(CBV_CURSOR_Y, te_line_visible_code,
-///TTT
+			vis_idx = vis_idx_from_byte_idx(CEPBV_CL->data, CEPBV_CLBI);
+			output_edit_line_text(CEPBV_CURSOR_Y, te_line_visible_code,
 			 vis_idx, vis_idx+utf8c_bytes(&te_line_visible_code[vis_idx]));
-//DDD			output_edit_line_text(CBV_CURSOR_Y, tio_blank_line(),
-//DDD			 vis_idx, vis_idx+1);
 		}
 	}
 }
@@ -482,7 +484,7 @@ PRIVATE void disp_edit_line_single_line_regexp(int yy, const be_line_t *line,
 		 regexp_matches_start_idx(&regexp_matches, 0),
 		 regexp_matches_end_idx(&regexp_matches, 0),
 		 &min_byte_idx, &max_byte_idx) > 0) {
-			set_color_attrs_ptr(&clr_syntax->color);
+			set_item_color(&clr_syntax->color);
 			output_edit_line_text(yy, te_line_concat_linefeed, min_byte_idx, max_byte_idx);
 		}
 		byte_idx = regexp_matches_end_idx(&regexp_matches, 0);
@@ -527,7 +529,7 @@ PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
 	int line_cnt;
 	int min_byte_idx, max_byte_idx;
 
-	set_color_attrs_ptr(&clr_syntax->color);
+	set_item_color(&clr_syntax->color);
 	// First, search start or end syntax on earlier lines.
 	for (line_cnt = 0, start_line = NODE_PREV(line); ;
 	 line_cnt++, start_line = NODE_PREV(start_line)) {
@@ -617,6 +619,119 @@ step_two:
 }
 #endif // ENABLE_SYNTAX
 
+#ifdef ENABLE_REGEX
+PRIVATE void disp_edit_win_bracket_hl(int cur_pane)
+{
+	char char_under_cursor;
+	be_line_t *match_line;
+	int match_byte_idx;
+	be_line_t *line;
+	int byte_idx;
+
+	int yy;
+	int depth;
+	int match_len;
+	int byte_idx_1;
+	int byte_idx_2;
+	int max_wl_idx;
+	int wl_idx;
+	int left_byte_idx, right_byte_idx;
+	int safe_cnt = 0;
+
+	char_under_cursor = *CEPBV_CL_CEPBV_CLBI;
+
+#ifdef HL_BRACKET_BW
+	// draw backward [0, yy] from cursor pos
+	match_line = CEPBV_CL;
+	match_byte_idx = CEPBV_CLBI;
+	line = CEPBV_CL;
+	byte_idx = CEPBV_CLBI;
+	yy = CEPBV_CURSOR_Y;
+	for (depth = 1, safe_cnt = 0;
+	 ((-MAX_BRACKET_NESTING < depth) && (depth < MAX_BRACKET_NESTING))
+	  && (safe_cnt < MAX_BRACKET_NESTING);
+	 safe_cnt++) {
+		match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
+		 char_under_cursor, search__.needle, BACKWARD_SEARCH, &depth);
+////flf_d_printf("match_len: %d\n", match_len);
+		for ( ; yy >= 0; ) {
+			if (match_len == 0)
+				break;
+			te_tab_expand_line(line->data);
+			max_wl_idx = max_wrap_line_idx(te_line_concat_linefeed, -1);
+			wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, byte_idx, -1);
+			for ( ; wl_idx >= 0; wl_idx--) {
+				byte_idx_1 = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, 0, -1);
+				byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx,
+				 INT_MAX, -1);
+				if (match_line == line && get_intersection(byte_idx_1, byte_idx_2,
+				 byte_idx, byte_idx + match_len, &left_byte_idx, &right_byte_idx) > 0) {
+					set_color_for_bracket_hl(abs(depth));
+					output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
+					match_len = 0;	// clear match_len to go next bracket
+					break;
+				}
+				yy--;
+				if (yy < 0)
+					break;
+			}
+			if (match_len == 0)
+				break;
+			line = NODE_PREV(line);
+			if (IS_NODE_INT(line) == 0)
+				break;
+			byte_idx = line_data_strlen(line->data);	// goto the previous line's tail
+		}
+	}
+#endif // HL_BRACKET_BW
+
+#ifdef HL_BRACKET_FW
+	// draw forward [yy, edit_win_get_text_lines()-1] from cursor pos
+	match_line = CEPBV_CL;
+	match_byte_idx = CEPBV_CLBI;
+	line = CEPBV_CL;
+	byte_idx = CEPBV_CLBI;
+	yy = CEPBV_CURSOR_Y;
+	for (depth = 1, safe_cnt = 0;
+	 ((-MAX_BRACKET_NESTING < depth) && (depth < MAX_BRACKET_NESTING))
+	  && (safe_cnt < MAX_BRACKET_NESTING);
+	 safe_cnt++) {
+		match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
+		 char_under_cursor, search__.needle, FORWARD_SEARCH, &depth);
+////flf_d_printf("match_len: %d\n", match_len);
+		for ( ; yy < edit_win_get_text_lines(); ) {
+			if (match_len == 0)
+				break;
+			te_tab_expand_line(line->data);
+			max_wl_idx = max_wrap_line_idx(te_line_concat_linefeed, -1);
+			wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, byte_idx, -1);
+			for ( ; wl_idx <= max_wl_idx; wl_idx++) {
+				byte_idx_1 = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, 0, -1);
+				byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx,
+				 INT_MAX, -1);
+				if (match_line == line && get_intersection(byte_idx_1, byte_idx_2,
+				 byte_idx, byte_idx + match_len, &left_byte_idx, &right_byte_idx) > 0) {
+					set_color_for_bracket_hl(abs(depth));
+					output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
+					match_len = 0;	// clear match_len to go next bracket
+					break;
+				}
+				yy--;
+				if (yy >= edit_win_get_text_lines())
+					break;
+			}
+			if (match_len == 0)
+				break;
+			line = NODE_NEXT(line);
+			if (IS_NODE_INT(line) == 0)
+				break;
+			byte_idx = 0;	// goto the next line's head
+		}
+	}
+#endif // HL_BRACKET_FW
+}
+#endif // ENABLE_REGEX
+
 // display output routines ----------------------------------------------------
 /*
           |min_text_x_to_keep
@@ -639,7 +754,7 @@ PRIVATE int output_edit_line_num(int yy, const be_buf_t *buf, const be_line_t *l
 	if (GET_APPMD(ed_SHOW_LINE_NUMBER) == 0) {
 		return 0;
 	}
-	if (line == CBV_CL) {
+	if (line == CEPBV_CL) {
 		set_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 1);
 	} else {
 		set_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 0);
@@ -652,7 +767,7 @@ PRIVATE int output_edit_line_num(int yy, const be_buf_t *buf, const be_line_t *l
 // Set cursor at (cursor_y, cur_line_byte_idx).
 void set_edit_cursor_pos(void)
 {
-	sub_win_set_cursor_pos(edit_win_get_text_y() + CBV_CURSOR_Y, get_cursor_x_in_edit_win());
+	sub_win_set_cursor_pos(edit_win_get_text_y() + CEPBV_CURSOR_Y, get_cursor_x_in_edit_win());
 }
 
 PRIVATE int output_edit_line_text(int yy, const char *raw_code, int byte_idx_1, int byte_idx_2)
@@ -674,7 +789,7 @@ PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
 	wl_idx = start_wl_idx_of_wrap_line(raw_code, byte_idx_1, -1);
 	left_x = start_col_idx_of_wrap_line(raw_code, byte_idx_1, -1);
 	right_x = end_col_idx_of_wrap_line(raw_code, wl_idx, byte_idx_2, -1);
-	left_x = LIM_MIN(left_x, get_c_b_v_min_text_x_to_keep());
+	left_x = LIM_MIN(left_x, get_cep_buf_view_min_text_x_to_keep());
 	right_x = LIM_MAX(right_x, get_max_text_x_to_be_disp());
 	left_byte_idx = end_byte_idx_of_wrap_line_ge(raw_code, wl_idx, left_x, -1);
 	right_byte_idx = end_byte_idx_of_wrap_line_le(raw_code, wl_idx, right_x, -1);
@@ -701,15 +816,15 @@ PRIVATE int get_cursor_x_in_edit_win(void)
 }
 PRIVATE int get_cursor_x_in_text(void)
 {
-	return start_col_idx_of_wrap_line(CBV_CL->data, CBV_CLBI, -1);
+	return start_col_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1);
 }
 PRIVATE int get_max_text_x_to_be_disp(void)
 {
-	return get_c_b_v_min_text_x_to_keep() + get_edit_win_columns_for_text();
+	return get_cep_buf_view_min_text_x_to_keep() + get_edit_win_columns_for_text();
 }
 PRIVATE int get_edit_win_x_in_text(int text_x)
 {
-	return get_line_num_columns() + (text_x - get_c_b_v_min_text_x_to_keep());
+	return get_line_num_columns() + (text_x - get_cep_buf_view_min_text_x_to_keep());
 }
 // width of text view area (window-width - line-number-width)
 int get_edit_win_columns_for_text(void)
@@ -725,7 +840,7 @@ PRIVATE int get_line_num_columns(void)
 	// ^text-to-edit
 	 ? 0
 	// 999 ^text-to-edit
-	 : get_buf_line_num_columns(get_c_e_b());
+	 : get_buf_line_num_columns(get_cep_buf());
 }
 
 // ruler ======================================================================
@@ -757,7 +872,7 @@ PRIVATE const char *get_ruler_text(int col_idx)
 {
 	const char *str;
 
-	str = make_ruler_text__(get_c_b_v_min_text_x_to_keep(), get_edit_win_columns_for_text());
+	str = make_ruler_text__(get_cep_buf_view_min_text_x_to_keep(), get_edit_win_columns_for_text());
 	col_idx = MK_IN_RANGE(0, col_idx, strnlen(str, MAX_RULER_STR_LEN));
 	return &str[col_idx];
 }

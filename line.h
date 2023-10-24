@@ -153,7 +153,7 @@ int line_count_lines(be_line_t *line);
 const be_line_t *line_get_top_anch(const be_line_t *line);
 
 size_t line_data_len(const be_line_t *line);
-size_t line_strlen(const char *str);
+size_t line_data_strlen(const char *str);
 
 //-----------------------------------------------------------------------------
 
