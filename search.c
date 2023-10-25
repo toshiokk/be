@@ -285,7 +285,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 #else // ENABLE_UNDO
 				ret = ask_yes_no(ASK_YES_NO | ASK_ALL | ASK_BACKWARD | ASK_FORWARD | ASK_END,
 #endif // ENABLE_UNDO
-				 _("Replace this instance ?"));
+				 _("Replace from [%s] to [%s] ?"), needle, replace_to);
 			} else {
 				// break ALL-replacing loop
 				if ((key = tio_input_key()) >= 0) {
@@ -297,6 +297,8 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 				}
 			}
 		} else {
+			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_CENTER, UPDATE_SCRN_ALL);
+			update_screen_editor(1, 1, 1);
 			// not found message has been displayed
 #ifdef ENABLE_UNDO
 			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_FORWARD | ASK_END
@@ -467,7 +469,7 @@ PRIVATE int do_find_bracket_(int reverse)
 	 ((0 < depth) && (depth < MAX_BRACKET_NESTING)) && (safe_cnt < MAX_BRACKET_NESTING);
 	 safe_cnt++) {
 		match_len = search_bracket_in_buffer(&line, &byte_idx,
-		 char_under_cursor, needle, search_dir, &depth);
+		 char_under_cursor, needle, search_dir, &depth, NULL);
 ////flf_d_printf("haystack: [%s], needle: [%s] ==> match_len: %d\n", CEPBV_CL_CEPBV_CLBI, needle, match_len);
 		if (match_len == 0)
 			break;
@@ -495,17 +497,23 @@ PRIVATE int do_find_bracket_(int reverse)
 	return 0;
 }
 int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
- char char_under_cursor, const char *needle, int search_dir, int *ptr_depth)
+ char char_under_cursor, const char *needle, int search_dir, int *ptr_depth, int *prev_depth)
 {
 	int match_len = search_needle_in_buffer(ptr_line, ptr_byte_idx,
 	 needle, search_dir, CASE_SENSITIVE, SKIP, INNER_BUFFER_SEARCH);
 	if (match_len > 0) {
 		// found bracket
 		if ((*ptr_line)->data[*ptr_byte_idx] == char_under_cursor) {
+			if (prev_depth) {
+				*prev_depth = *ptr_depth;
+			}
 			(*ptr_depth)++;
 		} else {
 			// found complemental bracket
 			(*ptr_depth)--;
+			if (prev_depth) {
+				*prev_depth = *ptr_depth;
+			}
 		}
 	}
 ////flf_d_printf("match_len: %d, depth: %d\n", match_len, *ptr_depth);
@@ -597,7 +605,7 @@ int get_colors_for_bracket_hl()
 }
 void get_color_for_bracket_hl(int color_idx, char *fgc, char *bgc)
 {
-	if (num_colors_for_bracket_hl <= 0) {
+	if (get_colors_for_bracket_hl() <= 0) {
 		get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, fgc, bgc);
 	} else {
 		color_idx %= num_colors_for_bracket_hl;
@@ -609,6 +617,7 @@ void set_color_for_bracket_hl(int color_idx)
 {
 	char fgc, bgc;
 	get_color_for_bracket_hl(color_idx, &fgc, &bgc);
+flf_d_printf("color_idx-%d %d/%d\n", color_idx, fgc, bgc);
 	tio_set_attrs(bgc, fgc, 0);
 }
 
@@ -718,8 +727,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 		// found and update current line pointer
 		*ptr_line = line;
 		*ptr_byte_idx = matches_start_idx(&matches__);
-line_dump_byte_idx(*ptr_line, *ptr_byte_idx);
-_D_(dump_editor_panes());
+///_D_(dump_editor_panes());
 		return match_len;
 	}
 	// not found then return to begining position

@@ -369,24 +369,24 @@ char *strlower(char *buffer)
 
 //-----------------------------------------------------------------------------
 
-// "/very/long/long/path/to/file" ==> "/very/lo...th/to/file"
-//                                       1/3         2/3
-char *shrink_str(char *buf, int space)
+char *shrink_str(char *str, int space, int n_for_10)
 {
 	char buf_[MAX_PATH_LEN+1];
 
-	shrink_str_buf(buf_, buf, space);
-	strlcpy__(buf, buf_, MAX_PATH_LEN);
-	return buf;
+	shrink_str_buf(buf_, str, space, n_for_10);
+	strlcpy__(str, buf_, MAX_PATH_LEN);
+	return str;
 }
-char *shrink_str_static(const char *str, int space)
-{
-	static char buf[MAX_PATH_LEN+1];
-
-	shrink_str_buf(buf, str, space);
-	return buf;
-}
-char *shrink_str_buf(char *buf, const char *str, int space)
+///char *shrink_str_static(const char *str, int space, int n_for_10)
+///{
+///	static char buf[MAX_PATH_LEN+1];
+///
+///	shrink_str_buf(buf, str, space, n_for_10);
+///	return buf;
+///}
+// "/very/long/long/path/to/file" ==> "/very/lo...th/to/file"
+//                                       n/10         (10-n)/10
+char *shrink_str_buf(char *buf, const char *str, int space, int n_for_10)
 {
 	int str_cols;
 	int space1 = 0, space2 = 0;
@@ -397,10 +397,10 @@ char *shrink_str_buf(char *buf, const char *str, int space)
 		// enough space
 		strlcpy__(buf, str, MAX_PATH_LEN);
 	} else {
-#define STR_PPP		"..."
-#define STRLEN_PPP	3	// strlen(STR_PPP)
+#define STR_PPP		"~~"
+#define STRLEN_PPP	2	// strlen(STR_PPP)
 		if (space > STRLEN_PPP) {
-			space1 = LIM_MIN(0, (space - STRLEN_PPP) / 3);
+			space1 = LIM_MIN(0, (space - STRLEN_PPP) / 10 * n_for_10);
 			space2 = LIM_MIN(0, (space - STRLEN_PPP) - space1);
 			byte_idx1 = get_byte_idx_from_col_idx(str, space1, -1, NULL);
 			byte_idx2 = get_byte_idx_from_col_idx(str, str_cols - space2, +1, NULL);

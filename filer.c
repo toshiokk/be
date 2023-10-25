@@ -494,7 +494,7 @@ PRIVATE void disp_filer_title_bar(const char *path,
 	snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, "%d/%d:%d %c %s",
 	 cur_idx, files_total, files_selected, *get_str_sort_by(), buf_time);
 	space = LIM_MIN(0, main_win_get_columns() - strnlen(buf_files, MAX_SCRN_LINE_BUF_LEN) - 1);
-	shrink_str(buf_dir, space);
+	shrink_str(buf_dir, space, 2);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN, "%-*s %s", space, buf_dir, buf_files);
 
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0, buffer, -1);
@@ -526,7 +526,7 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 	if (filer_win_get_file_path_lines()) {
 		// on two pane mode, show each path
 		strlcpy__(buffer, fv->cur_dir, MAX_SCRN_LINE_BUF_LEN);
-		shrink_str(buffer, main_win_get_columns());
+		shrink_str(buffer, main_win_get_columns(), 2);
 		set_color_by_idx(ITEM_COLOR_IDX_TITLE, cur_pane);
 		sub_win_output_string(filer_win_get_file_path_y(), 0, buffer, -1);
 	}

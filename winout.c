@@ -300,7 +300,7 @@ const char *shrink_str_to_scr_static(const char *str)
 {
 	static char buf[MAX_PATH_LEN+1];
 
-	return shrink_str_buf(buf, str, main_win_get_columns() / 2);
+	return shrink_str_buf(buf, str, main_win_get_columns() / 2, 5);
 }
 
 // End of winout.c

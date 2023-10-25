@@ -40,7 +40,7 @@ int do_find_bracket(void);
 int do_find_bracket_reverse(void);
 #define MAX_BRACKET_NESTING		100
 int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
- char char_under_cursor, const char *needle, int search_dir, int *ptr_depth);
+ char char_under_cursor, const char *needle, int search_dir, int *ptr_depth, int *prev_depth);
 
 #define BRACKET_SEARCH_REGEXP_STR_LEN	4	// "[<>]"
 int setup_bracket_search(char char_under_cursor, int reverse, char *char_wanted, char *needle);

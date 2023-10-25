@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-25 06:27+0900\n"
+"POT-Creation-Date: 2023-10-25 21:45+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -820,34 +820,35 @@ msgid "forward"
 msgstr ""
 
 #: ../search.c:288
-msgid "Replace this instance ?"
+#, c-format
+msgid "Replace from [%s] to [%s] ?"
 msgstr ""
 
-#: ../search.c:452
+#: ../search.c:454
 msgid "Not a bracket"
 msgstr ""
 
 #. found peer bracket
-#: ../search.c:477
+#: ../search.c:479
 msgid "Peer bracket found"
 msgstr ""
 
 #. didn't find peer bracket
-#: ../search.c:480
+#: ../search.c:482
 msgid "No peer bracket found"
 msgstr ""
 
 #. didn't find peer bracket
-#: ../search.c:483
+#: ../search.c:485
 msgid "Bracket nesting too deep"
 msgstr ""
 
-#: ../search.c:624
+#: ../search.c:626
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr ""
 
-#: ../search.c:732
+#: ../search.c:734
 #, c-format
 msgid "\"%s\" not found"
 msgstr ""
