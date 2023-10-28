@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-28 14:00+0900\n"
+"POT-Creation-Date: 2023-10-28 14:38+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -843,12 +843,12 @@ msgstr ""
 msgid "Bracket nesting too deep"
 msgstr ""
 
-#: ../search.c:680
+#: ../search.c:681
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr ""
 
-#: ../search.c:789
+#: ../search.c:790
 #, c-format
 msgid "\"%s\" not found"
 msgstr ""

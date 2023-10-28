@@ -624,13 +624,13 @@ void prepare_colors_for_bracket_hl(int offset)
 		get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, &fgc_sel, &bgc_sel);
 		colors_for_bracket_hl[color_idx].fgc = fgc_sel;
 		colors_for_bracket_hl[color_idx].bgc = bgc_sel;
-flf_d_printf("color_idx/fgc/bgc: %d/%d/%d\n", color_idx, fgc_sel, bgc_sel);
+////flf_d_printf("color_idx/fgc/bgc: %d/%d/%d\n", color_idx, fgc_sel, bgc_sel);
 		color_idx++;
 		for (char fgc = 0; color_idx < COLORS_FOR_BRACKET_HL; fgc++) {
 			fgc = fgc % COLORS16;
 			if (fgc != fgc_txt && fgc != fgc_sel
 			 && fgc != (bgc_txt % COLORS8)) {	// Because there is no light color in BGC
-flf_d_printf("color_idx/fgc/bgc: %d/%d/%d\n", color_idx, fgc, bgc_txt);
+////flf_d_printf("color_idx/fgc/bgc: %d/%d/%d\n", color_idx, fgc, bgc_txt);
 				colors_for_bracket_hl[color_idx].fgc = fgc;
 				colors_for_bracket_hl[color_idx].bgc = bgc_txt;
 				color_idx++;

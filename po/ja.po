@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-28 14:00+0900\n"
+"POT-Creation-Date: 2023-10-28 14:38+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -863,12 +863,12 @@ msgstr "対向括弧が見つかりません"
 msgid "Bracket nesting too deep"
 msgstr "括弧の入れ子が深過ぎます"
 
-#: ../search.c:680
+#: ../search.c:681
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr "文字列 [%s] を検索中..."
 
-#: ../search.c:789
+#: ../search.c:790
 #, c-format
 msgid "\"%s\" not found"
 msgstr "\"%s\" が見つかりません"

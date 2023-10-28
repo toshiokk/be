@@ -701,6 +701,7 @@ flf_d_printf("yy: %d\n", yy);
 	}
 #endif // HL_BRACKET_BW
 
+	depth_increase = - depth_increase;	// invert increase (-1 ==> 1, 1 ==> -1)
 #ifdef HL_BRACKET_FW
 	// draw forward [yy, edit_win_get_text_lines()-1] from cursor pos
 	match_line = CEPBV_CL;
