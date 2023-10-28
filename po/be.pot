@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-28 14:38+0900\n"
+"POT-Creation-Date: 2023-10-28 17:12+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -829,26 +829,31 @@ msgid "Not a bracket"
 msgstr ""
 
 #. found peer bracket
-#: ../search.c:486
+#: ../search.c:484
 msgid "Peer bracket found"
 msgstr ""
 
-#. didn't find peer bracket
-#: ../search.c:489
+#: ../search.c:488
 msgid "No peer bracket found"
 msgstr ""
 
-#. didn't find peer bracket
-#: ../search.c:492
-msgid "Bracket nesting too deep"
+#: ../search.c:490
+#, c-format
+msgid "Too many bracket pairs (%d)"
 msgstr ""
 
-#: ../search.c:681
+#. didn't find peer bracket
+#: ../search.c:494
+#, c-format
+msgid "Bracket nesting too deep (%d)"
+msgstr ""
+
+#: ../search.c:683
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr ""
 
-#: ../search.c:790
+#: ../search.c:792
 #, c-format
 msgid "\"%s\" not found"
 msgstr ""

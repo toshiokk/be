@@ -640,14 +640,15 @@ PRIVATE void disp_edit_win_bracket_hl()
 	int max_wl_idx;
 	int wl_idx;
 	int left_byte_idx, right_byte_idx;
+#define MAX_BRACKET_HL		100	// for avoiding infinite loop
 	int safe_cnt = 0;
 
 	int color_idx;
-	char color_idx_stack[MAX_BRACKET_NESTING];
+	char color_idx_stack[MAX_BRACKET_NESTINGS];
 
 	char_under_cursor = *CEPBV_CL_CEPBV_CLBI;
 	search_dir = setup_bracket_search(char_under_cursor, FORWARD_DIR, &depth_increase, NULL, NULL);
-	prepare_colors_for_bracket_hl(MAX_BRACKET_NESTING/2);
+	prepare_colors_for_bracket_hl(MAX_BRACKET_NESTINGS/2);
 
 #ifdef HL_BRACKET_BW
 	// draw backward [0, yy] from cursor pos
@@ -657,14 +658,14 @@ PRIVATE void disp_edit_win_bracket_hl()
 	byte_idx = CEPBV_CLBI;
 	yy = CEPBV_CURSOR_Y;
 	skip_here = 0;
-	for (depth = MAX_BRACKET_NESTING/2, safe_cnt = 0;
-	 ((0 < depth) && (depth < MAX_BRACKET_NESTING)) && (safe_cnt < MAX_BRACKET_NESTING);
+	for (depth = MAX_BRACKET_NESTINGS/2, safe_cnt = 0;
+	 ((0 < depth) && (depth < MAX_BRACKET_NESTINGS)) && (safe_cnt < MAX_BRACKET_HL);
 	 safe_cnt++) {
-flf_d_printf("depth: %d\n", depth);
+////flf_d_printf("depth: %d\n", depth);
 		match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
 		 char_under_cursor, search__.needle, BACKWARD_SEARCH, skip_here,
 		 depth_increase, &depth, &prev_depth);
-flf_d_printf("depth: %d\n", depth);
+////flf_d_printf("depth: %d\n", depth);
 		skip_here = 1;
 ////flf_d_printf("match_len: %d\n", match_len);
 		for ( ; yy >= 0; ) {
@@ -681,8 +682,8 @@ flf_d_printf("depth: %d\n", depth);
 				 match_byte_idx, match_byte_idx + match_len,
 				 &left_byte_idx, &right_byte_idx) > 0) {
 					set_color_for_bracket_hl(prev_depth); // select color by depth
-line_dump_byte_idx(match_line, match_byte_idx);
-flf_d_printf("yy: %d\n", yy);
+////line_dump_byte_idx(match_line, match_byte_idx);
+////flf_d_printf("yy: %d\n", yy);
 					output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 					match_len = 0;	// clear match_len so that go to next bracket
 					break;
@@ -710,14 +711,14 @@ flf_d_printf("yy: %d\n", yy);
 	byte_idx = CEPBV_CLBI;
 	yy = CEPBV_CURSOR_Y;
 	skip_here = 0;
-	for (depth = MAX_BRACKET_NESTING/2, safe_cnt = 0;
-	 ((0 < depth) && (depth < MAX_BRACKET_NESTING)) && (safe_cnt < MAX_BRACKET_NESTING);
+	for (depth = MAX_BRACKET_NESTINGS/2, safe_cnt = 0;
+	 ((0 < depth) && (depth < MAX_BRACKET_NESTINGS)) && (safe_cnt < MAX_BRACKET_HL);
 	 safe_cnt++) {
-flf_d_printf("depth: %d\n", depth);
+////flf_d_printf("depth: %d\n", depth);
 		match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
 		 char_under_cursor, search__.needle, FORWARD_SEARCH, skip_here,
 		 depth_increase, &depth, &prev_depth);
-flf_d_printf("depth: %d\n", depth);
+////flf_d_printf("depth: %d\n", depth);
 		skip_here = 1;
 ////flf_d_printf("match_len: %d\n", match_len);
 		for ( ; yy < edit_win_get_text_lines(); ) {
@@ -734,8 +735,8 @@ flf_d_printf("depth: %d\n", depth);
 				 match_byte_idx, match_byte_idx + match_len,
 				 &left_byte_idx, &right_byte_idx) > 0) {
 					set_color_for_bracket_hl(prev_depth); // select color by depth
-line_dump_byte_idx(match_line, match_byte_idx);
-flf_d_printf("prev_depth/depth: %d/%d, yy: %d\n", prev_depth, depth, yy);
+////line_dump_byte_idx(match_line, match_byte_idx);
+////flf_d_printf("prev_depth/depth: %d/%d, yy: %d\n", prev_depth, depth, yy);
 					output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 					match_len = 0;	// clear match_len so that go to next bracket
 					break;

@@ -470,26 +470,28 @@ PRIVATE int do_find_bracket_(int reverse)
 	memorize_cursor_pos_before_move();
 
 	skip_here = 0;
-	for (match_len = 0, depth = 0, safe_cnt = 0;
-	 safe_cnt < MAX_BRACKET_NESTING;
-	 safe_cnt++) {
-flf_d_printf("depth: %d\n", depth);
+	for (match_len = 0, depth = 0, safe_cnt = 0; safe_cnt < MAX_BRACKETS_SEARCH; safe_cnt++) {
+////flf_d_printf("depth: %d\n", depth);
 		match_len = search_bracket_in_buffer(&line, &byte_idx,
 		 char_under_cursor, needle, search_dir, skip_here, depth_increase, &depth, NULL);
-flf_d_printf("depth: %d\n", depth);
-		if ((depth <= 0) || (MAX_BRACKET_NESTING <= depth) || (match_len == 0))
+////flf_d_printf("depth: %d\n", depth);
+		if ((depth <= 0) || (MAX_BRACKET_NESTINGS <= depth) || (match_len == 0))
 			break;
 		skip_here = 1;
 	}
 	if ((match_len > 0) && (depth == 0)) {
 		// found peer bracket
 		disp_status_bar_done(_("Peer bracket found"));
-	} else if (depth < MAX_BRACKET_NESTING) {
+	} else if (depth < MAX_BRACKET_NESTINGS) {
 		// didn't find peer bracket
-		disp_status_bar_err(_("No peer bracket found"));
+		if (safe_cnt < MAX_BRACKETS_SEARCH) {
+			disp_status_bar_err(_("No peer bracket found"));
+		} else {
+			disp_status_bar_err(_("Too many bracket pairs (%d)"), MAX_BRACKETS_SEARCH);
+		}
 	} else {
 		// didn't find peer bracket
-		disp_status_bar_err(_("Bracket nesting too deep"));
+		disp_status_bar_err(_("Bracket nesting too deep (%d)"), MAX_BRACKET_NESTINGS);
 	}
 	if (depth == 0) {
 		// found peer bracket
@@ -579,8 +581,8 @@ int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
  char char_under_cursor, const char *needle, int search_dir, int skip_here,
  int depth_increase, int *ptr_depth, int *prev_depth)
 {
-_D_(line_dump_byte_idx(*ptr_line, *ptr_byte_idx));
-flf_d_printf("needle: {%s}, search_dir: %d, skip_here: %d\n", needle, search_dir, skip_here);
+////_D_(line_dump_byte_idx(*ptr_line, *ptr_byte_idx));
+////flf_d_printf("needle: {%s}, search_dir: %d, skip_here: %d\n", needle, search_dir, skip_here);
 	int match_len = search_needle_in_buffer(ptr_line, ptr_byte_idx,
 	 needle, search_dir, CASE_SENSITIVE, skip_here, INNER_BUFFER_SEARCH);
 	if (match_len > 0) {
@@ -599,8 +601,8 @@ flf_d_printf("needle: {%s}, search_dir: %d, skip_here: %d\n", needle, search_dir
 			}
 		}
 	}
-_D_(line_dump_byte_idx(*ptr_line, *ptr_byte_idx));
-flf_d_printf("match_len: %d\n", match_len);
+////_D_(line_dump_byte_idx(*ptr_line, *ptr_byte_idx));
+////flf_d_printf("match_len: %d\n", match_len);
 ////flf_d_printf("match_len: %d, depth: %d\n", match_len, *ptr_depth);
 	return match_len;
 }
