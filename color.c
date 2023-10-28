@@ -233,6 +233,7 @@ int display_bracket_hl_colors(int yy, int xx)
 	char fgc, bgc;
 	char buffer[MAX_PATH_LEN+1];
 
+	prepare_colors_for_bracket_hl(0);
 	for (color_idx = 0; color_idx < get_colors_for_bracket_hl(); color_idx++) {
 		set_color_for_bracket_hl(color_idx);
 		snprintf(buffer, MAX_PATH_LEN, "%2d: ([{<>}])", color_idx);

@@ -2,6 +2,8 @@
 #cp -av berc .berc
 cp -av emacs.berc .emacs.berc
 cp -av wordstar.berc .wordstar.berc
-#cp -av berc ~/.berc
+if [ -n "$1" ]; then
+  cp -av berc ~/.berc
+fi
 cp -av emacs.berc ~/.emacs.berc
 cp -av wordstar.berc ~/.wordstar.berc

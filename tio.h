@@ -47,7 +47,7 @@ typedef short key_code_t;
 #define CL_BK		COLOR_BLACK
 #define CL_RD		COLOR_RED
 #define CL_GR		COLOR_GREEN
-#define CL_BR		COLOR_YELLOW			// brown
+#define CL_BR		COLOR_YELLOW				// brown
 #define CL_BL		COLOR_BLUE
 #define CL_MG		COLOR_MAGENTA
 #define CL_CY		COLOR_CYAN

@@ -31,6 +31,13 @@ typedef struct {
 /////extern be_buf_t *c_e_b;			
 /////extern be_buf_view_t *c_b_v;	// c_b_v = c_e_v->views[editor_panes.cur_pane_idx]
 
+// エディタ2ペイン
+// ・個々にバッファを参照
+// ファイラー2ペイン
+// ・個々にディレクトリを参照
+// バッファ
+// ・エディタ2ペインに対応する2ビューを持ち、各ペインから参照
+
 //-----------------------------------------------------------------------------
 
 enum BUFS_IDX {
@@ -59,6 +66,13 @@ extern be_bufs_t edit_buffers;
 #define CUR_EDIT_BUF_TOP_NODE	BUF_TOP_NODE(get_cep_buf())
 #define CUR_EDIT_BUF_BOT_NODE	BUF_BOT_NODE(get_cep_buf())
 #define CUR_EDIT_BUF_BOT_ANCH	BUF_BOT_ANCH(get_cep_buf())
+
+// CEPBV : Current Editor Pane -> Buffer View
+// EPBV  : Editor Pane -> Buffer View
+// BUF_V : Buffer View
+// BUF_VX: Buffer View indeXed
+// BUF_V0: Buffer View index-0
+// BUF_V1: Buffer View index-1
 
 #define BUF_VX(buf, idx)					(&((buf)->buf_views[idx]))
 

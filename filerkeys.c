@@ -121,7 +121,7 @@ func_key_table_t filer_func_key_table[] = {
 
  { "",                "Filer Menu-5",                   NKA,          NKA, NKA,
    0,F_I(do_filer_menu_5), NULL },
- { "Split pane",      "Split screen into panes",        '\\', K_M_BACKSLASH, NKA,
+ { "Split pane",      "Split screen into panes",        '\\', K_MC_BACKSLASH, NKA,
    0,F_I(do_tog_filer_panes), get_str_filer_panes },
  { "Switch pane",     "Switch filer pane",              K_TAB, K_M_TAB, NKA,
    1,F_I(do_switch_filer_pane), NULL },

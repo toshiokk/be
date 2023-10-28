@@ -31,7 +31,8 @@
 #endif // ENABLE_DEBUG
 
 #ifdef ENABLE_DEBUG
-///#define START_UP_TEST
+///
+#define START_UP_TEST
 #endif // ENABLE_DEBUG
 
 #ifdef ENABLE_DEBUG
@@ -39,6 +40,7 @@
 #define __FN__		__FUNCTION__
 
 #define _D_(debug)						_FLF_;	debug;
+#define _D(debug)						_FLF;	debug;
 #define flf_d_printf(args...)			tflfl_d_printf_(0, __FILE__, __LINE__, __FN__, "", args)
 #define tflf_d_printf(args...)			tflfl_d_printf_(1, __FILE__, __LINE__, __FN__, "", args)
 #define mflf_d_printf(args...)			tflfl_d_printf_(3, __FILE__, __LINE__, __FN__, "", args)
@@ -51,6 +53,7 @@
 #else // ENABLE_DEBUG
 
 #define _D_(debug)
+#define _D(debug)
 #define flf_d_printf(args...)
 #define tflf_d_printf(args...)
 #define mflf_d_printf(args...)
@@ -69,6 +72,7 @@
 #define _MFLF_						mflf_d_printf("\n");
 #define _UFLF_						uflf_d_printf("\n");
 #define _FLF_						flf_d_printf("\n");
+#define _FLF						flf_d_printf("");
 #define _PROGERR_		flf_d_printf("PROGERR\n");
 #define _FATALERR_		flf_d_printf("FATALERR\n");
 #define _WARNING_		flf_d_printf("WARNING\n");

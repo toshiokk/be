@@ -75,9 +75,10 @@ int do_search_forward_next(void)
 
 //------------------------------------------------------------------------------
 
-// TODO: search wrap around
-// on forward search, end of the last file ==> top of the first file
-// on reverse search, top of the first file ==> end of the last file
+// TODO: search wrap around of files
+//  on forward search, end of the last file ==> top of the first file
+//  on reverse search, top of the first file ==> end of the last file
+
 // Replace a string
 int do_replace(void)
 {
@@ -418,7 +419,7 @@ PRIVATE int do_find_bracket_(int reverse);
 // {{}}} <<>>> {{{}} <<<>>
 int do_find_bracket(void)
 {
-	return do_find_bracket_(+1);
+	return do_find_bracket_(FORWARD_SEARCH);
 }
 
 // [test string]
@@ -434,22 +435,25 @@ int do_find_bracket(void)
 // }}{{{ }}}{{ >><<< >>><<
 int do_find_bracket_reverse(void)
 {
-	return do_find_bracket_(-1);
+	return do_find_bracket_(BACKWARD_SEARCH);
 }
 PRIVATE int do_find_bracket_(int reverse)
 {
 	char char_under_cursor;
-	char char_wanted;
+	char char_counterpart;
+	int depth_increase;
 	char needle[BRACKET_SEARCH_REGEXP_STR_LEN+1];
 	int search_dir;			// search direction (FORWARD_SEARCH / BACKWARD_SEARCH)
 	be_line_t *line;
 	int byte_idx;
 	int depth;
 	int match_len;
+	int skip_here;
 	int safe_cnt = 0;
 
 	char_under_cursor = *CEPBV_CL_CEPBV_CLBI;
-	search_dir = setup_bracket_search(char_under_cursor, reverse, &char_wanted, needle);
+	search_dir = setup_bracket_search(char_under_cursor, reverse,
+	 &depth_increase, &char_counterpart, needle);
 	if (search_dir == 0) {
 		disp_status_bar_done(_("Not a bracket"));
 		return 1;
@@ -465,16 +469,19 @@ PRIVATE int do_find_bracket_(int reverse)
 
 	memorize_cursor_pos_before_move();
 
-	for (depth = 1, safe_cnt = 0;
-	 ((0 < depth) && (depth < MAX_BRACKET_NESTING)) && (safe_cnt < MAX_BRACKET_NESTING);
+	skip_here = 0;
+	for (match_len = 0, depth = 0, safe_cnt = 0;
+	 safe_cnt < MAX_BRACKET_NESTING;
 	 safe_cnt++) {
+flf_d_printf("depth: %d\n", depth);
 		match_len = search_bracket_in_buffer(&line, &byte_idx,
-		 char_under_cursor, needle, search_dir, &depth, NULL);
-////flf_d_printf("haystack: [%s], needle: [%s] ==> match_len: %d\n", CEPBV_CL_CEPBV_CLBI, needle, match_len);
-		if (match_len == 0)
+		 char_under_cursor, needle, search_dir, skip_here, depth_increase, &depth, NULL);
+flf_d_printf("depth: %d\n", depth);
+		if ((depth <= 0) || (MAX_BRACKET_NESTING <= depth) || (match_len == 0))
 			break;
+		skip_here = 1;
 	}
-	if (depth == 0) {
+	if ((match_len > 0) && (depth == 0)) {
 		// found peer bracket
 		disp_status_bar_done(_("Peer bracket found"));
 	} else if (depth < MAX_BRACKET_NESTING) {
@@ -496,34 +503,13 @@ PRIVATE int do_find_bracket_(int reverse)
 	}
 	return 0;
 }
-int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
- char char_under_cursor, const char *needle, int search_dir, int *ptr_depth, int *prev_depth)
-{
-	int match_len = search_needle_in_buffer(ptr_line, ptr_byte_idx,
-	 needle, search_dir, CASE_SENSITIVE, SKIP, INNER_BUFFER_SEARCH);
-	if (match_len > 0) {
-		// found bracket
-		if ((*ptr_line)->data[*ptr_byte_idx] == char_under_cursor) {
-			if (prev_depth) {
-				*prev_depth = *ptr_depth;
-			}
-			(*ptr_depth)++;
-		} else {
-			// found complemental bracket
-			(*ptr_depth)--;
-			if (prev_depth) {
-				*prev_depth = *ptr_depth;
-			}
-		}
-	}
-////flf_d_printf("match_len: %d, depth: %d\n", match_len, *ptr_depth);
-	return match_len;
-}
 
-int setup_bracket_search(char char_under_cursor, int reverse, char *char_wanted, char *needle)
+int setup_bracket_search(char char_under_cursor, int reverse,
+ int *depth_increase, char *counterpart_char, char *needle)
 {
 	const char *brackets = "([{<>}])";
 	const char *ptr;
+	char char_counterpart;
 	char regexp_str[] = "[xy]";
 	int offset;
 	int search_dir;			// search direction (FORWARD_SEARCH / BACKWARD_SEARCH)
@@ -534,91 +520,153 @@ int setup_bracket_search(char char_under_cursor, int reverse, char *char_wanted,
 		return 0;
 	}
 	offset = ptr - brackets;
-	*char_wanted = brackets[strlen(brackets) - (offset + 1)];
+	char_counterpart = brackets[strlen(brackets) - (offset + 1)];
 
 	// apparent near redundancy with regexp_str[] here is needed,
 	// "[][]" works, "[[]]" doesn't
 	if (offset < (strlen(brackets) / 2)) {	// on a left bracket
-		regexp_str[1] = *char_wanted;		// ']'
+		regexp_str[1] = char_counterpart;	// ']'
 		regexp_str[2] = char_under_cursor;	// '['
-		if (reverse > 0) {
+		if (reverse >= 0) {
 			// [0]
 			// ^
 			search_dir = FORWARD_SEARCH;	// forward
 		} else {
 			// ]0[
-			// ^
+			//   ^
 			search_dir = BACKWARD_SEARCH;	// backward
 		}
 	} else {								// on a right bracket
 		regexp_str[1] = char_under_cursor;	// ']'
-		regexp_str[2] = *char_wanted;		// '['
-		if (reverse > 0) {
+		regexp_str[2] = char_counterpart;	// '['
+		if (reverse >= 0) {
 			// [0]
 			//   ^
 			search_dir = BACKWARD_SEARCH;	// backward
 		} else {
 			// ]0[
-			//   ^
+			// ^
 			search_dir = FORWARD_SEARCH;	// forward
 		}
 	}
-	strlcpy__(needle, regexp_str, BRACKET_SEARCH_REGEXP_STR_LEN);
-////flf_d_printf("char_wanted: [%s][%c]\n", needle, *char_wanted);
+	if (depth_increase) {
+		*depth_increase = reverse;
+	}
+	if (counterpart_char) {
+		*counterpart_char = char_counterpart;
+	}
+	if (needle) {
+		strlcpy__(needle, regexp_str, BRACKET_SEARCH_REGEXP_STR_LEN);
+	}
+flf_d_printf("depth_increase/char_counterpart/needle: [%d][%d][%s]\n", *depth_increase, char_counterpart, needle);
 	return search_dir;
 }
 
-#define COLORS_FOR_BRACKET_HL	(7+7)	// color pairs for counter bracket highlighting
+// center of color_idx: 5
+// center of depth    : 5
+//
+// BRACKET_HL_TEST                   V                                 
+//         ( ( ( ( ( ( ( ( ( ( ) ) ( ( ( ) ) ) ( ) ( ) ) ) ) ) ) ) ) ) 
+// depth  4 5 6 7 0 1 2 3 4 5 6 5 4 5 6 7 6 5 4 5 4 5 4 3 2 1 0 7 6 5 4
+// color   4 5 6 7 0 1 2 3 4 5 5 4 4 5 6 6 5 4 4 4 4 4 3 2 1 0 7 6 5 4 
+//
+// BRACKET_HL_TEST                         V                           
+//         ( ( ( ( ( ( ( ( ( ( ) ) ( ( ( ) ) ) ( ) ( ) ) ) ) ) ) ) ) ) 
+// depth  3 4 5 6 7 0 1 2 3 4 5 4 3 4 5 6 5 4 3 4 3 4 3 2 1 0 7 6 5 4 3
+// color   4 5 6 7 0 1 2 3 4 5 5 4 4 5 6 6 5 4 4 4 4 4 3 2 1 0 7 6 5 4 
+
+int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
+ char char_under_cursor, const char *needle, int search_dir, int skip_here,
+ int depth_increase, int *ptr_depth, int *prev_depth)
+{
+_D_(line_dump_byte_idx(*ptr_line, *ptr_byte_idx));
+flf_d_printf("needle: {%s}, search_dir: %d, skip_here: %d\n", needle, search_dir, skip_here);
+	int match_len = search_needle_in_buffer(ptr_line, ptr_byte_idx,
+	 needle, search_dir, CASE_SENSITIVE, skip_here, INNER_BUFFER_SEARCH);
+	if (match_len > 0) {
+		// found bracket
+		if ((*ptr_line)->data[*ptr_byte_idx] == char_under_cursor) {
+			// found original bracket ==> increase depth
+			if (prev_depth) {
+				*prev_depth = *ptr_depth;
+			}
+			(*ptr_depth) += depth_increase;	// post increment/decrement
+		} else {
+			// found counterpart bracket ==> decrease depth
+			(*ptr_depth) -= depth_increase;	// pre increment/decrement
+			if (prev_depth) {
+				*prev_depth = *ptr_depth;
+			}
+		}
+	}
+_D_(line_dump_byte_idx(*ptr_line, *ptr_byte_idx));
+flf_d_printf("match_len: %d\n", match_len);
+////flf_d_printf("match_len: %d, depth: %d\n", match_len, *ptr_depth);
+	return match_len;
+}
+
+#define COLORS_FOR_BRACKET_HL	((COLORS16)-2)	// color pairs for counter bracket highlighting
 
 PRIVATE int num_colors_for_bracket_hl = 0;
+PRIVATE int color_idx_offset = 0;
 PRIVATE item_color_t colors_for_bracket_hl[COLORS_FOR_BRACKET_HL];
 
-void prepare_colors_for_bracket_hl()
+void prepare_colors_for_bracket_hl(int offset)
 {
-	char fgc_sel;
-	char bgc_sel;
-	int color_idx = 0;
-
-	get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, &fgc_sel, &bgc_sel);
-	for (char bgc = 0; (color_idx < COLORS_FOR_BRACKET_HL) && (bgc < COLORS); bgc++) {
-		if (bgc != bgc_sel) {
-			colors_for_bracket_hl[color_idx].bgc = COLORS + bgc;
-			colors_for_bracket_hl[color_idx].fgc = fgc_sel;
-			color_idx++;
+	color_idx_offset = offset;
+	if (num_colors_for_bracket_hl == 0) {
+		char fgc_txt;
+		char bgc_txt;
+		char fgc_sel;
+		char bgc_sel;
+		int color_idx = 0;
+		get_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, &fgc_txt, &bgc_txt);
+		get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, &fgc_sel, &bgc_sel);
+		colors_for_bracket_hl[color_idx].fgc = fgc_sel;
+		colors_for_bracket_hl[color_idx].bgc = bgc_sel;
+flf_d_printf("color_idx/fgc/bgc: %d/%d/%d\n", color_idx, fgc_sel, bgc_sel);
+		color_idx++;
+		for (char fgc = 0; color_idx < COLORS_FOR_BRACKET_HL; fgc++) {
+			fgc = fgc % COLORS16;
+			if (fgc != fgc_txt && fgc != fgc_sel
+			 && fgc != (bgc_txt % COLORS8)) {	// Because there is no light color in BGC
+flf_d_printf("color_idx/fgc/bgc: %d/%d/%d\n", color_idx, fgc, bgc_txt);
+				colors_for_bracket_hl[color_idx].fgc = fgc;
+				colors_for_bracket_hl[color_idx].bgc = bgc_txt;
+				color_idx++;
+			}
 		}
+		num_colors_for_bracket_hl = color_idx;
 	}
-	for (char fgc = 0; (color_idx < COLORS_FOR_BRACKET_HL) && (fgc < COLORS); fgc++) {
-		if (fgc != fgc_sel) {
-			colors_for_bracket_hl[color_idx].bgc = bgc_sel;
-			colors_for_bracket_hl[color_idx].fgc = COLORS + fgc;
-			color_idx++;
-		}
-	}
-	num_colors_for_bracket_hl = color_idx;
 }
 int get_colors_for_bracket_hl()
 {
 	if (num_colors_for_bracket_hl == 0) {
-		prepare_colors_for_bracket_hl();
+		prepare_colors_for_bracket_hl(0);
 	}
 	return num_colors_for_bracket_hl;
+}
+void set_color_for_bracket_hl(int color_idx)
+{
+	char fgc, bgc;
+
+	color_idx -= color_idx_offset;
+	color_idx %= num_colors_for_bracket_hl;		// (-num_colors, num_colors)
+	color_idx += num_colors_for_bracket_hl;		// make [0, 2*num_colors)
+	color_idx %= num_colors_for_bracket_hl;
+	color_idx %= num_colors_for_bracket_hl;
+	get_color_for_bracket_hl(color_idx, &fgc, &bgc);
+flf_d_printf("color_idx-%d %d/%d\n", color_idx, fgc, bgc);
+	tio_set_attrs(bgc, fgc, 0);
 }
 void get_color_for_bracket_hl(int color_idx, char *fgc, char *bgc)
 {
 	if (get_colors_for_bracket_hl() <= 0) {
 		get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, fgc, bgc);
 	} else {
-		color_idx %= num_colors_for_bracket_hl;
 		*bgc = colors_for_bracket_hl[color_idx].bgc;
 		*fgc = colors_for_bracket_hl[color_idx].fgc;
 	}
-}
-void set_color_for_bracket_hl(int color_idx)
-{
-	char fgc, bgc;
-	get_color_for_bracket_hl(color_idx, &fgc, &bgc);
-flf_d_printf("color_idx-%d %d/%d\n", color_idx, fgc, bgc);
-	tio_set_attrs(bgc, fgc, 0);
 }
 
 #endif // ENABLE_REGEX
@@ -672,8 +720,9 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 				} else if (IS_NODE_TOP(line) == 0) {
 					line = NODE_PREV(line);
 					byte_idx = line_data_len(line);
-				} else if (global_search && switch_c_e_b_to_prev(0, 1)) {
+				} else if (global_search && switch_c_e_b_to_prev(0, 0)) {
 					// update pointers after switching buffer
+					// but not update pointers in buffer
 					ptr_line = &(CEPBV_CL);
 					ptr_byte_idx = &(CEPBV_CLBI);
 					line = CUR_EDIT_BUF_BOT_NODE;
@@ -702,8 +751,9 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 				} else if (IS_NODE_BOT(line) == 0) {
 					line = NODE_NEXT(line);
 					byte_idx = 0;
-				} else if (global_search && switch_c_e_b_to_next(0, 1)) {
+				} else if (global_search && switch_c_e_b_to_next(0, 0)) {
 					// update pointers after switching buffer
+					// but not update pointers in buffer
 					ptr_line = &(CEPBV_CL);
 					ptr_byte_idx = &(CEPBV_CLBI);
 					line = CUR_EDIT_BUF_TOP_NODE;

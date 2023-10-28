@@ -185,7 +185,7 @@ void clear_edit_win_update_needed(void)
 }
 
 #ifdef ENABLE_REGEX
-PRIVATE void disp_edit_win_bracket_hl(int cur_pane);
+PRIVATE void disp_edit_win_bracket_hl();
 #endif // ENABLE_REGEX
 
 //-111111111111<   |
@@ -264,7 +264,7 @@ void disp_edit_win(int cur_pane)
 #define HL_BRACKET_FW
 #if defined(HL_BRACKET_BW) || defined(HL_BRACKET_FW)
 	if ((search_is_needle_set(&search__) == 2) && cur_pane) {
-		disp_edit_win_bracket_hl(cur_pane);
+		disp_edit_win_bracket_hl();
 	}
 #endif // defined(HL_BRACKET_BW) || defined(HL_BRACKET_FW)
 #endif // ENABLE_REGEX
@@ -606,8 +606,7 @@ step_two:
 			byte_idx = te_line_concat_linefeed_bytes;
 		}
 		if (get_intersection(byte_idx_1, byte_idx_2,
-		 regexp_matches_start_idx(&matches_begin, 0),
-		 byte_idx,
+		 regexp_matches_start_idx(&matches_begin, 0), byte_idx,
 		 &min_byte_idx, &max_byte_idx) > 0) {
 			output_edit_line_text(yy, line->data, min_byte_idx, max_byte_idx);
 		}
@@ -621,9 +620,11 @@ step_two:
 #endif // ENABLE_SYNTAX
 
 #ifdef ENABLE_REGEX
-PRIVATE void disp_edit_win_bracket_hl(int cur_pane)
+PRIVATE void disp_edit_win_bracket_hl()
 {
 	char char_under_cursor;
+	int search_dir;
+	int depth_increase;
 	be_line_t *match_line;
 	int match_byte_idx;
 	be_line_t *line;
@@ -633,6 +634,7 @@ PRIVATE void disp_edit_win_bracket_hl(int cur_pane)
 	int depth;
 	int prev_depth;
 	int match_len;
+	int skip_here;
 	int byte_idx_1;
 	int byte_idx_2;
 	int max_wl_idx;
@@ -640,7 +642,12 @@ PRIVATE void disp_edit_win_bracket_hl(int cur_pane)
 	int left_byte_idx, right_byte_idx;
 	int safe_cnt = 0;
 
+	int color_idx;
+	char color_idx_stack[MAX_BRACKET_NESTING];
+
 	char_under_cursor = *CEPBV_CL_CEPBV_CLBI;
+	search_dir = setup_bracket_search(char_under_cursor, FORWARD_DIR, &depth_increase, NULL, NULL);
+	prepare_colors_for_bracket_hl(MAX_BRACKET_NESTING/2);
 
 #ifdef HL_BRACKET_BW
 	// draw backward [0, yy] from cursor pos
@@ -649,12 +656,16 @@ PRIVATE void disp_edit_win_bracket_hl(int cur_pane)
 	line = CEPBV_CL;
 	byte_idx = CEPBV_CLBI;
 	yy = CEPBV_CURSOR_Y;
+	skip_here = 0;
 	for (depth = MAX_BRACKET_NESTING/2, safe_cnt = 0;
-	 ((0 < depth) && (depth < MAX_BRACKET_NESTING))
-	  && (safe_cnt < MAX_BRACKET_NESTING);
+	 ((0 < depth) && (depth < MAX_BRACKET_NESTING)) && (safe_cnt < MAX_BRACKET_NESTING);
 	 safe_cnt++) {
+flf_d_printf("depth: %d\n", depth);
 		match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
-		 char_under_cursor, search__.needle, BACKWARD_SEARCH, &depth, &prev_depth);
+		 char_under_cursor, search__.needle, BACKWARD_SEARCH, skip_here,
+		 depth_increase, &depth, &prev_depth);
+flf_d_printf("depth: %d\n", depth);
+		skip_here = 1;
 ////flf_d_printf("match_len: %d\n", match_len);
 		for ( ; yy >= 0; ) {
 			if (match_len == 0)
@@ -667,8 +678,9 @@ PRIVATE void disp_edit_win_bracket_hl(int cur_pane)
 				byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx,
 				 INT_MAX, -1);
 				if (match_line == line && get_intersection(byte_idx_1, byte_idx_2,
-				 match_byte_idx, match_byte_idx + match_len, &left_byte_idx, &right_byte_idx) > 0) {
-					set_color_for_bracket_hl(abs(prev_depth)); // select color by depth
+				 match_byte_idx, match_byte_idx + match_len,
+				 &left_byte_idx, &right_byte_idx) > 0) {
+					set_color_for_bracket_hl(prev_depth); // select color by depth
 line_dump_byte_idx(match_line, match_byte_idx);
 flf_d_printf("yy: %d\n", yy);
 					output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
@@ -696,12 +708,16 @@ flf_d_printf("yy: %d\n", yy);
 	line = CEPBV_CL;
 	byte_idx = CEPBV_CLBI;
 	yy = CEPBV_CURSOR_Y;
+	skip_here = 0;
 	for (depth = MAX_BRACKET_NESTING/2, safe_cnt = 0;
-	 ((0 < depth) && (depth < MAX_BRACKET_NESTING))
-	  && (safe_cnt < MAX_BRACKET_NESTING);
+	 ((0 < depth) && (depth < MAX_BRACKET_NESTING)) && (safe_cnt < MAX_BRACKET_NESTING);
 	 safe_cnt++) {
+flf_d_printf("depth: %d\n", depth);
 		match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
-		 char_under_cursor, search__.needle, FORWARD_SEARCH, &depth, &prev_depth);
+		 char_under_cursor, search__.needle, FORWARD_SEARCH, skip_here,
+		 depth_increase, &depth, &prev_depth);
+flf_d_printf("depth: %d\n", depth);
+		skip_here = 1;
 ////flf_d_printf("match_len: %d\n", match_len);
 		for ( ; yy < edit_win_get_text_lines(); ) {
 			if (match_len == 0)
@@ -714,10 +730,11 @@ flf_d_printf("yy: %d\n", yy);
 				byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx,
 				 INT_MAX, -1);
 				if (match_line == line && get_intersection(byte_idx_1, byte_idx_2,
-				 match_byte_idx, match_byte_idx + match_len, &left_byte_idx, &right_byte_idx) > 0) {
-					set_color_for_bracket_hl(abs(prev_depth)); // select color by depth
+				 match_byte_idx, match_byte_idx + match_len,
+				 &left_byte_idx, &right_byte_idx) > 0) {
+					set_color_for_bracket_hl(prev_depth); // select color by depth
 line_dump_byte_idx(match_line, match_byte_idx);
-flf_d_printf("yy: %d\n", yy);
+flf_d_printf("prev_depth/depth: %d/%d, yy: %d\n", prev_depth, depth, yy);
 					output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 					match_len = 0;	// clear match_len so that go to next bracket
 					break;

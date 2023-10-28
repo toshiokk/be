@@ -60,7 +60,7 @@
 #warning "!!!! both of CURSOR_POS_BYTE and CURSOR_POS_COLUMN are NOT defined !!!!"
 #endif
 
-// NOTE: how to use single line comment "//", "///" and "////"
+// NOTE: how to use single line comment "//", "///", "////" and "/////"
 //   simple comment
 //! !! doxygen comment !!
 /// !! doxygen comment !!

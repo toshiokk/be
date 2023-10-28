@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-25 23:24+0900\n"
+"POT-Creation-Date: 2023-10-28 14:00+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -603,20 +603,20 @@ msgstr ""
 msgid "Start key macro playback"
 msgstr ""
 
-#: ../main.c:551
+#: ../main.c:557
 msgid ""
 "\n"
 "No file written\n"
 msgstr ""
 
-#: ../main.c:560
+#: ../main.c:566
 #, c-format
 msgid ""
 "\n"
 "Buffer written to %s\n"
 msgstr ""
 
-#: ../main.c:589
+#: ../main.c:595
 #, c-format
 msgid ""
 "\n"
@@ -624,98 +624,98 @@ msgid ""
 msgstr ""
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:591
+#: ../main.c:597
 msgid "Option"
 msgstr ""
 
-#: ../main.c:591
+#: ../main.c:597
 msgid "Long option"
 msgstr ""
 
-#: ../main.c:591
+#: ../main.c:597
 msgid "Meaning"
 msgstr ""
 
-#: ../main.c:593
+#: ../main.c:599
 msgid "Read RCFILE"
 msgstr ""
 
-#: ../main.c:594
+#: ../main.c:600
 msgid "Don't look at berc files"
 msgstr ""
 
-#: ../main.c:597
+#: ../main.c:603
 msgid "Don't use history file"
 msgstr ""
 
-#: ../main.c:599
+#: ../main.c:605
 msgid "Set tab-size to NUM[1-15]"
 msgstr ""
 
-#: ../main.c:600
+#: ../main.c:606
 msgid "View mode(Read only mode)"
 msgstr ""
 
-#: ../main.c:602
+#: ../main.c:608
 msgid "Don't use nkf"
 msgstr ""
 
-#: ../main.c:603
+#: ../main.c:609
 msgid "ASCII character encoding"
 msgstr ""
 
-#: ../main.c:604
+#: ../main.c:610
 msgid "JIS character encoding"
 msgstr ""
 
-#: ../main.c:605
+#: ../main.c:611
 msgid "EUCJP character encoding"
 msgstr ""
 
-#: ../main.c:606
+#: ../main.c:612
 msgid "SJIS character encoding"
 msgstr ""
 
-#: ../main.c:607
+#: ../main.c:613
 msgid "UTF8 character encoding"
 msgstr ""
 
-#: ../main.c:610
+#: ../main.c:616
 msgid "Output debug log to stderr"
 msgstr ""
 
-#: ../main.c:612
+#: ../main.c:618
 msgid "Show version information"
 msgstr ""
 
-#: ../main.c:613
+#: ../main.c:619
 msgid "Show this message"
 msgstr ""
 
-#: ../main.c:614
+#: ../main.c:620
 msgid "Start at line number NUM"
 msgstr ""
 
-#: ../main.c:616
+#: ../main.c:622
 msgid "Investigate key codes"
 msgstr ""
 
-#: ../main.c:633
+#: ../main.c:639
 #, c-format
 msgid "%s editor version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:635
+#: ../main.c:641
 #, c-format
 msgid " Build Options:\n"
 msgstr ""
 
-#: ../main.c:893
+#: ../main.c:899
 #, c-format
 msgid "Screen size: %dx%d"
 msgstr ""
 
-#: ../main.c:898
+#: ../main.c:904
 msgid "We're invincible with this!!"
 msgstr ""
 
@@ -749,106 +749,106 @@ msgstr ""
 msgid "Error in file: %s on line: %d"
 msgstr ""
 
-#: ../search.c:119
+#: ../search.c:120
 #, c-format
 msgid "Replaced %d occurrence"
 msgstr ""
 
-#: ../search.c:120
+#: ../search.c:121
 #, c-format
 msgid "Replaced %d occurrences"
 msgstr ""
 
-#: ../search.c:121
+#: ../search.c:122
 #, c-format
 msgid "Replaced %d occurrencess"
 msgstr ""
 
-#: ../search.c:122
+#: ../search.c:123
 #, c-format
 msgid "Replaced %d occurrencesss"
 msgstr ""
 
-#: ../search.c:148
+#: ../search.c:149
 msgid "Search"
 msgstr ""
 
-#: ../search.c:148
+#: ../search.c:149
 msgid "Replace"
 msgstr ""
 
-#: ../search.c:149
+#: ../search.c:150
 msgid "[Ignore-case]"
 msgstr ""
 
-#: ../search.c:149
+#: ../search.c:150
 msgid "[Differenciate-case]"
 msgstr ""
 
-#: ../search.c:151
+#: ../search.c:152
 msgid "[Regexp]"
 msgstr ""
 
-#: ../search.c:155
+#: ../search.c:156
 msgid "[Backward]"
 msgstr ""
 
-#: ../search.c:155
+#: ../search.c:156
 msgid "[Forward]"
 msgstr ""
 
-#: ../search.c:170
+#: ../search.c:171
 #, c-format
 msgid "Invalid regexp: [%s]:%s"
 msgstr ""
 
-#: ../search.c:183
+#: ../search.c:184
 msgid "Replace with"
 msgstr ""
 
-#: ../search.c:237
+#: ../search.c:238
 #, c-format
 msgid "\"%s\" found in %s search"
 msgstr ""
 
-#: ../search.c:238
+#: ../search.c:239
 msgid "backward"
 msgstr ""
 
-#: ../search.c:238
+#: ../search.c:239
 msgid "forward"
 msgstr ""
 
-#: ../search.c:288
+#: ../search.c:289
 #, c-format
 msgid "Replace from [%s] to [%s] ?"
 msgstr ""
 
-#: ../search.c:454
+#: ../search.c:458
 msgid "Not a bracket"
 msgstr ""
 
 #. found peer bracket
-#: ../search.c:479
+#: ../search.c:486
 msgid "Peer bracket found"
 msgstr ""
 
 #. didn't find peer bracket
-#: ../search.c:482
+#: ../search.c:489
 msgid "No peer bracket found"
 msgstr ""
 
 #. didn't find peer bracket
-#: ../search.c:485
+#: ../search.c:492
 msgid "Bracket nesting too deep"
 msgstr ""
 
-#: ../search.c:633
+#: ../search.c:680
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr ""
 
-#: ../search.c:740
+#: ../search.c:789
 #, c-format
 msgid "\"%s\" not found"
 msgstr ""

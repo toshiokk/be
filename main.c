@@ -477,6 +477,12 @@ PRIVATE void start_up_test(void)
 }
 PRIVATE void start_up_test2(void)
 {
+flf_d_printf("modulo test --------------\n");
+	for (int nn = -9; nn < 10; nn++) {
+flf_d_printf("%2d mod 7 = %2d, ", nn, nn % 7);
+flf_d_printf("%2d mod 5 = %2d, ", nn, nn % 5);
+flf_d_printf("%2d mod 3 = %2d\n", nn, nn % 3);
+	}
 }
 #endif // START_UP_TEST
 //-----------------------------------------------------------------------------

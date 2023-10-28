@@ -58,11 +58,12 @@
 #define K_C_G			K_C('G')
 #define K_C_H			K_C('H')
 #define K_C_I			K_C('I')
-#define K_TAB			K_C_I
+#define K_TAB			K_C_I		// 09
 #define K_C_J			K_C('J')
 #define K_C_K			K_C('K')
 #define K_C_L			K_C('L')
 #define K_C_M			K_C('M')
+#define K_ENTER			KEY_ENTER	// 0d
 #define K_C_N			K_C('N')
 #define K_C_O			K_C('O')
 #define K_C_P			K_C('P')
@@ -76,15 +77,12 @@
 #define K_C_X			K_C('X')
 #define K_C_Y			K_C('Y')
 #define K_C_Z			K_C('Z')
-#define K_C_LBRACKET	K_C('[')	// 5b
-#define K_C_BACKSLASH	K_C('\\')	// 5c
-#define K_C_RBRACKET	K_C(']')	// 5d
-#define K_C_CARET		K_C('^')	// 5e
-#define K_C_UNDERLINE	K_C('_')	// 5f
-
-#define K_ENTER			KEY_ENTER
-
-#define K_ESC			CHAR_ESC
+#define K_C_LBRACKET	K_C('[')	// 1b
+#define K_ESC			CHAR_ESC	// 1b
+#define K_C_BACKSLASH	K_C('\\')	// 1c
+#define K_C_RBRACKET	K_C(']')	// 1d
+#define K_C_CARET		K_C('^')	// 1e
+#define K_C_UNDERLINE	K_C('_')	// 1f
 
 #define K_M_0			K_M('0')
 #define K_M_1			K_M('1')
@@ -148,48 +146,52 @@
 #define K_M_X			K_M('X')
 #define K_M_Y			K_M('Y')
 #define K_M_Z			K_M('Z')
-#define K_M_BS			K_M(K_C_H)
-#define K_M_TAB			K_M(K_TAB)
-#define K_M_CR			K_M(K_C_M)
-#define K_M_ESC			K_M(CHAR_ESC)
-#define K_M_SP			K_M(' ')
+#define K_M_BS			K_M(K_C_H)		// 1b08
+#define K_M_TAB			K_M(K_TAB)		// 1b09
+#define K_M_CR			K_M(K_C_M)		// 1b0d
+#define K_M_ESC			K_M(CHAR_ESC)	// 1b1b
+#define K_M_SP			K_M(' ')		// 1b20
+#define K_M_EXCLAMATION		K_M('!')	// 1b21
+#define K_M_QUOTATION		K_M('"')	// 1b22
+#define K_M_SHARP			K_M('#')	// 1b23
+#define K_M_DOLLAR			K_M('$')	// 1b24
+#define K_M_PERCENT			K_M('%')	// 1b25
+#define K_M_AMPERSAND		K_M('&')	// 1b26
+#define K_M_APOSTROPHE		K_M('\'')	// 1b27
+#define K_M_LPARENTHESIS	K_M('(')	// 1b28
+#define K_M_RPARENTHESIS	K_M(')')	// 1b29
+#define K_M_ASTERISK		K_M('*')	// 1b2a
+#define K_M_PLUS			K_M('+')	// 1b2b
+#define K_M_COMMA			K_M(',')	// 1b2c
+#define K_M_HYPHEN			K_M('-')	// 1b2d
+#define K_M_PERIOD			K_M('.')	// 1b2e
+#define K_M_SLASH			K_M('/')	// 1b2f
+#define K_M_COLON			K_M(':')	// 1b3a
+#define K_M_SEMICOLON		K_M(';')	// 1b3b
+#define K_M_LESSTHAN		K_M('<')	// 1b3c
+#define K_M_EQUAL			K_M('=')	// 1b3d
+#define K_M_GREATERTHAN		K_M('>')	// 1b3e
+#define K_M_QUESTION		K_M('?')	// 1b3f
+#define K_M_AT				K_M('@')	// 1b40
+#define K_M_LBRACKET		K_M('[')	// 1b5b
+#define K_M_BACKSLASH		K_M('\\')	// 1b5c
+#define K_M_RBRACKET		K_M(']')	// 1b5d
+#define K_M_CARET			K_M('^')	// 1b5e
+#define K_M_UNDERLINE		K_M('_')	// 1b5f
+#define K_M_BACKQUOTE		K_M('`')	// 1b60
+#define K_M_LBRACE			K_M('{')	// 1b7b
+#define K_M_VERTBAR			K_M('|')	// 1b7c
+#define K_M_RBRACE			K_M('}')	// 1b7d
+#define K_M_TILDE			K_M('~')	// 1b7e
+#define K_M_DEL				K_M(0x7f)	// 1b7f
 
-#define K_M_SPACE			K_M(' ')	// 20
-#define K_M_EXCLAMATION		K_M('!')	// 21
-#define K_M_QUOTATION		K_M('"')	// 22
-#define K_M_SHARP			K_M('#')	// 23
-#define K_M_DOLLAR			K_M('$')	// 24
-#define K_M_PERCENT			K_M('%')	// 25
-#define K_M_AMPERSAND		K_M('&')	// 26
-#define K_M_APOSTROPHE		K_M('\'')	// 27
-#define K_M_LPARENTHESIS	K_M('(')	// 28
-#define K_M_RPARENTHESIS	K_M(')')	// 29
-#define K_M_ASTERISK		K_M('*')	// 2a
-#define K_M_PLUS			K_M('+')	// 2b
-#define K_M_COMMA			K_M(',')	// 2c
-#define K_M_HYPHEN			K_M('-')	// 2d
-#define K_M_PERIOD			K_M('.')	// 2e
-#define K_M_SLASH			K_M('/')	// 2f
-#define K_M_COLON			K_M(':')	// 3a
-#define K_M_SEMICOLON		K_M(';')	// 3b
-#define K_M_LESSTHAN		K_M('<')	// 3c
-#define K_M_EQUAL			K_M('=')	// 3d
-#define K_M_GREATERTHAN		K_M('>')	// 3e
-#define K_M_QUESTION		K_M('?')	// 3f
-#define K_M_AT				K_M('@')	// 40
-#define K_M_LBRACKET		K_M('[')	// 5b
-#define K_M_BACKSLASH		K_M('\\')	// 5c
-#define K_M_RBRACKET		K_M(']')	// 5d
-#define K_M_CARET			K_M('^')	// 5e
-#define K_M_UNDERLINE		K_M('_')	// 5f
-#define K_M_BACKQUOTE		K_M('`')	// 60
-#define K_M_LBRACE			K_M('{')	// 7b
-#define K_M_VERTBAR			K_M('|')	// 7c
-#define K_M_RBRACE			K_M('}')	// 7d
-#define K_M_TILDE			K_M('~')	// 7e
-#define K_M_DEL				K_M(0x7f)	// 7f
+#define K_MC_LBRACKET		K_M(K_C('['))	// 1b1b
+#define K_MC_BACKSLASH		K_M(K_C('\\'))	// 1b1c
+#define K_MC_RBRACKET		K_M(K_C(']'))	// 1b1d
+#define K_MC_CARET			K_M(K_C('^'))	// 1b1e
+#define K_MC_UNDERLINE		K_M(K_C('_'))	// 1b1f
 
-#define K_MC_A			K_M(K_C('A'))
+#define K_MC_A			K_M(K_C('A'))	// 1b01
 #define K_MC_B			K_M(K_C('B'))
 #define K_MC_C			K_M(K_C('C'))
 #define K_MC_D			K_M(K_C('D'))
@@ -214,7 +216,7 @@
 #define K_MC_W			K_M(K_C('W'))
 #define K_MC_X			K_M(K_C('X'))
 #define K_MC_Y			K_M(K_C('Y'))
-#define K_MC_Z			K_M(K_C('Z'))
+#define K_MC_Z			K_M(K_C('Z'))	// 1b1a
 
 #define K_F01			KEY_F(1)
 #define K_F02			KEY_F(2)

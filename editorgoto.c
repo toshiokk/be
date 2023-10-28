@@ -522,8 +522,7 @@ char *memorize_cur_file_pos_null(char *buffer)
 {
 	buffer = buffer ? buffer : memorized_file_pos_str;
 	mk_cur_file_pos_str(buffer);
-////
-flf_d_printf("buffer: [%s]\n", buffer);
+////flf_d_printf("buffer: [%s]\n", buffer);
 	return buffer;
 }
 

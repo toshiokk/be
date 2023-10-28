@@ -5,3 +5,4 @@ LANG=C; export LANG
 echo "## ./configure ##" >_conf.log
 ./configure --enable-debug --enable-experimental 2>&1 | tee -a _conf.log
 echo "#### End of ./configure ####" >>_conf.log
+./__m

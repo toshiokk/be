@@ -143,9 +143,9 @@ func_key_table_t editor_func_key_table[] = {
  { "Replace",         "Replace keyword",                K_C_CARET,    NKA, NKA,
    0,F_I(do_replace), NULL },
 #ifdef ENABLE_REGEX
- { "Find Bracket()",  "Find counterpart bracket()",     K_M_RBRACKET, NKA, NKA,
+ { "Find Bracket()",  "Find counterpart bracket()",     K_M_RBRACKET, K_M_LBRACE, K_M_BACKSLASH,
    0,F_I(do_find_bracket), NULL },
- { "Find Bracket)(",  "Find counterpart bracket)(",     K_M_RBRACE,   NKA, NKA,
+ { "Find Bracket)(",  "Find counterpart bracket)(",     K_M_LBRACKET, K_M_RBRACE, K_M_VERTBAR,
    0,F_I(do_find_bracket_reverse), NULL },
 #endif // ENABLE_REGEX
 
@@ -177,7 +177,7 @@ func_key_table_t editor_func_key_table[] = {
    0,F_I(do_open_proj_file), NULL },
  { "Goto prev. pos",  "Goto previous pos.",             K_M_SLASH,    NKA, NKA,
    0,F_I(do_return_to_prev_file_pos), NULL },
- { "Split pane",      "Split screen into panes",        K_M_BACKSLASH, K_M_VERTBAR, NKA,
+ { "Split pane",      "Split screen into panes",        K_MC_BACKSLASH, NKA, NKA,
    0,F_I(do_tog_editor_panes), get_editor_panes },
  { "Switch pane",     "Switch editor pane",             K_M_TAB,      NKA, NKA,
    0,F_I(do_switch_editor_pane), NULL },
