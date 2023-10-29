@@ -74,8 +74,7 @@ void memorize_cursor_pos_before_move(void);
 int get_disp_y_after_cursor_move(void);
 
 int get_cur_screen_top(be_line_t **line, int *byte_idx);
-int get_screen_top(be_line_t *_cl_, int _clbi_, int yy,
- be_line_t **line, int *byte_idx);
+int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *byte_idx);
 
 void fix_buf_state_after_cursor_move(cursor_horiz_vert_move_t cursor_move);
 void fix_buf_state_after_cursor_horiz_move(void);

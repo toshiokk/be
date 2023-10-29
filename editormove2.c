@@ -212,8 +212,7 @@ int get_cur_screen_top(be_line_t **line, int *byte_idx)
 	return get_screen_top(CEPBV_CL, CEPBV_CLBI, CEPBV_CURSOR_Y, line, byte_idx);
 }
 // go backward to screen top and return line and byte_idx
-int get_screen_top(be_line_t *_cl_, int _clbi_, int yy,
- be_line_t **line, int *byte_idx)
+int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *byte_idx)
 {
 	int line_cnt = 0;
 	int wl_idx;

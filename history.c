@@ -46,8 +46,9 @@ PRIVATE const char *get_history_older(int hist_type_idx);
 PRIVATE const char *get_history_newer(int hist_type_idx);
 
 PRIVATE const char *is_the_last_line(int hist_type_idx, const char *str);
-PRIVATE be_line_t *search_history_str_complete(int hist_type_idx, const char *str);
-PRIVATE be_line_t *search_history_str_partial(int hist_type_idx, const char *str);
+PRIVATE be_line_t *search_history_exact_match(int hist_type_idx, const char *str);
+PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str);
+PRIVATE int search_history_from_oldest(int hist_type_idx, const char *str);
 
 // search/replace(directory and execution) history support functions
 
@@ -139,18 +140,26 @@ void update_history(int hist_type_idx, const char *str)
 
 ////
 flf_d_printf("hist_type_idx:%d:[%s]\n", hist_type_idx, str);
+
+	if (hist_type_idx == HISTORY_TYPE_IDX_CURSPOS) {
+		// check if exact line registered
+		int lines = search_history_from_oldest(hist_type_idx, str);
+		if (0 < lines && lines <= MAX_HISTORY_LINES / 2) {
+			return; // registered relatively newer, no need of update
+		}
+	}
 	if (is_the_last_line(hist_type_idx, str) != NULL) {
 		// str is registered in the last line, no need update
 		return;
 	}
+	// load-modify(free old entry and append new entry)-save
 	load_history_idx(hist_type_idx);
-	if ((line = search_history_str_complete(hist_type_idx, str)) != NULL) {
+	if ((line = search_history_exact_match(hist_type_idx, str)) != NULL) {
 		line_unlink_free(line);	// delete older line
 	}
 	append_history(hist_type_idx, str);
 	set_history_modified(hist_type_idx);
 	save_history_if_modified(hist_type_idx);
-	////save_histories();
 }
 
 const char *get_history_newest(int hist_type_idx, int last_n)
@@ -170,7 +179,7 @@ const char *get_history_completion(int hist_type_idx, const char *str)
 {
 	be_line_t *line;
 
-	if ((line = search_history_str_partial(hist_type_idx, str)) != NULL) {
+	if ((line = search_history_partial_match(hist_type_idx, str)) != NULL) {
 		return line->data;
 	}
 	return str;		// return original string
@@ -415,7 +424,7 @@ PRIVATE const char *is_the_last_line(int hist_type_idx, const char *str)
 	return NULL;
 }
 // find first line containing string str in history list
-PRIVATE be_line_t *search_history_str_complete(int hist_type_idx, const char *str)
+PRIVATE be_line_t *search_history_exact_match(int hist_type_idx, const char *str)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
@@ -426,7 +435,7 @@ PRIVATE be_line_t *search_history_str_complete(int hist_type_idx, const char *st
 	}
 	return NULL;
 }
-PRIVATE be_line_t *search_history_str_partial(int hist_type_idx, const char *str)
+PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
@@ -436,6 +445,20 @@ PRIVATE be_line_t *search_history_str_partial(int hist_type_idx, const char *str
 			return line;
 	}
 	return NULL;
+}
+PRIVATE int search_history_from_oldest(int hist_type_idx, const char *str)
+{
+	be_buf_t *buf = get_history_buf(hist_type_idx);
+	be_line_t *line;
+	int lines;
+
+	lines = 0;
+	for (line = BUF_BOT_NODE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
+		lines++;
+		if (strlcmp__(line->data, str) == 0)	// partial match
+			return lines;
+	}
+	return -1; // not found
 }
 const char *search_history_file_path(int hist_type_idx, const char *path)
 {

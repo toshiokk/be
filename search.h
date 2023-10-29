@@ -45,8 +45,7 @@ int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
  int depth_increase, int *ptr_depth, int *prev_depth);
 
 #define BRACKET_SEARCH_REGEXP_STR_LEN	4	// "[<>]"
-int setup_bracket_search(char char_under_cursor, int reverse,
- int *depth_increase, char *counterpart_char, char *needle);
+int setup_bracket_search(char char_under_cursor, int reverse_pair, char *needle);
 
 void prepare_colors_for_bracket_hl(int offset);
 int get_colors_for_bracket_hl();

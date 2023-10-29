@@ -404,7 +404,7 @@ int replace_str_in_buffer(search_t *search, matches_t *matches, const char *repl
 //------------------------------------------------------------------------------
 
 #ifdef ENABLE_REGEX
-PRIVATE int do_find_bracket_(int reverse);
+PRIVATE int do_find_bracket_(int reverse_pair);
 
 // [test string]
 // 12345678901234567890123456789012345678901234567890
@@ -437,7 +437,7 @@ int do_find_bracket_reverse(void)
 {
 	return do_find_bracket_(BACKWARD_SEARCH);
 }
-PRIVATE int do_find_bracket_(int reverse)
+PRIVATE int do_find_bracket_(int reverse_pair)
 {
 	char char_under_cursor;
 	char char_counterpart;
@@ -452,8 +452,7 @@ PRIVATE int do_find_bracket_(int reverse)
 	int safe_cnt = 0;
 
 	char_under_cursor = *CEPBV_CL_CEPBV_CLBI;
-	search_dir = setup_bracket_search(char_under_cursor, reverse,
-	 &depth_increase, &char_counterpart, needle);
+	search_dir = setup_bracket_search(char_under_cursor, reverse_pair, needle);
 	if (search_dir == 0) {
 		disp_status_bar_done(_("Not a bracket"));
 		return 1;
@@ -506,8 +505,7 @@ PRIVATE int do_find_bracket_(int reverse)
 	return 0;
 }
 
-int setup_bracket_search(char char_under_cursor, int reverse,
- int *depth_increase, char *counterpart_char, char *needle)
+int setup_bracket_search(char char_under_cursor, int reverse_pair, char *needle)
 {
 	const char *brackets = "([{<>}])";
 	const char *ptr;
@@ -529,38 +527,33 @@ int setup_bracket_search(char char_under_cursor, int reverse,
 	if (offset < (strlen(brackets) / 2)) {	// on a left bracket
 		regexp_str[1] = char_counterpart;	// ']'
 		regexp_str[2] = char_under_cursor;	// '['
-		if (reverse >= 0) {
-			// [0]
+		if (reverse_pair >= 0) {
+			// (0)
 			// ^
 			search_dir = FORWARD_SEARCH;	// forward
 		} else {
-			// ]0[
+			// )0(
 			//   ^
 			search_dir = BACKWARD_SEARCH;	// backward
 		}
 	} else {								// on a right bracket
 		regexp_str[1] = char_under_cursor;	// ']'
 		regexp_str[2] = char_counterpart;	// '['
-		if (reverse >= 0) {
-			// [0]
+		if (reverse_pair >= 0) {
+			// (0)
 			//   ^
 			search_dir = BACKWARD_SEARCH;	// backward
 		} else {
-			// ]0[
+			// )0(
 			// ^
 			search_dir = FORWARD_SEARCH;	// forward
 		}
 	}
-	if (depth_increase) {
-		*depth_increase = reverse;
-	}
-	if (counterpart_char) {
-		*counterpart_char = char_counterpart;
-	}
+
 	if (needle) {
 		strlcpy__(needle, regexp_str, BRACKET_SEARCH_REGEXP_STR_LEN);
 	}
-flf_d_printf("depth_increase/char_counterpart/needle: [%d][%d][%s]\n", *depth_increase, char_counterpart, needle);
+flf_d_printf("search_dir/needle: [%d][%s]\n", search_dir, needle);
 	return search_dir;
 }
 
@@ -568,14 +561,14 @@ flf_d_printf("depth_increase/char_counterpart/needle: [%d][%d][%s]\n", *depth_in
 // center of depth    : 5
 //
 // BRACKET_HL_TEST                   V                                 
-//         ( ( ( ( ( ( ( ( ( ( ) ) ( ( ( ) ) ) ( ) ( ) ) ) ) ) ) ) ) ) 
-// depth  4 5 6 7 0 1 2 3 4 5 6 5 4 5 6 7 6 5 4 5 4 5 4 3 2 1 0 7 6 5 4
-// color   4 5 6 7 0 1 2 3 4 5 5 4 4 5 6 6 5 4 4 4 4 4 3 2 1 0 7 6 5 4 
+//         ( ( ( ( ( ( ( ( ( ( ) ) ( ( ( ) ) ) ( ( ) ) ) ) ) ) ) ) ) ) 
+// depth  3 4 5 6 7 0 1 2 3 4 5 4 3 4 5 6 5 4 3 4 5 6 7 2 1 0 7 6 5 4 3
+// color   7 0 1 2 3 4 5 6 7 0 0 7 7 * 1 1 * 7 7 7 7 7 6 5 4 3 2 1 0 7 
 //
 // BRACKET_HL_TEST                         V                           
-//         ( ( ( ( ( ( ( ( ( ( ) ) ( ( ( ) ) ) ( ) ( ) ) ) ) ) ) ) ) ) 
-// depth  3 4 5 6 7 0 1 2 3 4 5 4 3 4 5 6 5 4 3 4 3 4 3 2 1 0 7 6 5 4 3
-// color   4 5 6 7 0 1 2 3 4 5 5 4 4 5 6 6 5 4 4 4 4 4 3 2 1 0 7 6 5 4 
+//         ( ( ( ( ( ( ( ( ( ( ) ) ( ( ( ) ) ) ( ( ) ) ) ) ) ) ) ) ) ) 
+// depth  3 4 5 6 7 0 1 2 3 4 5 4 3 4 5 6 5 4 3 4 5 6 7 2 1 0 7 6 5 4 3
+// color   7 0 1 2 3 4 5 6 7 0 0 7 7 * 1 1 * 7 7 0 0 7 6 5 4 3 2 1 0 7 
 
 int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
  char char_under_cursor, const char *needle, int search_dir, int skip_here,

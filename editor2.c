@@ -643,13 +643,10 @@ PRIVATE void disp_edit_win_bracket_hl()
 #define MAX_BRACKET_HL		100	// for avoiding infinite loop
 	int safe_cnt = 0;
 
-	int color_idx;
-	char color_idx_stack[MAX_BRACKET_NESTINGS];
-
-	char_under_cursor = *CEPBV_CL_CEPBV_CLBI;
-	search_dir = setup_bracket_search(char_under_cursor, FORWARD_DIR, &depth_increase, NULL, NULL);
 	prepare_colors_for_bracket_hl(MAX_BRACKET_NESTINGS/2);
+	char_under_cursor = *CEPBV_CL_CEPBV_CLBI;
 
+	depth_increase = setup_bracket_search(char_under_cursor, search__.direction, NULL);
 #ifdef HL_BRACKET_BW
 	// draw backward [0, yy] from cursor pos
 	match_line = CEPBV_CL;
@@ -663,8 +660,7 @@ PRIVATE void disp_edit_win_bracket_hl()
 	 safe_cnt++) {
 ////flf_d_printf("depth: %d\n", depth);
 		match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
-		 char_under_cursor, search__.needle, BACKWARD_SEARCH, skip_here,
-		 depth_increase, &depth, &prev_depth);
+		 char_under_cursor, search__.needle, BACKWARD_SEARCH, skip_here, depth_increase, &depth, &prev_depth);
 ////flf_d_printf("depth: %d\n", depth);
 		skip_here = 1;
 ////flf_d_printf("match_len: %d\n", match_len);
@@ -716,8 +712,7 @@ PRIVATE void disp_edit_win_bracket_hl()
 	 safe_cnt++) {
 ////flf_d_printf("depth: %d\n", depth);
 		match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
-		 char_under_cursor, search__.needle, FORWARD_SEARCH, skip_here,
-		 depth_increase, &depth, &prev_depth);
+		 char_under_cursor, search__.needle, FORWARD_SEARCH, skip_here, depth_increase, &depth, &prev_depth);
 ////flf_d_printf("depth: %d\n", depth);
 		skip_here = 1;
 ////flf_d_printf("match_len: %d\n", match_len);

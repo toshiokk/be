@@ -43,13 +43,14 @@ int search_str_in_line(search_t *search, matches_t *matches,
 
 	if (needle) {
 		strlcpy__(search->needle, needle, MAX_PATH_LEN);
+		search->direction, search_dir;
 		search->ignore_case = ignore_case;
 	}
 #ifdef ENABLE_REGEX
 	if (GET_APPMD(ed_USE_REGEXP) == 0) {
 #endif // ENABLE_REGEX
 		match_len = search_str_in_line_strstr(search->needle, matches,
-		 search_dir, search->ignore_case, haystack, byte_idx);
+		 search->direction, search->ignore_case, haystack, byte_idx);
 #ifdef ENABLE_REGEX
 	} else {
 		match_len = search_str_in_line_regexp(&search->regexp, &matches->regexp_matches,

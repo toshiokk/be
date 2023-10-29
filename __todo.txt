@@ -8,7 +8,10 @@
 	3. typedef char color_idx, items_idx, ...
 	May be 3. is the better.
 
-Reconsideration of editor/filer 2 panes:
+### Highlight only current cursor position's peer of brackets in first-highlight-color.
+    Highlight not-current-peer in second-hightlight-color.
+
+### Reconsideration of editor/filer 2 panes:
   Editor 2 panes
     - each pane has buffer refrence.
     - current pane selector (cur_pane_idx)
@@ -18,19 +21,20 @@ Reconsideration of editor/filer 2 panes:
   Buffer has 2 views which is referenced from editor 2 panes
     - each view has current position in buffer
 
-[v ] If not-modified in write_file_modified, clear [Modified] flag.
+[v] If not-modified in write_file_modified, clear [Modified] flag.
 [ ] Check object copy
 [v] Write Node policy
 [ ] Adopt Node policy
 
+[v] Do not update file_open_history if current line not changed
 [v] Draw cursor off
-[v ] If no keyword found on first search, search reverse direction.
+[v] If no keyword found on first search, search reverse direction.
 [vv] Fix editor crash problem
 [v] avoid view shift at cut_to_tail
 [v] Save all modified buffer with ask, without ask.
 [v] Play back key macro when recording key macro.
    - separate two key assigns of stop-rec-key-macro and play-back-key-macro[K_M_2].
-[ ] counter bracket highlighting {[(< >)]}
+[v ] counter bracket highlighting {[(< >)]}
 [v] Color of selection
 [v] avoid cursor to jump around the line tail
 [v] History list ==> multi-buffer accessible from editor as edit buffers.

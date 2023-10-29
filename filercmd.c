@@ -25,7 +25,7 @@
 
 PRIVATE int do_edit_file_(int recursive);
 
-PRIVATE int if_dir_change_dir(void);
+PRIVATE int filer_change_dir_to_cur_sel(void);
 PRIVATE int filer_change_dir_if_not_yet(const char *dir);
 PRIVATE int filer_change_prev_dir(void);
 
@@ -63,7 +63,7 @@ int do_refresh_filer(void)
 }
 int do_enter_file(void)
 {
-	if (if_dir_change_dir()) {
+	if (filer_change_dir_to_cur_sel()) {
 		return 0;
 	}
 	if (S_ISREG(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st.st_mode)) {
@@ -90,7 +90,8 @@ int do_edit_new_file(void)
 	char file_name[MAX_PATH_LEN+1];
 	int ret;
 
-	ret = input_string("", file_name, HISTORY_TYPE_IDX_DIR, _("Edit new file:"));
+	ret = input_string("", file_name, HISTORY_TYPE_IDX_CURSPOS , _("Edit new file:"));
+///	ret = input_string("", file_name, HISTORY_TYPE_IDX_DIR, _("Edit new file:"));
 
 	if (ret < 0) {
 		// do_edit_new_file -> FILER_DO_ENTERED_DIR_PATH
@@ -114,7 +115,7 @@ int do_view_file(void)
 	int file_idx;
 	char *file_name;
 
-	if (if_dir_change_dir()) {
+	if (filer_change_dir_to_cur_sel()) {
 		return 0;
 	}
 	if (is_app_list_mode()) {
@@ -136,7 +137,7 @@ int do_tail_file(void)	// view file with "tail" command
 	int file_idx;
 	char *file_name;
 
-	if (if_dir_change_dir()) {
+	if (filer_change_dir_to_cur_sel()) {
 		return 0;
 	}
 	if (is_app_list_mode()) {
@@ -667,7 +668,7 @@ PRIVATE int do_edit_file_(int recursive)
 {
 	int file_idx;
 
-	if (if_dir_change_dir()) {
+	if (filer_change_dir_to_cur_sel()) {
 		return 0;
 	}
 	if (is_app_list_mode()) {
@@ -697,7 +698,7 @@ PRIVATE int do_edit_file_(int recursive)
 	return 0;
 }
 
-PRIVATE int if_dir_change_dir(void)
+PRIVATE int filer_change_dir_to_cur_sel(void)
 {
 	if (S_ISDIR(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st.st_mode)) {
 		filer_change_dir(get_cur_filer_view()

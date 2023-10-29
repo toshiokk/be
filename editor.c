@@ -169,7 +169,8 @@ PRIVATE int open_file_recursive(int recursive)
 #endif // ENABLE_FILER
 
 _FLF_
-		ret = input_string("", file_name, HISTORY_TYPE_IDX_DIR, _("Open existing file:"));
+		ret = input_string("", file_name, HISTORY_TYPE_IDX_CURSPOS , _("Open existing file:"));
+///		ret = input_string("", file_name, HISTORY_TYPE_IDX_DIR, _("Open existing file:"));
 _FLF_
 
 		if (ret <= 0) {
@@ -412,8 +413,8 @@ int do_close_file_ask(void)
 		return -1;
 	}
 	// Yes/No
-	if (free_cur_edit_buf() == 0)
-		return 1;
+	free_cur_edit_buf();
+
 	do_refresh_editor();
 	disp_status_bar_done(_("One buffer closed"));
 	return 2;
