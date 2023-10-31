@@ -186,6 +186,7 @@ void clear_edit_win_update_needed(void)
 
 #ifdef ENABLE_REGEX
 PRIVATE void disp_edit_win_bracket_hl();
+PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir, char char_under_cursor, char *needle, int depth_increase);
 #endif // ENABLE_REGEX
 
 //-111111111111<   |
@@ -623,13 +624,25 @@ step_two:
 PRIVATE void disp_edit_win_bracket_hl()
 {
 	char char_under_cursor;
+	char needle[BRACKET_SEARCH_REGEXP_STR_LEN+1];
 	int search_dir;
-	int depth_increase;
+	int display_direction;
+
+	prepare_colors_for_bracket_hl();
+	char_under_cursor = *CEPBV_CL_CEPBV_CLBI;
+
+	display_direction = setup_bracket_search(char_under_cursor, search__.direction, needle);
+
+	disp_edit_win_bracket_hl_dir(- display_direction, char_under_cursor, needle, -1);
+	disp_edit_win_bracket_hl_dir(  display_direction, char_under_cursor, needle, +1);
+}
+
+PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir, char char_under_cursor, char *needle, int depth_increase)
+{
 	be_line_t *match_line;
 	int match_byte_idx;
 	be_line_t *line;
 	int byte_idx;
-
 	int yy;
 	int depth;
 	int prev_depth;
@@ -639,116 +652,120 @@ PRIVATE void disp_edit_win_bracket_hl()
 	int byte_idx_2;
 	int max_wl_idx;
 	int wl_idx;
-	int left_byte_idx, right_byte_idx;
+	int left_byte_idx;
+	int right_byte_idx;
 #define MAX_BRACKET_HL		100	// for avoiding infinite loop
 	int safe_cnt = 0;
 
-	prepare_colors_for_bracket_hl(MAX_BRACKET_NESTINGS/2);
-	char_under_cursor = *CEPBV_CL_CEPBV_CLBI;
-
-	depth_increase = setup_bracket_search(char_under_cursor, search__.direction, NULL);
-#ifdef HL_BRACKET_BW
-	// draw backward [0, yy] from cursor pos
-	match_line = CEPBV_CL;
-	match_byte_idx = CEPBV_CLBI;
-	line = CEPBV_CL;
-	byte_idx = CEPBV_CLBI;
-	yy = CEPBV_CURSOR_Y;
-	skip_here = 0;
-	for (depth = MAX_BRACKET_NESTINGS/2, safe_cnt = 0;
-	 ((0 < depth) && (depth < MAX_BRACKET_NESTINGS)) && (safe_cnt < MAX_BRACKET_HL);
-	 safe_cnt++) {
-////flf_d_printf("depth: %d\n", depth);
-		match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
-		 char_under_cursor, search__.needle, BACKWARD_SEARCH, skip_here, depth_increase, &depth, &prev_depth);
-////flf_d_printf("depth: %d\n", depth);
-		skip_here = 1;
-////flf_d_printf("match_len: %d\n", match_len);
-		for ( ; yy >= 0; ) {
-			if (match_len == 0)
-				break;
-			te_tab_expand_line(line->data);
-			max_wl_idx = max_wrap_line_idx(te_line_concat_linefeed, -1);
-			wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, byte_idx, -1);
-			for ( ; wl_idx >= 0; wl_idx--) {
-				byte_idx_1 = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, 0, -1);
-				byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx,
-				 INT_MAX, -1);
-				if (match_line == line && get_intersection(byte_idx_1, byte_idx_2,
-				 match_byte_idx, match_byte_idx + match_len,
-				 &left_byte_idx, &right_byte_idx) > 0) {
-					set_color_for_bracket_hl(prev_depth); // select color by depth
-////line_dump_byte_idx(match_line, match_byte_idx);
-////flf_d_printf("yy: %d\n", yy);
-					output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
-					match_len = 0;	// clear match_len so that go to next bracket
-					break;
-				}
-				yy--;
-				if (yy < 0)
-					break;
-			}
-			if (match_len == 0)
-				break;
-			line = NODE_PREV(line);
-			if (IS_NODE_INT(line) == 0)
-				break;
-			byte_idx = line_data_strlen(line->data);	// goto the previous line's tail
-		}
-	}
-#endif // HL_BRACKET_BW
-
 	depth_increase = - depth_increase;	// invert increase (-1 ==> 1, 1 ==> -1)
-#ifdef HL_BRACKET_FW
-	// draw forward [yy, edit_win_get_text_lines()-1] from cursor pos
-	match_line = CEPBV_CL;
-	match_byte_idx = CEPBV_CLBI;
-	line = CEPBV_CL;
-	byte_idx = CEPBV_CLBI;
-	yy = CEPBV_CURSOR_Y;
-	skip_here = 0;
-	for (depth = MAX_BRACKET_NESTINGS/2, safe_cnt = 0;
-	 ((0 < depth) && (depth < MAX_BRACKET_NESTINGS)) && (safe_cnt < MAX_BRACKET_HL);
-	 safe_cnt++) {
+	depth_increase = - depth_increase;	// invert increase (-1 ==> 1, 1 ==> -1)
+	if (display_dir < 0) {
+#ifdef HL_BRACKET_BW
+		// draw backward [0, yy] from cursor pos
+		match_line = CEPBV_CL;
+		match_byte_idx = CEPBV_CLBI;
+		line = CEPBV_CL;
+		byte_idx = CEPBV_CLBI;
+		yy = CEPBV_CURSOR_Y;
+		skip_here = 0;
+		for (depth = 0, safe_cnt = 0;
+		 ((-MAX_BRACKET_NESTINGS < depth) && (depth < MAX_BRACKET_NESTINGS))
+		  && (safe_cnt < MAX_BRACKET_HL);
+		 safe_cnt++) {
 ////flf_d_printf("depth: %d\n", depth);
-		match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
-		 char_under_cursor, search__.needle, FORWARD_SEARCH, skip_here, depth_increase, &depth, &prev_depth);
+			match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
+			 char_under_cursor, needle, BACKWARD_SEARCH, skip_here, depth_increase, &depth, &prev_depth);
 ////flf_d_printf("depth: %d\n", depth);
-		skip_here = 1;
+			skip_here = 1;
 ////flf_d_printf("match_len: %d\n", match_len);
-		for ( ; yy < edit_win_get_text_lines(); ) {
-			if (match_len == 0)
-				break;
-			te_tab_expand_line(line->data);
-			max_wl_idx = max_wrap_line_idx(te_line_concat_linefeed, -1);
-			wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, byte_idx, -1);
-			for ( ; wl_idx <= max_wl_idx; wl_idx++) {
-				byte_idx_1 = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, 0, -1);
-				byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx,
-				 INT_MAX, -1);
-				if (match_line == line && get_intersection(byte_idx_1, byte_idx_2,
-				 match_byte_idx, match_byte_idx + match_len,
-				 &left_byte_idx, &right_byte_idx) > 0) {
-					set_color_for_bracket_hl(prev_depth); // select color by depth
-////line_dump_byte_idx(match_line, match_byte_idx);
-////flf_d_printf("prev_depth/depth: %d/%d, yy: %d\n", prev_depth, depth, yy);
-					output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
-					match_len = 0;	// clear match_len so that go to next bracket
+			for ( ; yy >= 0; ) {
+				if (match_len == 0)
 					break;
+				te_tab_expand_line(line->data);
+				max_wl_idx = max_wrap_line_idx(te_line_concat_linefeed, -1);
+				wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, byte_idx, -1);
+				for ( ; wl_idx >= 0; wl_idx--) {
+					byte_idx_1 = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, 0, -1);
+					byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx,
+					 INT_MAX, -1);
+					if (match_line == line && get_intersection(byte_idx_1, byte_idx_2,
+					 match_byte_idx, match_byte_idx + match_len,
+					 &left_byte_idx, &right_byte_idx) > 0) {
+						set_color_for_bracket_hl(depth_increase, prev_depth); // select color by depth
+////
+line_dump_byte_idx(match_line, match_byte_idx);
+////flf_d_printf("yy: %d\n", yy);
+						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
+						match_len = 0;	// clear match_len so that go to next bracket
+						break;
+					}
+					yy--;
+					if (yy < 0)
+						break;
 				}
-				yy++;
-				if (yy >= edit_win_get_text_lines())
+				if (match_len == 0)
 					break;
+				line = NODE_PREV(line);
+				if (IS_NODE_INT(line) == 0)
+					break;
+				byte_idx = line_data_strlen(line->data);	// goto the previous line's tail
 			}
-			if (match_len == 0)
-				break;
-			line = NODE_NEXT(line);
-			if (IS_NODE_INT(line) == 0)
-				break;
-			byte_idx = 0;	// goto the next line's head
 		}
-	}
+#endif // HL_BRACKET_BW
+	} else {
+#ifdef HL_BRACKET_FW
+		// draw forward [yy, edit_win_get_text_lines()-1] from cursor pos
+		match_line = CEPBV_CL;
+		match_byte_idx = CEPBV_CLBI;
+		line = CEPBV_CL;
+		byte_idx = CEPBV_CLBI;
+		yy = CEPBV_CURSOR_Y;
+		skip_here = 0;
+		for (depth = 0, safe_cnt = 0;
+		 ((-MAX_BRACKET_NESTINGS < depth) && (depth < MAX_BRACKET_NESTINGS))
+		  && (safe_cnt < MAX_BRACKET_HL);
+		 safe_cnt++) {
+////flf_d_printf("depth: %d\n", depth);
+			match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
+			 char_under_cursor, needle, FORWARD_SEARCH, skip_here, depth_increase, &depth, &prev_depth);
+////flf_d_printf("depth: %d\n", depth);
+			skip_here = 1;
+////flf_d_printf("match_len: %d\n", match_len);
+			for ( ; yy < edit_win_get_text_lines(); ) {
+				if (match_len == 0)
+					break;
+				te_tab_expand_line(line->data);
+				max_wl_idx = max_wrap_line_idx(te_line_concat_linefeed, -1);
+				wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, byte_idx, -1);
+				for ( ; wl_idx <= max_wl_idx; wl_idx++) {
+					byte_idx_1 = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, 0, -1);
+					byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx,
+					 INT_MAX, -1);
+					if (match_line == line && get_intersection(byte_idx_1, byte_idx_2,
+					 match_byte_idx, match_byte_idx + match_len,
+					 &left_byte_idx, &right_byte_idx) > 0) {
+						set_color_for_bracket_hl(depth_increase, prev_depth); // select color by depth
+////
+line_dump_byte_idx(match_line, match_byte_idx);
+////flf_d_printf("prev_depth/depth: %d/%d, yy: %d\n", prev_depth, depth, yy);
+						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
+						match_len = 0;	// clear match_len so that go to next bracket
+						break;
+					}
+					yy++;
+					if (yy >= edit_win_get_text_lines())
+						break;
+				}
+				if (match_len == 0)
+					break;
+				line = NODE_NEXT(line);
+				if (IS_NODE_INT(line) == 0)
+					break;
+				byte_idx = 0;	// goto the next line's head
+			}
+		}
 #endif // HL_BRACKET_FW
+	}
 }
 #endif // ENABLE_REGEX
 

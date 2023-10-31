@@ -143,10 +143,14 @@ func_key_table_t editor_func_key_table[] = {
  { "Replace",         "Replace keyword",                K_C_CARET,    NKA, NKA,
    0,F_I(do_replace), NULL },
 #ifdef ENABLE_REGEX
- { "Find Bracket()",  "Find counterpart bracket()",     K_M_RBRACKET, K_M_LBRACE, K_M_BACKSLASH,
+ { "Find Bracket()",  "Find counterpart bracket()",     K_M_RBRACKET, K_M_LBRACE, NKA,
    0,F_I(do_find_bracket), NULL },
- { "Find Bracket)(",  "Find counterpart bracket)(",     K_M_LBRACKET, K_M_RBRACE, K_M_VERTBAR,
+ { "Find Bracket)(",  "Find counterpart bracket)(",     K_M_LBRACKET, K_M_RBRACE, NKA,
    0,F_I(do_find_bracket_reverse), NULL },
+ { "Hilight Bracket()",  "Hilight counterpart bracket()", K_M_BACKSLASH, NKA, NKA,
+   0,F_I(do_highlight_bracket), NULL },
+ { "Hilight Bracket)(",  "Hilight counterpart bracket)(", K_M_VERTBAR,   NKA, NKA,
+   0,F_I(do_highlight_bracket_reverse), NULL },
 #endif // ENABLE_REGEX
 
  { "",                "Buffer Menu",                    NKA,          NKA, NKA,

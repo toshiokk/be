@@ -23,7 +23,6 @@
 #define regexp_h
 
 #define BACKWARD_DIR		(-1)
-#define NO_DIR				(0)
 #define FORWARD_DIR			(+1)
 #define BACKWARD_SEARCH		BACKWARD_DIR
 #define FORWARD_SEARCH		FORWARD_DIR

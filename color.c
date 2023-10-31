@@ -233,9 +233,9 @@ int display_bracket_hl_colors(int yy, int xx)
 	char fgc, bgc;
 	char buffer[MAX_PATH_LEN+1];
 
-	prepare_colors_for_bracket_hl(0);
+	prepare_colors_for_bracket_hl();
 	for (color_idx = 0; color_idx < get_colors_for_bracket_hl(); color_idx++) {
-		set_color_for_bracket_hl(color_idx);
+		set_color_for_bracket_hl(0, color_idx);
 		snprintf(buffer, MAX_PATH_LEN, "%2d: ([{<>}])", color_idx);
 		tio_output_string(main_win_get_mid_win_y() + yy + color_idx, xx + 0, buffer, -1);
 	}
