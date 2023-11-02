@@ -655,7 +655,7 @@ PRIVATE int add_file_type(const char *file_type_name, const char *regexp_file_na
 	return 0;
 
 add_file_type_err:;
-////_FLF_
+///_FLF_
 	regexp_free(file_type->regexp);
 	return 1;
 }
@@ -763,7 +763,7 @@ void dump_file_type(const file_type_t *file_type, int syntax)
 {
 	color_syntax_t *clr_syntax;
 
-////_FLF_
+///_FLF_
 	if (file_type == NULL) {
 		flf_d_printf("file_type: NULL\n");
 	}

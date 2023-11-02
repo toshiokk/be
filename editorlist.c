@@ -28,7 +28,7 @@ int do_switch_to_file_list(void)
 	be_buf_t *edit_buf;
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
-_FLF_
+///_FLF_
 	prev_cur_edit_buf = get_cep_buf();
 	set_cep_buf(EDIT_BUFS_TOP_ANCH);
 	buf_free_lines(EDIT_BUFS_TOP_ANCH);
@@ -173,7 +173,7 @@ void make_help_func_list(void)
 	char *func_ = "--------------------------------";
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
-_FLF_
+///_FLF_
 	table = get_func_key_table_from_key_group(0);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
 	 "Function", "Key1", "Key2", "Key3", "func_id");

@@ -170,7 +170,6 @@ PRIVATE int open_file_recursive(int recursive)
 
 _FLF_
 		ret = input_string("", file_name, HISTORY_TYPE_IDX_CURSPOS , _("Open existing file:"));
-///		ret = input_string("", file_name, HISTORY_TYPE_IDX_DIR, _("Open existing file:"));
 _FLF_
 
 		if (ret <= 0) {
@@ -678,7 +677,6 @@ int update_screen_editor(int title_bar, int status_bar, int refresh)
 	int pane_idx;			// pane index
 
 ///mflf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
-///_FLF_
 	// title bar
 	if (title_bar) {
 		disp_editor_title_bar();

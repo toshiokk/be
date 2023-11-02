@@ -46,8 +46,6 @@
 #define IS_NODE_BOT(node)			(IS_PTR_NULL(node) || IS_NODE_BOT_ANCH(NODE_NEXT(node)))
 #define IS_NODE_BOT_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL(NODE_NEXT(node)))
 
-#define IS_NODE_INVALID(node)		(IS_NODE_TOP_ANCH(node) || IS_NODE_BOT_ANCH(node))
-#define IS_NODE_VALID(node)			(IS_NODE_INVALID(node) == 0)
 
 // ## Node structure ----------------------------------------------------------
 //   top-anch

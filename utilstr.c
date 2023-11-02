@@ -228,7 +228,7 @@ const char *quote_file_name_if_necessary(char *buf, const char *string)
 			return quote_string(buf, string, '\'');
 		}
 	}
-	return string;
+	return string;	// no quotation necessary
 }
 
 int is_strlen_0(const char *str)

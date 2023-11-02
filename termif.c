@@ -465,7 +465,6 @@ void termif_refresh(void)
 		send_cursor_pos_to_term(termif_cursor_yy, termif_cursor_xx);
 		send_cursor_on_to_term(termif_cursor_on);
 	}
-///_FLF_
 }
 
 PRIVATE void send_cursor_pos_string_to_term(int yy, int xx, const char *string, int bytes)
@@ -492,8 +491,8 @@ PRIVATE void send_cursor_pos_to_term(int yy, int xx)
 		send_printf_to_term("\x1b[%d;%df", yy+1, xx+1);
 #endif
 	} else {
-		warning_printf("(%d, %d)\n", xx, yy);
-mflf_d_printf("(%d, %d)\n", termif_columns, termif_lines);
+///		warning_printf("(%d, %d)\n", xx, yy);	// not warn this
+///mflf_d_printf("(%d, %d)\n", termif_columns, termif_lines);
 	}
 }
 PRIVATE void send_attrs_to_term(vscreen_char_t attrs)

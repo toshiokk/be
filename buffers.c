@@ -90,7 +90,7 @@ void free_all_buffers(void)
 {
 	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
 	bufs_free_all_bufss(&bufs_top_anchor);
-	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
+///	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
 }
 
 // Edit-buffer manipulation routines
@@ -113,6 +113,9 @@ int free_edit_buf(be_buf_t *edit_buf)
 {
 	int ret = 1;
 
+	if (IS_NODE_INT(edit_buf) == 0) {
+		return 0;
+	}
 #ifdef ENABLE_HISTORY
 	update_history(HISTORY_TYPE_IDX_CURSPOS, mk_cur_file_pos_str_static());
 #endif // ENABLE_HISTORY
@@ -285,11 +288,11 @@ void create_edit_buf(const char *full_path)
 	buf_insert_before(EDIT_BUFS_BOT_ANCH, buf);
 ///_FLF_
 	set_cep_buf(buf);
-	if (IS_NODE_VALID(editor_panes.bufs[0]) == 0) {
+	if (IS_NODE_INT(editor_panes.bufs[0]) == 0) {
 		// make view-0 buffer valid
 		editor_panes.bufs[0] = buf;
 	}
-	if (IS_NODE_VALID(editor_panes.bufs[1]) == 0) {
+	if (IS_NODE_INT(editor_panes.bufs[1]) == 0) {
 		// make view-1 buffer valid
 		editor_panes.bufs[1] = buf;
 	}
@@ -320,7 +323,7 @@ int count_edit_bufs(void)
 
 int is_c_e_b_valid(void)
 {
-	return IS_NODE_VALID(get_cep_buf());
+	return IS_NODE_INT(get_cep_buf());
 }
 
 // Cut-buffers manipulation routines -----------------------------------------

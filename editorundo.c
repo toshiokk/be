@@ -149,7 +149,7 @@ void undo_adjust_max_line(void)
 	int past_max_line = 0;
 
 	line = NODE_NEXT(undo_min_line);
-	for (lines = 0 ; IS_NODE_VALID(line); lines++) {
+	for (lines = 0 ; IS_NODE_INT(line); lines++) {
 		if (line == undo_max_line) {
 			past_max_line = 1;
 		}

@@ -418,7 +418,7 @@ int switch_c_e_b_to_next(int beep_at_end, int goto_top)
 }
 int switch_c_e_b_to_valid_buf(void)
 {
-	if (IS_NODE_VALID(get_cep_buf()) == 0) {
+	if (IS_NODE_INT(get_cep_buf()) == 0) {
 		return switch_c_e_b_to_another_buf();
 	}
 	return 1;
@@ -459,8 +459,7 @@ PRIVATE const char *skip_n_file_names(const char *line, int field_idx)
 	const char *ptr;
 	int field_cnt;
 
-////
-flf_d_printf("[%s], %d\n", line, field_idx);
+////flf_d_printf("[%s], %d\n", line, field_idx);
 	ptr = line;
 	for (field_cnt = 0; ; field_cnt++) {
 		ptr = skip_to_file_path(ptr);
@@ -474,8 +473,7 @@ flf_d_printf("[%s], %d\n", line, field_idx);
 			// not progressed
 			break;
 	}
-////
-flf_d_printf("file: [%s]\n", ptr);
+////flf_d_printf("file: [%s]\n", ptr);
 	return ptr;
 }
 
@@ -489,7 +487,7 @@ void test_get_n_th_file_name(void)
 	char file_path[MAX_PATH_LEN+1];
 	int line_num, col_num;
 
-_FLF_
+///_FLF_
 	for (field_idx = 0; field_idx < 10; field_idx++) {
 		ptr = skip_n_file_names(test_str, field_idx);
 		if (*ptr == '\0')
@@ -653,10 +651,8 @@ no_file_path:;
 		*line_num_ = line_num;
 	if (col_num_)
 		*col_num_ = col_num;
-///
-flf_d_printf("str:[%s] ==> path:[%s] line:%d col:%d\n",
-///
- str, file_path, line_num, col_num);
+///flf_d_printf("str:[%s] ==> path:[%s] line:%d col:%d\n",
+/// str, file_path, line_num, col_num);
 	return strnlen(file_path, MAX_PATH_LEN);
 }
 

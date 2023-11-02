@@ -150,8 +150,12 @@ be_buf_t *buf_unlink_free(be_buf_t *buf)
 	be_buf_t *prev_buf;
 
 ///_D_(buf_dump_state(buf));
-	if (IS_NODE_VALID(buf) == 0) {
-		progerr_printf("CANNOT free this buffer %s\n", buf->file_path);
+	if (IS_NODE_INT(buf) == 0) {
+		if (IS_PTR_NULL(buf)) {
+			progerr_printf("This buffer is NULL\n");
+		} else {
+			progerr_printf("CANNOT free this buffer %s\n", buf->file_path);
+		}
 		return NULL;
 	}
 	prev_buf = NODE_PREV(buf);
@@ -396,7 +400,7 @@ unsigned short buf_calc_crc(be_buf_t *buf)
 				break;
 		}
 	}
-flf_d_printf("crc: %04lx, size: %d\n", file_crc, file_size);
+///flf_d_printf("crc: %04lx, size: %d\n", file_crc, file_size);
 	return file_crc;
 }
 //-----------------------------------------------------------------------------
@@ -435,7 +439,7 @@ be_bufs_t *bufs_free_all_bufss(be_bufs_t *bufs)
 			be_buf_t *buf = BUFS_TOP_NODE(bufs);
 			flf_d_printf(" %cbuf:[%s]\n",
 			 (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
-			if (IS_NODE_VALID(buf) == 0) {
+			if (IS_NODE_INT(buf) == 0) {
 				break;
 			}
 			flf_d_printf("    unlink_free %cbuf:[%s]\n",

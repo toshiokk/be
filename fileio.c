@@ -104,6 +104,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 	ret = load_file_into_cur_buf__(full_path, 1, msg_on_err);
 
 	if (ret < 0) {
+///_FLF_
 		free_cur_edit_buf();
 		return -1;
 	}
@@ -201,7 +202,7 @@ PRIVATE int guess_encoding_by_nkf(const char *full_path)
 	if (pclose(fp) == -1) {
 		return -1;
 	}
-flf_d_printf("guessed encoding by nkf: %s", buffer);
+///flf_d_printf("guessed encoding by nkf: %s", buffer);
 	if (strlcmp__(buffer, "ASCII") == 0) {
 		CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
 	} else if (strlcmp__(buffer, "UTF-8") == 0) {
@@ -630,7 +631,7 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 PRIVATE int files_loaded = 0;
 void clear_files_loaded(void)
 {
-_FLF_
+///_FLF_
 	files_loaded = 0;
 }
 int add_files_loaded(int files)
