@@ -36,14 +36,15 @@ PRIVATE int output_edit_line_num(int yy, const be_buf_t *buf, const be_line_t *l
 PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
  int byte_idx_1, int byte_idx_2, const char *vis_code);
 
-PRIVATE int get_cursor_x_in_edit_win(void);
-PRIVATE int get_cursor_x_in_text(void);
-PRIVATE int get_max_text_x_to_be_disp(void);
-PRIVATE int get_edit_win_x_in_text(int text_x);
-PRIVATE int get_line_num_columns(void);
+PRIVATE int get_edit_win_x_for_cursor_x(void);
+PRIVATE int get_cursor_text_x(void);
+PRIVATE int get_max_text_x_to_keep(void);
+PRIVATE int get_edit_win_x_for_text_x(int text_x);
+PRIVATE int get_edit_win_x_for_view_x(int view_x);
+PRIVATE int get_cur_buf_line_num_columns(void);
 
 PRIVATE const char *get_ruler_text(int col_idx);
-PRIVATE const char *make_ruler_text__(int col_x, int columns);
+PRIVATE const char *make_ruler_text(int col_x, int columns);
 
 #define MAX_LINE_NUM_STR_LEN		10	// 4000000000
 PRIVATE const char *get_line_num_string(const be_buf_t *buf, const be_line_t *line,
@@ -209,7 +210,7 @@ void disp_edit_win(int cur_pane)
 	int yy;
 	int max_wl_idx;
 	int wl_idx;
-	int cursor_line_text_right_x = -1;
+	int cursor_line_right_text_x = -1;
 
 	// Don't make the cursor jump around the screen while updating
 	tio_set_cursor_on(0);
@@ -229,8 +230,7 @@ void disp_edit_win(int cur_pane)
 	for (yy = 0; yy < edit_win_get_text_lines(); ) {
 		if (IS_NODE_BOT_ANCH(line))
 			break;
-		te_tab_expand_line(line->data);
-		max_wl_idx = max_wrap_line_idx(te_line_concat_linefeed, -1);
+		max_wl_idx = te_tab_expand_line__max_wl_idx(line->data);
 ///flf_d_printf("[%s]\n", te_line_concat_linefeed);
 ///flf_d_printf("max_wl_idx: %d\n", max_wl_idx);
 		wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, byte_idx, -1);
@@ -240,8 +240,8 @@ void disp_edit_win(int cur_pane)
 			 INT_MAX, -1);
 			disp_edit_line(cur_pane, yy, get_cep_buf(), line, byte_idx_1, byte_idx_2);
 			if (yy == CEPBV_CURSOR_Y) {
-				cursor_line_text_right_x = LIM_MAX(get_edit_win_columns_for_text(),
-				 end_col_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, byte_idx_2, -1));
+				cursor_line_right_text_x = end_col_idx_of_wrap_line(
+				 te_line_concat_linefeed, wl_idx, byte_idx_2, -1);
 			}
 			yy++;
 			if (yy >= edit_win_get_text_lines())
@@ -271,7 +271,7 @@ void disp_edit_win(int cur_pane)
 #endif // ENABLE_REGEX
 
 	if (GET_APPMD(ed_SHOW_RULER)) {
-		int edit_win_text_x = get_line_num_columns();
+		int edit_win_text_x = get_cur_buf_line_num_columns();
 		if (GET_APPMD(ed_SHOW_LINE_NUMBER)) {
 			// display buffer total lines ("999 ")
 			set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
@@ -280,18 +280,23 @@ void disp_edit_win(int cur_pane)
 			 edit_win_text_x);
 		}
 		// display ruler("1---5----10---15---20---25---30---35---40---45---50---55---60---65")
+		const char *ruler = get_ruler_text(CEPBV_MIN_TEXT_X_TO_KEEP);
 		set_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 0);
-		sub_win_output_string(edit_win_get_ruler_y(), edit_win_text_x,
-		 get_ruler_text(0), -1);
+		sub_win_output_string(edit_win_get_ruler_y(), edit_win_text_x, ruler, -1);
 		// display cursor column indicator in reverse text on ruler
 		set_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 1);
-		sub_win_output_string(edit_win_get_ruler_y(), get_cursor_x_in_edit_win(),
-		 get_ruler_text(get_cursor_x_in_text() - get_cep_buf_view_min_text_x_to_keep()), 1);
+		sub_win_output_string(edit_win_get_ruler_y(), get_edit_win_x_for_cursor_x(),
+		 &ruler[get_cursor_text_x() - CEPBV_MIN_TEXT_X_TO_KEEP], 1);
 		// display line tail column indicator in reverse text on ruler
-		if (cursor_line_text_right_x >= 0) {
-			sub_win_output_string(edit_win_get_ruler_y(),
-			 edit_win_text_x + (cursor_line_text_right_x-1 - get_cep_buf_view_min_text_x_to_keep()),
-			 get_ruler_text(cursor_line_text_right_x-1 - get_cep_buf_view_min_text_x_to_keep()), 1);
+		if (cursor_line_right_text_x >= 0) {
+			int view_x = cursor_line_right_text_x-1 - CEPBV_MIN_TEXT_X_TO_KEEP;
+flf_d_printf("ruler: [%s]\n", ruler);
+flf_d_printf("right_text_x/view_x/x_to_keep/columns: %d/%d/%d/%d\n",
+ cursor_line_right_text_x, view_x, CEPBV_MIN_TEXT_X_TO_KEEP, get_edit_win_columns_for_text());
+			if (view_x < get_edit_win_columns_for_text()) {
+				sub_win_output_string(edit_win_get_ruler_y(), get_edit_win_x_for_view_x(view_x),
+				 &ruler[view_x], 1);
+			}
 		}
 	}
 
@@ -681,8 +686,7 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir, char char_under_curso
 			for ( ; yy >= 0; ) {
 				if (match_len == 0)
 					break;
-				te_tab_expand_line(line->data);
-				max_wl_idx = max_wrap_line_idx(te_line_concat_linefeed, -1);
+				max_wl_idx = te_tab_expand_line__max_wl_idx(line->data);
 				wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, byte_idx, -1);
 				for ( ; wl_idx >= 0; wl_idx--) {
 					byte_idx_1 = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, 0, -1);
@@ -734,8 +738,7 @@ line_dump_byte_idx(match_line, match_byte_idx);
 			for ( ; yy < edit_win_get_text_lines(); ) {
 				if (match_len == 0)
 					break;
-				te_tab_expand_line(line->data);
-				max_wl_idx = max_wrap_line_idx(te_line_concat_linefeed, -1);
+				max_wl_idx = te_tab_expand_line__max_wl_idx(line->data);
 				wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, byte_idx, -1);
 				for ( ; wl_idx <= max_wl_idx; wl_idx++) {
 					byte_idx_1 = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, 0, -1);
@@ -804,7 +807,7 @@ PRIVATE int output_edit_line_num(int yy, const be_buf_t *buf, const be_line_t *l
 // Set cursor at (cursor_y, cur_line_byte_idx).
 void set_edit_cursor_pos(void)
 {
-	sub_win_set_cursor_pos(edit_win_get_text_y() + CEPBV_CURSOR_Y, get_cursor_x_in_edit_win());
+	sub_win_set_cursor_pos(edit_win_get_text_y() + CEPBV_CURSOR_Y, get_edit_win_x_for_cursor_x());
 }
 
 PRIVATE int output_edit_line_text(int yy, const char *raw_code, int byte_idx_1, int byte_idx_2)
@@ -826,8 +829,8 @@ PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
 	wl_idx = start_wl_idx_of_wrap_line(raw_code, byte_idx_1, -1);
 	left_x = start_col_idx_of_wrap_line(raw_code, byte_idx_1, -1);
 	right_x = end_col_idx_of_wrap_line(raw_code, wl_idx, byte_idx_2, -1);
-	left_x = LIM_MIN(left_x, get_cep_buf_view_min_text_x_to_keep());
-	right_x = LIM_MAX(right_x, get_max_text_x_to_be_disp());
+	left_x = LIM_MIN(left_x, CEPBV_MIN_TEXT_X_TO_KEEP);
+	right_x = LIM_MAX(right_x, get_max_text_x_to_keep());
 	left_byte_idx = end_byte_idx_of_wrap_line_ge(raw_code, wl_idx, left_x, -1);
 	right_byte_idx = end_byte_idx_of_wrap_line_le(raw_code, wl_idx, right_x, -1);
 
@@ -841,37 +844,41 @@ PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
 	if (bytes > 0) {	// if (bytes <= 0), no output neccesary
 ///_FLF_
 		sub_win_output_string(edit_win_get_text_y() + yy,
-		 get_edit_win_x_in_text(left_x), &vis_code[left_vis_idx], bytes);
+		 get_edit_win_x_for_text_x(left_x), &vis_code[left_vis_idx], bytes);
 	}
 ///_FLF_
 	return bytes;
 }
 
-PRIVATE int get_cursor_x_in_edit_win(void)
+PRIVATE int get_edit_win_x_for_cursor_x(void)
 {
-	return get_edit_win_x_in_text(get_cursor_x_in_text());
+	return get_edit_win_x_for_text_x(get_cursor_text_x());
 }
-PRIVATE int get_cursor_x_in_text(void)
+PRIVATE int get_cursor_text_x(void)
 {
 	return start_col_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1);
 }
-PRIVATE int get_max_text_x_to_be_disp(void)
+PRIVATE int get_max_text_x_to_keep(void)
 {
-	return get_cep_buf_view_min_text_x_to_keep() + get_edit_win_columns_for_text();
+	return CEPBV_MIN_TEXT_X_TO_KEEP + get_edit_win_columns_for_text();
 }
-PRIVATE int get_edit_win_x_in_text(int text_x)
+PRIVATE int get_edit_win_x_for_text_x(int text_x)
 {
-	return get_line_num_columns() + (text_x - get_cep_buf_view_min_text_x_to_keep());
+	return get_edit_win_x_for_view_x(text_x - CEPBV_MIN_TEXT_X_TO_KEEP);
+}
+PRIVATE int get_edit_win_x_for_view_x(int view_x)
+{
+	return get_cur_buf_line_num_columns() + view_x;
 }
 // width of text view area (window-width - line-number-width)
 int get_edit_win_columns_for_text(void)
 {
 	// <text-to-edit................................>
 	// 999 <text-to-edit............................>
-	return sub_win_get_columns() - get_line_num_columns();
+	return sub_win_get_columns() - get_cur_buf_line_num_columns();
 }
 // text x position (line-number-width)
-PRIVATE int get_line_num_columns(void)
+PRIVATE int get_cur_buf_line_num_columns(void)
 {
 	return GET_APPMD(ed_SHOW_LINE_NUMBER) == 0
 	// ^text-to-edit
@@ -885,17 +892,22 @@ PRIVATE int get_line_num_columns(void)
 #ifdef START_UP_TEST
 void test_make_ruler_text(void)
 {
-flf_d_printf("[%s]\n", make_ruler_text__(0, 40));
-flf_d_printf("[%s]\n", make_ruler_text__(97, 40));
-flf_d_printf("[%s]\n", make_ruler_text__(98, 40));
-flf_d_printf("[%s]\n", make_ruler_text__(99, 40));
-flf_d_printf("[%s]\n", make_ruler_text__(100, 40));
+flf_d_printf("[%s]\n", make_ruler_text(0, 40));
+flf_d_printf("[%s]\n", make_ruler_text(97, 40));
+flf_d_printf("[%s]\n", make_ruler_text(98, 40));
+flf_d_printf("[%s]\n", make_ruler_text(99, 40));
+flf_d_printf("[%s]\n", make_ruler_text(100, 40));
 }
 #endif // START_UP_TEST
 
+PRIVATE const char *get_ruler_text(int col_idx)
+{
+	return make_ruler_text(col_idx, get_edit_win_columns_for_text());
+}
 #define RULER_NUM_INTERVAL	5
 #define R_N_I				RULER_NUM_INTERVAL
 #define MAX_RULER_STR_LEN	(MAX_SCRN_LINE_BUF_LEN + R_N_I)
+//01234567890123456789012345678901234567890123456789012345678901234567890123456789
 //12345678901234567890123456789012345678901234567890123456789012345678901234567890
 //1---5----10---15---20---25---30---35---40---45---50---55---60---65---70---75---80
 //9910-9915-9920-9925-9930-9935-9940-9945-9950-9955-9960-9965-9970-9975-9980-9985-9990
@@ -905,25 +917,20 @@ flf_d_printf("[%s]\n", make_ruler_text__(100, 40));
 //-9915-9920-9925-9930-9935-9940-9945-9950-9955-9960-9965-9970-9975-9980-9985-9990-9995
 //9915-9920-9925-9930-9935-9940-9945-9950-9955-9960-9965-9970-9975-9980-9985-9990-9995
 //915-9920-9925-9930-9935-9940-9945-9950-9955-9960-9965-9970-9975-9980-9985-9990-9995
-PRIVATE const char *get_ruler_text(int col_idx)
+PRIVATE const char *make_ruler_text(int start_col_idx, int length)
 {
-	const char *str;
-
-	str = make_ruler_text__(get_cep_buf_view_min_text_x_to_keep(), get_edit_win_columns_for_text());
-	col_idx = MK_IN_RANGE(0, col_idx, strnlen(str, MAX_RULER_STR_LEN));
-	return &str[col_idx];
-}
-PRIVATE const char *make_ruler_text__(int start_col_idx, int columns)
-{
-	static int start_col_idx__ = -1;
-	static int columns__ = -1;
+	static int start_col_idx_cached = -1;
+	static int length_cached = -1;
 	static char ruler_line_buf[MAX_RULER_STR_LEN+1] = "";	// ruler line
 	int col_num;
 	char col_num_str[4+1];	// "9999"
 
-	if (start_col_idx__ != start_col_idx || columns__ != columns) {
-		start_col_idx__ = start_col_idx;
-		columns__ = columns;
+	length = MIN(MAX_RULER_STR_LEN, length);
+	if (start_col_idx_cached == start_col_idx && length_cached == length) {
+		// return cached string
+	} else {
+		start_col_idx_cached = start_col_idx;
+		length_cached = length;
 
 		strcpy__(ruler_line_buf, "");
 		// 0, 5, 10, 15, 20, ...
@@ -931,7 +938,7 @@ PRIVATE const char *make_ruler_text__(int start_col_idx, int columns)
 		 col_num <= MAX_EDIT_LINE_LEN * get_cur_buf_tab_size();
 		 col_num = ((col_num / R_N_I) + 1) * R_N_I) {
 			snprintf_(col_num_str, 4+1, "%d", col_num);
-			if (col_num - 1 - start_col_idx < 0) {
+			if (col_num <= start_col_idx) {
 				// line head
 				if (start_col_idx == 0) {
 					snprintf_(ruler_line_buf, R_N_I+1, "1----");
@@ -939,14 +946,15 @@ PRIVATE const char *make_ruler_text__(int start_col_idx, int columns)
 					snprintf_(ruler_line_buf, R_N_I+1, "-----");
 				}
 			} else {
+										//4,9,14,19, ...
 				snprintf_(&ruler_line_buf[col_num - 1 - start_col_idx], R_N_I+1,
 				 "%s----", col_num_str);
 			}
-			if (strnlen(ruler_line_buf, MAX_RULER_STR_LEN) >= columns)
+			if (strnlen(ruler_line_buf, MAX_RULER_STR_LEN) >= length)
 				break;
 		}
 ///flf_d_printf("[%s]\n", ruler_line_buf);
-		ruler_line_buf[columns] = '\0';
+		ruler_line_buf[length] = '\0';	// limit length
 ///flf_d_printf("[%s]\n", ruler_line_buf);
 	}
 	return ruler_line_buf;
@@ -1114,6 +1122,12 @@ const char *te_concat_linefeed(const char *original)
 	strlcat__(te_line_concat_linefeed, MAX_EDIT_LINE_LEN * 2, "\n");
 	te_line_concat_linefeed_bytes = strnlen(te_line_concat_linefeed, MAX_EDIT_LINE_LEN * 2);
 	return te_line_concat_linefeed;
+}
+
+int te_tab_expand_line__max_wl_idx(const char *original)
+{
+	te_tab_expand_line(original);
+	return max_wrap_line_idx(te_line_concat_linefeed, -1);
 }
 
 // End of editor2.c

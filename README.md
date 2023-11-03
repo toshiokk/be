@@ -60,7 +60,7 @@ Splash screen (en)
 - Stacked cut buffer.
 - Character/Line/Rectangular CUT, COPY and PASTE.
 - Backup file is made on saving file.
-- Bracket match.
+- Bracket match and Bracket highlighting.
 - Undo/Redo.
 - History support.  
 	Search/Replace history.  
@@ -93,7 +93,7 @@ $ be [Enter]
 ~~~
 Start Filer.  
 Select file by UP and DOWN key and hit 'e' to edit the file.
-'d' to detele, 'm' to move and 'c' to copy the file.
+'d' to delete, 'm' to move and 'c' to copy the file.
 'h' to change current working directory.
 'q' to quit filer.
 
@@ -150,7 +150,7 @@ So BE editor is 微 editor, is Small-editor.
 | Bracket match          | Yes | ??  | Yes |
 | Code folding           | No  | Yes | No  |
 | Calling Spell checker  | Yes | No  | No  |
-| Drop down menu         | No  | Powerfull | Simple |
+| Drop down menu         | No  | Powerful | Simple |
 | Runs on                | Linux | Linux/Unix/Windows | Linux |
 | Mouse operation        | Yes | Yes | No  |
 | GUI support            | No  | Yes | No  |
@@ -194,7 +194,7 @@ Execute commands.
     $ make
     $ sudo make install
 
-## Licence
+## License
 
 [GPL](COPYING)
 
@@ -221,8 +221,8 @@ PCR
 | ^J | Cut to line head |
 | ^L | Cut to line tail |
 | ^Y | Copy current line into cut buffer |
-| ^P | Paste from cut buffer with popinig-up cut buffer |
-| ^O | Paste from cut buffer without popinig-up cut buffer |
+| ^P | Paste from cut buffer with popping-up cut buffer |
+| ^O | Paste from cut buffer without popping-up cut buffer |
 | ^U | Duplicate current line (^Y and ^P) |
 
 ## rc file
@@ -232,13 +232,21 @@ PCR
 | $PWD/.berc  | 1st candidate of rc-file. |
 | $HOME/.berc | 2nd candidate of rc-file. |
 
-## Application direcoty:
+## Application directory and file
 
-| Directory path | contents |
-| -------------------- | --------------------|
-| $HOME/.be            | 5 history files are saved here. |
-| $HOME/.betrash/dirs  | Directories trashed by Filer are moved here. |
-| $HOME/.betrash/files | Files trashed by Filer are moved here. |
+| Directory path             | contents |
+| -------------------------- | -------- |
+| $HOME/.be                  | 5 history files are saved here. |
+| $HOME/.betrash/dirs        | Directories trashed by Filer are moved here. |
+| $HOME/.betrash/files       | Files trashed by Filer are moved here. |
+
+| File path                  | contents |
+| -------------------------- | -------- |
+| $HOME/.be/search_history   | history of keyword searched |
+| $HOME/.be/exec_history     | history of command executed |
+| $HOME/.be/dir_history      | history of directory selected |
+| $HOME/.be/openfile_history | history of file position |
+| $HOME/.be/keymacro_history | history of keymacro executed |
 
 ## Project file
 
@@ -247,9 +255,13 @@ Files having extension .bep or .pro are recognized as a project file by BE edito
 
 ### How to generate project file
 
-You can easily make project file.
+You can easily make project file like:
 
     $ ls *.h *.c *.cpp >my_proj.bep
+
+or
+
+    $ find >my_proj.bep
 
 ### How to use Project file
 

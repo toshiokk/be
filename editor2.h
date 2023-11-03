@@ -63,6 +63,7 @@ extern int te_line_visible_code_columns;
 extern char te_line_visible_code[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];
 const char *te_tab_expand_line(const char *original);
 const char *te_concat_linefeed(const char *original);
+int te_tab_expand_line__max_wl_idx(const char *original);
 
 #endif // editor2_h
 

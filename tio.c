@@ -195,16 +195,16 @@ int tio_resume(void)
 }
 
 //-----------------------------------------------------------------------------
-///int tio_get_screen_size_from_term(void)
-///{
-///	int lines = tio_get_lines();
-///	int cols = tio_get_columns();
-///#ifdef ENABLE_NCURSES
-///#else // ENABLE_NCURSES
-///	termif_get_screen_size_from_term();
-///#endif // ENABLE_NCURSES
-///	return (lines != tio_get_lines()) || (cols != tio_get_columns());
-///}
+////int tio_get_screen_size_from_term(void)
+////{
+////	int lines = tio_get_lines();
+////	int cols = tio_get_columns();
+////#ifdef ENABLE_NCURSES
+////#else // ENABLE_NCURSES
+////	termif_get_screen_size_from_term();
+////#endif // ENABLE_NCURSES
+////	return (lines != tio_get_lines()) || (cols != tio_get_columns());
+////}
 
 int tio_check_update_terminal_size(void)
 {

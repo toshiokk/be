@@ -448,7 +448,7 @@ int wrap_line_length(int width)
 	 ? width
 	 : (CUR_EBUF_STATE(buf_LINE_WRAP_MODE) == 0
 	  ? (MAX_EDIT_LINE_LEN * priv_tab_size + 1)		// will never wrap
-	  : get_edit_win_columns_for_text());			// wrap line by editor window columns
+	  : get_edit_win_columns_for_text());			// wrap line by editor window width
 }
 
 //-----------------------------------------------------------------------------

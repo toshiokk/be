@@ -587,6 +587,8 @@ int do_tog_line_wrap_mode(void)
 {
 	tog_line_wrap_mode();
 	SHOW_MODE("Line-wrap mode", get_str_line_wrap_mode());
+
+	CEPBV_MIN_TEXT_X_TO_KEEP = 0;
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }

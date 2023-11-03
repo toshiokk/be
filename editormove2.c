@@ -251,7 +251,7 @@ void fix_buf_state_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 	int wl_idx;
 	int cursor_x_in_text;
 
-	if (is_disable_update_min_x_to_keep() == 0) {
+	if (is_disabled_update_min_text_x_to_keep() == 0) {
 		if (cursor_move == CURS_MOVE_HORIZ) {
 			CEPBV_CURSOR_X_TO_KEEP = start_col_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1);
 			update_min_text_x_to_keep(CEPBV_CURSOR_X_TO_KEEP);
@@ -265,9 +265,15 @@ void fix_buf_state_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 	}
 }
 
+// cursor_text_x                                          : X position in contents of cursor
+// text_x, min_text_x, max_text_x,
+//  left_text_x, right_text_x, text_left_x, text_right_x  : X position in contents
+// disp_x, min_disp_x, max_disp_x,
+//  left_disp_x, right_disp_x, disp_left_x, disp_right_x  : X position in screen
+
 PRIVATE int calc_min_text_x_to_keep();
-PRIVATE int recalc_min_text_x_to_keep(int disp_width, int text_width, int horiz_margin,
- int cursor_x, int cur_min_text_x);
+PRIVATE int recalc_min_text_x_to_keep(int disp_width, int text_width, int margin,
+ int cursor_text_x, int cur_min_text_x);
 
 // sample long line:
 // 00000000001111111111222222222233333333334444444444
@@ -301,8 +307,9 @@ PRIVATE int recalc_min_text_x_to_keep(int disp_width, int text_width, int margin
 	 LIM_MAX(text_width - disp_width, cursor_text_x - (disp_width - margin)),
 	 cur_min_text_x,
 	 LIM_MIN(0, cursor_text_x - margin));
-//      cccccccccccccccccccccccccccccccccccccccc
-//      0000000000111111111122222222223333333333
+//
+//      cccccccccccccccccccccccccccccccccccccccc                     cursor position
+//      000000000011111111112222222222333333333344444444445555555555 contents
 //      <--disp_width-------------------------->
 //      <--->                              <---> horizontal-margin
 
@@ -328,31 +335,27 @@ PRIVATE int recalc_min_text_x_to_keep(int disp_width, int text_width, int margin
 }
 
 // min_text_x_to_keep = 0
-// |<-- display width ----------------------------->|
-// 00000000001111111111222222222233333333334444444444555555555566666666667777777777
+// |<-- display width ------------------->|
+// 000000000011111111112222222222333333333344444444445555555555
 //
 //           min_text_x_to_keep = 10
-//           |<-- display width ----------------------------->|
-// 00000000001111111111222222222233333333334444444444555555555566666666667777777777
-int get_cep_buf_view_min_text_x_to_keep(void)
-{
-	return CEPBV_MIN_TEXT_X_TO_KEEP;
-}
+//           |<-- display width ------------------->|
+// 000000000011111111112222222222333333333344444444445555555555
 
 //-----------------------------------------------------------------------------
 
-PRIVATE char disable_update_min_x_to_keep = 0;
-void set_disable_update_min_x_to_keep()
+PRIVATE char disabled_update_min_text_x_to_keep = 0;
+void set_disabled_update_min_text_x_to_keep()
 {
-	disable_update_min_x_to_keep = 1;
+	disabled_update_min_text_x_to_keep = 1;
 }
-void clear_disable_update_min_x_to_keep()
+void clear_disabled_update_min_text_x_to_keep()
 {
-	disable_update_min_x_to_keep = 0;
+	disabled_update_min_text_x_to_keep = 0;
 }
-char is_disable_update_min_x_to_keep()
+char is_disabled_update_min_text_x_to_keep()
 {
-	return disable_update_min_x_to_keep;
+	return disabled_update_min_text_x_to_keep;
 }
 
 // End of editormove2.c

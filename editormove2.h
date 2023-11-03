@@ -43,7 +43,7 @@
 	(edit_win_get_text_lines()-1 - EDITOR_VERT_SCROLL_MARGIN_LINES)
 
 #define EDITOR_VERT_SCROLL_LINES						\
-	MIN_MAX_(1, edit_win_get_text_lines()-1 - EDITOR_VERT_SCROLL_MARGIN_LINES, 50)
+	MIN_MAX_(1, edit_win_get_text_lines() / 2, 50)
 
 #define HORIZ_SCROLL_MARGIN		5
 
@@ -81,11 +81,10 @@ void fix_buf_state_after_cursor_horiz_move(void);
 void fix_buf_state_after_cursor_vert_move(void);
 
 void update_min_text_x_to_keep(int text_x);
-int get_cep_buf_view_min_text_x_to_keep(void);
 
-void set_disable_update_min_x_to_keep();
-void clear_disable_update_min_x_to_keep();
-char is_disable_update_min_x_to_keep();
+void set_disabled_update_min_text_x_to_keep();
+void clear_disabled_update_min_text_x_to_keep();
+char is_disabled_update_min_text_x_to_keep();
 
 #endif // editormove2_h
 
