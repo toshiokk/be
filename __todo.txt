@@ -21,6 +21,7 @@
   Buffer has 2 views which is referenced from editor 2 panes
     - each view has current position in buffer
 
+[v] limit current y position of editor screen on resize window
 [v ] directory invert search direction on Key B and F.
 [v ] line tail indicator at line shift
 [v] If not-modified in write_file_modified, clear [Modified] flag.

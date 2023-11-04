@@ -676,6 +676,7 @@ int update_screen_editor(int title_bar, int status_bar, int refresh)
 	int cur_pane_idx;		// pane index
 	int pane_idx;			// pane index
 
+	CEPBV_CURSOR_Y = MIN(edit_win_get_text_lines()-1, CEPBV_CURSOR_Y);
 ///mflf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 	// title bar
 	if (title_bar) {
