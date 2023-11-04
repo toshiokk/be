@@ -257,20 +257,20 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 	int match_len;
 	int ret = 0;
 	long length_change;
-	int prev_ed_REVERSE_SEARCH;
+///	int prev_ed_REVERSE_SEARCH;
 	key_code_t key;
 
 	if (strlen(needle)) {
 		strlcpy__(last_searched_needle, needle, MAX_PATH_LEN);
 	}
 
-	prev_ed_REVERSE_SEARCH = GET_APPMD(ed_REVERSE_SEARCH);
+///	prev_ed_REVERSE_SEARCH = GET_APPMD(ed_REVERSE_SEARCH);
 	for (skip_here = NO_SKIP; ; ) {
-		if (prev_ed_REVERSE_SEARCH != GET_APPMD(ed_REVERSE_SEARCH)) {
-			prev_ed_REVERSE_SEARCH = GET_APPMD(ed_REVERSE_SEARCH);
-			// search direction changed, not skip here on the next search
-			skip_here = NO_SKIP;
-		}
+///		if (prev_ed_REVERSE_SEARCH != GET_APPMD(ed_REVERSE_SEARCH)) {
+///			prev_ed_REVERSE_SEARCH = GET_APPMD(ed_REVERSE_SEARCH);
+///			// search direction changed, not skip here on the next search
+///			skip_here = NO_SKIP;
+///		}
 
 		match_len = search_needle_in_buffers(needle,
 		 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), skip_here);
@@ -308,7 +308,11 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_FORWARD | ASK_END, "");
 #endif // ENABLE_UNDO
 		}
-		if (ret == ANSWER_NO || ret == ANSWER_FORWARD) {
+		if (ret == ANSWER_NO) {
+			// Not replace and search next
+			skip_here = SKIP;
+			continue;
+		} else if (ret == ANSWER_FORWARD) {
 			// forward search
 			CLR_APPMD(ed_REVERSE_SEARCH);
 			skip_here = SKIP;

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-03 23:43+0900\n"
+"POT-Creation-Date: 2023-11-04 16:03+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -143,7 +143,7 @@ msgstr ""
 msgid "Cut-buffer cleared"
 msgstr ""
 
-#: ../editorcut.c:69 ../editorcut.c:229 ../editorcut.c:260
+#: ../editorcut.c:69 ../editorcut.c:227 ../editorcut.c:258
 msgid "Cut-buffer empty !!"
 msgstr ""
 
@@ -151,43 +151,43 @@ msgstr ""
 msgid "Cut-buffer popped"
 msgstr ""
 
-#: ../editorcut.c:95
+#: ../editorcut.c:94
 msgid "Cut to line head"
 msgstr ""
 
-#: ../editorcut.c:106
+#: ../editorcut.c:104
 msgid "Cut to line tail"
 msgstr ""
 
-#: ../editorcut.c:126
+#: ../editorcut.c:124
 msgid "Mark Set"
 msgstr ""
 
-#: ../editorcut.c:140
+#: ../editorcut.c:138
 msgid "Mark UNset"
 msgstr ""
 
-#: ../editorcut.c:156
+#: ../editorcut.c:154
 msgid "Text Copied to Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:165
+#: ../editorcut.c:163
 msgid "Text Deleted"
 msgstr ""
 
-#: ../editorcut.c:174
+#: ../editorcut.c:172
 msgid "Text Cut to Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:183
+#: ../editorcut.c:181
 msgid "Text Duplicated"
 msgstr ""
 
-#: ../editorcut.c:194
+#: ../editorcut.c:192
 msgid "Text Pasted with popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:204
+#: ../editorcut.c:202
 msgid "Text Pasted without popping Cut-buffer"
 msgstr ""
 
@@ -824,36 +824,36 @@ msgstr ""
 msgid "Replace from [%s] to [%s] ?"
 msgstr ""
 
-#: ../search.c:463
+#: ../search.c:467
 msgid "Not a bracket"
 msgstr ""
 
 #. found peer bracket
-#: ../search.c:493
+#: ../search.c:497
 msgid "Peer bracket found"
 msgstr ""
 
-#: ../search.c:497
+#: ../search.c:501
 msgid "No peer bracket found"
 msgstr ""
 
-#: ../search.c:499
+#: ../search.c:503
 #, c-format
 msgid "Too many bracket pairs (%d)"
 msgstr ""
 
 #. didn't find peer bracket
-#: ../search.c:503
+#: ../search.c:507
 #, c-format
 msgid "Bracket nesting too deep (%d)"
 msgstr ""
 
-#: ../search.c:700
+#: ../search.c:704
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr ""
 
-#: ../search.c:809
+#: ../search.c:813
 #, c-format
 msgid "\"%s\" not found"
 msgstr ""

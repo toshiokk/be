@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-03 23:43+0900\n"
+"POT-Creation-Date: 2023-11-04 16:03+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -150,7 +150,7 @@ msgstr ""
 msgid "Cut-buffer cleared"
 msgstr "カットバッファをクリアしました"
 
-#: ../editorcut.c:69 ../editorcut.c:229 ../editorcut.c:260
+#: ../editorcut.c:69 ../editorcut.c:227 ../editorcut.c:258
 msgid "Cut-buffer empty !!"
 msgstr "カットバッファが空です !!"
 
@@ -158,45 +158,45 @@ msgstr "カットバッファが空です !!"
 msgid "Cut-buffer popped"
 msgstr "カットバッファをポップしました"
 
-#: ../editorcut.c:95
+#: ../editorcut.c:94
 #, fuzzy
 msgid "Cut to line head"
 msgstr "行頭までカットしました"
 
-#: ../editorcut.c:106
+#: ../editorcut.c:104
 #, fuzzy
 msgid "Cut to line tail"
 msgstr "行末までカットしました"
 
-#: ../editorcut.c:126
+#: ../editorcut.c:124
 msgid "Mark Set"
 msgstr "マーク開始"
 
-#: ../editorcut.c:140
+#: ../editorcut.c:138
 msgid "Mark UNset"
 msgstr "マーク中止"
 
-#: ../editorcut.c:156
+#: ../editorcut.c:154
 msgid "Text Copied to Cut-buffer"
 msgstr "テキストをカットバッファにコピーしました"
 
-#: ../editorcut.c:165
+#: ../editorcut.c:163
 msgid "Text Deleted"
 msgstr "テキストを削除しました"
 
-#: ../editorcut.c:174
+#: ../editorcut.c:172
 msgid "Text Cut to Cut-buffer"
 msgstr "テキストをカットバッファにカットしました"
 
-#: ../editorcut.c:183
+#: ../editorcut.c:181
 msgid "Text Duplicated"
 msgstr "テキストを複製しました"
 
-#: ../editorcut.c:194
+#: ../editorcut.c:192
 msgid "Text Pasted with popping Cut-buffer"
 msgstr "テキストを張り付けました(カットバッファをポップ)"
 
-#: ../editorcut.c:204
+#: ../editorcut.c:202
 msgid "Text Pasted without popping Cut-buffer"
 msgstr "テキストを張り付けました(カットバッファは変化なし)"
 
@@ -844,36 +844,36 @@ msgstr "[前方検索]"
 msgid "Replace from [%s] to [%s] ?"
 msgstr "文字列 [%s] を [%s] に置換しますか ?"
 
-#: ../search.c:463
+#: ../search.c:467
 msgid "Not a bracket"
 msgstr "括弧ではありません"
 
 #. found peer bracket
-#: ../search.c:493
+#: ../search.c:497
 msgid "Peer bracket found"
 msgstr "対向括弧が見つかりました"
 
-#: ../search.c:497
+#: ../search.c:501
 msgid "No peer bracket found"
 msgstr "対向括弧が見つかりません"
 
-#: ../search.c:499
+#: ../search.c:503
 #, c-format
 msgid "Too many bracket pairs (%d)"
 msgstr ""
 
 #. didn't find peer bracket
-#: ../search.c:503
+#: ../search.c:507
 #, fuzzy, c-format
 msgid "Bracket nesting too deep (%d)"
 msgstr "括弧の入れ子が深過ぎます"
 
-#: ../search.c:700
+#: ../search.c:704
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr "文字列 [%s] を検索中..."
 
-#: ../search.c:809
+#: ../search.c:813
 #, c-format
 msgid "\"%s\" not found"
 msgstr "\"%s\" が見つかりません"
