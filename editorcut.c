@@ -89,7 +89,6 @@ int do_cut_to_head(void)
 {
 	do_set_mark();
 	do_start_of_line();
-	//TTT swap_m_l_b_i_with_c_l_b_i();
 	do_cut_text();
 
 	disp_status_bar_done(_("Cut to line head"));
@@ -100,7 +99,6 @@ int do_cut_to_tail(void)
 	set_disabled_update_min_text_x_to_keep();	// avoid contents jump around
 	do_set_mark();
 	do_end_of_line();
-	//TTT swap_m_l_b_i_with_c_l_b_i();
 	do_cut_text();
 
 	disp_status_bar_done(_("Cut to line tail"));

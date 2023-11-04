@@ -21,7 +21,8 @@
   Buffer has 2 views which is referenced from editor 2 panes
     - each view has current position in buffer
 
-[ ] line tail indicator at line shift
+[ ] directory invert search direction on Key B and F.
+[v ] line tail indicator at line shift
 [v] If not-modified in write_file_modified, clear [Modified] flag.
 [ ] Check object copy
 [v] Write Node policy

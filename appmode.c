@@ -134,7 +134,7 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 	case EDMD_SHOW_LINE_NUMBER:
 		return get_str_show_line_num();
 	case EDMD_CURS_POSITIONING:
-		return get_str_curs_positioning();
+		return get_str_cursor_positioning();
 	case EDMD_AUTO_INDENT:
 		return get_str_auto_indent();
 	case EDMD_BACKUP_FILES:
@@ -234,19 +234,19 @@ const char *get_str_utf8(void)
 }
 #endif // ENABLE_UTF8
 
-int inc_curs_positioning(void)
+int inc_cursor_positioning(void)
 {
 	INC_APPMD(ed_CURS_POSITIONING, CURS_POSITIONING_BOTTOM);
 	return 0;
 }
-const char *get_str_curs_positioning(void)
+const char *get_str_cursor_positioning(void)
 {
 	static char buf[10+1];
 
-	snprintf(buf, 10+1, "%d", get_curs_positioning());
+	snprintf(buf, 10+1, "%d", get_cursor_positioning());
 	return buf;
 }
-int get_curs_positioning(void)
+int get_cursor_positioning(void)
 {
 	return GET_APPMD(ed_CURS_POSITIONING);
 }
@@ -458,10 +458,10 @@ int do_tog_utf8(void)
 }
 #endif // ENABLE_UTF8
 
-int do_inc_curs_positioning(void)
+int do_inc_cursor_positioning(void)
 {
-	inc_curs_positioning();
-	SHOW_MODE("Cursor center mode", get_str_curs_positioning());
+	inc_cursor_positioning();
+	SHOW_MODE("Cursor center mode", get_str_cursor_positioning());
 	return 0;
 }
 

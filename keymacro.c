@@ -170,7 +170,7 @@ flf_d_printf("key_macro_recording: %d\n", key_macro_recording);
 }
 
 //-----------------------------------------------------------------------------
-////PRIVATE int curs_positioning_mode_save = 0;
+////PRIVATE int cursor_positioning_mode_save = 0;
 int key_macro_start_playback(void)
 {
 //#ifdef ENABLE_HISTORY
@@ -183,7 +183,7 @@ int key_macro_start_playback(void)
 		key_macro_playing_back = 0;	// playback key strokes
 	}
 	return key_macro_recorded;
-////	curs_positioning_mode_save = GET_APPMD(ed_CURS_POSITIONING);	// save CURS_POSITIONING
+////	cursor_positioning_mode_save = GET_APPMD(ed_CURS_POSITIONING);	// save CURS_POSITIONING
 ////	SET_APPMD_VAL(ed_CURS_POSITIONING, CURS_POSITIONING_CENTER);	// set CURS_POSITIONING_CENTER
 }
 key_code_t key_macro_get_key(void)
@@ -205,7 +205,7 @@ key_code_t key_macro_get_key(void)
 void key_macro_end_playback(void)
 {
 	key_macro_playing_back = -1;		// stop playback
-////	SET_APPMD_VAL(ed_CURS_POSITIONING, curs_positioning_mode_save);	// recover CURS_POSITIONING
+////	SET_APPMD_VAL(ed_CURS_POSITIONING, cursor_positioning_mode_save);	// recover CURS_POSITIONING
 }
 int key_macro_is_playing_back(void)
 {

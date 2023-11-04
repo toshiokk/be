@@ -241,7 +241,7 @@ func_key_table_t editor_func_key_table[] = {
  { "",                "Settings Menu-2",                NKA,          NKA, NKA,
    0,F_I(do_editor_menu_8), NULL },
  { "Cursor center",   "Toggle Cursor-center mode",      K_MC_S,       NKA, NKA,
-   0,F_I(do_inc_curs_positioning),  get_str_curs_positioning },
+   0,F_I(do_inc_cursor_positioning),  get_str_cursor_positioning },
  { "Dual scroll",     "Toggle Dual scroll",             K_MC_D,       NKA, NKA,
    0,F_I(do_tog_dual_scroll),    get_str_dual_scroll },
  { "View mode",       "Toggle View mode",               K_MC_V,       NKA, NKA,

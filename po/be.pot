@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-03 20:51+0900\n"
+"POT-Creation-Date: 2023-11-03 23:43+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr ""
 msgid "Calculating CRC..."
 msgstr ""
 
-#: ../buffers.c:596 ../buffers.c:603
+#: ../buffers.c:598 ../buffers.c:605
 msgid "Tab size"
 msgstr ""
 
@@ -123,19 +123,19 @@ msgstr ""
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 
-#: ../editor2.c:107 ../fileio.c:78
+#: ../editor2.c:108 ../fileio.c:78
 msgid "New File"
 msgstr ""
 
-#: ../editor2.c:109
+#: ../editor2.c:110
 msgid "[Modified] "
 msgstr ""
 
-#: ../editor2.c:111
+#: ../editor2.c:112
 msgid "[VIEW mode] "
 msgstr ""
 
-#: ../editor2.c:113
+#: ../editor2.c:114
 msgid "[WRITE-PROTECTED] "
 msgstr ""
 

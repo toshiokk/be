@@ -231,9 +231,9 @@ const char *get_str_regexp(void);
 int tog_utf8(void);
 const char *get_str_utf8(void);
 #endif // ENABLE_UTF8
-int inc_curs_positioning(void);
-const char *get_str_curs_positioning(void);
-int get_curs_positioning(void);
+int inc_cursor_positioning(void);
+const char *get_str_cursor_positioning(void);
+int get_cursor_positioning(void);
 
 #ifdef ENABLE_SYNTAX
 int tog_syntax_hl(void);
@@ -276,7 +276,7 @@ int do_tog_dual_scroll(void);
 int do_tog_ignore_case(void);
 int do_tog_regexp(void);
 int do_tog_utf8(void);
-int do_inc_curs_positioning(void);
+int do_inc_cursor_positioning(void);
 int do_tog_syntax_hl(void);
 int do_tog_tab_eol_notation(void);
 int do_tog_show_ruler(void);

@@ -43,17 +43,6 @@ void set_mark_pos(void)
 	CEPB_ML = CEPBV_CL;
 	CEPB_MLBI = CEPBV_CLBI;
 }
-// CEPB_MLBI <==> CEPBV_CLBI
-///void swap_m_l_b_i_with_c_l_b_i(void)
-///{
-///	int c_l_b_i;
-///
-///	if (CEPB_ML == CEPBV_CL) {
-///		c_l_b_i = CEPB_MLBI;
-///		CEPB_MLBI = CEPBV_CLBI;
-///		CEPBV_CLBI = c_l_b_i;
-///	}
-///}
 
 PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move_t cursor_move);
 PRIVATE void change_cut_mode_on_mark_region_special_cases(void);

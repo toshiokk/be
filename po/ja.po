@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-03 20:51+0900\n"
+"POT-Creation-Date: 2023-11-03 23:43+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -29,7 +29,7 @@ msgstr "キーコード: %04x"
 msgid "Calculating CRC..."
 msgstr "CRC を計算中..."
 
-#: ../buffers.c:596 ../buffers.c:603
+#: ../buffers.c:598 ../buffers.c:605
 msgid "Tab size"
 msgstr "タブサイズ"
 
@@ -130,19 +130,19 @@ msgstr "LISTモードでは編集できません"
 msgid "Modification not allowed in VIEW mode"
 msgstr "VIEWモードでは編集できません"
 
-#: ../editor2.c:107 ../fileio.c:78
+#: ../editor2.c:108 ../fileio.c:78
 msgid "New File"
 msgstr "新規ファイル"
 
-#: ../editor2.c:109
+#: ../editor2.c:110
 msgid "[Modified] "
 msgstr ""
 
-#: ../editor2.c:111
+#: ../editor2.c:112
 msgid "[VIEW mode] "
 msgstr ""
 
-#: ../editor2.c:113
+#: ../editor2.c:114
 msgid "[WRITE-PROTECTED] "
 msgstr ""
 

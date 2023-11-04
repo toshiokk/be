@@ -31,7 +31,6 @@ extern int mark_max_col_idx;
 
 void clear_mark_pos(void);
 void set_mark_pos(void);
-///TTT void swap_m_l_b_i_with_c_l_b_i(void);
 void setup_cut_region_after_cursor_move(cursor_horiz_vert_move_t cursor_move);
 void setup_cut_region(void);
 int is_there_cut_region(void);

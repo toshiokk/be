@@ -21,9 +21,9 @@
 
 #include "headers.h"
 
-PRIVATE int input_str_pos_(const char *default__, char *input_buf, int curs_byte_idx,
+PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, va_list ap);
-PRIVATE int input_str_pos__(const char *default__, char *input_buf, int curs_byte_idx,
+PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg);
 PRIVATE void disp_input_box(const char *buf, const char *input_buf, int x);
 PRIVATE void blank_input_box(void);
@@ -41,14 +41,14 @@ int input_string(const char *default__, char *input_buf,
 	return ret;
 }
 
-int input_string_pos(const char *default__, char *input_buf, int curs_byte_idx,
+int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, ...)
 {
 	va_list ap;
 	int ret;
 
 	va_start(ap, msg);
-	ret = input_str_pos_(default__, input_buf, curs_byte_idx, hist_type_idx, msg, ap);
+	ret = input_str_pos_(default__, input_buf, cursor_byte_idx, hist_type_idx, msg, ap);
 	va_end(ap);
 	return ret;
 }
@@ -56,7 +56,7 @@ int input_string_pos(const char *default__, char *input_buf, int curs_byte_idx,
 // return -1: recursively called
 // return 0 : cancelled
 // return 1 : input normally
-PRIVATE int input_str_pos_(const char *default__, char *input_buf, int curs_byte_idx,
+PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, va_list ap)
 {
 	static int recursively_called = 0;
@@ -82,7 +82,7 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int curs_byte
 
 	tio_set_cursor_on(1);
 	//---------------------------------------------------------------------------------
-	ret = input_str_pos__(default__, input_buf, curs_byte_idx, hist_type_idx, msg_buf);
+	ret = input_str_pos__(default__, input_buf, cursor_byte_idx, hist_type_idx, msg_buf);
 	//---------------------------------------------------------------------------------
 	// 0: cancelled
 	// 1: string is normally input
@@ -108,7 +108,7 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int curs_byte
 // Input string. This should only be called from input_string().
 // return 0 : cancelled
 // return 1 : input normally
-PRIVATE int input_str_pos__(const char *default__, char *input_buf, int curs_byte_idx,
+PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg)
 {
 	int key_input;
@@ -121,11 +121,11 @@ PRIVATE int input_str_pos__(const char *default__, char *input_buf, int curs_byt
 	char cut_buf[MAX_PATH_LEN+1] = "";
 
 	strlcpy__(input_buf, default__, MAX_PATH_LEN);
-	curs_byte_idx = MIN_MAX_(0, curs_byte_idx, strnlen(default__, MAX_PATH_LEN));
+	cursor_byte_idx = MIN_MAX_(0, cursor_byte_idx, strnlen(default__, MAX_PATH_LEN));
 
 	blank_key_list_lines();
 	for ( ; ; ) {
-		disp_input_box(msg, input_buf, curs_byte_idx);
+		disp_input_box(msg, input_buf, cursor_byte_idx);
 		tio_refresh();
 		//---------------------------
 		key_input = input_key_loop();
@@ -136,10 +136,10 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		if (IS_CHAR_KEY(key_input)) {
 			// character key
 			if (strnlen(input_buf, MAX_PATH_LEN) < MAX_PATH_LEN) {
-				memmove(input_buf + curs_byte_idx + 1, input_buf + curs_byte_idx,
-				 strnlen(input_buf, MAX_PATH_LEN) - curs_byte_idx + 1);
-				input_buf[curs_byte_idx] = key_input;
-				curs_byte_idx++;
+				memmove(input_buf + cursor_byte_idx + 1, input_buf + cursor_byte_idx,
+				 strnlen(input_buf, MAX_PATH_LEN) - cursor_byte_idx + 1);
+				input_buf[cursor_byte_idx] = key_input;
+				cursor_byte_idx++;
 			}
 			func_id = "";
 		} else {
@@ -158,62 +158,62 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		} else
 		if (cmp_func_id(func_id, "do_left")) {
 			// cursor left
-			if (curs_byte_idx > 0) {
-				bytes = utf8c_prev_bytes(input_buf, &input_buf[curs_byte_idx]);
-				curs_byte_idx -= bytes;
+			if (cursor_byte_idx > 0) {
+				bytes = utf8c_prev_bytes(input_buf, &input_buf[cursor_byte_idx]);
+				cursor_byte_idx -= bytes;
 			}
 		} else
 		if (cmp_func_id(func_id, "do_right")) {
 			// cursor right
-			if (curs_byte_idx < strnlen(input_buf, MAX_PATH_LEN)) {
-				bytes = utf8c_bytes(&input_buf[curs_byte_idx]);
-				curs_byte_idx += bytes;
+			if (cursor_byte_idx < strnlen(input_buf, MAX_PATH_LEN)) {
+				bytes = utf8c_bytes(&input_buf[cursor_byte_idx]);
+				cursor_byte_idx += bytes;
 			}
 		} else
 		if (cmp_func_id(func_id, "do_start_of_line")
 		 || cmp_func_id(func_id, "do_prev_word")) {
 			// goto line head
-			curs_byte_idx = 0;
+			cursor_byte_idx = 0;
 		} else
 		if (cmp_func_id(func_id, "do_end_of_line")
 		 || cmp_func_id(func_id, "do_next_word")) {
 			// goto line tail
-			curs_byte_idx = strnlen(input_buf, MAX_PATH_LEN);
+			cursor_byte_idx = strnlen(input_buf, MAX_PATH_LEN);
 		} else
 		if (cmp_func_id(func_id, "do_backspace")
 		 || (key_input == K_BS)) {
 			// backspace
-			if (curs_byte_idx > 0) {
-				bytes = utf8c_prev_bytes(input_buf, &input_buf[curs_byte_idx]);
-				curs_byte_idx -= bytes;
-				delete_str(input_buf, curs_byte_idx, bytes);
+			if (cursor_byte_idx > 0) {
+				bytes = utf8c_prev_bytes(input_buf, &input_buf[cursor_byte_idx]);
+				cursor_byte_idx -= bytes;
+				delete_str(input_buf, cursor_byte_idx, bytes);
 			}
 		} else
 		if (cmp_func_id(func_id, "do_delete_char")
 		 || (key_input == K_DEL)) {
 			// delete
-			if (curs_byte_idx < strnlen(input_buf, MAX_PATH_LEN)) {
-				bytes = utf8c_bytes(&input_buf[curs_byte_idx]);
-				delete_str(input_buf, curs_byte_idx, bytes);
+			if (cursor_byte_idx < strnlen(input_buf, MAX_PATH_LEN)) {
+				bytes = utf8c_bytes(&input_buf[cursor_byte_idx]);
+				delete_str(input_buf, cursor_byte_idx, bytes);
 			}
 		} else
 		if (cmp_func_id(func_id, "do_cut_to_head")) {
 			// cut to line head
-			strcut__(cut_buf, MAX_PATH_LEN, input_buf, 0, curs_byte_idx);
-			delete_str(input_buf, 0, curs_byte_idx);
-			curs_byte_idx = 0;
+			strcut__(cut_buf, MAX_PATH_LEN, input_buf, 0, cursor_byte_idx);
+			delete_str(input_buf, 0, cursor_byte_idx);
+			cursor_byte_idx = 0;
 		} else
 		if (cmp_func_id(func_id, "do_cut_text")) {
 			// cut line
 			strlcpy__(cut_buf, input_buf, MAX_PATH_LEN);
 			strcpy(input_buf, "");
-			curs_byte_idx = 0;
+			cursor_byte_idx = 0;
 		} else
 		if (cmp_func_id(func_id, "do_cut_to_tail")) {
 			// cut to line tail
 			strcut__(cut_buf, MAX_PATH_LEN,
-			 input_buf, curs_byte_idx, strnlen(input_buf, MAX_PATH_LEN));
-			delete_str(input_buf, curs_byte_idx, strnlen(input_buf, MAX_PATH_LEN) - curs_byte_idx);
+			 input_buf, cursor_byte_idx, strnlen(input_buf, MAX_PATH_LEN));
+			delete_str(input_buf, cursor_byte_idx, strnlen(input_buf, MAX_PATH_LEN) - cursor_byte_idx);
 		} else
 		if (cmp_func_id(func_id, "do_copy_text")) {
 			// copy to the cut buffer
@@ -221,14 +221,14 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		} else
 		if (cmp_func_id(func_id, "do_paste_text_with_pop")) {
 			// paste from the cut buffer
-			insert_str(input_buf, MAX_PATH_LEN, curs_byte_idx, cut_buf, -1);
+			insert_str(input_buf, MAX_PATH_LEN, cursor_byte_idx, cut_buf, -1);
 #ifdef ENABLE_HISTORY
 		} else
 		if (key_input == K_TAB) {
 			// tab history completion
 			strlcpy__(input_buf, get_history_completion(hist_type_idx, input_buf),
 			 MAX_PATH_LEN);
-			curs_byte_idx = strnlen(input_buf, MAX_PATH_LEN);
+			cursor_byte_idx = strnlen(input_buf, MAX_PATH_LEN);
 		} else
 		if (cmp_func_id(func_id, "do_up")
 		 || cmp_func_id(func_id, "do_page_up")
@@ -239,11 +239,11 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 				if (cmp_func_id(func_id, "do_up")) {
 					// clear input buffer
 					strcpy__(input_buf, "");
-					curs_byte_idx = 0;
+					cursor_byte_idx = 0;
 				}
 #endif
-				curs_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
-				 curs_byte_idx, buffer);
+				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
+				 cursor_byte_idx, buffer);
 			}
 #endif // ENABLE_HISTORY
 #ifdef ENABLE_FILER
@@ -258,11 +258,11 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 				if (cmp_func_id(func_id, "do_down")) {
 					// clear input buffer
 					strcpy__(input_buf, "");
-					curs_byte_idx = 0;
+					cursor_byte_idx = 0;
 				}
 #endif
-				curs_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
-				 curs_byte_idx, buffer);
+				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
+				 cursor_byte_idx, buffer);
 			}
 #endif // ENABLE_FILER
 		} else
@@ -279,18 +279,18 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 				byte_idx = byte_idx_from_byte_idx(line,
 				 CEPBV_CLBI + strnlen(input_buf, MAX_PATH_LEN));
 				// copy one token (at least copy one character)
-				curs_byte_idx = 0;
+				cursor_byte_idx = 0;
 				for ( ;
 				 (strnlen(input_buf, MAX_PATH_LEN) < MAX_PATH_LEN - MAX_UTF8C_BYTES)
 				  && (byte_idx < strnlen(line, MAX_PATH_LEN))
-				  && (curs_byte_idx == 0
+				  && (cursor_byte_idx == 0
 				   || (isalnum(line[byte_idx]) || line[byte_idx] == '_')); ) {
 					strlncat__(input_buf, MAX_PATH_LEN, &line[byte_idx],
 					 utf8c_bytes(&line[byte_idx]));
-					curs_byte_idx++;
+					cursor_byte_idx++;
 					byte_idx += utf8c_bytes(&line[byte_idx]);
 				}
-				curs_byte_idx = strnlen(input_buf, MAX_PATH_LEN);
+				cursor_byte_idx = strnlen(input_buf, MAX_PATH_LEN);
 			}
 		}
 		if (key_input == K_ESC || key_input == K_C_M)
@@ -322,9 +322,9 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 +input-string                                                        +
 +--------------------------------------------------------------------+
 */
-PRIVATE void disp_input_box(const char *msg, const char *input_buf, int curs_byte_idx)
+PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_byte_idx)
 {
-	int cursor_col_idx = col_idx_from_byte_idx(input_buf, 0, curs_byte_idx);
+	int cursor_col_idx = col_idx_from_byte_idx(input_buf, 0, cursor_byte_idx);
 	int input_area_width;
 	int start_byte_idx;
 	int bytes;
@@ -363,7 +363,7 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int curs_byt
 		main_win_set_cursor_pos(get_input_line_y()+1,
 		 1 + utf8s_columns(TRUNCATION_MARK, INT_MAX)
 		 + col_idx_from_byte_idx(&input_buf[start_byte_idx],
-		 0, curs_byte_idx - start_byte_idx));
+		 0, cursor_byte_idx - start_byte_idx));
 	}
 }
 PRIVATE void blank_input_box(void)
