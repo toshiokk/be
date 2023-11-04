@@ -230,18 +230,18 @@ void disp_edit_win(int cur_pane)
 	for (yy = 0; yy < edit_win_get_text_lines(); ) {
 		if (IS_NODE_BOT_ANCH(line))
 			break;
-		max_wl_idx = te_tab_expand_line__max_wl_idx(line->data);
-///flf_d_printf("[%s]\n", te_line_concat_linefeed);
+		max_wl_idx = te_tab_expand__max_wl_idx(line->data);
+///flf_d_printf("[%s]\n", te_concat_linefeed_buf);
 ///flf_d_printf("max_wl_idx: %d\n", max_wl_idx);
-		wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, byte_idx, -1);
+		wl_idx = start_wl_idx_of_wrap_line(te_concat_linefeed_buf, byte_idx, -1);
 		for ( ; wl_idx <= max_wl_idx; wl_idx++) {
-			byte_idx_1 = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, 0, -1);
-			byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx,
+			byte_idx_1 = start_byte_idx_of_wrap_line(te_concat_linefeed_buf, wl_idx, 0, -1);
+			byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_concat_linefeed_buf, wl_idx,
 			 INT_MAX, -1);
 			disp_edit_line(cur_pane, yy, get_cep_buf(), line, byte_idx_1, byte_idx_2);
 			if (yy == CEPBV_CURSOR_Y) {
 				cursor_line_right_text_x = end_col_idx_of_wrap_line(
-				 te_line_concat_linefeed, wl_idx, byte_idx_2, -1);
+				 te_concat_linefeed_buf, wl_idx, byte_idx_2, -1);
 			}
 			yy++;
 			if (yy >= edit_win_get_text_lines())
@@ -319,7 +319,7 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 	matches_t matches;
 
 ///flf_d_printf("%d, [%d, %d]\n", yy, byte_idx_1, byte_idx_2);
-///flf_d_printf("[%s]\n", te_line_concat_linefeed);
+///flf_d_printf("[%s]\n", te_concat_linefeed_buf);
 	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 	if (line == CEPBV_CL) {
 		// highlight current line by painting background
@@ -420,7 +420,7 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 		if (get_intersection(byte_idx_1, byte_idx_2,
 		 left_byte_idx, right_byte_idx, &left_byte_idx, &right_byte_idx) > 0) {
 			set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 0);
-			output_edit_line_text(yy, te_line_concat_linefeed, left_byte_idx, right_byte_idx);
+			output_edit_line_text(yy, te_concat_linefeed_buf, left_byte_idx, right_byte_idx);
 		}
 	}
 #endif
@@ -466,8 +466,8 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 		if (GET_APPMD(app_DRAW_CURSOR)) {
 			set_color_by_idx(ITEM_COLOR_IDX_CURSOR_CHAR, 1);
 			vis_idx = vis_idx_from_byte_idx(CEPBV_CL->data, CEPBV_CLBI);
-			output_edit_line_text(CEPBV_CURSOR_Y, te_line_visible_code,
-			 vis_idx, vis_idx+utf8c_bytes(&te_line_visible_code[vis_idx]));
+			output_edit_line_text(CEPBV_CURSOR_Y, te_visible_code_buf,
+			 vis_idx, vis_idx+utf8c_bytes(&te_visible_code_buf[vis_idx]));
 		}
 	}
 }
@@ -482,7 +482,7 @@ PRIVATE void disp_edit_line_single_line_regexp(int yy, const be_line_t *line,
 
 ////flf_d_printf("[%d, %d]\n", byte_idx_1, byte_idx_2);
 	for (byte_idx = 0; byte_idx < byte_idx_2; ) {
-		if (regexp_search_compiled(clr_syntax->regexp_start, te_line_concat_linefeed, byte_idx,
+		if (regexp_search_compiled(clr_syntax->regexp_start, te_concat_linefeed_buf, byte_idx,
 		 REG_NONE, &regexp_matches, 1) != 0) {
 			// not found
 			break;
@@ -492,7 +492,7 @@ PRIVATE void disp_edit_line_single_line_regexp(int yy, const be_line_t *line,
 		 regexp_matches_end_idx(&regexp_matches, 0),
 		 &min_byte_idx, &max_byte_idx) > 0) {
 			set_item_color(&clr_syntax->color);
-			output_edit_line_text(yy, te_line_concat_linefeed, min_byte_idx, max_byte_idx);
+			output_edit_line_text(yy, te_concat_linefeed_buf, min_byte_idx, max_byte_idx);
 		}
 		byte_idx = regexp_matches_end_idx(&regexp_matches, 0);
 	}
@@ -585,7 +585,7 @@ PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
 		//		/*
 		//		  comment .....				<== current line
 		//		*/
-		byte_idx = te_line_concat_linefeed_bytes;
+		byte_idx = te_concat_linefeed_bytes;
 	}
 	if (get_intersection(byte_idx_1, byte_idx_2, 0, byte_idx,
 	 &min_byte_idx, &max_byte_idx) > 0) {
@@ -595,7 +595,7 @@ PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
 
 step_two:
 	// Second step, we look for start in the current line.
-	for (byte_idx = 0; byte_idx < te_line_concat_linefeed_bytes; ) {
+	for (byte_idx = 0; byte_idx < te_concat_linefeed_bytes; ) {
 		if (regexp_search_compiled(clr_syntax->regexp_start, line->data, byte_idx,
 		 REG_NONE, &matches_begin, 1) != 0)
 			// No more start in the current line.
@@ -609,14 +609,14 @@ step_two:
 		} else {
 			//		... /* comment ...				<== current line
 			//		*/
-			byte_idx = te_line_concat_linefeed_bytes;
+			byte_idx = te_concat_linefeed_bytes;
 		}
 		if (get_intersection(byte_idx_1, byte_idx_2,
 		 regexp_matches_start_idx(&matches_begin, 0), byte_idx,
 		 &min_byte_idx, &max_byte_idx) > 0) {
 			output_edit_line_text(yy, line->data, min_byte_idx, max_byte_idx);
 		}
-		if (byte_idx == te_line_concat_linefeed_bytes) {
+		if (byte_idx == te_concat_linefeed_bytes) {
 			// We painted to the end of the line, so
 			// don't bother checking any more starts.
 			break;
@@ -686,11 +686,11 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir, char char_under_curso
 			for ( ; yy >= 0; ) {
 				if (match_len == 0)
 					break;
-				max_wl_idx = te_tab_expand_line__max_wl_idx(line->data);
-				wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, byte_idx, -1);
+				max_wl_idx = te_tab_expand__max_wl_idx(line->data);
+				wl_idx = start_wl_idx_of_wrap_line(te_concat_linefeed_buf, byte_idx, -1);
 				for ( ; wl_idx >= 0; wl_idx--) {
-					byte_idx_1 = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, 0, -1);
-					byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx,
+					byte_idx_1 = start_byte_idx_of_wrap_line(te_concat_linefeed_buf, wl_idx, 0, -1);
+					byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_concat_linefeed_buf, wl_idx,
 					 INT_MAX, -1);
 					if (match_line == line && get_intersection(byte_idx_1, byte_idx_2,
 					 match_byte_idx, match_byte_idx + match_len,
@@ -738,11 +738,11 @@ line_dump_byte_idx(match_line, match_byte_idx);
 			for ( ; yy < edit_win_get_text_lines(); ) {
 				if (match_len == 0)
 					break;
-				max_wl_idx = te_tab_expand_line__max_wl_idx(line->data);
-				wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, byte_idx, -1);
+				max_wl_idx = te_tab_expand__max_wl_idx(line->data);
+				wl_idx = start_wl_idx_of_wrap_line(te_concat_linefeed_buf, byte_idx, -1);
 				for ( ; wl_idx <= max_wl_idx; wl_idx++) {
-					byte_idx_1 = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, 0, -1);
-					byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx,
+					byte_idx_1 = start_byte_idx_of_wrap_line(te_concat_linefeed_buf, wl_idx, 0, -1);
+					byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_concat_linefeed_buf, wl_idx,
 					 INT_MAX, -1);
 					if (match_line == line && get_intersection(byte_idx_1, byte_idx_2,
 					 match_byte_idx, match_byte_idx + match_len,
@@ -812,7 +812,7 @@ void set_edit_cursor_pos(void)
 
 PRIVATE int output_edit_line_text(int yy, const char *raw_code, int byte_idx_1, int byte_idx_2)
 {
-	return output_edit_line_text__(yy, raw_code, byte_idx_1, byte_idx_2, te_line_visible_code);
+	return output_edit_line_text__(yy, raw_code, byte_idx_1, byte_idx_2, te_visible_code_buf);
 }
 PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
  int byte_idx_1, int byte_idx_2, const char *vis_code)
@@ -1047,16 +1047,18 @@ int edit_win_get_text_y(void)
 
 #define TAB_NOTATION	'>'
 #define EOL_NOTATION	'<'
-int te_line_concat_linefeed_bytes = 0;							// bytes of (raw_byte + line-feed)
-char te_line_concat_linefeed[MAX_EDIT_LINE_LEN * 2 +1];		// raw_byte + line-feed
-int te_line_visible_code_columns;							// length of tab-expanded line
-char te_line_visible_code[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];	// tab-expanded-visible-code
+// string linefeed('\n') concatenated
+int te_concat_linefeed_bytes = 0;						// bytes of (raw_byte + line-feed)
+char te_concat_linefeed_buf[MAX_EDIT_LINE_LEN * 2 +1];		// raw_byte + line-feed
+// string invisible code(TAB, Zenkaku-space, EOL) converted to charactor('>', '__', '<')
+int te_visible_code_columns;							// length of tab-expanded line
+char te_visible_code_buf[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];	// tab-expanded-visible-code
 // tab-expansion
 /* T:TAB, C:control-code ZZ:Zenkaku-space, L:'\n' */
 /* original:     "TabcdCefghZZijkl" */
 /* control_code: "TabcdCefghZZijklL" */
 /* visible_code: ">   abcd^?efgh[]ijkl<" */
-const char *te_tab_expand_line(const char *original)
+const char *te_tab_expand(const char *original)
 {
 	int col_idx;
 	int bytes;
@@ -1071,7 +1073,7 @@ const char *te_tab_expand_line(const char *original)
 	te_concat_linefeed(original);
 ///flf_d_printf("original:%s\n", original);
 	orig_ptr = original;
-	vis_ptr = te_line_visible_code;
+	vis_ptr = te_visible_code_buf;
 	for (col_idx = 0; *orig_ptr; ) {
 		if (*orig_ptr == '\t') {
 #ifdef ENABLE_SYNTAX
@@ -1112,22 +1114,23 @@ const char *te_tab_expand_line(const char *original)
 	*vis_ptr++ = ' ';
 #endif // ENABLE_SYNTAX
 	*vis_ptr = '\0';
-	te_line_visible_code_columns = col_idx + 1;
-	return te_line_visible_code;
+	te_visible_code_columns = col_idx + 1;
+	return te_visible_code_buf;
 }
 const char *te_concat_linefeed(const char *original)
 {
 ///flf_d_printf("[%s]\n", original);
-	strlcpy__(te_line_concat_linefeed, original, MAX_EDIT_LINE_LEN * 2);
-	strlcat__(te_line_concat_linefeed, MAX_EDIT_LINE_LEN * 2, "\n");
-	te_line_concat_linefeed_bytes = strnlen(te_line_concat_linefeed, MAX_EDIT_LINE_LEN * 2);
-	return te_line_concat_linefeed;
+	te_visible_code_buf[0] = '\0';	// clear te_visible_code_buf
+	strlcpy__(te_concat_linefeed_buf, original, MAX_EDIT_LINE_LEN * 2);
+	strlcat__(te_concat_linefeed_buf, MAX_EDIT_LINE_LEN * 2, "\n");
+	te_concat_linefeed_bytes = strnlen(te_concat_linefeed_buf, MAX_EDIT_LINE_LEN * 2);
+	return te_concat_linefeed_buf;
 }
 
-int te_tab_expand_line__max_wl_idx(const char *original)
+int te_tab_expand__max_wl_idx(const char *original)
 {
-	te_tab_expand_line(original);
-	return max_wrap_line_idx(te_line_concat_linefeed, -1);
+	te_tab_expand(original);
+	return max_wrap_line_idx(te_concat_linefeed_buf, -1);
 }
 
 // End of editor2.c

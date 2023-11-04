@@ -669,19 +669,19 @@ int c_l_up(be_line_t **line, int *byte_idx)
 	line_byte_idx = *byte_idx;
 
 	te_concat_linefeed((*line)->data);
-	wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, line_byte_idx, -1);
-	col_idx = start_col_idx_of_wrap_line(te_line_concat_linefeed, line_byte_idx, -1);
+	wl_idx = start_wl_idx_of_wrap_line(te_concat_linefeed_buf, line_byte_idx, -1);
+	col_idx = start_col_idx_of_wrap_line(te_concat_linefeed_buf, line_byte_idx, -1);
 	if (wl_idx > 0) {
 		wl_idx--;
-		line_byte_idx = end_byte_idx_of_wrap_line_le(te_line_concat_linefeed, wl_idx, col_idx, -1);
+		line_byte_idx = end_byte_idx_of_wrap_line_le(te_concat_linefeed_buf, wl_idx, col_idx, -1);
 	} else {
 		if (IS_NODE_TOP(*line)) {
 			return 0;	// no move
 		}
 		*line = NODE_PREV(*line);
 		te_concat_linefeed((*line)->data);
-		wl_idx = max_wrap_line_idx(te_line_concat_linefeed, -1);
-		line_byte_idx = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, col_idx, -1);
+		wl_idx = max_wrap_line_idx(te_concat_linefeed_buf, -1);
+		line_byte_idx = start_byte_idx_of_wrap_line(te_concat_linefeed_buf, wl_idx, col_idx, -1);
 	}
 
 	*byte_idx = line_byte_idx;
@@ -696,11 +696,11 @@ int c_l_down(be_line_t **line, int *byte_idx)
 	line_byte_idx = *byte_idx;
 
 	te_concat_linefeed((*line)->data);
-	wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, line_byte_idx, -1);
-	col_idx = start_col_idx_of_wrap_line(te_line_concat_linefeed, line_byte_idx, -1);
-	if (wl_idx < max_wrap_line_idx(te_line_concat_linefeed, -1)) {
+	wl_idx = start_wl_idx_of_wrap_line(te_concat_linefeed_buf, line_byte_idx, -1);
+	col_idx = start_col_idx_of_wrap_line(te_concat_linefeed_buf, line_byte_idx, -1);
+	if (wl_idx < max_wrap_line_idx(te_concat_linefeed_buf, -1)) {
 		wl_idx++;
-		line_byte_idx = end_byte_idx_of_wrap_line_le(te_line_concat_linefeed, wl_idx, col_idx, -1);
+		line_byte_idx = end_byte_idx_of_wrap_line_le(te_concat_linefeed_buf, wl_idx, col_idx, -1);
 	} else {
 		if (IS_NODE_BOT(*line)) {
 			return 0;	// no move
@@ -708,7 +708,7 @@ int c_l_down(be_line_t **line, int *byte_idx)
 		*line = NODE_NEXT(*line);
 		te_concat_linefeed((*line)->data);
 		wl_idx = 0;
-		line_byte_idx = end_byte_idx_of_wrap_line_ge(te_line_concat_linefeed, wl_idx, col_idx, -1);
+		line_byte_idx = end_byte_idx_of_wrap_line_ge(te_concat_linefeed_buf, wl_idx, col_idx, -1);
 	}
 
 	*byte_idx = line_byte_idx;

@@ -223,7 +223,7 @@ int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *b
 		return 0;
 	}
 	te_concat_linefeed(_cl_->data);
-	wl_idx = start_wl_idx_of_wrap_line(te_line_concat_linefeed, _clbi_, -1);
+	wl_idx = start_wl_idx_of_wrap_line(te_concat_linefeed_buf, _clbi_, -1);
 	for ( ; ; ) {
 		if (yy <= 0)
 			break;
@@ -231,7 +231,7 @@ int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *b
 			if (IS_NODE_TOP(_cl_) == 0)
 				_cl_ = NODE_PREV(_cl_);
 			te_concat_linefeed(_cl_->data);
-			wl_idx = max_wrap_line_idx(te_line_concat_linefeed, -1);
+			wl_idx = max_wrap_line_idx(te_concat_linefeed_buf, -1);
 		} else {
 			wl_idx--;
 		}
@@ -239,7 +239,7 @@ int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *b
 		line_cnt++;
 	}
 	*line = _cl_;
-	*byte_idx = start_byte_idx_of_wrap_line(te_line_concat_linefeed, wl_idx, 0, -1);
+	*byte_idx = start_byte_idx_of_wrap_line(te_concat_linefeed_buf, wl_idx, 0, -1);
 	return line_cnt;
 }
 
@@ -291,7 +291,7 @@ PRIVATE int calc_min_text_x_to_keep()
 {
 	te_concat_linefeed(CEPBV_CL->data);
 	return recalc_min_text_x_to_keep(get_edit_win_columns_for_text(),
-	 end_col_idx_of_wrap_line(te_line_concat_linefeed, 0, INT_MAX, -1),
+	 end_col_idx_of_wrap_line(te_concat_linefeed_buf, 0, INT_MAX, -1),
 	 HORIZ_SCROLL_MARGIN,
 	 start_col_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1),
 	 CEPBV_MIN_TEXT_X_TO_KEEP);
