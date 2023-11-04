@@ -22,8 +22,6 @@
 #include "headers.h"
 
 PRIVATE editor_panes_t editor_panes;
-/////be_buf_t *c_e_b = NULL;			// pointer to the current edit buffer
-/////be_buf_view_t *c_b_v = NULL;	// pointer to the current edit buffer view
 
 // collection of collections of buffers
 be_bufs_t bufs_top_anchor;		//< top buffers
@@ -121,7 +119,7 @@ int free_edit_buf(be_buf_t *edit_buf)
 #endif // ENABLE_HISTORY
 	if (edit_buf == get_cep_buf()) {
 		// select other buffer
-		ret = switch_c_e_b_to_another_buf();
+		ret = switch_cep_buf_to_another_buf();
 	}
 #ifdef ENABLE_UNDO
 	// free undo/redo buffers related to this edit_buf
@@ -196,7 +194,6 @@ void set_cep_buf(be_buf_t *buf)	// set edit buffer to current pane
 be_buf_t *get_cep_buf(void)
 {
 	return get_editor_pane_buf(-1);
-/////	return c_e_b;
 }
 be_buf_t **get_cep_buf_ptr(void)
 {
@@ -206,7 +203,6 @@ be_buf_t **get_cep_buf_ptr(void)
 be_buf_view_t *get_cep_buf_view(void)
 {
 	return &(get_cep_buf()->buf_views[get_editor_cur_pane_idx()]);
-/////	return c_b_v;
 }
 
 void set_editor_pane_n_buf(int pane_idx, be_buf_t *buf)
@@ -220,8 +216,6 @@ void set_editor_pane_n_buf(int pane_idx, be_buf_t *buf)
 	if (buf) {
 		editor_panes.bufs[pane_idx] = buf;
 	}
-	////set_c_e_b(editor_panes.bufs[pane_idx]);
-	////set_c_b_v(&(get_cep_buf()->buf_views[pane_idx]));
 ///_D_(dump_editor_panes());
 
 #ifdef ENABLE_SYNTAX
@@ -321,7 +315,7 @@ int count_edit_bufs(void)
 	return buf_count_bufs(EDIT_BUFS_TOP_NODE);
 }
 
-int is_c_e_b_valid(void)
+int is_cep_buf_valid(void)
 {
 	return IS_NODE_INT(get_cep_buf());
 }

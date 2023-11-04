@@ -1,6 +1,5 @@
 #### BE-editor to do list
 
-
 #### thinking
 - Which is the better practice
 	1. strict type specification uint8_t, int8_t, int16_t, int32_t
@@ -37,7 +36,7 @@
 [v] Save all modified buffer with ask, without ask.
 [v] Play back key macro when recording key macro.
    - separate two key assigns of stop-rec-key-macro and play-back-key-macro[K_M_2].
-[v ] counter bracket highlighting {[(< >)]}
+[vv] counter bracket highlighting {[(< >)]}
 [v] Color of selection
 [v] avoid cursor to jump around the line tail
 [v] History list ==> multi-buffer accessible from editor as edit buffers.

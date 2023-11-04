@@ -114,8 +114,6 @@ void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf);
 be_buf_t *buf_init_line_anchors(be_buf_t *buf);
 void buf_set_file_path(be_buf_t *buf, const char *file_path);
 void buf_get_file_path(be_buf_t *buf, char *file_path);
-////be_buf_t *buf_insert(be_buf_t *buf, be_buf_t *new_buf,
-//// insert_before_after_t before_after);
 be_buf_t *buf_insert_before(be_buf_t *buf, be_buf_t *new_buf);
 be_buf_t *buf_insert_after(be_buf_t *buf, be_buf_t *new_buf);
 be_buf_t *buf_link(be_buf_t *prev, be_buf_t *next);

@@ -88,19 +88,19 @@ int count_redo_bufs(void)
 }
 
 #ifdef ENABLE_DEBUG
-PRIVATE be_buf_t *prev_c_e_b;
-PRIVATE size_t prev_buf_size;
+PRIVATE be_buf_t *prev_cep_buf;
+PRIVATE size_t prev_cep_buf_size;
 PRIVATE int prev_count_undo_bufs;
 void memorize_undo_state_before_change(void)
 {
-	prev_c_e_b = get_cep_buf();
-	prev_buf_size = get_cep_buf()->buf_size;
+	prev_cep_buf = get_cep_buf();
+	prev_cep_buf_size = get_cep_buf()->buf_size;
 	prev_count_undo_bufs = count_undo_bufs();
 }
 void check_undo_state_after_change(void)
 {
 	if (get_cep_buf() != EDIT_BUFS_TOP_ANCH
-	 && get_cep_buf() == prev_c_e_b && get_cep_buf()->buf_size != prev_buf_size
+	 && get_cep_buf() == prev_cep_buf && get_cep_buf()->buf_size != prev_cep_buf_size
 		// edit buffer has been modified
 	 && count_undo_bufs() == prev_count_undo_bufs) {
 		// but no undo info pushed
@@ -281,7 +281,7 @@ PRIVATE be_line_t *delete_region_in_buf(be_buf_t *buf)
 	be_line_t *edit_line;
 	be_line_t *undo_line;
 
-	if (switch_c_e_b_to_abs_path(buf->abs_path) == 0) {
+	if (switch_cep_buf_to_abs_path(buf->abs_path) == 0) {
 		progerr_printf("No such buffer: %s\n", buf->abs_path);
 		return CUR_EDIT_BUF_BOT_NODE;
 	}
@@ -296,7 +296,7 @@ PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 {
 	be_line_t *undo_line;
 
-	if (switch_c_e_b_to_abs_path(buf->abs_path) == 0) {
+	if (switch_cep_buf_to_abs_path(buf->abs_path) == 0) {
 		progerr_printf("No such buffer: %s\n", buf->abs_path);
 		return CUR_EDIT_BUF_BOT_NODE;
 	}

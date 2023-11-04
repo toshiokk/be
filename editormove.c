@@ -199,7 +199,7 @@ PRIVATE void do_page_up_(void)
 			// already top of buffer, go to the previous buffer's last line
 			top_bottom_of_file = TBF_NONE;
 			tio_beep();
-			if (switch_c_e_b_to_prev(1, 1)) {
+			if (switch_cep_buf_to_prev(1, 1)) {
 				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 			}
 		}
@@ -239,7 +239,7 @@ PRIVATE int do_page_down_(void)
 			// already bottom of buffer, go to the next buffer's top line
 			top_bottom_of_file = TBF_NONE;
 			tio_beep();
-			if (switch_c_e_b_to_next(1, 1)) {
+			if (switch_cep_buf_to_next(1, 1)) {
 				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_TOP, UPDATE_SCRN_ALL);
 			}
 		}

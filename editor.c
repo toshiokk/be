@@ -544,14 +544,14 @@ int write_all_ask(int yes, close_after_save_t close)
 {
 	int ret = yes;
 
-	switch_c_e_b_to_top();
-	while (is_c_e_b_valid()) {
+	switch_cep_buf_to_top();
+	while (is_cep_buf_valid()) {
 		ret = write_file_ask(ret, close);
 		if (ret <= ANSWER_CANCEL) {
 			disp_status_bar_done(_("Cancelled"));
 			return -1;
 		}
-		if (switch_c_e_b_to_next(0, 0) == 0)
+		if (switch_cep_buf_to_next(0, 0) == 0)
 			break;
 	}
 	disp_status_bar_done(_("All buffers are checked"));
@@ -560,10 +560,10 @@ int write_all_ask(int yes, close_after_save_t close)
 int close_all_not_modified(void)
 {
 	disp_status_bar_ing(_("Freeing buffers..."));
-	switch_c_e_b_to_top();
-	while (is_c_e_b_valid()) {
+	switch_cep_buf_to_top();
+	while (is_cep_buf_valid()) {
 		if (check_cur_buf_modified()) {
-			if (switch_c_e_b_to_next(0, 0) == 0)
+			if (switch_cep_buf_to_next(0, 0) == 0)
 				break;
 		} else {
 			free_cur_edit_buf();
@@ -575,7 +575,7 @@ int close_all_not_modified(void)
 int close_all(void)
 {
 	disp_status_bar_ing(_("Freeing all buffers..."));
-	switch_c_e_b_to_top();
+	switch_cep_buf_to_top();
 	while (free_cur_edit_buf()) {
 		// loop
 		tio_refresh();

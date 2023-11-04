@@ -87,17 +87,6 @@ void buf_get_file_path(be_buf_t *buf, char *file_path)
 }
 
 // Splice a buffer into an existing be_buf_t
-////be_buf_t *buf_insert(be_buf_t *buf, be_buf_t *new_buf,
-//// insert_before_after_t before_after)
-////{
-////	if (before_after == INSERT_BEFORE) {
-////		buf_insert_before(buf, new_buf);
-////	} else {
-////		buf_insert_after(buf, new_buf);
-////	}
-////	return new_buf;
-////}
-
 PRIVATE be_buf_t *buf_insert_between(be_buf_t *prev, be_buf_t *new_buf, be_buf_t *next);
 be_buf_t *buf_insert_before(be_buf_t *buf, be_buf_t *new_buf)
 {

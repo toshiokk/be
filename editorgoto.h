@@ -53,14 +53,14 @@ int load_file_name_upp_low(const char *file_name,
 
 int load_file_name_recurs(const char *file_name, int open_on_err, int msg_on_err, int recursive);
 
-int switch_c_e_b_to_file_name(const char *file_name);
-int switch_c_e_b_to_abs_path(const char *abs_path);
-int switch_c_e_b_to_top(void);
-int switch_c_e_b_to_bot(void);
-int switch_c_e_b_to_next(int beep_at_end, int goto_top);
-int switch_c_e_b_to_prev(int beep_at_end, int goto_bottom);
-int switch_c_e_b_to_valid_buf(void);
-int switch_c_e_b_to_another_buf(void);
+int switch_cep_buf_to_file_name(const char *file_name);
+int switch_cep_buf_to_abs_path(const char *abs_path);
+int switch_cep_buf_to_top(void);
+int switch_cep_buf_to_bot(void);
+int switch_cep_buf_to_next(int beep_at_end, int goto_top);
+int switch_cep_buf_to_prev(int beep_at_end, int goto_bottom);
+int switch_cep_buf_to_valid_buf(void);
+int switch_cep_buf_to_another_buf(void);
 
 int is_file_name_proj_file(const char *file_name, int type);
 

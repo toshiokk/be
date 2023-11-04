@@ -28,9 +28,6 @@ typedef struct {
 } editor_panes_t;
 /////extern editor_panes_t editor_panes;
 
-/////extern be_buf_t *c_e_b;			
-/////extern be_buf_view_t *c_b_v;	// c_b_v = c_e_v->views[editor_panes.cur_pane_idx]
-
 // エディタ2ペイン
 // ・個々にバッファを参照
 // ファイラー2ペイン
@@ -193,7 +190,7 @@ void dump_editor_panes(void);
 be_line_t *append_string_to_cur_edit_buf(const char *string);
 void append_magic_line(void);
 int count_edit_bufs(void);
-int is_c_e_b_valid(void);
+int is_cep_buf_valid(void);
 
 //-----------------------------------------------------------------------------
 

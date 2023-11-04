@@ -717,7 +717,7 @@ PRIVATE int search_needle_in_buffers(
 
 // search keyword in buffer (when global_search is false) or buffers (when true).
 // - when keyword not found, return to original cursor position.
-// WARNING: When "global_search" is true, c_e_b may be changed.
+// WARNING: When "global_search" is true, cep_buf may be changed.
 PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
  const char *needle, int search_dir, int ignore_case, int skip_here, int global_search)
 {
@@ -743,7 +743,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 				} else if (IS_NODE_TOP(line) == 0) {
 					line = NODE_PREV(line);
 					byte_idx = line_data_len(line);
-				} else if (global_search && switch_c_e_b_to_prev(0, 0)) {
+				} else if (global_search && switch_cep_buf_to_prev(0, 0)) {
 					// update pointers after switching buffer
 					// but not update pointers in buffer
 					ptr_line = &(CEPBV_CL);
@@ -774,7 +774,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 				} else if (IS_NODE_BOT(line) == 0) {
 					line = NODE_NEXT(line);
 					byte_idx = 0;
-				} else if (global_search && switch_c_e_b_to_next(0, 0)) {
+				} else if (global_search && switch_cep_buf_to_next(0, 0)) {
 					// update pointers after switching buffer
 					// but not update pointers in buffer
 					ptr_line = &(CEPBV_CL);

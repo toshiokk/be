@@ -98,7 +98,7 @@ int do_open_files_in_buf(void)
 //-----------------------------------------------------------------------------
 int do_switch_to_top_file(void)
 {
-	if (switch_c_e_b_to_top() == 0) {
+	if (switch_cep_buf_to_top() == 0) {
 		return 0;
 	}
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
@@ -106,7 +106,7 @@ int do_switch_to_top_file(void)
 }
 int do_switch_to_bot_file(void)
 {
-	if (switch_c_e_b_to_bot() == 0) {
+	if (switch_cep_buf_to_bot() == 0) {
 		return 0;
 	}
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
@@ -117,7 +117,7 @@ int do_switch_to_prev_file(void)
 {
 	int ret;
 
-	if ((ret = switch_c_e_b_to_prev(1, 0)) == 0) {
+	if ((ret = switch_cep_buf_to_prev(1, 0)) == 0) {
 		disp_status_bar_err(_("No previous open files"));
 		return ret;
 	}
@@ -129,7 +129,7 @@ int do_switch_to_next_file(void)
 {
 	int ret;
 
-	if ((ret = switch_c_e_b_to_next(1, 0)) == 0) {
+	if ((ret = switch_cep_buf_to_next(1, 0)) == 0) {
 		disp_status_bar_err(_("No next open files"));
 		return ret;
 	}
@@ -342,7 +342,7 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 ///flf_d_printf("[%s]\n", file_name);
 	get_abs_path(file_name, abs_path);
 ///flf_d_printf("[%s]\n", abs_path);
-	if (switch_c_e_b_to_file_name(abs_path)) {
+	if (switch_cep_buf_to_file_name(abs_path)) {
 ///flf_d_printf("already loaded:[%s]\n", abs_path);
 		// already loaded
 		return 1;
@@ -357,14 +357,14 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 	return 1;
 }
 //-----------------------------------------------------------------------------
-int switch_c_e_b_to_file_name(const char *file_name)
+int switch_cep_buf_to_file_name(const char *file_name)
 {
 	char abs_path[MAX_PATH_LEN+1];
 
 	get_abs_path(file_name, abs_path);
-	return switch_c_e_b_to_abs_path(abs_path);
+	return switch_cep_buf_to_abs_path(abs_path);
 }
-int switch_c_e_b_to_abs_path(const char *abs_path)
+int switch_cep_buf_to_abs_path(const char *abs_path)
 {
 	be_buf_t *buf;
 
@@ -376,21 +376,21 @@ int switch_c_e_b_to_abs_path(const char *abs_path)
 	return 0;		// not found
 }
 //-----------------------------------------------------------------------------
-int switch_c_e_b_to_top(void)
+int switch_cep_buf_to_top(void)
 {
 	if (IS_NODE_BOT_ANCH(EDIT_BUFS_TOP_NODE))
 		return 0;
 	set_cep_buf(EDIT_BUFS_TOP_NODE);
 	return 1;
 }
-int switch_c_e_b_to_bot(void)
+int switch_cep_buf_to_bot(void)
 {
 	if (IS_NODE_TOP_ANCH(EDIT_BUFS_BOT_NODE))
 		return 0;
 	set_cep_buf(EDIT_BUFS_BOT_NODE);
 	return 1;
 }
-int switch_c_e_b_to_prev(int beep_at_end, int goto_bottom)
+int switch_cep_buf_to_prev(int beep_at_end, int goto_bottom)
 {
 	if (IS_NODE_TOP(get_cep_buf())) {
 		if (beep_at_end)
@@ -403,7 +403,7 @@ int switch_c_e_b_to_prev(int beep_at_end, int goto_bottom)
 	}
 	return 1;
 }
-int switch_c_e_b_to_next(int beep_at_end, int goto_top)
+int switch_cep_buf_to_next(int beep_at_end, int goto_top)
 {
 	if (IS_NODE_BOT(get_cep_buf())) {
 		if (beep_at_end)
@@ -416,17 +416,17 @@ int switch_c_e_b_to_next(int beep_at_end, int goto_top)
 	}
 	return 1;
 }
-int switch_c_e_b_to_valid_buf(void)
+int switch_cep_buf_to_valid_buf(void)
 {
 	if (IS_NODE_INT(get_cep_buf()) == 0) {
-		return switch_c_e_b_to_another_buf();
+		return switch_cep_buf_to_another_buf();
 	}
 	return 1;
 }
-int switch_c_e_b_to_another_buf(void)
+int switch_cep_buf_to_another_buf(void)
 {
-	if (switch_c_e_b_to_next(0, 0) == 0) {
-		if (switch_c_e_b_to_prev(0, 0) == 0) {
+	if (switch_cep_buf_to_next(0, 0) == 0) {
+		if (switch_cep_buf_to_prev(0, 0) == 0) {
 			set_cep_buf(EDIT_BUFS_TOP_ANCH);
 			return 0;
 		}
@@ -528,7 +528,7 @@ int recall_cur_file_pos_null(const char *str)
 {
 	char file_path[MAX_PATH_LEN+1];
 
-	if (switch_c_e_b_to_file_name(get_file_line_col_from_str_null(
+	if (switch_cep_buf_to_file_name(get_file_line_col_from_str_null(
 	 str, file_path, NULL, NULL)) == 0) {
 		return 0;
 	}

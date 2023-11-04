@@ -63,7 +63,7 @@ _FLF_
 _FLF_
 	init_app_mode();
 _FLF_
-	init_buffers();		// parse_options() needs c_e_b. So do here.
+	init_buffers();		// parse_options() needs cep_buf. So do here.
 #ifdef ENABLE_FILER
 	init_filer_panes(&filer_panes, get_start_dir());
 	////set_cur_filer_view();
