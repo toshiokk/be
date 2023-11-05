@@ -33,7 +33,6 @@ typedef struct {
 } filer_panes_t;
 
 extern filer_panes_t *cur_filer_panes;	// Current Filer ViewS (instance is allocated locally)
-/////extern filer_view_t *cur_fv;	// Current Filer View
 
 #define FILER_DO_NOTHING			0
 #define FILER_DO_UPDATE_SCREEN		1

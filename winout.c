@@ -238,7 +238,7 @@ void sub_win_clear_lines(int line_1, int line_2)
 }
 void sub_win_output_string(int yy, int xx, const char *string, int bytes)
 {
-///flf_d_printf("(%d, %d)%d[%s]\n", yy, xx, bytes, string);
+/////flf_d_printf("(%d, %d)%d[%s]\n", yy, xx, bytes, string);
 	win_output_string(cur_win, yy, xx, string, bytes);
 }
 //-----------------------------------------------------------------------------
@@ -269,7 +269,7 @@ PRIVATE void win_clear_lines(win_rect_t *win, int line_1, int line_2)
 	if (line_2 < 0) {
 		line_2 = line_1 + 1;
 	}
-///flf_d_printf("win_clear_lines(%d, %d)\n", line_1, line_2);
+/////flf_d_printf("win_clear_lines(%d, %d)\n", line_1, line_2);
 	for (yy = line_1; yy < line_2; yy++) {
 		win_output_string(win, yy, 0, tio_blank_line(), win_get_columns(win));
 	}
@@ -290,7 +290,7 @@ PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *stri
 	if (bytes < 0) {
 		bytes = byte_idx_from_col_idx(string, space_columns, CHAR_LEFT, NULL);
 	}
-///flf_d_printf("(%d, %d)%d[%s]\n", yy, xx, bytes, string);
+/////flf_d_printf("(%d, %d)%d[%s]\n", yy, xx, bytes, string);
 	tio_output_string(yy, xx, string, bytes);
 }
 
@@ -298,9 +298,7 @@ PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *stri
 
 const char *shrink_str_to_scr_static(const char *str)
 {
-	static char buf[MAX_PATH_LEN+1];
-
-	return shrink_str_buf(buf, str, main_win_get_columns() / 2, 5);
+	return shrink_str_static(str, main_win_get_columns() / 2, 5);
 }
 
 // End of winout.c

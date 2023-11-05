@@ -74,9 +74,9 @@ int tolower_if_alpha(int chr);
 char *strupper(char *buffer);
 char *strlower(char *buffer);
 
-char *shrink_str(char *str, int space, int n_for_10);
-///char *shrink_str_static(const char *str, int space, int n_for_10);
-char *shrink_str_buf(char *buf, const char *str, int space, int n_for_10);
+char *shrink_str(char *str, int space, int n_over_10);
+char *shrink_str_static(const char *str, int space, int n_over_10);
+char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10);
 
 int adjust_utf8s_columns(char *utf8s, int columns);
 int truncate_tail_utf8s_columns(char *utf8s, int columns);

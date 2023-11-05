@@ -389,10 +389,9 @@ int cache_groups(void)
 			break;
 		gid_name_cache[num_groups].gid = grent->gr_gid;
 		strlcpy__(gid_name_cache[num_groups].grpname, grent->gr_name, GRP_NAME_LEN);
-///flf_d_printf("%2d:%4d:[%s]\n",
-/// num_groups,
-/// gid_name_cache[num_groups].gid,
-/// gid_name_cache[num_groups].grpname);
+////flf_d_printf("%2d:%4d:[%s]\n", num_groups,
+//// gid_name_cache[num_groups].gid,
+//// gid_name_cache[num_groups].grpname);
 	}
 	endgrent();
 	return num_groups;

@@ -24,7 +24,6 @@
 #ifdef ENABLE_FILER
 
 filer_panes_t *cur_filer_panes;		// Current Filer Views
-/////filer_view_t *cur_fv;				// Current Filer View
 
 PRIVATE char filer_cur_path[MAX_PATH_LEN+1];	// /directory/filter.*
 int filer_do_next = FILER_DO_NOTHING;
@@ -103,14 +102,10 @@ filer_view_t *get_filer_view(int pane_idx)
 		return get_cur_filer_view();
 	}
 	return &cur_filer_panes->filer_views[pane_idx];
-	////cur_fv = &cur_filer_panes->filer_views[pane_idx];
-	////return cur_fv;
 }
 filer_view_t *get_cur_filer_view(void)
 {
 	return &cur_filer_panes->filer_views[get_filer_cur_pane_idx()];
-	////cur_fv = &cur_filer_panes->filer_views[get_filer_cur_pane_idx()];
-	////return cur_fv;
 }
 
 PRIVATE filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps)

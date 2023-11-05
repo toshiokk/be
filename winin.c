@@ -66,7 +66,7 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 	int ret;
 
 	if (recursively_called) {
-///flf_d_printf("recursively_called\n");
+/////flf_d_printf("recursively_called\n");
 		return -1;				// -1: recursive called
 	}
 	recursively_called = 1;
@@ -101,7 +101,7 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 		update_history(hist_type_idx, input_buf);
 	}
 #endif
-///flf_d_printf("-9 input_buf:[%s] default__:[%s] ret:%d\n", input_buf, default__, ret);
+/////flf_d_printf("-9 input_buf:[%s] default__:[%s] ret:%d\n", input_buf, default__, ret);
 	return 1;					// 1: input normally
 }
 
@@ -145,7 +145,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		} else {
 			// function key
 			func_id = get_func_id_from_key(key_input);
-///flf_d_printf("func_id:[%s]\n", func_id);
+/////flf_d_printf("func_id:[%s]\n", func_id);
 		}
 		if (key_input == K_ESC || key_input == K_M_ESC
 		 || cmp_func_id(func_id, "do_close_file_ask")
@@ -253,7 +253,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		 || cmp_func_id(func_id, "do_last_line")) {
 			ret = call_filer(1, 1, "", "", buffer, MAX_PATH_LEN);
 			if (ret > 0) {
-///flf_d_printf("[%s]\n", buffer);
+/////flf_d_printf("[%s]\n", buffer);
 #if 1
 				if (cmp_func_id(func_id, "do_down")) {
 					// clear input buffer
@@ -274,7 +274,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 				char *line;
 				int byte_idx;
 
-////flf_d_printf("input_buf:[%s]\n", input_buf);
+/////flf_d_printf("input_buf:[%s]\n", input_buf);
 				line = CEPBV_CL->data;
 				byte_idx = byte_idx_from_byte_idx(line,
 				 CEPBV_CLBI + strnlen(input_buf, MAX_PATH_LEN));
@@ -493,7 +493,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 	SET_APPMD_VAL(app_KEY_LINES, key_lines_save);	// recover KEY_LINES
 	update_screen_app(1, 1, 1);
 
-///flf_d_printf("ask_yes_no()==>%d\n", answer);
+/////flf_d_printf("ask_yes_no()==>%d\n", answer);
 	return answer;
 }
 
