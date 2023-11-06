@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-06 21:10+0900\n"
+"POT-Creation-Date: 2023-11-06 22:38+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,11 +26,11 @@ msgstr ""
 msgid "Key code: %04x"
 msgstr ""
 
-#: ../buffers.c:385 ../buffers.c:393
+#: ../buffers.c:383 ../buffers.c:391
 msgid "Calculating CRC..."
 msgstr ""
 
-#: ../buffers.c:592 ../buffers.c:599
+#: ../buffers.c:590 ../buffers.c:597
 msgid "Tab size"
 msgstr ""
 
@@ -848,12 +848,12 @@ msgstr ""
 msgid "Bracket nesting too deep (%d)"
 msgstr ""
 
-#: ../search.c:704
+#: ../search.c:699
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr ""
 
-#: ../search.c:813
+#: ../search.c:808
 #, c-format
 msgid "\"%s\" not found"
 msgstr ""
@@ -862,43 +862,43 @@ msgstr ""
 msgid "Out of memory!"
 msgstr ""
 
-#: ../winin.c:336
+#: ../winin.c:332
 msgid ""
 "UP:history, DOWN:browser, PgUp:insert from history, PgDn:insert from browser"
 msgstr ""
 
-#: ../winin.c:418
+#: ../winin.c:414
 msgid "Yes"
 msgstr ""
 
-#: ../winin.c:421
+#: ../winin.c:417
 msgid "No"
 msgstr ""
 
-#: ../winin.c:424
+#: ../winin.c:420
 msgid "All"
 msgstr ""
 
-#: ../winin.c:427
+#: ../winin.c:423
 msgid "Backward"
 msgstr ""
 
-#: ../winin.c:430
+#: ../winin.c:426
 msgid "Forward"
 msgstr ""
 
-#: ../winin.c:432
+#: ../winin.c:428
 msgid "Cancel"
 msgstr ""
 
-#: ../winin.c:434
+#: ../winin.c:430
 msgid "End"
 msgstr ""
 
-#: ../winin.c:437
+#: ../winin.c:433
 msgid "Undo"
 msgstr ""
 
-#: ../winin.c:440
+#: ../winin.c:436
 msgid "Redo"
 msgstr ""

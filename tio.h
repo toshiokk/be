@@ -82,8 +82,6 @@ int tio_resize(void);
 int tio_suspend(void);
 int tio_resume(void);
 
-///int tio_get_screen_size_from_term(void);
-
 int tio_check_update_terminal_size(void);
 int tio_check_terminal_resized(void);
 

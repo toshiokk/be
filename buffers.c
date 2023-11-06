@@ -70,7 +70,6 @@ void init_buffers(void)
 	init_head_of_bufs();
 
 	init_edit_bufs();
-_FLF_
 	init_cut_bufs();
 
 #ifdef ENABLE_HISTORY
@@ -280,7 +279,6 @@ void create_edit_buf(const char *full_path)
 
 	buf = buf_create(full_path);
 	buf_insert_before(EDIT_BUFS_BOT_ANCH, buf);
-///_FLF_
 	set_cep_buf(buf);
 	if (IS_NODE_INT(editor_panes.bufs[0]) == 0) {
 		// make view-0 buffer valid

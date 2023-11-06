@@ -542,8 +542,8 @@ PRIVATE void send_bold_to_term(int bold)
 ///{
 ///	if (reverse) {
 ///		send_printf_to_term("\x1b[7m");
-//////	} else {
-//////		send_printf_to_term("\x1b[27m");	// DNU: Linux console does NOT support this.
+////	} else {
+////		send_printf_to_term("\x1b[27m");	// DNU: Linux console does NOT support this.
 ///	}
 ///}
 PRIVATE void send_bgc_to_term(int bgc)

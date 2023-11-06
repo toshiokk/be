@@ -640,8 +640,6 @@ void prepare_colors_for_bracket_hl()
 ////flf_d_printf("color_idx/fgc/bgc: %d/%d/%d\n", color_idx, fgc_sel, bgc_sel);
 	for (char fgc = 0; fgc < COLORS16 && color_idx < COLORS_FOR_BRACKET_HL; fgc++) {
 		if (fgc != (bgc_sel2 % COLORS8)) {	// Because there is no light color in BGC
-///		if (fgc != fgc_sel2 && fgc != fgc_sel
-///		 && fgc != (bgc_sel2 % COLORS8)) {	// Because there is no light color in BGC
 ////flf_d_printf("color_idx/fgc/bgc: %d/%d/%d\n", color_idx, fgc, bgc_sel2);
 			colors_for_bracket_hl[color_idx].fgc = fgc;
 			colors_for_bracket_hl[color_idx].bgc = bgc_sel2;
@@ -661,25 +659,22 @@ void set_color_for_bracket_hl(int depth_increase, int color_idx)
 {
 	char fgc, bgc;
 	int num_colors_m1 = get_colors_for_bracket_hl() - 1;
-flf_d_printf("color_idx_0_count: %d, depth_inc: %d, color_idx: %d\n",
- color_idx_0_count, depth_increase, color_idx);
 
 	if (depth_increase) {
-		color_idx %= num_colors_m1;		// [0, -num_colors_m1+1, _num_colors_m1-1]
+		color_idx %= num_colors_m1;		// [-num_colors_m1+1, _num_colors_m1-1]
 		color_idx += num_colors_m1;		// make [0, 2*num_colors_m1-1]
-		color_idx %= num_colors_m1;		// [0--num_colors_m1-1]
-		if (depth_increase < 0 || color_idx_0_count >= 2) {
+		color_idx %= num_colors_m1;		// [0, num_colors_m1-1]
+		if ((depth_increase < 0)
+		 || ((depth_increase > 0) && (color_idx_0_count >= 2))) {
 			if (color_idx == 0) {
-				color_idx += num_colors_m1;	// [1--num_colors_m1] (does not use 0)
+				color_idx = num_colors_m1;	// 0 ==> num_colors_m1 (do not use 0)
 			}
 		}
-		if (depth_increase > 0 && color_idx == 0) {
+		if ((depth_increase > 0) && (color_idx == 0)) {
 			color_idx_0_count++;
 		}
 	}
 	get_color_for_bracket_hl(color_idx, &fgc, &bgc);
-flf_d_printf("color_idx_0_count: %d, color_idx: %d %d/%d\n",
- color_idx_0_count, color_idx, fgc, bgc);
 	tio_set_attrs(bgc, fgc, 0);
 }
 void get_color_for_bracket_hl(int color_idx, char *fgc, char *bgc)
@@ -716,7 +711,7 @@ PRIVATE int search_needle_in_buffers(
 }
 
 // search keyword in buffer (when global_search is false) or buffers (when true).
-// - when keyword not found, return to original cursor position.
+// when keyword not found, return to original cursor position.
 // WARNING: When "global_search" is true, cep_buf may be changed.
 PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
  const char *needle, int search_dir, int ignore_case, int skip_here, int global_search)

@@ -187,7 +187,8 @@ void clear_edit_win_update_needed(void)
 
 #ifdef ENABLE_REGEX
 PRIVATE void disp_edit_win_bracket_hl();
-PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir, char char_under_cursor, char *needle, int depth_increase);
+PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
+ char char_under_cursor, char *needle, int depth_increase);
 #endif // ENABLE_REGEX
 
 //-111111111111<   |
@@ -290,9 +291,9 @@ void disp_edit_win(int cur_pane)
 		// display line tail column indicator in reverse text on ruler
 		if (cursor_line_right_text_x >= 0) {
 			int view_x = cursor_line_right_text_x-1 - CEPBV_MIN_TEXT_X_TO_KEEP;
-flf_d_printf("ruler: [%s]\n", ruler);
-flf_d_printf("right_text_x/view_x/x_to_keep/columns: %d/%d/%d/%d\n",
- cursor_line_right_text_x, view_x, CEPBV_MIN_TEXT_X_TO_KEEP, get_edit_win_columns_for_text());
+////flf_d_printf("ruler: [%s]\n", ruler);
+////flf_d_printf("right_text_x/view_x/x_to_keep/columns: %d/%d/%d/%d\n",
+//// cursor_line_right_text_x, view_x, CEPBV_MIN_TEXT_X_TO_KEEP, get_edit_win_columns_for_text());
 			if (view_x < get_edit_win_columns_for_text()) {
 				sub_win_output_string(edit_win_get_ruler_y(), get_edit_win_x_for_view_x(view_x),
 				 &ruler[view_x], 1);
@@ -639,10 +640,11 @@ PRIVATE void disp_edit_win_bracket_hl()
 	display_direction = setup_bracket_search(char_under_cursor, search__.direction, needle);
 
 	disp_edit_win_bracket_hl_dir(- display_direction, char_under_cursor, needle, -1);
-	disp_edit_win_bracket_hl_dir(  display_direction, char_under_cursor, needle, +1);
+	disp_edit_win_bracket_hl_dir(+ display_direction, char_under_cursor, needle, +1);
 }
 
-PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir, char char_under_cursor, char *needle, int depth_increase)
+PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
+ char char_under_cursor, char *needle, int depth_increase)
 {
 	be_line_t *match_line;
 	int match_byte_idx;
@@ -662,8 +664,6 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir, char char_under_curso
 #define MAX_BRACKET_HL		100	// for avoiding infinite loop
 	int safe_cnt = 0;
 
-	depth_increase = - depth_increase;	// invert increase (-1 ==> 1, 1 ==> -1)
-	depth_increase = - depth_increase;	// invert increase (-1 ==> 1, 1 ==> -1)
 	if (display_dir < 0) {
 #ifdef HL_BRACKET_BW
 		// draw backward [0, yy] from cursor pos
@@ -696,8 +696,7 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir, char char_under_curso
 					 match_byte_idx, match_byte_idx + match_len,
 					 &left_byte_idx, &right_byte_idx) > 0) {
 						set_color_for_bracket_hl(depth_increase, prev_depth); // select color by depth
-////
-line_dump_byte_idx(match_line, match_byte_idx);
+////line_dump_byte_idx(match_line, match_byte_idx);
 ////flf_d_printf("yy: %d\n", yy);
 						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 						match_len = 0;	// clear match_len so that go to next bracket
@@ -748,8 +747,7 @@ line_dump_byte_idx(match_line, match_byte_idx);
 					 match_byte_idx, match_byte_idx + match_len,
 					 &left_byte_idx, &right_byte_idx) > 0) {
 						set_color_for_bracket_hl(depth_increase, prev_depth); // select color by depth
-////
-line_dump_byte_idx(match_line, match_byte_idx);
+////line_dump_byte_idx(match_line, match_byte_idx);
 ////flf_d_printf("prev_depth/depth: %d/%d, yy: %d\n", prev_depth, depth, yy);
 						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 						match_len = 0;	// clear match_len so that go to next bracket

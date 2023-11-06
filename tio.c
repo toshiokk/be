@@ -195,16 +195,6 @@ int tio_resume(void)
 }
 
 //-----------------------------------------------------------------------------
-////int tio_get_screen_size_from_term(void)
-////{
-////	int lines = tio_get_lines();
-////	int cols = tio_get_columns();
-////#ifdef ENABLE_NCURSES
-////#else // ENABLE_NCURSES
-////	termif_get_screen_size_from_term();
-////#endif // ENABLE_NCURSES
-////	return (lines != tio_get_lines()) || (cols != tio_get_columns());
-////}
 
 int tio_check_update_terminal_size(void)
 {
@@ -224,7 +214,6 @@ int tio_check_terminal_resized(void)
 {
 	if (is_sigwinch_signaled()) {
 		clear_sigwinch_signaled();
-///flf_d_printf("cols: %d, lines: %d\n", ioctl_ws_col, ioctl_ws_row);
 		return 1;
 	}
 	return 0;
@@ -303,16 +292,8 @@ void tio_clear_flash_screen(int delay)
 }
 void tio_clear_screen(void)
 {
-#if 0
-#ifdef ENABLE_NCURSES
-	curses_clear_screen();
-#else // ENABLE_NCURSES
-	termif_clear_screen();
-#endif // ENABLE_NCURSES
-#else
 	tio_clear_lines(0, tio_get_lines());
 	tio_refresh();
-#endif
 }
 void tio_clear_lines(int line_1, int line_2)
 {

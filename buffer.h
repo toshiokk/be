@@ -125,9 +125,6 @@ be_buf_t *buf_unlink_free(be_buf_t *buf);
 be_buf_t *buf_unlink(be_buf_t *buf);
 void buf_clear_link(be_buf_t *buf);
 
-///be_buf_t *goto_top_buf(be_buf_t *buf);
-///be_buf_t *goto_bottom_buf(be_buf_t *buf);
-
 void buf_free(be_buf_t *buf);
 void buf_free_lines(be_buf_t *buf);
 

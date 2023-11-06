@@ -172,19 +172,6 @@ void buf_clear_link(be_buf_t *buf)
 	buf->next = NULL;
 }
 
-///be_buf_t *goto_top_buf(be_buf_t *buf)
-///{
-///	for ( ; IS_NODE_TOP_ANCH(buf) == 0; buf = NODE_PREV(buf)) {
-///	}
-///	return buf;
-///}
-///be_buf_t *goto_bottom_buf(be_buf_t *buf)
-///{
-///	for ( ; IS_NODE_BOT_ANCH(buf) == 0; buf = NODE_NEXT(buf)) {
-///	}
-///	return buf;
-///}
-
 // Free a buffer
 void buf_free(be_buf_t *buf)
 {

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-06 21:10+0900\n"
+"POT-Creation-Date: 2023-11-06 22:38+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -25,11 +25,11 @@ msgstr ""
 msgid "Key code: %04x"
 msgstr "キーコード: %04x"
 
-#: ../buffers.c:385 ../buffers.c:393
+#: ../buffers.c:383 ../buffers.c:391
 msgid "Calculating CRC..."
 msgstr "CRC を計算中..."
 
-#: ../buffers.c:592 ../buffers.c:599
+#: ../buffers.c:590 ../buffers.c:597
 msgid "Tab size"
 msgstr "タブサイズ"
 
@@ -868,12 +868,12 @@ msgstr ""
 msgid "Bracket nesting too deep (%d)"
 msgstr "括弧の入れ子が深過ぎます"
 
-#: ../search.c:704
+#: ../search.c:699
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr "文字列 [%s] を検索中..."
 
-#: ../search.c:813
+#: ../search.c:808
 #, c-format
 msgid "\"%s\" not found"
 msgstr "\"%s\" が見つかりません"
@@ -882,44 +882,44 @@ msgstr "\"%s\" が見つかりません"
 msgid "Out of memory!"
 msgstr "メモリ不足!"
 
-#: ../winin.c:336
+#: ../winin.c:332
 msgid ""
 "UP:history, DOWN:browser, PgUp:insert from history, PgDn:insert from browser"
 msgstr ""
 
-#: ../winin.c:418
+#: ../winin.c:414
 msgid "Yes"
 msgstr "はい"
 
-#: ../winin.c:421
+#: ../winin.c:417
 msgid "No"
 msgstr "いいえ"
 
-#: ../winin.c:424
+#: ../winin.c:420
 msgid "All"
 msgstr "全て"
 
-#: ../winin.c:427
+#: ../winin.c:423
 msgid "Backward"
 msgstr "後方検索"
 
-#: ../winin.c:430
+#: ../winin.c:426
 msgid "Forward"
 msgstr "前方検索"
 
-#: ../winin.c:432
+#: ../winin.c:428
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: ../winin.c:434
+#: ../winin.c:430
 msgid "End"
 msgstr ""
 
-#: ../winin.c:437
+#: ../winin.c:433
 msgid "Undo"
 msgstr ""
 
-#: ../winin.c:440
+#: ../winin.c:436
 msgid "Redo"
 msgstr ""
 

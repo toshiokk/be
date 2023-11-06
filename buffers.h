@@ -26,7 +26,7 @@ typedef struct {
 	int cur_pane_idx;				// 0: left pane, 1: right pane
 	be_buf_t *bufs[EDITOR_PANES];	// edit-buffers shown in the left and the right pane
 } editor_panes_t;
-/////extern editor_panes_t editor_panes;
+////extern editor_panes_t editor_panes;
 
 // エディタ2ペイン
 // ・個々にバッファを参照
