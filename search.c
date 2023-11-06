@@ -221,7 +221,7 @@ int search_string_once(const char *needle, int search_count)
 	}
 
 	match_len = search_needle_in_buffers(needle,
-	 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), SKIP);
+	 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), SKIP_HERE);
 
 	if (match_len > 0) {
 		if (search_count == 0) {
@@ -257,20 +257,20 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 	int match_len;
 	int ret = 0;
 	long length_change;
-///	int prev_ed_REVERSE_SEARCH;
+	int prev_ed_REVERSE_SEARCH;
 	key_code_t key;
 
 	if (strlen(needle)) {
 		strlcpy__(last_searched_needle, needle, MAX_PATH_LEN);
 	}
 
-///	prev_ed_REVERSE_SEARCH = GET_APPMD(ed_REVERSE_SEARCH);
-	for (skip_here = NO_SKIP; ; ) {
-///		if (prev_ed_REVERSE_SEARCH != GET_APPMD(ed_REVERSE_SEARCH)) {
-///			prev_ed_REVERSE_SEARCH = GET_APPMD(ed_REVERSE_SEARCH);
-///			// search direction changed, not skip here on the next search
-///			skip_here = NO_SKIP;
-///		}
+	prev_ed_REVERSE_SEARCH = GET_APPMD(ed_REVERSE_SEARCH);
+	for (skip_here = NO_SKIP_HERE; ; ) {
+		if (prev_ed_REVERSE_SEARCH != GET_APPMD(ed_REVERSE_SEARCH)) {
+			prev_ed_REVERSE_SEARCH = GET_APPMD(ed_REVERSE_SEARCH);
+			// search direction changed, not skip here on the next search
+			skip_here = NO_SKIP_HERE;
+		}
 
 		match_len = search_needle_in_buffers(needle,
 		 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), skip_here);
@@ -310,17 +310,17 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 		}
 		if (ret == ANSWER_NO) {
 			// Not replace and search next
-			skip_here = SKIP;
+			skip_here = SKIP_HERE;
 			continue;
 		} else if (ret == ANSWER_FORWARD) {
 			// forward search
 			CLR_APPMD(ed_REVERSE_SEARCH);
-			skip_here = SKIP;
+			skip_here = SKIP_HERE;
 			continue;
 		} else if (ret == ANSWER_BACKWARD) {
 			// backward search
 			SET_APPMD(ed_REVERSE_SEARCH);
-			skip_here = SKIP;
+			skip_here = SKIP_HERE;
 			continue;
 		} else if (ret == ANSWER_YES || ret == ANSWER_ALL) {
 			if (match_len) {
@@ -344,10 +344,10 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 				if (GET_APPMD(ed_REVERSE_SEARCH) == 0) {
 					// forward search
 					CEPBV_CLBI += matches_match_len(&matches__) + length_change;
-					skip_here = NO_SKIP;	// CEPBV_CLBI already forwarded to skip word
+					skip_here = NO_SKIP_HERE;	// CEPBV_CLBI already forwarded to skip word
 				} else {
 					// backward search
-					skip_here = SKIP;		// skip
+					skip_here = SKIP_HERE;		// skip
 				}
 				get_cep_buf()->buf_size += length_change;
 				set_cur_buf_modified();
@@ -359,14 +359,14 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			do_undo();
 			num_replaced--;
 			num_undone++;
-			skip_here = NO_SKIP;
+			skip_here = NO_SKIP_HERE;
 			continue;
 		} else if (ret == ANSWER_REDO) {
 			// redo replace
 			do_redo();
 			num_undone--;
 			num_replaced++;
-			skip_here = NO_SKIP;
+			skip_here = NO_SKIP_HERE;
 			continue;
 #endif // ENABLE_UNDO
 		} else {			// Cancel

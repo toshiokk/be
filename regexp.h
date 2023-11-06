@@ -30,8 +30,8 @@
 #define IGNORE_CASE			1
 #define CASE_SENSITIVE		0
 
-#define NO_SKIP				0
-#define SKIP				1
+#define NO_SKIP_HERE		0
+#define SKIP_HERE			1
 
 #ifdef ENABLE_REGEX
 

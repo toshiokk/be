@@ -167,7 +167,7 @@ PRIVATE int check_file_pos_recorded_in_history(int hist_type_idx, const char *st
 	get_file_line_col_from_str_null(str, file_path, NULL, NULL);
 	const char *line = search_history_file_path(hist_type_idx, file_path);
 	// check if exact line registered
-	if ((line != str) && (strcmp(line, str) == 0)) {
+	if (strcmp(line, str) == 0) {
 		int lines = search_history_from_newest(hist_type_idx, line);
 		if (0 < lines && lines <= MAX_HISTORY_LINES / 2) {
 			return 1; // registered relatively newer, no need of update
