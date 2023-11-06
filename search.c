@@ -587,8 +587,8 @@ flf_d_printf("search_dir/needle: [%d][%s]\n", search_dir, needle);
 // color   7 0 1 2 3 4 5 6 7 0 0 7 7 * 1 1 * 7 7 0 0 7 6 5 4 3 2 1 0 7 
 
 int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
- char char_under_cursor, const char *needle, int search_dir, int skip_here,
- int depth_increase, int *ptr_depth, int *prev_depth)
+ char char_under_cursor, const char *needle, int search_dir, int skip_here, int depth_increase,
+ int *ptr_depth, int *prev_depth)
 {
 ////_D_(line_dump_byte_idx(*ptr_line, *ptr_byte_idx));
 ////flf_d_printf("needle: {%s}, search_dir: %d, skip_here: %d\n", needle, search_dir, skip_here);

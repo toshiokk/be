@@ -679,7 +679,8 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 		 safe_cnt++) {
 ////flf_d_printf("depth: %d\n", depth);
 			match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
-			 char_under_cursor, needle, BACKWARD_SEARCH, skip_here, depth_increase, &depth, &prev_depth);
+			 char_under_cursor, needle, BACKWARD_SEARCH, skip_here, depth_increase,
+			 &depth, &prev_depth);
 ////flf_d_printf("depth: %d\n", depth);
 			skip_here = 1;
 ////flf_d_printf("match_len: %d\n", match_len);
@@ -730,7 +731,8 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 		 safe_cnt++) {
 ////flf_d_printf("depth: %d\n", depth);
 			match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
-			 char_under_cursor, needle, FORWARD_SEARCH, skip_here, depth_increase, &depth, &prev_depth);
+			 char_under_cursor, needle, FORWARD_SEARCH, skip_here, depth_increase,
+			 &depth, &prev_depth);
 ////flf_d_printf("depth: %d\n", depth);
 			skip_here = 1;
 ////flf_d_printf("match_len: %d\n", match_len);

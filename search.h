@@ -45,8 +45,8 @@ int do_highlight_bracket_reverse(void);
 #define MAX_BRACKETS_SEARCH		10000	// for avoiding infinite loop
 int setup_bracket_search(char char_under_cursor, int reverse_pair, char *needle);
 int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
- char char_under_cursor, const char *needle, int search_dir, int skip_here,
- int depth_increase, int *ptr_depth, int *prev_depth);
+ char char_under_cursor, const char *needle, int search_dir, int skip_here, int depth_increase,
+ int *ptr_depth, int *prev_depth);
 
 void prepare_colors_for_bracket_hl();
 int get_colors_for_bracket_hl();
