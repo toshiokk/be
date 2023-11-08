@@ -172,15 +172,11 @@ int app_main_loop(void)
 
 	if (count_edit_bufs()) {
 		// application was started as a EDITOR
-///_FLF_
 		call_editor(0, 0);
-///_FLF_
 	} else {
 		// application was started as a FILER
 		while (1) {
-///_FLF_
 			call_filer(0, 0, "", "", file_name, MAX_PATH_LEN);
-///_FLF_
 			if (count_edit_bufs() == 0) {
 				// no file loaded in filer
 				break;
@@ -190,10 +186,8 @@ int app_main_loop(void)
 	}
 #else // ENABLE_FILER
 	if (count_edit_bufs() == 0) {
-///_FLF_
 		do_switch_to_file_list();
 		do_open_file();
-///_FLF_
 	}
 	if (count_edit_bufs()) {
 		call_editor(0, 0);

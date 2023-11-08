@@ -278,15 +278,11 @@ int load_file_in_string(const char *string,
 	int line_num, col_num;
 	int files;
 
-///flf_d_printf("string:[%s]\n", string);
 	if (get_file_line_col_from_str_null(string, file_path, &line_num, &col_num) == 0) {
-///_FLF_
 		return 0;
 	}
-///flf_d_printf("file_path:[%s]\n", file_path);
 	if ((files = load_file_name_upp_low(file_path,
 	 try_upp_low, open_on_err, msg_on_err, recursive)) > 0) {
-///flf_d_printf("loaded:[%s]\n", file_path);
 		goto_line_col_in_cur_buf(line_num, col_num);
 	}
 	return files;
@@ -320,14 +316,11 @@ int load_file_name_recurs(const char *file_name, int open_on_err, int msg_on_err
 	static int recursive_call_count = 0;
 	int files;
 
-///flf_d_printf("[%s], %d, %d, %d\n", file_name, open_on_err, msg_on_err, recursive);
 	if (load_file_name__(file_name, open_on_err, msg_on_err) <= 0) {
 		return 0;
 	}
-///_FLF_
 	files = 1;
 	if (recursive && recursive_call_count == 0 && is_file_name_proj_file(file_name, 0)) {
-///flf_d_printf("recursive_call_count:%d\n", recursive_call_count);
 		recursive_call_count++;
 		files += load_files_in_cur_buf();		// recursive call
 		recursive_call_count--;
@@ -339,18 +332,14 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 {
 	char abs_path[MAX_PATH_LEN+1];
 
-///flf_d_printf("[%s]\n", file_name);
 	get_abs_path(file_name, abs_path);
-///flf_d_printf("[%s]\n", abs_path);
 	if (switch_cep_buf_to_file_name(abs_path)) {
-///flf_d_printf("already loaded:[%s]\n", abs_path);
 		// already loaded
 		return 1;
 	}
 	if (load_file_into_new_buf(abs_path, open_on_err, msg_on_err) < 0) {
 		return 0;
 	}
-///flf_d_printf("loaded:[%s]\n", abs_path);
 #ifdef ENABLE_HISTORY
 	goto_pos_by_history(abs_path);
 #endif // ENABLE_HISTORY
@@ -487,7 +476,6 @@ void test_get_n_th_file_name(void)
 	char file_path[MAX_PATH_LEN+1];
 	int line_num, col_num;
 
-///_FLF_
 	for (field_idx = 0; field_idx < 10; field_idx++) {
 		ptr = skip_n_file_names(test_str, field_idx);
 		if (*ptr == '\0')
@@ -549,8 +537,6 @@ int goto_str_line_col_in_cur_buf(const char *str)
 }
 int goto_line_col_in_cur_buf(int line_num, int col_num)
 {
-////
-flf_d_printf("%d, %d\n", line_num, col_num);
 	if (line_num <= 0) {
 		return 0;
 	}
@@ -566,8 +552,7 @@ flf_d_printf("%d, %d\n", line_num, col_num);
 	// col_num is column in view
 	CEPBV_CLBI = byte_idx_from_col_idx(CEPBV_CL->data, col_num-1, CHAR_LEFT, NULL);
 #endif // CURSOR_POS_COLUMN
-////
-flf_d_printf("byte_idx: %d\n", CEPBV_CLBI);
+////flf_d_printf("line_num: %d, col_num: %d ==> byte_idx: %d\n", line_num, col_num, CEPBV_CLBI);
 	return 2;
 }
 //-----------------------------------------------------------------------------
@@ -659,8 +644,7 @@ no_file_path:;
 		*line_num_ = line_num;
 	if (col_num_)
 		*col_num_ = col_num;
-////
-flf_d_printf("str:[%s] ==> path:[%s] line:%d col:%d\n", str, file_path, line_num, col_num);
+////flf_d_printf("str:[%s] ==> path:[%s] line:%d col:%d\n", str, file_path, line_num, col_num);
 	return strnlen(file_path, MAX_PATH_LEN);
 }
 

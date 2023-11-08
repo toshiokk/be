@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-08 20:39+0900\n"
+"POT-Creation-Date: 2023-11-08 23:54+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -614,7 +614,7 @@ msgstr ""
 msgid "Start key macro playback"
 msgstr ""
 
-#: ../main.c:559
+#: ../main.c:553
 msgid ""
 "\n"
 "No file written\n"
@@ -622,7 +622,7 @@ msgstr ""
 "\n"
 "書き込まれたファイルはありません\n"
 
-#: ../main.c:568
+#: ../main.c:562
 #, c-format
 msgid ""
 "\n"
@@ -631,7 +631,7 @@ msgstr ""
 "\n"
 "ファイル %s に書き込みました\n"
 
-#: ../main.c:597
+#: ../main.c:591
 #, c-format
 msgid ""
 "\n"
@@ -641,99 +641,99 @@ msgstr ""
 "使用法"
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:599
+#: ../main.c:593
 msgid "Option"
 msgstr ""
 
-#: ../main.c:599
+#: ../main.c:593
 msgid "Long option"
 msgstr ""
 
-#: ../main.c:599
+#: ../main.c:593
 #, fuzzy
 msgid "Meaning"
 msgstr "意味"
 
-#: ../main.c:601
+#: ../main.c:595
 msgid "Read RCFILE"
 msgstr ""
 
-#: ../main.c:602
+#: ../main.c:596
 msgid "Don't look at berc files"
 msgstr "bercファイルを無視"
 
-#: ../main.c:605
+#: ../main.c:599
 msgid "Don't use history file"
 msgstr "ヒストリファイルを使用しない"
 
-#: ../main.c:607
+#: ../main.c:601
 msgid "Set tab-size to NUM[1-15]"
 msgstr "タブサイズをNUM[1-15]に設定"
 
-#: ../main.c:608
+#: ../main.c:602
 msgid "View mode(Read only mode)"
 msgstr "閲覧(読込専用)モード"
 
-#: ../main.c:610
+#: ../main.c:604
 msgid "Don't use nkf"
 msgstr "nkf を使用しない"
 
-#: ../main.c:611
+#: ../main.c:605
 msgid "ASCII character encoding"
 msgstr "ASCII エンコーディング"
 
-#: ../main.c:612
+#: ../main.c:606
 msgid "JIS character encoding"
 msgstr "JIS エンコーディング"
 
-#: ../main.c:613
+#: ../main.c:607
 msgid "EUCJP character encoding"
 msgstr "EUCJP エンコーディング"
 
-#: ../main.c:614
+#: ../main.c:608
 msgid "SJIS character encoding"
 msgstr "SJIS エンコーディング"
 
-#: ../main.c:615
+#: ../main.c:609
 msgid "UTF8 character encoding"
 msgstr "UTF8 エンコーディング"
 
-#: ../main.c:618
+#: ../main.c:612
 msgid "Output debug log to stderr"
 msgstr "stderrにデバッグログを出力"
 
-#: ../main.c:620
+#: ../main.c:614
 msgid "Show version information"
 msgstr "バージョン情報を表示"
 
-#: ../main.c:621
+#: ../main.c:615
 msgid "Show this message"
 msgstr "このメッセージを表示"
 
-#: ../main.c:622
+#: ../main.c:616
 msgid "Start at line number NUM"
 msgstr "NUM 行から開始"
 
-#: ../main.c:624
+#: ../main.c:618
 msgid "Investigate key codes"
 msgstr ""
 
-#: ../main.c:641
+#: ../main.c:635
 #, c-format
 msgid "%s editor version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:643
+#: ../main.c:637
 #, c-format
 msgid " Build Options:\n"
 msgstr " ビルドオプション:\n"
 
-#: ../main.c:901
+#: ../main.c:895
 #, fuzzy, c-format
 msgid "Screen size: %dx%d"
 msgstr "画面サイズ: %dx%d"
 
-#: ../main.c:906
+#: ../main.c:900
 msgid "We're invincible with this!!"
 msgstr "これさえあれば俺達は無敵だ!!"
 

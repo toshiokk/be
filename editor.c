@@ -74,7 +74,7 @@ PRIVATE int editor_main_loop(void)
 	matches_clear(&matches__);
 #endif // ENABLE_REGEX
 
-	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL_SOON);
 
 	// Main input loop
 	key_input = 0;

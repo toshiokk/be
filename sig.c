@@ -146,44 +146,44 @@ void clear_sigwinch_signaled(void)
 RETSIGTYPE handle_sigwinch(int signal)
 {
 	sigwinch_signaled = 1;
-	ioctl_get_win_size();
+///	ioctl_get_win_size();
 }
 int is_sigwinch_signaled(void)
 {
 	return sigwinch_signaled;
 }
 
-int ioctl_ws_col = 0;
-int ioctl_ws_row = 0;
-int ioctl_get_win_size(void)
-{
-	const char *tty;
-	int fd;
-	int result = 0;
-	struct winsize winsz;
-
-	tty = ttyname(0);
-	if (tty == NULL) {
-		ioctl_ws_col = -1;
-		return -1;
-	}
-	fd = open(tty, O_RDWR);
-	if (fd < 0) {
-		ioctl_ws_col = -2;
-		return -2;
-	}
-	result = ioctl(fd, TIOCGWINSZ, &winsz);
-	close(fd);
-	if (result < 0) {
-		ioctl_ws_col = -3;
-		return -3;
-	}
-	// screen size gotten.
-	// in some cases ncurses has already updated them but not in all cases.
-	ioctl_ws_col = winsz.ws_col;
-	ioctl_ws_row = winsz.ws_row;
-///flf_d_printf("cols: %d, lines: %d\n", ioctl_ws_col, ioctl_ws_row);
-	return 0;
-}
+///int ioctl_ws_col = 0;
+///int ioctl_ws_row = 0;
+///int ioctl_get_win_size(void)
+///{
+///	const char *tty;
+///	int fd;
+///	int result = 0;
+///	struct winsize winsz;
+///
+///	tty = ttyname(0);
+///	if (tty == NULL) {
+///		ioctl_ws_col = -1;
+///		return -1;
+///	}
+///	fd = open(tty, O_RDWR);
+///	if (fd < 0) {
+///		ioctl_ws_col = -2;
+///		return -2;
+///	}
+///	result = ioctl(fd, TIOCGWINSZ, &winsz);
+///	close(fd);
+///	if (result < 0) {
+///		ioctl_ws_col = -3;
+///		return -3;
+///	}
+///	// screen size gotten.
+///	// in some cases ncurses has already updated them but not in all cases.
+///	ioctl_ws_col = winsz.ws_col;
+///	ioctl_ws_row = winsz.ws_row;
+//////flf_d_printf("cols: %d, lines: %d\n", ioctl_ws_col, ioctl_ws_row);
+///	return 0;
+///}
 
 // End of sig.c
