@@ -515,7 +515,11 @@ PRIVATE void goto_pos_by_history(const char *full_path)
 }
 #endif // ENABLE_HISTORY
 //-----------------------------------------------------------------------------
-PRIVATE char memorized_file_pos_str[MAX_PATH_LEN+1];
+PRIVATE char memorized_file_pos_str[MAX_PATH_LEN+1] = "";
+char *get_memorized_file_pos_str()
+{
+	return memorized_file_pos_str;
+}
 char *memorize_cur_file_pos_null(char *buffer)
 {
 	buffer = buffer ? buffer : memorized_file_pos_str;
@@ -545,7 +549,8 @@ int goto_str_line_col_in_cur_buf(const char *str)
 }
 int goto_line_col_in_cur_buf(int line_num, int col_num)
 {
-////flf_d_printf("%d, %d\n", line_num, col_num);
+////
+flf_d_printf("%d, %d\n", line_num, col_num);
 	if (line_num <= 0) {
 		return 0;
 	}
@@ -561,6 +566,8 @@ int goto_line_col_in_cur_buf(int line_num, int col_num)
 	// col_num is column in view
 	CEPBV_CLBI = byte_idx_from_col_idx(CEPBV_CL->data, col_num-1, CHAR_LEFT, NULL);
 #endif // CURSOR_POS_COLUMN
+////
+flf_d_printf("byte_idx: %d\n", CEPBV_CLBI);
 	return 2;
 }
 //-----------------------------------------------------------------------------
@@ -603,6 +610,7 @@ char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col
 //-----------------------------------------------------------------------------
 PRIVATE int get_file_line_col_from_str(const char *str, char *file_path,
  int *line_num_, int *col_num_);
+
 const char *get_file_line_col_from_str_null(const char *str, char *file_path,
  int *line_num, int *col_num)
 {
@@ -651,8 +659,8 @@ no_file_path:;
 		*line_num_ = line_num;
 	if (col_num_)
 		*col_num_ = col_num;
-///flf_d_printf("str:[%s] ==> path:[%s] line:%d col:%d\n",
-/// str, file_path, line_num, col_num);
+////
+flf_d_printf("str:[%s] ==> path:[%s] line:%d col:%d\n", str, file_path, line_num, col_num);
 	return strnlen(file_path, MAX_PATH_LEN);
 }
 

@@ -412,10 +412,16 @@ int do_close_file_ask(void)
 		return -1;
 	}
 	// Yes/No
+	memorize_cur_file_pos_null(NULL);
 	free_cur_edit_buf();
 
 	do_refresh_editor();
 	disp_status_bar_done(_("One buffer closed"));
+	if (count_edit_bufs() == 0) {
+		// This file is the last open file.
+		// Memorize the last file's cursor pos.
+		update_history(HISTORY_TYPE_IDX_CURSPOS, get_memorized_file_pos_str(), 1);
+	}
 	return 2;
 }
 int do_close_all_ask(void)
@@ -534,10 +540,14 @@ int do_editor_menu_9(void)
 
 int write_close_all(int yes)
 {
+	memorize_cur_file_pos_null(NULL);
+
 	close_all_not_modified();
 	if (write_all_ask(yes, CLOSE_AFTER_SAVE_1) < 0)
 		return -1;
 	close_all();
+
+	update_history(HISTORY_TYPE_IDX_CURSPOS, get_memorized_file_pos_str(), 1);
 	return 0;
 }
 int write_all_ask(int yes, close_after_save_t close)

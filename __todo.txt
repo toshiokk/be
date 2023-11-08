@@ -1,5 +1,7 @@
 #### BE-editor to do list
 
+[ ] go back to the last cursor pos. in the last file.
+
 #### thinking
 - Which is the better practice
 	1. strict type specification uint8_t, int8_t, int16_t, int32_t

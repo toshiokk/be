@@ -83,7 +83,6 @@ int tio_suspend(void);
 int tio_resume(void);
 
 int tio_check_update_terminal_size(void);
-int tio_check_terminal_resized(void);
 
 void tio_set_screen_size(int lines, int columns);
 int tio_get_lines(void);

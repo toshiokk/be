@@ -98,6 +98,10 @@
 #define P_(singular, plural, type3, type4, number)	\
  select_plural_form(singular, plural, type3, type4, number)
 
+
+#ifndef BOOL
+#define BOOL	unsigned char
+#endif
 #ifndef TRUE
 #define TRUE	1
 #endif

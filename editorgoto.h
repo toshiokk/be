@@ -68,6 +68,7 @@ int is_file_name_proj_file(const char *file_name, int type);
 void test_get_n_th_file_name(void);
 #endif // START_UP_TEST
 
+char *get_memorized_file_pos_str();
 char *memorize_cur_file_pos_null(char *buffer);
 int recall_cur_file_pos_null(const char *str);
 int goto_str_line_col_in_cur_buf(const char *str);

@@ -153,8 +153,8 @@ int is_sigwinch_signaled(void)
 	return sigwinch_signaled;
 }
 
-int ioctl_ws_col = -1;
-int ioctl_ws_row = -1;
+int ioctl_ws_col = 0;
+int ioctl_ws_row = 0;
 int ioctl_get_win_size(void)
 {
 	const char *tty;
@@ -164,20 +164,18 @@ int ioctl_get_win_size(void)
 
 	tty = ttyname(0);
 	if (tty == NULL) {
-		///_FLF_
+		ioctl_ws_col = -1;
 		return -1;
 	}
 	fd = open(tty, O_RDWR);
 	if (fd < 0) {
-		///flf_d_printf("%s: tty: [%s]\n", strerror(errno), tty);
-		///_FLF_
+		ioctl_ws_col = -2;
 		return -2;
 	}
 	result = ioctl(fd, TIOCGWINSZ, &winsz);
 	close(fd);
 	if (result < 0) {
-		///flf_d_printf("%s: tty: [%s]\n", strerror(errno), tty);
-		///_FLF_
+		ioctl_ws_col = -3;
 		return -3;
 	}
 	// screen size gotten.

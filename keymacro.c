@@ -28,7 +28,7 @@ void load_key_macro(int last_n)
 }
 void save_key_macro(void)
 {
-	update_history(HISTORY_TYPE_IDX_KEYMACRO, get_string_from_key_macro());
+	update_history(HISTORY_TYPE_IDX_KEYMACRO, get_string_from_key_macro(), 0);
 }
 #endif // ENABLE_HISTORY
 

@@ -57,8 +57,7 @@ PRIVATE int filer_win_get_file_list_y(void);
 PRIVATE void disp_key_list_filer(void);
 
 #define FILER_VERT_SCROLL_MARGIN_LINES	LIM_MAX(5, filer_win_get_file_list_lines()/3)
-#define FILER_VERT_SCROLL_LINES			\
-	MIN_MAX_(1, filer_win_get_file_list_lines()-1 - FILER_VERT_SCROLL_MARGIN_LINES, 50)
+#define FILER_VERT_SCROLL_LINES			MIN_MAX_(1, filer_win_get_file_list_lines() / 2, 50)
 
 void init_filer_panes(filer_panes_t *fps, const char *cur_dir)
 {
@@ -225,7 +224,7 @@ PRIVATE int filer_main_loop(const char *directory, const char *filter,
 		cat_dir_and_file(filer_cur_path, MAX_PATH_LEN, get_cur_filer_view()->cur_dir, filter);
 #ifdef ENABLE_HISTORY
 		if (strcmp(prev_cur_dir, get_cur_filer_view()->cur_dir) != 0) {
-			update_history(HISTORY_TYPE_IDX_DIR, get_cur_filer_view()->cur_dir);
+			update_history(HISTORY_TYPE_IDX_DIR, get_cur_filer_view()->cur_dir, 0);
 			strlcpy__(prev_cur_dir, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
 		}
 #endif // ENABLE_HISTORY

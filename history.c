@@ -135,13 +135,13 @@ PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 }
 
 // update history list (load, modify, save)
-void update_history(int hist_type_idx, const char *str)
+void update_history(int hist_type_idx, const char *str, BOOL force_update)
 {
 	be_line_t *line;
 
 ////
 flf_d_printf("hist_type_idx:%d:[%s]\n", hist_type_idx, str);
-	if (hist_type_idx == HISTORY_TYPE_IDX_CURSPOS) {
+	if ((force_update == FALSE) && (hist_type_idx == HISTORY_TYPE_IDX_CURSPOS)) {
 		if (check_file_pos_recorded_in_history(hist_type_idx, str)) {
 			return; // registered relatively newer, no need of update
 		}
@@ -176,6 +176,7 @@ PRIVATE int check_file_pos_recorded_in_history(int hist_type_idx, const char *st
 	return 0;
 }
 
+// last_n: 1, 2, 3, ....
 const char *get_history_newest(int hist_type_idx, int last_n)
 {
 	int cnt;
@@ -185,6 +186,8 @@ const char *get_history_newest(int hist_type_idx, int last_n)
 	for (cnt = 0; cnt < last_n; cnt++) {
 		history = get_history_older(hist_type_idx);
 	}
+///
+flf_d_printf("[%s]\n", history);
 	return history;
 }
 
@@ -321,27 +324,23 @@ PRIVATE char *get_history_file_path(int hist_type_idx)
 	const char *file;
 	static char file_path[MAX_PATH_LEN+1];
 
+	dir = get_app_dir();
 	switch(hist_type_idx) {
 	default:
+	case HISTORY_TYPE_IDX_KEYMACRO:
+		file = KEYMACRO_HISTORY_FILE_NAME;
+		break;
 	case HISTORY_TYPE_IDX_SEARCH:
-		dir = get_app_dir();
 		file = SEARCH_HISTORY_FILE_NAME;
 		break;
-	case HISTORY_TYPE_IDX_EXEC:
-		dir = get_app_dir();
-		file = EXEC_HISTORY_FILE_NAME;
-		break;
-	case HISTORY_TYPE_IDX_DIR:
-		dir = get_app_dir();
-		file = DIR_HISTORY_FILE_NAME;
-		break;
 	case HISTORY_TYPE_IDX_CURSPOS:
-		dir = get_app_dir();
 		file = OPENFILE_HISTORY_FILE_NAME;
 		break;
-	case HISTORY_TYPE_IDX_KEYMACRO:
-		dir = get_app_dir();
-		file = KEYMACRO_HISTORY_FILE_NAME;
+	case HISTORY_TYPE_IDX_DIR:
+		file = DIR_HISTORY_FILE_NAME;
+		break;
+	case HISTORY_TYPE_IDX_EXEC:
+		file = EXEC_HISTORY_FILE_NAME;
 		break;
 	case HISTORY_TYPE_IDX_SHELL:
 		dir = get_home_dir();

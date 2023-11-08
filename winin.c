@@ -98,7 +98,7 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 	}
 #ifdef ENABLE_HISTORY
 	if (is_strlen_not_0(input_buf)) {
-		update_history(hist_type_idx, input_buf);
+		update_history(hist_type_idx, input_buf, 0);
 	}
 #endif
 ////flf_d_printf("-9 input_buf:[%s] default__:[%s] ret:%d\n", input_buf, default__, ret);
@@ -265,7 +265,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		if (cmp_func_id(func_id, "do_search_backward_first")
 		 || cmp_func_id(func_id, "do_search_forward_first")
 		 || cmp_func_id(func_id, "do_replace")) {
-			// get string from edit buffer current cursor position
+			// get string from edit buffer's current cursor position
 			if (count_edit_bufs()) {
 				char *line;
 				int byte_idx;

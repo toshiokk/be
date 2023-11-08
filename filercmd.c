@@ -667,6 +667,7 @@ int do_filer_menu_5(void)
 PRIVATE int do_edit_file_(int recursive)
 {
 	int file_idx;
+	int prev_count_edit_bufs = count_edit_bufs();
 
 	if (filer_change_dir_to_cur_sel()) {
 		return 0;
@@ -690,11 +691,34 @@ PRIVATE int do_edit_file_(int recursive)
 	if (get_files_loaded() == 0) {
 		filer_do_next = FILER_DO_REFRESH_FORCE;
 	} else {
+		if (prev_count_edit_bufs == 0) {
+			goto_last_file_line_col_in_loaded();
+		}
 		disp_files_loaded();
 		filer_do_next = FILER_DO_LOADED_FILE;
 	}
 	unselect_all_files_auto(_FILE_SEL_MAN_ | _FILE_SEL_AUTO_);
 ////_D_(bufs_dump_all_bufs(&bufs_top_anchor));
+
+
+	return 0;
+}
+
+int goto_last_file_line_col_in_loaded()
+{
+	char file_path[MAX_PATH_LEN+1];
+	int line_num, col_num;
+
+	get_file_line_col_from_str_null(get_history_newest(HISTORY_TYPE_IDX_CURSPOS, 1),
+	 file_path, &line_num, &col_num);
+	return goto_file_line_col_in_loaded(file_path, line_num, col_num);
+}
+
+int goto_file_line_col_in_loaded(const char *file_path, int line_num, int col_num)
+{
+	if (switch_cep_buf_to_abs_path(file_path)) {
+		return goto_line_col_in_cur_buf(line_num, col_num);
+	}
 	return 0;
 }
 
@@ -780,7 +804,7 @@ int filer_change_dir(const char *dir)
 	strlcpy__(get_cur_filer_view()->cur_dir, chg_dir, MAX_PATH_LEN);
 	get_cur_filer_view()->top_idx = 0;
 #ifdef ENABLE_HISTORY
-	update_history(HISTORY_TYPE_IDX_DIR, chg_dir);
+	update_history(HISTORY_TYPE_IDX_DIR, chg_dir, 0);
 #endif // ENABLE_HISTORY
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	disp_status_bar_done("Changed current directory to [%s]", chg_dir);

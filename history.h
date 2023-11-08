@@ -22,9 +22,9 @@
 #ifndef history_h
 #define history_h
 
-#define HISTORY_TYPE_IDX_SEARCH		0	// app
-#define HISTORY_TYPE_IDX_CURSPOS	1	// app
-#define HISTORY_TYPE_IDX_KEYMACRO	2	// app
+#define HISTORY_TYPE_IDX_KEYMACRO	0	// app
+#define HISTORY_TYPE_IDX_SEARCH		1	// app
+#define HISTORY_TYPE_IDX_CURSPOS	2	// app
 #define HISTORY_TYPE_IDX_DIR		3	// app
 #define HISTORY_TYPE_IDX_EXEC		4	// app
 #define HISTORY_TYPE_IDX_SHELL		5	// shell
@@ -67,7 +67,7 @@ void save_histories(void);
 
 void load_last_searched_needle(void);
 
-void update_history(int hist_type_idx, const char *str);
+void update_history(int hist_type_idx, const char *str, BOOL force_update);
 const char *get_history_newest(int hist_type_idx, int last_n);
 const char *get_history_completion(int hist_type_idx, const char *str);
 const char *search_history_file_path(int hist_type_idx, const char *path);

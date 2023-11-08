@@ -72,7 +72,7 @@ PRIVATE int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_ex
 
 #ifdef ENABLE_HISTORY
 	if (get_fork_exec_counter() == 0) {
-		update_history(HISTORY_TYPE_IDX_EXEC, command);
+		update_history(HISTORY_TYPE_IDX_EXEC, command, 0);
 	}
 #endif // ENABLE_HISTORY
 	return fork_execv(set_term, separate_bef_exec, pause_aft_exec, args);
@@ -141,7 +141,7 @@ PRIVATE void output_exec_args_history(char * const *args)
 			break;
 		concat_file_name_separating_by_space(buffer, MAX_PATH_LEN, arg);
 	}
-	update_history(HISTORY_TYPE_IDX_EXEC, buffer);
+	update_history(HISTORY_TYPE_IDX_EXEC, buffer, 0);
 }
 #endif // ENABLE_HISTORY
 

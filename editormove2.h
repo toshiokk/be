@@ -43,7 +43,7 @@
 	(edit_win_get_text_lines()-1 - EDITOR_VERT_SCROLL_MARGIN_LINES)
 
 #define EDITOR_VERT_SCROLL_LINES						\
-	MIN_MAX_(1, edit_win_get_text_lines() / 2, 50)
+	LIM_MIN(1, edit_win_get_text_lines()-1 - EDITOR_VERT_SCROLL_MARGIN_LINES)
 
 #define HORIZ_SCROLL_MARGIN		5
 

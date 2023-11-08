@@ -458,18 +458,13 @@ PRIVATE key_code_t input_key_timeout(void)
 {
 	key_code_t key;
 #define KEY_WAIT_TIME_USEC		1000000		// return every 1[Sec]
-	long usec_enter;
-
-	usec_enter = get_usec();
+	long usec_enter = get_usec();
 	while ((key = input_key_macro()) < 0) {
 		if (tio_check_update_terminal_size()) {
 			win_reinit_win_size();
-			///win_show_win_size();
 #ifdef ENABLE_HELP
 			disp_splash(0);
-			MSLEEP(1000);
 #endif // ENABLE_HELP
-			update_screen_app(1, 1, 1);
 		}
 		if (get_usec() - usec_enter >= KEY_WAIT_TIME_USEC)
 			break;

@@ -196,24 +196,18 @@ int tio_resume(void)
 
 //-----------------------------------------------------------------------------
 
-int tio_check_update_terminal_size(void)
-{
-	if (tio_check_terminal_resized()) {
-		tio_resize();
-		return 1;
-	}
-	return 0;
-}
-
 // How to know win size changed:
 //  1. signal sigwinch()
 // How to get win size:
 //  1. ioctl TIOCGWINSZ
 //  2. terminal set ("0x1b[999;999R") and get("\x1b[6n") cursor pos.
-int tio_check_terminal_resized(void)
+int tio_check_update_terminal_size(void)
 {
 	if (is_sigwinch_signaled()) {
+///flf_d_printf("cols x rows: %d x %d\n", ioctl_ws_col, ioctl_ws_row);
 		clear_sigwinch_signaled();
+		tio_resize();
+///flf_d_printf("cols x rows: %d x %d\n", tio_get_columns(), tio_get_lines());
 		return 1;
 	}
 	return 0;

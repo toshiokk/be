@@ -148,7 +148,9 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	}
 _FLF_
 	if (count_edit_bufs()) {
-		do_switch_to_top_file();
+		if (goto_last_file_line_col_in_loaded() == 0) {
+			do_switch_to_top_file();
+		}
 		if (start_line_num > 0)
 			goto_line_col_in_cur_buf(start_line_num, 1);
 		disp_files_loaded();
