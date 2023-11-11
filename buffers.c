@@ -85,7 +85,7 @@ void init_buffers(void)
 
 void free_all_buffers(void)
 {
-	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
+///	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
 	bufs_free_all_bufss(&bufs_top_anchor);
 ///	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
 }
@@ -569,13 +569,13 @@ void set_cur_buf_modified(void)
 
 //-----------------------------------------------------------------------------
 
-int do_tog_view_mode(void)
+int doe_tog_view_mode(void)
 {
 	tog_view_mode();
 	SHOW_MODE("View mode", get_str_view_mode());
 	return 0;
 }
-int do_tog_line_wrap_mode(void)
+int doe_tog_line_wrap_mode(void)
 {
 	tog_line_wrap_mode();
 	SHOW_MODE("Line-wrap mode", get_str_line_wrap_mode());
@@ -584,33 +584,33 @@ int do_tog_line_wrap_mode(void)
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
-int do_tog_tab_size(void)
+int doe_tog_tab_size(void)
 {
 	tog_tab_size();
 	SHOW_MODE(_("Tab size"), get_str_tab_size());
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
-int do_inc_tab_size(void)
+int doe_inc_tab_size(void)
 {
 	inc_tab_size();
 	SHOW_MODE(_("Tab size"), get_str_tab_size());
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
-int do_set_nix_file(void)
+int doe_set_nix_file(void)
 {
 	set_nix_file();
 	SHOW_MODE("File format", get_str_eol());
 	return 0;
 }
-int do_set_mac_file(void)
+int doe_set_mac_file(void)
 {
 	set_mac_file();
 	SHOW_MODE("File format", get_str_eol());
 	return 0;
 }
-int do_set_dos_file(void)
+int doe_set_dos_file(void)
 {
 	set_dos_file();
 	SHOW_MODE("File format", get_str_eol());
@@ -618,37 +618,37 @@ int do_set_dos_file(void)
 }
 //-----------------------------------------------------------------------------
 #ifdef USE_NKF
-int do_set_encode_ascii(void)
+int doe_set_encode_ascii(void)
 {
 	set_encode_ascii();
 	SHOW_MODE("ASCII format", get_str_encode_ascii());
 	return 0;
 }
-int do_set_encode_utf8(void)
+int doe_set_encode_utf8(void)
 {
 	set_encode_utf8();
 	SHOW_MODE("UTF-8 format", get_str_encode_utf8());
 	return 0;
 }
-int do_set_encode_eucjp(void)
+int doe_set_encode_eucjp(void)
 {
 	set_encode_eucjp();
 	SHOW_MODE("EUC-JP format", get_str_encode_eucjp());
 	return 0;
 }
-int do_set_encode_sjis(void)
+int doe_set_encode_sjis(void)
 {
 	set_encode_sjis();
 	SHOW_MODE("SJIS format", get_str_encode_sjis());
 	return 0;
 }
-int do_set_encode_jis(void)
+int doe_set_encode_jis(void)
 {
 	set_encode_jis();
 	SHOW_MODE("JIS format", get_str_encode_jis());
 	return 0;
 }
-int do_set_encode_binary(void)
+int doe_set_encode_binary(void)
 {
 	set_encode_binary();
 	SHOW_MODE("BINARY format", get_str_encode_binary());

@@ -527,6 +527,8 @@ PRIVATE void send_attrs_to_term(vscreen_char_t attrs)
 }
 PRIVATE void send_all_off_to_term(void)
 {
+///	send_fgc_to_term(7);
+///	send_bgc_to_term(0);
 	send_printf_to_term("\x1b[0m");
 	attrs_sent = VSCR_CHAR_ATTRS_DEFAULT;
 }

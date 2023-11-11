@@ -90,11 +90,11 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		switch (key_input) {
 		case K_LEFT:
 			group_idx = group_idx - 1;
-			goto do_menu_n_left_right;
+			goto app_menu_n_left_right;
 		case K_RIGHT:
 			group_idx = group_idx + 1;
-			goto do_menu_n_left_right;
-do_menu_n_left_right:;
+			goto app_menu_n_left_right;
+app_menu_n_left_right:;
 			if (group_idx < 0)
 				group_idx = get_func_key_table_from_key_groups() - 1;
 			if (group_idx > get_func_key_table_from_key_groups() - 1)
@@ -104,17 +104,17 @@ do_menu_n_left_right:;
 			break;
 		case K_UP:
 			entry_idx = entry_idx - 1;
-			goto do_menu_n_up_down;
+			goto app_menu_n_up_down;
 		case K_DOWN:
 			entry_idx = entry_idx + 1;
-			goto do_menu_n_up_down;
+			goto app_menu_n_up_down;
 		case K_PPAGE:
 			entry_idx = entry_idx - 5;
-			goto do_menu_n_up_down;
+			goto app_menu_n_up_down;
 		case K_NPAGE:	
 			entry_idx = entry_idx + 5;
-			goto do_menu_n_up_down;
-do_menu_n_up_down:;
+			goto app_menu_n_up_down;
+app_menu_n_up_down:;
 			if (entry_idx < 1)
 				entry_idx = get_func_key_table_from_key_entries(group_idx);
 			if (entry_idx > get_func_key_table_from_key_entries(group_idx))
@@ -420,12 +420,12 @@ flf_d_printf("get_menu_key(%04x)\n", key);
 void set_menu_key_for_do_app_menu_0(void)
 {
 #ifndef ENABLE_FILER
-	set_menu_key(get_key_for_func_id("do_editor_menu_0"));
+	set_menu_key(get_key_for_func_id("doe_editor_menu_0"));
 #else // ENABLE_FILER
 	if (GET_APPMD(app_EDITOR_FILER) == 0)
-		set_menu_key(get_key_for_func_id("do_editor_menu_0"));
+		set_menu_key(get_key_for_func_id("doe_editor_menu_0"));
 	else
-		set_menu_key(get_key_for_func_id("do_filer_menu_0"));
+		set_menu_key(get_key_for_func_id("dof_filer_menu_0"));
 #endif // ENABLE_FILER
 }
 
@@ -495,7 +495,7 @@ PRIVATE key_code_t input_key_bs_del(void)
 	key_code_t key;
 
 	key = tio_input_key();
-	switch(key) {
+	switch (key) {
 	case 0x7f:
 #define MAP_KEY_7F_BS
 #ifdef MAP_KEY_7F_BS
@@ -527,6 +527,8 @@ flf_d_printf("KEY_BACKSPACE ==> DEL\n");
 flf_d_printf("K_DC\n");
 		// Delete(0x0113) key code was seen.
 		SET_APPMD(app_MAP_KEY_7F_BS);	// DEL(0x7f) key code ==> BS
+		break;
+	default:
 		break;
 	}
 	return key;

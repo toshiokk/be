@@ -325,7 +325,7 @@ PRIVATE char *get_history_file_path(int hist_type_idx)
 	static char file_path[MAX_PATH_LEN+1];
 
 	dir = get_app_dir();
-	switch(hist_type_idx) {
+	switch (hist_type_idx) {
 	default:
 	case HISTORY_TYPE_IDX_KEYMACRO:
 		file = KEYMACRO_HISTORY_FILE_NAME;

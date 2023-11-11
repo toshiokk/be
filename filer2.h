@@ -46,28 +46,6 @@ typedef struct {
 	char next_file[MAX_PATH_LEN+1];		// next file to be current after changing dir
 } filer_view_t;
 
-void begin_fork_exec_repeat(void);
-void end_fork_exec_repeat(void);
-
-#define SETTERM0	0
-#define SETTERM1	1		// change terminal settings before executing sub process
-#define SEPARATE0	0
-#define SEPARATE1	1		// output separator line before executing sub process
-#define PAUSE0		0
-#define PAUSE1		1		// pause after execution of sub process
-int fork_exec_once_sh_c(int separate_bef_exec, int pause_aft_exec, const char *command);
-int fork_exec_repeat_sh_c(int separate_bef_exec, const char *command);
-int fork_exec_once(int separate_bef_exec, int pause_aft_exec, ...);
-int fork_exec_repeat(int separate_bef_exec, ...);
-
-void clear_fork_exec_counter(void);
-int get_fork_exec_counter(void);
-int inc_fork_exec_counter(void);
-
-void pause_after_exec(void);
-int restore_term_for_shell(void);
-int reinit_term_for_filer(void);
-
 #ifdef START_UP_TEST
 void test_get_file_size_str(void);
 #endif // START_UP_TEST

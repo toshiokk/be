@@ -27,22 +27,22 @@
 #define RECURSIVE1	1	// Recursive open
 #define RECURSIVE0	0	// Non-recursive open
 
-int do_goto_input_line(void);
-int do_goto_file_in_cur_line(void);
-int do_goto_directory_in_cur_line(void);
+int doe_goto_input_line(void);
+int doe_goto_file_in_cur_line(void);
+int doe_goto_directory_in_cur_line(void);
 
-int do_open_files_in_buf(void);
-int do_switch_to_top_file(void);
-int do_switch_to_bot_file(void);
-int do_switch_to_prev_file(void);
-int do_switch_to_next_file(void);
+int doe_open_files_in_buf(void);
+int doe_switch_to_top_file(void);
+int doe_switch_to_bot_file(void);
+int doe_switch_to_prev_file(void);
+int doe_switch_to_next_file(void);
 #ifdef ENABLE_EXPERIMENTAL
-int do_switch_to_prev_buffers(void);
-int do_switch_to_next_buffers(void);
+int doe_switch_to_prev_buffers(void);
+int doe_switch_to_next_buffers(void);
 #endif // ENABLE_EXPERIMENTAL
-int do_return_to_prev_file_pos(void);
+int doe_return_to_prev_file_pos(void);
 
-int do_switch_editor_pane(void);
+int doe_switch_editor_pane(void);
 void do_switch_editor_pane_(void);
 
 int load_file_in_string(const char *string,

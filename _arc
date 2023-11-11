@@ -1,5 +1,5 @@
 # archive source files
-make clean
+#make clean
 make distclean
 rm -f *.log
 cd ..

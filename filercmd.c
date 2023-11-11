@@ -37,65 +37,63 @@ PRIVATE int filer_change_prev_dir(void);
 
 #define BECMD		"becmd"		// becmd?
 
-int do_top_of_list(void)
+int dof_top_of_list(void)
 {
 	get_cur_filer_view()->cur_sel_idx = 0;
 	return 1;
 }
-int do_bottom_of_list(void)
+int dof_bottom_of_list(void)
 {
 	get_cur_filer_view()->cur_sel_idx = get_cur_filer_view()->file_list_entries-1;
 	return 1;
 }
 
-int do_switch_filer_pane(void)
+int dof_switch_filer_pane(void)
 {
 	set_filer_cur_pane_idx((get_filer_cur_pane_idx() + 1) % FILER_PANES);
-	////set_cur_filer_view();
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 1;
 }
-int do_refresh_filer(void)
+int dof_refresh_filer(void)
 {
 	disp_status_bar_done(_("File view refreshed"));
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 1;
 }
-int do_enter_file(void)
+int dof_enter_file(void)
 {
 	if (filer_change_dir_to_cur_sel()) {
 		return 0;
 	}
 	if (S_ISREG(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st.st_mode)) {
 		if (count_edit_bufs() == 0) {
-			return do_view_file();
+			return dof_view_file();
 		} else {
-			return do_edit_file_non_recursive();
+			return dof_edit_file_non_recursive();
 		}
 	}
 	return 0;
 }
-int do_edit_file(void)
+int dof_edit_file(void)
 {
 	do_edit_file_(RECURSIVE1);
 	return 1;
 }
-int do_edit_file_non_recursive(void)
+int dof_edit_file_non_recursive(void)
 {
 	do_edit_file_(RECURSIVE0);
 	return 1;
 }
-int do_edit_new_file(void)
+int dof_edit_new_file(void)
 {
 	char file_name[MAX_PATH_LEN+1];
 	int ret;
 
 	ret = input_string("", file_name, HISTORY_TYPE_IDX_CURSPOS , _("Edit new file:"));
-///	ret = input_string("", file_name, HISTORY_TYPE_IDX_DIR, _("Edit new file:"));
 
 	if (ret < 0) {
-		// do_edit_new_file -> FILER_DO_ENTERED_DIR_PATH
-		filer_do_next = FILER_DO_ENTERED_DIR_PATH;
+		// dof_edit_new_file -> FILER_DO_ENTER_DIR_PATH
+		filer_do_next = FILER_DO_ENTER_DIR_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -107,10 +105,10 @@ int do_edit_new_file(void)
 		return 0;
 	}
 	disp_files_loaded_ifnon0();
-	filer_do_next = FILER_DO_LOADED_FILE;
+	filer_do_next = FILER_DO_LOAD_FILE;
 	return 1;
 }
-int do_view_file(void)
+int dof_view_file(void)
 {
 	int file_idx;
 	char *file_name;
@@ -119,8 +117,8 @@ int do_view_file(void)
 		return 0;
 	}
 	if (is_app_list_mode()) {
-		// do_view_file -> FILER_DO_ENTERED_FILE
-		filer_do_next = FILER_DO_ENTERED_FILE;
+		// dof_view_file -> FILER_DO_ENTER_FILE
+		filer_do_next = FILER_DO_ENTER_FILE;
 		return 0;
 	}
 	file_idx = get_cur_filer_view()->cur_sel_idx;
@@ -132,7 +130,7 @@ int do_view_file(void)
 	}
 	return 0;
 }
-int do_tail_file(void)	// view file with "tail" command
+int dof_tail_file(void)	// view file with "tail" command
 {
 	int file_idx;
 	char *file_name;
@@ -141,8 +139,8 @@ int do_tail_file(void)	// view file with "tail" command
 		return 0;
 	}
 	if (is_app_list_mode()) {
-		// do_tail_file -> FILER_DO_ENTERED_FILE
-		filer_do_next = FILER_DO_ENTERED_FILE;
+		// dof_tail_file -> FILER_DO_ENTER_FILE
+		filer_do_next = FILER_DO_ENTER_FILE;
 		return 0;
 	}
 	file_idx = get_cur_filer_view()->cur_sel_idx;
@@ -152,7 +150,7 @@ int do_tail_file(void)	// view file with "tail" command
 	}
 	return 0;
 }
-int do_copy_file(void)
+int dof_copy_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
 	int ret;
@@ -164,8 +162,8 @@ int do_copy_file(void)
 	 HISTORY_TYPE_IDX_DIR, _("Copy to:"));
 
 	if (ret < 0) {
-		// do_copy_file -> FILER_DO_ENTERED_FILE
-		filer_do_next = FILER_DO_ENTERED_FILE;
+		// dof_copy_file -> FILER_DO_ENTER_FILE
+		filer_do_next = FILER_DO_ENTER_FILE;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -189,7 +187,7 @@ int do_copy_file(void)
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 0;
 }
-int do_copy_file_update(void)
+int dof_copy_file_update(void)
 {
 	char file_path[MAX_PATH_LEN+1];
 	int ret;
@@ -199,8 +197,8 @@ int do_copy_file_update(void)
 	 HISTORY_TYPE_IDX_DIR, _("Copy to (Update):"));
 
 	if (ret < 0) {
-		// do_copy_file_update -> FILER_DO_ENTERED_FILE
-		filer_do_next = FILER_DO_ENTERED_FILE;
+		// dof_copy_file_update -> FILER_DO_ENTER_FILE
+		filer_do_next = FILER_DO_ENTER_FILE;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -224,7 +222,7 @@ int do_copy_file_update(void)
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 0;
 }
-int do_rename_file(void)
+int dof_rename_file(void)
 {
 	char file_name[MAX_PATH_LEN+1];
 	int ret;
@@ -235,8 +233,8 @@ int do_rename_file(void)
 	ret = input_string(file_name, file_name, HISTORY_TYPE_IDX_EXEC, _("Rename to:"));
 
 	if (ret < 0) {
-		// do_rename_file -> FILER_DO_ENTERED_FILE
-		filer_do_next = FILER_DO_ENTERED_FILE;
+		// dof_rename_file -> FILER_DO_ENTER_FILE
+		filer_do_next = FILER_DO_ENTER_FILE;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -250,7 +248,7 @@ int do_rename_file(void)
 	}
 	return 0;
 }
-int do_move_file(void)
+int dof_move_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
 	int ret;
@@ -260,8 +258,8 @@ int do_move_file(void)
 	 HISTORY_TYPE_IDX_DIR, _("Move to:"));
 
 	if (ret < 0) {
-		// do_move_file -> FILER_DO_ENTERED_FILE
-		filer_do_next = FILER_DO_ENTERED_FILE;
+		// dof_move_file -> FILER_DO_ENTER_FILE
+		filer_do_next = FILER_DO_ENTER_FILE;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -285,7 +283,7 @@ int do_move_file(void)
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 0;
 }
-int do_trash_file(void)
+int dof_trash_file(void)
 {
 	int ret;
 	int file_idx;
@@ -319,7 +317,7 @@ int do_trash_file(void)
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 0;
 }
-int do_delete_file(void)
+int dof_delete_file(void)
 {
 	int ret;
 	int file_idx;
@@ -350,7 +348,7 @@ int do_delete_file(void)
 	}
 	return 0;
 }
-int do_mark_to_delete_file(void)
+int dof_mark_to_delete_file(void)
 {
 	int ret;
 	int file_idx;
@@ -385,7 +383,7 @@ int do_mark_to_delete_file(void)
 	}
 	return 0;
 }
-int do_size_zero_file(void)
+int dof_size_zero_file(void)
 {
 	int ret;
 	int file_idx;
@@ -420,7 +418,7 @@ int do_size_zero_file(void)
 	}
 	return 0;
 }
-int do_find_file(void)
+int dof_find_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
 	int ret;
@@ -428,8 +426,8 @@ int do_find_file(void)
 	ret = input_string("", file_path, HISTORY_TYPE_IDX_DIR, _("Find:"));
 
 	if (ret < 0) {
-		// do_find_file -> FILER_DO_ENTERED_FILE
-		filer_do_next = FILER_DO_ENTERED_FILE;
+		// dof_find_file -> FILER_DO_ENTER_FILE
+		filer_do_next = FILER_DO_ENTER_FILE;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -440,7 +438,7 @@ int do_find_file(void)
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 0;
 }
-int do_make_directory(void)
+int dof_make_directory(void)
 {
 	char file_path[MAX_PATH_LEN+1];
 	int ret;
@@ -448,8 +446,8 @@ int do_make_directory(void)
 	ret = input_string("", file_path, HISTORY_TYPE_IDX_DIR, _("Mkdir:"));
 
 	if (ret < 0) {
-		// do_make_directory -> FILER_DO_ENTERED_DIR_PATH
-		filer_do_next = FILER_DO_ENTERED_DIR_PATH;
+		// dof_make_directory -> FILER_DO_ENTER_DIR_PATH
+		filer_do_next = FILER_DO_ENTER_DIR_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -459,7 +457,7 @@ int do_make_directory(void)
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 0;
 }
-int do_change_directory(void)
+int dof_change_directory(void)
 {
 	char string[MAX_PATH_LEN+1];
 	char file_path[MAX_PATH_LEN+1];
@@ -469,8 +467,8 @@ int do_change_directory(void)
 	get_file_line_col_from_str_null(string, file_path, NULL, NULL);
 
 	if (ret < 0) {
-		// do_change_directory -> FILER_DO_ENTERED_DIR_PATH
-		filer_do_next = FILER_DO_ENTERED_DIR_PATH;
+		// dof_change_directory -> FILER_DO_ENTER_DIR_PATH
+		filer_do_next = FILER_DO_ENTER_DIR_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -479,37 +477,37 @@ int do_change_directory(void)
 	return filer_change_dir_parent(file_path);
 }
 
-int do_parent_directory(void)
+int dof_parent_directory(void)
 {
 	if (filer_change_dir("..") == 0)
 		return 0;
 	separate_dir_and_file(get_cur_filer_view()->cur_dir, get_cur_filer_view()->next_file);
 	return 1;
 }
-int do_beginning_directory(void)
+int dof_beginning_directory(void)
 {
 	return filer_change_dir_if_not_yet(cur_filer_panes->org_cur_dir);
 }
-int do_home_directory(void)
+int dof_home_directory(void)
 {
 	return filer_change_dir_if_not_yet("~");
 }
-int do_root_directory(void)
+int dof_root_directory(void)
 {
 	return filer_change_dir_if_not_yet("/");
 }
-int do_prev_directory(void)
+int dof_prev_directory(void)
 {
 	return filer_change_prev_dir();
 }
-int do_real_path(void)
+int dof_real_path(void)
 {
 	char chg_dir[MAX_PATH_LEN+1];
 
 	return filer_change_dir_if_not_yet(get_cwd(chg_dir));
 }
 //-----------------------------------------------------------------------------
-int do_select_file(void)
+int dof_select_file(void)
 {
 	int files_selected;
 
@@ -527,7 +525,7 @@ int do_select_file(void)
 //	filer_do_next = FILER_DO_UPDATE_SCREEN;
 	return 0;
 }
-int do_select_no_file(void)
+int dof_select_no_file(void)
 {
 	int file_idx;
 
@@ -538,7 +536,7 @@ int do_select_no_file(void)
 //	filer_do_next = FILER_DO_UPDATE_SCREEN;
 	return 0;
 }
-int do_select_all_files(void)
+int dof_select_all_files(void)
 {
 	int file_idx;
 	int files_selected;
@@ -560,51 +558,58 @@ int do_select_all_files(void)
 //	filer_do_next = FILER_DO_UPDATE_SCREEN;
 	return 0;
 }
-int do_quit_filer(void)
+int dof_quit_filer(void)
 {
 	filer_do_next = FILER_DO_QUIT;
 	return 0;
 }
-int do_quit_home_dir(void)
+int dof_quit_home_dir(void)
 {
-	do_home_directory();
-	do_quit_filer();
+	dof_home_directory();
+	dof_quit_filer();
 	return 0;
 }
-int do_filer_tog_show_dot_file(void)
+int dof_tog_show_dot_file(void)
 {
 	do_tog_show_dot_file();
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 0;
 }
-int do_filer_inc_show_file_info(void)
+int dof_inc_show_file_info(void)
 {
 	inc_show_file_info();
 	SHOW_MODE("File information", get_str_show_file_info());
 //	filer_do_next = FILER_DO_UPDATE_SCREEN;
 	return 0;
 }
-int do_filer_inc_sort_by(void)
+int dof_clr_sort_by(void)
 {
-	inc_sort_by();
-	SHOW_MODE("File sort", get_str_sort_by());
+	clr_sort_by();
+	SHOW_MODE("Clear File sort mode", get_str_sort_by());
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 0;
 }
-int do_tog_filer_panes(void)
+int dof_inc_sort_by(void)
+{
+	inc_sort_by();
+	SHOW_MODE("File sort mode", get_str_sort_by());
+	filer_do_next = FILER_DO_REFRESH_FORCE;
+	return 0;
+}
+int dof_tog_panes(void)
 {
 	tog_filer_panes();
 	SHOW_MODE("Filer panes", get_str_filer_panes());
 	filer_do_next = FILER_DO_REFRESH_AUTO;
 	return 0;
 }
-int do_filer_inc_key_list_lines(void)
+int dof_inc_key_list_lines(void)
 {
 	do_inc_key_list_lines_();
 	return 0;
 }
 
-int do_filer_display_color_pairs(void)
+int dof_display_color_pairs(void)
 {
 	display_color_pairs(0, 0);
 	input_key_loop();
@@ -618,7 +623,7 @@ int do_filer_display_color_pairs(void)
 }
 
 #ifdef ENABLE_HELP
-int do_filer_splash(void)
+int dof_filer_splash(void)
 {
 	disp_splash(100);
 	input_key_loop();
@@ -627,12 +632,12 @@ int do_filer_splash(void)
 }
 #endif // ENABLE_HELP
 
-int do_filer_menu_0(void)
+int dof_filer_menu_0(void)
 {
 	filer_menu_n(-1);
 	return 0;
 }
-int do_filer_menu_1(void)
+int dof_filer_menu_1(void)
 {
 	if (is_app_list_mode()) {
 		filer_do_next = FILER_DO_QUIT;
@@ -641,22 +646,22 @@ int do_filer_menu_1(void)
 	filer_menu_n(0);
 	return 0;
 }
-int do_filer_menu_2(void)
+int dof_filer_menu_2(void)
 {
 	filer_menu_n(1);
 	return 0;
 }
-int do_filer_menu_3(void)
+int dof_filer_menu_3(void)
 {
 	filer_menu_n(2);
 	return 0;
 }
-int do_filer_menu_4(void)
+int dof_filer_menu_4(void)
 {
 	filer_menu_n(2);
 	return 0;
 }
-int do_filer_menu_5(void)
+int dof_filer_menu_5(void)
 {
 	filer_menu_n(2);
 	return 0;
@@ -673,8 +678,8 @@ PRIVATE int do_edit_file_(int recursive)
 		return 0;
 	}
 	if (is_app_list_mode()) {
-		// do_edit_file_ -> FILER_DO_ENTERED_FILE
-		filer_do_next = FILER_DO_ENTERED_FILE;
+		// do_edit_file_ -> FILER_DO_ENTER_FILE
+		filer_do_next = FILER_DO_ENTER_FILE;
 		return 0;
 	}
 	clear_files_loaded();
@@ -695,7 +700,7 @@ PRIVATE int do_edit_file_(int recursive)
 			goto_last_file_line_col_in_loaded();
 		}
 		disp_files_loaded();
-		filer_do_next = FILER_DO_LOADED_FILE;
+		filer_do_next = FILER_DO_LOAD_FILE;
 	}
 	unselect_all_files_auto(_FILE_SEL_MAN_ | _FILE_SEL_AUTO_);
 ////_D_(bufs_dump_all_bufs(&bufs_top_anchor));

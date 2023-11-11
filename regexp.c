@@ -613,9 +613,9 @@ PRIVATE char *conv_regex_pcre_to_posix(const char *regexp, char *regex_buf)
 
 	dest = regex_buf;
 	for (src = regexp; *src && (dest - regex_buf < MAX_PATH_LEN-1); src++) {
-		switch(*src) {
+		switch (*src) {
 		case '\\':
-			switch(*(src+1)) {
+			switch (*(src+1)) {
 			case 't':
 				*dest++ = '\t';		// "\t" ==> '\t'
 				src++;

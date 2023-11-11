@@ -66,7 +66,6 @@ _FLF_
 	init_buffers();		// parse_options() needs cep_buf. So do here.
 #ifdef ENABLE_FILER
 	init_filer_panes(&filer_panes, get_start_dir());
-	////set_cur_filer_view();
 #endif // ENABLE_FILER
 _FLF_
 	parse_options(argc, argv);		// parse command line options
@@ -149,7 +148,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 _FLF_
 	if (count_edit_bufs()) {
 		if (goto_last_file_line_col_in_loaded() == 0) {
-			do_switch_to_top_file();
+			doe_switch_to_top_file();
 		}
 		if (start_line_num > 0)
 			goto_line_col_in_cur_buf(start_line_num, 1);
@@ -186,8 +185,8 @@ int app_main_loop(void)
 	}
 #else // ENABLE_FILER
 	if (count_edit_bufs() == 0) {
-		do_switch_to_file_list();
-		do_open_file();
+		doe_switch_to_file_list();
+		doe_open_file();
 	}
 	if (count_edit_bufs()) {
 		call_editor(0, 0);
@@ -876,7 +875,7 @@ void disp_splash(int delay)
 	left_x = (tio_get_columns() - cols) / 2;
 	for (yy = 0; yy < lines; yy++) {
 		for (xx = 0; xx < cols; xx++) {
-			switch(splash_text[yy][xx]) {
+			switch (splash_text[yy][xx]) {
 			default:	tio_set_attrs(CL_CY, CL_BK, 0);		break;
 			case 'F':	tio_set_attrs(CL_BK, CL_GR, 1);		break;
 			case 'B':	tio_set_attrs(CL_BK, CL_RD, 1);		break;

@@ -23,216 +23,6 @@
 
 #ifdef ENABLE_FILER
 
-void begin_fork_exec_repeat(void)
-{
-	restore_term_for_shell();
-	clear_fork_exec_counter();
-	clear_handler_sigint_called();
-}
-void end_fork_exec_repeat(void)
-{
-	pause_after_exec();
-	reinit_term_for_filer();
-}
-
-//-----------------------------------------------------------------------------
-
-#define MAX_EXECV_ARGS		10
-
-PRIVATE int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_exec,
- const char *command);
-PRIVATE int args_from_va_list(char **args, va_list ap);
-PRIVATE int fork_execv_hist(int set_term, int separate_bef_exec, int pause_aft_exec,
- char * const *args);
-#ifdef ENABLE_HISTORY
-PRIVATE void output_exec_args_history(char * const *args);
-#endif // ENABLE_HISTORY
-PRIVATE int fork_execv(int set_term, int separate_bef_exec, int pause_aft_exec,
- char * const args[]);
-
-int fork_exec_once_sh_c(int separate_bef_exec, int pause_aft_exec, const char *command)
-{
-	clear_fork_exec_counter();
-	return fork_exec_sh_c(SETTERM1, separate_bef_exec, pause_aft_exec, command);
-}
-int fork_exec_repeat_sh_c(int separate_bef_exec, const char *command)
-{
-	return fork_exec_sh_c(SETTERM0, separate_bef_exec, PAUSE0, command);
-}
-PRIVATE int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_exec,
- const char *command)
-{
-	char *args[MAX_EXECV_ARGS+1];
-
-	// sh -c "command arg1 arg2 arg3"
-	args[0] = "sh";
-	args[1] = "-c";
-	args[2] = (char *)command;
-	args[3] = NULL;
-
-#ifdef ENABLE_HISTORY
-	if (get_fork_exec_counter() == 0) {
-		update_history(HISTORY_TYPE_IDX_EXEC, command, 0);
-	}
-#endif // ENABLE_HISTORY
-	return fork_execv(set_term, separate_bef_exec, pause_aft_exec, args);
-}
-int fork_exec_once(int separate_bef_exec, int pause_aft_exec, ...)
-{
-	va_list ap;
-	char *args[MAX_EXECV_ARGS+1];
-
-	clear_fork_exec_counter();
-
-	va_start(ap, pause_aft_exec);
-	args_from_va_list(args, ap);
-	va_end(ap);
-
-	return fork_execv_hist(SETTERM1, separate_bef_exec, pause_aft_exec, args);
-}
-int fork_exec_repeat(int separate_bef_exec, ...)
-{
-	va_list ap;
-	char *args[MAX_EXECV_ARGS+1];
-
-	va_start(ap, separate_bef_exec);
-	args_from_va_list(args, ap);
-	va_end(ap);
-
-	return fork_execv_hist(SETTERM0, separate_bef_exec, PAUSE0, args);
-}
-
-// convert va_list to "char *argv[]"
-PRIVATE int args_from_va_list(char **args, va_list ap)
-{
-	int arg_idx;
-
-	for (arg_idx = 0; arg_idx < MAX_EXECV_ARGS; arg_idx++) {
-		args[arg_idx] = va_arg(ap, char *);
-		if (args[arg_idx] == NULL)
-			break;
-	}
-	args[arg_idx] = NULL;
-	return arg_idx;
-}
-
-PRIVATE int fork_execv_hist(int set_term, int separate_bef_exec, int pause_aft_exec,
- char * const *args)
-{
-#ifdef ENABLE_HISTORY
-	if (get_fork_exec_counter() == 0) {
-		output_exec_args_history(args);
-	}
-#endif // ENABLE_HISTORY
-	return fork_execv(set_term, separate_bef_exec, pause_aft_exec, args);
-}
-
-#ifdef ENABLE_HISTORY
-PRIVATE void output_exec_args_history(char * const *args)
-{
-	int arg_idx;
-	const char *arg;
-	char buffer[MAX_PATH_LEN+1];
-
-	buffer[0] = '\0';
-	for (arg_idx = 0; arg_idx < MAX_EXECV_ARGS; arg_idx++) {
-		arg = args[arg_idx];
-		if (arg == NULL)
-			break;
-		concat_file_name_separating_by_space(buffer, MAX_PATH_LEN, arg);
-	}
-	update_history(HISTORY_TYPE_IDX_EXEC, buffer, 0);
-}
-#endif // ENABLE_HISTORY
-
-PRIVATE int fork_execv(int set_term, int separate_bef_exec, int pause_aft_exec,
- char * const args[])
-{
-	pid_t pid;
-	int exit_status;
-	int ret;
-
-	if (set_term && get_fork_exec_counter() == 0) {
-		restore_term_for_shell();
-	}
-	if (separate_bef_exec > 0 && get_fork_exec_counter() == 0) {
-		// output separator line
-		printf("\n-------- command execution started here --------\n");
-		fflush(stdout);
-	}
-
-	exit_status = -10000;
-	if ((pid = fork()) == 0) {
-		signal_clear();
-		init_stderr();
-///flf_d_printf("args[0]: %s\n", args[0]);
-		execvp(args[0], args);
-		exit(-10001);					// execution error
-	} else {
-		for ( ; ; ) {
-			ret = waitpid(pid, &exit_status, 0);
-mflf_d_printf("ret: %d, exit_status: %d\n", ret, exit_status);
-			if (ret != -1)
-				break;
-		}
-	}
-
-	if (pause_aft_exec > 0) {
-		printf("\n\aStatus:%d ", exit_status);
-		pause_after_exec();
-	}
-	if (set_term && get_fork_exec_counter() == 0) {
-		reinit_term_for_filer();
-	}
-	inc_fork_exec_counter();
-	return exit_status;
-}
-
-PRIVATE int fork_exec_counter = 0;
-void clear_fork_exec_counter(void)
-{
-	fork_exec_counter = 0;
-}
-int get_fork_exec_counter(void)
-{
-	return fork_exec_counter;
-}
-int inc_fork_exec_counter(void)
-{
-	return fork_exec_counter++;
-}
-
-void pause_after_exec(void)
-{
-	set_term_raw();
-	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in getchar()
-	getchar();	getchar();	getchar();	getchar();	getchar();
-	getchar();	getchar();	getchar();	getchar();	getchar();
-	fcntl(STDIN_FILENO, F_SETFL, 0);				// block in getchar()
-	printf(
-//12345678901234567890123456789012345678901234567890123456789012345678901234567890
- "======== Hit any key to return to %s ======== ", APP_NAME);
-	fflush(stdout);
-	getchar();
-	printf("\n");
-}
-
-//-----------------------------------------------------------------------------
-int restore_term_for_shell(void)
-{
-	tio_clear_screen();
-	tio_set_cursor_on(1);
-	tio_suspend();
-	signal_fork();
-	return 0;
-}
-int reinit_term_for_filer(void)
-{
-	signal_init();
-	tio_resume();
-	tio_clear_flash_screen(1);
-	return 0;
-}
 //-----------------------------------------------------------------------------
 
 PRIVATE char *get_file_size_str(char *buf_size, loff_t size);
@@ -374,7 +164,7 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	} else {
 		type_str = "?";		// unknown file type
 	}
-	switch(GET_APPMD(fl_SHOW_FILE_INFO)) {
+	switch (GET_APPMD(fl_SHOW_FILE_INFO)) {
 	default:
 	case SHOW_FILE_INFO_0:
 	case SHOW_FILE_INFO_1:
@@ -401,7 +191,7 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 ///flf_d_printf("<%s %s %s %-8s %-8s>\n", buf_size, buf_time, buf_mode,
 /// get_user_name(show_link ? lst_ptr->st_uid : st_ptr->st_uid),
 /// get_group_name(show_link ? lst_ptr->st_gid : st_ptr->st_gid));
-	switch(GET_APPMD(fl_SHOW_FILE_INFO)) {
+	switch (GET_APPMD(fl_SHOW_FILE_INFO)) {
 	default:
 	case SHOW_FILE_INFO_0:
 		snprintf_(buf_info, FILE_INFO_BUF_LEN+1, "%s", " ");
@@ -597,48 +387,58 @@ void free_file_list(filer_view_t *fv)
 
 //-----------------------------------------------------------------------------
 // sort file list
+PRIVATE int comp_file_info(const void *aa, const void *bb);
 PRIVATE int comp_file_name(const void *aa, const void *bb);
 PRIVATE int comp_file_extension(const void *aa, const void *bb);
 PRIVATE int comp_file_time(const void *aa, const void *bb);
 PRIVATE int comp_file_size(const void *aa, const void *bb);
 PRIVATE int comp_file_type(file_info_t *aa, file_info_t *bb);
 PRIVATE int comp_file_executable(file_info_t *aa, file_info_t *bb);
-PRIVATE int get_file_type_no(struct stat *st);
+PRIVATE int get_file_type_no(file_info_t *info);
 PRIVATE int get_file_executable(struct stat *st);
 PRIVATE int strtypecasecmp(const char *s1, const char *s2);
 void sort_file_list(filer_view_t *fv)
 {
-	switch(GET_APPMD(fl_FILE_SORT_BY)) {
-	case FILE_SORT_BY_NAME:
-		qsort(fv->file_list, fv->file_list_entries, sizeof(file_info_t),
-		 comp_file_name);
-		break;
-	case FILE_SORT_BY_EXT:
-		qsort(fv->file_list, fv->file_list_entries, sizeof(file_info_t),
-		 comp_file_extension);
-		break;
-	case FILE_SORT_BY_TIME:
-		qsort(fv->file_list, fv->file_list_entries, sizeof(file_info_t),
-		 comp_file_time);
-		break;
-	case FILE_SORT_BY_SIZE:
-		qsort(fv->file_list, fv->file_list_entries, sizeof(file_info_t),
-		 comp_file_size);
-		break;
-	}
+	qsort(fv->file_list, fv->file_list_entries, sizeof(file_info_t), comp_file_info);
 }
 
 // Comparison functions for file listings ------------------------------------------
 
+PRIVATE int comp_file_info(const void *aa, const void *bb)
+{
+	int ret;
+
+	if ((ret = comp_file_type((file_info_t *)aa, (file_info_t *)bb)) != 0) {
+		return ret;
+	}
+	if (get_file_type_no((file_info_t *)aa) <= 1) {
+		// always sort directory in forward order by name
+		return comp_file_name(aa, bb);
+	}
+	switch (GET_APPMD(fl_FILE_SORT_BY)) {
+	default:
+	case FILE_SORT_BY_NAME:
+		 return comp_file_name(aa, bb);
+	case FILE_SORT_BY_NAME_REV:
+		 return - comp_file_name(aa, bb);
+	case FILE_SORT_BY_EXT:
+		 return comp_file_extension(aa, bb);
+	case FILE_SORT_BY_EXT_REV:
+		 return - comp_file_extension(aa, bb);
+	case FILE_SORT_BY_TIME:
+		 return comp_file_time(aa, bb);
+	case FILE_SORT_BY_TIME_REV:
+		 return - comp_file_time(aa, bb);
+	case FILE_SORT_BY_SIZE:
+		 return comp_file_size(aa, bb);
+	case FILE_SORT_BY_SIZE_REV:
+		 return - comp_file_size(aa, bb);
+	}
+}
 // sort directories before files,
 // sort by file name.
 PRIVATE int comp_file_name(const void *aa, const void *bb)
 {
-	int ret;
-
-	if ((ret = comp_file_type((file_info_t *)aa, (file_info_t *)bb)) != 0)
-		return ret;
-
 	return strtypecasecmp(((file_info_t *)aa)->file_name, ((file_info_t *)bb)->file_name);
 }
 // sort directories before files,
@@ -648,11 +448,8 @@ PRIVATE int comp_file_extension(const void *aa, const void *bb)
 {
 	int ret;
 
-	if ((ret = comp_file_type((file_info_t *)aa, (file_info_t *)bb)) != 0)
-		return ret;
 	if ((ret = comp_file_executable((file_info_t *)aa, (file_info_t *)bb)) != 0)
 		return ret;
-
 	if ((ret = strcmp(get_file_name_extension(((file_info_t *)aa)->file_name),
 	 get_file_name_extension(((file_info_t *)bb)->file_name))) != 0)
 		return ret;
@@ -662,22 +459,12 @@ PRIVATE int comp_file_extension(const void *aa, const void *bb)
 // and then by modification time stamp.
 PRIVATE int comp_file_time(const void *aa, const void *bb)
 {
-	int ret;
-
-	if ((ret = comp_file_type((file_info_t *)aa, (file_info_t *)bb)) != 0)
-		return ret;
-
 	return ((file_info_t *)aa)->st.st_mtime - ((file_info_t *)bb)->st.st_mtime;
 }
 // sort directories before files,
 // and then by file size.
 PRIVATE int comp_file_size(const void *aa, const void *bb)
 {
-	int ret;
-
-	if ((ret = comp_file_type((file_info_t *)aa, (file_info_t *)bb)) != 0)
-		return ret;
-
 	return ((file_info_t *)aa)->st.st_size - ((file_info_t *)bb)->st.st_size;
 }
 // compare file type
@@ -686,8 +473,8 @@ PRIVATE int comp_file_type(file_info_t *aa, file_info_t *bb)
 	int file_type_a;
 	int file_type_b;
 
-	file_type_a = get_file_type_no(&aa->st);
-	file_type_b = get_file_type_no(&bb->st);
+	file_type_a = get_file_type_no(aa);
+	file_type_b = get_file_type_no(bb);
 	return file_type_a - file_type_b;
 }
 // sort executable files before non-executables
@@ -701,22 +488,26 @@ PRIVATE int comp_file_executable(file_info_t *aa, file_info_t *bb)
 	return file_type_a - file_type_b;
 }
 // rank by file type
-PRIVATE int get_file_type_no(struct stat *st)
+PRIVATE int get_file_type_no(file_info_t *info)
 {
-	if (S_ISDIR(st->st_mode))
-		return 1;
-	if (S_ISLNK(st->st_mode))
-		return 2;
-	if (S_ISFIFO(st->st_mode))
+	if (S_ISDIR(info->st.st_mode)) {
+		if (strcmp(info->file_name, "..") == 0)
+			return 1;
+		else
+			return 2;
+	}
+	if (S_ISLNK(info->st.st_mode))
 		return 3;
-	if (S_ISSOCK(st->st_mode))
+	if (S_ISFIFO(info->st.st_mode))
 		return 4;
-	if (S_ISCHR(st->st_mode))
+	if (S_ISSOCK(info->st.st_mode))
 		return 5;
-	if (S_ISBLK(st->st_mode))
-		return 5;
-	if (S_ISREG(st->st_mode))
+	if (S_ISCHR(info->st.st_mode))
+		return 6;
+	if (S_ISBLK(info->st.st_mode))
 		return 7;
+	if (S_ISREG(info->st.st_mode))
+		return 8;
 	return 0;
 }
 PRIVATE int get_file_executable(struct stat *st)

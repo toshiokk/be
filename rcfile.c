@@ -383,7 +383,7 @@ PRIVATE int parse_color_syntax(void)
 		if (SKIP_SPACE(rc_line_ptr))
 			break;
 ///flf_d_printf("parsing: %s", rc_line_ptr);
-		switch(*rc_line_ptr) {
+		switch (*rc_line_ptr) {
 		case '<':
 			rc_line_ptr++;
 			if (parse_string(regexp_start, MAX_REGEXP_LEN))
@@ -463,7 +463,7 @@ PRIVATE int parse_bgc_fgc(int *bgc, int *fgc)
 		if (SKIP_SPACE(rc_line_ptr))
 			break;
 ///flf_d_printf("parsing: %s", rc_line_ptr);
-		switch(*rc_line_ptr) {
+		switch (*rc_line_ptr) {
 		case '-':
 			rc_line_ptr++;
 			parse_color_name(&bright, bgc);

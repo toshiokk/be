@@ -69,13 +69,13 @@ char *conv_esc_str(char *string)
 
 	dest = buf;
 	for (src = string; *src; src++) {
-		switch(*src) {
+		switch (*src) {
 		case '\\':
-			switch(*(src+1)) {
+			switch (*(src+1)) {
 			case 'a':
 			case 't':
 			case 'r':
-				switch(*(src+1)) {
+				switch (*(src+1)) {
 				case 'a':
 					*dest = '\a';
 					break;
@@ -645,7 +645,7 @@ char is_quoted(const char *str, char quote_chr)
 char *select_plural_form(char *singular, char *plural, char *type3, char *type4, int number)
 {
 ////flf_d_printf("number:%d ==> plural_form_index:%d\n", number, get_plural_form_index(number));
-	switch(get_plural_form_index(number)) {
+	switch (get_plural_form_index(number)) {
 	default:
 	case 0:
 		return singular;
@@ -749,7 +749,7 @@ int get_plural_form_index(int number)
 ////flf_d_printf("cur_lang:[%s] ==> cur_lang_idx:%d\n", cur_lang, cur_lang_idx);
 	}
 
-	switch(cur_lang_idx) {
+	switch (cur_lang_idx) {
 	default:
 	case LANG_EN:
 	case LANG_DE:

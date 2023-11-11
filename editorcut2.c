@@ -99,7 +99,7 @@ void setup_cut_region_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 //
 PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move_t cursor_move)
 {
-	switch(CUR_EBUF_STATE(buf_CUT_MODE)) {
+	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
 		break;
@@ -175,7 +175,7 @@ PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 ///			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_N_LINE;
 		} else {
 			// the same line, different column
-			switch(CUR_EBUF_STATE(buf_CUT_MODE)) {
+			switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 			default:
 			case CUT_MODE_0_LINE:
 			case CUT_MODE_N_LINE:
@@ -198,7 +198,7 @@ PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 			}
 		}
 	}
-	switch(CUR_EBUF_STATE(buf_CUT_MODE)) {
+	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
@@ -212,7 +212,7 @@ PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 		// different line, the same column
 		if (col_idx_from_byte_idx(mark_min_line->data, 0, mark_min_byte_idx)
 		 == col_idx_from_byte_idx(mark_max_line->data, 0, mark_max_byte_idx)) {
-			switch(CUR_EBUF_STATE(buf_CUT_MODE)) {
+			switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 			default:
 			case CUT_MODE_0_LINE:
 			case CUT_MODE_N_LINE:
@@ -239,7 +239,7 @@ void setup_cut_region(void)
 	int mark_min_line_col_idx;
 	int mark_max_line_col_idx;
 
-	switch(CUR_EBUF_STATE(buf_CUT_MODE)) {
+	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
@@ -323,7 +323,7 @@ void setup_cut_region(void)
 	}
 
 	// setup mark_min_col_idx, mark_max_col_idx
-	switch(CUR_EBUF_STATE(buf_CUT_MODE)) {
+	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
@@ -368,7 +368,7 @@ int is_there_cut_region(void)
 int lines_selected(void)
 {
 	int lines = abs(CEPB_ML->line_num - CEPBV_CL->line_num);
-	switch(CUR_EBUF_STATE(buf_CUT_MODE)) {
+	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:

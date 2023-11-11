@@ -112,6 +112,8 @@ void tio_test(void)
 			break;
 		case 'q':
 			break;
+		default:
+			break;
 		}
 		if (key == 'q')
 			break;
@@ -423,7 +425,7 @@ int differ_fgc_to_bgc(int bgc, int fgc)
 	if (fgc == bgc) {
 		// select different color as foreground color with background color
 		// so that you can recognize character
-		switch(fgc) {
+		switch (fgc) {
 		default:
 		case CL_BK:		fgc = CL_DGY;	break;
 		case CL_RD:		fgc = CL_LRD;	break;

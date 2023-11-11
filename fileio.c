@@ -259,7 +259,7 @@ PRIVATE int load_fp_into_cur_buf(FILE *fp)
 	fgetc_buffered_clear();
 	for ( ; ; ) {
 		chr_int = fgetc_buffered(fp);
-		switch(chr_int) {
+		switch (chr_int) {
 		case '\n':
 			if (prev_chr == '\r') {
 				file_format_idx = 2;	// LF after CR (DOS format)
@@ -295,7 +295,8 @@ append_line:;
 		if (chr_int == EOF)
 			break;
 	}
-	switch(file_format_idx) {
+	switch (file_format_idx) {
+	default:
 	case 0:
 		set_eol(EOL_NIX);
 		break;

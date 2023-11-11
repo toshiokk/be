@@ -36,42 +36,46 @@ int call_editor(int push_win, int list_mode);
 
 //-----------------------------------------------------------------------------
 
-int do_open_file(void);
-int do_open_new_file(void);
-int do_open_proj_file(void);
-int do_reopen_file_last_line(void);
-int do_reopen_file(void);
+int doe_open_file(void);
+int doe_open_new_file(void);
+int doe_open_proj_file(void);
+int doe_reopen_file_last_line(void);
+int doe_reopen_file(void);
 
-int do_write_file_to(void);
-int do_write_file_ask(void);
-int do_write_file_always(void);
-int do_write_all_ask(void);
-int do_write_all_modified(void);
+int doe_write_file_to(void);
+int doe_write_file_ask(void);
+int doe_write_file_always(void);
+int doe_write_all_ask(void);
+int doe_write_all_modified(void);
 
-int do_close_file_ask(void);
-int do_close_all_ask(void);
-int do_close_all_modified(void);
+int doe_close_file_ask(void);
+int doe_close_all_ask(void);
+int doe_close_all_modified(void);
 
-int do_read_file_into_cur_pos(void);
+int doe_read_file_into_cur_pos(void);
+
+//-----------------------------------------------------------------------------
+
+int doe_run_line_soon(void);
 
 //-----------------------------------------------------------------------------
 
 #ifdef ENABLE_HELP
-int do_editor_splash(void);
+int doe_editor_splash(void);
 #endif // ENABLE_HELP
 
-int do_editor_display_color_pairs(void);
+int doe_display_color_pairs(void);
 
-int do_editor_menu_0(void);
-int do_editor_menu_1(void);
-int do_editor_menu_2(void);
-int do_editor_menu_3(void);
-int do_editor_menu_4(void);
-int do_editor_menu_5(void);
-int do_editor_menu_6(void);
-int do_editor_menu_7(void);
-int do_editor_menu_8(void);
-int do_editor_menu_9(void);
+int doe_editor_menu_0(void);
+int doe_editor_menu_1(void);
+int doe_editor_menu_2(void);
+int doe_editor_menu_3(void);
+int doe_editor_menu_4(void);
+int doe_editor_menu_5(void);
+int doe_editor_menu_6(void);
+int doe_editor_menu_7(void);
+int doe_editor_menu_8(void);
+int doe_editor_menu_9(void);
 
 typedef enum {
 	NO_CLOSE_AFTER_SAVE_0,	// 0: File will be kept opened.
@@ -85,7 +89,7 @@ int close_all_not_modified(void);
 int close_all();
 int write_file_ask(int yes, close_after_save_t close);
 
-int do_editor_inc_key_list_lines(void);
+int doe_inc_key_list_lines(void);
 
 void win_push_win_size(void);
 void win_pop_win_size(void);

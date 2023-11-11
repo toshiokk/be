@@ -34,7 +34,7 @@ PRIVATE void goto_pos_by_history(const char *full_path);
 
 // 123
 // file.ext:123:45
-int do_goto_input_line(void)
+int doe_goto_input_line(void)
 {
 	char string[MAX_PATH_LEN+1];
 	int ret;
@@ -61,7 +61,7 @@ int do_goto_input_line(void)
 	return 1;
 }
 // do_tag_jump() and change directory
-int do_goto_file_in_cur_line(void)
+int doe_goto_file_in_cur_line(void)
 {
 	char dir_save[MAX_PATH_LEN+1];
 	int ret;
@@ -76,7 +76,7 @@ int do_goto_file_in_cur_line(void)
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
 }
-int do_goto_directory_in_cur_line(void)
+int doe_goto_directory_in_cur_line(void)
 {
 #ifdef ENABLE_FILER
 	char file_path[MAX_PATH_LEN+1];
@@ -87,7 +87,7 @@ int do_goto_directory_in_cur_line(void)
 #endif // ENABLE_FILER
 }
 
-int do_open_files_in_buf(void)
+int doe_open_files_in_buf(void)
 {
 	clear_files_loaded();
 	load_files_in_cur_buf();
@@ -96,7 +96,7 @@ int do_open_files_in_buf(void)
 	return 0;
 }
 //-----------------------------------------------------------------------------
-int do_switch_to_top_file(void)
+int doe_switch_to_top_file(void)
 {
 	if (switch_cep_buf_to_top() == 0) {
 		return 0;
@@ -104,7 +104,7 @@ int do_switch_to_top_file(void)
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
-int do_switch_to_bot_file(void)
+int doe_switch_to_bot_file(void)
 {
 	if (switch_cep_buf_to_bot() == 0) {
 		return 0;
@@ -113,7 +113,7 @@ int do_switch_to_bot_file(void)
 	return 1;
 }
 //-----------------------------------------------------------------------------
-int do_switch_to_prev_file(void)
+int doe_switch_to_prev_file(void)
 {
 	int ret;
 
@@ -125,7 +125,7 @@ int do_switch_to_prev_file(void)
 	disp_status_bar_done(_("Previous file"));
 	return ret;
 }
-int do_switch_to_next_file(void)
+int doe_switch_to_next_file(void)
 {
 	int ret;
 
@@ -138,7 +138,7 @@ int do_switch_to_next_file(void)
 	return ret;
 }
 #ifdef ENABLE_EXPERIMENTAL
-int do_switch_to_prev_buffers(void)
+int doe_switch_to_prev_buffers(void)
 {
 	be_bufs_t *bufs = get_bufs_contains_buf(&bufs_top_anchor, get_cep_buf());
 	if (IS_NODE_TOP(bufs))
@@ -150,7 +150,7 @@ flf_d_printf("NODE_PREV(bufs)->cur_buf->name: %s\n", NODE_PREV(bufs)->cur_buf->f
 	post_cmd_processing(CEPBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
-int do_switch_to_next_buffers(void)
+int doe_switch_to_next_buffers(void)
 {
 	be_bufs_t *bufs = get_bufs_contains_buf(&bufs_top_anchor, get_cep_buf());
 	if (IS_NODE_BOT(bufs))
@@ -164,17 +164,17 @@ flf_d_printf("NODE_NEXT(bufs)->cur_buf->name: %s\n", NODE_NEXT(bufs)->cur_buf->f
 }
 #endif // ENABLE_EXPERIMENTAL
 //-----------------------------------------------------------------------------
-int do_return_to_prev_file_pos(void)
+int doe_return_to_prev_file_pos(void)
 {
 	recall_cur_file_pos_null(NULL);
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
-	do_refresh_editor();
+	doe_refresh_editor();
 	disp_status_bar_done(_("Returned to previous pos"));
 	return 1;
 }
 //-----------------------------------------------------------------------------
-int do_switch_editor_pane(void)
+int doe_switch_editor_pane(void)
 {
 	do_switch_editor_pane_();
 ///_FLF_

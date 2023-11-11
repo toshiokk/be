@@ -21,7 +21,7 @@
 
 #include "headers.h"
 
-int do_switch_to_file_list(void)
+int doe_switch_to_file_list(void)
 {
 	be_buf_t *prev_cur_edit_buf;
 	be_line_t *line_to_go = NULL;
@@ -81,12 +81,12 @@ void make_help_buf(int help_idx);
 void make_help_key_list(void);
 void make_help_func_list(void);
 
-int do_switch_to_key_list(void)
+int doe_switch_to_key_list(void)
 {
 	make_help_buf_call_editor(HELP_BUF_IDX_KEY_LIST);
 	return 1;
 }
-int do_switch_to_func_list(void)
+int doe_switch_to_func_list(void)
 {
 	make_help_buf_call_editor(HELP_BUF_IDX_FUNC_LIST);
 	return 1;
@@ -100,7 +100,8 @@ int make_help_buf_call_editor(int help_idx)
 	make_help_buf(HELP_BUF_IDX_FUNC_LIST);
 
 	set_cep_buf(get_help_buf(help_idx));
-	switch(help_idx) {
+	switch (help_idx) {
+	default:
 	case HELP_BUF_IDX_KEY_LIST:
 		disp_status_bar_done(_("Key List"));
 		break;
@@ -119,7 +120,8 @@ void make_help_buf(int help_idx)
 	be_buf_t *buf = get_help_buf(help_idx);
 	set_cep_buf(buf);
 	buf_free_lines(buf);
-	switch(help_idx) {
+	switch (help_idx) {
+	default:
 	case HELP_BUF_IDX_KEY_LIST:
 		make_help_key_list();
 		break;

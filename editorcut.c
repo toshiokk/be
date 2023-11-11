@@ -57,13 +57,13 @@ PRIVATE int paste_cut_buf_char(void);
 PRIVATE int paste_cut_buf_line(void);
 PRIVATE int paste_cut_buf_rect(void);
 
-int do_clear_cut_buf(void)
+int doe_clear_cut_buf(void)
 {
 	free_all_cut_bufs();
 	disp_status_bar_done(_("Cut-buffer cleared"));
 	return 1;
 }
-int do_pop_cut_buf(void)
+int doe_pop_cut_buf(void)
 {
 	if (pop_cut_buf() == 0) {
 		disp_status_bar_err(_("Cut-buffer empty !!"));
@@ -73,39 +73,39 @@ int do_pop_cut_buf(void)
 	return 1;
 }
 
-int do_select_all_lines(void)
+int doe_select_all_lines(void)
 {
-	do_first_line();
-	do_start_of_line();
+	doe_first_line();
+	doe_start_of_line();
 
 	do_set_mark();
 
-	do_last_line();
-	do_end_of_line();
+	doe_last_line();
+	doe_end_of_line();
 	return 1;
 }
 
-int do_cut_to_head(void)
+int doe_cut_to_head(void)
 {
 	do_set_mark();
-	do_start_of_line();
-	do_cut_text();
+	doe_start_of_line();
+	doe_cut_text();
 
 	disp_status_bar_done(_("Cut to line head"));
 	return 1;
 }
-int do_cut_to_tail(void)
+int doe_cut_to_tail(void)
 {
 	set_disabled_update_min_text_x_to_keep();	// avoid contents jump around
 	do_set_mark();
-	do_end_of_line();
-	do_cut_text();
+	doe_end_of_line();
+	doe_cut_text();
 
 	disp_status_bar_done(_("Cut to line tail"));
 	return 1;
 }
 
-int do_tog_mark(void)
+int doe_tog_mark(void)
 {
 	if (IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
 		// no mark set ==> set mark
@@ -145,7 +145,7 @@ void do_clear_mark_(void)
 	setup_cut_region();
 }
 
-int do_copy_text(void)
+int doe_copy_text(void)
 {
 	if (copy_delete_paste_pop(CDPP_COPY) <= 0) {
 		return 0;
@@ -155,7 +155,7 @@ int do_copy_text(void)
 	return 1;
 }
 
-int do_delete_text(void)
+int doe_delete_text(void)
 {
 	if (copy_delete_paste_pop(CDPP_DELETE) <= 0) {
 		return 0;
@@ -164,7 +164,7 @@ int do_delete_text(void)
 	return 1;
 }
 
-int do_cut_text(void)
+int doe_cut_text(void)
 {
 	if (copy_delete_paste_pop(CDPP_CUT) <= 0) {
 		return 0;
@@ -173,7 +173,7 @@ int do_cut_text(void)
 	return 1;
 }
 
-int do_duplicate_text(void)
+int doe_duplicate_text(void)
 {
 	if (copy_delete_paste_pop(CDPP_DUPLICATE | CDPP_POP) <= 0) {
 		return 0;
@@ -182,7 +182,7 @@ int do_duplicate_text(void)
 	return 1;
 }
 
-int do_paste_text_with_pop(void)
+int doe_paste_text_with_pop(void)
 {
 	if (copy_delete_paste_pop(
 	 IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE)) == 0
@@ -192,7 +192,7 @@ int do_paste_text_with_pop(void)
 	disp_status_bar_done(_("Text Pasted with popping Cut-buffer"));
 	return 1;
 }
-int do_paste_text_without_pop(void)
+int doe_paste_text_without_pop(void)
 {
 	if (copy_delete_paste_pop(
 	 IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE)) == 0
@@ -267,7 +267,7 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 	clear_disabled_update_min_text_x_to_keep();
 
 	if (cp_del_paste_pop & CDPP_REPLACE) {
-		switch(CUR_CBUF_STATE(buf_CUT_MODE)) {
+		switch (CUR_CBUF_STATE(buf_CUT_MODE)) {
 		default:
 		case CUT_MODE_0_LINE:
 			post_cmd_processing(top_line, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
@@ -300,7 +300,7 @@ PRIVATE int copy_text_to_cut_buf(void)
 {
 	int char_cut;
 
-	switch(CUR_EBUF_STATE(buf_CUT_MODE)) {
+	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
@@ -308,7 +308,7 @@ PRIVATE int copy_text_to_cut_buf(void)
 	case CUT_MODE_VH_CHAR:
 	case CUT_MODE_V_LINE:
 	case CUT_MODE_HV_LINE:
-		switch(CUR_EBUF_STATE(buf_CUT_MODE)) {
+		switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 		default:
 		case CUT_MODE_0_LINE:
 		case CUT_MODE_N_LINE:
@@ -342,7 +342,7 @@ PRIVATE int copy_text_to_cut_buf(void)
 PRIVATE int delete_text_in_cut_region(void)
 {
 	set_cur_buf_modified();
-	switch(CUR_EBUF_STATE(buf_CUT_MODE)) {
+	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
@@ -365,7 +365,7 @@ PRIVATE int delete_text_in_cut_region(void)
 }
 PRIVATE int paste_text_from_cut_buf(void)
 {
-	switch(CUR_CBUF_STATE(buf_CUT_MODE)) {
+	switch (CUR_CBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_H_CHAR:
 	case CUT_MODE_VH_CHAR:

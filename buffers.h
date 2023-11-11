@@ -276,21 +276,21 @@ const char *get_str_encode(void);
 
 void set_cur_buf_modified(void);
 
-int do_tog_view_mode(void);
-int do_tog_line_wrap_mode(void);
-int do_tog_tab_size(void);
-int do_inc_tab_size(void);
-int do_set_nix_file(void);
-int do_set_mac_file(void);
-int do_set_dos_file(void);
+int doe_tog_view_mode(void);
+int doe_tog_line_wrap_mode(void);
+int doe_tog_tab_size(void);
+int doe_inc_tab_size(void);
+int doe_set_nix_file(void);
+int doe_set_mac_file(void);
+int doe_set_dos_file(void);
 
 #ifdef USE_NKF
-int do_set_encode_ascii(void);
-int do_set_encode_utf8(void);
-int do_set_encode_eucjp(void);
-int do_set_encode_sjis(void);
-int do_set_encode_jis(void);
-int do_set_encode_binary(void);
+int doe_set_encode_ascii(void);
+int doe_set_encode_utf8(void);
+int doe_set_encode_eucjp(void);
+int doe_set_encode_sjis(void);
+int doe_set_encode_jis(void);
+int doe_set_encode_binary(void);
 #endif // USE_NKF
 
 //-----------------------------------------------------------------------------

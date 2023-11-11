@@ -196,15 +196,17 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 			e_printf("Terminal I/O not initialized !! ");
 			e_vprintf(msg, ap);
 		} else {
-			set_color_by_idx(color_idx, 0);
+			set_color_by_idx(color_idx, 1);
 			blank_status_bar();
+			// display 1st half
 			main_win_output_string(main_win_get_bottom_win_y() + STATUS_LINE, 0, buffer, -1);
 			if (divisor > 0) {
 				// display percent indicator "bar"
 				col_idx = 1 + (main_win_get_columns()-2) * dividend / divisor;
 				// col_idx: 1 -- main_win_get_columns()-1
 				byte_idx = byte_idx_from_col_idx(buffer, col_idx, CHAR_RIGHT, &col_idx);
-				set_color_by_idx(color_idx, 1);
+				set_color_by_idx(color_idx, 0);
+				// display 2nd half
 				main_win_output_string(main_win_get_bottom_win_y() + STATUS_LINE, col_idx,
 				 &buffer[byte_idx], -1);
 			}

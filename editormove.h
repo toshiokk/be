@@ -22,34 +22,34 @@
 #ifndef editormove_h
 #define editormove_h
 
-int do_left(void);
-int do_right(void);
+int doe_left(void);
+int doe_right(void);
 
-int do_start_of_line(void);
-int do_end_of_line(void);
+int doe_start_of_line(void);
+int doe_end_of_line(void);
 
-int do_up(void);
-int do_down(void);
-int do_page_up(void);
-int do_page_down(void);
+int doe_up(void);
+int doe_down(void);
+int doe_page_up(void);
+int doe_page_down(void);
 
-int do_prev_word(void);
-int do_next_word(void);
-int do_first_line(void);
-int do_last_line(void);
-int do_control_code(void);
-int do_charcode(void);
-int do_paste_history(void);
+int doe_prev_word(void);
+int doe_next_word(void);
+int doe_first_line(void);
+int doe_last_line(void);
+int doe_control_code(void);
+int doe_charcode(void);
+int doe_paste_history(void);
 
-int do_tab(void);
+int doe_tab(void);
 int do_enter_char(char chr);
 int do_enter_char_send(void);
-int do_carriage_return(void);
-int do_backspace(void);
-int do_delete_char(void);
-int do_conv_upp_low_letter(void);
+int doe_carriage_return(void);
+int doe_backspace(void);
+int doe_delete_char(void);
+int doe_conv_upp_low_letter(void);
 
-int do_refresh_editor(void);
+int doe_refresh_editor(void);
 
 int move_cursor_left(int move_disp_y);
 int move_cursor_right(void);

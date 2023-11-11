@@ -24,18 +24,42 @@
 
 #ifdef ENABLE_FILER
 
-int do_run_line(void);
-int do_exec_command_with_file(void);
-int do_exec_command_with_files(void);
-int do_run_command_rel(void);
-int do_run_command_abs(void);
-int do_run_command_src_dst(void);
-int do_run_command_sh(void);
+int dof_exec_command_with_file(void);
+int dof_exec_command_with_files(void);
+int dof_run_command_rel(void);
+int dof_run_command_abs(void);
+int dof_run_command_src_dst(void);
+int dof_run_command_sh(void);
+int dof_run_command_soon(void);
 
-int do_filer_cmd_1(void);
-int do_filer_cmd_2(void);
-int do_filer_cmd_3(void);
-int do_filer_cmd_4(void);
+int dof_filer_cmd_1(void);
+int dof_filer_cmd_2(void);
+int dof_filer_cmd_3(void);
+int dof_filer_cmd_4(void);
+
+//-----------------------------------------------------------------------------
+
+void begin_fork_exec_repeat(void);
+void end_fork_exec_repeat(void);
+
+#define SETTERM0	0
+#define SETTERM1	1		// change terminal settings before executing sub process
+#define SEPARATE0	0
+#define SEPARATE1	1		// output separator line before executing sub process
+#define PAUSE0		0
+#define PAUSE1		1		// pause after execution of sub process
+int fork_exec_once_sh_c(int separate_bef_exec, int pause_aft_exec, const char *command);
+int fork_exec_repeat_sh_c(int separate_bef_exec, const char *command);
+int fork_exec_once(int separate_bef_exec, int pause_aft_exec, ...);
+int fork_exec_repeat(int separate_bef_exec, ...);
+
+void clear_fork_exec_counter(void);
+int get_fork_exec_counter(void);
+int inc_fork_exec_counter(void);
+
+void pause_after_exec(void);
+int restore_term_for_shell(void);
+int reinit_term_for_filer(void);
 
 #endif // ENABLE_FILER
 

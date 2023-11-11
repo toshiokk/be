@@ -35,27 +35,27 @@ void save_key_macro(void)
 //-----------------------------------------------------------------------------
 
 // start/abort recording
-int do_start_rec__cancel_rec(void)
+int doe_start_rec__cancel_rec(void)
 {
 	if (key_macro_is_recording() == 0)
-		do_start_recording();
+		doe_start_recording();
 	else
-		do_cancel_recording();
+		doe_cancel_recording();
 	return 0;
 }
 // end recording/start playback
-int do_end_rec__playback(void)
+int doe_end_rec__playback(void)
 {
 	if (key_macro_is_recording()) {
-		do_end_recording();
+		doe_end_recording();
 	} else {
-		do_playback();
+		doe_playback();
 	}
 	return 0;
 }
 //-----------------------------------------------------------------------------
 PRIVATE int start_playback_last_n(int last_n);
-int do_start_recording(void)
+int doe_start_recording(void)
 {
 	disp_status_bar_done(_("Start key macro recording"));
 	key_macro_start_recording();
@@ -64,7 +64,7 @@ int do_start_recording(void)
 	tio_refresh();
 	return 0;
 }
-int do_cancel_recording(void)
+int doe_cancel_recording(void)
 {
 	disp_status_bar_done(_("Cancel key macro recording"));
 	key_macro_cancel_recording();
@@ -73,7 +73,7 @@ int do_cancel_recording(void)
 	tio_refresh();
 	return 0;
 }
-int do_end_recording(void)
+int doe_end_recording(void)
 {
 	disp_status_bar_done(_("End key macro recording"));
 	key_macro_end_recording();
@@ -87,7 +87,7 @@ int do_end_recording(void)
 	tio_refresh();
 	return 0;
 }
-int do_playback(void)
+int doe_playback(void)
 {
 	if (key_macro_start_playback() == 0) {
 		disp_status_bar_done(_("No key macro recorded"));
@@ -96,12 +96,12 @@ int do_playback(void)
 	}
 	return 0;
 }
-int do_playback_last_1(void)
+int doe_playback_last_1(void)
 {
 	start_playback_last_n(1);
 	return 0;
 }
-int do_playback_last_2(void)
+int doe_playback_last_2(void)
 {
 	start_playback_last_n(2);
 	return 0;

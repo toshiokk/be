@@ -49,8 +49,8 @@ void undo_set_region(be_line_t *min_line, be_line_t *max_line, int cut_buf_lines
 void undo_adjust_max_line(void);
 void undo_save_before_change(void);
 void undo_save_after_change(void);
-int do_undo(void);
-int do_redo(void);
+int doe_undo(void);
+int doe_redo(void);
 
 //-----------------------------------------------------------------------------
 

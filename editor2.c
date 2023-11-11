@@ -107,11 +107,11 @@ void disp_editor_title_bar(void)
 	 get_editor_cur_pane_idx()+1, separator_char, buf_idx+1,
 	 (path[0] == '\0') ? _("New File") : path);
 	if (CUR_EBUF_STATE(buf_MODIFIED)) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[Modified] "));
+		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[Mod] "));
 	} else if (CUR_EBUF_STATE(buf_VIEW_MODE)) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[VIEW mode] "));
+		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[VM] "));
 	} else if (is_st_writable(&get_cep_buf()->orig_file_stat) == 0) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[WRITE-PROTECTED] "));
+		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[WP] "));
 	}
 
 	//-------------------------------------------------------------------------
@@ -381,7 +381,7 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 	 && (mark_min_line->line_num <= line->line_num
 	  && line->line_num <= mark_max_line->line_num)) {
 		// this line is at least partially selected
-		switch(CUR_EBUF_STATE(buf_CUT_MODE)) {
+		switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 		default:
 		case CUT_MODE_0_LINE:
 			break;

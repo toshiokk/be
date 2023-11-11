@@ -30,10 +30,10 @@ PRIVATE top_bottom_of_file_t top_bottom_of_file = 0;
 
 //-----------------------------------------------------------------------------
 
-int do_left(void)
+int doe_left(void)
 {
 	if (is_app_list_mode()) {
-		return do_page_up();
+		return doe_page_up();
 	}
 	move_cursor_left(1);
 
@@ -41,10 +41,10 @@ int do_left(void)
 	return 1;
 }
 
-int do_right(void)
+int doe_right(void)
 {
 	if (is_app_list_mode()) {
-		return do_page_down();
+		return doe_page_down();
 	}
 	move_cursor_right();
 
@@ -66,7 +66,7 @@ PRIVATE int get_char_type(char chr)
 }
 
 // go to previous word
-int do_prev_word(void)
+int doe_prev_word(void)
 {
 	if (CEPBV_CLBI > 0) {
 		// is head of the word ?
@@ -91,7 +91,7 @@ int do_prev_word(void)
 	return 0;
 }
 // go to next word
-int do_next_word(void)
+int doe_next_word(void)
 {
 	int chr_type;
 
@@ -111,7 +111,7 @@ int do_next_word(void)
 	return 0;
 }
 
-int do_start_of_line(void)
+int doe_start_of_line(void)
 {
 	CEPBV_CLBI = 0;
 
@@ -119,7 +119,7 @@ int do_start_of_line(void)
 	return 1;
 }
 
-int do_end_of_line(void)
+int doe_end_of_line(void)
 {
 	CEPBV_CLBI = line_data_len(CEPBV_CL);
 
@@ -130,7 +130,7 @@ int do_end_of_line(void)
 //-----------------------------------------------------------------------------
 
 PRIVATE void do_up_(void);
-int do_up(void)
+int doe_up(void)
 {
 	if (GET_APPMD(ed_DUAL_SCROLL) == 0) {
 		do_up_();
@@ -153,7 +153,7 @@ PRIVATE void do_up_(void)
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 PRIVATE void do_down_(void);
-int do_down(void)
+int doe_down(void)
 {
 	if (GET_APPMD(ed_DUAL_SCROLL) == 0) {
 		do_down_();
@@ -177,7 +177,7 @@ PRIVATE void do_down_(void)
 }
 
 PRIVATE void do_page_up_(void);
-int do_page_up(void)
+int doe_page_up(void)
 {
 	if (GET_APPMD(ed_DUAL_SCROLL) == 0) {
 		do_page_up_();
@@ -217,7 +217,7 @@ PRIVATE void do_page_up_(void)
 }
 
 PRIVATE int do_page_down_(void);
-int do_page_down(void)
+int doe_page_down(void)
 {
 	if (GET_APPMD(ed_DUAL_SCROLL) == 0) {
 		do_page_down_();
@@ -257,13 +257,13 @@ PRIVATE int do_page_down_(void)
 	return 1;
 }
 
-int do_first_line(void)
+int doe_first_line(void)
 {
 	first_line();
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_TOP, UPDATE_SCRN_ALL);
 	return 1;
 }
-int do_last_line(void)
+int doe_last_line(void)
 {
 	CEPBV_CL = CUR_EDIT_BUF_BOT_NODE;
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_BOTTOM, UPDATE_SCRN_ALL);
@@ -272,7 +272,7 @@ int do_last_line(void)
 
 PRIVATE int do_enter_utf8s(const char *utf8s);
 PRIVATE int do_enter_utf8c(const char *utf8c);
-int do_control_code(void)
+int doe_control_code(void)
 {
 	key_code_t key;
 
@@ -286,7 +286,7 @@ int do_control_code(void)
 	}
 	return 1;
 }
-int do_charcode(void)
+int doe_charcode(void)
 {
 	char string[MAX_PATH_LEN+1];
 	int ret;
@@ -320,7 +320,7 @@ int do_charcode(void)
 	return 0;
 }
 
-int do_paste_history(void)
+int doe_paste_history(void)
 {
 	char string[MAX_PATH_LEN+1];
 	int ret;
@@ -342,7 +342,7 @@ int do_paste_history(void)
 	return 0;
 }
 
-int do_tab(void)
+int doe_tab(void)
 {
 	return do_enter_char('\t');
 }
@@ -433,12 +433,11 @@ flf_d_printf("[%s]\n", utf8c);
 	return 1;
 }
 
-int do_carriage_return(void)
+int doe_carriage_return(void)
 {
 	const char *ptr_s, *ptr_d;
 	int len_s, len_d;
 
-///_FLF_
 	do_clear_mark_();
 	if (is_app_list_mode()) {
 		editor_quit = EDITOR_QUIT;
@@ -479,7 +478,7 @@ int do_carriage_return(void)
 	return 1;
 }
 
-int do_backspace(void)
+int doe_backspace(void)
 {
 	int bytes;
 
@@ -517,7 +516,7 @@ int do_backspace(void)
 	return 1;
 }
 
-int do_delete_char(void)
+int doe_delete_char(void)
 {
 	int bytes;
 
@@ -563,7 +562,7 @@ int do_delete_char(void)
 	return 1;
 }
 
-int do_conv_upp_low_letter(void)
+int doe_conv_upp_low_letter(void)
 {
 	int byte_idx;
 	char *data;
@@ -597,7 +596,7 @@ int do_conv_upp_low_letter(void)
 
 //-----------------------------------------------------------------------------
 
-int do_refresh_editor(void)
+int doe_refresh_editor(void)
 {
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;

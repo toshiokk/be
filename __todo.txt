@@ -1,16 +1,11 @@
 #### BE-editor to do list
 
-[ ] go back to the last cursor pos. in the last file.
-
 #### thinking
 - Which is the better practice
 	1. strict type specification uint8_t, int8_t, int16_t, int32_t
 	2. vague type specification unsigned char, char ...
 	3. typedef char color_idx, items_idx, ...
 	May be 3. is the better.
-
-### Highlight only current cursor position's peer of brackets in first-highlight-color.
-    Highlight not-current-peer in second-hightlight-color.
 
 ### Reconsideration of editor/filer 2 panes:
   Editor 2 panes
@@ -22,13 +17,16 @@
   Buffer has 2 views which is referenced from editor 2 panes
     - each view has current position in buffer
 
+[v] Highlight only current cursor position's peer of brackets in first-highlight-color.
+  [v] Highlight not-current-peer in second-hightlight-color.
+[v] go back to the last cursor pos. in the last file.
 [v] limit current y position of editor screen on resize window
 [v] directory invert search direction on Key B and F.
 [v] line tail indicator when line shift
 [v] If not-modified in write_file_modified, clear [Modified] flag.
 [ ] Check object copy
 [v] Write Node policy
-[ ] Adopt Node policy
+[v] Adopt Node policy
 
 [v] Do not update file_open_history if current line not changed
 [v] Draw cursor off
@@ -66,7 +64,7 @@
                   terminal display capability.
 
 [x]#bot_anchor
-[]avoid cur_line became wild pointer
+[v]avoid cur_line became wild pointer
 
 Editor 2 pane mode
   initialize
@@ -80,7 +78,7 @@ Editor 2 pane mode
   close
     selected-pane	chose valid-buffer before unlink	chose valid-buffer before unlink
 
-[]switch 1 pane when entering list-mode
+[v]switch 1 pane when entering list-mode
 
 [v]Undo後にカーソルが変更か所に移動しない。
 []M-z (reopen_file) bug

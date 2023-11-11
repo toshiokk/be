@@ -167,7 +167,6 @@ int call_filer(int push_win, int list_mode,
 		win_push_win_size();
 
 		prev_fps = inherit_filer_panes(&next_filer_panes);
-		////set_cur_filer_view();
 	}
 
 	memcpy(&appmode_save, &app_mode__, sizeof(app_mode__));
@@ -189,7 +188,6 @@ flf_d_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 
 	if (push_win) {
 		free_filer_panes(&next_filer_panes, prev_fps);
-		////set_cur_filer_view();
 		change_cur_dir(get_cur_filer_view()->cur_dir);
 
 		win_pop_win_size();
@@ -271,10 +269,10 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			 get_cur_filer_view()->file_list_entries-1);
 			break;
 		case K_HOME:
-			do_top_of_list();
+			dof_top_of_list();
 			break;
 		case K_END:
-			do_bottom_of_list();
+			dof_bottom_of_list();
 			break;
 		case K_ESC:
 			filer_do_next = FILER_DO_ABORT;
@@ -297,6 +295,7 @@ flf_d_printf("CALL_FILER_FUNC [%s]\n", func_key_table->func_id);
 					//=========================
 					(*func_key_table->func)();			// call function
 					//=========================
+flf_d_printf("filer_do_next: %d\n", filer_do_next);
 				}
 				unselect_all_files_auto(_FILE_SEL_AUTO_);
 			}
@@ -310,17 +309,17 @@ flf_d_printf("CALL_FILER_FUNC [%s]\n", func_key_table->func_id);
 flf_d_printf("filer_do_next: %d\n", filer_do_next);
 	strcpy__(file_path, "");
 	if (filer_do_next == FILER_DO_ABORT) {
-		return -1;		// aborted
+		return -1;		// abort
 	}
 	if (filer_do_next == FILER_DO_QUIT) {
-		return 0;		// quitted
+		return 0;		// quit
 	}
-	if (filer_do_next == FILER_DO_ENTERED_FILE
-	 || filer_do_next == FILER_DO_ENTERED_FILE_PATH) {
+	if (filer_do_next == FILER_DO_ENTER_FILE
+	 || filer_do_next == FILER_DO_ENTER_FILE_PATH) {
 		for (file_idx = select_and_get_first_file_idx_selected();
 		 file_idx >= 0;
 		 file_idx = get_next_file_idx_selected(file_idx)) {
-			if (filer_do_next == FILER_DO_ENTERED_FILE) {
+			if (filer_do_next == FILER_DO_ENTER_FILE) {
 				// file-1 "file name 2" "file name 3"
 				concat_file_name_separating_by_space(file_path, buf_len,
 				 get_cur_filer_view()->file_list[file_idx].file_name);
@@ -335,11 +334,11 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 			}
 		}
 	}
-	if (filer_do_next == FILER_DO_ENTERED_DIR_PATH) {
+	if (filer_do_next == FILER_DO_ENTER_DIR_PATH) {
 		strlcpy__(file_path, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
 	}
 flf_d_printf("[%s]\n", file_path);
-	return 1;		// file or dir is entered
+	return 1;		// files or dirs are entered
 }
 
 PRIVATE int check_filer_cur_dir(void)
@@ -349,7 +348,7 @@ PRIVATE int check_filer_cur_dir(void)
 		// current directory is not readable or disappeared
 		while (is_dir_readable(get_cur_filer_view()->cur_dir) == 0) {
 			// go up to the root dir
-			do_parent_directory();
+			dof_parent_directory();
 ///			if (strcmp(get_cur_filer_view()->cur_dir, get_cur_filer_view()->next_file) == 0)
 ///				break;		// the same dir
 		}
@@ -580,35 +579,35 @@ PRIVATE void disp_key_list_filer(void)
  "{Menu}  {Edit } {Copy } {CpyUd} {Renam}  {Move } {Delet} {MkDel} {MkDir} "
  " {ChDir} {Exec } {Run  } {Home }",
 
- "<do_quit_filer>Quit "
- "<do_edit_file>Edit "
- "<do_edit_new_file>EditNewFile "
- "<do_copy_file>Copy "
- "<do_copy_file_update>UpdateCopy "
- "<do_rename_file>Rename "
- "<do_move_file>Move "
- "<do_trash_file>Trash "
- "<do_delete_file>Delete "
- "<do_mark_to_delete_file>MarkToDelete "
- "<do_exec_command_with_file>Exec "
- "<do_run_command_rel>Run "
- "<do_select_file>SelectFile "
- "<do_select_no_file>SelNoFile "
- "<do_select_all_files>SelAllFiles ",
+ "<dof_quit_filer>Quit "
+ "<dof_edit_file>Edit "
+ "<dof_edit_new_file>EditNewFile "
+ "<dof_copy_file>Copy "
+ "<dof_copy_file_update>UpdateCopy "
+ "<dof_rename_file>Rename "
+ "<dof_move_file>Move "
+ "<dof_trash_file>Trash "
+ "<dof_delete_file>Delete "
+ "<dof_mark_to_delete_file>MarkToDelete "
+ "<dof_exec_command_with_file>Exec "
+ "<dof_run_command_rel>Run "
+ "<dof_select_file>SelectFile "
+ "<dof_select_no_file>SelNoFile "
+ "<dof_select_all_files>SelAllFiles ",
 
- "<do_home_directory>HomeDir "
- "<do_root_directory>RootDir "
- "<do_change_directory>ChgDir "
- "<do_parent_directory>ParentDir "
- "<do_enter_file>Pager/EnterDir "
- "<do_make_directory>MkDir "
- "<do_tog_filer_panes>TwoPane "
- "<do_switch_filer_pane>SwPane "
- "<do_filer_inc_sort_by>Sort "
- "<do_filer_inc_show_file_info>Info "
- "<do_refresh_filer>Refresh "
- "<do_filer_tog_show_dot_file>ShowDotFile "
- "<do_find_file>FindFile ",
+ "<dof_home_directory>HomeDir "
+ "<dof_root_directory>RootDir "
+ "<dof_change_directory>ChgDir "
+ "<dof_parent_directory>ParentDir "
+ "<dof_enter_file>Pager/EnterDir "
+ "<dof_make_directory>MkDir "
+ "<dof_tog_panes>TwoPane "
+ "<dof_switch_filer_pane>SwPane "
+ "<dof_inc_sort_by>Sort "
+ "<dof_inc_show_file_info>Info "
+ "<dof_refresh_filer>Refresh "
+ "<dof_tog_show_dot_file>ShowDotFile "
+ "<dof_find_file>FindFile ",
 	};
 	disp_key_list(filer_key_lists);
 }

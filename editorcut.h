@@ -22,25 +22,25 @@
 #ifndef editorcut_h
 #define editorcut_h
 
-int do_clear_cut_buf(void);
-int do_pop_cut_buf(void);
+int doe_clear_cut_buf(void);
+int doe_pop_cut_buf(void);
 
-int do_select_all_lines(void);
-int do_copy_text(void);
-int do_cut_to_head(void);
-int do_cut_to_tail(void);
+int doe_select_all_lines(void);
+int doe_copy_text(void);
+int doe_cut_to_head(void);
+int doe_cut_to_tail(void);
 
-int do_tog_mark(void);
+int doe_tog_mark(void);
 int do_set_mark(void);
 void do_set_mark_(void);
 int do_clear_mark(void);
 void do_clear_mark_(void);
 
-int do_delete_text(void);
-int do_cut_text(void);
-int do_duplicate_text(void);
-int do_paste_text_with_pop(void);
-int do_paste_text_without_pop(void);
+int doe_delete_text(void);
+int doe_cut_text(void);
+int doe_duplicate_text(void);
+int doe_paste_text_with_pop(void);
+int doe_paste_text_without_pop(void);
 
 #endif // editorcut_h
 

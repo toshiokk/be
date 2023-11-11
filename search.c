@@ -34,7 +34,7 @@ PRIVATE int byte_idx_of_prev_search = 0;
 PRIVATE int input_search_str(int search0_replace1, char *input_buf);
 PRIVATE int input_replace_str(char *input_buf);
 
-int do_search_backward_first(void)
+int doe_search_backward_first(void)
 {
 	char needle[MAX_PATH_LEN+1];
 
@@ -48,7 +48,7 @@ int do_search_backward_first(void)
 	TOGGLE_APPMD(ed_REVERSE_SEARCH);
 	return search_string_once(needle, 0);
 }
-int do_search_forward_first(void)
+int doe_search_forward_first(void)
 {
 	char needle[MAX_PATH_LEN+1];
 
@@ -62,12 +62,12 @@ int do_search_forward_first(void)
 	TOGGLE_APPMD(ed_REVERSE_SEARCH);
 	return search_string_once(needle, 0);
 }
-int do_search_backward_next(void)
+int doe_search_backward_next(void)
 {
 	SET_APPMD(ed_REVERSE_SEARCH);
 	return search_string_once(last_searched_needle, 1);
 }
-int do_search_forward_next(void)
+int doe_search_forward_next(void)
 {
 	CLR_APPMD(ed_REVERSE_SEARCH);
 	return search_string_once(last_searched_needle, 1);
@@ -80,7 +80,7 @@ int do_search_forward_next(void)
 //  on reverse search, top of the first file ==> end of the last file
 
 // Replace a string
-int do_replace(void)
+int doe_replace(void)
 {
 	char replace_from[MAX_PATH_LEN+1];
 	char replace_to[MAX_PATH_LEN+1];
@@ -356,14 +356,14 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 #ifdef ENABLE_UNDO
 		} else if (ret == ANSWER_UNDO) {
 			// undo replace
-			do_undo();
+			doe_undo();
 			num_replaced--;
 			num_undone++;
 			skip_here = NO_SKIP_HERE;
 			continue;
 		} else if (ret == ANSWER_REDO) {
 			// redo replace
-			do_redo();
+			doe_redo();
 			num_undone--;
 			num_replaced++;
 			skip_here = NO_SKIP_HERE;
@@ -432,19 +432,19 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair);
 //  ((((((((((((((((((((((((((((((((((((((((((((((((((
 //  (((((((((((((((((((((((((((((((((((((((((((((((((((
 // }}{{{ }}}{{ >><<< >>><<
-int do_find_bracket(void)
+int doe_find_bracket(void)
 {
 	return do_find_bracket_(1, FORWARD_SEARCH);
 }
-int do_find_bracket_reverse(void)
+int doe_find_bracket_reverse(void)
 {
 	return do_find_bracket_(1, BACKWARD_SEARCH);
 }
-int do_highlight_bracket(void)
+int doe_highlight_bracket(void)
 {
 	return do_find_bracket_(0, FORWARD_DIR);
 }
-int do_highlight_bracket_reverse(void)
+int doe_highlight_bracket_reverse(void)
 {
 	return do_find_bracket_(0, BACKWARD_DIR);
 }

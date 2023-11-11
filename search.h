@@ -27,19 +27,19 @@ extern char last_searched_needle[MAX_PATH_LEN+1];
 extern search_t search__;
 extern matches_t matches__;
 
-int do_search_backward_first(void);
-int do_search_forward_first(void);
-int do_search_backward_next(void);
-int do_search_forward_next(void);
+int doe_search_backward_first(void);
+int doe_search_forward_first(void);
+int doe_search_backward_next(void);
+int doe_search_forward_next(void);
 
-int do_replace(void);
+int doe_replace(void);
 
 #ifdef ENABLE_REGEX
 
-int do_find_bracket(void);
-int do_find_bracket_reverse(void);
-int do_highlight_bracket(void);
-int do_highlight_bracket_reverse(void);
+int doe_find_bracket(void);
+int doe_find_bracket_reverse(void);
+int doe_highlight_bracket(void);
+int doe_highlight_bracket_reverse(void);
 #define BRACKET_SEARCH_REGEXP_STR_LEN	4	// "[<>]"
 #define MAX_BRACKET_NESTINGS	1000
 #define MAX_BRACKETS_SEARCH		10000	// for avoiding infinite loop

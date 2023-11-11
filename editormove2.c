@@ -35,6 +35,7 @@ int post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_m
  locate_cursor_to_t locate_cursor, int update_needed)
 {
 	switch (GET_APPMD(ed_CURS_POSITIONING)) {
+	default:
 	case CURS_POSITIONING_NONE:		break;
 	case CURS_POSITIONING_TOP:		locate_cursor = LOCATE_CURS_TOP;		break;
 	case CURS_POSITIONING_CENTER:	locate_cursor = LOCATE_CURS_CENTER;		break;
@@ -72,7 +73,7 @@ void locate_cursor_in_edit_win(locate_cursor_to_t locate_curs)
 {
 	int disp_y_preferred;
 
-	switch(locate_curs) {
+	switch (locate_curs) {
 	default:
 	case LOCATE_CURS_NONE:
 		disp_y_preferred = CEPBV_CURSOR_Y;
@@ -90,7 +91,7 @@ void locate_cursor_in_edit_win(locate_cursor_to_t locate_curs)
 		} else {
 			// Case-B: current line is out of previous screen
 			// LOCATE_CURS_CENTER
-			switch(locate_curs) {
+			switch (locate_curs) {
 			default:
 			case LOCATE_CURS_JUMP_BACKWARD:	// 2 line upper than center
 				disp_y_preferred = edit_win_get_text_lines() / 2 - 2;

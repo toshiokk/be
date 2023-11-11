@@ -148,39 +148,39 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 ////flf_d_printf("func_id:[%s]\n", func_id);
 		}
 		if (key_input == K_ESC || key_input == K_M_ESC
-		 || cmp_func_id(func_id, "do_close_file_ask")
-		 || cmp_func_id(func_id, "do_close_all_ask")) {
+		 || cmp_func_id(func_id, "doe_close_file_ask")
+		 || cmp_func_id(func_id, "doe_close_all_ask")) {
 			strcpy__(input_buf, "");
 			key_input = K_ESC;
 		} else
 		if (key_input == K_C_M || key_input == K_ENTER) {
 			key_input = K_C_M;
 		} else
-		if (cmp_func_id(func_id, "do_left")) {
+		if (cmp_func_id(func_id, "doe_left")) {
 			// cursor left
 			if (cursor_byte_idx > 0) {
 				bytes = utf8c_prev_bytes(input_buf, &input_buf[cursor_byte_idx]);
 				cursor_byte_idx -= bytes;
 			}
 		} else
-		if (cmp_func_id(func_id, "do_right")) {
+		if (cmp_func_id(func_id, "doe_right")) {
 			// cursor right
 			if (cursor_byte_idx < strnlen(input_buf, MAX_PATH_LEN)) {
 				bytes = utf8c_bytes(&input_buf[cursor_byte_idx]);
 				cursor_byte_idx += bytes;
 			}
 		} else
-		if (cmp_func_id(func_id, "do_start_of_line")
-		 || cmp_func_id(func_id, "do_prev_word")) {
+		if (cmp_func_id(func_id, "doe_start_of_line")
+		 || cmp_func_id(func_id, "doe_prev_word")) {
 			// goto line head
 			cursor_byte_idx = 0;
 		} else
-		if (cmp_func_id(func_id, "do_end_of_line")
-		 || cmp_func_id(func_id, "do_next_word")) {
+		if (cmp_func_id(func_id, "doe_end_of_line")
+		 || cmp_func_id(func_id, "doe_next_word")) {
 			// goto line tail
 			cursor_byte_idx = strnlen(input_buf, MAX_PATH_LEN);
 		} else
-		if (cmp_func_id(func_id, "do_backspace")
+		if (cmp_func_id(func_id, "doe_backspace")
 		 || (key_input == K_BS)) {
 			// backspace
 			if (cursor_byte_idx > 0) {
@@ -189,7 +189,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 				delete_str(input_buf, cursor_byte_idx, bytes);
 			}
 		} else
-		if (cmp_func_id(func_id, "do_delete_char")
+		if (cmp_func_id(func_id, "doe_delete_char")
 		 || (key_input == K_DEL)) {
 			// delete
 			if (cursor_byte_idx < strnlen(input_buf, MAX_PATH_LEN)) {
@@ -197,29 +197,29 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 				delete_str(input_buf, cursor_byte_idx, bytes);
 			}
 		} else
-		if (cmp_func_id(func_id, "do_cut_to_head")) {
+		if (cmp_func_id(func_id, "doe_cut_to_head")) {
 			// cut to line head
 			strcut__(cut_buf, MAX_PATH_LEN, input_buf, 0, cursor_byte_idx);
 			delete_str(input_buf, 0, cursor_byte_idx);
 			cursor_byte_idx = 0;
 		} else
-		if (cmp_func_id(func_id, "do_cut_text")) {
+		if (cmp_func_id(func_id, "doe_cut_text")) {
 			// cut line
 			strlcpy__(cut_buf, input_buf, MAX_PATH_LEN);
 			strcpy(input_buf, "");
 			cursor_byte_idx = 0;
 		} else
-		if (cmp_func_id(func_id, "do_cut_to_tail")) {
+		if (cmp_func_id(func_id, "doe_cut_to_tail")) {
 			// cut to line tail
 			strcut__(cut_buf, MAX_PATH_LEN,
 			 input_buf, cursor_byte_idx, strnlen(input_buf, MAX_PATH_LEN));
 			delete_str(input_buf, cursor_byte_idx, strnlen(input_buf, MAX_PATH_LEN) - cursor_byte_idx);
 		} else
-		if (cmp_func_id(func_id, "do_copy_text")) {
+		if (cmp_func_id(func_id, "doe_copy_text")) {
 			// copy to the cut buffer
 			strlcpy__(cut_buf, input_buf, MAX_PATH_LEN);
 		} else
-		if (cmp_func_id(func_id, "do_paste_text_with_pop")) {
+		if (cmp_func_id(func_id, "doe_paste_text_with_pop")) {
 			// paste from the cut buffer
 			insert_str(input_buf, MAX_PATH_LEN, cursor_byte_idx, cut_buf, -1);
 #ifdef ENABLE_HISTORY
@@ -230,12 +230,14 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			 MAX_PATH_LEN);
 			cursor_byte_idx = strnlen(input_buf, MAX_PATH_LEN);
 		} else
-		if (cmp_func_id(func_id, "do_up")
-		 || cmp_func_id(func_id, "do_page_up")
-		 || cmp_func_id(func_id, "do_first_line")) {
+		if (cmp_func_id(func_id, "doe_up")
+		 || cmp_func_id(func_id, "doe_page_up")
+		 || cmp_func_id(func_id, "doe_first_line")) {
+			//----------------------------------------------------
 			ret = select_from_history_list(hist_type_idx, buffer);
+			//----------------------------------------------------
 			if (ret > 0) {
-				if (cmp_func_id(func_id, "do_up")) {
+				if (cmp_func_id(func_id, "doe_up")) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
@@ -246,13 +248,15 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 #endif // ENABLE_HISTORY
 #ifdef ENABLE_FILER
 		} else
-		if (cmp_func_id(func_id, "do_down")
-		 || cmp_func_id(func_id, "do_page_down")
-		 || cmp_func_id(func_id, "do_last_line")) {
+		if (cmp_func_id(func_id, "doe_down")
+		 || cmp_func_id(func_id, "doe_page_down")
+		 || cmp_func_id(func_id, "doe_last_line")) {
+			//---------------------------------------------------
 			ret = call_filer(1, 1, "", "", buffer, MAX_PATH_LEN);
+			//---------------------------------------------------
 			if (ret > 0) {
 ////flf_d_printf("[%s]\n", buffer);
-				if (cmp_func_id(func_id, "do_down")) {
+				if (cmp_func_id(func_id, "doe_down")) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
@@ -262,9 +266,9 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			}
 #endif // ENABLE_FILER
 		} else
-		if (cmp_func_id(func_id, "do_search_backward_first")
-		 || cmp_func_id(func_id, "do_search_forward_first")
-		 || cmp_func_id(func_id, "do_replace")) {
+		if (cmp_func_id(func_id, "doe_search_backward_first")
+		 || cmp_func_id(func_id, "doe_search_forward_first")
+		 || cmp_func_id(func_id, "doe_replace")) {
 			// get string from edit buffer's current cursor position
 			if (count_edit_bufs()) {
 				char *line;
@@ -466,10 +470,10 @@ int ask_yes_no(int flags, const char *msg, ...)
 		else if ((flags & ASK_ALL) && strchr__(chars_all, key_input) != NULL)
 			answer = ANSWER_ALL;
 		else if ((flags & ASK_BACKWARD) && (strchr__(chars_backward, key_input) != NULL)
-		 || cmp_func_id(func_id, "do_search_backward_next"))
+		 || cmp_func_id(func_id, "doe_search_backward_next"))
 			answer = ANSWER_BACKWARD;
 		else if ((flags & ASK_FORWARD) && (strchr__(chars_forward, key_input) != NULL)
-		 || cmp_func_id(func_id, "do_search_forward_next"))
+		 || cmp_func_id(func_id, "doe_search_forward_next"))
 			answer = ANSWER_FORWARD;
 		else if (strchr__(chars_cancel, key_input) != NULL)
 			answer = ANSWER_CANCEL;

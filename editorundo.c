@@ -202,7 +202,7 @@ PRIVATE be_line_t *restore_region_from_buffer(undo0_redo1_t undo0_redo1);
 PRIVATE be_line_t *delete_region_in_buf(be_buf_t *buf);
 PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf);
 
-int do_undo(void)
+int doe_undo(void)
 {
 	do_clear_mark_();
 	if (count_undo_bufs() < 2) {
@@ -211,7 +211,7 @@ int do_undo(void)
 	}
 	return do_undo_redo_(UNDO0);
 }
-int do_redo(void)
+int doe_redo(void)
 {
 	do_clear_mark_();
 	if (count_redo_bufs() < 2) {

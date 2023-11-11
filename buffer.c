@@ -263,7 +263,7 @@ int buf_is_orig_file_updated(be_buf_t *buf)
 //-----------------------------------------------------------------------------
 const char *buf_eol_str(be_buf_t *buf)
 {
-	switch(BUF_STATE(buf, buf_EOL)) {
+	switch (BUF_STATE(buf, buf_EOL)) {
 	default:
 	case EOL_NIX:
 		return "LF(NIX)";		/*"NIX"*/;
@@ -276,7 +276,7 @@ const char *buf_eol_str(be_buf_t *buf)
 const char *buf_encode_str(be_buf_t *buf)
 {
 #ifdef USE_NKF
-	switch(BUF_STATE(buf, buf_ENCODE)) {
+	switch (BUF_STATE(buf, buf_ENCODE)) {
 	default:
 	case ENCODE_ASCII:		return "ASCII";
 	case ENCODE_UTF8:		return "UTF8";
@@ -293,7 +293,7 @@ const char *buf_cut_mode_str(be_buf_t *buf)
 {
 	char *ptr;
 
-	switch(BUF_STATE(buf, buf_CUT_MODE)) {
+	switch (BUF_STATE(buf, buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:	ptr = "  ";			break;
 	case CUT_MODE_N_LINE:	ptr = "M ";			break;
@@ -413,13 +413,13 @@ be_bufs_t *bufs_free_all_bufss(be_bufs_t *bufs)
 		flf_d_printf("bufs: %s\n", bufs->name);
 		for ( ; ; ) {
 			be_buf_t *buf = BUFS_TOP_NODE(bufs);
-			flf_d_printf(" %cbuf:[%s]\n",
-			 (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
+///			flf_d_printf(" %cbuf:[%s]\n",
+///			 (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
 			if (IS_NODE_INT(buf) == 0) {
 				break;
 			}
-			flf_d_printf("    unlink_free %cbuf:[%s]\n",
-			 (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
+///			flf_d_printf("    unlink_free %cbuf:[%s]\n",
+///			 (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
 			if (bufs->cur_buf == buf) {
 				bufs->cur_buf = NODE_NEXT(buf);
 			}

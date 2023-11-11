@@ -36,16 +36,9 @@ PRIVATE int do_filer_cmd_(char *cmd_file);
 
 //-----------------------------------------------------------------------------
 
-int do_run_line(void)
-{
-	fork_exec_once_sh_c(SEPARATE1, PAUSE1, CEPBV_CL->data);
-	do_refresh_editor();
-	return 0;
-}
-
 #define STR_TO_BE_REPLACED_WITH_FILE_NAME		"{}"
 #define STR_TO_BE_REPLACED_WITH_FILE_NAME_LEN	strlen(STR_TO_BE_REPLACED_WITH_FILE_NAME)
-int do_exec_command_with_file(void)
+int dof_exec_command_with_file(void)
 {
 	char command_str[MAX_PATH_LEN+1];
 	int ret;
@@ -59,8 +52,8 @@ int do_exec_command_with_file(void)
 	 HISTORY_TYPE_IDX_EXEC, _("Execute({} will be replaced with file-name):"));
 
 	if (ret < 0) {
-		// do_exec_command_with_file -> FILER_DO_ENTERED_FILE_PATH
-		filer_do_next = FILER_DO_ENTERED_FILE_PATH;
+		// dof_exec_command_with_file -> FILER_DO_ENTER_FILE_PATH
+		filer_do_next = FILER_DO_ENTER_FILE_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -97,7 +90,7 @@ int do_exec_command_with_file(void)
 	}
 	return 0;
 }
-int do_exec_command_with_files(void)
+int dof_exec_command_with_files(void)
 {
 	char command_str[MAX_PATH_LEN+1];
 	int ret;
@@ -115,8 +108,8 @@ int do_exec_command_with_files(void)
 	 HISTORY_TYPE_IDX_EXEC, _("Execute with files:"));
 
 	if (ret < 0) {
-		// do_exec_command_with_files -> FILER_DO_ENTERED_FILE_PATH
-		filer_do_next = FILER_DO_ENTERED_FILE_PATH;
+		// dof_exec_command_with_files -> FILER_DO_ENTER_FILE_PATH
+		filer_do_next = FILER_DO_ENTER_FILE_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -126,7 +119,7 @@ int do_exec_command_with_files(void)
 	filer_do_next = FILER_DO_REFRESH_FORCE;
 	return 0;
 }
-int do_run_command_rel(void)
+int dof_run_command_rel(void)
 {
 	struct stat *st_ptr;
 
@@ -137,19 +130,24 @@ int do_run_command_rel(void)
 		do_run_command_(1);
 	return 0;
 }
-int do_run_command_abs(void)
+int dof_run_command_abs(void)
 {
 	do_run_command_(2);
 	return 0;
 }
-int do_run_command_src_dst(void)
+int dof_run_command_src_dst(void)
 {
 	do_run_command_(5);
 	return 0;
 }
-int do_run_command_sh(void)
+int dof_run_command_sh(void)
 {
 	do_run_command_(4);
+	return 0;
+}
+int dof_run_command_soon(void)
+{
+	do_run_command_(10 + 1);	// rwx: executable file
 	return 0;
 }
 PRIVATE int do_run_command_(int mode)
@@ -163,10 +161,10 @@ PRIVATE int do_run_command_(int mode)
 	struct stat *st_ptr;
 	int src_fv_idx = 0;
 	int dst_fv_idx = 1;
-	int ret;
+	int ret = 0;
 
 	st_ptr = &get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st;
-	switch(mode) {
+	switch (mode % 10) {
 	default:
 	case 0:
 		explanation = _("Run (with file):");
@@ -216,14 +214,18 @@ PRIVATE int do_run_command_(int mode)
 		break;
 	}
 
-	ret = input_string_pos(command_str, command_str,
-	 (S_ISREG(st_ptr->st_mode) && (st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
-	  ? MAX_PATH_LEN : 0,
-	 HISTORY_TYPE_IDX_EXEC, explanation);
+	if (mode >= 10) {
+		ret = 1;	// run soon without editing command line
+	} else {
+		ret = input_string_pos(command_str, command_str,
+		 (S_ISREG(st_ptr->st_mode) && (st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
+		  ? MAX_PATH_LEN : 0,
+		 HISTORY_TYPE_IDX_EXEC, explanation);
+	}
 
 	if (ret < 0) {
-		// do_run_command_ -> FILER_DO_ENTERED_FILE_PATH
-		filer_do_next = FILER_DO_ENTERED_FILE_PATH;
+		// do_run_command_ -> FILER_DO_ENTER_FILE_PATH
+		filer_do_next = FILER_DO_ENTER_FILE_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -232,24 +234,29 @@ PRIVATE int do_run_command_(int mode)
 	if (is_path_dir(command_str) > 0) {
 		return filer_change_dir(command_str);
 	}
+flf_d_printf("command_str [%s]\n", command_str);
 	fork_exec_once_sh_c(SEPARATE1, PAUSE1, command_str);
-	filer_do_next = FILER_DO_REFRESH_FORCE;
+	if (is_app_list_mode()) {
+		filer_do_next = FILER_DO_QUIT;
+	} else {
+		filer_do_next = FILER_DO_REFRESH_FORCE;
+	}
 	return 0;
 }
 
-int do_filer_cmd_1(void)
+int dof_filer_cmd_1(void)
 {
 	return do_filer_cmd_(BECMD "1");
 }
-int do_filer_cmd_2(void)
+int dof_filer_cmd_2(void)
 {
 	return do_filer_cmd_(BECMD "2");
 }
-int do_filer_cmd_3(void)
+int dof_filer_cmd_3(void)
 {
 	return do_filer_cmd_(BECMD "3");
 }
-int do_filer_cmd_4(void)
+int dof_filer_cmd_4(void)
 {
 	return do_filer_cmd_(BECMD "4");
 }
@@ -262,14 +269,229 @@ PRIVATE int do_filer_cmd_(char *cmd_file)
 	file_idx = get_cur_filer_view()->cur_sel_idx;
 	file_name = get_cur_filer_view()->file_list[file_idx].file_name;
 	if (is_app_list_mode()) {
-		// do_filer_cmd -> FILER_DO_ENTERED_FILE_PATH
-		filer_do_next = FILER_DO_ENTERED_FILE_PATH;
+		// do_filer_cmd -> FILER_DO_ENTER_FILE_PATH
+		filer_do_next = FILER_DO_ENTER_FILE_PATH;
 		return 0;
 	}
 	if (S_ISREG(get_cur_filer_view()->file_list[file_idx].st.st_mode)) {
 		fork_exec_once(SEPARATE1, PAUSE0, cmd_file, file_name, 0);
 		return 0;
 	}
+	return 0;
+}
+
+//-----------------------------------------------------------------------------
+
+void begin_fork_exec_repeat(void)
+{
+	restore_term_for_shell();
+	clear_fork_exec_counter();
+	clear_handler_sigint_called();
+}
+void end_fork_exec_repeat(void)
+{
+	pause_after_exec();
+	reinit_term_for_filer();
+}
+
+//-----------------------------------------------------------------------------
+
+#define MAX_EXECV_ARGS		10
+
+PRIVATE int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_exec,
+ const char *command);
+PRIVATE int args_from_va_list(char **args, va_list ap);
+PRIVATE int fork_execv_hist(int set_term, int separate_bef_exec, int pause_aft_exec,
+ char * const *args);
+#ifdef ENABLE_HISTORY
+PRIVATE void output_exec_args_history(char * const *args);
+#endif // ENABLE_HISTORY
+PRIVATE int fork_execv(int set_term, int separate_bef_exec, int pause_aft_exec,
+ char * const args[]);
+
+int fork_exec_once_sh_c(int separate_bef_exec, int pause_aft_exec, const char *command)
+{
+	clear_fork_exec_counter();
+	return fork_exec_sh_c(SETTERM1, separate_bef_exec, pause_aft_exec, command);
+}
+int fork_exec_repeat_sh_c(int separate_bef_exec, const char *command)
+{
+	return fork_exec_sh_c(SETTERM0, separate_bef_exec, PAUSE0, command);
+}
+PRIVATE int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_exec,
+ const char *command)
+{
+	char *args[MAX_EXECV_ARGS+1];
+
+	// sh -c "command arg1 arg2 arg3"
+	args[0] = "sh";
+	args[1] = "-c";
+	args[2] = (char *)command;
+	args[3] = NULL;
+
+#ifdef ENABLE_HISTORY
+	if (get_fork_exec_counter() == 0) {
+		update_history(HISTORY_TYPE_IDX_EXEC, command, 0);
+	}
+#endif // ENABLE_HISTORY
+	return fork_execv(set_term, separate_bef_exec, pause_aft_exec, args);
+}
+int fork_exec_once(int separate_bef_exec, int pause_aft_exec, ...)
+{
+	va_list ap;
+	char *args[MAX_EXECV_ARGS+1];
+
+	clear_fork_exec_counter();
+
+	va_start(ap, pause_aft_exec);
+	args_from_va_list(args, ap);
+	va_end(ap);
+
+	return fork_execv_hist(SETTERM1, separate_bef_exec, pause_aft_exec, args);
+}
+int fork_exec_repeat(int separate_bef_exec, ...)
+{
+	va_list ap;
+	char *args[MAX_EXECV_ARGS+1];
+
+	va_start(ap, separate_bef_exec);
+	args_from_va_list(args, ap);
+	va_end(ap);
+
+	return fork_execv_hist(SETTERM0, separate_bef_exec, PAUSE0, args);
+}
+
+// convert va_list to "char *argv[]"
+PRIVATE int args_from_va_list(char **args, va_list ap)
+{
+	int arg_idx;
+
+	for (arg_idx = 0; arg_idx < MAX_EXECV_ARGS; arg_idx++) {
+		args[arg_idx] = va_arg(ap, char *);
+		if (args[arg_idx] == NULL)
+			break;
+	}
+	args[arg_idx] = NULL;
+	return arg_idx;
+}
+
+PRIVATE int fork_execv_hist(int set_term, int separate_bef_exec, int pause_aft_exec,
+ char * const *args)
+{
+#ifdef ENABLE_HISTORY
+	if (get_fork_exec_counter() == 0) {
+		output_exec_args_history(args);
+	}
+#endif // ENABLE_HISTORY
+	return fork_execv(set_term, separate_bef_exec, pause_aft_exec, args);
+}
+
+#ifdef ENABLE_HISTORY
+PRIVATE void output_exec_args_history(char * const *args)
+{
+	int arg_idx;
+	const char *arg;
+	char buffer[MAX_PATH_LEN+1];
+
+	buffer[0] = '\0';
+	for (arg_idx = 0; arg_idx < MAX_EXECV_ARGS; arg_idx++) {
+		arg = args[arg_idx];
+		if (arg == NULL)
+			break;
+		concat_file_name_separating_by_space(buffer, MAX_PATH_LEN, arg);
+	}
+	update_history(HISTORY_TYPE_IDX_EXEC, buffer, 0);
+}
+#endif // ENABLE_HISTORY
+
+PRIVATE int fork_execv(int set_term, int separate_bef_exec, int pause_aft_exec,
+ char * const args[])
+{
+	pid_t pid;
+	int exit_status;
+	int ret;
+
+	if (set_term && get_fork_exec_counter() == 0) {
+		restore_term_for_shell();
+	}
+	if (separate_bef_exec > 0 && get_fork_exec_counter() == 0) {
+		// output separator line
+		printf("\n-------- command execution started here --------\n");
+		fflush(stdout);
+	}
+
+	exit_status = -10000;
+	if ((pid = fork()) == 0) {
+		signal_clear();
+		init_stderr();
+		//-----------------------------
+		execvp(args[0], args);
+		//-----------------------------
+		exit(-10001);					// execution error
+	} else {
+		for ( ; ; ) {
+			ret = waitpid(pid, &exit_status, 0);
+mflf_d_printf("ret: %d, exit_status: %d\n", ret, exit_status);
+			if (ret != -1)
+				break;
+		}
+	}
+
+	if (pause_aft_exec > 0) {
+		printf("\n\aStatus:%d ", exit_status);
+		pause_after_exec();
+	}
+	if (set_term && get_fork_exec_counter() == 0) {
+		reinit_term_for_filer();
+	}
+	inc_fork_exec_counter();
+	return exit_status;
+}
+
+PRIVATE int fork_exec_counter = 0;
+void clear_fork_exec_counter(void)
+{
+	fork_exec_counter = 0;
+}
+int get_fork_exec_counter(void)
+{
+	return fork_exec_counter;
+}
+int inc_fork_exec_counter(void)
+{
+	return fork_exec_counter++;
+}
+
+void pause_after_exec(void)
+{
+	set_term_raw();
+	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in getchar()
+	getchar();	getchar();	getchar();	getchar();	getchar();
+	getchar();	getchar();	getchar();	getchar();	getchar();
+	fcntl(STDIN_FILENO, F_SETFL, 0);				// block in getchar()
+	printf(
+//12345678901234567890123456789012345678901234567890123456789012345678901234567890
+ "======== Hit any key to return to %s ======== ", APP_NAME);
+	fflush(stdout);
+	getchar();
+	printf("\n");
+}
+
+//-----------------------------------------------------------------------------
+
+int restore_term_for_shell(void)
+{
+	tio_clear_screen();
+	tio_set_cursor_on(1);
+	tio_suspend();
+	signal_fork();
+	return 0;
+}
+int reinit_term_for_filer(void)
+{
+	signal_init();
+	tio_resume();
+	tio_clear_flash_screen(1);
 	return 0;
 }
 

@@ -118,6 +118,7 @@ flf_d_printf("CALL_EDITOR_FUNC [%s]\n", func_key_table->func_id);
 					//=========================
 					(*func_key_table->func)();			// call function
 					//=========================
+flf_d_printf("editor_quit: %d\n", editor_quit);
 					prev_key_executed = key_executed;
 					strlcpy__(prev_func_id, func_key_table->func_id, MAX_PATH_LEN);
 				}
@@ -151,7 +152,7 @@ flf_d_printf("CALL_EDITOR_FUNC [%s]\n", func_key_table->func_id);
 //-----------------------------------------------------------------------------
 
 PRIVATE int open_file_recursive(int recursive);
-int do_open_file(void)
+int doe_open_file(void)
 {
 	return open_file_recursive(RECURSIVE1);
 }
@@ -189,7 +190,7 @@ _FLF_
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
-int do_open_new_file(void)
+int doe_open_new_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
 	int ret;
@@ -213,7 +214,7 @@ int do_open_new_file(void)
 	return 1;
 }
 
-int do_open_proj_file(void)
+int doe_open_proj_file(void)
 {
 	char filter[MAX_PATH_LEN+1];
 	int loop;
@@ -227,7 +228,8 @@ int do_open_proj_file(void)
 	dir = opendir(".");
 #if 0
 	for (loop = 0; loop < 4; loop++) {
-		switch(loop) {
+		switch (loop) {
+		default:
 		case 0:		strcpy__(filter, PROJ_FILE_FILTER1);	break;
 		case 1:		strupper(filter);	break;	// "*.bep" ==> "*.BEP"
 		case 2:		strcpy__(filter, PROJ_FILE_FILTER2);	break;
@@ -287,15 +289,15 @@ int do_open_proj_file(void)
 	return 1;
 }
 
-int do_reopen_file_last_line(void)
+int doe_reopen_file_last_line(void)
 {
-	if (do_reopen_file() == 0) {
+	if (doe_reopen_file() == 0) {
 		return 0;
 	}
-	do_last_line();
+	doe_last_line();
 	return 1;
 }
-int do_reopen_file(void)
+int doe_reopen_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
 	int ret;
@@ -333,18 +335,18 @@ int do_reopen_file(void)
 
 //-----------------------------------------------------------------------------
 
-// | Func name               |files|close|un-modified|ask Y/N|file-name|
-// | ----------------------- |-----|-----|-----------|-------|---------|
-// | do_write_file_to()      | one |none | Yes       | none  |New-name |write to new file
-// | do_write_file_ask()     | one |none | no        | Ask   |cur-name |
-// | do_write_file_always()  | one |none | Yes       | none  |cur-name |ask if not modified
-// | do_write_all_ask()      | All |none | no        | Ask   |cur-name |
-// | do_write_all_modified() | All |none | no        | none  |cur-name |
-// | do_close_file_ask()     | one |Close| no        | Ask   |cur-name |
-// | do_close_all_ask()      | All |Close| no        | Ask   |cur-name |
-// | do_close_all_modified() | All |Close| no        | none  |cur-name |
+// | Func name                |files|close|un-modified|ask Y/N|file-name|
+// | ------------------------ |-----|-----|-----------|-------|---------|
+// | doe_write_file_to()      | one |none | Yes       | none  |New-name |write to new file
+// | doe_write_file_ask()     | one |none | no        | Ask   |cur-name |
+// | doe_write_file_always()  | one |none | Yes       | none  |cur-name |ask if not modified
+// | doe_write_all_ask()      | All |none | no        | Ask   |cur-name |
+// | doe_write_all_modified() | All |none | no        | none  |cur-name |
+// | doe_close_file_ask()     | one |Close| no        | Ask   |cur-name |
+// | doe_close_all_ask()      | All |Close| no        | Ask   |cur-name |
+// | doe_close_all_modified() | All |Close| no        | none  |cur-name |
 
-int do_write_file_to(void)
+int doe_write_file_to(void)
 {
 	char file_path[MAX_PATH_LEN+1] = "";
 	char org_file_path[MAX_PATH_LEN+1] = "";
@@ -375,22 +377,22 @@ flf_d_printf("[%s]\n", file_path);
 	disp_status_bar_done(_("Written to the file: %s"), file_path);
 	return 0;
 }
-int do_write_file_ask(void)
+int doe_write_file_ask(void)
 {
 	return write_file_ask(ANSWER_NO, NO_CLOSE_AFTER_SAVE_0);
 }
-int do_write_file_always(void)
+int doe_write_file_always(void)
 {
 	return write_file_ask(ANSWER_FORCE, NO_CLOSE_AFTER_SAVE_0);
 }
-int do_write_all_ask(void)
+int doe_write_all_ask(void)
 {
 	memorize_cur_file_pos_null(NULL);
 	write_all_ask(ANSWER_NO, NO_CLOSE_AFTER_SAVE_0);
 	recall_cur_file_pos_null(NULL);
 	return 1;
 }
-int do_write_all_modified(void)
+int doe_write_all_modified(void)
 {
 	memorize_cur_file_pos_null(NULL);
 	write_all_ask(ANSWER_ALL, NO_CLOSE_AFTER_SAVE_0);
@@ -398,7 +400,7 @@ int do_write_all_modified(void)
 	return 1;
 }
 
-int do_close_file_ask(void)
+int doe_close_file_ask(void)
 {
 	int ret;
 
@@ -415,7 +417,7 @@ int do_close_file_ask(void)
 	memorize_cur_file_pos_null(NULL);
 	free_cur_edit_buf();
 
-	do_refresh_editor();
+	doe_refresh_editor();
 	disp_status_bar_done(_("One buffer closed"));
 	if (count_edit_bufs() == 0) {
 		// This file is the last open file.
@@ -424,7 +426,7 @@ int do_close_file_ask(void)
 	}
 	return 2;
 }
-int do_close_all_ask(void)
+int doe_close_all_ask(void)
 {
 	if (is_app_list_mode()) {
 		editor_quit = EDITOR_ABORT;
@@ -433,7 +435,7 @@ int do_close_all_ask(void)
 	write_close_all(ANSWER_NO);
 	return 0;
 }
-int do_close_all_modified(void)
+int doe_close_all_modified(void)
 {
 	if (is_app_list_mode()) {
 		editor_quit = EDITOR_ABORT;
@@ -444,24 +446,41 @@ int do_close_all_modified(void)
 }
 
 //-----------------------------------------------------------------------------
-int do_read_file_into_cur_pos(void)
+int doe_read_file_into_cur_pos(void)
 {
 	memorize_cur_file_pos_null(NULL);
 	open_file_recursive(RECURSIVE0);
 	if (get_files_loaded() <= 0) {
 		return 0;
 	}
-	do_select_all_lines();
-	do_copy_text();
-	do_close_file_ask();
+	doe_select_all_lines();
+	doe_copy_text();
+	doe_close_file_ask();
 	recall_cur_file_pos_null(NULL);
-	do_paste_text_with_pop();
+	doe_paste_text_with_pop();
 	return 0;
 }
 //-----------------------------------------------------------------------------
 
+int doe_run_line_soon(void)
+{
+	char buffer[MAX_PATH_LEN+1];
+
+	// CEPBV_CL->data may be in history buffer and freed in calling update_history().
+	// So copy to local buffer.
+	strlcpy__(buffer, CEPBV_CL->data, MAX_PATH_LEN);
+	fork_exec_once_sh_c(SEPARATE1, PAUSE1, buffer);
+	doe_refresh_editor();
+	if (is_app_list_mode()) {
+		editor_quit = EDITOR_ABORT;
+	}
+	return 0;
+}
+
+//-----------------------------------------------------------------------------
+
 #ifdef ENABLE_HELP
-int do_editor_splash(void)
+int doe_editor_splash(void)
 {
 	disp_splash(100);
 	input_key_loop();
@@ -470,7 +489,7 @@ int do_editor_splash(void)
 }
 #endif // ENABLE_HELP
 
-int do_editor_display_color_pairs(void)
+int doe_display_color_pairs(void)
 {
 	display_color_pairs(0, 0);
 #ifdef ENABLE_DEBUG
@@ -481,12 +500,12 @@ int do_editor_display_color_pairs(void)
 	return 0;
 }
 
-int do_editor_menu_0(void)
+int doe_editor_menu_0(void)
 {
 	editor_menu_n(-1);
 	return 0;
 }
-int do_editor_menu_1(void)
+int doe_editor_menu_1(void)
 {
 	if (is_app_list_mode()) {
 		editor_quit = EDITOR_ABORT;
@@ -495,42 +514,42 @@ int do_editor_menu_1(void)
 	editor_menu_n(0);
 	return 0;
 }
-int do_editor_menu_2(void)
+int doe_editor_menu_2(void)
 {
 	editor_menu_n(1);
 	return 0;
 }
-int do_editor_menu_3(void)
+int doe_editor_menu_3(void)
 {
 	editor_menu_n(2);
 	return 0;
 }
-int do_editor_menu_4(void)
+int doe_editor_menu_4(void)
 {
 	editor_menu_n(3);
 	return 0;
 }
-int do_editor_menu_5(void)
+int doe_editor_menu_5(void)
 {
 	editor_menu_n(4);
 	return 0;
 }
-int do_editor_menu_6(void)
+int doe_editor_menu_6(void)
 {
 	editor_menu_n(5);
 	return 0;
 }
-int do_editor_menu_7(void)
+int doe_editor_menu_7(void)
 {
 	editor_menu_n(6);
 	return 0;
 }
-int do_editor_menu_8(void)
+int doe_editor_menu_8(void)
 {
 	editor_menu_n(7);
 	return 0;
 }
-int do_editor_menu_9(void)
+int doe_editor_menu_9(void)
 {
 	editor_menu_n(8);
 	return 0;
@@ -631,7 +650,7 @@ int write_file_ask(int yes, close_after_save_t close)
 	return ret;		// all:2, yes:1
 }
 
-int do_editor_inc_key_list_lines(void)
+int doe_inc_key_list_lines(void)
 {
 	do_inc_key_list_lines_();
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
@@ -793,34 +812,34 @@ void disp_key_list_editor(void)
  " {Rec  } {Play } {SchBW} {SchFW} "
  " {Mark } {Cut  } {Copy } {Pop  } "
  " {Paste} {Dupli} {Files} {TagJp}",
- "<do_close_file_ask>Quit "
- "<do_cut_to_head>CutToHead "
- "<do_cut_text>CutLine "
- "<do_cut_to_tail>CutToTail "
- "<do_copy_text>CopyLine "
- "<do_paste_text_with_pop>PasteWPop "
- "<do_paste_text_without_pop>PasteWoPop "
- "<do_duplicate_text>DupLine "
- "<do_first_line>TopOfFile "
- "<do_last_line>BotOfFile "
- "<do_prev_word>PrevWord "
- "<do_next_word>NextWord ",
+ "<doe_close_file_ask>Quit "
+ "<doe_cut_to_head>CutToHead "
+ "<doe_cut_text>CutLine "
+ "<doe_cut_to_tail>CutToTail "
+ "<doe_copy_text>CopyLine "
+ "<doe_paste_text_with_pop>PasteWPop "
+ "<doe_paste_text_without_pop>PasteWoPop "
+ "<doe_duplicate_text>DupLine "
+ "<doe_first_line>TopOfFile "
+ "<doe_last_line>BotOfFile "
+ "<doe_prev_word>PrevWord "
+ "<doe_next_word>NextWord ",
 
- "<do_close_all_ask>CloseAll "
- "<do_open_file>OpenFile "
- "<do_write_file_ask>WriteFile "
- "<do_search_backward_first>Search BW "
- "<do_search_forward_first>Search FW "
- "<do_replace>Replace "
- "<do_switch_to_file_list>FileList "
- "<do_switch_to_prev_file>PrevFile "
- "<do_switch_to_next_file>NextFile "
+ "<doe_close_all_ask>CloseAll "
+ "<doe_open_file>OpenFile "
+ "<doe_write_file_ask>WriteFile "
+ "<doe_search_backward_first>Search BW "
+ "<doe_search_forward_first>Search FW "
+ "<doe_replace>Replace "
+ "<doe_switch_to_file_list>FileList "
+ "<doe_switch_to_prev_file>PrevFile "
+ "<doe_switch_to_next_file>NextFile "
 #ifdef ENABLE_EXPERIMENTAL
- "<do_switch_to_prev_buffers>PrevBufs "
- "<do_switch_to_next_buffers>NextBufs "
+ "<doe_switch_to_prev_buffers>PrevBufs "
+ "<doe_switch_to_next_buffers>NextBufs "
 #endif // ENABLE_EXPERIMENTAL
- "<do_switch_to_key_list>KeyList "
- "<do_switch_to_func_list>FuncList ",
+ "<doe_switch_to_key_list>KeyList "
+ "<doe_switch_to_func_list>FuncList ",
 	};
 	disp_key_list(editor_key_lists);
 }
