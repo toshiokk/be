@@ -24,6 +24,7 @@
 
 #ifdef ENABLE_FILER
 
+// "dof_..."  DO Editor function
 int dof_top_of_list(void);
 int dof_bottom_of_list(void);
 

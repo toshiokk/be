@@ -440,7 +440,7 @@ int doe_carriage_return(void)
 
 	do_clear_mark_();
 	if (is_app_list_mode()) {
-		editor_quit = EDITOR_QUIT;
+		editor_quit = EDITOR_ENTERED;
 		return 0;
 	}
 	if (is_view_mode_then_warn_it())

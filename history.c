@@ -66,7 +66,6 @@ void init_histories(void)
 	int hist_type_idx;
 	char buf_name[MAX_PATH_LEN+1];
 
-///_FLF_
 	// prepare ~/.be directory
 	if (is_path_exist(get_app_dir()) == 0) {
 		if (mkdir(get_app_dir(), S_IRUSR | S_IWUSR | S_IXUSR) < 0) {
@@ -79,7 +78,6 @@ void init_histories(void)
 			 get_app_dir());
 		}
 	}
-///_FLF_
 	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
 		snprintf_(buf_name, MAX_PATH_LEN, "#%d:%s",
 		 hist_type_idx, get_history_file_path(hist_type_idx));
@@ -95,11 +93,9 @@ void load_histories(void)
 {
 	int hist_type_idx;
 
-///_FLF_
 	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
 		load_history_idx(hist_type_idx);
 	}
-////_D_(set_history_modified(hist_type_idx));
 ////_D_(dump_hist_bufs_lines());
 }
 
@@ -145,10 +141,11 @@ flf_d_printf("hist_type_idx:%d:[%s]\n", hist_type_idx, str);
 		if (check_file_pos_recorded_in_history(hist_type_idx, str)) {
 			return; // registered relatively newer, no need of update
 		}
-	}
-	if (is_the_last_line(hist_type_idx, str) != NULL) {
-		// str is registered in the last line, no need update
-		return;
+	} else {
+		if (is_the_last_line(hist_type_idx, str) != NULL) {
+			// str is registered in the last line, no need update
+			return;
+		}
 	}
 	// load-modify(free old entry and append new entry)-save
 	load_history_idx(hist_type_idx);
@@ -156,8 +153,7 @@ flf_d_printf("hist_type_idx:%d:[%s]\n", hist_type_idx, str);
 		line_unlink_free(line);	// delete older line
 	}
 	append_history(hist_type_idx, str);
-	set_history_modified(hist_type_idx);
-	save_history_if_modified(hist_type_idx);
+	save_history_idx(hist_type_idx);
 }
 
 PRIVATE int check_file_pos_recorded_in_history(int hist_type_idx, const char *str)
@@ -430,9 +426,7 @@ PRIVATE const char *is_the_last_line(int hist_type_idx, const char *str)
 	be_line_t *line;
 
 	line = BUF_BOT_NODE(buf);
-	if (IS_NODE_TOP_ANCH(line))
-		return NULL;
-	if (strcmp(line->data, str) == 0)	// exact match
+	if (IS_NODE_INT(line) && (strcmp(line->data, str) == 0))	// exact match
 		return line->data;
 	return NULL;
 }
@@ -502,7 +496,6 @@ const char *search_history_file_path(int hist_type_idx, const char *path)
 int select_from_history_list(int hist_type_idx, char *buffer)
 {
 	be_buf_t *edit_buf_save;
-	int ret;
 
 	edit_buf_save = get_cep_buf();
 	load_histories();
@@ -511,16 +504,17 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 	CEPBV_CL = CUR_EDIT_BUF_BOT_NODE;
 	post_cmd_processing(CUR_EDIT_BUF_TOP_NODE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 
-	ret = call_editor(1, 1);
+	int ret = call_editor(1, 1);
 
-	if (ret == 0)
-		strcpy__(buffer, "");
-	else
+	if (ret > 0) {
 		strlcpy__(buffer, CEPBV_CL->data, MAX_EDIT_LINE_LEN);
+	} else {
+		strcpy__(buffer, "");
+	}
 ///_FLF_
 	set_cep_buf(edit_buf_save);
 
-	return ret;
+	return ret; // 1: selected, 0: done in editor, -1: cancelled
 }
 
 //------------------------------------------------------------------------------------

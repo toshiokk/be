@@ -1,5 +1,8 @@
 #### BE-editor to do list
 
+[] return to filer main screen after run file soon
+[] editor: when scrolling reverse direction, previous area should be shown.
+
 #### thinking
 - Which is the better practice
 	1. strict type specification uint8_t, int8_t, int16_t, int32_t

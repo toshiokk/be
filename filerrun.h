@@ -32,10 +32,10 @@ int dof_run_command_src_dst(void);
 int dof_run_command_sh(void);
 int dof_run_command_soon(void);
 
-int dof_filer_cmd_1(void);
-int dof_filer_cmd_2(void);
-int dof_filer_cmd_3(void);
-int dof_filer_cmd_4(void);
+////int dof_run_cmd_1(void);
+////int dof_run_cmd_2(void);
+////int dof_run_cmd_3(void);
+////int dof_run_cmd_4(void);
 
 //-----------------------------------------------------------------------------
 

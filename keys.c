@@ -348,7 +348,7 @@ PRIVATE func_key_table_t *get_func_table_from_func_id__(func_key_table_t *func_k
 
 int is_key_bound_to_func(key_code_t key, func_key_table_t *func_key_table)
 {
-	return key != NKA
+	return key != KNA
 	 && (key == func_key_table->key1
 	  || key == func_key_table->key2
 	  || key == func_key_table->key3);
@@ -366,19 +366,19 @@ void clear_keys_if_bound(key_code_t *keys)
 void clear_key_if_bound_to_func(key_code_t key, func_key_table_t *func_key_table)
 {
 	if (func_key_table->key1 == key) {
-		func_key_table->key1 = NKA;
+		func_key_table->key1 = KNA;
 	}
 	if (func_key_table->key2 == key) {
-		func_key_table->key2 = NKA;
+		func_key_table->key2 = KNA;
 	}
 	if (func_key_table->key3 == key) {
-		func_key_table->key3 = NKA;
+		func_key_table->key3 = KNA;
 	}
 }
 void clear_keys_bound_to_func(func_key_table_t *func_key_table)
 {
-	func_key_table->key1 = NKA;
-	func_key_table->key2 = NKA;
+	func_key_table->key1 = KNA;
+	func_key_table->key2 = KNA;
 }
 
 void bind_key_to_func(func_key_table_t *func_key_table, key_code_t *keys)
@@ -729,7 +729,7 @@ const char *key_name_from_key_code(key_code_t key_code, char *buf)
 		} else {
 			snprintf(buf, MAX_KEY_NAME_LEN+1, "%04x", key_code);
 		}
-	} else if (key_code == NKA) {
+	} else if (key_code == KNA) {
 		snprintf(buf, MAX_KEY_NAME_LEN+1, "---");
 	} else {
 		snprintf(buf, MAX_KEY_NAME_LEN+1, "%04x", key_code);

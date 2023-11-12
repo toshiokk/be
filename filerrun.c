@@ -23,8 +23,8 @@
 
 #ifdef ENABLE_FILER
 
-PRIVATE int do_run_command_(int mode);
-PRIVATE int do_filer_cmd_(char *cmd_file);
+PRIVATE int dof_run_command_(int mode);
+////PRIVATE int dof_run_cmd_(char *cmd_file);
 
 #define BEPAGER		"bepager"
 #define BETAIL		"betail"
@@ -38,6 +38,8 @@ PRIVATE int do_filer_cmd_(char *cmd_file);
 
 #define STR_TO_BE_REPLACED_WITH_FILE_NAME		"{}"
 #define STR_TO_BE_REPLACED_WITH_FILE_NAME_LEN	strlen(STR_TO_BE_REPLACED_WITH_FILE_NAME)
+
+// If two or more files selected, process it by enumerating execution.
 int dof_exec_command_with_file(void)
 {
 	char command_str[MAX_PATH_LEN+1];
@@ -64,7 +66,7 @@ int dof_exec_command_with_file(void)
 	}
 	if (get_files_selected_cfv() == 0) {
 		fork_exec_once_sh_c(SEPARATE1, PAUSE1, command_str);
-		filer_do_next = FILER_DO_REFRESH_FORCE;
+		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	} else {
 		begin_fork_exec_repeat();
 		for (file_idx = select_and_get_first_file_idx_selected();
@@ -86,16 +88,18 @@ int dof_exec_command_with_file(void)
 			fork_exec_repeat_sh_c(SEPARATE1, buffer);
 		}
 		end_fork_exec_repeat();
-		filer_do_next = FILER_DO_REFRESH_FORCE;
+		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	}
 	return 0;
 }
+// If two or more files selected, pass all to command line at once.
 int dof_exec_command_with_files(void)
 {
 	char command_str[MAX_PATH_LEN+1];
 	int ret;
 	int file_idx;
 
+	// "file1 file2 ..."
 	command_str[0] = '\0';
 	for (file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
@@ -116,7 +120,7 @@ int dof_exec_command_with_files(void)
 		return 0;
 	}
 	fork_exec_once_sh_c(SEPARATE1, PAUSE1, command_str);
-	filer_do_next = FILER_DO_REFRESH_FORCE;
+	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
 int dof_run_command_rel(void)
@@ -125,32 +129,32 @@ int dof_run_command_rel(void)
 
 	st_ptr = &get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st;
 	if ((st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) == 0)
-		do_run_command_(0);
+		dof_run_command_(0);
 	else
-		do_run_command_(1);
+		dof_run_command_(1);
 	return 0;
 }
 int dof_run_command_abs(void)
 {
-	do_run_command_(2);
+	dof_run_command_(2);
 	return 0;
 }
 int dof_run_command_src_dst(void)
 {
-	do_run_command_(5);
+	dof_run_command_(5);
 	return 0;
 }
 int dof_run_command_sh(void)
 {
-	do_run_command_(4);
+	dof_run_command_(4);
 	return 0;
 }
 int dof_run_command_soon(void)
 {
-	do_run_command_(10 + 1);	// rwx: executable file
+	dof_run_command_(10 + 1);	// rwx: executable file
 	return 0;
 }
-PRIVATE int do_run_command_(int mode)
+PRIVATE int dof_run_command_(int mode)
 {
 	const char *explanation;
 	char buf_s[MAX_PATH_LEN+1];
@@ -222,13 +226,14 @@ PRIVATE int do_run_command_(int mode)
 		  ? MAX_PATH_LEN : 0,
 		 HISTORY_TYPE_IDX_EXEC, explanation);
 	}
+flf_d_printf("ret: %d\n", ret);
 
 	if (ret < 0) {
-		// do_run_command_ -> FILER_DO_ENTER_FILE_PATH
+		// dof_run_command_ -> FILER_DO_ENTER_FILE_PATH
 		filer_do_next = FILER_DO_ENTER_FILE_PATH;
 		return 0;
 	}
-	if (ret <= 0) {
+	if (ret == 0) {
 		return 0;
 	}
 	if (is_path_dir(command_str) > 0) {
@@ -239,46 +244,46 @@ flf_d_printf("command_str [%s]\n", command_str);
 	if (is_app_list_mode()) {
 		filer_do_next = FILER_DO_QUIT;
 	} else {
-		filer_do_next = FILER_DO_REFRESH_FORCE;
+		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	}
 	return 0;
 }
 
-int dof_filer_cmd_1(void)
-{
-	return do_filer_cmd_(BECMD "1");
-}
-int dof_filer_cmd_2(void)
-{
-	return do_filer_cmd_(BECMD "2");
-}
-int dof_filer_cmd_3(void)
-{
-	return do_filer_cmd_(BECMD "3");
-}
-int dof_filer_cmd_4(void)
-{
-	return do_filer_cmd_(BECMD "4");
-}
+////int dof_run_cmd_1(void)
+////{
+////	return dof_run_cmd_(BECMD "1");
+////}
+////int dof_run_cmd_2(void)
+////{
+////	return dof_run_cmd_(BECMD "2");
+////}
+////int dof_run_cmd_3(void)
+////{
+////	return dof_run_cmd_(BECMD "3");
+////}
+////int dof_run_cmd_4(void)
+////{
+////	return dof_run_cmd_(BECMD "4");
+////}
 
-PRIVATE int do_filer_cmd_(char *cmd_file)
-{
-	int file_idx;
-	char *file_name;
-
-	file_idx = get_cur_filer_view()->cur_sel_idx;
-	file_name = get_cur_filer_view()->file_list[file_idx].file_name;
-	if (is_app_list_mode()) {
-		// do_filer_cmd -> FILER_DO_ENTER_FILE_PATH
-		filer_do_next = FILER_DO_ENTER_FILE_PATH;
-		return 0;
-	}
-	if (S_ISREG(get_cur_filer_view()->file_list[file_idx].st.st_mode)) {
-		fork_exec_once(SEPARATE1, PAUSE0, cmd_file, file_name, 0);
-		return 0;
-	}
-	return 0;
-}
+////PRIVATE int dof_run_cmd_(char *cmd_file)
+////{
+////	int file_idx;
+////	char *file_name;
+////
+////	file_idx = get_cur_filer_view()->cur_sel_idx;
+////	file_name = get_cur_filer_view()->file_list[file_idx].file_name;
+////	if (is_app_list_mode()) {
+////		// do_filer_cmd -> FILER_DO_ENTER_FILE_PATH
+////		filer_do_next = FILER_DO_ENTER_FILE_PATH;
+////		return 0;
+////	}
+////	if (S_ISREG(get_cur_filer_view()->file_list[file_idx].st.st_mode)) {
+////		fork_exec_once(SEPARATE1, PAUSE0, cmd_file, file_name, 0);
+////		return 0;
+////	}
+////	return 0;
+////}
 
 //-----------------------------------------------------------------------------
 
@@ -301,8 +306,6 @@ void end_fork_exec_repeat(void)
 PRIVATE int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_exec,
  const char *command);
 PRIVATE int args_from_va_list(char **args, va_list ap);
-PRIVATE int fork_execv_hist(int set_term, int separate_bef_exec, int pause_aft_exec,
- char * const *args);
 #ifdef ENABLE_HISTORY
 PRIVATE void output_exec_args_history(char * const *args);
 #endif // ENABLE_HISTORY
@@ -329,36 +332,30 @@ PRIVATE int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_ex
 	args[2] = (char *)command;
 	args[3] = NULL;
 
-#ifdef ENABLE_HISTORY
-	if (get_fork_exec_counter() == 0) {
-		update_history(HISTORY_TYPE_IDX_EXEC, command, 0);
-	}
-#endif // ENABLE_HISTORY
 	return fork_execv(set_term, separate_bef_exec, pause_aft_exec, args);
 }
+
 int fork_exec_once(int separate_bef_exec, int pause_aft_exec, ...)
 {
-	va_list ap;
-	char *args[MAX_EXECV_ARGS+1];
-
 	clear_fork_exec_counter();
 
+	va_list ap;
+	char *args[MAX_EXECV_ARGS+1];
 	va_start(ap, pause_aft_exec);
 	args_from_va_list(args, ap);
 	va_end(ap);
 
-	return fork_execv_hist(SETTERM1, separate_bef_exec, pause_aft_exec, args);
+	return fork_execv(SETTERM1, separate_bef_exec, pause_aft_exec, args);
 }
 int fork_exec_repeat(int separate_bef_exec, ...)
 {
 	va_list ap;
 	char *args[MAX_EXECV_ARGS+1];
-
 	va_start(ap, separate_bef_exec);
 	args_from_va_list(args, ap);
 	va_end(ap);
 
-	return fork_execv_hist(SETTERM0, separate_bef_exec, PAUSE0, args);
+	return fork_execv(SETTERM0, separate_bef_exec, PAUSE0, args);
 }
 
 // convert va_list to "char *argv[]"
@@ -375,24 +372,16 @@ PRIVATE int args_from_va_list(char **args, va_list ap)
 	return arg_idx;
 }
 
-PRIVATE int fork_execv_hist(int set_term, int separate_bef_exec, int pause_aft_exec,
- char * const *args)
+PRIVATE int fork_execv(int set_term, int separate_bef_exec, int pause_aft_exec,
+ char * const args[])
 {
-#ifdef ENABLE_HISTORY
-	if (get_fork_exec_counter() == 0) {
-		output_exec_args_history(args);
-	}
-#endif // ENABLE_HISTORY
-	return fork_execv(set_term, separate_bef_exec, pause_aft_exec, args);
-}
+	pid_t pid;
+	int exit_status;
+	int ret;
 
-#ifdef ENABLE_HISTORY
-PRIVATE void output_exec_args_history(char * const *args)
-{
 	int arg_idx;
 	const char *arg;
 	char buffer[MAX_PATH_LEN+1];
-
 	buffer[0] = '\0';
 	for (arg_idx = 0; arg_idx < MAX_EXECV_ARGS; arg_idx++) {
 		arg = args[arg_idx];
@@ -400,16 +389,12 @@ PRIVATE void output_exec_args_history(char * const *args)
 			break;
 		concat_file_name_separating_by_space(buffer, MAX_PATH_LEN, arg);
 	}
-	update_history(HISTORY_TYPE_IDX_EXEC, buffer, 0);
-}
+mflf_d_printf("exec: [%s]\n", buffer);
+#ifdef ENABLE_HISTORY
+	if (get_fork_exec_counter() == 0) {
+		update_history(HISTORY_TYPE_IDX_EXEC, buffer, 0);
+	}
 #endif // ENABLE_HISTORY
-
-PRIVATE int fork_execv(int set_term, int separate_bef_exec, int pause_aft_exec,
- char * const args[])
-{
-	pid_t pid;
-	int exit_status;
-	int ret;
 
 	if (set_term && get_fork_exec_counter() == 0) {
 		restore_term_for_shell();

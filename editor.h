@@ -26,16 +26,17 @@ extern int prev_key_executed;
 extern int key_executed;
 extern char prev_func_id[MAX_PATH_LEN+1];
 typedef enum {
-	EDITOR_NONE,
-	EDITOR_ABORT,
-	EDITOR_QUIT,
+	EDITOR_NONE = 0,
+	EDITOR_ABORT = 1,
+	EDITOR_QUIT = 2,
+	EDITOR_ENTERED = 3,
 } editor_quit_t;
 extern editor_quit_t editor_quit;
 
 int call_editor(int push_win, int list_mode);
 
 //-----------------------------------------------------------------------------
-
+// "doe_..."  DO Editor function
 int doe_open_file(void);
 int doe_open_new_file(void);
 int doe_open_proj_file(void);

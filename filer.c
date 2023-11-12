@@ -179,7 +179,8 @@ flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
 flf_d_printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
 	ret = filer_main_loop(dir, filter, file_path, buf_len);
 flf_d_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
-	filer_do_next = FILER_DO_NOTHING;
+flf_d_printf("ret: %d\n", ret);
+///	filer_do_next = FILER_DO_NOTHING;
 
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 	SET_APPMD_VAL(app_LIST_MODE, GET_APPMD_PTR(&appmode_save, app_LIST_MODE));
@@ -215,7 +216,7 @@ PRIVATE int filer_main_loop(const char *directory, const char *filter,
 		strlcpy__(get_cur_filer_view()->cur_dir, directory, MAX_PATH_LEN);
 	}
 
-	filer_do_next = FILER_DO_REFRESH_FORCE;
+	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 
 	while (1) {
 		check_filer_cur_dir();
@@ -226,11 +227,11 @@ PRIVATE int filer_main_loop(const char *directory, const char *filter,
 			strlcpy__(prev_cur_dir, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
 		}
 #endif // ENABLE_HISTORY
-		if (filer_do_next >= FILER_DO_UPDATE_SCREEN) {
-			update_all_file_list(filter, filer_do_next == FILER_DO_REFRESH_FORCE ? 2
-			 : (filer_do_next == FILER_DO_REFRESH_AUTO ? 1 : 0));
+		if (filer_do_next >= FILER_DO_UPDATE_FILE_LIST_AUTO) {
+			update_all_file_list(filter, filer_do_next == FILER_DO_UPDATE_FILE_LIST_FORCE ? 2
+			 : (filer_do_next == FILER_DO_UPDATE_FILE_LIST_AUTO ? 1 : 0));
 		}
-		update_screen_filer(1, filer_do_next >= FILER_DO_UPDATE_SCREEN, 1);
+		update_screen_filer(1, filer_do_next >= FILER_DO_UPDATE_FILE_LIST_AUTO, 1);
 		//----------------------------------
 		key_input = input_key_wait_return();
 		//----------------------------------
@@ -243,10 +244,10 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 
 		strcpy__(get_cur_filer_view()->next_file, "");
 
-		filer_do_next = FILER_DO_UPDATE_SCREEN;
+		filer_do_next = FILER_DO_UPDATE_FILE_LIST_AUTO;
 		switch (key_input) {
 		case K_NONE:
-			filer_do_next = FILER_DO_REFRESH_AUTO;
+			filer_do_next = FILER_DO_UPDATE_FILE_LIST_AUTO;
 			break;
 		case K_UP:
 			get_cur_filer_view()->cur_sel_idx = MIN_MAX_(0, get_cur_filer_view()->cur_sel_idx - 1,
@@ -291,11 +292,11 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 				strlcpy__(get_cur_filer_view()->next_file,
 				 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name, MAX_PATH_LEN);
 				if (is_app_list_mode() == 0 || func_key_table->list_mode) {
-flf_d_printf("CALL_FILER_FUNC [%s]\n", func_key_table->func_id);
+flf_d_printf("CALL_FUNC_FILER [%s] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n", func_key_table->func_id);
 					//=========================
 					(*func_key_table->func)();			// call function
 					//=========================
-flf_d_printf("filer_do_next: %d\n", filer_do_next);
+flf_d_printf("filer_do_next: %d    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", filer_do_next);
 				}
 				unselect_all_files_auto(_FILE_SEL_AUTO_);
 			}

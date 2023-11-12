@@ -34,17 +34,16 @@ typedef struct {
 
 extern filer_panes_t *cur_filer_panes;	// Current Filer ViewS (instance is allocated locally)
 
-#define FILER_DO_NOTHING			0
-#define FILER_DO_UPDATE_SCREEN		1
-#define FILER_DO_REFRESH_AUTO		2	// periodic file list update
-#define FILER_DO_REFRESH_FORCE		3	// force file list update
+#define FILER_DO_NOTHING				0
+#define FILER_DO_UPDATE_FILE_LIST_AUTO	1	// periodic file list update
+#define FILER_DO_UPDATE_FILE_LIST_FORCE	2	// force file list update
 
-#define FILER_DO_QUIT				5
-#define FILER_DO_ABORT				6
-#define FILER_DO_LOAD_FILE			7
-#define FILER_DO_ENTER_FILE			8	// file, dir
-#define FILER_DO_ENTER_FILE_PATH	9	// /home/user/.bashrc
-#define FILER_DO_ENTER_DIR_PATH		10	// /home/user/bin
+#define FILER_DO_QUIT					5
+#define FILER_DO_ABORT					6
+#define FILER_DO_LOAD_FILE				7
+#define FILER_DO_ENTER_FILE				8	// file, dir
+#define FILER_DO_ENTER_FILE_PATH		9	// /home/user/.bashrc
+#define FILER_DO_ENTER_DIR_PATH			10	// /home/user/bin
 extern int filer_do_next;
 
 void init_filer_panes(filer_panes_t *fps, const char *cur_dir);

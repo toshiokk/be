@@ -84,17 +84,22 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 	//---------------------------------------------------------------------------------
 	ret = input_str_pos__(default__, input_buf, cursor_byte_idx, hist_type_idx, msg_buf);
 	//---------------------------------------------------------------------------------
-	// 0: cancelled
-	// 1: string is normally input
+flf_d_printf("ret: %d\n", ret);
+	// -1: cancelled
+	//  0: quited
+	//  1: string is normally input
 	tio_set_cursor_on(0);
 
 	change_cur_dir(dir_save);
 	update_screen_app(1, 1, 1);
 	recursively_called = 0;
 
-	if (ret <= 0) {
+	if (ret < 0) {
 		disp_status_bar_done(_("Cancelled"));
-		return 0;				// 0: cancelled
+		return ret;			// -1: cancelled
+	}
+	if (ret == 0) {
+		return ret;			// 0: something done and quited input
 	}
 #ifdef ENABLE_HISTORY
 	if (is_strlen_not_0(input_buf)) {
@@ -244,6 +249,11 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 				}
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
 				 cursor_byte_idx, buffer);
+			} else
+			if (ret == 0) {
+				key_input = KNA;	// quit
+			} else {
+				key_input = K_ESC;	// cancelled
 			}
 #endif // ENABLE_HISTORY
 #ifdef ENABLE_FILER
@@ -254,6 +264,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			//---------------------------------------------------
 			ret = call_filer(1, 1, "", "", buffer, MAX_PATH_LEN);
 			//---------------------------------------------------
+flf_d_printf("ret: %d\n", ret);
 			if (ret > 0) {
 ////flf_d_printf("[%s]\n", buffer);
 				if (cmp_func_id(func_id, "doe_down")) {
@@ -271,13 +282,10 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		 || cmp_func_id(func_id, "doe_replace")) {
 			// get string from edit buffer's current cursor position
 			if (count_edit_bufs()) {
-				char *line;
-				int byte_idx;
-
-////flf_d_printf("input_buf:[%s]\n", input_buf);
-				line = CEPBV_CL->data;
-				byte_idx = byte_idx_from_byte_idx(line,
+				char *line = CEPBV_CL->data;
+				int byte_idx = byte_idx_from_byte_idx(line,
 				 CEPBV_CLBI + strnlen(input_buf, MAX_PATH_LEN));
+////flf_d_printf("input_buf:[%s]\n", input_buf);
 				// copy one token (at least copy one character)
 				cursor_byte_idx = 0;
 				for ( ;
@@ -293,12 +301,14 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 				cursor_byte_idx = strnlen(input_buf, MAX_PATH_LEN);
 			}
 		}
-		if (key_input == K_ESC || key_input == K_C_M)
+		if (key_input == K_ESC || key_input == KNA || key_input == K_C_M)
 			break;
 	}
 
 	if (key_input == K_ESC)
-		return 0;						// cancelled, no input
+		return -1;						// cancelled, no input
+	if (key_input == KNA)
+		return 0;						// done in editor
 	return 1;							// input
 }
 

@@ -22,6 +22,11 @@
 #ifndef keys_h
 #define keys_h
 
+#define KEY_NONE			(-1)
+#define K_NONE				KEY_NONE
+#define KEY_NOT_ASSIGNED	(-0x8000)
+#define KNA					KEY_NOT_ASSIGNED
+
 // HP-UX 10 & 11 do not seem to support KEY_HOME and KEY_END
 #if !defined(KEY_HOME) || !defined(KEY_END)
 #define KEY_HOME		0x0106
@@ -44,8 +49,6 @@
 #define K_C(chr)			CTRL_CHAR(chr)				// Ctrl-x
 #define K_M(key)			KEY_META(key)				// Alt-x
 #define K_MC(chr)			KEY_META_CTRL(chr)			// Alt-Ctrl-x
-
-#define K_NONE			-1
 
 #define K_C_AT			K_C('@')
 #define K_C_SP			K_C('@')
@@ -291,9 +294,6 @@
 #define S_C_X		"\x18"
 #define S_C_Y		"\x19"
 #define S_C_Z		"\x1a"
-
-#define NO_KEY_ASSIGNED		(-0x8000)
-#define NKA					NO_KEY_ASSIGNED
 
 #define IS_CHAR_KEY(key)	(' ' <= (key) && (key) < 0x0100)
 

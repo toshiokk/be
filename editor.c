@@ -114,7 +114,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 				if (is_app_list_mode() == 0 || func_key_table->list_mode) {
 					search_clear(&search__);
 					key_executed = key_input;
-flf_d_printf("CALL_EDITOR_FUNC [%s]\n", func_key_table->func_id);
+flf_d_printf("CALL_FUNC_EDITOR [%s]\n", func_key_table->func_id);
 					//=========================
 					(*func_key_table->func)();			// call function
 					//=========================
@@ -144,7 +144,9 @@ flf_d_printf("editor_quit: %d\n", editor_quit);
 	key_macro_cancel_recording();
 #endif // ENABLE_HISTORY
 	if (editor_quit == EDITOR_ABORT) {
-		return 0;	// cancelled
+		return -1;	// cancelled
+	} else if (editor_quit == EDITOR_QUIT) {
+		return 0;	// done
 	}
 	return 1;		// selected
 }
@@ -472,7 +474,7 @@ int doe_run_line_soon(void)
 	fork_exec_once_sh_c(SEPARATE1, PAUSE1, buffer);
 	doe_refresh_editor();
 	if (is_app_list_mode()) {
-		editor_quit = EDITOR_ABORT;
+		editor_quit = EDITOR_QUIT;
 	}
 	return 0;
 }
