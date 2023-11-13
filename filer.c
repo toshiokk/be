@@ -23,10 +23,10 @@
 
 #ifdef ENABLE_FILER
 
-filer_panes_t *cur_filer_panes;		// Current Filer Views
+filer_panes_t *cur_filer_panes;		// Current Filer Panes
 
 PRIVATE char filer_cur_path[MAX_PATH_LEN+1];	// /directory/filter.*
-int filer_do_next = FILER_DO_NOTHING;
+filer_do_next_t filer_do_next = FILER_DO_NOTHING;
 
 PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir);
 PRIVATE filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps);
@@ -294,7 +294,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 				if (is_app_list_mode() == 0 || func_key_table->list_mode) {
 flf_d_printf("CALL_FUNC_FILER [%s] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n", func_key_table->func_id);
 					//=========================
-					(*func_key_table->func)();			// call function
+					(*func_key_table->func)();			// call function "dof_...()"
 					//=========================
 flf_d_printf("filer_do_next: %d    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", filer_do_next);
 				}

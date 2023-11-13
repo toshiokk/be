@@ -23,7 +23,7 @@
 
 #ifdef ENABLE_FILER
 
-PRIVATE int do_edit_file_(int recursive);
+PRIVATE int dof_edit_file_(int recursive);
 
 PRIVATE int filer_change_dir_to_cur_sel(void);
 PRIVATE int filer_change_dir_if_not_yet(const char *dir);
@@ -76,12 +76,12 @@ int dof_enter_file(void)
 }
 int dof_edit_file(void)
 {
-	do_edit_file_(RECURSIVE1);
+	dof_edit_file_(RECURSIVE1);
 	return 1;
 }
 int dof_edit_file_non_recursive(void)
 {
-	do_edit_file_(RECURSIVE0);
+	dof_edit_file_(RECURSIVE0);
 	return 1;
 }
 int dof_edit_new_file(void)
@@ -665,7 +665,7 @@ int dof_filer_menu_5(void)
 
 //-----------------------------------------------------------------------------
 
-PRIVATE int do_edit_file_(int recursive)
+PRIVATE int dof_edit_file_(int recursive)
 {
 	int file_idx;
 	int prev_count_edit_bufs = count_edit_bufs();
@@ -674,7 +674,7 @@ PRIVATE int do_edit_file_(int recursive)
 		return 0;
 	}
 	if (is_app_list_mode()) {
-		// do_edit_file_ -> FILER_DO_ENTER_FILE
+		// dof_edit_file_ -> FILER_DO_ENTER_FILE
 		filer_do_next = FILER_DO_ENTER_FILE;
 		return 0;
 	}

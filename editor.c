@@ -43,7 +43,6 @@ flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
 flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 	ret = editor_main_loop();
 flf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
-	editor_quit = EDITOR_NONE;
 
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 	SET_APPMD_VAL(app_LIST_MODE, GET_APPMD_PTR(&appmode_save, app_LIST_MODE));
@@ -116,7 +115,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 					key_executed = key_input;
 flf_d_printf("CALL_FUNC_EDITOR [%s]\n", func_key_table->func_id);
 					//=========================
-					(*func_key_table->func)();			// call function
+					(*func_key_table->func)();			// call function "doe_...()"
 					//=========================
 flf_d_printf("editor_quit: %d\n", editor_quit);
 					prev_key_executed = key_executed;
@@ -509,10 +508,6 @@ int doe_editor_menu_0(void)
 }
 int doe_editor_menu_1(void)
 {
-	if (is_app_list_mode()) {
-		editor_quit = EDITOR_ABORT;
-		return 0;
-	}
 	editor_menu_n(0);
 	return 0;
 }

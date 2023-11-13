@@ -59,7 +59,7 @@ func_key_table_t editor_func_key_table[] = {
    0,F_I(doe_read_file_into_cur_pos), NULL },
 
  { "",                    "Cursor Menu",                    KNA,          KNA, KNA,
-   1,F_I(doe_editor_menu_2), NULL },
+   0,F_I(doe_editor_menu_2), NULL },
  { "Up",                  "Move cursor UP",                 K_C_E, KNA,   K_UP,
    1,F_I(doe_up), NULL },
  { "Down",                "Move cursor DOWN",               K_C_X, KNA,   K_DOWN,
@@ -88,7 +88,7 @@ func_key_table_t editor_func_key_table[] = {
    0,F_I(doe_goto_input_line), NULL },
  { "TagJump",             "Tagged jump",                    K_M_j, K_F12,      KNA,
    1,F_I(doe_goto_file_in_cur_line), NULL },
- { "Change directory",    "Goto directory",                K_M_J, K_SF12,     KNA,
+ { "Change directory",    "Goto directory",                 K_M_J, K_SF12,     KNA,
    1,F_I(doe_goto_directory_in_cur_line), NULL },
 
  { "",                    "Edit Menu",                      KNA,          KNA, KNA,
@@ -120,7 +120,7 @@ func_key_table_t editor_func_key_table[] = {
  { "Playback-2",          "Playback 2nd newest key-macro",  K_SF02,       KNA, KNA,
    0,F_I(doe_playback_last_2), NULL },
 #ifdef ENABLE_FILER
- { "Run line",            "Run current line as command",    K_M_x,        KNA, KNA,
+ { "Run line",            "Run current line as command",    K_M_CR, K_M_x,     KNA,
    1,F_I(doe_run_line_soon), NULL },
 #endif // ENABLE_FILER
 #ifdef ENABLE_UNDO

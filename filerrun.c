@@ -55,7 +55,8 @@ int dof_exec_command_with_file(void)
 
 	if (ret < 0) {
 		// dof_exec_command_with_file -> FILER_DO_ENTER_FILE_PATH
-		filer_do_next = FILER_DO_ENTER_FILE_PATH;
+		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
+		///filer_do_next = FILER_DO_ENTER_FILE_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -113,7 +114,8 @@ int dof_exec_command_with_files(void)
 
 	if (ret < 0) {
 		// dof_exec_command_with_files -> FILER_DO_ENTER_FILE_PATH
-		filer_do_next = FILER_DO_ENTER_FILE_PATH;
+		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
+		///filer_do_next = FILER_DO_ENTER_FILE_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -230,7 +232,8 @@ flf_d_printf("ret: %d\n", ret);
 
 	if (ret < 0) {
 		// dof_run_command_ -> FILER_DO_ENTER_FILE_PATH
-		filer_do_next = FILER_DO_ENTER_FILE_PATH;
+		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
+		///filer_do_next = FILER_DO_ENTER_FILE_PATH;
 		return 0;
 	}
 	if (ret == 0) {
@@ -332,6 +335,12 @@ PRIVATE int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_ex
 	args[2] = (char *)command;
 	args[3] = NULL;
 
+mflf_d_printf("exec: [%s %s %s]\n", args[0], args[1], args[2]);
+#ifdef ENABLE_HISTORY
+	if (get_fork_exec_counter() == 0) {
+		update_history(HISTORY_TYPE_IDX_EXEC, command, 0);
+	}
+#endif // ENABLE_HISTORY
 	return fork_execv(set_term, separate_bef_exec, pause_aft_exec, args);
 }
 
@@ -362,13 +371,24 @@ int fork_exec_repeat(int separate_bef_exec, ...)
 PRIVATE int args_from_va_list(char **args, va_list ap)
 {
 	int arg_idx;
+	char buffer[MAX_PATH_LEN+1];
 
+	buffer[0] = '\0';
 	for (arg_idx = 0; arg_idx < MAX_EXECV_ARGS; arg_idx++) {
 		args[arg_idx] = va_arg(ap, char *);
 		if (args[arg_idx] == NULL)
 			break;
+		concat_file_name_separating_by_space(buffer, MAX_PATH_LEN, args[arg_idx]);
 	}
 	args[arg_idx] = NULL;
+
+mflf_d_printf("exec: [%s]\n", buffer);
+#ifdef ENABLE_HISTORY
+	if (get_fork_exec_counter() == 0) {
+		update_history(HISTORY_TYPE_IDX_EXEC, buffer, 0);
+	}
+#endif // ENABLE_HISTORY
+
 	return arg_idx;
 }
 
@@ -378,23 +398,6 @@ PRIVATE int fork_execv(int set_term, int separate_bef_exec, int pause_aft_exec,
 	pid_t pid;
 	int exit_status;
 	int ret;
-
-	int arg_idx;
-	const char *arg;
-	char buffer[MAX_PATH_LEN+1];
-	buffer[0] = '\0';
-	for (arg_idx = 0; arg_idx < MAX_EXECV_ARGS; arg_idx++) {
-		arg = args[arg_idx];
-		if (arg == NULL)
-			break;
-		concat_file_name_separating_by_space(buffer, MAX_PATH_LEN, arg);
-	}
-mflf_d_printf("exec: [%s]\n", buffer);
-#ifdef ENABLE_HISTORY
-	if (get_fork_exec_counter() == 0) {
-		update_history(HISTORY_TYPE_IDX_EXEC, buffer, 0);
-	}
-#endif // ENABLE_HISTORY
 
 	if (set_term && get_fork_exec_counter() == 0) {
 		restore_term_for_shell();

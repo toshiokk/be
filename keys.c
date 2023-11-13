@@ -42,6 +42,10 @@ void set_app_func_key_table(void)
 
 void editor_menu_n(int grp_idx)
 {
+	if (is_app_list_mode()) {
+		editor_quit = EDITOR_ABORT;
+		return;
+	}
 	static int prev_group_idx;
 	static int prev_entry_idx;
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-12 22:36+0900\n"
+"POT-Creation-Date: 2023-11-13 23:34+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -33,100 +33,100 @@ msgstr "CRC を計算中..."
 msgid "Tab size"
 msgstr "タブサイズ"
 
-#: ../editor.c:108 ../filer.c:289
+#: ../editor.c:107 ../filer.c:289
 #, c-format
 msgid "Key command not assigned: %04xh"
 msgstr "このキーコードにはコマンドが割り当てられていません: %04xh"
 
-#: ../editor.c:175
+#: ../editor.c:174
 msgid "Open existing file:"
 msgstr "既存ファイルを開く:"
 
-#: ../editor.c:200
+#: ../editor.c:199
 msgid "Open new file:"
 msgstr "新しいファイルを開く:"
 
-#: ../editor.c:280
+#: ../editor.c:279
 msgid "No project file found"
 msgstr ""
 
-#: ../editor.c:309
+#: ../editor.c:308
 msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr "バッファは変更されています。再オープンしますか ?"
 
-#: ../editor.c:334
+#: ../editor.c:333
 #, fuzzy
 msgid "File re-loaded"
 msgstr "ファイルを開き直しました"
 
-#: ../editor.c:379
+#: ../editor.c:378
 #, fuzzy, c-format
 msgid "Written to the file: %s"
 msgstr "ファイルに書き込みました: %s"
 
-#: ../editor.c:423
+#: ../editor.c:422
 #, fuzzy
 msgid "One buffer closed"
 msgstr "1 ファイルを閉じました"
 
-#: ../editor.c:582 ../editor.c:629 ../editor.c:642 ../fileio.c:360
+#: ../editor.c:577 ../editor.c:624 ../editor.c:637 ../fileio.c:360
 #: ../fileio.c:365 ../winin.c:98
 msgid "Cancelled"
 msgstr "キャンセルされました"
 
-#: ../editor.c:588
+#: ../editor.c:583
 #, fuzzy
 msgid "All buffers are checked"
 msgstr "全ファイルをチェックしました"
 
-#: ../editor.c:593
+#: ../editor.c:588
 #, fuzzy
 msgid "Freeing buffers..."
 msgstr "全バッファを開放中..."
 
-#: ../editor.c:608
+#: ../editor.c:603
 msgid "Freeing all buffers..."
 msgstr "全バッファを開放中..."
 
 #. buffer is acctually NOT modified, so clear "modified" flag
-#: ../editor.c:623
+#: ../editor.c:618
 #, fuzzy
 msgid "Buffer is NOT modified"
 msgstr "ファイルは変更されていません"
 
-#: ../editor.c:627
+#: ../editor.c:622
 #, fuzzy
 msgid "Save unmodified buffer ?"
 msgstr "変更されていないバッファを書き込みますか ?"
 
-#: ../editor.c:639
+#: ../editor.c:634
 msgid "Save modified buffer ?"
 msgstr "変更されたバッファを書き込みますか ?"
 
-#: ../editor.c:640
+#: ../editor.c:635
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr "変更されたバッファを書き込みますか (\"いいえ\" で変更は破棄されます) ?"
 
-#: ../editor.c:650
+#: ../editor.c:645
 msgid "Buffer saved to file"
 msgstr "バッファを書き込みました"
 
-#: ../editor.c:802
+#: ../editor.c:797
 #, fuzzy, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 "行:%4lu/%-4lu 桁:%3lu/%-3lu サイズ:%6lu%s 文字コード:%s エンコード:%s 行末:%s"
 
-#: ../editor.c:859
+#: ../editor.c:854
 #, fuzzy
 msgid "Modification not allowed in Anchor buffer"
 msgstr "LISTモードでは編集できません"
 
-#: ../editor.c:863
+#: ../editor.c:858
 msgid "Modification not allowed in LIST mode"
 msgstr "LISTモードでは編集できません"
 
-#: ../editor.c:867
+#: ../editor.c:862
 msgid "Modification not allowed in VIEW mode"
 msgstr "VIEWモードでは編集できません"
 
@@ -536,31 +536,31 @@ msgstr "カレントディレクトリを変更できません [%s]: %s"
 msgid "Execute({} will be replaced with file-name):"
 msgstr "コマンド実行({}はファイル名に置換される):"
 
-#: ../filerrun.c:112
+#: ../filerrun.c:113
 msgid "Execute with files:"
 msgstr "コマンド実行(ファイル名引数付き):"
 
-#: ../filerrun.c:174
+#: ../filerrun.c:176
 msgid "Run (with file):"
 msgstr "コマンド実行(ファイル名引数付き):"
 
-#: ../filerrun.c:179
+#: ../filerrun.c:181
 msgid "Run (current-directory-file):"
 msgstr "コマンド実行(カレントディレクトリファイル):"
 
-#: ../filerrun.c:184
+#: ../filerrun.c:186
 msgid "Run (with real-path):"
 msgstr "コマンド実行(絶対パス):"
 
-#: ../filerrun.c:191
+#: ../filerrun.c:193
 msgid "Run (script):"
 msgstr "コマンド実行(スクリプト):"
 
-#: ../filerrun.c:196
+#: ../filerrun.c:198
 msgid "Run (script by shell):"
 msgstr "コマンド実行(シェルによるスクリプト):"
 
-#: ../filerrun.c:201
+#: ../filerrun.c:203
 msgid "Run (with SRC-path and DEST-path):"
 msgstr "コマンド実行(元ファイルパス、先ファイルパス付き):"
 

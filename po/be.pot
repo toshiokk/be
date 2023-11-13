@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-12 22:36+0900\n"
+"POT-Creation-Date: 2023-11-13 23:34+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,92 +34,92 @@ msgstr ""
 msgid "Tab size"
 msgstr ""
 
-#: ../editor.c:108 ../filer.c:289
+#: ../editor.c:107 ../filer.c:289
 #, c-format
 msgid "Key command not assigned: %04xh"
 msgstr ""
 
-#: ../editor.c:175
+#: ../editor.c:174
 msgid "Open existing file:"
 msgstr ""
 
-#: ../editor.c:200
+#: ../editor.c:199
 msgid "Open new file:"
 msgstr ""
 
-#: ../editor.c:280
+#: ../editor.c:279
 msgid "No project file found"
 msgstr ""
 
-#: ../editor.c:309
+#: ../editor.c:308
 msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr ""
 
-#: ../editor.c:334
+#: ../editor.c:333
 msgid "File re-loaded"
 msgstr ""
 
-#: ../editor.c:379
+#: ../editor.c:378
 #, c-format
 msgid "Written to the file: %s"
 msgstr ""
 
-#: ../editor.c:423
+#: ../editor.c:422
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editor.c:582 ../editor.c:629 ../editor.c:642 ../fileio.c:360
+#: ../editor.c:577 ../editor.c:624 ../editor.c:637 ../fileio.c:360
 #: ../fileio.c:365 ../winin.c:98
 msgid "Cancelled"
 msgstr ""
 
-#: ../editor.c:588
+#: ../editor.c:583
 msgid "All buffers are checked"
 msgstr ""
 
-#: ../editor.c:593
+#: ../editor.c:588
 msgid "Freeing buffers..."
 msgstr ""
 
-#: ../editor.c:608
+#: ../editor.c:603
 msgid "Freeing all buffers..."
 msgstr ""
 
 #. buffer is acctually NOT modified, so clear "modified" flag
-#: ../editor.c:623
+#: ../editor.c:618
 msgid "Buffer is NOT modified"
 msgstr ""
 
-#: ../editor.c:627
+#: ../editor.c:622
 msgid "Save unmodified buffer ?"
 msgstr ""
 
-#: ../editor.c:639
+#: ../editor.c:634
 msgid "Save modified buffer ?"
 msgstr ""
 
-#: ../editor.c:640
+#: ../editor.c:635
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr ""
 
-#: ../editor.c:650
+#: ../editor.c:645
 msgid "Buffer saved to file"
 msgstr ""
 
-#: ../editor.c:802
+#: ../editor.c:797
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:859
+#: ../editor.c:854
 msgid "Modification not allowed in Anchor buffer"
 msgstr ""
 
-#: ../editor.c:863
+#: ../editor.c:858
 msgid "Modification not allowed in LIST mode"
 msgstr ""
 
-#: ../editor.c:867
+#: ../editor.c:862
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 
@@ -525,31 +525,31 @@ msgstr ""
 msgid "Execute({} will be replaced with file-name):"
 msgstr ""
 
-#: ../filerrun.c:112
+#: ../filerrun.c:113
 msgid "Execute with files:"
 msgstr ""
 
-#: ../filerrun.c:174
+#: ../filerrun.c:176
 msgid "Run (with file):"
 msgstr ""
 
-#: ../filerrun.c:179
+#: ../filerrun.c:181
 msgid "Run (current-directory-file):"
 msgstr ""
 
-#: ../filerrun.c:184
+#: ../filerrun.c:186
 msgid "Run (with real-path):"
 msgstr ""
 
-#: ../filerrun.c:191
+#: ../filerrun.c:193
 msgid "Run (script):"
 msgstr ""
 
-#: ../filerrun.c:196
+#: ../filerrun.c:198
 msgid "Run (script by shell):"
 msgstr ""
 
-#: ../filerrun.c:201
+#: ../filerrun.c:203
 msgid "Run (with SRC-path and DEST-path):"
 msgstr ""
 
