@@ -149,6 +149,38 @@
 #define K_M_X			K_M('X')
 #define K_M_Y			K_M('Y')
 #define K_M_Z			K_M('Z')
+
+#define K_MC_A			K_M(K_C('A'))	// 1b01
+#define K_MC_B			K_M(K_C('B'))
+#define K_MC_C			K_M(K_C('C'))
+#define K_MC_D			K_M(K_C('D'))
+#define K_MC_E			K_M(K_C('E'))
+#define K_MC_F			K_M(K_C('F'))
+#define K_MC_G			K_M(K_C('G'))
+#define K_MC_H			K_M(K_C('H'))
+#define K_MC_I			K_M(K_C('I'))
+#define K_MC_J			K_M(K_C('J'))
+#define K_MC_K			K_M(K_C('K'))
+#define K_MC_L			K_M(K_C('L'))
+#define K_MC_M			K_M(K_C('M'))
+#define K_MC_N			K_M(K_C('N'))
+#define K_MC_O			K_M(K_C('O'))
+#define K_MC_P			K_M(K_C('P'))
+#define K_MC_Q			K_M(K_C('Q'))
+#define K_MC_R			K_M(K_C('R'))
+#define K_MC_S			K_M(K_C('S'))
+#define K_MC_T			K_M(K_C('T'))
+#define K_MC_U			K_M(K_C('U'))
+#define K_MC_V			K_M(K_C('V'))
+#define K_MC_W			K_M(K_C('W'))
+#define K_MC_X			K_M(K_C('X'))
+#define K_MC_Y			K_M(K_C('Y'))
+#define K_MC_Z			K_M(K_C('Z'))	// 1b1a
+#define K_MC_LBRACKET	K_M(K_C('['))	// 1b1b
+#define K_MC_BACKSLASH	K_M(K_C('\\'))	// 1b1c
+#define K_MC_RBRACKET	K_M(K_C(']'))	// 1b1d
+#define K_MC_CARET		K_M(K_C('^'))	// 1b1e
+#define K_MC_UNDERLINE	K_M(K_C('_'))	// 1b1f
 #define K_M_BS			K_M(K_C_H)		// 1b08
 #define K_M_TAB			K_M(K_TAB)		// 1b09
 #define K_M_CR			K_M(K_C_M)		// 1b0d
@@ -187,39 +219,6 @@
 #define K_M_RBRACE			K_M('}')	// 1b7d
 #define K_M_TILDE			K_M('~')	// 1b7e
 #define K_M_DEL				K_M(0x7f)	// 1b7f
-
-#define K_MC_LBRACKET		K_M(K_C('['))	// 1b1b
-#define K_MC_BACKSLASH		K_M(K_C('\\'))	// 1b1c
-#define K_MC_RBRACKET		K_M(K_C(']'))	// 1b1d
-#define K_MC_CARET			K_M(K_C('^'))	// 1b1e
-#define K_MC_UNDERLINE		K_M(K_C('_'))	// 1b1f
-
-#define K_MC_A			K_M(K_C('A'))	// 1b01
-#define K_MC_B			K_M(K_C('B'))
-#define K_MC_C			K_M(K_C('C'))
-#define K_MC_D			K_M(K_C('D'))
-#define K_MC_E			K_M(K_C('E'))
-#define K_MC_F			K_M(K_C('F'))
-#define K_MC_G			K_M(K_C('G'))
-#define K_MC_H			K_M(K_C('H'))
-#define K_MC_I			K_M(K_C('I'))
-#define K_MC_J			K_M(K_C('J'))
-#define K_MC_K			K_M(K_C('K'))
-#define K_MC_L			K_M(K_C('L'))
-#define K_MC_M			K_M(K_C('M'))
-#define K_MC_N			K_M(K_C('N'))
-#define K_MC_O			K_M(K_C('O'))
-#define K_MC_P			K_M(K_C('P'))
-#define K_MC_Q			K_M(K_C('Q'))
-#define K_MC_R			K_M(K_C('R'))
-#define K_MC_S			K_M(K_C('S'))
-#define K_MC_T			K_M(K_C('T'))
-#define K_MC_U			K_M(K_C('U'))
-#define K_MC_V			K_M(K_C('V'))
-#define K_MC_W			K_M(K_C('W'))
-#define K_MC_X			K_M(K_C('X'))
-#define K_MC_Y			K_M(K_C('Y'))
-#define K_MC_Z			K_M(K_C('Z'))	// 1b1a
 
 #define K_F01			KEY_F(1)
 #define K_F02			KEY_F(2)
