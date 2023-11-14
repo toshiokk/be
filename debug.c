@@ -97,6 +97,7 @@ void tflfl_d_printf_(int time, const char *file, int line,
 
 	switch (time) {
 	default:
+		// FALLTHROUGH
 	case 1:
 		get_sssssspmmm(buffer);
 		snprintf_(buf_time, MAX_PATH_LEN, "MSEC %s ", buffer);

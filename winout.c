@@ -122,6 +122,7 @@ void win_reinit_win_size(void)
 		win_select_win(sub_win_idx);
 		switch (sub_win_idx) {
 		default:
+			// FALLTHROUGH
 		case WIN_IDX_MAIN:
 			cur_win->top = 0 + win_depth * 1;
 			cur_win->left = 0 + win_depth * 2;

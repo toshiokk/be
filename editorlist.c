@@ -102,6 +102,7 @@ int make_help_buf_call_editor(int help_idx)
 	set_cep_buf(get_help_buf(help_idx));
 	switch (help_idx) {
 	default:
+		// FALLTHROUGH
 	case HELP_BUF_IDX_KEY_LIST:
 		disp_status_bar_done(_("Key List"));
 		break;
@@ -122,6 +123,7 @@ void make_help_buf(int help_idx)
 	buf_free_lines(buf);
 	switch (help_idx) {
 	default:
+		// FALLTHROUGH
 	case HELP_BUF_IDX_KEY_LIST:
 		make_help_key_list();
 		break;

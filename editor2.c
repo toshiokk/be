@@ -383,6 +383,7 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 		// this line is at least partially selected
 		switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 		default:
+			// FALLTHROUGH
 		case CUT_MODE_0_LINE:
 			break;
 		case CUT_MODE_N_LINE:

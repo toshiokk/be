@@ -43,6 +43,7 @@ flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
 flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 	ret = editor_main_loop();
 flf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
+	editor_quit = EDITOR_NONE;	// for caller editor_main_loop(), clear "editor_quit"
 
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 	SET_APPMD_VAL(app_LIST_MODE, GET_APPMD_PTR(&appmode_save, app_LIST_MODE));
@@ -106,10 +107,10 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 				if (IS_CHAR_KEY(key_input) == 0) {
 					disp_status_bar_err(_("Key command not assigned: %04xh"), key_input);
 				} else {
-					do_enter_char(key_input);
+					doe_enter_char(key_input);
 				}
 			} else {
-				do_enter_char_send();
+				doe_enter_char_send();
 				if (is_app_list_mode() == 0 || func_key_table->list_mode) {
 					search_clear(&search__);
 					key_executed = key_input;
@@ -231,6 +232,7 @@ int doe_open_proj_file(void)
 	for (loop = 0; loop < 4; loop++) {
 		switch (loop) {
 		default:
+			// FALLTHROUGH
 		case 0:		strcpy__(filter, PROJ_FILE_FILTER1);	break;
 		case 1:		strupper(filter);	break;	// "*.bep" ==> "*.BEP"
 		case 2:		strcpy__(filter, PROJ_FILE_FILTER2);	break;

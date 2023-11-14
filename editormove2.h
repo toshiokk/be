@@ -36,11 +36,9 @@
 // LINES-1-1 |                                   |
 // LINES-1-0 |                                   |
 // LINES     +-----------------------------------+
-#define EDITOR_VERT_SCROLL_MARGIN_LINES		\
-	LIM_MAX(3, edit_win_get_text_lines()/3)
-#define TOP_SCROLL_MARGIN_IDX		EDITOR_VERT_SCROLL_MARGIN_LINES
-#define BOTTOM_SCROLL_MARGIN_IDX	\
-	(edit_win_get_text_lines()-1 - EDITOR_VERT_SCROLL_MARGIN_LINES)
+#define EDITOR_VERT_SCROLL_MARGIN_LINES		LIM_MAX(3, edit_win_get_text_lines()/3)		// [0, 3]
+#define TOP_SCROLL_MARGIN_Y		EDITOR_VERT_SCROLL_MARGIN_LINES
+#define BOTTOM_SCROLL_MARGIN_Y	(edit_win_get_text_lines()-1 - EDITOR_VERT_SCROLL_MARGIN_LINES)
 
 #define EDITOR_VERT_SCROLL_LINES						\
 	LIM_MIN(1, edit_win_get_text_lines()-1 - EDITOR_VERT_SCROLL_MARGIN_LINES)

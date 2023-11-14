@@ -381,7 +381,7 @@ PRIVATE void dump_vscreen(int yy, int len)
 #define OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
 #endif // VAGUE_WIDE_CHR
 #ifdef OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
-// If is_vague_wide_chr(), display this char as if wide char.
+// If is_vague_wide_chr(), display this char as a wide char.
 // (display "  " and display this wide char to 1st place)
 // Expected effect:
 //   If this char is narrow char, displayed "N ".

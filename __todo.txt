@@ -1,7 +1,8 @@
 #### BE-editor to do list
 
-[] return to filer main screen after run file soon
 [] editor: when scrolling reverse direction, previous area should be shown.
+[v] return to filer main screen after run file soon
+[] visit all cut mode by moving cursor horizontally and vertically in specific order.
 
 #### thinking
 - Which is the better practice

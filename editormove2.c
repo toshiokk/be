@@ -36,6 +36,7 @@ int post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_m
 {
 	switch (GET_APPMD(ed_CURS_POSITIONING)) {
 	default:
+		// FALLTHROUGH
 	case CURS_POSITIONING_NONE:		break;
 	case CURS_POSITIONING_TOP:		locate_cursor = LOCATE_CURS_TOP;		break;
 	case CURS_POSITIONING_CENTER:	locate_cursor = LOCATE_CURS_CENTER;		break;
@@ -75,6 +76,7 @@ void locate_cursor_in_edit_win(locate_cursor_to_t locate_curs)
 
 	switch (locate_curs) {
 	default:
+		// FALLTHROUGH
 	case LOCATE_CURS_NONE:
 		disp_y_preferred = CEPBV_CURSOR_Y;
 		break;
@@ -93,6 +95,7 @@ void locate_cursor_in_edit_win(locate_cursor_to_t locate_curs)
 			// LOCATE_CURS_CENTER
 			switch (locate_curs) {
 			default:
+				// FALLTHROUGH
 			case LOCATE_CURS_JUMP_BACKWARD:	// 2 line upper than center
 				disp_y_preferred = edit_win_get_text_lines() / 2 - 2;
 				break;
@@ -139,9 +142,9 @@ void fix_cursor_y_keeping_vert_scroll_margin(void)
 
 	// keep top/bottom scroll margin
 	disp_y_preferred = MIN_MAX_(
-	 TOP_SCROLL_MARGIN_IDX,
+	 TOP_SCROLL_MARGIN_Y,
 	 CEPBV_CURSOR_Y,
-	 BOTTOM_SCROLL_MARGIN_IDX);
+	 BOTTOM_SCROLL_MARGIN_Y);
 
 	line = CEPBV_CL;
 	byte_idx = CEPBV_CLBI;

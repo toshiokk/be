@@ -135,6 +135,7 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file
 		}
 		switch (CUR_EBUF_STATE(buf_ENCODE)) {
 		default:
+			// FALLTHROUGH
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
 		case ENCODE_BINARY:
@@ -152,6 +153,7 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file
 		}
 		switch (CUR_EBUF_STATE(buf_ENCODE)) {
 		default:
+			// FALLTHROUGH
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
 		case ENCODE_BINARY:
@@ -297,6 +299,7 @@ append_line:;
 	}
 	switch (file_format_idx) {
 	default:
+		// FALLTHROUGH
 	case 0:
 		set_eol(EOL_NIX);
 		break;
@@ -515,6 +518,7 @@ PRIVATE int save_cur_buf_to_file__(const char *file_path)
 	if (GET_APPMD(ed_USE_NKF)) {
 		switch (CUR_EBUF_STATE(buf_ENCODE)) {
 		default:
+			// FALLTHROUGH
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
 		case ENCODE_BINARY:
@@ -532,6 +536,7 @@ PRIVATE int save_cur_buf_to_file__(const char *file_path)
 		}
 		switch (CUR_EBUF_STATE(buf_ENCODE)) {
 		default:
+			// FALLTHROUGH
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
 		case ENCODE_BINARY:
@@ -613,6 +618,7 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 		}
 		switch (CUR_EBUF_STATE(buf_EOL)) {
 		default:
+			// FALLTHROUGH
 		case EOL_NIX:
 			putc('\n', fp);
 			break;

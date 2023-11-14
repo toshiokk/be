@@ -166,6 +166,7 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	}
 	switch (GET_APPMD(fl_SHOW_FILE_INFO)) {
 	default:
+		// FALLTHROUGH
 	case SHOW_FILE_INFO_0:
 	case SHOW_FILE_INFO_1:
 	case SHOW_FILE_INFO_2:
@@ -193,6 +194,7 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 /// get_group_name(show_link ? lst_ptr->st_gid : st_ptr->st_gid));
 	switch (GET_APPMD(fl_SHOW_FILE_INFO)) {
 	default:
+		// FALLTHROUGH
 	case SHOW_FILE_INFO_0:
 		snprintf_(buf_info, FILE_INFO_BUF_LEN+1, "%s", " ");
 		break;
@@ -417,6 +419,7 @@ PRIVATE int comp_file_info(const void *aa, const void *bb)
 	}
 	switch (GET_APPMD(fl_FILE_SORT_BY)) {
 	default:
+		// FALLTHROUGH
 	case FILE_SORT_BY_NAME:
 		 return comp_file_name(aa, bb);
 	case FILE_SORT_BY_NAME_REV:

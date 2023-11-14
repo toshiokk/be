@@ -72,9 +72,9 @@ char *conv_esc_str(char *string)
 		switch (*src) {
 		case '\\':
 			switch (*(src+1)) {
-			case 'a':
+			case 'a':		// FALLTHROUGH
+			case 'r':		// FALLTHROUGH
 			case 't':
-			case 'r':
 				switch (*(src+1)) {
 				case 'a':
 					*dest = '\a';
@@ -647,6 +647,7 @@ char *select_plural_form(char *singular, char *plural, char *type3, char *type4,
 ////flf_d_printf("number:%d ==> plural_form_index:%d\n", number, get_plural_form_index(number));
 	switch (get_plural_form_index(number)) {
 	default:
+		// FALLTHROUGH
 	case 0:
 		return singular;
 	case 1:
@@ -751,6 +752,7 @@ int get_plural_form_index(int number)
 
 	switch (cur_lang_idx) {
 	default:
+		// FALLTHROUGH
 	case LANG_EN:
 	case LANG_DE:
 		if (number == 1)

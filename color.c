@@ -28,13 +28,19 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	//  bgc, fgc
 	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_DEFAULT)			},
 #ifndef ENABLE_EXPERIMENTAL
+	// official release
 	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_TITLE)				},
 	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_STATUS)			},
 #else // ENABLE_EXPERIMENTAL
-///	{ CL_GR, CL_BL, S(ITEM_COLOR_IDX_TITLE)				},
-///	{ CL_GR, CL_BL, S(ITEM_COLOR_IDX_STATUS)			},
-	{ CL_GR, CL_CY, S(ITEM_COLOR_IDX_TITLE)				},
-	{ CL_GR, CL_CY, S(ITEM_COLOR_IDX_STATUS)			},
+#if 1
+	// test release
+	{ CL_GR, CL_BL, S(ITEM_COLOR_IDX_TITLE)				},
+	{ CL_GR, CL_BL, S(ITEM_COLOR_IDX_STATUS)			},
+#else
+	// experimental release
+	{ CL_GR, CL_GR, S(ITEM_COLOR_IDX_TITLE)				},
+	{ CL_GR, CL_GR, S(ITEM_COLOR_IDX_STATUS)			},
+#endif
 #endif // ENABLE_EXPERIMENTAL
 	{ CL_WH, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
 	{ CL_BK, CL_BR, S(ITEM_COLOR_IDX_KEY_LIST2)			},

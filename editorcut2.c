@@ -101,6 +101,7 @@ PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move
 {
 	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
+		// FALLTHROUGH
 	case CUT_MODE_0_LINE:
 		break;
 	case CUT_MODE_N_LINE:
@@ -177,6 +178,7 @@ PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 			// the same line, different column
 			switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 			default:
+				// FALLTHROUGH
 			case CUT_MODE_0_LINE:
 			case CUT_MODE_N_LINE:
 			case CUT_MODE_H_CHAR:
@@ -200,6 +202,7 @@ PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 	}
 	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
+		// FALLTHROUGH
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
 	case CUT_MODE_H_CHAR:
@@ -214,6 +217,7 @@ PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 		 == col_idx_from_byte_idx(mark_max_line->data, 0, mark_max_byte_idx)) {
 			switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 			default:
+				// FALLTHROUGH
 			case CUT_MODE_0_LINE:
 			case CUT_MODE_N_LINE:
 			case CUT_MODE_H_CHAR:
@@ -241,6 +245,7 @@ void setup_cut_region(void)
 
 	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
+		// FALLTHROUGH
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
 		if (IS_NODE_BOT(CEPBV_CL)) {
@@ -325,6 +330,7 @@ void setup_cut_region(void)
 	// setup mark_min_col_idx, mark_max_col_idx
 	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
+		// FALLTHROUGH
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
 	case CUT_MODE_H_CHAR:
@@ -369,16 +375,16 @@ int lines_selected(void)
 {
 	int lines = abs(CEPB_ML->line_num - CEPBV_CL->line_num);
 	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
-	default:
-	case CUT_MODE_0_LINE:
-	case CUT_MODE_N_LINE:
-	case CUT_MODE_H_CHAR:
-	case CUT_MODE_VH_CHAR:
-	case CUT_MODE_HV_BOX:
+	default:					// FALLTHROUGH
+	case CUT_MODE_0_LINE:		// FALLTHROUGH
+	case CUT_MODE_N_LINE:		// FALLTHROUGH
+	case CUT_MODE_H_CHAR:		// FALLTHROUGH
+	case CUT_MODE_VH_CHAR:		// FALLTHROUGH
+	case CUT_MODE_HV_BOX:		// FALLTHROUGH
 	case CUT_MODE_VH_BOX:
 		lines++;
 		break;
-	case CUT_MODE_V_LINE:
+	case CUT_MODE_V_LINE:		// FALLTHROUGH
 	case CUT_MODE_HV_LINE:
 		break;
 	}

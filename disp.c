@@ -121,6 +121,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 
 	switch (status_bar_to_display) {
 	default:
+		// FALLTHROUGH
 	case S_B_D_NONE:
 	case S_B_D_PERCENT_FILER:
 	case S_B_D_ING:
@@ -151,6 +152,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 ///mflf_d_printf("[%s]\n", buf);
 		switch (status_bar_to_display) {
 		default:
+			// FALLTHROUGH
 		case S_B_D_NONE:
 		case S_B_D_PERCENT_FILER:
 		case S_B_D_ING:
@@ -181,6 +183,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		adjust_utf8s_columns(buffer, main_win_get_columns());
 		switch (status_bar_displayed) {
 		default:
+			// FALLTHROUGH
 		case S_B_D_NONE:
 		case S_B_D_PERCENT_FILER:
 		case S_B_D_ING:

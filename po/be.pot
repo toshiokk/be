@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-13 23:53+0900\n"
+"POT-Creation-Date: 2023-11-15 00:15+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../appmode.c:545
+#: ../appmode.c:547
 msgid "Input key to show key code"
 msgstr ""
 
-#: ../appmode.c:547 ../editormove.c:283
+#: ../appmode.c:549 ../editormove.c:283
 #, c-format
 msgid "Key code: %04x"
 msgstr ""
@@ -34,92 +34,92 @@ msgstr ""
 msgid "Tab size"
 msgstr ""
 
-#: ../editor.c:107 ../filer.c:289
+#: ../editor.c:108 ../filer.c:289
 #, c-format
 msgid "Key command not assigned: %04xh"
 msgstr ""
 
-#: ../editor.c:174
+#: ../editor.c:175
 msgid "Open existing file:"
 msgstr ""
 
-#: ../editor.c:199
+#: ../editor.c:200
 msgid "Open new file:"
 msgstr ""
 
-#: ../editor.c:279
+#: ../editor.c:281
 msgid "No project file found"
 msgstr ""
 
-#: ../editor.c:308
+#: ../editor.c:310
 msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr ""
 
-#: ../editor.c:333
+#: ../editor.c:335
 msgid "File re-loaded"
 msgstr ""
 
-#: ../editor.c:378
+#: ../editor.c:380
 #, c-format
 msgid "Written to the file: %s"
 msgstr ""
 
-#: ../editor.c:422
+#: ../editor.c:424
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editor.c:577 ../editor.c:624 ../editor.c:637 ../fileio.c:360
-#: ../fileio.c:365 ../winin.c:98
+#: ../editor.c:579 ../editor.c:626 ../editor.c:639 ../fileio.c:363
+#: ../fileio.c:368 ../winin.c:98
 msgid "Cancelled"
 msgstr ""
 
-#: ../editor.c:583
+#: ../editor.c:585
 msgid "All buffers are checked"
 msgstr ""
 
-#: ../editor.c:588
+#: ../editor.c:590
 msgid "Freeing buffers..."
 msgstr ""
 
-#: ../editor.c:603
+#: ../editor.c:605
 msgid "Freeing all buffers..."
 msgstr ""
 
 #. buffer is acctually NOT modified, so clear "modified" flag
-#: ../editor.c:618
+#: ../editor.c:620
 msgid "Buffer is NOT modified"
 msgstr ""
 
-#: ../editor.c:622
+#: ../editor.c:624
 msgid "Save unmodified buffer ?"
 msgstr ""
 
-#: ../editor.c:634
+#: ../editor.c:636
 msgid "Save modified buffer ?"
 msgstr ""
 
-#: ../editor.c:635
+#: ../editor.c:637
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr ""
 
-#: ../editor.c:645
+#: ../editor.c:647
 msgid "Buffer saved to file"
 msgstr ""
 
-#: ../editor.c:797
+#: ../editor.c:799
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:854
+#: ../editor.c:856
 msgid "Modification not allowed in Anchor buffer"
 msgstr ""
 
-#: ../editor.c:858
+#: ../editor.c:860
 msgid "Modification not allowed in LIST mode"
 msgstr ""
 
-#: ../editor.c:862
+#: ../editor.c:864
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 
@@ -227,15 +227,15 @@ msgstr ""
 msgid "#List of Editor Key Bindings"
 msgstr ""
 
-#: ../editorlist.c:71 ../editorlist.c:150
+#: ../editorlist.c:71 ../editorlist.c:152
 msgid "#List of Editor Functions"
 msgstr ""
 
-#: ../editorlist.c:106
+#: ../editorlist.c:107
 msgid "Key List"
 msgstr ""
 
-#: ../editorlist.c:109
+#: ../editorlist.c:110
 msgid "Function List"
 msgstr ""
 
@@ -314,104 +314,104 @@ msgstr ""
 msgid "BINARY file !! [%s]"
 msgstr ""
 
-#: ../fileio.c:175 ../fileio.c:196 ../fileio.c:233
+#: ../fileio.c:177 ../fileio.c:198 ../fileio.c:235
 #, c-format
 msgid "Can not read-open file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:358
+#: ../fileio.c:361
 msgid "File was modified by another program, OVERWRITE ?"
 msgstr ""
 
-#: ../fileio.c:370
+#: ../fileio.c:373
 #, c-format
 msgid "File [%s] can NOT be written !!"
 msgstr ""
 
-#: ../fileio.c:382
+#: ../fileio.c:385
 msgid "File Name to Write"
 msgstr ""
 
-#: ../fileio.c:400
+#: ../fileio.c:403
 msgid "File exists, OVERWRITE it ?"
 msgstr ""
 
-#: ../fileio.c:409
+#: ../fileio.c:412
 msgid "Path is not file, can not WRITE it"
 msgstr ""
 
-#: ../fileio.c:439
+#: ../fileio.c:442
 #, c-format
 msgid "File [%s] is NOT regular file !!"
 msgstr ""
 
-#: ../fileio.c:443
+#: ../fileio.c:446
 #, c-format
 msgid "Writing File %s ..."
 msgstr ""
 
-#: ../fileio.c:456
+#: ../fileio.c:459
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr ""
 
-#: ../fileio.c:465
+#: ../fileio.c:468
 #, c-format
 msgid "%d line written"
 msgstr ""
 
-#: ../fileio.c:466
+#: ../fileio.c:469
 #, c-format
 msgid "%d lines written"
 msgstr ""
 
-#: ../fileio.c:467
+#: ../fileio.c:470
 #, c-format
 msgid "%d liness written"
 msgstr ""
 
-#: ../fileio.c:468
+#: ../fileio.c:471
 #, c-format
 msgid "%d linesss written"
 msgstr ""
 
-#: ../fileio.c:555 ../fileio.c:580
+#: ../fileio.c:560 ../fileio.c:585
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr ""
 
 #. -1: error
-#: ../fileio.c:563 ../fileio.c:588
+#: ../fileio.c:568 ../fileio.c:593
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:610
+#: ../fileio.c:615
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:654
+#: ../fileio.c:660
 #, c-format
 msgid "%d file loaded"
 msgstr ""
 
-#: ../fileio.c:655
+#: ../fileio.c:661
 #, c-format
 msgid "%d files loaded"
 msgstr ""
 
-#: ../fileio.c:656
+#: ../fileio.c:662
 #, c-format
 msgid "%d filess loaded"
 msgstr ""
 
-#: ../fileio.c:657
+#: ../fileio.c:663
 #, c-format
 msgid "%d filesss loaded"
 msgstr ""
 
-#: ../filer2.c:257
+#: ../filer2.c:259
 msgid " <<broken-link>>"
 msgstr ""
 
@@ -529,27 +529,27 @@ msgstr ""
 msgid "Execute with files:"
 msgstr ""
 
-#: ../filerrun.c:176
+#: ../filerrun.c:177
 msgid "Run (with file):"
 msgstr ""
 
-#: ../filerrun.c:181
+#: ../filerrun.c:182
 msgid "Run (current-directory-file):"
 msgstr ""
 
-#: ../filerrun.c:186
+#: ../filerrun.c:187
 msgid "Run (with real-path):"
 msgstr ""
 
-#: ../filerrun.c:193
+#: ../filerrun.c:194
 msgid "Run (script):"
 msgstr ""
 
-#: ../filerrun.c:198
+#: ../filerrun.c:199
 msgid "Run (script by shell):"
 msgstr ""
 
-#: ../filerrun.c:203
+#: ../filerrun.c:204
 msgid "Run (with SRC-path and DEST-path):"
 msgstr ""
 

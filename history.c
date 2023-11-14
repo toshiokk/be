@@ -135,8 +135,6 @@ void update_history(int hist_type_idx, const char *str, BOOL force_update)
 {
 	be_line_t *line;
 
-////
-flf_d_printf("hist_type_idx:%d:[%s]\n", hist_type_idx, str);
 	if ((force_update == FALSE) && (hist_type_idx == HISTORY_TYPE_IDX_CURSPOS)) {
 		if (check_file_pos_recorded_in_history(hist_type_idx, str)) {
 			return; // registered relatively newer, no need of update
@@ -147,6 +145,8 @@ flf_d_printf("hist_type_idx:%d:[%s]\n", hist_type_idx, str);
 			return;
 		}
 	}
+///
+flf_d_printf("hist_type_idx:%d:[%s]\n", hist_type_idx, str);
 	// load-modify(free old entry and append new entry)-save
 	load_history_idx(hist_type_idx);
 	if ((line = search_history_exact_match(hist_type_idx, str)) != NULL) {
@@ -323,6 +323,7 @@ PRIVATE char *get_history_file_path(int hist_type_idx)
 	dir = get_app_dir();
 	switch (hist_type_idx) {
 	default:
+		// FALLTHROUGH
 	case HISTORY_TYPE_IDX_KEYMACRO:
 		file = KEYMACRO_HISTORY_FILE_NAME;
 		break;

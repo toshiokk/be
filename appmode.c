@@ -42,6 +42,7 @@ void set_mode_idx_val(mode_idx_t mode_idx, int val)
 {
 	switch (mode_idx) {
 	default:
+		// FALLTHROUGH
 	case APMD_DRAW_CURSOR:
 		SET_APPMD_VAL(app_DRAW_CURSOR, val);
 		break;
@@ -116,6 +117,7 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 {
 	switch (mode_idx) {
 	default:
+		// FALLTHROUGH
 	case APMD_DRAW_CURSOR:
 		return get_str_draw_cursor();
 	case APMD_KEY_LINES:
@@ -348,15 +350,14 @@ int inc_show_file_info(void)
 const char *get_str_show_file_info(void)
 {
 	switch (GET_APPMD(fl_SHOW_FILE_INFO)) {
-	default:
 	case SHOW_FILE_INFO_0:		return "None";
 	case SHOW_FILE_INFO_1:		return "Siz";
 	case SHOW_FILE_INFO_2:		return "Tim";
 	case SHOW_FILE_INFO_3:		return "Siz+Tim";
 	case SHOW_FILE_INFO_4:		return "SzTmt7777Us";
 	case SHOW_FILE_INFO_5:		return "SzTmRwxUG";
+	default:	return "";
 	}
-	return "";
 }
 
 int clr_sort_by(void)
@@ -373,6 +374,7 @@ const char *get_str_sort_by(void)
 {
 	switch (GET_APPMD(fl_FILE_SORT_BY)) {
 	default:
+		// FALLTHROUGH
 	case FILE_SORT_BY_NAME:
 		return "name";
 	case FILE_SORT_BY_NAME_REV:

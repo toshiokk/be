@@ -42,8 +42,8 @@ int doe_charcode(void);
 int doe_paste_history(void);
 
 int doe_tab(void);
-int do_enter_char(char chr);
-int do_enter_char_send(void);
+int doe_enter_char(char chr);
+int doe_enter_char_send(void);
 int doe_carriage_return(void);
 int doe_backspace(void);
 int doe_delete_char(void);

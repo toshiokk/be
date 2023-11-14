@@ -172,6 +172,7 @@ PRIVATE int dof_run_command_(int mode)
 	st_ptr = &get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st;
 	switch (mode % 10) {
 	default:
+		// FALLTHROUGH
 	case 0:
 		explanation = _("Run (with file):");
 		snprintf_(command_str, MAX_PATH_LEN+1, " %s",
