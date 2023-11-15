@@ -121,6 +121,7 @@ typedef struct /*buf_state*/ {
 #else
 #define HV_IS_LINE_VH_IS_BOX
 #endif
+
 #define CUT_MODE_0_LINE			0	// no mark                                    (one line cut)
 #define CUT_MODE_N_LINE			1	// marking started but cursor not moved           (line cut)
 #define CUT_MODE_H_CHAR			2	//  and cursor moved horizontally                 (char cut)

@@ -166,14 +166,13 @@ PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move
 PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 {
 	if (CEPBV_CL == CEPB_ML) {
-		// current == begin
+		// current line == beginning line
 		mark_min_line = CEPBV_CL;
 		mark_max_line = CEPBV_CL;
 		if (CEPBV_CLBI == CEPB_MLBI) {
-			// the same line, the same column
+			// the same line and the same column
 			// change cut-mode to initial mode
-///			// cut-mode is not initial mode, set to initial mode
-///			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_N_LINE;
+			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_N_LINE;
 		} else {
 			// the same line, different column
 			switch (CUR_EBUF_STATE(buf_CUT_MODE)) {

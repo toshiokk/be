@@ -1,7 +1,8 @@
 #### BE-editor to do list
 
 [v] easily change release-level: stable-release, test-release, experimental-release
-[] visit all cut mode by moving cursor horizontal and vertical in specific way.
+[-] visit all cut mode by moving cursor horizontal and vertical in specific way.
+    ==> [v] clear cut mode by returning cursor to beginning position.
 [v] editor: when scrolling reverse direction, previous area should be shown.
 [v] return to filer main screen after run file soon
 
