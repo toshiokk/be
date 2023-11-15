@@ -29,6 +29,11 @@
 #ifndef appdefs_h
 #define appdefs_h
 
+#define APP_REL_LVL 0		// Application Release Level
+#define APP_REL_LVL_EXPERIMENTAL	0
+#define APP_REL_LVL_TEST			1
+#define APP_REL_LVL_STABLE			2
+
 #define APP_NAME		"BE"
 #define BIN_NAME		"be"
 

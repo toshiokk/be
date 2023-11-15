@@ -55,8 +55,8 @@ int dof_exec_command_with_file(void)
 
 	if (ret < 0) {
 		// dof_exec_command_with_file -> FILER_DO_ENTER_FILE_PATH
-		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
-		///filer_do_next = FILER_DO_ENTER_FILE_PATH;
+		///DDDfiler_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
+		///DDDfiler_do_next = FILER_DO_ENTER_FILE_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -114,8 +114,8 @@ int dof_exec_command_with_files(void)
 
 	if (ret < 0) {
 		// dof_exec_command_with_files -> FILER_DO_ENTER_FILE_PATH
-		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
-		///filer_do_next = FILER_DO_ENTER_FILE_PATH;
+		///DDDfiler_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
+		///DDDfiler_do_next = FILER_DO_ENTER_FILE_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -233,8 +233,8 @@ flf_d_printf("ret: %d\n", ret);
 
 	if (ret < 0) {
 		// dof_run_command_ -> FILER_DO_ENTER_FILE_PATH
-		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
-		///filer_do_next = FILER_DO_ENTER_FILE_PATH;
+		///DDDfiler_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
+		///DDDfiler_do_next = FILER_DO_ENTER_FILE_PATH;
 		return 0;
 	}
 	if (ret == 0) {

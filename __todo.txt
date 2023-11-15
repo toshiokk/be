@@ -1,13 +1,14 @@
 #### BE-editor to do list
 
-[] editor: when scrolling reverse direction, previous area should be shown.
+[v] easily change release-level: stable-release, test-release, experimental-release
+[] visit all cut mode by moving cursor horizontal and vertical in specific way.
+[v] editor: when scrolling reverse direction, previous area should be shown.
 [v] return to filer main screen after run file soon
-[] visit all cut mode by moving cursor horizontally and vertically in specific order.
 
 #### thinking
 - Which is the better practice
 	1. strict type specification uint8_t, int8_t, int16_t, int32_t
-	2. vague type specification unsigned char, char ...
+	2. vague type specification unsigned char, char, int ...
 	3. typedef char color_idx, items_idx, ...
 	May be 3. is the better.
 

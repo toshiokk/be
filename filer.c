@@ -180,7 +180,7 @@ flf_d_printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
 	ret = filer_main_loop(dir, filter, file_path, buf_len);
 flf_d_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 flf_d_printf("ret: %d\n", ret);
-///	filer_do_next = FILER_DO_NOTHING;
+	filer_do_next = FILER_DO_NOTHING;	// for caller of call_filer(), clear "editor_quit"
 
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 	SET_APPMD_VAL(app_LIST_MODE, GET_APPMD_PTR(&appmode_save, app_LIST_MODE));

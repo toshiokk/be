@@ -253,7 +253,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			if (ret == 0) {
 				key_input = KNA;	// quit
 			} else {
-				key_input = K_ESC;	// cancelled
+///DDD				key_input = K_ESC;	// cancelled
 			}
 #endif // ENABLE_HISTORY
 #ifdef ENABLE_FILER

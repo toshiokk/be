@@ -397,15 +397,15 @@ char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10)
 		// enough space
 		strlcpy__(buf, str, MAX_PATH_LEN);
 	} else {
-#define STR_PPP		"~~"
-#define STRLEN_PPP	2	// strlen(STR_PPP)
-		if (space > STRLEN_PPP) {
-			space1 = LIM_MIN(0, (space - STRLEN_PPP) / 10 * n_over_10);
-			space2 = LIM_MIN(0, (space - STRLEN_PPP) - space1);
+#define STR_TILDE		"~~"
+#define STR_TILDE_LEN	2	// strlen(STR_TILDE)
+		if (space > STR_TILDE_LEN) {
+			space1 = LIM_MIN(0, (space - STR_TILDE_LEN) / 10 * n_over_10);
+			space2 = LIM_MIN(0, (space - STR_TILDE_LEN) - space1);
 			byte_idx1 = get_byte_idx_from_col_idx(str, space1, -1, NULL);
 			byte_idx2 = get_byte_idx_from_col_idx(str, str_cols - space2, +1, NULL);
 			strlcpy__(buf, str, byte_idx1);
-			strcat__(buf, STR_PPP);
+			strcat__(buf, STR_TILDE);
 			strcat__(buf, &str[byte_idx2]);
 		} else {
 			space2 = LIM_MIN(0, space);

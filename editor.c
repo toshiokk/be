@@ -43,7 +43,8 @@ flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
 flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 	ret = editor_main_loop();
 flf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
-	editor_quit = EDITOR_NONE;	// for caller editor_main_loop(), clear "editor_quit"
+flf_d_printf("ret: %d\n", ret);
+	editor_quit = EDITOR_NONE;	// for caller of call_editor(), clear "editor_quit"
 
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 	SET_APPMD_VAL(app_LIST_MODE, GET_APPMD_PTR(&appmode_save, app_LIST_MODE));

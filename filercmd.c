@@ -93,7 +93,7 @@ int dof_edit_new_file(void)
 
 	if (ret < 0) {
 		// dof_edit_new_file -> FILER_DO_ENTER_DIR_PATH
-		filer_do_next = FILER_DO_ENTER_DIR_PATH;
+		///DDDfiler_do_next = FILER_DO_ENTER_DIR_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -163,7 +163,7 @@ int dof_copy_file(void)
 
 	if (ret < 0) {
 		// dof_copy_file -> FILER_DO_ENTER_FILE
-		filer_do_next = FILER_DO_ENTER_FILE;
+		///DDDfiler_do_next = FILER_DO_ENTER_FILE;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -198,7 +198,7 @@ int dof_copy_file_update(void)
 
 	if (ret < 0) {
 		// dof_copy_file_update -> FILER_DO_ENTER_FILE
-		filer_do_next = FILER_DO_ENTER_FILE;
+		///DDDfiler_do_next = FILER_DO_ENTER_FILE;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -234,7 +234,7 @@ int dof_rename_file(void)
 
 	if (ret < 0) {
 		// dof_rename_file -> FILER_DO_ENTER_FILE
-		filer_do_next = FILER_DO_ENTER_FILE;
+		///DDDfiler_do_next = FILER_DO_ENTER_FILE;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -259,7 +259,7 @@ int dof_move_file(void)
 
 	if (ret < 0) {
 		// dof_move_file -> FILER_DO_ENTER_FILE
-		filer_do_next = FILER_DO_ENTER_FILE;
+		///DDDfiler_do_next = FILER_DO_ENTER_FILE;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -427,7 +427,7 @@ int dof_find_file(void)
 
 	if (ret < 0) {
 		// dof_find_file -> FILER_DO_ENTER_FILE
-		filer_do_next = FILER_DO_ENTER_FILE;
+		///DDDfiler_do_next = FILER_DO_ENTER_FILE;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -447,7 +447,7 @@ int dof_make_directory(void)
 
 	if (ret < 0) {
 		// dof_make_directory -> FILER_DO_ENTER_DIR_PATH
-		filer_do_next = FILER_DO_ENTER_DIR_PATH;
+		///DDDfiler_do_next = FILER_DO_ENTER_DIR_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -468,7 +468,7 @@ int dof_change_directory(void)
 
 	if (ret < 0) {
 		// dof_change_directory -> FILER_DO_ENTER_DIR_PATH
-		filer_do_next = FILER_DO_ENTER_DIR_PATH;
+		///DDDfiler_do_next = FILER_DO_ENTER_DIR_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
