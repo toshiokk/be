@@ -1,8 +1,8 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.68])
-AC_INIT([BE], [231113], [BUG-REPORT-ADDRESS])
+AC_PREREQ([2.71])
+AC_INIT([BE],[231115],[BUG-REPORT-ADDRESS])
 AC_CONFIG_SRCDIR([buffers.h])
 AC_CONFIG_HEADERS([config.h])
 
@@ -46,7 +46,19 @@ AC_CHECK_HEADERS(ncursesw/curses.h, ncursesw_curses_h=1, ncursesw_curses_h=0)
 AC_CHECK_HEADERS(pcreposix.h, pcreposix_h=1, pcreposix_h=0)
 AC_CHECK_HEADERS(pcre/pcreposix.h, pcre_pcreposix_h=1, pcre_pcreposix_h=0)
 
-AC_TYPE_SIGNAL
+m4_warn([obsolete],
+[your code may safely assume C89 semantics that RETSIGTYPE is void.
+Remove this warning and the `AC_CACHE_CHECK' when you adjust the code.])dnl
+AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],[AC_COMPILE_IFELSE(
+[AC_LANG_PROGRAM([#include <sys/types.h>
+#include <signal.h>
+],
+		 [return *(signal (0, 0)) (0) == 1;])],
+		   [ac_cv_type_signal=int],
+		   [ac_cv_type_signal=void])])
+AC_DEFINE_UNQUOTED([RETSIGTYPE],[$ac_cv_type_signal],[Define as the return type of signal handlers
+		    (`int' or `void').])
+
 AC_CHECK_FUNCS(getopt_long)
 
 AC_ARG_ENABLE(all, [  --enable-all  Enable ALL extra functionality (kitchen sink option)])
@@ -62,7 +74,6 @@ yes)
 	enable_regex=yes
 	enable_help=yes
 	enable_debug=no
-	enable_experimental=no
 	enable_nkf=yes
 	enable_ncurses=yes
 	enable_pcre=yes
@@ -79,7 +90,6 @@ no)
 	enable_regex=no
 	enable_help=no
 	enable_debug=no
-	enable_experimental=no
 	enable_nkf=no
 	enable_ncurses=no
 	enable_pcre=no
@@ -149,12 +159,6 @@ yes|no)		;;
 *)	enable_debug=no		;;
 esac
 
-AC_ARG_ENABLE(experimental, [  --enable-experimental  Enable experimental feature (disabled by default)])
-case "$enable_experimental" in
-yes|no)		;;
-*)	enable_experimental=no		;;
-esac
-
 AC_ARG_ENABLE(ncurses, [  --enable-ncurses  Use the ncurses library instead of own library])
 case "$enable_ncurses" in
 yes|no)		;;
@@ -193,7 +197,6 @@ echo "enable_nkf=$enable_nkf"
 echo "enable_busybox=$enable_busybox"
 echo "enable_help=$enable_help"
 echo "enable_debug=$enable_debug"
-echo "enable_experimental=$enable_experimental"
 
 AC_CHECK_FUNC(mblen, have_mblen=1, have_mblen=0)
 
@@ -329,9 +332,6 @@ fi
 if test "$enable_debug" = yes ; then
 	AC_DEFINE(ENABLE_DEBUG, 1, [Define this to use DEBUG.])
 fi
-if test "$enable_experimental" = yes ; then
-	AC_DEFINE(ENABLE_EXPERIMENTAL, 1, [Define this to use experimental feature.])
-fi
 if test "$enable_ncurses" = yes ; then
 	AC_DEFINE(ENABLE_NCURSES, 1, [Define this to use ncurses library instead of own library.])
 fi
@@ -356,7 +356,6 @@ echo "enable_rc=$enable_rc"
 echo "enable_regex=$enable_regex"
 echo "enable_help=$enable_help"
 echo "enable_debug=$enable_debug"
-echo "enable_experimental=$enable_experimental"
 echo "enable_ncurses=$enable_ncurses"
 echo "enable_pcre=$enable_pcre"
 echo "enable_nkf=$enable_nkf"
