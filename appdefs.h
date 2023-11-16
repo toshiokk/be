@@ -29,10 +29,10 @@
 #ifndef appdefs_h
 #define appdefs_h
 
-#define APP_REL_LVL 0		// Application Release Level
-#define APP_REL_LVL_EXPERIMENTAL	0
-#define APP_REL_LVL_TEST			1
-#define APP_REL_LVL_STABLE			2
+#define APP_REL_LVL 1		// Application Release Level
+#define APP_REL_LVL_EXPERIMENTAL	0	// experimental release
+#define APP_REL_LVL_TEST			1	// test         release
+#define APP_REL_LVL_STABLE			2	// stable       release
 
 #define APP_NAME		"BE"
 #define BIN_NAME		"be"
@@ -67,8 +67,8 @@
 
 // NOTE: how to use single line comment "//", "///", "////" and "/////"
 //   simple comment
-//! !! doxygen comment !!
-/// !! doxygen comment !!
+//! "doxygen comment"
+/// "doxygen comment"
 ////  code commented out
 ///// code obsolete and to be deleted
 

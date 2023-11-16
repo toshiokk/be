@@ -50,13 +50,16 @@ int dof_exec_command_with_file(void)
 #define MAX_REPLACEMENTS	10
 	int cnt;
 
+	if (is_app_list_mode()) {
+		// dof_exec_command_with_file -> FILER_DO_ENTER_FILE_PATH
+		filer_do_next = FILER_DO_ENTER_FILE_PATH;
+		return -1;
+	}
+
 	ret = input_string("", command_str,
 	 HISTORY_TYPE_IDX_EXEC, _("Execute({} will be replaced with file-name):"));
 
 	if (ret < 0) {
-		// dof_exec_command_with_file -> FILER_DO_ENTER_FILE_PATH
-		///DDDfiler_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
-		///DDDfiler_do_next = FILER_DO_ENTER_FILE_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -100,6 +103,12 @@ int dof_exec_command_with_files(void)
 	int ret;
 	int file_idx;
 
+	if (is_app_list_mode()) {
+		// dof_exec_command_with_files -> FILER_DO_ENTER_FILE_PATH
+		filer_do_next = FILER_DO_ENTER_FILE_PATH;
+		return -1;
+	}
+
 	// "file1 file2 ..."
 	command_str[0] = '\0';
 	for (file_idx = select_and_get_first_file_idx_selected();
@@ -113,9 +122,6 @@ int dof_exec_command_with_files(void)
 	 HISTORY_TYPE_IDX_EXEC, _("Execute with files:"));
 
 	if (ret < 0) {
-		// dof_exec_command_with_files -> FILER_DO_ENTER_FILE_PATH
-		///DDDfiler_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
-		///DDDfiler_do_next = FILER_DO_ENTER_FILE_PATH;
 		return 0;
 	}
 	if (ret <= 0) {
@@ -168,6 +174,12 @@ PRIVATE int dof_run_command_(int mode)
 	int src_fv_idx = 0;
 	int dst_fv_idx = 1;
 	int ret = 0;
+
+	if (is_app_list_mode()) {
+		// dof_run_command_ -> FILER_DO_ENTER_FILE_PATH
+		filer_do_next = FILER_DO_ENTER_FILE_PATH;
+		return -1;
+	}
 
 	st_ptr = &get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st;
 	switch (mode % 10) {
@@ -232,9 +244,6 @@ PRIVATE int dof_run_command_(int mode)
 flf_d_printf("ret: %d\n", ret);
 
 	if (ret < 0) {
-		// dof_run_command_ -> FILER_DO_ENTER_FILE_PATH
-		///DDDfiler_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
-		///DDDfiler_do_next = FILER_DO_ENTER_FILE_PATH;
 		return 0;
 	}
 	if (ret == 0) {

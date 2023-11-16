@@ -32,12 +32,6 @@ PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir);
 PRIVATE filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps);
 PRIVATE void free_filer_panes(filer_panes_t *fps, filer_panes_t *prev_fps);
 PRIVATE int get_other_filer_pane_idx(int filer_pane_idx);
-#if 0
-#ifdef ENABLE_DEBUG
-PRIVATE void dump_filer_view(filer_view_t *fv);
-PRIVATE void dump_filer_panes(void);
-#endif // ENABLE_DEBUG
-#endif // 0
 
 PRIVATE int filer_main_loop(const char *directory, const char *filter,
  char *file_path, int buf_len);
@@ -131,27 +125,6 @@ PRIVATE int get_other_filer_pane_idx(int filer_pane_idx)
 {
 	return filer_pane_idx == 0 ? 1 : 0;
 }
-
-#if 0
-#ifdef ENABLE_DEBUG
-PRIVATE void dump_filer_view(filer_view_t *fv)
-{
-flf_d_printf("fv:%p\n", fv);
-flf_d_printf("cur_dir:[%s]\n", fv->cur_dir);
-flf_d_printf("file_list_entries: %d\n", fv->file_list_entries);
-flf_d_printf("file_list: %p\n", fv->file_list);
-flf_d_printf("top_idx:[%d]\n", fv->top_idx);
-flf_d_printf("cur_sel_idx:[%d]\n", fv->cur_sel_idx);
-flf_d_printf("next_file:[%s]\n", fv->next_file);
-}
-PRIVATE void dump_filer_panes(void)
-{
-	flf_d_printf("cur_filer_panes: %p\n", cur_filer_panes);
-	flf_d_printf("cur_pane_idx: %d\n", cur_filer_panes->cur_pane_idx);
-	flf_d_printf("get_cur_filer_view(): %p\n", get_cur_filer_view());
-}
-#endif // ENABLE_DEBUG
-#endif // 0
 
 //-----------------------------------------------------------------------------
 

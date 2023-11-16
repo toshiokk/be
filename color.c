@@ -27,17 +27,17 @@ item_color_t item_colors[MAX_ITEM_COLORS];
 item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	//  bgc, fgc
 	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_DEFAULT)			},
-#if APP_REL_LVL== 2
+#if APP_REL_LVL == APP_REL_LVL_STABLE
 	// official release
 	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_TITLE)				},
 	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_STATUS)			},
 #endif
-#if APP_REL_LVL== 1
+#if APP_REL_LVL == APP_REL_LVL_TEST
 	// test release
 	{ CL_GR, CL_BL, S(ITEM_COLOR_IDX_TITLE)				},
 	{ CL_GR, CL_BL, S(ITEM_COLOR_IDX_STATUS)			},
 #endif
-#if APP_REL_LVL== 0
+#if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
 	// experimental release
 	{ CL_GR, CL_GR, S(ITEM_COLOR_IDX_TITLE)				},
 	{ CL_GR, CL_GR, S(ITEM_COLOR_IDX_STATUS)			},

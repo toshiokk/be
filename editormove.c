@@ -389,10 +389,8 @@ PRIVATE int do_enter_utf8s(const char *utf8s)
 flf_d_printf("[%s]\n", utf8s);
 	do_clear_mark_();
 	if (is_view_mode_then_warn_it()) {
-///_FLF_
 		return 0;
 	}
-///_FLF_
 #ifdef ENABLE_UNDO
 	undo_set_region_save_before_change(CEPBV_CL, CEPBV_CL, 1);
 #endif // ENABLE_UNDO

@@ -73,9 +73,9 @@ func_key_table_t filer_func_key_table[] = {
 
  { "",                    "Filer Menu-3",                   KNA,          KNA, KNA,
    0,F_I(dof_filer_menu_3), NULL },
- { "Top",                 "Top of list",                    K_C_T,        K_M_t, KNA,
+ { "Top",                 "Top of list",                    K_C_T, K_M_t,      KNA,
    1,F_I(dof_top_of_list),  NULL },
- { "Bottom",              "Bottom of list",                 K_C_B,        K_M_b, KNA,
+ { "Bottom",              "Bottom of list",                 K_C_B, K_M_b,      KNA,
    1,F_I(dof_bottom_of_list), NULL },
  { "Select",              "Select file",                    ' ',          KNA, KNA,
    1,F_I(dof_select_file),  NULL },

@@ -165,12 +165,12 @@ func_key_table_t editor_func_key_table[] = {
    0,F_I(doe_switch_to_bot_file), NULL },
  { "File List",           "Display File List",              K_M_SEMICOLON, K_F11, KNA,
    0,F_I(doe_switch_to_file_list), NULL },
-#ifdef ENABLE_EXPERIMENTAL
+#if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
  { "Previous buffers",    "Goto previous buffers",          K_M_LPARENTHESIS, KNA, KNA,
    0,F_I(doe_switch_to_prev_buffers), NULL },
  { "Next buffers",        "Goto next buffers",              K_M_RPARENTHESIS, KNA, KNA,
    0,F_I(doe_switch_to_next_buffers), NULL },
-#endif // ENABLE_EXPERIMENTAL
+#endif // APP_REL_LVL
 #ifdef ENABLE_HELP
  { "Key List",            "Display Key List",               K_M_k,        KNA, KNA,
    0,F_I(doe_switch_to_key_list), NULL },

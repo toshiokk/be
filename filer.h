@@ -41,7 +41,8 @@ typedef enum {
 
 	FILER_DO_QUIT = 					5,
 	FILER_DO_ABORT = 					6,
-	FILER_DO_LOAD_FILE = 				7,
+
+	FILER_DO_FILE_LOADED = 				7,
 	FILER_DO_ENTER_FILE = 				8,	// file, dir
 	FILER_DO_ENTER_FILE_PATH = 			9,	// /home/user/.bashrc
 	FILER_DO_ENTER_DIR_PATH = 			10,	// /home/user/bin

@@ -43,7 +43,6 @@ int search_str_in_line(search_t *search, matches_t *matches,
 
 	if (needle) {
 		strlcpy__(search->needle, needle, MAX_PATH_LEN);
-		///DDD search->direction = search_dir;
 		search->ignore_case = ignore_case;
 	}
 #ifdef ENABLE_REGEX

@@ -1,4 +1,4 @@
-echo "change APP_REL_LVL definition in appdef.h"
+echo "change Application Release Level -- APP_REL_LVL definition in appdef.h"
 echo "Usage: $0 [0|1|2]"
 echo "  0: experimental release"
 echo "  1: test         release"

@@ -137,7 +137,7 @@ int doe_switch_to_next_file(void)
 	disp_status_bar_done(_("Next file"));
 	return ret;
 }
-#ifdef ENABLE_EXPERIMENTAL
+#if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
 int doe_switch_to_prev_buffers(void)
 {
 	be_bufs_t *bufs = get_bufs_contains_buf(&bufs_top_anchor, get_cep_buf());
@@ -162,7 +162,7 @@ flf_d_printf("NODE_NEXT(bufs)->cur_buf->name: %s\n", NODE_NEXT(bufs)->cur_buf->f
 	post_cmd_processing(CEPBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
-#endif // ENABLE_EXPERIMENTAL
+#endif // APP_REL_LVL
 //-----------------------------------------------------------------------------
 int doe_return_to_prev_file_pos(void)
 {

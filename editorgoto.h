@@ -36,10 +36,10 @@ int doe_switch_to_top_file(void);
 int doe_switch_to_bot_file(void);
 int doe_switch_to_prev_file(void);
 int doe_switch_to_next_file(void);
-#ifdef ENABLE_EXPERIMENTAL
+#if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
 int doe_switch_to_prev_buffers(void);
 int doe_switch_to_next_buffers(void);
-#endif // ENABLE_EXPERIMENTAL
+#endif // APP_REL_LVL
 int doe_return_to_prev_file_pos(void);
 
 int doe_switch_editor_pane(void);

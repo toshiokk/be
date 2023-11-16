@@ -834,10 +834,10 @@ void disp_key_list_editor(void)
  "<doe_switch_to_file_list>FileList "
  "<doe_switch_to_prev_file>PrevFile "
  "<doe_switch_to_next_file>NextFile "
-#ifdef ENABLE_EXPERIMENTAL
+#if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
  "<doe_switch_to_prev_buffers>PrevBufs "
  "<doe_switch_to_next_buffers>NextBufs "
-#endif // ENABLE_EXPERIMENTAL
+#endif // APP_REL_LVL
  "<doe_switch_to_key_list>KeyList "
  "<doe_switch_to_func_list>FuncList ",
 	};
@@ -846,7 +846,7 @@ void disp_key_list_editor(void)
 
 //-----------------------------------------------------------------------------
 
-int is_app_list_mode(void)
+int is_app_list_mode(void)	// in editor: text view mode, in filer: file list mode
 {
 	return GET_APPMD(app_LIST_MODE);			// 0: edit mode, 1: list mode
 }
