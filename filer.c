@@ -30,7 +30,6 @@ filer_do_next_t filer_do_next = FILER_DO_NOTHING;
 
 PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir);
 PRIVATE filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps);
-PRIVATE void free_filer_panes(filer_panes_t *fps, filer_panes_t *prev_fps);
 PRIVATE int get_other_filer_pane_idx(int filer_pane_idx);
 
 PRIVATE int filer_main_loop(const char *directory, const char *filter,
@@ -55,15 +54,20 @@ PRIVATE void disp_key_list_filer(void);
 
 void init_filer_panes(filer_panes_t *fps, const char *cur_dir)
 {
-	int filer_pane_idx;
-
 	cur_filer_panes = fps;
 	strlcpy__(cur_filer_panes->org_cur_dir, cur_dir, MAX_PATH_LEN);
 	set_filer_cur_pane_idx(0);
-	for (filer_pane_idx = 0; filer_pane_idx < FILER_PANES; filer_pane_idx++) {
+	for (int filer_pane_idx = 0; filer_pane_idx < FILER_PANES; filer_pane_idx++) {
 		// set initial value
 		init_filer_view(&cur_filer_panes->filer_views[filer_pane_idx], cur_dir);
 	}
+}
+void free_filer_panes(filer_panes_t *fps, filer_panes_t *prev_fps)
+{
+	for (int filer_pane_idx = 0; filer_pane_idx < FILER_PANES; filer_pane_idx++) {
+		free_file_list(&fps->filer_views[filer_pane_idx]);
+	}
+	cur_filer_panes = prev_fps;
 }
 void set_filer_cur_pane_idx(int cur_pane_idx)
 {
@@ -107,15 +111,6 @@ PRIVATE filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps)
 
 	init_filer_panes(next_fps, prev_fps->filer_views[prev_fps->cur_pane_idx].cur_dir);
 	return prev_fps;
-}
-PRIVATE void free_filer_panes(filer_panes_t *fps, filer_panes_t *prev_fps)
-{
-	int filer_pane_idx;
-
-	for (filer_pane_idx = 0; filer_pane_idx < FILER_PANES; filer_pane_idx++) {
-		free_file_list(&fps->filer_views[filer_pane_idx]);
-	}
-	cur_filer_panes = prev_fps;
 }
 filer_view_t *get_other_filer_view(void)
 {
@@ -288,12 +283,12 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 	if (filer_do_next == FILER_DO_QUIT) {
 		return 0;		// quit
 	}
-	if (filer_do_next == FILER_DO_ENTER_FILE
+	if (filer_do_next == FILER_DO_ENTER_FILE_NAME
 	 || filer_do_next == FILER_DO_ENTER_FILE_PATH) {
 		for (file_idx = select_and_get_first_file_idx_selected();
 		 file_idx >= 0;
 		 file_idx = get_next_file_idx_selected(file_idx)) {
-			if (filer_do_next == FILER_DO_ENTER_FILE) {
+			if (filer_do_next == FILER_DO_ENTER_FILE_NAME) {
 				// file-1 "file name 2" "file name 3"
 				concat_file_name_separating_by_space(file_path, buf_len,
 				 get_cur_filer_view()->file_list[file_idx].file_name);
@@ -323,8 +318,6 @@ PRIVATE int check_filer_cur_dir(void)
 		while (is_dir_readable(get_cur_filer_view()->cur_dir) == 0) {
 			// go up to the root dir
 			dof_parent_directory();
-///			if (strcmp(get_cur_filer_view()->cur_dir, get_cur_filer_view()->next_file) == 0)
-///				break;		// the same dir
 		}
 		tio_beep();
 	}

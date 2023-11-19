@@ -115,8 +115,8 @@ int dof_view_file(void)
 		return 0;
 	}
 	if (is_app_list_mode()) {
-		// dof_view_file -> FILER_DO_ENTER_FILE
-		filer_do_next = FILER_DO_ENTER_FILE;
+		// dof_view_file -> FILER_DO_ENTER_FILE_NAME
+		filer_do_next = FILER_DO_ENTER_FILE_NAME;
 		return -1;
 	}
 	file_idx = get_cur_filer_view()->cur_sel_idx;
@@ -134,8 +134,8 @@ int dof_tail_file(void)	// view file with "tail" command
 	char *file_name;
 
 	if (is_app_list_mode()) {
-		// dof_tail_file -> FILER_DO_ENTER_FILE
-		filer_do_next = FILER_DO_ENTER_FILE;
+		// dof_tail_file -> FILER_DO_ENTER_FILE_NAME
+		filer_do_next = FILER_DO_ENTER_FILE_NAME;
 		return -1;
 	}
 	if (filer_change_dir_to_cur_sel()) {
@@ -155,8 +155,8 @@ int dof_copy_file(void)
 	int file_idx;
 
 	if (is_app_list_mode()) {
-		// dof_copy_file -> FILER_DO_ENTER_FILE
-		filer_do_next = FILER_DO_ENTER_FILE;
+		// dof_copy_file -> FILER_DO_ENTER_FILE_NAME
+		filer_do_next = FILER_DO_ENTER_FILE_NAME;
 		return -1;
 	}
 
@@ -196,8 +196,8 @@ int dof_copy_file_update(void)
 	int file_idx;
 
 	if (is_app_list_mode()) {
-		// dof_copy_file_update -> FILER_DO_ENTER_FILE
-		filer_do_next = FILER_DO_ENTER_FILE;
+		// dof_copy_file_update -> FILER_DO_ENTER_FILE_NAME
+		filer_do_next = FILER_DO_ENTER_FILE_NAME;
 		return -1;
 	}
 
@@ -234,8 +234,8 @@ int dof_rename_file(void)
 	int ret;
 
 	if (is_app_list_mode()) {
-		// dof_rename_file -> FILER_DO_ENTER_FILE
-		filer_do_next = FILER_DO_ENTER_FILE;
+		// dof_rename_file -> FILER_DO_ENTER_FILE_NAME
+		filer_do_next = FILER_DO_ENTER_FILE_NAME;
 		return -1;
 	}
 
@@ -265,8 +265,8 @@ int dof_move_file(void)
 	int file_idx;
 
 	if (is_app_list_mode()) {
-		// dof_move_file -> FILER_DO_ENTER_FILE
-		filer_do_next = FILER_DO_ENTER_FILE;
+		// dof_move_file -> FILER_DO_ENTER_FILE_NAME
+		filer_do_next = FILER_DO_ENTER_FILE_NAME;
 		return -1;
 	}
 
@@ -338,8 +338,8 @@ int dof_delete_file(void)
 	int files_selected;
 
 	if (is_app_list_mode()) {
-		// dof_move_file -> FILER_DO_ENTER_FILE
-		filer_do_next = FILER_DO_ENTER_FILE;
+		// dof_move_file -> FILER_DO_ENTER_FILE_NAME
+		filer_do_next = FILER_DO_ENTER_FILE_NAME;
 		return -1;
 	}
 
@@ -444,8 +444,8 @@ int dof_find_file(void)
 	int ret;
 
 	if (is_app_list_mode()) {
-		// dof_find_file -> FILER_DO_ENTER_FILE
-		filer_do_next = FILER_DO_ENTER_FILE;
+		// dof_find_file -> FILER_DO_ENTER_FILE_NAME
+		filer_do_next = FILER_DO_ENTER_FILE_NAME;
 		return -1;
 	}
 
@@ -646,7 +646,6 @@ int dof_display_color_pairs(void)
 	display_bracket_hl_colors(0, 40);
 	input_key_loop();
 #endif // ENABLE_DEBUG
-	filer_do_next = FILER_DO_NOTHING;
 	return 0;
 }
 
@@ -707,8 +706,8 @@ PRIVATE int dof_edit_file_(int recursive)
 		return 0;
 	}
 	if (is_app_list_mode()) {
-		// dof_edit_file_ -> FILER_DO_ENTER_FILE
-		filer_do_next = FILER_DO_ENTER_FILE;
+		// dof_edit_file_ -> FILER_DO_ENTER_FILE_NAME
+		filer_do_next = FILER_DO_ENTER_FILE_NAME;
 		return -1;
 	}
 
@@ -733,7 +732,7 @@ PRIVATE int dof_edit_file_(int recursive)
 		filer_do_next = FILER_DO_FILE_LOADED;
 	}
 	unselect_all_files_auto(_FILE_SEL_MAN_ | _FILE_SEL_AUTO_);
-////_D_(bufs_dump_all_bufs(&bufs_top_anchor));
+////_D_(bufs_dump_all_bufs(&bufs_top_anchor))
 
 	return 0;
 }
@@ -830,7 +829,6 @@ int filer_change_dir(const char *dir)
 		// We can't open this dir for some reason. Complain.
 		disp_status_bar_err(_("Can not change current directory to [%s]: %s"),
 		 shrink_str_to_scr_static(chg_dir), strerror(errno));
-		filer_do_next = FILER_DO_NOTHING;
 		return 1;
 	}
 	strlcpy__(get_cur_filer_view()->prev_dir, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);

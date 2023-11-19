@@ -134,7 +134,7 @@ RETSIGTYPE handler_sigsegv(int signal)
 	tio_beep(); MSLEEP(200);
 	tio_beep(); MSLEEP(500);
 #endif
-	_D_(output_last_d_printf());
+	_D_(output_last_d_printf())
 	exit(255);
 }
 

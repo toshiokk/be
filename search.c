@@ -235,7 +235,7 @@ int search_string_once(const char *needle, int search_count)
 			// next time
 			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_CENTER, UPDATE_SCRN_ALL);
 		}
-		disp_status_bar_done(_("\"%s\" found in %s search"), needle,
+		disp_status_bar_done(_("[%s] found in %s search"), needle,
 		 GET_APPMD(ed_REVERSE_SEARCH) ? _("backward") : _("forward"));
 	}
 
@@ -303,10 +303,11 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			// not found message has been displayed
 #ifdef ENABLE_UNDO
 			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_FORWARD | ASK_END
-			 | (num_replaced ? ASK_UNDO : 0) | (num_undone ? ASK_REDO : 0), "");
+			 | (num_replaced ? ASK_UNDO : 0) | (num_undone ? ASK_REDO : 0),
 #else // ENABLE_UNDO
-			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_FORWARD | ASK_END, "");
+			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_FORWARD | ASK_END,
 #endif // ENABLE_UNDO
+			 _("[%s] not found :"), needle);
 		}
 		if (ret == ANSWER_NO) {
 			// Not replace and search next
@@ -590,7 +591,7 @@ int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
  char char_under_cursor, const char *needle, int search_dir, int skip_here, int depth_increase,
  int *ptr_depth, int *prev_depth)
 {
-////_D_(line_dump_byte_idx(*ptr_line, *ptr_byte_idx));
+////_D_(line_dump_byte_idx(*ptr_line, *ptr_byte_idx))
 ////flf_d_printf("needle: {%s}, search_dir: %d, skip_here: %d\n", needle, search_dir, skip_here);
 	int match_len = search_needle_in_buffer(ptr_line, ptr_byte_idx,
 	 needle, search_dir, CASE_SENSITIVE, skip_here, INNER_BUFFER_SEARCH);
@@ -610,7 +611,7 @@ int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 			}
 		}
 	}
-////_D_(line_dump_byte_idx(*ptr_line, *ptr_byte_idx));
+////_D_(line_dump_byte_idx(*ptr_line, *ptr_byte_idx))
 ////flf_d_printf("match_len: %d\n", match_len);
 ////flf_d_printf("match_len: %d, depth: %d\n", match_len, *ptr_depth);
 	return match_len;
@@ -795,7 +796,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 		// found and update current line pointer
 		*ptr_line = line;
 		*ptr_byte_idx = matches_start_idx(&matches__);
-///_D_(dump_editor_panes());
+///_D_(dump_editor_panes())
 		return match_len;
 	}
 	// not found then return to begining position
@@ -805,7 +806,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 
 void disp_status_bar_not_found_msg(const char *str)
 {
-	disp_status_bar_err(_("\"%s\" not found"), shrink_str_to_scr_static(str));
+	disp_status_bar_err(_("[%s] not found"), shrink_str_to_scr_static(str));
 	set_edit_win_update_needed(UPDATE_SCRN_ALL);
 }
 

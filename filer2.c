@@ -325,6 +325,7 @@ int make_file_list(filer_view_t *fv, const char *filter)
 		// count files
 	}
 	entries = file_idx;
+	_mlc_set_caller
 	fv->file_list = (file_info_t *)malloc__(sizeof(file_info_t) * entries);
 
 	rewinddir(dir);
@@ -348,12 +349,14 @@ int make_file_list(filer_view_t *fv, const char *filter)
 				continue;
 			ent_ptr = &fv->file_list[file_idx];
 			// fill file_info_t
+			_mlc_set_caller
 			ent_ptr->file_name = malloc_strcpy(dirent->d_name);
 			memcpy__(&ent_ptr->st, &st, sizeof(struct stat));
 			memcpy__(&ent_ptr->lst, &lst, sizeof(struct stat));
 			ent_ptr->symlink = NULL;
 			if (S_ISLNK(lst.st_mode)) {
 				if ((len = readlink__(dirent->d_name, symlink, MAX_PATH_LEN)) > 0) {
+					_mlc_set_caller
 					ent_ptr->symlink = malloc_strcpy(symlink);
 				}
 			}

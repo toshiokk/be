@@ -100,8 +100,8 @@ void test_regexp(void);
 #endif // START_UP_TEST
 regexp_t *regexp_alloc(void);
 regexp_t *regexp_init(regexp_t *regexp);
-int regexp_free_regex_compiled(regexp_t *regexp);
-int regexp_free(regexp_t *regexp);
+void regexp_free_regex_compiled(regexp_t *regexp);
+void regexp_free(regexp_t *regexp);
 
 int regexp_search(regexp_t *regexp, regexp_matches_t *regexp_matches, const char *needle,
  const char *haystack, int byte_idx, int cflags, int eflags, size_t max_matches);
@@ -137,7 +137,7 @@ int regexec_1(const regex_t *preg, const char *haystack,
  regmatch_t pmatch[], int eflags);
 int regexec_n(const regex_t *preg, const char *haystack,
  size_t nmatch, regmatch_t pmatch[], int eflags);
-int regfree__(regex_t *preg);
+void regfree__(regex_t *preg);
 
 #endif // ENABLE_REGEX
 

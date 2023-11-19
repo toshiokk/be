@@ -24,7 +24,6 @@
 #ifdef ENABLE_FILER
 
 PRIVATE int dof_run_command_(int mode);
-////PRIVATE int dof_run_cmd_(char *cmd_file);
 
 #define BEPAGER		"bepager"
 #define BETAIL		"betail"
@@ -261,6 +260,8 @@ flf_d_printf("command_str [%s]\n", command_str);
 	}
 	return 0;
 }
+
+////PRIVATE int dof_run_cmd_(char *cmd_file);
 
 ////int dof_run_cmd_1(void)
 ////{

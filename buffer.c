@@ -29,6 +29,7 @@ be_buf_t *buf_create(const char *full_path)
 {
 	be_buf_t *buf;
 
+	_mlc_set_caller
 	buf = (be_buf_t *)malloc__(sizeof(be_buf_t));
 ///	get_mem_free_in_kb(1);
 	return buf_init(buf, full_path);
@@ -67,8 +68,8 @@ void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf)
 }
 be_buf_t *buf_init_line_anchors(be_buf_t *buf)
 {
-	line_init(BUF_TOP_ANCH(buf), "#LINE-top-anchor");
-	line_init(BUF_BOT_ANCH(buf), "#LINE-bot-anchor");
+	line_init(BUF_TOP_ANCH(buf));
+	line_init(BUF_BOT_ANCH(buf));
 	line_link(BUF_TOP_ANCH(buf), BUF_BOT_ANCH(buf));
 	return buf;
 }
@@ -138,7 +139,7 @@ be_buf_t *buf_unlink_free(be_buf_t *buf)
 {
 	be_buf_t *prev_buf;
 
-///_D_(buf_dump_state(buf));
+///_D_(buf_dump_state(buf))
 	if (IS_NODE_INT(buf) == 0) {
 		if (IS_PTR_NULL(buf)) {
 			progerr_printf("This buffer is NULL\n");
@@ -416,8 +417,8 @@ be_bufs_t *bufs_free_all_bufss(be_bufs_t *bufs)
 		flf_d_printf("bufs: %s\n", bufs->name);
 		for ( ; ; ) {
 			be_buf_t *buf = BUFS_TOP_NODE(bufs);
-///			flf_d_printf(" %cbuf:[%s]\n",
-///			 (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
+			flf_d_printf(" %cbuf:[%s]\n",
+			 (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
 			if (IS_NODE_INT(buf) == 0) {
 				break;
 			}

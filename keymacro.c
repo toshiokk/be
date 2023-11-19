@@ -80,7 +80,7 @@ int doe_end_recording(void)
 
 #ifdef ENABLE_HISTORY
 	save_key_macro();
-///_D_(dump_history_ix(HISTORY_TYPE_IDX_KEYMACRO));
+///_D_(dump_history_ix(HISTORY_TYPE_IDX_KEYMACRO))
 #endif // ENABLE_HISTORY
 
 	disp_editor_title_bar();

@@ -46,27 +46,146 @@ char *malloc_strcpy(const char *string)
 	return buf;
 }
 
-// Thanks BG, many ppl have been asking for this...
+//-----------------------------------------------------------------------------
+#ifdef MEMORY_LEAK_CHECKER
+
+#define MAX_MALLOCS_TO_MONITOR	2000000	// 2,000,00
+static struct malloc_caller malloc_callers[MAX_MALLOCS_TO_MONITOR];
+
+static const char *caller_file_name = NULL;	// "filename.c"
+static int caller_line_num = 0;				// line number
+void mlc_init()
+{
+	for (int alloc_idx = 0; alloc_idx < MAX_MALLOCS_TO_MONITOR; alloc_idx++) {
+		mlc_clear_caller(&malloc_callers[alloc_idx]);
+	}
+	_mlc_set_caller
+}
+void mlc_set_caller(const char *file_name, int line_num)
+{
+	caller_file_name = file_name;
+	caller_line_num = line_num;
+}
+struct malloc_caller* mlc_register_caller()
+{
+	for (int alloc_idx = 0; alloc_idx < MAX_MALLOCS_TO_MONITOR; alloc_idx++) {
+		if (malloc_callers[alloc_idx].file_name == NULL) {
+			mlc_update_caller(&(malloc_callers[alloc_idx]));
+			return &(malloc_callers[alloc_idx]);
+		}
+	}
+	return NULL;
+}
+void mlc_update_caller(struct malloc_caller* caller)
+{
+	caller->file_name = caller_file_name;
+	caller->line_num = caller_line_num;
+}
+
+void mlc_clear_caller(struct malloc_caller* caller)
+{
+	caller->file_name = NULL;
+}
+
+int mlc_check_leak()
+{
+	int count = 1;
+	flf_d_printf("\n");
+	for (int alloc_idx = 0; alloc_idx < MAX_MALLOCS_TO_MONITOR; alloc_idx++) {
+		if (malloc_callers[alloc_idx].file_name) {
+			d_printf("%3d:%3d: file_name: [%s], line_num: %d\n", count, alloc_idx,
+			 malloc_callers[alloc_idx].file_name,
+			 malloc_callers[alloc_idx].line_num);
+			count++;
+		}
+	}
+}
+
+// allocate additional memory for monitoring memory leaks
+//		struct malloc_header malloc_header;	// additional memory
+//		void memory[size];					// <== return this address to user
+//
+static int malloced_count = 0;
+static int max_malloced_count = 0;
+static size_t malloced_size = 0;
+static size_t max_malloced_size = 0;
+static int save_malloced_count = 0;
+static size_t save_malloced_size = 0;
+
+void mlc_check_count()
+{
+	flf_d_printf("max_count: %d, max_size: %d, count: %d, size: %d\n",
+	 max_malloced_count, max_malloced_size, malloced_count, malloced_size);
+}
+void mlc_memorize_count()
+{
+	save_malloced_count = malloced_count;
+	save_malloced_size = malloced_size;
+	mlc_check_count();
+}
+void mlc_differenciate_count()
+{
+	mlc_check_count();
+	flf_d_printf("count: %d, size: %d\n",
+	 malloced_count - save_malloced_count, malloced_size - save_malloced_size);
+}
+#endif // MEMORY_LEAK_CHECKER
+
 void *malloc__(size_t bytes)
 {
 	void *ptr;
 
+#ifdef MEMORY_LEAK_CHECKER
+	bytes += sizeof(struct malloc_header);
+#endif // MEMORY_LEAK_CHECKER
 	ptr = malloc(bytes);
 	if (ptr == NULL && bytes != 0) {
 		_FATALERR_
 		die_on(_("Out of memory!"));
 	}
+#ifdef MEMORY_LEAK_CHECKER
+	bytes -= sizeof(struct malloc_header);
+	struct malloc_header* mptr = (struct malloc_header*)ptr;
+	mptr->size = bytes;
+	mptr->caller = mlc_register_caller();
+
+	malloced_count++;
+	max_malloced_count = MAX(max_malloced_count, malloced_count);
+	malloced_size += bytes;
+	max_malloced_size = MAX(max_malloced_size, malloced_size);
+
+	ptr += sizeof(struct malloc_header);
+#endif // MEMORY_LEAK_CHECKER
 	return ptr;
 }
 
 void *remalloc__(void *ptr, size_t bytes)
 {
+	if (ptr == NULL) {
+		return malloc__(bytes);
+	}
+#ifdef MEMORY_LEAK_CHECKER
+	ptr -= sizeof(struct malloc_header);
+	struct malloc_header* mptr = (struct malloc_header*)ptr;
+	struct malloc_caller* caller = mptr->caller;
+	malloced_size -= mptr->size;
+	bytes += sizeof(struct malloc_header);
+#endif // MEMORY_LEAK_CHECKER
 	ptr = realloc(ptr, bytes);
-
 	if (ptr == NULL && bytes != 0) {
 		_FATALERR_
 		die_on(_("Out of memory!"));
 	}
+#ifdef MEMORY_LEAK_CHECKER
+	bytes -= sizeof(struct malloc_header);
+	mptr = (struct malloc_header*)ptr;
+	mlc_update_caller(caller);
+	mptr->size = bytes;
+	mptr->caller = caller;
+	malloced_size += bytes;
+
+	ptr += sizeof(struct malloc_header);
+#endif // MEMORY_LEAK_CHECKER
 	return ptr;
 }
 
@@ -79,6 +198,13 @@ void free_ptr(void **ptr)
 void free__(void *ptr)
 {
 	if (ptr) {
+#ifdef MEMORY_LEAK_CHECKER
+		ptr -= sizeof(struct malloc_header);
+		struct malloc_header* mptr = (struct malloc_header*)ptr;
+		malloced_count--;
+		malloced_size -= mptr->size;
+		mlc_clear_caller(mptr->caller);
+#endif // MEMORY_LEAK_CHECKER
 		free(ptr);
 	}
 }
@@ -95,6 +221,7 @@ void remalloc_and_null_terminate_string(char **ptr)
 // NOTE: DONOT use for be_line_t::data
 void remalloc_and_null_terminate_length(char **ptr, size_t len)
 {
+	_mlc_set_caller
 	*ptr = char_remalloc(*ptr, len + 1);
 	(*ptr)[len] = '\0';
 }

@@ -214,6 +214,7 @@ flf_d_printf("Attempting to read rc file %s ...\n", rc_file_path);
 		}
 		return 1;
 	}
+	_mlc_memorize_count
 ///flf_d_printf("Reading rc file %s ...\n", rc_file_path);
 	while (fgets(rc_line_buf, MAX_SCRN_LINE_BUF_LEN, fp) != 0) {
 		remove_line_tail_lf(rc_line_buf);
@@ -264,6 +265,7 @@ flf_d_printf("clear_keys_bound_to_func(%s)\n", func_key_table->func_id);
 read_rc_path_match:;
 		}
 	}
+	_mlc_differ_count
 	if (fclose(fp) != 0) {
 		return 1;
 	}
@@ -561,19 +563,19 @@ PRIVATE struct /*_color_index_*/ {
 	int color_index;
 } color_names[] = {
 	{ "black",		CL_BK,	},	//  0
-	{ "dgray",		CL_DGY,	},	//  8
+	{ "dgray",		CL_DG,	},	//  8
 	{ "red",		CL_RD,	},	//  1
-	{ "lred",		CL_LRD,	},	//  9
+	{ "lred",		CL_LR,	},	//  9
 	{ "green",		CL_GR,	},	//  2
-	{ "lgreen",		CL_LGR,	},	// 10
+	{ "lgreen",		CL_LG,	},	// 10
 	{ "brown",		CL_BR,	},	//  3
 	{ "yellow",		CL_YL,	},	// 11
 	{ "blue",		CL_BL,	},	//  4
-	{ "lblue",		CL_LBL,	},	// 12
+	{ "lblue",		CL_LB,	},	// 12
 	{ "magenta",	CL_MG,	},	//  5
-	{ "lmagenta",	CL_LMG,	},	// 13
+	{ "lmagenta",	CL_LM,	},	// 13
 	{ "cyan",		CL_CY,	},	//  6
-	{ "lcyan",		CL_LCY,	},	// 14
+	{ "lcyan",		CL_LC,	},	// 14
 	{ "gray",		CL_GY,	},	//  7
 	{ "white",		CL_WH,	},	// 15
 	{ "none",		-1,	},
@@ -637,6 +639,7 @@ PRIVATE int add_file_type(const char *file_type_name, const char *regexp_file_na
 	file_type_t *file_type = NULL;
 
 ///flf_d_printf("adding file type: [%s] [%s]\n", file_type_name, regexp_file_name);
+	_mlc_set_caller
 	file_type = (file_type_t *)malloc__(sizeof(file_type_t));
 	file_type->regexp = regexp_alloc();
 	file_type->next = NULL;
@@ -645,6 +648,7 @@ PRIVATE int add_file_type(const char *file_type_name, const char *regexp_file_na
 		 regexp_file_name, file_type->regexp->regex_err_msg);
 		goto add_file_type_err;
 	}
+	_mlc_set_caller
 	file_type->desc = malloc_strcpy(file_type_name);
 	file_type->color_syntax = NULL;
 	file_type->tab_size = DEFAULT_TAB_SIZE;
@@ -657,6 +661,7 @@ PRIVATE int add_file_type(const char *file_type_name, const char *regexp_file_na
 add_file_type_err:;
 ///_FLF_
 	regexp_free(file_type->regexp);
+	file_type->regexp = NULL;
 	return 1;
 }
 
@@ -669,6 +674,7 @@ PRIVATE int add_color_syntax(const char *regexp_start, const char *regexp_end, i
 	if (strlen(regexp_start) == 0)
 		return 1;
 
+	_mlc_set_caller
 	clr_syntax = (color_syntax_t *)malloc__(sizeof(color_syntax_t));
 	clr_syntax->next = NULL;
 	clr_syntax->regexp_end = NULL;
@@ -690,15 +696,17 @@ PRIVATE int add_color_syntax(const char *regexp_start, const char *regexp_end, i
 	}
 	clr_syntax->color.bgc = bgc;
 	clr_syntax->color.fgc = fgc;
-///	clr_syntax->color.reverse = reverse;
 
 	link_color_syntax_w_file_type(cur_file_type, clr_syntax);
 	return 0;
 
 add_color_syntax_err2:;
 	regexp_free(clr_syntax->regexp_end);
+	clr_syntax->regexp_end = NULL;
 add_color_syntax_err1:;
 	regexp_free(clr_syntax->regexp_start);
+	clr_syntax->regexp_start = NULL;
+	FREE_CLR_PTR(clr_syntax);
 	return 1;
 }
 
@@ -708,7 +716,7 @@ PRIVATE int link_color_syntax_w_file_type(file_type_t *file_type, color_syntax_t
 
 	for (color_syntax_ptr_ptr = &file_type->color_syntax;
 	 *color_syntax_ptr_ptr != NULL; ) {
-///_D_(dump_color_syntax(*color_syntax_ptr_ptr));
+///_D_(dump_color_syntax(*color_syntax_ptr_ptr))
 		color_syntax_ptr_ptr = &(*color_syntax_ptr_ptr)->next;
 	}
 	*color_syntax_ptr_ptr = clr_syntax;
@@ -720,15 +728,17 @@ void free_file_types(void)
 	file_type_t *file_type, *f_next;
 	color_syntax_t *clr_syntax, *c_next;
 
+	_mlc_memorize_count
+///_D_(dump_file_types())
 	for (file_type = file_types_head; file_type != NULL; ) {
 		FREE_CLR_PTR(file_type->desc);
 		regexp_free(file_type->regexp);
 		for (clr_syntax = file_type->color_syntax; clr_syntax != NULL; ) {
 			if (clr_syntax->regexp_start) {
-				regexp_free(clr_syntax->regexp_start);
+				FREE_CLR_PTR(clr_syntax->regexp_start);
 			}
 			if (clr_syntax->regexp_end) {
-				regexp_free(clr_syntax->regexp_end);
+				FREE_CLR_PTR(clr_syntax->regexp_end);
 			}
 			c_next = clr_syntax->next;
 			FREE_CLR_PTR(clr_syntax);
@@ -740,6 +750,7 @@ void free_file_types(void)
 	}
 	file_types_head = NULL;
 	cur_file_type = NULL;
+	_mlc_differ_count
 }
 
 //------------------------------------------------------------------------------------

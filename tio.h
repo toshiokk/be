@@ -52,16 +52,21 @@ typedef short key_code_t;
 #define CL_MG		COLOR_MAGENTA
 #define CL_CY		COLOR_CYAN
 #define CL_GY		COLOR_WHITE					// white (light gray)
-#define CL_DGY		((CL_HI) + (COLOR_BLACK))	// dark gray
-#define CL_LRD		((CL_HI) + (COLOR_RED))		// light red
-#define CL_LGR		((CL_HI) + (COLOR_GREEN))	// light green
+#define CL_DG		((CL_HI) + (COLOR_BLACK))	// dark gray
+#define CL_LR		((CL_HI) + (COLOR_RED))		// light red
+#define CL_LG		((CL_HI) + (COLOR_GREEN))	// light green
 #define CL_YL		((CL_HI) + (COLOR_YELLOW))	// light yellow
-#define CL_LBL		((CL_HI) + (COLOR_BLUE))	// light blue
-#define CL_LMG		((CL_HI) + (COLOR_MAGENTA))	// light magenta
-#define CL_LCY		((CL_HI) + (COLOR_CYAN))	// light cyan
+#define CL_LB		((CL_HI) + (COLOR_BLUE))	// light blue
+#define CL_LM		((CL_HI) + (COLOR_MAGENTA))	// light magenta
+#define CL_LC		((CL_HI) + (COLOR_CYAN))	// light cyan
 #define CL_WH		((CL_HI) + (COLOR_WHITE))	// bright white
 
+#ifndef ENABLE_16_BCG
 #define LIMIT_BGC(bgc)			((bgc) & ((COLORS8)-1))		// [0, 7]
+#else // ENABLE_16_BCG
+#define LIMIT_BGC(bgc)			((bgc) & ((COLORS16)-1))	// [0, 15]
+#endif // ENABLE_16_BCG
+
 #define LIMIT_FGC(fgc)			((fgc) & ((COLORS16)-1))	// [0, 15]
 #define MAKE_HIGH_COLOR(color)	((color) | (CL_HI))
 #define GET_BASE_COLOR(color)	((color) & ((CL_HI)-1))

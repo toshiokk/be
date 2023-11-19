@@ -161,7 +161,6 @@ typedef struct /*buf_state*/ {
 } buf_state_t;
 
 typedef enum /*_mode_idx_*/ {
-///	APMD_RCFILE,
 	APMD_DRAW_CURSOR,
 	APMD_KEY_LINES,
 	APMD_MAP_KEY_7F_BS,

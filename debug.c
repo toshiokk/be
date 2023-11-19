@@ -96,8 +96,6 @@ void tflfl_d_printf_(int time, const char *file, int line,
 	va_end(list);
 
 	switch (time) {
-	default:
-		// FALLTHROUGH
 	case 1:
 		get_sssssspmmm(buffer);
 		snprintf_(buf_time, MAX_PATH_LEN, "MSEC %s ", buffer);
@@ -107,6 +105,8 @@ void tflfl_d_printf_(int time, const char *file, int line,
 		break;
 	case 6:
 		snprintf_(buf_time, MAX_PATH_LEN, "%s ", cur_hhcmmcss_uuuuuu());
+		break;
+	default:
 		break;
 	}
 	if (file[0]) {

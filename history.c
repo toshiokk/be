@@ -93,10 +93,19 @@ void load_histories(void)
 {
 	int hist_type_idx;
 
+///	_mlc_memorize_count
+///	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
+///		load_history_idx(hist_type_idx);
+///	}
+///	_mlc_check_count
+///	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
+///		clear_history(hist_type_idx);
+///	}
+///	_mlc_differ_count
 	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
 		load_history_idx(hist_type_idx);
 	}
-////_D_(dump_hist_bufs_lines());
+////_D_(dump_hist_bufs_lines())
 }
 
 // save histories to file
@@ -311,7 +320,7 @@ flf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, file_path);
 		}
 	}
 	clear_history_modified(hist_type_idx);
-///_D_(dump_history_ix(hist_type_idx));
+///_D_(dump_history_ix(hist_type_idx))
 	return error;
 }
 PRIVATE char *get_history_file_path(int hist_type_idx)
@@ -388,13 +397,13 @@ PRIVATE void set_history_oldest(int hist_type_idx)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	buf_set_cur_line(buf, BUF_TOP_NODE(buf));
-///_D_(buf_dump_lines(buf, INT_MAX));
+///_D_(buf_dump_lines(buf, INT_MAX))
 }
 PRIVATE void set_history_newest(int hist_type_idx)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	buf_set_cur_line(buf, BUF_BOT_NODE(buf));
-///_D_(buf_dump_lines(buf, INT_MAX));
+///_D_(buf_dump_lines(buf, INT_MAX))
 }
 PRIVATE const char *get_history_older(int hist_type_idx)
 {

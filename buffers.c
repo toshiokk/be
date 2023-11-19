@@ -85,9 +85,9 @@ void init_buffers(void)
 
 void free_all_buffers(void)
 {
-///	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
+///	_D_(bufs_dump_all_bufs(&bufs_top_anchor))
 	bufs_free_all_bufss(&bufs_top_anchor);
-///	_D_(bufs_dump_all_bufs(&bufs_top_anchor));
+///	_D_(bufs_dump_all_bufs(&bufs_top_anchor))
 }
 
 // Edit-buffer manipulation routines
@@ -215,7 +215,7 @@ void set_editor_pane_n_buf(int pane_idx, be_buf_t *buf)
 	if (buf) {
 		editor_panes.bufs[pane_idx] = buf;
 	}
-///_D_(dump_editor_panes());
+///_D_(dump_editor_panes())
 
 #ifdef ENABLE_SYNTAX
 	set_file_type_by_cur_file_path();

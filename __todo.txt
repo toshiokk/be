@@ -1,6 +1,10 @@
-#### BE-editor to do list
+#### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: hard, v: done)
 
+[H] sofisticate filer_do_next mechanism
 
+[v] check memory leak
+  [v] fix memory leak
+[v] lighter background color by ESC [ {100,107} m
 [v] easily change release-level: stable-release, test-release, experimental-release
 [-] visit all cut mode by moving cursor horizontal and vertical in specific way.
     ==> [v] clear cut mode by returning cursor to beginning position.

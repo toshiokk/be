@@ -42,7 +42,6 @@ PRIVATE int parse_options(int argc, char *argv[]);
 PRIVATE void start_up_test(void);
 PRIVATE void start_up_test2(void);
 #endif // START_UP_TEST
-PRIVATE void exit_app(void);
 PRIVATE int write_cur_dir_to_exit_file(void);
 PRIVATE void die_save_file(const char *die_file_path);
 
@@ -55,21 +54,25 @@ int main(int argc, char *argv[])
 #endif // ENABLE_FILER
 	int start_line_num = 0;			// Line to start at
 
-flf_d_printf("Start-------------------------------------------------------------\n");
+	init_app_mode();
+#ifdef ENABLE_DEBUG
+	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
+#endif // ENABLE_DEBUG
+flf_d_printf("Start %s ----------------\n", APP_NAME " " __DATE__ " " __TIME__);
+	_mlc_init
 	get_start_dir();
 	signal_init();
 _FLF_
 	init_locale();
 _FLF_
-	init_app_mode();
-_FLF_
+	_mlc_memorize_count
 	init_buffers();		// parse_options() needs cep_buf. So do here.
+	_mlc_differ_count
 #ifdef ENABLE_FILER
 	init_filer_panes(&filer_panes, get_start_dir());
 #endif // ENABLE_FILER
 _FLF_
 	parse_options(argc, argv);		// parse command line options
-flf_d_printf("Starting %s ----------------\n", APP_NAME " " __DATE__ " " __TIME__);
 	cache_users();
 	cache_groups();
 _FLF_
@@ -85,8 +88,10 @@ _FLF_
 	}
 #endif // ENABLE_RC
 #ifdef ENABLE_SYNTAX
+	_mlc_memorize_count
 	register_default_color_syntax();
-///_D_(dump_file_types());
+	_mlc_differ_count
+///_D_(dump_file_types())
 #endif // ENABLE_SYNTAX
 
 	// setup terminal
@@ -160,7 +165,26 @@ _FLF_
 _FLF_
 
 	set_die_on_callback(NULL);
-	exit_app();
+
+	set_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
+	tio_clear_screen();
+	tio_destroy();
+
+	write_cur_dir_to_exit_file();
+
+	_mlc_check_count
+	free_all_allocated_memory();
+#ifdef ENABLE_FILER
+	free_filer_panes(&filer_panes, NULL);
+#endif // ENABLE_FILER
+
+	signal_clear();
+
+	_mlc_check_count
+	_D_(_mlc_check_leak)
+
+flf_d_printf("Exit %s --------------------\n", APP_NAME " " __DATE__ " " __TIME__);
+	printf("\n");
 	return 0;
 }
 
@@ -203,16 +227,11 @@ PRIVATE int init_locale(void)
 	setlocale(LC_ALL, "");	// set locale so that wchar related functions work
 #if defined(ENABLE_NLS) && defined(ENABLE_UTF8)
 e_printf("LANG: [%s]\n", getenv__("LANG"));
-//	setenv("LANG", "ja_JP.UTF-8", 1);
-//e_printf("LANG: [%s]\n", getenv__("LANG"));
 	setlocale(LC_ALL, getenv__("LANG"));
 e_printf("cur locale: %s\n", setlocale(LC_ALL, NULL));
 e_printf("PACKAGE: %s, LOCALEDIR: %s\n", PACKAGE, LOCALEDIR);
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-//e_printf("MB_LEN_MAX: %d\n", MB_LEN_MAX);
-//e_printf("MB_CUR_MAX: %d\n", MB_CUR_MAX);
-//e_printf("MAX_UTF8C_BYTES: %d\n", MAX_UTF8C_BYTES);
 #endif // defined(ENABLE_NLS) && defined(ENABLE_UTF8)
 	return 0;
 }
@@ -231,7 +250,11 @@ PRIVATE int init_app_mode(void)
 #endif // ENABLE_HISTORY
 	CLR_APPMD(app_DRAW_CURSOR);
 	SET_APPMD_VAL(app_KEY_LINES, 3);
+#if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
+	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);
+#else
 	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
+#endif
 	// editor mode
 	CLR_APPMD(app_EDITOR_FILER);
 	set_app_func_key_table();
@@ -297,6 +320,7 @@ PRIVATE int parse_options(int argc, char *argv[])
 {
 	int optchr;
 
+	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
 #ifdef ENABLE_DEBUG
 	for (optchr = 0; optchr < argc; optchr++) {
 		flf_d_printf("optind:%d: %s\n", optchr, argv[optchr]);
@@ -372,9 +396,7 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 #endif // USE_NKF
 		case 'd':
 			SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);
-#ifdef ENABLE_DEBUG
-			set_debug_printf_output(1);
-#endif // ENABLE_DEBUG
+			set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
 			break;
 		case 'v':
 			show_version();
@@ -427,9 +449,9 @@ PRIVATE void start_up_test(void)
 	flf_d_printf("mem type: 0x1234567890123456\n");
 	flf_d_printf("auto buf: %p\n", buf);
 	flf_d_printf("\"string\": %p\n", "string");
-	allocated = malloc(100);
+	allocated = malloc__(100);
 	flf_d_printf("malloc  : %p\n", allocated);
-	free(allocated);
+	free__(allocated);
 
 	flf_d_printf("#define KEY_RESIZE	0x%04x\n", KEY_RESIZE);
 	flf_d_printf("#define KEY_HOME		0x%04x\n", KEY_HOME);
@@ -481,24 +503,6 @@ flf_d_printf("%2d mod 3 = %2d\n", nn, nn % 3);
 }
 #endif // START_UP_TEST
 //-----------------------------------------------------------------------------
-
-// exit application
-PRIVATE void exit_app(void)
-{
-	set_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
-	tio_clear_screen();
-	tio_destroy();
-
-	write_cur_dir_to_exit_file();
-
-	free_all_allocated_memory();
-
-	signal_clear();
-
-flf_d_printf("Exit %s --------------------\n", APP_NAME " " __DATE__ " " __TIME__);
-	printf("\n");
-	exit(0);
-}
 
 PRIVATE int write_cur_dir_to_exit_file(void)
 {
@@ -572,7 +576,9 @@ void free_all_allocated_memory(void)
 ///_FLF_
 ///	save_key_macro();
 #endif // ENABLE_HISTORY
+	_mlc_memorize_count
 	free_all_buffers();
+	_mlc_differ_count
 
 #ifdef ENABLE_SYNTAX
 ///_FLF_

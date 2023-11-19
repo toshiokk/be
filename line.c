@@ -27,10 +27,11 @@ be_line_t *line_create(void)
 {
 	be_line_t *line;
 
+	_mlc_set_caller
 	line = (be_line_t *)malloc__(sizeof(be_line_t));
-	return line_init(line, "");
+	return line_init(line);
 }
-be_line_t *line_init(be_line_t *line, const char *string)
+be_line_t *line_init(be_line_t *line)
 {
 	// initialize be_line_t
 	line->prev = NULL;
@@ -39,9 +40,6 @@ be_line_t *line_init(be_line_t *line, const char *string)
 	line->size = 0;
 	line->line_num = 0;
 	line->buf_size = 0;
-	if (string && string[0]) {
-		line_set_string(line, string);
-	}
 	return line;
 }
 be_line_t *line_create_with_string(const char *string)
@@ -66,7 +64,7 @@ be_line_t *line_set_string_len(be_line_t *line, const char *string, len_t len)
 	if (line->data) {
 		if (IS_OVERWRAP(line->data, line->data + MAX_EDIT_LINE_LEN,
 		 string, string + MAX_EDIT_LINE_LEN)) {
-			// string will be destroyed in remalloc(), copy it to temporary buffer
+			// string may be destroyed in remalloc(), copy it to temporary buffer
 			strlcpy__(buffer, string, MAX_EDIT_LINE_LEN);
 			string = buffer;
 		}
@@ -78,7 +76,9 @@ be_line_t *line_set_string_len(be_line_t *line, const char *string, len_t len)
 		len = byte_idx_from_byte_idx(string, LIM_MAX(len, MAX_EDIT_LINE_LEN));
 	}
 	line->size = len + 1;
+	_mlc_set_caller
 	line->data = char_remalloc(line->data, len + 1);
+flf_d_printf("[%s]\n", string);
 	strlcpy__(line->data, string, len);	// copy string
 	return line;			// return line
 }

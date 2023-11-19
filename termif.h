@@ -51,6 +51,10 @@
 #define COLORS			8
 #define COLOR_PAIRS		((COLORS) * (COLORS))
 
+// NOTE: Linux console supports highlight only for foreground
+//       and does not support highlight for background
+///#define ENABLE_16_BCG	// use lighter background color (color number 8 -- 15)
+
 int termif_init(void);
 int termif_begin(void);
 int termif_end(void);

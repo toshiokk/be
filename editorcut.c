@@ -235,7 +235,7 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 		setup_cut_region();
 	}
 	top_line = NODE_PREV(mark_min_line);
-///_D_(line_dump_lines(top_line, 10, NULL));
+///_D_(line_dump_lines(top_line, 10, NULL))
 	// ====  COPY  ====
 	if (cp_del_paste_pop & CDPP_COPY) {
 		copy_text_to_cut_buf();
@@ -412,7 +412,7 @@ PRIVATE void copy_region_to_cut_buf(
 	for (line = min_line; IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		if (line != max_line) {
 			// first and intermediate line
-////_D_(line_dump_byte_idx(line, min_byte_idx));
+////_D_(line_dump_byte_idx(line, min_byte_idx))
 			append_string_to_cur_cut_buf(
 			 strcut__(buf, MAX_EDIT_LINE_LEN, line->data, min_byte_idx, line_data_len(line)));
 		} else {

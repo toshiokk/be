@@ -320,7 +320,8 @@ regexp_t *regexp_alloc(void)
 {
 	regexp_t *regexp;
 
-	regexp = (regexp_t*)malloc(sizeof(regexp_t));
+	_mlc_set_caller
+	regexp = (regexp_t*)malloc__(sizeof(regexp_t));
 	return regexp_init(regexp);
 }
 regexp_t *regexp_init(regexp_t *regexp)
@@ -331,18 +332,21 @@ regexp_t *regexp_init(regexp_t *regexp)
 ///	regexp->cflags_compiled = 0;
 	return regexp;
 }
-int regexp_free_regex_compiled(regexp_t *regexp)
+void regexp_free_regex_compiled(regexp_t *regexp)
 {
-	if (regexp->is_compiled == 0)
-		return 0;
-	regexp->is_compiled = 0;
-	return regfree__(&regexp->regex_compiled);
+	if (regexp) {
+		if (regexp->is_compiled == 0)
+			return;
+		regexp->is_compiled = 0;
+		regfree__(&regexp->regex_compiled);
+	}
 }
-int regexp_free(regexp_t *regexp)
+void regexp_free(regexp_t *regexp)
 {
-	regexp_free_regex_compiled(regexp);
-	free(regexp);
-	return 1;
+	if (regexp) {
+		regexp_free_regex_compiled(regexp);
+		free__(regexp);
+	}
 }
 int regexp_search(regexp_t *regexp, regexp_matches_t *regexp_matches, const char *needle,
  const char *haystack, int byte_idx, int cflags, int eflags, size_t max_matches)
@@ -387,7 +391,7 @@ int regexp_search_compiled(regexp_t *regexp, const char *haystack, int byte_idx,
 {
 	int ret;
 
-///_D_(dump_str_w_caret(haystack, byte_idx));
+///_D_(dump_str_w_caret(haystack, byte_idx))
 	if (regexp->is_compiled < 2) {
 		return -1;	// compilation error
 	}
@@ -399,7 +403,7 @@ int regexp_search_compiled(regexp_t *regexp, const char *haystack, int byte_idx,
 		 byte_idx + regexp_matches_start_idx(regexp_matches, 0));
 		regexp_matches_set_end_idx(regexp_matches, 0,
 		 byte_idx + regexp_matches_end_idx(regexp_matches, 0));
-///_D_(regexp_dump_matches(regexp, regexp_matches, haystack));
+///_D_(regexp_dump_matches(regexp, regexp_matches, haystack))
 	}
 	return ret;		// 0: match
 }
@@ -594,10 +598,11 @@ int regexec_n(const regex_t *preg, const char *haystack,
 	return REG_NOMATCH;
 }
 
-int regfree__(regex_t *preg)
+void regfree__(regex_t *preg)
 {
-	regfree(preg);
-	return 0;
+	if (preg) {
+		regfree(preg);
+	}
 }
 
 //------------------------------------------------------------------------------

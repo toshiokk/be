@@ -43,10 +43,52 @@ void die_on(const char *msg);
 #define char_malloc(bytes)			(char *)malloc__(bytes)
 #define char_remalloc(ptr, bytes)	(char *)remalloc__(ptr, bytes)
 
+///#define MEMORY_LEAK_CHECKER
+#ifndef MEMORY_LEAK_CHECKER
+
+#define _mlc_init
+#define _mlc_set_caller
+#define _mlc_check_leak
+#define _mlc_check_count
+#define _mlc_memorize_count
+#define _mlc_differ_count
+
+#else // MEMORY_LEAK_CHECKER
+
+#define _mlc_init				mlc_init();
+#define _mlc_set_caller			mlc_set_caller(__FILE__, __LINE__);
+#define _mlc_check_leak			mlc_check_leak();
+#define _mlc_check_count		mlc_check_count();
+#define _mlc_memorize_count		mlc_memorize_count();
+#define _mlc_differ_count		mlc_differenciate_count();
+
+struct malloc_caller {
+	const char *file_name;	// "filename.c"
+	int line_num;			// line number
+};
+struct malloc_header {
+	size_t size;		// size which user requested and allocated
+	struct malloc_caller *caller;
+};
+#define MAX_MALLOCS_TO_MONITOR	2000000	// 2,000,000
+
+void mlc_init();
+void mlc_set_caller(const char *file_name, int line_num);
+struct malloc_caller* mlc_register_caller();
+void mlc_update_caller(struct malloc_caller* caller);
+void mlc_clear_caller(struct malloc_caller* caller);
+int mlc_check_leak();
+
+void mlc_check_count();
+void mlc_memorize_count();
+void mlc_differenciate_count();
+#endif // MEMORY_LEAK_CHECKER
+
 char *malloc_strcpy(const char *string);
 void *malloc__(size_t bytes);
 void *remalloc__(void *ptr, size_t bytes);
 #define FREE_CLR_PTR(ptr)	free_ptr((void **)&(ptr))
+#define FREE_CLR_PTR_FLF(ptr)	{ if (ptr) { _FLF_ } free_ptr((void **)&(ptr)); }
 void free_ptr(void **ptr);
 void free__(void *ptr);
 

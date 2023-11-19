@@ -1,0 +1,14 @@
+# configure, make
+#sudo chown `whoami` *
+rm _build.log
+
+{
+echo "#### BE build.log ####"
+echo "## ./configure ##"
+./_c_debug
+
+echo "## make ##"
+echo "## sudo make install ##"
+./__m
+
+} 2>&1 | tee -a _build.log

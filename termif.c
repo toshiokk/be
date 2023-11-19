@@ -550,14 +550,30 @@ PRIVATE void send_bold_to_term(int bold)
 ///}
 PRIVATE void send_bgc_to_term(int bgc)
 {
+#ifndef ENABLE_16_BCG
 	send_printf_to_term("\x1b[%dm", 40 + (bgc % COLORS));
-	// NOTE: Linux console supports highlight only for foreground
-	//       and does not support highlight for background
+#else // ENABLE_16_BCG
+	if (bgc < COLORS) {
+		send_printf_to_term("\x1b[%dm", 40 + (bgc % COLORS));
+	} else {
+		// NOTE: highlight background color by ESC [ {100--107} m
+		send_printf_to_term("\x1b[%dm", 100 + (bgc % COLORS));
+	}
+#endif // ENABLE_16_BCG
 }
 PRIVATE void send_fgc_to_term(int fgc)
 {
+#ifndef ENABLE_16_BCG
 	send_printf_to_term("\x1b[%dm", 30 + (fgc % COLORS));
 	send_bold_to_term(fgc >= COLORS);
+#else // ENABLE_16_BCG
+	if (fgc < COLORS) {
+		send_printf_to_term("\x1b[%dm", 30 + (fgc % COLORS));
+	} else {
+		// NOTE: highlight foreground color by ESC [ {90--97} m
+		send_printf_to_term("\x1b[%dm", 90 + (fgc % COLORS));
+	}
+#endif // ENABLE_16_BCG
 }
 PRIVATE void send_printf_to_term(const char *format, ...)
 {

@@ -24,9 +24,15 @@
 // Color table for the various items
 item_color_t item_colors[MAX_ITEM_COLORS];
 
+#ifndef ENABLE_16_BCG
+#define CL_BG	CL_WH	// gray background color
+#else // ENABLE_16_BCG
+#define CL_BG	CL_GY	// gray background color
+#endif // ENABLE_16_BCG
+
 item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	//  bgc, fgc
-	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_DEFAULT)			},
+	{ CL_BG, CL_BK, S(ITEM_COLOR_IDX_DEFAULT)			},
 #if APP_REL_LVL == APP_REL_LVL_STABLE
 	// official release
 	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_TITLE)				},
@@ -42,9 +48,9 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	{ CL_GR, CL_GR, S(ITEM_COLOR_IDX_TITLE)				},
 	{ CL_GR, CL_GR, S(ITEM_COLOR_IDX_STATUS)			},
 #endif
-	{ CL_WH, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
+	{ CL_BG, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
 	{ CL_BK, CL_BR, S(ITEM_COLOR_IDX_KEY_LIST2)			},
-	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL)		},
+	{ CL_BG, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL)		},
 	{ CL_RD, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED)		},
 ///	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED2)	},
 	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED2)	},
@@ -54,8 +60,8 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	{ CL_BK, CL_GR, S(ITEM_COLOR_IDX_LINE_NUMBER)		},
 	{ CL_CY, CL_BL, S(ITEM_COLOR_IDX_MENU_FRAME)		},
 	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_MENU_ITEM)			},
-	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_MENU_SELECTED)		},
-	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_INPUT)				},
+	{ CL_BG, CL_BK, S(ITEM_COLOR_IDX_MENU_SELECTED)		},
+	{ CL_BG, CL_BK, S(ITEM_COLOR_IDX_INPUT)				},
 };
 
 // Initialize with default application color set.
@@ -163,7 +169,7 @@ int set_file_type_by_file_name(const char *file_path)
 		cur_file_type = last_file_type;
 		return 0;
 	}
-///_D_(dump_file_type(cur_file_type, 0));
+///_D_(dump_file_type(cur_file_type, 0))
 	return 1;
 }
 

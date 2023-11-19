@@ -1,97 +1,97 @@
-    77    350   2981 appdefs.h
-   298   1048  10224 appmode.h
+    82    371   3193 appdefs.h
+   298   1046  10208 appmode.h
    197    762   7615 buffer.h
    310    905  12007 buffers.h
    109    428   4281 color.h
-   297   1403   8106 config.h
+   294   1392   8028 config.h
     63    253   2523 cursesif.h
     94    371   3864 debug.h
     53    261   2530 disp.h
-   111    330   3792 editor.h
+   112    344   3857 editor.h
     70    293   3113 editor2.h
     47    195   2057 editorcut.h
     41    194   2015 editorcut2.h
-    85    338   3660 editorgoto.h
+    85    340   3670 editorgoto.h
     30    172   1738 editorkeys.h
     37    179   1829 editorlist.h
-    64    229   2421 editormove.h
-    91    415   4335 editormove2.h
+    64    229   2423 editormove.h
+    89    416   4336 editormove2.h
     66    237   2801 editorundo.h
     49    233   2296 fileio.h
-    66    290   2849 filer.h
+    68    292   2862 filer.h
     72    308   3088 filer2.h
-    90    283   3246 filercmd.h
+    91    288   3279 filercmd.h
     30    172   1733 filerkeys.h
-    68    272   2892 filerrun.h
+    68    272   2900 filerrun.h
     67    237   2377 headers.h
     87    354   3844 history.h
     63    240   2757 keymacro.h
-   358   1281  11447 keys.h
+   357   1284  11472 keys.h
    168    730   7526 line.h
     60    311   2949 linewrap.h
     70    352   2625 main.h
     37     85    842 myutf8.h
     49    210   2102 rcfile.h
-   146    568   5876 regexp.h
+   146    568   5879 regexp.h
     66    281   2994 search.h
     45    203   2091 sig.h
    114    233   2082 stdincs.h
     80    315   2964 termif.h
-   119    482   4456 tio.h
+   119    482   4450 tio.h
     50    257   2442 utf8.h
     17     27    239 utilincs.h
     93    353   3632 utilpath.h
-   109    433   4333 utils.h
+   118    458   4608 utils.h
    122    592   5478 utilstr.h
     58    315   2713 winin.h
     80    319   3188 winout.h
-   551   1066  12243 appmode.c
-   589   1685  16063 buffer.c
+   553   1072  12293 appmode.c
+   592   1691  16114 buffer.c
    704   1471  18337 buffers.c
-   249    864   8031 color.c
+   255    878   8140 color.c
    203    615   5322 cursesif.c
-   171    563   4741 debug.c
-   250    783   7817 disp.c
-   884   2205  23397 editor.c
-  1136   3904  40372 editor2.c
-   683   1724  17090 editorcut.c
-   388   1126  11103 editorcut2.c
-   665   2022  20685 editorgoto.c
-   299   1654  17411 editorkeys.c
-   201    554   6842 editorlist.c
-   733   1912  18786 editormove.c
-   362   1217  12893 editormove2.c
+   172    565   4758 debug.c
+   253    789   7870 disp.c
+   884   2233  23567 editor.c
+  1137   3906  40390 editor2.c
+   688   1734  17177 editorcut.c
+   393   1143  11279 editorcut2.c
+   665   2024  20696 editorgoto.c
+   299   1656  17421 editorkeys.c
+   203    558   6876 editorlist.c
+   731   1916  18833 editormove.c
+   365   1223  12942 editormove2.c
    326    949   9747 editorundo.c
-   661   2023  18601 fileio.c
-   617   1692  20051 filer.c
-   679   2500  22371 filer2.c
-   821   1966  21898 filercmd.c
-   162    885   9399 filerkeys.c
-   500   1314  13900 filerrun.c
-   545   1586  15809 history.c
+   667   2035  18708 fileio.c
+   589   1630  19353 filer.c
+   682   2506  22422 filer2.c
+   848   1992  22180 filercmd.c
+   162    893   9362 filerkeys.c
+   499   1328  13941 filerrun.c
+   549   1630  16136 history.c
    303    876   9260 keymacro.c
-   786   2483  20480 keys.c
+   790   2491  20550 keys.c
    382   1147  10629 line.c
    652   2366  27153 linewrap.c
-   905   2685  27145 main.c
+   912   2691  27342 main.c
    149    520   3801 myutf8.c
-   810   2281  22601 rcfile.c
-   646   2133  20479 regexp.c
+   818   2292  22865 rcfile.c
+   649   2135  20473 regexp.c
    812   2798  25854 search.c
    189    568   5174 sig.c
-   778   2701  25211 termif.c
-   463   1225  10840 tio.c
+   778   2701  25210 termif.c
+   464   1227  10847 tio.c
    200    665   5087 utf8.c
    666   1940  17929 utilpath.c
-   400   1170   9967 utils.c
-   854   2676  21135 utilstr.c
-   564   1863  20107 winin.c
-   305   1024  10716 winout.c
- 26816  85500 843430 合計
+   455   1333  11494 utils.c
+   856   2684  21219 utilstr.c
+   572   1911  20375 winin.c
+   306   1026  10734 winout.c
+ 26957  85967 847360 合計
  185  492 8256 berc
   13   26  459 emacs.berc
   13   26  459 wordstar.berc
  211  544 9174 合計
- 1065  2636 24662 po/ja.po
+ 1065  2636 24663 po/ja.po
   282  1348  8252 README.md
- 1347  3984 32914 合計
+ 1347  3984 32915 合計
