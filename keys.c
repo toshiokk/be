@@ -43,7 +43,7 @@ void set_app_func_key_table(void)
 void editor_menu_n(int grp_idx)
 {
 	if (is_app_list_mode()) {
-		editor_quit = EDITOR_ABORT;
+		editor_quit = EDITOR_CANCELLED;
 		return;
 	}
 	static int prev_group_idx;
@@ -261,7 +261,6 @@ func_key_table_t *get_func_key_table_from_key_group(int group_idx)
 	int idx;
 
 	for (idx = 0; app_func_key_table[idx].help[0]; idx++) {
-////flf_d_printf("%s|%s\n", app_func_key_table[idx].desc, app_func_key_table[idx].help);
 		if (app_func_key_table[idx].desc[0] == 0) {
 			if (group_idx == 0)
 				return &app_func_key_table[idx];
@@ -306,7 +305,6 @@ func_key_table_t *get_func_key_table_from_key(func_key_table_t *key_table, key_c
 
 	for (idx = 0; key_table[idx].help[0]; idx++) {
 		if (is_key_bound_to_func(key, &key_table[idx])) {
-////flf_d_printf("func_id: %s\n", key_table[idx].func_id);
 			return &key_table[idx];
 		}
 	}
@@ -536,6 +534,11 @@ flf_d_printf("K_DC\n");
 		break;
 	}
 	return key;
+}
+
+int input_key_break(void)
+{
+	return tio_input_key() == K_C_C;
 }
 
 //-----------------------------------------------------------------------------

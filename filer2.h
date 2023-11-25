@@ -57,11 +57,13 @@ void free_file_list(filer_view_t *fv);
 void sort_file_list(filer_view_t *fv);
 int get_files_selected_cfv(void);
 int get_files_selected(filer_view_t *fv);
+
 int select_and_get_first_file_idx_selected(void);
+int select_file_if_none_selected(void);
 int get_first_file_idx_selected(void);
 int get_next_file_idx_selected(int start_file_idx);
-int select_file_if_none_selected(void);
 void unselect_all_files_auto(char selection_bit);
+
 int research_file_name_in_file_list(filer_view_t *fv);
 int search_file_name_in_file_list(filer_view_t *fv, const char *file_name);
 

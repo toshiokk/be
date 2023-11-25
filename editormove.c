@@ -265,7 +265,7 @@ int doe_first_line(void)
 }
 int doe_last_line(void)
 {
-	CEPBV_CL = CUR_EDIT_BUF_BOT_NODE;
+	CEPBV_CL = CUR_EDIT_BUF_BOT_LINE;
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_BOTTOM, UPDATE_SCRN_ALL);
 	return 1;
 }
@@ -537,7 +537,8 @@ int doe_delete_char(void)
 		get_cep_buf()->buf_size -= bytes;
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	} else {
-		if (IS_NODE_BOT(CEPBV_CL)) {
+		// line end
+		if (IS_NODE_BOT_MOST(CEPBV_CL)) {
 			// line end and the last line
 			return 0;
 		}
@@ -608,7 +609,7 @@ int move_cursor_left(int move_disp_y)
 
 	if (CEPBV_CLBI <= 0) {
 		// line top
-		if (IS_NODE_TOP(CEPBV_CL)) {
+		if (IS_NODE_TOP_MOST(CEPBV_CL)) {
 			return 0;
 		}
 		CEPBV_CL = NODE_PREV(CEPBV_CL);
@@ -644,7 +645,7 @@ int move_cursor_right(void)
 		}
 		set_edit_win_update_needed(UPDATE_SCRN_CUR_PREV);
 	} else {
-		if (IS_NODE_BOT(CEPBV_CL)) {
+		if (IS_NODE_BOT_MOST(CEPBV_CL)) {
 			return 0;
 		}
 		CEPBV_CL = NODE_NEXT(CEPBV_CL);
@@ -672,7 +673,7 @@ int c_l_up(be_line_t **line, int *byte_idx)
 		wl_idx--;
 		line_byte_idx = end_byte_idx_of_wrap_line_le(te_concat_linefeed_buf, wl_idx, col_idx, -1);
 	} else {
-		if (IS_NODE_TOP(*line)) {
+		if (IS_NODE_TOP_MOST(*line)) {
 			return 0;	// no move
 		}
 		*line = NODE_PREV(*line);
@@ -699,7 +700,7 @@ int c_l_down(be_line_t **line, int *byte_idx)
 		wl_idx++;
 		line_byte_idx = end_byte_idx_of_wrap_line_le(te_concat_linefeed_buf, wl_idx, col_idx, -1);
 	} else {
-		if (IS_NODE_BOT(*line)) {
+		if (IS_NODE_BOT_MOST(*line)) {
 			return 0;	// no move
 		}
 		*line = NODE_NEXT(*line);
@@ -713,18 +714,18 @@ int c_l_down(be_line_t **line, int *byte_idx)
 }
 int cursor_next_line(void)
 {
-	if (IS_NODE_BOT(CEPBV_CL))
+	if (IS_NODE_BOT_MOST(CEPBV_CL))
 		return 0;
 	CEPBV_CL = NODE_NEXT(CEPBV_CL);
 	CEPBV_CLBI = 0;
-	return IS_NODE_BOT(CEPBV_CL) ? 1 : 2;
+	return IS_NODE_BOT_MOST(CEPBV_CL) ? 1 : 2;
 }
 
 //-----------------------------------------------------------------------------
 
 int first_line(void)
 {
-	CEPBV_CL = CUR_EDIT_BUF_TOP_NODE;
+	CEPBV_CL = CUR_EDIT_BUF_TOP_LINE;
 	return 1;
 }
 

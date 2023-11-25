@@ -24,8 +24,8 @@
 // be_buf_t manipulation routines ==========================================
 // (common to edit-buffer, cut-buffer, undo-redo-buffer and history)
 
-// Create a new be_buf_t
-be_buf_t *buf_create(const char *full_path)
+// Create a new buffer be_buf_t
+be_buf_t *buf_create_node(const char *full_path)
 {
 	be_buf_t *buf;
 
@@ -34,6 +34,16 @@ be_buf_t *buf_create(const char *full_path)
 ///	get_mem_free_in_kb(1);
 	return buf_init(buf, full_path);
 }
+// Free a buffer be_buf_t
+be_buf_t *buf_free_node(be_buf_t *buf)
+{
+	be_buf_t *next = NODE_NEXT(buf);
+	buf_free_lines(buf);
+	free__(buf);
+///	get_mem_free_in_kb(1);
+	return next;
+}
+
 // initialize be_buf_t members
 be_buf_t *buf_init(be_buf_t *buf, const char *full_path)
 {
@@ -47,7 +57,7 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path)
 	buf->orig_file_stat.st_mtime = time(NULL);		// time file was created
 	buf->orig_file_crc = 0;
 
-	buf_init_line_anchors(buf);
+	buf_init_line_anchors(buf, buf->file_path);
 
 	buf_view_init(&(buf->buf_views[0]), buf);
 	buf_view_init(&(buf->buf_views[1]), buf);
@@ -66,17 +76,19 @@ void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf)
 	BUF_V_CURSOR_X_TO_KEEP(b_v) = 0;
 	BUF_V_MIN_TEXT_X_TO_KEEP(b_v) = 0;
 }
-be_buf_t *buf_init_line_anchors(be_buf_t *buf)
+be_buf_t *buf_init_line_anchors(be_buf_t *buf, char *initial_data)
 {
-	line_init(BUF_TOP_ANCH(buf));
-	line_init(BUF_BOT_ANCH(buf));
+	_mlc_set_caller
+	line_init(BUF_TOP_ANCH(buf), initial_data);
+	_mlc_set_caller
+	line_init(BUF_BOT_ANCH(buf), initial_data);
 	line_link(BUF_TOP_ANCH(buf), BUF_BOT_ANCH(buf));
 	return buf;
 }
 void buf_set_file_path(be_buf_t *buf, const char *file_path)
 {
 	strlcpy__(buf->file_path, file_path, MAX_PATH_LEN);
-	if (IS_NODE_TOP_ANCH(buf)) {
+	if (IS_NODE_ANCH(buf)) {
 		strlcpy__(buf->abs_path, file_path, MAX_PATH_LEN);
 		return;
 	}
@@ -118,7 +130,7 @@ be_buf_t *buf_link(be_buf_t *prev, be_buf_t *next)
 // This is NOT deep-copy
 be_buf_t *buf_create_copy(be_buf_t *src)
 {
-	return buf_copy(buf_create(""), src);
+	return buf_copy(buf_create_node(""), src);
 }
 // This is NOT deep-copy
 be_buf_t *buf_copy(be_buf_t *dest, be_buf_t *src)
@@ -128,7 +140,7 @@ be_buf_t *buf_copy(be_buf_t *dest, be_buf_t *src)
 		// buffer is linked.
 		// clear link and anchors to avoid double linking
 		buf_clear_link(dest);
-		buf_init_line_anchors(dest);
+		buf_init_line_anchors(dest, NULL);
 	}
 	BUF_V0_CL(dest) = BUF_V1_CL(dest) = BUF_TOP_ANCH(dest);
 	dest->mark_line = BUF_TOP_ANCH(dest);
@@ -137,24 +149,23 @@ be_buf_t *buf_copy(be_buf_t *dest, be_buf_t *src)
 
 be_buf_t *buf_unlink_free(be_buf_t *buf)
 {
-	be_buf_t *prev_buf;
-
 ///_D_(buf_dump_state(buf))
-	if (IS_NODE_INT(buf) == 0) {
-		if (IS_PTR_NULL(buf)) {
-			progerr_printf("This buffer is NULL\n");
-		} else {
-			progerr_printf("CANNOT free this buffer %s\n", buf->file_path);
-		}
-		return NULL;
+	be_buf_t *next = NODE_NEXT(buf);
+	if (IS_NODE_INT(buf)) {
+		buf_unlink(buf);
+		buf_free_node(buf);
+	} else
+	if (IS_NODE_ANCH(buf)) {
+		// not unlink and not free frame
+		buf_free_lines(buf);
+	} else {
+		progerr_printf("This buffer is NULL\n");
+		next = buf;
 	}
-	prev_buf = NODE_PREV(buf);
-	buf_unlink(buf);
-	buf_free(buf);
-	return prev_buf;
+	return next;	// return next buf
 }
 
-// Unlink a line from the rest of the be_buf_t
+// Unlink a buffer from the rest of the be_buf_t
 be_buf_t *buf_unlink(be_buf_t *buf)
 {
 	buf_avoid_wild_ptr_cur(buf);
@@ -172,20 +183,12 @@ void buf_clear_link(be_buf_t *buf)
 	buf->prev = NULL;
 	buf->next = NULL;
 }
-
-// Free a buffer
-void buf_free(be_buf_t *buf)
-{
-	buf_free_lines(buf);
-	free__(buf);
-///	get_mem_free_in_kb(1);
-}
 void buf_free_lines(be_buf_t *buf)
 {
 	be_line_t *line;
 
 	// free all lines from top to bottom
-	for (line = BUF_TOP_NODE(buf); IS_NODE_INT(line); ) {
+	for (line = BUF_TOP_LINE(buf); IS_NODE_INT(line); ) {
 		line = line_unlink_free(line);
 	}
 }
@@ -197,7 +200,7 @@ int buf_compare(be_buf_t *buf1, be_buf_t *buf2)
 	be_line_t *line2;
 	int diff;
 
-	for (line1 = BUF_TOP_NODE(buf1), line2 = BUF_TOP_NODE(buf2);
+	for (line1 = BUF_TOP_LINE(buf1), line2 = BUF_TOP_LINE(buf2);
 	 IS_NODE_INT(line1) && IS_NODE_INT(line2); 
 	 line1 = NODE_NEXT(line1), line2 = NODE_NEXT(line2)) {
 		diff = strncmp(line1->data, line2->data, MAX_EDIT_LINE_LEN);
@@ -224,7 +227,7 @@ int buf_guess_tab_size(be_buf_t *buf)
 	int lines_space4 = 0;
 	be_line_t *line;
 
-	for (line = BUF_TOP_NODE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
+	for (line = BUF_TOP_LINE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		if (line_data_len(line) > 4) {
 			if (strlcmp__(line->data, "    ") == 0 && line->data[4] != ' ')
 				lines_space4++;
@@ -238,18 +241,27 @@ int buf_guess_tab_size(be_buf_t *buf)
 	return 0;
 }
 
-int buf_count_bufs(be_buf_t *buf)
+int buf_count_bufs(be_bufs_t *bufs)
 {
+	be_buf_t *buf;
 	int count;
 
-	for (count = 0; IS_NODE_INT(buf); count++) {
-		buf = NODE_NEXT(buf);
+	for (buf = NODES_TOP_NODE(bufs), count = 0; IS_NODE_INT(buf);
+	 buf = NODE_NEXT(buf), count++) {
+		// NOTHING_TO_DO
 	}
 	return count;
 }
 int buf_count_lines(be_buf_t *buf)
 {
-	return line_count_lines(BUF_TOP_NODE(buf));
+	be_line_t *line;
+	int count;
+
+	for (line = BUF_TOP_LINE(buf), count = 0; IS_NODE_INT(line);
+	 line = NODE_NEXT(line), count++) {
+		// NOTHING_TO_DO
+	}
+	return count;
 }
 
 int buf_is_orig_file_updated(be_buf_t *buf)
@@ -322,9 +334,9 @@ be_line_t *buf_cur_line(be_buf_t *buf)
 be_line_t *buf_move_cur_line_to_prev(be_buf_t *buf)
 {
 	be_line_t *line = BUF_V0_CL(buf);
-	if (IS_NODE_TOP_ANCH(line) == 0) {
+	if (IS_NODE_INT(line)) {
 		BUF_V0_CL(buf) = NODE_PREV(line);
-		return line;
+		return line;	// return previous current line
 	}
 	// do not move and return NULL
 	return NULL;
@@ -332,9 +344,9 @@ be_line_t *buf_move_cur_line_to_prev(be_buf_t *buf)
 be_line_t *buf_move_cur_line_to_next(be_buf_t *buf)
 {
 	be_line_t *line = BUF_V0_CL(buf);
-	if (IS_NODE_BOT_ANCH(line) == 0) {
+	if (IS_NODE_INT(line)) {
 		BUF_V0_CL(buf) = NODE_NEXT(line);
-		return line;
+		return line;	// return previous current line
 	}
 	// do not move and return NULL
 	return NULL;
@@ -344,10 +356,13 @@ be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num)
 {
 	be_line_t *line;
 
-	for (line = BUF_TOP_NODE(buf); line_num > 1; line_num--) {
-		if (IS_NODE_BOT(line))
-			break;
-		line = NODE_NEXT(line);
+	for (line = BUF_TOP_LINE(buf); line_num > 1 && IS_NODE_INT(line);
+	 line_num--, line = NODE_NEXT(line)) {
+		// NOTHING_TO_DO
+	}
+	// If line has gone through to bottom anchor, make it back to a valid line.
+	if (IS_NODE_BOT_ANCH(line)) {
+		line = NODE_PREV(line);
 	}
 	return line;
 }
@@ -372,11 +387,11 @@ unsigned short buf_calc_crc(be_buf_t *buf)
 
 	file_size = 0;
 	clear_crc16ccitt();
-	for (line = BUF_TOP_NODE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
+	for (line = BUF_TOP_LINE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		file_size += line_data_len(line) + 1;
 		for (ptr = line->data; ; ptr++) {
 			file_crc = calc_crc16ccitt(*ptr);
-			if (*ptr == 0)	// count in last NUL code
+			if (*ptr == 0)	// count including last NUL code
 				break;
 		}
 	}
@@ -390,8 +405,8 @@ be_bufs_t *bufs_init(be_bufs_t *bufs, const char* buf_name)
 	bufs->prev = bufs->next = NULL;
 	strlcpy__(bufs->name, buf_name, MAX_NAME_LEN);
 	init_bufs_top_bot_anchor(
-	 BUFS_TOP_ANCH(bufs), "#BUF-top-anchor",
-	 BUFS_BOT_ANCH(bufs), "#BUF-bot-anchor");
+	 BUFS_TOP_ANCH(bufs), "#bufs-top-anchor",
+	 BUFS_BOT_ANCH(bufs), "#bufs-bot-anchor");
 	bufs->cur_buf = BUFS_BOT_ANCH(bufs);
 	return bufs;
 }
@@ -410,24 +425,16 @@ be_bufs_t *bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next)
 	return bufs_link(mid, next);
 }
 
-be_bufs_t *bufs_free_all_bufss(be_bufs_t *bufs)
+be_bufs_t *bufs_free_all_bufs(be_bufs_t *bufs)
 {
-	flf_d_printf("bufs: %s\n", bufs->name);
 	for ( ; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs)) {
-		flf_d_printf("bufs: %s\n", bufs->name);
-		for ( ; ; ) {
-			be_buf_t *buf = BUFS_TOP_NODE(bufs);
-			flf_d_printf(" %cbuf:[%s]\n",
-			 (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
-			if (IS_NODE_INT(buf) == 0) {
-				break;
-			}
-///			flf_d_printf("    unlink_free %cbuf:[%s]\n",
-///			 (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
+///		flf_d_printf("bufs: [%s]\n", bufs->name);
+		for (be_buf_t *buf = BUFS_TOP_ANCH(bufs); IS_PTR_VALID(buf); ) {
+///			flf_d_printf(" %cbuf:[%s]\n", (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
 			if (bufs->cur_buf == buf) {
 				bufs->cur_buf = NODE_NEXT(buf);
 			}
-			buf_unlink_free(buf);
+			buf = buf_unlink_free(buf);
 		}
 	}
 	return bufs;
@@ -456,25 +463,16 @@ void init_bufs_top_bot_anchor(
 	buf_link(buf_top, buf_bot);
 }
 
-PRIVATE be_buf_t *make_sure_buf_is_top_buf(be_buf_t *bufs)
-{
-	if (IS_NODE_TOP_ANCH(bufs)) {
-		bufs = NODE_NEXT(bufs);
-	}
-	while (IS_NODE_TOP(bufs) == 0) {
-		bufs = NODE_PREV(bufs);
-	}
-	return bufs;
-}
+PRIVATE be_buf_t *make_sure_buf_is_top_buf(be_buf_t *buf);
 
-be_buf_t *get_buf_from_bufs_by_idx(be_buf_t *bufs, int buf_idx)
+be_buf_t *get_buf_from_bufs_by_idx(be_buf_t *buf, int buf_idx)
 {
 	// making sure that bufs is TOP_BUF
-	bufs = make_sure_buf_is_top_buf(bufs);
-	for ( ; IS_NODE_INT(bufs) && buf_idx > 0; buf_idx--) {
-		bufs = NODE_NEXT(bufs);
+	buf = make_sure_buf_is_top_buf(buf);
+	for ( ; buf_idx > 0 && IS_NODE_INT(buf); buf_idx--, buf = NODE_NEXT(buf)) {
+		// NOTHING_TO_DO
 	}
-	return bufs;	// bufs may be top/bottom anchor
+	return buf;	// buf may be top/bottom anchor
 }
 int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf)
 {
@@ -485,21 +483,32 @@ int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf)
 	}
 	return -1;	// not found
 }
-be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *bufs, const char *abs_path)
+be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *buf, const char *abs_path)
 {
-	bufs = make_sure_buf_is_top_buf(bufs);
-	for ( ; IS_NODE_INT(bufs); bufs = NODE_NEXT(bufs)) {
-		if (strcmp(bufs->abs_path, abs_path) == 0) {
-			return bufs;	// found
+	buf = make_sure_buf_is_top_buf(buf);
+	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+		if (strcmp(buf->abs_path, abs_path) == 0) {
+			return buf;	// found
 		}
 	}
 	return NULL;		// not found
 }
 
+PRIVATE be_buf_t *make_sure_buf_is_top_buf(be_buf_t *buf)
+{
+	if (IS_NODE_TOP_ANCH(buf)) {
+		buf = NODE_NEXT(buf);
+	}
+	for ( ; IS_PTR_VALID(buf) && IS_NODE_TOP(buf) == 0; buf = NODE_PREV(buf)) {
+		// NOTHING_TO_DO
+	}
+	return buf;
+}
+
 //-----------------------------------------------------------------------------
 void renumber_all_bufs_from_top(be_bufs_t *bufs)
 {
-	for (be_buf_t *buf = BUFS_TOP_NODE(bufs); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+	for (be_buf_t *buf = BUFS_TOP_BUF(bufs); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
 		buf_renumber_from_top(buf);
 	}
 }
@@ -563,26 +572,26 @@ flf_d_printf("file_path: [%s], abs_path: [%s]\n", buf->file_path, buf->abs_path)
 ///flf_d_printf("mark_line_byte_idx: %d\n", buf->mark_line_byte_idx);
 ///flf_d_printf("enc: %s, eol: %s\n", buf_encode_str(buf), buf_eol_str(buf));
 }
-be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
-{
-	be_line_t *line;
-
-	for (line = BUF_TOP_NODE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
-		if (line == line_)
-			return line_;
-	}
-	return NULL;
-}
+///be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
+///{
+///	be_line_t *line;
+///
+///	for (line = BUF_TOP_LINE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
+///		if (line == line_)
+///			return line_;
+///	}
+///	return NULL;
+///}
 
 void bufs_dump_all_bufs(be_bufs_t *bufs)
 {
 flf_d_printf("00============================================\n");
 	for ( ; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs)) {
-		flf_d_printf("bufs: %s\n", bufs->name);
+		flf_d_printf("bufs: [%s]\n", bufs->name);
 		for (be_buf_t *buf = BUFS_TOP_ANCH(bufs); IS_PTR_VALID(buf); buf = NODE_NEXT(buf)) {
-			flf_d_printf(" %cbuf: %s\n", (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
-			flf_d_printf("   buf->v0_str: %s\n", buf->buf_views[0].cur_line->data);
-			flf_d_printf("   buf->v1_str: %s\n", buf->buf_views[1].cur_line->data);
+			flf_d_printf(" %cbuf: [%s]\n", (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
+			flf_d_printf("    buf->v0_str: [%s]\n", buf->buf_views[0].cur_line->data);
+			flf_d_printf("    buf->v1_str: [%s]\n", buf->buf_views[1].cur_line->data);
 		}
 	}
 flf_d_printf("99============================================\n");

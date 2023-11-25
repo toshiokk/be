@@ -56,7 +56,7 @@ char *get_file_name_extension(char *file_name);
 
 char *remove_last_slash(char *path);
 char *get_last_slash(char *path);
-////int is_path_only_file_name(const char *path);
+///int is_path_only_file_name(const char *path);
 
 char *separate_dir_part_and_file_part(const char *path,
  char *dir_part, char *file_part);
@@ -65,6 +65,7 @@ char *strip_file_from_path(const char *path);
 char *separate_dir_and_file(char *path, char *dir);
 char *normalize_root_dir(char *dir);
 
+int get_file_type_by_file_path(const char *file_path);
 int is_path_exist(const char *path);
 int is_path_regular_file(const char *path);
 int is_path_dir(const char *path);

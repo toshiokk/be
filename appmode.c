@@ -514,7 +514,7 @@ int doe_tog_show_line_num(void)
 	return 0;
 }
 
-int dof_tog_map_key_7f_bs(void)
+int doe_tog_map_key_7f_bs(void)
 {
 	tog_map_key_7f_bs();
 	SHOW_MODE("Map Key-Code-7F to Key-BS", get_str_map_key_7f_bs());

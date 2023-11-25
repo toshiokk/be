@@ -120,12 +120,9 @@ void test_replace_str(void)
 char *replace_str(char *buffer, size_t buf_len, size_t start, int delete_len,
  const char *str, len_t insert_len)
 {
-////flf_d_printf("[%s], [%s]:%d, [%s]:%d\n",
-/// buffer, &buffer[start], delete_len, str, insert_len);
 	if (delete_len > 0) {
 		delete_str(buffer, start, delete_len);
 	}
-////flf_d_printf("[%s]\n", buffer);
 	if (insert_len) {	// (insert_len > 0) or (insert_len == -1)
 		insert_str(buffer, buf_len, start, str, insert_len);
 	}
@@ -159,7 +156,6 @@ int insert_str_separating_by_space(char *buffer, size_t buf_len, size_t offset,
 	offset += strlen(str);
 	// "abc xyz def"
 	//         ^
-////flf_d_printf("buffer: [%s]\n", buffer);
 	return offset;
 }
 
@@ -176,8 +172,6 @@ char *insert_str(char *buffer, size_t buf_len, size_t offset,
 {
 	int org_len;
 
-////flf_d_printf("buffer: [%s]\n", buffer);
-////flf_d_printf("string: [%s]\n", string);
 	org_len = strnlen(buffer, buf_len);
 	if (insert_len < 0) {
 		insert_len = strnlen(string, buf_len);
@@ -190,7 +184,6 @@ char *insert_str(char *buffer, size_t buf_len, size_t offset,
 			// buffer overflow
 		}
 	}
-////flf_d_printf("buffer: [%s]\n", buffer);
 	return buffer;
 }
 char *concat_file_name_separating_by_space(char *buffer, size_t buf_len,
@@ -444,7 +437,6 @@ int get_byte_idx_from_col_idx(const char *utf8s, int columns, int left_right,
 		col_idx += utf8c_columns(ptr);
 		ptr += utf8c_bytes(ptr);
 	}
-////flf_d_printf("([%s], %d) ==> %d\n", utf8s, columns, ptr - utf8s);
 	if (left_right < 0 && columns < col_idx) {
 		col_idx = prev_col_idx;
 		ptr = prev_ptr;
@@ -611,7 +603,6 @@ char *escape_quote_chr(char *buffer, const char *string, char quote_chr)
 
 char *unquote_string(char *buffer)
 {
-////flf_d_printf("     [%s] ==>\n", buffer);
 	if (is_quoted(buffer, '\'') || is_quoted(buffer, '"')) {
 		char quote_chr = buffer[0];
 		size_t len = str_path_len(buffer);
@@ -626,7 +617,6 @@ char *unquote_string(char *buffer)
 		}
 		*ptr = '\0';	// NUL terminate
 	}
-////flf_d_printf(" ==> [%s]\n", buffer);
 	return buffer;
 }
 char is_quoted(const char *str, char quote_chr)
@@ -644,7 +634,6 @@ char is_quoted(const char *str, char quote_chr)
 
 char *select_plural_form(char *singular, char *plural, char *type3, char *type4, int number)
 {
-////flf_d_printf("number:%d ==> plural_form_index:%d\n", number, get_plural_form_index(number));
 	switch (get_plural_form_index(number)) {
 	default:
 		// FALLTHROUGH
@@ -739,7 +728,6 @@ int get_plural_form_index(int number)
 	if (cur_lang[0] == '\0') {
 		// current language is not set, set cur_lang_idx by env "LANG"
 		strlcpy__(cur_lang, getenv__("LANG"), LANG_STR_LEN);	// "ja_JP.UTF-8"
-////flf_d_printf("cur_lang:[%s]\n", cur_lang);
 		for (cur_lang_idx = 0; cur_lang_idx < LANG_ZZ; cur_lang_idx++) {
 			if (strncmp(cur_lang, lang_names[cur_lang_idx], LANG_STR_LEN) == 0)
 				break;
@@ -747,7 +735,6 @@ int get_plural_form_index(int number)
 		if (cur_lang_idx == LANG_ZZ) {
 			cur_lang_idx = LANG_EN;
 		}
-////flf_d_printf("cur_lang:[%s] ==> cur_lang_idx:%d\n", cur_lang, cur_lang_idx);
 	}
 
 	switch (cur_lang_idx) {

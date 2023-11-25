@@ -48,8 +48,8 @@ PRIVATE const char *get_history_newer(int hist_type_idx);
 
 PRIVATE const char *is_the_last_line(int hist_type_idx, const char *str);
 PRIVATE be_line_t *search_history_exact_match(int hist_type_idx, const char *str);
-PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str);
 PRIVATE int search_history_from_newest(int hist_type_idx, const char *str);
+PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str);
 
 // search/replace(directory and execution) history support functions
 
@@ -79,9 +79,9 @@ void init_histories(void)
 		}
 	}
 	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
-		snprintf_(buf_name, MAX_PATH_LEN, "#%d:%s",
-		 hist_type_idx, get_history_file_path(hist_type_idx));
-		buf_insert_before(HIST_BUFS_BOT_ANCH, buf_create(buf_name));
+		snprintf_(buf_name, MAX_PATH_LEN, "%s",
+		 get_history_file_path(hist_type_idx));
+		buf_insert_before(HIST_BUFS_BOT_ANCH, buf_create_node(buf_name));
 		init_history(hist_type_idx);
 	}
 }
@@ -105,7 +105,6 @@ void load_histories(void)
 	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
 		load_history_idx(hist_type_idx);
 	}
-////_D_(dump_hist_bufs_lines())
 }
 
 // save histories to file
@@ -136,7 +135,7 @@ PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 		e_printf(_("hist_type_idx out of range: %d"), hist_type_idx);
 		hist_type_idx = 0;
 	}
-	return get_buf_from_bufs_by_idx(HIST_BUFS_TOP_NODE, hist_type_idx);
+	return get_buf_from_bufs_by_idx(HIST_BUFS_TOP_BUF, hist_type_idx);
 }
 
 // update history list (load, modify, save)
@@ -191,8 +190,7 @@ const char *get_history_newest(int hist_type_idx, int last_n)
 	for (cnt = 0; cnt < last_n; cnt++) {
 		history = get_history_older(hist_type_idx);
 	}
-///
-flf_d_printf("[%s]\n", history);
+///flf_d_printf("[%s]\n", history);
 	return history;
 }
 
@@ -396,13 +394,13 @@ PRIVATE int is_history_modified(int hist_type_idx)
 PRIVATE void set_history_oldest(int hist_type_idx)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
-	buf_set_cur_line(buf, BUF_TOP_NODE(buf));
+	buf_set_cur_line(buf, BUF_TOP_LINE(buf));
 ///_D_(buf_dump_lines(buf, INT_MAX))
 }
 PRIVATE void set_history_newest(int hist_type_idx)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
-	buf_set_cur_line(buf, BUF_BOT_NODE(buf));
+	buf_set_cur_line(buf, BUF_BOT_LINE(buf));
 ///_D_(buf_dump_lines(buf, INT_MAX))
 }
 PRIVATE const char *get_history_older(int hist_type_idx)
@@ -435,7 +433,7 @@ PRIVATE const char *is_the_last_line(int hist_type_idx, const char *str)
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
 
-	line = BUF_BOT_NODE(buf);
+	line = BUF_BOT_LINE(buf);
 	if (IS_NODE_INT(line) && (strcmp(line->data, str) == 0))	// exact match
 		return line->data;
 	return NULL;
@@ -446,20 +444,9 @@ PRIVATE be_line_t *search_history_exact_match(int hist_type_idx, const char *str
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
 
-	for (line = BUF_BOT_NODE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
+	for (line = BUF_BOT_LINE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
 		if (strcmp(line->data, str) == 0)	// exact match
-			return line;
-	}
-	return NULL;
-}
-PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str)
-{
-	be_buf_t *buf = get_history_buf(hist_type_idx);
-	be_line_t *line;
-
-	for (line = BUF_BOT_NODE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
-		if (strlcmp__(line->data, str) == 0)	// partial match
-			return line;
+			return line;	// return line
 	}
 	return NULL;
 }
@@ -470,12 +457,23 @@ PRIVATE int search_history_from_newest(int hist_type_idx, const char *str)
 	int lines;
 
 	lines = 0;
-	for (line = BUF_BOT_NODE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
+	for (line = BUF_BOT_LINE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
 		lines++;
 		if (strcmp(line->data, str) == 0)	// exact match
-			return lines;
+			return lines;	// return line count from the newest
 	}
 	return 0; // not found
+}
+PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str)
+{
+	be_buf_t *buf = get_history_buf(hist_type_idx);
+	be_line_t *line;
+
+	for (line = BUF_BOT_LINE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
+		if (strlcmp__(line->data, str) == 0)	// partial match
+			return line;
+	}
+	return NULL;
 }
 const char *search_history_file_path(int hist_type_idx, const char *path)
 {
@@ -486,7 +484,7 @@ const char *search_history_file_path(int hist_type_idx, const char *path)
 
 	path = quote_file_name(path);
 	// search from the newest to the oldest
-	for (line = BUF_BOT_NODE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
+	for (line = BUF_BOT_LINE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
 		// /home/user/filename.exp|1234
 		// '/home/user/ filename.exp '|1234
 		if ((ptr = strstr(line->data, FILE_PATH_SEPARATOR)) != NULL) {
@@ -511,8 +509,8 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 	load_histories();
 	renumber_all_bufs_from_top(&history_buffers);
 	set_cep_buf(get_history_buf(hist_type_idx));
-	CEPBV_CL = CUR_EDIT_BUF_BOT_NODE;
-	post_cmd_processing(CUR_EDIT_BUF_TOP_NODE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	CEPBV_CL = CUR_EDIT_BUF_BOT_LINE;
+	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 
 	int ret = call_editor(1, 1);
 
@@ -521,7 +519,6 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 	} else {
 		strcpy__(buffer, "");
 	}
-///_FLF_
 	set_cep_buf(edit_buf_save);
 
 	return ret; // 1: selected, 0: done in editor, -1: cancelled

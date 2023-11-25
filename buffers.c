@@ -24,8 +24,8 @@
 PRIVATE editor_panes_t editor_panes;
 
 // collection of collections of buffers
-be_bufs_t bufs_top_anchor;		//< top buffers
-be_bufs_t bufs_bot_anchor;		//< bottom buffers
+be_bufs_t bufss_top_anchor;		//< top buffers
+be_bufs_t bufss_bot_anchor;		//< bottom buffers
 
 // collection of edit buffers--------------------------------------------------
 be_bufs_t edit_buffers;
@@ -50,17 +50,17 @@ be_bufs_t redo_buffers;
 
 void init_head_of_bufs(void)
 {
-	bufs_init(&bufs_top_anchor, "#BUFS-top-anchor");
-	bufs_init(&bufs_bot_anchor, "#BUFS-bot-anchor");
-	bufs_link(&bufs_top_anchor, &bufs_bot_anchor);
+	bufs_init(&bufss_top_anchor, "##ALL_BUFS-top-anchor");
+	bufs_init(&bufss_bot_anchor, "##ALL_BUFS-bot-anchor");
+	bufs_link(&bufss_top_anchor, &bufss_bot_anchor);
 
-	bufs_insert_before(&bufs_bot_anchor, bufs_init(&edit_buffers, "#edit-buffers"));
-	bufs_insert_before(&bufs_bot_anchor, bufs_init(&cut_buffers, "#cut-buffers"));
-	bufs_insert_before(&bufs_bot_anchor, bufs_init(&history_buffers, "#history-buffers"));
-	bufs_insert_before(&bufs_bot_anchor, bufs_init(&help_buffers, "#help-buffers"));
+	bufs_insert_before(&bufss_bot_anchor, bufs_init(&edit_buffers, "##edit-buffers"));
+	bufs_insert_before(&bufss_bot_anchor, bufs_init(&cut_buffers, "##cut-buffers"));
+	bufs_insert_before(&bufss_bot_anchor, bufs_init(&history_buffers, "##history-buffers"));
+	bufs_insert_before(&bufss_bot_anchor, bufs_init(&help_buffers, "##help-buffers"));
 #ifdef ENABLE_UNDO
-	bufs_insert_before(&bufs_bot_anchor, bufs_init(&undo_buffers, "#undo-buffers"));
-	bufs_insert_before(&bufs_bot_anchor, bufs_init(&redo_buffers, "#redo-buffers"));
+	bufs_insert_before(&bufss_bot_anchor, bufs_init(&undo_buffers, "##undo-buffers"));
+	bufs_insert_before(&bufss_bot_anchor, bufs_init(&redo_buffers, "##redo-buffers"));
 #endif // ENABLE_UNDO
 }
 
@@ -85,9 +85,9 @@ void init_buffers(void)
 
 void free_all_buffers(void)
 {
-///	_D_(bufs_dump_all_bufs(&bufs_top_anchor))
-	bufs_free_all_bufss(&bufs_top_anchor);
-///	_D_(bufs_dump_all_bufs(&bufs_top_anchor))
+///	_D_(bufs_dump_all_bufs(&bufss_top_anchor))
+	bufs_free_all_bufs(&bufss_top_anchor);
+///	_D_(bufs_dump_all_bufs(&bufss_top_anchor))
 }
 
 // Edit-buffer manipulation routines
@@ -149,11 +149,11 @@ void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr)
 void line_avoid_wild_ptr_cur(be_line_t *line)
 {
 	// avoid EPBVX_CL(0) becoming wild-pointer
-	line_avoid_wild_ptr(line, &EPBVX_CL(0));
+	line_avoid_wild_ptr(&EPBVX_CL(0), line);
 	// avoid EPBVX_CL(1) becoming wild-pointer
-	line_avoid_wild_ptr(line, &EPBVX_CL(1));
+	line_avoid_wild_ptr(&EPBVX_CL(1), line);
 }
-void line_avoid_wild_ptr(be_line_t *line, be_line_t **line_ptr)
+void line_avoid_wild_ptr(be_line_t **line_ptr, be_line_t *line)
 {
 	if (*line_ptr == line) {
 		if (IS_NODE_TOP(*line_ptr) == 0) {
@@ -262,13 +262,13 @@ void dump_editor_panes(void)
 
 //-----------------------------------------------------------------------------
 
-be_buf_t *get_edit_buf_from_abs_path(const char *abs_path)
+be_buf_t *get_edit_buf_by_abs_path(const char *abs_path)
 {
-	return get_buf_from_bufs_by_abs_path(EDIT_BUFS_TOP_NODE, abs_path);
+	return get_buf_from_bufs_by_abs_path(EDIT_BUFS_TOP_BUF, abs_path);
 }
 int get_edit_buf_idx_from_buf(be_buf_t *edit_buf)
 {
-	return get_buf_idx_in_bufs(EDIT_BUFS_TOP_NODE, edit_buf);
+	return get_buf_idx_in_bufs(EDIT_BUFS_TOP_BUF, edit_buf);
 }
 
 //-----------------------------------------------------------------------------
@@ -277,7 +277,7 @@ void create_edit_buf(const char *full_path)
 {
 	be_buf_t *buf;
 
-	buf = buf_create(full_path);
+	buf = buf_create_node(full_path);
 	buf_insert_before(EDIT_BUFS_BOT_ANCH, buf);
 	set_cep_buf(buf);
 	if (IS_NODE_INT(editor_panes.bufs[0]) == 0) {
@@ -303,14 +303,16 @@ be_line_t *append_string_to_cur_edit_buf(const char *string)
 // Append a new magic-line to the bottom of the current buffer
 void append_magic_line(void)
 {
-	if (buf_count_lines(get_cep_buf()) == 0 || line_data_len(CUR_EDIT_BUF_BOT_NODE)) {
+	int lines = buf_count_lines(get_cep_buf());
+	if ((lines == 0)
+	 || (lines && line_data_len(CUR_EDIT_BUF_BOT_LINE))) {
 		append_string_to_cur_edit_buf("");
 	}
 }
 
 int count_edit_bufs(void)
 {
-	return buf_count_bufs(EDIT_BUFS_TOP_NODE);
+	return buf_count_bufs(&edit_buffers);
 }
 
 int is_cep_buf_valid(void)
@@ -328,27 +330,27 @@ void init_cut_bufs(void)
 }
 void free_all_cut_bufs(void)
 {
-	while (IS_NODE_INT(CUR_CUT_BUF)) {
-		pop_cut_buf();
+	while (IS_NODE_INT(TOP_BUF_OF_CUT_BUFS)) {
+		pop_n_free_from_cut_buf();
 	}
 }
 be_buf_t *push_cut_buf(void)
 {
-	be_buf_t *cut_buf;
+	be_buf_t *buf;
 	char buf_name[MAX_PATH_LEN+1];
 
 	snprintf(buf_name, MAX_PATH_LEN, "#cut-buffer-%02d", count_cut_bufs());
-	cut_buf = buf_create(buf_name);
-	buf_insert_after(CUT_BUFS_TOP_ANCH, cut_buf);
+	buf = buf_create_node(buf_name);
+	buf_insert_after(CUT_BUFS_TOP_ANCH, buf);
 	// copy cut-mode to cut-buffer
 	SET_CUR_CBUF_STATE(buf_CUT_MODE, CUR_EBUF_STATE(buf_CUT_MODE));
-	return cut_buf;
+	return buf;
 }
-int pop_cut_buf(void)
+int pop_n_free_from_cut_buf(void)
 {
-	if (IS_NODE_BOT_ANCH(CUR_CUT_BUF))
+	if (IS_NODE_BOT_ANCH(TOP_BUF_OF_CUT_BUFS))
 		return 0;
-	buf_unlink_free(CUR_CUT_BUF);
+	buf_unlink_free(TOP_BUF_OF_CUT_BUFS);
 	return 1;
 }
 be_line_t *append_string_to_cur_cut_buf(const char *string)
@@ -357,18 +359,18 @@ be_line_t *append_string_to_cur_cut_buf(const char *string)
 }
 int count_cut_bufs(void)
 {
-	return buf_count_bufs(CUR_CUT_BUF);
+	return buf_count_bufs(&cut_buffers);
 }
 int count_cur_cut_buf_lines(void)
 {
-	return buf_count_lines(CUR_CUT_BUF);
+	return buf_count_lines(TOP_BUF_OF_CUT_BUFS);
 }
 
 //-----------------------------------------------------------------------------
 
 void renumber_cur_buf_from_top(void)
 {
-	buf_renumber_from_line(get_cep_buf(), CUR_EDIT_BUF_TOP_NODE);
+	buf_renumber_from_line(get_cep_buf(), CUR_EDIT_BUF_TOP_LINE);
 }
 
 be_line_t *get_line_ptr_from_cur_buf_line_num(int line_num)
@@ -684,13 +686,13 @@ void dump_cut_bufs_lines(void)
 void dump_cur_edit_buf(void)
 {
 flf_d_printf("<<<<<<<<<<<<<<<<<<<\n");
-flf_d_printf("CUR_EDIT_BUF_TOP_NODE:%08lx\n", CUR_EDIT_BUF_TOP_NODE);
-	if (CUR_EDIT_BUF_TOP_NODE) {
-		flf_d_printf("CUR_EDIT_BUF_TOP_NODE->data:%08lx\n", CUR_EDIT_BUF_TOP_NODE->data);
+flf_d_printf("CUR_EDIT_BUF_TOP_LINE:%08lx\n", CUR_EDIT_BUF_TOP_LINE);
+	if (CUR_EDIT_BUF_TOP_LINE) {
+		flf_d_printf("CUR_EDIT_BUF_TOP_LINE->data:%08lx\n", CUR_EDIT_BUF_TOP_LINE->data);
 	}
-flf_d_printf("CUR_EDIT_BUF_BOT_NODE:%08lx\n", CUR_EDIT_BUF_BOT_NODE);
-	if (CUR_EDIT_BUF_BOT_NODE) {
-		flf_d_printf("CUR_EDIT_BUF_BOT_NODE->data:%08lx\n", CUR_EDIT_BUF_BOT_NODE->data);
+flf_d_printf("CUR_EDIT_BUF_BOT_LINE:%08lx\n", CUR_EDIT_BUF_BOT_LINE);
+	if (CUR_EDIT_BUF_BOT_LINE) {
+		flf_d_printf("CUR_EDIT_BUF_BOT_LINE->data:%08lx\n", CUR_EDIT_BUF_BOT_LINE->data);
 	}
 flf_d_printf("cur_line:%08lx\n", CEPBV_CL);
 	if (CEPBV_CL) {

@@ -31,9 +31,12 @@
 //
 // set edit_win_update_needed		update screen of cur-line or whole win
 //
-int post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_move,
+void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_move,
  locate_cursor_to_t locate_cursor, int update_needed)
 {
+///	if (IS_NODE_INT(get_cep_buf()) == 0) {
+///		return;
+///	}
 	switch (GET_APPMD(ed_CURS_POSITIONING)) {
 	default:
 		// FALLTHROUGH
@@ -52,7 +55,7 @@ int post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_m
 #ifdef ENABLE_UNDO
 	undo_save_after_change();
 #endif // ENABLE_UNDO
-	return 0;
+	return;
 }
 
 //-----------------------------------------------------------------------------

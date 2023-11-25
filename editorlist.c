@@ -28,12 +28,11 @@ int doe_switch_to_file_list(void)
 	be_buf_t *edit_buf;
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
-///_FLF_
 	prev_cur_edit_buf = get_cep_buf();
 	set_cep_buf(EDIT_BUFS_TOP_ANCH);
 	buf_free_lines(EDIT_BUFS_TOP_ANCH);
 	buf_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Files currently loaded"));
-	for (edit_buf = EDIT_BUFS_TOP_NODE; IS_NODE_INT(edit_buf);
+	for (edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
 	 edit_buf = NODE_NEXT(edit_buf)) {
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-60s %-5s %s %s",
 		 quote_file_name(edit_buf->abs_path),
@@ -41,17 +40,17 @@ int doe_switch_to_file_list(void)
 		 BUF_STATE(edit_buf, buf_MODIFIED) ? "Mo" : "--");
 		append_string_to_cur_edit_buf(buffer);
 		if (edit_buf == prev_cur_edit_buf)
-			line_to_go = CUR_EDIT_BUF_BOT_NODE;
+			line_to_go = CUR_EDIT_BUF_BOT_LINE;
 	}
 	append_magic_line();
 	if (line_to_go) {
 		CEPBV_CL = line_to_go;
 	} else {
-		CEPBV_CL = CUR_EDIT_BUF_TOP_NODE;
+		CEPBV_CL = CUR_EDIT_BUF_TOP_LINE;
 	}
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
 
-	post_cmd_processing(CUR_EDIT_BUF_TOP_NODE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	disp_status_bar_done(_("File List"));
 	return 1;
 }
@@ -67,12 +66,12 @@ void init_help_bufs(void)
 	init_bufs_top_bot_anchor(
 	 HELP_BUFS_TOP_ANCH, "#Help-bufs-top-anchor",
 	 HELP_BUFS_BOT_ANCH, "#Help-bufs-bot-anchor");
-	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create(_("#List of Editor Key Bindings")));
-	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create(_("#List of Editor Functions")));
+	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create_node(_("#List of Editor Key Bindings")));
+	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create_node(_("#List of Editor Functions")));
 }
 be_buf_t *get_help_buf(int help_buf_idx)
 {
-	return get_buf_from_bufs_by_idx(HELP_BUFS_TOP_NODE, help_buf_idx);
+	return get_buf_from_bufs_by_idx(HELP_BUFS_TOP_BUF, help_buf_idx);
 }
 
 //-----------------------------------------------------------------------------
@@ -132,7 +131,7 @@ void make_help_buf(int help_idx)
 		break;
 	}
 	append_magic_line();
-	CEPBV_CL = CUR_EDIT_BUF_TOP_NODE;
+	CEPBV_CL = CUR_EDIT_BUF_TOP_LINE;
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
 	// renumber
 	post_cmd_processing(CEPBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
@@ -177,7 +176,6 @@ void make_help_func_list(void)
 	char *func_ = "--------------------------------";
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
-///_FLF_
 	table = get_func_key_table_from_key_group(0);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
 	 "Function", "Key1", "Key2", "Key3", "func_id");

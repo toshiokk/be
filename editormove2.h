@@ -62,7 +62,7 @@ typedef enum {
 	CURS_MOVE_NONE, CURS_MOVE_HORIZ, CURS_MOVE_VERT,
 } cursor_horiz_vert_move_t;
 
-int post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_move,
+void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_move,
  locate_cursor_to_t locate_cursor, int update_needed);
 
 void locate_cursor_in_edit_win(locate_cursor_to_t locate_curs);

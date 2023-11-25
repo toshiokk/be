@@ -101,8 +101,6 @@ PRIVATE int init_color_pairs(void)
 	int fgc, bgc;
 
 	start_color();
-////flf_d_printf("COLOR_PAIRS: %d\n", COLOR_PAIRS);
-////flf_d_printf("COLORS: %d\n", COLORS);
 	for (bgc = 0; bgc < COLORS; bgc++) {
 		for (fgc = 0; fgc < COLORS; fgc++) {
 			init_pair(get_color_pair(bgc, fgc), fgc, bgc);
@@ -113,7 +111,6 @@ PRIVATE int init_color_pairs(void)
 
 void curses_set_attrs(int bgc, int fgc, int rev)
 {
-////flf_d_printf("rev:%d, bold:%d, bgc:%d, fgc:%d\n", rev, bold, bgc, fgc);
 	if (bgc >= 0) {
 		curses_bgc = bgc;
 	}
@@ -151,7 +148,6 @@ void curses_set_cursor_on(int on_off)
 }
 void curses_set_cursor_pos(int yy, int xx)
 {
-////flf_d_printf("%d, %d\n", yy, xx);
 	wmove(curses_win, yy, xx);
 }
 void curses_clear_screen(void)
@@ -194,7 +190,6 @@ PRIVATE key_code_t getch_(void)
 	int key;
 
 	key = getch();
-////	flf_d_printf("getch():%04x %d\n", key, key);
 	return key;
 }
 

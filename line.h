@@ -38,14 +38,38 @@
 #define NODES_TOP_NODE(nodes)		(NODE_NEXT(NODES_TOP_ANCH(nodes)))
 #define NODES_BOT_NODE(nodes)		(NODE_PREV(NODES_BOT_ANCH(nodes)))
 #define NODES_BOT_ANCH(nodes)		(&((nodes)->bot_anchor))
-// "NODE" is "BUFFER" or "LINE"
-#define IS_NODE_TOP_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL(NODE_PREV(node)))
-#define IS_NODE_TOP(node)			(IS_PTR_NULL(node) || IS_NODE_TOP_ANCH(NODE_PREV(node)))
-#define IS_NODE_INT(node)			IS_NODE_INTERMEDIATE(node)
-#define IS_NODE_INTERMEDIATE(node)	(!IS_NODE_TOP_ANCH(node) && !IS_NODE_BOT_ANCH(node))
-#define IS_NODE_BOT(node)			(IS_PTR_NULL(node) || IS_NODE_BOT_ANCH(NODE_NEXT(node)))
-#define IS_NODE_BOT_ANCH(node)		(IS_PTR_NULL(node) || IS_PTR_NULL(NODE_NEXT(node)))
 
+//|Node pos.     |IS_PTR_NULL     |IS_TOP_MOST    |IS_NODE_INT    |IS_BOT_MOST    |IS_PTR_NULL|
+//|              |        |IS_TOP_ANCH    |IS_TOP_NODE    |IS_BOT_NODE    |IS_BOT_ANCH        |
+//|--------------|--------|-------|-------|-------|-------|-------|-------|-------|-----------|
+//|TOP_ANCH->prev|    1   |   0   |   1   |   0   |   0   |   0   |   0   |   0   |   0       |
+//|TOP_ANCH      |    0   |   1   |   1   |   0   |   0   |   0   |   0   |   0   |   0       |
+//|TOP_NODE      |    0   |   0   |   1   |   1   |   1   |   0   |   0   |   0   |   0       |
+//|INT_NODE      |    0   |   0   |   0   |   0   |   1   |   0   |   0   |   0   |   0       |
+//|BOT_NODE      |    0   |   0   |   0   |   0   |   1   |   1   |   1   |   0   |   0       |
+//|BOT_ANCH      |    0   |   0   |   0   |   0   |   0   |   0   |   1   |   1   |   0       |
+//|BOT_ANCH->next|    0   |   0   |   0   |   0   |   0   |   0   |   1   |   0   |   1       |
+
+//|Node pos.     |IS_PTR_NULL     |IS_TOP_MOST    |IS_NODE_INT    |IS_BOT_MOST    |IS_PTR_NULL|
+//|              |        |IS_TOP_ANCH    |IS_TOP_NODE    |IS_BOT_NODE    |IS_BOT_ANCH        |
+//|--------------|--------|-------|-------|-------|-------|-------|-------|-------|-----------|
+//|TOP_ANCH->prev|    1   |   0   |   1   |   0   |   0   |   0   |   0   |   0   |   0       |
+//|TOP_ANCH      |    0   |   1   |   1   |   0   |   0   |   0   |   0   |   0   |   0       |
+//|no-valid-node |    -   |   -   |   -   |   -   |   -   |   -   |   -   |   -   |   -       |
+//|BOT_ANCH      |    0   |   0   |   0   |   0   |   0   |   0   |   1   |   1   |   0       |
+//|BOT_ANCH->next|    0   |   0   |   0   |   0   |   0   |   0   |   1   |   0   |   1       |
+
+// "NODE" is "BUFFER" or "LINE"
+#define IS_NODE_TOP_MOST(node)	(IS_NODE_TOP(node) || IS_NODE_TOP_ANCH(node) || IS_PTR_NULL(node))
+#define IS_NODE_TOP_ANCH(node)	(IS_PTR_VALID(node) && IS_PTR_NULL(NODE_PREV(node)))
+#define IS_NODE_TOP(node)		(IS_NODE_INT(node) && IS_NODE_TOP_ANCH(NODE_PREV(node)))
+#define IS_NODE_INT(node)		(IS_PTR_VALID(node) \
+							 && IS_PTR_VALID(NODE_PREV(node)) && IS_PTR_VALID(NODE_NEXT(node)))
+#define IS_NODE_BOT(node)		(IS_NODE_INT(node) && IS_NODE_BOT_ANCH(NODE_NEXT(node)))
+#define IS_NODE_BOT_ANCH(node)	(IS_PTR_VALID(node) && IS_PTR_NULL(NODE_NEXT(node)))
+#define IS_NODE_BOT_MOST(node)	(IS_NODE_BOT(node) || IS_NODE_BOT_ANCH(node) || IS_PTR_NULL(node))
+
+#define IS_NODE_ANCH(node)		(IS_NODE_TOP_ANCH(node) || IS_NODE_BOT_ANCH(node))
 
 // ## Node structure ----------------------------------------------------------
 //   top-anch
@@ -112,11 +136,13 @@ typedef enum {
 } insert_before_after_t;
 
 be_line_t *line_create(void);
-be_line_t *line_init(be_line_t *line);
+be_line_t *line_init(be_line_t *line, char *initial_data);
+///be_line_t *line_init(be_line_t *line);
 be_line_t *line_set_string(be_line_t *line, const char *string);
 be_line_t *line_set_string_len(be_line_t *line, const char *string, len_t len);
 char *line_get_string(be_line_t *line);
 void line_free(be_line_t *line);
+void line_free_data(be_line_t *line);
 
 be_line_t *line_create_copy(be_line_t *src);
 be_line_t *line_copy(be_line_t *dest, be_line_t *src);
@@ -134,20 +160,21 @@ be_line_t *line_delete_string(be_line_t *line, int byte_idx, int delete_len);
 be_line_t *line_insert_string(be_line_t *line, int byte_idx, const char *string, int insert_len);
 be_line_t *line_replace_string(be_line_t *line, int byte_idx, int delete_len,
  const char *string, len_t insert_len);
+
+be_line_t *line_separate(be_line_t *line, int byte_idx, insert_before_after_t before_after);
+
 be_line_t *line_insert_with_string(be_line_t *line,
  insert_before_after_t before_after, const char *string);
 be_line_t *line_insert_with_string_len(be_line_t *line,
  insert_before_after_t before_after, const char *string, len_t len);
+void line_insert_with_string_len_before(be_line_t *line, const char *string, len_t len);
+
 be_line_t *line_create_with_string(const char *string);
 be_line_t *line_create_with_string_len(const char *string, len_t len);
-be_line_t *line_concat(be_line_t *line, concat_prev_next_t prev_next);
 be_line_t *line_concat_with_prev(be_line_t *line);
 be_line_t *line_concat_with_next(be_line_t *line);
 
-be_line_t *line_separate(be_line_t *line, int byte_idx, insert_before_after_t before_after);
-
 int line_renumber_from_line(be_line_t *line, size_t *_buf_size_);
-int line_count_lines(be_line_t *line);
 const be_line_t *line_get_top_anch(const be_line_t *line);
 
 size_t line_data_len(const be_line_t *line);

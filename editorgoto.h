@@ -53,8 +53,8 @@ int load_file_name_upp_low(const char *file_name,
 
 int load_file_name_recurs(const char *file_name, int open_on_err, int msg_on_err, int recursive);
 
-int switch_cep_buf_to_file_name(const char *file_name);
-int switch_cep_buf_to_abs_path(const char *abs_path);
+int switch_cep_buf_by_file_name(const char *file_name);
+int switch_cep_buf_by_abs_path(const char *abs_path);
 int switch_cep_buf_to_top(void);
 int switch_cep_buf_to_bot(void);
 int switch_cep_buf_to_next(int beep_at_end, int goto_top);
@@ -77,7 +77,7 @@ int goto_line_col_in_cur_buf(int line_num, int col_no);
 char *mk_cur_file_pos_str_static(void);
 char *mk_cur_file_pos_str(char *buffer);
 char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col_no);
-const char *get_file_line_col_from_str_null(const char *str, char *file_path,
+int get_file_line_col_from_str_null(const char *str, char *file_path,
  int *line_num, int *col_num);
 
 #endif // editorgoto_h

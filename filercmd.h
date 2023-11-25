@@ -30,7 +30,7 @@ int dof_bottom_of_list(void);
 
 int dof_switch_filer_pane(void);
 int dof_refresh_filer(void);
-int dof_enter_file(void);
+int dof_tap_file(void);
 int dof_edit_file(void);
 int dof_edit_file_non_recursive(void);
 int dof_edit_new_file(void);

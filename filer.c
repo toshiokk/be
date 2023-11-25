@@ -67,7 +67,9 @@ void free_filer_panes(filer_panes_t *fps, filer_panes_t *prev_fps)
 	for (int filer_pane_idx = 0; filer_pane_idx < FILER_PANES; filer_pane_idx++) {
 		free_file_list(&fps->filer_views[filer_pane_idx]);
 	}
-	cur_filer_panes = prev_fps;
+	if (prev_fps) {
+		cur_filer_panes = prev_fps;
+	}
 }
 void set_filer_cur_pane_idx(int cur_pane_idx)
 {
@@ -205,7 +207,7 @@ PRIVATE int filer_main_loop(const char *directory, const char *filter,
 		//----------------------------------
 		if (key_input >= 0) {
 			// some key input
-mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
+mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
  '_', key_input, short_key_name_from_key_code(key_input, NULL));
 			clear_status_bar_displayed();
 		}
@@ -255,18 +257,38 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			}
 			if (func_key_table == NULL) {
 				disp_status_bar_err(_("Key command not assigned: %04xh"), key_input);
-				filer_do_next = FILER_DO_NOTHING;
+				filer_do_next = FILER_DO_UPDATE_FILE_LIST_AUTO;
 			} else {
 				strlcpy__(get_cur_filer_view()->next_file,
 				 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name, MAX_PATH_LEN);
-				if (is_app_list_mode() == 0 || func_key_table->list_mode) {
+				if (is_app_list_mode()) {
+					switch (func_key_table->list_mode) {
+					case XL:		// not executable in List mode
+						disp_status_bar_done(
+						 _("Can not execute this function: [%s]"), func_key_table->func_id);
+						break;
+					case XA:		// executable all Normal/List mode
+						break;
+					case XF:		// not executable in List mode and FILER_DO_ENTER_FILE_NAME
+						filer_do_next = FILER_DO_ENTER_FILE_NAME;
+						break;
+					case XP:		// not executable in List mode and FILER_DO_ENTER_FILE_PATH
+						filer_do_next = FILER_DO_ENTER_FILE_PATH;
+						break;
+					case XD:		// not executable in List mode and FILER_DO_ENTER_DIR_PATH
+						filer_do_next = FILER_DO_ENTER_DIR_PATH;
+						break;
+					}
+				}
+				if (is_app_list_mode() == 0 && filer_do_next == FILER_DO_NOTHING) {
 flf_d_printf("CALL_FUNC_FILER [%s] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n", func_key_table->func_id);
 					//=========================
-					(*func_key_table->func)();			// call function "dof_...()"
+					int ret = (*func_key_table->func)();	// call function "dof_...()"
 					//=========================
-flf_d_printf("filer_do_next: %d    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", filer_do_next);
+flf_d_printf("ret_val: %d    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", ret);
+					unselect_all_files_auto(_FILE_SEL_AUTO_);
 				}
-				unselect_all_files_auto(_FILE_SEL_AUTO_);
+flf_d_printf("filer_do_next: %d\n", filer_do_next);
 			}
 			break;
 		}
@@ -566,7 +588,7 @@ PRIVATE void disp_key_list_filer(void)
  "<dof_root_directory>RootDir "
  "<dof_change_directory>ChgDir "
  "<dof_parent_directory>ParentDir "
- "<dof_enter_file>Pager/EnterDir "
+ "<dof_tap_file>Pager/EnterDir "
  "<dof_make_directory>MkDir "
  "<dof_tog_panes>TwoPane "
  "<dof_switch_filer_pane>SwPane "

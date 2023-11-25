@@ -27,8 +27,8 @@ extern int key_executed;
 extern char prev_func_id[MAX_PATH_LEN+1];
 typedef enum {
 	EDITOR_NONE = 0,
-	EDITOR_ABORT = 1,
-	EDITOR_QUIT = 2,
+	EDITOR_CANCELLED = 1,
+	EDITOR_DONE = 2,
 	EDITOR_ENTERED = 3,
 } editor_quit_t;
 extern editor_quit_t editor_quit;

@@ -26,7 +26,6 @@ int priv_tab_size = DEFAULT_TAB_SIZE;	// Tab size gotten from buf_state
 void set_wrap_line_tab_size(int tab_size)
 {
 	priv_tab_size = tab_size;
-////flf_d_printf("priv_tab_size:%d\n", priv_tab_size);
 }
 
 //-----------------------------------------------------------------------------
@@ -250,10 +249,7 @@ int max_wrap_line_idx(const char *line, int width)
 {
 	int line_idx;
 
-////flf_d_printf("[%s]\n", line);
-////flf_d_printf("width:%d\n", width);
 	line_idx = end_wl_idx_of_wrap_line(line, INT_MAX, width);
-////flf_d_printf(" ==>max_line_idx:%d\n", line_idx);
 	return line_idx;
 }
 int start_wl_idx_of_wrap_line(const char *line, int byte_idx, int width)
@@ -261,13 +257,7 @@ int start_wl_idx_of_wrap_line(const char *line, int byte_idx, int width)
 	DEFINE_WRAP_LINE_VARS
 
 	width = wrap_line_length(width);
-////flf_d_printf("byte_idx:%d width:%d\n", byte_idx, width);
-//// if (byte_idx < strlen(line)) {
-////  flf_d_printf("[%s]\n", &line[byte_idx]);
-//// }
 	for ( ; *ptr; ) {
-////flf_d_printf("wl_idx:%d col_idx:%d ptr-line:%d byte_idx:%d\n",
-//// wl_idx, col_idx, ptr - line, byte_idx);
 		if (ptr - line >= byte_idx)
 			break;
 		FORWARD_WRAP_LINE_COL_IDX();
@@ -276,7 +266,6 @@ int start_wl_idx_of_wrap_line(const char *line, int byte_idx, int width)
 		GOTO_NEXT_LINE_IF_LINE_END_COL();
 		GOTO_NEXT_LINE_IF_NEXT_CHAR_WRAPS();
 	}
-////flf_d_printf(" ==>(wl_idx:%d) col_idx:%d byte_idx:%d\n", wl_idx, col_idx, ptr - line);
 	return wl_idx;
 }
 int end_wl_idx_of_wrap_line(const char *line, int byte_idx, int width)
@@ -284,26 +273,16 @@ int end_wl_idx_of_wrap_line(const char *line, int byte_idx, int width)
 	DEFINE_WRAP_LINE_VARS
 
 	width = wrap_line_length(width);
-////flf_d_printf("[%s]\n", line);
-////flf_d_printf("byte_idx:%d width:%d\n", byte_idx, width);
-//// if (byte_idx < strlen(line)) {
-////  flf_d_printf("[%s]\n", &line[byte_idx]);
-//// }
 	for ( ; *ptr; ) {
-////flf_d_printf("wl_idx:%d col_idx:%d ptr-line:%d byte_idx:%d\n",
-//// wl_idx, col_idx, ptr - line, byte_idx);
 		if (ptr - line >= byte_idx)
 			break;
 		FORWARD_WRAP_LINE_COL_IDX();
 		FORWARD_WRAP_LINE_PTR();
 		GOTO_NEXT_LINE_IF_LINE_EXCEED();
-////flf_d_printf("wl_idx:%d col_idx:%d ptr-line:%d byte_idx:%d\n",
-//// wl_idx, col_idx, ptr - line, byte_idx);
 		if (ptr - line >= byte_idx)
 			break;
 		GOTO_NEXT_LINE_IF_NEXT_CHAR_WRAPS();
 	}
-////flf_d_printf(" ==>(wl_idx:%d) col_idx:%d byte_idx:%d\n", wl_idx, col_idx, ptr - line);
 	return wl_idx;
 }
 // line_idx=0, byte_idx=80 ==> col_idx=0
@@ -312,11 +291,6 @@ int start_col_idx_of_wrap_line(const char *line, int byte_idx, int width)
 	DEFINE_WRAP_LINE_VARS
 
 	width = wrap_line_length(width);
-////flf_d_printf("[%s]\n", line);
-////flf_d_printf("byte_idx:%d width:%d\n", byte_idx, width);
-//// if (byte_idx < strlen(line)) {
-////  flf_d_printf("[%s]\n", &line[byte_idx]);
-//// }
 	for ( ; *ptr; ) {
 		if (ptr - line >= byte_idx)
 			break;
@@ -326,7 +300,6 @@ int start_col_idx_of_wrap_line(const char *line, int byte_idx, int width)
 		GOTO_NEXT_LINE_IF_LINE_END_COL();
 		GOTO_NEXT_LINE_IF_NEXT_CHAR_WRAPS();
 	}
-////flf_d_printf(" ==>wl_idx:%d (col_idx:%d) byte_idx:%d\n", wl_idx, col_idx, ptr - line);
 	return col_idx;
 }
 // line_idx=0, byte_idx=80 ==> col_idx=80
@@ -335,14 +308,7 @@ int end_col_idx_of_wrap_line(const char *line, int line_idx, int byte_idx, int w
 	DEFINE_WRAP_LINE_VARS
 
 	width = wrap_line_length(width);
-////flf_d_printf("[%s]\n", line);
-////flf_d_printf("line_idx:%d byte_idx:%d width:%d\n", line_idx, byte_idx, width);
-//// if (byte_idx < strlen(line)) {
-////  flf_d_printf("[%s]\n", &line[byte_idx]);
-//// }
 	for ( ; *ptr; ) {
-////flf_d_printf("wl_idx:%d col_idx:%d ptr-line:%d byte_idx:%d\n",
-//// wl_idx, col_idx, ptr - line, byte_idx);
 		if ((ptr - line >= byte_idx)
 		 || (wl_idx > line_idx))
 			break;
@@ -355,7 +321,6 @@ int end_col_idx_of_wrap_line(const char *line, int line_idx, int byte_idx, int w
 			break;
 		GOTO_NEXT_LINE_IF_LINE_EXCEED();
 	}
-////flf_d_printf(" ==>wl_idx:%d (col_idx:%d) byte_idx:%d\n", wl_idx, col_idx, ptr - line);
 	return col_idx;
 }
 int start_byte_idx_of_wrap_line(const char *line, int line_idx, int column, int width)
@@ -363,14 +328,7 @@ int start_byte_idx_of_wrap_line(const char *line, int line_idx, int column, int 
 	DEFINE_WRAP_LINE_VARS
 
 	width = wrap_line_length(width);
-////flf_d_printf("[%s]\n", line);
-////flf_d_printf("line_idx:%d column:%d width:%d\n", line_idx, column, width);
-//// if (column <= 256) {
-////  flf_d_printf("[%*s|]\n", column, "");
-//// }
 	for ( ; *ptr; ) {
-////flf_d_printf("wl_idx:%d col_idx:%d ptr-line:%d column:%d\n",
-//// wl_idx, col_idx, ptr - line, column);
 		if ((wl_idx >= line_idx && col_idx >= column)
 		 || (wl_idx > line_idx))
 			break;
@@ -383,7 +341,6 @@ int start_byte_idx_of_wrap_line(const char *line, int line_idx, int column, int 
 		 || (wl_idx > line_idx))
 			break;
 	}
-////flf_d_printf(" ==>wl_idx:%d col_idx:%d (byte_idx:%d)\n", wl_idx, col_idx, ptr - line);
 	return ptr - line;
 }
 int end_byte_idx_of_wrap_line_le(const char *line, int line_idx, int column, int width)
@@ -391,14 +348,7 @@ int end_byte_idx_of_wrap_line_le(const char *line, int line_idx, int column, int
 	DEFINE_WRAP_LINE_VARS
 
 	width = wrap_line_length(width);
-////flf_d_printf("[%s]\n", line);
-////flf_d_printf("line_idx:%d column:%d width:%d\n", line_idx, column, width);
-//// if (column <= 256) {
-////  flf_d_printf("[%*s|]\n", column, "");
-//// }
 	for ( ; *ptr; ) {
-////flf_d_printf("wl_idx:%d col_idx:%d ptr-line:%d column:%d\n",
-//// wl_idx, col_idx, ptr - line, column);
 		if ((wl_idx >= line_idx && col_idx >= column)
 		 || (wl_idx > line_idx))
 			break;
@@ -411,7 +361,6 @@ int end_byte_idx_of_wrap_line_le(const char *line, int line_idx, int column, int
 		FORWARD_WRAP_LINE_PTR();
 		GOTO_NEXT_LINE_IF_LINE_EXCEED();
 	}
-////flf_d_printf(" ==>wl_idx:%d col_idx:%d (byte_idx:%d)\n", wl_idx, col_idx, ptr - line);
 	return ptr - line;
 }
 int end_byte_idx_of_wrap_line_ge(const char *line, int line_idx, int column, int width)
@@ -419,14 +368,7 @@ int end_byte_idx_of_wrap_line_ge(const char *line, int line_idx, int column, int
 	DEFINE_WRAP_LINE_VARS
 
 	width = wrap_line_length(width);
-////flf_d_printf("[%s]\n", line);
-////flf_d_printf("line_idx:%d column:%d width:%d\n", line_idx, column, width);
-//// if (column <= 256) {
-////  flf_d_printf("[%*s|]\n", column, "");
-//// }
 	for ( ; *ptr; ) {
-////flf_d_printf("wl_idx:%d col_idx:%d ptr-line:%d column:%d\n",
-//// wl_idx, col_idx, ptr - line, column);
 		if ((wl_idx >= line_idx && col_idx >= column)
 		 || (wl_idx > line_idx))
 			break;
@@ -439,7 +381,6 @@ int end_byte_idx_of_wrap_line_ge(const char *line, int line_idx, int column, int
 		GOTO_NEXT_LINE_IF_LINE_END_COL();
 		GOTO_NEXT_LINE_IF_NEXT_CHAR_WRAPS();
 	}
-////flf_d_printf(" ==>wl_idx:%d col_idx:%d (byte_idx:%d)\n", wl_idx, col_idx, ptr - line);
 	return ptr - line;
 }
 int wrap_line_length(int width)
@@ -590,7 +531,6 @@ int vis_idx_from_col_idx(const char *utf8s, int columns)
 PRIVATE void test_get_intersection_(int min1, int max1, int min2, int max2);
 void test_get_intersection(void)
 {
-_FLF_
 	// aaaaaa bbbbbb
 	test_get_intersection_(0, 54, 64, 65);
 	// aaaaaa bbbbbb

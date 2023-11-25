@@ -565,6 +565,17 @@ int select_and_get_first_file_idx_selected(void)
 	select_file_if_none_selected();
 	return get_first_file_idx_selected();
 }
+int select_file_if_none_selected(void)
+{
+	int files_selected;
+	int sel_idx = get_cur_filer_view()->cur_sel_idx;
+
+	files_selected = get_files_selected_cfv();
+	if (files_selected == 0) {
+		get_cur_filer_view()->file_list[sel_idx].selected = _FILE_SEL_AUTO_;
+	}
+	return files_selected;
+}
 int get_first_file_idx_selected(void)
 {
 	int file_idx;
@@ -589,17 +600,6 @@ int get_next_file_idx_selected(int start_file_idx)
 	if (file_idx < get_cur_filer_view()->file_list_entries)
 		return file_idx;
 	return -1;	// no selected file found
-}
-int select_file_if_none_selected(void)
-{
-	int files_selected;
-	int sel_idx = get_cur_filer_view()->cur_sel_idx;
-
-	files_selected = get_files_selected_cfv();
-	if (files_selected == 0) {
-		get_cur_filer_view()->file_list[sel_idx].selected = _FILE_SEL_AUTO_;
-	}
-	return files_selected;
 }
 void unselect_all_files_auto(char selection_bit)
 {

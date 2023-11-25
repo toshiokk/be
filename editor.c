@@ -39,6 +39,7 @@ int call_editor(int push_win, int list_mode)
 	SET_APPMD_VAL(ed_EDITOR_PANES, 0);
 	set_app_func_key_table();
 
+_D_(dump_cur_pointers())
 flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
 flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 	ret = editor_main_loop();
@@ -46,6 +47,7 @@ flf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
 flf_d_printf("ret: %d\n", ret);
 	editor_quit = EDITOR_NONE;	// for caller of call_editor(), clear "editor_quit"
 	_mlc_check_count
+_D_(dump_cur_pointers())
 
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 	SET_APPMD_VAL(app_LIST_MODE, GET_APPMD_PTR(&appmode_save, app_LIST_MODE));
@@ -93,7 +95,7 @@ PRIVATE int editor_main_loop(void)
 		if (key_input < 0) {
 			// no key input
 		} else {
-mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
+mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
  '_', key_input, short_key_name_from_key_code(key_input, NULL));
 
 #ifdef ENABLE_REGEX
@@ -113,16 +115,26 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 				}
 			} else {
 				doe_enter_char_send();
-				if (is_app_list_mode() == 0 || func_key_table->list_mode) {
+				switch (func_key_table->list_mode) {
+				default:
+				case XL:		// not executable in List mode
+					if (is_app_list_mode()) {
+						disp_status_bar_done(
+						 _("Can not execute this function: [%s]"), func_key_table->func_id);
+						break;
+					}
+					// FALLTHROUGH
+				case XA:		// executable all Normal/List mode
 					search_clear(&search__);
 					key_executed = key_input;
 flf_d_printf("CALL_FUNC_EDITOR [%s]\n", func_key_table->func_id);
 					//=========================
-					(*func_key_table->func)();			// call function "doe_...()"
+					int ret = (*func_key_table->func)();			// call function "doe_...()"
 					//=========================
-flf_d_printf("editor_quit: %d\n", editor_quit);
+flf_d_printf("ret_val: %d, editor_quit: %d\n", ret, editor_quit);
 					prev_key_executed = key_executed;
 					strlcpy__(prev_func_id, func_key_table->func_id, MAX_PATH_LEN);
+					break;
 				}
 			}
 #ifdef ENABLE_UNDO
@@ -138,6 +150,7 @@ flf_d_printf("editor_quit: %d\n", editor_quit);
 				break;
 			}
 		}
+_D_(dump_cur_pointers())
 		if (editor_quit) {
 			break;
 		}
@@ -145,9 +158,11 @@ flf_d_printf("editor_quit: %d\n", editor_quit);
 #ifdef ENABLE_HISTORY
 	key_macro_cancel_recording();
 #endif // ENABLE_HISTORY
-	if (editor_quit == EDITOR_ABORT) {
+_D_(dump_cur_pointers())
+	if (editor_quit == EDITOR_CANCELLED) {
 		return -1;	// cancelled
-	} else if (editor_quit == EDITOR_QUIT) {
+	} else
+	if (editor_quit == EDITOR_DONE) {
 		return 0;	// done
 	}
 	return 1;		// selected
@@ -173,9 +188,7 @@ PRIVATE int open_file_recursive(int recursive)
 			break;
 #endif // ENABLE_FILER
 
-_FLF_
 		ret = input_string("", file_name, HISTORY_TYPE_IDX_CURSPOS , _("Open existing file:"));
-_FLF_
 
 		if (ret <= 0) {
 			break;
@@ -313,19 +326,14 @@ int doe_reopen_file(void)
 		if (ret <= 0)
 			return 0;
 	}
-///_FLF_
 	memorize_cur_file_pos_null(NULL);
-///_FLF_
 	free_cur_edit_buf();
-///_FLF_
 	// CURDIR: abs-path is specified
-	if (load_file_name_recurs(get_file_line_col_from_str_null(NULL, file_path, NULL, NULL),
-	 OOE0, MOE1, RECURSIVE1) <= 0) {
-///_FLF_
+	get_file_line_col_from_str_null(NULL, file_path, NULL, NULL);
+	if (load_file_name_recurs(file_path, OOE0, MOE1, RECURSIVE1) <= 0) {
 		tio_beep();
 		return 0;
 	}
-///_FLF_
 	goto_str_line_col_in_cur_buf(NULL);
 #ifdef ENABLE_UNDO
 #ifdef ENABLE_DEBUG
@@ -410,7 +418,7 @@ int doe_close_file_ask(void)
 	int ret;
 
 	if (is_app_list_mode()) {
-		editor_quit = EDITOR_ABORT;
+		editor_quit = EDITOR_CANCELLED;
 		return 0;
 	}
 	ret = write_file_ask(ANSWER_NO, CLOSE_AFTER_SAVE_1);
@@ -434,7 +442,7 @@ int doe_close_file_ask(void)
 int doe_close_all_ask(void)
 {
 	if (is_app_list_mode()) {
-		editor_quit = EDITOR_ABORT;
+		editor_quit = EDITOR_CANCELLED;
 		return 0;
 	}
 	write_close_all(ANSWER_NO);
@@ -443,7 +451,7 @@ int doe_close_all_ask(void)
 int doe_close_all_modified(void)
 {
 	if (is_app_list_mode()) {
-		editor_quit = EDITOR_ABORT;
+		editor_quit = EDITOR_CANCELLED;
 		return 0;
 	}
 	write_close_all(ANSWER_ALL);
@@ -474,11 +482,13 @@ int doe_run_line_soon(void)
 	// CEPBV_CL->data may be in history buffer and freed in calling update_history().
 	// So copy to local buffer.
 	strlcpy__(buffer, CEPBV_CL->data, MAX_PATH_LEN);
+
 	fork_exec_once_sh_c(SEPARATE1, PAUSE1, buffer);
-	doe_refresh_editor();
+
 	if (is_app_list_mode()) {
-		editor_quit = EDITOR_QUIT;
+		editor_quit = EDITOR_DONE;
 	}
+	doe_refresh_editor();
 	return 0;
 }
 
@@ -854,7 +864,7 @@ int is_app_list_mode(void)	// in editor: text view mode, in filer: file list mod
 
 int is_view_mode_then_warn_it(void)
 {
-	if (IS_NODE_TOP_ANCH(get_cep_buf()) || IS_NODE_BOT_ANCH(get_cep_buf())) {
+	if (IS_NODE_ANCH(get_cep_buf())) {
 		disp_status_bar_done(_("Modification not allowed in Anchor buffer"));
 		return 1;
 	}
@@ -874,6 +884,7 @@ int is_view_mode_then_warn_it(void)
 #ifdef ENABLE_DEBUG
 void dump_cur_pointers(void)
 {
+	flf_d_printf("cep_buf:[%s]\n", get_cep_buf()->file_path);
 	flf_d_printf("%d:[%s]\n", CEPBV_CL->line_num, CEPBV_CL->data);
 	flf_d_printf("CEPBV_CLBI:%d\n", CEPBV_CLBI);
 	flf_d_printf("cursor_y:%d\n", CEPBV_CURSOR_Y);

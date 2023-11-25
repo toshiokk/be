@@ -58,26 +58,21 @@ int main(int argc, char *argv[])
 #ifdef ENABLE_DEBUG
 	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
 #endif // ENABLE_DEBUG
-flf_d_printf("Start %s ----------------\n", APP_NAME " " __DATE__ " " __TIME__);
+flf_d_printf("Start %s ===================================\n", APP_NAME " " __DATE__ " " __TIME__);
 	_mlc_init
 	get_start_dir();
 	signal_init();
-_FLF_
 	init_locale();
-_FLF_
 	_mlc_memorize_count
 	init_buffers();		// parse_options() needs cep_buf. So do here.
 	_mlc_differ_count
 #ifdef ENABLE_FILER
 	init_filer_panes(&filer_panes, get_start_dir());
 #endif // ENABLE_FILER
-_FLF_
 	parse_options(argc, argv);		// parse command line options
 	cache_users();
 	cache_groups();
-_FLF_
 	init_default_app_color();
-_FLF_
 #ifdef START_UP_TEST
 	start_up_test();
 #endif // START_UP_TEST
@@ -129,14 +124,12 @@ flf_d_printf("opening files --------------------------------------------\n");
 	disp_splash(0);
 	MSLEEP(500);
 #endif // ENABLE_HELP
-_FLF_
 	// If there's a +LINE flag, it is the first non-option argument
 	if (0 < optind && optind < argc && argv[optind][0] == '+') {
 flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 		sscanf(&argv[optind][1], "%d", &start_line_num);
 		optind++;
 	}
-_FLF_
 	// More than one file is specified on the command line,
 	// load them all and switch to the first one afterward.
 	if (optind < argc) {
@@ -150,19 +143,17 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 			tio_refresh();
 		}
 	}
-_FLF_
 	if (count_edit_bufs()) {
 		if (goto_last_file_line_col_in_loaded() == 0) {
 			doe_switch_to_top_file();
 		}
-		if (start_line_num > 0)
+		if (start_line_num > 0) {
 			goto_line_col_in_cur_buf(start_line_num, 1);
+		}
 		disp_files_loaded();
 	}
 
-_FLF_
 	app_main_loop();
-_FLF_
 
 	set_die_on_callback(NULL);
 
@@ -183,7 +174,7 @@ _FLF_
 	_mlc_check_count
 	_D_(_mlc_check_leak)
 
-flf_d_printf("Exit %s --------------------\n", APP_NAME " " __DATE__ " " __TIME__);
+flf_d_printf("Exit %s ====================================\n", APP_NAME " " __DATE__ " " __TIME__);
 	printf("\n");
 	return 0;
 }
@@ -533,7 +524,7 @@ void app_die_on(const char *msg)
 	e_printf("%s", msg);
 
 	// then save all of the modified buffers, if any
-	for (buf = EDIT_BUFS_TOP_NODE; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+	for (buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
 		set_cep_buf(buf);
 		if (check_cur_buf_modified()) {
 			// save the file if it's been modified
@@ -573,7 +564,6 @@ PRIVATE void die_save_file(const char *die_file_path)
 void free_all_allocated_memory(void)
 {
 #ifdef ENABLE_HISTORY
-///_FLF_
 ///	save_key_macro();
 #endif // ENABLE_HISTORY
 	_mlc_memorize_count
@@ -581,10 +571,8 @@ void free_all_allocated_memory(void)
 	_mlc_differ_count
 
 #ifdef ENABLE_SYNTAX
-///_FLF_
 	free_file_types();
 #endif // ENABLE_SYNTAX
-///_FLF_
 }
 
 //-----------------------------------------------------------------------------

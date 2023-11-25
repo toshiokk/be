@@ -286,7 +286,7 @@ int doe_tog_syntax_hl(void);
 int doe_tog_tab_eol_notation(void);
 int doe_tog_show_ruler(void);
 int doe_tog_show_line_num(void);
-int dof_tog_map_key_7f_bs(void);
+int doe_tog_map_key_7f_bs(void);
 int doe_inc_backup_files(void);
 int do_tog_show_dot_file(void);
 int do_inc_key_list_lines_(void);

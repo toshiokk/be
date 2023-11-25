@@ -120,7 +120,7 @@ void disp_editor_title_bar(void)
 	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, "%s", buf_cut_mode_str(get_cep_buf()));
 #ifdef ENABLE_DEBUG
 ///	// cut buffer cut mode
-///	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " %s", buf_cut_mode_str(CUR_CUT_BUF));
+///	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " %s", buf_cut_mode_str(TOP_BUF_OF_CUT_BUFS));
 #endif // ENABLE_DEBUG
 	// edit buffers
 	edit_bufs = count_edit_bufs();
@@ -277,7 +277,7 @@ void disp_edit_win(int cur_pane)
 			// display buffer total lines ("999 ")
 			set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 			sub_win_output_string(edit_win_get_ruler_y(), 0,
-			 get_line_num_string(get_cep_buf(), CUR_EDIT_BUF_BOT_NODE, buf_line_num),
+			 get_line_num_string(get_cep_buf(), CUR_EDIT_BUF_BOT_LINE, buf_line_num),
 			 edit_win_text_x);
 		}
 		// display ruler("1---5----10---15---20---25---30---35---40---45---50---55---60---65")
@@ -291,9 +291,6 @@ void disp_edit_win(int cur_pane)
 		// display line tail column indicator in reverse text on ruler
 		if (cursor_line_right_text_x >= 0) {
 			int view_x = cursor_line_right_text_x-1 - CEPBV_MIN_TEXT_X_TO_KEEP;
-////flf_d_printf("ruler: [%s]\n", ruler);
-////flf_d_printf("right_text_x/view_x/x_to_keep/columns: %d/%d/%d/%d\n",
-//// cursor_line_right_text_x, view_x, CEPBV_MIN_TEXT_X_TO_KEEP, get_edit_win_columns_for_text());
 			if (view_x < get_edit_win_columns_for_text()) {
 				sub_win_output_string(edit_win_get_ruler_y(), get_edit_win_x_for_view_x(view_x),
 				 &ruler[view_x], 1);
@@ -482,7 +479,6 @@ PRIVATE void disp_edit_line_single_line_regexp(int yy, const be_line_t *line,
 	regexp_matches_t regexp_matches;
 	int min_byte_idx, max_byte_idx;
 
-////flf_d_printf("[%d, %d]\n", byte_idx_1, byte_idx_2);
 	for (byte_idx = 0; byte_idx < byte_idx_2; ) {
 		if (regexp_search_compiled(clr_syntax->regexp_start, te_concat_linefeed_buf, byte_idx,
 		 REG_NONE, &regexp_matches, 1) != 0) {
@@ -543,7 +539,7 @@ PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
 	for (line_cnt = 0, start_line = NODE_PREV(line); ;
 	 line_cnt++, start_line = NODE_PREV(start_line)) {
 #define MAX_SYNTAX_SEARCH_LINES		LIM_MIN(25, edit_win_get_text_lines() * 2)
-		if (line_cnt >= MAX_SYNTAX_SEARCH_LINES || IS_NODE_TOP_ANCH(start_line)) {
+		if (IS_NODE_TOP_ANCH(start_line) || line_cnt >= MAX_SYNTAX_SEARCH_LINES) {
 			// No syntax found, so skip to the next step.
 			goto step_two;
 		}
@@ -678,13 +674,10 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 		 ((-MAX_BRACKET_NESTINGS < depth) && (depth < MAX_BRACKET_NESTINGS))
 		  && (safe_cnt < MAX_BRACKET_HL);
 		 safe_cnt++) {
-////flf_d_printf("depth: %d\n", depth);
 			match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
 			 char_under_cursor, needle, BACKWARD_SEARCH, skip_here, depth_increase,
 			 &depth, &prev_depth);
-////flf_d_printf("depth: %d\n", depth);
 			skip_here = 1;
-////flf_d_printf("match_len: %d\n", match_len);
 			for ( ; yy >= 0; ) {
 				if (match_len == 0)
 					break;
@@ -698,8 +691,6 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 					 match_byte_idx, match_byte_idx + match_len,
 					 &left_byte_idx, &right_byte_idx) > 0) {
 						set_color_for_bracket_hl(depth_increase, prev_depth); // select color by depth
-////line_dump_byte_idx(match_line, match_byte_idx);
-////flf_d_printf("yy: %d\n", yy);
 						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 						match_len = 0;	// clear match_len so that go to next bracket
 						break;
@@ -730,13 +721,10 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 		 ((-MAX_BRACKET_NESTINGS < depth) && (depth < MAX_BRACKET_NESTINGS))
 		  && (safe_cnt < MAX_BRACKET_HL);
 		 safe_cnt++) {
-////flf_d_printf("depth: %d\n", depth);
 			match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
 			 char_under_cursor, needle, FORWARD_SEARCH, skip_here, depth_increase,
 			 &depth, &prev_depth);
-////flf_d_printf("depth: %d\n", depth);
 			skip_here = 1;
-////flf_d_printf("match_len: %d\n", match_len);
 			for ( ; yy < edit_win_get_text_lines(); ) {
 				if (match_len == 0)
 					break;
@@ -750,8 +738,6 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 					 match_byte_idx, match_byte_idx + match_len,
 					 &left_byte_idx, &right_byte_idx) > 0) {
 						set_color_for_bracket_hl(depth_increase, prev_depth); // select color by depth
-////line_dump_byte_idx(match_line, match_byte_idx);
-////flf_d_printf("prev_depth/depth: %d/%d, yy: %d\n", prev_depth, depth, yy);
 						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 						match_len = 0;	// clear match_len so that go to next bracket
 						break;
@@ -843,11 +829,9 @@ PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
 ///flf_d_printf("left_x:%d,right_x:%d,left_vis_idx:%d,right_vis_idx:%d,bytes:%d,[%s]\n",
 /// left_x,right_x,left_vis_idx,right_vis_idx,bytes, &vis_code[left_vis_idx]);
 	if (bytes > 0) {	// if (bytes <= 0), no output neccesary
-///_FLF_
 		sub_win_output_string(edit_win_get_text_y() + yy,
 		 get_edit_win_x_for_text_x(left_x), &vis_code[left_vis_idx], bytes);
 	}
-///_FLF_
 	return bytes;
 }
 
@@ -1002,7 +986,7 @@ PRIVATE int get_buf_line_num_columns(const be_buf_t *buf)
 }
 PRIVATE int get_buf_line_num_digits(const be_buf_t *buf)
 {
-	return get_line_num_digits(BUF_BOT_NODE(buf)->line_num);
+	return get_line_num_digits(BUF_BOT_LINE(buf)->line_num);
 }
 PRIVATE int get_line_num_digits(int max_line_num)
 {

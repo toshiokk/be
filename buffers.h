@@ -26,7 +26,6 @@ typedef struct {
 	int cur_pane_idx;				// 0: left pane, 1: right pane
 	be_buf_t *bufs[EDITOR_PANES];	// edit-buffers shown in the left and the right pane
 } editor_panes_t;
-////extern editor_panes_t editor_panes;
 
 // エディタ2ペイン
 // ・個々にバッファを参照
@@ -49,19 +48,19 @@ enum BUFS_IDX {
 };
 
 // collection of collections of buffers (Root of all buffers)
-extern be_bufs_t bufs_top_anchor;		//< top buffers
-extern be_bufs_t bufs_bot_anchor;		//< bottom buffers
+extern be_bufs_t bufss_top_anchor;		//< top buffers
+extern be_bufs_t bufss_bot_anchor;		//< bottom buffers
 
 // Edit buffers ---------------------------------------------------------------
 extern be_bufs_t edit_buffers;
 #define EDIT_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&edit_buffers)
-#define EDIT_BUFS_TOP_NODE		BUFS_TOP_NODE(&edit_buffers)
-#define EDIT_BUFS_BOT_NODE		BUFS_BOT_NODE(&edit_buffers)
+#define EDIT_BUFS_TOP_BUF		BUFS_TOP_BUF(&edit_buffers)
+#define EDIT_BUFS_BOT_BUF		BUFS_BOT_BUF(&edit_buffers)
 #define EDIT_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&edit_buffers)
 // current edit buffer --------------------------------------------------------
 #define CUR_EDIT_BUF_TOP_ANCH	BUF_TOP_ANCH(get_cep_buf())
-#define CUR_EDIT_BUF_TOP_NODE	BUF_TOP_NODE(get_cep_buf())
-#define CUR_EDIT_BUF_BOT_NODE	BUF_BOT_NODE(get_cep_buf())
+#define CUR_EDIT_BUF_TOP_LINE	BUF_TOP_LINE(get_cep_buf())
+#define CUR_EDIT_BUF_BOT_LINE	BUF_BOT_LINE(get_cep_buf())
 #define CUR_EDIT_BUF_BOT_ANCH	BUF_BOT_ANCH(get_cep_buf())
 
 // CEPBV : Current Editor Pane -> Buffer View
@@ -105,46 +104,46 @@ extern be_bufs_t edit_buffers;
 // Cut buffers ----------------------------------------------------------------
 extern be_bufs_t cut_buffers;
 #define CUT_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&cut_buffers)
-#define CUT_BUFS_TOP_NODE		BUFS_TOP_NODE(&cut_buffers)
-#define CUT_BUFS_BOT_NODE		BUFS_BOT_NODE(&cut_buffers)
+#define CUT_BUFS_TOP_BUF		BUFS_TOP_BUF(&cut_buffers)
+#define CUT_BUFS_BOT_BUF		BUFS_BOT_BUF(&cut_buffers)
 #define CUT_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&cut_buffers)
 // current cut buffer ---------------------------------------------------------
-#define CUR_CUT_BUF				CUT_BUFS_TOP_NODE
-#define CUR_CUT_BUF_TOP_NODE	BUF_TOP_NODE(CUR_CUT_BUF)
-#define CUR_CUT_BUF_BOT_ANCH	BUF_BOT_ANCH(CUR_CUT_BUF)
+#define TOP_BUF_OF_CUT_BUFS		CUT_BUFS_TOP_BUF
+#define CUR_CUT_BUF_TOP_LINE	BUF_TOP_LINE(CUT_BUFS_TOP_BUF)
+#define CUR_CUT_BUF_BOT_ANCH	BUF_BOT_ANCH(CUT_BUFS_TOP_BUF)
 
 // History buffers ------------------------------------------------------------
 extern be_bufs_t history_buffers;
 #define HIST_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&history_buffers)
-#define HIST_BUFS_TOP_NODE		BUFS_TOP_NODE(&history_buffers)
-#define HIST_BUFS_BOT_NODE		BUFS_BOT_NODE(&history_buffers)
+#define HIST_BUFS_TOP_BUF		BUFS_TOP_BUF(&history_buffers)
+#define HIST_BUFS_BOT_BUF		BUFS_BOT_BUF(&history_buffers)
 #define HIST_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&history_buffers)
 
 // Help buffers ------------------------------------------------------------
 extern be_bufs_t help_buffers;
 #define HELP_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&help_buffers)
-#define HELP_BUFS_TOP_NODE		BUFS_TOP_NODE(&help_buffers)
-#define HELP_BUFS_BOT_NODE		BUFS_BOT_NODE(&help_buffers)
+#define HELP_BUFS_TOP_BUF		BUFS_TOP_BUF(&help_buffers)
+#define HELP_BUFS_BOT_BUF		BUFS_BOT_BUF(&help_buffers)
 #define HELP_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&help_buffers)
 
 #ifdef ENABLE_UNDO
 // Undo buffers ---------------------------------------------------------------
 extern be_bufs_t undo_buffers;
 #define UNDO_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&undo_buffers)
-#define UNDO_BUFS_TOP_NODE		BUFS_TOP_NODE(&undo_buffers)
-#define UNDO_BUFS_BOT_NODE		BUFS_BOT_NODE(&undo_buffers)
+#define UNDO_BUFS_TOP_BUF		BUFS_TOP_BUF(&undo_buffers)
+#define UNDO_BUFS_BOT_BUF		BUFS_BOT_BUF(&undo_buffers)
 #define UNDO_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&undo_buffers)
 // current undo buffer --------------------------------------------------------
-#define CUR_UNDO_BUF			UNDO_BUFS_TOP_NODE
-#define CUR_UNDO_BUF_BOT_ANCH	BUF_BOT_ANCH(CUR_UNDO_BUF)
+#define TOP_BUF_OF_UNDO_BUFS	UNDO_BUFS_TOP_BUF
+#define CUR_UNDO_BUF_BOT_ANCH	BUF_BOT_ANCH(UNDO_BUFS_TOP_BUF)
 // Redo buffers ---------------------------------------------------------------
 extern be_bufs_t redo_buffers;
 #define REDO_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&redo_buffers)
-#define REDO_BUFS_TOP_NODE		BUFS_TOP_NODE(&redo_buffers)
-#define REDO_BUFS_BOT_NODE		BUFS_BOT_NODE(&redo_buffers)
+#define REDO_BUFS_TOP_BUF		BUFS_TOP_BUF(&redo_buffers)
+#define REDO_BUFS_BOT_BUF		BUFS_BOT_BUF(&redo_buffers)
 #define REDO_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&redo_buffers)
 // current redo buffer --------------------------------------------------------
-#define CUR_REDO_BUF			REDO_BUFS_TOP_NODE
+#define TOP_BUF_OF_REDO_BUFS	REDO_BUFS_TOP_BUF
 #endif // ENABLE_UNDO
 
 //=============================================================================
@@ -161,9 +160,9 @@ void buf_avoid_wild_ptr_cur(be_buf_t *buf);
 void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr);
 
 void line_avoid_wild_ptr_cur(be_line_t *line);
-void line_avoid_wild_ptr(be_line_t *line, be_line_t **line_ptr);
+void line_avoid_wild_ptr(be_line_t **line_ptr, be_line_t *line);
 
-be_buf_t *get_edit_buf_from_abs_path(const char *abs_path);
+be_buf_t *get_edit_buf_by_abs_path(const char *abs_path);
 int get_edit_buf_idx_from_buf(be_buf_t *edit_buf);
 
 void create_edit_buf(const char *file_path);
@@ -197,7 +196,7 @@ int is_cep_buf_valid(void);
 void init_cut_bufs(void);
 void free_all_cut_bufs(void);
 be_buf_t *push_cut_buf(void);
-int pop_cut_buf(void);
+int pop_n_free_from_cut_buf(void);
 be_line_t *append_string_to_cur_cut_buf(const char *string);
 int count_cut_bufs(void);
 int count_cur_cut_buf_lines(void);
@@ -226,8 +225,8 @@ void clear_cur_buf_modified(void);
 #define CMP_CUR_EBUF_STATE(var, val)		CMP_BUF_STATE(get_cep_buf(), var, val)
 
 // current cut buffer state
-#define CUR_CBUF_STATE(var)					BUF_STATE(CUR_CUT_BUF, var)
-#define SET_CUR_CBUF_STATE(var, val)		SET_BUF_STATE(CUR_CUT_BUF, var, val)
+#define CUR_CBUF_STATE(var)					BUF_STATE(TOP_BUF_OF_CUT_BUFS, var)
+#define SET_CUR_CBUF_STATE(var, val)		SET_BUF_STATE(TOP_BUF_OF_CUT_BUFS, var, val)
 
 int tog_view_mode(void);
 const char *get_str_view_mode(void);

@@ -299,13 +299,21 @@
 #define FUNC_ID(func)	func, #func
 #define F_I(func)		FUNC_ID(func)
 
+typedef enum {
+	XA,		// executable all (Normal/List) mode
+	XL,		// not executable in List mode
+	XF,		// not executable in List mode and FILER_DO_ENTER_FILE_NAME
+	XP,		// not executable in List mode and FILER_DO_ENTER_FILE_PATH
+	XD,		// not executable in List mode and FILER_DO_ENTER_DIR_PATH
+} list_mode_t;
+
 typedef struct {
-	char *desc;			// short description
-	char *help;			// explanation
+	char *desc;					// short description
+	char *help;					// explanation
 	key_code_t key1;
 	key_code_t key2;
 	key_code_t key3;
-	char list_mode;		// executable in list mode
+	list_mode_t list_mode;		// executable in list mode
 	int (*func)(void);
 	char *func_id;
 	const char *(*func_get)(void);	// function to get assigned value
@@ -351,6 +359,7 @@ void set_menu_key_for_do_app_menu_0(void);
 
 key_code_t input_key_loop(void);
 key_code_t input_key_wait_return(void);
+int input_key_break(void);
 
 #endif // keys_h
 

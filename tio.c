@@ -123,7 +123,6 @@ void tio_test(void)
 	}
 
 	tio_destroy();
-_FLF_
 	exit(0);
 }
 #endif // START_UP_TEST

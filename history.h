@@ -23,9 +23,9 @@
 #define history_h
 
 #define HISTORY_TYPE_IDX_KEYMACRO	0	// app
-#define HISTORY_TYPE_IDX_SEARCH		1	// app
-#define HISTORY_TYPE_IDX_CURSPOS	2	// app
-#define HISTORY_TYPE_IDX_DIR		3	// app
+#define HISTORY_TYPE_IDX_CURSPOS	1	// app
+#define HISTORY_TYPE_IDX_DIR		2	// app
+#define HISTORY_TYPE_IDX_SEARCH		3	// app
 #define HISTORY_TYPE_IDX_EXEC		4	// app
 #define HISTORY_TYPE_IDX_SHELL		5	// shell
 #define HISTORY_TYPES_APP			5	// types of app histories (5)

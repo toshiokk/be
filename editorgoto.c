@@ -60,13 +60,18 @@ int doe_goto_input_line(void)
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
 }
-// do_tag_jump() and change directory
+
+PRIVATE int check_cur_line_file_or_directory(void);
+
+// TAG JUMP
 int doe_goto_file_in_cur_line(void)
 {
 	char dir_save[MAX_PATH_LEN+1];
 	int ret;
 
-////flf_d_printf("[%s]\n", CEPBV_CL->data);
+	if (check_cur_line_file_or_directory() == 1) {
+		return doe_goto_directory_in_cur_line();
+	}
 	memorize_cur_file_pos_null(NULL);
 	clear_files_loaded();
 	save_change_cur_dir(dir_save, strip_file_from_path(get_cep_buf()->abs_path));
@@ -85,6 +90,15 @@ int doe_goto_directory_in_cur_line(void)
 	}
 	return filer_change_dir_parent(file_path) == 0;
 #endif // ENABLE_FILER
+}
+
+PRIVATE int check_cur_line_file_or_directory(void)
+{
+	char file_path[MAX_PATH_LEN+1];
+	if (get_file_line_col_from_str_null(CEPBV_CL->data, file_path, NULL, NULL) == 0) {
+		return 0;
+	}
+	return get_file_type_by_file_path(file_path);
 }
 
 int doe_open_files_in_buf(void)
@@ -140,7 +154,7 @@ int doe_switch_to_next_file(void)
 #if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
 int doe_switch_to_prev_buffers(void)
 {
-	be_bufs_t *bufs = get_bufs_contains_buf(&bufs_top_anchor, get_cep_buf());
+	be_bufs_t *bufs = get_bufs_contains_buf(&bufss_top_anchor, get_cep_buf());
 	if (IS_NODE_TOP(bufs))
 		return 0;
 flf_d_printf("bufs: %s\n", bufs->name);
@@ -152,13 +166,14 @@ flf_d_printf("NODE_PREV(bufs)->cur_buf->name: %s\n", NODE_PREV(bufs)->cur_buf->f
 }
 int doe_switch_to_next_buffers(void)
 {
-	be_bufs_t *bufs = get_bufs_contains_buf(&bufs_top_anchor, get_cep_buf());
+	be_bufs_t *bufs = get_bufs_contains_buf(&bufss_top_anchor, get_cep_buf());
 	if (IS_NODE_BOT(bufs))
 		return 0;
 flf_d_printf("bufs: %s\n", bufs->name);
 flf_d_printf("NODE_NEXT(bufs)->name: %s\n", NODE_NEXT(bufs)->name);
 flf_d_printf("NODE_NEXT(bufs)->cur_buf->name: %s\n", NODE_NEXT(bufs)->cur_buf->file_path);
 	set_cep_buf(NODE_NEXT(bufs)->cur_buf);
+_D_(bufs_dump_all_bufs(&bufss_top_anchor))
 	post_cmd_processing(CEPBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
@@ -177,9 +192,7 @@ int doe_return_to_prev_file_pos(void)
 int doe_switch_editor_pane(void)
 {
 	doe_switch_editor_pane_();
-///_FLF_
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
-///_FLF_
 	return 1;
 }
 void doe_switch_editor_pane_(void)
@@ -200,14 +213,14 @@ int load_files_in_cur_buf(void)
 	char dir_save[MAX_PATH_LEN+1];
 	int files = 0;
 
-	memorize_cur_file_pos_null(file_pos_str);
-	first_line();
-	clear_handler_sigint_called();
 #define MAX_LINES_TO_TRY_TO_LOAD		10000
 #define MAX_FILES_TO_LOAD				2000
 #define MIN_FREE_MEM_KB					(100 * 1000)	// 100 MB
+	memorize_cur_file_pos_null(file_pos_str);
+	first_line();
+	clear_sigint_signaled();
 	for (lines = 0; lines < MAX_LINES_TO_TRY_TO_LOAD; lines++) {
-		if (is_handler_sigint_called())
+		if (is_sigint_signaled())
 			break;
 		if (line_data_len(CEPBV_CL)) {
 			if (CEPBV_CL->data[0] != '#') {
@@ -255,7 +268,6 @@ PRIVATE int load_files_in_string(const char *string,
 	int files;
 	const char *ptr;
 
-////flf_d_printf("[%s]\n", string);
 	for (field_idx = 0; files_loaded < files_to_load; field_idx++) {
 		ptr = skip_n_file_names(string, field_idx);
 		if (*ptr == '\0')
@@ -266,9 +278,7 @@ PRIVATE int load_files_in_string(const char *string,
 			open_on_err = 0;
 			msg_on_err = 0;
 		}
-////flf_d_printf("files_loaded: %d\n", files_loaded);
 	}
-////flf_d_printf("files_loaded: %d\n", files_loaded);
 	return files_loaded;
 }
 int load_file_in_string(const char *string,
@@ -333,7 +343,7 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 	char abs_path[MAX_PATH_LEN+1];
 
 	get_abs_path(file_name, abs_path);
-	if (switch_cep_buf_to_file_name(abs_path)) {
+	if (switch_cep_buf_by_file_name(abs_path)) {
 		// already loaded
 		return 1;
 	}
@@ -346,18 +356,18 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 	return 1;
 }
 //-----------------------------------------------------------------------------
-int switch_cep_buf_to_file_name(const char *file_name)
+int switch_cep_buf_by_file_name(const char *file_name)
 {
 	char abs_path[MAX_PATH_LEN+1];
 
 	get_abs_path(file_name, abs_path);
-	return switch_cep_buf_to_abs_path(abs_path);
+	return switch_cep_buf_by_abs_path(abs_path);
 }
-int switch_cep_buf_to_abs_path(const char *abs_path)
+int switch_cep_buf_by_abs_path(const char *abs_path)
 {
 	be_buf_t *buf;
 
-	buf = get_edit_buf_from_abs_path(abs_path);
+	buf = get_edit_buf_by_abs_path(abs_path);
 	if (buf) {
 		set_cep_buf(buf);
 		return 1;	// switched
@@ -367,16 +377,16 @@ int switch_cep_buf_to_abs_path(const char *abs_path)
 //-----------------------------------------------------------------------------
 int switch_cep_buf_to_top(void)
 {
-	if (IS_NODE_BOT_ANCH(EDIT_BUFS_TOP_NODE))
+	if (IS_NODE_ANCH(EDIT_BUFS_TOP_BUF))
 		return 0;
-	set_cep_buf(EDIT_BUFS_TOP_NODE);
+	set_cep_buf(EDIT_BUFS_TOP_BUF);
 	return 1;
 }
 int switch_cep_buf_to_bot(void)
 {
-	if (IS_NODE_TOP_ANCH(EDIT_BUFS_BOT_NODE))
+	if (IS_NODE_ANCH(EDIT_BUFS_BOT_BUF))
 		return 0;
-	set_cep_buf(EDIT_BUFS_BOT_NODE);
+	set_cep_buf(EDIT_BUFS_BOT_BUF);
 	return 1;
 }
 int switch_cep_buf_to_prev(int beep_at_end, int goto_bottom)
@@ -388,7 +398,7 @@ int switch_cep_buf_to_prev(int beep_at_end, int goto_bottom)
 	}
 	set_cep_buf(NODE_PREV(get_cep_buf()));
 	if (goto_bottom) {
-		CEPBV_CL = CUR_EDIT_BUF_BOT_NODE;
+		CEPBV_CL = CUR_EDIT_BUF_BOT_LINE;
 	}
 	return 1;
 }
@@ -401,7 +411,7 @@ int switch_cep_buf_to_next(int beep_at_end, int goto_top)
 	}
 	set_cep_buf(NODE_NEXT(get_cep_buf()));
 	if (goto_top) {
-		CEPBV_CL = CUR_EDIT_BUF_TOP_NODE;
+		CEPBV_CL = CUR_EDIT_BUF_TOP_LINE;
 	}
 	return 1;
 }
@@ -448,7 +458,6 @@ PRIVATE const char *skip_n_file_names(const char *line, int field_idx)
 	const char *ptr;
 	int field_cnt;
 
-////flf_d_printf("[%s], %d\n", line, field_idx);
 	ptr = line;
 	for (field_cnt = 0; ; field_cnt++) {
 		ptr = skip_to_file_path(ptr);
@@ -462,7 +471,6 @@ PRIVATE const char *skip_n_file_names(const char *line, int field_idx)
 			// not progressed
 			break;
 	}
-////flf_d_printf("file: [%s]\n", ptr);
 	return ptr;
 }
 
@@ -512,7 +520,6 @@ char *memorize_cur_file_pos_null(char *buffer)
 {
 	buffer = buffer ? buffer : memorized_file_pos_str;
 	mk_cur_file_pos_str(buffer);
-////flf_d_printf("buffer: [%s]\n", buffer);
 	return buffer;
 }
 
@@ -520,12 +527,12 @@ int recall_cur_file_pos_null(const char *str)
 {
 	char file_path[MAX_PATH_LEN+1];
 
-	if (switch_cep_buf_to_file_name(get_file_line_col_from_str_null(
-	 str, file_path, NULL, NULL)) == 0) {
-		return 0;
+	if (get_file_line_col_from_str_null(str, file_path, NULL, NULL)) {
+		if (switch_cep_buf_by_file_name(file_path) == 0) {
+			return 0;
+		}
 	}
-	goto_str_line_col_in_cur_buf(str);
-	return 1;
+	return goto_str_line_col_in_cur_buf(str);
 }
 int goto_str_line_col_in_cur_buf(const char *str)
 {
@@ -552,7 +559,6 @@ int goto_line_col_in_cur_buf(int line_num, int col_num)
 	// col_num is column in view
 	CEPBV_CLBI = byte_idx_from_col_idx(CEPBV_CL->data, col_num-1, CHAR_LEFT, NULL);
 #endif // CURSOR_POS_COLUMN
-////flf_d_printf("line_num: %d, col_num: %d ==> byte_idx: %d\n", line_num, col_num, CEPBV_CLBI);
 	return 2;
 }
 //-----------------------------------------------------------------------------
@@ -596,12 +602,11 @@ char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col
 PRIVATE int get_file_line_col_from_str(const char *str, char *file_path,
  int *line_num_, int *col_num_);
 
-const char *get_file_line_col_from_str_null(const char *str, char *file_path,
+int get_file_line_col_from_str_null(const char *str, char *file_path,
  int *line_num, int *col_num)
 {
 	str = str ? str : memorized_file_pos_str;
-	get_file_line_col_from_str(str, file_path, line_num, col_num);
-	return file_path;
+	return get_file_line_col_from_str(str, file_path, line_num, col_num);
 }
 // /home/user/tools/be/src/editorgoto.c|400:10
 //  => "/home/user/tools/be/src/editorgoto.c", 400, 10
@@ -644,7 +649,6 @@ no_file_path:;
 		*line_num_ = line_num;
 	if (col_num_)
 		*col_num_ = col_num;
-////flf_d_printf("str:[%s] ==> path:[%s] line:%d col:%d\n", str, file_path, line_num, col_num);
 	return strnlen(file_path, MAX_PATH_LEN);
 }
 

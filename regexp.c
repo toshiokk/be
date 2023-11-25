@@ -60,7 +60,6 @@ int search_str_in_line(search_t *search, matches_t *matches,
 		 regexp_matches_end_idx(&matches->regexp_matches, 0));
 	}
 #endif // ENABLE_REGEX
-////flf_d_printf("haystack: [%s], needle: [%s], dir: %d ==> match_len: %d\n", &haystack[byte_idx], needle, search_dir, match_len);
 	return match_len;	// >0: match
 }
 
@@ -284,20 +283,17 @@ void test_regexp(void)
 
 	needle = "\\t";
 	haystack = "aaa\t\nbbbtnccc";
-	////regexp_init(&regexp);
 	ret = regexp_search(&regexp, &regexp_matches, needle, haystack, 0, REG_NONE, REG_NONE, 3);
 	flf_d_printf("ret: %d\n", ret);
 	regexp_dump_matches(&regexp, &regexp_matches, haystack);
 
 	needle = "\\n";
 	haystack = "aaa\t\nbbbtnccc";
-	////regexp_init(&regexp);
 	ret = regexp_search(&regexp, &regexp_matches, needle, haystack, 0, REG_NONE, REG_NONE, 3);
 	flf_d_printf("ret: %d\n", ret);
 	regexp_dump_matches(&regexp, &regexp_matches, haystack);
 
 	// test replacement in sub-expression
-	////regexp_init(&regexp);
 // REGEX: "abc(def|ghi)(jkl|mno)pqr" REPLACE-TO: "123\\2\\1456"
 // INPUT-TEXT: "abcghijklpqr" OUTPUT-TEXT: "123jklghi456"
 	needle = "abc(def|ghi)(jkl|mno)pqr";
@@ -366,7 +362,6 @@ int regexp_search(regexp_t *regexp, regexp_matches_t *regexp_matches, const char
 }
 int regexp_compile(regexp_t *regexp, const char *needle, int cflags)
 {
-////flf_d_printf("[%s]\n", needle);
 	if (regexp->is_compiled) {
 		if (strcmp(needle, regexp->needle_compiled) != 0
 		 || cflags != regexp->cflags_compiled) {
@@ -395,7 +390,6 @@ int regexp_search_compiled(regexp_t *regexp, const char *haystack, int byte_idx,
 	if (regexp->is_compiled < 2) {
 		return -1;	// compilation error
 	}
-////flf_d_printf("[%s]\n", regexp->needle_compiled);
 	if ((ret = regexec_n(&regexp->regex_compiled, &haystack[byte_idx],
 	 max_matches, regexp_matches->matches,
 	 eflags | (byte_idx == 0 ? REG_NONE : REG_NOTBOL))) == 0) {

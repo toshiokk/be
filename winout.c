@@ -45,9 +45,9 @@ void win_init_win_size(void)
 
 ///int win_show_win_size(void)
 ///{
-////* Minimum editor window rows required to work properly */
+///	/* Minimum editor window rows required to work properly */
 ///#define MIN_WIN_LINES		(TITLE_LINES+5+STATUS_LINES+MAX_KEY_LINES)	// 10
-////* Minimum editor window cols required to work properly */
+///	/* Minimum editor window cols required to work properly */
 ///#define MIN_WIN_COLS		40
 ///	if (tio_get_lines() < MIN_WIN_LINES
 ///	 || tio_get_columns() < MIN_WIN_COLS) {
@@ -240,7 +240,6 @@ void sub_win_clear_lines(int line_1, int line_2)
 }
 void sub_win_output_string(int yy, int xx, const char *string, int bytes)
 {
-////flf_d_printf("(%d, %d)%d[%s]\n", yy, xx, bytes, string);
 	win_output_string(cur_win, yy, xx, string, bytes);
 }
 //-----------------------------------------------------------------------------
@@ -271,7 +270,6 @@ PRIVATE void win_clear_lines(win_rect_t *win, int line_1, int line_2)
 	if (line_2 < 0) {
 		line_2 = line_1 + 1;
 	}
-////flf_d_printf("win_clear_lines(%d, %d)\n", line_1, line_2);
 	for (yy = line_1; yy < line_2; yy++) {
 		win_output_string(win, yy, 0, tio_blank_line(), win_get_columns(win));
 	}
@@ -292,7 +290,6 @@ PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *stri
 	if (bytes < 0) {
 		bytes = byte_idx_from_col_idx(string, space_columns, CHAR_LEFT, NULL);
 	}
-////flf_d_printf("(%d, %d)%d[%s]\n", yy, xx, bytes, string);
 	tio_output_string(yy, xx, string, bytes);
 }
 

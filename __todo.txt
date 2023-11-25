@@ -1,6 +1,13 @@
 #### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: hard, v: done)
 
-[H] sofisticate filer_do_next mechanism
+[v] change current directory in editor
+[] change current directory in editor and show current direcotory
+[] change current directory in editor and run text line
+[] How to manage a state of 0 node
+[] How can I avoid NULL pointer crash ?
+[ ] show tree and select file/directory
+[v] sofisticate filer_do_next mechanism
+[ ] sofisticate editor_quit mechanism
 
 [v] check memory leak
   [v] fix memory leak

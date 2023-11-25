@@ -470,7 +470,6 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair)
 	}
 	search__.direction = reverse_pair;
 	SET_APPMD(ed_USE_REGEXP);
-////flf_d_printf("needle: [%s], %d\n", needle, search_dir);
 
 	set_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);
 	blank_status_bar();
@@ -482,10 +481,8 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair)
 
 	skip_here = 0;
 	for (match_len = 0, depth = 0, safe_cnt = 0; safe_cnt < MAX_BRACKETS_SEARCH; safe_cnt++) {
-////flf_d_printf("depth: %d\n", depth);
 		match_len = search_bracket_in_buffer(&line, &byte_idx,
 		 char_under_cursor, needle, search_dir, skip_here, FORWARD_DIR, &depth, NULL);
-////flf_d_printf("depth: %d\n", depth);
 		// repeat until the counterpart bracket found
 		if ((depth <= 0) || (MAX_BRACKET_NESTINGS <= depth) || (match_len == 0)) {
 			// counterpart bracket found, nesting too deep or no bracket found
@@ -531,9 +528,7 @@ int setup_bracket_search(char char_under_cursor, int reverse_pair, char *needle)
 	int offset;
 	int search_dir;			// search direction (FORWARD_SEARCH / BACKWARD_SEARCH)
 
-////flf_d_printf("char_under_cursor: [%s][%c]\n", brackets, char_under_cursor);
 	if ((ptr = strchr__(brackets, char_under_cursor)) == NULL) {
-////flf_d_printf("char_under_cursor: [%s][%c]\n", brackets, char_under_cursor);
 		return 0;
 	}
 	offset = ptr - brackets;
@@ -591,8 +586,6 @@ int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
  char char_under_cursor, const char *needle, int search_dir, int skip_here, int depth_increase,
  int *ptr_depth, int *prev_depth)
 {
-////_D_(line_dump_byte_idx(*ptr_line, *ptr_byte_idx))
-////flf_d_printf("needle: {%s}, search_dir: %d, skip_here: %d\n", needle, search_dir, skip_here);
 	int match_len = search_needle_in_buffer(ptr_line, ptr_byte_idx,
 	 needle, search_dir, CASE_SENSITIVE, skip_here, INNER_BUFFER_SEARCH);
 	if (match_len > 0) {
@@ -611,9 +604,6 @@ int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 			}
 		}
 	}
-////_D_(line_dump_byte_idx(*ptr_line, *ptr_byte_idx))
-////flf_d_printf("match_len: %d\n", match_len);
-////flf_d_printf("match_len: %d, depth: %d\n", match_len, *ptr_depth);
 	return match_len;
 }
 
@@ -638,10 +628,8 @@ void prepare_colors_for_bracket_hl()
 	colors_for_bracket_hl[color_idx].fgc = fgc_sel;
 	colors_for_bracket_hl[color_idx].bgc = bgc_sel;
 	color_idx++;
-////flf_d_printf("color_idx/fgc/bgc: %d/%d/%d\n", color_idx, fgc_sel, bgc_sel);
 	for (char fgc = 0; fgc < COLORS16 && color_idx < COLORS_FOR_BRACKET_HL; fgc++) {
 		if (fgc != (bgc_sel2 % COLORS8)) {	// Because there is no light color in BGC
-////flf_d_printf("color_idx/fgc/bgc: %d/%d/%d\n", color_idx, fgc, bgc_sel2);
 			colors_for_bracket_hl[color_idx].fgc = fgc;
 			colors_for_bracket_hl[color_idx].bgc = bgc_sel2;
 			color_idx++;
@@ -744,7 +732,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 					// but not update pointers in buffer
 					ptr_line = &(CEPBV_CL);
 					ptr_byte_idx = &(CEPBV_CLBI);
-					line = CUR_EDIT_BUF_BOT_NODE;
+					line = CUR_EDIT_BUF_BOT_LINE;
 					byte_idx = line_data_len(line);
 				} else {
 					break;
@@ -775,7 +763,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 					// but not update pointers in buffer
 					ptr_line = &(CEPBV_CL);
 					ptr_byte_idx = &(CEPBV_CLBI);
-					line = CUR_EDIT_BUF_TOP_NODE;
+					line = CUR_EDIT_BUF_TOP_LINE;
 					byte_idx = 0;
 				} else {
 					break;

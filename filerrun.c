@@ -72,10 +72,11 @@ int dof_exec_command_with_file(void)
 		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	} else {
 		begin_fork_exec_repeat();
+		clear_sigint_signaled();
 		for (file_idx = select_and_get_first_file_idx_selected();
 		 file_idx >= 0;
 		 file_idx = get_next_file_idx_selected(file_idx)) {
-			if (is_handler_sigint_called())
+			if (is_sigint_signaled())
 				break;
 			// replace "{}" with filename
 			// Ex. "cp -auv {} dir/{}" ==> "cp -auv filename dir/filename"
@@ -261,51 +262,13 @@ flf_d_printf("command_str [%s]\n", command_str);
 	return 0;
 }
 
-////PRIVATE int dof_run_cmd_(char *cmd_file);
-
-////int dof_run_cmd_1(void)
-////{
-////	return dof_run_cmd_(BECMD "1");
-////}
-////int dof_run_cmd_2(void)
-////{
-////	return dof_run_cmd_(BECMD "2");
-////}
-////int dof_run_cmd_3(void)
-////{
-////	return dof_run_cmd_(BECMD "3");
-////}
-////int dof_run_cmd_4(void)
-////{
-////	return dof_run_cmd_(BECMD "4");
-////}
-
-////PRIVATE int dof_run_cmd_(char *cmd_file)
-////{
-////	int file_idx;
-////	char *file_name;
-////
-////	file_idx = get_cur_filer_view()->cur_sel_idx;
-////	file_name = get_cur_filer_view()->file_list[file_idx].file_name;
-////	if (is_app_list_mode()) {
-////		// do_filer_cmd -> FILER_DO_ENTER_FILE_PATH
-////		filer_do_next = FILER_DO_ENTER_FILE_PATH;
-////		return 0;
-////	}
-////	if (S_ISREG(get_cur_filer_view()->file_list[file_idx].st.st_mode)) {
-////		fork_exec_once(SEPARATE1, PAUSE0, cmd_file, file_name, 0);
-////		return 0;
-////	}
-////	return 0;
-////}
-
 //-----------------------------------------------------------------------------
 
 void begin_fork_exec_repeat(void)
 {
 	restore_term_for_shell();
 	clear_fork_exec_counter();
-	clear_handler_sigint_called();
+	clear_sigint_signaled();
 }
 void end_fork_exec_repeat(void)
 {

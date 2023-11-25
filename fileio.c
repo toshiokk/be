@@ -43,7 +43,7 @@ int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_er
 		return lines;
 	}
 	append_magic_line();
-	CEPBV_CL = CUR_EDIT_BUF_TOP_NODE;
+	CEPBV_CL = CUR_EDIT_BUF_TOP_LINE;
 	renumber_cur_buf_from_top();
 	update_cur_buf_crc();
 
@@ -65,7 +65,8 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 	if (is_strlen_not_0(full_path)) {
 		ret = stat(full_path, &fileinfo);
 	}
-///flf_d_printf("[%s], ret %d\n", full_path, ret);
+///
+flf_d_printf("[%s], ret %d\n", full_path, ret);
 	if (ret < 0) {
 		// New file
 		if (open_on_err == 0) {
@@ -104,7 +105,6 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 	ret = load_file_into_cur_buf__(full_path, 1, msg_on_err);
 
 	if (ret < 0) {
-///_FLF_
 		free_cur_edit_buf();
 		return -1;
 	}
@@ -119,7 +119,6 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file
 	const char *nkf_options;
 #endif // USE_NKF
 
-////flf_d_printf("full_path: [%s]\n", full_path);
 #ifdef USE_NKF
 	if (GET_APPMD(ed_USE_NKF)) {
 		if (CUR_EBUF_STATE(buf_ENCODE) == ENCODE_ASCII) {
@@ -252,12 +251,14 @@ PRIVATE int load_fp_into_cur_buf(FILE *fp)
 	int file_format_idx = 0;	// 0 = nix, 1 = Mac, 2 = DOS
 	int chr_int;			// read character
 	int prev_chr = '\0';	// previous read character
-	char buf[MAX_EDIT_LINE_LEN+1];
+	char line_buf[MAX_EDIT_LINE_LEN+1];
 	int len;
 	int lines_read = 0;
+	be_line_t *line;
 
+	line = CUR_EDIT_BUF_BOT_ANCH;
 	len = 0;
-	buf[len] = '\0';
+	line_buf[len] = '\0';
 	fgetc_buffered_clear();
 	for ( ; ; ) {
 		chr_int = fgetc_buffered(fp);
@@ -275,22 +276,22 @@ PRIVATE int load_fp_into_cur_buf(FILE *fp)
 			goto append_line;
 		default:
 			if (len >= MAX_EDIT_LINE_LEN) {
-				append_string_to_cur_edit_buf(buf);
+				line_insert_with_string_len_before(line, line_buf, len);
 				lines_read++;
 				len = 0;
-				buf[len] = '\0';
+				line_buf[len] = '\0';
 			}
-			buf[len++] = chr_int;
-			buf[len] = '\0';
+			line_buf[len++] = chr_int;
+			line_buf[len] = '\0';
 			break;
 		case EOF:
 			if (len == 0)
 				break;
 append_line:;
-			append_string_to_cur_edit_buf(buf);
+			line_insert_with_string_len_before(line, line_buf, len);
 			lines_read++;
 			len = 0;
-			buf[len] = '\0';
+			line_buf[len] = '\0';
 			break;
 		}
 		prev_chr = chr_int;
@@ -310,8 +311,6 @@ append_line:;
 		set_eol(EOL_DOS);
 		break;
 	}
-////flf_d_printf("file_format_idx: %d\n", file_format_idx);
-////flf_d_printf("CUR_EBUF_STATE(buf_EOL) => [%s]\n", buf_eol_str(get_cep_buf()));
 	return lines_read;
 }
 
@@ -606,7 +605,7 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 	long size;
 
 	lines_written = 0;
-	for (line = CUR_EDIT_BUF_TOP_NODE; IS_NODE_INT(line); line = NODE_NEXT(line)) {
+	for (line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		if (IS_NODE_BOT(line) && line_data_len(line) == 0)
 			break;			// do not output the magic line
 		line_len = line_data_len(line);
@@ -638,7 +637,6 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 PRIVATE int files_loaded = 0;
 void clear_files_loaded(void)
 {
-///_FLF_
 	files_loaded = 0;
 }
 int add_files_loaded(int files)

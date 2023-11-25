@@ -92,11 +92,24 @@ char *get_last_slash(char *path)
 		ptr = path;
 	return ptr;
 }
-////int is_path_only_file_name(const char *path)
-////{
-////	return strchr(path, '/') == NULL;
-////}
+///int is_path_only_file_name(const char *path)
+///{
+///	return strchr(path, '/') == NULL;
+///}
 
+int get_file_type_by_file_path(const char *file_path)
+{
+	if (is_path_exist(file_path) == 0) {
+		return -1;
+	}
+	if (is_path_dir(file_path) > 0) {
+		return 1;	// directory
+	} else
+	if (is_path_regular_file(file_path) > 0) {
+		return 2;	// file
+	}
+	return 0;
+}
 int is_path_exist(const char *path)
 {
 	struct stat st;
@@ -142,7 +155,6 @@ int is_dir_readable(const char *path)
 {
 	DIR *dir;
 
-////flf_d_printf("path: %s\n", path);
 	dir = opendir(path);
 	// If dir is NULL, don't call closedir()
 	if (dir)
@@ -402,38 +414,32 @@ PRIVATE char *normalize_full_path__(char *abs_path, char *parent, char *child)
 {
 	char *grandchild;
 
-////flf_d_printf(">[%s], [%s], [%s]\n", abs_path, parent, child);
 	if (*parent == '/')
 		parent++;
 	if (*child == '/')
 		child++;
 	for ( ; is_file_path_char(child); ) {
-////flf_d_printf("=[%s], [%s], [%s]\n", abs_path, parent, child);
 		if (strcmp(child, ".") == 0) {
 			// "/dir1/." ==> "/dir1/"
 			// "/."      ==> "/"
 			strlcpy__(child, child+1, MAX_PATH_LEN);
-////flf_d_printf("*[%s]\n", parent);
 		} else
 		if (strlcmp__(child, "./") == 0) {
 			// "/dir1/./????" ==> "/dir1/????"
 			// "/./????"      ==> "/????"
 			strlcpy__(child, child+2, MAX_PATH_LEN);
-////flf_d_printf("*[%s]\n", parent);
 			child = parent;
 		} else
 		if (strcmp(child, "..") == 0) {
 			// "/dir1/.." ==> "/"
 			// "/.."      ==> "/"
 			strlcpy__(parent, child+2, MAX_PATH_LEN);
-////flf_d_printf("*[%s]\n", parent);
 			child = parent;
 		} else
 		if (strlcmp__(child, "../") == 0) {
 			// "/dir1/../????" ==> "/????"
 			// "/../????"      ==> "/????"
 			strlcpy__(parent, child+3, MAX_PATH_LEN);
-////flf_d_printf("*[%s]\n", parent);
 			child = parent;
 			if (abs_path+1 < child) {
 				// not string top
@@ -449,11 +455,9 @@ PRIVATE char *normalize_full_path__(char *abs_path, char *parent, char *child)
 				// "/dir1/../????"
 				//   ^   ^
 				child = normalize_full_path__(abs_path, child, grandchild);	// recursive call
-////flf_d_printf("-[%s], [%s], [%s]\n", abs_path, parent, child);
 			}
 		}
 	}
-////flf_d_printf("<[%s]\n", child);
 	return child;
 }
 
@@ -553,7 +557,6 @@ char *realpath__(const char *path, char *buf, int buf_len)
 	} else {
 		strlcpy__(buf, buffer, buf_len);
 	}
-////flf_d_printf("realpath__([%s]) ==> [%s]\n", path, buf);
 	return buf;
 }
 #else // HAVE_REALPATH

@@ -58,7 +58,7 @@ int read_rc_file(const char *rc_file_name)
 	if (read_rc_path(rc_file_path, 0) == 0)
 		return 0;
 
-////#define SYSCONFDIR		"/usr/local/etc"
+///#define SYSCONFDIR		"/usr/local/etc"
 #ifdef SYSCONFDIR
 	// read /usr/local/etc/berc
 	snprintf_(rc_file_path, MAX_PATH_LEN+1, "%s/%s", SYSCONFDIR, rc_file_name);
@@ -202,8 +202,7 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 ///	free_file_types();
 ///#endif // ENABLE_SYNTAX
 
-///
-flf_d_printf("Attempting to read rc file %s ...\n", rc_file_path);
+///flf_d_printf("Attempting to read rc file %s ...\n", rc_file_path);
 	rc_line_num = 0;
 	if ((fp = fopen(rc_file_path, "r")) == NULL) {
 ///flf_d_printf("No rc file %s\n", rc_file_path);
@@ -496,8 +495,7 @@ PRIVATE int parse_key_names(key_code_t *keys, int max_keys_bind)
 	for (key_idx = 0; key_idx < max_keys_bind; ) {
 		if (SKIP_SPACE(rc_line_ptr))
 			break;
-///
-flf_d_printf("parsing: %s\n", rc_line_ptr);
+///flf_d_printf("parsing: %s\n", rc_line_ptr);
 		if (parse_word(key_name, MAX_KEY_NAME_LEN)) {
 			return 1;
 		}
@@ -659,7 +657,6 @@ PRIVATE int add_file_type(const char *file_type_name, const char *regexp_file_na
 	return 0;
 
 add_file_type_err:;
-///_FLF_
 	regexp_free(file_type->regexp);
 	file_type->regexp = NULL;
 	return 1;
@@ -669,8 +666,6 @@ PRIVATE int add_color_syntax(const char *regexp_start, const char *regexp_end, i
 {
 	color_syntax_t *clr_syntax;
 
-////flf_d_printf("adding color syntax: [%s] [%s] %d %d %d %d\n",
-//// regexp_start, regexp_end, fgc, bgc, reverse, bold);
 	if (strlen(regexp_start) == 0)
 		return 1;
 
@@ -774,7 +769,6 @@ void dump_file_type(const file_type_t *file_type, int syntax)
 {
 	color_syntax_t *clr_syntax;
 
-///_FLF_
 	if (file_type == NULL) {
 		flf_d_printf("file_type: NULL\n");
 	}
@@ -790,14 +784,12 @@ void dump_file_type(const file_type_t *file_type, int syntax)
 }
 void dump_color_syntax(const color_syntax_t *clr_syntax)
 {
-_FLF_
 	flf_d_printf("%p: [%s]-[%s] %d/%d ->%p\n",
 	 clr_syntax,
 	 clr_syntax->regexp_start->needle_compiled,
 	 clr_syntax->regexp_end ? clr_syntax->regexp_end->needle_compiled : "",
 	 clr_syntax->color.bgc, clr_syntax->color.fgc,
 	 clr_syntax->next);
-_FLF_
 }
 #endif // ENABLE_DEBUG
 

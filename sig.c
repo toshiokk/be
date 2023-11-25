@@ -83,18 +83,21 @@ void signal_clear(void)
 #endif
 }
 
-PRIVATE int handler_sigint_called = 0;
-void clear_handler_sigint_called(void)
+PRIVATE int sigint_signaled = 0;
+void clear_sigint_signaled(void)
 {
-	handler_sigint_called = 0;
+	sigint_signaled = 0;
 }
 RETSIGTYPE handler_sigint(int signal)
 {
-	handler_sigint_called = 1;
+	sigint_signaled = 1;
 }
-int is_handler_sigint_called(void)
+int is_sigint_signaled(void)
 {
-	return handler_sigint_called;
+	if (input_key_break()) {
+		return 1;
+	}
+	return sigint_signaled;
 }
 
 RETSIGTYPE handler_sighup(int signal)
@@ -146,44 +149,10 @@ void clear_sigwinch_signaled(void)
 RETSIGTYPE handle_sigwinch(int signal)
 {
 	sigwinch_signaled = 1;
-///	ioctl_get_win_size();
 }
 int is_sigwinch_signaled(void)
 {
 	return sigwinch_signaled;
 }
-
-///int ioctl_ws_col = 0;
-///int ioctl_ws_row = 0;
-///int ioctl_get_win_size(void)
-///{
-///	const char *tty;
-///	int fd;
-///	int result = 0;
-///	struct winsize winsz;
-///
-///	tty = ttyname(0);
-///	if (tty == NULL) {
-///		ioctl_ws_col = -1;
-///		return -1;
-///	}
-///	fd = open(tty, O_RDWR);
-///	if (fd < 0) {
-///		ioctl_ws_col = -2;
-///		return -2;
-///	}
-///	result = ioctl(fd, TIOCGWINSZ, &winsz);
-///	close(fd);
-///	if (result < 0) {
-///		ioctl_ws_col = -3;
-///		return -3;
-///	}
-///	// screen size gotten.
-///	// in some cases ncurses has already updated them but not in all cases.
-///	ioctl_ws_col = winsz.ws_col;
-///	ioctl_ws_row = winsz.ws_row;
-//////flf_d_printf("cols: %d, lines: %d\n", ioctl_ws_col, ioctl_ws_row);
-///	return 0;
-///}
 
 // End of sig.c

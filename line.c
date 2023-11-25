@@ -29,14 +29,15 @@ be_line_t *line_create(void)
 
 	_mlc_set_caller
 	line = (be_line_t *)malloc__(sizeof(be_line_t));
-	return line_init(line);
+	_mlc_set_caller
+	return line_init(line, NULL);
 }
-be_line_t *line_init(be_line_t *line)
+be_line_t *line_init(be_line_t *line, char *initial_data)
 {
 	// initialize be_line_t
 	line->prev = NULL;
 	line->next = NULL;
-	line->data = NULL;
+	line->data = initial_data;
 	line->size = 0;
 	line->line_num = 0;
 	line->buf_size = 0;
@@ -51,6 +52,7 @@ be_line_t *line_create_with_string_len(const char *string, len_t len)
 	be_line_t *new_line;
 
 	new_line = line_create();
+	_mlc_set_caller
 	return line_set_string_len(new_line, string, len);
 }
 be_line_t *line_set_string(be_line_t *line, const char *string)
@@ -76,9 +78,8 @@ be_line_t *line_set_string_len(be_line_t *line, const char *string, len_t len)
 		len = byte_idx_from_byte_idx(string, LIM_MAX(len, MAX_EDIT_LINE_LEN));
 	}
 	line->size = len + 1;
-	_mlc_set_caller
+///	_mlc_set_caller
 	line->data = char_remalloc(line->data, len + 1);
-flf_d_printf("[%s]\n", string);
 	strlcpy__(line->data, string, len);	// copy string
 	return line;			// return line
 }
@@ -88,12 +89,24 @@ char *line_get_string(be_line_t *line)
 }
 void line_free(be_line_t *line)
 {
-	if (line) {
-		if (line->data) {
-			FREE_CLR_PTR(line->data);
-		}
-		free__(line);
+	if (line == NULL) {
+		_PROGERR_
+		return;
 	}
+	line_free_data(line);	// only free data (good for top/bottom_anchor)
+	free__(line);
+}
+void line_free_data(be_line_t *line)	// only free data (good for top/bottom_anchor)
+{
+	if (line == NULL) {
+		_PROGERR_
+		return;
+	}
+	if (line->data == NULL) {
+		_PROGERR_
+		return;
+	}
+	FREE_CLR_PTR(line->data);
 }
 
 // This is deep-copy.
@@ -108,6 +121,7 @@ be_line_t *line_copy(be_line_t *dest, be_line_t *src)
 	dest->prev = NULL;
 	dest->next = NULL;
 	dest->data = NULL;
+	_mlc_set_caller
 	return line_set_string(dest, src->data);
 }
 
@@ -149,12 +163,14 @@ be_line_t *line_link(be_line_t *prev, be_line_t *next)
 
 be_line_t *line_unlink_free(be_line_t *line)
 {
-	be_line_t *next_line;
-
-	next_line = NODE_NEXT(line);
-	line_unlink(line);
-	line_free(line);
-	return next_line;	// return the next line
+	be_line_t *next = NODE_NEXT(line);
+	if (IS_NODE_INT(line)) {
+		line_unlink(line);
+		line_free(line);
+	} else {
+		progerr_printf("This buffer is NULL\n");
+	}
+	return next;	// return the next line
 }
 // Unlink a line from the rest of the be_line_t
 be_line_t *line_unlink(be_line_t *line)
@@ -171,14 +187,6 @@ be_line_t *line_unlink(be_line_t *line)
 	return line;
 }
 
-be_line_t *line_concat(be_line_t *line, concat_prev_next_t prev_next)
-{
-	if (prev_next == WITH_PREV) {
-		return line_concat_with_prev(line);
-	} else {
-		return line_concat_with_next(line);
-	}
-}
 // concatenate the line with the previous line
 //[before]
 //  aaaa			This line is freed.
@@ -245,28 +253,15 @@ be_line_t *line_replace_string(be_line_t *line, int byte_idx, int delete_len,
 
 	strlcpy__(buffer, line->data, MAX_EDIT_LINE_LEN);
 	replace_str(buffer, MAX_EDIT_LINE_LEN, byte_idx, delete_len, string, insert_len);
+	_mlc_set_caller
 	return line_set_string(line, buffer);
-}
-//-----------------------------------------------------------------------------
-be_line_t *line_insert_with_string(be_line_t *line, insert_before_after_t before_after,
- const char *string)
-{
-	return line_insert_with_string_len(line, before_after, string, -1);
-}
-be_line_t *line_insert_with_string_len(be_line_t *line, insert_before_after_t before_after,
- const char *string, len_t len)
-{
-	be_line_t *new_line;
-
-	new_line = line_create_with_string_len(string, len);
-	line_insert(line, new_line, before_after);
-	return new_line;			// return inserted line
 }
 //-----------------------------------------------------------------------------
 be_line_t *line_separate(be_line_t *line, int byte_idx, insert_before_after_t before_after)
 {
 	be_line_t *new_line;
 
+	_mlc_set_caller
 	if (before_after == INSERT_BEFORE) {
 		// insert before
 		// aaaa^BBBBBB
@@ -289,6 +284,26 @@ be_line_t *line_separate(be_line_t *line, int byte_idx, insert_before_after_t be
 	return new_line;			// return newly created(inserted) line
 }
 //-----------------------------------------------------------------------------
+be_line_t *line_insert_with_string(be_line_t *line, insert_before_after_t before_after,
+ const char *string)
+{
+	return line_insert_with_string_len(line, before_after, string, -1);
+}
+be_line_t *line_insert_with_string_len(be_line_t *line, insert_before_after_t before_after,
+ const char *string, len_t len)
+{
+	be_line_t *new_line;
+
+	new_line = line_create_with_string_len(string, len);
+	line_insert(line, new_line, before_after);
+	return new_line;			// return inserted line
+}
+void line_insert_with_string_len_before(be_line_t *line, const char *string, len_t len)
+{
+	line_insert_before(line, line_create_with_string_len(string, len));
+}
+
+//-----------------------------------------------------------------------------
 int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 {
 	int line_num = 0;
@@ -306,8 +321,12 @@ int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 	for ( ; line && IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		line->line_num = ++line_num;
 		if (line->size <= 0) {
-			if (line->data)
+			if (line->data == NULL) {
+				_PROGERR_
+				line->size = 0;
+			} else {
 				line->size = line_data_len(line) + 1;
+			}
 		}
 		buf_size += line->size;
 		line->buf_size = buf_size;
@@ -318,20 +337,10 @@ int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 	return line_num;
 }
 
-int line_count_lines(be_line_t *line)
-{
-	int count;
-
-	for (count = 0; IS_NODE_INT(line); count++) {
-		line = NODE_NEXT(line);
-	}
-	return count;
-}
-
 const be_line_t *line_get_top_anch(const be_line_t *line)
 {
-	for ( ; IS_NODE_INT(line); ) {
-		line = NODE_PREV(line);
+	for ( ; IS_NODE_INT(line); line = NODE_PREV(line)) {
+		// nothing to do
 	}
 	return line;
 }

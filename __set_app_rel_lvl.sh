@@ -23,7 +23,7 @@ fi
 if [ "$1" = 2 ]; then
   grep_define $1
 fi
-if [ -z "$1" ]; then
+#if [ -z "$1" ]; then
   grep "define APP_REL_LVL" appdefs.h
-fi
+#fi
 } | grep APP_REL_LVL

@@ -149,13 +149,13 @@ color_syntax =";.*"                                     +magenta
 color_syntax <"/\*"  >"\*/"                             +magenta
 tab_size	8
 
-# HTML files
+# HTML file
 file_type "HTML" "\.(html|HTML|htm|HTM)$"
 color_syntax <"<"  >">"    +blue
 color_syntax ="&[^; \t]*;" +red
 tab_size	4
 
-# Verilog HDL files
+# Verilog HDL file
 file_type "VHDL" "\.(v|V)$"
 color_syntax ="\b(module|endmodule|always|posedge|negedge|assign)\b" +red
 color_syntax ="\b(parameter|input|output|inout|wire|reg)\b"          +red
@@ -179,6 +179,11 @@ file_type "MD" "\.(md|MD)$"
 color_syntax ="#" +blue
 color_syntax ="~~~" +blue
 tab_size	8
+
+# Protobuf definition file
+file_type "proto" "\.(proto|PROTO)$"
+color_syntax ="///.*"                                                +brown
+tab_size	4
 
 [key bindings]
 #include .emacs.berc

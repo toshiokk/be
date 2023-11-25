@@ -197,16 +197,18 @@ void free_ptr(void **ptr)
 
 void free__(void *ptr)
 {
-	if (ptr) {
-#ifdef MEMORY_LEAK_CHECKER
-		ptr -= sizeof(struct malloc_header);
-		struct malloc_header* mptr = (struct malloc_header*)ptr;
-		malloced_count--;
-		malloced_size -= mptr->size;
-		mlc_clear_caller(mptr->caller);
-#endif // MEMORY_LEAK_CHECKER
-		free(ptr);
+	if (ptr == NULL) {
+		_PROGERR_
+		return;
 	}
+#ifdef MEMORY_LEAK_CHECKER
+	ptr -= sizeof(struct malloc_header);
+	struct malloc_header* mptr = (struct malloc_header*)ptr;
+	malloced_count--;
+	malloced_size -= mptr->size;
+	mlc_clear_caller(mptr->caller);
+#endif // MEMORY_LEAK_CHECKER
+	free(ptr);
 }
 
 //-----------------------------------------------------------------------------
@@ -516,9 +518,6 @@ int cache_groups(void)
 			break;
 		gid_name_cache[num_groups].gid = grent->gr_gid;
 		strlcpy__(gid_name_cache[num_groups].grpname, grent->gr_name, GRP_NAME_LEN);
-////flf_d_printf("%2d:%4d:[%s]\n", num_groups,
-//// gid_name_cache[num_groups].gid,
-//// gid_name_cache[num_groups].grpname);
 	}
 	endgrent();
 	return num_groups;
