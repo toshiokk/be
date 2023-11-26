@@ -42,7 +42,7 @@ func_key_table_t filer_func_key_table[] = {
  { "Edit new file",       "Edit new file",                  'E', K_M_E,        KNA,
    XF, F_I(dof_edit_new_file), NULL },
  { "Enter file/dir",      "Enter file/directory",           K_ENTER, K_C_M,    KNA,
-   XF, F_I(dof_tap_file),   NULL },
+   XA, F_I(dof_tap_file),   NULL },
  { "Parent directory",    "Parent directory",               K_BS, K_C_H,       KNA,
    XA, F_I(dof_parent_directory), NULL },
 

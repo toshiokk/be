@@ -22,6 +22,17 @@
 #ifndef editormove_h
 #define editormove_h
 
+typedef enum {
+	EBS_NONE,
+	EBS_UP_AT_TOP,			// cursor UP requested at top of buffer
+	EBS_PAGEUP_AT_TOP,		// page   UP requested at top of buffer
+	EBS_DOWN_AT_BOTTOM,		// cursor down requested at bottom of buffer
+	EBS_PAGEDOWN_AT_BOTTOM,	// page   down requested at bottom of buffer
+} easy_buffer_switching_t;
+void clear_easy_buffer_switching();
+void count_easy_buffer_switching();
+int check_easy_buffer_switching(easy_buffer_switching_t top_bottom);
+
 int doe_left(void);
 int doe_right(void);
 

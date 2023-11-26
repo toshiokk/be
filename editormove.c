@@ -21,12 +21,58 @@
 
 #include "headers.h"
 
-typedef enum {
-	TBF_NONE,
-	TBF_TOP,		// cursor positioned previously top of buffer
-	TBF_BOTTOM,		// cursor positioned previously bottom of buffer
-} top_bottom_of_file_t;
-PRIVATE top_bottom_of_file_t top_bottom_of_file = 0;
+PRIVATE easy_buffer_switching_t easy_buffer_switching = 0;
+PRIVATE char easy_buffer_switching_count = 0;
+
+void clear_easy_buffer_switching()
+{
+	easy_buffer_switching = EBS_NONE;
+	easy_buffer_switching_count = 0;
+}
+void count_easy_buffer_switching()
+{
+	if (easy_buffer_switching != EBS_NONE) {
+		easy_buffer_switching_count++;
+		if (easy_buffer_switching_count >= 2) {
+			clear_easy_buffer_switching();
+		}
+	}
+}
+int check_easy_buffer_switching(easy_buffer_switching_t top_bottom)
+{
+	switch (easy_buffer_switching) {
+	default:
+	case EBS_NONE:
+		break;
+	case EBS_UP_AT_TOP:
+		if (top_bottom == EBS_PAGEUP_AT_TOP) {
+			clear_easy_buffer_switching();
+			return 1;
+		}
+		break;
+	case EBS_PAGEUP_AT_TOP:
+		if (top_bottom == EBS_UP_AT_TOP) {
+			clear_easy_buffer_switching();
+			return 1;
+		}
+		break;
+	case EBS_DOWN_AT_BOTTOM:
+		if (top_bottom == EBS_PAGEDOWN_AT_BOTTOM) {
+			clear_easy_buffer_switching();
+			return 1;
+		}
+		break;
+	case EBS_PAGEDOWN_AT_BOTTOM:
+		if (top_bottom == EBS_DOWN_AT_BOTTOM) {
+			clear_easy_buffer_switching();
+			return 1;
+		}
+		break;
+	}
+	easy_buffer_switching = top_bottom;
+	easy_buffer_switching_count = 0;
+	return 0;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -146,9 +192,14 @@ PRIVATE void doe_up_(void)
 {
 	if (c_l_up(&CEPBV_CL, &CEPBV_CLBI)) {
 		CEPBV_CURSOR_Y--;
-		top_bottom_of_file = TBF_NONE;
 	} else {
-		top_bottom_of_file = TBF_TOP;
+		if (check_easy_buffer_switching(EBS_UP_AT_TOP)) {
+			// already top of buffer, go to the previous buffer's last line
+			tio_beep();
+			if (switch_cep_buf_to_prev(1, 1)) {
+				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
+			}
+		}
 	}
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
@@ -169,9 +220,14 @@ PRIVATE void doe_down_(void)
 {
 	if (c_l_down(&CEPBV_CL, &CEPBV_CLBI)) {
 		CEPBV_CURSOR_Y++;
-		top_bottom_of_file = TBF_NONE;
 	} else {
-		top_bottom_of_file = TBF_BOTTOM;
+		if (check_easy_buffer_switching(EBS_DOWN_AT_BOTTOM)) {
+			// already bottom of buffer, go to the next buffer's top line
+			tio_beep();
+			if (switch_cep_buf_to_next(1, 1)) {
+				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_TOP, UPDATE_SCRN_ALL);
+			}
+		}
 	}
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
@@ -195,9 +251,8 @@ PRIVATE void doe_page_up_(void)
 	int cnt;
 
 	if (c_l_up(&CEPBV_CL, &CEPBV_CLBI) == 0) {
-		if (top_bottom_of_file == TBF_TOP) {
+		if (check_easy_buffer_switching(EBS_PAGEUP_AT_TOP)) {
 			// already top of buffer, go to the previous buffer's last line
-			top_bottom_of_file = TBF_NONE;
 			tio_beep();
 			if (switch_cep_buf_to_prev(1, 1)) {
 				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
@@ -235,9 +290,8 @@ PRIVATE int doe_page_down_(void)
 	int cnt;
 
 	if (c_l_down(&CEPBV_CL, &CEPBV_CLBI) == 0) {
-		if (top_bottom_of_file == TBF_BOTTOM) {
+		if (check_easy_buffer_switching(EBS_PAGEDOWN_AT_BOTTOM)) {
 			// already bottom of buffer, go to the next buffer's top line
-			top_bottom_of_file = TBF_NONE;
 			tio_beep();
 			if (switch_cep_buf_to_next(1, 1)) {
 				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_TOP, UPDATE_SCRN_ALL);

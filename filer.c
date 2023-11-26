@@ -263,11 +263,13 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 				 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name, MAX_PATH_LEN);
 				if (is_app_list_mode()) {
 					switch (func_key_table->list_mode) {
+					case XA:		// executable all Normal/List mode
 					case XL:		// not executable in List mode
+						break;
+///PPP					case XL:		// not executable in List mode
 						disp_status_bar_done(
 						 _("Can not execute this function: [%s]"), func_key_table->func_id);
-						break;
-					case XA:		// executable all Normal/List mode
+						filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 						break;
 					case XF:		// not executable in List mode and FILER_DO_ENTER_FILE_NAME
 						filer_do_next = FILER_DO_ENTER_FILE_NAME;
@@ -280,7 +282,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 						break;
 					}
 				}
-				if (is_app_list_mode() == 0 && filer_do_next == FILER_DO_NOTHING) {
+				if (filer_do_next == FILER_DO_NOTHING) {
 flf_d_printf("CALL_FUNC_FILER [%s] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n", func_key_table->func_id);
 					//=========================
 					int ret = (*func_key_table->func)();	// call function "dof_...()"

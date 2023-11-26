@@ -141,7 +141,6 @@ int buf_renumber_from_line(be_buf_t *buf, be_line_t *line);
 int buf_guess_tab_size(be_buf_t *buf);
 
 int buf_count_bufs(be_bufs_t *bufs);
-///int buf_count_bufs(be_buf_t *buf);
 int buf_count_lines(be_buf_t *buf);
 int buf_is_orig_file_updated(be_buf_t *buf);
 

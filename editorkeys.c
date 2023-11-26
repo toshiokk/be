@@ -120,7 +120,7 @@ func_key_table_t editor_func_key_table[] = {
  { "Playback-2",          "Playback 2nd newest key-macro",  K_SF02,       KNA, KNA,
    XL, F_I(doe_playback_last_2), NULL },
 #ifdef ENABLE_FILER
- { "Run line",            "Run current line as command",    K_M_x,        KNA, KNA,
+ { "Run line soon",       "Run current line as command",    K_M_x,        KNA, KNA,
    XA, F_I(doe_run_line_soon), NULL },
 #endif // ENABLE_FILER
 #ifdef ENABLE_UNDO

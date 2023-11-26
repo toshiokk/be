@@ -131,6 +131,7 @@ flf_d_printf("CALL_FUNC_EDITOR [%s]\n", func_key_table->func_id);
 					//=========================
 					int ret = (*func_key_table->func)();			// call function "doe_...()"
 					//=========================
+					count_easy_buffer_switching();
 flf_d_printf("ret_val: %d, editor_quit: %d\n", ret, editor_quit);
 					prev_key_executed = key_executed;
 					strlcpy__(prev_func_id, func_key_table->func_id, MAX_PATH_LEN);

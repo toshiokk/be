@@ -29,7 +29,7 @@
 #ifndef appdefs_h
 #define appdefs_h
 
-#define APP_REL_LVL 2		// Application Release Level
+#define APP_REL_LVL 0		// Application Release Level
 #define APP_REL_LVL_EXPERIMENTAL	0	// experimental release
 #define APP_REL_LVL_TEST			1	// test         release
 #define APP_REL_LVL_STABLE			2	// stable       release
@@ -71,6 +71,9 @@
 /// "doxygen comment"
 ////  code commented out
 ///// code obsolete and to be deleted
+
+///PPP pending code
+///TTT temporary test code
 
 // NOTE: length of string buffer must be categorized into three types
 //	MAX_SCRN_LINE_BUF_LEN	384*3 = 1152

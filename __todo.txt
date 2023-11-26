@@ -1,13 +1,26 @@
 #### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: hard, v: done)
 
 [v] change current directory in editor
-[] change current directory in editor and show current direcotory
-[] change current directory in editor and run text line
+[] show current directory in editor
+/home/user/tools/be/be
+/home/user/tools/be/be/po
+/home/user/tools/be/be/doc
+/home/user/tools/be/be/demo
+/home/user/tools/be/be/scripts
+/home/user/tools/be/be/protected
+/home/user/tools/be/be/testfiles
+/home/user/tools/be/be/testfiles/漢字ディレクトリ名
+/home/user/tools/be/be/autom4te.cache
+/home/user/tools/be/be/m4
 [] How to manage a state of 0 node
 [] How can I avoid NULL pointer crash ?
 [ ] show tree and select file/directory
 [v] sofisticate filer_do_next mechanism
 [ ] sofisticate editor_quit mechanism
+
+[v] easy goto prev/next buffer
+	- UP then PAGEUP ==> prev.buf, DOWN then PAGEDOWN ==> next.buf)
+	- PAGEUP then UP ==> prev.buf, PAGEDOWN then DOWN ==> next.buf)
 
 [v] check memory leak
   [v] fix memory leak
