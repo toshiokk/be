@@ -147,10 +147,10 @@ void disp_editor_title_bar(void)
 
 	//-------------------------------------------------------------------------
 	int max_status_cols = main_win_get_columns() / 2;
-	///int max_status_cols = main_win_get_columns() / 3;
+	int status_cols = main_win_get_columns();
 #ifdef ENABLE_DEBUG
 	snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, " %s%s%s", buf_buf, buf_mem, buf_time);
-	int status_cols = str_path_len(buf_status);
+	status_cols = str_path_len(buf_status);
 	if (status_cols > max_status_cols) {
 		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, " %s%s", buf_mem, buf_time);
 		status_cols = str_path_len(buf_status);

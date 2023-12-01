@@ -18,7 +18,7 @@
 [] How to manage a state of 0 node
 [] How can I avoid NULL pointer crash ?
 [ ] show tree and select file/directory
-[] Use title-bar fully for file path
+[v] Use title-bar fully for file path
   [p:i:/path/to/file.txt Enn Cnn Unn Rnn mmmmMB HH:MM:DD]
   [p:i:/long/long/long/path/to/file.txt  mmmmMB HH:MM:DD]
   [p:i:/long/long/very-long/path/to/file.txt    HH:MM:DD]
