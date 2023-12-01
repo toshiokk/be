@@ -352,7 +352,7 @@ int doe_charcode(void)
 	if (is_view_mode_then_warn_it())
 		return 0;
 
-	ret = input_string("", string,
+	ret = input_string_tail("", string,
 	 HISTORY_TYPE_IDX_SEARCH, _("Enter Unicode number in hex:"));
 
 	if (ret < 0) {
@@ -382,7 +382,7 @@ int doe_paste_history(void)
 	if (is_view_mode_then_warn_it())
 		return 0;
 
-	ret = input_string("", string,
+	ret = input_string_tail("", string,
 	 HISTORY_TYPE_IDX_SEARCH, _("Select history string to paste:"));
 
 	if (ret < 0) {

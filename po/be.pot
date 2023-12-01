@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-25 22:11+0900\n"
+"POT-Creation-Date: 2023-12-02 00:30+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Input key to show key code"
 msgstr ""
 
-#: ../appmode.c:549 ../editormove.c:283
+#: ../appmode.c:549 ../editormove.c:337
 #, c-format
 msgid "Key code: %04x"
 msgstr ""
@@ -34,113 +34,113 @@ msgstr ""
 msgid "Tab size"
 msgstr ""
 
-#: ../editor.c:112 ../filer.c:259
+#: ../editor.c:116 ../filer.c:259
 #, c-format
 msgid "Key command not assigned: %04xh"
 msgstr ""
 
-#: ../editor.c:123 ../filer.c:268
+#: ../editor.c:127 ../filer.c:271
 #, c-format
 msgid "Can not execute this function: [%s]"
 msgstr ""
 
-#: ../editor.c:191
+#: ../editor.c:196
 msgid "Open existing file:"
 msgstr ""
 
-#: ../editor.c:215
+#: ../editor.c:220
 msgid "Open new file:"
 msgstr ""
 
-#: ../editor.c:296
+#: ../editor.c:301
 msgid "No project file found"
 msgstr ""
 
-#: ../editor.c:325
+#: ../editor.c:330
 msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr ""
 
-#: ../editor.c:345
+#: ../editor.c:350
 msgid "File re-loaded"
 msgstr ""
 
-#: ../editor.c:390
+#: ../editor.c:395
 #, c-format
 msgid "Written to the file: %s"
 msgstr ""
 
-#: ../editor.c:434
+#: ../editor.c:439
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editor.c:591 ../editor.c:638 ../editor.c:651 ../fileio.c:362
+#: ../editor.c:610 ../editor.c:657 ../editor.c:670 ../fileio.c:362
 #: ../fileio.c:367 ../winin.c:97
 msgid "Cancelled"
 msgstr ""
 
-#: ../editor.c:597
+#: ../editor.c:616
 msgid "All buffers are checked"
 msgstr ""
 
-#: ../editor.c:602
+#: ../editor.c:621
 msgid "Freeing buffers..."
 msgstr ""
 
-#: ../editor.c:617
+#: ../editor.c:636
 msgid "Freeing all buffers..."
 msgstr ""
 
 #. buffer is acctually NOT modified, so clear "modified" flag
-#: ../editor.c:632
+#: ../editor.c:651
 msgid "Buffer is NOT modified"
 msgstr ""
 
-#: ../editor.c:636
+#: ../editor.c:655
 msgid "Save unmodified buffer ?"
 msgstr ""
 
-#: ../editor.c:648
+#: ../editor.c:667
 msgid "Save modified buffer ?"
 msgstr ""
 
-#: ../editor.c:649
+#: ../editor.c:668
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr ""
 
-#: ../editor.c:659
+#: ../editor.c:678
 msgid "Buffer saved to file"
 msgstr ""
 
-#: ../editor.c:811
+#: ../editor.c:830
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:868
+#: ../editor.c:887
 msgid "Modification not allowed in Anchor buffer"
 msgstr ""
 
-#: ../editor.c:872
+#: ../editor.c:891
 msgid "Modification not allowed in LIST mode"
 msgstr ""
 
-#: ../editor.c:876
+#: ../editor.c:895
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 
-#: ../editor2.c:108 ../fileio.c:79
+#: ../editor2.c:107 ../fileio.c:79
 msgid "New File"
 msgstr ""
 
-#: ../editor2.c:110
+#: ../editor2.c:109
 msgid "[Mod] "
 msgstr ""
 
-#: ../editor2.c:112
+#: ../editor2.c:111
 msgid "[VM] "
 msgstr ""
 
-#: ../editor2.c:114
+#: ../editor2.c:113
 msgid "[WP] "
 msgstr ""
 
@@ -244,15 +244,15 @@ msgstr ""
 msgid "Function List"
 msgstr ""
 
-#: ../editormove.c:281
+#: ../editormove.c:335
 msgid "Input control character [^A-^Z,^[,^\\,^],^^,^_,]"
 msgstr ""
 
-#: ../editormove.c:302
+#: ../editormove.c:356
 msgid "Enter Unicode number in hex:"
 msgstr ""
 
-#: ../editormove.c:332
+#: ../editormove.c:386
 msgid "Select history string to paste:"
 msgstr ""
 
@@ -521,7 +521,7 @@ msgid "File selection cleared"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:840
+#: ../filercmd.c:824
 #, c-format
 msgid "Can not change current directory to [%s]: %s"
 msgstr ""
@@ -608,20 +608,20 @@ msgstr ""
 msgid "Start key macro playback"
 msgstr ""
 
-#: ../main.c:547
+#: ../main.c:552
 msgid ""
 "\n"
 "No file written\n"
 msgstr ""
 
-#: ../main.c:556
+#: ../main.c:561
 #, c-format
 msgid ""
 "\n"
 "Buffer written to %s\n"
 msgstr ""
 
-#: ../main.c:584
+#: ../main.c:589
 #, c-format
 msgid ""
 "\n"
@@ -629,98 +629,98 @@ msgid ""
 msgstr ""
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:586
+#: ../main.c:591
 msgid "Option"
 msgstr ""
 
-#: ../main.c:586
+#: ../main.c:591
 msgid "Long option"
 msgstr ""
 
-#: ../main.c:586
+#: ../main.c:591
 msgid "Meaning"
 msgstr ""
 
-#: ../main.c:588
+#: ../main.c:593
 msgid "Read RCFILE"
 msgstr ""
 
-#: ../main.c:589
+#: ../main.c:594
 msgid "Don't look at berc files"
 msgstr ""
 
-#: ../main.c:592
+#: ../main.c:597
 msgid "Don't use history file"
 msgstr ""
 
-#: ../main.c:594
+#: ../main.c:599
 msgid "Set tab-size to NUM[1-15]"
 msgstr ""
 
-#: ../main.c:595
+#: ../main.c:600
 msgid "View mode(Read only mode)"
 msgstr ""
 
-#: ../main.c:597
+#: ../main.c:602
 msgid "Don't use nkf"
 msgstr ""
 
-#: ../main.c:598
+#: ../main.c:603
 msgid "ASCII character encoding"
 msgstr ""
 
-#: ../main.c:599
+#: ../main.c:604
 msgid "JIS character encoding"
 msgstr ""
 
-#: ../main.c:600
+#: ../main.c:605
 msgid "EUCJP character encoding"
 msgstr ""
 
-#: ../main.c:601
+#: ../main.c:606
 msgid "SJIS character encoding"
 msgstr ""
 
-#: ../main.c:602
+#: ../main.c:607
 msgid "UTF8 character encoding"
 msgstr ""
 
-#: ../main.c:605
+#: ../main.c:610
 msgid "Output debug log to stderr"
 msgstr ""
 
-#: ../main.c:607
+#: ../main.c:612
 msgid "Show version information"
 msgstr ""
 
-#: ../main.c:608
+#: ../main.c:613
 msgid "Show this message"
 msgstr ""
 
-#: ../main.c:609
+#: ../main.c:614
 msgid "Start at line number NUM"
 msgstr ""
 
-#: ../main.c:611
+#: ../main.c:616
 msgid "Investigate key codes"
 msgstr ""
 
-#: ../main.c:628
+#: ../main.c:633
 #, c-format
 msgid "%s editor version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:630
+#: ../main.c:635
 #, c-format
 msgid " Build Options:\n"
 msgstr ""
 
-#: ../main.c:888
+#: ../main.c:893
 #, c-format
 msgid "Screen size: %dx%d"
 msgstr ""
 
-#: ../main.c:893
+#: ../main.c:898
 msgid "We're invincible with this!!"
 msgstr ""
 

@@ -29,7 +29,7 @@ PRIVATE void disp_input_box(const char *buf, const char *input_buf, int x);
 PRIVATE void blank_input_box(void);
 
 // input string
-int input_string(const char *default__, char *input_buf,
+int input_string_tail(const char *default__, char *input_buf,
  int hist_type_idx, const char *msg, ...)
 {
 	va_list ap;
@@ -108,7 +108,7 @@ flf_d_printf("ret: %d\n", ret);
 	return 1;					// 1: input normally
 }
 
-// Input string. This should only be called from input_string().
+// Input string. This should only be called from input_string_xxx().
 // return 0 : cancelled
 // return 1 : input normally
 PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_byte_idx,

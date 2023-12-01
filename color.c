@@ -42,15 +42,11 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	// test release
 	{ CL_CY, CL_BL, S(ITEM_COLOR_IDX_TITLE)				},
 	{ CL_CY, CL_BL, S(ITEM_COLOR_IDX_STATUS)			},
-///	{ CL_GR, CL_BL, S(ITEM_COLOR_IDX_TITLE)				},
-///	{ CL_GR, CL_BL, S(ITEM_COLOR_IDX_STATUS)			},
 #endif
 #if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
 	// experimental release
-	{ CL_GR, CL_BR, S(ITEM_COLOR_IDX_TITLE)				},
-	{ CL_GR, CL_BR, S(ITEM_COLOR_IDX_STATUS)			},
-///	{ CL_GR, CL_GR, S(ITEM_COLOR_IDX_TITLE)				},
-///	{ CL_GR, CL_GR, S(ITEM_COLOR_IDX_STATUS)			},
+	{ CL_GR, CL_BL, S(ITEM_COLOR_IDX_TITLE)				},
+	{ CL_GR, CL_BL, S(ITEM_COLOR_IDX_STATUS)			},
 #endif
 	{ CL_BG, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
 	{ CL_BK, CL_BR, S(ITEM_COLOR_IDX_KEY_LIST2)			},
@@ -245,6 +241,7 @@ int display_item_colors(int yy, int xx)
 	tio_refresh();
 	return 0;
 }
+#ifdef ENABLE_REGEX
 int display_bracket_hl_colors(int yy, int xx)
 {
 	int color_idx;
@@ -260,6 +257,7 @@ int display_bracket_hl_colors(int yy, int xx)
 	tio_refresh();
 	return 0;
 }
+#endif // ENABLE_REGEX
 #endif // ENABLE_DEBUG
 
 // End of color.c

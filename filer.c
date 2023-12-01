@@ -449,7 +449,7 @@ PRIVATE void disp_filer_title_bar(const char *path,
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 	char buf_dir[MAX_PATH_LEN+1];
 	char buf_files[MAX_SCRN_LINE_BUF_LEN+1];
-	char buf_time[HHCMMCSS_LEN+1];
+	char buf_time[1+HHCMMCSS_LEN+1];
 
 	set_title_bar_color_by_state(0);
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0,
@@ -472,10 +472,11 @@ PRIVATE void disp_filer_title_bar(const char *path,
 	 root_notation(), get_filer_cur_pane_idx()+1, separator_char, path);
 
 	// current time
-	strlcpy__(buf_time, cur_ctime(), HHCMMCSS_LEN);
+	snprintf_(buf_time, 1+HHCMMCSS_YY_MM_DD_LEN+1, " %s",
+	 cur_ctime_cdate(just_has_been_input_key()));
 
 	//-------------------------------------------------------------------------
-	snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, "%d/%d:%d %c %s",
+	snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, "%d/%d:%d %c%s",
 	 cur_idx, files_total, files_selected, *get_str_sort_by(), buf_time);
 	space = LIM_MIN(0, main_win_get_columns() - strnlen(buf_files, MAX_SCRN_LINE_BUF_LEN) - 1);
 	shrink_str(buf_dir, space, 2);

@@ -433,6 +433,12 @@ void set_menu_key_for_do_app_menu_0(void)
 
 //-----------------------------------------------------------------------------
 
+PRIVATE int has_been_input_key = 0;
+int just_has_been_input_key()
+{
+	return has_been_input_key;
+}
+
 PRIVATE key_code_t input_key_timeout(void);
 PRIVATE key_code_t input_key_macro(void);
 PRIVATE key_code_t input_key_bs_del(void);
@@ -447,18 +453,20 @@ key_code_t input_key_loop(void)
 }
 key_code_t input_key_wait_return(void)
 {
-	static key_code_t prev_key = -1;
+	static key_code_t prev_key = KEY_NONE;
 	key_code_t key = input_key_timeout();
 	if (key < 0 && prev_key >= 0) {
 		tio_repaint_all();
 	}
 	prev_key = key;
+	has_been_input_key = (key >= 0);
 	return key;
 }
 
 PRIVATE key_code_t input_key_timeout(void)
 {
 	key_code_t key;
+	key_code_t key_resized = KEY_NONE;
 #define KEY_WAIT_TIME_USEC		1000000		// return every 1[Sec]
 	long usec_enter = get_usec();
 	while ((key = input_key_macro()) < 0) {
@@ -466,11 +474,16 @@ PRIVATE key_code_t input_key_timeout(void)
 			win_reinit_win_size();
 #ifdef ENABLE_HELP
 			disp_splash(0);
+			usec_enter = get_usec();
 #endif // ENABLE_HELP
+			key_resized = KEY_NONE2;
 		}
 		if (get_usec() - usec_enter >= KEY_WAIT_TIME_USEC)
 			break;
 		MSLEEP(10);		// wait 10[mS]
+	}
+	if (key < 0) {
+		key = key_resized;
 	}
 	return key;
 }

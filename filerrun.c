@@ -55,7 +55,7 @@ int dof_exec_command_with_file(void)
 		return -1;
 	}
 
-	ret = input_string("", command_str,
+	ret = input_string_tail("", command_str,
 	 HISTORY_TYPE_IDX_EXEC, _("Execute({} will be replaced with file-name):"));
 
 	if (ret < 0) {

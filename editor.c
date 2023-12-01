@@ -87,6 +87,7 @@ PRIVATE int editor_main_loop(void)
 		if (key_macro_is_playing_back()) {
 			// When playing back key-macro, do not update screen for speed up.
 		} else {
+			set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 			update_screen_editor(1, key_input >= 0, 1);
 		}
 		//----------------------------------
@@ -94,6 +95,9 @@ PRIVATE int editor_main_loop(void)
 		//----------------------------------
 		if (key_input < 0) {
 			// no key input
+			if (key_input == KEY_NONE2) {
+				key_input = 0x00;
+			}
 		} else {
 mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
  '_', key_input, short_key_name_from_key_code(key_input, NULL));
@@ -189,7 +193,7 @@ PRIVATE int open_file_recursive(int recursive)
 			break;
 #endif // ENABLE_FILER
 
-		ret = input_string("", file_name, HISTORY_TYPE_IDX_CURSPOS , _("Open existing file:"));
+		ret = input_string_tail("", file_name, HISTORY_TYPE_IDX_CURSPOS , _("Open existing file:"));
 
 		if (ret <= 0) {
 			break;
@@ -213,7 +217,7 @@ int doe_open_new_file(void)
 	char file_path[MAX_PATH_LEN+1];
 	int ret;
 
-	ret = input_string("", file_path, HISTORY_TYPE_IDX_DIR, _("Open new file:"));
+	ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_DIR, _("Open new file:"));
 
 	if (ret < 0) {
 		return 0;
@@ -433,11 +437,13 @@ int doe_close_file_ask(void)
 
 	doe_refresh_editor();
 	disp_status_bar_done(_("One buffer closed"));
+#ifdef ENABLE_HISTORY
 	if (count_edit_bufs() == 0) {
 		// This file is the last open file.
 		// Memorize the last file's cursor pos.
 		update_history(HISTORY_TYPE_IDX_CURSPOS, get_memorized_file_pos_str(), 1);
 	}
+#endif // ENABLE_HISTORY
 	return 2;
 }
 int doe_close_all_ask(void)
@@ -476,6 +482,7 @@ int doe_read_file_into_cur_pos(void)
 }
 //-----------------------------------------------------------------------------
 
+#ifdef ENABLE_FILER
 int doe_run_line_soon(void)
 {
 	char buffer[MAX_PATH_LEN+1];
@@ -492,6 +499,13 @@ int doe_run_line_soon(void)
 	doe_refresh_editor();
 	return 0;
 }
+int doe_call_filer(void)
+{
+	char file_name[MAX_PATH_LEN+1] = "";
+	call_filer(1, 0, "", file_name, file_name, MAX_PATH_LEN);
+	return 0;
+}
+#endif // ENABLE_FILER
 
 //-----------------------------------------------------------------------------
 
@@ -499,7 +513,7 @@ int doe_run_line_soon(void)
 int doe_editor_splash(void)
 {
 	disp_splash(100);
-	input_key_loop();
+	input_key_wait_return();
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
@@ -511,7 +525,9 @@ int doe_display_color_pairs(void)
 #ifdef ENABLE_DEBUG
 	input_key_loop();
 	display_item_colors(0, 0);
+#ifdef ENABLE_REGEX
 	display_bracket_hl_colors(0, 40);
+#endif // ENABLE_REGEX
 #endif // ENABLE_DEBUG
 	return 0;
 }
@@ -578,7 +594,9 @@ int write_close_all(int yes)
 		return -1;
 	close_all();
 
+#ifdef ENABLE_HISTORY
 	update_history(HISTORY_TYPE_IDX_CURSPOS, get_memorized_file_pos_str(), 1);
+#endif // ENABLE_HISTORY
 	return 0;
 }
 int write_all_ask(int yes, close_after_save_t close)

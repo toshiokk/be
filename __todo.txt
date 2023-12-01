@@ -1,4 +1,8 @@
-#### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: hard, v: done)
+#### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: complete)
+
+[] change current directory by selecting from directory tree (find . -type d -maxdepth 3)
+[] load file                by selecting from file      tree (find . -type f -maxdepth 3)
+   (how to limit max lines to be loaded into editor)
 
 [v] change current directory in editor
 [] show current directory in editor
@@ -9,15 +13,39 @@
 /home/user/tools/be/be/scripts
 /home/user/tools/be/be/protected
 /home/user/tools/be/be/testfiles
-/home/user/tools/be/be/testfiles/漢字ディレクトリ名
 /home/user/tools/be/be/autom4te.cache
 /home/user/tools/be/be/m4
 [] How to manage a state of 0 node
 [] How can I avoid NULL pointer crash ?
 [ ] show tree and select file/directory
-[v] sofisticate filer_do_next mechanism
-[ ] sofisticate editor_quit mechanism
+[] Use title-bar fully for file path
+  [p:i:/path/to/file.txt Enn Cnn Unn Rnn mmmmMB HH:MM:DD]
+  [p:i:/long/long/long/path/to/file.txt  mmmmMB HH:MM:DD]
+  [p:i:/long/long/very-long/path/to/file.txt    HH:MM:DD]
 
+Filer <==> Editor switching and collaboration
+- F: Load file
+   E: Edit (capable)
+- F: Execute shell command
+   E: Select from exec-history
+  F: Execute (capable)
+- F: Search keyword
+   F: Select from search-history
+  F: Do search (capable)
+- F: Load file
+   E: Change filer-current-directory to the directory of the current-line (capable)
+- F: Load file
+   E: Change current-directory to the directory of the current-line and Open filer
+  F: Do something in current-directory (**possible to implement**)
+- F: Load script file
+   E: Execute current-line as a command
+      (preserve current-directory if changed in execution(***DIFFICULT***))
+
+[v] Show date in space for Time just after key press
+[v] sofisticate filer_do_next mechanism
+[v] sofisticate editor_quit mechanism
+
+[v] break many files loading (by Ctrl-C)
 [v] easy goto prev/next buffer
 	- UP then PAGEUP ==> prev.buf, DOWN then PAGEDOWN ==> next.buf)
 	- PAGEUP then UP ==> prev.buf, PAGEDOWN then DOWN ==> next.buf)

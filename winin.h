@@ -22,7 +22,7 @@
 #ifndef winin_h
 #define winin_h
 
-int input_string(const char *default__, char *input_buf,
+int input_string_tail(const char *default__, char *input_buf,
  int hist_type_idx, const char *msg, ...);
 int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, ...);

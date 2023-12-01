@@ -54,8 +54,8 @@ PRIVATE int get_buf_line_num_digits(const be_buf_t *buf);
 PRIVATE int get_line_num_digits(int max_line_num);
 
 								//  0123456789012345678901
-#define BUF_BUF_LEN			22	// "Mc Cut00 Undo00 Redo00"
-#define MEM_BUF_LEN			8	// "999000Mb" (999Gb)
+#define BUF_BUF_LEN			15	// "E99 C99 U99 R99"
+#define MEM_BUF_LEN			7	// "999000M" (999G)
 #define HHCMMCSS_LEN		8	// "23:59:59"
 //1:/home/...editor2.c[Modified] Mc Cut00 Undo00 Redo00 123456MB 11:55:04
 void disp_editor_title_bar(void)
@@ -63,7 +63,6 @@ void disp_editor_title_bar(void)
 	int buf_idx;
 	char *path;
 	char separator_char;
-	int space;
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 	char buf_path[MAX_SCRN_LINE_BUF_LEN+1];
 	char buf_status[MAX_SCRN_LINE_BUF_LEN+1];
@@ -78,7 +77,7 @@ void disp_editor_title_bar(void)
 #ifdef ENABLE_DEBUG
 	char buf_mem[MEM_BUF_LEN+1];
 #endif // ENABLE_DEBUG
-	char buf_time[HHCMMCSS_LEN+1];
+	char buf_time[1+HHCMMCSS_LEN+1];
 
 	buf_idx = get_edit_buf_idx_from_buf(get_cep_buf());
 	path = get_cep_buf()->abs_path;
@@ -139,30 +138,36 @@ void disp_editor_title_bar(void)
 
 #ifdef ENABLE_DEBUG
 	// free memory in MB
-	snprintf_(buf_mem, MEM_BUF_LEN+1, "%dMb", get_mem_free_in_kb(1)/1000);
+	snprintf_(buf_mem, MEM_BUF_LEN+1, " %dM", get_mem_free_in_kb(1)/1000);
 #endif // ENABLE_DEBUG
 
 	// current time
-	strlcpy__(buf_time, cur_ctime(), HHCMMCSS_LEN);
+	snprintf_(buf_time, 1+HHCMMCSS_YY_MM_DD_LEN+1, " %s",
+	 cur_ctime_cdate(just_has_been_input_key()));
 
 	//-------------------------------------------------------------------------
+	int max_status_cols = main_win_get_columns() / 2;
+	///int max_status_cols = main_win_get_columns() / 3;
 #ifdef ENABLE_DEBUG
-	snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s %s %s", buf_buf, buf_mem, buf_time);
-#else // ENABLE_DEBUG
-	snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s %s", buf_buf, buf_time);
-#endif // ENABLE_DEBUG
-	space = LIM_MIN(0, main_win_get_columns() - strnlen(buf_status, MAX_SCRN_LINE_BUF_LEN) - 1);
-	if (space < main_win_get_columns() / 2) {
-#ifdef ENABLE_DEBUG
-		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s %s", buf_mem, buf_time);
-#else // ENABLE_DEBUG
-		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s", buf_time);
-#endif // ENABLE_DEBUG
-		space = LIM_MIN(0,
-		 main_win_get_columns() - strnlen(buf_status, MAX_SCRN_LINE_BUF_LEN) - 1);
+	snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, " %s%s%s", buf_buf, buf_mem, buf_time);
+	int status_cols = str_path_len(buf_status);
+	if (status_cols > max_status_cols) {
+		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, " %s%s", buf_mem, buf_time);
+		status_cols = str_path_len(buf_status);
 	}
-	shrink_str(buf_path, space, 2);
-	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN, "%-*s %s", space, buf_path, buf_status);
+#endif // ENABLE_DEBUG
+	if (status_cols > max_status_cols) {
+		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, " %s%s", buf_buf, buf_time);
+		status_cols = str_path_len(buf_status);
+		if (status_cols > max_status_cols) {
+			snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, " %s", buf_time);
+			status_cols = str_path_len(buf_status);
+		}
+	}
+	int path_cols = LIM_MIN(0, main_win_get_columns() - status_cols);
+	shrink_str(buf_path, path_cols, 2);
+	adjust_utf8s_columns(buf_path, path_cols);
+	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_path, buf_status);
 
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0, buffer, -1);
 

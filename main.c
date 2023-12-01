@@ -144,9 +144,11 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 		}
 	}
 	if (count_edit_bufs()) {
+#ifdef ENABLE_HISTORY
 		if (goto_last_file_line_col_in_loaded() == 0) {
 			doe_switch_to_top_file();
 		}
+#endif // ENABLE_HISTORY
 		if (start_line_num > 0) {
 			goto_line_col_in_cur_buf(start_line_num, 1);
 		}
@@ -200,7 +202,6 @@ int app_main_loop(void)
 	}
 #else // ENABLE_FILER
 	if (count_edit_bufs() == 0) {
-		doe_switch_to_file_list();
 		doe_open_file();
 	}
 	if (count_edit_bufs()) {
@@ -297,7 +298,9 @@ const struct option long_options[] = {
 	{ "nonkf",         no_argument,       0, 'n' },
 	{ "encoding",      required_argument, 0, 'e' },
 #endif // USE_NKF
+#ifdef ENABLE_DEBUG
 	{ "debug",         no_argument,       0, 'd' },
+#endif // ENABLE_DEBUG
 	{ "version",       no_argument,       0, 'v' },		// show version
 	{ "help",          no_argument,       0, '?' },		// show help text
 #ifndef ENABLE_NCURSES
@@ -385,9 +388,11 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 			}
 			break;
 #endif // USE_NKF
+#ifdef ENABLE_DEBUG
 		case 'd':
 			SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);
 			set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
+#endif // ENABLE_DEBUG
 			break;
 		case 'v':
 			show_version();

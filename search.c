@@ -145,7 +145,7 @@ int input_search_str(int search0_replace1, char *input_buf)
 		strcpy__(default_needle, "");
 	}
 
-	ret = input_string("", input_buf, HISTORY_TYPE_IDX_SEARCH, "%s%s%s%s%s:",
+	ret = input_string_tail("", input_buf, HISTORY_TYPE_IDX_SEARCH, "%s%s%s%s%s:",
 	 search0_replace1 == 0 ? _("Search") : _("Replace"),
 	 GET_APPMD(ed_IGNORE_CASE) ? _("[Ignore-case]") : _("[Differenciate-case]"),
 #ifdef ENABLE_REGEX
@@ -181,7 +181,7 @@ int input_replace_str(char *input_buf)
 {
 	int ret;
 
-	ret = input_string("", input_buf, HISTORY_TYPE_IDX_SEARCH, "%s:", _("Replace with"));
+	ret = input_string_tail("", input_buf, HISTORY_TYPE_IDX_SEARCH, "%s:", _("Replace with"));
 
 	if (ret <= 0) {
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);

@@ -40,7 +40,7 @@ int doe_goto_input_line(void)
 	int ret;
 	int line_num;
 
-	ret = input_string("", string, HISTORY_TYPE_IDX_CURSPOS, _("Enter line number:"));
+	ret = input_string_tail("", string, HISTORY_TYPE_IDX_CURSPOS, _("Enter line number:"));
 
 	if (ret < 0) {
 		return 0;
@@ -343,7 +343,7 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 	char abs_path[MAX_PATH_LEN+1];
 
 	get_abs_path(file_name, abs_path);
-	if (switch_cep_buf_by_file_name(abs_path)) {
+	if (switch_cep_buf_by_abs_path(abs_path)) {
 		// already loaded
 		return 1;
 	}
@@ -355,83 +355,20 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 #endif // ENABLE_HISTORY
 	return 1;
 }
-//-----------------------------------------------------------------------------
-int switch_cep_buf_by_file_name(const char *file_name)
+#ifdef ENABLE_HISTORY
+PRIVATE void goto_pos_by_history(const char *full_path)
 {
-	char abs_path[MAX_PATH_LEN+1];
+	const char *str;
 
-	get_abs_path(file_name, abs_path);
-	return switch_cep_buf_by_abs_path(abs_path);
-}
-int switch_cep_buf_by_abs_path(const char *abs_path)
-{
-	be_buf_t *buf;
-
-	buf = get_edit_buf_by_abs_path(abs_path);
-	if (buf) {
-		set_cep_buf(buf);
-		return 1;	// switched
+	// search in history
+	str = search_history_file_path(HISTORY_TYPE_IDX_CURSPOS, full_path);
+	// get line-num and col-num
+	if (goto_str_line_col_in_cur_buf(str)) {
+		EPBVX_CL(0) = EPBVX_CL(1) = CEPBV_CL;
+		EPBVX_CLBI(0) = EPBVX_CLBI(1) = CEPBV_CLBI;
 	}
-	return 0;		// not found
 }
-//-----------------------------------------------------------------------------
-int switch_cep_buf_to_top(void)
-{
-	if (IS_NODE_ANCH(EDIT_BUFS_TOP_BUF))
-		return 0;
-	set_cep_buf(EDIT_BUFS_TOP_BUF);
-	return 1;
-}
-int switch_cep_buf_to_bot(void)
-{
-	if (IS_NODE_ANCH(EDIT_BUFS_BOT_BUF))
-		return 0;
-	set_cep_buf(EDIT_BUFS_BOT_BUF);
-	return 1;
-}
-int switch_cep_buf_to_prev(int beep_at_end, int goto_bottom)
-{
-	if (IS_NODE_TOP(get_cep_buf())) {
-		if (beep_at_end)
-			tio_beep();
-		return 0;
-	}
-	set_cep_buf(NODE_PREV(get_cep_buf()));
-	if (goto_bottom) {
-		CEPBV_CL = CUR_EDIT_BUF_BOT_LINE;
-	}
-	return 1;
-}
-int switch_cep_buf_to_next(int beep_at_end, int goto_top)
-{
-	if (IS_NODE_BOT(get_cep_buf())) {
-		if (beep_at_end)
-			tio_beep();
-		return 0;
-	}
-	set_cep_buf(NODE_NEXT(get_cep_buf()));
-	if (goto_top) {
-		CEPBV_CL = CUR_EDIT_BUF_TOP_LINE;
-	}
-	return 1;
-}
-int switch_cep_buf_to_valid_buf(void)
-{
-	if (IS_NODE_INT(get_cep_buf()) == 0) {
-		return switch_cep_buf_to_another_buf();
-	}
-	return 1;
-}
-int switch_cep_buf_to_another_buf(void)
-{
-	if (switch_cep_buf_to_next(0, 0) == 0) {
-		if (switch_cep_buf_to_prev(0, 0) == 0) {
-			set_cep_buf(EDIT_BUFS_TOP_ANCH);
-			return 0;
-		}
-	}
-	return 1;
-}
+#endif // ENABLE_HISTORY
 //-----------------------------------------------------------------------------
 int is_file_name_proj_file(const char *file_name, int type)
 {
@@ -497,17 +434,17 @@ void test_get_n_th_file_name(void)
 
 //-----------------------------------------------------------------------------
 #ifdef ENABLE_HISTORY
-PRIVATE void goto_pos_by_history(const char *full_path)
+int goto_last_file_line_col_in_loaded()
 {
-	const char *str;
+	char file_path[MAX_PATH_LEN+1];
+	int line_num, col_num;
 
-	// search in history
-	str = search_history_file_path(HISTORY_TYPE_IDX_CURSPOS, full_path);
-	// get line-num and col-num
-	if (goto_str_line_col_in_cur_buf(str)) {
-		EPBVX_CL(0) = EPBVX_CL(1) = CEPBV_CL;
-		EPBVX_CLBI(0) = EPBVX_CLBI(1) = CEPBV_CLBI;
+	get_file_line_col_from_str_null(get_history_newest(HISTORY_TYPE_IDX_CURSPOS, 1),
+	 file_path, &line_num, &col_num);
+	if (switch_cep_buf_by_file_name(file_path)) {
+		return goto_line_col_in_cur_buf(line_num, col_num);
 	}
+	return 0;
 }
 #endif // ENABLE_HISTORY
 //-----------------------------------------------------------------------------
@@ -651,6 +588,84 @@ no_file_path:;
 		*col_num_ = col_num;
 	return strnlen(file_path, MAX_PATH_LEN);
 }
+//-----------------------------------------------------------------------------
+int switch_cep_buf_by_file_name(const char *file_name)
+{
+	char abs_path[MAX_PATH_LEN+1];
+
+	get_abs_path(file_name, abs_path);
+	return switch_cep_buf_by_abs_path(abs_path);
+}
+int switch_cep_buf_by_abs_path(const char *abs_path)
+{
+	be_buf_t *buf;
+
+	buf = get_edit_buf_by_abs_path(abs_path);
+	if (buf) {
+		set_cep_buf(buf);
+		return 1;	// switched
+	}
+	return 0;		// not found
+}
+
+int switch_cep_buf_to_top(void)
+{
+	if (IS_NODE_ANCH(EDIT_BUFS_TOP_BUF))
+		return 0;
+	set_cep_buf(EDIT_BUFS_TOP_BUF);
+	return 1;
+}
+int switch_cep_buf_to_bot(void)
+{
+	if (IS_NODE_ANCH(EDIT_BUFS_BOT_BUF))
+		return 0;
+	set_cep_buf(EDIT_BUFS_BOT_BUF);
+	return 1;
+}
+int switch_cep_buf_to_prev(int beep_at_end, int goto_bottom)
+{
+	if (IS_NODE_TOP(get_cep_buf())) {
+		if (beep_at_end)
+			tio_beep();
+		return 0;
+	}
+	set_cep_buf(NODE_PREV(get_cep_buf()));
+	if (goto_bottom) {
+		CEPBV_CL = CUR_EDIT_BUF_BOT_LINE;
+	}
+	return 1;
+}
+int switch_cep_buf_to_next(int beep_at_end, int goto_top)
+{
+	if (IS_NODE_BOT(get_cep_buf())) {
+		if (beep_at_end)
+			tio_beep();
+		return 0;
+	}
+	set_cep_buf(NODE_NEXT(get_cep_buf()));
+	if (goto_top) {
+		CEPBV_CL = CUR_EDIT_BUF_TOP_LINE;
+	}
+	return 1;
+}
+int switch_cep_buf_to_valid_buf(void)
+{
+	if (IS_NODE_INT(get_cep_buf()) == 0) {
+		return switch_cep_buf_to_another_buf();
+	}
+	return 1;
+}
+int switch_cep_buf_to_another_buf(void)
+{
+	if (switch_cep_buf_to_next(0, 0) == 0) {
+		if (switch_cep_buf_to_prev(0, 0) == 0) {
+			set_cep_buf(EDIT_BUFS_TOP_ANCH);
+			return 0;
+		}
+	}
+	return 1;
+}
+//-----------------------------------------------------------------------------
 
 // supported file names:
 //  |No.| file type                                                | command line | file list |

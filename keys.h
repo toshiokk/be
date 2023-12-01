@@ -23,8 +23,10 @@
 #define keys_h
 
 #define KEY_NONE			(-1)
+#define KEY_NONE2			(-2)
 #define K_NONE				KEY_NONE
-#define KEY_NOT_ASSIGNED	(-0x8000)
+///#define KEY_NOT_ASSIGNED	(-0x8000)
+#define KEY_NOT_ASSIGNED	KEY_NONE
 #define KNA					KEY_NOT_ASSIGNED
 
 // HP-UX 10 & 11 do not seem to support KEY_HOME and KEY_END
@@ -356,6 +358,8 @@ const char *short_key_name_from_func_id(char *buf);
 void set_menu_key(key_code_t key);
 key_code_t get_menu_key(void);
 void set_menu_key_for_do_app_menu_0(void);
+
+int just_has_been_input_key();
 
 key_code_t input_key_loop(void);
 key_code_t input_key_wait_return(void);

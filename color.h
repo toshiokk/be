@@ -101,7 +101,9 @@ int display_color_pairs(int yy, int xx);
 
 #ifdef ENABLE_DEBUG
 int display_item_colors(int yy, int xx);
+#ifdef ENABLE_REGEX
 int display_bracket_hl_colors(int yy, int xx);
+#endif // ENABLE_REGEX
 #endif // ENABLE_DEBUG
 
 #endif // color_h

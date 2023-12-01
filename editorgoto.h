@@ -53,20 +53,15 @@ int load_file_name_upp_low(const char *file_name,
 
 int load_file_name_recurs(const char *file_name, int open_on_err, int msg_on_err, int recursive);
 
-int switch_cep_buf_by_file_name(const char *file_name);
-int switch_cep_buf_by_abs_path(const char *abs_path);
-int switch_cep_buf_to_top(void);
-int switch_cep_buf_to_bot(void);
-int switch_cep_buf_to_next(int beep_at_end, int goto_top);
-int switch_cep_buf_to_prev(int beep_at_end, int goto_bottom);
-int switch_cep_buf_to_valid_buf(void);
-int switch_cep_buf_to_another_buf(void);
-
 int is_file_name_proj_file(const char *file_name, int type);
 
 #ifdef START_UP_TEST
 void test_get_n_th_file_name(void);
 #endif // START_UP_TEST
+
+#ifdef ENABLE_HISTORY
+int goto_last_file_line_col_in_loaded();
+#endif // ENABLE_HISTORY
 
 char *get_memorized_file_pos_str();
 char *memorize_cur_file_pos_null(char *buffer);
@@ -79,6 +74,16 @@ char *mk_cur_file_pos_str(char *buffer);
 char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col_no);
 int get_file_line_col_from_str_null(const char *str, char *file_path,
  int *line_num, int *col_num);
+
+int switch_cep_buf_by_file_name(const char *file_name);
+int switch_cep_buf_by_abs_path(const char *abs_path);
+
+int switch_cep_buf_to_top(void);
+int switch_cep_buf_to_bot(void);
+int switch_cep_buf_to_next(int beep_at_end, int goto_top);
+int switch_cep_buf_to_prev(int beep_at_end, int goto_bottom);
+int switch_cep_buf_to_valid_buf(void);
+int switch_cep_buf_to_another_buf(void);
 
 #endif // editorgoto_h
 

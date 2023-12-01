@@ -78,9 +78,6 @@ int dof_filer_menu_3(void);
 int dof_filer_menu_4(void);
 int dof_filer_menu_5(void);
 
-int goto_last_file_line_col_in_loaded();
-int goto_file_line_col_in_loaded(const char *file_path, int line_num, int col_num);
-
 int filer_change_dir_parent(const char *dir);
 int filer_change_dir(const char *dir);
 

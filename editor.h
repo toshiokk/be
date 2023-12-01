@@ -57,7 +57,10 @@ int doe_read_file_into_cur_pos(void);
 
 //-----------------------------------------------------------------------------
 
+#ifdef ENABLE_FILER
 int doe_run_line_soon(void);
+int doe_call_filer(void);
+#endif // ENABLE_FILER
 
 //-----------------------------------------------------------------------------
 

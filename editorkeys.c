@@ -123,6 +123,10 @@ func_key_table_t editor_func_key_table[] = {
  { "Run line soon",       "Run current line as command",    K_M_x,        KNA, KNA,
    XA, F_I(doe_run_line_soon), NULL },
 #endif // ENABLE_FILER
+#ifdef ENABLE_FILER
+ { "Filer",               "Switch to filer",                K_M_f,        KNA, KNA,
+   XA, F_I(doe_call_filer), NULL },
+#endif // ENABLE_FILER
 #ifdef ENABLE_UNDO
  { "Undo",                "Undo",                           K_M_u, K_M_z,      KNA,
    XL, F_I(doe_undo), NULL },
@@ -172,9 +176,9 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_switch_to_next_buffers), NULL },
 #endif // APP_REL_LVL
 #ifdef ENABLE_HELP
- { "Key List",            "Display Key List",               K_M_k,        KNA, KNA,
+ { "Key List",            "Display Key List",               K_M_K,        KNA, KNA,
    XL, F_I(doe_switch_to_key_list), NULL },
- { "Func List",           "Display Function List",          K_M_f,        KNA, KNA,
+ { "Func List",           "Display Function List",          K_M_F,        KNA, KNA,
    XL, F_I(doe_switch_to_func_list), NULL },
 #endif // ENABLE_HELP
  { "Open Proj File",      "Open Project file",              K_M_l,        KNA, KNA,

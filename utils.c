@@ -259,6 +259,17 @@ unsigned short calc_crc16ccitt(unsigned char byte)
 	return crc16ccitt;
 }
 //-----------------------------------------------------------------------------
+#define YYYY_MM_DD_HHCMMCSS_LEN		(4+1+2+1+2+1+2+1+2+1+2)	// "2037/12/31 23:59:59"
+PRIVATE char *get_yyyysmmsdd_hhcmmcss(time_t abs_time, char *buf);
+
+const char *cur_ctime_cdate(int time0_date1)
+{
+	if (time0_date1 == 0) {
+		return cur_ctime();
+	} else {
+		return cur_cdate();
+	}
+}
 const char *cur_ctime(void)
 {
 	time_t cur_time;
@@ -268,6 +279,18 @@ const char *cur_ctime(void)
 	cur_time = time(NULL);
 	strlcpy__(buf_time, &(ctime(&cur_time)[11]), HHCMMCSS_LEN);
 	return buf_time;
+}
+const char *cur_cdate(void)
+{
+	time_t cur_time;
+#define YY_MM_DD_LEN		8	// "2037-12-31 23:59:59"
+	char buf_ymd_hms[YYYY_MM_DD_HHCMMCSS_LEN+1];
+	static char buf_date[YYYY_MM_DD_HHCMMCSS_LEN+1];
+
+	cur_time = time(NULL);
+	get_yyyysmmsdd_hhcmmcss(cur_time, buf_ymd_hms);
+	strlcpy__(buf_date, &(buf_ymd_hms[2]), YY_MM_DD_LEN);
+	return buf_date;
 }
 //-----------------------------------------------------------------------------
 char *get_ssspuuuuuu(char *buf)
@@ -337,6 +360,23 @@ const char *cur_hhcmmcss_uuuuuu(void)
 	strlcpy__(hhcmmcss, &(ctime(&cur_time)[11]), HHCMMCSS_LEN);
 	snprintf_(buf_time, HHCMMCSS_UUUUUU_LEN+1, "%s.%06d", hhcmmcss, (int)tv.tv_usec);
 	return buf_time;
+}
+
+PRIVATE char *get_yyyysmmsdd_hhcmmcss(time_t abs_time, char *buf)
+{
+	struct tm tm_;
+	struct tm *tm;
+
+	if (abs_time == 0) {
+//		strcpy(buf, "???\?/?\?/?? ??:??:??");
+//		strcpy(buf, "0000/00/00 00:00:00");
+		strcpy(buf, "----/--/-- --:--:--");
+	} else {
+		tm = localtime_r(&abs_time, &tm_);		// THREAD_SAFE
+		snprintf(buf, YYYY_MM_DD_HHCMMCSS_LEN+1, "%04d/%02d/%02d %02d:%02d:%02d",
+		 1900 + tm->tm_year, tm->tm_mon+1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+	}
+	return buf;
 }
 
 //-----------------------------------------------------------------------------------
