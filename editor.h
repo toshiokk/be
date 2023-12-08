@@ -50,6 +50,7 @@ int doe_write_all_ask(void);
 int doe_write_all_modified(void);
 
 int doe_close_file_ask(void);
+int doe_close_file_always(void);
 int doe_close_all_ask(void);
 int doe_close_all_modified(void);
 

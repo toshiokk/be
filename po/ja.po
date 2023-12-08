@@ -93,7 +93,7 @@ msgstr "全バッファを開放中..."
 msgid "Freeing all buffers..."
 msgstr "全バッファを開放中..."
 
-#. buffer is acctually NOT modified, so clear "modified" flag
+#. buffer is actually NOT modified, so clear "modified" flag
 #: ../editor.c:651
 #, fuzzy
 msgid "Buffer is NOT modified"

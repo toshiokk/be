@@ -1,6 +1,6 @@
 echo make
 LANG=C; export LANG
-mk_backup_file __error
+mk_backup_file2 __error
 if [ ! -f Makefile ]; then
   echo "!!!! No Makefile found !!!!"
   echo "Running ./configure to make Makefile ..."
