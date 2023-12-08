@@ -88,11 +88,10 @@ typedef enum {
 							//    (ANSWERING No WILL DISCARD CHANGES)
 } close_after_save_t;
 
-int write_close_all(int yes);
-int write_all_ask(int yes, close_after_save_t close);
+int write_all_ask(int yes_no, close_after_save_t close);
 int close_all_not_modified(void);
 int close_all();
-int write_file_ask(int yes, close_after_save_t close);
+int write_file_ask(int yes_no, close_after_save_t close);
 
 int doe_inc_key_list_lines(void);
 

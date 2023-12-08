@@ -116,7 +116,6 @@ int regexp_replace(regexp_t *regexp, regexp_matches_t *regexp_matches,
  char *buffer, int buf_len, const char *replace_to);
 
 //------------------------------------------------------------------------------
-
 void regexp_matches_clear(regexp_matches_t *regexp_matches);
 void regexp_matches_set_start_idx(regexp_matches_t *regexp_matches, int match_idx,
  int byte_idx);

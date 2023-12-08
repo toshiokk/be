@@ -353,18 +353,18 @@ int doe_reopen_file(void)
 
 //-----------------------------------------------------------------------------
 
-//|Func name               |files|close|un-mod|ask Y/N|file-name|Key|
-//|                        |     |     | ified|       |         |   |
-//|------------------------|-----|-----|------|-------|---------|---|
-//|doe_write_file_to()     | one |none | Yes  | none  |New-name |@s |write to new file
-//|doe_write_file_ask()    | one |none | no   | Ask   |cur-name |@w |
-//|doe_write_file_always() | one |none | no   | none  |cur-name |@W |ask if not modified
-//|doe_write_all_ask()     | All |none | no   | Ask   |cur-name |@a |
-//|doe_write_all_modified()| All |none | no   | none  |cur-name |@A |
-//|doe_close_file_ask()    | one |Close| no   | Ask   |cur-name |^Q |
-//|doe_close_file_always() | one |Close| no   | none  |cur-name |(@^Q)|not implemented
-//|doe_close_all_ask()     | All |Close| no   | Ask   |cur-name |@q |
-//|doe_close_all_modified()| All |Close| no   | none  |cur-name |@Q |
+//|Func name               |files|close|un-mod|ask Y/N|file-name|Key  |
+//|                        |     |     | ified|       |         |     |
+//|------------------------|-----|-----|------|-------|---------|-----|
+//|doe_write_file_to()     | one |none | Yes  | none  |New-name |@s   |write to new file
+//|doe_write_file_ask()    | one |none | no   | Ask   |cur-name |@w   |
+//|doe_write_file_always() | one |none | no   | none  |cur-name |@W   |ask if not modified
+//|doe_write_all_ask()     | All |none | no   | Ask   |cur-name |@a   |
+//|doe_write_all_modified()| All |none | no   | none  |cur-name |@A   |
+//|doe_close_file_ask()    | one |Close| no   | Ask   |cur-name |^Q   |
+//|doe_close_file_always() | one |Close| no   | none  |cur-name |(@^Q)|
+//|doe_close_all_ask()     | All |Close| no   | Ask   |cur-name |@q   |
+//|doe_close_all_modified()| All |Close| no   | none  |cur-name |@Q   |
 
 int doe_write_file_to(void)
 {
@@ -464,6 +464,7 @@ PRIVATE int close_file(int yes_no)
 #endif // ENABLE_HISTORY
 	return 2;
 }
+PRIVATE int write_close_all(int yes_no);
 int doe_close_all_ask(void)
 {
 	write_close_all(ANSWER_NO);
@@ -472,6 +473,24 @@ int doe_close_all_ask(void)
 int doe_close_all_modified(void)
 {
 	write_close_all(ANSWER_YES);
+	return 0;
+}
+PRIVATE int write_close_all(int yes_no)
+{
+	if (is_app_list_mode()) {
+		editor_quit = EDITOR_CANCELLED;
+		return 0;
+	}
+	memorize_cur_file_pos_null(NULL);
+
+	close_all_not_modified();
+	if (write_all_ask(yes_no, CLOSE_AFTER_SAVE_1) < 0)
+		return -1;
+	close_all();
+
+#ifdef ENABLE_HISTORY
+	update_history(HISTORY_TYPE_IDX_CURSPOS, get_memorized_file_pos_str(), 1);
+#endif // ENABLE_HISTORY
 	return 0;
 }
 
@@ -594,28 +613,9 @@ int doe_editor_menu_9(void)
 }
 
 //-----------------------------------------------------------------------------
-
-int write_close_all(int yes_no)
+int write_all_ask(int yes_no, close_after_save_t close)
 {
-	if (is_app_list_mode()) {
-		editor_quit = EDITOR_CANCELLED;
-		return 0;
-	}
-	memorize_cur_file_pos_null(NULL);
-
-	close_all_not_modified();
-	if (write_all_ask(yes_no, CLOSE_AFTER_SAVE_1) < 0)
-		return -1;
-	close_all();
-
-#ifdef ENABLE_HISTORY
-	update_history(HISTORY_TYPE_IDX_CURSPOS, get_memorized_file_pos_str(), 1);
-#endif // ENABLE_HISTORY
-	return 0;
-}
-int write_all_ask(int yes, close_after_save_t close)
-{
-	int ret = yes;
+	int ret = yes_no;
 
 	switch_cep_buf_to_top();
 	while (is_cep_buf_valid()) {
@@ -656,16 +656,16 @@ int close_all(void)
 	return 0;
 }
 
-int write_file_ask(int yes, close_after_save_t close)
+int write_file_ask(int yes_no, close_after_save_t close)
 {
-	int ret = yes;
+	int ret = yes_no;
 
-	if (yes < ANSWER_FORCE && check_cur_buf_modified() == 0) {
-		clear_cur_buf_modified();	// buffer is actually NOT modified, so clear "modified" flag
+	if (yes_no < ANSWER_FORCE && check_cur_buf_modified() == 0) {
+		clear_cur_buf_modified();	// If buffer is actually NOT modified, clear "modified" flag
 		disp_status_bar_done(_("Buffer is NOT modified"));
 		return ANSWER_NO;
 	}
-	if (yes == ANSWER_FORCE && check_cur_buf_modified() == 0) {
+	if (yes_no == ANSWER_FORCE && check_cur_buf_modified() == 0) {
 		ret = ask_yes_no(ASK_YES_NO | ASK_ALL, _("Save unmodified buffer ?"));
 		if (ret < 0) {
 			disp_status_bar_done(_("Cancelled"));
@@ -913,7 +913,6 @@ int is_view_mode_then_warn_it(void)
 }
 
 //-----------------------------------------------------------------------------
-
 #ifdef ENABLE_DEBUG
 void dump_cur_pointers(void)
 {

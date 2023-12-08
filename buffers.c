@@ -291,7 +291,6 @@ void create_edit_buf(const char *full_path)
 }
 
 //-----------------------------------------------------------------------------
-
 // Append a new line to the bottom of the current buffer
 be_line_t *append_string_to_cur_edit_buf(const char *string)
 {

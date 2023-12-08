@@ -776,7 +776,6 @@ int cursor_next_line(void)
 }
 
 //-----------------------------------------------------------------------------
-
 int first_line(void)
 {
 	CEPBV_CL = CUR_EDIT_BUF_TOP_LINE;

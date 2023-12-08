@@ -85,7 +85,6 @@ int get_byte_idx_from_col_idx(const char *utf8s, int columns, int left_right,
 int expand_utf8s_columns(char *utf8s, int columns);
 
 //-----------------------------------------------------------------------------
-
 int skip_space(const char **ptr);
 const char *skip_chars(const char *ptr, const char *chars);
 const char *skip_to_file_path(const char *ptr);
