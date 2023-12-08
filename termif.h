@@ -23,7 +23,6 @@
 #define termif_h
 
 // These keywords are defined in curses.h
-
 #define KEY_RESIZE		0x019a
 #define KEY_HOME		0x0106
 #define KEY_END			0x0168

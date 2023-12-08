@@ -1077,7 +1077,7 @@ const char *te_tab_expand(const char *original)
 			orig_ptr++;
 		} else if (is_ctrl_char((unsigned char)*orig_ptr)) {
 			*vis_ptr++ = '^';
-			*vis_ptr++ = (*orig_ptr == 0x7f) ? '?' : *orig_ptr + '@';
+			*vis_ptr++ = (*orig_ptr == CHAR_DEL) ? '?' : *orig_ptr + '@';
 			col_idx += 2;
 			orig_ptr++;
 		} else if ((unsigned char)*orig_ptr < 0x80) {	// ASCII

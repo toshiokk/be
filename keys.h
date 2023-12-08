@@ -42,7 +42,8 @@
 #endif // !defined(KEY_UP) || !defined(KEY_DOWN)
 
 #define CTRL_CHAR(chr)		((chr) - '@')				// Ctrl-x
-#define CHAR_ESC			0x1b
+#define CHAR_ESC			0x1b						// ASCII ESC
+#define CHAR_DEL			0x7f						// ASCII DEL
 #define TWO_BYTE_KEY_CODE(h, l)	((h) << 8 | (l))
 #define TBKC(h, l)			TWO_BYTE_KEY_CODE(h, l)
 #define KEY_META(key)		TBKC(CHAR_ESC, key)			// Alt-x
@@ -220,7 +221,7 @@
 #define K_M_VERTBAR			K_M('|')	// 1b7c
 #define K_M_RBRACE			K_M('}')	// 1b7d
 #define K_M_TILDE			K_M('~')	// 1b7e
-#define K_M_DEL				K_M(0x7f)	// 1b7f
+#define K_M_DEL				K_M(CHAR_DEL)	// 1b7f
 
 #define K_F01			KEY_F(1)
 #define K_F02			KEY_F(2)
@@ -247,8 +248,10 @@
 #define K_SF11			KEY_F(12+11)
 #define K_SF12			KEY_F(12+12)
 
-#define K_IC			KEY_IC
+#define K_INS			KEY_IC
 #define K_DC			KEY_DC
+
+// Abstruct key code
 //							Key-Backspace	Key-Delete
 // console(TL11Fuji)		0x08			0x7f
 // console(Slackware12.2)	0x7f			0x0113
@@ -259,6 +262,7 @@
 // MX Linux(21)				0x7f			1b,5b,33,7e
 #define K_BS			0x1008
 #define K_DEL			0x107f			// console: DEL, konsole: BS
+
 #define K_HOME			KEY_HOME
 #define K_END			KEY_END
 #define K_PPAGE			KEY_PPAGE

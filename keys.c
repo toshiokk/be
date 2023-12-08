@@ -511,16 +511,16 @@ PRIVATE key_code_t input_key_bs_del(void)
 
 	key = tio_input_key();
 	switch (key) {
-	case 0x7f:
+	case CHAR_DEL:
 #define MAP_KEY_7F_BS
 #ifdef MAP_KEY_7F_BS
 		if (GET_APPMD(app_MAP_KEY_7F_BS)) {
 flf_d_printf("KEY_7F ==> BS\n");
-			key = K_BS;		// 0x7f ==> BS
+			key = K_BS;		// CHAR_DEL ==> BS
 		} else {
 #endif // MAP_KEY_7F_BS
 flf_d_printf("KEY_7F ==> DEL\n");
-			key = K_DEL;	// 0x7f ==> Delete
+			key = K_DEL;	// CHAR_DEL ==> Delete
 #ifdef MAP_KEY_7F_BS
 		}
 #endif // MAP_KEY_7F_BS
@@ -538,10 +538,11 @@ flf_d_printf("KEY_BACKSPACE ==> DEL\n");
 		}
 #endif // MAP_KEY_7F_BS
 		break;
-	case K_DC:
-flf_d_printf("K_DC\n");
+	case KEY_DC:
+flf_d_printf("KEY_DC ==> DEL\n");
 		// Delete(0x0113) key code was seen.
-		SET_APPMD(app_MAP_KEY_7F_BS);	// DEL(0x7f) key code ==> BS
+		SET_APPMD(app_MAP_KEY_7F_BS);	// set conversion of CHAR_DEL ==> BS
+		key = K_DEL;
 		break;
 	default:
 		break;
@@ -707,8 +708,7 @@ key_name_table_t key_name_table[] = {
 	{ K_SF10		, "S-F10", },
 	{ K_SF11		, "S-F11", },
 	{ K_SF12		, "S-F12", },
-	{ K_IC			, "INS", },
-	{ K_DC			, "DC", },
+	{ K_INS			, "INS", },
 	{ K_DEL			, "DEL", },
 	{ K_HOME		, "HOME", },
 	{ K_END			, "END", },

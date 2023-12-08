@@ -81,9 +81,21 @@ int dof_edit_file(void)
 }
 int dof_edit_file_non_recursive(void)
 {
+	if (count_edit_bufs()) {
+		return dof_call_editor();
+	}
 	dof_edit_file_(RECURSIVE0);
 	return 1;
 }
+int dof_call_editor()
+{
+	if (count_edit_bufs() == 0) {
+		return dof_edit_new_file();
+	}
+	call_editor(1, 1);
+	return 1;
+}
+
 int dof_edit_new_file(void)
 {
 	char file_name[MAX_PATH_LEN+1];
@@ -228,36 +240,6 @@ int dof_copy_file_update(void)
 	}
 	end_fork_exec_repeat();
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
-	return 0;
-}
-int dof_rename_file(void)
-{
-	char file_name[MAX_PATH_LEN+1];
-	int ret;
-
-	if (is_app_list_mode()) {
-		// dof_rename_file -> FILER_DO_ENTER_FILE_NAME
-		filer_do_next = FILER_DO_ENTER_FILE_NAME;
-		return -1;
-	}
-
-	strlcpy__(file_name, get_cur_filer_view()
-	 ->file_list[get_cur_filer_view()->cur_sel_idx].file_name, MAX_PATH_LEN);
-
-	ret = input_string_tail(file_name, file_name, HISTORY_TYPE_IDX_EXEC, _("Rename to:"));
-
-	if (ret < 0) {
-		return 0;
-	}
-	if (ret <= 0) {
-		return 0;
-	}
-	if (fork_exec_once(SEPARATE1, PAUSE1, "mv", "-i",
-	 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name,
-	 file_name, 0) == 0) {
-		strlcpy__(get_cur_filer_view()->next_file, file_name, MAX_PATH_LEN);
-		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
-	}
 	return 0;
 }
 int dof_move_file(void)
@@ -444,6 +426,36 @@ int dof_size_zero_file(void)
 	}
 	end_fork_exec_repeat();
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
+	return 0;
+}
+int dof_rename_file(void)
+{
+	char file_name[MAX_PATH_LEN+1];
+	int ret;
+
+	if (is_app_list_mode()) {
+		// dof_rename_file -> FILER_DO_ENTER_FILE_NAME
+		filer_do_next = FILER_DO_ENTER_FILE_NAME;
+		return -1;
+	}
+
+	strlcpy__(file_name, get_cur_filer_view()
+	 ->file_list[get_cur_filer_view()->cur_sel_idx].file_name, MAX_PATH_LEN);
+
+	ret = input_string_tail(file_name, file_name, HISTORY_TYPE_IDX_EXEC, _("Rename to:"));
+
+	if (ret < 0) {
+		return 0;
+	}
+	if (ret <= 0) {
+		return 0;
+	}
+	if (fork_exec_once(SEPARATE1, PAUSE1, "mv", "-i",
+	 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name,
+	 file_name, 0) == 0) {
+		strlcpy__(get_cur_filer_view()->next_file, file_name, MAX_PATH_LEN);
+		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
+	}
 	return 0;
 }
 int dof_find_file(void)

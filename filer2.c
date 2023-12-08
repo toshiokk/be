@@ -617,7 +617,9 @@ int research_file_name_in_file_list(filer_view_t *fv)
 {
 	int cur_sel_idx;
 
+flf_d_printf("[%s]\n", fv->next_file);
 	cur_sel_idx = search_file_name_in_file_list(fv, fv->next_file);
+flf_d_printf("%d\n", cur_sel_idx);
 	if (cur_sel_idx < 0) {
 		if (fv->cur_sel_idx >= 0)
 			cur_sel_idx = fv->cur_sel_idx;

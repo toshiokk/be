@@ -368,6 +368,7 @@ int doe_write_file_to(void)
 {
 	char file_path[MAX_PATH_LEN+1] = "";
 	char org_file_path[MAX_PATH_LEN+1] = "";
+	char file_name[MAX_PATH_LEN+1] = "";
 
 	strlcpy__(file_path, get_cep_buf()->file_path, MAX_PATH_LEN);
 flf_d_printf("[%s]\n", file_path);
@@ -391,8 +392,14 @@ flf_d_printf("[%s]\n", file_path);
 flf_d_printf("[%s]\n", file_path);
 		break;
 	}
+	strlcpy__(file_name, separate_dir_and_file(file_path, org_file_path), MAX_PATH_LEN);
+#ifdef ENABLE_FILER
+	// copy new file name to filer next_file
+	strlcpy__(get_cur_filer_view()->next_file, file_name, MAX_PATH_LEN);
+flf_d_printf("[%s]\n", file_name);
+#endif // ENABLE_FILER
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
-	disp_status_bar_done(_("Written to the file: %s"), file_path);
+	disp_status_bar_done(_("Written to the file: %s"), file_name);
 	return 0;
 }
 int doe_write_file_ask(void)

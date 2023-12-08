@@ -335,7 +335,7 @@ int doe_control_code(void)
 	disp_status_bar_ing(_("Input control character [^A-^Z,^[,^\\,^],^^,^_,\x7f]"));
 	key = input_key_loop();
 	disp_status_bar_ing(_("Key code: %04x"), key);
-	if ((0x01 <= key && key < 0x20) || key == 0x7f) {
+	if ((0x01 <= key && key < 0x20) || key == CHAR_DEL) {
 		doe_enter_char(key);
 	}
 	return 1;

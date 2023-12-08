@@ -57,6 +57,10 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_open_files_in_buf), NULL },
  { "Read into buffer",    "Read file into current pos",     K_M_i,        KNA, KNA,
    XL, F_I(doe_read_file_into_cur_pos), NULL },
+#ifdef ENABLE_FILER
+ { "Filer",               "Open filer",                     K_M_f, K_F11, KNA,
+   XA, F_I(doe_call_filer), NULL },
+#endif // ENABLE_FILER
 
  { "",                    "Cursor Menu",                    KNA,          KNA, KNA,
    XL, F_I(doe_editor_menu_2), NULL },
@@ -99,7 +103,7 @@ func_key_table_t editor_func_key_table[] = {
    XA, F_I(doe_carriage_return), NULL },
  { "Backspace",           "Backspace",                      K_C_H, KNA,   K_BS,
    XL, F_I(doe_backspace), NULL },
- { "Delete",              "Delete a character",             K_C_G, K_DEL, K_DC,
+ { "Delete",              "Delete a character",             K_C_G, K_DEL,      KNA,
    XL, F_I(doe_delete_char), NULL },
  { "UpperLower",          "Invert upper/lower letter",      K_C_W,        KNA, KNA,
    XL, F_I(doe_conv_upp_low_letter), NULL },
@@ -122,10 +126,6 @@ func_key_table_t editor_func_key_table[] = {
 #ifdef ENABLE_FILER
  { "Run line soon",       "Run current line as command",    K_M_x,        KNA, KNA,
    XA, F_I(doe_run_line_soon), NULL },
-#endif // ENABLE_FILER
-#ifdef ENABLE_FILER
- { "Filer",               "Switch to filer",                K_M_f,        KNA, KNA,
-   XA, F_I(doe_call_filer), NULL },
 #endif // ENABLE_FILER
 #ifdef ENABLE_UNDO
  { "Undo",                "Undo",                           K_M_u, K_M_z,      KNA,
@@ -167,7 +167,7 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_switch_to_top_file), NULL },
  { "Bottom File",         "Open bottom file",               K_M_GREATERTHAN, KNA, KNA,
    XL, F_I(doe_switch_to_bot_file), NULL },
- { "File List",           "Display File List",              K_M_SEMICOLON, K_F11, KNA,
+ { "File List",           "Display File List",              K_M_SEMICOLON,   KNA, KNA,
    XL, F_I(doe_switch_to_file_list), NULL },
 #if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
  { "Previous buffers",    "Goto previous buffers",          K_M_LPARENTHESIS, KNA, KNA,
@@ -208,7 +208,7 @@ func_key_table_t editor_func_key_table[] = {
    XA, F_I(doe_copy_text), NULL },
  { "Paste Text",          "Paste from Cut-buf with pop",    K_C_P, K_F08,      KNA,
    XL, F_I(doe_paste_text_with_pop), NULL },
- { "Paste2 Text",         "Paste from Cut-buf without pop", K_C_O, K_F09, K_IC,    
+ { "Paste2 Text",         "Paste from Cut-buf without pop", K_C_O, K_F09, K_INS,
    XL, F_I(doe_paste_text_without_pop), NULL },
  { "Duplic Text",         "Duplicate line",                 K_C_U, K_F10,      KNA,
    XL, F_I(doe_duplicate_text), NULL },

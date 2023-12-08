@@ -355,9 +355,12 @@ PRIVATE int check_filer_cur_dir(void)
 PRIVATE int update_all_file_list(const char *filter, int force_update)
 {
 	if (GET_APPMD(fl_FILER_PANES) == 0) {
+_FLF_
 		update_file_list(get_cur_filer_view(), filter, force_update);
 	} else {
+_FLF_
 		update_file_list(get_filer_view(0), filter, force_update);
+_FLF_
 		update_file_list(get_filer_view(1), filter, force_update);
 	}
 	return 0;
@@ -576,10 +579,10 @@ PRIVATE void disp_key_list_filer(void)
  "<dof_edit_new_file>EditNewFile "
  "<dof_copy_file>Copy "
  "<dof_copy_file_update>UpdateCopy "
- "<dof_rename_file>Rename "
  "<dof_move_file>Move "
  "<dof_trash_file>Trash "
  "<dof_delete_file>Delete "
+ "<dof_rename_file>Rename "
  "<dof_mark_to_delete_file>MarkToDelete "
  "<dof_exec_command_with_file>Exec "
  "<dof_run_command_rel>Run "
