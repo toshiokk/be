@@ -50,11 +50,11 @@ Filer <==> Editor switching and collaboration
   [p:i:/long/long/long/path/to/file.txt  mmmmMB HH:MM:DD]
   [p:i:/long/long/very-long/path/to/file.txt    HH:MM:DD]
 
+[v] Stop loading large or many files. (by Ctrl-C)
 [v] Show date in space for Time just after key press
 [v] sofisticate filer_do_next mechanism
 [v] sofisticate editor_quit mechanism
 
-[v] break many files loading (by Ctrl-C)
 [v] easy goto prev/next buffer
 	- UP then PAGEUP ==> prev.buf, DOWN then PAGEDOWN ==> next.buf)
 	- PAGEUP then UP ==> prev.buf, PAGEDOWN then DOWN ==> next.buf)

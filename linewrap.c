@@ -393,7 +393,6 @@ int wrap_line_length(int width)
 }
 
 //-----------------------------------------------------------------------------
-
 #define FORWARD_COL_IDX()										\
 	if (*ptr == '\t') {											\
 		col_idx += (priv_tab_size - col_idx % priv_tab_size);	\

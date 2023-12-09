@@ -43,8 +43,7 @@ void die_on(const char *msg);
 #define char_malloc(bytes)			(char *)malloc__(bytes)
 #define char_remalloc(ptr, bytes)	(char *)remalloc__(ptr, bytes)
 
-///
-#define MEMORY_LEAK_CHECKER
+///#define MEMORY_LEAK_CHECKER
 #ifndef MEMORY_LEAK_CHECKER
 
 #define _mlc_init

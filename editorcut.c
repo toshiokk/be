@@ -268,7 +268,6 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 	if (cp_del_paste_pop & CDPP_REPLACE) {
 		switch (CUR_CBUF_STATE(buf_CUT_MODE)) {
 		default:
-			// FALLTHROUGH
 		case CUT_MODE_0_LINE:
 			post_cmd_processing(top_line, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 			break;
@@ -295,14 +294,12 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 }
 
 //-----------------------------------------------------------------------------
-
 PRIVATE int copy_text_to_cut_buf(void)
 {
 	int char_cut;
 
 	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
-		// FALLTHROUGH
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
 	case CUT_MODE_H_CHAR:
@@ -311,7 +308,6 @@ PRIVATE int copy_text_to_cut_buf(void)
 	case CUT_MODE_HV_LINE:
 		switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 		default:
-			// FALLTHROUGH
 		case CUT_MODE_0_LINE:
 		case CUT_MODE_N_LINE:
 		case CUT_MODE_V_LINE:
@@ -346,7 +342,6 @@ PRIVATE int delete_text_in_cut_region(void)
 	set_cur_buf_modified();
 	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
-		// FALLTHROUGH
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
 	case CUT_MODE_H_CHAR:
@@ -374,7 +369,6 @@ PRIVATE int paste_text_from_cut_buf(void)
 		paste_cut_buf_char();
 		break;
 	default:
-		// FALLTHROUGH
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
 	case CUT_MODE_V_LINE:
@@ -390,7 +384,6 @@ PRIVATE int paste_text_from_cut_buf(void)
 }
 
 //-------------------------------------------------------------------------------------------------
-
 // Ex.1
 //  aaaaAAAAAAAAAAAAAaaaa
 // Ex.2

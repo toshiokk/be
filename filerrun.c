@@ -184,7 +184,6 @@ PRIVATE int dof_run_command_(int mode)
 	st_ptr = &get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st;
 	switch (mode % 10) {
 	default:
-		// FALLTHROUGH
 	case 0:
 		explanation = _("Run (with file):");
 		snprintf_(command_str, MAX_PATH_LEN+1, " %s",
@@ -263,7 +262,6 @@ flf_d_printf("command_str [%s]\n", command_str);
 }
 
 //-----------------------------------------------------------------------------
-
 void begin_fork_exec_repeat(void)
 {
 	restore_term_for_shell();
@@ -277,7 +275,6 @@ void end_fork_exec_repeat(void)
 }
 
 //-----------------------------------------------------------------------------
-
 #define MAX_EXECV_ARGS		10
 
 PRIVATE int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_exec,
@@ -440,7 +437,6 @@ void pause_after_exec(void)
 }
 
 //-----------------------------------------------------------------------------
-
 int restore_term_for_shell(void)
 {
 	tio_clear_screen();

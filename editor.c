@@ -174,7 +174,6 @@ _D_(dump_cur_pointers())
 }
 
 //-----------------------------------------------------------------------------
-
 PRIVATE int open_file_recursive(int recursive);
 int doe_open_file(void)
 {
@@ -252,7 +251,6 @@ int doe_open_proj_file(void)
 	for (loop = 0; loop < 4; loop++) {
 		switch (loop) {
 		default:
-			// FALLTHROUGH
 		case 0:		strcpy__(filter, PROJ_FILE_FILTER1);	break;
 		case 1:		strupper(filter);	break;	// "*.bep" ==> "*.BEP"
 		case 2:		strcpy__(filter, PROJ_FILE_FILTER2);	break;
@@ -352,7 +350,6 @@ int doe_reopen_file(void)
 }
 
 //-----------------------------------------------------------------------------
-
 //|Func name               |files|close|un-mod|ask Y/N|file-name|Key  |
 //|                        |     |     | ified|       |         |     |
 //|------------------------|-----|-----|------|-------|---------|-----|
@@ -509,8 +506,8 @@ int doe_read_file_into_cur_pos(void)
 	doe_paste_text_with_pop();
 	return 0;
 }
-//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 #ifdef ENABLE_FILER
 int doe_run_line_soon(void)
 {
@@ -537,7 +534,6 @@ int doe_call_filer(void)
 #endif // ENABLE_FILER
 
 //-----------------------------------------------------------------------------
-
 #ifdef ENABLE_HELP
 int doe_editor_splash(void)
 {
@@ -667,7 +663,7 @@ int write_file_ask(int yes_no, close_after_save_t close)
 	}
 	if (yes_no == ANSWER_FORCE && check_cur_buf_modified() == 0) {
 		ret = ask_yes_no(ASK_YES_NO | ASK_ALL, _("Save unmodified buffer ?"));
-		if (ret < 0) {
+		if (ret <= 0) {
 			disp_status_bar_done(_("Cancelled"));
 			return ANSWER_CANCEL;
 		}
@@ -742,7 +738,6 @@ int update_screen_app(int title_bar, int status_bar, int refresh)
 }
 
 //-----------------------------------------------------------------------------
-
 int update_screen_editor(int title_bar, int status_bar, int refresh)
 {
 	int pane_sel_idx;		// 0: not current pane, 1: current pane
@@ -889,7 +884,6 @@ void disp_key_list_editor(void)
 }
 
 //-----------------------------------------------------------------------------
-
 int is_app_list_mode(void)	// in editor: text view mode, in filer: file list mode
 {
 	return GET_APPMD(app_LIST_MODE);			// 0: edit mode, 1: list mode

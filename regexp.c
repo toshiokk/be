@@ -165,7 +165,6 @@ int search_str_in_line_regexp(regexp_t *regexp, regexp_matches_t *regexp_matches
 #endif // ENABLE_REGEX
 
 //-----------------------------------------------------------------------------
-
 PRIVATE const char *revstrstr(const char *haystack, const char *tail_of_haystack,
  const char *needle);
 PRIVATE const char *revstristr(const char *haystack, const char *tail_of_haystack,
@@ -472,7 +471,6 @@ int regexp_replace(regexp_t *regexp, regexp_matches_t *regexp_matches,
 }
 
 //------------------------------------------------------------------------------
-
 void regexp_matches_clear(regexp_matches_t *regexp_matches)
 {
 #if 0
@@ -600,7 +598,6 @@ void regfree__(regex_t *preg)
 }
 
 //------------------------------------------------------------------------------
-
 #ifndef USE_PCRE
 // GNU C library's POSIX regex implementation does not support escape sequence such as "\t".
 // So convert two bytes string "\t" to one byte character '\t'.

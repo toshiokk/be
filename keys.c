@@ -271,7 +271,6 @@ func_key_table_t *get_func_key_table_from_key_group(int group_idx)
 }
 
 //-----------------------------------------------------------------------------
-
 int cmp_func_id(const char *func_id_1, const char *func_id_2)
 {
 	return strcmp(func_id_1, func_id_2) == 0;
@@ -400,7 +399,6 @@ const char *short_key_name_from_func_id(char *buf)
 }
 
 //-----------------------------------------------------------------------------
-
 PRIVATE key_code_t menu_key = -1;
 void set_menu_key(key_code_t key)
 {
@@ -432,7 +430,6 @@ void set_menu_key_for_do_app_menu_0(void)
 }
 
 //-----------------------------------------------------------------------------
-
 PRIVATE int has_been_input_key = 0;
 int just_has_been_input_key()
 {
@@ -556,7 +553,6 @@ int input_key_break(void)
 }
 
 //-----------------------------------------------------------------------------
-
 key_name_table_t key_name_table[] = {
 //					   12345
 	{ ' '			, "SP", },

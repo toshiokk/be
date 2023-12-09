@@ -426,7 +426,6 @@ int differ_fgc_to_bgc(int bgc, int fgc)
 		// so that you can recognize character
 		switch (fgc) {
 		default:
-			// FALLTHROUGH
 		case CL_BK:		fgc = CL_DG;	break;
 		case CL_RD:		fgc = CL_LR;	break;
 		case CL_GR:		fgc = CL_LG;	break;

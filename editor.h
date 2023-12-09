@@ -44,6 +44,7 @@ int doe_reopen_file_last_line(void);
 int doe_reopen_file(void);
 
 int doe_write_file_to(void);
+
 int doe_write_file_ask(void);
 int doe_write_file_always(void);
 int doe_write_all_ask(void);

@@ -33,7 +33,6 @@ void save_key_macro(void)
 #endif // ENABLE_HISTORY
 
 //-----------------------------------------------------------------------------
-
 // start/abort recording
 int doe_start_rec__cancel_rec(void)
 {
@@ -117,7 +116,6 @@ PRIVATE int start_playback_last_n(int last_n)
 }
 //-----------------------------------------------------------------------------
 // Keyboard macro
-
 #define KEY_CODE_STR_LEN	(2+MAX_KEY_NAME_LEN+1)	// "\(RIGHT)"
 
 #define MAX_KEY_STROKES			MAX_EDIT_LINE_LEN / KEY_CODE_STR_LEN

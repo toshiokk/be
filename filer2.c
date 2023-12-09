@@ -166,7 +166,6 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	}
 	switch (GET_APPMD(fl_SHOW_FILE_INFO)) {
 	default:
-		// FALLTHROUGH
 	case SHOW_FILE_INFO_0:
 	case SHOW_FILE_INFO_1:
 	case SHOW_FILE_INFO_2:
@@ -194,7 +193,6 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 /// get_group_name(show_link ? lst_ptr->st_gid : st_ptr->st_gid));
 	switch (GET_APPMD(fl_SHOW_FILE_INFO)) {
 	default:
-		// FALLTHROUGH
 	case SHOW_FILE_INFO_0:
 		snprintf_(buf_info, FILE_INFO_BUF_LEN+1, "%s", " ");
 		break;
@@ -407,8 +405,7 @@ void sort_file_list(filer_view_t *fv)
 	qsort(fv->file_list, fv->file_list_entries, sizeof(file_info_t), comp_file_info);
 }
 
-// Comparison functions for file listings ------------------------------------------
-
+// Comparison functions for file list ------------------------------------------
 PRIVATE int comp_file_info(const void *aa, const void *bb)
 {
 	int ret;
@@ -422,7 +419,6 @@ PRIVATE int comp_file_info(const void *aa, const void *bb)
 	}
 	switch (GET_APPMD(fl_FILE_SORT_BY)) {
 	default:
-		// FALLTHROUGH
 	case FILE_SORT_BY_NAME:
 		 return comp_file_name(aa, bb);
 	case FILE_SORT_BY_NAME_REV:
@@ -542,7 +538,6 @@ PRIVATE int strtypecasecmp(const char *s1, const char *s2)
 }
 
 //-----------------------------------------------------------------------------
-
 int get_files_selected_cfv(void)
 {
 	return get_files_selected(get_cur_filer_view());
@@ -612,14 +607,13 @@ void unselect_all_files_auto(char selection_bit)
 }
 
 //-----------------------------------------------------------------------------
-
 int research_file_name_in_file_list(filer_view_t *fv)
 {
 	int cur_sel_idx;
 
-flf_d_printf("[%s]\n", fv->next_file);
+///flf_d_printf("[%s]\n", fv->next_file);
 	cur_sel_idx = search_file_name_in_file_list(fv, fv->next_file);
-flf_d_printf("%d\n", cur_sel_idx);
+///flf_d_printf("%d\n", cur_sel_idx);
 	if (cur_sel_idx < 0) {
 		if (fv->cur_sel_idx >= 0)
 			cur_sel_idx = fv->cur_sel_idx;

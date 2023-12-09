@@ -355,12 +355,12 @@ PRIVATE int check_filer_cur_dir(void)
 PRIVATE int update_all_file_list(const char *filter, int force_update)
 {
 	if (GET_APPMD(fl_FILER_PANES) == 0) {
-_FLF_
+///_FLF_
 		update_file_list(get_cur_filer_view(), filter, force_update);
 	} else {
-_FLF_
+///_FLF_
 		update_file_list(get_filer_view(0), filter, force_update);
-_FLF_
+///_FLF_
 		update_file_list(get_filer_view(1), filter, force_update);
 	}
 	return 0;

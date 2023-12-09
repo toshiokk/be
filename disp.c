@@ -121,16 +121,16 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 
 	switch (status_bar_to_display) {
 	default:
-		// FALLTHROUGH
 	case S_B_D_NONE:
+	case S_B_D_PERCENT_EDITOR:
 	case S_B_D_PERCENT_FILER:
 	case S_B_D_ING:
 	case S_B_D_DONE:
-///		if (status_bar_to_display >= status_bar_displayed) {
+		if (status_bar_to_display >= status_bar_displayed) {
 			// display this if higher or the same priority
 			status_bar_displayed = status_bar_to_display;
 			update = 1;
-///		}
+		}
 		break;
 	case S_B_D_ERR:
 		if (status_bar_to_display > status_bar_displayed) {
@@ -138,9 +138,6 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 			status_bar_displayed = status_bar_to_display;
 			update = 1;
 		}
-		break;
-	case S_B_D_PERCENT_EDITOR:
-		update = 1;
 		break;
 	}
 
@@ -152,8 +149,18 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 ///mflf_d_printf("[%s]\n", buf);
 		switch (status_bar_to_display) {
 		default:
-			// FALLTHROUGH
 		case S_B_D_NONE:
+		case S_B_D_PERCENT_EDITOR:
+			// this time: "PREV_MSG || NEW_MSG"
+			strcpy__(buffer, "");
+			if (strnlen(prev_msg, MAX_SCRN_LINE_BUF_LEN)) {
+				strlcat__(buffer, MAX_SCRN_LINE_BUF_LEN, prev_msg);
+				strlcat__(buffer, MAX_SCRN_LINE_BUF_LEN, "  |  ");
+			}
+			strlcat__(buffer, MAX_SCRN_LINE_BUF_LEN, buf);
+			strcpy__(prev_msg, "");
+			// next time: "NEW_MSG"
+			break;
 		case S_B_D_PERCENT_FILER:
 		case S_B_D_ING:
 			// this time: "NEW_MSG"
@@ -168,27 +175,15 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 			strlcpy__(prev_msg, buf, MAX_SCRN_LINE_BUF_LEN);
 			// next time: "PREV_MSG || NEW_MSG"
 			break;
-		case S_B_D_PERCENT_EDITOR:
-			// this time: "PREV_MSG || NEW_MSG"
-			strcpy__(buffer, "");
-			if (strnlen(prev_msg, MAX_SCRN_LINE_BUF_LEN)) {
-				strlcat__(buffer, MAX_SCRN_LINE_BUF_LEN, prev_msg);
-				strlcat__(buffer, MAX_SCRN_LINE_BUF_LEN, "  |  ");
-			}
-			strlcat__(buffer, MAX_SCRN_LINE_BUF_LEN, buf);
-			strcpy__(prev_msg, "");
-			// next time: "NEW_MSG"
-			break;
 		}
 		adjust_utf8s_columns(buffer, main_win_get_columns());
 		switch (status_bar_displayed) {
 		default:
-			// FALLTHROUGH
 		case S_B_D_NONE:
+		case S_B_D_PERCENT_EDITOR:
 		case S_B_D_PERCENT_FILER:
 		case S_B_D_ING:
 		case S_B_D_DONE:
-		case S_B_D_PERCENT_EDITOR:
 			color_idx = ITEM_COLOR_IDX_STATUS;
 			break;
 		case S_B_D_ERR:
@@ -214,7 +209,8 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 				 &buffer[byte_idx], -1);
 			}
 		}
-///mflf_d_printf("SB: [%s]\n", buffer);
+///
+mflf_d_printf("SB: [%s]\n", buffer);
 	}
 
 	if (status_bar_to_display == S_B_D_PERCENT_EDITOR) {

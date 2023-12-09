@@ -220,8 +220,6 @@ int load_files_in_cur_buf(void)
 	first_line();
 	clear_sigint_signaled();
 	for (lines = 0; lines < MAX_LINES_TO_TRY_TO_LOAD; lines++) {
-		if (is_sigint_signaled())
-			break;
 		if (line_data_len(CEPBV_CL)) {
 			if (CEPBV_CL->data[0] != '#') {
 				memorize_cur_file_pos_null(NULL);
@@ -240,13 +238,16 @@ int load_files_in_cur_buf(void)
 			break;
 		if (get_mem_free_in_kb(1) <= MIN_FREE_MEM_KB)
 			break;
+		if (is_sigint_signaled()) {
+flf_d_printf("sigint_signaled\n");
+			break;
+		}
 	}
 	recall_cur_file_pos_null(file_pos_str);
 	return files;
 }
 
 //=============================================================================
-
 // supported formats:
 //  ##						// ignore any string
 //  #fileio.h				// file name in comment
@@ -303,21 +304,28 @@ int load_file_name_upp_low(const char *file_name,
 	char file_name_buf[MAX_PATH_LEN+1];
 	int files;
 
-	// try to open specified file name (FileName.Ext)
-	if ((files = load_file_name_recurs(file_name, open_on_err, msg_on_err, recursive)) > 0)
-		return files;
-	if (try_upp_low) {
+	clear_sigint_signaled();
+	for (int name_type_idx = 0; name_type_idx < (try_upp_low ? 3 : 1); name_type_idx++) {
 		strlcpy__(file_name_buf, file_name, MAX_PATH_LEN);
-		// try to open in upper case file name (FILENAME.EXT)
-		strupper(file_name_buf);
+		switch (name_type_idx) {
+		case 0:
+			// try to open specified file name (FileName.Ext)
+			break;
+		case 1:
+			// try to open in upper case file name (FILENAME.EXT)
+			strupper(file_name_buf);
+			break;
+		case 2:
+			// try to open in lower case file name (filename.ext)
+			strlower(file_name_buf);
+			break;
+		}
 		if ((files = load_file_name_recurs(file_name_buf, open_on_err, msg_on_err, recursive)) > 0)
 			return files;
-		// try to open in lower case file name (filename.ext)
-		strlower(file_name_buf);
-		if ((files = load_file_name_recurs(file_name_buf, open_on_err, msg_on_err, recursive)) > 0)
-			return files;
+		if (is_sigint_signaled()) {
+			break;
+		}
 	}
-///	return files;	// 0
 	return 0;	// 0
 }
 // Open file. If it is a project file, open file(s) described in it.
@@ -666,7 +674,6 @@ int switch_cep_buf_to_another_buf(void)
 	return 1;
 }
 //-----------------------------------------------------------------------------
-
 // supported file names:
 //  |No.| file type                                                | command line | file list |
 //  |---|----------------------------------------------------------|--------------|-----------|

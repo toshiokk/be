@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-09 08:14+0900\n"
+"POT-Creation-Date: 2023-12-09 19:18+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../appmode.c:547
+#: ../appmode.c:544
 msgid "Input key to show key code"
 msgstr ""
 
-#: ../appmode.c:549 ../editormove.c:337
+#: ../appmode.c:546 ../editormove.c:335
 #, c-format
 msgid "Key code: %04x"
 msgstr ""
@@ -44,91 +44,91 @@ msgstr ""
 msgid "Can not execute this function: [%s]"
 msgstr ""
 
-#: ../editor.c:196
+#: ../editor.c:195
 msgid "Open existing file:"
 msgstr ""
 
-#: ../editor.c:220
+#: ../editor.c:219
 msgid "Open new file:"
 msgstr ""
 
-#: ../editor.c:301
+#: ../editor.c:299
 msgid "No project file found"
 msgstr ""
 
-#: ../editor.c:330
+#: ../editor.c:328
 msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr ""
 
-#: ../editor.c:350
+#: ../editor.c:348
 msgid "File re-loaded"
 msgstr ""
 
-#: ../editor.c:404
+#: ../editor.c:401
 #, c-format
 msgid "Written to the file: %s"
 msgstr ""
 
-#: ../editor.c:457
+#: ../editor.c:454
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editor.c:624 ../editor.c:671 ../editor.c:684 ../fileio.c:362
-#: ../fileio.c:367 ../winin.c:97
+#: ../editor.c:620 ../editor.c:667 ../editor.c:680 ../fileio.c:366
+#: ../fileio.c:371 ../winin.c:97
 msgid "Cancelled"
 msgstr ""
 
-#: ../editor.c:630
+#: ../editor.c:626
 msgid "All buffers are checked"
 msgstr ""
 
-#: ../editor.c:635
+#: ../editor.c:631
 msgid "Freeing buffers..."
 msgstr ""
 
-#: ../editor.c:650
+#: ../editor.c:646
 msgid "Freeing all buffers..."
 msgstr ""
 
 #. If buffer is actually NOT modified, clear "modified" flag
-#: ../editor.c:665
+#: ../editor.c:661
 msgid "Buffer is NOT modified"
 msgstr ""
 
-#: ../editor.c:669
+#: ../editor.c:665
 msgid "Save unmodified buffer ?"
 msgstr ""
 
-#: ../editor.c:681
+#: ../editor.c:677
 msgid "Save modified buffer ?"
 msgstr ""
 
-#: ../editor.c:682
+#: ../editor.c:678
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr ""
 
-#: ../editor.c:692
+#: ../editor.c:688
 msgid "Buffer saved to file"
 msgstr ""
 
-#: ../editor.c:844
+#: ../editor.c:839
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:901
+#: ../editor.c:895
 msgid "Modification not allowed in Anchor buffer"
 msgstr ""
 
-#: ../editor.c:905
+#: ../editor.c:899
 msgid "Modification not allowed in LIST mode"
 msgstr ""
 
-#: ../editor.c:909
+#: ../editor.c:903
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 
-#: ../editor2.c:107 ../fileio.c:79
+#: ../editor2.c:107 ../fileio.c:78
 msgid "New File"
 msgstr ""
 
@@ -232,27 +232,27 @@ msgstr ""
 msgid "#List of Editor Key Bindings"
 msgstr ""
 
-#: ../editorlist.c:70 ../editorlist.c:151
+#: ../editorlist.c:70 ../editorlist.c:149
 msgid "#List of Editor Functions"
 msgstr ""
 
-#: ../editorlist.c:106
+#: ../editorlist.c:105
 msgid "Key List"
 msgstr ""
 
-#: ../editorlist.c:109
+#: ../editorlist.c:108
 msgid "Function List"
 msgstr ""
 
-#: ../editormove.c:335
+#: ../editormove.c:333
 msgid "Input control character [^A-^Z,^[,^\\,^],^^,^_,]"
 msgstr ""
 
-#: ../editormove.c:356
+#: ../editormove.c:354
 msgid "Enter Unicode number in hex:"
 msgstr ""
 
-#: ../editormove.c:386
+#: ../editormove.c:384
 msgid "Select history string to paste:"
 msgstr ""
 
@@ -288,135 +288,135 @@ msgstr ""
 msgid "%d linesss read %s"
 msgstr ""
 
-#: ../fileio.c:74
+#: ../fileio.c:73
 #, c-format
 msgid "File [%s] not found"
 msgstr ""
 
-#: ../fileio.c:86
+#: ../fileio.c:85
 #, c-format
 msgid "[%s] is a directory"
 msgstr ""
 
-#: ../fileio.c:86
+#: ../fileio.c:85
 #, c-format
 msgid "[%s] is a special file"
 msgstr ""
 
-#: ../fileio.c:95
+#: ../fileio.c:94
 #, c-format
 msgid "[%s] is too large to read into buffer"
 msgstr ""
 
 #. regular file
-#: ../fileio.c:101
+#: ../fileio.c:100
 #, c-format
 msgid "Reading File %s ..."
 msgstr ""
 
-#: ../fileio.c:129
+#: ../fileio.c:128
 #, c-format
 msgid "BINARY file !! [%s]"
 msgstr ""
 
-#: ../fileio.c:176 ../fileio.c:197 ../fileio.c:234
+#: ../fileio.c:173 ../fileio.c:194 ../fileio.c:231
 #, c-format
 msgid "Can not read-open file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:360
+#: ../fileio.c:364
 msgid "File was modified by another program, OVERWRITE ?"
 msgstr ""
 
-#: ../fileio.c:372
+#: ../fileio.c:376
 #, c-format
 msgid "File [%s] can NOT be written !!"
 msgstr ""
 
-#: ../fileio.c:384
+#: ../fileio.c:388
 msgid "File Name to Write"
 msgstr ""
 
-#: ../fileio.c:402
+#: ../fileio.c:406
 msgid "File exists, OVERWRITE it ?"
 msgstr ""
 
-#: ../fileio.c:411
+#: ../fileio.c:415
 msgid "Path is not file, can not WRITE it"
-msgstr ""
-
-#: ../fileio.c:441
-#, c-format
-msgid "File [%s] is NOT regular file !!"
 msgstr ""
 
 #: ../fileio.c:445
 #, c-format
+msgid "File [%s] is NOT regular file !!"
+msgstr ""
+
+#: ../fileio.c:449
+#, c-format
 msgid "Writing File %s ..."
 msgstr ""
 
-#: ../fileio.c:458
+#: ../fileio.c:462
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr ""
 
-#: ../fileio.c:467
+#: ../fileio.c:471
 #, c-format
 msgid "%d line written"
 msgstr ""
 
-#: ../fileio.c:468
+#: ../fileio.c:472
 #, c-format
 msgid "%d lines written"
 msgstr ""
 
-#: ../fileio.c:469
+#: ../fileio.c:473
 #, c-format
 msgid "%d liness written"
 msgstr ""
 
-#: ../fileio.c:470
+#: ../fileio.c:474
 #, c-format
 msgid "%d linesss written"
 msgstr ""
 
-#: ../fileio.c:559 ../fileio.c:584
+#: ../fileio.c:561 ../fileio.c:586
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr ""
 
 #. -1: error
-#: ../fileio.c:567 ../fileio.c:592
+#: ../fileio.c:569 ../fileio.c:594
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:614
+#: ../fileio.c:616
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:658
+#: ../fileio.c:659
 #, c-format
 msgid "%d file loaded"
 msgstr ""
 
-#: ../fileio.c:659
+#: ../fileio.c:660
 #, c-format
 msgid "%d files loaded"
 msgstr ""
 
-#: ../fileio.c:660
+#: ../fileio.c:661
 #, c-format
 msgid "%d filess loaded"
 msgstr ""
 
-#: ../fileio.c:661
+#: ../fileio.c:662
 #, c-format
 msgid "%d filesss loaded"
 msgstr ""
 
-#: ../filer2.c:259
+#: ../filer2.c:257
 msgid " <<broken-link>>"
 msgstr ""
 
@@ -521,7 +521,7 @@ msgid "File selection cleared"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:836
+#: ../filercmd.c:835
 #, c-format
 msgid "Can not change current directory to [%s]: %s"
 msgstr ""
@@ -534,27 +534,27 @@ msgstr ""
 msgid "Execute with files:"
 msgstr ""
 
-#: ../filerrun.c:189
+#: ../filerrun.c:188
 msgid "Run (with file):"
 msgstr ""
 
-#: ../filerrun.c:194
+#: ../filerrun.c:193
 msgid "Run (current-directory-file):"
 msgstr ""
 
-#: ../filerrun.c:199
+#: ../filerrun.c:198
 msgid "Run (with real-path):"
 msgstr ""
 
-#: ../filerrun.c:206
+#: ../filerrun.c:205
 msgid "Run (script):"
 msgstr ""
 
-#: ../filerrun.c:211
+#: ../filerrun.c:210
 msgid "Run (script by shell):"
 msgstr ""
 
-#: ../filerrun.c:216
+#: ../filerrun.c:215
 msgid "Run (with SRC-path and DEST-path):"
 msgstr ""
 
@@ -568,43 +568,43 @@ msgstr ""
 msgid "No application directory %s"
 msgstr ""
 
-#: ../history.c:135
+#: ../history.c:133
 #, c-format
 msgid "hist_type_idx out of range: %d"
 msgstr ""
 
-#: ../history.c:244
+#: ../history.c:241
 #, c-format
 msgid "Unable to create history file: %s, %s"
 msgstr ""
 
-#: ../history.c:261
+#: ../history.c:258
 #, c-format
 msgid "Unable to write history file: %s, %s"
 msgstr ""
 
-#: ../history.c:294
+#: ../history.c:291
 #, c-format
 msgid "Unable to open history file: %s, %s"
 msgstr ""
 
-#: ../keymacro.c:60
+#: ../keymacro.c:59
 msgid "Start key macro recording"
 msgstr ""
 
-#: ../keymacro.c:69
+#: ../keymacro.c:68
 msgid "Cancel key macro recording"
 msgstr ""
 
-#: ../keymacro.c:78
+#: ../keymacro.c:77
 msgid "End key macro recording"
 msgstr ""
 
-#: ../keymacro.c:93
+#: ../keymacro.c:92
 msgid "No key macro recorded"
 msgstr ""
 
-#: ../keymacro.c:95 ../keymacro.c:111
+#: ../keymacro.c:94 ../keymacro.c:110
 msgid "Start key macro playback"
 msgstr ""
 

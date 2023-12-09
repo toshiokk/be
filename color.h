@@ -47,14 +47,12 @@ typedef enum {
 typedef struct /*item_color*/ {
 	char bgc;			// bg color
 	char fgc;			// fg color
-
 #ifdef ENABLE_DEBUG
 #define S(str)		#str,
 	char *item_name;	// "ITEM_COLOR_IDX_DEFAULT"
 #else // ENABLE_DEBUG
 #define S(str)
 #endif // ENABLE_DEBUG
-
 } item_color_t;
 
 extern item_color_t item_colors[MAX_ITEM_COLORS];

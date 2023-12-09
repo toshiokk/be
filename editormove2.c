@@ -26,20 +26,14 @@
 // update buffer size				after deletion and insertion of lines
 // renumber lines					after deletion and insertion of lines
 // fix buffer state					update cursor_x_to_keep, update cut region
-//
 // position cursor in edit_win		
-//
 // set edit_win_update_needed		update screen of cur-line or whole win
-//
+
 void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_move,
  locate_cursor_to_t locate_cursor, int update_needed)
 {
-///	if (IS_NODE_INT(get_cep_buf()) == 0) {
-///		return;
-///	}
 	switch (GET_APPMD(ed_CURS_POSITIONING)) {
 	default:
-		// FALLTHROUGH
 	case CURS_POSITIONING_NONE:		break;
 	case CURS_POSITIONING_TOP:		locate_cursor = LOCATE_CURS_TOP;		break;
 	case CURS_POSITIONING_CENTER:	locate_cursor = LOCATE_CURS_CENTER;		break;
@@ -59,7 +53,6 @@ void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_
 }
 
 //-----------------------------------------------------------------------------
-
 //	+---------------------------------+
 //	|        LOCATE_CURS_TOP          |
 //	|                                 |
@@ -79,7 +72,6 @@ void locate_cursor_in_edit_win(locate_cursor_to_t locate_curs)
 
 	switch (locate_curs) {
 	default:
-		// FALLTHROUGH
 	case LOCATE_CURS_NONE:
 		disp_y_preferred = CEPBV_CURSOR_Y;
 		break;
@@ -98,7 +90,6 @@ void locate_cursor_in_edit_win(locate_cursor_to_t locate_curs)
 			// LOCATE_CURS_CENTER
 			switch (locate_curs) {
 			default:
-				// FALLTHROUGH
 			case LOCATE_CURS_JUMP_BACKWARD:	// 2 line upper than center
 				disp_y_preferred = edit_win_get_text_lines() / 2 - 2;
 				break;
@@ -176,11 +167,6 @@ int get_disp_y_after_cursor_move(void)
 	int wl_idx;
 	int yy;
 
-	///if (IS_PTR_NULL(prev_cur_line) || IS_PTR_NULL(prev_cur_line->data)) {
-	///	// Avoid editor crash !!!!
-	///	_PROGERR_
-	///	return -1;
-	///}
 	cur_wl_idx = start_wl_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1);
 
 	// check if cur_line is in [0, prev_cursor_y]
@@ -251,7 +237,6 @@ int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *b
 }
 
 //-----------------------------------------------------------------------------
-
 // adjust pointers after moving horizontally or vertically
 void fix_buf_state_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 {

@@ -95,7 +95,8 @@ RETSIGTYPE handler_sigint(int signal)
 int is_sigint_signaled(void)
 {
 	if (input_key_break()) {
-		return 1;
+		sigint_signaled = 1;
+flf_d_printf("sigint_signaled\n");
 	}
 	return sigint_signaled;
 }

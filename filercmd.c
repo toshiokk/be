@@ -716,7 +716,6 @@ int dof_filer_menu_5(void)
 }
 
 //-----------------------------------------------------------------------------
-
 PRIVATE int dof_edit_file_(int recursive)
 {
 	int file_idx;
@@ -736,14 +735,14 @@ PRIVATE int dof_edit_file_(int recursive)
 	for (file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
-		if (is_sigint_signaled())
-			break;
 		if (S_ISREG(get_cur_filer_view()->file_list[file_idx].st.st_mode)) {
 			if (load_file_name_upp_low(get_cur_filer_view()->file_list[file_idx].file_name,
 			 TUL0, OOE0, MOE1, recursive) <= 0) {
 				tio_beep();
 			}
 		}
+		if (is_sigint_signaled())
+			break;
 	}
 	if (get_files_loaded() == 0) {
 		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;

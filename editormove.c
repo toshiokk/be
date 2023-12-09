@@ -75,7 +75,6 @@ int check_easy_buffer_switching(easy_buffer_switching_t top_bottom)
 }
 
 //-----------------------------------------------------------------------------
-
 int doe_left(void)
 {
 	if (is_app_list_mode()) {
@@ -174,7 +173,6 @@ int doe_end_of_line(void)
 }
 
 //-----------------------------------------------------------------------------
-
 PRIVATE void doe_up_(void);
 int doe_up(void)
 {
@@ -648,7 +646,6 @@ int doe_conv_upp_low_letter(void)
 }
 
 //-----------------------------------------------------------------------------
-
 int doe_refresh_editor(void)
 {
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
@@ -656,7 +653,6 @@ int doe_refresh_editor(void)
 }
 
 //-----------------------------------------------------------------------------
-
 int move_cursor_left(int move_disp_y)
 {
 	int wl_idx;

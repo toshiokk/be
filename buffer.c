@@ -278,7 +278,6 @@ const char *buf_eol_str(be_buf_t *buf)
 {
 	switch (BUF_STATE(buf, buf_EOL)) {
 	default:
-		// FALLTHROUGH
 	case EOL_NIX:
 		return "LF(NIX)";		/*"NIX"*/;
 	case EOL_MAC:
@@ -292,7 +291,6 @@ const char *buf_encode_str(be_buf_t *buf)
 #ifdef USE_NKF
 	switch (BUF_STATE(buf, buf_ENCODE)) {
 	default:
-		// FALLTHROUGH
 	case ENCODE_ASCII:		return "ASCII";
 	case ENCODE_UTF8:		return "UTF8";
 	case ENCODE_EUCJP:		return "EUCJP";
@@ -310,7 +308,6 @@ const char *buf_cut_mode_str(be_buf_t *buf)
 
 	switch (BUF_STATE(buf, buf_CUT_MODE)) {
 	default:
-		// FALLTHROUGH
 	case CUT_MODE_0_LINE:	ptr = "  ";			break;
 	case CUT_MODE_N_LINE:	ptr = "M ";			break;
 	case CUT_MODE_H_CHAR:	ptr = "Mc";			break;

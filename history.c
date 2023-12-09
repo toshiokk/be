@@ -87,7 +87,6 @@ void init_histories(void)
 }
 
 //-----------------------------------------------------------------------------
-
 // load history files into buffers
 void load_histories(void)
 {
@@ -125,7 +124,6 @@ void load_last_searched_needle(void)
 }
 
 //-----------------------------------------------------------------------------
-
 PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 {
 	be_buf_t *buf;
@@ -219,7 +217,6 @@ PRIVATE char *get_app_dir(void)
 }
 
 //-----------------------------------------------------------------------------
-
 PRIVATE int save_history_if_modified(int hist_type_idx)
 {
 	if (is_history_modified(hist_type_idx) == 0)
@@ -330,7 +327,6 @@ PRIVATE char *get_history_file_path(int hist_type_idx)
 	dir = get_app_dir();
 	switch (hist_type_idx) {
 	default:
-		// FALLTHROUGH
 	case HISTORY_TYPE_IDX_KEYMACRO:
 		file = KEYMACRO_HISTORY_FILE_NAME;
 		break;
@@ -356,7 +352,6 @@ PRIVATE char *get_history_file_path(int hist_type_idx)
 }
 
 //-----------------------------------------------------------------------------
-
 // initialize search and replace history lists
 PRIVATE void init_history(int hist_type_idx)
 {
@@ -500,7 +495,6 @@ const char *search_history_file_path(int hist_type_idx, const char *path)
 }
 
 //-----------------------------------------------------------------------------
-
 int select_from_history_list(int hist_type_idx, char *buffer)
 {
 	be_buf_t *edit_buf_save;
@@ -525,7 +519,6 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 }
 
 //------------------------------------------------------------------------------------
-
 #ifdef ENABLE_DEBUG
 void dump_history_ix(int hist_type_idx)
 {
