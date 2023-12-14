@@ -23,8 +23,9 @@
 
 /* Strip one dir from the end of the string */
 // /dir1/dir2/file ==> /dir1/dir2
-// /dir1/dir2/ ==> /dir1/dir2
-// /dir1 ==> /
+// /dir1/dir2/     ==> /dir1/dir2
+// /dir1           ==> /
+// ""              ==> /
 char *strip_file_from_path(const char *path)
 {
 	static char dir[MAX_PATH_LEN+1];
@@ -35,27 +36,27 @@ char *strip_file_from_path(const char *path)
 	return dir;
 }
 // /dir1/dir2/file ==> /dir1/dir2  file
-// /dir1/dir2 ==> /dir1  dir2
-// /file      ==> /  file
-// file       ==> /  file
-// /          ==> /  ""
-// ""         ==> /  ""
-char *separate_dir_and_file(char *path, char *file)
+// /dir1/dir2      ==> /dir1       dir2
+// /file           ==> /           file
+// file            ==> /           file
+// /               ==> /           ""
+// ""              ==> /           ""
+char *separate_dir_and_file(char *path, char *buf_name)
 {
 	char *ptr;
 
 	ptr = get_last_slash(path);
 	if (*ptr == '/') {
-		*ptr++ = '\0';	// NUL terminate ("/dir/file" ==> "/dir")
-		strlcpy__(file, ptr, MAX_PATH_LEN);	// "file"
-		normalize_root_dir(path);			// "" ==> "/"
+		*ptr++ = '\0';							// NUL terminate ("/dir/file" ==> "/dir")
+		strlcpy__(buf_name, ptr, MAX_PATH_LEN);	// "file"
+		normalize_root_dir(path);				// "" ==> "/"
 	} else {
-		strcpy__(path, "/");				// "file" ==> "/"
-		strlcpy__(file, ptr, MAX_PATH_LEN);	// "file" ==> "file"
+		strcpy__(path, "/");					// "file" ==> "/"
+		strlcpy__(buf_name, ptr, MAX_PATH_LEN);	// "file" ==> "file"
 	}
 ///flf_d_printf("separate_dir_and_file(%s)\n", path);
 ///flf_d_printf(" ==> dir/file:[%s]/[%s]\n", dir, file);
-	return file;		// return file
+	return buf_name;		// return file_name
 }
 
 // "" ==> "/"
@@ -100,15 +101,15 @@ char *get_last_slash(char *path)
 int get_file_type_by_file_path(const char *file_path)
 {
 	if (is_path_exist(file_path) == 0) {
-		return -1;
+		return 0;	// not exist
 	}
 	if (is_path_dir(file_path) > 0) {
 		return 1;	// directory
 	} else
 	if (is_path_regular_file(file_path) > 0) {
-		return 2;	// file
+		return 2;	// regular file
 	}
-	return 0;
+	return 3;		// not directory and regular file
 }
 int is_path_exist(const char *path)
 {

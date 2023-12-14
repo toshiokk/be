@@ -2,20 +2,20 @@
 
 Filer <==> Editor switching and collaboration
 [] Fix [goto filer] key and [goto editor] key
-  | mode      | F11         | F12         |
-  | --------- | ----------- | ----------- |
-  | in filer  | GOTO EDITOR | open file   |
-  | in editor | GOTO FILER  | open file   |
-- F: Load file and open editor
-   E: Edit (v capable)
-- F: Input command line to execute
+  | mode      | F11         | F12                                 |
+  | --------- | ----------- | ----------------------------------- |
+  | in filer  | GOTO EDITOR | open file in editor / open in filer |
+  | in editor | GOTO FILER  | open file in editor / open in filer |
+v F: Load file and open editor
+   E: Edit
+v F: Input command line to execute
    E: Select from exec-history
-  F: Execute selected command line (v capable)
-- F: Input keyword to search
+  F: Execute selected command line
+v F: Input keyword to search
    F: Select from search-history
-  F: Do search (v capable)
+  F: Do search
 - F: Load file and open editor (wo saving cur-dir)
-   E: Change current-directory to the directory of the current-line (v capable)
+   E: Change current-directory to the directory of the current-line
 - F: Load file and open editor (wo saving cur-dir)
    E: Change current-directory to the directory of the current-line
    E: Open filer

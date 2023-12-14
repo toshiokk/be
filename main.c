@@ -134,14 +134,19 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	// load them all and switch to the first one afterward.
 	if (optind < argc) {
 		clear_files_loaded();
+		begin_check_break_key();
 		for ( ; optind < argc; optind++) {
 flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 			// CURDIR: changed in editor
-			if (load_file_name_upp_low(argv[optind], TUL0, OOE1, MOE0, RECURSIVE1) <= 0) {
+			if (load_file_name_upp_low_(argv[optind], TUL0, OOE1, MOE0, RECURSIVE1) <= 0) {
 				tio_beep();
 			}
 			tio_refresh();
+			if (check_break_key()) {
+				break;
+			}
 		}
+		end_check_break_key();
 	}
 	if (count_edit_bufs()) {
 #ifdef ENABLE_HISTORY
@@ -242,11 +247,7 @@ PRIVATE int init_app_mode(void)
 #endif // ENABLE_HISTORY
 	CLR_APPMD(app_DRAW_CURSOR);
 	SET_APPMD_VAL(app_KEY_LINES, 3);
-#if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
-	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);
-#else
 	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
-#endif
 	// editor mode
 	CLR_APPMD(app_EDITOR_FILER);
 	set_app_func_key_table();

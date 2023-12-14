@@ -391,7 +391,7 @@ flf_d_printf("[%s]\n", file_path);
 flf_d_printf("[%s]\n", file_path);
 		break;
 	}
-	strlcpy__(file_name, separate_dir_and_file(file_path, org_file_path), MAX_PATH_LEN);
+	separate_dir_and_file(file_path, file_name);
 #ifdef ENABLE_FILER
 	// copy new file name to filer next_file
 	strlcpy__(get_cur_filer_view()->next_file, file_name, MAX_PATH_LEN);
@@ -528,7 +528,7 @@ int doe_run_line_soon(void)
 int doe_call_filer(void)
 {
 	char file_name[MAX_PATH_LEN+1] = "";
-	call_filer(1, 0, "", file_name, file_name, MAX_PATH_LEN);
+	call_filer(1, 0, "", "", file_name, MAX_PATH_LEN);
 	return 0;
 }
 #endif // ENABLE_FILER

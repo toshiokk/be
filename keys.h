@@ -367,7 +367,10 @@ int just_has_been_input_key();
 
 key_code_t input_key_loop(void);
 key_code_t input_key_wait_return(void);
-int input_key_break(void);
+
+void begin_check_break_key(void);
+void end_check_break_key(void);
+int check_break_key(void);
 
 #endif // keys_h
 

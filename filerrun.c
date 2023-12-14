@@ -72,7 +72,6 @@ int dof_exec_command_with_file(void)
 		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	} else {
 		begin_fork_exec_repeat();
-		clear_sigint_signaled();
 		for (file_idx = select_and_get_first_file_idx_selected();
 		 file_idx >= 0;
 		 file_idx = get_next_file_idx_selected(file_idx)) {

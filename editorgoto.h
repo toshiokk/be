@@ -45,13 +45,16 @@ int doe_return_to_prev_file_pos(void);
 int doe_switch_editor_pane(void);
 void doe_switch_editor_pane_(void);
 
-int load_file_in_string(const char *string,
- int try_upp_low, int open_on_err, int msg_on_err, int recursive);
-
+//-----------------------------------------------------------------------------
 int load_file_name_upp_low(const char *file_name,
  int try_upp_low, int open_on_err, int msg_on_err, int recursive);
-
 int load_file_name_recurs(const char *file_name, int open_on_err, int msg_on_err, int recursive);
+int load_files_in_cur_buf(void);
+int load_files_in_string(const char *string, int files_to_load, int try_upp_low,
+ int open_on_err, int msg_on_err, int recursive);
+
+int load_file_name_upp_low_(const char *file_name,
+ int try_upp_low, int open_on_err, int msg_on_err, int recursive);
 
 int is_file_name_proj_file(const char *file_name, int type);
 

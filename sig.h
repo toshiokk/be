@@ -26,8 +26,10 @@ void signal_init(void);
 void signal_fork(void);
 void signal_clear(void);
 void clear_sigint_signaled(void);
+void set_sigint_signaled(void);
 RETSIGTYPE handler_sigint(int signal);
 int is_sigint_signaled(void);
+
 RETSIGTYPE handler_sighup(int signal);
 RETSIGTYPE handler_sigterm(int signal);
 RETSIGTYPE handler_sigsegv(int signal);

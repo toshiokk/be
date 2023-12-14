@@ -62,7 +62,7 @@ char *separate_dir_part_and_file_part(const char *path,
  char *dir_part, char *file_part);
 
 char *strip_file_from_path(const char *path);
-char *separate_dir_and_file(char *path, char *dir);
+char *separate_dir_and_file(char *path, char *buf_name);
 char *normalize_root_dir(char *dir);
 
 int get_file_type_by_file_path(const char *file_path);

@@ -438,6 +438,7 @@ int just_has_been_input_key()
 
 PRIVATE key_code_t input_key_timeout(void);
 PRIVATE key_code_t input_key_macro(void);
+PRIVATE key_code_t input_key_check_break_key(void);
 PRIVATE key_code_t input_key_bs_del(void);
 
 key_code_t input_key_loop(void)
@@ -484,6 +485,7 @@ PRIVATE key_code_t input_key_timeout(void)
 	}
 	return key;
 }
+
 PRIVATE key_code_t input_key_macro(void)
 {
 	key_code_t key = -1;
@@ -492,16 +494,92 @@ PRIVATE key_code_t input_key_macro(void)
 		return key;
 	}
 #ifndef ENABLE_HISTORY
-	key = input_key_bs_del();
+	key = input_key_check_break_key();
 #else
 	key = key_macro_get_key();
 	if (key < 0) {
-		key = input_key_bs_del();
+		key = input_key_check_break_key();
+if (key >= 0) {
+flf_d_printf("<<[%04x]\n", key);
+}
 	}
 	key_macro_put_key(key);
 #endif // ENABLE_HISTORY
 	return key;
 }
+
+// Record key strokes pushed while loading large or many files
+// and Restore it after finished loading files.
+PRIVATE int key_codes_saved = -1;			// >=0: saving,    -1: not recording
+PRIVATE int key_codes_restored = -1;		// >=0: restoring, -1: not restoring
+#define MAX_KEY_STROKES_CHECK_BREAK_KEY		40
+PRIVATE key_code_t key_codes_check_break_key[MAX_KEY_STROKES_CHECK_BREAK_KEY+1];
+PRIVATE int is_saving_check_break_key(void);
+PRIVATE int is_restoring_check_break_key(void);
+
+PRIVATE int is_saving_check_break_key(void)
+{
+	return (0 <= key_codes_saved && key_codes_saved < MAX_KEY_STROKES_CHECK_BREAK_KEY)
+	 && (is_restoring_check_break_key() == 0);
+}
+PRIVATE int is_restoring_check_break_key(void)
+{
+	return (0 <= key_codes_restored && key_codes_restored < key_codes_saved);
+}
+void begin_check_break_key(void)
+{
+_FLF_
+	key_codes_saved = 0;		// start saving
+	key_codes_restored = -1;	// stop restoration
+	clear_sigint_signaled();
+}
+void end_check_break_key(void)
+{
+	if (key_codes_saved > 0) {
+		key_codes_restored = 0;		// start restoring
+	} else {
+		key_codes_saved = -1;		// clear saved keys
+		key_codes_restored = -1;	// stop restoration
+	}
+_FLF_
+}
+int check_break_key(void)
+{
+	if (is_saving_check_break_key()) {
+		if (input_key_check_break_key() == K_C_C) {	// Ctrl-C key is break key
+			set_sigint_signaled();
+flf_d_printf("sigint_signaled\n");
+		}
+	}
+	return is_sigint_signaled();
+}
+PRIVATE key_code_t input_key_check_break_key(void)
+{
+	key_code_t key;
+
+	if (is_restoring_check_break_key()) {
+		// restoring key strokes
+		key = key_codes_check_break_key[key_codes_restored];
+		key_codes_restored++;
+		if (key_codes_restored >= key_codes_saved) {
+			key_codes_saved = -1;		// clear saved keys
+			key_codes_restored = -1;	// stop restoration
+		}
+flf_d_printf("<[%04x]\n", key);
+		return key;
+	}
+	key = input_key_bs_del();
+	if (is_saving_check_break_key()) {
+		// saving key strokes
+		if (key >= 0) {
+			key_codes_check_break_key[key_codes_saved] = key;
+			key_codes_saved++;
+flf_d_printf(">[%04x]\n", key);
+		}
+	}
+	return key;
+}
+
 PRIVATE key_code_t input_key_bs_del(void)
 {
 	key_code_t key;
@@ -545,11 +623,6 @@ flf_d_printf("KEY_DC ==> DEL\n");
 		break;
 	}
 	return key;
-}
-
-int input_key_break(void)
-{
-	return tio_input_key() == K_C_C;
 }
 
 //-----------------------------------------------------------------------------

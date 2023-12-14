@@ -126,7 +126,7 @@ PRIVATE int get_other_filer_pane_idx(int filer_pane_idx)
 //-----------------------------------------------------------------------------
 
 int call_filer(int push_win, int list_mode,
- char *dir, char *filter, char *file_path, int buf_len)
+ const char *dir, const char *filter, char *file_path, int buf_len)
 {
 	filer_panes_t *prev_fps = NULL;
 	filer_panes_t next_filer_panes;
@@ -264,9 +264,8 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 				if (is_app_list_mode()) {
 					switch (func_key_table->list_mode) {
 					case XA:		// executable all Normal/List mode
-					case XL:		// not executable in List mode
 						break;
-///PPP					case XL:		// not executable in List mode
+					case XL:		// not executable in List mode
 						disp_status_bar_done(
 						 _("Can not execute this function: [%s]"), func_key_table->func_id);
 						filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
@@ -571,8 +570,10 @@ PRIVATE int filer_win_get_file_list_y(void)
 PRIVATE void disp_key_list_filer(void)
 {
 	char *filer_key_lists[] = {
- "{Menu}  {Edit } {Copy } {CpyUd} {Renam}  {Move } {Delet} {MkDel} {MkDir} "
- " {ChDir} {Exec } {Run  } {Home }",
+ "{Menu}"
+ "  {Home } {Copy } {CpyUd} {Renam}"
+ "  {Move } {Delet} {MkDel} {MkDir}"
+ "  {ChDir} {Exec } {Run  } {Edit }",
 
  "<dof_quit_filer>Quit "
  "<dof_edit_file>Edit "

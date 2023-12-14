@@ -265,7 +265,6 @@ PRIVATE int load_into_cur_buf_fp(FILE *fp)
 	len = 0;
 	line_buf[len] = '\0';
 	fgetc_buffered_clear();
-	clear_sigint_signaled();
 	for ( ; ; ) {
 		chr_int = fgetc_buffered(fp);
 		switch (chr_int) {
@@ -298,7 +297,7 @@ PRIVATE int load_into_cur_buf_fp(FILE *fp)
 		prev_chr = chr_int;
 		if (chr_int == EOF)
 			break;
-		if (is_sigint_signaled()) {
+		if (check_break_key()) {
 flf_d_printf("sigint_signaled\n");
 			lines_read = -1;
 			break;
@@ -446,7 +445,8 @@ int backup_and_save_cur_buf(const char *file_path)
 		 shrink_str_to_scr_static(file_path));
 		return -1;
 	}
-	disp_status_bar_ing(_("Writing File %s ..."), shrink_str_to_scr_static(get_cep_buf()->abs_path));
+	disp_status_bar_ing(_("Writing File %s ..."),
+	 shrink_str_to_scr_static(get_cep_buf()->abs_path));
 	if (GET_APPMD(ed_BACKUP_FILES)) {
 		if (backup_files(file_path, get_backup_files()) < 0) {
 			return -1;

@@ -88,16 +88,16 @@ void clear_sigint_signaled(void)
 {
 	sigint_signaled = 0;
 }
-RETSIGTYPE handler_sigint(int signal)
+void set_sigint_signaled(void)
 {
 	sigint_signaled = 1;
 }
+RETSIGTYPE handler_sigint(int signal)
+{
+	set_sigint_signaled();
+}
 int is_sigint_signaled(void)
 {
-	if (input_key_break()) {
-		sigint_signaled = 1;
-flf_d_printf("sigint_signaled\n");
-	}
 	return sigint_signaled;
 }
 

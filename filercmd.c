@@ -184,7 +184,6 @@ int dof_copy_file(void)
 		return 0;
 	}
 	begin_fork_exec_repeat();
-	clear_sigint_signaled();
 	for (file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
@@ -224,7 +223,6 @@ int dof_copy_file_update(void)
 		return 0;
 	}
 	begin_fork_exec_repeat();
-	clear_sigint_signaled();
 	for (file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
@@ -261,7 +259,6 @@ int dof_move_file(void)
 		return 0;
 	}
 	begin_fork_exec_repeat();
-	clear_sigint_signaled();
 	for (file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
@@ -294,7 +291,6 @@ int dof_trash_file(void)
 		return 0;
 	}
 	begin_fork_exec_repeat();
-	clear_sigint_signaled();
 	for (file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
@@ -336,7 +332,6 @@ int dof_delete_file(void)
 		return 0;
 	}
 	begin_fork_exec_repeat();
-	clear_sigint_signaled();
 	for (file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
@@ -370,7 +365,6 @@ int dof_mark_to_delete_file(void)
 		return 0;
 	}
 	begin_fork_exec_repeat();
-	clear_sigint_signaled();
 	for (file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
@@ -407,7 +401,6 @@ int dof_size_zero_file(void)
 		return 0;
 	}
 	begin_fork_exec_repeat();
-	clear_sigint_signaled();
 	for (file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
@@ -554,9 +547,9 @@ int dof_prev_directory(void)
 }
 int dof_real_path(void)
 {
-	char chg_dir[MAX_PATH_LEN+1];
+	char chdir[MAX_PATH_LEN+1];
 
-	return filer_change_dir_if_not_yet(get_cwd(chg_dir));
+	return filer_change_dir_if_not_yet(get_cwd(chdir));
 }
 //-----------------------------------------------------------------------------
 int dof_select_file(void)
@@ -731,19 +724,23 @@ PRIVATE int dof_edit_file_(int recursive)
 	}
 
 	clear_files_loaded();
-	clear_sigint_signaled();
+
+	begin_check_break_key();
 	for (file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if (S_ISREG(get_cur_filer_view()->file_list[file_idx].st.st_mode)) {
-			if (load_file_name_upp_low(get_cur_filer_view()->file_list[file_idx].file_name,
+			if (load_file_name_upp_low_(get_cur_filer_view()->file_list[file_idx].file_name,
 			 TUL0, OOE0, MOE1, recursive) <= 0) {
 				tio_beep();
 			}
 		}
-		if (is_sigint_signaled())
+		if (check_break_key()) {
 			break;
+		}
 	}
+	end_check_break_key();
+
 	if (get_files_loaded() == 0) {
 		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	} else {
@@ -788,63 +785,62 @@ PRIVATE int filer_change_prev_dir(void)
 }
 int filer_change_dir_parent(const char *dir)
 {
-	char chg_dir[MAX_PATH_LEN+1];
+	char chdir[MAX_PATH_LEN+1];
 	char file[MAX_PATH_LEN+1];
 
-	strlcpy__(chg_dir, dir, MAX_PATH_LEN);
+	strlcpy__(chdir, dir, MAX_PATH_LEN);
 	for ( ; ; ) {
-flf_d_printf("try to chdir[%s]\n", chg_dir);
-		if (strcmp(chg_dir, "/") == 0) {
+flf_d_printf("try to chdir[%s]\n", chdir);
+		if (strcmp(chdir, "/") == 0) {
 			return -1;	// error
 		}
-		if (filer_change_dir(chg_dir) == 0) {
+		if (filer_change_dir(chdir) == 0) {
 			break;
 		}
 		// If can not change to dir, try parent dir
 		// /try/to/change/dir/file ==> /try/to/change/dir
-		separate_dir_and_file(chg_dir, file);
+		separate_dir_and_file(chdir, file);
 	}
 	return 0;	// changed
 }
 int filer_change_dir(const char *dir)
 {
-	char buf[MAX_PATH_LEN+1];
-	char chg_dir[MAX_PATH_LEN+1];
+	char chdir[MAX_PATH_LEN+1];
 	char file[MAX_PATH_LEN+1];
 
 	if (strcmp(dir, ".") == 0) {
 		return 0;
 	} else if (strcmp(dir, "..") == 0) {
-		strlcpy__(chg_dir, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
-		strlcpy__(get_cur_filer_view()->next_file, separate_dir_and_file(chg_dir, file), MAX_PATH_LEN);
+		strlcpy__(chdir, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
+		separate_dir_and_file(chdir, get_cur_filer_view()->next_file);
 	} else if (strcmp(dir, "~") == 0) {
 		strcpy__(get_cur_filer_view()->next_file, "..");
-		get_abs_path("~", chg_dir);
+		get_abs_path("~", chdir);
 	} else if (dir[0] == '/') {
 		// absolute path
 		strcpy__(get_cur_filer_view()->next_file, "..");
-		strlcpy__(chg_dir, dir, MAX_PATH_LEN);
+		strlcpy__(chdir, dir, MAX_PATH_LEN);
 	} else {
 		// relative path
 		strcpy__(get_cur_filer_view()->next_file, "..");
-		cat_dir_and_file(chg_dir, MAX_PATH_LEN, get_cur_filer_view()->cur_dir, dir);	// /dir1 ==> /dir1/dir2
+		cat_dir_and_file(chdir, MAX_PATH_LEN, get_cur_filer_view()->cur_dir, dir);	// /dir1 ==> /dir1/dir2
 	}
-	normalize_full_path(chg_dir);
-	if (is_dir_readable(chg_dir) == 0) {
+	normalize_full_path(chdir);
+	if (is_dir_readable(chdir) == 0) {
 		// We can't open this dir for some reason. Complain.
-		disp_status_bar_err(_("Can not change current directory to [%s]: %s"),
-		 shrink_str_to_scr_static(chg_dir), strerror(errno));
+		disp_status_bar_err(_("Can not change current chdir to [%s]: %s"),
+		 shrink_str_to_scr_static(chdir), strerror(errno));
 		return 1;
 	}
 	strlcpy__(get_cur_filer_view()->prev_dir, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
-	change_cur_dir(chg_dir);
-	strlcpy__(get_cur_filer_view()->cur_dir, chg_dir, MAX_PATH_LEN);
+	change_cur_dir(chdir);
+	strlcpy__(get_cur_filer_view()->cur_dir, chdir, MAX_PATH_LEN);
 	get_cur_filer_view()->top_idx = 0;
 #ifdef ENABLE_HISTORY
-	update_history(HISTORY_TYPE_IDX_DIR, chg_dir, 0);
+	update_history(HISTORY_TYPE_IDX_DIR, chdir, 0);
 #endif // ENABLE_HISTORY
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
-	disp_status_bar_done("Changed current directory to [%s]", chg_dir);
+	disp_status_bar_done("Changed current chdir to [%s]", chdir);
 	return 0;
 }
 

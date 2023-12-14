@@ -58,7 +58,7 @@ filer_view_t *get_cur_filer_view(void);
 filer_view_t *get_other_filer_view(void);
 
 int call_filer(int push_win, int list_mode,
- char *dir, char *filter, char *file_path, int buf_len);
+ const char *dir, const char *filter, char *file_path, int buf_len);
 
 int update_screen_filer(int title_bar, int status_bar, int refresh);
 
