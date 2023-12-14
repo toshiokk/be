@@ -215,7 +215,8 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			// cut to line tail
 			strcut__(cut_buf, MAX_PATH_LEN,
 			 input_buf, cursor_byte_idx, strnlen(input_buf, MAX_PATH_LEN));
-			delete_str(input_buf, cursor_byte_idx, strnlen(input_buf, MAX_PATH_LEN) - cursor_byte_idx);
+			delete_str(input_buf, cursor_byte_idx,
+			 strnlen(input_buf, MAX_PATH_LEN) - cursor_byte_idx);
 		} else
 		if (cmp_func_id(func_id, "doe_copy_text")) {
 			// copy to the cut buffer

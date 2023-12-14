@@ -504,7 +504,8 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 	renumber_all_bufs_from_top(&history_buffers);
 	set_cep_buf(get_history_buf(hist_type_idx));
 	CEPBV_CL = CUR_EDIT_BUF_BOT_LINE;
-	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
+	 UPDATE_SCRN_ALL_SOON);
 
 	int ret = call_editor(1, 1);
 

@@ -27,7 +27,8 @@ void search_clear(search_t *search)
 }
 int search_is_needle_set(search_t *search)
 {
-	if ((strlen(search->needle) == 4) && (search->needle[0] == '[') && (search->needle[3] == ']')) {
+	if ((strlen(search->needle) == 4)
+	 && (search->needle[0] == '[') && (search->needle[3] == ']')) {
 		return 2;	// Bracket search "[()]"
 	}
 	if (strlen(search->needle)) {

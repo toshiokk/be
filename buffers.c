@@ -36,7 +36,7 @@ be_bufs_t cut_buffers;
 // history buffers ------------------------------------------------------------
 be_bufs_t history_buffers;
 
-// help buffers ------------------------------------------------------------
+// help buffers ---------------------------------------------------------------
 be_bufs_t help_buffers;
 
 #ifdef ENABLE_UNDO
@@ -247,14 +247,16 @@ void dump_editor_panes(void)
 	flf_d_printf("get_cep_buf(): %p, &(get_cep_buf()->buf_views[0]): %p\n",
 	 get_cep_buf(), &(get_cep_buf()->buf_views[0]));
 	line_dump_byte_idx(EPBVX_CL(0), EPBVX_CLBI(0));
-	flf_d_printf("EPBVX_CURSOR_Y(0): %d, EPBVX_CURSOR_X_TO_KEEP(0): %d, EPBVX_MIN_TEXT_X_TO_KEEP(0): %d\n",
+	flf_d_printf(
+	 "EPBVX_CURSOR_Y(0): %d, EPBVX_CURSOR_X_TO_KEEP(0): %d, EPBVX_MIN_TEXT_X_TO_KEEP(0): %d\n",
 	 EPBVX_CURSOR_Y(0), EPBVX_CURSOR_X_TO_KEEP(0), EPBVX_MIN_TEXT_X_TO_KEEP(0));
 	flf_d_printf("pane_idx-1 ---------------------------------------------\n");
 	buf_dump_state(editor_panes.bufs[1]);
 	flf_d_printf("get_cep_buf(): %p, &(get_cep_buf()->buf_views[1]): %p\n",
 	 get_cep_buf(), &(get_cep_buf()->buf_views[1]));
 	line_dump_byte_idx(EPBVX_CL(1), EPBVX_CLBI(1));
-	flf_d_printf("EPBVX_CURSOR_Y(1): %d, EPBVX_CURSOR_X_TO_KEEP(1): %d, EPBVX_MIN_TEXT_X_TO_KEEP(1): %d\n",
+	flf_d_printf(
+	 "EPBVX_CURSOR_Y(1): %d, EPBVX_CURSOR_X_TO_KEEP(1): %d, EPBVX_MIN_TEXT_X_TO_KEEP(1): %d\n",
 	 EPBVX_CURSOR_Y(1), EPBVX_CURSOR_X_TO_KEEP(1), EPBVX_MIN_TEXT_X_TO_KEEP(1));
 	flf_d_printf("========================================================\n");
 }
@@ -294,7 +296,8 @@ void create_edit_buf(const char *full_path)
 // Append a new line to the bottom of the current buffer
 be_line_t *append_string_to_cur_edit_buf(const char *string)
 {
-	EPBVX_CL(0) = EPBVX_CL(1) = line_insert_with_string(CUR_EDIT_BUF_BOT_ANCH, INSERT_BEFORE, string);
+	EPBVX_CL(0) = EPBVX_CL(1) = line_insert_with_string(CUR_EDIT_BUF_BOT_ANCH, INSERT_BEFORE,
+	 string);
 	EPBVX_CLBI(0) = EPBVX_CLBI(1) = 0;
 	return CEPBV_CL;
 }

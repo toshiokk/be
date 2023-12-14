@@ -227,9 +227,11 @@ int search_string_once(const char *needle, int search_count)
 		if (search_count == 0) {
 			// first time
 			if (GET_APPMD(ed_REVERSE_SEARCH)) {
-				post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_BACKWARD, UPDATE_SCRN_ALL);
+				post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_BACKWARD,
+				 UPDATE_SCRN_ALL);
 			} else {
-				post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_FORWARD, UPDATE_SCRN_ALL);
+				post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_FORWARD,
+				 UPDATE_SCRN_ALL);
 			}
 		} else {
 			// next time

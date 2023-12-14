@@ -823,7 +823,8 @@ int filer_change_dir(const char *dir)
 	} else {
 		// relative path
 		strcpy__(get_cur_filer_view()->next_file, "..");
-		cat_dir_and_file(chdir, MAX_PATH_LEN, get_cur_filer_view()->cur_dir, dir);	// /dir1 ==> /dir1/dir2
+		// /dir1 dir2 ==> /dir1/dir2
+		cat_dir_and_file(chdir, MAX_PATH_LEN, get_cur_filer_view()->cur_dir, dir);
 	}
 	normalize_full_path(chdir);
 	if (is_dir_readable(chdir) == 0) {

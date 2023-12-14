@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-14 21:20+0900\n"
+"POT-Creation-Date: 2023-12-14 22:06+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -365,63 +365,63 @@ msgstr ""
 msgid "Writing File %s ..."
 msgstr "ファイル %s を書き込み中..."
 
-#: ../fileio.c:461
+#: ../fileio.c:462
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr "ファイル %2$s にパーミッション %1$o をセットできません: %3$s"
 
-#: ../fileio.c:470
+#: ../fileio.c:471
 #, c-format
 msgid "%d line written"
 msgstr "%d 行を書き込みました"
 
-#: ../fileio.c:471
+#: ../fileio.c:472
 #, c-format
 msgid "%d lines written"
 msgstr "%d 行を書き込みました"
 
-#: ../fileio.c:472
+#: ../fileio.c:473
 #, c-format
 msgid "%d liness written"
 msgstr "%d 行を書き込みました"
 
-#: ../fileio.c:473
+#: ../fileio.c:474
 #, c-format
 msgid "%d linesss written"
 msgstr "%d 行を書き込みました"
 
-#: ../fileio.c:560 ../fileio.c:585
+#: ../fileio.c:561 ../fileio.c:586
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr "ファイルを書込オープン出来ません [%s]: %s"
 
 #. -1: error
-#: ../fileio.c:568 ../fileio.c:593
+#: ../fileio.c:569 ../fileio.c:594
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr "ファイルがクローズできません [%s]: %s"
 
-#: ../fileio.c:615
+#: ../fileio.c:616
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr "ファイルを書込オープン出来ません [%s]: %s"
 
-#: ../fileio.c:658
+#: ../fileio.c:659
 #, c-format
 msgid "%d file loaded"
 msgstr "%d ファイルを読み込みました"
 
-#: ../fileio.c:659
+#: ../fileio.c:660
 #, c-format
 msgid "%d files loaded"
 msgstr "%d ファイルを読み込みました"
 
-#: ../fileio.c:660
+#: ../fileio.c:661
 #, c-format
 msgid "%d filess loaded"
 msgstr "%d ファイルを読み込みました"
 
-#: ../fileio.c:661
+#: ../fileio.c:662
 #, c-format
 msgid "%d filesss loaded"
 msgstr "%d ファイルを読み込みました"
@@ -619,7 +619,7 @@ msgstr ""
 msgid "Start key macro playback"
 msgstr ""
 
-#: ../main.c:557
+#: ../main.c:553
 msgid ""
 "\n"
 "No file written\n"
@@ -627,7 +627,7 @@ msgstr ""
 "\n"
 "書き込まれたファイルはありません\n"
 
-#: ../main.c:566
+#: ../main.c:562
 #, c-format
 msgid ""
 "\n"
@@ -636,7 +636,7 @@ msgstr ""
 "\n"
 "ファイル %s に書き込みました\n"
 
-#: ../main.c:594
+#: ../main.c:590
 #, c-format
 msgid ""
 "\n"
@@ -646,99 +646,99 @@ msgstr ""
 "使用法"
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:596
+#: ../main.c:592
 msgid "Option"
 msgstr ""
 
-#: ../main.c:596
+#: ../main.c:592
 msgid "Long option"
 msgstr ""
 
-#: ../main.c:596
+#: ../main.c:592
 #, fuzzy
 msgid "Meaning"
 msgstr "意味"
 
-#: ../main.c:598
+#: ../main.c:594
 msgid "Read RCFILE"
 msgstr ""
 
-#: ../main.c:599
+#: ../main.c:595
 msgid "Don't look at berc files"
 msgstr "bercファイルを無視"
 
-#: ../main.c:602
+#: ../main.c:598
 msgid "Don't use history file"
 msgstr "ヒストリファイルを使用しない"
 
-#: ../main.c:604
+#: ../main.c:600
 msgid "Set tab-size to NUM[1-15]"
 msgstr "タブサイズをNUM[1-15]に設定"
 
-#: ../main.c:605
+#: ../main.c:601
 msgid "View mode(Read only mode)"
 msgstr "閲覧(読込専用)モード"
 
-#: ../main.c:607
+#: ../main.c:603
 msgid "Don't use nkf"
 msgstr "nkf を使用しない"
 
-#: ../main.c:608
+#: ../main.c:604
 msgid "ASCII character encoding"
 msgstr "ASCII エンコーディング"
 
-#: ../main.c:609
+#: ../main.c:605
 msgid "JIS character encoding"
 msgstr "JIS エンコーディング"
 
-#: ../main.c:610
+#: ../main.c:606
 msgid "EUCJP character encoding"
 msgstr "EUCJP エンコーディング"
 
-#: ../main.c:611
+#: ../main.c:607
 msgid "SJIS character encoding"
 msgstr "SJIS エンコーディング"
 
-#: ../main.c:612
+#: ../main.c:608
 msgid "UTF8 character encoding"
 msgstr "UTF8 エンコーディング"
 
-#: ../main.c:615
+#: ../main.c:611
 msgid "Output debug log to stderr"
 msgstr "stderrにデバッグログを出力"
 
-#: ../main.c:617
+#: ../main.c:613
 msgid "Show version information"
 msgstr "バージョン情報を表示"
 
-#: ../main.c:618
+#: ../main.c:614
 msgid "Show this message"
 msgstr "このメッセージを表示"
 
-#: ../main.c:619
+#: ../main.c:615
 msgid "Start at line number NUM"
 msgstr "NUM 行から開始"
 
-#: ../main.c:621
+#: ../main.c:617
 msgid "Investigate key codes"
 msgstr ""
 
-#: ../main.c:638
+#: ../main.c:634
 #, c-format
 msgid "%s editor version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:640
+#: ../main.c:636
 #, c-format
 msgid " Build Options:\n"
 msgstr " ビルドオプション:\n"
 
-#: ../main.c:898
+#: ../main.c:894
 #, fuzzy, c-format
 msgid "Screen size: %dx%d"
 msgstr "画面サイズ: %dx%d"
 
-#: ../main.c:903
+#: ../main.c:899
 msgid "We're invincible with this!!"
 msgstr "これさえあれば俺達は無敵だ!!"
 

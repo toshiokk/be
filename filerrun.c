@@ -186,12 +186,14 @@ PRIVATE int dof_run_command_(int mode)
 	case 0:
 		explanation = _("Run (with file):");
 		snprintf_(command_str, MAX_PATH_LEN+1, " %s",
-		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name));
+		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]
+		  .file_name));
 		break;
 	case 1:
 		explanation = _("Run (current-directory-file):");
 		snprintf_(command_str, MAX_PATH_LEN+1, "./%s ",
-		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name));
+		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]
+		  .file_name));
 		break;
 	case 2:
 		explanation = _("Run (with real-path):");
@@ -203,12 +205,14 @@ PRIVATE int dof_run_command_(int mode)
 	case 3:
 		explanation = _("Run (script):");
 		snprintf_(command_str, MAX_PATH_LEN+1, ". %s",
-		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name));
+		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]
+		  .file_name));
 		break;
 	case 4:
 		explanation = _("Run (script by shell):");
 		snprintf_(command_str, MAX_PATH_LEN+1, "sh %s",
-		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name));
+		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]
+		  .file_name));
 		break;
 	case 5:
 		explanation = _("Run (with SRC-path and DEST-path):");

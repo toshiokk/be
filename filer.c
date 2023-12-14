@@ -260,7 +260,8 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 				filer_do_next = FILER_DO_UPDATE_FILE_LIST_AUTO;
 			} else {
 				strlcpy__(get_cur_filer_view()->next_file,
-				 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name, MAX_PATH_LEN);
+				 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name,
+				  MAX_PATH_LEN);
 				if (is_app_list_mode()) {
 					switch (func_key_table->list_mode) {
 					case XA:		// executable all Normal/List mode
@@ -282,7 +283,8 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 					}
 				}
 				if (filer_do_next == FILER_DO_NOTHING) {
-flf_d_printf("CALL_FUNC_FILER [%s] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n", func_key_table->func_id);
+flf_d_printf("CALL_FUNC_FILER [%s] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n",
+ func_key_table->func_id);
 					//=========================
 					int ret = (*func_key_table->func)();	// call function "dof_...()"
 					//=========================

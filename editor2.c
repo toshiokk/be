@@ -688,13 +688,15 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 				max_wl_idx = te_tab_expand__max_wl_idx(line->data);
 				wl_idx = start_wl_idx_of_wrap_line(te_concat_linefeed_buf, byte_idx, -1);
 				for ( ; wl_idx >= 0; wl_idx--) {
-					byte_idx_1 = start_byte_idx_of_wrap_line(te_concat_linefeed_buf, wl_idx, 0, -1);
+					byte_idx_1 = start_byte_idx_of_wrap_line(te_concat_linefeed_buf, wl_idx,
+					 0, -1);
 					byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_concat_linefeed_buf, wl_idx,
 					 INT_MAX, -1);
 					if (match_line == line && get_intersection(byte_idx_1, byte_idx_2,
 					 match_byte_idx, match_byte_idx + match_len,
 					 &left_byte_idx, &right_byte_idx) > 0) {
-						set_color_for_bracket_hl(depth_increase, prev_depth); // select color by depth
+						// select color by depth
+						set_color_for_bracket_hl(depth_increase, prev_depth);
 						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 						match_len = 0;	// clear match_len so that go to next bracket
 						break;
@@ -735,13 +737,15 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 				max_wl_idx = te_tab_expand__max_wl_idx(line->data);
 				wl_idx = start_wl_idx_of_wrap_line(te_concat_linefeed_buf, byte_idx, -1);
 				for ( ; wl_idx <= max_wl_idx; wl_idx++) {
-					byte_idx_1 = start_byte_idx_of_wrap_line(te_concat_linefeed_buf, wl_idx, 0, -1);
+					byte_idx_1 = start_byte_idx_of_wrap_line(te_concat_linefeed_buf, wl_idx,
+					 0, -1);
 					byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_concat_linefeed_buf, wl_idx,
 					 INT_MAX, -1);
 					if (match_line == line && get_intersection(byte_idx_1, byte_idx_2,
 					 match_byte_idx, match_byte_idx + match_len,
 					 &left_byte_idx, &right_byte_idx) > 0) {
-						set_color_for_bracket_hl(depth_increase, prev_depth); // select color by depth
+						// select color by depth
+						set_color_for_bracket_hl(depth_increase, prev_depth);
 						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 						match_len = 0;	// clear match_len so that go to next bracket
 						break;

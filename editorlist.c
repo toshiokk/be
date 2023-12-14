@@ -50,7 +50,8 @@ int doe_switch_to_file_list(void)
 	}
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
 
-	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
+	 UPDATE_SCRN_ALL_SOON);
 	disp_status_bar_done(_("File List"));
 	return 1;
 }

@@ -200,7 +200,8 @@ flf_d_printf("pane_idx: %d\n", pane_idx);
 }
 
 //-----------------------------------------------------------------------------
-PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int msg_on_err, int recursive);
+PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int msg_on_err,
+ int recursive);
 PRIVATE int load_files_in_cur_buf_(void);
 PRIVATE int load_files_in_string_(const char *string,
  int files_to_load, int try_upp_low, int open_on_err, int msg_on_err, int recursive);
@@ -368,7 +369,8 @@ int load_file_name_upp_low_(const char *file_name,
 			strlower(file_name_buf);
 			break;
 		}
-		if ((files = load_file_name_recurs_(file_name_buf, open_on_err, msg_on_err, recursive)) > 0)
+		if ((files = load_file_name_recurs_(file_name_buf, open_on_err, msg_on_err,
+		 recursive)) > 0)
 			return files;
 		if (check_break_key()) {
 			break;
@@ -379,7 +381,8 @@ int load_file_name_upp_low_(const char *file_name,
 
 // Open file. If it is a project file, open file(s) described in it.
 // sub-function of load_file_name_recurs()
-PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int msg_on_err, int recursive)
+PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int msg_on_err,
+ int recursive)
 {
 	static int recursive_call_count = 0;
 	int files = 0;

@@ -133,7 +133,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 					key_executed = key_input;
 flf_d_printf("CALL_FUNC_EDITOR [%s]\n", func_key_table->func_id);
 					//=========================
-					int ret = (*func_key_table->func)();			// call function "doe_...()"
+					int ret = (*func_key_table->func)();	// call function "doe_...()"
 					//=========================
 					count_easy_buffer_switching();
 flf_d_printf("ret_val: %d, editor_quit: %d\n", ret, editor_quit);
@@ -192,7 +192,7 @@ PRIVATE int open_file_recursive(int recursive)
 			break;
 #endif // ENABLE_FILER
 
-		ret = input_string_tail("", file_name, HISTORY_TYPE_IDX_CURSPOS , _("Open existing file:"));
+		ret = input_string_tail("", file_name, HISTORY_TYPE_IDX_CURSPOS, _("Open existing file:"));
 
 		if (ret <= 0) {
 			break;
