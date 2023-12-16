@@ -1,5 +1,4 @@
 echo debugging be ...
-#export LANG=en
 rm -f $HOME/.beexit
 mk_backup_file __be_test.log
 if [ -f ./be ]; then

@@ -28,6 +28,7 @@
 #define RECURSIVE0	0	// Non-recursive open
 
 int doe_goto_input_line(void);
+int doe_goto_file_or_dir_in_cur_line(void);
 int doe_goto_file_in_cur_line(void);
 int doe_goto_directory_in_cur_line(void);
 

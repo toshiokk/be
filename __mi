@@ -1,4 +1,5 @@
 echo make and install
+./__set_app_rel_lvl.sh 1
 ./__m
 strip be
 ls -l be

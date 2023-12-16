@@ -39,7 +39,7 @@ func_key_table_t filer_func_key_table[] = {
    XF, F_I(dof_edit_file),    NULL },
  { "Edit file/Editor",    "Edit file/Open editor",          K_M_e, K_F11,      KNA,
    XF, F_I(dof_edit_file_non_recursive), NULL },
- { "Edit new file",       "Edit new file",                  'E', K_M_E,        KNA,
+ { "Edit new file",       "Edit new file",                  'E', K_M_n, K_M_E,
    XF, F_I(dof_edit_new_file), NULL },
  { "Enter file/dir",      "Enter file/directory",           K_ENTER, K_C_M,    KNA,
    XA, F_I(dof_tap_file),   NULL },
@@ -73,6 +73,16 @@ func_key_table_t filer_func_key_table[] = {
 
  { "",                    "Filer Menu-3",                   KNA,          KNA, KNA,
    XL, F_I(dof_filer_menu_3), NULL },
+
+ { "Up",                  "Move cursor UP",                 K_C_E, KNA,   K_UP,
+   XA, F_I(dof_up), NULL },
+ { "Down",                "Move cursor DOWN",               K_C_X, KNA,   K_DOWN,
+   XA, F_I(dof_down), NULL },
+ { "Prev Page",           "Page UP",                        K_C_R, KNA,   K_PPAGE,
+   XA, F_I(dof_page_up), NULL },
+ { "Next Page",           "Page DOWN",                      K_C_C, KNA,   K_NPAGE,
+   XA, F_I(dof_page_down), NULL },
+
  { "Top",                 "Top of list",                    K_C_T, K_M_t,      KNA,
    XA, F_I(dof_top_of_list),  NULL },
  { "Bottom",              "Bottom of list",                 K_C_B, K_M_b,      KNA,

@@ -37,6 +37,34 @@ PRIVATE int filer_change_prev_dir(void);
 
 #define BECMD		"becmd"		// becmd?
 
+int dof_up(void)
+{
+	get_cur_filer_view()->cur_sel_idx = MIN_MAX_(0,
+	 get_cur_filer_view()->cur_sel_idx - 1,
+	 get_cur_filer_view()->file_list_entries-1);
+	return 1;
+}
+int dof_down(void)
+{
+	get_cur_filer_view()->cur_sel_idx = MIN_MAX_(0,
+	 get_cur_filer_view()->cur_sel_idx + 1,
+	 get_cur_filer_view()->file_list_entries-1);
+	return 1;
+}
+int dof_page_up(void)
+{
+	get_cur_filer_view()->cur_sel_idx = MIN_MAX_(0,
+	 get_cur_filer_view()->cur_sel_idx - FILER_VERT_SCROLL_LINES,
+	 get_cur_filer_view()->file_list_entries-1);
+	return 1;
+}
+int dof_page_down(void)
+{
+	get_cur_filer_view()->cur_sel_idx = MIN_MAX_(0,
+	 get_cur_filer_view()->cur_sel_idx + FILER_VERT_SCROLL_LINES,
+	 get_cur_filer_view()->file_list_entries-1);
+	return 1;
+}
 int dof_top_of_list(void)
 {
 	get_cur_filer_view()->cur_sel_idx = 0;
@@ -549,7 +577,7 @@ int dof_real_path(void)
 {
 	char chdir[MAX_PATH_LEN+1];
 
-	return filer_change_dir_if_not_yet(get_cwd(chdir));
+	return filer_change_dir_if_not_yet(getcwd__(chdir));
 }
 //-----------------------------------------------------------------------------
 int dof_select_file(void)
@@ -841,7 +869,7 @@ int filer_change_dir(const char *dir)
 	update_history(HISTORY_TYPE_IDX_DIR, chdir, 0);
 #endif // ENABLE_HISTORY
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
-	disp_status_bar_done("Changed current chdir to [%s]", chdir);
+	disp_status_bar_done(_("Changed current directory to [%s]"), chdir);
 	return 0;
 }
 

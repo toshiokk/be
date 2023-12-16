@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-14 22:06+0900\n"
+"POT-Creation-Date: 2023-12-16 16:17+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,105 +26,105 @@ msgstr ""
 msgid "Key code: %04x"
 msgstr ""
 
-#: ../buffers.c:384 ../buffers.c:392
+#: ../buffers.c:387 ../buffers.c:395
 msgid "Calculating CRC..."
 msgstr ""
 
-#: ../buffers.c:591 ../buffers.c:598
+#: ../buffers.c:594 ../buffers.c:601
 msgid "Tab size"
 msgstr ""
 
-#: ../editor.c:116 ../filer.c:259
+#: ../editor.c:116 ../filer.c:246
 #, c-format
 msgid "Key command not assigned: %04xh"
 msgstr ""
 
-#: ../editor.c:127 ../filer.c:270
+#: ../editor.c:127 ../filer.c:258
 #, c-format
 msgid "Can not execute this function: [%s]"
 msgstr ""
 
-#: ../editor.c:195
+#: ../editor.c:192
 msgid "Open existing file:"
 msgstr ""
 
-#: ../editor.c:219
+#: ../editor.c:216
 msgid "Open new file:"
 msgstr ""
 
-#: ../editor.c:299
+#: ../editor.c:296
 msgid "No project file found"
 msgstr ""
 
-#: ../editor.c:328
+#: ../editor.c:325
 msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr ""
 
-#: ../editor.c:348
+#: ../editor.c:345
 msgid "File re-loaded"
 msgstr ""
 
-#: ../editor.c:401
+#: ../editor.c:398
 #, c-format
 msgid "Written to the file: %s"
 msgstr ""
 
-#: ../editor.c:454
+#: ../editor.c:451
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editor.c:620 ../editor.c:667 ../editor.c:680 ../fileio.c:365
+#: ../editor.c:617 ../editor.c:664 ../editor.c:677 ../fileio.c:365
 #: ../fileio.c:370 ../winin.c:97
 msgid "Cancelled"
 msgstr ""
 
-#: ../editor.c:626
+#: ../editor.c:623
 msgid "All buffers are checked"
 msgstr ""
 
-#: ../editor.c:631
+#: ../editor.c:628
 msgid "Freeing buffers..."
 msgstr ""
 
-#: ../editor.c:646
+#: ../editor.c:643
 msgid "Freeing all buffers..."
 msgstr ""
 
 #. If buffer is actually NOT modified, clear "modified" flag
-#: ../editor.c:661
+#: ../editor.c:658
 msgid "Buffer is NOT modified"
 msgstr ""
 
-#: ../editor.c:665
+#: ../editor.c:662
 msgid "Save unmodified buffer ?"
 msgstr ""
 
-#: ../editor.c:677
+#: ../editor.c:674
 msgid "Save modified buffer ?"
 msgstr ""
 
-#: ../editor.c:678
+#: ../editor.c:675
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr ""
 
-#: ../editor.c:688
+#: ../editor.c:685
 msgid "Buffer saved to file"
 msgstr ""
 
-#: ../editor.c:839
+#: ../editor.c:836
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:895
+#: ../editor.c:892
 msgid "Modification not allowed in Anchor buffer"
 msgstr ""
 
-#: ../editor.c:899
+#: ../editor.c:896
 msgid "Modification not allowed in LIST mode"
 msgstr ""
 
-#: ../editor.c:903
+#: ../editor.c:900
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 
@@ -200,23 +200,23 @@ msgstr ""
 msgid "Enter line number:"
 msgstr ""
 
-#: ../editorgoto.c:130
+#: ../editorgoto.c:146
 msgid "No previous open files"
 msgstr ""
 
-#: ../editorgoto.c:134
+#: ../editorgoto.c:150
 msgid "Previous file"
 msgstr ""
 
-#: ../editorgoto.c:142
+#: ../editorgoto.c:158
 msgid "No next open files"
 msgstr ""
 
-#: ../editorgoto.c:146
+#: ../editorgoto.c:162
 msgid "Next file"
 msgstr ""
 
-#: ../editorgoto.c:183
+#: ../editorgoto.c:199
 msgid "Returned to previous pos"
 msgstr ""
 
@@ -224,23 +224,23 @@ msgstr ""
 msgid "#List of Files currently loaded"
 msgstr ""
 
-#: ../editorlist.c:54
+#: ../editorlist.c:55
 msgid "File List"
 msgstr ""
 
-#: ../editorlist.c:69
+#: ../editorlist.c:70
 msgid "#List of Editor Key Bindings"
 msgstr ""
 
-#: ../editorlist.c:70 ../editorlist.c:149
+#: ../editorlist.c:71 ../editorlist.c:150
 msgid "#List of Editor Functions"
 msgstr ""
 
-#: ../editorlist.c:105
+#: ../editorlist.c:106
 msgid "Key List"
 msgstr ""
 
-#: ../editorlist.c:108
+#: ../editorlist.c:109
 msgid "Function List"
 msgstr ""
 
@@ -420,110 +420,115 @@ msgstr ""
 msgid " <<broken-link>>"
 msgstr ""
 
-#: ../filercmd.c:59
+#: ../filercmd.c:87
 msgid "File view refreshed"
 msgstr ""
 
-#: ../filercmd.c:104
+#: ../filercmd.c:132
 msgid "Edit new file:"
 msgstr ""
 
-#: ../filercmd.c:178
+#: ../filercmd.c:206
 msgid "Copy to:"
 msgstr ""
 
-#: ../filercmd.c:217
+#: ../filercmd.c:245
 msgid "Copy to (Update):"
 msgstr ""
 
-#: ../filercmd.c:256
+#: ../filercmd.c:284
 msgid "Move to:"
 msgstr ""
 
-#: ../filercmd.c:286
+#: ../filercmd.c:314
 #, c-format
 msgid "Trash file %s ?"
 msgstr ""
 
-#: ../filercmd.c:289
+#: ../filercmd.c:317
 #, c-format
 msgid "Trash %d files ?"
 msgstr ""
 
-#: ../filercmd.c:327
+#: ../filercmd.c:355
 #, c-format
 msgid "Delete file %s ?"
 msgstr ""
 
-#: ../filercmd.c:330
+#: ../filercmd.c:358
 #, c-format
 msgid "Delete %d files ?"
 msgstr ""
 
-#: ../filercmd.c:359
+#: ../filercmd.c:387
 #, c-format
 msgid "Mark file %s to be Deleted later ?"
 msgstr ""
 
-#: ../filercmd.c:362
+#: ../filercmd.c:390
 #, c-format
 msgid "Mark %d files to be Deleted later ?"
 msgstr ""
 
-#: ../filercmd.c:395
+#: ../filercmd.c:423
 #, c-format
 msgid "Make size of file %s 0 ?"
 msgstr ""
 
-#: ../filercmd.c:398
+#: ../filercmd.c:426
 #, c-format
 msgid "Make size of %d files 0 ?"
 msgstr ""
 
-#: ../filercmd.c:438
+#: ../filercmd.c:466
 msgid "Rename to:"
 msgstr ""
 
-#: ../filercmd.c:465
+#: ../filercmd.c:493
 msgid "Find:"
 msgstr ""
 
-#: ../filercmd.c:489
+#: ../filercmd.c:517
 msgid "Mkdir:"
 msgstr ""
 
-#: ../filercmd.c:513
+#: ../filercmd.c:541
 msgid "Chdir to:"
 msgstr ""
 
-#: ../filercmd.c:563 ../filercmd.c:596
+#: ../filercmd.c:591 ../filercmd.c:624
 #, c-format
 msgid "%d file selected"
 msgstr ""
 
-#: ../filercmd.c:564 ../filercmd.c:597
+#: ../filercmd.c:592 ../filercmd.c:625
 #, c-format
 msgid "%d files selected"
 msgstr ""
 
-#: ../filercmd.c:565 ../filercmd.c:598
+#: ../filercmd.c:593 ../filercmd.c:626
 #, c-format
 msgid "%d filess selected"
 msgstr ""
 
-#: ../filercmd.c:566 ../filercmd.c:599
+#: ../filercmd.c:594 ../filercmd.c:627
 #, c-format
 msgid "%d filesss selected"
 msgstr ""
 
-#: ../filercmd.c:579
+#: ../filercmd.c:607
 msgid "File selection cleared"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:831
+#: ../filercmd.c:860
 #, c-format
 msgid "Can not change current chdir to [%s]: %s"
+msgstr ""
+
+#: ../filercmd.c:872
+#, c-format
+msgid "Changed current directory to [%s]"
 msgstr ""
 
 #: ../filerrun.c:59
@@ -538,23 +543,23 @@ msgstr ""
 msgid "Run (with file):"
 msgstr ""
 
-#: ../filerrun.c:192
+#: ../filerrun.c:193
 msgid "Run (current-directory-file):"
 msgstr ""
 
-#: ../filerrun.c:197
+#: ../filerrun.c:199
 msgid "Run (with real-path):"
 msgstr ""
 
-#: ../filerrun.c:204
+#: ../filerrun.c:206
 msgid "Run (script):"
 msgstr ""
 
-#: ../filerrun.c:209
+#: ../filerrun.c:212
 msgid "Run (script by shell):"
 msgstr ""
 
-#: ../filerrun.c:214
+#: ../filerrun.c:218
 msgid "Run (with SRC-path and DEST-path):"
 msgstr ""
 
@@ -608,20 +613,20 @@ msgstr ""
 msgid "Start key macro playback"
 msgstr ""
 
-#: ../main.c:553
+#: ../main.c:551
 msgid ""
 "\n"
 "No file written\n"
 msgstr ""
 
-#: ../main.c:562
+#: ../main.c:560
 #, c-format
 msgid ""
 "\n"
 "Buffer written to %s\n"
 msgstr ""
 
-#: ../main.c:590
+#: ../main.c:588
 #, c-format
 msgid ""
 "\n"
@@ -629,98 +634,98 @@ msgid ""
 msgstr ""
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:592
+#: ../main.c:590
 msgid "Option"
 msgstr ""
 
-#: ../main.c:592
+#: ../main.c:590
 msgid "Long option"
 msgstr ""
 
-#: ../main.c:592
+#: ../main.c:590
 msgid "Meaning"
 msgstr ""
 
-#: ../main.c:594
+#: ../main.c:592
 msgid "Read RCFILE"
 msgstr ""
 
-#: ../main.c:595
+#: ../main.c:593
 msgid "Don't look at berc files"
 msgstr ""
 
-#: ../main.c:598
+#: ../main.c:596
 msgid "Don't use history file"
 msgstr ""
 
-#: ../main.c:600
+#: ../main.c:598
 msgid "Set tab-size to NUM[1-15]"
 msgstr ""
 
-#: ../main.c:601
+#: ../main.c:599
 msgid "View mode(Read only mode)"
 msgstr ""
 
-#: ../main.c:603
+#: ../main.c:601
 msgid "Don't use nkf"
 msgstr ""
 
-#: ../main.c:604
+#: ../main.c:602
 msgid "ASCII character encoding"
 msgstr ""
 
-#: ../main.c:605
+#: ../main.c:603
 msgid "JIS character encoding"
 msgstr ""
 
-#: ../main.c:606
+#: ../main.c:604
 msgid "EUCJP character encoding"
 msgstr ""
 
-#: ../main.c:607
+#: ../main.c:605
 msgid "SJIS character encoding"
 msgstr ""
 
-#: ../main.c:608
+#: ../main.c:606
 msgid "UTF8 character encoding"
 msgstr ""
 
-#: ../main.c:611
+#: ../main.c:609
 msgid "Output debug log to stderr"
 msgstr ""
 
-#: ../main.c:613
+#: ../main.c:611
 msgid "Show version information"
 msgstr ""
 
-#: ../main.c:614
+#: ../main.c:612
 msgid "Show this message"
 msgstr ""
 
-#: ../main.c:615
+#: ../main.c:613
 msgid "Start at line number NUM"
 msgstr ""
 
-#: ../main.c:617
+#: ../main.c:615
 msgid "Investigate key codes"
 msgstr ""
 
-#: ../main.c:634
+#: ../main.c:632
 #, c-format
 msgid "%s editor version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:636
+#: ../main.c:634
 #, c-format
 msgid " Build Options:\n"
 msgstr ""
 
-#: ../main.c:894
+#: ../main.c:892
 #, c-format
 msgid "Screen size: %dx%d"
 msgstr ""
 
-#: ../main.c:899
+#: ../main.c:897
 msgid "We're invincible with this!!"
 msgstr ""
 
@@ -811,59 +816,59 @@ msgstr ""
 msgid "Replace with"
 msgstr ""
 
-#: ../search.c:238
+#: ../search.c:240
 #, c-format
 msgid "[%s] found in %s search"
 msgstr ""
 
-#: ../search.c:239
+#: ../search.c:241
 msgid "backward"
 msgstr ""
 
-#: ../search.c:239
+#: ../search.c:241
 msgid "forward"
 msgstr ""
 
-#: ../search.c:289
+#: ../search.c:291
 #, c-format
 msgid "Replace from [%s] to [%s] ?"
 msgstr ""
 
-#: ../search.c:310
+#: ../search.c:312
 #, c-format
 msgid "[%s] not found :"
 msgstr ""
 
-#: ../search.c:468
+#: ../search.c:470
 msgid "Not a bracket"
 msgstr ""
 
 #. found peer bracket
-#: ../search.c:495
+#: ../search.c:497
 msgid "Peer bracket found"
 msgstr ""
 
-#: ../search.c:499
+#: ../search.c:501
 msgid "No peer bracket found"
 msgstr ""
 
-#: ../search.c:501
+#: ../search.c:503
 #, c-format
 msgid "Too many bracket pairs (%d)"
 msgstr ""
 
 #. didn't find peer bracket
-#: ../search.c:505
+#: ../search.c:507
 #, c-format
 msgid "Bracket nesting too deep (%d)"
 msgstr ""
 
-#: ../search.c:688
+#: ../search.c:690
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr ""
 
-#: ../search.c:797
+#: ../search.c:799
 #, c-format
 msgid "[%s] not found"
 msgstr ""
@@ -872,43 +877,43 @@ msgstr ""
 msgid "Out of memory!"
 msgstr ""
 
-#: ../winin.c:339
+#: ../winin.c:340
 msgid ""
 "UP:history, DOWN:browser, PgUp:insert from history, PgDn:insert from browser"
 msgstr ""
 
-#: ../winin.c:421
+#: ../winin.c:422
 msgid "Yes"
 msgstr ""
 
-#: ../winin.c:424
+#: ../winin.c:425
 msgid "No"
 msgstr ""
 
-#: ../winin.c:427
+#: ../winin.c:428
 msgid "All"
 msgstr ""
 
-#: ../winin.c:430
+#: ../winin.c:431
 msgid "Backward"
 msgstr ""
 
-#: ../winin.c:433
+#: ../winin.c:434
 msgid "Forward"
 msgstr ""
 
-#: ../winin.c:435
+#: ../winin.c:436
 msgid "Cancel"
 msgstr ""
 
-#: ../winin.c:437
+#: ../winin.c:438
 msgid "End"
 msgstr ""
 
-#: ../winin.c:440
+#: ../winin.c:441
 msgid "Undo"
 msgstr ""
 
-#: ../winin.c:443
+#: ../winin.c:444
 msgid "Redo"
 msgstr ""

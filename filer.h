@@ -25,13 +25,11 @@
 #ifdef ENABLE_FILER
 
 #define FILER_PANES		MAX_APP_PANES_2
-
 typedef struct {
 	char org_cur_dir[MAX_PATH_LEN+1];	// original current directory
 	int cur_pane_idx;					// 0: Left, 1: Right
 	filer_view_t filer_views[FILER_PANES];
 } filer_panes_t;
-
 extern filer_panes_t *cur_filer_panes;	// Current Filer Panes (instance is allocated locally)
 
 typedef enum {
@@ -61,6 +59,11 @@ int call_filer(int push_win, int list_mode,
  const char *dir, const char *filter, char *file_path, int buf_len);
 
 int update_screen_filer(int title_bar, int status_bar, int refresh);
+
+int filer_win_get_file_path_lines(void);
+int filer_win_get_file_list_lines(void);
+int filer_win_get_file_path_y(void);
+int filer_win_get_file_list_y(void);
 
 #endif // ENABLE_FILER
 

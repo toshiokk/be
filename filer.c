@@ -42,15 +42,7 @@ PRIVATE void disp_filer_title_bar(const char *path,
  int cur_idx, int files_selected, int files_total);
 PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane);
 
-PRIVATE int filer_win_get_file_path_lines(void);
-PRIVATE int filer_win_get_file_list_lines(void);
-PRIVATE int filer_win_get_file_path_y(void);
-PRIVATE int filer_win_get_file_list_y(void);
-
 PRIVATE void disp_key_list_filer(void);
-
-#define FILER_VERT_SCROLL_MARGIN_LINES	LIM_MAX(5, filer_win_get_file_list_lines()/3)
-#define FILER_VERT_SCROLL_LINES			MIN_MAX_(1, filer_win_get_file_list_lines() / 2, 50)
 
 void init_filer_panes(filer_panes_t *fps, const char *cur_dir)
 {
@@ -112,6 +104,7 @@ PRIVATE filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps)
 	filer_panes_t *prev_fps = cur_filer_panes;	// previous file panes
 
 	init_filer_panes(next_fps, prev_fps->filer_views[prev_fps->cur_pane_idx].cur_dir);
+flf_d_printf("%p\n", next_fps);
 	return prev_fps;
 }
 filer_view_t *get_other_filer_view(void)
@@ -220,24 +213,18 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 			filer_do_next = FILER_DO_UPDATE_FILE_LIST_AUTO;
 			break;
 		case K_UP:
-			get_cur_filer_view()->cur_sel_idx = MIN_MAX_(0, get_cur_filer_view()->cur_sel_idx - 1,
-			 get_cur_filer_view()->file_list_entries-1);
+			dof_up();
 			break;
 		case K_DOWN:
-			get_cur_filer_view()->cur_sel_idx = MIN_MAX_(0, get_cur_filer_view()->cur_sel_idx + 1,
-			 get_cur_filer_view()->file_list_entries-1);
+			dof_down();
 			break;
 		case K_PPAGE:
 		case K_LEFT:
-			get_cur_filer_view()->cur_sel_idx = MIN_MAX_(0,
-			 get_cur_filer_view()->cur_sel_idx - FILER_VERT_SCROLL_LINES,
-			 get_cur_filer_view()->file_list_entries-1);
+			dof_page_up();
 			break;
 		case K_NPAGE:
 		case K_RIGHT:
-			get_cur_filer_view()->cur_sel_idx = MIN_MAX_(0,
-			 get_cur_filer_view()->cur_sel_idx + FILER_VERT_SCROLL_LINES,
-			 get_cur_filer_view()->file_list_entries-1);
+			dof_page_down();
 			break;
 		case K_HOME:
 			dof_top_of_list();
@@ -283,7 +270,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 					}
 				}
 				if (filer_do_next == FILER_DO_NOTHING) {
-flf_d_printf("CALL_FUNC_FILER [%s] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n",
+flf_d_printf("CALL_FILER_FUNC [%s] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n",
  func_key_table->func_id);
 					//=========================
 					int ret = (*func_key_table->func)();	// call function "dof_...()"
@@ -420,12 +407,9 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 		}
 	}
 	// status bar
-	if (status_bar) {
-		disp_status_bar_percent_filer(get_cur_filer_view()->cur_sel_idx,
-		 get_cur_filer_view()->file_list_entries - 1,
-		 "%s", file_info_str(&(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]),
-		 0, 1, 0));
-	}
+	disp_status_bar_percent_filer(
+	 "%s", file_info_str(&(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]),
+	 0, 1, 0));
 	// key list
 	disp_key_list_filer();
 
@@ -547,7 +531,7 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 	return 0;
 }
 //-------------------------------------
-PRIVATE int filer_win_get_file_path_lines(void)
+int filer_win_get_file_path_lines(void)
 {
 	if (GET_APPMD(fl_FILER_PANES) == 0) {
 		return 0;
@@ -555,16 +539,16 @@ PRIVATE int filer_win_get_file_path_lines(void)
 		return 1;
 	}
 }
-PRIVATE int filer_win_get_file_list_lines(void)
+int filer_win_get_file_list_lines(void)
 {
 	return LIM_MIN(0, sub_win_get_lines() - filer_win_get_file_path_lines());
 }
 //-------------------------------------
-PRIVATE int filer_win_get_file_path_y(void)
+int filer_win_get_file_path_y(void)
 {
 	return 0;
 }
-PRIVATE int filer_win_get_file_list_y(void)
+int filer_win_get_file_list_y(void)
 {
 	return filer_win_get_file_path_y() + filer_win_get_file_path_lines();
 }

@@ -131,7 +131,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 				case XA:		// executable all Normal/List mode
 					search_clear(&search__);
 					key_executed = key_input;
-flf_d_printf("CALL_FUNC_EDITOR [%s]\n", func_key_table->func_id);
+flf_d_printf("CALL_EDITOR_FUNC [%s]\n", func_key_table->func_id);
 					//=========================
 					int ret = (*func_key_table->func)();	// call function "doe_...()"
 					//=========================
@@ -148,12 +148,9 @@ flf_d_printf("ret_val: %d, editor_quit: %d\n", ret, editor_quit);
 #endif // ENABLE_DEBUG
 #endif // ENABLE_UNDO
 		}
-		if (is_app_list_mode() == 0) {
-			// normal mode
-			if (count_edit_bufs() == 0) {
-				// all files closed on edit mode, exit editor
-				break;
-			}
+		if (is_app_list_mode() == 0 && count_edit_bufs() == 0) {
+			// If all files closed on edit mode, exit editor.
+			break;
 		}
 _D_(dump_cur_pointers())
 		if (editor_quit) {
@@ -837,7 +834,7 @@ int disp_status_bar_editor(void)
 	strcpy__(buffer, "");
 	strlcat__(buffer, MAX_EDIT_LINE_LEN,
 	 _("LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"));
-	disp_status_bar_percent_editor(CEPBV_CL->line_num-1, get_cep_buf()->buf_lines-1,
+	disp_status_bar_percent_editor(
 	 buffer, CEPBV_CL->line_num, get_cep_buf()->buf_lines, xx, disp_len,
 	 get_cep_buf()->buf_size, buf_lines_sel, buf_char_code,
 	 buf_encode_str(get_cep_buf()), buf_eol_str(get_cep_buf()));

@@ -14,16 +14,8 @@ grep_define()
 }
 
 {
-if [ "$1" = 0 ]; then
-  grep_define $1
-fi
-if [ "$1" = 1 ]; then
-  grep_define $1
-fi
-if [ "$1" = 2 ]; then
-  grep_define $1
-fi
-#if [ -z "$1" ]; then
+  if [ "$1" = 0 -o "$1" = 1 -o "$1" = 2 ]; then
+    grep_define $1
+  fi
   grep "define APP_REL_LVL" appdefs.h
-#fi
 } | grep APP_REL_LVL

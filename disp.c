@@ -49,23 +49,23 @@ const char *root_notation(void)
 PRIVATE s_b_d_t status_bar_displayed = S_B_D_NONE;
 
 PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
- int dividend, int divisor, const char *msg, va_list ap);
+ const char *msg, va_list ap);
 
 // enable status bar update
 void clear_status_bar_displayed(void)
 {
 	set_status_bar_displayed(S_B_D_NONE);
 }
-void set_status_bar_displayed(s_b_d_t s_b_d)
+void set_status_bar_displayed(s_b_d_t status_bar_to_display)
 {
-	status_bar_displayed = s_b_d;
+	status_bar_displayed = status_bar_to_display;
 }
 void disp_status_bar_ing(const char *msg, ...)
 {
 	va_list ap;
 
 	va_start(ap, msg);
-	disp_status_bar_percent_va(S_B_D_ING, 0, 0, msg, ap);
+	disp_status_bar_percent_va(S_B_D_ING, msg, ap);
 	va_end(ap);
 	tio_refresh();	// update screen soon
 }
@@ -74,7 +74,7 @@ void disp_status_bar_done(const char *msg, ...)
 	va_list ap;
 
 	va_start(ap, msg);
-	disp_status_bar_percent_va(S_B_D_DONE, 0, 0, msg, ap);
+	disp_status_bar_percent_va(S_B_D_DONE, msg, ap);
 	va_end(ap);
 }
 void disp_status_bar_err(const char *msg, ...)
@@ -82,24 +82,24 @@ void disp_status_bar_err(const char *msg, ...)
 	va_list ap;
 
 	va_start(ap, msg);
-	disp_status_bar_percent_va(S_B_D_ERR, 0, 0, msg, ap);
+	disp_status_bar_percent_va(S_B_D_ERR, msg, ap);
 	va_end(ap);
 	tio_beep();
 }
-void disp_status_bar_percent_editor(int dividend, int divisor, const char *msg, ...)
+void disp_status_bar_percent_editor(const char *msg, ...)
 {
 	va_list ap;
 
 	va_start(ap, msg);
-	disp_status_bar_percent_va(S_B_D_PERCENT_EDITOR, dividend, divisor, msg, ap);
+	disp_status_bar_percent_va(S_B_D_PERCENT_EDITOR, msg, ap);
 	va_end(ap);
 }
-void disp_status_bar_percent_filer(int dividend, int divisor, const char *msg, ...)
+void disp_status_bar_percent_filer(const char *msg, ...)
 {
 	va_list ap;
 
 	va_start(ap, msg);
-	disp_status_bar_percent_va(S_B_D_PERCENT_FILER, dividend, divisor, msg, ap);
+	disp_status_bar_percent_va(S_B_D_PERCENT_FILER, msg, ap);
 	va_end(ap);
 }
 
@@ -109,15 +109,33 @@ void disp_status_bar_percent_filer(int dividend, int divisor, const char *msg, .
 //  "abc" not found  |  LINE:  12/1234 COLUMN:40/80 SIZE:  1000 CODE:2f ENC:ASCII EOL:LF(NIX)
 //  2 files loaded  |  LINE:  12/1234 COLUMN:40/80 SIZE:  1000 CODE:2f ENC:ASCII EOL:LF(NIX)
 PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
- int dividend, int divisor, const char *msg, va_list ap)
+ const char *msg, va_list ap)
 {
+	int dividend = 1; int divisor = 1;
 	int update = 0;
 	char buf[MAX_SCRN_LINE_BUF_LEN+1];
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 	static char prev_msg[MAX_SCRN_LINE_BUF_LEN+1];
 	int color_idx;
 	int col_idx;
-	int byte_idx;
+	int byte_idx_1, byte_idx_2;
+	int col_idx_1, col_idx_2;
+
+#ifdef ENABLE_FILER
+	if (GET_APPMD(app_EDITOR_FILER) == 0) {
+#endif // ENABLE_FILER
+		///if (status_bar_to_display == S_B_D_PERCENT_EDITOR) {
+			dividend = CEPBV_CL->line_num-1;
+			divisor = get_cep_buf()->buf_lines-1;
+		///}
+#ifdef ENABLE_FILER
+	} else {
+		///if (status_bar_to_display == S_B_D_PERCENT_FILER) {
+			dividend = get_cur_filer_view()->cur_sel_idx;
+			divisor = get_cur_filer_view()->file_list_entries;
+		///}
+	}
+#endif // ENABLE_FILER
 
 	switch (status_bar_to_display) {
 	default:
@@ -194,23 +212,24 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 			e_printf("Terminal I/O not initialized !! ");
 			e_vprintf(msg, ap);
 		} else {
-			set_color_by_idx(color_idx, 1);
+			set_color_by_idx(color_idx, 0);
 			blank_status_bar();
-			// display 1st half
+			// display status bar
 			main_win_output_string(main_win_get_bottom_win_y() + STATUS_LINE, 0, buffer, -1);
 			if (divisor > 0) {
-				// display percent indicator "bar"
-				col_idx = 1 + (main_win_get_columns()-2) * dividend / divisor;
-				// col_idx: 1 -- main_win_get_columns()-1
-				byte_idx = byte_idx_from_col_idx(buffer, col_idx, CHAR_RIGHT, &col_idx);
-				set_color_by_idx(color_idx, 0);
-				// display 2nd half
-				main_win_output_string(main_win_get_bottom_win_y() + STATUS_LINE, col_idx,
-				 &buffer[byte_idx], -1);
+				// display percent indicator
+				col_idx = (main_win_get_columns() - 1) * dividend / divisor;
+				// col_idx: 0 -- main_win_get_columns()-1
+				byte_idx_1 = byte_idx_from_col_idx(buffer, col_idx, CHAR_LEFT,  &col_idx_1);
+				byte_idx_2 = byte_idx_from_col_idx(buffer, col_idx+1, CHAR_RIGHT, &col_idx_2);
+				set_color_by_idx(color_idx, 1);
+				// display percent indicator
+///mflf_d_printf("%d  %d, %d  %d, %d\n", col_idx, byte_idx_1, byte_idx_2, col_idx_1, col_idx_2);
+				main_win_output_string(main_win_get_bottom_win_y() + STATUS_LINE, col_idx_1,
+				 &buffer[byte_idx_1], byte_idx_2 - byte_idx_1);
 			}
 		}
-///
-mflf_d_printf("SB: [%s]\n", buffer);
+///mflf_d_printf("SB: [%s]\n", buffer);
 	}
 
 	if (status_bar_to_display == S_B_D_PERCENT_EDITOR) {

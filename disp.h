@@ -35,12 +35,12 @@ typedef enum /*s_b_d*/ {	// Status Bar Displayed
 	S_B_D_ERR,				//! 5 error (overwritable after one second)
 } s_b_d_t;
 void clear_status_bar_displayed(void);
-void set_status_bar_displayed(s_b_d_t s_b_d);
+void set_status_bar_displayed(s_b_d_t status_bar_to_display);
 void disp_status_bar_ing(const char *msg, ...);
 void disp_status_bar_done(const char *msg, ...);
 void disp_status_bar_err(const char *msg, ...);
-void disp_status_bar_percent_editor(int dividend, int divisor, const char *msg, ...);
-void disp_status_bar_percent_filer(int dividend, int divisor, const char *msg, ...);
+void disp_status_bar_percent_editor(const char *msg, ...);
+void disp_status_bar_percent_filer(const char *msg, ...);
 
 void blank_status_bar(void);
 void blank_yes_no_line(void);

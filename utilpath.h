@@ -81,7 +81,7 @@ const char *get_start_dir(void);
 int save_change_cur_dir(char *dir_save, const char *dir);
 char *get_cur_dir(char *dir);
 int change_cur_dir(const char *dir);
-char *get_cwd(char *cwd);
+char *getcwd__(char *cwd);
 char *getenv_pwd(char *cwd);
 char *getenv__(char *env);
 char *add_last_slash_to_dir(char *dir);

@@ -499,9 +499,9 @@ PRIVATE key_code_t input_key_macro(void)
 	key = key_macro_get_key();
 	if (key < 0) {
 		key = input_key_check_break_key();
-if (key >= 0) {
-flf_d_printf("<<[%04x]\n", key);
-}
+///if (key >= 0) {
+///flf_d_printf("<<[%04x]\n", key);
+///}
 	}
 	key_macro_put_key(key);
 #endif // ENABLE_HISTORY

@@ -59,14 +59,20 @@ int doe_goto_input_line(void)
 
 PRIVATE int check_cur_line_file_or_directory(void);
 
+int doe_goto_file_or_dir_in_cur_line(void)
+{
+	switch (check_cur_line_file_or_directory()) {
+	case 1:
+		return doe_goto_directory_in_cur_line();
+	default:
+		return doe_goto_file_in_cur_line();
+	}
+}
+
 // TAG JUMP
 int doe_goto_file_in_cur_line(void)
 {
 	char dir_save[MAX_PATH_LEN+1];
-
-	if (check_cur_line_file_or_directory() == 1) {
-		return doe_goto_directory_in_cur_line();
-	}
 	memorize_cur_file_pos_null(NULL);
 	clear_files_loaded();
 	save_change_cur_dir(dir_save, strip_file_from_path(get_cep_buf()->abs_path));
@@ -78,13 +84,23 @@ int doe_goto_file_in_cur_line(void)
 }
 int doe_goto_directory_in_cur_line(void)
 {
-#ifdef ENABLE_FILER
 	char file_path[MAX_PATH_LEN+1];
 	if (get_file_line_col_from_str_null(CEPBV_CL->data, file_path, NULL, NULL) == 0) {
 		return 0;
 	}
-	return call_filer(1, 0, file_path, "", file_path, MAX_PATH_LEN);
+	if (change_cur_dir(file_path) == 0) {
+#ifdef ENABLE_HISTORY
+		update_history(HISTORY_TYPE_IDX_DIR, file_path, 0);
+#endif // ENABLE_HISTORY
+#ifdef ENABLE_FILER
+		// update filer's current dir and open filer
+		strlcpy__(get_cur_filer_view()->cur_dir, file_path, MAX_PATH_LEN);
+		get_cur_filer_view()->cur_sel_idx = 0;
+		call_filer(1, 0, file_path, "", file_path, MAX_PATH_LEN);
 #endif // ENABLE_FILER
+	}
+	editor_quit = EDITOR_CANCELLED;
+	return 1;
 }
 
 PRIVATE int check_cur_line_file_or_directory(void)
@@ -337,9 +353,11 @@ PRIVATE int load_file_in_string(const char *string,
 	int line_num, col_num;
 	int files;
 
+flf_d_printf("[%s]\n", string);
 	if (get_file_line_col_from_str_null(string, file_path, &line_num, &col_num) == 0) {
 		return 0;
 	}
+flf_d_printf("[%s]\n", file_path);
 	if ((files = load_file_name_upp_low_(file_path,
 	 try_upp_low, open_on_err, msg_on_err, recursive)) > 0) {
 		goto_line_col_in_cur_buf(line_num, col_num);

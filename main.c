@@ -191,17 +191,15 @@ int app_main_loop(void)
 #ifdef ENABLE_FILER
 	char file_name[MAX_PATH_LEN+1];
 
-	if (count_edit_bufs()) {
-		// application was started as a EDITOR
-		call_editor(0, 0);
-	} else {
-		// application was started as a FILER
-		while (1) {
+	// application was started as a FILER
+	while (1) {
+		if (count_edit_bufs() == 0) {
 			call_filer(0, 0, "", "", file_name, MAX_PATH_LEN);
 			if (count_edit_bufs() == 0) {
 				// no file loaded in filer
 				break;
 			}
+		} else {
 			call_editor(0, 0);
 		}
 	}
@@ -209,7 +207,7 @@ int app_main_loop(void)
 	if (count_edit_bufs() == 0) {
 		doe_open_file();
 	}
-	if (count_edit_bufs()) {
+	while (count_edit_bufs()) {
 		call_editor(0, 0);
 	}
 #endif // ENABLE_FILER
@@ -422,7 +420,7 @@ PRIVATE void start_up_test(void)
 	void *allocated;
 
 ///	tio_test();
-	get_cwd(buf);
+	getcwd__(buf);
 	flf_d_printf("getcwd: [%s]\n", buf);
 	getenv_pwd(buf);
 	flf_d_printf("getenv(PWD): [%s]\n", buf);

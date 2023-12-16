@@ -229,7 +229,7 @@ const char *get_start_dir(void)
 	static char start_dir[MAX_PATH_LEN+1] = "";
 
 	if (strcmp(start_dir, "") == 0) {
-		if (strlen(get_cwd(start_dir)) == 0) {
+		if (strlen(getcwd__(start_dir)) == 0) {
 			getenv_pwd(start_dir);
 		}
 	}
@@ -244,7 +244,7 @@ PRIVATE char current_directory[MAX_PATH_LEN+1] = "";
 char *get_cur_dir(char *dir)
 {
 	if (strcmp(current_directory, "") == 0) {
-		if (strlen(get_cwd(current_directory)) == 0) {
+		if (strlen(getcwd__(current_directory)) == 0) {
 			getenv_pwd(current_directory);
 		}
 	}
@@ -263,7 +263,7 @@ int change_cur_dir(const char *dir)
 //------------------------------------------------------------------------------
 
 // get real current directory(symbolic link is expanded to absolute path)
-char *get_cwd(char *cwd)
+char *getcwd__(char *cwd)
 {
 	if (getcwd(cwd, MAX_PATH_LEN) == NULL) {
 		strcpy__(cwd, "");
