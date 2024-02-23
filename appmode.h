@@ -116,7 +116,7 @@ typedef struct /*buf_state*/ {
 	unsigned char buf_MODIFIED:1;
 	unsigned char buf_VIEW_MODE:1;
 	unsigned char buf_LINE_WRAP_MODE:1;
-#if 1
+#if 1 // 1
 #define HV_IS_BOX_VH_IS_CHAR
 #else
 #define HV_IS_LINE_VH_IS_BOX

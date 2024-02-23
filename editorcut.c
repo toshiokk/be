@@ -87,6 +87,9 @@ int doe_select_all_lines(void)
 
 int doe_cut_to_head(void)
 {
+	if (CEPBV_CLBI == 0) {
+		return 0;
+	}
 	do_set_mark();
 	doe_start_of_line();
 	doe_cut_text();
@@ -96,6 +99,9 @@ int doe_cut_to_head(void)
 }
 int doe_cut_to_tail(void)
 {
+	if (CEPBV_CLBI == line_data_len(CEPBV_CL)) {
+		return 0;
+	}
 	set_disabled_update_min_text_x_to_keep();	// avoid contents jump around
 	do_set_mark();
 	doe_end_of_line();

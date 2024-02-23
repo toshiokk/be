@@ -42,9 +42,9 @@ void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_
 	if (renum_from) {
 		buf_renumber_from_line(get_cep_buf(), renum_from);
 	}
-	fix_buf_state_after_cursor_move(cursor_move);
+	adjust_curs_pos_after_cursor_move(cursor_move);
 	setup_cut_region_after_cursor_move(cursor_move);
-	locate_cursor_in_edit_win(locate_cursor);
+	locate_curs_y_in_edit_win(locate_cursor);
 	set_edit_win_update_needed(update_needed);
 #ifdef ENABLE_UNDO
 	undo_save_after_change();
@@ -66,7 +66,7 @@ void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_
 //	|                                 |
 //	|       LOCATE_CURS_BOTTOM        |
 //	+---------------------------------+
-void locate_cursor_in_edit_win(locate_cursor_to_t locate_curs)
+void locate_curs_y_in_edit_win(locate_cursor_to_t locate_curs)
 {
 	int disp_y_preferred;
 
@@ -238,7 +238,7 @@ int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *b
 
 //-----------------------------------------------------------------------------
 // adjust pointers after moving horizontally or vertically
-void fix_buf_state_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
+void adjust_curs_pos_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 {
 	int wl_idx;
 	int cursor_x_in_text;
