@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-16 16:17+0900\n"
+"POT-Creation-Date: 2024-02-23 17:04+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -29,125 +29,124 @@ msgstr "キーコード: %04x"
 msgid "Calculating CRC..."
 msgstr "CRC を計算中..."
 
-#: ../buffers.c:594 ../buffers.c:601
+#: ../buffers.c:595 ../buffers.c:602
 msgid "Tab size"
 msgstr "タブサイズ"
 
-#: ../editor.c:116 ../filer.c:246
+#: ../editor.c:113 ../filer.c:251
 #, c-format
 msgid "Key command not assigned: %04xh"
 msgstr "このキーコードにはコマンドが割り当てられていません: %04xh"
 
-#: ../editor.c:127 ../filer.c:258
+#: ../editor.c:124 ../filer.c:263
 #, c-format
 msgid "Can not execute this function: [%s]"
 msgstr ""
 
-#: ../editor.c:192
+#: ../editor.c:189
 msgid "Open existing file:"
 msgstr "既存ファイルを開く:"
 
-#: ../editor.c:216
+#: ../editor.c:213
 msgid "Open new file:"
 msgstr "新しいファイルを開く:"
 
-#: ../editor.c:296
+#: ../editor.c:293
 msgid "No project file found"
 msgstr ""
 
-#: ../editor.c:325
+#: ../editor.c:322
 msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr "バッファは変更されています。再オープンしますか ?"
 
-#: ../editor.c:345
+#: ../editor.c:342
 #, fuzzy
 msgid "File re-loaded"
 msgstr "ファイルを開き直しました"
 
-#: ../editor.c:398
+#: ../editor.c:395
 #, fuzzy, c-format
 msgid "Written to the file: %s"
 msgstr "ファイルに書き込みました: %s"
 
-#: ../editor.c:451
+#: ../editor.c:448
 #, fuzzy
 msgid "One buffer closed"
 msgstr "1 ファイルを閉じました"
 
-#: ../editor.c:617 ../editor.c:664 ../editor.c:677 ../fileio.c:365
+#: ../editor.c:615 ../editor.c:663 ../editor.c:676 ../fileio.c:365
 #: ../fileio.c:370 ../winin.c:97
 msgid "Cancelled"
 msgstr "キャンセルされました"
 
-#: ../editor.c:623
+#: ../editor.c:621
 #, fuzzy
 msgid "All buffers are checked"
 msgstr "全ファイルをチェックしました"
 
-#: ../editor.c:628
+#: ../editor.c:626
 #, fuzzy
 msgid "Freeing buffers..."
 msgstr "全バッファを開放中..."
 
-#: ../editor.c:643
+#: ../editor.c:641
 msgid "Freeing all buffers..."
 msgstr "全バッファを開放中..."
 
-#. If buffer is actually NOT modified, clear "modified" flag
-#: ../editor.c:658
+#: ../editor.c:657
 #, fuzzy
 msgid "Buffer is NOT modified"
 msgstr "ファイルは変更されていません"
 
-#: ../editor.c:662
+#: ../editor.c:661
 #, fuzzy
 msgid "Save unmodified buffer ?"
 msgstr "変更されていないバッファを書き込みますか ?"
 
-#: ../editor.c:674
+#: ../editor.c:673
 msgid "Save modified buffer ?"
 msgstr "変更されたバッファを書き込みますか ?"
 
-#: ../editor.c:675
+#: ../editor.c:674
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr "変更されたバッファを書き込みますか (\"いいえ\" で変更は破棄されます) ?"
 
-#: ../editor.c:685
+#: ../editor.c:684
 msgid "Buffer saved to file"
 msgstr "バッファを書き込みました"
 
-#: ../editor.c:836
+#: ../editor.c:835
 #, fuzzy, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 "行:%4lu/%-4lu 桁:%3lu/%-3lu サイズ:%6lu%s 文字コード:%s エンコード:%s 行末:%s"
 
-#: ../editor.c:892
+#: ../editor.c:891
 #, fuzzy
 msgid "Modification not allowed in Anchor buffer"
 msgstr "LISTモードでは編集できません"
 
-#: ../editor.c:896
+#: ../editor.c:895
 msgid "Modification not allowed in LIST mode"
 msgstr "LISTモードでは編集できません"
 
-#: ../editor.c:900
+#: ../editor.c:899
 msgid "Modification not allowed in VIEW mode"
 msgstr "VIEWモードでは編集できません"
 
-#: ../editor2.c:107 ../fileio.c:78
+#: ../editor2.c:108 ../fileio.c:78
 msgid "New File"
 msgstr "新規ファイル"
 
-#: ../editor2.c:109
+#: ../editor2.c:110
 msgid "[Mod] "
 msgstr ""
 
-#: ../editor2.c:111
+#: ../editor2.c:112
 msgid "[VM] "
 msgstr ""
 
-#: ../editor2.c:113
+#: ../editor2.c:114
 msgid "[WP] "
 msgstr ""
 
@@ -532,12 +531,12 @@ msgid "File selection cleared"
 msgstr "ファイル選択をクリアしました"
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:860
+#: ../filercmd.c:862
 #, fuzzy, c-format
 msgid "Can not change current chdir to [%s]: %s"
 msgstr "カレントディレクトリを変更できません [%s]: %s"
 
-#: ../filercmd.c:872
+#: ../filercmd.c:874
 #, fuzzy, c-format
 msgid "Changed current directory to [%s]"
 msgstr "カレントディレクトリを変更しました [%s]"
@@ -747,32 +746,32 @@ msgstr "画面サイズ: %dx%d"
 msgid "We're invincible with this!!"
 msgstr "これさえあれば俺達は無敵だ!!"
 
-#: ../rcfile.c:211
+#: ../rcfile.c:215
 #, c-format
 msgid "Unable to open config file: %s, %s\n"
 msgstr "configファイル %s が読み込めません: %s\n"
 
-#: ../rcfile.c:291
+#: ../rcfile.c:295
 #, c-format
 msgid "Not valid number: %s\n"
 msgstr "数値が異常です: %s\n"
 
-#: ../rcfile.c:409 ../rcfile.c:477
+#: ../rcfile.c:421 ../rcfile.c:489
 #, c-format
 msgid "color %s not understood.\n"
 msgstr "不正な color %s です。\n"
 
-#: ../rcfile.c:602
+#: ../rcfile.c:614
 #, c-format
 msgid "color name %s not understood.\n"
 msgstr ""
 
-#: ../rcfile.c:645 ../rcfile.c:679 ../rcfile.c:687
+#: ../rcfile.c:657 ../rcfile.c:691 ../rcfile.c:699
 #, c-format
 msgid "Bad regexp: [%s]:%s\n"
 msgstr "不正な正規表現です: [%s]:%s\n"
 
-#: ../rcfile.c:804
+#: ../rcfile.c:816
 #, c-format
 msgid "Error in file: %s on line: %d"
 msgstr "ファイル: %s 行: %d でエラー"

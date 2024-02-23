@@ -206,7 +206,6 @@ struct be_line_t *get_line_ptr_from_cur_buf_line_num(int line_num);
 
 void update_cur_buf_crc(void);
 int check_cur_buf_modified(void);
-void clear_cur_buf_modified(void);
 
 //-----------------------------------------------------------------------------
 

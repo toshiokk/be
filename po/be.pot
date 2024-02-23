@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-16 16:17+0900\n"
+"POT-Creation-Date: 2024-02-23 17:04+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,117 +30,116 @@ msgstr ""
 msgid "Calculating CRC..."
 msgstr ""
 
-#: ../buffers.c:594 ../buffers.c:601
+#: ../buffers.c:595 ../buffers.c:602
 msgid "Tab size"
 msgstr ""
 
-#: ../editor.c:116 ../filer.c:246
+#: ../editor.c:113 ../filer.c:251
 #, c-format
 msgid "Key command not assigned: %04xh"
 msgstr ""
 
-#: ../editor.c:127 ../filer.c:258
+#: ../editor.c:124 ../filer.c:263
 #, c-format
 msgid "Can not execute this function: [%s]"
 msgstr ""
 
-#: ../editor.c:192
+#: ../editor.c:189
 msgid "Open existing file:"
 msgstr ""
 
-#: ../editor.c:216
+#: ../editor.c:213
 msgid "Open new file:"
 msgstr ""
 
-#: ../editor.c:296
+#: ../editor.c:293
 msgid "No project file found"
 msgstr ""
 
-#: ../editor.c:325
+#: ../editor.c:322
 msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr ""
 
-#: ../editor.c:345
+#: ../editor.c:342
 msgid "File re-loaded"
 msgstr ""
 
-#: ../editor.c:398
+#: ../editor.c:395
 #, c-format
 msgid "Written to the file: %s"
 msgstr ""
 
-#: ../editor.c:451
+#: ../editor.c:448
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editor.c:617 ../editor.c:664 ../editor.c:677 ../fileio.c:365
+#: ../editor.c:615 ../editor.c:663 ../editor.c:676 ../fileio.c:365
 #: ../fileio.c:370 ../winin.c:97
 msgid "Cancelled"
 msgstr ""
 
-#: ../editor.c:623
+#: ../editor.c:621
 msgid "All buffers are checked"
 msgstr ""
 
-#: ../editor.c:628
+#: ../editor.c:626
 msgid "Freeing buffers..."
 msgstr ""
 
-#: ../editor.c:643
+#: ../editor.c:641
 msgid "Freeing all buffers..."
 msgstr ""
 
-#. If buffer is actually NOT modified, clear "modified" flag
-#: ../editor.c:658
+#: ../editor.c:657
 msgid "Buffer is NOT modified"
 msgstr ""
 
-#: ../editor.c:662
+#: ../editor.c:661
 msgid "Save unmodified buffer ?"
 msgstr ""
 
-#: ../editor.c:674
+#: ../editor.c:673
 msgid "Save modified buffer ?"
 msgstr ""
 
-#: ../editor.c:675
+#: ../editor.c:674
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr ""
 
-#: ../editor.c:685
+#: ../editor.c:684
 msgid "Buffer saved to file"
 msgstr ""
 
-#: ../editor.c:836
+#: ../editor.c:835
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:892
+#: ../editor.c:891
 msgid "Modification not allowed in Anchor buffer"
 msgstr ""
 
-#: ../editor.c:896
+#: ../editor.c:895
 msgid "Modification not allowed in LIST mode"
 msgstr ""
 
-#: ../editor.c:900
+#: ../editor.c:899
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 
-#: ../editor2.c:107 ../fileio.c:78
+#: ../editor2.c:108 ../fileio.c:78
 msgid "New File"
 msgstr ""
 
-#: ../editor2.c:109
+#: ../editor2.c:110
 msgid "[Mod] "
 msgstr ""
 
-#: ../editor2.c:111
+#: ../editor2.c:112
 msgid "[VM] "
 msgstr ""
 
-#: ../editor2.c:113
+#: ../editor2.c:114
 msgid "[WP] "
 msgstr ""
 
@@ -521,12 +520,12 @@ msgid "File selection cleared"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:860
+#: ../filercmd.c:862
 #, c-format
 msgid "Can not change current chdir to [%s]: %s"
 msgstr ""
 
-#: ../filercmd.c:872
+#: ../filercmd.c:874
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr ""
@@ -729,32 +728,32 @@ msgstr ""
 msgid "We're invincible with this!!"
 msgstr ""
 
-#: ../rcfile.c:211
+#: ../rcfile.c:215
 #, c-format
 msgid "Unable to open config file: %s, %s\n"
 msgstr ""
 
-#: ../rcfile.c:291
+#: ../rcfile.c:295
 #, c-format
 msgid "Not valid number: %s\n"
 msgstr ""
 
-#: ../rcfile.c:409 ../rcfile.c:477
+#: ../rcfile.c:421 ../rcfile.c:489
 #, c-format
 msgid "color %s not understood.\n"
 msgstr ""
 
-#: ../rcfile.c:602
+#: ../rcfile.c:614
 #, c-format
 msgid "color name %s not understood.\n"
 msgstr ""
 
-#: ../rcfile.c:645 ../rcfile.c:679 ../rcfile.c:687
+#: ../rcfile.c:657 ../rcfile.c:691 ../rcfile.c:699
 #, c-format
 msgid "Bad regexp: [%s]:%s\n"
 msgstr ""
 
-#: ../rcfile.c:804
+#: ../rcfile.c:816
 #, c-format
 msgid "Error in file: %s on line: %d"
 msgstr ""

@@ -95,9 +95,6 @@ PRIVATE int editor_main_loop(void)
 		//----------------------------------
 		if (key_input < 0) {
 			// no key input
-			if (key_input == KEY_NONE2) {
-				key_input = 0x00;
-			}
 		} else {
 mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
  '_', key_input, short_key_name_from_key_code(key_input, NULL));
@@ -544,12 +541,13 @@ int doe_editor_splash(void)
 int doe_display_color_pairs(void)
 {
 	display_color_pairs(0, 0);
-#ifdef ENABLE_DEBUG
 	input_key_loop();
+#ifdef ENABLE_DEBUG
 	display_item_colors(0, 0);
 #ifdef ENABLE_REGEX
 	display_bracket_hl_colors(0, 40);
 #endif // ENABLE_REGEX
+	input_key_loop();
 #endif // ENABLE_DEBUG
 	return 0;
 }
@@ -653,8 +651,9 @@ int write_file_ask(int yes_no, close_after_save_t close)
 {
 	int ret = yes_no;
 
+	switch_cep_buf_to_valid_buf();
+
 	if (yes_no < ANSWER_FORCE && check_cur_buf_modified() == 0) {
-		clear_cur_buf_modified();	// If buffer is actually NOT modified, clear "modified" flag
 		disp_status_bar_done(_("Buffer is NOT modified"));
 		return ANSWER_NO;
 	}

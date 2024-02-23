@@ -13,9 +13,9 @@ cursor_center		0
 history			1
 regexp			1
 tab_eol_notation	1
-map_key_7f_bs		0
+map_key_7f_bs		1
 
-key_list_lines		1
+key_list_lines		0
 tab_size		8
 
 [color]
@@ -44,11 +44,11 @@ color_syntax ="\b(compl|concept|const|constexpr|const_cast)\b"         +red
 color_syntax ="\b(continue|co_await|co_return|co_yield)\b"             +red
 color_syntax ="\b(decltype|default|delete|do|double|dynamic_cast)\b"   +red
 color_syntax ="\b(else|enum|explicit|export|extern)\b"                 +red
-color_syntax ="\b(false|float|for|friend|goto)\b"                      +red
+color_syntax ="\b(false|final|float|for|friend|goto)\b"                +red
 color_syntax ="\b(if|import|inline|int|long)\b"                        +red
 color_syntax ="\b(module|mutable|namespace|new)\b"                     +red
 color_syntax ="\b(noexcept|not|not_eq|nullptr)\b"                      +red
-color_syntax ="\b(operator|or|or_eq|private|protected|public)\b"       +red
+color_syntax ="\b(operator|or|or_eq|override|private|protected|public)\b" +red
 color_syntax ="\b(register|reinterpret_cast|requires|return)\b"        +red
 color_syntax ="\b(short|signed|sizeof)\b"                              +red
 color_syntax ="\b(static|static_assert|static_cast)\b"                 +red

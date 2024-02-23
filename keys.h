@@ -23,7 +23,6 @@
 #define keys_h
 
 #define KEY_NONE			(-1)
-#define KEY_NONE2			(-2)
 #define K_NONE				KEY_NONE
 ///#define KEY_NOT_ASSIGNED	(-0x8000)
 #define KEY_NOT_ASSIGNED	KEY_NONE

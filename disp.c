@@ -21,15 +21,19 @@
 
 #include "headers.h"
 
-void set_title_bar_color_by_state(int cep_buf_cut_mode)
+void set_title_bar_color_by_state(int mode1, int mode2)
 {
 	if (key_macro_is_recording()) {
 		// Recording key macro, you see strange color on title bar.
-		set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, 0);
+		set_color_by_idx(ITEM_COLOR_IDX_WARNING2, 0);
 	} else
-	if (cep_buf_cut_mode) {
+	if (mode1) {
 		// Marking text, you see strange color on title bar.
 		set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 0);
+	} else
+	if (mode2) {
+		// File is modified, you see strange color on title bar.
+		set_color_by_idx(ITEM_COLOR_IDX_WARNING3, 0);
 	} else
 	if (geteuid() == 0) {
 		// If you are super user, you see strange color on title bar.

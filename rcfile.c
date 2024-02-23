@@ -79,6 +79,8 @@ PRIVATE int parse_color_text_normal(void);
 PRIVATE int parse_color_text_selected(void);
 PRIVATE int parse_color_text_selected2(void);
 PRIVATE int parse_color_warning(void);
+PRIVATE int parse_color_warning2(void);
+PRIVATE int parse_color_warning3(void);
 PRIVATE int parse_color_cursor(void);
 PRIVATE int parse_color_cursor_line(void);
 PRIVATE int parse_color_line_number(void);
@@ -155,6 +157,8 @@ struct /*_rc_cmd_func_*/ {
 	{ "color_text_selected",	parse_color_text_selected,	},
 	{ "color_text_selected2",	parse_color_text_selected2,	},
 	{ "color_warning",			parse_color_warning,		},
+	{ "color_warning2",			parse_color_warning2,		},
+	{ "color_warning3",			parse_color_warning3,		},
 	{ "color_cursor",			parse_color_cursor,			},
 	{ "color_cursor_line",		parse_color_cursor_line,	},
 	{ "color_line_number",		parse_color_line_number,	},
@@ -329,6 +333,14 @@ PRIVATE int parse_color_text_selected2(void)
 PRIVATE int parse_color_warning(void)
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_WARNING);
+}
+PRIVATE int parse_color_warning2(void)
+{
+	return parse_bgc_fgc_register(ITEM_COLOR_IDX_WARNING2);
+}
+PRIVATE int parse_color_warning3(void)
+{
+	return parse_bgc_fgc_register(ITEM_COLOR_IDX_WARNING3);
 }
 PRIVATE int parse_color_cursor(void)
 {

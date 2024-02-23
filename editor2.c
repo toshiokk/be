@@ -57,7 +57,7 @@ PRIVATE int get_line_num_digits(int max_line_num);
 #define BUF_BUF_LEN			15	// "E99 C99 U99 R99"
 #define MEM_BUF_LEN			7	// "999000M" (999G)
 #define HHCMMCSS_LEN		8	// "23:59:59"
-//1:/home/...editor2.c[Modified] Mc Cut00 Undo00 Redo00 123456MB 11:55:04
+//1:/home/...editor2.c[Mod]    Mc E00 C00 U00 R00 1234M 11:55:04
 void disp_editor_title_bar(void)
 {
 	int buf_idx;
@@ -84,7 +84,8 @@ void disp_editor_title_bar(void)
 
 	tio_set_cursor_on(0);
 
-	set_title_bar_color_by_state(BUF_STATE(get_cep_buf(), buf_CUT_MODE));
+	set_title_bar_color_by_state(BUF_STATE(get_cep_buf(), buf_CUT_MODE),
+	 CUR_EBUF_STATE(buf_MODIFIED));
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0,
 	 tio_blank_line(), main_win_get_columns());
 

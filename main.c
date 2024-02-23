@@ -50,7 +50,7 @@ char *main_rc_file_name = RC_FILE_NAME;	// standard rc file
 int main(int argc, char *argv[])
 {
 #ifdef ENABLE_FILER
-	filer_panes_t filer_panes;
+	filer_panes_t root_filer_panes;
 #endif // ENABLE_FILER
 	int start_line_num = 0;			// Line to start at
 
@@ -67,7 +67,7 @@ flf_d_printf("Start %s ===================================\n", APP_NAME " " __DA
 	init_buffers();		// parse_options() needs cep_buf. So do here.
 	_mlc_differ_count
 #ifdef ENABLE_FILER
-	init_filer_panes(&filer_panes, get_start_dir());
+	init_filer_panes(&root_filer_panes, get_start_dir());
 #endif // ENABLE_FILER
 	parse_options(argc, argv);		// parse command line options
 	cache_users();
@@ -173,7 +173,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	_mlc_check_count
 	free_all_allocated_memory();
 #ifdef ENABLE_FILER
-	free_filer_panes(&filer_panes, NULL);
+	free_filer_panes(&root_filer_panes, NULL);
 #endif // ENABLE_FILER
 
 	signal_clear();
@@ -891,10 +891,10 @@ void disp_splash(int delay)
 	tio_output_string(top_y + msg3_y, left_x + msg3_x, __DATE__ " " __TIME__, -1);
 	snprintf(buffer, 100+1, _("Screen size: %dx%d"), tio_get_columns(), tio_get_lines());
 	if (msg2_x >= 0) {
-	tio_output_string(top_y + msg4_y, left_x + msg4_x, buffer, -1);
+		tio_output_string(top_y + msg4_y, left_x + msg4_x, buffer, -1);
 	}
 	if (msg3_x >= 0) {
-	tio_output_string(top_y + msg5_y, left_x + msg5_x, _("We're invincible with this!!"), -1);
+		tio_output_string(top_y + msg5_y, left_x + msg5_x, _("We're invincible with this!!"), -1);
 	}
 	tio_refresh();
 }

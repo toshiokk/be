@@ -684,7 +684,9 @@ int dof_display_color_pairs(void)
 	input_key_loop();
 #ifdef ENABLE_DEBUG
 	display_item_colors(0, 0);
+#ifdef ENABLE_REGEX
 	display_bracket_hl_colors(0, 40);
+#endif // ENABLE_REGEX
 	input_key_loop();
 #endif // ENABLE_DEBUG
 	return 0;

@@ -50,6 +50,7 @@ v F: Input keyword to search
   [p:i:/long/long/long/path/to/file.txt  mmmmMB HH:MM:DD]
   [p:i:/long/long/very-long/path/to/file.txt    HH:MM:DD]
 
+[v] Repaint whole of screen after wake up from sleep
 [v] Stop loading large or many files. (by Ctrl-C)
 [v] Show date in space for Time just after key press
 [v] sofisticate filer_do_next mechanism

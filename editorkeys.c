@@ -155,10 +155,10 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_find_bracket), NULL },
  { "Find Bracket)(",      "Find counterpart bracket)(",     K_M_LBRACKET, K_M_RBRACE, KNA,
    XL, F_I(doe_find_bracket_reverse), NULL },
- { "Hilight Bracket()",   "Hilight counterpart bracket()", K_M_BACKSLASH, KNA, KNA,
-   XL, F_I(doe_highlight_bracket), NULL },
- { "Hilight Bracket)(",   "Hilight counterpart bracket)(", K_M_VERTBAR,   KNA, KNA,
-   XL, F_I(doe_highlight_bracket_reverse), NULL },
+/// { "Hilight Bracket()",   "Hilight counterpart bracket()", K_M_BACKSLASH, KNA, KNA,
+///   XL, F_I(doe_highlight_bracket), NULL },
+/// { "Hilight Bracket)(",   "Hilight counterpart bracket)(", K_M_VERTBAR,   KNA, KNA,
+///   XL, F_I(doe_highlight_bracket_reverse), NULL },
 #endif // ENABLE_REGEX
 
  { "",                    "Buffer Menu",                    KNA,          KNA, KNA,

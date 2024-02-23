@@ -394,13 +394,14 @@ int check_cur_buf_modified(void)
 	if (CUR_EBUF_STATE(buf_MODIFIED)) {
 		disp_status_bar_ing(_("Calculating CRC..."));
 		modified = buf_check_crc(get_cep_buf());
+		if (modified == 0) {
+			// clear "modified" flag if it's actually not modified
+			SET_CUR_EBUF_STATE(buf_MODIFIED, 0);
+			disp_editor_title_bar();
+		}
 	}
 ///flf_d_printf("modified: %d\n", modified);
 	return modified;
-}
-void clear_cur_buf_modified(void)
-{
-	SET_CUR_EBUF_STATE(buf_MODIFIED, 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -566,7 +567,7 @@ const char *get_str_encode(void)
 void set_cur_buf_modified(void)
 {
 	if (CUR_EBUF_STATE(buf_MODIFIED) == 0) {
-		CUR_EBUF_STATE(buf_MODIFIED) = 1;
+		SET_CUR_EBUF_STATE(buf_MODIFIED, 1);
 		disp_editor_title_bar();
 	}
 }

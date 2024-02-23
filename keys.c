@@ -474,7 +474,6 @@ PRIVATE key_code_t input_key_timeout(void)
 			disp_splash(0);
 			usec_enter = get_usec();
 #endif // ENABLE_HELP
-			key_resized = KEY_NONE2;
 		}
 		if (get_usec() - usec_enter >= KEY_WAIT_TIME_USEC)
 			break;

@@ -54,6 +54,19 @@ void init_filer_panes(filer_panes_t *fps, const char *cur_dir)
 		init_filer_view(&cur_filer_panes->filer_views[filer_pane_idx], cur_dir);
 	}
 }
+PRIVATE filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps)
+{
+	int cur_pane_idx = get_filer_cur_pane_idx();
+	filer_panes_t *prev_fps = cur_filer_panes;	// previous filer panes
+	init_filer_panes(next_fps, prev_fps->filer_views[get_filer_cur_pane_idx()].cur_dir);
+	set_filer_cur_pane_idx(cur_pane_idx);
+	for (int filer_pane_idx = 0; filer_pane_idx < FILER_PANES; filer_pane_idx++) {
+		// set initial value
+		init_filer_view(&next_fps->filer_views[filer_pane_idx],
+		 prev_fps->filer_views[filer_pane_idx].cur_dir);
+	}
+	return prev_fps;
+}
 void free_filer_panes(filer_panes_t *fps, filer_panes_t *prev_fps)
 {
 	for (int filer_pane_idx = 0; filer_pane_idx < FILER_PANES; filer_pane_idx++) {
@@ -99,14 +112,6 @@ filer_view_t *get_cur_filer_view(void)
 	return &cur_filer_panes->filer_views[get_filer_cur_pane_idx()];
 }
 
-PRIVATE filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps)
-{
-	filer_panes_t *prev_fps = cur_filer_panes;	// previous file panes
-
-	init_filer_panes(next_fps, prev_fps->filer_views[prev_fps->cur_pane_idx].cur_dir);
-flf_d_printf("%p\n", next_fps);
-	return prev_fps;
-}
 filer_view_t *get_other_filer_view(void)
 {
 	return &cur_filer_panes->filer_views[get_other_filer_pane_idx(get_filer_cur_pane_idx())];
@@ -439,7 +444,7 @@ PRIVATE void disp_filer_title_bar(const char *path,
 	char buf_files[MAX_SCRN_LINE_BUF_LEN+1];
 	char buf_time[1+HHCMMCSS_LEN+1];
 
-	set_title_bar_color_by_state(0);
+	set_title_bar_color_by_state(0, 0);
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0,
 	 tio_blank_line(), main_win_get_columns());
 
