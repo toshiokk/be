@@ -26,12 +26,15 @@ v F: Input keyword to search
    E: Execute current-line as a command
       (preserve current-directory if changed in execution(***DIFFICULT***))
 
+[v] inherit filer view(cur_sel_idx) in "filer list view"
+[v] after screen resized, status bar is not displayed
+
 [] change current directory by selecting from directory tree (find . -type d -maxdepth 3)
 [] load file                by selecting from file      tree (find . -type f -maxdepth 3)
    (how to limit max lines to be loaded into editor)
 
 [v] change current directory in editor
-    [] show current directory in editor
+    [x] show current directory in editor (==> shown after change)
 
 /home/user/tools/be/be
 /home/user/tools/be/be/po

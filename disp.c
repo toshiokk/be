@@ -128,16 +128,12 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 #ifdef ENABLE_FILER
 	if (GET_APPMD(app_EDITOR_FILER) == 0) {
 #endif // ENABLE_FILER
-		///if (status_bar_to_display == S_B_D_PERCENT_EDITOR) {
-			dividend = CEPBV_CL->line_num-1;
-			divisor = get_cep_buf()->buf_lines-1;
-		///}
+		dividend = CEPBV_CL->line_num-1;
+		divisor = get_cep_buf()->buf_lines-1;
 #ifdef ENABLE_FILER
 	} else {
-		///if (status_bar_to_display == S_B_D_PERCENT_FILER) {
-			dividend = get_cur_filer_view()->cur_sel_idx;
-			divisor = get_cur_filer_view()->file_list_entries;
-		///}
+		dividend = get_cur_filer_view()->cur_sel_idx;
+		divisor = get_cur_filer_view()->file_list_entries;
 	}
 #endif // ENABLE_FILER
 
@@ -236,7 +232,8 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 ///mflf_d_printf("SB: [%s]\n", buffer);
 	}
 
-	if (status_bar_to_display == S_B_D_PERCENT_EDITOR) {
+	if (status_bar_to_display == S_B_D_PERCENT_FILER
+	 || status_bar_to_display == S_B_D_PERCENT_EDITOR) {
 		clear_status_bar_displayed();
 	}
 }

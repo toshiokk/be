@@ -471,7 +471,7 @@ PRIVATE key_code_t input_key_timeout(void)
 		if (tio_check_update_terminal_size()) {
 			win_reinit_win_size();
 #ifdef ENABLE_HELP
-			disp_splash(0);
+			disp_splash(-1);
 			usec_enter = get_usec();
 #endif // ENABLE_HELP
 		}

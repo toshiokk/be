@@ -64,6 +64,8 @@ PRIVATE filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps)
 		// set initial value
 		init_filer_view(&next_fps->filer_views[filer_pane_idx],
 		 prev_fps->filer_views[filer_pane_idx].cur_dir);
+		next_fps->filer_views[filer_pane_idx].cur_sel_idx = 
+		 prev_fps->filer_views[filer_pane_idx].cur_sel_idx;
 	}
 	return prev_fps;
 }
@@ -93,6 +95,7 @@ PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir)
 	memset(fv, 0x00, sizeof(*fv));
 	strlcpy__(fv->cur_dir, cur_dir, MAX_PATH_LEN);
 	strcpy__(fv->cur_filter, "");
+	strcpy__(fv->listed_dir, "");
 	fv->file_list_entries = 0;
 	fv->file_list = NULL;
 	fv->cur_sel_idx = -1;
@@ -196,10 +199,11 @@ PRIVATE int filer_main_loop(const char *directory, const char *filter,
 		}
 #endif // ENABLE_HISTORY
 		if (filer_do_next >= FILER_DO_UPDATE_FILE_LIST_AUTO) {
-			update_all_file_list(filter, filer_do_next == FILER_DO_UPDATE_FILE_LIST_FORCE ? 2
+			update_all_file_list(filter, filer_do_next == FILER_DO_UPDATE_FILE_LIST_FORCE
+			 ? 2
 			 : (filer_do_next == FILER_DO_UPDATE_FILE_LIST_AUTO ? 1 : 0));
 		}
-		update_screen_filer(1, filer_do_next >= FILER_DO_UPDATE_FILE_LIST_AUTO, 1);
+		update_screen_filer(1, 1, 1);
 		//----------------------------------
 		key_input = input_key_wait_return();
 		//----------------------------------
@@ -263,14 +267,14 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 						 _("Can not execute this function: [%s]"), func_key_table->func_id);
 						filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 						break;
-					case XF:		// not executable in List mode and FILER_DO_ENTER_FILE_NAME
+					case XF:		// not executable in List mode and return FILE_NAME
 						filer_do_next = FILER_DO_ENTER_FILE_NAME;
 						break;
-					case XP:		// not executable in List mode and FILER_DO_ENTER_FILE_PATH
+					case XP:		// not executable in List mode and return FILE_PATH
 						filer_do_next = FILER_DO_ENTER_FILE_PATH;
 						break;
-					case XD:		// not executable in List mode and FILER_DO_ENTER_DIR_PATH
-						filer_do_next = FILER_DO_ENTER_DIR_PATH;
+					case XD:		// not executable in List mode and return CUR_DIR_PATH
+						filer_do_next = FILER_DO_ENTER_CUR_DIR_PATH;
 						break;
 					}
 				}
@@ -320,7 +324,7 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 			}
 		}
 	}
-	if (filer_do_next == FILER_DO_ENTER_DIR_PATH) {
+	if (filer_do_next == FILER_DO_ENTER_CUR_DIR_PATH) {
 		strlcpy__(file_path, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
 	}
 flf_d_printf("[%s]\n", file_path);

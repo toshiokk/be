@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-23 17:04+0900\n"
+"POT-Creation-Date: 2024-02-24 11:39+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,12 +34,12 @@ msgstr ""
 msgid "Tab size"
 msgstr ""
 
-#: ../editor.c:113 ../filer.c:251
+#: ../editor.c:113 ../filer.c:255
 #, c-format
 msgid "Key command not assigned: %04xh"
 msgstr ""
 
-#: ../editor.c:124 ../filer.c:263
+#: ../editor.c:124 ../filer.c:267
 #, c-format
 msgid "Can not execute this function: [%s]"
 msgstr ""
@@ -147,7 +147,7 @@ msgstr ""
 msgid "Cut-buffer cleared"
 msgstr ""
 
-#: ../editorcut.c:69 ../editorcut.c:226 ../editorcut.c:257
+#: ../editorcut.c:69 ../editorcut.c:232 ../editorcut.c:263
 msgid "Cut-buffer empty !!"
 msgstr ""
 
@@ -155,43 +155,43 @@ msgstr ""
 msgid "Cut-buffer popped"
 msgstr ""
 
-#: ../editorcut.c:94
+#: ../editorcut.c:97
 msgid "Cut to line head"
 msgstr ""
 
-#: ../editorcut.c:104
+#: ../editorcut.c:110
 msgid "Cut to line tail"
 msgstr ""
 
-#: ../editorcut.c:124
+#: ../editorcut.c:130
 msgid "Mark Set"
 msgstr ""
 
-#: ../editorcut.c:138
+#: ../editorcut.c:144
 msgid "Mark UNset"
 msgstr ""
 
-#: ../editorcut.c:154
+#: ../editorcut.c:160
 msgid "Text Copied to Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:163
+#: ../editorcut.c:169
 msgid "Text Deleted"
 msgstr ""
 
-#: ../editorcut.c:172
+#: ../editorcut.c:178
 msgid "Text Cut to Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:181
+#: ../editorcut.c:187
 msgid "Text Duplicated"
 msgstr ""
 
-#: ../editorcut.c:192
+#: ../editorcut.c:198
 msgid "Text Pasted with popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:202
+#: ../editorcut.c:208
 msgid "Text Pasted without popping Cut-buffer"
 msgstr ""
 
@@ -487,10 +487,20 @@ msgstr ""
 msgid "Find:"
 msgstr ""
 
+#. ///	if (is_app_list_mode()) {
+#. ///		// dof_make_directory -> FILER_DO_ENTER_CUR_DIR_PATH
+#. ///		filer_do_next = FILER_DO_ENTER_CUR_DIR_PATH;
+#. ///		return -1;
+#. ///	}
 #: ../filercmd.c:517
 msgid "Mkdir:"
 msgstr ""
 
+#. ///	if (is_app_list_mode()) {
+#. ///		// dof_change_directory -> FILER_DO_ENTER_CUR_DIR_PATH
+#. ///		filer_do_next = FILER_DO_ENTER_CUR_DIR_PATH;
+#. ///		return -1;
+#. ///	}
 #: ../filercmd.c:541
 msgid "Chdir to:"
 msgstr ""
@@ -724,8 +734,12 @@ msgstr ""
 msgid "Screen size: %dx%d"
 msgstr ""
 
-#: ../main.c:897
-msgid "We're invincible with this!!"
+#: ../main.c:899
+msgid "We're invincible with this !!"
+msgstr ""
+
+#: ../main.c:901
+msgid "This is where we live in !!"
 msgstr ""
 
 #: ../rcfile.c:215

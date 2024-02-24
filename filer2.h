@@ -43,7 +43,7 @@ typedef struct {
 	int cur_sel_idx;
 	int top_idx;
 	char prev_dir[MAX_PATH_LEN+1];		// previous current directory
-	char next_file[MAX_PATH_LEN+1];		// next file to be current after changing dir
+	char next_file[MAX_PATH_LEN+1];		// next file to be selected after changing dir
 } filer_view_t;
 
 #ifdef START_UP_TEST

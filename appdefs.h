@@ -70,7 +70,7 @@
 //! "doxygen comment"
 /// "doxygen comment"
 ////  code commented out
-///// code obsolete and to be deleted
+///// code obsolete and to be removed
 
 ///PPP pending(temporarily commented-out) code
 ///TTT temporary test code

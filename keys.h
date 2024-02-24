@@ -309,7 +309,7 @@ typedef enum {
 	XL,		// not executable in List mode
 	XF,		// not executable in List mode and FILER_DO_ENTER_FILE_NAME
 	XP,		// not executable in List mode and FILER_DO_ENTER_FILE_PATH
-	XD,		// not executable in List mode and FILER_DO_ENTER_DIR_PATH
+	XD,		// not executable in List mode and FILER_DO_ENTER_CUR_DIR_PATH
 } list_mode_t;
 
 typedef struct {

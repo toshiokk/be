@@ -88,7 +88,7 @@ PRIVATE int editor_main_loop(void)
 			// When playing back key-macro, do not update screen for speed up.
 		} else {
 			set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
-			update_screen_editor(1, key_input >= 0, 1);
+			update_screen_editor(1, 1, 1);
 		}
 		//----------------------------------
 		key_input = input_key_wait_return();

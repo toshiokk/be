@@ -508,11 +508,11 @@ int dof_make_directory(void)
 	char file_path[MAX_PATH_LEN+1];
 	int ret;
 
-	if (is_app_list_mode()) {
-		// dof_make_directory -> FILER_DO_ENTER_DIR_PATH
-		filer_do_next = FILER_DO_ENTER_DIR_PATH;
-		return -1;
-	}
+/////	if (is_app_list_mode()) {
+/////		// dof_make_directory -> FILER_DO_ENTER_CUR_DIR_PATH
+/////		filer_do_next = FILER_DO_ENTER_CUR_DIR_PATH;
+/////		return -1;
+/////	}
 
 	ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_DIR, _("Mkdir:"));
 
@@ -532,11 +532,11 @@ int dof_change_directory(void)
 	char file_path[MAX_PATH_LEN+1];
 	int ret;
 
-	if (is_app_list_mode()) {
-		// dof_change_directory -> FILER_DO_ENTER_DIR_PATH
-		filer_do_next = FILER_DO_ENTER_DIR_PATH;
-		return -1;
-	}
+/////	if (is_app_list_mode()) {
+/////		// dof_change_directory -> FILER_DO_ENTER_CUR_DIR_PATH
+/////		filer_do_next = FILER_DO_ENTER_CUR_DIR_PATH;
+/////		return -1;
+/////	}
 
 	ret = input_string_tail("", string, HISTORY_TYPE_IDX_DIR, _("Chdir to:"));
 	get_file_line_col_from_str_null(string, file_path, NULL, NULL);

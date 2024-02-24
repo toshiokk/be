@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-23 17:04+0900\n"
+"POT-Creation-Date: 2024-02-24 11:39+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -33,12 +33,12 @@ msgstr "CRC を計算中..."
 msgid "Tab size"
 msgstr "タブサイズ"
 
-#: ../editor.c:113 ../filer.c:251
+#: ../editor.c:113 ../filer.c:255
 #, c-format
 msgid "Key command not assigned: %04xh"
 msgstr "このキーコードにはコマンドが割り当てられていません: %04xh"
 
-#: ../editor.c:124 ../filer.c:263
+#: ../editor.c:124 ../filer.c:267
 #, c-format
 msgid "Can not execute this function: [%s]"
 msgstr ""
@@ -154,7 +154,7 @@ msgstr ""
 msgid "Cut-buffer cleared"
 msgstr "カットバッファをクリアしました"
 
-#: ../editorcut.c:69 ../editorcut.c:226 ../editorcut.c:257
+#: ../editorcut.c:69 ../editorcut.c:232 ../editorcut.c:263
 msgid "Cut-buffer empty !!"
 msgstr "カットバッファが空です !!"
 
@@ -162,45 +162,45 @@ msgstr "カットバッファが空です !!"
 msgid "Cut-buffer popped"
 msgstr "カットバッファをポップしました"
 
-#: ../editorcut.c:94
+#: ../editorcut.c:97
 #, fuzzy
 msgid "Cut to line head"
 msgstr "行頭までカットしました"
 
-#: ../editorcut.c:104
+#: ../editorcut.c:110
 #, fuzzy
 msgid "Cut to line tail"
 msgstr "行末までカットしました"
 
-#: ../editorcut.c:124
+#: ../editorcut.c:130
 msgid "Mark Set"
 msgstr "マーク開始"
 
-#: ../editorcut.c:138
+#: ../editorcut.c:144
 msgid "Mark UNset"
 msgstr "マーク中止"
 
-#: ../editorcut.c:154
+#: ../editorcut.c:160
 msgid "Text Copied to Cut-buffer"
 msgstr "テキストをカットバッファにコピーしました"
 
-#: ../editorcut.c:163
+#: ../editorcut.c:169
 msgid "Text Deleted"
 msgstr "テキストを削除しました"
 
-#: ../editorcut.c:172
+#: ../editorcut.c:178
 msgid "Text Cut to Cut-buffer"
 msgstr "テキストをカットバッファにカットしました"
 
-#: ../editorcut.c:181
+#: ../editorcut.c:187
 msgid "Text Duplicated"
 msgstr "テキストを複製しました"
 
-#: ../editorcut.c:192
+#: ../editorcut.c:198
 msgid "Text Pasted with popping Cut-buffer"
 msgstr "テキストを張り付けました(カットバッファをポップ)"
 
-#: ../editorcut.c:202
+#: ../editorcut.c:208
 msgid "Text Pasted without popping Cut-buffer"
 msgstr "テキストを張り付けました(カットバッファは変化なし)"
 
@@ -498,10 +498,20 @@ msgstr "変更後ファイル名:"
 msgid "Find:"
 msgstr ""
 
+#. ///	if (is_app_list_mode()) {
+#. ///		// dof_make_directory -> FILER_DO_ENTER_CUR_DIR_PATH
+#. ///		filer_do_next = FILER_DO_ENTER_CUR_DIR_PATH;
+#. ///		return -1;
+#. ///	}
 #: ../filercmd.c:517
 msgid "Mkdir:"
 msgstr "作成ディレクトリ名:"
 
+#. ///	if (is_app_list_mode()) {
+#. ///		// dof_change_directory -> FILER_DO_ENTER_CUR_DIR_PATH
+#. ///		filer_do_next = FILER_DO_ENTER_CUR_DIR_PATH;
+#. ///		return -1;
+#. ///	}
 #: ../filercmd.c:541
 msgid "Chdir to:"
 msgstr "カレントディレクトリ変更:"
@@ -742,9 +752,14 @@ msgstr " ビルドオプション:\n"
 msgid "Screen size: %dx%d"
 msgstr "画面サイズ: %dx%d"
 
-#: ../main.c:897
-msgid "We're invincible with this!!"
+#: ../main.c:899
+#, fuzzy
+msgid "We're invincible with this !!"
 msgstr "これさえあれば俺達は無敵だ!!"
+
+#: ../main.c:901
+msgid "This is where we live in !!"
+msgstr ""
 
 #: ../rcfile.c:215
 #, c-format

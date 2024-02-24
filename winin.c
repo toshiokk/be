@@ -240,7 +240,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			ret = select_from_history_list(hist_type_idx, buffer);
 			//----------------------------------------------------
 			if (ret > 0) {
-				if (cmp_func_id(func_id, "doe_up")) {
+				if (cmp_func_id(func_id, "doe_first_line")) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
@@ -262,7 +262,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			//---------------------------------------------------
 flf_d_printf("ret: %d\n", ret);
 			if (ret > 0) {
-				if (cmp_func_id(func_id, "doe_down")) {
+				if (cmp_func_id(func_id, "doe_last_line")) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;

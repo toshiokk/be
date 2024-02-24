@@ -894,7 +894,12 @@ void disp_splash(int delay)
 		tio_output_string(top_y + msg4_y, left_x + msg4_x, buffer, -1);
 	}
 	if (msg3_x >= 0) {
-		tio_output_string(top_y + msg5_y, left_x + msg5_x, _("We're invincible with this!!"), -1);
+		tio_output_string(top_y + msg5_y, left_x + msg5_x,
+#if APP_REL_LVL == APP_REL_LVL_STABLE
+		 _("We're invincible with this !!"), -1);
+#else
+		 _("This is where we live in !!"), -1);
+#endif
 	}
 	tio_refresh();
 }
