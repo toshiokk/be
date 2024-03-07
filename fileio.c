@@ -135,7 +135,6 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file
 		default:
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
-		case ENCODE_BINARY:
 			nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
 			break;
 		case ENCODE_EUCJP:
@@ -147,16 +146,19 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file
 		case ENCODE_JIS:
 			nkf_options = "-Jwx";	// input JIS, output UTF8, preserve HankakuKana
 			break;
+		case ENCODE_BINARY:
+			nkf_options = "-w";		// output UTF8
+			break;
 		}
 		switch (CUR_EBUF_STATE(buf_ENCODE)) {
 		default:
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
-		case ENCODE_BINARY:
 			break;
 		case ENCODE_EUCJP:
 		case ENCODE_SJIS:
 		case ENCODE_JIS:
+		case ENCODE_BINARY:
 			return load_file_into_cur_buf_nkf(full_path, nkf_options);
 		}
 	} // if (GET_APPMD(ed_USE_NKF))
@@ -523,7 +525,6 @@ PRIVATE int save_cur_buf_to_file__(const char *file_path)
 		default:
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
-		case ENCODE_BINARY:
 			nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
 			break;
 		case ENCODE_EUCJP:
@@ -535,16 +536,19 @@ PRIVATE int save_cur_buf_to_file__(const char *file_path)
 		case ENCODE_JIS:
 			nkf_options = "-Wjx";	// input UTF8, output JIS, preserve HankakuKana
 			break;
+		case ENCODE_BINARY:
+			nkf_options = "-W";		// input UTF8
+			break;
 		}
 		switch (CUR_EBUF_STATE(buf_ENCODE)) {
 		default:
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
-		case ENCODE_BINARY:
 			break;
 		case ENCODE_EUCJP:
 		case ENCODE_SJIS:
 		case ENCODE_JIS:
+		case ENCODE_BINARY:
 			return save_cur_buf_to_file_nkf(file_path, nkf_options);
 		}
 	}

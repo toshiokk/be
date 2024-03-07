@@ -53,10 +53,30 @@ PRIVATE int get_buf_line_num_columns(const be_buf_t *buf);
 PRIVATE int get_buf_line_num_digits(const be_buf_t *buf);
 PRIVATE int get_line_num_digits(int max_line_num);
 
+PRIVATE char blink_counter = 0;
+void start_title_bar_blinking()
+{
+	blink_counter = 1;
+}
+void stop_title_bar_blinking()
+{
+	blink_counter = 0;
+}
+PRIVATE int get_title_bar_inversion()
+{
+	//  0 ==>  0 ==>  0 ...
+	// +1 ==> -1 ==> +1 ...
+	blink_counter *= -1;
+	return blink_counter > 0;
+}
+
+PRIVATE int get_title_bar_inversion();
+PRIVATE void blink_editor_title_bar();
 								//  0123456789012345678901
 #define BUF_BUF_LEN			15	// "E99 C99 U99 R99"
 #define MEM_BUF_LEN			7	// "999000M" (999G)
 #define HHCMMCSS_LEN		8	// "23:59:59"
+PRIVATE char editor_title_bar_buf[MAX_SCRN_LINE_BUF_LEN+1] = "";
 //1:/home/...editor2.c[Mod]    Mc E00 C00 U00 R00 1234M 11:55:04
 void disp_editor_title_bar(void)
 {
@@ -83,11 +103,6 @@ void disp_editor_title_bar(void)
 	path = get_cep_buf()->abs_path;
 
 	tio_set_cursor_on(0);
-
-	set_title_bar_color_by_state(BUF_STATE(get_cep_buf(), buf_CUT_MODE),
-	 CUR_EBUF_STATE(buf_MODIFIED));
-	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0,
-	 tio_blank_line(), main_win_get_columns());
 
 	//-------------------------------------------------------------------------
 	separator_char = ':';
@@ -168,12 +183,28 @@ void disp_editor_title_bar(void)
 	int path_cols = LIM_MIN(0, main_win_get_columns() - status_cols);
 	shrink_str(buf_path, path_cols, 2);
 	adjust_utf8s_columns(buf_path, path_cols);
-	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_path, buf_status);
 
+#if 0
+	set_title_bar_color_by_state(BUF_STATE(get_cep_buf(), buf_CUT_MODE),
+	 CUR_EBUF_STATE(buf_MODIFIED), 0);
+	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_path, buf_status);
+flf_d_printf("[%s]\n", buffer);
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0, buffer, -1);
+#else
+	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_path, buf_status);
+	strcpy(editor_title_bar_buf, buffer);
+	blink_editor_title_bar();
+#endif
 
 	tio_set_cursor_on(1);
 }
+PRIVATE void blink_editor_title_bar()
+{
+	set_title_bar_color_by_state(BUF_STATE(get_cep_buf(), buf_CUT_MODE),
+	 CUR_EBUF_STATE(buf_MODIFIED), get_title_bar_inversion());
+	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0, editor_title_bar_buf, -1);
+}
+
 //-----------------------------------------------------------------------------
 PRIVATE int edit_win_update_needed = UPDATE_SCRN_NONE;
 void set_edit_win_update_needed(int update_needed)
@@ -1043,8 +1074,8 @@ int edit_win_get_text_y(void)
 #define EOL_NOTATION	'<'
 // string linefeed('\n') concatenated
 int te_concat_linefeed_bytes = 0;						// bytes of (raw_byte + line-feed)
-char te_concat_linefeed_buf[MAX_EDIT_LINE_LEN * 2 +1];		// raw_byte + line-feed
-// string invisible code(TAB, Zenkaku-space, EOL) converted to charactor('>', '__', '<')
+char te_concat_linefeed_buf[MAX_EDIT_LINE_LEN * 2 +1];	// raw_byte + line-feed
+// string invisible code(TAB, Zenkaku-space, EOL) converted to character('>', '__', '<')
 int te_visible_code_columns;							// length of tab-expanded line
 char te_visible_code_buf[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];	// tab-expanded-visible-code
 // tab-expansion

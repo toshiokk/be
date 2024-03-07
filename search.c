@@ -292,7 +292,8 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			} else {
 				// break ALL-replacing loop
 				if ((key = tio_input_key()) >= 0) {
-					if (key == K_M_ESC) {
+					if (key == K_ESC) {
+					////if (key == K_M_ESC) {
 						ret = ANSWER_END;
 					} else if (key == K_C_C) {
 						ret = ANSWER_CANCEL;
@@ -630,7 +631,7 @@ void prepare_colors_for_bracket_hl()
 	colors_for_bracket_hl[color_idx].fgc = fgc_sel;
 	colors_for_bracket_hl[color_idx].bgc = bgc_sel;
 	color_idx++;
-	for (char fgc = 0; fgc < COLORS16 && color_idx < COLORS_FOR_BRACKET_HL; fgc++) {
+	for (char fgc = COLORS16-1; fgc >= 0 && color_idx < COLORS_FOR_BRACKET_HL; fgc--) {
 		if (fgc != (bgc_sel2 % COLORS8)) {	// Because there is no light color in BGC
 			colors_for_bracket_hl[color_idx].fgc = fgc;
 			colors_for_bracket_hl[color_idx].bgc = bgc_sel2;

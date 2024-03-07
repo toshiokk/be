@@ -150,9 +150,9 @@ void *malloc__(size_t bytes)
 	mptr->caller = mlc_register_caller();
 
 	malloced_count++;
-	max_malloced_count = MAX(max_malloced_count, malloced_count);
+	max_malloced_count = MAX_(max_malloced_count, malloced_count);
 	malloced_size += bytes;
-	max_malloced_size = MAX(max_malloced_size, malloced_size);
+	max_malloced_size = MAX_(max_malloced_size, malloced_size);
 
 	ptr += sizeof(struct malloc_header);
 #endif // MEMORY_LEAK_CHECKER

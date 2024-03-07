@@ -4,7 +4,7 @@ echo "  0: experimental release"
 echo "  1: test         release"
 echo "  2: official     release"
 
-grep_define()
+sed_define()
 {
   mk_backup_file appdefs.h
   sed "s/define APP_REL_LVL ./define APP_REL_LVL $1/g" appdefs.h >appdefs.h~~~~
@@ -15,7 +15,7 @@ grep_define()
 
 {
   if [ "$1" = 0 -o "$1" = 1 -o "$1" = 2 ]; then
-    grep_define $1
+    sed_define $1
   fi
   grep "define APP_REL_LVL" appdefs.h
 } | grep APP_REL_LVL

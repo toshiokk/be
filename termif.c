@@ -34,9 +34,13 @@
 
 ///#define TERMIF_MAX_SCRN_COLS		384		// = 1920[pixels] / 5[pixels/char] (Full HD)
 ///#define TERMIF_MAX_SCRN_COLS		512		// = 2560[pixels] / 5[pixels/char] (WQXGA)
-#define TERMIF_MAX_SCRN_COLS		768		// = 3840[pixels] / 5[pixels/char] (4K landscape)
+///#define TERMIF_MAX_SCRN_COLS		768		// = 3840[pixels] / 5[pixels/char] (4K landscape)
+#define TERMIF_MAX_SCRN_COLS		1536	// = 7680[pixels] / 5[pixels/char] (8K landscape)
+
 ///#define TERMIF_MAX_SCRN_LINES		108		// = 1080[pixels] / 10[pixels/char] (Full HD)
-#define TERMIF_MAX_SCRN_LINES		384		// = 3840[pixels] / 10[pixels/char] (4K portrait)
+///#define TERMIF_MAX_SCRN_LINES		384		// = 3840[pixels] / 10[pixels/char] (4K portrait)
+#define TERMIF_MAX_SCRN_LINES		768		// = 7680[pixels] / 10[pixels/char] (8K portrait)
+
 #define TERMIF_LINE_BUF_LEN			(TERMIF_MAX_SCRN_COLS * MAX_UTF8C_BYTES)
 
 // Virtual screen
@@ -54,7 +58,7 @@
 #define VSCR_CHAR_BOLD		0x00400000UL
 #define VSCR_CHAR_WIDTH1	0x00000000UL	// narrow char. or 2nd place of wide char.
 #define VSCR_CHAR_WIDTH2	0x00200000UL	// 1st place of wide char.
-#define VSCR_IS_WIDE_CHAR_COL1(vscr_char)	((vscr_char) & VSCR_CHAR_WIDTH2)
+#define VSCR_IS_COL1_WIDE_CHAR(vscr_char)	((vscr_char) & VSCR_CHAR_WIDTH2)
 #define VSCR_CHAR_UCS21		0x001fffffUL	// 21 bits
 #define VSCR_CHAR_UCS21_SPACE		' '		// space
 #define VSCR_CHAR_ATTRS		(VSCR_CHAR_BGC | VSCR_CHAR_FGC | VSCR_CHAR_REV | VSCR_CHAR_BOLD)
@@ -109,10 +113,8 @@ PRIVATE void send_fgc_to_term(int fgc);
 PRIVATE void send_printf_to_term(const char *format, ...);
 PRIVATE void send_string_to_term(const char *string, int bytes);
 PRIVATE void send_string_to_term__(const char *string, int bytes);
-PRIVATE void send_string_to_term_flush(void);
 
 PRIVATE key_code_t input_and_decode_key_sequences(void);
-PRIVATE key_code_t compare_key_seq(char *key_sequences);
 PRIVATE key_code_t input_key(void);
 
 //-----------------------------------------------------------------------------
@@ -145,16 +147,16 @@ int termif_get_screen_size_from_term(void)
 {
 	int termif_lines_save;
 	int termif_columns_save;
-	int tries;
 	int lines;
 	int cols;
 
 #define MAX_REPORT_TRIES		3
 	termif_lines_save = termif_get_lines();
 	termif_columns_save = termif_get_columns();
-	termif_set_screen_size(999, 999);
-	for (tries = 0; tries < MAX_REPORT_TRIES; tries++) {
-		send_cursor_pos_to_term(998, 998);
+	termif_set_screen_size(TERMIF_MAX_SCRN_LINES, TERMIF_MAX_SCRN_COLS);
+	for (int tries = 0; tries < MAX_REPORT_TRIES; tries++) {
+		send_cursor_pos_to_term(TERMIF_MAX_SCRN_LINES-1, TERMIF_MAX_SCRN_COLS-1);
+flf_d_printf("(%d, %d)\n", TERMIF_MAX_SCRN_LINES-1, TERMIF_MAX_SCRN_COLS-1);
 		if (termif_get_cursor_pos(&lines, &cols)) {
 			if (lines <= TERMIF_MAX_SCRN_LINES && cols <= TERMIF_MAX_SCRN_COLS) {
 				termif_set_screen_size(lines, cols);
@@ -200,31 +202,38 @@ void termif_set_cursor_pos(int yy, int xx)
 }
 int termif_get_cursor_pos(int *yy, int *xx)
 {
-#define MIN_REPORT_LEN		6	// "e[9;9R"
-#define MAX_REPORT_LEN		(10+10)	// "e[999;999R"
-	char buf[MAX_REPORT_LEN+1];	// "e[999;999R"
+#define MIN_REPORT_LEN		6		// "e[9;9R"
+#define MAX_REPORT_LEN		(11+11)	// "e[999;9999R"
+	char buf[MAX_REPORT_LEN+1];		// "e[999;9999R"
 	int len;
 	const char *ptr;
 	int lines, cols;
 
 	fflush(stdin);
 	send_printf_to_term("\x1b[6n");
-	MSLEEP(100);	// wait for receiving answer back
-	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in read()
-	if ((len = read(STDIN_FILENO, buf, MAX_REPORT_LEN)) >= MIN_REPORT_LEN) {
-		buf[len] = '\0';
-///flf_d_printf("report:[%s]\n", buf);
-		for (ptr = buf; *ptr; ptr++) {
-			if (isdigit(*ptr))
-				break;
-		}
-///flf_d_printf("report:[%s]\n", ptr);
-		// ESC [ lines ; cols R
-		if (sscanf(ptr, "%d;%d", &lines, &cols) >= 2) {
-///flf_d_printf("cursor-pos: %d, %d\n", lines, cols);
-			*yy = lines;
-			*xx = cols;
-			return 1;
+	int tries;
+#define MAX_RX_TRIES	3
+	for (int tries = 0; tries < MAX_RX_TRIES; tries++) {
+		MSLEEP(100);	// wait for receiving answer back
+		fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in read()
+		if ((len = read(STDIN_FILENO, buf, MAX_REPORT_LEN)) >= MIN_REPORT_LEN) {
+			buf[len] = '\0';
+///
+flf_d_printf("report:[%s]\n", buf);
+			for (ptr = buf; *ptr; ptr++) {
+				if (isdigit(*ptr))
+					break;
+			}
+///
+flf_d_printf("report:[%s]\n", ptr);
+			// ESC [ lines ; cols R
+			if (sscanf(ptr, "%d;%d", &lines, &cols) >= 2) {
+///
+flf_d_printf("cursor-pos: %d, %d\n", lines, cols);
+				*yy = lines;
+				*xx = cols;
+				return 1;
+			}
 		}
 	}
 	return 0;
@@ -295,7 +304,7 @@ PRIVATE void put_narrow_char_to_vscreen(vscreen_char_t ucs21)
 #define CHECK_AND_CORRECT_INCONSISTENCY
 #ifdef CHECK_AND_CORRECT_INCONSISTENCY
 		if ((0 <= termif_cursor_xx-1)
-		 && VSCR_IS_WIDE_CHAR_COL1(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx-1])) {
+		 && VSCR_IS_COL1_WIDE_CHAR(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx-1])) {
 			// putting narrow char. to the 2nd byte of wide char.
 			//                       clear 1st byte of wide char.
 			//  v      v
@@ -303,7 +312,7 @@ PRIVATE void put_narrow_char_to_vscreen(vscreen_char_t ucs21)
 			VSCR_CHAR_REPLACE_WIDTH_UCS21(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx-1],
 			 VSCR_CHAR_WIDTH1, VSCR_CHAR_UCS21_SPACE);
 		}
-		if (VSCR_IS_WIDE_CHAR_COL1(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx])
+		if (VSCR_IS_COL1_WIDE_CHAR(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx])
 		 && (termif_cursor_xx+1 < termif_columns)) {
 			// putting narrow char. to the 1st byte of wide char.
 			//                       clear 2nd byte of wide char.
@@ -325,7 +334,7 @@ PRIVATE void put_wide_char_to_vscreen(vscreen_char_t ucs21)
 	 && (0 <= termif_cursor_xx+1 && termif_cursor_xx+1 < termif_columns)) {
 #ifdef CHECK_AND_CORRECT_INCONSISTENCY
 		if ((0 <= termif_cursor_xx-1)
-		 && VSCR_IS_WIDE_CHAR_COL1(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx-1])) {
+		 && VSCR_IS_COL1_WIDE_CHAR(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx-1])) {
 			// putting 1st byte of wide char to the 2nd byte of wide char which is prevly placed.
 			//                                clear 1st byte of wide char which is prevly placed.
 			//  v      v
@@ -333,7 +342,7 @@ PRIVATE void put_wide_char_to_vscreen(vscreen_char_t ucs21)
 			VSCR_CHAR_REPLACE_WIDTH_UCS21(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx-1],
 			 VSCR_CHAR_WIDTH1, VSCR_CHAR_UCS21_SPACE);
 		}
-		if (VSCR_IS_WIDE_CHAR_COL1(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx+1])
+		if (VSCR_IS_COL1_WIDE_CHAR(vscreen_to_paint[termif_cursor_yy][termif_cursor_xx+1])
 		 && (termif_cursor_xx+2 < termif_columns)) {
 			// putting 2nd byte of wide char to the 1st byte of prevly placed wide char.
 			//                                clear 2nd byte of prevly placed wide char.
@@ -370,22 +379,22 @@ PRIVATE void dump_vscreen(int yy, int len)
 // If narrow char, compare 1st place.
 // If wide   char, compare 1st and 2nd place.
 #define CMP_NARR_OR_WIDE_CHR()										\
-	(VSCR_IS_WIDE_CHAR_COL1(vscreen_to_paint[yy][xx]) == 0			\
+	(VSCR_IS_COL1_WIDE_CHAR(vscreen_to_paint[yy][xx]) == 0			\
 	 ? (vscreen_painted[yy][xx] != vscreen_to_paint[yy][xx])		\
 	 : (vscreen_painted[yy][xx] != vscreen_to_paint[yy][xx]			\
 	  || vscreen_painted[yy][xx+1] != vscreen_to_paint[yy][xx+1]))
 
 #ifdef VAGUE_WIDE_CHR
 ///
-#define OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
+#define OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
 #endif // VAGUE_WIDE_CHR
-#ifdef OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
+#ifdef OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
 // If is_vague_wide_chr(), display this char as a wide char.
 // (display "  " and display this wide char to 1st place)
 // Expected effect:
 //   If this char is narrow char, displayed "N ".
 //   If this char is wide   char, displayed "WW".
-#endif // OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
+#endif // OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
 
 // refresh screen by sending pending data in vscreen_to_paint to the screen.
 void termif_refresh(void)
@@ -402,7 +411,7 @@ void termif_refresh(void)
 		for (xx = 0; xx < termif_columns; ) {
 			start_attrs = (vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS);
 			if (CMP_NARR_OR_WIDE_CHR()) {
-#ifdef OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
+#ifdef OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
 				ucs21 = vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21;
 				if (is_vague_wide_chr(ucs21)) {
 					if (cursor_on) {
@@ -419,22 +428,22 @@ void termif_refresh(void)
 					vscreen_painted[yy][xx] = vscreen_to_paint[yy][xx];
 					xx++;
 				} else {
-#endif // OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
+#endif // OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
 					start_xx = xx;
 					strcpy(line_buf, "");
 					for ( ; xx < termif_columns; ) {
 						ucs21 = vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21;
 						if (((vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS) != start_attrs)
 						 || CMP_NARR_OR_WIDE_CHR() == 0
-#ifdef OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
+#ifdef OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
 						 || is_vague_wide_chr(ucs21)
-#endif // OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
+#endif // OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
 													) {
 							break;
 						}
 						utf8c_encode(ucs21, utf8c);
 						strlcat__(line_buf, TERMIF_LINE_BUF_LEN, utf8c);
-						if (VSCR_IS_WIDE_CHAR_COL1(vscreen_to_paint[yy][xx])
+						if (VSCR_IS_COL1_WIDE_CHAR(vscreen_to_paint[yy][xx])
 						 && ((vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21)
 						  == (vscreen_to_paint[yy][xx+1] & VSCR_CHAR_UCS21))) {
 							// wide char and, 1st and 2nd UCS are the same.
@@ -451,9 +460,9 @@ void termif_refresh(void)
 					}
 					send_attrs_to_term(start_attrs);
 					send_cursor_pos_string_to_term(yy, start_xx, line_buf, -1);
-#ifdef OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
+#ifdef OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
 				}
-#endif // OUTPUT_VAGUE_WIDE_CHR_AS_WIDE
+#endif // OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
 			} else {
 				xx++;
 			}
@@ -603,10 +612,6 @@ PRIVATE void send_string_to_term__(const char *string, int bytes)
 		 strerror(errno), written, bytes);
 		mflf_d_printf("[%s]\n", string);
 	}
-	send_string_to_term_flush();
-}
-PRIVATE void send_string_to_term_flush(void)
-{
 	fsync(STDOUT_FILENO);
 }
 
@@ -653,8 +658,8 @@ struct _key_seq_ {
 	{ K_NPAGE,	"\x1b\x5b\x36\x7e" },
 	{ K_UP,		"\x1b\x5b\x41" },
 	{ K_DOWN,	"\x1b\x5b\x42" },
-	{ K_LEFT,	"\x1b\x5b\x44" },
 	{ K_RIGHT,	"\x1b\x5b\x43" },
+	{ K_LEFT,	"\x1b\x5b\x44" },
 	// xterm
 	{ K_F01,	"\x1b\x4f\x50" },
 	{ K_F02,	"\x1b\x4f\x51" },
@@ -685,61 +690,131 @@ struct _key_seq_ {
 //	{ KEY_SDC,	"\x1b\x5b\x33\x3b\x32\x7e" },
 //	{ KEY_SHOME,"\x1b\x5b\x32\x48" },
 //	{ KEY_SEND,	"\x1b\x5b\x32\x46" },
+	// WSL Terminal
+	{ K_C_UP,	"\x1b\x5b\x31\x3b\x35\x41" },
+	{ K_C_DOWN,	"\x1b\x5b\x31\x3b\x35\x42" },
+	{ K_C_RIGHT,"\x1b\x5b\x31\x3b\x35\x43" },
+	{ K_C_LEFT,	"\x1b\x5b\x31\x3b\x35\x44" },
+	{ K_M_UP,	"\x1b\x5b\x31\x3b\x33\x41" },
+	{ K_M_DOWN,	"\x1b\x5b\x31\x3b\x33\x42" },
+	{ K_M_RIGHT,"\x1b\x5b\x31\x3b\x33\x43" },
+	{ K_M_LEFT,	"\x1b\x5b\x31\x3b\x33\x44" },
 };
+#define SIZEOF_KEY_SEQ_TABLE	(sizeof(key_seq_table) / sizeof(key_seq_table[0]))
+
+// input			| match			| output
+// ---------------- | ------------- | ------
+// XX				| no match		| XX
+// XX-YY			| no match		| XX (Keep YY for the next input)
+// XX-YY-ZZ			| no match		| XX (Keep YY-ZZ for the next input)
+// ESC $			| partial match	| ESC
+// ESC-XX			| partial match	| ESC-XX
+// ESC-K2			| partial match	| continue input
+// ESC-K2 $			| partial match	| ESC-K2
+// ESC-K2-XX		| partial match	| ESC-K2 (Keep XX for the next input)
+// ESC-K2-K3		| partial match	| continue input
+// ESC-K2-K3 $		| partial match	| ESC-K2 (Keep K3 for the next input)
+// ESC-K2-K3-XX		| partial match	| ESC-K2 (Keep K3-XX for the next input)
+// ESC-K2-K3...Kn	| full match	| decoded-key
+// ESC-K2-K3...XX	| partial match	| ESC-K2 (Keep K3...XX for the next input)
+// ESC-K2-K3...Kn	| partial match	| continue input
+// ESC-K2-K3...Kn $	| partial match	| ESC-K2 (Keep K3...Kn for the next input)
+// ESC-K2-K3...K6-XX| partial match	| ESC-K2 (Keep K3...K6-XX for the next input)
+//
+// NOTE:
+//   ESC,K2,K3...Kn : matching part
+//   XX,YY,ZZ       : not matching part
+//   $              : end of input
+
+PRIVATE int strcmp_match_len(const char *str1, size_t str1_len, const char *str2);
 
 PRIVATE key_code_t input_and_decode_key_sequences(void)
 {
-	key_code_t key1;
-	key_code_t key2;
-	char key_sequences[MAX_KEY_SEQ+1];
-///	static char key_sequences[MAX_KEY_SEQ+1];
-	int key_idx;
+	PRIVATE unsigned char key_buffer[MAX_KEY_SEQ+1] = "";	// 1 for NUL terminator
+	PRIVATE int key_cnt = 0;
+	key_code_t key;
 
-again:;
-	key_idx = 0;
-	if ((key1 = input_key()) < 0) {
-		return key1;
+	inline int get_key_from_buf_len(int len) {
+		key_code_t key = KEY_NONE;
+		if (len == 1) {
+			key = key_buffer[0];
+			memmove(key_buffer, &key_buffer[1], key_cnt - 1);
+			key_cnt -= 1;
+		} else if (len == 2) {
+			key = TBKC(key_buffer[0], key_buffer[1]);
+			memmove(key_buffer, &key_buffer[2], key_cnt - 2);
+			key_cnt -= 2;
+		}
+		return key;
 	}
-	if (key1 == 0x1b) {
-		key_sequences[key_idx++] = key1;
-		key_sequences[key_idx] = '\0';
-		key1 = -1;
-		for ( ; key_idx < MAX_KEY_SEQ; ) {
-			if ((key2 = input_key()) < 0)
+	// ESC    key, return 0x001b
+	// XX     key, return 0x00XX
+	// ESC-XX key, return 0x1bXX
+	// XX-YY  key, return 0x00XX
+	inline int get_key_from_buf() {
+		key_code_t key = KEY_NONE;
+		if (key_cnt == 1) {
+			key = get_key_from_buf_len(1);
+		} else if (key_cnt >= 2) {
+			if (key_buffer[0] != CHAR_ESC) {
+				key = get_key_from_buf_len(1);
+			} else {
+				key = get_key_from_buf_len(2);
+			}
+		}
+		return key;
+	}
+
+	for ( ; key_cnt < MAX_KEY_SEQ; ) {
+		key = input_key();
+		if (key < 0) {
+			key = get_key_from_buf();
+			break;
+		} else {
+			key_buffer[key_cnt++] = key;
+			key_buffer[key_cnt] = '\0';
+			// compare to key sequences then:
+			//   if full match:
+			//     shift key_buffer by match length and return decoded key code
+			//   if partial match:
+			//     continue input next key
+			//   if no match:
+			//     return 0x1bXX
+			int max_match_len = 0;
+			for (int seq_idx = 0; seq_idx < SIZEOF_KEY_SEQ_TABLE; seq_idx++) {
+				int len = strcmp_match_len(key_buffer, key_cnt,
+				 key_seq_table[seq_idx].sequences);
+				if (len == strlen(key_seq_table[seq_idx].sequences)) {
+					// full match, return decoded key code
+					memmove(key_buffer, &key_buffer[len], key_cnt - len);
+					key_cnt -= len;
+					// return decoded key code
+					return key_seq_table[seq_idx].key;
+				}
+				max_match_len = MAX_(max_match_len, len);
+			}
+			// not full match
+			if (max_match_len < key_cnt) {
+				// There is no possiblity to match any more
+				key = get_key_from_buf();
 				break;
-			key_sequences[key_idx++] = key2;
-			key_sequences[key_idx] = '\0';
-			if ((key1 = compare_key_seq(key_sequences)) >= 0)
-				break;
+			} else {
+				// There is a possiblity to match, continue input
+			}
 		}
 	}
-	if (key1 < 0) {
-		if (strlen(key_sequences) > 1)
-			goto again;
-		key1 = key_sequences[0];
-	}
-	return key1;
+	return key;
 }
 
-PRIVATE key_code_t compare_key_seq(char *key_sequences)
+PRIVATE int strcmp_match_len(const char *str1, size_t str1_len, const char *str2)
 {
-	int seq_idx;
-
-	if (strlen(key_sequences) == 2) {
-		for (seq_idx = 0; seq_idx < sizeof(key_seq_table) / sizeof(key_seq_table[0]);
-		 seq_idx++) {
-			if (strncmp(key_sequences, key_seq_table[seq_idx].sequences, 2) == 0)
-				return -1;
-		}
-		return (key_sequences[0] << 8) | key_sequences[1];
-	} else if (strlen(key_sequences) >= 3) {
-		for (seq_idx = 0; seq_idx < sizeof(key_seq_table) / sizeof(key_seq_table[0]);
-		 seq_idx++) {
-			if (strcmp(key_sequences, key_seq_table[seq_idx].sequences) == 0)
-				return key_seq_table[seq_idx].key;
+	int len;
+	for (len = 0; (len < str1_len) && (str1[len] || str2[len]); len++) {
+		if (str1[len] != str2[len]) {
+			break;
 		}
 	}
-	return -1;
+	return len;		// match len: 0--
 }
 
 PRIVATE key_code_t input_key(void)
@@ -757,9 +832,9 @@ PRIVATE key_code_t input_key(void)
 
 void investigate_key_sequence(void)
 {
+#if 1
 	key_code_t key;
-	char key_sequences[MAX_KEY_SEQ+1];
-///	static char key_sequences[MAX_KEY_SEQ+1];
+	char key_buffer[MAX_KEY_SEQ+1];
 	int key_idx = 0;
 	int keys;
 	long start_msec;
@@ -769,23 +844,37 @@ void investigate_key_sequence(void)
 	for (key = -1 ; key < 0; ) {
 		key = input_key();
 	}
-	key_sequences[key_idx] = key;
+	key_buffer[key_idx] = key;
 	key_idx++;
-	key_sequences[key_idx] = '\0';
+	key_buffer[key_idx] = '\0';
 	for (start_msec = get_msec(); key_idx < MAX_KEY_SEQ && get_msec() < start_msec + 1000; ) {
 		if ((key = input_key()) >= 0) {
-			key_sequences[key_idx] = key;
+			key_buffer[key_idx] = key;
 			key_idx++;
-			key_sequences[key_idx] = '\0';
+			key_buffer[key_idx] = '\0';
 		}
 	}
 	keys = key_idx;
 	termif_end();
 	printf("\n");
 	for (key_idx = 0; key_idx < keys; key_idx++) {
-		printf("%02x ", key_sequences[key_idx]);
+		printf("%02x ", key_buffer[key_idx]);
 	}
 	printf("\n");
+#else
+	termif_init();
+	termif_begin();
+	for ( ; ; ) {
+		key_code_t key = input_and_decode_key_sequences();
+		if (key >= 0) {
+			printf("%04x\n", key);
+		}
+		if (key == 'q') {
+			break;
+		}
+	}
+	termif_end();
+#endif
 }
 
 #endif // ENABLE_NCURSES

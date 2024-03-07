@@ -240,7 +240,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			ret = select_from_history_list(hist_type_idx, buffer);
 			//----------------------------------------------------
 			if (ret > 0) {
-				if (cmp_func_id(func_id, "doe_first_line")) {
+				if (ret < 2 || cmp_func_id(func_id, "doe_page_up")) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
@@ -262,7 +262,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			//---------------------------------------------------
 flf_d_printf("ret: %d\n", ret);
 			if (ret > 0) {
-				if (cmp_func_id(func_id, "doe_last_line")) {
+				if (ret < 2 || cmp_func_id(func_id, "doe_page_down")) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
@@ -402,7 +402,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 	const char *chars_backward = "Bb";			// Backward search
 	const char *chars_forward = "Ff ";			// Forward search
 	const char *chars_cancel = "EeSsXx";		// End/Stop/eXit
-	const char *chars_end = "QqRr\x1b" S_C_Q;	// Quit/Return/cancel
+	const char *chars_end = "QqRr" S_ESC S_C_Q;	// Quit/Return/ESC/Ctrl-Q
 	const char *chars_undo = "Uu";				// Undo
 	const char *chars_redo = "Oo";				// redO
 	key_code_t key_input;

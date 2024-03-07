@@ -562,7 +562,7 @@ int is_file_path_char(const char *ptr)
 int is_file_name_char(const char *ptr)
 {
 ///	return (((' ' < *ptr) && (*ptr < 0x80) && (*ptr != '/')) || (utf8c_bytes(ptr) >= 2));
-	return isalnum(*ptr) || strchr__("_-+.~$%&@=\"\'", *ptr) || (utf8c_bytes(ptr) >= 2);
+	return isalnum(*ptr) || strchr__("_-+.~!#$%&@=\"\'", *ptr) || (utf8c_bytes(ptr) >= 2);
 }
 int is_separator(char chr)
 {

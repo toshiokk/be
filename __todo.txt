@@ -1,5 +1,21 @@
 #### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: complete)
 
+[v] Avoid corruption on binary file
+	- convert fake UTF-8 character to normal UTF-8 char.
+	==> input nkf -w, output: nkf -W
+[] share cut-buffer between BE-editor-instances (Use clip-board or Make own clip-board)
+
+[-] Auto indent by Alt-Enter
+
+[v] recognize Alt-UP, Alt-Down, Alt-Right, Alt-Left keys
+              \e[1;3A \e[1;3B \e[1;3D \e[1;3C
+[v] recognize Ctrl-UP, Ctrl-Down, Ctrl-Right, Ctrl-Left keys
+              \e[1;5A \e[1;5B \e[1;5D \e[1;5C
+[v] start up in two pane filer
+[v] update history with cur-dir just before changing cur-dir
+[v] Not delimit file path by # ("abc#def" ==> "abc#def", "abc #def" ==> "abc" "#def")
+[v] blink title bar when recording key macro or marking text
+
 Filer <==> Editor switching and collaboration
 [] Fix [goto filer] key and [goto editor] key
   | mode      | F11         | F12                                 |

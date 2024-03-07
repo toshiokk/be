@@ -309,7 +309,7 @@ PRIVATE int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_ex
 	args[2] = (char *)command;
 	args[3] = NULL;
 
-mflf_d_printf("exec: [%s %s %s]\n", args[0], args[1], args[2]);
+mflf_d_printf("exec: {{%s} {%s} {%s}}\n", args[0], args[1], args[2]);
 #ifdef ENABLE_HISTORY
 	if (get_fork_exec_counter() == 0) {
 		update_history(HISTORY_TYPE_IDX_EXEC, command, 0);

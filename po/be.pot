@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-24 11:39+0900\n"
+"POT-Creation-Date: 2024-03-06 18:20+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,8 +73,8 @@ msgstr ""
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editor.c:615 ../editor.c:663 ../editor.c:676 ../fileio.c:365
-#: ../fileio.c:370 ../winin.c:97
+#: ../editor.c:615 ../editor.c:663 ../editor.c:676 ../fileio.c:367
+#: ../fileio.c:372 ../winin.c:97
 msgid "Cancelled"
 msgstr ""
 
@@ -127,19 +127,19 @@ msgstr ""
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 
-#: ../editor2.c:108 ../fileio.c:78
+#: ../editor2.c:123 ../fileio.c:78
 msgid "New File"
 msgstr ""
 
-#: ../editor2.c:110
+#: ../editor2.c:125
 msgid "[Mod] "
 msgstr ""
 
-#: ../editor2.c:112
+#: ../editor2.c:127
 msgid "[VM] "
 msgstr ""
 
-#: ../editor2.c:114
+#: ../editor2.c:129
 msgid "[WP] "
 msgstr ""
 
@@ -318,99 +318,99 @@ msgstr ""
 msgid "BINARY file !! [%s]"
 msgstr ""
 
-#: ../fileio.c:173 ../fileio.c:194 ../fileio.c:231
+#: ../fileio.c:175 ../fileio.c:196 ../fileio.c:233
 #, c-format
 msgid "Can not read-open file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:363
+#: ../fileio.c:365
 msgid "File was modified by another program, OVERWRITE ?"
 msgstr ""
 
-#: ../fileio.c:375
+#: ../fileio.c:377
 #, c-format
 msgid "File [%s] can NOT be written !!"
 msgstr ""
 
-#: ../fileio.c:387
+#: ../fileio.c:389
 msgid "File Name to Write"
 msgstr ""
 
-#: ../fileio.c:405
+#: ../fileio.c:407
 msgid "File exists, OVERWRITE it ?"
 msgstr ""
 
-#: ../fileio.c:414
+#: ../fileio.c:416
 msgid "Path is not file, can not WRITE it"
 msgstr ""
 
-#: ../fileio.c:444
+#: ../fileio.c:446
 #, c-format
 msgid "File [%s] is NOT regular file !!"
 msgstr ""
 
-#: ../fileio.c:448
+#: ../fileio.c:450
 #, c-format
 msgid "Writing File %s ..."
 msgstr ""
 
-#: ../fileio.c:462
+#: ../fileio.c:464
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr ""
 
-#: ../fileio.c:471
+#: ../fileio.c:473
 #, c-format
 msgid "%d line written"
 msgstr ""
 
-#: ../fileio.c:472
+#: ../fileio.c:474
 #, c-format
 msgid "%d lines written"
 msgstr ""
 
-#: ../fileio.c:473
+#: ../fileio.c:475
 #, c-format
 msgid "%d liness written"
 msgstr ""
 
-#: ../fileio.c:474
+#: ../fileio.c:476
 #, c-format
 msgid "%d linesss written"
 msgstr ""
 
-#: ../fileio.c:561 ../fileio.c:586
+#: ../fileio.c:565 ../fileio.c:590
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr ""
 
 #. -1: error
-#: ../fileio.c:569 ../fileio.c:594
+#: ../fileio.c:573 ../fileio.c:598
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:616
+#: ../fileio.c:620
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:659
+#: ../fileio.c:663
 #, c-format
 msgid "%d file loaded"
 msgstr ""
 
-#: ../fileio.c:660
+#: ../fileio.c:664
 #, c-format
 msgid "%d files loaded"
 msgstr ""
 
-#: ../fileio.c:661
+#: ../fileio.c:665
 #, c-format
 msgid "%d filess loaded"
 msgstr ""
 
-#: ../fileio.c:662
+#: ../fileio.c:666
 #, c-format
 msgid "%d filesss loaded"
 msgstr ""
@@ -487,55 +487,45 @@ msgstr ""
 msgid "Find:"
 msgstr ""
 
-#. ///	if (is_app_list_mode()) {
-#. ///		// dof_make_directory -> FILER_DO_ENTER_CUR_DIR_PATH
-#. ///		filer_do_next = FILER_DO_ENTER_CUR_DIR_PATH;
-#. ///		return -1;
-#. ///	}
-#: ../filercmd.c:517
+#: ../filercmd.c:511
 msgid "Mkdir:"
 msgstr ""
 
-#. ///	if (is_app_list_mode()) {
-#. ///		// dof_change_directory -> FILER_DO_ENTER_CUR_DIR_PATH
-#. ///		filer_do_next = FILER_DO_ENTER_CUR_DIR_PATH;
-#. ///		return -1;
-#. ///	}
-#: ../filercmd.c:541
+#: ../filercmd.c:529
 msgid "Chdir to:"
 msgstr ""
 
-#: ../filercmd.c:591 ../filercmd.c:624
+#: ../filercmd.c:579 ../filercmd.c:612
 #, c-format
 msgid "%d file selected"
 msgstr ""
 
-#: ../filercmd.c:592 ../filercmd.c:625
+#: ../filercmd.c:580 ../filercmd.c:613
 #, c-format
 msgid "%d files selected"
 msgstr ""
 
-#: ../filercmd.c:593 ../filercmd.c:626
+#: ../filercmd.c:581 ../filercmd.c:614
 #, c-format
 msgid "%d filess selected"
 msgstr ""
 
-#: ../filercmd.c:594 ../filercmd.c:627
+#: ../filercmd.c:582 ../filercmd.c:615
 #, c-format
 msgid "%d filesss selected"
 msgstr ""
 
-#: ../filercmd.c:607
+#: ../filercmd.c:595
 msgid "File selection cleared"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:862
+#: ../filercmd.c:866
 #, c-format
 msgid "Can not change current chdir to [%s]: %s"
 msgstr ""
 
-#: ../filercmd.c:874
+#: ../filercmd.c:875
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr ""
@@ -622,20 +612,20 @@ msgstr ""
 msgid "Start key macro playback"
 msgstr ""
 
-#: ../main.c:551
+#: ../main.c:561
 msgid ""
 "\n"
 "No file written\n"
 msgstr ""
 
-#: ../main.c:560
+#: ../main.c:570
 #, c-format
 msgid ""
 "\n"
 "Buffer written to %s\n"
 msgstr ""
 
-#: ../main.c:588
+#: ../main.c:598
 #, c-format
 msgid ""
 "\n"
@@ -643,102 +633,102 @@ msgid ""
 msgstr ""
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:590
+#: ../main.c:600
 msgid "Option"
 msgstr ""
 
-#: ../main.c:590
+#: ../main.c:600
 msgid "Long option"
 msgstr ""
 
-#: ../main.c:590
+#: ../main.c:600
 msgid "Meaning"
 msgstr ""
 
-#: ../main.c:592
+#: ../main.c:602
 msgid "Read RCFILE"
 msgstr ""
 
-#: ../main.c:593
+#: ../main.c:603
 msgid "Don't look at berc files"
 msgstr ""
 
-#: ../main.c:596
+#: ../main.c:606
 msgid "Don't use history file"
 msgstr ""
 
-#: ../main.c:598
+#: ../main.c:608
 msgid "Set tab-size to NUM[1-15]"
 msgstr ""
 
-#: ../main.c:599
+#: ../main.c:609
 msgid "View mode(Read only mode)"
 msgstr ""
 
-#: ../main.c:601
+#: ../main.c:611
 msgid "Don't use nkf"
 msgstr ""
 
-#: ../main.c:602
+#: ../main.c:612
 msgid "ASCII character encoding"
 msgstr ""
 
-#: ../main.c:603
+#: ../main.c:613
 msgid "JIS character encoding"
 msgstr ""
 
-#: ../main.c:604
+#: ../main.c:614
 msgid "EUCJP character encoding"
 msgstr ""
 
-#: ../main.c:605
+#: ../main.c:615
 msgid "SJIS character encoding"
 msgstr ""
 
-#: ../main.c:606
+#: ../main.c:616
 msgid "UTF8 character encoding"
 msgstr ""
 
-#: ../main.c:609
+#: ../main.c:619
 msgid "Output debug log to stderr"
 msgstr ""
 
-#: ../main.c:611
+#: ../main.c:621
 msgid "Show version information"
 msgstr ""
 
-#: ../main.c:612
+#: ../main.c:622
 msgid "Show this message"
 msgstr ""
 
-#: ../main.c:613
+#: ../main.c:623
 msgid "Start at line number NUM"
 msgstr ""
 
-#: ../main.c:615
+#: ../main.c:625
 msgid "Investigate key codes"
 msgstr ""
 
-#: ../main.c:632
+#: ../main.c:642
 #, c-format
 msgid "%s editor version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:634
+#: ../main.c:644
 #, c-format
 msgid " Build Options:\n"
 msgstr ""
 
-#: ../main.c:892
+#: ../main.c:902
 #, c-format
 msgid "Screen size: %dx%d"
 msgstr ""
 
-#: ../main.c:899
+#: ../main.c:909
 msgid "We're invincible with this !!"
 msgstr ""
 
-#: ../main.c:901
+#: ../main.c:911
 msgid "This is where we live in !!"
 msgstr ""
 
@@ -847,41 +837,41 @@ msgstr ""
 msgid "Replace from [%s] to [%s] ?"
 msgstr ""
 
-#: ../search.c:312
+#: ../search.c:313
 #, c-format
 msgid "[%s] not found :"
 msgstr ""
 
-#: ../search.c:470
+#: ../search.c:471
 msgid "Not a bracket"
 msgstr ""
 
 #. found peer bracket
-#: ../search.c:497
+#: ../search.c:498
 msgid "Peer bracket found"
 msgstr ""
 
-#: ../search.c:501
+#: ../search.c:502
 msgid "No peer bracket found"
 msgstr ""
 
-#: ../search.c:503
+#: ../search.c:504
 #, c-format
 msgid "Too many bracket pairs (%d)"
 msgstr ""
 
 #. didn't find peer bracket
-#: ../search.c:507
+#: ../search.c:508
 #, c-format
 msgid "Bracket nesting too deep (%d)"
 msgstr ""
 
-#: ../search.c:690
+#: ../search.c:691
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr ""
 
-#: ../search.c:799
+#: ../search.c:800
 #, c-format
 msgid "[%s] not found"
 msgstr ""

@@ -41,9 +41,10 @@ typedef enum {
 	FILER_DO_ABORT = 				6,	// abort       and return from filer
 	FILER_DO_FILE_LOADED = 			7,	// file loaded and return from filer
 
-	FILER_DO_ENTER_FILE_NAME =		8,	// list mode: return file name (file, dir)
-	FILER_DO_ENTER_FILE_PATH = 		9,	// list mode: return file path (/path/to/file, /path/to/dir)
-	FILER_DO_ENTER_CUR_DIR_PATH = 	10,	// list mode: return current directory path (/path/to/dir)
+										// list mode:
+	FILER_DO_ENTER_FILE_NAME =		8,	//   return file name (file, dir)
+	FILER_DO_ENTER_FILE_PATH = 		9,	//   return file path (/path/to/file, /path/to/dir)
+	FILER_DO_ENTER_CUR_DIR_PATH = 	10,	//   return current directory path (/path/to/dir)
 } filer_do_next_t;
 extern filer_do_next_t filer_do_next;
 

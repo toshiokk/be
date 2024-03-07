@@ -22,6 +22,9 @@
 #ifndef editor2_h
 #define editor2_h
 
+void start_title_bar_blinking();
+void stop_title_bar_blinking();
+
 void disp_editor_title_bar(void);
 
 #define UPDATE_SCRN_NONE		0x00

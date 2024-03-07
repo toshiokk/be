@@ -24,7 +24,6 @@
 
 #define KEY_NONE			(-1)
 #define K_NONE				KEY_NONE
-///#define KEY_NOT_ASSIGNED	(-0x8000)
 #define KEY_NOT_ASSIGNED	KEY_NONE
 #define KNA					KEY_NOT_ASSIGNED
 
@@ -43,11 +42,13 @@
 #define CTRL_CHAR(chr)		((chr) - '@')				// Ctrl-x
 #define CHAR_ESC			0x1b						// ASCII ESC
 #define CHAR_DEL			0x7f						// ASCII DEL
-#define TWO_BYTE_KEY_CODE(h, l)	((h) << 8 | (l))
-#define TBKC(h, l)			TWO_BYTE_KEY_CODE(h, l)
-#define KEY_META(key)		TBKC(CHAR_ESC, key)			// Alt-x
-#define KEY_META_CTRL(chr)	KEY_META(CTRL_CHAR(chr))	// Alt-Ctrl-x
+#define TWO_BYTE_KEY_CODE(h, l)	((key_code_t)(h) << 8 | (l))
+#define TBKC(h, l)			TWO_BYTE_KEY_CODE((h), (l))
+#define KEY_META(key)		TWO_BYTE_KEY_CODE(CHAR_ESC, key)	// Alt-x
+#define KEY_META_CTRL(chr)	KEY_META(CTRL_CHAR(chr))			// Alt-Ctrl-x
+#define IS_META_KEY(key)	(((key) & 0xff00) == KEY_META(0x00))
 
+#define K_(chr)				(chr)
 #define K_C(chr)			CTRL_CHAR(chr)				// Ctrl-x
 #define K_M(key)			KEY_META(key)				// Alt-x
 #define K_MC(chr)			KEY_META_CTRL(chr)			// Alt-Ctrl-x
@@ -68,7 +69,7 @@
 #define K_C_K			K_C('K')
 #define K_C_L			K_C('L')
 #define K_C_M			K_C('M')
-#define K_ENTER			KEY_ENTER	// 0d
+#define K_ENTER			K_C_M		// 0d
 #define K_C_N			K_C('N')
 #define K_C_O			K_C('O')
 #define K_C_P			K_C('P')
@@ -165,6 +166,7 @@
 #define K_MC_K			K_M(K_C('K'))
 #define K_MC_L			K_M(K_C('L'))
 #define K_MC_M			K_M(K_C('M'))
+#define K_M_ENTER		K_M(K_ENTER)
 #define K_MC_N			K_M(K_C('N'))
 #define K_MC_O			K_M(K_C('O'))
 #define K_MC_P			K_M(K_C('P'))
@@ -266,10 +268,20 @@
 #define K_END			KEY_END
 #define K_PPAGE			KEY_PPAGE
 #define K_NPAGE			KEY_NPAGE
+
 #define K_UP			KEY_UP
 #define K_DOWN			KEY_DOWN
-#define K_LEFT			KEY_LEFT
 #define K_RIGHT			KEY_RIGHT
+#define K_LEFT			KEY_LEFT
+// WSL Terminal
+#define K_C_UP			(0x0100 + (K_UP))
+#define K_C_DOWN		(0x0100 + (K_DOWN))
+#define K_C_RIGHT		(0x0100 + (K_RIGHT))
+#define K_C_LEFT		(0x0100 + (K_LEFT))
+#define K_M_UP			(0x0200 + (K_UP))
+#define K_M_DOWN		(0x0200 + (K_DOWN))
+#define K_M_RIGHT		(0x0200 + (K_RIGHT))
+#define K_M_LEFT		(0x0200 + (K_LEFT))
 
 #define S_C_AT		"\x00"
 #define S_C_A		"\x01"
@@ -286,7 +298,7 @@
 #define S_C_L		"\x0c"
 #define S_C_M		"\x0d"
 #define S_C_N		"\x0e"
-#define S_C_O		"\x1f"
+#define S_C_O		"\x0f"
 #define S_C_P		"\x10"
 #define S_C_Q		"\x11"
 #define S_C_R		"\x12"
@@ -298,6 +310,7 @@
 #define S_C_X		"\x18"
 #define S_C_Y		"\x19"
 #define S_C_Z		"\x1a"
+#define S_ESC		"\x1b"
 
 #define IS_CHAR_KEY(key)	(' ' <= (key) && (key) < 0x0100)
 
@@ -309,7 +322,7 @@ typedef enum {
 	XL,		// not executable in List mode
 	XF,		// not executable in List mode and FILER_DO_ENTER_FILE_NAME
 	XP,		// not executable in List mode and FILER_DO_ENTER_FILE_PATH
-	XD,		// not executable in List mode and FILER_DO_ENTER_CUR_DIR_PATH
+	XC,		// not executable in List mode and FILER_DO_ENTER_CUR_DIR_PATH
 } list_mode_t;
 
 typedef struct {

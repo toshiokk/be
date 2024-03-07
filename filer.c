@@ -273,7 +273,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 					case XP:		// not executable in List mode and return FILE_PATH
 						filer_do_next = FILER_DO_ENTER_FILE_PATH;
 						break;
-					case XD:		// not executable in List mode and return CUR_DIR_PATH
+					case XC:		// not executable in List mode and return CUR_DIR_PATH
 						filer_do_next = FILER_DO_ENTER_CUR_DIR_PATH;
 						break;
 					}
@@ -328,7 +328,9 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 		strlcpy__(file_path, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
 	}
 flf_d_printf("[%s]\n", file_path);
-	return 1;		// files or dirs are entered
+	return IS_META_KEY(key_input)
+	 ? 2	// Append input file/dir name
+	 : 1;	// input file/dir name
 }
 
 PRIVATE int check_filer_cur_dir(void)
@@ -448,7 +450,7 @@ PRIVATE void disp_filer_title_bar(const char *path,
 	char buf_files[MAX_SCRN_LINE_BUF_LEN+1];
 	char buf_time[1+HHCMMCSS_LEN+1];
 
-	set_title_bar_color_by_state(0, 0);
+	set_title_bar_color_by_state(0, 0, 0);
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0,
 	 tio_blank_line(), main_win_get_columns());
 

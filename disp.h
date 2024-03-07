@@ -22,7 +22,7 @@
 #ifndef disp_h
 #define disp_h
 
-void set_title_bar_color_by_state(int mode1, int mode2);
+void set_title_bar_color_by_state(int mode1, int mode2, char invert);
 const char *root_notation(void);
 
 //! priority to display on the status bar

@@ -125,7 +125,6 @@ app_menu_n_up_down:;
 				entry_idx = 1;
 			entry_idx = MIN_MAX_(1, entry_idx, get_func_key_table_from_key_entries(group_idx));
 			break;
-		case K_C_M:
 		case K_ENTER:
 			exec_func(group_idx, entry_idx);
 #ifndef ENABLE_FILER
@@ -439,7 +438,7 @@ int just_has_been_input_key()
 PRIVATE key_code_t input_key_timeout(void);
 PRIVATE key_code_t input_key_macro(void);
 PRIVATE key_code_t input_key_check_break_key(void);
-PRIVATE key_code_t input_key_bs_del(void);
+PRIVATE key_code_t map_key_code(key_code_t key);
 
 key_code_t input_key_loop(void)
 {
@@ -567,7 +566,8 @@ PRIVATE key_code_t input_key_check_break_key(void)
 flf_d_printf("<[%04x]\n", key);
 		return key;
 	}
-	key = input_key_bs_del();
+	key = tio_input_key();
+	key = map_key_code(key);
 	if (is_saving_check_break_key()) {
 		// saving key strokes
 		if (key >= 0) {
@@ -579,11 +579,8 @@ flf_d_printf(">[%04x]\n", key);
 	return key;
 }
 
-PRIVATE key_code_t input_key_bs_del(void)
+PRIVATE key_code_t map_key_code(key_code_t key)
 {
-	key_code_t key;
-
-	key = tio_input_key();
 	switch (key) {
 	case CHAR_DEL:
 #define MAP_KEY_7F_BS
@@ -618,6 +615,8 @@ flf_d_printf("KEY_DC ==> DEL\n");
 		SET_APPMD(app_MAP_KEY_7F_BS);	// set conversion of CHAR_DEL ==> BS
 		key = K_DEL;
 		break;
+	case KEY_ENTER:		// 0x0157
+		key = K_ENTER;
 	default:
 		break;
 	}
@@ -784,8 +783,8 @@ key_name_table_t key_name_table[] = {
 	{ K_NPAGE		, "PGDN", },
 	{ K_UP			, "UP", },
 	{ K_DOWN		, "DOWN", },
-	{ K_LEFT		, "LEFT", },
 	{ K_RIGHT		, "RIGHT", },
+	{ K_LEFT		, "LEFT", },
 };
 
 const char *short_key_name_from_key_code(key_code_t key_code, char *buf)

@@ -21,26 +21,26 @@
 
 #include "headers.h"
 
-void set_title_bar_color_by_state(int mode1, int mode2)
+void set_title_bar_color_by_state(int mode1, int mode2, char invert)
 {
 	if (key_macro_is_recording()) {
 		// Recording key macro, you see strange color on title bar.
-		set_color_by_idx(ITEM_COLOR_IDX_WARNING2, 0);
+		set_color_by_idx(ITEM_COLOR_IDX_WARNING2, invert);
 	} else
 	if (mode1) {
 		// Marking text, you see strange color on title bar.
-		set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 0);
+		set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, invert);
 	} else
 	if (mode2) {
 		// File is modified, you see strange color on title bar.
-		set_color_by_idx(ITEM_COLOR_IDX_WARNING3, 0);
+		set_color_by_idx(ITEM_COLOR_IDX_WARNING3, invert);
 	} else
 	if (geteuid() == 0) {
 		// If you are super user, you see strange color on title bar.
-		set_color_by_idx(ITEM_COLOR_IDX_WARNING, 0);
+		set_color_by_idx(ITEM_COLOR_IDX_WARNING, invert);
 	} else {
 		// Normal color
-		set_color_by_idx(ITEM_COLOR_IDX_TITLE, 0);
+		set_color_by_idx(ITEM_COLOR_IDX_TITLE, invert);
 	}
 }
 

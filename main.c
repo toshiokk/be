@@ -280,7 +280,7 @@ PRIVATE int init_app_mode(void)
 	return 0;
 }
 
-const char short_options[] = "C:cht:rne:dv?k";
+const char short_options[] = "C:cht:rne:wdv?k";
 #ifdef HAVE_GETOPT_LONG
 int option_index = 0;
 const struct option long_options[] = {
@@ -297,6 +297,9 @@ const struct option long_options[] = {
 	{ "nonkf",         no_argument,       0, 'n' },
 	{ "encoding",      required_argument, 0, 'e' },
 #endif // USE_NKF
+#ifdef ENABLE_FILER
+	{ "twopane",       no_argument,       0, 'w' },
+#endif // ENABLE_HISTORY
 #ifdef ENABLE_DEBUG
 	{ "debug",         no_argument,       0, 'd' },
 #endif // ENABLE_DEBUG
@@ -387,6 +390,13 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 			}
 			break;
 #endif // USE_NKF
+#ifdef ENABLE_FILER
+		case 'w':
+			SET_APPMD(fl_FILER_PANES);
+			SET_APPMD_VAL(fl_SHOW_FILE_INFO, SHOW_FILE_INFO_1);
+///			SET_APPMD_VAL(fl_SHOW_FILE_INFO, SHOW_FILE_INFO_3);
+			break;
+#endif // ENABLE_FILER
 #ifdef ENABLE_DEBUG
 		case 'd':
 			SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);

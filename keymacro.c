@@ -130,6 +130,7 @@ PRIVATE key_code_t key_codes_recorded[MAX_KEY_STROKES+1];
 void key_macro_start_recording(void)
 {
 	key_macro_recording = 0;		// start recording
+	start_title_bar_blinking();
 }
 void key_macro_put_key(key_code_t key)
 {
@@ -153,6 +154,7 @@ int key_macro_is_recording(void)
 void key_macro_cancel_recording(void)
 {
 	key_macro_recording = -1;		// abort recording
+	stop_title_bar_blinking();
 }
 void key_macro_end_recording(void)
 {

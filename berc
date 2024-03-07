@@ -4,7 +4,7 @@ scroll			0
 view_mode		0
 syntax_hl		1
 show_dot_file		0
-show_file_info		4
+#show_file_info		4
 sort_by			0
 ignore_case		0
 draw_cursor		0
