@@ -915,4 +915,17 @@ void disp_splash(int delay)
 }
 #endif // ENABLE_HELP
 
+//------------------------------------------------------------------------------------
+char *get_app_dir(void)
+{
+	static char dir[MAX_PATH_LEN+1];
+
+#if defined(APP_DIR)
+	snprintf_(dir, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), APP_DIR);
+#else
+	snprintf_(dir, MAX_PATH_LEN+1, "%s", get_home_dir());
+#endif
+	return dir;
+}
+
 // End of main.c

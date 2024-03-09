@@ -1,20 +1,26 @@
 #### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: complete)
 
-[v] Avoid corruption on binary file
-	- convert fake UTF-8 character to normal UTF-8 char.
-	==> input nkf -w, output: nkf -W
-[] share cut-buffer between BE-editor-instances (Use clip-board or Make own clip-board)
-
+[] Avoid inputting garbage on Atl-Fxx key.
 [-] Auto indent by Alt-Enter
 
 [v] recognize Alt-UP, Alt-Down, Alt-Right, Alt-Left keys
               \e[1;3A \e[1;3B \e[1;3D \e[1;3C
 [v] recognize Ctrl-UP, Ctrl-Down, Ctrl-Right, Ctrl-Left keys
               \e[1;5A \e[1;5B \e[1;5D \e[1;5C
-[v] start up in two pane filer
+
+[x] share cut-buffer between BE-editor-instances (Use clip-board or own clip-board file)
+	F07 copy selection and save to clip-board
+	Shift-F07 copy current file to clip-board
+	Shift-F08 paste clip-board into current line
+
+[v] cut_to_head(), cut_to_tail() ==> delete_to_head(), delete_to_tail()
+[v] start up in two pane filer ==> add "-w" command line option
 [v] update history with cur-dir just before changing cur-dir
 [v] Not delimit file path by # ("abc#def" ==> "abc#def", "abc #def" ==> "abc" "#def")
 [v] blink title bar when recording key macro or marking text
+[v] Avoid screen corruption on binary file
+	- convert fake UTF-8 character to normal UTF-8 char.
+	==> input nkf -w, output: nkf -W
 
 Filer <==> Editor switching and collaboration
 [] Fix [goto filer] key and [goto editor] key

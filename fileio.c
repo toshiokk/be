@@ -430,7 +430,6 @@ int input_new_file_name_n_ask(char *file_path)
 
 PRIVATE int backup_files(const char *file_path, int depth);
 PRIVATE char *make_backup_file_path(const char *orig_path, char *backup_path, int depth);
-PRIVATE int save_cur_buf_to_file__(const char *file_path);
 
 int backup_and_save_cur_buf(const char *file_path)
 {
@@ -455,7 +454,7 @@ int backup_and_save_cur_buf(const char *file_path)
 		}
 	}
 
-	lines_written = save_cur_buf_to_file__(abs_path);
+	lines_written = save_cur_buf_to_file(abs_path);
 
 	if (S_ISREG(get_cep_buf()->orig_file_stat.st_mode)) {
 		mask = get_cep_buf()->orig_file_stat.st_mode & 07777;
@@ -513,7 +512,7 @@ PRIVATE int save_cur_buf_to_file_nkf(const char *file_path, const char *nkf_opti
 #endif // USE_NKF
 PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp);
 
-PRIVATE int save_cur_buf_to_file__(const char *file_path)
+int save_cur_buf_to_file(const char *file_path)
 {
 #ifdef USE_NKF
 	const char *nkf_options;

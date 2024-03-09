@@ -31,8 +31,6 @@ PRIVATE int save_history_idx(int hist_type_idx);
 PRIVATE int load_history_idx(int hist_type_idx);
 PRIVATE char *get_history_file_path(int hist_type_idx);
 
-PRIVATE char *get_app_dir(void);
-
 PRIVATE void init_history(int hist_type_idx);
 PRIVATE void append_history(int hist_type_idx, const char *str);
 PRIVATE void clear_history(int hist_type_idx);
@@ -201,19 +199,6 @@ const char *get_history_completion(int hist_type_idx, const char *str)
 		return line->data;
 	}
 	return str;		// return original string
-}
-
-//------------------------------------------------------------------------------------
-PRIVATE char *get_app_dir(void)
-{
-	static char dir[MAX_PATH_LEN+1];
-
-#if defined(APP_DIR)
-	snprintf_(dir, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), APP_DIR);
-#else
-	snprintf_(dir, MAX_PATH_LEN+1, "%s", get_home_dir());
-#endif
-	return dir;
 }
 
 //-----------------------------------------------------------------------------

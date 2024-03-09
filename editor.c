@@ -501,6 +501,47 @@ int doe_read_file_into_cur_pos(void)
 	return 0;
 }
 
+#define _CLIP_BOARD_FILE_NAME		"clip_board"		// default clip board file name
+#if defined(APP_DIR)
+#define CLIP_BOARD_FILE_NAME		_CLIP_BOARD_FILE_NAME
+#else // APP_DIR
+#define CLIP_BOARD_FILE_NAME		"." _CLIP_BOARD_FILE_NAME
+#endif // APP_DIR
+
+// clip board file is common to all be-editor instances in one user
+const char *get_clip_board_file_path()
+{
+	static char file_path[MAX_PATH_LEN+1];
+
+	snprintf_(file_path, MAX_PATH_LEN+1, "%s/%s", get_app_dir(), CLIP_BOARD_FILE_NAME);
+	return file_path;
+}
+int save_buffer_to_clip_board_file(be_buf_t *buf)
+{
+	memorize_cur_file_pos_null(NULL);
+	set_cep_buf(buf);
+	int ret = save_cur_buf_to_file(get_clip_board_file_path());
+	recall_cur_file_pos_null(NULL);
+	return ret;
+}
+int doe_save_cur_buffer_to_clip_board()
+{
+	return save_cur_buf_to_file(get_clip_board_file_path());
+}
+int doe_read_clip_board_into_cur_pos()
+{
+	memorize_cur_file_pos_null(NULL);
+	if (load_file_name_upp_low(get_clip_board_file_path(), TUL0, OOE0, MOE1, RECURSIVE0) <= 0) {
+		return 0;
+	}
+	doe_select_all_lines();
+	doe_copy_text();
+	doe_close_file_ask();
+	recall_cur_file_pos_null(NULL);
+	doe_paste_text_with_pop();
+	return 0;
+}
+
 //-----------------------------------------------------------------------------
 #ifdef ENABLE_FILER
 int doe_run_line_soon(void)

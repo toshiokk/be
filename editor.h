@@ -57,6 +57,11 @@ int doe_close_all_modified(void);
 
 int doe_read_file_into_cur_pos(void);
 
+const char *get_clip_board_file_path();
+int save_buffer_to_clip_board_file(be_buf_t *buf);
+int doe_save_cur_buffer_to_clip_board();
+int doe_read_clip_board_into_cur_pos();
+
 //-----------------------------------------------------------------------------
 
 #ifdef ENABLE_FILER

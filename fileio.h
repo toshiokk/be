@@ -38,6 +38,8 @@ int backup_and_save_cur_buf_ask(void);
 int input_new_file_name_n_ask(char *file_path);
 int backup_and_save_cur_buf(const char *file_path);
 
+int save_cur_buf_to_file(const char *file_path);
+
 void clear_files_loaded(void);
 int add_files_loaded(int files);
 int get_files_loaded(void);

@@ -76,15 +76,16 @@ int doe_pop_cut_buf(void)
 int doe_select_all_lines(void)
 {
 	doe_first_line();
-	doe_start_of_line();
+////	doe_start_of_line();
 
 	do_set_mark();
 
 	doe_last_line();
-	doe_end_of_line();
+////	doe_end_of_line();
 	return 1;
 }
 
+/////int doe_delete_to_head(void)
 int doe_cut_to_head(void)
 {
 	if (CEPBV_CLBI == 0) {
@@ -92,11 +93,13 @@ int doe_cut_to_head(void)
 	}
 	do_set_mark();
 	doe_start_of_line();
-	doe_cut_text();
+	doe_delete_text();
+	/////doe_cut_text();
 
 	disp_status_bar_done(_("Cut to line head"));
 	return 1;
 }
+/////int doe_delete_to_tail(void)
 int doe_cut_to_tail(void)
 {
 	if (CEPBV_CLBI == line_data_len(CEPBV_CL)) {
@@ -105,7 +108,8 @@ int doe_cut_to_tail(void)
 	set_disabled_update_min_text_x_to_keep();	// avoid contents jump around
 	do_set_mark();
 	doe_end_of_line();
-	doe_cut_text();
+	doe_delete_text();
+	/////doe_cut_text();
 
 	disp_status_bar_done(_("Cut to line tail"));
 	return 1;
@@ -341,6 +345,7 @@ PRIVATE int copy_text_to_cut_buf(void)
 		 mark_max_line, mark_max_col_idx);
 		break;
 	}
+	save_buffer_to_clip_board_file(CUT_BUFS_TOP_BUF);
 	return 1;
 }
 PRIVATE int delete_text_in_cut_region(void)
