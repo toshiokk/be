@@ -134,6 +134,13 @@ PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 	return get_buf_from_bufs_by_idx(HIST_BUFS_TOP_BUF, hist_type_idx);
 }
 
+void update_dir_history(const char *prev_dir, const char *cur_dir)
+{
+	// previous dir
+	update_history(HISTORY_TYPE_IDX_DIR, prev_dir, 0);
+	// next dir
+	update_history(HISTORY_TYPE_IDX_DIR, cur_dir, 0);
+}
 // update history list (load, modify, save)
 void update_history(int hist_type_idx, const char *str, BOOL force_update)
 {

@@ -76,16 +76,11 @@ int doe_pop_cut_buf(void)
 int doe_select_all_lines(void)
 {
 	doe_first_line();
-////	doe_start_of_line();
-
 	do_set_mark();
-
 	doe_last_line();
-////	doe_end_of_line();
 	return 1;
 }
 
-/////int doe_delete_to_head(void)
 int doe_cut_to_head(void)
 {
 	if (CEPBV_CLBI == 0) {
@@ -94,12 +89,10 @@ int doe_cut_to_head(void)
 	do_set_mark();
 	doe_start_of_line();
 	doe_delete_text();
-	/////doe_cut_text();
 
 	disp_status_bar_done(_("Cut to line head"));
 	return 1;
 }
-/////int doe_delete_to_tail(void)
 int doe_cut_to_tail(void)
 {
 	if (CEPBV_CLBI == line_data_len(CEPBV_CL)) {
@@ -109,7 +102,6 @@ int doe_cut_to_tail(void)
 	do_set_mark();
 	doe_end_of_line();
 	doe_delete_text();
-	/////doe_cut_text();
 
 	disp_status_bar_done(_("Cut to line tail"));
 	return 1;

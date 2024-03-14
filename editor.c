@@ -91,7 +91,7 @@ PRIVATE int editor_main_loop(void)
 			update_screen_editor(1, 1, 1);
 		}
 		//----------------------------------
-		key_input = input_key_wait_return();
+		key_input = input_key_wait_return(500);
 		//----------------------------------
 		if (key_input < 0) {
 			// no key input
@@ -573,7 +573,7 @@ int doe_call_filer(void)
 int doe_editor_splash(void)
 {
 	disp_splash(100);
-	input_key_wait_return();
+	input_key_wait_return(2000);
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	return 0;
 }

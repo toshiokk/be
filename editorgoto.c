@@ -88,18 +88,22 @@ int doe_goto_directory_in_cur_line(void)
 	if (get_file_line_col_from_str_null(CEPBV_CL->data, file_path, NULL, NULL) == 0) {
 		return 0;
 	}
-	if (change_cur_dir(file_path) == 0) {
+	if (filer_change_dir_parent(file_path) == 0) {
 #ifdef ENABLE_HISTORY
-		update_history(HISTORY_TYPE_IDX_DIR, file_path, 0);
+		update_dir_history(get_cur_filer_view()->prev_dir, get_cur_filer_view()->cur_dir);
+		/////update_history(HISTORY_TYPE_IDX_DIR, file_path, 0);
 #endif // ENABLE_HISTORY
 #ifdef ENABLE_FILER
-		// update filer's current dir and open filer
-		strlcpy__(get_cur_filer_view()->cur_dir, file_path, MAX_PATH_LEN);
+		///// update filer's current dir and open filer
+		/////strlcpy__(get_cur_filer_view()->cur_dir, file_path, MAX_PATH_LEN);
 		get_cur_filer_view()->cur_sel_idx = 0;
-		call_filer(1, 0, file_path, "", file_path, MAX_PATH_LEN);
+_FLF_
+		call_filer(1, 0, get_cur_filer_view()->cur_dir, "", file_path, MAX_PATH_LEN);
 #endif // ENABLE_FILER
+_FLF_
 	}
 	editor_quit = EDITOR_CANCELLED;
+_FLF_
 	return 1;
 }
 

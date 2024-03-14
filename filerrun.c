@@ -49,11 +49,11 @@ int dof_exec_command_with_file(void)
 #define MAX_REPLACEMENTS	10
 	int cnt;
 
-	if (is_app_list_mode()) {
-		// dof_exec_command_with_file -> FILER_DO_ENTER_FILE_PATH
-		filer_do_next = FILER_DO_ENTER_FILE_PATH;
-		return -1;
-	}
+	////if (is_app_list_mode()) {
+	////	// dof_exec_command_with_file -> FILER_DO_ENTER_FILE_PATH
+	////	filer_do_next = FILER_DO_ENTER_FILE_PATH;
+	////	return -1;
+	////}
 
 	ret = input_string_tail("", command_str,
 	 HISTORY_TYPE_IDX_EXEC, _("Execute({} will be replaced with file-name):"));
@@ -102,11 +102,11 @@ int dof_exec_command_with_files(void)
 	int ret;
 	int file_idx;
 
-	if (is_app_list_mode()) {
-		// dof_exec_command_with_files -> FILER_DO_ENTER_FILE_PATH
-		filer_do_next = FILER_DO_ENTER_FILE_PATH;
-		return -1;
-	}
+	////if (is_app_list_mode()) {
+	////	// dof_exec_command_with_files -> FILER_DO_ENTER_FILE_PATH
+	////	filer_do_next = FILER_DO_ENTER_FILE_PATH;
+	////	return -1;
+	////}
 
 	// "file1 file2 ..."
 	command_str[0] = '\0';
@@ -174,11 +174,11 @@ PRIVATE int dof_run_command_(int mode)
 	int dst_fv_idx = 1;
 	int ret = 0;
 
-	if (is_app_list_mode()) {
-		// dof_run_command_ -> FILER_DO_ENTER_FILE_PATH
-		filer_do_next = FILER_DO_ENTER_FILE_PATH;
-		return -1;
-	}
+	////if (is_app_list_mode()) {
+	////	// dof_run_command_ -> FILER_DO_ENTER_FILE_PATH
+	////	filer_do_next = FILER_DO_ENTER_FILE_PATH;
+	////	return -1;
+	////}
 
 	st_ptr = &get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st;
 	switch (mode % 10) {

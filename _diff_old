@@ -5,7 +5,9 @@ OLD_DIR=../old/be
   echo "kdiff3 ${OLD_DIR}/$1 $1 #========================" >>_diff.txt
   diff ${OLD_DIR}/$1 $1 >>_diff.txt
   echo "kdiff3 ${OLD_DIR}/$1 $1 #========================" >>_sdiff.txt
-  sdiff -w 200 --expand-tabs --tabsize=4 ${OLD_DIR}/$1 $1 >>_sdiff.txt
+  if ! diff ${OLD_DIR}/$1 $1 >/dev/null ; then
+    sdiff -w 200 --expand-tabs --tabsize=4 ${OLD_DIR}/$1 $1 >>_sdiff.txt
+  fi
 }
 
 rm -f _diff.txt _sdiff.txt

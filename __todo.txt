@@ -1,6 +1,10 @@
 #### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: complete)
 
-[] Avoid inputting garbage on Atl-Fxx key.
+[] to be able to change directory on file path "/dir/to/file.txt" to directory "/dir/to/"
+
+[v ] code clean up for filer view mode
+
+[v] Avoid inputting garbage on Alt-Fxx key. ==> register all xterm keys
 [-] Auto indent by Alt-Enter
 
 [v] recognize Alt-UP, Alt-Down, Alt-Right, Alt-Left keys
@@ -12,7 +16,7 @@
 	F07 copy selection and save to clip-board
 	Shift-F07 copy current file to clip-board
 	Shift-F08 paste clip-board into current line
-
+	[] support both character copy and line copy
 [v] cut_to_head(), cut_to_tail() ==> delete_to_head(), delete_to_tail()
 [v] start up in two pane filer ==> add "-w" command line option
 [v] update history with cur-dir just before changing cur-dir

@@ -435,7 +435,7 @@ int just_has_been_input_key()
 	return has_been_input_key;
 }
 
-PRIVATE key_code_t input_key_timeout(void);
+PRIVATE key_code_t input_key_timeout(int wait_msec);
 PRIVATE key_code_t input_key_macro(void);
 PRIVATE key_code_t input_key_check_break_key(void);
 PRIVATE key_code_t map_key_code(key_code_t key);
@@ -444,42 +444,45 @@ key_code_t input_key_loop(void)
 {
 	key_code_t key;
 
-	while ((key = input_key_wait_return()) < 0) {
+	while ((key = input_key_wait_return(1000)) < 0) {
+		// loop
 	}
 	return key;
 }
-key_code_t input_key_wait_return(void)
+key_code_t input_key_wait_return(int wait_msec)
 {
 	static key_code_t prev_key = KEY_NONE;
-	key_code_t key = input_key_timeout();
+	key_code_t key = input_key_timeout(wait_msec);
 	if (key < 0 && prev_key >= 0) {
-		tio_repaint_all();
+		///PPPtio_repaint_all();
 	}
 	prev_key = key;
 	has_been_input_key = (key >= 0);
 	return key;
 }
 
-PRIVATE key_code_t input_key_timeout(void)
+// clock display update interval	0.5 second
+// recording key macro blinking		0.5 second
+// splash screen display duration	2 seconds
+PRIVATE key_code_t input_key_timeout(int wait_msec)
 {
+#define KEY_WAIT_TIME_MSEC		500		// return every 500[mSec]
+	if (wait_msec < 100) {
+		wait_msec = KEY_WAIT_TIME_MSEC;
+	}
 	key_code_t key;
-	key_code_t key_resized = KEY_NONE;
-#define KEY_WAIT_TIME_USEC		1000000		// return every 1[Sec]
-	long usec_enter = get_usec();
+	long msec_enter = get_msec();
 	while ((key = input_key_macro()) < 0) {
 		if (tio_check_update_terminal_size()) {
 			win_reinit_win_size();
 #ifdef ENABLE_HELP
 			disp_splash(-1);
-			usec_enter = get_usec();
+			msec_enter = get_msec();
 #endif // ENABLE_HELP
 		}
-		if (get_usec() - usec_enter >= KEY_WAIT_TIME_USEC)
+		if (get_msec() - msec_enter >= wait_msec)
 			break;
 		MSLEEP(10);		// wait 10[mS]
-	}
-	if (key < 0) {
-		key = key_resized;
 	}
 	return key;
 }
@@ -763,18 +766,18 @@ key_name_table_t key_name_table[] = {
 	{ K_F10			, "F10", },
 	{ K_F11			, "F11", },
 	{ K_F12			, "F12", },
-	{ K_SF01		, "S-F1", },
-	{ K_SF02		, "S-F2", },
-	{ K_SF03		, "S-F3", },
-	{ K_SF04		, "S-F4", },
-	{ K_SF05		, "S-F5", },
-	{ K_SF06		, "S-F6", },
-	{ K_SF07		, "S-F7", },
-	{ K_SF08		, "S-F8", },
-	{ K_SF09		, "S-F9", },
-	{ K_SF10		, "S-F10", },
-	{ K_SF11		, "S-F11", },
-	{ K_SF12		, "S-F12", },
+	{ K_S_F01		, "S-F1", },
+	{ K_S_F02		, "S-F2", },
+	{ K_S_F03		, "S-F3", },
+	{ K_S_F04		, "S-F4", },
+	{ K_S_F05		, "S-F5", },
+	{ K_S_F06		, "S-F6", },
+	{ K_S_F07		, "S-F7", },
+	{ K_S_F08		, "S-F8", },
+	{ K_S_F09		, "S-F9", },
+	{ K_S_F10		, "S-F10", },
+	{ K_S_F11		, "S-F11", },
+	{ K_S_F12		, "S-F12", },
 	{ K_INS			, "INS", },
 	{ K_DEL			, "DEL", },
 	{ K_HOME		, "HOME", },

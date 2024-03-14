@@ -181,7 +181,7 @@ PRIVATE int filer_main_loop(const char *directory, const char *filter,
 	int file_idx;
 
 #ifdef ENABLE_HISTORY
-	get_cur_dir(prev_cur_dir);		// memorize prev. current dir
+	get_cur_dir(prev_cur_dir);		// memorize current dir
 #endif // ENABLE_HISTORY
 	if (is_strlen_not_0(directory)) {
 		strlcpy__(get_cur_filer_view()->cur_dir, directory, MAX_PATH_LEN);
@@ -205,7 +205,7 @@ PRIVATE int filer_main_loop(const char *directory, const char *filter,
 		}
 		update_screen_filer(1, 1, 1);
 		//----------------------------------
-		key_input = input_key_wait_return();
+		key_input = input_key_wait_return(500);
 		//----------------------------------
 		if (key_input >= 0) {
 			// some key input
@@ -316,7 +316,6 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 			} else {
 				// /dir/to/file-path-1 "/dir/to/file path 2" "/dir/to/file path 3"
 				char path[MAX_PATH_LEN];
-
 				cat_dir_and_file(path, MAX_PATH_LEN,
 				 get_cur_filer_view()->cur_dir,
 				 get_cur_filer_view()->file_list[file_idx].file_name);
@@ -570,7 +569,7 @@ PRIVATE void disp_key_list_filer(void)
  "{Menu}"
  "  {Home } {Copy } {CpyUd} {Renam}"
  "  {Move } {Delet} {MkDel} {MkDir}"
- "  {ChDir} {Exec } {Run  } {Edit }",
+ "  {ChDir} {Exec } {Edit } {Edit }",
 
  "<dof_quit_filer>Quit "
  "<dof_edit_file>Edit "

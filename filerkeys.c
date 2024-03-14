@@ -78,7 +78,7 @@ func_key_table_t filer_func_key_table[] = {
  { "Tail",                "View tail of file",              K_('l'),      KNA, KNA,
    XF, F_I(dof_tail_file),    NULL },
  { "Find file",           "Find file",                      K_('j'),      KNA, KNA,
-   XF, F_I(dof_find_file),    NULL },
+   XA, F_I(dof_find_file),    NULL },
 
  { "",                    "Filer Menu-3",                   KNA,          KNA, KNA,
    XL, F_I(dof_filer_menu_3), NULL },

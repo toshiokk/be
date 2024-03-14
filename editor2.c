@@ -67,7 +67,8 @@ PRIVATE int get_title_bar_inversion()
 	//  0 ==>  0 ==>  0 ...
 	// +1 ==> -1 ==> +1 ...
 	blink_counter *= -1;
-	return blink_counter > 0;
+	//  0 ==>  1 ==>  0 ...
+	return blink_counter < 0;
 }
 
 PRIVATE int get_title_bar_inversion();

@@ -53,6 +53,23 @@
 #define K_M(key)			KEY_META(key)				// Alt-x
 #define K_MC(chr)			KEY_META_CTRL(chr)			// Alt-Ctrl-x
 
+// Shift, Ctrl, Meta(Alt) modifier
+#define K_S_MOD			0x0100
+#define K_C_MOD			0x0200
+#define K_M_MOD			0x0400
+#define K_SC_MOD		(K_S_MOD | K_C_MOD | 0      )
+#define K_SM_MOD		(K_S_MOD | 0       | K_M_MOD)
+#define K_CM_MOD		(0       | K_C_MOD | K_M_MOD)
+#define K_SCM_MOD		(K_S_MOD | K_C_MOD | K_M_MOD)
+
+#define K_S_(key)		(K_S_MOD + (key))
+#define K_C_(key)		(K_C_MOD + (key))
+#define K_M_(key)		(K_M_MOD + (key))
+#define K_SC_(key)		(K_SC_MOD + (key))
+#define K_SM_(key)		(K_SM_MOD + (key))
+#define K_CM_(key)		(K_CM_MOD + (key))
+#define K_SCM_(key)		(K_SCM_MOD + (key))
+
 #define K_C_AT			K_C('@')
 #define K_C_SP			K_C('@')
 #define K_C_A			K_C('A')
@@ -236,23 +253,74 @@
 #define K_F10			KEY_F(10)
 #define K_F11			KEY_F(11)
 #define K_F12			KEY_F(12)
-#define K_SF01			KEY_F(12+1)
-#define K_SF02			KEY_F(12+2)
-#define K_SF03			KEY_F(12+3)
-#define K_SF04			KEY_F(12+4)
-#define K_SF05			KEY_F(12+5)
-#define K_SF06			KEY_F(12+6)
-#define K_SF07			KEY_F(12+7)
-#define K_SF08			KEY_F(12+8)
-#define K_SF09			KEY_F(12+9)
-#define K_SF10			KEY_F(12+10)
-#define K_SF11			KEY_F(12+11)
-#define K_SF12			KEY_F(12+12)
+#define K_S_F01			K_S_(K_F01)
+#define K_S_F02			K_S_(K_F02)
+#define K_S_F03			K_S_(K_F03)
+#define K_S_F04			K_S_(K_F04)
+#define K_S_F05			K_S_(K_F05)
+#define K_S_F06			K_S_(K_F06)
+#define K_S_F07			K_S_(K_F07)
+#define K_S_F08			K_S_(K_F08)
+#define K_S_F09			K_S_(K_F09)
+#define K_S_F10			K_S_(K_F10)
+#define K_S_F11			K_S_(K_F11)
+#define K_S_F12			K_S_(K_F12)
+#define K_C_F01			K_C_(K_F01)
+#define K_C_F02			K_C_(K_F02)
+#define K_C_F03			K_C_(K_F03)
+#define K_C_F04			K_C_(K_F04)
+#define K_C_F05			K_C_(K_F05)
+#define K_C_F06			K_C_(K_F06)
+#define K_C_F07			K_C_(K_F07)
+#define K_C_F08			K_C_(K_F08)
+#define K_C_F09			K_C_(K_F09)
+#define K_C_F10			K_C_(K_F10)
+#define K_C_F11			K_C_(K_F11)
+#define K_C_F12			K_C_(K_F12)
+#define K_M_F01			K_M_(K_F01)
+#define K_M_F02			K_M_(K_F02)
+#define K_M_F03			K_M_(K_F03)
+#define K_M_F04			K_M_(K_F04)
+#define K_M_F05			K_M_(K_F05)
+#define K_M_F06			K_M_(K_F06)
+#define K_M_F07			K_M_(K_F07)
+#define K_M_F08			K_M_(K_F08)
+#define K_M_F09			K_M_(K_F09)
+#define K_M_F10			K_M_(K_F10)
+#define K_M_F11			K_M_(K_F11)
+#define K_M_F12			K_M_(K_F12)
+#define K_SM_F01		K_SM_(K_F01)
+#define K_SM_F02		K_SM_(K_F02)
+#define K_SM_F03		K_SM_(K_F03)
+#define K_SM_F04		K_SM_(K_F04)
+#define K_SM_F05		K_SM_(K_F05)
+#define K_SM_F06		K_SM_(K_F06)
+#define K_SM_F07		K_SM_(K_F07)
+#define K_SM_F08		K_SM_(K_F08)
+#define K_SM_F09		K_SM_(K_F09)
+#define K_SM_F10		K_SM_(K_F10)
+#define K_SM_F11		K_SM_(K_F11)
+#define K_SM_F12		K_SM_(K_F12)
 
 #define K_INS			KEY_IC
-#define K_DC			KEY_DC
+#define K_S_INS			K_S_(K_INS)
+#define K_M_INS			K_M_(K_INS)
+#define K_SM_INS		K_SM_(K_INS)
+#define K_C_INS			K_C_(K_INS)
+#define K_SC_INS		K_SC_(K_INS)
+#define K_CM_INS		K_CM_(K_INS)
+#define K_SCM_INS		K_SCM_(K_INS)
 
-// Abstruct key code
+#define K_DC			KEY_DC
+#define K_S_DC			K_S_(K_DC)
+#define K_M_DC			K_M_(K_DC)
+#define K_SM_DC			K_SM_(K_DC)
+#define K_C_DC			K_C_(K_DC)
+#define K_SC_DC			K_SC_(K_DC)
+#define K_CM_DC			K_CM_(K_DC)
+#define K_SCM_DC		K_SCM_(K_DC)
+
+// Abstract key code
 //							Key-Backspace	Key-Delete
 // console(TL11Fuji)		0x08			0x7f
 // console(Slackware12.2)	0x7f			0x0113
@@ -273,15 +341,36 @@
 #define K_DOWN			KEY_DOWN
 #define K_RIGHT			KEY_RIGHT
 #define K_LEFT			KEY_LEFT
+
 // WSL Terminal
-#define K_C_UP			(0x0100 + (K_UP))
-#define K_C_DOWN		(0x0100 + (K_DOWN))
-#define K_C_RIGHT		(0x0100 + (K_RIGHT))
-#define K_C_LEFT		(0x0100 + (K_LEFT))
-#define K_M_UP			(0x0200 + (K_UP))
-#define K_M_DOWN		(0x0200 + (K_DOWN))
-#define K_M_RIGHT		(0x0200 + (K_RIGHT))
-#define K_M_LEFT		(0x0200 + (K_LEFT))
+#define K_S_UP			K_S_(K_UP)
+#define K_S_DOWN		K_S_(K_DOWN)
+#define K_S_RIGHT		K_S_(K_RIGHT)
+#define K_S_LEFT		K_S_(K_LEFT)
+#define K_SM_UP			K_SM_(K_UP)
+#define K_SM_DOWN		K_SM_(K_DOWN)
+#define K_SM_RIGHT		K_SM_(K_RIGHT)
+#define K_SM_LEFT		K_SM_(K_LEFT)
+#define K_SC_UP			K_SC_(K_UP)
+#define K_SC_DOWN		K_SC_(K_DOWN)
+#define K_SC_RIGHT		K_SC_(K_RIGHT)
+#define K_SC_LEFT		K_SC_(K_LEFT)
+#define K_SCM_UP		K_SCM_(K_UP)
+#define K_SCM_DOWN		K_SCM_(K_DOWN)
+#define K_SCM_RIGHT		K_SCM_(K_RIGHT)
+#define K_SCM_LEFT		K_SCM_(K_LEFT)
+#define K_C_UP			K_C_(K_UP)
+#define K_C_DOWN		K_C_(K_DOWN)
+#define K_C_RIGHT		K_C_(K_RIGHT)
+#define K_C_LEFT		K_C_(K_LEFT)
+#define K_M_UP			K_M_(K_UP)
+#define K_M_DOWN		K_M_(K_DOWN)
+#define K_M_RIGHT		K_M_(K_RIGHT)
+#define K_M_LEFT		K_M_(K_LEFT)
+#define K_CM_UP			K_CM_(K_UP)
+#define K_CM_DOWN		K_CM_(K_DOWN)
+#define K_CM_RIGHT		K_CM_(K_RIGHT)
+#define K_CM_LEFT		K_CM_(K_LEFT)
 
 #define S_C_AT		"\x00"
 #define S_C_A		"\x01"
@@ -378,7 +467,7 @@ void set_menu_key_for_do_app_menu_0(void);
 int just_has_been_input_key();
 
 key_code_t input_key_loop(void);
-key_code_t input_key_wait_return(void);
+key_code_t input_key_wait_return(int wait_msec);
 
 void begin_check_break_key(void);
 void end_check_break_key(void);
