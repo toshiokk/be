@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-15 22:52+0900\n"
+"POT-Creation-Date: 2024-03-17 22:50+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -208,23 +208,23 @@ msgstr "テキストを張り付けました(カットバッファは変化な�
 msgid "Enter line number:"
 msgstr "行番号入力:"
 
-#: ../editorgoto.c:150
+#: ../editorgoto.c:144
 msgid "No previous open files"
 msgstr "これ以上前にファイルがありません"
 
-#: ../editorgoto.c:154
+#: ../editorgoto.c:148
 msgid "Previous file"
 msgstr "一つ前のファイルにスイッチしました"
 
-#: ../editorgoto.c:162
+#: ../editorgoto.c:156
 msgid "No next open files"
 msgstr "これ以上後にファイルがありません"
 
-#: ../editorgoto.c:166
+#: ../editorgoto.c:160
 msgid "Next file"
 msgstr "一つ後のファイルにスイッチしました"
 
-#: ../editorgoto.c:203
+#: ../editorgoto.c:197
 msgid "Returned to previous pos"
 msgstr ""
 
@@ -536,12 +536,12 @@ msgid "File selection cleared"
 msgstr "ファイル選択をクリアしました"
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:865
+#: ../filercmd.c:832
 #, fuzzy, c-format
-msgid "Can not change current chdir to [%s]: %s"
+msgid "Can not change current to [%s]: %s"
 msgstr "カレントディレクトリを変更できません [%s]: %s"
 
-#: ../filercmd.c:874
+#: ../filercmd.c:842
 #, fuzzy, c-format
 msgid "Changed current directory to [%s]"
 msgstr "カレントディレクトリを変更しました [%s]"

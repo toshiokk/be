@@ -1,1 +1,0 @@
-/usr/share/aclocal/glibc2.m4

@@ -1,8 +1,9 @@
 echo "change Application Release Level -- APP_REL_LVL definition in appdef.h"
-echo "Usage: $0 [0|1|2]"
-echo "  0: experimental release"
-echo "  1: test         release"
-echo "  2: official     release"
+echo "Usage: $0 [0|1|2|3]"
+echo "  0: experimental"
+echo "  1: test-1       release"
+echo "  2: test-2       release"
+echo "  3: official     release"
 
 sed_define()
 {
@@ -14,7 +15,7 @@ sed_define()
 }
 
 {
-  if [ "$1" = 0 -o "$1" = 1 -o "$1" = 2 ]; then
+  if [ "$1" = 0 -o "$1" = 1 -o "$1" = 2 -o "$1" = 3 ]; then
     sed_define $1
   fi
   grep "define APP_REL_LVL" appdefs.h

@@ -1,1 +1,0 @@
-/usr/share/aclocal/longdouble.m4

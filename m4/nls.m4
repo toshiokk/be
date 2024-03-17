@@ -1,1 +1,0 @@
-/usr/share/aclocal/nls.m4

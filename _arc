@@ -2,6 +2,7 @@
 #make clean
 make distclean
 rm -f *.log
+rm -f _cppcheck.out
 cd ..
 rm_tildes
 tar -czvf be`yymmdd-hhmm`.tgz be/*

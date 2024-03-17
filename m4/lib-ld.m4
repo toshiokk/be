@@ -1,1 +1,0 @@
-/usr/share/aclocal/lib-ld.m4

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-15 22:52+0900\n"
+"POT-Creation-Date: 2024-03-17 22:50+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -199,23 +199,23 @@ msgstr ""
 msgid "Enter line number:"
 msgstr ""
 
-#: ../editorgoto.c:150
+#: ../editorgoto.c:144
 msgid "No previous open files"
 msgstr ""
 
-#: ../editorgoto.c:154
+#: ../editorgoto.c:148
 msgid "Previous file"
 msgstr ""
 
-#: ../editorgoto.c:162
+#: ../editorgoto.c:156
 msgid "No next open files"
 msgstr ""
 
-#: ../editorgoto.c:166
+#: ../editorgoto.c:160
 msgid "Next file"
 msgstr ""
 
-#: ../editorgoto.c:203
+#: ../editorgoto.c:197
 msgid "Returned to previous pos"
 msgstr ""
 
@@ -525,12 +525,12 @@ msgid "File selection cleared"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:865
+#: ../filercmd.c:832
 #, c-format
-msgid "Can not change current chdir to [%s]: %s"
+msgid "Can not change current to [%s]: %s"
 msgstr ""
 
-#: ../filercmd.c:874
+#: ../filercmd.c:842
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr ""

@@ -1,1 +1,0 @@
-/usr/share/aclocal/inttypes.m4

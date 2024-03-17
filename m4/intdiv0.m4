@@ -1,1 +1,0 @@
-/usr/share/aclocal/intdiv0.m4
