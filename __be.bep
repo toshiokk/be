@@ -24,7 +24,7 @@
     30    172   1733 filerkeys.h
     63    264   2783 filerrun.h
     67    237   2377 headers.h
-    87    354   3844 history.h
+    88    361   3912 history.h
     63    240   2757 keymacro.h
    478   1681  15190 keys.h
    195   1020   9572 line.h
@@ -53,24 +53,24 @@
    172    564   4750 debug.c
    269    837   8463 disp.c
    959   2426  25973 editor.c
-  1161   3949  40648 editor2.c
+  1162   3956  40673 editor2.c
    689   1748  17238 editorcut.c
    386   1117  11057 editorcut2.c
-   761   2257  23198 editorgoto.c
-   311   1851  18372 editorkeys.c
+   765   2262  23343 editorgoto.c
+   311   1851  18373 editorkeys.c
    200    552   6834 editorlist.c
    783   2029  20183 editormove.c
    353   1196  12739 editormove2.c
    328    953   9800 editorundo.c
    669   2057  18883 fileio.c
-   610   1693  19576 filer.c
+   609   1693  19575 filer.c
    682   2511  22568 filer2.c
-   882   2041  22791 filercmd.c
+   880   2036  22746 filercmd.c
    172   1014  10005 filerkeys.c
    461   1246  13090 filerrun.c
-   525   1607  15694 history.c
+   532   1628  15898 history.c
    299    854   8975 keymacro.c
-   873   2759  22877 keys.c
+   874   2766  22943 keys.c
    391   1179  10913 line.c
    591   2088  24257 linewrap.c
    931   2744  27993 main.c
@@ -87,7 +87,7 @@
    842   2634  20528 utilstr.c
    567   1904  20115 winin.c
    302   1010  10533 winout.c
- 27741  88946 870594 合計
+ 27752  88988 871057 合計
  190  504 8410 berc
   13   26  459 emacs.berc
   13   26  459 wordstar.berc

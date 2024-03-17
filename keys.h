@@ -467,7 +467,7 @@ void set_menu_key_for_do_app_menu_0(void);
 int just_has_been_input_key();
 
 key_code_t input_key_loop(void);
-key_code_t input_key_wait_return(int wait_msec);
+key_code_t input_key_wait_return(void);
 
 void begin_check_break_key(void);
 void end_check_break_key(void);

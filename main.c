@@ -189,12 +189,12 @@ flf_d_printf("Exit %s ====================================\n", APP_NAME " " __DA
 int app_main_loop(void)
 {
 #ifdef ENABLE_FILER
-	char file_name[MAX_PATH_LEN+1];
+	char file_path[MAX_PATH_LEN+1];
 
 	// application was started as a FILER
 	while (1) {
 		if (count_edit_bufs() == 0) {
-			call_filer(0, 0, "", "", file_name, MAX_PATH_LEN);
+			call_filer(0, 0, "", "", file_path, MAX_PATH_LEN);
 			if (count_edit_bufs() == 0) {
 				// no file loaded in filer
 				break;

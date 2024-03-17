@@ -60,7 +60,7 @@ func_key_table_t editor_func_key_table[] = {
  { "Read into buffer",    "Read file into current pos",     K_M_i,        KNA, KNA,
    XL, F_I(doe_read_file_into_cur_pos), NULL },
 #ifdef ENABLE_FILER
- { "Filer",               "Open filer",                     K_M_f,        KNA, KNA,
+ { "Filer",               "Open filer",                     K_M_f, K_F11, KNA,
    XA, F_I(doe_call_filer), NULL },
 #endif // ENABLE_FILER
 
@@ -171,7 +171,7 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_switch_to_top_file), NULL },
  { "Bottom File",         "Open bottom file",               K_M_GREATERTHAN, KNA, KNA,
    XL, F_I(doe_switch_to_bot_file), NULL },
- { "File List",           "Display File List",              K_M_SEMICOLON, K_F11, KNA,
+ { "File List",           "Display File List",              K_M_SEMICOLON,   KNA, KNA,
    XL, F_I(doe_switch_to_file_list), NULL },
 #if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
  { "Previous buffers",    "Goto previous buffers",          K_M_LPARENTHESIS, KNA, KNA,

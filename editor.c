@@ -91,7 +91,7 @@ PRIVATE int editor_main_loop(void)
 			update_screen_editor(1, 1, 1);
 		}
 		//----------------------------------
-		key_input = input_key_wait_return(500);
+		key_input = input_key_wait_return();
 		//----------------------------------
 		if (key_input < 0) {
 			// no key input
@@ -175,28 +175,28 @@ int doe_open_file(void)
 }
 PRIVATE int open_file_recursive(int recursive)
 {
-	char file_name[MAX_PATH_LEN+1] = "";
+	char file_path[MAX_PATH_LEN+1] = "";
 	int ret;
 
 	clear_files_loaded();
 	while (1) {
 #ifdef ENABLE_FILER
-		ret = call_filer(1, 0, "", file_name, file_name, MAX_PATH_LEN);
+		ret = call_filer(1, 0, "", file_path, file_path, MAX_PATH_LEN);
 		if (ret > 0)
 			break;
 #endif // ENABLE_FILER
 
-		ret = input_string_tail("", file_name, HISTORY_TYPE_IDX_CURSPOS, _("Open existing file:"));
+		ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_CURSPOS, _("Open existing file:"));
 
 		if (ret <= 0) {
 			break;
 		}
 #ifdef ENABLE_FILER
-		if (is_path_wildcard(file_name))
+		if (is_path_wildcard(file_path))
 			continue;
 #endif // ENABLE_FILER
 		// CURDIR: changed in editor
-		if (load_file_name_upp_low(file_name, TUL0, OOE0, MOE1, recursive) <= 0) {
+		if (load_file_name_upp_low(file_path, TUL0, OOE0, MOE1, recursive) <= 0) {
 			tio_beep();
 		}
 		break;
@@ -562,8 +562,8 @@ int doe_run_line_soon(void)
 }
 int doe_call_filer(void)
 {
-	char file_name[MAX_PATH_LEN+1] = "";
-	call_filer(1, 0, "", "", file_name, MAX_PATH_LEN);
+	char file_path[MAX_PATH_LEN+1] = "";
+	call_filer(1, 0, "", "", file_path, MAX_PATH_LEN);
 	return 0;
 }
 #endif // ENABLE_FILER
@@ -573,7 +573,7 @@ int doe_call_filer(void)
 int doe_editor_splash(void)
 {
 	disp_splash(100);
-	input_key_wait_return(2000);
+	input_key_wait_return();
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	return 0;
 }

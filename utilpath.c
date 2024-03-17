@@ -35,6 +35,8 @@ char *strip_file_from_path(const char *path)
 	separate_dir_and_file(dir, file);
 	return dir;
 }
+
+// path-----------     path------  buf_name
 // /dir1/dir2/file ==> /dir1/dir2  file
 // /dir1/dir2      ==> /dir1       dir2
 // /file           ==> /           file
@@ -103,11 +105,11 @@ int get_file_type_by_file_path(const char *file_path)
 	if (is_path_exist(file_path) == 0) {
 		return 0;	// not exist
 	}
-	if (is_path_dir(file_path) > 0) {
-		return 1;	// directory
-	} else
 	if (is_path_regular_file(file_path) > 0) {
-		return 2;	// regular file
+		return 1;	// regular file
+	} else
+	if (is_path_dir(file_path) > 0) {
+		return 2;	// directory
 	}
 	return 3;		// not directory and regular file
 }
@@ -152,17 +154,6 @@ int is_st_writable(struct stat *st)
 }
 
 #ifdef ENABLE_FILER
-int is_dir_readable(const char *path)
-{
-	DIR *dir;
-
-	dir = opendir(path);
-	// If dir is NULL, don't call closedir()
-	if (dir)
-		closedir(dir);
-	return dir != NULL;
-}
-
 int is_path_wildcard(char *path)
 {
 #ifdef ENABLE_DEBUG
@@ -260,6 +251,54 @@ int change_cur_dir(const char *dir)
 	}
 	return ret;
 }
+
+// change direcotry independent from filer view
+//   cur_dir:    current directory before changing directory and after changing directory
+//   next_file:  file to be pointed after changing directory
+int change_dir__(const char *dir, char *cur_dir, char *prev_dir, char *next_file)
+{
+	char dir_to_go[MAX_PATH_LEN+1];
+
+	if (strcmp(dir, ".") == 0) {
+		return 0;	// OK
+	} else if (strcmp(dir, "..") == 0) {
+		strlcpy__(dir_to_go, cur_dir, MAX_PATH_LEN);
+		separate_dir_and_file(dir_to_go, next_file);
+	} else if (strcmp(dir, "~") == 0) {
+		strcpy__(next_file, "..");
+		get_abs_path("~", dir_to_go);
+	} else if (dir[0] == '/') {
+		// absolute path
+		strcpy__(next_file, "..");
+		strlcpy__(dir_to_go, dir, MAX_PATH_LEN);
+	} else {
+		// relative path
+		strcpy__(next_file, "..");
+		// /dir1 dir2 ==> /dir1/dir2
+		cat_dir_and_file(dir_to_go, MAX_PATH_LEN, cur_dir, dir);
+	}
+	normalize_full_path(dir_to_go);
+	if (is_dir_readable(dir_to_go) == 0) {
+		// We can't open this dir for some reason. Complain.
+		return 1;	// Error
+	}
+	strlcpy__(prev_dir, cur_dir, MAX_PATH_LEN);
+	change_cur_dir(dir_to_go);
+	strlcpy__(cur_dir, dir_to_go, MAX_PATH_LEN);
+	return 0;	// OK
+}
+
+int is_dir_readable(const char *path)
+{
+	DIR *dir;
+
+	dir = opendir(path);
+	// If dir is NULL, don't call closedir()
+	if (dir)
+		closedir(dir);
+	return dir != NULL;
+}
+
 //------------------------------------------------------------------------------
 
 // get real current directory(symbolic link is expanded to absolute path)

@@ -566,9 +566,9 @@ int dof_prev_directory(void)
 }
 int dof_real_path(void)
 {
-	char chdir[MAX_PATH_LEN+1];
+	char dir[MAX_PATH_LEN+1];
 
-	return filer_change_dir_if_not_yet(getcwd__(chdir));
+	return filer_change_dir_if_not_yet(getcwd__(dir));
 }
 //-----------------------------------------------------------------------------
 int dof_select_file(void)
@@ -687,7 +687,7 @@ int dof_display_color_pairs(void)
 int dof_filer_splash(void)
 {
 	disp_splash(100);
-	input_key_wait_return(2000);
+	input_key_wait_return();
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -805,74 +805,43 @@ PRIVATE int filer_change_prev_dir(void)
 // If can not change dir, try parent dir
 int filer_change_dir_parent(const char *dir)
 {
-	char chdir[MAX_PATH_LEN+1];
+	char dir_to_go[MAX_PATH_LEN+1];
 	char file[MAX_PATH_LEN+1];
 
-	strlcpy__(chdir, dir, MAX_PATH_LEN);
+	strlcpy__(dir_to_go, dir, MAX_PATH_LEN);
 	for ( ; ; ) {
-flf_d_printf("try to chdir[%s]\n", chdir);
-		if (strcmp(chdir, "/") == 0) {
+flf_d_printf("try to dir_to_go[%s]\n", dir_to_go);
+		if (strcmp(dir_to_go, "/") == 0) {
 			return -1;	// error
 		}
-		if (filer_change_dir(chdir) == 0) {
+		if (filer_change_dir(dir_to_go) == 0) {
 			break;
 		}
 		// If can not change dir, try parent dir
 		// /try/to/change/dir/file ==> /try/to/change/dir
-		separate_dir_and_file(chdir, file);
+		separate_dir_and_file(dir_to_go, file);
 	}
 	return 0;	// changed
 }
 
-PRIVATE int filer_change_dir__(const char *dir);
 int filer_change_dir(const char *dir)
 {
-	if (filer_change_dir__(dir)) {
-		return 1;
+	if (change_dir__(dir, get_cur_filer_view()->cur_dir,
+	 get_cur_filer_view()->prev_dir, get_cur_filer_view()->next_file)) {
+		// We can't open this dir for some reason. Complain.
+		disp_status_bar_err(_("Can not change current to [%s]: %s"),
+		 shrink_str_to_scr_static(dir), strerror(errno));
+		return 1;	// Error
 	}
 #ifdef ENABLE_HISTORY
 	// previous dir, next dir
 	update_dir_history(get_cur_filer_view()->prev_dir, get_cur_filer_view()->cur_dir);
 #endif // ENABLE_HISTORY
-	return 0;
-}
-PRIVATE int filer_change_dir__(const char *dir)
-{
-	char chdir[MAX_PATH_LEN+1];
-	char file[MAX_PATH_LEN+1];
-
-	if (strcmp(dir, ".") == 0) {
-		return 0;	// OK
-	} else if (strcmp(dir, "..") == 0) {
-		strlcpy__(chdir, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
-		separate_dir_and_file(chdir, get_cur_filer_view()->next_file);
-	} else if (strcmp(dir, "~") == 0) {
-		strcpy__(get_cur_filer_view()->next_file, "..");
-		get_abs_path("~", chdir);
-	} else if (dir[0] == '/') {
-		// absolute path
-		strcpy__(get_cur_filer_view()->next_file, "..");
-		strlcpy__(chdir, dir, MAX_PATH_LEN);
-	} else {
-		// relative path
-		strcpy__(get_cur_filer_view()->next_file, "..");
-		// /dir1 dir2 ==> /dir1/dir2
-		cat_dir_and_file(chdir, MAX_PATH_LEN, get_cur_filer_view()->cur_dir, dir);
-	}
-	normalize_full_path(chdir);
-	if (is_dir_readable(chdir) == 0) {
-		// We can't open this dir for some reason. Complain.
-		disp_status_bar_err(_("Can not change current chdir to [%s]: %s"),
-		 shrink_str_to_scr_static(chdir), strerror(errno));
-		return 1;	// Error
-	}
-	strlcpy__(get_cur_filer_view()->prev_dir, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
-	change_cur_dir(chdir);
-	strlcpy__(get_cur_filer_view()->cur_dir, chdir, MAX_PATH_LEN);
 	get_cur_filer_view()->top_idx = 0;
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
-	disp_status_bar_done(_("Changed current directory to [%s]"), chdir);
-	return 0;	// OK
+	disp_status_bar_done(_("Changed current directory to [%s]"),
+	 shrink_str_to_scr_static(get_cur_filer_view()->cur_dir));
+	return 0;
 }
 
 #endif // ENABLE_FILER

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 07:36+0900\n"
+"POT-Creation-Date: 2024-03-15 22:52+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,8 +73,8 @@ msgstr ""
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editor.c:656 ../editor.c:704 ../editor.c:717 ../fileio.c:367
-#: ../fileio.c:372 ../winin.c:97
+#: ../editor.c:656 ../editor.c:704 ../editor.c:717 ../fileio.c:368
+#: ../fileio.c:373 ../winin.c:97
 msgid "Cancelled"
 msgstr ""
 
@@ -199,23 +199,23 @@ msgstr ""
 msgid "Enter line number:"
 msgstr ""
 
-#: ../editorgoto.c:146
+#: ../editorgoto.c:150
 msgid "No previous open files"
 msgstr ""
 
-#: ../editorgoto.c:150
+#: ../editorgoto.c:154
 msgid "Previous file"
 msgstr ""
 
-#: ../editorgoto.c:158
+#: ../editorgoto.c:162
 msgid "No next open files"
 msgstr ""
 
-#: ../editorgoto.c:162
+#: ../editorgoto.c:166
 msgid "Next file"
 msgstr ""
 
-#: ../editorgoto.c:199
+#: ../editorgoto.c:203
 msgid "Returned to previous pos"
 msgstr ""
 
@@ -323,94 +323,94 @@ msgstr ""
 msgid "Can not read-open file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:365
+#: ../fileio.c:366
 msgid "File was modified by another program, OVERWRITE ?"
 msgstr ""
 
-#: ../fileio.c:377
+#: ../fileio.c:378
 #, c-format
 msgid "File [%s] can NOT be written !!"
 msgstr ""
 
-#: ../fileio.c:389
+#: ../fileio.c:390
 msgid "File Name to Write"
 msgstr ""
 
-#: ../fileio.c:407
+#: ../fileio.c:408
 msgid "File exists, OVERWRITE it ?"
 msgstr ""
 
-#: ../fileio.c:416
+#: ../fileio.c:417
 msgid "Path is not file, can not WRITE it"
 msgstr ""
 
-#: ../fileio.c:445
+#: ../fileio.c:446
 #, c-format
 msgid "File [%s] is NOT regular file !!"
 msgstr ""
 
-#: ../fileio.c:449
+#: ../fileio.c:450
 #, c-format
 msgid "Writing File %s ..."
 msgstr ""
 
-#: ../fileio.c:463
+#: ../fileio.c:464
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr ""
 
-#: ../fileio.c:472
+#: ../fileio.c:473
 #, c-format
 msgid "%d line written"
 msgstr ""
 
-#: ../fileio.c:473
+#: ../fileio.c:474
 #, c-format
 msgid "%d lines written"
 msgstr ""
 
-#: ../fileio.c:474
+#: ../fileio.c:475
 #, c-format
 msgid "%d liness written"
 msgstr ""
 
-#: ../fileio.c:475
+#: ../fileio.c:476
 #, c-format
 msgid "%d linesss written"
 msgstr ""
 
-#: ../fileio.c:564 ../fileio.c:589
+#: ../fileio.c:565 ../fileio.c:590
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr ""
 
 #. -1: error
-#: ../fileio.c:572 ../fileio.c:597
+#: ../fileio.c:573 ../fileio.c:598
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:619
+#: ../fileio.c:620
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:662
+#: ../fileio.c:663
 #, c-format
 msgid "%d file loaded"
 msgstr ""
 
-#: ../fileio.c:663
+#: ../fileio.c:664
 #, c-format
 msgid "%d files loaded"
 msgstr ""
 
-#: ../fileio.c:664
+#: ../fileio.c:665
 #, c-format
 msgid "%d filess loaded"
 msgstr ""
 
-#: ../fileio.c:665
+#: ../fileio.c:666
 #, c-format
 msgid "%d filesss loaded"
 msgstr ""
@@ -525,12 +525,12 @@ msgid "File selection cleared"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:867
+#: ../filercmd.c:865
 #, c-format
 msgid "Can not change current chdir to [%s]: %s"
 msgstr ""
 
-#: ../filercmd.c:876
+#: ../filercmd.c:874
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr ""
@@ -582,17 +582,17 @@ msgstr ""
 msgid "hist_type_idx out of range: %d"
 msgstr ""
 
-#: ../history.c:226
+#: ../history.c:233
 #, c-format
 msgid "Unable to create history file: %s, %s"
 msgstr ""
 
-#: ../history.c:243
+#: ../history.c:250
 #, c-format
 msgid "Unable to write history file: %s, %s"
 msgstr ""
 
-#: ../history.c:276
+#: ../history.c:283
 #, c-format
 msgid "Unable to open history file: %s, %s"
 msgstr ""

@@ -72,7 +72,6 @@ int is_path_dir(const char *path);
 int is_file_writable(const char *path);
 int is_st_writable(struct stat *st);
 #ifdef ENABLE_FILER
-int is_dir_readable(const char *path);
 int is_path_wildcard(char *path);
 #endif // ENABLE_FILER
 
@@ -81,6 +80,9 @@ const char *get_start_dir(void);
 int save_change_cur_dir(char *dir_save, const char *dir);
 char *get_cur_dir(char *dir);
 int change_cur_dir(const char *dir);
+int change_dir__(const char *dir, char *cur_dir, char *prev_dir, char *next_file);
+int is_dir_readable(const char *path);
+
 char *getcwd__(char *cwd);
 char *getenv_pwd(char *cwd);
 char *getenv__(char *env);

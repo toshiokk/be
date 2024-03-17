@@ -81,7 +81,7 @@ app_menu_n_again:;
 	while (1) {
 		again_ret = 0;
 		update_screen_app(1, 1, 0);
-		disp_drop_down_menu(group_idx, entry_idx, main_win_get_mid_win_y(), group_idx * 2);
+		disp_drop_down_menu(group_idx, entry_idx, main_win_get_top_win_y(), group_idx * 2);
 		tio_refresh();
 
 		tio_set_cursor_on(0);
@@ -435,7 +435,7 @@ int just_has_been_input_key()
 	return has_been_input_key;
 }
 
-PRIVATE key_code_t input_key_timeout(int wait_msec);
+PRIVATE key_code_t input_key_timeout(void);
 PRIVATE key_code_t input_key_macro(void);
 PRIVATE key_code_t input_key_check_break_key(void);
 PRIVATE key_code_t map_key_code(key_code_t key);
@@ -444,45 +444,43 @@ key_code_t input_key_loop(void)
 {
 	key_code_t key;
 
-	while ((key = input_key_wait_return(1000)) < 0) {
-		// loop
+	while ((key = input_key_wait_return()) < 0) {
 	}
 	return key;
 }
-key_code_t input_key_wait_return(int wait_msec)
+key_code_t input_key_wait_return(void)
 {
 	static key_code_t prev_key = KEY_NONE;
-	key_code_t key = input_key_timeout(wait_msec);
+	key_code_t key = input_key_timeout();
 	if (key < 0 && prev_key >= 0) {
-		///PPPtio_repaint_all();
+		tio_repaint_all();
 	}
 	prev_key = key;
 	has_been_input_key = (key >= 0);
 	return key;
 }
 
-// clock display update interval	0.5 second
-// recording key macro blinking		0.5 second
-// splash screen display duration	2 seconds
-PRIVATE key_code_t input_key_timeout(int wait_msec)
+PRIVATE key_code_t input_key_timeout(void)
 {
-#define KEY_WAIT_TIME_MSEC		500		// return every 500[mSec]
-	if (wait_msec < 100) {
-		wait_msec = KEY_WAIT_TIME_MSEC;
-	}
 	key_code_t key;
-	long msec_enter = get_msec();
+	key_code_t key_resized = KEY_NONE;
+////#define KEY_WAIT_TIME_USEC		1000000		// return every 1[Sec]
+#define KEY_WAIT_TIME_USEC		500000		// return every 500[mSec]
+	long usec_enter = get_usec();
 	while ((key = input_key_macro()) < 0) {
 		if (tio_check_update_terminal_size()) {
 			win_reinit_win_size();
 #ifdef ENABLE_HELP
 			disp_splash(-1);
-			msec_enter = get_msec();
+			usec_enter = get_usec();
 #endif // ENABLE_HELP
 		}
-		if (get_msec() - msec_enter >= wait_msec)
+		if (get_usec() - usec_enter >= KEY_WAIT_TIME_USEC)
 			break;
 		MSLEEP(10);		// wait 10[mS]
+	}
+	if (key < 0) {
+		key = key_resized;
 	}
 	return key;
 }

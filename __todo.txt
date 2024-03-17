@@ -4,7 +4,7 @@
 
 [v ] code clean up for filer view mode
 
-[v] Avoid inputting garbage on Alt-Fxx key. ==> register all xterm keys
+[v] Avoid inputting garbage on Atl-Fxx key. ==> register all xterm keys
 [-] Auto indent by Alt-Enter
 
 [v] recognize Alt-UP, Alt-Down, Alt-Right, Alt-Left keys

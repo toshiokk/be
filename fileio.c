@@ -299,11 +299,6 @@ PRIVATE int load_into_cur_buf_fp(FILE *fp)
 		prev_chr = chr_int;
 		if (chr_int == EOF)
 			break;
-		if (check_break_key()) {
-flf_d_printf("sigint_signaled\n");
-			lines_read = -1;
-			break;
-		}
 	}
 	switch (file_format_idx) {
 	default:
@@ -316,6 +311,9 @@ flf_d_printf("sigint_signaled\n");
 	case 2:
 		set_eol(EOL_DOS);
 		break;
+	}
+	if (check_break_key()) {
+		lines_read = -1;
 	}
 	return lines_read;
 }
@@ -334,6 +332,9 @@ PRIVATE int fgetc_buffered(FILE *fp)
 	int chr;
 
 	if (fgetc_buffered_byte_idx >= fgetc_buffered_read_len) {
+		if (check_break_key()) {
+			return EOF;
+		}
 		if ((fgetc_buffered_read_len = fread(fgetc_buffered_buf, 1, MAX_EDIT_LINE_LEN, fp)) <= 0)
 			return EOF;
 		fgetc_buffered_byte_idx = 0;
@@ -439,7 +440,7 @@ int backup_and_save_cur_buf(const char *file_path)
 
 ///flf_d_printf("[%s]\n", file_path);
 	get_abs_path(file_path, abs_path);
-	// TODO: do minimum check
+	// TODO: do minimum check PPP
 	//  file_path is regular file and not dir and special file
 	if (is_path_regular_file(file_path) == 0) {
 		disp_status_bar_err(_("File [%s] is NOT regular file !!"),

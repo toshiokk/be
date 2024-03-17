@@ -181,7 +181,7 @@ PRIVATE int filer_main_loop(const char *directory, const char *filter,
 	int file_idx;
 
 #ifdef ENABLE_HISTORY
-	get_cur_dir(prev_cur_dir);		// memorize current dir
+	get_cur_dir(prev_cur_dir);		// memorize prev. current dir
 #endif // ENABLE_HISTORY
 	if (is_strlen_not_0(directory)) {
 		strlcpy__(get_cur_filer_view()->cur_dir, directory, MAX_PATH_LEN);
@@ -205,7 +205,7 @@ PRIVATE int filer_main_loop(const char *directory, const char *filter,
 		}
 		update_screen_filer(1, 1, 1);
 		//----------------------------------
-		key_input = input_key_wait_return(500);
+		key_input = input_key_wait_return();
 		//----------------------------------
 		if (key_input >= 0) {
 			// some key input
