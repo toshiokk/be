@@ -1,0 +1,10 @@
+history.c 231 save_history_idx hist_type_idx:2[/home/user/.be/dir_history]
+filer.c 149 call_filer push_win:1, list_mode:0
+filer.c 150 call_filer <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+07:59:00.801 filer.c 212 filer_main_loop input_key:0x0102(DOWN)=======================
+07:59:01.111 filer.c 212 filer_main_loop input_key:0x0102(DOWN)=======================
+07:59:01.297 filer.c 212 filer_main_loop input_key:0x0102(DOWN)=======================
+07:59:01.517 filer.c 212 filer_main_loop input_key:0x001b(ESC)=======================
+filer.c 299 filer_main_loop filer_do_next: 6
+sig.c 129 handler_sigsegv Received SIGSEGV
+sig.c 141 handler_sigsegv 
