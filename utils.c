@@ -342,7 +342,8 @@ const char *cur_hhcmmcss_mmm(void)
 	gettimeofday(&tv, &tz);
 	cur_time = tv.tv_sec;
 	strlcpy__(hhcmmcss, &(ctime(&cur_time)[11]), HHCMMCSS_LEN);
-	snprintf_(buf_time, HHCMMCSS_MMM_LEN+1, "%s.%03d", hhcmmcss, (int)(tv.tv_usec / 1000 % 1000));
+	snprintf_(buf_time, HHCMMCSS_MMM_LEN+1, "%s.%03d",
+	 hhcmmcss, (int)(tv.tv_usec / 1000 % 1000));
 	return buf_time;
 }
 const char *cur_hhcmmcss_uuuuuu(void)
@@ -473,7 +474,7 @@ char *nn_from_num(int num, char *buf)
 
 static struct uid_name {
 	uid_t uid;
-	char username[USR_NAME_LEN+1];
+	char user_name[USR_NAME_LEN+1];
 	char homedir[MAX_PATH_LEN+1];
 } uid_name_cache[MAX_USERS];
 static int num_users = -1;
@@ -483,7 +484,6 @@ static struct gid_name {
 	char grpname[GRP_NAME_LEN+1];
 } gid_name_cache[MAX_GROUPS];
 static int num_groups = -1;
-
 const char *get_user_name(uid_t uid)
 {
 #define USER_ID_LEN		8
@@ -495,21 +495,21 @@ const char *get_user_name(uid_t uid)
 	}
 	for (idx = 0; idx < num_users; idx++) {
 		if (uid == uid_name_cache[idx].uid)
-			return uid_name_cache[idx].username;
+			return uid_name_cache[idx].user_name;
 	}
 	snprintf_(user_id, USER_ID_LEN+1, "%d", uid);
 	return user_id;
 }
-const char *get_user_home_dir(const char *username)
+const char *get_user_home_dir(const char *user_name)
 {
 	int idx;
 
 	for (idx = 0; idx < num_users; idx++) {
-		if (strlcmp__(username, uid_name_cache[idx].username) == 0) {
+		if (strlcmp__(user_name, uid_name_cache[idx].user_name) == 0) {
 			return uid_name_cache[idx].homedir;
 		}
 	}
-	return username;
+	return user_name;
 }
 const char *get_group_name(gid_t gid)
 {
@@ -536,12 +536,12 @@ int cache_users(void)
 		if ((pwent = getpwent()) == NULL)
 			break;
 		uid_name_cache[num_users].uid = pwent->pw_uid;
-		strlcpy__(uid_name_cache[num_users].username, pwent->pw_name, USR_NAME_LEN);
+		strlcpy__(uid_name_cache[num_users].user_name, pwent->pw_name, USR_NAME_LEN);
 		strlcpy__(uid_name_cache[num_users].homedir, pwent->pw_dir, MAX_PATH_LEN);
 ///flf_d_printf("%2d:%4d:[%s]:[%s]\n",
 /// num_users,
 /// uid_name_cache[num_users].uid,
-/// uid_name_cache[num_users].username,
+/// uid_name_cache[num_users].user_name,
 /// uid_name_cache[num_users].homedir);
 	}
 	endpwent();
@@ -561,6 +561,25 @@ int cache_groups(void)
 	}
 	endgrent();
 	return num_groups;
+}
+
+const char *get_host_name()
+{
+#define HOST_NAME_LEN		20
+	static char hostname[HOST_NAME_LEN+1];
+
+	gethostname(hostname, HOST_NAME_LEN);
+	return hostname;
+}
+
+const char *get_my_user_name_at_host_name()
+{
+#define USER_AT_HOST_NAME_LEN		(USER_ID_LEN + 1 + HOST_NAME_LEN)
+	static char buf_user_at_host[USER_AT_HOST_NAME_LEN+1];
+	snprintf_(buf_user_at_host, USER_AT_HOST_NAME_LEN+1, "@%s", get_host_name());
+	////snprintf_(buf_user_at_host, USER_AT_HOST_NAME_LEN+1, "%s@%s",
+	//// get_user_name(geteuid()), get_host_name());
+	return buf_user_at_host;
 }
 
 // End of utils.c

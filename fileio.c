@@ -21,6 +21,10 @@
 
 #include "headers.h"
 
+#ifdef USE_NKF
+PRIVATE int nkf_avalability = -1;	// -1: Unkown, 0: unavailable, 1: available
+#endif // USE_NKF
+
 PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int msg_on_err);
 PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file, int msg_on_err);
 
@@ -70,7 +74,8 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 		// New file
 		if (open_on_err == 0) {
 			if (msg_on_err) {
-				disp_status_bar_err(_("File [%s] not found"), shrink_str_to_scr_static(full_path));
+				disp_status_bar_err(_("File [%s] not found"),
+				 shrink_str_to_scr_static(full_path));
 			}
 			return -1;	// open error
 		}
@@ -135,7 +140,7 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file
 		default:
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
-			nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
+			////nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
 			break;
 		case ENCODE_EUCJP:
 			nkf_options = "-Ewx";	// input EUCJP, output UTF8, preserve HankakuKana
@@ -197,8 +202,13 @@ PRIVATE int guess_encoding_by_nkf(const char *full_path)
 		 shrink_str_to_scr_static(full_path), strerror(errno));
 		return -1;
 	}
-	if (fgets(buffer, MAX_PATH_LEN, fp) == NULL)
+	if (fgets(buffer, MAX_PATH_LEN, fp) == NULL) {
+		// have read nothing, clear buffer
 		buffer[0] = '\0';
+		nkf_avalability = 0;	// set unavaileble (0)
+	} else {
+		nkf_avalability = 1;	// set availeble (1)
+	}
 	if (pclose(fp) == -1) {
 		return -1;
 	}
@@ -216,7 +226,8 @@ PRIVATE int guess_encoding_by_nkf(const char *full_path)
 	} else if (strlcmp__(buffer, "BINARY") == 0) {
 		CUR_EBUF_STATE(buf_ENCODE) = ENCODE_BINARY;
 	} else {
-		CUR_EBUF_STATE(buf_ENCODE) = ENCODE_BINARY;
+		// maybe, no nkf is available
+		CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
 	}
 	return 0;
 }
@@ -335,8 +346,9 @@ PRIVATE int fgetc_buffered(FILE *fp)
 		if (check_break_key()) {
 			return EOF;
 		}
-		if ((fgetc_buffered_read_len = fread(fgetc_buffered_buf, 1, MAX_EDIT_LINE_LEN, fp)) <= 0)
+		if ((fgetc_buffered_read_len = fread(fgetc_buffered_buf, 1, MAX_EDIT_LINE_LEN, fp)) <= 0) {
 			return EOF;
+		}
 		fgetc_buffered_byte_idx = 0;
 	}
 	chr = (unsigned char)fgetc_buffered_buf[fgetc_buffered_byte_idx++];
@@ -440,7 +452,7 @@ int backup_and_save_cur_buf(const char *file_path)
 
 ///flf_d_printf("[%s]\n", file_path);
 	get_abs_path(file_path, abs_path);
-	// TODO: do minimum check PPP
+	// TODO: do minimum check
 	//  file_path is regular file and not dir and special file
 	if (is_path_regular_file(file_path) == 0) {
 		disp_status_bar_err(_("File [%s] is NOT regular file !!"),
@@ -525,7 +537,7 @@ int save_cur_buf_to_file(const char *file_path)
 		default:
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
-			nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
+			////nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
 			break;
 		case ENCODE_EUCJP:
 			nkf_options = "-Wex";	// input UTF8, output EUCJP, preserve HankakuKana
@@ -549,7 +561,10 @@ int save_cur_buf_to_file(const char *file_path)
 		case ENCODE_SJIS:
 		case ENCODE_JIS:
 		case ENCODE_BINARY:
-			return save_cur_buf_to_file_nkf(file_path, nkf_options);
+			if (nkf_avalability > 0) {
+				return save_cur_buf_to_file_nkf(file_path, nkf_options);
+			}
+			break;
 		}
 	}
 #endif // USE_NKF

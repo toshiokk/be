@@ -26,12 +26,19 @@ PRIVATE int editor_main_loop(void);
 
 int call_editor(int push_win, int list_mode)
 {
+#ifdef ENABLE_FILER
+	filer_panes_t *prev_fps = NULL;
+	filer_panes_t next_filer_panes;
+#endif // ENABLE_FILER
 	app_mode_t appmode_save;
 	int ret;
 
 	if (push_win) {
 		win_push_win_size();
 	}
+#ifdef ENABLE_FILER
+	prev_fps = inherit_filer_panes(&next_filer_panes);
+#endif // ENABLE_FILER
 
 	memcpy(&appmode_save, &app_mode__, sizeof(app_mode__));
 	CLR_APPMD(app_EDITOR_FILER);
@@ -54,6 +61,9 @@ flf_d_printf("ret: %d\n", ret);
 	SET_APPMD_VAL(ed_EDITOR_PANES, GET_APPMD_PTR(&appmode_save, ed_EDITOR_PANES));
 	set_app_func_key_table();
 
+#ifdef ENABLE_FILER
+	free_filer_panes(&next_filer_panes, prev_fps);
+#endif // ENABLE_FILER
 	if (push_win) {
 		win_pop_win_size();
 	}
@@ -88,7 +98,7 @@ PRIVATE int editor_main_loop(void)
 			// When playing back key-macro, do not update screen for speed up.
 		} else {
 			set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
-			update_screen_editor(1, 1, 1);
+			update_screen_editor(1, key_input >= 0, 1);
 		}
 		//----------------------------------
 		key_input = input_key_wait_return();
@@ -175,7 +185,7 @@ int doe_open_file(void)
 }
 PRIVATE int open_file_recursive(int recursive)
 {
-	char file_path[MAX_PATH_LEN+1] = "";
+	char file_path[MAX_PATH_LEN+1];
 	int ret;
 
 	clear_files_loaded();
@@ -385,7 +395,7 @@ flf_d_printf("[%s]\n", file_path);
 flf_d_printf("[%s]\n", file_path);
 		break;
 	}
-	separate_dir_and_file(file_path, file_name);
+	separate_path_to_dir_and_file(file_path, file_path, file_name);
 #ifdef ENABLE_FILER
 	// copy new file name to filer next_file
 	strlcpy__(get_cur_filer_view()->next_file, file_name, MAX_PATH_LEN);
@@ -562,7 +572,7 @@ int doe_run_line_soon(void)
 }
 int doe_call_filer(void)
 {
-	char file_path[MAX_PATH_LEN+1] = "";
+	char file_path[MAX_PATH_LEN+1];
 	call_filer(1, 0, "", "", file_path, MAX_PATH_LEN);
 	return 0;
 }
@@ -573,7 +583,7 @@ int doe_call_filer(void)
 int doe_editor_splash(void)
 {
 	disp_splash(100);
-	input_key_wait_return();
+	input_key_loop();
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	return 0;
 }

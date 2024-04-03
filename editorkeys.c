@@ -60,7 +60,7 @@ func_key_table_t editor_func_key_table[] = {
  { "Read into buffer",    "Read file into current pos",     K_M_i,        KNA, KNA,
    XL, F_I(doe_read_file_into_cur_pos), NULL },
 #ifdef ENABLE_FILER
- { "Filer",               "Open filer",                     K_M_f, K_F11, KNA,
+ { "Filer",               "Open filer",                     K_M_f,        KNA, KNA,
    XA, F_I(doe_call_filer), NULL },
 #endif // ENABLE_FILER
 
@@ -96,7 +96,7 @@ func_key_table_t editor_func_key_table[] = {
    XA, F_I(doe_goto_file_or_dir_in_cur_line), NULL },
  { "TagJump",             "Tagged jump",                    K_M_j,        KNA, KNA,
    XA, F_I(doe_goto_file_in_cur_line), NULL },
- { "TagJump to directory","Tagged jump to directory",       K_M_J,        KNA, KNA,
+ { "TagJump to directory","Tagged jump to directory",       K_F11, K_M_J,      KNA,
    XA, F_I(doe_goto_directory_in_cur_line), NULL },
 
  { "",                    "Edit Menu",                      KNA,          KNA, KNA,

@@ -460,22 +460,29 @@ key_code_t input_key_wait_return(void)
 	return key;
 }
 
+// Display update durations:
+// | type                              | duration [mSec] |
+// |-----------------------------------|-----------------|
+// | current time update in title bar  | 1000            |
+// | splash screen when screen resized | 2000            |
+// | splash screen by key              | infinite        |
+//
 PRIVATE key_code_t input_key_timeout(void)
 {
 	key_code_t key;
 	key_code_t key_resized = KEY_NONE;
-////#define KEY_WAIT_TIME_USEC		1000000		// return every 1[Sec]
-#define KEY_WAIT_TIME_USEC		500000		// return every 500[mSec]
-	long usec_enter = get_usec();
+#define KEY_WAIT_TIME_MSEC		1000		// return every 1[Sec]
+	long msec_enter = get_msec();
 	while ((key = input_key_macro()) < 0) {
 		if (tio_check_update_terminal_size()) {
 			win_reinit_win_size();
 #ifdef ENABLE_HELP
 			disp_splash(-1);
-			usec_enter = get_usec();
+#define SPLASH_DURATION_MSEC	(2000 - KEY_WAIT_TIME_MSEC)
+			msec_enter = get_msec() + SPLASH_DURATION_MSEC;
 #endif // ENABLE_HELP
 		}
-		if (get_usec() - usec_enter >= KEY_WAIT_TIME_USEC)
+		if ((long)(get_msec() - msec_enter) >= KEY_WAIT_TIME_MSEC)
 			break;
 		MSLEEP(10);		// wait 10[mS]
 	}

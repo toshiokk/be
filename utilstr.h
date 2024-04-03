@@ -47,7 +47,7 @@ char *insert_str(char *buffer, size_t buf_len, size_t offset,
  const char *string, len_t insert_len);
 char *concat_file_name_separating_by_space(char *buffer, size_t buf_len,
  const char *string);
-const char *quote_file_name(const char *string);
+const char *quote_file_name_static(const char *string);
 const char *quote_file_name_buf(char *buf, const char *string);
 const char *quote_file_name_if_necessary(char *buf, const char *string);
 
@@ -90,16 +90,14 @@ const char *skip_chars(const char *ptr, const char *chars);
 const char *skip_to_file_path(const char *ptr);
 const char *skip_file_path(const char *ptr);
 char *skip_file_name(char *ptr);
-#if 0
-const char *skip_separator(const char *ptr);
-#endif
+/////const char *skip_separator(const char *ptr);
 const char *skip_to_digit(const char *ptr);
 const char *skip_digits(const char *ptr);
 
 char *remove_line_tail_lf(char *line);
 int is_file_path_char(const char *ptr);
 int is_file_name_char(const char *ptr);
-int is_separator(char chr);
+/////int is_separator(char chr);
 int contain_chr(const char *string, char chr);
 char *quote_string(char *buf, const char *string, char quote_chr);
 char *escape_quote_chr(char *buffer, const char *string, char quote_chr);

@@ -65,10 +65,12 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 	int byte_idx;
 	int ret;
 
-	if (recursively_called) {
+_FLF_
+	if (recursively_called >= 3) {
+_FLF_
 		return -1;				// -1: recursive called
 	}
-	recursively_called = 1;
+_FLF_
 
 	vsnprintf(msg_buf, MAX_SCRN_LINE_BUF_LEN+1, msg, ap);
 	byte_idx = byte_idx_from_col_idx(msg_buf, main_win_get_columns(), CHAR_LEFT, NULL);
@@ -77,21 +79,22 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 	set_work_space_color_low();
 	update_screen_app(1, 1, 1);
 	set_work_space_color_normal();
-	get_cur_dir(dir_save);
 
+	get_cur_dir(dir_save);
 	tio_set_cursor_on(1);
 	//---------------------------------------------------------------------------------
+	recursively_called++;
 	ret = input_str_pos__(default__, input_buf, cursor_byte_idx, hist_type_idx, msg_buf);
+	recursively_called--;
 	//---------------------------------------------------------------------------------
 flf_d_printf("ret: %d\n", ret);
 	// -1: cancelled
 	//  0: quited
 	//  1: string is normally input
 	tio_set_cursor_on(0);
-
 	change_cur_dir(dir_save);
+
 	update_screen_app(1, 1, 1);
-	recursively_called = 0;
 
 	if (ret < 0) {
 		disp_status_bar_done(_("Cancelled"));
@@ -208,7 +211,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		if (cmp_func_id(func_id, "doe_cut_text")) {
 			// cut line
 			strlcpy__(cut_buf, input_buf, MAX_PATH_LEN);
-			strcpy(input_buf, "");
+			strcpy__(input_buf, "");
 			cursor_byte_idx = 0;
 		} else
 		if (cmp_func_id(func_id, "doe_cut_to_tail")) {
@@ -310,20 +313,8 @@ flf_d_printf("ret: %d\n", ret);
 #Prompt message#######################################################
 #input-string                                                        #
 ###UP:history##DOWN:browser###########################################
-
--Prompt message-------------------------------------------------------
--input-string                                                        -
-----------------------------------------------------------------------
-
--Prompt message-------------------------------------------------------
-|input-string                                                        |
-----------------------------------------------------------------------
-
 +Prompt message------------------------------------------------------+
 |input-string                                                        |
-+--------------------------------------------------------------------+
-+Prompt message------------------------------------------------------+
-+input-string                                                        +
 +--------------------------------------------------------------------+
 */
 PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_byte_idx)

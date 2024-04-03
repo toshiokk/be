@@ -188,9 +188,6 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 		break;
 	}
 
-///flf_d_printf("<%s %s %s %-8s %-8s>\n", buf_size, buf_time, buf_mode,
-/// get_user_name(show_link ? lst_ptr->st_uid : st_ptr->st_uid),
-/// get_group_name(show_link ? lst_ptr->st_gid : st_ptr->st_gid));
 	switch (GET_APPMD(fl_SHOW_FILE_INFO)) {
 	default:
 	case SHOW_FILE_INFO_0:
@@ -373,10 +370,10 @@ make_file_list_ret:;
 // Free malloc()ed memory
 void free_file_list(filer_view_t *fv)
 {
-	int file_idx;
+	/////int file_idx;
 
 	if (fv->file_list) {
-		for (file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
+		for (int file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
 			if (fv->file_list[file_idx].file_name) {
 				FREE_CLR_PTR(fv->file_list[file_idx].file_name);
 			}
@@ -422,20 +419,20 @@ PRIVATE int comp_file_info(const void *aa, const void *bb)
 	default:
 	case FILE_SORT_BY_NAME:
 		 return comp_file_name(aa, bb);
-	case FILE_SORT_BY_NAME_REV:
-		 return - comp_file_name(aa, bb);
+	////case FILE_SORT_BY_NAME_REV:
+	////	 return - comp_file_name(aa, bb);
 	case FILE_SORT_BY_EXT:
 		 return comp_file_extension(aa, bb);
-	case FILE_SORT_BY_EXT_REV:
-		 return - comp_file_extension(aa, bb);
+	////case FILE_SORT_BY_EXT_REV:
+	////	 return - comp_file_extension(aa, bb);
 	case FILE_SORT_BY_TIME:
 		 return comp_file_time(aa, bb);
-	case FILE_SORT_BY_TIME_REV:
-		 return - comp_file_time(aa, bb);
+	////case FILE_SORT_BY_TIME_REV:
+	////	 return - comp_file_time(aa, bb);
 	case FILE_SORT_BY_SIZE:
 		 return comp_file_size(aa, bb);
-	case FILE_SORT_BY_SIZE_REV:
-		 return - comp_file_size(aa, bb);
+	////case FILE_SORT_BY_SIZE_REV:
+	////	 return - comp_file_size(aa, bb);
 	}
 }
 // sort directories before files,
@@ -599,9 +596,9 @@ int get_next_file_idx_selected(int start_file_idx)
 }
 void unselect_all_files_auto(char selection_bit)
 {
-	int file_idx;
+	/////int file_idx;
 
-	for (file_idx = 0 ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
+	for (int file_idx = 0 ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
 		get_cur_filer_view()->file_list[file_idx].selected
 		 = get_cur_filer_view()->file_list[file_idx].selected & ~selection_bit;
 	}
@@ -610,25 +607,23 @@ void unselect_all_files_auto(char selection_bit)
 //-----------------------------------------------------------------------------
 int research_file_name_in_file_list(filer_view_t *fv)
 {
-	int cur_sel_idx;
-
 ///flf_d_printf("[%s]\n", fv->next_file);
-	cur_sel_idx = search_file_name_in_file_list(fv, fv->next_file);
-///flf_d_printf("%d\n", cur_sel_idx);
-	if (cur_sel_idx < 0) {
+	int file_idx = search_file_name_in_file_list(fv, fv->next_file);
+///flf_d_printf("%d\n", file_idx);
+	if (file_idx < 0) {
 		if (fv->cur_sel_idx >= 0)
-			cur_sel_idx = fv->cur_sel_idx;
+			file_idx = fv->cur_sel_idx;
 		else
-			cur_sel_idx = 0;
+			file_idx = 0;
 	}
-	cur_sel_idx = MIN_MAX_(0, cur_sel_idx, fv->file_list_entries-1);
-	fv->cur_sel_idx = cur_sel_idx;
+	file_idx = MIN_MAX_(0, file_idx, fv->file_list_entries-1);
+	fv->cur_sel_idx = file_idx;
 	return 0;
 }
 
 int search_file_name_in_file_list(filer_view_t *fv, const char *file_name)
 {
-	int file_idx;
+	/////int file_idx;
 	int file_name_len;
 	// 0,1: regular <-> non-regular file, 2,3: all file
 	// 0,2: case sensitive, 1,3: case ignorant
@@ -639,7 +634,7 @@ int search_file_name_in_file_list(filer_view_t *fv, const char *file_name)
 	int cmp_type;
 
 	// exact match
-	for (file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
+	for (int file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
 		if (strcmp(fv->file_list[file_idx].file_name, file_name) == 0) {
 			return file_idx;
 		}
@@ -647,7 +642,7 @@ int search_file_name_in_file_list(filer_view_t *fv, const char *file_name)
 	// partial match in regular file
 	for (cmp_type = 0; cmp_type < 4; cmp_type++) {
 		for (file_name_len = strlen(file_name); file_name_len; file_name_len--) {
-			for (file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
+			for (int file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
 				if (cmp_type < 2) {		// cmp_type = 0, 1
 					if ((S_ISREG(get_cur_filer_view()
 					   ->file_list[get_cur_filer_view()->cur_sel_idx].st.st_mode)

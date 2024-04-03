@@ -92,14 +92,19 @@ typedef struct /*app_mode*/ {
 	// filer settings
 	unsigned char fl_SHOW_DOT_FILE:1;		// bit 27
 #define FILE_SORT_BY_NAME		0
-#define FILE_SORT_BY_NAME_REV	1
-#define FILE_SORT_BY_EXT		2
-#define FILE_SORT_BY_EXT_REV	3
-#define FILE_SORT_BY_TIME		4
-#define FILE_SORT_BY_TIME_REV	5
-#define FILE_SORT_BY_SIZE		6
-#define FILE_SORT_BY_SIZE_REV	7
-#define FILE_SORT_BY_MAX		FILE_SORT_BY_SIZE_REV
+#define FILE_SORT_BY_EXT		1
+#define FILE_SORT_BY_TIME		2
+#define FILE_SORT_BY_SIZE		3
+#define FILE_SORT_BY_MAX		FILE_SORT_BY_SIZE
+////#define FILE_SORT_BY_NAME		0
+////#define FILE_SORT_BY_NAME_REV	1
+////#define FILE_SORT_BY_EXT		2
+////#define FILE_SORT_BY_EXT_REV	3
+////#define FILE_SORT_BY_TIME		4
+////#define FILE_SORT_BY_TIME_REV	5
+////#define FILE_SORT_BY_SIZE		6
+////#define FILE_SORT_BY_SIZE_REV	7
+////#define FILE_SORT_BY_MAX		FILE_SORT_BY_SIZE_REV
 	unsigned char fl_FILE_SORT_BY:3;		// bit 28-30
 #define SHOW_FILE_INFO_0				0	// None
 #define SHOW_FILE_INFO_1				1	// Size

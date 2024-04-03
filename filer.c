@@ -29,11 +29,10 @@ PRIVATE char filer_cur_path[MAX_PATH_LEN+1];	// /directory/filter.*
 filer_do_next_t filer_do_next = FILER_DO_NOTHING;
 
 PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir);
-PRIVATE filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps);
+PRIVATE filer_view_t *get_filer_view(int pane_idx);
 PRIVATE int get_other_filer_pane_idx(int filer_pane_idx);
 
-PRIVATE int filer_main_loop(const char *directory, const char *filter,
- char *file_path, int buf_len);
+PRIVATE int filer_main_loop(const char *dir, const char *filter, char *path_buf, int buf_len);
 PRIVATE int check_filer_cur_dir(void);
 PRIVATE int update_all_file_list(const char *filter, int force_update);
 PRIVATE int update_file_list(filer_view_t *fv, const char *filter, int force_update);
@@ -54,7 +53,7 @@ void init_filer_panes(filer_panes_t *fps, const char *cur_dir)
 		init_filer_view(&cur_filer_panes->filer_views[filer_pane_idx], cur_dir);
 	}
 }
-PRIVATE filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps)
+filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps)
 {
 	int cur_pane_idx = get_filer_cur_pane_idx();
 	filer_panes_t *prev_fps = cur_filer_panes;	// previous filer panes
@@ -103,7 +102,7 @@ PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir)
 	strcpy__(fv->prev_dir, "");
 	strcpy__(fv->next_file, "");
 }
-filer_view_t *get_filer_view(int pane_idx)
+PRIVATE filer_view_t *get_filer_view(int pane_idx)
 {
 	if (pane_idx < 0) {
 		return get_cur_filer_view();
@@ -127,8 +126,11 @@ PRIVATE int get_other_filer_pane_idx(int filer_pane_idx)
 //-----------------------------------------------------------------------------
 
 int call_filer(int push_win, int list_mode,
- const char *dir, const char *filter, char *file_path, int buf_len)
+ const char *dir, const char *filter, char *path_buf, int buf_len)
 {
+	strcpy(path_buf, "");
+flf_d_printf("push: %d, list: %d, dir: %s, filter: [%s], path: [%s], len: %d\n",
+ push_win, list_mode, dir, filter, path_buf, buf_len);
 	filer_panes_t *prev_fps = NULL;
 	filer_panes_t next_filer_panes;
 	app_mode_t appmode_save;
@@ -148,7 +150,7 @@ int call_filer(int push_win, int list_mode,
 
 flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
 flf_d_printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
-	ret = filer_main_loop(dir, filter, file_path, buf_len);
+	ret = filer_main_loop(dir, filter, path_buf, buf_len);
 flf_d_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 flf_d_printf("ret: %d\n", ret);
 	filer_do_next = FILER_DO_NOTHING;	// for caller of call_filer(), clear "editor_quit"
@@ -170,28 +172,28 @@ flf_d_printf("ret: %d\n", ret);
 
 //-----------------------------------------------------------------------------
 
-PRIVATE int filer_main_loop(const char *directory, const char *filter,
- char *file_path, int buf_len)
+PRIVATE int filer_main_loop(const char *dir, const char *filter, char *path_buf, int buf_len)
 {
+flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path_buf, buf_len);
 #ifdef ENABLE_HISTORY
 	char prev_cur_dir[MAX_PATH_LEN+1];
 #endif // ENABLE_HISTORY
 	key_code_t key_input;
 	func_key_table_t *func_key_table;
-	int file_idx;
+	/////int file_idx;
 
 #ifdef ENABLE_HISTORY
 	get_cur_dir(prev_cur_dir);		// memorize prev. current dir
 #endif // ENABLE_HISTORY
-	if (is_strlen_not_0(directory)) {
-		strlcpy__(get_cur_filer_view()->cur_dir, directory, MAX_PATH_LEN);
+	if (is_strlen_not_0(dir)) {
+		strlcpy__(get_cur_filer_view()->cur_dir, dir, MAX_PATH_LEN);
 	}
 
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 
 	while (1) {
 		check_filer_cur_dir();
-		cat_dir_and_file(filer_cur_path, MAX_PATH_LEN, get_cur_filer_view()->cur_dir, filter);
+		cat_dir_and_file(filer_cur_path, get_cur_filer_view()->cur_dir, filter);
 #ifdef ENABLE_HISTORY
 		if (strcmp(prev_cur_dir, get_cur_filer_view()->cur_dir) != 0) {
 			update_history(HISTORY_TYPE_IDX_DIR, get_cur_filer_view()->cur_dir, 0);
@@ -203,7 +205,7 @@ PRIVATE int filer_main_loop(const char *directory, const char *filter,
 			 ? 2
 			 : (filer_do_next == FILER_DO_UPDATE_FILE_LIST_AUTO ? 1 : 0));
 		}
-		update_screen_filer(1, 1, 1);
+		update_screen_filer(1, key_input >= 0, 1);
 		//----------------------------------
 		key_input = input_key_wait_return();
 		//----------------------------------
@@ -297,36 +299,38 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 	}
 
 flf_d_printf("filer_do_next: %d\n", filer_do_next);
-	strcpy__(file_path, "");
+	strcpy__(path_buf, "");
 	if (filer_do_next == FILER_DO_ABORT) {
 		return -1;		// abort
 	}
 	if (filer_do_next == FILER_DO_QUIT) {
 		return 0;		// quit
 	}
+_FLF_
 	if (filer_do_next == FILER_DO_ENTER_FILE_NAME
 	 || filer_do_next == FILER_DO_ENTER_FILE_PATH) {
-		for (file_idx = select_and_get_first_file_idx_selected();
+		for (int file_idx = select_and_get_first_file_idx_selected();
 		 file_idx >= 0;
 		 file_idx = get_next_file_idx_selected(file_idx)) {
 			if (filer_do_next == FILER_DO_ENTER_FILE_NAME) {
 				// file-1 "file name 2" "file name 3"
-				concat_file_name_separating_by_space(file_path, buf_len,
+				concat_file_name_separating_by_space(path_buf, buf_len,
 				 get_cur_filer_view()->file_list[file_idx].file_name);
 			} else {
 				// /dir/to/file-path-1 "/dir/to/file path 2" "/dir/to/file path 3"
 				char path[MAX_PATH_LEN];
-				cat_dir_and_file(path, MAX_PATH_LEN,
+				cat_dir_and_file(path,
 				 get_cur_filer_view()->cur_dir,
 				 get_cur_filer_view()->file_list[file_idx].file_name);
-				concat_file_name_separating_by_space(file_path, buf_len, path);
+				concat_file_name_separating_by_space(path_buf, buf_len, path);
 			}
 		}
 	}
+_FLF_
 	if (filer_do_next == FILER_DO_ENTER_CUR_DIR_PATH) {
-		strlcpy__(file_path, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
+		strlcpy__(path_buf, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
 	}
-flf_d_printf("[%s]\n", file_path);
+flf_d_printf("[%s]\n", path_buf);
 	return IS_META_KEY(key_input)
 	 ? 2	// Append input file/dir name
 	 : 1;	// input file/dir name
@@ -466,8 +470,13 @@ PRIVATE void disp_filer_title_bar(const char *path,
 		}
 	}
 #endif // ENABLE_DEBUG
-	snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%s%d%c%s",
-	 root_notation(), get_filer_cur_pane_idx()+1, separator_char, path);
+	if (get_win_depth() == 0) {
+		snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%s:%d%c%s",
+		 get_my_user_name_at_host_name(), get_filer_cur_pane_idx()+1, separator_char, path);
+	} else {
+		snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%d%c%s",
+		 get_filer_cur_pane_idx()+1, separator_char, path);
+	}
 
 	// current time
 	snprintf_(buf_time, 1+HHCMMCSS_YY_MM_DD_LEN+1, " %s",
@@ -485,9 +494,9 @@ PRIVATE void disp_filer_title_bar(const char *path,
 
 PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 {
-	int line_idx;
 	int cur_sel_idx;
 	int bottom_idx;
+	/////int line_idx;
 	int file_idx;
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 	char *ptr;
@@ -514,7 +523,7 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 		sub_win_output_string(filer_win_get_file_path_y(), 0, buffer, -1);
 	}
 
-	for (line_idx = 0, file_idx = fv->top_idx;
+	for (int line_idx = 0, file_idx = fv->top_idx;
 	 line_idx < filer_win_get_file_list_lines() && file_idx < fv->file_list_entries;
 	 line_idx++, file_idx++) {
 		// Highlight the currently selected file/dir.

@@ -1,0 +1,8 @@
+# backup "be" directory to ../old/
+
+back_dir=be`yymmdd-hhmmss`
+cp -auv ../be ../old/$back_dir
+rm -f ../old/be
+ln -s ../old/$back_dir ../old/be
+
+##### EOF

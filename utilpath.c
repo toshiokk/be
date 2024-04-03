@@ -21,44 +21,109 @@
 
 #include "utilincs.h"
 
+// change direcotry independently from filer view
+//   cur_dir:    current directory before changing directory and after changing directory
+//   prev_dir:   previous current directory before changing directory
+//   next_file:  file to be pointed after changing directory
+int change_dir_in_path(char *path, char *cur_dir, char *prev_dir, char *next_file)
+{
+flf_d_printf("path: [%s]\n", path);
+	char dir[MAX_PATH_LEN+1];
+
+	if (is_path_regular_file(path) > 0) {
+_FLF_
+		// If path is pointing a file, change to the directory containing it.
+		separate_path_to_dir_and_file(path, dir, next_file);
+flf_d_printf("path: [%s]\n", path);
+	} else {
+		if (strcmp(path, ".") == 0) {
+			return 1;	// OK
+		} else if (strcmp(path, "..") == 0) {
+			separate_path_to_dir_and_file(cur_dir, dir, next_file);
+		} else if (strcmp(path, "~") == 0) {
+			strcpy__(next_file, "..");
+			get_abs_path("~", dir);
+		} else if (path[0] == '/') {
+			// absolute path "/some/dir"
+			strcpy__(next_file, "..");
+			strlcpy__(dir, path, MAX_PATH_LEN);
+		} else {
+			// relative path "some/dir" or "./some/dir"
+			strcpy__(next_file, "..");
+			// "/cur/dir" + "some/dir" ==> "/cur/dir/some/dir"
+flf_d_printf("cur_dir: [%s], path: [%s]\n", cur_dir, path);
+			cat_dir_and_file(dir, cur_dir, path);
+		}
+	}
+flf_d_printf("dir: [%s]\n", dir);
+	normalize_full_path(dir);
+flf_d_printf("dir: [%s]\n", dir);
+	if (is_dir_readable(dir) == 0) {
+		// We can't open this dir for some reason. Complain.
+_FLF_
+		return 0;	// Error
+	}
+	strlcpy__(prev_dir, cur_dir, MAX_PATH_LEN);
+	change_cur_dir(dir);
+	get_cur_dir(cur_dir);
+flf_d_printf("cur_dir: [%s]\n", cur_dir);
+	return 1;	// OK
+}
+
+//------------------------------------------------------------------------------
+
 /* Strip one dir from the end of the string */
 // /dir1/dir2/file ==> /dir1/dir2
 // /dir1/dir2/     ==> /dir1/dir2
 // /dir1           ==> /
 // ""              ==> /
-char *strip_file_from_path(const char *path)
+char *strip_file_from_path(char *path)
 {
 	static char dir[MAX_PATH_LEN+1];
 	char file[MAX_PATH_LEN+1];
-
-	strlcpy__(dir, path, MAX_PATH_LEN);
-	separate_dir_and_file(dir, file);
+	separate_path_to_dir_and_file(path, dir, file);
 	return dir;
 }
 
-// path-----------     path------  buf_name
+PRIVATE void test_separate_path_to_dir_and_file__(char *path, char *buf_dir, char *buf_file);
+void test_separate_path_to_dir_and_file()
+{
+	char buf_dir[MAX_PATH_LEN+1];
+	char buf_file[MAX_PATH_LEN+1];
+	test_separate_path_to_dir_and_file__("/dir/to/file", buf_dir, buf_file);
+	strcpy(buf_dir, "/dir/to/file");
+	test_separate_path_to_dir_and_file__(buf_dir, buf_dir, buf_file);
+}
+PRIVATE void test_separate_path_to_dir_and_file__(char *path, char *buf_dir, char *buf_file)
+{
+flf_d_printf("path[%s]\n", path);
+	separate_path_to_dir_and_file(path, buf_dir, buf_file);
+flf_d_printf("  dir[%s], file[%s]\n", buf_dir, buf_file);
+}
+// path-----------     buf_dir---  buf_file
 // /dir1/dir2/file ==> /dir1/dir2  file
 // /dir1/dir2      ==> /dir1       dir2
 // /file           ==> /           file
 // file            ==> /           file
 // /               ==> /           ""
 // ""              ==> /           ""
-char *separate_dir_and_file(char *path, char *buf_name)
+// path and buf_dir can be the same address
+char *separate_path_to_dir_and_file(char *path, char *buf_dir, char *buf_file)
 {
 	char *ptr;
 
 	ptr = get_last_slash(path);
 	if (*ptr == '/') {
-		*ptr++ = '\0';							// NUL terminate ("/dir/file" ==> "/dir")
-		strlcpy__(buf_name, ptr, MAX_PATH_LEN);	// "file"
-		normalize_root_dir(path);				// "" ==> "/"
+		strlcpy__(buf_dir, path, ptr-path);			// "/dir"
+		strlcpy__(buf_file, ptr+1, MAX_PATH_LEN);	// "file"
+		normalize_root_dir(buf_dir);				// "" ==> "/"
 	} else {
-		strcpy__(path, "/");					// "file" ==> "/"
-		strlcpy__(buf_name, ptr, MAX_PATH_LEN);	// "file" ==> "file"
+		strlcpy__(buf_file, ptr, MAX_PATH_LEN);	// "file" ==> "file"
+		strcpy__(buf_dir, "/");					// "file" ==> "/"
 	}
-///flf_d_printf("separate_dir_and_file(%s)\n", path);
+///flf_d_printf("separate_path_to_dir_and_file(%s)\n", path);
 ///flf_d_printf(" ==> dir/file:[%s]/[%s]\n", dir, file);
-	return buf_name;		// return file_name
+	return buf_file;		// return file_name
 }
 
 // "" ==> "/"
@@ -83,6 +148,25 @@ char *remove_last_slash(char *path)
 	return path;
 }
 
+int contain_redundant_slash(char *path)
+{
+	return strstr(path, "//") != NULL;
+}
+
+// "////" ==> "/"
+// "//dir//file" ==> "/dir/file"
+char *remove_redundant_slash(char *path)
+{
+	char *ptr;
+	for ( ; ; ) {
+		if ((ptr = strstr(path, "//")) == NULL) {
+			break;
+		}
+		memmove(ptr, ptr+1, strnlen(ptr+1, MAX_PATH_LEN)+1);
+	}
+	return path;
+}
+
 // point to the last '/'
 // /dir1/dir2/file    file
 //           ^        ^
@@ -100,19 +184,19 @@ char *get_last_slash(char *path)
 ///	return strchr(path, '/') == NULL;
 ///}
 
-int get_file_type_by_file_path(const char *file_path)
-{
-	if (is_path_exist(file_path) == 0) {
-		return 0;	// not exist
-	}
-	if (is_path_regular_file(file_path) > 0) {
-		return 1;	// regular file
-	} else
-	if (is_path_dir(file_path) > 0) {
-		return 2;	// directory
-	}
-	return 3;		// not directory and regular file
-}
+/////int get_file_type_by_file_path(const char *file_path)
+/////{
+/////	if (is_path_exist(file_path) == 0) {
+/////		return 0;	// not exist
+/////	}
+/////	if (is_path_regular_file(file_path) > 0) {
+/////		return 1;	// regular file
+/////	} else
+/////	if (is_path_dir(file_path) > 0) {
+/////		return 2;	// directory
+/////	}
+/////	return 3;		// not directory and regular file
+/////}
 int is_path_exist(const char *path)
 {
 	struct stat st;
@@ -247,45 +331,10 @@ int change_cur_dir(const char *dir)
 	int ret;
 
 	if ((ret = chdir(dir)) == 0) {
-		strlcpy__(current_directory, dir, MAX_PATH_LEN);
+		getcwd__(current_directory);
+flf_d_printf("current_directory[%s]\n", current_directory);
 	}
 	return ret;
-}
-
-// change direcotry independent from filer view
-//   cur_dir:    current directory before changing directory and after changing directory
-//   next_file:  file to be pointed after changing directory
-int change_dir__(const char *dir, char *cur_dir, char *prev_dir, char *next_file)
-{
-	char dir_to_go[MAX_PATH_LEN+1];
-
-	if (strcmp(dir, ".") == 0) {
-		return 0;	// OK
-	} else if (strcmp(dir, "..") == 0) {
-		strlcpy__(dir_to_go, cur_dir, MAX_PATH_LEN);
-		separate_dir_and_file(dir_to_go, next_file);
-	} else if (strcmp(dir, "~") == 0) {
-		strcpy__(next_file, "..");
-		get_abs_path("~", dir_to_go);
-	} else if (dir[0] == '/') {
-		// absolute path
-		strcpy__(next_file, "..");
-		strlcpy__(dir_to_go, dir, MAX_PATH_LEN);
-	} else {
-		// relative path
-		strcpy__(next_file, "..");
-		// /dir1 dir2 ==> /dir1/dir2
-		cat_dir_and_file(dir_to_go, MAX_PATH_LEN, cur_dir, dir);
-	}
-	normalize_full_path(dir_to_go);
-	if (is_dir_readable(dir_to_go) == 0) {
-		// We can't open this dir for some reason. Complain.
-		return 1;	// Error
-	}
-	strlcpy__(prev_dir, cur_dir, MAX_PATH_LEN);
-	change_cur_dir(dir_to_go);
-	strlcpy__(cur_dir, dir_to_go, MAX_PATH_LEN);
-	return 0;	// OK
 }
 
 int is_dir_readable(const char *path)
@@ -334,27 +383,52 @@ char *add_last_slash_to_dir(char *dir)
 	return dir;
 }
 
-// Concatenate path and file
-// /dir1/dir2  file ==> /dir1/dir2/file
-// /dir1/dir2/  file ==> /dir1/dir2/file
-// dir1/dir2  file ==> dir1/dir2/file
-// ""  file ==> file
-char *cat_dir_and_file(char *buf, int buf_len, const char *dir, const char *file)
+#ifdef START_UP_TEST
+PRIVATE void test_cat_dir_and_file_(char *buf, const char *dir, const char *file);
+void test_cat_dir_and_file()
 {
-	int last;
+	char buf[MAX_PATH_LEN+1];
+	test_cat_dir_and_file_(buf, "/dir1/dir2", "/file");
+	test_cat_dir_and_file_(buf, "/dir1/dir2/", "/file");
+	strcpy(buf, "/dir1/dir2");
+	test_cat_dir_and_file_(buf, buf, "/file");
+}
+PRIVATE void test_cat_dir_and_file_(char *buf, const char *dir, const char *file)
+{
+flf_d_printf("dir: [%s], file: [%s]\n", dir, file);
+	cat_dir_and_file(buf, dir, file);
+flf_d_printf("  buf: [%s]\n", buf);
+}
+#endif // START_UP_TEST
 
-	last = LIM_MIN(0, strnlen(dir, MAX_PATH_LEN) - 1);
+// Concatenate path and file
+// "/dir1/dir2"   "file"       ==> "/dir1/dir2/file"
+// "/dir1/dir2/"  "file"       ==> "/dir1/dir2/file"
+// "/dir1/dir2/"  "./dir/file" ==> "/dir1/dir2/./dir/file"
+// "dir1/dir2"    "file"       ==> "dir1/dir2/file"
+// "/"            "file"       ==> "/file"
+// ""             "file"       ==> "file"
+// buf and dir can be the same address
+char *cat_dir_and_file(char *buf, const char *dir, const char *file)
+{
+////flf_d_printf("dir: [%s], file: [%s]\n", dir, file);
+	char tmp_buf[MAX_PATH_LEN+1];
 	if (file[0] == '/') {
 		// "/file" ==> "file"
 		file++;
 	}
+	int last = LIM_MIN(0, strnlen(dir, MAX_PATH_LEN) - 1);
 	if (is_strlen_0(dir) || dir[last] == '/') {
 ///flf_d_printf("dir file [%s %s]\n", dir, file);
-		snprintf(buf, buf_len+1, "%s%s", dir, file);
+		// "/dir1/dir2/" + "file" ==> "/dir1/dir2/file"
+		snprintf(tmp_buf, MAX_PATH_LEN+1, "%s%s", dir, file);
 	} else {
 ///flf_d_printf("dir / file [%s / %s]\n", dir, file);
-		snprintf(buf, buf_len+1, "%s/%s", dir, file);
+		// "/dir1/dir2" + "/" + "file" ==> "/dir1/dir2/file"
+		snprintf(tmp_buf, MAX_PATH_LEN+1, "%s/%s", dir, file);
 	}
+////flf_d_printf("buf: [%s]\n", buf);
+	strlcpy__(buf, tmp_buf, MAX_PATH_LEN);
 	return buf;
 }
 
@@ -391,6 +465,8 @@ PRIVATE void test_normalize_full_path__(const char *abs_path);
 int test_normalize_full_path(void)
 {
 	flf_d_printf("-----------------------\n");
+	test_normalize_full_path_("///");
+	test_normalize_full_path_("///dir///file///");
 	test_normalize_full_path_(".");
 	test_normalize_full_path_("././.");
 	test_normalize_full_path_("..");
@@ -445,6 +521,7 @@ char *normalize_full_path(char *abs_path)
 	// "/dir1/../????"
 	//  ^
 	normalize_full_path__(abs_path, abs_path, abs_path);
+	remove_redundant_slash(abs_path);
 	remove_last_slash(abs_path);
 	return abs_path;
 }
@@ -616,11 +693,11 @@ char *my_realpath(const char *path, char *buf, int buf_len)
 // ./filename.ext               ==> /home/user/tools/src/filename.ext
 PRIVATE char *get_full_path(const char *path, char *buf)
 {
-	char username[MAX_PATH_LEN+1];
-	const char *userdir;
+	char user_name[MAX_PATH_LEN+1];
+	const char *user_dir;
 	char cur_dir[MAX_PATH_LEN+1];
 	size_t len;
-	const struct passwd *userdata = 0;
+	const struct passwd *user_data = 0;
 
 	strlcpy__(buf, path, MAX_PATH_LEN);
 	if (path[0] == '/') {
@@ -634,23 +711,23 @@ PRIVATE char *get_full_path(const char *path, char *buf)
 		}
 		// Determine home directory using getpwuid() or getpwent(), don't rely on $HOME
 		if (len == 1) {		// "~"
-			userdata = getpwuid(geteuid());
-			userdir = userdata->pw_dir;
+			user_data = getpwuid(geteuid());
+			user_dir = user_data->pw_dir;
 		} else {			// "~user"
-			strlcpy__(username, &path[1], len);
-			userdir = get_user_home_dir(username);
-///flf_d_printf("[%s] ==> [%s]\n", username, userdir);
+			strlcpy__(user_name, &path[1], len);
+			user_dir = get_user_home_dir(user_name);
+///flf_d_printf("[%s] ==> [%s]\n", user_name, user_dir);
 		}
 		if (path[len] == '/') {
 			// "~/..."   "~/..."
 			//   ^    ==>   ^
 			len++;
 		}
-		cat_dir_and_file(buf, MAX_PATH_LEN, userdir, &path[len]);
+		cat_dir_and_file(buf, user_dir, &path[len]);
 	} else {
 		// "./..." ==> "/home/user/tools/..."
 		get_cur_dir(cur_dir);
-		cat_dir_and_file(buf, MAX_PATH_LEN, cur_dir, path);
+		cat_dir_and_file(buf, cur_dir, path);
 	}
 ///flf_d_printf("[%s] ==> [%s]\n", path, buf);
 	normalize_full_path(buf);

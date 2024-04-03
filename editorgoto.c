@@ -57,57 +57,82 @@ int doe_goto_input_line(void)
 	return 1;
 }
 
-PRIVATE int check_cur_line_file_or_directory(void);
+/////PRIVATE int check_cur_line_file_or_directory(void);
+/////PRIVATE int check_cur_line_file_or_directory(void)
+/////{
+/////	char file_path[MAX_PATH_LEN+1];
+/////	if (get_file_line_col_from_str_null(CEPBV_CL->data, file_path, NULL, NULL) == 0) {
+/////		return 0;
+/////	}
+/////	return get_file_type_by_file_path(file_path);
+/////}
 
 int doe_goto_file_or_dir_in_cur_line(void)
 {
-	switch (check_cur_line_file_or_directory()) {
-	case 1:		// regular file
-		return doe_goto_file_in_cur_line();
-	default:	
-		return doe_goto_directory_in_cur_line();
+	if (doe_goto_file_in_cur_line() > 0) {
+_FLF_
+		// files opened
+		return 1;
 	}
+_FLF_
+	// going to change directory
+	return doe_goto_directory_in_cur_line();
 }
 
 // TAG JUMP
 int doe_goto_file_in_cur_line(void)
 {
 	char dir_save[MAX_PATH_LEN+1];
-	memorize_cur_file_pos_null(NULL);
 	clear_files_loaded();
+
+	memorize_cur_file_pos_null(NULL);
 	save_change_cur_dir(dir_save, strip_file_from_path(get_cep_buf()->abs_path));
 	// CURDIR: changed to cur-file's abs-dir
-	load_files_in_string(CEPBV_CL->data, 10, TUL1, OOE0, MOE1, RECURSIVE1);
+	int files = load_files_in_string(CEPBV_CL->data, 10, TUL1, OOE0, MOE1, RECURSIVE1);
 	change_cur_dir(dir_save);
+
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
-	return 1;
+	return files;
 }
+
 int doe_goto_directory_in_cur_line(void)
 {
+#ifdef ENABLE_FILER
 	char file_path[MAX_PATH_LEN+1];
-	if (get_file_line_col_from_str_null(CEPBV_CL->data, file_path, NULL, NULL) == 0) {
+	change_cur_dir(strip_file_from_path(get_cep_buf()->abs_path));
+	if (change_dirs_in_string(CEPBV_CL->data, get_cur_filer_view()->cur_dir,
+	 get_cur_filer_view()->prev_dir, get_cur_filer_view()->next_file) == 0) {
 		return 0;
 	}
-#ifdef ENABLE_FILER
-	if (filer_change_dir_parent(file_path) == 0) {
 #ifdef ENABLE_HISTORY
-		update_dir_history(get_cur_filer_view()->prev_dir, get_cur_filer_view()->cur_dir);
+	update_dir_history(get_cur_filer_view()->prev_dir, get_cur_filer_view()->cur_dir);
 #endif // ENABLE_HISTORY
-		get_cur_filer_view()->cur_sel_idx = 0;
-		call_filer(1, 0, get_cur_filer_view()->cur_dir, "", file_path, MAX_PATH_LEN);
-	}
+	call_filer(1, 0, get_cur_filer_view()->cur_dir, "", file_path, MAX_PATH_LEN);
 #endif // ENABLE_FILER
 	editor_quit = EDITOR_CANCELLED;
 	return 1;
 }
 
-PRIVATE int check_cur_line_file_or_directory(void)
+int change_dirs_in_string(const char *string, char *cur_dir, char *prev_dir, char *next_file)
 {
-	char file_path[MAX_PATH_LEN+1];
-	if (get_file_line_col_from_str_null(CEPBV_CL->data, file_path, NULL, NULL) == 0) {
-		return 0;
+	const char *ptr;
+	char dir[MAX_PATH_LEN+1];
+
+	for (int field_idx = 0; ; field_idx++) {
+		ptr = skip_n_file_names(string, field_idx);
+		if (*ptr == '\0')
+			break;
+		if (get_file_line_col_from_str_null(ptr, dir, NULL, NULL)) {
+flf_d_printf("dir: [%s]\n", dir);
+			// directory gotten
+			if ((contain_redundant_slash(dir) == 0)
+			 && change_dir_in_path(dir, cur_dir, prev_dir, next_file)) {
+				return 1;	// changed
+			}
+			// not changed, try the next directory
+		}
 	}
-	return get_file_type_by_file_path(file_path);
+	return 0;
 }
 
 int doe_open_files_in_buf(void)
@@ -255,10 +280,10 @@ int load_files_in_string(const char *string,
  int files_to_load, int try_upp_low, int open_on_err, int msg_on_err, int recursive)
 {
 	begin_check_break_key();
-	int ret = load_files_in_string_(string, files_to_load, try_upp_low, open_on_err, msg_on_err,
+	int files = load_files_in_string_(string, files_to_load, try_upp_low, open_on_err, msg_on_err,
 	 recursive);
 	end_check_break_key();
-	return ret;
+	return files;
 }
 
 //-----------------------------------------------------------------------------
@@ -268,7 +293,6 @@ PRIVATE int load_files_in_cur_buf_(void)
 {
 	char file_pos_str[MAX_PATH_LEN+1];
 	int lines;
-	char dir_save[MAX_PATH_LEN+1];
 	int files = 0;
 
 #define MAX_LINES_TO_TRY_TO_LOAD		10000
@@ -279,6 +303,7 @@ PRIVATE int load_files_in_cur_buf_(void)
 	for (lines = 0; lines < MAX_LINES_TO_TRY_TO_LOAD; lines++) {
 		if (line_data_len(CEPBV_CL)) {
 			if (CEPBV_CL->data[0] != '#') {
+				char dir_save[MAX_PATH_LEN+1];
 				memorize_cur_file_pos_null(NULL);
 				save_change_cur_dir(dir_save, strip_file_from_path(get_cep_buf()->abs_path));
 				// CURDIR: changed to cur-file's abs-dir
@@ -326,17 +351,17 @@ PRIVATE int load_file_in_string(const char *string,
 PRIVATE int load_files_in_string_(const char *string,
  int files_to_load, int try_upp_low, int open_on_err, int msg_on_err, int recursive)
 {
-	int field_idx;
 	int files_loaded = 0;
 	int files;
 	const char *ptr;
 
-	for (field_idx = 0; files_loaded < files_to_load; field_idx++) {
+#define FILES_TO_LOAD_10		10
+	for (int field_idx = 0; files_loaded < FILES_TO_LOAD_10; field_idx++) {
 		ptr = skip_n_file_names(string, field_idx);
 		if (*ptr == '\0')
 			break;
 		files = load_file_in_string(ptr, try_upp_low, open_on_err, msg_on_err, recursive);
-		if (files > 0) {
+		if (files > files_to_load) {
 			files_loaded++;
 			open_on_err = 0;
 			msg_on_err = 0;
@@ -466,6 +491,27 @@ int is_file_name_proj_file(const char *file_name, int type)
 	}
 	return 0;	// not project file
 }
+
+#ifdef START_UP_TEST
+void test_get_n_th_file_name(void)
+{
+	char test_str[] =
+	 "history.c 345 hist_type_idx:3:['/home/user/ filename including space .txt '|1:1]";
+	const char *ptr;
+	char file_path[MAX_PATH_LEN+1];
+	int line_num, col_num;
+
+	for (int field_idx = 0; field_idx < 10; field_idx++) {
+		ptr = skip_n_file_names(test_str, field_idx);
+		if (*ptr == '\0')
+			break;
+		if (get_file_line_col_from_str_null(ptr, file_path, &line_num, &col_num)) {
+			flf_d_printf("%d: file_path:[%s],%d,%d\n", field_idx, file_path, line_num, col_num);
+		}
+	}
+}
+#endif // START_UP_TEST
+
 PRIVATE const char *skip_n_file_names(const char *line, int field_idx)
 {
 	const char *ptr;
@@ -487,27 +533,6 @@ PRIVATE const char *skip_n_file_names(const char *line, int field_idx)
 	return ptr;
 }
 
-#ifdef START_UP_TEST
-void test_get_n_th_file_name(void)
-{
-	char test_str[] =
-	 "history.c 345 hist_type_idx:3:['/home/user/ filename including space .txt '|1:1]";
-	int field_idx;
-	const char *ptr;
-	char file_path[MAX_PATH_LEN+1];
-	int line_num, col_num;
-
-	for (field_idx = 0; field_idx < 10; field_idx++) {
-		ptr = skip_n_file_names(test_str, field_idx);
-		if (*ptr == '\0')
-			break;
-		if (get_file_line_col_from_str_null(ptr, file_path, &line_num, &col_num)) {
-			flf_d_printf("%d: file_path:[%s],%d,%d\n", field_idx, file_path, line_num, col_num);
-		}
-	}
-}
-#endif // START_UP_TEST
-
 //-----------------------------------------------------------------------------
 #ifdef ENABLE_HISTORY
 int goto_last_file_line_col_in_loaded()
@@ -515,12 +540,14 @@ int goto_last_file_line_col_in_loaded()
 	char file_path[MAX_PATH_LEN+1];
 	int line_num, col_num;
 
-	get_file_line_col_from_str_null(get_history_newest(HISTORY_TYPE_IDX_CURSPOS, 1),
-	 file_path, &line_num, &col_num);
-	if (switch_cep_buf_by_file_name(file_path)) {
-		return goto_line_col_in_cur_buf(line_num, col_num);
+	if (get_file_line_col_from_str_null(get_history_newest(HISTORY_TYPE_IDX_CURSPOS, 1),
+	 file_path, &line_num, &col_num) == 0) {
+		return 0;
 	}
-	return 0;
+	if (switch_cep_buf_by_file_name(file_path) == 0) {
+		return 0;
+	}
+	return goto_line_col_in_cur_buf(line_num, col_num);
 }
 #endif // ENABLE_HISTORY
 //-----------------------------------------------------------------------------
@@ -595,7 +622,7 @@ char *mk_cur_file_pos_str(char *buffer)
 }
 char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col_num)
 {
-	file_path = quote_file_name(file_path);
+	file_path = quote_file_name_static(file_path);
 	if (col_num <= 0) {
 		if (line_num <= 0) {
 			// /path/to/file.ext

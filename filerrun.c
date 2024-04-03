@@ -43,17 +43,11 @@ int dof_exec_command_with_file(void)
 {
 	char command_str[MAX_PATH_LEN+1];
 	int ret;
-	int file_idx;
+	/////int file_idx;
 	char *ptr_replace;
 	char buffer[MAX_PATH_LEN+1];
 #define MAX_REPLACEMENTS	10
 	int cnt;
-
-	////if (is_app_list_mode()) {
-	////	// dof_exec_command_with_file -> FILER_DO_ENTER_FILE_PATH
-	////	filer_do_next = FILER_DO_ENTER_FILE_PATH;
-	////	return -1;
-	////}
 
 	ret = input_string_tail("", command_str,
 	 HISTORY_TYPE_IDX_EXEC, _("Execute({} will be replaced with file-name):"));
@@ -72,7 +66,7 @@ int dof_exec_command_with_file(void)
 		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	} else {
 		begin_fork_exec_repeat();
-		for (file_idx = select_and_get_first_file_idx_selected();
+		for (int file_idx = select_and_get_first_file_idx_selected();
 		 file_idx >= 0;
 		 file_idx = get_next_file_idx_selected(file_idx)) {
 			if (is_sigint_signaled())
@@ -86,7 +80,7 @@ int dof_exec_command_with_file(void)
 					break;
 				replace_str(buffer, MAX_PATH_LEN,
 				 ptr_replace - buffer, STR_TO_BE_REPLACED_WITH_FILE_NAME_LEN,
-				 quote_file_name(get_cur_filer_view()->file_list[file_idx].file_name), -1);
+				 quote_file_name_static(get_cur_filer_view()->file_list[file_idx].file_name), -1);
 			}
 			fork_exec_repeat_sh_c(SEPARATE1, buffer);
 		}
@@ -100,17 +94,11 @@ int dof_exec_command_with_files(void)
 {
 	char command_str[MAX_PATH_LEN+1];
 	int ret;
-	int file_idx;
-
-	////if (is_app_list_mode()) {
-	////	// dof_exec_command_with_files -> FILER_DO_ENTER_FILE_PATH
-	////	filer_do_next = FILER_DO_ENTER_FILE_PATH;
-	////	return -1;
-	////}
+	/////int file_idx;
 
 	// "file1 file2 ..."
 	command_str[0] = '\0';
-	for (file_idx = select_and_get_first_file_idx_selected();
+	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		concat_file_name_separating_by_space(command_str, MAX_PATH_LEN,
@@ -174,25 +162,19 @@ PRIVATE int dof_run_command_(int mode)
 	int dst_fv_idx = 1;
 	int ret = 0;
 
-	////if (is_app_list_mode()) {
-	////	// dof_run_command_ -> FILER_DO_ENTER_FILE_PATH
-	////	filer_do_next = FILER_DO_ENTER_FILE_PATH;
-	////	return -1;
-	////}
-
 	st_ptr = &get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st;
 	switch (mode % 10) {
 	default:
 	case 0:
 		explanation = _("Run (with file):");
 		snprintf_(command_str, MAX_PATH_LEN+1, " %s",
-		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]
+		 quote_file_name_static(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]
 		  .file_name));
 		break;
 	case 1:
 		explanation = _("Run (current-directory-file):");
 		snprintf_(command_str, MAX_PATH_LEN+1, "./%s ",
-		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]
+		 quote_file_name_static(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]
 		  .file_name));
 		break;
 	case 2:
@@ -205,13 +187,13 @@ PRIVATE int dof_run_command_(int mode)
 	case 3:
 		explanation = _("Run (script):");
 		snprintf_(command_str, MAX_PATH_LEN+1, ". %s",
-		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]
+		 quote_file_name_static(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]
 		  .file_name));
 		break;
 	case 4:
 		explanation = _("Run (script by shell):");
 		snprintf_(command_str, MAX_PATH_LEN+1, "sh %s",
-		 quote_file_name(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]
+		 quote_file_name_static(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]
 		  .file_name));
 		break;
 	case 5:

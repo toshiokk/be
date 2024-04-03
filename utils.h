@@ -143,10 +143,13 @@ void test_nn_from_num(void);
 char *nn_from_num(int num, char *buf);
 
 const char *get_user_name(uid_t uid);
-const char *get_user_home_dir(const char *username);
+const char *get_user_home_dir(const char *user_name);
 const char *get_group_name(gid_t gid);
 int cache_users(void);
 int cache_groups(void);
+
+const char *get_host_name();
+const char *get_my_user_name_at_host_name();
 
 #endif // utils_h
 

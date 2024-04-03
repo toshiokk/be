@@ -331,7 +331,7 @@ PRIVATE int parse_options(int argc, char *argv[])
 #endif
 flf_d_printf("optchr: %c\n", optchr);
 if (optarg) {
-flf_d_printf("*optarg: %c\n", *optarg);
+  flf_d_printf("*optarg: %c\n", *optarg);
 }
 		switch (optchr) {
 #ifdef ENABLE_RC
@@ -478,6 +478,8 @@ PRIVATE void start_up_test(void)
 	test_get_full_path();
 	test_realpath();
 	test_get_file_name_extension();
+	test_cat_dir_and_file();
+	test_separate_path_to_dir_and_file();
 
 ///	test_get_intersection();
 	get_mem_free_in_kb(1);
@@ -905,11 +907,7 @@ void disp_splash(int delay)
 	}
 	if (msg3_x >= 0) {
 		tio_output_string(top_y + msg5_y, left_x + msg5_x,
-#if APP_REL_LVL == APP_REL_LVL_STABLE
 		 _("We're invincible with this !!"), -1);
-#else
-		 _("This is where we live in !!"), -1);
-#endif
 	}
 	tio_refresh();
 }

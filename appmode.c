@@ -374,20 +374,20 @@ const char *get_str_sort_by(void)
 	default:
 	case FILE_SORT_BY_NAME:
 		return "name";
-	case FILE_SORT_BY_NAME_REV:
-		return "Name-Rev";
+	////case FILE_SORT_BY_NAME_REV:
+	////	return "Name-Rev";
 	case FILE_SORT_BY_EXT:
 		return "ext";
-	case FILE_SORT_BY_EXT_REV:
-		return "Ext-Rev";
+	////case FILE_SORT_BY_EXT_REV:
+	////	return "Ext-Rev";
 	case FILE_SORT_BY_TIME:
 		return "time";
-	case FILE_SORT_BY_TIME_REV:
-		return "Time-Rev";
+	////case FILE_SORT_BY_TIME_REV:
+	////	return "Time-Rev";
 	case FILE_SORT_BY_SIZE:
 		return "size";
-	case FILE_SORT_BY_SIZE_REV:
-		return "Size-Rev";
+	////case FILE_SORT_BY_SIZE_REV:
+	////	return "Size-Rev";
 	}
 }
 

@@ -469,7 +469,7 @@ const char *search_history_file_path(int hist_type_idx, const char *path)
 	const char *ptr;
 	size_t len;
 
-	path = quote_file_name(path);
+	path = quote_file_name_static(path);
 	// search from the newest to the oldest
 	for (line = BUF_BOT_LINE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
 		// /home/user/filename.exp|1234

@@ -48,15 +48,15 @@ typedef enum {
 extern filer_do_next_t filer_do_next;
 
 void init_filer_panes(filer_panes_t *fps, const char *cur_dir);
+filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps);
 void free_filer_panes(filer_panes_t *fps, filer_panes_t *prev_fps);
 void set_filer_cur_pane_idx(int cur_pane_idx);
 int get_filer_cur_pane_idx();
-filer_view_t *get_filer_view(int pane_idx);
 filer_view_t *get_cur_filer_view(void);
 filer_view_t *get_other_filer_view(void);
 
 int call_filer(int push_win, int list_mode,
- const char *dir, const char *filter, char *file_path, int buf_len);
+ const char *dir, const char *filter, char *path_buf, int buf_len);
 
 int update_screen_filer(int title_bar, int status_bar, int refresh);
 

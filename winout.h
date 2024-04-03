@@ -46,7 +46,8 @@ void win_init_win_size(void);
 
 void inc_win_depth(void);
 void dec_win_depth(void);
-int win_terminal_resized(void);
+const int get_win_depth(void);
+
 void win_reinit_win_size(void);
 void win_select_win(int sub_win_idx);
 void dump_cur_win(void);

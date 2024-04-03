@@ -1,8 +1,21 @@
 #### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: complete)
 
-[] to be able to change directory on file path "/dir/to/file.txt" to directory "/dir/to/"
+[v] change directory on file path "/dir/to/file.txt" to directory "/dir/to/"
+[v] change directory on relative file path "./dir/to/file.txt" to relative directory "./dir/to/"
+[] after changing directory to "./dir/to/" by "./dir/to/file.txt", point "file.txt"
+[v] open file based on buffer's direcotry
+[v] change directory based on buffer's direcotry
 
-[v ] code clean up for filer view mode
+[v] cursor position when returned to filer
+[v] automatic fallback when no nkf filter available
+
+[v] Show `username@hostname` in the title bar in filer (no need in editor)
+[v] Avoid showing directory path like "///" (remove_redundant_slash())
+[v] Avoid changing directory on "///" (contain_redundant_slash())
+
+[v] Execute script specifying absolute path from current directory.(E/R/T/X)
+
+[v] code clean up for filer view mode
 
 [v] Avoid inputting garbage on Atl-Fxx key. ==> register all xterm keys
 [-] Auto indent by Alt-Enter
@@ -13,7 +26,7 @@
               \e[1;5A \e[1;5B \e[1;5D \e[1;5C
 
 [x] share cut-buffer between BE-editor-instances (Use clip-board or own clip-board file)
-	F07 copy selection and save to clip-board
+	F07 copy selection to clip-board
 	Shift-F07 copy current file to clip-board
 	Shift-F08 paste clip-board into current line
 	[] support both character copy and line copy

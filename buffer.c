@@ -569,16 +569,16 @@ flf_d_printf("file_path: [%s], abs_path: [%s]\n", buf->file_path, buf->abs_path)
 ///flf_d_printf("mark_line_byte_idx: %d\n", buf->mark_line_byte_idx);
 ///flf_d_printf("enc: %s, eol: %s\n", buf_encode_str(buf), buf_eol_str(buf));
 }
-///be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
-///{
-///	be_line_t *line;
-///
-///	for (line = BUF_TOP_LINE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
-///		if (line == line_)
-///			return line_;
-///	}
-///	return NULL;
-///}
+/////be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
+/////{
+/////	be_line_t *line;
+/////
+/////	for (line = BUF_TOP_LINE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
+/////		if (line == line_)
+/////			return line_;
+/////	}
+/////	return NULL;
+/////}
 
 void bufs_dump_all_bufs(be_bufs_t *bufs)
 {

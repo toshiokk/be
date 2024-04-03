@@ -193,13 +193,13 @@ char *concat_file_name_separating_by_space(char *buffer, size_t buf_len,
 		// "command" ==> "command "
 		strlcat__(buffer, buf_len, " ");
 	}
-	string = quote_file_name(string);
+	string = quote_file_name_static(string);
 	if (strnlen(buffer, buf_len) + strnlen(string, buf_len) <= buf_len) {
 		strlcat__(buffer, buf_len, string);
 	}
 	return buffer;
 }
-const char *quote_file_name(const char *string)
+const char *quote_file_name_static(const char *string)
 {
 	static char buf[MAX_PATH_LEN+1];
 
@@ -220,6 +220,8 @@ const char *quote_file_name_if_necessary(char *buf, const char *string)
 			// abc"def.txt ==> 'abc"def.txt'
 			return quote_string(buf, string, '\'');
 		}
+	} else {
+		strcpy__(buf, string);
 	}
 	return string;	// no quotation necessary
 }
@@ -518,16 +520,14 @@ char *skip_file_name(char *ptr)
 	}
 	return ptr;
 }
-#if 0
-const char *skip_separator(const char *ptr)
-{
-	for ( ; is_separator(*ptr); ) {
-		ptr++;
-		// skip to the next token
-	}
-	return ptr;
-}
-#endif
+/////const char *skip_separator(const char *ptr)
+/////{
+/////	for ( ; is_separator(*ptr); ) {
+/////		ptr++;
+/////		// skip to the next token
+/////	}
+/////	return ptr;
+/////}
 const char *skip_to_digit(const char *ptr)
 {
 	for ( ; *ptr && isdigit(*ptr) == 0; ) {
@@ -563,11 +563,12 @@ int is_file_name_char(const char *ptr)
 {
 ///	return (((' ' < *ptr) && (*ptr < 0x80) && (*ptr != '/')) || (utf8c_bytes(ptr) >= 2));
 	return isalnum(*ptr) || strchr__("_-+.~!#$%&@=\"\'", *ptr) || (utf8c_bytes(ptr) >= 2);
+	// non-file-name-chars are ' ' '\t' '/' '|' ':'
 }
-int is_separator(char chr)
-{
-	return strchr__(" \t,:", chr) != NULL;
-}
+/////int is_separator(char chr)
+/////{
+/////	return strchr__(" \t,:", chr) != NULL;
+/////}
 int contain_chr(const char *string, char chr)
 {
 	return strchr(string, chr) != NULL;

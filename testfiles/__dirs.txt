@@ -1,0 +1,70 @@
+/home/user/tools/be/be
+/home/user/tools/be/be/po
+/home/user/tools/be/be/doc
+/home/user/tools/be/be/demo
+# /home/user/tools/be/be/scripts
+## /home/user/tools/be/be/protected
+# /home/user/tools/be/be/testfiles
+# /home/user/tools/be/be/testfiles/漢字ディレクトリ名
+# /home/user/tools/be/be/testfiles/漢字ディレクトリ名1
+/home/user/tools/be/be/testfiles/漢字ディレクトリ名22
+// /home/user/tools/be/be/autom4te.cache
+//// /home/user/tools/be/be/none
+/home/user/tools/be/be/none
+
+/home/user/tools/be/be/testfiles
+/home/user/tools/be/be/testfiles/
+/home/user/tools/be/be/testfiles/_knjutf8.txt
+/home/user/tools/be/be/testfiles/huge.c
+/home/user/tools/be/be/testfiles/dir.txt
+/home/user/tools/be/be/testfiles/dos.txt
+/home/user/tools/be/be/testfiles/杜子春eucjp.txt
+
+/home/user/tools/ucon/ucon/testfiles
+/home/user/tools/ucon/ucon/testfiles/_test_16colors.sh
+/home/user/tools/ucon/ucon/testfiles/藪の中.txt
+/home/user/tools/ucon/ucon/pen.c
+/home/user/tools/ucon/ucon/pen.h
+/home/user/tools/ucon/ucon/configure
+/home/user/tools/ucon/ucon/ChangeLog
+/home/user/tools/ucon/ucon/fbcommon.c
+/home/user/tools/ucon/ucon/_arc
+/home/user/tools/ucon/ucon/demo
+/home/user/tools/ucon/ucon/scripts
+/home/user/tools/ucon/ucon/scripts/ucon28
+/home/user/tools/ucon/ucon/im
+/home/user/tools/ucon/ucon/im/_debug.log
+/home/user/tools/ucon/ucon/im/漢字-ひらがな-雨にも負けず.txt
+/home/user/tools/ucon/ucon/im/notused
+/home/user/tools/ucon/ucon/im/notused/SKK-JISYO.S
+/home/user/tools/ucon/ucon/im/canna-dic
+/home/user/tools/ucon/ucon/im/canna-dic/tmp.dic
+/home/user/tools/ucon/ucon/fonts/_ucon12.hex
+/home/user/tools/ucon/ucon/fonts/old
+/home/user/tools/ucon/ucon/fonts/old/ucon10.hex
+/home/user/tools/ucon/ucon/fonts/fonts
+/home/user/tools/ucon/ucon/fonts/fonts/txt2hex.c
+/
+.
+..
+./.
+./..
+./杜子春jis.txt
+./_debug.log
+./_utf8.txt
+./_test.pro
+./mac.txt
+./sample.html
+./__EVENT171222.LOG
+./verylonglongline65536.txt
+./nix.txt
+./低EMI基板作成の秘訣utf8-lf.txt
+./free_loop
+./huge-jis.c
+./verylongtabline.txt
+./長い全角文字ファイル名.txt
+./漢字ディレクトリ名
+./漢字ディレクトリ名/漢字ファイル名.txt
+./漢字ディレクトリ名/漢字ファイル名1.txt
+./漢字ディレクトリ名/漢字ファイル名22.txt
+./漢字ディレクトリ名/becrash.log

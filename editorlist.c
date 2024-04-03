@@ -35,7 +35,7 @@ int doe_switch_to_file_list(void)
 	for (edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
 	 edit_buf = NODE_NEXT(edit_buf)) {
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-60s %-5s %s %s",
-		 quote_file_name(edit_buf->abs_path),
+		 quote_file_name_static(edit_buf->abs_path),
 		 buf_encode_str(edit_buf), buf_eol_str(edit_buf),
 		 BUF_STATE(edit_buf, buf_MODIFIED) ? "Mo" : "--");
 		append_string_to_cur_edit_buf(buffer);

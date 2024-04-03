@@ -72,10 +72,9 @@ void dec_win_depth(void)
 		win_depth--;
 	}
 }
-
-int win_terminal_resized(void)
+const int get_win_depth(void)
 {
-	return win_lines != tio_get_lines() || win_columns != tio_get_columns();
+	return win_depth;
 }
 
 // editor window sectioning
