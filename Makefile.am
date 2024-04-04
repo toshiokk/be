@@ -21,6 +21,7 @@ be_SOURCES = \
 	appmode.c \
 	editor.c \
 	editor2.c \
+	editor3.c \
 	editormove.c \
 	editormove2.c \
 	editorgoto.c \
@@ -67,6 +68,7 @@ be_SOURCES = \
 	debug.h \
 	editor.h \
 	editor2.h \
+	editor3.h \
 	editormove.h \
 	editormove2.h \
 	editorgoto.h \

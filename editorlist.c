@@ -197,4 +197,4 @@ void make_help_func_list(void)
 
 #endif // ENABLE_HELP
 
-// End of list.c
+// End of editorlist.c

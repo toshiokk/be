@@ -463,7 +463,9 @@ key_code_t input_key_wait_return(void)
 // Display update durations:
 // | type                              | duration [mSec] |
 // |-----------------------------------|-----------------|
-// | current time update in title bar  | 1000            |
+// | current time update in title bar  |  500            |
+// | blinking title bar                |  500            |
+// | file list update                  |  500            |
 // | splash screen when screen resized | 2000            |
 // | splash screen by key              | infinite        |
 //
@@ -471,7 +473,7 @@ PRIVATE key_code_t input_key_timeout(void)
 {
 	key_code_t key;
 	key_code_t key_resized = KEY_NONE;
-#define KEY_WAIT_TIME_MSEC		1000		// return every 1[Sec]
+#define KEY_WAIT_TIME_MSEC		500		// return every 1[Sec]
 	long msec_enter = get_msec();
 	while ((key = input_key_macro()) < 0) {
 		if (tio_check_update_terminal_size()) {

@@ -842,7 +842,7 @@ void disp_splash(int delay)
 			msg2_x = 42;
 			msg3_x = 34;
 			msg4_x = 34;
-			msg5_x = 28;
+			msg5_x = 27;
 			break;
 		case 1:
 			splash_text = splash_text_s;
@@ -855,7 +855,7 @@ void disp_splash(int delay)
 			msg2_x = 34;
 			msg3_x = 26;
 			msg4_x = 26;
-			msg5_x = 20;
+			msg5_x = 19;
 			break;
 		default:
 		case 0:

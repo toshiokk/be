@@ -27,12 +27,15 @@ typedef struct {
 	be_buf_t *bufs[EDITOR_PANES];	// edit-buffers shown in the left and the right pane
 } editor_panes_t;
 
-// エディタ2ペイン
-// ・個々にバッファを参照
-// ファイラー2ペイン
-// ・個々にディレクトリを参照
-// バッファ
-// ・エディタ2ペインに対応する2ビューを持ち、各ペインから参照
+// two panes of editor
+// - each pane reference a `buffer`
+// two panes of filer
+// - each pane reference a `directory-view`
+//
+// `buffers`
+// - buffer has two views and accessed from each pane of editor
+// `directory-view`
+// - two directory views referenced from each pane.
 
 //-----------------------------------------------------------------------------
 

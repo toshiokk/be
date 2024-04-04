@@ -24,8 +24,6 @@
 
 #define PROJ_FILE_EXTENSION1	".bep"		// BE Project file
 #define PROJ_FILE_EXTENSION2	".pro"		// Qt PROject file
-#define PROJ_FILE_FILTER1		"*" PROJ_FILE_EXTENSION1
-#define PROJ_FILE_FILTER2		"*" PROJ_FILE_EXTENSION2
 
 #define OOE1	1	// Open On Error
 #define OOE0	0

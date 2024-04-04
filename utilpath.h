@@ -59,7 +59,7 @@ char *get_file_name_extension(char *file_name);
 
 //-----------------------------------------------------------------------------
 
-char *normalize_root_dir(char *dir);
+/////char *normalize_root_dir(char *dir);
 char *remove_last_slash(char *path);
 int contain_redundant_slash(char *path);
 char *remove_redundant_slash(char *path);

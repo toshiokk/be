@@ -1,5 +1,5 @@
 /**************************************************************************
- *   headers.h                                                            *
+ *   editor3.h                                                            *
  *                                                                        *
  *   Copyright (C) 1999-2003 Chris Allegretta                             *
  *                                                                        *
@@ -19,50 +19,37 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef headers_h
-#define headers_h
+#ifndef editor3_h
+#define editor3_h
 
-#include "stdincs.h"
+#define MAX_LINE_NUM_STR_LEN		10	// 4000000000
+const char *get_line_num_string(const be_buf_t *buf, const be_line_t *line,
+ char *buf_line_num);
+int get_buf_line_num_columns(const be_buf_t *buf);
 
-#include "utilincs.h"
+#ifdef START_UP_TEST
+void test_make_ruler_text(void);
+#endif // START_UP_TEST
 
-#include "appdefs.h"
-#include "appmode.h"
-#include "line.h"
-#include "buffer.h"
-#include "buffers.h"
-#include "regexp.h"
-#include "color.h"
-#include "sig.h"
-#include "tio.h"
-#include "fileio.h"
-#include "history.h"
-#include "keymacro.h"
-#include "keys.h"
-#include "rcfile.h"
-#include "search.h"
-#include "disp.h"
-#include "winout.h"
-#include "winin.h"
-#include "linewrap.h"
-#include "filerkeys.h"
-#include "filerrun.h"
-#include "filercmd.h"
-#include "filer2.h"
-#include "filer.h"
-#include "editorundo.h"
-#include "editorkeys.h"
-#include "editormove2.h"
-#include "editormove.h"
-#include "editorgoto.h"
-#include "editorcut2.h"
-#include "editorcut.h"
-#include "editorlist.h"
-#include "editor3.h"
-#include "editor2.h"
-#include "editor.h"
-#include "main.h"
+const char *get_ruler_text(int col_idx);
+const char *make_ruler_text(int col_x, int columns);
 
-#endif // headers_h
+int edit_win_get_path_lines(void);
+int edit_win_get_path_columns(void);
+int edit_win_get_text_lines(void);
 
-// End of headers.h
+int edit_win_get_path_y(void);
+int edit_win_get_ruler_y(void);
+int edit_win_get_text_y(void);
+
+extern int te_concat_linefeed_bytes;
+extern char te_concat_linefeed_buf[MAX_EDIT_LINE_LEN * 2 +1];
+extern int te_visible_code_columns;
+extern char te_visible_code_buf[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];
+const char *te_tab_expand(const char *original);
+const char *te_concat_linefeed(const char *original);
+int te_tab_expand__max_wl_idx(const char *original);
+
+#endif // editor3_h
+
+// End of editor3.h

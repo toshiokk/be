@@ -1,8 +1,16 @@
-#### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: complete)
+#### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: done, x: impossible)
+
+[] input_string()
+  | key             | file path | append  | action                                       |
+  |-----------------|-----------|---------|----------------------------------------------|
+  | e,d,f,c         | file name | replace | input file name replacing previous string    |
+  | E,D,F,C         | file path | replace | input file path replacing previous string    |
+  | M-E,M-D,M-F,M-C | file name | append  | input file name appending to previous string |
+  | M-e,M-d,M-f,M-c | file name | append  | input file path appending to previous string |
 
 [v] change directory on file path "/dir/to/file.txt" to directory "/dir/to/"
 [v] change directory on relative file path "./dir/to/file.txt" to relative directory "./dir/to/"
-[] after changing directory to "./dir/to/" by "./dir/to/file.txt", point "file.txt"
+[x] after changing directory to "./dir/to/" by "./dir/to/file.txt", point "file.txt"
 [v] open file based on buffer's direcotry
 [v] change directory based on buffer's direcotry
 

@@ -251,33 +251,6 @@ int doe_open_proj_file(void)
 
 	strcpy__(file_name, "");
 	dir = opendir(".");
-#if 0
-	for (loop = 0; loop < 4; loop++) {
-		switch (loop) {
-		default:
-		case 0:		strcpy__(filter, PROJ_FILE_FILTER1);	break;
-		case 1:		strupper(filter);	break;	// "*.bep" ==> "*.BEP"
-		case 2:		strcpy__(filter, PROJ_FILE_FILTER2);	break;
-		case 3:		strupper(filter);	break;	// "*.pro" ==> "*.PRO"
-		}
-		rewinddir(dir);
-		while ((dirent = readdir(dir)) != NULL) {
-			lstat(dirent->d_name, &lst);
-			if (S_ISLNK(lst.st_mode))
-				stat(dirent->d_name, &st);
-			else
-				memcpy__(&st, &lst, sizeof(struct stat));
-			if (S_ISREG(st.st_mode) && fnmatch(filter, dirent->d_name, 0) == 0) {
-				strlcpy__(file_name, dirent->d_name, MAX_PATH_LEN);
-				break;
-			}
-		}
-		if (is_strlen_not_0(file_name)) {
-			// file matched
-			break;
-		}
-	}
-#else
 	for (loop = 0; loop < 2; loop++) {
 		rewinddir(dir);
 		while ((dirent = readdir(dir)) != NULL) {
@@ -296,7 +269,6 @@ int doe_open_proj_file(void)
 			break;
 		}
 	}
-#endif
 	closedir(dir);
 
 	if (is_strlen_0(file_name)) {

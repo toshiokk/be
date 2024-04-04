@@ -419,20 +419,12 @@ PRIVATE int comp_file_info(const void *aa, const void *bb)
 	default:
 	case FILE_SORT_BY_NAME:
 		 return comp_file_name(aa, bb);
-	////case FILE_SORT_BY_NAME_REV:
-	////	 return - comp_file_name(aa, bb);
 	case FILE_SORT_BY_EXT:
 		 return comp_file_extension(aa, bb);
-	////case FILE_SORT_BY_EXT_REV:
-	////	 return - comp_file_extension(aa, bb);
 	case FILE_SORT_BY_TIME:
 		 return comp_file_time(aa, bb);
-	////case FILE_SORT_BY_TIME_REV:
-	////	 return - comp_file_time(aa, bb);
 	case FILE_SORT_BY_SIZE:
 		 return comp_file_size(aa, bb);
-	////case FILE_SORT_BY_SIZE_REV:
-	////	 return - comp_file_size(aa, bb);
 	}
 }
 // sort directories before files,

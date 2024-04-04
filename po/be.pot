@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 21:38+0900\n"
+"POT-Creation-Date: 2024-04-04 23:22+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../appmode.c:544
+#: ../appmode.c:536
 msgid "Input key to show key code"
 msgstr ""
 
-#: ../appmode.c:546 ../editormove.c:335
+#: ../appmode.c:538 ../editormove.c:335
 #, c-format
 msgid "Key code: %04x"
 msgstr ""
@@ -52,94 +52,94 @@ msgstr ""
 msgid "Open new file:"
 msgstr ""
 
-#: ../editor.c:303
+#: ../editor.c:275
 msgid "No project file found"
 msgstr ""
 
-#: ../editor.c:332
+#: ../editor.c:304
 msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr ""
 
-#: ../editor.c:352
+#: ../editor.c:324
 msgid "File re-loaded"
 msgstr ""
 
-#: ../editor.c:405
+#: ../editor.c:377
 #, c-format
 msgid "Written to the file: %s"
 msgstr ""
 
-#: ../editor.c:458
+#: ../editor.c:430
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editor.c:666 ../editor.c:714 ../editor.c:727 ../fileio.c:380
+#: ../editor.c:638 ../editor.c:686 ../editor.c:699 ../fileio.c:380
 #: ../fileio.c:385 ../winin.c:100
 msgid "Cancelled"
 msgstr ""
 
-#: ../editor.c:672
+#: ../editor.c:644
 msgid "All buffers are checked"
 msgstr ""
 
-#: ../editor.c:677
+#: ../editor.c:649
 msgid "Freeing buffers..."
 msgstr ""
 
-#: ../editor.c:692
+#: ../editor.c:664
 msgid "Freeing all buffers..."
 msgstr ""
 
-#: ../editor.c:708
+#: ../editor.c:680
 msgid "Buffer is NOT modified"
 msgstr ""
 
-#: ../editor.c:712
+#: ../editor.c:684
 msgid "Save unmodified buffer ?"
 msgstr ""
 
-#: ../editor.c:724
+#: ../editor.c:696
 msgid "Save modified buffer ?"
 msgstr ""
 
-#: ../editor.c:725
+#: ../editor.c:697
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr ""
 
-#: ../editor.c:735
+#: ../editor.c:707
 msgid "Buffer saved to file"
 msgstr ""
 
-#: ../editor.c:886
+#: ../editor.c:858
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:942
+#: ../editor.c:914
 msgid "Modification not allowed in Anchor buffer"
 msgstr ""
 
-#: ../editor.c:946
+#: ../editor.c:918
 msgid "Modification not allowed in LIST mode"
 msgstr ""
 
-#: ../editor.c:950
+#: ../editor.c:922
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 
-#: ../editor2.c:124 ../fileio.c:83
+#: ../editor2.c:114 ../fileio.c:83
 msgid "New File"
 msgstr ""
 
-#: ../editor2.c:126
+#: ../editor2.c:116
 msgid "[Mod] "
 msgstr ""
 
-#: ../editor2.c:128
+#: ../editor2.c:118
 msgid "[VM] "
 msgstr ""
 
-#: ../editor2.c:130
+#: ../editor2.c:120
 msgid "[WP] "
 msgstr ""
 
