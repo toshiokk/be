@@ -173,10 +173,10 @@ PRIVATE int check_file_pos_recorded_in_history(int hist_type_idx, const char *st
 	// "/dir/file.txt|100,40" ==> "/dir/file.txt"
 	get_file_line_col_from_str_null(str, file_path, NULL, NULL);
 	const char *line = search_history_file_path(hist_type_idx, file_path);
-	// check if exact line registered
 	if (strcmp(line, str) == 0) {
-		int lines = search_history_from_newest(hist_type_idx, line);
-		if (0 < lines && lines <= MAX_HISTORY_LINES / 2) {
+		// exact the same line registered
+		int line_num_from_bottom = search_history_from_newest(hist_type_idx, line);
+		if (0 < line_num_from_bottom && line_num_from_bottom <= MAX_HISTORY_LINES / 2) {
 			return 1; // registered relatively newer, no need of update
 		}
 	}
@@ -441,13 +441,11 @@ PRIVATE int search_history_from_newest(int hist_type_idx, const char *str)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
-	int lines;
-
-	lines = 0;
+	int line_num_from_bottom = 0;
 	for (line = BUF_BOT_LINE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
-		lines++;
+		line_num_from_bottom++;
 		if (strcmp(line->data, str) == 0)	// exact match
-			return lines;	// return line count from the newest
+			return line_num_from_bottom;	// return line count from the newest
 	}
 	return 0; // not found
 }
@@ -489,12 +487,13 @@ const char *search_history_file_path(int hist_type_idx, const char *path)
 //-----------------------------------------------------------------------------
 int select_from_history_list(int hist_type_idx, char *buffer)
 {
-	be_buf_t *edit_buf_save;
 
-	edit_buf_save = get_cep_buf();
 	load_histories();
 	renumber_all_bufs_from_top(&history_buffers);
+
+	be_buf_t *edit_buf_save = get_cep_buf();
 	set_cep_buf(get_history_buf(hist_type_idx));
+
 	CEPBV_CL = CUR_EDIT_BUF_BOT_LINE;
 	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
 	 UPDATE_SCRN_ALL_SOON);
@@ -506,6 +505,7 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 	} else {
 		strcpy__(buffer, "");
 	}
+
 	set_cep_buf(edit_buf_save);
 
 	return ret; // 1: selected, 0: done in editor, -1: cancelled

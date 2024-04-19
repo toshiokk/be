@@ -270,6 +270,8 @@ int inc_key_list_lines(void);
 const char *get_str_key_list_lines(void);
 int get_key_list_lines(void);
 
+int is_app_list_mode(void);
+
 int doe_tog_panes(void);
 int doe_tog_draw_cursor(void);
 int doe_tog_auto_indent(void);

@@ -361,6 +361,7 @@ be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num)
 	if (IS_NODE_BOT_ANCH(line)) {
 		line = NODE_PREV(line);
 	}
+_D_(line_dump(line))
 	return line;
 }
 

@@ -76,9 +76,7 @@ _FLF_
 	byte_idx = byte_idx_from_col_idx(msg_buf, main_win_get_columns(), CHAR_LEFT, NULL);
 	msg_buf[byte_idx] = '\0';		// limit message length
 
-	set_work_space_color_low();
 	update_screen_app(1, 1, 1);
-	set_work_space_color_normal();
 
 	get_cur_dir(dir_save);
 	tio_set_cursor_on(1);
@@ -94,6 +92,7 @@ flf_d_printf("ret: %d\n", ret);
 	tio_set_cursor_on(0);
 	change_cur_dir(dir_save);
 
+	///set_work_space_color_normal();
 	update_screen_app(1, 1, 1);
 
 	if (ret < 0) {
@@ -407,7 +406,6 @@ int ask_yes_no(int flags, const char *msg, ...)
 	blank_key_list_lines();
 	// First, display key list
 	if (get_key_list_lines()) {
-		blank_yes_no_line();
 		main_win_set_cursor_pos(get_yes_no_line_y(), 0);
 		if (flags & ASK_YES) {
 			list_one_key(chars_yes[0], _("Yes"));

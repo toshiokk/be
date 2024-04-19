@@ -32,7 +32,8 @@ item_color_t item_colors[MAX_ITEM_COLORS];
 
 item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	//  bgc, fgc
-	{ CL_BG, CL_BK, S(ITEM_COLOR_IDX_DEFAULT)			},
+///	{ CL_BG, CL_BK, S(ITEM_COLOR_IDX_DEFAULT)			},
+	{ CL_BK, CL_WH, S(ITEM_COLOR_IDX_DEFAULT)			},
 #if APP_REL_LVL == APP_REL_LVL_STABLE
 	// official release
 	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_TITLE)				},
@@ -76,19 +77,32 @@ void init_default_app_color(void)
 	memcpy__(item_colors, default_item_colors, sizeof(default_item_colors));
 }
 
-PRIVATE int work_space_color_low = 0;
-void set_work_space_color_low(void)
+void set_work_space_color_dark_if_app_list_mode()
 {
-	work_space_color_low++;
+	if (is_app_list_mode()) {
+		set_work_space_color_dark();
+	}
+}
+void set_work_space_color_normal_if_app_list_mode()
+{
+	if (is_app_list_mode()) {
+		set_work_space_color_normal();
+	}
+}
+
+PRIVATE int work_space_color_dark = 0;
+void set_work_space_color_dark(void)
+{
+	work_space_color_dark++;
 }
 void set_work_space_color_normal(void)
 {
-	if (work_space_color_low)
-		work_space_color_low--;
+	if (work_space_color_dark)
+		work_space_color_dark--;
 }
-int is_work_space_color_low(void)
+int is_work_space_color_dark(void)
 {
-	return work_space_color_low;
+	return work_space_color_dark;
 }
 
 //-----------------------------------------------------------------------------
@@ -114,20 +128,18 @@ void get_color_by_idx(item_color_idx_t color_idx, char *fgc, char *bgc)
 // set current color by item_idx
 void set_color_by_idx(item_color_idx_t color_idx, int reverse)
 {
-	int bgc;
-
 	if (0 <= color_idx && color_idx < MAX_ITEM_COLORS) {
-		bgc = item_colors[color_idx].bgc;
-#if 1
-		if (is_work_space_color_low()) {
-			if (bgc == CL_WH) {
-				bgc = CL_BR;
-///				bgc = CL_CY;
-///				bgc = CL_BL;
-			}
+		if (is_work_space_color_dark() && (color_idx == ITEM_COLOR_IDX_TEXT_NORMAL)) {
+			color_idx = ITEM_COLOR_IDX_DEFAULT;
 		}
-#endif
-		tio_set_attrs(bgc, item_colors[color_idx].fgc, reverse);
+		tio_set_attrs(item_colors[color_idx].bgc, item_colors[color_idx].fgc, reverse);
+		///int bgc = item_colors[color_idx].bgc;
+		///if (is_work_space_color_dark()) {
+		///	if (bgc == CL_WH) {
+		///		bgc = CL_BR;
+		///	}
+		///}
+		///tio_set_attrs(bgc, item_colors[color_idx].fgc, reverse);
 	}
 }
 

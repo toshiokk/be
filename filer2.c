@@ -307,7 +307,7 @@ int make_file_list(filer_view_t *fv, const char *filter)
 	int file_idx;
 	int len;
 
-	save_change_cur_dir(dir_save, fv->cur_dir);
+	change_cur_dir_after_save(dir_save, fv->cur_dir);
 
 	free_file_list(fv);
 
@@ -370,8 +370,6 @@ make_file_list_ret:;
 // Free malloc()ed memory
 void free_file_list(filer_view_t *fv)
 {
-	/////int file_idx;
-
 	if (fv->file_list) {
 		for (int file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
 			if (fv->file_list[file_idx].file_name) {
@@ -588,8 +586,6 @@ int get_next_file_idx_selected(int start_file_idx)
 }
 void unselect_all_files_auto(char selection_bit)
 {
-	/////int file_idx;
-
 	for (int file_idx = 0 ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
 		get_cur_filer_view()->file_list[file_idx].selected
 		 = get_cur_filer_view()->file_list[file_idx].selected & ~selection_bit;
@@ -615,7 +611,6 @@ int research_file_name_in_file_list(filer_view_t *fv)
 
 int search_file_name_in_file_list(filer_view_t *fv, const char *file_name)
 {
-	/////int file_idx;
 	int file_name_len;
 	// 0,1: regular <-> non-regular file, 2,3: all file
 	// 0,2: case sensitive, 1,3: case ignorant

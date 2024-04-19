@@ -38,7 +38,7 @@ typedef short key_code_t;
 #endif // ENABLE_NCURSES
 
 #define COLORS8			((COLOR_WHITE) + 1)
-#define COLORS16		((COLORS) * 2)
+#define COLORS16		((COLORS8) * 2)
 
 #define COLOR_DEFAULT	(-1)	// Not change color but use the value previously set
 #define CL_DF		COLOR_DEFAULT

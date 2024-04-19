@@ -25,7 +25,7 @@
 //   cur_dir:    current directory before changing directory and after changing directory
 //   prev_dir:   previous current directory before changing directory
 //   next_file:  file to be pointed after changing directory
-int change_dir_in_path(char *path, char *cur_dir, char *prev_dir, char *next_file)
+int change_cur_dir_in_path(char *path, char *cur_dir, char *prev_dir, char *next_file)
 {
 flf_d_printf("path: [%s]\n", path);
 	char dir[MAX_PATH_LEN+1];
@@ -77,12 +77,16 @@ _FLF_
 // /dir1/dir2/     ==> /dir1/dir2
 // /dir1           ==> /
 // ""              ==> /
-char *strip_file_from_path(char *path)
+char *strip_file_from_path(char *path, char *dir)
 {
-	static char dir[MAX_PATH_LEN+1];
 	char file[MAX_PATH_LEN+1];
-	separate_path_to_dir_and_file(path, dir, file);
-	return dir;
+	if (dir == NULL) {
+		separate_path_to_dir_and_file(path, path, file);
+		return path;
+	} else {
+		separate_path_to_dir_and_file(path, dir, file);
+		return dir;
+	}
 }
 
 PRIVATE void test_separate_path_to_dir_and_file__(char *path, char *buf_dir, char *buf_file,
@@ -351,6 +355,15 @@ char *get_home_dir(void)
 }
 
 //------------------------------------------------------------------------------
+// comparison of change current dir functions
+// | func                                     |save before change|may change to parent|
+// |------------------------------------------|------------------|--------------------|
+// | change_cur_dir_by_file_path_after_save   | Yes              | Yes                |
+// | change_cur_dir_by_file_path              | No               | Yes                |
+// | change_cur_dir_after_save                | Yes              | No                 |
+// | change_cur_dir                           | No               | No                 |
+
+
 const char *get_start_dir(void)
 {
 	static char start_dir[MAX_PATH_LEN+1] = "";
@@ -362,7 +375,28 @@ const char *get_start_dir(void)
 	}
 	return start_dir;
 }
-int save_change_cur_dir(char *dir_save, const char *dir)
+int change_cur_dir_by_file_path_after_save(char *dir_save, char *file_path)
+{
+	char dir[MAX_PATH_LEN+1];
+	strip_file_if_path_is_file(file_path, dir);
+	return change_cur_dir_after_save(dir_save, dir);
+}
+int change_cur_dir_by_file_path(char *file_path)
+{
+	char dir[MAX_PATH_LEN+1];
+	strip_file_if_path_is_file(file_path, dir);
+	return change_cur_dir(dir);
+}
+char *strip_file_if_path_is_file(char *path, char *dir)
+{
+	if (is_path_regular_file(path) > 0) {
+		strip_file_from_path(path, dir);
+	} else {
+		strlcpy__(dir, path, MAX_PATH_LEN);
+	}
+	return dir;
+}
+int change_cur_dir_after_save(char *dir_save, const char *dir)
 {
 	get_cur_dir(dir_save);
 	return change_cur_dir(dir);

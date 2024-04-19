@@ -68,7 +68,8 @@ void test_get_n_th_file_name(void);
 int goto_last_file_line_col_in_loaded();
 #endif // ENABLE_HISTORY
 
-char *get_memorized_file_pos_str();
+char *get_memorized_file_pos_buf(char *buffer);
+const char *get_memorized_file_pos_str(const char *str);
 char *memorize_cur_file_pos_null(char *buffer);
 int recall_cur_file_pos_null(const char *str);
 int goto_str_line_col_in_cur_buf(const char *str);

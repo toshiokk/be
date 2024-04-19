@@ -247,7 +247,7 @@ PCR
 | $HOME/.be/dir_history      | history of directory selected |
 | $HOME/.be/openfile_history | history of file position |
 | $HOME/.be/keymacro_history | history of keymacro executed |
-| $HOME/.be/clip_board       | clip board file, common to all be-editor instances in one user |
+| $HOME/.be/clipboard        | clipboard file, common to all be-editor instances in one user |
 
 ## Project file
 

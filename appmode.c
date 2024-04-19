@@ -413,6 +413,11 @@ int get_key_list_lines(void)
 	return GET_APPMD(app_KEY_LINES);
 }
 
+int is_app_list_mode(void)	// in editor: text view mode, in filer: file list mode
+{
+	return GET_APPMD(app_LIST_MODE);			// 0: edit mode, 1: list mode
+}
+
 //=============================================================================
 
 int doe_tog_panes(void)

@@ -69,6 +69,7 @@ int c_l_up(be_line_t **line, int *byte_idx);
 int c_l_down(be_line_t **line, int *byte_idx);
 int cursor_next_line(void);
 int first_line(void);
+int last_line(void);
 
 #endif // editormove_h
 

@@ -204,7 +204,6 @@ int dof_copy_file(void)
 		return 0;
 	}
 	begin_fork_exec_repeat();
-	/////int file_idx = get_first_file_idx_selected();
 	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
@@ -226,7 +225,6 @@ int dof_copy_file_update(void)
 {
 	char file_path[MAX_PATH_LEN+1];
 	int ret;
-	/////int file_idx;
 
 	ret = input_string_tail(get_other_filer_view()->cur_dir, file_path,
 	 HISTORY_TYPE_IDX_DIR, _("Copy to (Update):"));
@@ -259,7 +257,6 @@ int dof_move_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
 	int ret;
-	/////int file_idx;
 
 	ret = input_string_tail(get_other_filer_view()->cur_dir, file_path,
 	 HISTORY_TYPE_IDX_DIR, _("Move to:"));
@@ -287,9 +284,8 @@ int dof_move_file(void)
 }
 int dof_trash_file(void)
 {
-	int ret;
-	/////int file_idx;
 	int files_selected;
+	int ret;
 
 	if ((files_selected = get_files_selected_cfv()) == 0)
 		ret = ask_yes_no(ASK_YES_NO, _("Trash file %s ?"),
@@ -322,9 +318,8 @@ int dof_trash_file(void)
 }
 int dof_delete_file(void)
 {
-	int ret;
-	/////int file_idx;
 	int files_selected;
+	int ret;
 
 	if ((files_selected = get_files_selected_cfv()) == 0)
 		ret = ask_yes_no(ASK_YES_NO, _("Delete file %s ?"),
@@ -354,9 +349,8 @@ int dof_delete_file(void)
 }
 int dof_mark_to_delete_file(void)
 {
-	int ret;
-	/////int file_idx;
 	int files_selected;
+	int ret;
 
 	if ((files_selected = get_files_selected_cfv()) == 0)
 		ret = ask_yes_no(ASK_YES_NO, _("Mark file %s to be Deleted later ?"),
@@ -390,9 +384,8 @@ int dof_mark_to_delete_file(void)
 }
 int dof_size_zero_file(void)
 {
-	int ret;
-	/////int file_idx;
 	int files_selected;
+	int ret;
 
 	if ((files_selected = get_files_selected_cfv()) == 0)
 		ret = ask_yes_no(ASK_YES_NO, _("Make size of file %s 0 ?"),
@@ -503,13 +496,14 @@ int dof_change_directory(void)
 
 int dof_parent_directory(void)
 {
-	if (filer_change_dir("..") == 0)
-		return 0;
+	if (filer_change_dir("..")) {
+		return 1;   // OK
+	}
 	separate_path_to_dir_and_file(
 	 get_cur_filer_view()->cur_dir,
 	 get_cur_filer_view()->cur_dir,
 	 get_cur_filer_view()->next_file);
-	return 1;
+	return 0;
 }
 int dof_beginning_directory(void)
 {
@@ -530,7 +524,6 @@ int dof_prev_directory(void)
 int dof_real_path(void)
 {
 	char dir[MAX_PATH_LEN+1];
-
 	return filer_change_dir_if_not_yet(getcwd__(dir));
 }
 //-----------------------------------------------------------------------------
@@ -553,8 +546,6 @@ int dof_select_file(void)
 }
 int dof_select_no_file(void)
 {
-	/////int file_idx;
-
 	for (int file_idx = 0 ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
 		get_cur_filer_view()->file_list[file_idx].selected = 0;
 	}
@@ -563,7 +554,6 @@ int dof_select_no_file(void)
 }
 int dof_select_all_files(void)
 {
-	/////int file_idx;
 	int files_selected;
 
 	for (int file_idx = 0 ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
@@ -695,7 +685,6 @@ int dof_filer_menu_5(void)
 //-----------------------------------------------------------------------------
 PRIVATE int dof_edit_file_(int recursive)
 {
-	/////int file_idx;
 	int prev_count_edit_bufs = count_edit_bufs();
 
 	if (filer_change_dir_to_cur_sel()) {
@@ -746,9 +735,9 @@ PRIVATE int filer_change_dir_to_cur_sel(void)
 	if (S_ISDIR(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st.st_mode)) {
 		filer_change_dir(get_cur_filer_view()
 		 ->file_list[get_cur_filer_view()->cur_sel_idx].file_name);
-		return 1;
+		return 1;		// OK
 	}
-	return 0;
+	return 0;			// error
 }
 PRIVATE int filer_change_dir_if_not_yet(char *dir)
 {
@@ -765,7 +754,7 @@ PRIVATE int filer_change_dir_to_prev_dir(void)
 	if (strlen(get_cur_filer_view()->prev_dir)) {
 		return filer_change_dir(get_cur_filer_view()->prev_dir);
 	}
-	return 0;
+	return 0;		// error
 }
 
 // If can not change dir, try parent dir
@@ -780,23 +769,24 @@ flf_d_printf("try to dir[%s]\n", dir);
 		if (strcmp(dir, "/") == 0) {
 			return 0;	// error
 		}
-		if (filer_change_dir(dir) == 0) {
+		if (filer_change_dir(dir)) {
 			break;
 		}
 		// If can not change dir, try parent dir
 		// /try/to/change/dir/file ==> /try/to/change/dir
-		separate_path_to_dir_and_file(dir, dir, file);
+		strip_file_from_path(dir, NULL);
+		/////separate_path_to_dir_and_file(dir, dir, file);
 	}
 	return 1;	// changed
 }
 int filer_change_dir(char *dir)
 {
-	if (change_dir_in_path(dir, get_cur_filer_view()->cur_dir,
+	if (change_cur_dir_in_path(dir, get_cur_filer_view()->cur_dir,
 	 get_cur_filer_view()->prev_dir, get_cur_filer_view()->next_file) == 0) {
 		// We can't open this dir for some reason. Complain.
 		disp_status_bar_err(_("Can not change current to [%s]: %s"),
 		 shrink_str_to_scr_static(dir), strerror(errno));
-		return 1;	// Error
+		return 0;	// error
 	}
 #ifdef ENABLE_HISTORY
 	// previous dir, next dir
@@ -806,7 +796,7 @@ int filer_change_dir(char *dir)
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	disp_status_bar_done(_("Changed current directory to [%s]"),
 	 shrink_str_to_scr_static(get_cur_filer_view()->cur_dir));
-	return 0;
+	return 1;		// OK
 }
 
 #endif // ENABLE_FILER

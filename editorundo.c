@@ -107,7 +107,7 @@ void check_undo_state_after_change(void)
 	 && count_undo_bufs() == prev_count_undo_bufs) {
 		// but no undo info pushed
 		// warn it by setting unusual application color
-		set_work_space_color_low();
+		set_work_space_color_dark();
 		disp_status_bar_err(_("!!!! No UNDO info pushed !!!!"));
 		progerr_printf("No UNDO info pushed for %s\n", prev_func_id);
 	}

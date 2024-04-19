@@ -43,7 +43,6 @@ void disp_status_bar_percent_editor(const char *msg, ...);
 void disp_status_bar_percent_filer(const char *msg, ...);
 
 void blank_status_bar(void);
-void blank_yes_no_line(void);
 void blank_key_list_lines(void);
 int get_input_line_y(void);
 int get_yes_no_line_y(void);

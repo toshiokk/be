@@ -1,7 +1,0 @@
-# configure for debug
-# make, make install
-LANG=C; export LANG
-#sudo chown `whoami` *
-echo "## ./configure ##" >_conf.log
-./configure --enable-debug --enable-pcre 2>&1 | tee -a _conf.log
-echo "#### End of ./configure ####" >>_conf.log

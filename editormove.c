@@ -317,7 +317,7 @@ int doe_first_line(void)
 }
 int doe_last_line(void)
 {
-	CEPBV_CL = CUR_EDIT_BUF_BOT_LINE;
+	last_line();
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_BOTTOM, UPDATE_SCRN_ALL);
 	return 1;
 }
@@ -330,6 +330,7 @@ int doe_control_code(void)
 
 	if (is_view_mode_then_warn_it())
 		return 0;
+
 	disp_status_bar_ing(_("Input control character [^A-^Z,^[,^\\,^],^^,^_,\x7f]"));
 	key = input_key_loop();
 	disp_status_bar_ing(_("Key code: %04x"), key);
@@ -440,9 +441,9 @@ PRIVATE int do_enter_utf8s(const char *utf8s)
 
 flf_d_printf("[%s]\n", utf8s);
 	do_clear_mark_();
-	if (is_view_mode_then_warn_it()) {
+	if (is_view_mode_then_warn_it())
 		return 0;
-	}
+
 #ifdef ENABLE_UNDO
 	undo_set_region_save_before_change(CEPBV_CL, CEPBV_CL, 1);
 #endif // ENABLE_UNDO
@@ -537,6 +538,7 @@ int doe_backspace(void)
 	do_clear_mark_();
 	if (is_view_mode_then_warn_it())
 		return 0;
+
 ///_D_(dump_editor_panes())
 	if (CEPBV_CLBI <= 0) {
 		if (IS_NODE_TOP(CEPBV_CL)) {
@@ -625,6 +627,7 @@ int doe_conv_upp_low_letter(void)
 	do_clear_mark_();
 	if (is_view_mode_then_warn_it())
 		return 0;
+
 	byte_idx = CEPBV_CLBI;
 	data = CEPBV_CL->data;
 	if (isalpha(data[byte_idx])) {
@@ -778,6 +781,10 @@ int first_line(void)
 {
 	CEPBV_CL = CUR_EDIT_BUF_TOP_LINE;
 	return 1;
+}
+int last_line(void)
+{
+	CEPBV_CL = CUR_EDIT_BUF_BOT_LINE;
 }
 
 // End of editormove.c

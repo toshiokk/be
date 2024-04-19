@@ -45,6 +45,7 @@ int call_editor(int push_win, int list_mode)
 	SET_APPMD_VAL(app_LIST_MODE, list_mode);
 	SET_APPMD_VAL(ed_EDITOR_PANES, 0);
 	set_app_func_key_table();
+	set_work_space_color_dark_if_app_list_mode();
 
 ////_D_(dump_cur_pointers())
 flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
@@ -56,6 +57,7 @@ flf_d_printf("ret: %d\n", ret);
 	_mlc_check_count
 ////_D_(dump_cur_pointers())
 
+	set_work_space_color_normal_if_app_list_mode();
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 	SET_APPMD_VAL(app_LIST_MODE, GET_APPMD_PTR(&appmode_save, app_LIST_MODE));
 	SET_APPMD_VAL(ed_EDITOR_PANES, GET_APPMD_PTR(&appmode_save, ed_EDITOR_PANES));
@@ -296,6 +298,7 @@ int doe_reopen_file_last_line(void)
 }
 int doe_reopen_file(void)
 {
+	char file_pos_str[MAX_PATH_LEN+1];
 	char file_path[MAX_PATH_LEN+1];
 	int ret;
 
@@ -305,10 +308,10 @@ int doe_reopen_file(void)
 		if (ret <= 0)
 			return 0;
 	}
-	memorize_cur_file_pos_null(NULL);
+	memorize_cur_file_pos_null(file_pos_str);
 	free_cur_edit_buf();
 	// CURDIR: abs-path is specified
-	get_file_line_col_from_str_null(NULL, file_path, NULL, NULL);
+	get_file_line_col_from_str_null(file_pos_str, file_path, NULL, NULL);
 	if (load_file_name_recurs(file_path, OOE0, MOE1, RECURSIVE1) <= 0) {
 		tio_beep();
 		return 0;
@@ -387,16 +390,18 @@ int doe_write_file_always(void)
 }
 int doe_write_all_ask(void)
 {
-	memorize_cur_file_pos_null(NULL);
+	char file_pos_str[MAX_PATH_LEN+1];
+	memorize_cur_file_pos_null(file_pos_str);
 	write_all_ask(ANSWER_NO, NO_CLOSE_AFTER_SAVE_0);
-	recall_cur_file_pos_null(NULL);
+	recall_cur_file_pos_null(file_pos_str);
 	return 1;
 }
 int doe_write_all_modified(void)
 {
-	memorize_cur_file_pos_null(NULL);
+	char file_pos_str[MAX_PATH_LEN+1];
+	memorize_cur_file_pos_null(file_pos_str);
 	write_all_ask(ANSWER_ALL, NO_CLOSE_AFTER_SAVE_0);
-	recall_cur_file_pos_null(NULL);
+	recall_cur_file_pos_null(file_pos_str);
 	return 1;
 }
 
@@ -412,6 +417,7 @@ int doe_close_file_always(void)
 PRIVATE int close_file(int yes_no)
 {
 	int ret;
+	char file_pos_str[MAX_PATH_LEN+1];
 
 	if (is_app_list_mode()) {
 		editor_quit = EDITOR_CANCELLED;
@@ -423,7 +429,9 @@ PRIVATE int close_file(int yes_no)
 		return -1;
 	}
 	// Yes/No
-	memorize_cur_file_pos_null(NULL);
+
+	// current file may be the last open file.
+	memorize_cur_file_pos_null(file_pos_str);
 	free_cur_edit_buf();
 
 	doe_refresh_editor();
@@ -431,8 +439,8 @@ PRIVATE int close_file(int yes_no)
 #ifdef ENABLE_HISTORY
 	if (count_edit_bufs() == 0) {
 		// This file is the last open file.
-		// Memorize the last file's cursor pos.
-		update_history(HISTORY_TYPE_IDX_CURSPOS, get_memorized_file_pos_str(), 1);
+		// Memorize the last open file's cursor pos.
+		update_history(HISTORY_TYPE_IDX_CURSPOS, file_pos_str, 1);
 	}
 #endif // ENABLE_HISTORY
 	return 2;
@@ -450,11 +458,13 @@ int doe_close_all_modified(void)
 }
 PRIVATE int write_close_all(int yes_no)
 {
+	char file_pos_str[MAX_PATH_LEN+1];
 	if (is_app_list_mode()) {
 		editor_quit = EDITOR_CANCELLED;
 		return 0;
 	}
-	memorize_cur_file_pos_null(NULL);
+	// memorize the last current file.
+	memorize_cur_file_pos_null(file_pos_str);
 
 	close_all_not_modified();
 	if (write_all_ask(yes_no, CLOSE_AFTER_SAVE_1) < 0)
@@ -462,7 +472,8 @@ PRIVATE int write_close_all(int yes_no)
 	close_all();
 
 #ifdef ENABLE_HISTORY
-	update_history(HISTORY_TYPE_IDX_CURSPOS, get_memorized_file_pos_str(), 1);
+	// memorize the last current file's cursor pos.
+	update_history(HISTORY_TYPE_IDX_CURSPOS, file_pos_str, 1);
 #endif // ENABLE_HISTORY
 	return 0;
 }
@@ -470,7 +481,8 @@ PRIVATE int write_close_all(int yes_no)
 //-----------------------------------------------------------------------------
 int doe_read_file_into_cur_pos(void)
 {
-	memorize_cur_file_pos_null(NULL);
+	char file_pos_str[MAX_PATH_LEN+1];
+	memorize_cur_file_pos_null(file_pos_str);
 	open_file_recursive(RECURSIVE0);
 	if (get_files_loaded() <= 0) {
 		return 0;
@@ -478,48 +490,57 @@ int doe_read_file_into_cur_pos(void)
 	doe_select_all_lines();
 	doe_copy_text();
 	doe_close_file_ask();
-	recall_cur_file_pos_null(NULL);
+	recall_cur_file_pos_null(file_pos_str);
 	doe_paste_text_with_pop();
 	return 0;
 }
 
-#define _CLIP_BOARD_FILE_NAME		"clip_board"		// default clip board file name
+#define _CLIPBOARD_FILE_NAME	"clipboard"		// default clipboard file name
 #if defined(APP_DIR)
-#define CLIP_BOARD_FILE_NAME		_CLIP_BOARD_FILE_NAME
+#define CLIPBOARD_FILE_NAME		_CLIPBOARD_FILE_NAME
 #else // APP_DIR
-#define CLIP_BOARD_FILE_NAME		"." _CLIP_BOARD_FILE_NAME
+#define CLIPBOARD_FILE_NAME		"." _CLIPBOARD_FILE_NAME
 #endif // APP_DIR
 
-// clip board file is common to all be-editor instances in one user
-const char *get_clip_board_file_path()
+// clipboard file is common to all be-editor instances in one user
+const char *get_clipboard_file_path()
 {
 	static char file_path[MAX_PATH_LEN+1];
 
-	snprintf_(file_path, MAX_PATH_LEN+1, "%s/%s", get_app_dir(), CLIP_BOARD_FILE_NAME);
+	snprintf_(file_path, MAX_PATH_LEN+1, "%s/%s", get_app_dir(), CLIPBOARD_FILE_NAME);
 	return file_path;
 }
-int save_buffer_to_clip_board_file(be_buf_t *buf)
+int save_cut_buf_to_clipboard_file()
 {
-	memorize_cur_file_pos_null(NULL);
-	set_cep_buf(buf);
-	int ret = save_cur_buf_to_file(get_clip_board_file_path());
-	recall_cur_file_pos_null(NULL);
-	return ret;
+	return save_buf_to_file(CUT_BUFS_TOP_BUF, get_clipboard_file_path());
 }
-int doe_save_cur_buffer_to_clip_board()
+int load_clipboard_into_cut_buf()
 {
-	return save_cur_buf_to_file(get_clip_board_file_path());
+	return load_file_into_buf(CUT_BUFS_TOP_BUF, get_clipboard_file_path());
 }
-int doe_read_clip_board_into_cur_pos()
+
+int doe_read_clipboard_into_cur_char()
 {
-	memorize_cur_file_pos_null(NULL);
-	if (load_file_name_upp_low(get_clip_board_file_path(), TUL0, OOE0, MOE1, RECURSIVE0) <= 0) {
+	return do_read_clipboard_into_cur_pos(0);
+}
+int doe_read_clipboard_into_cur_line()
+{
+	return do_read_clipboard_into_cur_pos(1);
+}
+int do_read_clipboard_into_cur_pos(int char0_line1)
+{
+	push_cut_buf();
+	if (load_clipboard_into_cut_buf() <= 0) {
+		pop_n_free_from_cut_buf();
 		return 0;
 	}
-	doe_select_all_lines();
-	doe_copy_text();
-	doe_close_file_ask();
-	recall_cur_file_pos_null(NULL);
+	if (char0_line1 == 0) {
+		// set character cut ==> character paste
+		SET_CUR_CBUF_STATE(buf_CUT_MODE, CUT_MODE_H_CHAR);
+	} else {
+		// set line cut ==> line paste
+		SET_CUR_CBUF_STATE(buf_CUT_MODE, CUT_MODE_N_LINE);
+	}
 	doe_paste_text_with_pop();
 	return 0;
 }
@@ -538,6 +559,7 @@ int doe_run_line_soon(void)
 
 	if (is_app_list_mode()) {
 		editor_quit = EDITOR_DONE;
+		return 0;
 	}
 	doe_refresh_editor();
 	return 0;
@@ -719,9 +741,7 @@ int doe_inc_key_list_lines(void)
 void win_push_win_size(void)
 {
 	// draw parent screen reversed
-	set_work_space_color_low();
 	update_screen_app(1, 1, 1);
-	set_work_space_color_normal();
 
 	inc_win_depth();
 	win_reinit_win_size();
@@ -736,6 +756,7 @@ void win_pop_win_size(void)
 	dec_win_depth();
 	win_reinit_win_size();
 
+	set_work_space_color_normal();
 	// draw parent screen
 	update_screen_app(1, 1, 1);
 }
@@ -770,35 +791,32 @@ int update_screen_editor(int title_bar, int status_bar, int refresh)
 		disp_editor_title_bar();
 	}
 
-	if (GET_APPMD(ed_EDITOR_PANES) == 0) {		// 1 pane
-		win_select_win(WIN_IDX_SUB_WHOLE);
-		if (get_edit_win_update_needed()) {
+	if (get_edit_win_update_needed()) {
+		if (GET_APPMD(ed_EDITOR_PANES) == 0) {		// 1 pane
+			win_select_win(WIN_IDX_SUB_WHOLE);
 			disp_edit_win(1);
-		}
-	} else {									// 2 panes
-		cur_pane_idx = get_editor_cur_pane_idx();
-		for (pane_sel_idx = 0; pane_sel_idx < EDITOR_PANES; pane_sel_idx++) {
-			// 1st, update not current pane.
-			// 2nd, update current pane.
-			if (pane_sel_idx == 0) {
-				// not current pane
-				pane_idx = 1 - cur_pane_idx;	// 0 ==> 1, 1 ==> 0
-			} else {
-				// current pane
-				pane_idx = cur_pane_idx;
-			}
-			win_select_win(WIN_IDX_SUB_LEFT + pane_idx);
-			if (pane_sel_idx == 0) {
-				// not current pane
-				set_work_space_color_low();
-			} else {
-				// current pane
-				set_work_space_color_normal();
-			}
+		} else {									// 2 panes
+			cur_pane_idx = get_editor_cur_pane_idx();
+			for (pane_sel_idx = 0; pane_sel_idx < EDITOR_PANES; pane_sel_idx++) {
+				// 1st, update not current pane.
+				// 2nd, update current pane.
+				if (pane_sel_idx == 0) {
+					// not current pane
+					pane_idx = 1 - cur_pane_idx;	// 0 ==> 1, 1 ==> 0
+				} else {
+					// current pane
+					pane_idx = cur_pane_idx;
+				}
+				win_select_win(WIN_IDX_SUB_LEFT + pane_idx);
+				if (pane_sel_idx == 0) {
+					set_work_space_color_dark();
+				}
 ///flf_d_printf("pane_sel_idx: %d, pane_idx: %d\n", pane_sel_idx, pane_idx);
-			set_editor_cur_pane_idx(pane_idx);
-			if (get_edit_win_update_needed()) {
+				set_editor_cur_pane_idx(pane_idx);
 				disp_edit_win(pane_sel_idx);
+				if (pane_sel_idx == 0) {
+					set_work_space_color_normal();
+				}
 			}
 		}
 	}
@@ -903,19 +921,15 @@ void disp_key_list_editor(void)
 }
 
 //-----------------------------------------------------------------------------
-int is_app_list_mode(void)	// in editor: text view mode, in filer: file list mode
-{
-	return GET_APPMD(app_LIST_MODE);			// 0: edit mode, 1: list mode
-}
 
 int is_view_mode_then_warn_it(void)
 {
-	if (IS_NODE_ANCH(get_cep_buf())) {
-		disp_status_bar_done(_("Modification not allowed in Anchor buffer"));
-		return 1;
-	}
 	if (is_app_list_mode()) {
 		disp_status_bar_done(_("Modification not allowed in LIST mode"));
+		return 1;
+	}
+	if (IS_NODE_ANCH(get_cep_buf())) {
+		disp_status_bar_done(_("Modification not allowed in Anchor buffer"));
 		return 1;
 	}
 	if (CUR_EBUF_STATE(buf_VIEW_MODE)) {

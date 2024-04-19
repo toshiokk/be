@@ -242,11 +242,6 @@ void blank_status_bar(void)
 {
 	main_win_clear_lines(main_win_get_bottom_win_y() + STATUS_LINE, -1);
 }
-void blank_yes_no_line(void)
-{
-	set_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
-	main_win_clear_lines(get_yes_no_line_y(), -1);
-}
 
 void blank_key_list_lines(void)
 {

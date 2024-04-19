@@ -104,7 +104,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 	// regular file
 	disp_status_bar_ing(_("Reading File %s ..."), shrink_str_to_scr_static(full_path));
 	create_edit_buf(full_path);
-	memcpy__(&get_cep_buf()->orig_file_stat, &fileinfo, sizeof(fileinfo));
+	memcpy__(&(get_cep_buf()->orig_file_stat), &fileinfo, sizeof(fileinfo));
 
 	ret = load_file_into_cur_buf__(full_path, 1, msg_on_err);
 
@@ -116,6 +116,17 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 }
 
 //-----------------------------------------------------------------------------
+
+int load_file_into_buf(be_buf_t *buf, const char *full_path)
+{
+	be_buf_t *buf_save = get_cep_buf();
+	set_cep_buf(buf);
+
+	int ret = load_file_into_cur_buf__(full_path, 1, 0);
+
+	set_cep_buf(buf_save);
+	return ret;
+}
 
 PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file, int msg_on_err)
 {
@@ -479,7 +490,7 @@ int backup_and_save_cur_buf(const char *file_path)
 	}
 
 	// get current file stat in orig_file_stat
-	stat(get_cep_buf()->file_path, &get_cep_buf()->orig_file_stat);
+	stat(get_cep_buf()->file_path, &(get_cep_buf()->orig_file_stat));
 	update_cur_buf_crc();
 
 	disp_status_bar_ing(P_(_("%d line written"),
@@ -525,6 +536,16 @@ PRIVATE int save_cur_buf_to_file_nkf(const char *file_path, const char *nkf_opti
 #endif // USE_NKF
 PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp);
 
+int save_buf_to_file(be_buf_t *buf, const char *file_path)
+{
+	be_buf_t *buf_save = get_cep_buf();
+	set_cep_buf(buf);
+
+	int ret = save_cur_buf_to_file(file_path);
+
+	set_cep_buf(buf_save);
+	return ret;
+}
 int save_cur_buf_to_file(const char *file_path)
 {
 #ifdef USE_NKF

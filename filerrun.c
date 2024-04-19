@@ -43,7 +43,6 @@ int dof_exec_command_with_file(void)
 {
 	char command_str[MAX_PATH_LEN+1];
 	int ret;
-	/////int file_idx;
 	char *ptr_replace;
 	char buffer[MAX_PATH_LEN+1];
 #define MAX_REPLACEMENTS	10
@@ -94,7 +93,6 @@ int dof_exec_command_with_files(void)
 {
 	char command_str[MAX_PATH_LEN+1];
 	int ret;
-	/////int file_idx;
 
 	// "file1 file2 ..."
 	command_str[0] = '\0';

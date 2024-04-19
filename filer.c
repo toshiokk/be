@@ -146,6 +146,7 @@ flf_d_printf("push: %d, list: %d, dir: %s, filter: [%s], path: [%s], len: %d\n",
 	SET_APPMD(app_EDITOR_FILER);
 	SET_APPMD_VAL(app_LIST_MODE, list_mode);
 	SET_APPMD_VAL(ed_EDITOR_PANES, 0);
+	set_work_space_color_dark_if_app_list_mode();
 	set_app_func_key_table();
 
 flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
@@ -155,6 +156,7 @@ flf_d_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 flf_d_printf("ret: %d\n", ret);
 	filer_do_next = FILER_DO_NOTHING;	// for caller of call_filer(), clear "editor_quit"
 
+	set_work_space_color_normal_if_app_list_mode();
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 	SET_APPMD_VAL(app_LIST_MODE, GET_APPMD_PTR(&appmode_save, app_LIST_MODE));
 	SET_APPMD_VAL(ed_EDITOR_PANES, GET_APPMD_PTR(&appmode_save, ed_EDITOR_PANES));
@@ -180,7 +182,6 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 #endif // ENABLE_HISTORY
 	key_code_t key_input;
 	func_key_table_t *func_key_table;
-	/////int file_idx;
 
 #ifdef ENABLE_HISTORY
 	get_cur_dir(prev_cur_dir);		// memorize prev. current dir
@@ -411,13 +412,12 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 			}
 			win_select_win(WIN_IDX_SUB_LEFT + pane_idx);
 			if (pane_sel_idx == 0) {
-				// not current pane
-				set_work_space_color_low();
-			} else {
-				// current pane
-				set_work_space_color_normal();
+				set_work_space_color_dark();
 			}
 			disp_file_list(&cur_filer_panes->filer_views[pane_idx], pane_sel_idx);
+			if (pane_sel_idx == 0) {
+				set_work_space_color_normal();
+			}
 		}
 	}
 	// status bar
@@ -431,8 +431,6 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 	sub_win_set_cursor_pos(filer_win_get_file_list_y()
 	 + get_cur_filer_view()->cur_sel_idx
 	 - get_cur_filer_view()->top_idx, 0);
-
-	set_work_space_color_normal();
 
 	if (refresh) {
 		tio_refresh();
@@ -496,7 +494,6 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 {
 	int cur_sel_idx;
 	int bottom_idx;
-	/////int line_idx;
 	int file_idx;
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 	char *ptr;

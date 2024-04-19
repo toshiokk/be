@@ -57,10 +57,13 @@ int doe_close_all_modified(void);
 
 int doe_read_file_into_cur_pos(void);
 
-const char *get_clip_board_file_path();
-int save_buffer_to_clip_board_file(be_buf_t *buf);
-int doe_save_cur_buffer_to_clip_board();
-int doe_read_clip_board_into_cur_pos();
+const char *get_clipboard_file_path();
+int save_cut_buf_to_clipboard_file();
+int load_clipboard_into_cut_buf();
+
+int doe_read_clipboard_into_cur_char();
+int doe_read_clipboard_into_cur_line();
+int do_read_clipboard_into_cur_pos(int char0_line1);
 
 //-----------------------------------------------------------------------------
 
@@ -109,7 +112,6 @@ int update_screen_editor(int title_bar, int status_bar, int refresh);
 int disp_status_bar_editor(void);
 void disp_key_list_editor(void);
 
-int is_app_list_mode(void);
 int is_view_mode_then_warn_it(void);
 
 #ifdef ENABLE_DEBUG

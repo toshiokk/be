@@ -94,12 +94,12 @@ int doe_switch_to_func_list(void)
 
 int make_help_buf_call_editor(int help_idx)
 {
-	be_buf_t *edit_buf_save = get_cep_buf();
-
 	make_help_buf(HELP_BUF_IDX_KEY_LIST);
 	make_help_buf(HELP_BUF_IDX_FUNC_LIST);
 
+	be_buf_t *edit_buf_save = get_cep_buf();
 	set_cep_buf(get_help_buf(help_idx));
+
 	switch (help_idx) {
 	default:
 	case HELP_BUF_IDX_KEY_LIST:

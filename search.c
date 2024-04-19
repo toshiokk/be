@@ -731,7 +731,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 					line = NODE_PREV(line);
 					byte_idx = line_data_len(line);
 				} else if (global_search && switch_cep_buf_to_prev(0, 0)) {
-					// update pointers after switching buffer
+					// update local pointers after switching buffer
 					// but not update pointers in buffer
 					ptr_line = &(CEPBV_CL);
 					ptr_byte_idx = &(CEPBV_CLBI);
@@ -762,7 +762,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 					line = NODE_NEXT(line);
 					byte_idx = 0;
 				} else if (global_search && switch_cep_buf_to_next(0, 0)) {
-					// update pointers after switching buffer
+					// update local pointers after switching buffer
 					// but not update pointers in buffer
 					ptr_line = &(CEPBV_CL);
 					ptr_byte_idx = &(CEPBV_CLBI);

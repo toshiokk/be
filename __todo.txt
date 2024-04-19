@@ -1,12 +1,30 @@
-#### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: done, x: impossible)
+#### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible)
 
-[] input_string()
-  | key             | file path | append  | action                                       |
-  |-----------------|-----------|---------|----------------------------------------------|
-  | e,d,f,c         | file name | replace | input file name replacing previous string    |
-  | E,D,F,C         | file path | replace | input file path replacing previous string    |
-  | M-E,M-D,M-F,M-C | file name | append  | input file name appending to previous string |
-  | M-e,M-d,M-f,M-c | file name | append  | input file path appending to previous string |
+[v] when reopened, current file pos is the last line in all file
+[] tag jump opens too many files.
+
+[v] share cut-buffer between BE-editor-instances (Use system clip-board or own clip-board file)
+	F06/F07 cut/copy selection to clip-board
+	[v] Shift-F07 paste clip-board into current cursor pos(character based paste)
+	[v] Shift-F08 paste clip-board into current line(line based paste)
+	[v] support both character copy and line copy (on GUI based app. there is the only character based cut)
+
+[] difficult to memorize below function keys for human
+[v] input_string() by filer
+  | key         | string to be input | replace/append  | action                                       |
+  |-------------|--------------------|-----------------|----------------------------------------------|
+  | e,d,c       | file name          | replace         | input file name replacing previous string    |
+  | E,D,C       | file path          | replace         | input file path replacing previous string    |
+  | M-e,M-d,M-c | file name          | append          | input file name appending to previous string |
+  | M-E,M-D,M-C | file path          | append          | input file path appending to previous string |
+  | m,M         | dir path           | replace         | input dir path replacing previous string     |
+  | M-m,M-M     | dir path           | append          | input dir path appending to previous string  |
+
+[] The same data should be saved after loading binary file.(Ex. PNG file)
+  load: 0x7f,0x80--0xff ==> 0x17f,0x180--0x1ff
+        convert_7f_ff_to_utf8_17f_1ff()
+  save: 0x17f,0x180--0x1ff ==> 0x7f,0x80--0xff
+        convert_utf8_17f_1ff_to_7f_ff()
 
 [v] change directory on file path "/dir/to/file.txt" to directory "/dir/to/"
 [v] change directory on relative file path "./dir/to/file.txt" to relative directory "./dir/to/"
@@ -32,12 +50,6 @@
               \e[1;3A \e[1;3B \e[1;3D \e[1;3C
 [v] recognize Ctrl-UP, Ctrl-Down, Ctrl-Right, Ctrl-Left keys
               \e[1;5A \e[1;5B \e[1;5D \e[1;5C
-
-[x] share cut-buffer between BE-editor-instances (Use clip-board or own clip-board file)
-	F07 copy selection to clip-board
-	Shift-F07 copy current file to clip-board
-	Shift-F08 paste clip-board into current line
-	[] support both character copy and line copy
 [v] cut_to_head(), cut_to_tail() ==> delete_to_head(), delete_to_tail()
 [v] start up in two pane filer ==> add "-w" command line option
 [v] update history with cur-dir just before changing cur-dir
