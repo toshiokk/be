@@ -29,7 +29,9 @@
 
 int doe_goto_input_line(void);
 int doe_goto_file_or_dir_in_cur_line(void);
+int doe_goto_file_or_dir_in_cur_cursor_pos(void);
 int doe_goto_file_in_cur_line(void);
+int doe_goto_file_in_cur_cursor_pos(void);
 int doe_goto_directory_in_cur_line(void);
 int change_dirs_in_string(const char *string, char *cur_dir, char *prev_dir, char *next_file);
 

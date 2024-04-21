@@ -137,7 +137,6 @@ int tio_is_initialized(void)
 int tio_init(void)
 {
 	strnset__(tio_blank_line_buf, ' ', MAX_SCRN_LINE_BUF_LEN);
-///	strnset__(tio_blank_line_buf, '_', MAX_SCRN_LINE_BUF_LEN);
 #ifdef ENABLE_NCURSES
 	flf_d_printf("Using curses (cursesif)\n");
 	curses_init();
@@ -178,7 +177,6 @@ int tio_end(void)
 int tio_resize(void)
 {
 	// update screen size
-///	tio_set_screen_size(lines, cols);
 	// re-initialize terminal interface to reflect new terminal size
 	tio_end();
 	tio_begin();
@@ -205,10 +203,8 @@ int tio_resume(void)
 int tio_check_update_terminal_size(void)
 {
 	if (is_sigwinch_signaled()) {
-///flf_d_printf("cols x rows: %d x %d\n", ioctl_ws_col, ioctl_ws_row);
 		clear_sigwinch_signaled();
 		tio_resize();
-///flf_d_printf("cols x rows: %d x %d\n", tio_get_columns(), tio_get_lines());
 		return 1;
 	}
 	return 0;
@@ -305,11 +301,9 @@ const char *tio_blank_line(void)
 
 void tio_output_string(int yy, int xx, const char *string, int bytes)
 {
-///flf_d_printf("bytes: %d\n", bytes);
 	if (bytes < 0) {
 		bytes = byte_idx_from_col_idx(string, tio_get_columns() - xx, CHAR_LEFT, NULL);
 	}
-///flf_d_printf("bytes: %d\n", bytes);
 #ifdef ENABLE_NCURSES
 	curses_output_string(yy, xx, string, bytes);
 #else // ENABLE_NCURSES

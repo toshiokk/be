@@ -218,18 +218,15 @@ int termif_get_cursor_pos(int *yy, int *xx)
 		fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in read()
 		if ((len = read(STDIN_FILENO, buf, MAX_REPORT_LEN)) >= MIN_REPORT_LEN) {
 			buf[len] = '\0';
-///
-flf_d_printf("report:[%s]\n", buf);
+/////flf_d_printf("report:[%s]\n", buf);
 			for (ptr = buf; *ptr; ptr++) {
 				if (isdigit(*ptr))
 					break;
 			}
-///
-flf_d_printf("report:[%s]\n", ptr);
+/////flf_d_printf("report:[%s]\n", ptr);
 			// ESC [ lines ; cols R
 			if (sscanf(ptr, "%d;%d", &lines, &cols) >= 2) {
-///
-flf_d_printf("cursor-pos: %d, %d\n", lines, cols);
+/////flf_d_printf("cursor-pos: %d, %d\n", lines, cols);
 				*yy = lines;
 				*xx = cols;
 				return 1;
@@ -283,13 +280,9 @@ PRIVATE void set_string_to_vscreen(const char *string, int bytes)
 	vscreen_char_t ucs21;
 	int width;
 
-///flf_d_printf("[%s]\n", string);
-///flf_d_printf("bytes: %d\n", bytes);
 	for (str = string; str - string < bytes; str += utf8c_bytes(str)) {
-///flf_d_printf("%d\n", str - string);
 		ucs21 = utf8c_decode(str);
 		width = utf8c_columns(str);
-///flf_d_printf("%04x: %d\n", ucs21, width);
 		if (width == 1) {			// narrow char.
 			put_narrow_char_to_vscreen(ucs21);
 		} else if (width == 2) {	// wide char.
@@ -592,7 +585,6 @@ PRIVATE void send_printf_to_term(const char *format, ...)
 	va_start(ap, format);
 	vsnprintf(buffer, MAX_ESC_SEQ_LEN+1, format, ap);
 	va_end(ap);
-///d_printf("XXX{%s}\n", buffer);
 	send_string_to_term__(buffer, -1);
 }
 PRIVATE void send_string_to_term(const char *string, int bytes)
@@ -892,7 +884,6 @@ PRIVATE key_code_t input_key(void)
 	if (read(STDIN_FILENO, buf, 1) >= 1) {
 		key = buf[0];
 	}
-///	flf_d_printf("getch():%04x %d\n", key, key);
 	return key;
 }
 

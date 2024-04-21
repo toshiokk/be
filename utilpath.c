@@ -182,14 +182,6 @@ char *separate_path_to_dir_and_file(char *path, char *buf_dir, char *buf_file)
 	return buf_file;		// return file_name
 }
 
-/////// "" ==> "/"
-/////char *normalize_root_dir(char *dir)
-/////{
-/////	if (dir[0] == '\0')
-/////		strcpy__(dir, "/");
-/////	return dir;
-/////}
-
 // /dir1/dir2/ ==> /dir1/dir2
 // /           ==> ""
 char *remove_last_slash(char *path)
@@ -235,10 +227,10 @@ char *get_last_slash(char *path)
 		ptr = path;
 	return ptr;
 }
-///int is_path_only_file_name(const char *path)
-///{
-///	return strchr(path, '/') == NULL;
-///}
+/////int is_path_only_file_name(const char *path)
+/////{
+/////	return strchr(path, '/') == NULL;
+/////}
 
 /////int get_file_type_by_file_path(const char *file_path)
 /////{

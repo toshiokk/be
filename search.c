@@ -787,7 +787,6 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 		// found and update current line pointer
 		*ptr_line = line;
 		*ptr_byte_idx = matches_start_idx(&matches__);
-///_D_(dump_editor_panes())
 		return match_len;
 	}
 	// not found then return to begining position

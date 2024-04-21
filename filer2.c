@@ -256,8 +256,6 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 		snprintf_(buffer, FILE_NAME_INFO_BUF_LEN+1, "%c%s%s",
 		 selected ? '*' : ' ', buf_name, info_str_ptr);
 	}
-///dump_cur_win();
-///flf_d_printf("[%s]\n", buffer);
 	return buffer;
 }
 PRIVATE char *get_file_size_str(char *buf_size, loff_t size)
@@ -595,9 +593,7 @@ void unselect_all_files_auto(char selection_bit)
 //-----------------------------------------------------------------------------
 int research_file_name_in_file_list(filer_view_t *fv)
 {
-///flf_d_printf("[%s]\n", fv->next_file);
 	int file_idx = search_file_name_in_file_list(fv, fv->next_file);
-///flf_d_printf("%d\n", file_idx);
 	if (file_idx < 0) {
 		if (fv->cur_sel_idx >= 0)
 			file_idx = fv->cur_sel_idx;

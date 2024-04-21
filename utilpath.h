@@ -65,12 +65,11 @@ char *separate_path_to_dir_and_file(char *path, char *buf_dir, char *buf_file);
 
 int change_cur_dir_in_path(char *path, char *cur_dir, char *prev_dir, char *next_file);
 
-/////char *normalize_root_dir(char *dir);
 char *remove_last_slash(char *path);
 int contain_redundant_slash(char *path);
 char *remove_redundant_slash(char *path);
 char *get_last_slash(char *path);
-///int is_path_only_file_name(const char *path);
+/////int is_path_only_file_name(const char *path);
 
 char *separate_dir_part_and_file_part(const char *path,
  char *dir_part, char *file_part);

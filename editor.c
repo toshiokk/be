@@ -308,6 +308,7 @@ int doe_reopen_file(void)
 		if (ret <= 0)
 			return 0;
 	}
+	// memorize current file path before closing
 	memorize_cur_file_pos_null(file_pos_str);
 	free_cur_edit_buf();
 	// CURDIR: abs-path is specified
@@ -430,7 +431,7 @@ PRIVATE int close_file(int yes_no)
 	}
 	// Yes/No
 
-	// current file may be the last open file.
+	// If the current file has been the last open file, memorize it later.
 	memorize_cur_file_pos_null(file_pos_str);
 	free_cur_edit_buf();
 

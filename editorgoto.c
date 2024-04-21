@@ -21,12 +21,14 @@
 
 #include "headers.h"
 
-PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_err);
+PRIVATE int load_file_in_string(const char *string,
+ int try_upp_low, int open_on_err, int msg_on_err, int recursive);
 
-PRIVATE const char *skip_n_file_names(const char *line, int field_idx);
 #ifdef ENABLE_HISTORY
 PRIVATE void goto_pos_by_history(const char *full_path);
 #endif // ENABLE_HISTORY
+
+PRIVATE const char *skip_n_file_names(const char *line, int field_idx);
 
 // 123
 // file.ext:123:45
@@ -78,6 +80,17 @@ _FLF_
 	// going to change directory
 	return doe_goto_directory_in_cur_line();
 }
+int doe_goto_file_or_dir_in_cur_cursor_pos(void)
+{
+	if (doe_goto_file_in_cur_cursor_pos() > 0) {
+_FLF_
+		// files opened
+		return 1;
+	}
+_FLF_
+	// going to change directory
+	return doe_goto_directory_in_cur_line();
+}
 
 // TAG JUMP
 int doe_goto_file_in_cur_line(void)
@@ -85,11 +98,24 @@ int doe_goto_file_in_cur_line(void)
 	char dir_save[MAX_PATH_LEN+1];
 	clear_files_loaded();
 
-	memorize_cur_file_pos_null(NULL);
-flf_d_printf("abs_path: [%s]\n", get_cep_buf()->abs_path);
-	change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->abs_path);
 	// CURDIR: changed to cur-file's abs-dir
+	change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->abs_path);
+	// file_path is taken from the head of current line
 	int files = load_files_in_string(CEPBV_CL->data, 10, TUL1, OOE0, MOE1, RECURSIVE1);
+	change_cur_dir(dir_save);
+
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
+	return files;
+}
+int doe_goto_file_in_cur_cursor_pos(void)
+{
+	char dir_save[MAX_PATH_LEN+1];
+	clear_files_loaded();
+
+	// CURDIR: changed to cur-file's abs-dir
+	change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->abs_path);
+	// file_path is taken from the current cursor position
+	int files = load_files_in_string(&(CEPBV_CL->data[CEPBV_CLBI]), 1, TUL1, OOE0, MOE1, RECURSIVE1);
 	change_cur_dir(dir_save);
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
@@ -103,6 +129,7 @@ int doe_goto_directory_in_cur_line(void)
 	change_cur_dir_by_file_path(get_cep_buf()->abs_path);
 	if (change_dirs_in_string(CEPBV_CL->data, get_cur_filer_view()->cur_dir,
 	 get_cur_filer_view()->prev_dir, get_cur_filer_view()->next_file) == 0) {
+		// directory can not be changed
 		return 0;
 	}
 #ifdef ENABLE_HISTORY
@@ -287,6 +314,7 @@ int load_files_in_cur_buf(void)
 int load_files_in_string(const char *string,
  int files_to_load, int try_upp_low, int open_on_err, int msg_on_err, int recursive)
 {
+flf_d_printf("string: [%s]\n", string);
 	begin_check_break_key();
 	int files = load_files_in_string_(string, files_to_load, try_upp_low, open_on_err, msg_on_err,
 	 recursive);
@@ -313,11 +341,13 @@ PRIVATE int load_files_in_cur_buf_(void)
 			if (CEPBV_CL->data[0] != '#') {
 				char file_pos_str2[MAX_PATH_LEN+1];
 				char dir_save[MAX_PATH_LEN+1];
+
 				memorize_cur_file_pos_null(file_pos_str2);
-				change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->abs_path);
 				// CURDIR: changed to cur-file's abs-dir
+				change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->abs_path);
 				files += load_files_in_string_(CEPBV_CL->data, 10, TUL1, OOE0, MOE0, RECURSIVE0);
 				change_cur_dir(dir_save);
+
 				disp_editor_title_bar();
 				tio_refresh();
 				recall_cur_file_pos_null(file_pos_str2);
@@ -353,25 +383,20 @@ flf_d_printf("sigint_signaled\n");
 //  diff fileio.h fileio.h~
 //  SOURCES += fileio.h
 
-PRIVATE int load_file_in_string(const char *string,
- int try_upp_low, int open_on_err, int msg_on_err, int recursive);
-
 // sub-function of load_files_in_string()
 PRIVATE int load_files_in_string_(const char *string,
  int files_to_load, int try_upp_low, int open_on_err, int msg_on_err, int recursive)
 {
 	int files_loaded = 0;
-	int files;
-	const char *ptr;
 
-#define FILES_TO_LOAD_10		10
-	for (int field_idx = 0; files_loaded < FILES_TO_LOAD_10; field_idx++) {
-		ptr = skip_n_file_names(string, field_idx);
+	for (int field_idx = 0; files_loaded < files_to_load; field_idx++) {
+		const char *ptr = skip_n_file_names(string, field_idx);
 		if (*ptr == '\0')
 			break;
-		files = load_file_in_string(ptr, try_upp_low, open_on_err, msg_on_err, recursive);
-		if (files > files_to_load) {
-			files_loaded++;
+		int files = load_file_in_string(ptr, try_upp_low, open_on_err, msg_on_err, recursive);
+		if (files > 0) {
+			// once any file has loaded, show no more error message
+ 			files_loaded++;
 			open_on_err = 0;
 			msg_on_err = 0;
 		}
@@ -385,11 +410,9 @@ PRIVATE int load_file_in_string(const char *string,
 	int line_num, col_num;
 	int files;
 
-/////flf_d_printf("[%s]\n", string);
 	if (get_file_line_col_from_str_null(string, file_path, &line_num, &col_num) == 0) {
 		return 0;
 	}
-/////flf_d_printf("[%s], %d, %d\n", file_path, line_num, col_num);
 	if ((files = load_file_name_upp_low_(file_path,
 	 try_upp_low, open_on_err, msg_on_err, recursive)) > 0) {
 		if (recursive) {
@@ -431,6 +454,8 @@ int load_file_name_upp_low_(const char *file_name,
 	}
 	return 0;	// 0
 }
+
+PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_err);
 
 // Open file. If it is a project file, open file(s) described in it.
 // sub-function of load_file_name_recurs()
@@ -475,13 +500,11 @@ PRIVATE void goto_pos_by_history(const char *full_path)
 
 	// search in history
 	str = search_history_file_path(HISTORY_TYPE_IDX_CURSPOS, full_path);
-/////flf_d_printf("[%s]\n", str);
 	// get line-num and col-num
 	if (goto_str_line_col_in_cur_buf(str)) {
 		EPBVX_CL(0) = EPBVX_CL(1) = CEPBV_CL;
 		EPBVX_CLBI(0) = EPBVX_CLBI(1) = CEPBV_CLBI;
 	}
-/////_D_(dump_editor_panes())
 }
 #endif // ENABLE_HISTORY
 //-----------------------------------------------------------------------------

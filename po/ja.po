@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-19 08:02+0900\n"
+"POT-Creation-Date: 2024-04-20 01:01+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -204,27 +204,27 @@ msgstr "テキストを張り付けました(カットバッファをポップ)"
 msgid "Text Pasted without popping Cut-buffer"
 msgstr "テキストを張り付けました(カットバッファは変化なし)"
 
-#: ../editorgoto.c:39
+#: ../editorgoto.c:37
 msgid "Enter line number:"
 msgstr "行番号入力:"
 
-#: ../editorgoto.c:170
+#: ../editorgoto.c:168
 msgid "No previous open files"
 msgstr "これ以上前にファイルがありません"
 
-#: ../editorgoto.c:175
+#: ../editorgoto.c:173
 msgid "Previous file"
 msgstr "一つ前のファイルにスイッチしました"
 
-#: ../editorgoto.c:183
+#: ../editorgoto.c:181
 msgid "No next open files"
 msgstr "これ以上後にファイルがありません"
 
-#: ../editorgoto.c:187
+#: ../editorgoto.c:185
 msgid "Next file"
 msgstr "一つ後のファイルにスイッチしました"
 
-#: ../editorgoto.c:224
+#: ../editorgoto.c:222
 msgid "Returned to previous pos"
 msgstr ""
 

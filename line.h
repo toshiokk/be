@@ -137,7 +137,6 @@ typedef enum {
 
 be_line_t *line_create(void);
 be_line_t *line_init(be_line_t *line, char *initial_data);
-///be_line_t *line_init(be_line_t *line);
 be_line_t *line_set_string(be_line_t *line, const char *string);
 be_line_t *line_set_string_len(be_line_t *line, const char *string, len_t len);
 char *line_get_string(be_line_t *line);

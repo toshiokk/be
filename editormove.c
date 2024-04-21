@@ -539,7 +539,6 @@ int doe_backspace(void)
 	if (is_view_mode_then_warn_it())
 		return 0;
 
-///_D_(dump_editor_panes())
 	if (CEPBV_CLBI <= 0) {
 		if (IS_NODE_TOP(CEPBV_CL)) {
 			// top of file, can not backspace

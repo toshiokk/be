@@ -43,23 +43,6 @@ void win_init_win_size(void)
 	win_reinit_win_size();
 }
 
-///int win_show_win_size(void)
-///{
-///	/* Minimum editor window rows required to work properly */
-///#define MIN_WIN_LINES		(TITLE_LINES+5+STATUS_LINES+MAX_KEY_LINES)	// 10
-///	/* Minimum editor window cols required to work properly */
-///#define MIN_WIN_COLS		40
-///	if (tio_get_lines() < MIN_WIN_LINES
-///	 || tio_get_columns() < MIN_WIN_COLS) {
-///		disp_status_bar_done(_("Window size too small: (%d, %d)"),
-///		 tio_get_columns(), tio_get_lines());
-///		return 1;
-///	}
-///	disp_status_bar_done(_("Window size: (%d, %d)"),
-///	 tio_get_columns(), tio_get_lines());
-///	return 0;
-///}
-
 //-----------------------------------------------------------------------------
 
 void inc_win_depth(void)

@@ -223,7 +223,6 @@ PRIVATE int guess_encoding_by_nkf(const char *full_path)
 	if (pclose(fp) == -1) {
 		return -1;
 	}
-///flf_d_printf("guessed encoding by nkf: %s", buffer);
 	if (strlcmp__(buffer, "ASCII") == 0) {
 		CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
 	} else if (strlcmp__(buffer, "UTF-8") == 0) {
@@ -248,9 +247,7 @@ PRIVATE int load_file_into_cur_buf_nkf(const char *full_path, const char *nkf_op
 	FILE *fp;
 	int lines;
 
-///flf_d_printf("nkf_options[%s]\n", nkf_options);
 	snprintf_(buffer, MAX_PATH_LEN+1, "nkf %s \"%s\"", nkf_options, full_path);
-///flf_d_printf("[%s]\n", buffer);
 	if ((fp = popen(buffer, "r")) <= 0) {
 		disp_status_bar_err(_("Can not read-open file [%s]: %s"),
 		 shrink_str_to_scr_static(full_path), strerror(errno));
@@ -382,7 +379,6 @@ int backup_and_save_cur_buf_ask(void)
 			return -1;
 		}
 	}
-///flf_d_printf("[%s]\n", file_path);
 	if (buf_is_orig_file_updated(get_cep_buf()) > 0) {
 		// file is modified by another program
 		ret = ask_yes_no(ASK_YES_NO,
@@ -396,7 +392,6 @@ int backup_and_save_cur_buf_ask(void)
 		disp_status_bar_done(_("Cancelled"));
 		return -1;
 	}
-///flf_d_printf("[%s]\n", file_path);
 	if ((ret = backup_and_save_cur_buf(file_path)) < 0) {
 		disp_status_bar_err(_("File [%s] can NOT be written !!"),
 		 shrink_str_to_scr_static(file_path));
@@ -446,7 +441,6 @@ int input_new_file_name_n_ask(char *file_path)
 		}
 		break;
 	}
-///flf_d_printf("[%s]\n", file_path);
 	return 1;		// input
 }
 
@@ -461,7 +455,6 @@ int backup_and_save_cur_buf(const char *file_path)
 	int mask = 0;
 	int lines_written;
 
-///flf_d_printf("[%s]\n", file_path);
 	get_abs_path(file_path, abs_path);
 	// TODO: do minimum check
 	//  file_path is regular file and not dir and special file
@@ -482,7 +475,6 @@ int backup_and_save_cur_buf(const char *file_path)
 
 	if (S_ISREG(get_cep_buf()->orig_file_stat.st_mode)) {
 		mask = get_cep_buf()->orig_file_stat.st_mode & 07777;
-///flf_d_printf("chmod([%s], %05o)\n", abs_path, mask);
 		if (chmod(abs_path, mask) < 0) {
 			disp_status_bar_err(_("Can not set permissions %1$o on [%2$s]: %3$s"),
 			 mask, shrink_str_to_scr_static(abs_path), strerror(errno));

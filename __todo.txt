@@ -1,7 +1,7 @@
 #### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible)
 
 [v] when reopened, current file pos is the last line in all file
-[] tag jump opens too many files.
+[v] tag jump opens too many files. F11 opens only one file maximum
 
 [v] share cut-buffer between BE-editor-instances (Use system clip-board or own clip-board file)
 	F06/F07 cut/copy selection to clip-board

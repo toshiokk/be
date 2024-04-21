@@ -349,7 +349,6 @@ int regexp_search(regexp_t *regexp, regexp_matches_t *regexp_matches, const char
 {
 	int ret;
 
-///flf_d_printf("[%s]\n", needle);
 	regexp_matches_clear(regexp_matches);
 	if (needle) {
 		// auto compile regexp
@@ -386,7 +385,6 @@ int regexp_search_compiled(regexp_t *regexp, const char *haystack, int byte_idx,
 {
 	int ret;
 
-///_D_(dump_str_w_caret(haystack, byte_idx))
 	if (regexp->is_compiled < 2) {
 		return -1;	// compilation error
 	}
@@ -397,7 +395,6 @@ int regexp_search_compiled(regexp_t *regexp, const char *haystack, int byte_idx,
 		 byte_idx + regexp_matches_start_idx(regexp_matches, 0));
 		regexp_matches_set_end_idx(regexp_matches, 0,
 		 byte_idx + regexp_matches_end_idx(regexp_matches, 0));
-///_D_(regexp_dump_matches(regexp, regexp_matches, haystack))
 	}
 	return ret;		// 0: match
 }
@@ -461,13 +458,10 @@ int regexp_replace(regexp_t *regexp, regexp_matches_t *regexp_matches,
 		}
 	}
 	*output_ptr = '\0';
-///flf_d_printf("before: [%s]\n", buffer);
-///flf_d_printf("output: [%s]\n", output);
 	replace_str(buffer, buf_len,
 	 regexp_matches_start_idx(regexp_matches, 0),
 	 regexp_matches_match_len(regexp_matches, 0),
 	 output, -1);
-///flf_d_printf("after : [%s]\n", buffer);
 	return output_ptr - output;	// return length of change
 }
 
@@ -581,8 +575,7 @@ int regexec_n(const regex_t *preg, const char *haystack,
 		if (ret == 0 && pmatch) {
 			// check match-length != 0
 			if (pmatch[0].rm_so == pmatch[0].rm_eo) {
-///
-				_WARNING_
+/////_WARNING_
 				pmatch[0].rm_eo++;
 			}
 		}
@@ -632,7 +625,6 @@ PRIVATE char *conv_regex_pcre_to_posix(const char *regexp, char *regex_buf)
 		}
 	}
 	*dest = '\0';
-///	flf_d_printf("\n<{%s}\n>{%s}\n", regexp, regex_buf);
 	return regex_buf;
 }
 #endif // USE_PCRE

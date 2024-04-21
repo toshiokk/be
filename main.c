@@ -86,7 +86,6 @@ flf_d_printf("Start %s ===================================\n", APP_NAME " " __DA
 	_mlc_memorize_count
 	register_default_color_syntax();
 	_mlc_differ_count
-///_D_(dump_file_types())
 #endif // ENABLE_SYNTAX
 
 	// setup terminal

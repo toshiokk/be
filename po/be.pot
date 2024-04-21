@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-19 08:02+0900\n"
+"POT-Creation-Date: 2024-04-20 01:01+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -195,27 +195,27 @@ msgstr ""
 msgid "Text Pasted without popping Cut-buffer"
 msgstr ""
 
-#: ../editorgoto.c:39
+#: ../editorgoto.c:37
 msgid "Enter line number:"
 msgstr ""
 
-#: ../editorgoto.c:170
+#: ../editorgoto.c:168
 msgid "No previous open files"
 msgstr ""
 
-#: ../editorgoto.c:175
+#: ../editorgoto.c:173
 msgid "Previous file"
 msgstr ""
 
-#: ../editorgoto.c:183
+#: ../editorgoto.c:181
 msgid "No next open files"
 msgstr ""
 
-#: ../editorgoto.c:187
+#: ../editorgoto.c:185
 msgid "Next file"
 msgstr ""
 
-#: ../editorgoto.c:224
+#: ../editorgoto.c:222
 msgid "Returned to previous pos"
 msgstr ""
 

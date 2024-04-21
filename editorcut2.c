@@ -346,16 +346,16 @@ void setup_cut_region(void)
 		}
 		break;
 	}
-////flf_d_printf("CEPB_ML: [%s]\n", CEPB_ML->data);
-////flf_d_printf("CEPB_MLBI: %d\n", CEPB_MLBI);
-////flf_d_printf("CEPBV_CL: [%s]\n", CEPBV_CL->data);
-////flf_d_printf("CEPBV_CLBI: %d\n", CEPBV_CLBI);
-////flf_d_printf("mark_min_line: [%s]\n", mark_min_line->data);
-////flf_d_printf("mark_min_byte_idx: %d\n", mark_min_byte_idx);
-////flf_d_printf("mark_max_line: [%s]\n", mark_max_line->data);
-////flf_d_printf("mark_max_byte_idx: %d\n", mark_max_byte_idx);
-////flf_d_printf("mark_min_col_idx: %d\n", mark_min_col_idx);
-////flf_d_printf("mark_max_col_idx: %d\n", mark_max_col_idx);
+/////flf_d_printf("CEPB_ML: [%s]\n", CEPB_ML->data);
+/////flf_d_printf("CEPB_MLBI: %d\n", CEPB_MLBI);
+/////flf_d_printf("CEPBV_CL: [%s]\n", CEPBV_CL->data);
+/////flf_d_printf("CEPBV_CLBI: %d\n", CEPBV_CLBI);
+/////flf_d_printf("mark_min_line: [%s]\n", mark_min_line->data);
+/////flf_d_printf("mark_min_byte_idx: %d\n", mark_min_byte_idx);
+/////flf_d_printf("mark_max_line: [%s]\n", mark_max_line->data);
+/////flf_d_printf("mark_max_byte_idx: %d\n", mark_max_byte_idx);
+//////flf_d_printf("mark_min_col_idx: %d\n", mark_min_col_idx);
+/////flf_d_printf("mark_max_col_idx: %d\n", mark_max_col_idx);
 }
 
 int is_there_cut_region(void)

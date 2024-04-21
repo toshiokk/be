@@ -248,7 +248,6 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 		setup_cut_region();
 	}
 	top_line = NODE_PREV(mark_min_line);
-///_D_(line_dump_lines(top_line, 10, NULL))
 	// ====  COPY  ====
 	if (cp_del_paste_pop & CDPP_COPY) {
 		copy_text_to_cut_buf();

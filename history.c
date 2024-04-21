@@ -118,7 +118,7 @@ void load_last_searched_needle(void)
 {
 	// load last_searched_needle
 	strlcpy__(last_searched_needle, get_history_newest(HISTORY_TYPE_IDX_SEARCH, 1), MAX_PATH_LEN);
-///flf_d_printf("last_searched_needle[%s]\n", last_searched_needle);
+/////flf_d_printf("last_searched_needle[%s]\n", last_searched_needle);
 }
 
 //-----------------------------------------------------------------------------
@@ -156,8 +156,7 @@ void update_history(int hist_type_idx, const char *str, BOOL force_update)
 			return;
 		}
 	}
-///
-flf_d_printf("hist_type_idx:%d:[%s]\n", hist_type_idx, str);
+/////flf_d_printf("hist_type_idx:%d:[%s]\n", hist_type_idx, str);
 	// load-modify(free old entry and append new entry)-save
 	load_history_idx(hist_type_idx);
 	if ((line = search_history_exact_match(hist_type_idx, str)) != NULL) {
@@ -193,7 +192,6 @@ const char *get_history_newest(int hist_type_idx, int last_n)
 	for (cnt = 0; cnt < last_n; cnt++) {
 		history = get_history_older(hist_type_idx);
 	}
-///flf_d_printf("[%s]\n", history);
 	return history;
 }
 
@@ -307,7 +305,6 @@ flf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, file_path);
 		}
 	}
 	clear_history_modified(hist_type_idx);
-///_D_(dump_history_ix(hist_type_idx))
 	return error;
 }
 PRIVATE char *get_history_file_path(int hist_type_idx)
@@ -354,7 +351,6 @@ PRIVATE void init_history(int hist_type_idx)
 PRIVATE void append_history(int hist_type_idx, const char *str)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
-///flf_d_printf("[%s]\n", str);
 	buf_set_cur_line(buf, line_insert_with_string(BUF_BOT_ANCH(buf), INSERT_BEFORE, str));
 }
 PRIVATE void clear_history(int hist_type_idx)
@@ -382,13 +378,11 @@ PRIVATE void set_history_oldest(int hist_type_idx)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	buf_set_cur_line(buf, BUF_TOP_LINE(buf));
-///_D_(buf_dump_lines(buf, INT_MAX))
 }
 PRIVATE void set_history_newest(int hist_type_idx)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	buf_set_cur_line(buf, BUF_BOT_LINE(buf));
-///_D_(buf_dump_lines(buf, INT_MAX))
 }
 PRIVATE const char *get_history_older(int hist_type_idx)
 {

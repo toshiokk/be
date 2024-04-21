@@ -42,8 +42,6 @@ extern int cur_win_idx;
 
 void win_init_win_size(void);
 
-///int win_show_win_size(void);
-
 void inc_win_depth(void);
 void dec_win_depth(void);
 const int get_win_depth(void);

@@ -31,7 +31,6 @@ be_buf_t *buf_create_node(const char *full_path)
 
 	_mlc_set_caller
 	buf = (be_buf_t *)malloc__(sizeof(be_buf_t));
-///	get_mem_free_in_kb(1);
 	return buf_init(buf, full_path);
 }
 // Free a buffer be_buf_t
@@ -40,7 +39,6 @@ be_buf_t *buf_free_node(be_buf_t *buf)
 	be_buf_t *next = NODE_NEXT(buf);
 	buf_free_lines(buf);
 	free__(buf);
-///	get_mem_free_in_kb(1);
 	return next;
 }
 
@@ -149,7 +147,6 @@ be_buf_t *buf_copy(be_buf_t *dest, be_buf_t *src)
 
 be_buf_t *buf_unlink_free(be_buf_t *buf)
 {
-///_D_(buf_dump_state(buf))
 	be_buf_t *next = NODE_NEXT(buf);
 	if (IS_NODE_INT(buf)) {
 		buf_unlink(buf);
@@ -351,6 +348,7 @@ be_line_t *buf_move_cur_line_to_next(be_buf_t *buf)
 
 be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num)
 {
+mflf_d_printf("line_num: %d\n", line_num);
 	be_line_t *line;
 
 	for (line = BUF_TOP_LINE(buf); line_num > 1 && IS_NODE_INT(line);
@@ -393,7 +391,6 @@ unsigned short buf_calc_crc(be_buf_t *buf)
 				break;
 		}
 	}
-///flf_d_printf("crc: %04lx, size: %d\n", file_crc, file_size);
 	return file_crc;
 }
 //-----------------------------------------------------------------------------
@@ -426,9 +423,7 @@ be_bufs_t *bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next)
 be_bufs_t *bufs_free_all_bufs(be_bufs_t *bufs)
 {
 	for ( ; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs)) {
-///		flf_d_printf("bufs: [%s]\n", bufs->name);
 		for (be_buf_t *buf = BUFS_TOP_ANCH(bufs); IS_PTR_VALID(buf); ) {
-///			flf_d_printf(" %cbuf:[%s]\n", (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
 			if (bufs->cur_buf == buf) {
 				bufs->cur_buf = NODE_NEXT(buf);
 			}
@@ -561,14 +556,6 @@ void buf_dump_state(be_buf_t *buf)
 		return;
 	}
 flf_d_printf("file_path: [%s], abs_path: [%s]\n", buf->file_path, buf->abs_path);
-///	buf_dump_ptrs(buf);
-///flf_d_printf("byte_idx: %d\n", buf->cur_line_byte_idx);
-///flf_d_printf("buf->cursor_y: %d\n", buf->cursor_y);
-///flf_d_printf("cursor_x_to_keep: %d\n", buf->cursor_x_to_keep);
-///flf_d_printf("buf_lines: %d\n", buf->buf_lines);
-///flf_d_printf("buf_size: %d\n", buf->buf_size);
-///flf_d_printf("mark_line_byte_idx: %d\n", buf->mark_line_byte_idx);
-///flf_d_printf("enc: %s, eol: %s\n", buf_encode_str(buf), buf_eol_str(buf));
 }
 /////be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
 /////{

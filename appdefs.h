@@ -29,7 +29,7 @@
 #ifndef appdefs_h
 #define appdefs_h
 
-#define APP_REL_LVL 2		// Application Release Level
+#define APP_REL_LVL 0		// Application Release Level
 #define APP_REL_LVL_EXPERIMENTAL	0	// experimental release
 #define APP_REL_LVL_TEST1			1	// test-1       release
 #define APP_REL_LVL_TEST2			2	// test-2       release
@@ -58,7 +58,6 @@
 #define MAX_TAB_SIZE			8
 
 #define CURSOR_POS_BYTE		// col_num is byte count
-///#define CURSOR_POS_COLUMN	// col_num is column in view
 #if (!defined(CURSOR_POS_BYTE) && !defined(CURSOR_POS_COLUMN)) \
  || (defined(CURSOR_POS_BYTE) && defined(CURSOR_POS_COLUMN))
 #warning "!!!! both of CURSOR_POS_BYTE and CURSOR_POS_COLUMN are defined !!!!"

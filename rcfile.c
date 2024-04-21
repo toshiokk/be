@@ -235,7 +235,6 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 				break;
 		}
 		strlcpy__(cmd, begin, rc_line_ptr - begin);
-///flf_d_printf("rc_command: %s\n", cmd);
 		if (strlen(cmd)) {
 			for (idx = 0; idx < ARRAY_SIZE_OF(rc_cmd_idx); idx++) {
 				if (strcmp(rc_cmd_idx[idx].command, cmd) == 0) {
@@ -253,12 +252,8 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 				}
 			}
 			if ((func_key_table = get_func_table_from_func_id(cmd)) != NULL) {
-///
-flf_d_printf("parsing: %s\n", rc_line_ptr);
 				parse_key_names(keys, MAX_KEYS_BOUND);
 				if (keys[0] >= 0) {
-///
-flf_d_printf("clear_keys_bound_to_func(%s)\n", func_key_table->func_id);
 					clear_keys_if_bound(keys);
 					clear_keys_bound_to_func(func_key_table);
 					bind_key_to_func(func_key_table, keys);
@@ -395,7 +390,6 @@ PRIVATE int parse_color_syntax(void)
 	while (*rc_line_ptr) {
 		if (SKIP_SPACE(rc_line_ptr))
 			break;
-///flf_d_printf("parsing: %s", rc_line_ptr);
 		switch (*rc_line_ptr) {
 		case '<':
 			rc_line_ptr++;
@@ -475,7 +469,6 @@ PRIVATE int parse_bgc_fgc(int *bgc, int *fgc)
 	while (*rc_line_ptr) {
 		if (SKIP_SPACE(rc_line_ptr))
 			break;
-///flf_d_printf("parsing: %s", rc_line_ptr);
 		switch (*rc_line_ptr) {
 		case '-':
 			rc_line_ptr++;
@@ -507,7 +500,6 @@ PRIVATE int parse_key_names(key_code_t *keys, int max_keys_bind)
 	for (key_idx = 0; key_idx < max_keys_bind; ) {
 		if (SKIP_SPACE(rc_line_ptr))
 			break;
-///flf_d_printf("parsing: %s\n", rc_line_ptr);
 		if (parse_word(key_name, MAX_KEY_NAME_LEN)) {
 			return 1;
 		}
@@ -595,7 +587,6 @@ PRIVATE int parse_color_name(int *bright, int *color)
 {
 	int index;
 
-///flf_d_printf("colorname: %s\n", colorname);
 	*bright = 0;
 	*color = -1;
 	if (parse_keyword(&rc_line_ptr, "bright") == 0) {
@@ -648,7 +639,6 @@ PRIVATE int add_file_type(const char *file_type_name, const char *regexp_file_na
 	file_type_t **file_type_ptr;
 	file_type_t *file_type = NULL;
 
-///flf_d_printf("adding file type: [%s] [%s]\n", file_type_name, regexp_file_name);
 	_mlc_set_caller
 	file_type = (file_type_t *)malloc__(sizeof(file_type_t));
 	file_type->regexp = regexp_alloc();
@@ -723,7 +713,6 @@ PRIVATE int link_color_syntax_w_file_type(file_type_t *file_type, color_syntax_t
 
 	for (color_syntax_ptr_ptr = &file_type->color_syntax;
 	 *color_syntax_ptr_ptr != NULL; ) {
-///_D_(dump_color_syntax(*color_syntax_ptr_ptr))
 		color_syntax_ptr_ptr = &(*color_syntax_ptr_ptr)->next;
 	}
 	*color_syntax_ptr_ptr = clr_syntax;
@@ -736,7 +725,6 @@ void free_file_types(void)
 	color_syntax_t *clr_syntax, *c_next;
 
 	_mlc_memorize_count
-///_D_(dump_file_types())
 	for (file_type = file_types_head; file_type != NULL; ) {
 		FREE_CLR_PTR(file_type->desc);
 		regexp_free(file_type->regexp);

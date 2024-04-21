@@ -85,9 +85,7 @@ void init_buffers(void)
 
 void free_all_buffers(void)
 {
-///	_D_(bufs_dump_all_bufs(&bufss_top_anchor))
 	bufs_free_all_bufs(&bufss_top_anchor);
-///	_D_(bufs_dump_all_bufs(&bufss_top_anchor))
 }
 
 // Edit-buffer manipulation routines
