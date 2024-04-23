@@ -528,6 +528,13 @@ char *skip_file_name(char *ptr)
 /////	}
 /////	return ptr;
 /////}
+const char *skip_one_separator(const char *ptr)
+{
+	if (is_separator(*ptr)) {
+		ptr++;	// skip it
+	}
+	return ptr;
+}
 const char *skip_to_digit(const char *ptr)
 {
 	for ( ; *ptr && isdigit(*ptr) == 0; ) {
@@ -565,10 +572,18 @@ int is_file_name_char(const char *ptr)
 	return isalnum(*ptr) || strchr__("_-+.~!#$%&@=\"\'", *ptr) || (utf8c_bytes(ptr) >= 2);
 	// non-file-name-chars are ' ' '\t' '/' '|' ':'
 }
-/////int is_separator(char chr)
-/////{
-/////	return strchr__(" \t,:", chr) != NULL;
-/////}
+int is_separator(char chr)
+{
+	return is_white_space_separator(chr) || is_non_white_space_separator(chr);
+}
+int is_non_white_space_separator(char chr)
+{
+	return strchr__(" \t,:|()", chr) != NULL;
+}
+int is_white_space_separator(char chr)
+{
+	return strchr__(" \t", chr) != NULL;
+}
 int contain_chr(const char *string, char chr)
 {
 	return strchr(string, chr) != NULL;

@@ -197,7 +197,7 @@ int doe_switch_to_prev_file(void)
 		disp_status_bar_err(_("No previous open files"));
 		return ret;
 	}
-_D_(dump_editor_panes())
+/////_D_(dump_editor_panes())
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	disp_status_bar_done(_("Previous file"));
 	return ret;
@@ -220,9 +220,9 @@ int doe_switch_to_prev_buffers(void)
 	be_bufs_t *bufs = get_bufs_contains_buf(&bufss_top_anchor, get_cep_buf());
 	if (IS_NODE_TOP(bufs))
 		return 0;
-flf_d_printf("bufs: %s\n", bufs->name);
-flf_d_printf("NODE_PREV(bufs)->name: %s\n", NODE_PREV(bufs)->name);
-flf_d_printf("NODE_PREV(bufs)->cur_buf->name: %s\n", NODE_PREV(bufs)->cur_buf->file_path);
+/////flf_d_printf("bufs: %s\n", bufs->name);
+/////flf_d_printf("NODE_PREV(bufs)->name: %s\n", NODE_PREV(bufs)->name);
+/////flf_d_printf("NODE_PREV(bufs)->cur_buf->name: %s\n", NODE_PREV(bufs)->cur_buf->file_path);
 	set_cep_buf(NODE_PREV(bufs)->cur_buf);
 	post_cmd_processing(CEPBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
@@ -232,11 +232,11 @@ int doe_switch_to_next_buffers(void)
 	be_bufs_t *bufs = get_bufs_contains_buf(&bufss_top_anchor, get_cep_buf());
 	if (IS_NODE_BOT(bufs))
 		return 0;
-flf_d_printf("bufs: %s\n", bufs->name);
-flf_d_printf("NODE_NEXT(bufs)->name: %s\n", NODE_NEXT(bufs)->name);
-flf_d_printf("NODE_NEXT(bufs)->cur_buf->name: %s\n", NODE_NEXT(bufs)->cur_buf->file_path);
+/////flf_d_printf("bufs: %s\n", bufs->name);
+/////flf_d_printf("NODE_NEXT(bufs)->name: %s\n", NODE_NEXT(bufs)->name);
+/////flf_d_printf("NODE_NEXT(bufs)->cur_buf->name: %s\n", NODE_NEXT(bufs)->cur_buf->file_path);
 	set_cep_buf(NODE_NEXT(bufs)->cur_buf);
-_D_(bufs_dump_all_bufs(&bufss_top_anchor))
+/////_D_(bufs_dump_all_bufs(&bufss_top_anchor))
 	post_cmd_processing(CEPBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
@@ -695,10 +695,21 @@ int get_file_line_col_from_str_null(const char *str, char *file_path,
 	str = get_memorized_file_pos_str(str);
 	return get_file_line_col_from_str(str, file_path, line_num, col_num);
 }
-// /home/user/tools/be/src/editorgoto.c|400:10
-//  => "/home/user/tools/be/src/editorgoto.c", 400, 10
-// '/home/user/tools/be/src/ file name.txt '|400:10
-//  => "/home/user/tools/be/src/ file name.txt ", 400, 10
+
+/*
+# supported formats
+- GCC compiler error message(GCC)
+	main.c:29:2
+- BE standard file pos format
+	/home/user/tools/be/be/editorgoto.c|400:10
+	  => "/home/user/tools/be/src/editorgoto.c", 400, 10
+- BE standard file pos format (quoted)
+	'/home/user/tools/be/src/ file name.txt '|400:10
+	  => "/home/user/tools/be/src/ file name.txt ", 400, 10
+- MSC compiler error message(MS-C)
+	main.c(29:2)
+*/
+
 PRIVATE int get_file_line_col_from_str(const char *str, char *file_path,
  int *line_num_, int *col_num_)
 {
@@ -721,7 +732,7 @@ PRIVATE int get_file_line_col_from_str(const char *str, char *file_path,
 	strlcpy__(file_path, fn_begin, LIM_MAX(MAX_PATH_LEN, fn_end - fn_begin));
 	unquote_string(file_path);
 	// skip to beginning of a line number
-	ptr = skip_to_digit(ptr);
+	ptr = skip_one_separator(ptr);
 	if (isdigit(*ptr)) {
 		line_num = atoi(ptr);
 	}

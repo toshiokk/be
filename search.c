@@ -332,7 +332,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 #ifdef ENABLE_DEBUG
 				memorize_undo_state_before_change();
 #endif // ENABLE_DEBUG
-				undo_set_region_save_before_change(CEPBV_CL, CEPBV_CL, 1);
+				undo_set_region_n_save_before_change(CEPBV_CL, CEPBV_CL, 1);
 #endif // ENABLE_UNDO
 				// ----------------------------------------------------------------------
 				length_change = replace_str_in_buffer(&search__, &matches__, replace_to);

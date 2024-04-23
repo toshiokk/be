@@ -1,5 +1,6 @@
 #### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible)
 
+[v] support tag jump from MS-C compiler error message "main.c(100,10)"
 [v] when reopened, current file pos is the last line in all file
 [v] tag jump opens too many files. F11 opens only one file maximum
 
@@ -88,6 +89,7 @@ v F: Input keyword to search
 [v] inherit filer view(cur_sel_idx) in "filer list view"
 [v] after screen resized, status bar is not displayed
 
+[ ] show tree and select file/directory
 [] change current directory by selecting from directory tree (find . -type d -maxdepth 3)
 [] load file                by selecting from file      tree (find . -type f -maxdepth 3)
    (how to limit max lines to be loaded into editor)
@@ -106,7 +108,6 @@ v F: Input keyword to search
 /home/user/tools/be/be/m4
 [] How to manage a state of 0 node
 [] How can I avoid NULL pointer crash ?
-[ ] show tree and select file/directory
 [v] Use title-bar fully for file path
   [p:i:/path/to/file.txt Enn Cnn Unn Rnn mmmmMB HH:MM:DD]
   [p:i:/long/long/long/path/to/file.txt  mmmmMB HH:MM:DD]

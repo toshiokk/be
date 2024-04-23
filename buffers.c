@@ -204,7 +204,6 @@ be_buf_view_t *get_cep_buf_view(void)
 
 void set_editor_pane_n_buf(int pane_idx, be_buf_t *buf)
 {
-///flf_d_printf("pane_idx: %d ------------\n", pane_idx);
 	if (pane_idx < 0) {
 		pane_idx = editor_panes.cur_pane_idx;
 	} else {
@@ -398,7 +397,6 @@ int check_cur_buf_modified(void)
 			disp_editor_title_bar();
 		}
 	}
-///flf_d_printf("modified: %d\n", modified);
 	return modified;
 }
 

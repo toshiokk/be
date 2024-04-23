@@ -125,13 +125,15 @@ PRIVATE int undo_lines = 0;
 PRIVATE void save_region_to_undo_buf(void);
 PRIVATE be_line_t *append_line_to_cur_undo_buf(be_line_t *line);
 
-void undo_set_region_save_before_change(be_line_t *min_line, be_line_t *max_line,
+PRIVATE void undo_set_region(be_line_t *min_line, be_line_t *max_line, int cut_buf_lines);
+// set region and save before change
+void undo_set_region_n_save_before_change(be_line_t *min_line, be_line_t *max_line,
  int cut_buf_lines)
 {
 	undo_set_region(min_line, max_line, cut_buf_lines);
 	undo_save_before_change();
 }
-void undo_set_region(be_line_t *min_line, be_line_t *max_line, int cut_buf_lines)
+PRIVATE void undo_set_region(be_line_t *min_line, be_line_t *max_line, int cut_buf_lines)
 {
 	undo_min_line = NODE_PREV(min_line);
 	undo_max_line = NODE_NEXT(max_line);
@@ -147,15 +149,16 @@ void undo_save_before_change(void)
 void undo_adjust_max_line(void)
 {
 	be_line_t *line;
-	int lines;
-	int past_max_line = 0;
+	int has_past_max_line = 0;
 
 	line = NODE_NEXT(undo_min_line);
-	for (lines = 0 ; IS_NODE_INT(line); lines++) {
+	for (int lines = 0 ; IS_NODE_INT(line); lines++) {
 		if (line == undo_max_line) {
-			past_max_line = 1;
+			has_past_max_line = 1;
 		}
-		if (lines >= undo_lines && past_max_line) {
+		if (lines >= undo_lines && has_past_max_line) {
+			// more than undo_lines
+			// or has_past_max_line
 			break;
 		}
 		line = NODE_NEXT(line);
@@ -171,7 +174,7 @@ void undo_save_after_change(void)
 		// Save the state after change.
 		save_region_to_undo_buf();	// save the state after change
 		if (count_undo_bufs() >= 2) {
-			// compare before and after
+			// compare buffer after change and buffer before change
 			if (buf_compare(TOP_BUF_OF_UNDO_BUFS, NODE_NEXT(TOP_BUF_OF_UNDO_BUFS)) == 0) {
 				// not changed, pop two buffer (after and before)
 				buf_free_node(pop_undo_buf());

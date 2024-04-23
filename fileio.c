@@ -611,9 +611,7 @@ PRIVATE int save_cur_buf_to_file_nkf(const char *file_path, const char *nkf_opti
 	FILE *fp = 0;
 	int lines;
 
-///flf_d_printf("nkf_options[%s]\n", nkf_options);
 	snprintf_(buffer, MAX_PATH_LEN+1, "nkf %s >\"%s\"", nkf_options, file_path);
-///flf_d_printf("[%s]\n", buffer);
 	if ((fp = popen(buffer, "w")) <= 0) {
 		disp_status_bar_err(_("Can not write-open file [%s]: %s"),
 		 shrink_str_to_scr_static(file_path), strerror(errno));

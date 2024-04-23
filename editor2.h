@@ -37,8 +37,7 @@ void disp_editor_title_bar(void);
 #define UPDATE_SCRN_SOON		0x80	// 1000 0000
 #define UPDATE_SCRN_CUR_PREV	(UPDATE_SCRN_CUR | UPDATE_SCRN_PREV)
 #define UPDATE_SCRN_CUR_NEXT	(UPDATE_SCRN_CUR | UPDATE_SCRN_NEXT)
-///#define UPDATE_SCRN_ALL_SOON		(UPDATE_SCRN_ALL | UPDATE_SCRN_SOON)
-#define UPDATE_SCRN_ALL_SOON		UPDATE_SCRN_ALL
+#define UPDATE_SCRN_ALL_SOON	(UPDATE_SCRN_ALL | UPDATE_SCRN_SOON)
 void set_edit_win_update_needed(int update_needed);
 int get_edit_win_update_needed(void);
 void clear_edit_win_update_needed(void);
