@@ -265,6 +265,10 @@ be_buf_t *get_edit_buf_by_abs_path(const char *abs_path)
 {
 	return get_buf_from_bufs_by_abs_path(EDIT_BUFS_TOP_BUF, abs_path);
 }
+be_buf_t *get_edit_buf_by_file_name(const char *file_name)
+{
+	return get_buf_from_bufs_by_file_name(EDIT_BUFS_TOP_BUF, file_name);
+}
 int get_edit_buf_idx_from_buf(be_buf_t *edit_buf)
 {
 	return get_buf_idx_in_bufs(EDIT_BUFS_TOP_BUF, edit_buf);
@@ -394,7 +398,7 @@ int check_cur_buf_modified(void)
 		if (modified == 0) {
 			// clear "modified" flag if it's actually not modified
 			SET_CUR_EBUF_STATE(buf_MODIFIED, 0);
-			disp_editor_title_bar();
+			editor_disp_title_bar();
 		}
 	}
 	return modified;
@@ -564,7 +568,7 @@ void set_cur_buf_modified(void)
 {
 	if (CUR_EBUF_STATE(buf_MODIFIED) == 0) {
 		SET_CUR_EBUF_STATE(buf_MODIFIED, 1);
-		disp_editor_title_bar();
+		editor_disp_title_bar();
 	}
 }
 

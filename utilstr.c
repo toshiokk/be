@@ -26,10 +26,9 @@
 // [0x00, 0x1f], 0x7f
 int is_ctrl_char(unsigned char uchar)
 {
-	int chr;
-
-	chr = uchar;
-	return (0x00 <= chr && chr < 0x20) || (0x7f <= chr && chr < 0x80);
+///	int chr = uchar;
+///	return (0x00 <= chr && chr < 0x20) || (0x7f <= chr && chr < 0x80);
+	return (uchar < 0x20) || (uchar == 0x7f);
 }
 
 //-----------------------------------------------------------------------------
@@ -235,7 +234,7 @@ int is_strlen_not_0(const char *str)
 	return *str;
 }
 
-size_t str_path_len(const char *str)
+size_t strlen_path(const char *str)
 {
 	return strnlen(str, MAX_PATH_LEN);
 }
@@ -308,6 +307,17 @@ int strlcasecmp(const char *str1, const char *str2)
 {
 	return strncasecmp(str1, str2, strlen(str2));
 }
+
+/////// dest: "/home/user/tools/be/file_name.ext"
+/////// src :                              ".ext"
+/////int strcmp_from_tail(const char *dest, const char *src)
+/////{
+/////	ssize_t diff = strlen_path(dest) - strlen_path(src);
+/////	if (diff < 0) {
+/////		return -1;
+/////	}
+/////	return strcmp(&dest[diff], src);
+/////}
 
 char *strchr__(const char *str, char chr)
 {
@@ -622,7 +632,7 @@ char *unquote_string(char *buffer)
 {
 	if (is_quoted(buffer, '\'') || is_quoted(buffer, '"')) {
 		char quote_chr = buffer[0];
-		size_t len = str_path_len(buffer);
+		size_t len = strlen_path(buffer);
 		char *ptr = buffer;
 		for (int idx = 1; idx < len-1; idx++) {
 			if (buffer[idx] == '\\' && buffer[idx+1] == quote_chr) {
@@ -638,8 +648,8 @@ char *unquote_string(char *buffer)
 }
 char is_quoted(const char *str, char quote_chr)
 {
-	if (str_path_len(str) >= 2) {
-		if (str[0] == quote_chr && str[str_path_len(str) - 1] == quote_chr) {
+	if (strlen_path(str) >= 2) {
+		if (str[0] == quote_chr && str[strlen_path(str) - 1] == quote_chr) {
 			// 'string-quoted' or "string-quoted"
 			return quote_chr;
 		}

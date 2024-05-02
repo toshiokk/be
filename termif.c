@@ -218,15 +218,12 @@ int termif_get_cursor_pos(int *yy, int *xx)
 		fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in read()
 		if ((len = read(STDIN_FILENO, buf, MAX_REPORT_LEN)) >= MIN_REPORT_LEN) {
 			buf[len] = '\0';
-/////flf_d_printf("report:[%s]\n", buf);
 			for (ptr = buf; *ptr; ptr++) {
 				if (isdigit(*ptr))
 					break;
 			}
-/////flf_d_printf("report:[%s]\n", ptr);
 			// ESC [ lines ; cols R
 			if (sscanf(ptr, "%d;%d", &lines, &cols) >= 2) {
-/////flf_d_printf("cursor-pos: %d, %d\n", lines, cols);
 				*yy = lines;
 				*xx = cols;
 				return 1;

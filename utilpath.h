@@ -63,7 +63,8 @@ char *separate_path_to_dir_and_file(char *path, char *buf_dir, char *buf_file);
 
 //-----------------------------------------------------------------------------
 
-int change_cur_dir_in_path(char *path, char *cur_dir, char *prev_dir, char *next_file);
+int change_cur_dir_saving_prev_next_dir(char *path,
+ char *cur_dir, char *prev_dir, char *next_file);
 
 char *remove_last_slash(char *path);
 int contain_redundant_slash(char *path);

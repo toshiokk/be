@@ -305,7 +305,7 @@ const char *buf_cut_mode_str(be_buf_t *buf)
 
 	switch (BUF_STATE(buf, buf_CUT_MODE)) {
 	default:
-	case CUT_MODE_0_LINE:	ptr = "  ";			break;
+	case CUT_MODE_0_LINE:	ptr = "--";			break;
 	case CUT_MODE_N_LINE:	ptr = "M ";			break;
 	case CUT_MODE_H_CHAR:	ptr = "Mc";			break;
 	case CUT_MODE_VH_CHAR:	ptr = "MC";			break;
@@ -348,7 +348,6 @@ be_line_t *buf_move_cur_line_to_next(be_buf_t *buf)
 
 be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num)
 {
-mflf_d_printf("line_num: %d\n", line_num);
 	be_line_t *line;
 
 	for (line = BUF_TOP_LINE(buf); line_num > 1 && IS_NODE_INT(line);
@@ -359,7 +358,7 @@ mflf_d_printf("line_num: %d\n", line_num);
 	if (IS_NODE_BOT_ANCH(line)) {
 		line = NODE_PREV(line);
 	}
-_D_(line_dump(line))
+/////_D_(line_dump(line))
 	return line;
 }
 
@@ -481,6 +480,19 @@ be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *buf, const char *abs_path)
 	buf = make_sure_buf_is_top_buf(buf);
 	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
 		if (strcmp(buf->abs_path, abs_path) == 0) {
+			return buf;	// found
+		}
+	}
+	return NULL;		// not found
+}
+be_buf_t *get_buf_from_bufs_by_file_name(be_buf_t *buf, const char *file_name)
+{
+	buf = make_sure_buf_is_top_buf(buf);
+	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+		char dir[MAX_PATH_LEN+1];
+		char file[MAX_PATH_LEN+1];
+		separate_path_to_dir_and_file(buf->abs_path, dir, file);
+		if (strcmp(file, file_name) == 0) {
 			return buf;	// found
 		}
 	}

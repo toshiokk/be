@@ -92,7 +92,6 @@ flf_d_printf("ret: %d\n", ret);
 	tio_set_cursor_on(0);
 	change_cur_dir(dir_save);
 
-	///set_work_space_color_normal();
 	update_screen_app(1, 1, 1);
 
 	if (ret < 0) {
@@ -126,7 +125,7 @@ PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_b
 	char cut_buf[MAX_PATH_LEN+1] = "";
 
 	strlcpy__(input_buf, default__, MAX_PATH_LEN);
-	cursor_byte_idx = MIN_MAX_(0, cursor_byte_idx, strnlen(default__, MAX_PATH_LEN));
+	cursor_byte_idx = MIN_MAX_(0, cursor_byte_idx, strlen_path(default__));
 
 	blank_key_list_lines();
 	for ( ; ; ) {
@@ -140,9 +139,9 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 
 		if (IS_CHAR_KEY(key_input)) {
 			// character key
-			if (strnlen(input_buf, MAX_PATH_LEN) < MAX_PATH_LEN) {
+			if (strlen_path(input_buf) < MAX_PATH_LEN) {
 				memmove(input_buf + cursor_byte_idx + 1, input_buf + cursor_byte_idx,
-				 strnlen(input_buf, MAX_PATH_LEN) - cursor_byte_idx + 1);
+				 strlen_path(input_buf) - cursor_byte_idx + 1);
 				input_buf[cursor_byte_idx] = key_input;
 				cursor_byte_idx++;
 			}
@@ -169,7 +168,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		} else
 		if (cmp_func_id(func_id, "doe_right")) {
 			// cursor right
-			if (cursor_byte_idx < strnlen(input_buf, MAX_PATH_LEN)) {
+			if (cursor_byte_idx < strlen_path(input_buf)) {
 				bytes = utf8c_bytes(&input_buf[cursor_byte_idx]);
 				cursor_byte_idx += bytes;
 			}
@@ -182,7 +181,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		if (cmp_func_id(func_id, "doe_end_of_line")
 		 || cmp_func_id(func_id, "doe_next_word")) {
 			// goto line tail
-			cursor_byte_idx = strnlen(input_buf, MAX_PATH_LEN);
+			cursor_byte_idx = strlen_path(input_buf);
 		} else
 		if (cmp_func_id(func_id, "doe_backspace")
 		 || (key_input == K_BS)) {
@@ -196,7 +195,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		if (cmp_func_id(func_id, "doe_delete_char")
 		 || (key_input == K_DEL)) {
 			// delete
-			if (cursor_byte_idx < strnlen(input_buf, MAX_PATH_LEN)) {
+			if (cursor_byte_idx < strlen_path(input_buf)) {
 				bytes = utf8c_bytes(&input_buf[cursor_byte_idx]);
 				delete_str(input_buf, cursor_byte_idx, bytes);
 			}
@@ -216,9 +215,9 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		if (cmp_func_id(func_id, "doe_cut_to_tail")) {
 			// cut to line tail
 			strcut__(cut_buf, MAX_PATH_LEN,
-			 input_buf, cursor_byte_idx, strnlen(input_buf, MAX_PATH_LEN));
+			 input_buf, cursor_byte_idx, strlen_path(input_buf));
 			delete_str(input_buf, cursor_byte_idx,
-			 strnlen(input_buf, MAX_PATH_LEN) - cursor_byte_idx);
+			 strlen_path(input_buf) - cursor_byte_idx);
 		} else
 		if (cmp_func_id(func_id, "doe_copy_text")) {
 			// copy to the cut buffer
@@ -233,7 +232,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			// tab history completion
 			strlcpy__(input_buf, get_history_completion(hist_type_idx, input_buf),
 			 MAX_PATH_LEN);
-			cursor_byte_idx = strnlen(input_buf, MAX_PATH_LEN);
+			cursor_byte_idx = strlen_path(input_buf);
 		} else
 		if (cmp_func_id(func_id, "doe_up")
 		 || cmp_func_id(func_id, "doe_page_up")
@@ -281,12 +280,12 @@ flf_d_printf("ret: %d\n", ret);
 			if (count_edit_bufs()) {
 				char *line = CEPBV_CL->data;
 				int byte_idx = byte_idx_from_byte_idx(line,
-				 CEPBV_CLBI + strnlen(input_buf, MAX_PATH_LEN));
+				 CEPBV_CLBI + strlen_path(input_buf));
 				// copy one token (at least copy one character)
 				cursor_byte_idx = 0;
 				for ( ;
-				 (strnlen(input_buf, MAX_PATH_LEN) < MAX_PATH_LEN - MAX_UTF8C_BYTES)
-				  && (byte_idx < strnlen(line, MAX_PATH_LEN))
+				 (strlen_path(input_buf) < MAX_PATH_LEN - MAX_UTF8C_BYTES)
+				  && (byte_idx < strlen_path(line))
 				  && (cursor_byte_idx == 0
 				   || (isalnum(line[byte_idx]) || line[byte_idx] == '_')); ) {
 					strlncat__(input_buf, MAX_PATH_LEN, &line[byte_idx],
@@ -294,7 +293,7 @@ flf_d_printf("ret: %d\n", ret);
 					cursor_byte_idx++;
 					byte_idx += utf8c_bytes(&line[byte_idx]);
 				}
-				cursor_byte_idx = strnlen(input_buf, MAX_PATH_LEN);
+				cursor_byte_idx = strlen_path(input_buf);
 			}
 		}
 		if (key_input == K_ESC || key_input == KNA || key_input == K_C_M)

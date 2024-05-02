@@ -31,7 +31,6 @@ int call_editor(int push_win, int list_mode)
 	filer_panes_t next_filer_panes;
 #endif // ENABLE_FILER
 	app_mode_t appmode_save;
-	int ret;
 
 	if (push_win) {
 		win_push_win_size();
@@ -45,23 +44,23 @@ int call_editor(int push_win, int list_mode)
 	SET_APPMD_VAL(app_LIST_MODE, list_mode);
 	SET_APPMD_VAL(ed_EDITOR_PANES, 0);
 	set_app_func_key_table();
-	set_work_space_color_dark_if_app_list_mode();
+	set_work_space_color_on_app_list_mode();
 
 ////_D_(dump_cur_pointers())
 flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
 flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
-	ret = editor_main_loop();
+	int ret = editor_main_loop();
 flf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
 flf_d_printf("ret: %d\n", ret);
 	editor_quit = EDITOR_NONE;	// for caller of call_editor(), clear "editor_quit"
 	_mlc_check_count
 ////_D_(dump_cur_pointers())
 
-	set_work_space_color_normal_if_app_list_mode();
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 	SET_APPMD_VAL(app_LIST_MODE, GET_APPMD_PTR(&appmode_save, app_LIST_MODE));
 	SET_APPMD_VAL(ed_EDITOR_PANES, GET_APPMD_PTR(&appmode_save, ed_EDITOR_PANES));
 	set_app_func_key_table();
+	set_work_space_color_on_app_list_mode();
 
 #ifdef ENABLE_FILER
 	free_filer_panes(&next_filer_panes, prev_fps);
@@ -122,7 +121,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 			if ((func_key_table = get_func_key_table_from_key(editor_func_key_table, key_input))
 			 == NULL) {
 				if (IS_CHAR_KEY(key_input) == 0) {
-					disp_status_bar_err(_("Key command not assigned: %04xh"), key_input);
+					disp_status_bar_err(_("No command assigned for the key: %04xh"), key_input);
 				} else {
 					doe_enter_char(key_input);
 				}
@@ -208,7 +207,7 @@ PRIVATE int open_file_recursive(int recursive)
 			continue;
 #endif // ENABLE_FILER
 		// CURDIR: changed in editor
-		if (load_file_name_upp_low(file_path, TUL0, OOE0, MOE1, recursive) <= 0) {
+		if (load_file_name_upp_low(file_path, TUL0, OOE0, MOE1, LFH0, recursive) <= 0) {
 			tio_beep();
 		}
 		break;
@@ -232,7 +231,7 @@ int doe_open_new_file(void)
 	}
 	clear_files_loaded();
 	// CURDIR: changed in editor
-	if (load_file_name_upp_low(file_path, TUL0, OOE1, MOE0, RECURSIVE0) <= 0) {
+	if (load_file_name_upp_low(file_path, TUL0, OOE1, MOE0, LFH0, RECURSIVE0) <= 0) {
 		tio_beep();
 		return 0;
 	}
@@ -279,7 +278,7 @@ int doe_open_proj_file(void)
 	}
 
 	// CURDIR: changed in editor
-	if (load_file_name_recurs(file_name, OOE0, MOE1, RECURSIVE1) <= 0) {
+	if (load_file_name_upp_low(file_name, TUL0, OOE0, MOE1, LFH0, RECURSIVE1) <= 0) {
 		tio_beep();
 		return 0;
 	}
@@ -313,7 +312,7 @@ int doe_reopen_file(void)
 	free_cur_edit_buf();
 	// CURDIR: abs-path is specified
 	get_file_line_col_from_str_null(file_pos_str, file_path, NULL, NULL);
-	if (load_file_name_recurs(file_path, OOE0, MOE1, RECURSIVE1) <= 0) {
+	if (load_file_name_upp_low(file_path, TUL0, OOE0, MOE1, LFH0, RECURSIVE1) <= 0) {
 		tio_beep();
 		return 0;
 	}
@@ -333,11 +332,11 @@ int doe_reopen_file(void)
 //|Func name               |files|close|un-mod|ask Y/N|file-name|Key  |
 //|                        |     |     | ified|       |         |     |
 //|------------------------|-----|-----|------|-------|---------|-----|
-//|doe_write_file_to()     | one |none | Yes  | none  |New-name |@s   |write to new file
-//|doe_write_file_ask()    | one |none | no   | Ask   |cur-name |@w   |
-//|doe_write_file_always() | one |none | no   | none  |cur-name |@W   |ask if not modified
-//|doe_write_all_ask()     | All |none | no   | Ask   |cur-name |@a   |
-//|doe_write_all_modified()| All |none | no   | none  |cur-name |@A   |
+//|doe_write_file_to()     | one |no   | Yes  | none  |New-name |@s   |write to new file
+//|doe_write_file_ask()    | one |no   | no   | Ask   |cur-name |@w   |
+//|doe_write_file_always() | one |no   | no   | none  |cur-name |@W   |
+//|doe_write_all_ask()     | All |no   | no   | Ask   |cur-name |@a   |
+//|doe_write_all_modified()| All |no   | no   | none  |cur-name |@A   |
 //|doe_close_file_ask()    | one |Close| no   | Ask   |cur-name |^Q   |
 //|doe_close_file_always() | one |Close| no   | none  |cur-name |(@^Q)|
 //|doe_close_all_ask()     | All |Close| no   | Ask   |cur-name |@q   |
@@ -345,37 +344,31 @@ int doe_reopen_file(void)
 
 int doe_write_file_to(void)
 {
-	char file_path[MAX_PATH_LEN+1] = "";
-	char org_file_path[MAX_PATH_LEN+1] = "";
-	char file_name[MAX_PATH_LEN+1] = "";
+	char file_path[MAX_PATH_LEN+1];
 
 	strlcpy__(file_path, get_cep_buf()->file_path, MAX_PATH_LEN);
-flf_d_printf("[%s]\n", file_path);
 	while (1) {
 		if (input_new_file_name_n_ask(file_path) <= 0) {
 			return -1;
 		}
-flf_d_printf("[%s]\n", file_path);
 #ifdef ENABLE_FILER
 		if (is_path_wildcard(file_path))
 			continue;
 #endif // ENABLE_FILER
-flf_d_printf("[%s]\n", file_path);
+		char org_file_path[MAX_PATH_LEN+1];
 		buf_get_file_path(get_cep_buf(), org_file_path);
 		buf_set_file_path(get_cep_buf(), file_path);	// set new file name
 		if (backup_and_save_cur_buf(file_path) < 0) {
-flf_d_printf("[%s]\n", file_path);
 			buf_set_file_path(get_cep_buf(), org_file_path);
 			return -1;
 		}
-flf_d_printf("[%s]\n", file_path);
 		break;
 	}
+	char file_name[MAX_PATH_LEN+1];
 	separate_path_to_dir_and_file(file_path, file_path, file_name);
 #ifdef ENABLE_FILER
 	// copy new file name to filer next_file
 	strlcpy__(get_cur_filer_view()->next_file, file_name, MAX_PATH_LEN);
-flf_d_printf("[%s]\n", file_name);
 #endif // ENABLE_FILER
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	disp_status_bar_done(_("Written to the file: %s"), file_name);
@@ -417,14 +410,13 @@ int doe_close_file_always(void)
 }
 PRIVATE int close_file(int yes_no)
 {
-	int ret;
 	char file_pos_str[MAX_PATH_LEN+1];
 
 	if (is_app_list_mode()) {
 		editor_quit = EDITOR_CANCELLED;
 		return 0;
 	}
-	ret = write_file_ask(yes_no, CLOSE_AFTER_SAVE_1);
+	int ret = write_file_ask(yes_no, CLOSE_AFTER_SAVE_1);
 	if (ret <= ANSWER_CANCEL) {
 		// Cancel/Error
 		return -1;
@@ -652,11 +644,9 @@ int doe_editor_menu_9(void)
 //-----------------------------------------------------------------------------
 int write_all_ask(int yes_no, close_after_save_t close)
 {
-	int ret = yes_no;
-
 	switch_cep_buf_to_top();
 	while (is_cep_buf_valid()) {
-		ret = write_file_ask(ret, close);
+		int ret = write_file_ask(yes_no, close);
 		if (ret <= ANSWER_CANCEL) {
 			disp_status_bar_done(_("Cancelled"));
 			return -1;
@@ -664,7 +654,7 @@ int write_all_ask(int yes_no, close_after_save_t close)
 		if (switch_cep_buf_to_next(0, 0) == 0)
 			break;
 	}
-	disp_status_bar_done(_("All buffers are checked"));
+	disp_status_bar_done(_("All buffers are checked(saved if modified)"));
 	return 1;
 }
 int close_all_not_modified(void)
@@ -693,24 +683,32 @@ int close_all(void)
 	return 0;
 }
 
+// | "yes_no" value | ask yes / no          | save or not           |
+// |----------------|-----------------------|-----------------------|
+// | ANSWER_FORCE   | save soon if modified | save soon if modified |
+// | < ANSWER_FORCE | ask if not modified   | save if answered YES  |
+// | ANSWER_ALL     | save soon if modified | save soon if modified |
+// | < ANSWER_ALL   | ask if modified       | save if answered YES  |
+
 int write_file_ask(int yes_no, close_after_save_t close)
 {
 	int ret = yes_no;
 
 	switch_cep_buf_to_valid_buf();
 
-	if (yes_no < ANSWER_FORCE && check_cur_buf_modified() == 0) {
+	/////if (yes_no < ANSWER_FORCE && check_cur_buf_modified() == 0) {
+	if (check_cur_buf_modified() == 0) {
 		disp_status_bar_done(_("Buffer is NOT modified"));
 		return ANSWER_NO;
 	}
-	if (yes_no == ANSWER_FORCE && check_cur_buf_modified() == 0) {
-		ret = ask_yes_no(ASK_YES_NO | ASK_ALL, _("Save unmodified buffer ?"));
-		if (ret <= 0) {
-			disp_status_bar_done(_("Cancelled"));
-			return ANSWER_CANCEL;
-		}
-		ret = ANSWER_FORCE;
-	}
+	/////if (yes_no == ANSWER_FORCE && check_cur_buf_modified() == 0) {
+	/////	ret = ask_yes_no(ASK_YES_NO | ASK_ALL, _("Save unmodified buffer ?"));
+	/////	if (ret <= 0) {
+	/////		disp_status_bar_done(_("Cancelled"));
+	/////		return ANSWER_CANCEL;
+	/////	}
+	/////	ret = ANSWER_FORCE;
+	/////}
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	update_screen_editor(1, 1, 1);
 	if (ret < ANSWER_ALL) {
@@ -757,7 +755,6 @@ void win_pop_win_size(void)
 	dec_win_depth();
 	win_reinit_win_size();
 
-	set_work_space_color_normal();
 	// draw parent screen
 	update_screen_app(1, 1, 1);
 }
@@ -786,10 +783,10 @@ int update_screen_editor(int title_bar, int status_bar, int refresh)
 	int pane_idx;			// pane index
 
 	CEPBV_CURSOR_Y = MIN(edit_win_get_text_lines()-1, CEPBV_CURSOR_Y);
-///mflf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
+////mflf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 	// title bar
 	if (title_bar) {
-		disp_editor_title_bar();
+		editor_disp_title_bar();
 	}
 
 	if (get_edit_win_update_needed()) {
@@ -812,7 +809,7 @@ int update_screen_editor(int title_bar, int status_bar, int refresh)
 				if (pane_sel_idx == 0) {
 					set_work_space_color_dark();
 				}
-///flf_d_printf("pane_sel_idx: %d, pane_idx: %d\n", pane_sel_idx, pane_idx);
+////flf_d_printf("pane_sel_idx: %d, pane_idx: %d\n", pane_sel_idx, pane_idx);
 				set_editor_cur_pane_idx(pane_idx);
 				disp_edit_win(pane_sel_idx);
 				if (pane_sel_idx == 0) {
@@ -835,7 +832,7 @@ int update_screen_editor(int title_bar, int status_bar, int refresh)
 		tio_refresh();
 	}
 	clear_edit_win_update_needed();
-///mflf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}\n");
+////mflf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}\n");
 	return 0;
 }
 

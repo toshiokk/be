@@ -137,7 +137,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 		for ( ; optind < argc; optind++) {
 flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 			// CURDIR: changed in editor
-			if (load_file_name_upp_low_(argv[optind], TUL0, OOE1, MOE0, RECURSIVE1) <= 0) {
+			if (load_file_name_upp_low_(argv[optind], TUL0, OOE1, MOE0, LFH0, RECURSIVE1) <= 0) {
 				tio_beep();
 			}
 			tio_refresh();
@@ -381,6 +381,9 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 					break;
 				case 'u':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_UTF8);
+					break;
+				case 'b':
+					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_BINARY);
 					break;
 				case 'a':
 				default:

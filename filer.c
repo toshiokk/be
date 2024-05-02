@@ -37,7 +37,7 @@ PRIVATE int check_filer_cur_dir(void);
 PRIVATE int update_all_file_list(const char *filter, int force_update);
 PRIVATE int update_file_list(filer_view_t *fv, const char *filter, int force_update);
 
-PRIVATE void disp_filer_title_bar(const char *path,
+PRIVATE void filer_disp_title_bar(const char *path,
  int cur_idx, int files_selected, int files_total);
 PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane);
 
@@ -134,7 +134,6 @@ flf_d_printf("push: %d, list: %d, dir: %s, filter: [%s], path: [%s], len: %d\n",
 	filer_panes_t *prev_fps = NULL;
 	filer_panes_t next_filer_panes;
 	app_mode_t appmode_save;
-	int ret;
 
 	if (push_win) {
 		win_push_win_size();
@@ -146,21 +145,21 @@ flf_d_printf("push: %d, list: %d, dir: %s, filter: [%s], path: [%s], len: %d\n",
 	SET_APPMD(app_EDITOR_FILER);
 	SET_APPMD_VAL(app_LIST_MODE, list_mode);
 	SET_APPMD_VAL(ed_EDITOR_PANES, 0);
-	set_work_space_color_dark_if_app_list_mode();
 	set_app_func_key_table();
+	set_work_space_color_on_app_list_mode();
 
 flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
 flf_d_printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
-	ret = filer_main_loop(dir, filter, path_buf, buf_len);
+	int ret = filer_main_loop(dir, filter, path_buf, buf_len);
 flf_d_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 flf_d_printf("ret: %d\n", ret);
 	filer_do_next = FILER_DO_NOTHING;	// for caller of call_filer(), clear "editor_quit"
 
-	set_work_space_color_normal_if_app_list_mode();
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 	SET_APPMD_VAL(app_LIST_MODE, GET_APPMD_PTR(&appmode_save, app_LIST_MODE));
 	SET_APPMD_VAL(ed_EDITOR_PANES, GET_APPMD_PTR(&appmode_save, ed_EDITOR_PANES));
 	set_app_func_key_table();
+	set_work_space_color_on_app_list_mode();
 
 	if (push_win) {
 		free_filer_panes(&next_filer_panes, prev_fps);
@@ -255,7 +254,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 				 tolower_if_alpha(key_input));
 			}
 			if (func_key_table == NULL) {
-				disp_status_bar_err(_("Key command not assigned: %04xh"), key_input);
+				disp_status_bar_err(_("No command assigned for the key: %04xh"), key_input);
 				filer_do_next = FILER_DO_UPDATE_FILE_LIST_AUTO;
 			} else {
 				strlcpy__(get_cur_filer_view()->next_file,
@@ -395,7 +394,7 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 	files_selected = get_files_selected_cfv();
 
 	// title bar
-	disp_filer_title_bar(filer_cur_path,
+	filer_disp_title_bar(filer_cur_path,
 	 get_cur_filer_view()->cur_sel_idx, files_selected, get_cur_filer_view()->file_list_entries);
 
 	if (GET_APPMD(fl_FILER_PANES) == 0) {		// 1 pane
@@ -441,7 +440,7 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 }
 
 #define HHCMMCSS_LEN		8	// "23:59:59"
-PRIVATE void disp_filer_title_bar(const char *path,
+PRIVATE void filer_disp_title_bar(const char *path,
  int cur_idx, int files_selected, int files_total)
 {
 	int space;
@@ -468,21 +467,31 @@ PRIVATE void disp_filer_title_bar(const char *path,
 		}
 	}
 #endif // ENABLE_DEBUG
-	if (get_win_depth() == 0) {
-		snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%s:%d%c%s",
-		 get_my_user_name_at_host_name(), get_filer_cur_pane_idx()+1, separator_char, path);
+	if ((get_win_depth() == 0) && (msec_past_input_key() >= 1000)) {
+		snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%s%s:%d%c%s",
+		 root_notation(), get_at_host_name(),
+		 get_filer_cur_pane_idx()+1, separator_char, path);
 	} else {
-		snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%d%c%s",
+		snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%s%d%c%s",
+		 root_notation(),
 		 get_filer_cur_pane_idx()+1, separator_char, path);
 	}
 
-	// current time
-	snprintf_(buf_time, 1+HHCMMCSS_YY_MM_DD_LEN+1, " %s",
-	 cur_ctime_cdate(just_has_been_input_key()));
-
 	//-------------------------------------------------------------------------
-	snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, "%d/%d:%d %c%s",
-	 cur_idx, files_total, files_selected, *get_str_sort_by(), buf_time);
+	if (msec_past_input_key() >= 1000 || files_selected) {
+		// current date / time
+		snprintf_(buf_time, 1+HHCMMCSS_YY_MM_DD_LEN+1, " %s",
+		 cur_ctime_cdate(msec_past_input_key() < 2000));
+		if (files_selected == 0) {
+			snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, "%d:%d %c%s",
+			 cur_idx, files_total, *get_str_sort_by(), buf_time);
+		} else {
+			snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, "%d/%d %c%s",
+			 files_selected, files_total, *get_str_sort_by(), buf_time);
+		}
+	} else {
+		strcpy(buf_files, "");
+	}
 	space = LIM_MIN(0, main_win_get_columns() - strnlen(buf_files, MAX_SCRN_LINE_BUF_LEN) - 1);
 	shrink_str(buf_dir, space, 2);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN, "%-*s %s", space, buf_dir, buf_files);

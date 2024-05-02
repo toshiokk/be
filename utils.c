@@ -451,8 +451,10 @@ char *nn_from_num(int num, char *buf)
 {
 	if (num < 0) {
 		snprintf_(buf, 2+1, "-%d", (-num) % 10);	// -9 -- -1
+	} else if (num < 10) {
+		snprintf_(buf, 2+1, "%d", num);				// 0 -- 9
 	} else if (num < 100) {
-		snprintf_(buf, 2+1, "%02d", num);	// 00 -- 99
+		snprintf_(buf, 2+1, "%02d", num);			// 00 -- 99
 	} else if (num < 260 + 100) {
 		num -= 100;
 		snprintf_(buf, 2+1, "%c%d", 'A' + num / 10, num % 10);	// a0 -- z9
@@ -572,11 +574,13 @@ const char *get_host_name()
 	return hostname;
 }
 
-const char *get_my_user_name_at_host_name()
+const char *get_at_host_name()
 {
 #define USER_AT_HOST_NAME_LEN		(USER_ID_LEN + 1 + HOST_NAME_LEN)
 	static char buf_user_at_host[USER_AT_HOST_NAME_LEN+1];
+	// @hostname
 	snprintf_(buf_user_at_host, USER_AT_HOST_NAME_LEN+1, "@%s", get_host_name());
+	////// username@hostname
 	////snprintf_(buf_user_at_host, USER_AT_HOST_NAME_LEN+1, "%s@%s",
 	//// get_user_name(geteuid()), get_host_name());
 	return buf_user_at_host;

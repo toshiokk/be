@@ -181,6 +181,7 @@ void init_bufs_top_bot_anchor(
 be_buf_t *get_buf_from_bufs_by_idx(be_buf_t *buf, int buf_idx);
 int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf);
 be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *bufs, const char *abs_path);
+be_buf_t *get_buf_from_bufs_by_file_name(be_buf_t *buf, const char *file_name);
 
 void renumber_all_bufs_from_top(be_bufs_t *bufs);
 

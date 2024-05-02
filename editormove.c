@@ -448,7 +448,7 @@ flf_d_printf("[%s]\n", utf8s);
 	undo_set_region_n_save_before_change(CEPBV_CL, CEPBV_CL, 1);
 #endif // ENABLE_UNDO
 
-	bytes_str = strnlen(utf8s, MAX_PATH_LEN);
+	bytes_str = strlen_path(utf8s);
 #ifdef ENABLE_UTF8
 	for (byte_idx = 0; byte_idx < bytes_str; byte_idx += bytes_chr) {
 		bytes_chr = utf8c_bytes(&utf8s[byte_idx]);

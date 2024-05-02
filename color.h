@@ -81,8 +81,7 @@ extern file_type_t *default_color_syntax;
 #endif // ENABLE_SYNTAX
 
 void init_default_app_color(void);
-void set_work_space_color_dark_if_app_list_mode();
-void set_work_space_color_normal_if_app_list_mode();
+void set_work_space_color_on_app_list_mode();
 void set_work_space_color_dark(void);
 void set_work_space_color_normal(void);
 int is_work_space_color_dark(void);

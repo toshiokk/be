@@ -40,8 +40,6 @@ PRIVATE void set_history_modified(int hist_type_idx);
 PRIVATE int is_history_modified(int hist_type_idx);
 
 PRIVATE void set_history_oldest(int hist_type_idx);
-PRIVATE void set_history_newest(int hist_type_idx);
-PRIVATE const char *get_history_older(int hist_type_idx);
 PRIVATE const char *get_history_newer(int hist_type_idx);
 
 PRIVATE const char *is_the_last_line(int hist_type_idx, const char *str);
@@ -118,7 +116,6 @@ void load_last_searched_needle(void)
 {
 	// load last_searched_needle
 	strlcpy__(last_searched_needle, get_history_newest(HISTORY_TYPE_IDX_SEARCH, 1), MAX_PATH_LEN);
-/////flf_d_printf("last_searched_needle[%s]\n", last_searched_needle);
 }
 
 //-----------------------------------------------------------------------------
@@ -156,7 +153,6 @@ void update_history(int hist_type_idx, const char *str, BOOL force_update)
 			return;
 		}
 	}
-/////flf_d_printf("hist_type_idx:%d:[%s]\n", hist_type_idx, str);
 	// load-modify(free old entry and append new entry)-save
 	load_history_idx(hist_type_idx);
 	if ((line = search_history_exact_match(hist_type_idx, str)) != NULL) {
@@ -379,12 +375,12 @@ PRIVATE void set_history_oldest(int hist_type_idx)
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	buf_set_cur_line(buf, BUF_TOP_LINE(buf));
 }
-PRIVATE void set_history_newest(int hist_type_idx)
+void set_history_newest(int hist_type_idx)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	buf_set_cur_line(buf, BUF_BOT_LINE(buf));
 }
-PRIVATE const char *get_history_older(int hist_type_idx)
+char *get_history_older(int hist_type_idx)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
@@ -481,7 +477,6 @@ const char *search_history_file_path(int hist_type_idx, const char *path)
 //-----------------------------------------------------------------------------
 int select_from_history_list(int hist_type_idx, char *buffer)
 {
-
 	load_histories();
 	renumber_all_bufs_from_top(&history_buffers);
 

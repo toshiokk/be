@@ -73,6 +73,9 @@ const char *get_history_newest(int hist_type_idx, int last_n);
 const char *get_history_completion(int hist_type_idx, const char *str);
 const char *search_history_file_path(int hist_type_idx, const char *path);
 
+void set_history_newest(int hist_type_idx);
+char *get_history_older(int hist_type_idx);
+
 int select_from_history_list(int hist_type_idx, char *buffer);
 
 #ifdef ENABLE_DEBUG

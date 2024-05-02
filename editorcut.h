@@ -23,7 +23,7 @@
 #define editorcut_h
 
 int doe_clear_cut_buf(void);
-int doe_pop_cut_buf(void);
+/////int doe_pop_cut_buf(void);
 
 int doe_select_all_lines(void);
 int doe_copy_text(void);

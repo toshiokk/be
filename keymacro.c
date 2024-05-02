@@ -59,7 +59,7 @@ int doe_start_recording(void)
 	disp_status_bar_done(_("Start key macro recording"));
 	key_macro_start_recording();
 
-	disp_editor_title_bar();
+	editor_disp_title_bar();
 	tio_refresh();
 	return 0;
 }
@@ -68,7 +68,7 @@ int doe_cancel_recording(void)
 	disp_status_bar_done(_("Cancel key macro recording"));
 	key_macro_cancel_recording();
 
-	disp_editor_title_bar();
+	editor_disp_title_bar();
 	tio_refresh();
 	return 0;
 }
@@ -81,7 +81,7 @@ int doe_end_recording(void)
 	save_key_macro();
 #endif // ENABLE_HISTORY
 
-	disp_editor_title_bar();
+	editor_disp_title_bar();
 	tio_refresh();
 	return 0;
 }

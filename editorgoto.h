@@ -22,10 +22,12 @@
 #ifndef editorgoto_h
 #define editorgoto_h
 
-#define TUL1		1	// Try upper lower
-#define TUL0		0	// No try upper lower
-#define RECURSIVE1	1	// Recursive open
-#define RECURSIVE0	0	// Non-recursive open
+#define TUL0		0	// Not try to upper lower cases of file name
+#define TUL1		1	// Try to open upper lower cases of file name
+#define LFH0		0	// Not load a file memorized in history
+#define LFH1		1	// Load a file memorized in history
+#define RECURSIVE0	0	// Not recursively open files
+#define RECURSIVE1	1	// Recursively open files
 
 int doe_goto_input_line(void);
 int doe_goto_file_or_dir_in_cur_line(void);
@@ -44,21 +46,35 @@ int doe_switch_to_next_file(void);
 int doe_switch_to_prev_buffers(void);
 int doe_switch_to_next_buffers(void);
 #endif // APP_REL_LVL
+void memorize_cur_file_pos_and_clear_prev_file_pos_cnt();
 int doe_return_to_prev_file_pos(void);
+int doe_return_to_next_file_pos(void);
 
 int doe_switch_editor_pane(void);
 void doe_switch_editor_pane_(void);
 
 //-----------------------------------------------------------------------------
+// Top level functions - never called recursively
+// | function name            | actions                                                     |
+// |--------------------------|-------------------------------------------------------------|
+// | load_files_in_cur_buf()  | Load files listed in current buffer							|
+// | load_files_in_string()   | Load files listed in one line of string						|
+// | load_file_name_upp_low() | Try to open file with name in as-it-is, UPPER or lower case	|
+// | load_file_name__         | Load file and goto pos (memorized in 'openfile_history')	|
+//
+// Top level functions must:
+//  1. call begin_check_break_key()
+//  2. call equivalent sub-function (sub-function can be called recursively)
+//  3. call end_check_break_key()
+
 int load_file_name_upp_low(const char *file_name,
- int try_upp_low, int open_on_err, int msg_on_err, int recursive);
-int load_file_name_recurs(const char *file_name, int open_on_err, int msg_on_err, int recursive);
+ int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive);
 int load_files_in_cur_buf(void);
-int load_files_in_string(const char *string, int files_to_load, int try_upp_low,
- int open_on_err, int msg_on_err, int recursive);
+int load_files_in_string(const char *string, int files_to_load,
+ int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive);
 
 int load_file_name_upp_low_(const char *file_name,
- int try_upp_low, int open_on_err, int msg_on_err, int recursive);
+ int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive);
 
 int is_file_name_proj_file(const char *file_name, int type);
 
@@ -84,6 +100,7 @@ int get_file_line_col_from_str_null(const char *str, char *file_path,
  int *line_num, int *col_num);
 
 int switch_cep_buf_by_file_name(const char *file_name);
+int switch_cep_buf_extending_file_name_to_path(const char *file_name);
 int switch_cep_buf_by_abs_path(const char *abs_path);
 
 int switch_cep_buf_to_top(void);

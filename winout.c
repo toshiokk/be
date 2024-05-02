@@ -63,7 +63,7 @@ const int get_win_depth(void)
 // editor window sectioning
 //	[single pane]							[two panes]
 //	+path-----------(MAIN)--------------+	+----------------(MAIN)-----------------+
-//	|---+--ruler--(SUB_WHOLE)-----------|   |path--(SUB_LEFT)---+path--(SUB_RIGHT)--|
+//	|---+--ruler--(SUB_WHOLE)-----------|	|path--(SUB_LEFT)---+path--(SUB_RIGHT)--|
 //	|  1+------------text---------------|	|---+----ruler------+---+----ruler------|
 //	|  2|                               |	|  1+----text-------|  1+----text-------|
 //	|  3|                               |	|  2|               |  2|               |

@@ -77,15 +77,11 @@ void init_default_app_color(void)
 	memcpy__(item_colors, default_item_colors, sizeof(default_item_colors));
 }
 
-void set_work_space_color_dark_if_app_list_mode()
+void set_work_space_color_on_app_list_mode()
 {
 	if (is_app_list_mode()) {
 		set_work_space_color_dark();
-	}
-}
-void set_work_space_color_normal_if_app_list_mode()
-{
-	if (is_app_list_mode()) {
+	} else {
 		set_work_space_color_normal();
 	}
 }

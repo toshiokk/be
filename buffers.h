@@ -166,6 +166,7 @@ void line_avoid_wild_ptr_cur(be_line_t *line);
 void line_avoid_wild_ptr(be_line_t **line_ptr, be_line_t *line);
 
 be_buf_t *get_edit_buf_by_abs_path(const char *abs_path);
+be_buf_t *get_edit_buf_by_file_name(const char *file_name);
 int get_edit_buf_idx_from_buf(be_buf_t *edit_buf);
 
 void create_edit_buf(const char *file_path);

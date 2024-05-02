@@ -92,8 +92,8 @@ int doe_editor_menu_8(void);
 int doe_editor_menu_9(void);
 
 typedef enum {
-	NO_CLOSE_AFTER_SAVE_0,	// 0: File will be kept opened.
-	CLOSE_AFTER_SAVE_1		// 1: File will be closed after save.
+	NO_CLOSE_AFTER_SAVE_0,	// 0: File will be kept open
+	CLOSE_AFTER_SAVE_1		// 1: File will be closed after save
 							//    (ANSWERING No WILL DISCARD CHANGES)
 } close_after_save_t;
 

@@ -68,8 +68,8 @@ PRIVATE void blink_editor_title_bar();
 #define MEM_BUF_LEN			7	// "999000M" (999G)
 #define HHCMMCSS_LEN		8	// "23:59:59"
 PRIVATE char editor_title_bar_buf[MAX_SCRN_LINE_BUF_LEN+1] = "";
-//1:/home/...editor2.c[Mod]    Mc E00 C00 U00 R00 1234M 11:55:04
-void disp_editor_title_bar(void)
+//1:/home/...editor2.c[Mod]    Mc E99 C0 U0 R0 1234M 11:55:04
+void editor_disp_title_bar(void)
 {
 	int buf_idx;
 	char *path;
@@ -150,27 +150,31 @@ void disp_editor_title_bar(void)
 
 	// current time
 	snprintf_(buf_time, 1+HHCMMCSS_YY_MM_DD_LEN+1, " %s",
-	 cur_ctime_cdate(just_has_been_input_key()));
+	 cur_ctime_cdate(msec_past_input_key() < 2000));
 
 	//-------------------------------------------------------------------------
 	int max_status_cols = main_win_get_columns() / 2;
 	int status_cols = main_win_get_columns();
 #ifdef ENABLE_DEBUG
 	snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, " %s%s%s", buf_buf, buf_mem, buf_time);
-	status_cols = str_path_len(buf_status);
+	status_cols = strlen_path(buf_status);
 	if (status_cols > max_status_cols) {
 		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, " %s%s", buf_mem, buf_time);
-		status_cols = str_path_len(buf_status);
+		status_cols = strlen_path(buf_status);
 	}
 #endif // ENABLE_DEBUG
 	if (status_cols > max_status_cols) {
 		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, " %s%s", buf_buf, buf_time);
-		status_cols = str_path_len(buf_status);
+		status_cols = strlen_path(buf_status);
 		if (status_cols > max_status_cols) {
 			snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, " %s", buf_time);
-			status_cols = str_path_len(buf_status);
+			status_cols = strlen_path(buf_status);
 		}
 	}
+	if (msec_past_input_key() < 1000) {
+		strcpy(buf_status, "");
+	}
+	status_cols = strlen_path(buf_status);
 	int path_cols = LIM_MIN(0, main_win_get_columns() - status_cols);
 	shrink_str(buf_path, path_cols, 2);
 	adjust_utf8s_columns(buf_path, path_cols);
@@ -849,8 +853,8 @@ PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
 	left_vis_idx = vis_idx_from_byte_idx(raw_code, left_byte_idx);
 	right_vis_idx = vis_idx_from_byte_idx(raw_code, right_byte_idx);
 	bytes = right_vis_idx - left_vis_idx;
-///flf_d_printf("left_x:%d,right_x:%d,left_vis_idx:%d,right_vis_idx:%d,bytes:%d,[%s]\n",
-/// left_x,right_x,left_vis_idx,right_vis_idx,bytes, &vis_code[left_vis_idx]);
+////flf_d_printf("left_x:%d,right_x:%d,left_vis_idx:%d,right_vis_idx:%d,bytes:%d,[%s]\n",
+//// left_x,right_x,left_vis_idx,right_vis_idx,bytes, &vis_code[left_vis_idx]);
 	if (bytes > 0) {	// if (bytes <= 0), no output neccesary
 		sub_win_output_string(edit_win_get_text_y() + yy,
 		 get_edit_win_x_for_text_x(left_x), &vis_code[left_vis_idx], bytes);

@@ -224,7 +224,7 @@ const char *te_tab_expand(const char *original)
 			orig_ptr++;
 		} else if (is_ctrl_char((unsigned char)*orig_ptr)) {
 			*vis_ptr++ = '^';
-			*vis_ptr++ = (*orig_ptr == CHAR_DEL) ? '?' : *orig_ptr + '@';
+			*vis_ptr++ = (*orig_ptr == CHAR_DEL) ? '?' : (*orig_ptr + '@');
 			col_idx += 2;
 			orig_ptr++;
 		} else if ((unsigned char)*orig_ptr < 0x80) {	// ASCII
@@ -252,6 +252,7 @@ const char *te_tab_expand(const char *original)
 #endif // ENABLE_SYNTAX
 	*vis_ptr = '\0';
 	te_visible_code_columns = col_idx + 1;
+flf_d_printf("[%s]\n", te_visible_code_buf);
 	return te_visible_code_buf;
 }
 const char *te_concat_linefeed(const char *original)

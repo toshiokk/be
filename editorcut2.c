@@ -354,7 +354,7 @@ void setup_cut_region(void)
 /////flf_d_printf("mark_min_byte_idx: %d\n", mark_min_byte_idx);
 /////flf_d_printf("mark_max_line: [%s]\n", mark_max_line->data);
 /////flf_d_printf("mark_max_byte_idx: %d\n", mark_max_byte_idx);
-//////flf_d_printf("mark_min_col_idx: %d\n", mark_min_col_idx);
+/////flf_d_printf("mark_min_col_idx: %d\n", mark_min_col_idx);
 /////flf_d_printf("mark_max_col_idx: %d\n", mark_max_col_idx);
 }
 

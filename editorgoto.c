@@ -21,10 +21,19 @@
 
 #include "headers.h"
 
-PRIVATE int load_file_in_string(const char *string,
- int try_upp_low, int open_on_err, int msg_on_err, int recursive);
+PRIVATE int load_files_in_cur_buf_(void);
+PRIVATE int load_files_in_string_(const char *string, int files_to_load,
+ int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive);
+PRIVATE int load_file_in_string_(const char *string,
+ int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive);
+
+PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int msg_on_err,
+ int load_from_history, int recursive);
+PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_err,
+ int load_from_history);
 
 #ifdef ENABLE_HISTORY
+PRIVATE int load_and_goto_from_history(const char *file_name);
 PRIVATE void goto_pos_by_history(const char *full_path);
 #endif // ENABLE_HISTORY
 
@@ -54,7 +63,8 @@ int doe_goto_input_line(void)
 	}
 	// go to file
 	// CURDIR: changed in editor
-	load_files_in_string(string, 1, TUL0, OOE0, MOE1, RECURSIVE0);	// file.ext:123:45
+	// file.ext:123:45
+	load_files_in_string(string, 1, TUL0, OOE0, MOE1, LFH0, RECURSIVE0);
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
 }
@@ -101,7 +111,8 @@ int doe_goto_file_in_cur_line(void)
 	// CURDIR: changed to cur-file's abs-dir
 	change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->abs_path);
 	// file_path is taken from the head of current line
-	int files = load_files_in_string(CEPBV_CL->data, 10, TUL1, OOE0, MOE1, RECURSIVE1);
+	int files = load_files_in_string(CEPBV_CL->data, 10,
+	 TUL1, OOE0, MOE1, LFH1, RECURSIVE1);
 	change_cur_dir(dir_save);
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
@@ -115,7 +126,8 @@ int doe_goto_file_in_cur_cursor_pos(void)
 	// CURDIR: changed to cur-file's abs-dir
 	change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->abs_path);
 	// file_path is taken from the current cursor position
-	int files = load_files_in_string(&(CEPBV_CL->data[CEPBV_CLBI]), 1, TUL1, OOE0, MOE1, RECURSIVE1);
+	int files = load_files_in_string(&(CEPBV_CL->data[CEPBV_CLBI]), 1,
+	 TUL1, OOE0, MOE1, LFH1, RECURSIVE1);
 	change_cur_dir(dir_save);
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
@@ -151,10 +163,9 @@ int change_dirs_in_string(const char *string, char *cur_dir, char *prev_dir, cha
 		if (*ptr == '\0')
 			break;
 		if (get_file_line_col_from_str_null(ptr, dir, NULL, NULL)) {
-flf_d_printf("dir: [%s]\n", dir);
 			// directory gotten
 			if ((contain_redundant_slash(dir) == 0)
-			 && change_cur_dir_in_path(dir, cur_dir, prev_dir, next_file)) {
+			 && change_cur_dir_saving_prev_next_dir(dir, cur_dir, prev_dir, next_file)) {
 				return 1;	// changed
 			}
 			// not changed, try the next directory
@@ -220,9 +231,6 @@ int doe_switch_to_prev_buffers(void)
 	be_bufs_t *bufs = get_bufs_contains_buf(&bufss_top_anchor, get_cep_buf());
 	if (IS_NODE_TOP(bufs))
 		return 0;
-/////flf_d_printf("bufs: %s\n", bufs->name);
-/////flf_d_printf("NODE_PREV(bufs)->name: %s\n", NODE_PREV(bufs)->name);
-/////flf_d_printf("NODE_PREV(bufs)->cur_buf->name: %s\n", NODE_PREV(bufs)->cur_buf->file_path);
 	set_cep_buf(NODE_PREV(bufs)->cur_buf);
 	post_cmd_processing(CEPBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
@@ -232,23 +240,42 @@ int doe_switch_to_next_buffers(void)
 	be_bufs_t *bufs = get_bufs_contains_buf(&bufss_top_anchor, get_cep_buf());
 	if (IS_NODE_BOT(bufs))
 		return 0;
-/////flf_d_printf("bufs: %s\n", bufs->name);
-/////flf_d_printf("NODE_NEXT(bufs)->name: %s\n", NODE_NEXT(bufs)->name);
-/////flf_d_printf("NODE_NEXT(bufs)->cur_buf->name: %s\n", NODE_NEXT(bufs)->cur_buf->file_path);
 	set_cep_buf(NODE_NEXT(bufs)->cur_buf);
-/////_D_(bufs_dump_all_bufs(&bufss_top_anchor))
 	post_cmd_processing(CEPBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 #endif // APP_REL_LVL
 //-----------------------------------------------------------------------------
+PRIVATE int curs_pos_history_counter = 1;
+PRIVATE int return_to_history_file_pos(int file_pos_counter);
+void memorize_cur_file_pos_and_clear_prev_file_pos_cnt()
+{
+	update_history(HISTORY_TYPE_IDX_CURSPOS, mk_cur_file_pos_str_static(), 0);
+	curs_pos_history_counter = 1;
+}
 int doe_return_to_prev_file_pos(void)
 {
-	recall_cur_file_pos_null(NULL);
+	int file_pos_counter = curs_pos_history_counter;
+	///if (curs_pos_history_counter < MAX_HISTORY_LINES) {
+	///	curs_pos_history_counter++;
+	///}
+	return return_to_history_file_pos(file_pos_counter);
+}
+int doe_return_to_next_file_pos(void)
+{
+	int file_pos_counter = curs_pos_history_counter;
+	if (curs_pos_history_counter > 1) {
+		curs_pos_history_counter--;
+	}
+	return return_to_history_file_pos(file_pos_counter);
+}
+PRIVATE int return_to_history_file_pos(int file_pos_counter)
+{
+	recall_cur_file_pos_null(get_history_newest(HISTORY_TYPE_IDX_CURSPOS, file_pos_counter));
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	doe_refresh_editor();
-	disp_status_bar_done(_("Returned to previous pos"));
+	disp_status_bar_done(_("Returned to %d-th previous pos"), file_pos_counter);
 	return 1;
 }
 //-----------------------------------------------------------------------------
@@ -263,44 +290,17 @@ void doe_switch_editor_pane_(void)
 	int pane_idx;			// pane index
 
 	pane_idx = get_editor_cur_pane_idx() ? 0 : 1;
-flf_d_printf("pane_idx: %d\n", pane_idx);
 	set_editor_cur_pane_idx(pane_idx);
 }
 
 //-----------------------------------------------------------------------------
-PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int msg_on_err,
- int recursive);
-PRIVATE int load_files_in_cur_buf_(void);
-PRIVATE int load_files_in_string_(const char *string,
- int files_to_load, int try_upp_low, int open_on_err, int msg_on_err, int recursive);
-
-// Top level functions - never called recursively
-// | function name            | actions                                                            |
-// |--------------------------|--------------------------------------------------------------------|
-// | load_files_in_cur_buf()  | Load files listed in current buffer								   |
-// | load_files_in_string()   | Load files listed in one line of string							   |
-// | load_file_in_string()    | Load one file in one line of string and goto pos (appdefs.h|100,8) |
-// | load_file_name_upp_low() | Try to open file with name in as-it-is, UPPER and lower case	   |
-// | load_file_name_recurs()  | Load file and if it's project file, load files described in it	   |
-// | load_file_name__         | Load file and goto pos (memorized in 'openfile_history')		   |
-//
-// Top level functions must:
-//  1. call begin_check_break_key()
-//  2. call equivalent sub-function (sub-function can be called recursively)
-//  3. call end_check_break_key()
 
 int load_file_name_upp_low(const char *file_name,
- int try_upp_low, int open_on_err, int msg_on_err, int recursive)
+ int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive)
 {
 	begin_check_break_key();
-	int ret = load_file_name_upp_low_(file_name, try_upp_low, open_on_err, msg_on_err, recursive);
-	end_check_break_key();
-	return ret;
-}
-int load_file_name_recurs(const char *file_name, int open_on_err, int msg_on_err, int recursive)
-{
-	begin_check_break_key();
-	int ret = load_file_name_recurs_(file_name, open_on_err, msg_on_err, recursive);
+	int ret = load_file_name_upp_low_(file_name,
+	 try_upp_low, open_on_err, msg_on_err, load_from_history, recursive);
 	end_check_break_key();
 	return ret;
 }
@@ -311,13 +311,13 @@ int load_files_in_cur_buf(void)
 	end_check_break_key();
 	return ret;
 }
-int load_files_in_string(const char *string,
- int files_to_load, int try_upp_low, int open_on_err, int msg_on_err, int recursive)
+int load_files_in_string(const char *string, int files_to_load,
+ int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive)
 {
 flf_d_printf("string: [%s]\n", string);
 	begin_check_break_key();
 	int files = load_files_in_string_(string, files_to_load, try_upp_low, open_on_err, msg_on_err,
-	 recursive);
+	 load_from_history, recursive);
 	end_check_break_key();
 	return files;
 }
@@ -345,10 +345,11 @@ PRIVATE int load_files_in_cur_buf_(void)
 				memorize_cur_file_pos_null(file_pos_str2);
 				// CURDIR: changed to cur-file's abs-dir
 				change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->abs_path);
-				files += load_files_in_string_(CEPBV_CL->data, 10, TUL1, OOE0, MOE0, RECURSIVE0);
+				files += load_files_in_string_(CEPBV_CL->data, 10, TUL1, OOE0, MOE0,
+				 LFH0, RECURSIVE0);
 				change_cur_dir(dir_save);
 
-				disp_editor_title_bar();
+				editor_disp_title_bar();
 				tio_refresh();
 				recall_cur_file_pos_null(file_pos_str2);
 			}
@@ -369,23 +370,10 @@ flf_d_printf("sigint_signaled\n");
 }
 
 //=============================================================================
-// supported formats:
-//  ##						// ignore any string
-//  #fileio.h				// file name in comment
-//  #include <fileio.h>		// C include directive
-//  fileio.h:10				// GCC error message
-//  fileio.h,10				// C compiler error message
-//  fileio.h(10)			// M$ C compiler error message
-//  #:fileio.h,10			// gettext *.po file
-//  fileio.h 10:10			// file-name line-num:col-num
-//  11/04/13 16:40:00, fileio.h:10:10,	// event log file
-//  <location filename="fileio.h" line="10"/>	// Qt-lupdate
-//  diff fileio.h fileio.h~
-//  SOURCES += fileio.h
 
 // sub-function of load_files_in_string()
-PRIVATE int load_files_in_string_(const char *string,
- int files_to_load, int try_upp_low, int open_on_err, int msg_on_err, int recursive)
+PRIVATE int load_files_in_string_(const char *string, int files_to_load,
+ int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive)
 {
 	int files_loaded = 0;
 
@@ -393,7 +381,8 @@ PRIVATE int load_files_in_string_(const char *string,
 		const char *ptr = skip_n_file_names(string, field_idx);
 		if (*ptr == '\0')
 			break;
-		int files = load_file_in_string(ptr, try_upp_low, open_on_err, msg_on_err, recursive);
+		int files = load_file_in_string_(ptr,
+		 try_upp_low, open_on_err, msg_on_err, load_from_history, recursive);
 		if (files > 0) {
 			// once any file has loaded, show no more error message
  			files_loaded++;
@@ -403,8 +392,8 @@ PRIVATE int load_files_in_string_(const char *string,
 	}
 	return files_loaded;
 }
-PRIVATE int load_file_in_string(const char *string,
- int try_upp_low, int open_on_err, int msg_on_err, int recursive)
+PRIVATE int load_file_in_string_(const char *string,
+ int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive)
 {
 	char file_path[MAX_PATH_LEN+1];
 	int line_num, col_num;
@@ -414,18 +403,17 @@ PRIVATE int load_file_in_string(const char *string,
 		return 0;
 	}
 	if ((files = load_file_name_upp_low_(file_path,
-	 try_upp_low, open_on_err, msg_on_err, recursive)) > 0) {
+	 try_upp_low, open_on_err, msg_on_err, load_from_history, recursive)) > 0) {
 		if (recursive) {
-			// tagged jump to line, col
+			// Tag-jump to line, col
 			goto_line_col_in_cur_buf(line_num, col_num);	// appdefs.h|100,8
 		}
 	}
 	return files;
 }
 
-// sub-function of load_file_name_upp_low()
 int load_file_name_upp_low_(const char *file_name,
- int try_upp_low, int open_on_err, int msg_on_err, int recursive)
+ int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive)
 {
 	char file_name_buf[MAX_PATH_LEN+1];
 	int files;
@@ -446,7 +434,7 @@ int load_file_name_upp_low_(const char *file_name,
 			break;
 		}
 		if ((files = load_file_name_recurs_(file_name_buf, open_on_err, msg_on_err,
-		 recursive)) > 0)
+		 load_from_history, recursive)) > 0)
 			return files;
 		if (check_break_key()) {
 			break;
@@ -455,17 +443,14 @@ int load_file_name_upp_low_(const char *file_name,
 	return 0;	// 0
 }
 
-PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_err);
-
 // Open file. If it is a project file, open file(s) described in it.
-// sub-function of load_file_name_recurs()
 PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int msg_on_err,
- int recursive)
+ int load_from_history, int recursive)
 {
 	static int recursive_call_count = 0;
 	int files = 0;
 
-	if (load_file_name__(file_name, open_on_err, msg_on_err) > 0) {
+	if (load_file_name__(file_name, open_on_err, msg_on_err, load_from_history) > 0) {
 		files = 1;
 		if (recursive && recursive_call_count == 0 && is_file_name_proj_file(file_name, 0)) {
 			recursive_call_count++;
@@ -476,24 +461,70 @@ PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int m
 	}
 	return files;
 }
-PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_err)
+PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_err,
+ int load_from_history)
 {
 	char abs_path[MAX_PATH_LEN+1];
 
 	get_abs_path(file_name, abs_path);
+	// switch to if the file of the "file-path" already loaded
 	if (switch_cep_buf_by_abs_path(abs_path)) {
 		// already loaded
-		return 1;
+		goto loaded;
 	}
-	if (load_file_into_new_buf(abs_path, open_on_err, msg_on_err) < 0) {
-		return 0;
+	// try to load the file
+	if (load_file_into_new_buf(abs_path, open_on_err, msg_on_err) > 0) {
+		goto loaded;
 	}
+	// switch to if the file of the "file-name" already loaded
+	if (switch_cep_buf_by_file_name(file_name)) {
+		// already loaded
+		goto loaded;
+	}
+#ifdef ENABLE_HISTORY
+	if (load_from_history) {
+		// try to load a file of the same "file-name" memorized in history
+		if (load_and_goto_from_history(file_name)) {
+			goto loaded;
+		}
+	}
+#endif // ENABLE_HISTORY
+	return 0;
+loaded:
 #ifdef ENABLE_HISTORY
 	goto_pos_by_history(abs_path);
 #endif // ENABLE_HISTORY
 	return 1;
 }
+
 #ifdef ENABLE_HISTORY
+// may load one of below files
+// /path/to/filename.ext
+// /path/to/dir1/filename.ext
+// /path/to/dir1/dir2/filename.ext
+PRIVATE int load_and_goto_from_history(const char *file_name)
+{
+	set_history_newest(HISTORY_TYPE_IDX_CURSPOS);
+	for ( ; ; ) {
+		char *history = get_history_older(HISTORY_TYPE_IDX_CURSPOS);
+		if (strlen_path(history) == 0) {
+			break;
+		}
+/////flf_d_printf("history:[%s]\n", history);
+		char file_path[MAX_PATH_LEN+1];
+		if (get_file_line_col_from_str_null(history, file_path, NULL, NULL)) {
+			char dir[MAX_PATH_LEN+1];
+			char file[MAX_PATH_LEN+1];
+			separate_path_to_dir_and_file(file_path, dir, file);
+/////flf_d_printf("file:[%s]\n", file);
+			if (strcmp(file, file_name) == 0) {
+				return load_file_in_string_(history, TUL0, OOE0, MOE0, LFH0, RECURSIVE0);
+			}
+		}
+	}
+	return 0;
+}
+
 PRIVATE void goto_pos_by_history(const char *full_path)
 {
 	const char *str;
@@ -511,17 +542,17 @@ PRIVATE void goto_pos_by_history(const char *full_path)
 int is_file_name_proj_file(const char *file_name, int type)
 {
 	if ((type == 0 || type == 1)
-	 && strnlen(file_name, MAX_PATH_LEN) >= strlen(PROJ_FILE_EXTENSION1)) {
+	 && strlen_path(file_name) >= strlen(PROJ_FILE_EXTENSION1)) {
 		if (strcasecmp(
-		 &file_name[strnlen(file_name, MAX_PATH_LEN) - strlen(PROJ_FILE_EXTENSION1)],
+		 &file_name[strlen_path(file_name) - strlen(PROJ_FILE_EXTENSION1)],
 	     PROJ_FILE_EXTENSION1) == 0) {
 			return 1;
 		}
 	}
 	if ((type == 0 || type == 2)
-	 && strnlen(file_name, MAX_PATH_LEN) >= strlen(PROJ_FILE_EXTENSION2)) {
+	 && strlen_path(file_name) >= strlen(PROJ_FILE_EXTENSION2)) {
 		if (strcasecmp(
-		 &file_name[strnlen(file_name, MAX_PATH_LEN) - strlen(PROJ_FILE_EXTENSION2)],
+		 &file_name[strlen_path(file_name) - strlen(PROJ_FILE_EXTENSION2)],
 	     PROJ_FILE_EXTENSION2) == 0) {
 			return 1;
 		}
@@ -581,7 +612,7 @@ int goto_last_file_line_col_in_loaded()
 	 file_path, &line_num, &col_num) == 0) {
 		return 0;
 	}
-	if (switch_cep_buf_by_file_name(file_path) == 0) {
+	if (switch_cep_buf_by_abs_path(file_path) == 0) {
 		return 0;
 	}
 	return goto_line_col_in_cur_buf(line_num, col_num);
@@ -601,7 +632,6 @@ char *memorize_cur_file_pos_null(char *buffer)
 {
 	buffer = get_memorized_file_pos_buf(buffer);
 	mk_cur_file_pos_str(buffer);
-///flf_d_printf("[%s]\n", buffer);
 	return buffer;
 }
 
@@ -610,8 +640,7 @@ int recall_cur_file_pos_null(const char *str)
 	char file_path[MAX_PATH_LEN+1];
 
 	if (get_file_line_col_from_str_null(str, file_path, NULL, NULL)) {
-///flf_d_printf("[%s]\n", file_path);
-		if (switch_cep_buf_by_file_name(file_path) == 0) {
+		if (switch_cep_buf_by_abs_path(file_path) == 0) {
 			return 0;
 		}
 	}
@@ -623,9 +652,7 @@ int goto_str_line_col_in_cur_buf(const char *str)
 	int line_num, col_num;
 
 	get_file_line_col_from_str_null(str, file_path, &line_num, &col_num);
-flf_d_printf("[%s],%d,%d\n", str, line_num, col_num);
 	int ret = goto_line_col_in_cur_buf(line_num, col_num);
-flf_d_printf("%d\n", ret);
 	return ret;
 }
 int goto_line_col_in_cur_buf(int line_num, int col_num)
@@ -696,19 +723,23 @@ int get_file_line_col_from_str_null(const char *str, char *file_path,
 	return get_file_line_col_from_str(str, file_path, line_num, col_num);
 }
 
-/*
-# supported formats
-- GCC compiler error message(GCC)
-	main.c:29:2
-- BE standard file pos format
-	/home/user/tools/be/be/editorgoto.c|400:10
-	  => "/home/user/tools/be/src/editorgoto.c", 400, 10
-- BE standard file pos format (quoted)
-	'/home/user/tools/be/src/ file name.txt '|400:10
-	  => "/home/user/tools/be/src/ file name.txt ", 400, 10
-- MSC compiler error message(MS-C)
-	main.c(29:2)
-*/
+// supported formats:
+//  ##						// ignore any string
+//  #fileio.h				// file name in comment
+//  #include <fileio.h>		// C include directive
+//  fileio.h:20:10			// GCC error message
+//  fileio.h,10				// C compiler error message
+//  fileio.h(20:10)			// M$ C compiler error message
+//  #:fileio.h,10			// gettext *.po file
+//  fileio.h 20:10			// file-name line-num:col-num
+//  11/04/13 16:40:00, fileio.h:20:10,	// event log file
+//  <location filename="fileio.h" line="10"/>	// Qt-lupdate
+//  diff fileio.h fileio.h~		// command line
+//  SOURCES += fileio.h		// Qt project file
+//  /home/user/tools/be/be/editorgoto.c|400:10 // BE file pos format
+//	  => "/home/user/tools/be/src/editorgoto.c", 400, 10
+//  '/home/user/tools/be/src/ file name.txt '|400:10 // BE file pos format (quoted)
+//	  => "/home/user/tools/be/src/ file name.txt ", 400, 10
 
 PRIVATE int get_file_line_col_from_str(const char *str, char *file_path,
  int *line_num_, int *col_num_)
@@ -747,14 +778,24 @@ no_file_path:;
 		*line_num_ = line_num;
 	if (col_num_)
 		*col_num_ = col_num;
-	return strnlen(file_path, MAX_PATH_LEN);
+	return strlen_path(file_path);
 }
 //-----------------------------------------------------------------------------
 int switch_cep_buf_by_file_name(const char *file_name)
 {
+	be_buf_t *buf = get_edit_buf_by_file_name(file_name);
+	if (buf) {
+		set_cep_buf(buf);
+		return 1;	// switched
+	}
+	return 0;		// not found
+}
+int switch_cep_buf_extending_file_name_to_path(const char *file_name)
+{
 	char abs_path[MAX_PATH_LEN+1];
 
 	get_abs_path(file_name, abs_path);
+flf_d_printf("[%s]-->[%s]\n", file_name, abs_path);
 	return switch_cep_buf_by_abs_path(abs_path);
 }
 int switch_cep_buf_by_abs_path(const char *abs_path)

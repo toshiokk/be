@@ -25,7 +25,7 @@
 void start_title_bar_blinking();
 void stop_title_bar_blinking();
 
-void disp_editor_title_bar(void);
+void editor_disp_title_bar(void);
 
 #define UPDATE_SCRN_NONE		0x00
 #define UPDATE_SCRN_BACKWARD	0x01	// 0000 0001

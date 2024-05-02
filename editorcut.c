@@ -63,15 +63,15 @@ int doe_clear_cut_buf(void)
 	disp_status_bar_done(_("Cut-buffer cleared"));
 	return 1;
 }
-int doe_pop_cut_buf(void)
-{
-	if (pop_n_free_from_cut_buf() == 0) {
-		disp_status_bar_err(_("Cut-buffer empty !!"));
-	} else {
-		disp_status_bar_done(_("Cut-buffer popped"));
-	}
-	return 1;
-}
+/////int doe_pop_cut_buf(void)
+/////{
+/////	if (pop_n_free_from_cut_buf() == 0) {
+/////		disp_status_bar_err(_("Cut-buffer empty !!"));
+/////	} else {
+/////		disp_status_bar_done(_("Cut-buffer popped"));
+/////	}
+/////	return 1;
+/////}
 
 int doe_select_all_lines(void)
 {

@@ -1,6 +1,19 @@
 #### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible)
 
-[v] support tag jump from MS-C compiler error message "main.c(100,10)"
+[] treat symlink path as is and not in real-path
+[v] sort symlinks to the next of directories
+
+[] differnciate "buffer saved" and "buffer checked"
+[v] delete "Save unmodified file ??"
+
+[v ] show file path on the title bar as long as possible
+
+[v] tag jump with just file_name.ext switches already open file
+[v] tag jump with just file_name.ext opens file listed in openfile_history
+[v] return to file positon where KW replace has begun
+[v] return to file positon where KW search has begun
+
+[v] re-support tag jump from MS-C compiler error message "main.c(100,10)"
 [v] when reopened, current file pos is the last line in all file
 [v] tag jump opens too many files. F11 opens only one file maximum
 
@@ -21,11 +34,9 @@
   | m,M         | dir path           | replace         | input dir path replacing previous string     |
   | M-m,M-M     | dir path           | append          | input dir path appending to previous string  |
 
-[] The same data should be saved after loading binary file.(Ex. PNG file)
-  load: 0x7f,0x80--0xff ==> 0x17f,0x180--0x1ff
-        convert_7f_ff_to_utf8_17f_1ff()
-  save: 0x17f,0x180--0x1ff ==> 0x7f,0x80--0xff
-        convert_utf8_17f_1ff_to_7f_ff()
+[v] The same data should be saved after loading binary file.(Ex. PNG file)
+  load: 0x00--0x1f,0x7f--0xff ==> 0x0100--0x011f, 0x17f--0x1ff
+  save: 0x0100--0x011f,0x17f--0x1ff ==> 0x00--0x1f,0x7f--0xff
 
 [v] change directory on file path "/dir/to/file.txt" to directory "/dir/to/"
 [v] change directory on relative file path "./dir/to/file.txt" to relative directory "./dir/to/"

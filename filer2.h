@@ -46,6 +46,8 @@ typedef struct {
 	char next_file[MAX_PATH_LEN+1];		// next file to be selected after changing dir
 } filer_view_t;
 
+int get_file_type_num(file_info_t *info);
+
 #ifdef START_UP_TEST
 void test_get_file_size_str(void);
 #endif // START_UP_TEST

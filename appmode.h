@@ -128,16 +128,16 @@ typedef struct /*buf_state*/ {
 #define CUT_MODE_VH_BOX			7	//  and cursor moved vertically then horizontally (box cut)
 #define IS_MARK_SET(cut_mode)	((cut_mode) != CUT_MODE_0_LINE)
 	unsigned char buf_CUT_MODE:3;
-#define TAB_SIZE_MIN		1
-#define TAB_SIZE_1			1
-#define TAB_SIZE_2			2
-#define TAB_SIZE_3			3
-#define TAB_SIZE_4			4
-#define TAB_SIZE_5			5
-#define TAB_SIZE_6			6
-#define TAB_SIZE_7			7
-#define TAB_SIZE_8			8
-#define TAB_SIZE_MAX		TAB_SIZE_8
+#define TAB_SIZE_MIN			1
+#define TAB_SIZE_1				1
+#define TAB_SIZE_2				2
+#define TAB_SIZE_3				3
+#define TAB_SIZE_4				4
+#define TAB_SIZE_5				5
+#define TAB_SIZE_6				6
+#define TAB_SIZE_7				7
+#define TAB_SIZE_8				8
+#define TAB_SIZE_MAX			TAB_SIZE_8
 	unsigned char buf_TAB_SIZE:4;
 #define EOL_NIX					0
 #define EOL_MAC					1

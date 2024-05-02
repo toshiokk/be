@@ -77,7 +77,8 @@ int is_vague_wide_chr(wchar_t wc)
 {
 	return 0
 	// WIDE_CHAR_LIST
-	 || (0x2000 <= wc && wc < 0x33e0)
+	 || (0x2000 <= wc && wc < 0x2800)
+	 || (0x2900 <= wc && wc < 0x33e0)
 	 || (0xa000 <= wc && wc < 0xac00)
 	 || (0xe000 <= wc && wc < 0xf900)
 	;

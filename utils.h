@@ -149,7 +149,7 @@ int cache_users(void);
 int cache_groups(void);
 
 const char *get_host_name();
-const char *get_my_user_name_at_host_name();
+const char *get_at_host_name();
 
 #endif // utils_h
 

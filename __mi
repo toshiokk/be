@@ -1,6 +1,14 @@
 echo make and install
-#./__set_app_rel_lvl.sh 1
+
+if [ -n "$1" ]; then
+  mk_backup_file appdefs.h
+  ./__set_app_rel_lvl.sh "$1"
+fi
 ./__m
+if [ -n "@1" ]; then
+  cp -av appdefs.h~ appdefs.h
+fi
+
 strip be
 ls -l be
 echo -n "To install this, hit Enter: "; read key

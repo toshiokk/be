@@ -34,9 +34,9 @@ void test_get_file_size_str(void)
 	loff_t zeros;
 	int bits;
 	int bit;
-#ifdef ENABLE_DEBUG
+/////#ifdef ENABLE_DEBUG
 	char buf_size[20+1];
-#endif // ENABLE_DEBUG
+/////#endif // ENABLE_DEBUG
 
 	for (bits = 1; bits <= 64; bits++) {
 		// 0x01, 0x03, ... 0x7fffffffffffffff, 0xffffffffffffffff
@@ -62,9 +62,9 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	struct stat *st_ptr;
 	struct stat *lst_ptr;
 	int is_link;
-	int is_link_dead = 0;
+	int is_link_broken = 0;
 	struct tm *tm_ptr;
-	char buf_name[MAX_PATH_LEN*3+1];		// for UTF8 file name
+	char buf_name[MAX_PATH_LEN*MAX_UTF8C_BYTES+1];		// for UTF8 file name
 	loff_t size;
 	char buf_size[20+1];
 	char buf_time[20+1];
@@ -81,42 +81,45 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	int info_space;
 // *filename.ext 123456 070113-125959 user---- group---
 #define SELECTED_MARK_LEN	1
-#define FILE_NAME_INFO_BUF_LEN	(SELECTED_MARK_LEN + MAX_PATH_LEN*3+1 +6+1+(6+1+6)+(8+1+8)+1)
+#define FILE_NAME_INFO_BUF_LEN	(SELECTED_MARK_LEN + MAX_PATH_LEN*MAX_UTF8C_BYTES+1 +6+1+(6+1+6)+(8+1+8)+1)
 	static char buffer[FILE_NAME_INFO_BUF_LEN+1];
 #define MIN_FILE_NAME_SPACE		12		// "filename.ext"(DOS8.3)
 
+flf_d_printf("[%s], %d\n", file_info->file_name, get_file_type_num(file_info));
 	st_ptr = &file_info->st;
 	lst_ptr = &file_info->lst;
 	is_link = S_ISLNK(lst_ptr->st_mode);
 	if (is_link)
-		is_link_dead = (memcmp(st_ptr, lst_ptr, sizeof(*st_ptr)) == 0);
+		is_link_broken = (memcmp(st_ptr, lst_ptr, sizeof(*st_ptr)) == 0);
 
 	strcpy__(buf_name, "");
 	if (show_link && is_link) {
-		strlcat__(buf_name, MAX_PATH_LEN*3, file_info->file_name);
+		strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, file_info->file_name);
 		if (S_ISDIR(lst_ptr->st_mode)) {
-			strlcat__(buf_name, MAX_PATH_LEN*3, "/");
+			strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, "/");
 		} else if (lst_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) {
 			// Symlink's 'x' bits are usually set.
-			// strlcat__(buf_name, "*", MAX_PATH_LEN*3);
+			// strlcat__(buf_name, "*", MAX_PATH_LEN*MAX_UTF8C_BYTES);
 		}
-#define LINK_ARROW		"-->"
-		strlcat__(buf_name, MAX_PATH_LEN*3, LINK_ARROW);
+#define LINK_ARROW		" ->"
+///#define LINK_ARROW		" >>"
+///#define LINK_ARROW		" > "
+		strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, LINK_ARROW);
 		if (file_info->symlink)
-			strlcat__(buf_name, MAX_PATH_LEN*3, file_info->symlink);
-		if (is_link_dead)
-			strlcat__(buf_name, MAX_PATH_LEN*3, "!");
+			strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, file_info->symlink);
+		if (is_link_broken)
+			strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, "!");
 	} else {
 		if (is_link)
-			strlcat__(buf_name, MAX_PATH_LEN*3, file_info->symlink);
+			strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, file_info->symlink);
 		else
-			strlcat__(buf_name, MAX_PATH_LEN*3, file_info->file_name);
+			strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, file_info->file_name);
 	}
 	if (S_ISDIR(st_ptr->st_mode)) {
-		strlcat__(buf_name, MAX_PATH_LEN*3, "/");
-	} else if (is_link_dead == 0
+		strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, "/");
+	} else if (is_link_broken == 0
 	 && (st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
-		strlcat__(buf_name, MAX_PATH_LEN*3, "*");
+		strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, "*");
 	}
 
 	strcpy__(buf_size, "");
@@ -238,7 +241,7 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	}
 	if (file_name_cols > file_name_space) {
 		truncate_tail_utf8s_columns(buf_name, file_name_space-1);
-		strlcat__(buf_name, MAX_PATH_LEN*3, "~");	// add truncated-mark
+		strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, "~");	// add truncated-mark
 	}
 	expand_utf8s_columns(buf_name, file_name_space);
 	info_space = LIM_MIN(0, sub_win_get_columns() - (SELECTED_MARK_LEN + file_name_space));
@@ -250,7 +253,7 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 			info_str_ptr[1] = '~';	// truncate-head mark
 		}
 	}
-	if (show_link == 0 && is_link_dead) {
+	if (show_link == 0 && is_link_broken) {
 		strlcpy__(buffer, _(" <<broken-link>>"), FILE_NAME_INFO_BUF_LEN);
 	} else {
 		snprintf_(buffer, FILE_NAME_INFO_BUF_LEN+1, "%c%s%s",
@@ -260,37 +263,47 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 }
 PRIVATE char *get_file_size_str(char *buf_size, loff_t size)
 {
-	char buf_1_to_999[5+1];		// 1.000 - 999.9 - 10000 - 99999
+	char buf[5+1];		// 1.000 - 999.9 - 10000 - 99999
 
 	if (size < 1000000ULL)					// less than 1 MEGA (0 - 999999)
 		snprintf_(buf_size, 6+1, "%6d", (int)size);
 	else if (size < 1000000000ULL)			// less than 1000 MEGA (1.000M - 999.9M)
-		snprintf_(buf_size, 6+1, "%sM", get_1k_to_999k_str(size / 1000ULL, buf_1_to_999));
+		snprintf_(buf_size, 6+1, "%sM", get_1k_to_999k_str(size / 1000ULL, buf));
 	else if (size < 1000000000000ULL)		// less than 1000 GIGA (1.000G - 999.9G)
-		snprintf_(buf_size, 6+1, "%sG", get_1k_to_999k_str(size / 1000000ULL, buf_1_to_999));
-	else if (size < 1000000000000000ULL)	// less than 1000 TERA (1.000T - 9999.9T)
-		snprintf_(buf_size, 6+1, "%sT", get_1k_to_999k_str(size / 1000000000ULL, buf_1_to_999));
-	else if (size < 1000000000000000000ULL)	// less than 1000 PETA (1.000P - 9999.9P)
-		snprintf_(buf_size, 6+1, "%sP", get_1k_to_999k_str(size / 1000000000000ULL, buf_1_to_999));
-	else									// more than 1000 PETA (100P - 18446P)
-		snprintf_(buf_size, 6+1, "%sP", get_1k_to_999k_str(size / 1000000000000ULL, buf_1_to_999));
+		snprintf_(buf_size, 6+1, "%sG", get_1k_to_999k_str(size / 1000000ULL, buf));
+	else if (size < 1000000000000000ULL)	// less than 1000 TERA (1.000T - 999.9T)
+		snprintf_(buf_size, 6+1, "%sT", get_1k_to_999k_str(size / 1000000000ULL, buf));
+	else if (size < 1000000000000000000ULL)	// less than 1000 PETA (1.000P - 999.9P)
+		snprintf_(buf_size, 6+1, "%sP", get_1k_to_999k_str(size / 1000000000000ULL, buf));
+	else									// less than 18000 EXA (1.000E - 18.44E)
+		snprintf_(buf_size, 6+1, "%sE", get_1k_to_999k_str(size / 1000000000000000ULL, buf));
 	return buf_size;
 }
 PRIVATE const char *get_1k_to_999k_str(long size, char *buf)
 {
-	if (size < 10000UL)					// less than 10 K (1.000K - 9.999K)
+	if (size < 10000UL)					// less than 10K (1.000K - 9.999K)
 		snprintf_(buf, 5+1, "%1d.%03d",
 		 (int)(size / 1000), (int)((size / 1) % 1000));
-	else if (size < 100000UL)			// less than 100 K (10.00M - 99.99G)
+	else if (size < 100000UL)			// less than 100K (10.00M - 99.99G)
 		snprintf_(buf, 5+1, "%2d.%02d",
 		 (int)(size / 1000), (int)((size / 10) % 100));
-	else if (size < 1000000UL)			// less than 1000 K (100.0K - 999.9K)
+	else if (size < 1000000UL)			// less than 1000K (100.0K - 999.9K)
 		snprintf_(buf, 5+1, "%3d.%1d",
 		 (int)(size / 1000), (int)((size / 100) % 10));
 	else if (size < 1000 * 99999ULL)	// 1000K - 99999K
 		snprintf_(buf, 5+1, "%5d", (int)(size / 1000));
 	return buf;
 }
+
+//     0 - 99999
+//  100K -  999K
+// 1.00M - 9.99M
+// 10.0M - 99.9M
+//  100M -  999M
+// 1.00G - 9.99G
+// 10.0G - 99.9G
+//  100G -  999G
+
 //-----------------------------------------------------------------------------
 int make_file_list(filer_view_t *fv, const char *filter)
 {
@@ -391,7 +404,8 @@ PRIVATE int comp_file_time(const void *aa, const void *bb);
 PRIVATE int comp_file_size(const void *aa, const void *bb);
 PRIVATE int comp_file_type(file_info_t *aa, file_info_t *bb);
 PRIVATE int comp_file_executable(file_info_t *aa, file_info_t *bb);
-PRIVATE int get_file_type_no(file_info_t *info);
+////PRIVATE int get_file_type_num(file_info_t *info);
+PRIVATE int get_stat_file_type_num(struct stat *st, const char *file_name);
 PRIVATE int get_file_executable(struct stat *st);
 PRIVATE int strtypecasecmp(const char *s1, const char *s2);
 void sort_file_list(filer_view_t *fv)
@@ -407,20 +421,20 @@ PRIVATE int comp_file_info(const void *aa, const void *bb)
 	if ((ret = comp_file_type((file_info_t *)aa, (file_info_t *)bb)) != 0) {
 		return ret;
 	}
-	if (get_file_type_no((file_info_t *)aa) <= 1) {
+	if (get_file_type_num((file_info_t *)aa) <= 22) {
 		// always sort directory in forward order by name
 		return comp_file_name(aa, bb);
 	}
 	switch (GET_APPMD(fl_FILE_SORT_BY)) {
 	default:
 	case FILE_SORT_BY_NAME:
-		 return comp_file_name(aa, bb);
+		return comp_file_name(aa, bb);
 	case FILE_SORT_BY_EXT:
-		 return comp_file_extension(aa, bb);
+		return comp_file_extension(aa, bb);
 	case FILE_SORT_BY_TIME:
-		 return comp_file_time(aa, bb);
+		return comp_file_time(aa, bb);
 	case FILE_SORT_BY_SIZE:
-		 return comp_file_size(aa, bb);
+		return comp_file_size(aa, bb);
 	}
 }
 // sort directories before files,
@@ -461,8 +475,8 @@ PRIVATE int comp_file_type(file_info_t *aa, file_info_t *bb)
 	int file_type_a;
 	int file_type_b;
 
-	file_type_a = get_file_type_no(aa);
-	file_type_b = get_file_type_no(bb);
+	file_type_a = get_file_type_num(aa);
+	file_type_b = get_file_type_num(bb);
 	return file_type_a - file_type_b;
 }
 // sort executable files before non-executables
@@ -475,28 +489,74 @@ PRIVATE int comp_file_executable(file_info_t *aa, file_info_t *bb)
 	file_type_b = get_file_executable(&bb->st);
 	return file_type_a - file_type_b;
 }
-// rank by file type
-PRIVATE int get_file_type_no(file_info_t *info)
+
+// rank of file type
+//  1: ..
+//  2: .
+// 10: unknown type
+// 20: dir
+// 30: symlink broken
+// 31: symlink to unknown type
+// 32: symlink to dir
+// 33: symlink to symlink
+// 34: symlink to FIFO
+// 35: symlink to socket
+// 36: symlink to char device
+// 37: symlink to block device
+// 38: symlink to regular file
+// 40: FIFO
+// 50: socket
+// 60: char device
+// 70: block device
+// 80: regular file
+
+////PRIVATE 
+int get_file_type_num(file_info_t *info)
 {
-	if (S_ISDIR(info->st.st_mode)) {
-		if (strcmp(info->file_name, "..") == 0)
-			return 1;
-		else
-			return 2;
+	int file_type_num = 0;
+	if (S_ISLNK(info->lst.st_mode)) {
+		if (memcmp(&(info->st), &(info->lst), sizeof(info->st)) != 0) {
+			file_type_num = 30 + get_stat_file_type_num(&(info->st), info->file_name) / 10;
+		} else {
+			file_type_num = 30;	// broken symlink
+		}
+	} else {
+		file_type_num = get_stat_file_type_num(&(info->st), info->file_name);
 	}
-	if (S_ISLNK(info->st.st_mode))
-		return 3;
-	if (S_ISFIFO(info->st.st_mode))
-		return 4;
-	if (S_ISSOCK(info->st.st_mode))
-		return 5;
-	if (S_ISCHR(info->st.st_mode))
-		return 6;
-	if (S_ISBLK(info->st.st_mode))
-		return 7;
-	if (S_ISREG(info->st.st_mode))
-		return 8;
-	return 0;
+	return file_type_num;
+}
+PRIVATE int get_stat_file_type_num(struct stat *st, const char *file_name)
+{
+	int file_type_num = 10;		// unknown type
+	if (S_ISDIR(st->st_mode)) {
+		if (strcmp(file_name, "..") == 0) {
+			file_type_num = 1;	// ".."
+		} else
+		if (strcmp(file_name, ".") == 0) {
+			file_type_num = 2;	// "."
+		} else {
+			file_type_num = 20;	// dir
+		}
+	} else
+	if (S_ISLNK(st->st_mode)) {
+		file_type_num = 30;		// symlink
+	} else
+	if (S_ISFIFO(st->st_mode)) {
+		file_type_num = 40;		// FIFO
+	} else
+	if (S_ISSOCK(st->st_mode)) {
+		file_type_num = 50;		// socket
+	} else
+	if (S_ISCHR(st->st_mode)) {
+		file_type_num = 60;		// character device
+	} else
+	if (S_ISBLK(st->st_mode)) {
+		file_type_num = 70;		// block device
+	} else
+	if (S_ISREG(st->st_mode)) {
+		file_type_num = 80;		// regular file
+	}
+	return file_type_num;
 }
 PRIVATE int get_file_executable(struct stat *st)
 {

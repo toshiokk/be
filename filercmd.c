@@ -153,7 +153,7 @@ int dof_edit_new_file(void)
 		return 0;
 	}
 	clear_files_loaded();
-	if (load_file_name_upp_low(file_name, TUL0, OOE1, MOE0, RECURSIVE0) <= 0) {
+	if (load_file_name_upp_low(file_name, TUL0, OOE1, MOE0, LFH0, RECURSIVE0) <= 0) {
 		tio_beep();
 		return 0;
 	}
@@ -702,7 +702,7 @@ PRIVATE int dof_edit_file_(int recursive)
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if (S_ISREG(get_cur_filer_view()->file_list[file_idx].st.st_mode)) {
 			if (load_file_name_upp_low_(get_cur_filer_view()->file_list[file_idx].file_name,
-			 TUL0, OOE0, MOE1, recursive) <= 0) {
+			 TUL0, OOE0, MOE1, LFH0, recursive) <= 0) {
 				tio_beep();
 			}
 		}
@@ -775,13 +775,12 @@ flf_d_printf("try to dir[%s]\n", dir);
 		// If can not change dir, try parent dir
 		// /try/to/change/dir/file ==> /try/to/change/dir
 		strip_file_from_path(dir, NULL);
-		/////separate_path_to_dir_and_file(dir, dir, file);
 	}
 	return 1;	// changed
 }
 int filer_change_dir(char *dir)
 {
-	if (change_cur_dir_in_path(dir, get_cur_filer_view()->cur_dir,
+	if (change_cur_dir_saving_prev_next_dir(dir, get_cur_filer_view()->cur_dir,
 	 get_cur_filer_view()->prev_dir, get_cur_filer_view()->next_file) == 0) {
 		// We can't open this dir for some reason. Complain.
 		disp_status_bar_err(_("Can not change current to [%s]: %s"),

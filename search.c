@@ -42,6 +42,7 @@ int doe_search_backward_first(void)
 	if (input_search_str(SEARCH0, needle) <= 0) {
 		return -1;
 	}
+	memorize_cur_file_pos_and_clear_prev_file_pos_cnt();
 	found_in_prev_search = 1;
 	if (search_string_once(needle, 0))
 		return 1;
@@ -56,6 +57,7 @@ int doe_search_forward_first(void)
 	if (input_search_str(SEARCH0, needle) <= 0) {
 		return -1;
 	}
+	memorize_cur_file_pos_and_clear_prev_file_pos_cnt();
 	found_in_prev_search = 1;
 	if (search_string_once(needle, 0))
 		return 1;

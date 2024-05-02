@@ -575,7 +575,6 @@ int regexec_n(const regex_t *preg, const char *haystack,
 		if (ret == 0 && pmatch) {
 			// check match-length != 0
 			if (pmatch[0].rm_so == pmatch[0].rm_eo) {
-/////_WARNING_
 				pmatch[0].rm_eo++;
 			}
 		}

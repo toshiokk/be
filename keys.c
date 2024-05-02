@@ -429,10 +429,10 @@ void set_menu_key_for_do_app_menu_0(void)
 }
 
 //-----------------------------------------------------------------------------
-PRIVATE int has_been_input_key = 0;
-int just_has_been_input_key()
+PRIVATE unsigned long msec_when_input_key = 0;
+unsigned long msec_past_input_key()
 {
-	return has_been_input_key;
+	return get_msec() - msec_when_input_key;
 }
 
 PRIVATE key_code_t input_key_timeout(void);
@@ -456,35 +456,45 @@ key_code_t input_key_wait_return(void)
 		tio_repaint_all();
 	}
 	prev_key = key;
-	has_been_input_key = (key >= 0);
+	if (key >= 0) {
+		msec_when_input_key = get_msec();
+	}
 	return key;
 }
 
 // Display update durations:
 // | type                              | duration [mSec] |
 // |-----------------------------------|-----------------|
-// | current time update in title bar  |  500            |
-// | blinking title bar                |  500            |
-// | file list update                  |  500            |
+// | current time update in title bar  | 1000            |
+// | recording key macro               |  200            |
+// | file list update                  | 1000            |
 // | splash screen when screen resized | 2000            |
 // | splash screen by key              | infinite        |
 //
+#define DEFAULT_KEY_WAIT_MSEC		1000	// return every 1[Sec]
+#define KEY_MACRO_KEY_WAIT_MSEC		200
+#ifdef ENABLE_HELP
+#define SPLASH_KEY_WAIT_MSEC		2000
+#endif // ENABLE_HELP
 PRIVATE key_code_t input_key_timeout(void)
 {
 	key_code_t key;
 	key_code_t key_resized = KEY_NONE;
-#define KEY_WAIT_TIME_MSEC		500		// return every 1[Sec]
+	long key_wait_time_msec = DEFAULT_KEY_WAIT_MSEC;
+	if (key_macro_is_recording()) {
+		key_wait_time_msec = KEY_MACRO_KEY_WAIT_MSEC;
+	}
 	long msec_enter = get_msec();
 	while ((key = input_key_macro()) < 0) {
 		if (tio_check_update_terminal_size()) {
 			win_reinit_win_size();
 #ifdef ENABLE_HELP
 			disp_splash(-1);
-#define SPLASH_DURATION_MSEC	(2000 - KEY_WAIT_TIME_MSEC)
-			msec_enter = get_msec() + SPLASH_DURATION_MSEC;
+			msec_enter = get_msec();	// restart time monitoring
+			key_wait_time_msec = SPLASH_KEY_WAIT_MSEC;
 #endif // ENABLE_HELP
 		}
-		if ((long)(get_msec() - msec_enter) >= KEY_WAIT_TIME_MSEC)
+		if ((long)(get_msec() - msec_enter) >= key_wait_time_msec)
 			break;
 		MSLEEP(10);		// wait 10[mS]
 	}
