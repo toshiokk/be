@@ -48,8 +48,8 @@ int read_rc_file(const char *rc_file_name)
 	char rc_file_path[MAX_PATH_LEN+1];
 
 	// read ./.berc
-	if (get_start_dir()) {
-		snprintf_(rc_file_path, MAX_PATH_LEN+1, "%s/.%s", get_start_dir(), rc_file_name);
+	if (get_starting_dir()) {
+		snprintf_(rc_file_path, MAX_PATH_LEN+1, "%s/.%s", get_starting_dir(), rc_file_name);
 		if (read_rc_path(rc_file_path, 0) == 0)
 			return 0;
 	}

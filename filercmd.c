@@ -524,7 +524,7 @@ int dof_prev_directory(void)
 int dof_real_path(void)
 {
 	char dir[MAX_PATH_LEN+1];
-	return filer_change_dir_if_not_yet(getcwd__(dir));
+	return filer_change_dir_if_not_yet(get_real_path_of_cur_dir(dir));
 }
 //-----------------------------------------------------------------------------
 int dof_select_file(void)

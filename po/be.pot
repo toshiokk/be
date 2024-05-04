@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-02 23:08+0900\n"
+"POT-Creation-Date: 2024-05-04 23:30+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../appmode.c:541
+#: ../appmode.c:549
 msgid "Input key to show key code"
 msgstr ""
 
-#: ../appmode.c:543 ../editormove.c:336
+#: ../appmode.c:551 ../editormove.c:336
 #, c-format
 msgid "Key code: %04x"
 msgstr ""
@@ -34,12 +34,12 @@ msgstr ""
 msgid "Tab size"
 msgstr ""
 
-#: ../editor.c:124 ../filer.c:257
+#: ../editor.c:124 ../filer.c:258
 #, c-format
 msgid "No command assigned for the key: %04xh"
 msgstr ""
 
-#: ../editor.c:135 ../filer.c:269
+#: ../editor.c:135 ../filer.c:270
 #, c-format
 msgid "Can not execute this function: [%s]"
 msgstr ""
@@ -74,7 +74,7 @@ msgid "One buffer closed"
 msgstr ""
 
 #: ../editor.c:651 ../editor.c:720 ../fileio.c:144 ../fileio.c:149
-#: ../winin.c:98
+#: ../winin.c:99
 msgid "Cancelled"
 msgstr ""
 
@@ -123,19 +123,19 @@ msgstr ""
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 
-#: ../editor2.c:114 ../fileio.c:92
+#: ../editor2.c:119 ../fileio.c:92
 msgid "New File"
 msgstr ""
 
-#: ../editor2.c:116
+#: ../editor2.c:121
 msgid "[Mod] "
 msgstr ""
 
-#: ../editor2.c:118
+#: ../editor2.c:123
 msgid "[VM] "
 msgstr ""
 
-#: ../editor2.c:120
+#: ../editor2.c:125
 msgid "[WP] "
 msgstr ""
 
@@ -192,48 +192,48 @@ msgstr ""
 msgid "Enter line number:"
 msgstr ""
 
-#: ../editorgoto.c:208
+#: ../editorgoto.c:210
 msgid "No previous open files"
 msgstr ""
 
-#: ../editorgoto.c:213
+#: ../editorgoto.c:215
 msgid "Previous file"
 msgstr ""
 
-#: ../editorgoto.c:221
+#: ../editorgoto.c:223
 msgid "No next open files"
 msgstr ""
 
-#: ../editorgoto.c:225
+#: ../editorgoto.c:227
 msgid "Next file"
 msgstr ""
 
-#: ../editorgoto.c:278
+#: ../editorgoto.c:280
 #, c-format
 msgid "Returned to %d-th previous pos"
 msgstr ""
 
-#: ../editorlist.c:34
+#: ../editorlist.c:35
 msgid "#List of Files currently loaded"
 msgstr ""
 
-#: ../editorlist.c:55
+#: ../editorlist.c:57
 msgid "File List"
 msgstr ""
 
-#: ../editorlist.c:70
+#: ../editorlist.c:72
 msgid "#List of Editor Key Bindings"
 msgstr ""
 
-#: ../editorlist.c:71 ../editorlist.c:150
+#: ../editorlist.c:73 ../editorlist.c:152
 msgid "#List of Editor Functions"
 msgstr ""
 
-#: ../editorlist.c:106
+#: ../editorlist.c:108
 msgid "Key List"
 msgstr ""
 
-#: ../editorlist.c:109
+#: ../editorlist.c:111
 msgid "Function List"
 msgstr ""
 
@@ -308,7 +308,7 @@ msgid "Reading File %s ..."
 msgstr ""
 
 #: ../fileio.c:142
-msgid "File was modified by another program, OVERWRITE ?"
+msgid "File has modified by another program, OVERWRITE ?"
 msgstr ""
 
 #: ../fileio.c:153
@@ -606,20 +606,20 @@ msgstr ""
 msgid "Start key macro playback"
 msgstr ""
 
-#: ../main.c:565
+#: ../main.c:566
 msgid ""
 "\n"
 "No file written\n"
 msgstr ""
 
-#: ../main.c:574
+#: ../main.c:575
 #, c-format
 msgid ""
 "\n"
 "Buffer written to %s\n"
 msgstr ""
 
-#: ../main.c:602
+#: ../main.c:603
 #, c-format
 msgid ""
 "\n"
@@ -627,88 +627,88 @@ msgid ""
 msgstr ""
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:604
+#: ../main.c:605
 msgid "Option"
 msgstr ""
 
-#: ../main.c:604
+#: ../main.c:605
 msgid "Long option"
 msgstr ""
 
-#: ../main.c:604
+#: ../main.c:605
 msgid "Meaning"
 msgstr ""
 
-#: ../main.c:606
+#: ../main.c:607
 msgid "Read RCFILE"
 msgstr ""
 
-#: ../main.c:607
+#: ../main.c:608
 msgid "Don't look at berc files"
 msgstr ""
 
-#: ../main.c:610
+#: ../main.c:611
 msgid "Don't use history file"
 msgstr ""
 
-#: ../main.c:612
+#: ../main.c:613
 msgid "Set tab-size to NUM[1-15]"
 msgstr ""
 
-#: ../main.c:613
+#: ../main.c:614
 msgid "View mode(Read only mode)"
 msgstr ""
 
-#: ../main.c:615
+#: ../main.c:616
 msgid "Don't use nkf"
 msgstr ""
 
-#: ../main.c:616
+#: ../main.c:617
 msgid "ASCII character encoding"
 msgstr ""
 
-#: ../main.c:617
+#: ../main.c:618
 msgid "JIS character encoding"
 msgstr ""
 
-#: ../main.c:618
+#: ../main.c:619
 msgid "EUCJP character encoding"
 msgstr ""
 
-#: ../main.c:619
+#: ../main.c:620
 msgid "SJIS character encoding"
 msgstr ""
 
-#: ../main.c:620
+#: ../main.c:621
 msgid "UTF8 character encoding"
 msgstr ""
 
-#: ../main.c:623
+#: ../main.c:624
 msgid "Output debug log to stderr"
 msgstr ""
 
-#: ../main.c:625
+#: ../main.c:626
 msgid "Show version information"
 msgstr ""
 
-#: ../main.c:626
+#: ../main.c:627
 msgid "Show this message"
 msgstr ""
 
-#: ../main.c:627
+#: ../main.c:628
 msgid "Start at line number NUM"
 msgstr ""
 
-#: ../main.c:629
+#: ../main.c:630
 msgid "Investigate key codes"
 msgstr ""
 
-#: ../main.c:646
+#: ../main.c:647
 #, c-format
 msgid "%s editor version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:648
+#: ../main.c:649
 #, c-format
 msgid " Build Options:\n"
 msgstr ""
@@ -827,9 +827,9 @@ msgstr ""
 msgid "Replace from [%s] to [%s] ?"
 msgstr ""
 
-#: ../search.c:315
+#: ../search.c:315 ../search.c:801
 #, c-format
-msgid "[%s] not found :"
+msgid "Keyword [%s] not found"
 msgstr ""
 
 #: ../search.c:473
@@ -861,52 +861,47 @@ msgstr ""
 msgid "Searching word: [%s]..."
 msgstr ""
 
-#: ../search.c:801
-#, c-format
-msgid "[%s] not found"
-msgstr ""
-
 #: ../utils.c:144 ../utils.c:177
 msgid "Out of memory!"
 msgstr ""
 
-#: ../winin.c:329
+#: ../winin.c:330
 msgid ""
 "UP:history, DOWN:browser, PgUp:insert from history, PgDn:insert from browser"
 msgstr ""
 
-#: ../winin.c:410
+#: ../winin.c:411
 msgid "Yes"
 msgstr ""
 
-#: ../winin.c:413
+#: ../winin.c:414
 msgid "No"
 msgstr ""
 
-#: ../winin.c:416
+#: ../winin.c:417
 msgid "All"
 msgstr ""
 
-#: ../winin.c:419
+#: ../winin.c:420
 msgid "Backward"
 msgstr ""
 
-#: ../winin.c:422
+#: ../winin.c:423
 msgid "Forward"
 msgstr ""
 
-#: ../winin.c:424
+#: ../winin.c:425
 msgid "Cancel"
 msgstr ""
 
-#: ../winin.c:426
+#: ../winin.c:427
 msgid "End"
 msgstr ""
 
-#: ../winin.c:429
+#: ../winin.c:430
 msgid "Undo"
 msgstr ""
 
-#: ../winin.c:432
+#: ../winin.c:433
 msgid "Redo"
 msgstr ""

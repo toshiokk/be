@@ -1,7 +1,7 @@
 #### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible)
 
-[] treat symlink path as is and not in real-path
-[v] sort symlinks to the next of directories
+[v] treat symlink path as is and not in real-path
+[v] sort symlinks to the next of directories in file list
 
 [] differnciate "buffer saved" and "buffer checked"
 [v] delete "Save unmodified file ??"

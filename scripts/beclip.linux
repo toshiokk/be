@@ -1,0 +1,2 @@
+cat $HOME/.be/clipboard | xsel --clipboard --input
+cat $HOME/.be/clipboard

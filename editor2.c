@@ -63,7 +63,12 @@ PRIVATE int get_title_bar_inversion()
 
 PRIVATE int get_title_bar_inversion();
 PRIVATE void blink_editor_title_bar();
-								//  0123456789012345678901
+
+#ifdef ENABLE_UNDO
+///#define SHOW_UNDO_BUFS
+#endif // ENABLE_UNDO
+///#define SHOW_MEM_FREE
+								//  012345678901234
 #define BUF_BUF_LEN			15	// "E99 C99 U99 R99"
 #define MEM_BUF_LEN			7	// "999000M" (999G)
 #define HHCMMCSS_LEN		8	// "23:59:59"
@@ -80,14 +85,14 @@ void editor_disp_title_bar(void)
 	char buf_num[2+1];
 	int edit_bufs;
 	int cut_bufs;
-#ifdef ENABLE_UNDO
+#ifdef SHOW_UNDO_BUFS
 	int undo_bufs;
 	int redo_bufs;
-#endif // ENABLE_UNDO
-	char buf_buf[BUF_BUF_LEN+1];
-#ifdef ENABLE_DEBUG
-	char buf_mem[MEM_BUF_LEN+1];
-#endif // ENABLE_DEBUG
+#endif // SHOW_UNDO_BUFS
+	char buf_bufs[BUF_BUF_LEN+1] = "";
+#ifdef SHOW_MEM_FREE
+	char buf_mem[MEM_BUF_LEN+1] = "";
+#endif // SHOW_MEM_FREE
 	char buf_time[1+HHCMMCSS_LEN+1];
 
 	buf_idx = get_edit_buf_idx_from_buf(get_cep_buf());
@@ -121,61 +126,49 @@ void editor_disp_title_bar(void)
 	}
 
 	//-------------------------------------------------------------------------
-	buf_buf[0] = '\0';
 	// edit buffer cut mode
-	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, "%s", buf_cut_mode_str(get_cep_buf()));
-#ifdef ENABLE_DEBUG
-///	// cut buffer cut mode
-///	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " %s", buf_cut_mode_str(TOP_BUF_OF_CUT_BUFS));
-#endif // ENABLE_DEBUG
+	if (BUF_STATE(get_cep_buf(), buf_CUT_MODE) != CUT_MODE_0_LINE) {
+		strcat_printf(buf_bufs, MAX_SCRN_LINE_BUF_LEN, " %s", buf_cut_mode_str(get_cep_buf()));
+	}
 	// edit buffers
 	edit_bufs = count_edit_bufs();
-	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " E%s", nn_from_num(edit_bufs, buf_num));
+	strcat_printf(buf_bufs, MAX_SCRN_LINE_BUF_LEN, " e%s", nn_from_num(edit_bufs, buf_num));
 	// cut buffers
 	cut_bufs = count_cut_bufs();
-	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " C%s", nn_from_num(cut_bufs, buf_num));
-#ifdef ENABLE_UNDO
+	strcat_printf(buf_bufs, MAX_SCRN_LINE_BUF_LEN, "c%s", nn_from_num(cut_bufs, buf_num));
+#ifdef SHOW_UNDO_BUFS
 	// undo buffers
 	undo_bufs = count_undo_bufs() / 2;
-	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " U%s", nn_from_num(undo_bufs, buf_num));
+	strcat_printf(buf_bufs, MAX_SCRN_LINE_BUF_LEN, "u%s", nn_from_num(undo_bufs, buf_num));
 	// redo buffers
 	redo_bufs = count_redo_bufs() / 2;
-	strcat_printf(buf_buf, MAX_SCRN_LINE_BUF_LEN, " R%s", nn_from_num(redo_bufs, buf_num));
-#endif // ENABLE_UNDO
+	strcat_printf(buf_bufs, MAX_SCRN_LINE_BUF_LEN, "r%s", nn_from_num(redo_bufs, buf_num));
+#endif // SHOW_UNDO_BUFS
 
-#ifdef ENABLE_DEBUG
+#ifdef SHOW_MEM_FREE
 	// free memory in MB
 	snprintf_(buf_mem, MEM_BUF_LEN+1, " %dM", get_mem_free_in_kb(1)/1000);
-#endif // ENABLE_DEBUG
-
+#endif // SHOW_MEM_FREE
 	// current time
 	snprintf_(buf_time, 1+HHCMMCSS_YY_MM_DD_LEN+1, " %s",
-	 cur_ctime_cdate(msec_past_input_key() < 2000));
+	 cur_ctime_cdate(msec_past_input_key() < 1000));
 
 	//-------------------------------------------------------------------------
-	int max_status_cols = main_win_get_columns() / 2;
-	int status_cols = main_win_get_columns();
-#ifdef ENABLE_DEBUG
-	snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, " %s%s%s", buf_buf, buf_mem, buf_time);
-	status_cols = strlen_path(buf_status);
-	if (status_cols > max_status_cols) {
-		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, " %s%s", buf_mem, buf_time);
-		status_cols = strlen_path(buf_status);
+#ifdef SHOW_MEM_FREE
+	if (msec_past_input_key() < 2000) {
+		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s%s", buf_bufs, buf_mem, buf_time);
+	} else {
+		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_mem, buf_time);
 	}
-#endif // ENABLE_DEBUG
-	if (status_cols > max_status_cols) {
-		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, " %s%s", buf_buf, buf_time);
-		status_cols = strlen_path(buf_status);
-		if (status_cols > max_status_cols) {
-			snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, " %s", buf_time);
-			status_cols = strlen_path(buf_status);
-		}
+#else // SHOW_MEM_FREE
+	if (msec_past_input_key() < 2000) {
+		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_bufs, buf_time);
+	} else {
+		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s", buf_time);
 	}
-	if (msec_past_input_key() < 1000) {
-		strcpy(buf_status, "");
-	}
-	status_cols = strlen_path(buf_status);
-	int path_cols = LIM_MIN(0, main_win_get_columns() - status_cols);
+#endif // SHOW_MEM_FREE
+
+	int path_cols = LIM_MIN(0, main_win_get_columns() - strlen_path(buf_status));
 	shrink_str(buf_path, path_cols, 2);
 	adjust_utf8s_columns(buf_path, path_cols);
 

@@ -4,10 +4,8 @@ if [ -n "$1" ]; then
   mk_backup_file appdefs.h
   ./__set_app_rel_lvl.sh "$1"
 fi
+
 ./__m
-if [ -n "@1" ]; then
-  cp -av appdefs.h~ appdefs.h
-fi
 
 strip be
 ls -l be
@@ -17,3 +15,7 @@ sudo sh ./__m install
 sh _cp_be_scripts
 sh _cp_berc
 ./_xi18n
+
+if [ -n "@1" ]; then
+  cp -v appdefs.h~ appdefs.h
+fi

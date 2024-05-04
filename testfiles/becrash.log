@@ -1,0 +1,10 @@
+19:56:53.266 filer.c 214 filer_main_loop input_key:0x0103(UP)=======================
+19:56:53.302 filer.c 214 filer_main_loop input_key:0x0103(UP)=======================
+19:56:53.338 filer.c 214 filer_main_loop input_key:0x0103(UP)=======================
+19:56:54.111 filer.c 214 filer_main_loop input_key:0x0103(UP)=======================
+19:56:54.290 filer.c 214 filer_main_loop input_key:0x0103(UP)=======================
+19:56:54.562 filer.c 214 filer_main_loop input_key:0x0065(e)=======================
+filer.c 284 filer_main_loop CALL_FILER_FUNC [dof_edit_file] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+keys.c 546 begin_check_break_key 
+sig.c 129 handler_sigsegv Received SIGSEGV
+sig.c 141 handler_sigsegv 

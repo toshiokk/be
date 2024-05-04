@@ -25,6 +25,9 @@
 PRIVATE int nkf_avalability = -1;	// -1: Unkown, 0: unavailable, 1: available
 #endif // USE_NKF
 
+PRIVATE int backup_files(const char *file_path, int depth);
+PRIVATE char *make_backup_file_path(const char *orig_path, char *backup_path, int depth);
+
 PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int msg_on_err);
 PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file, int msg_on_err);
 PRIVATE int load_file_into_cur_buf_ascii(const char *file_name);
@@ -35,9 +38,6 @@ PRIVATE int my_guess_bin_file(const char *full_path);
 PRIVATE int load_file_into_cur_buf_nkf(const char *full_path, const char *nkf_options);
 #endif // USE_NKF
 PRIVATE int load_into_cur_buf_fp(FILE *fp);
-
-PRIVATE int backup_files(const char *file_path, int depth);
-PRIVATE char *make_backup_file_path(const char *orig_path, char *backup_path, int depth);
 
 PRIVATE int save_cur_buf_to_file_ascii(const char *file_path);
 #ifdef USE_NKF
@@ -139,7 +139,7 @@ int backup_and_save_cur_buf_ask(void)
 	if (buf_is_orig_file_updated(get_cep_buf()) > 0) {
 		// file is modified by another program
 		ret = ask_yes_no(ASK_YES_NO,
-		 _("File was modified by another program, OVERWRITE ?"));
+		 _("File has modified by another program, OVERWRITE ?"));
 		if (ret < 0) {
 			disp_status_bar_done(_("Cancelled"));
 			return -1;
@@ -331,13 +331,13 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file
 		default:
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
-		case ENCODE_BINARY:
 			break;
 		case ENCODE_EUCJP:
 		case ENCODE_SJIS:
 		case ENCODE_JIS:
 			return load_file_into_cur_buf_nkf(full_path, nkf_options);
-			////return load_file_into_cur_buf_binary(full_path);
+		case ENCODE_BINARY:
+			return load_file_into_cur_buf_binary(full_path);
 			/////break;
 		}
 	} // if (GET_APPMD(ed_USE_NKF))
@@ -536,7 +536,7 @@ PRIVATE int load_file_into_cur_buf_ascii(const char *full_path)
 PRIVATE int load_file_into_cur_buf_binary(const char *full_path)
 {
 #define	BIN_LINE_LEN	64
-#define	BIN_BASE_CODE	0x2800
+#define	BIN_BASE_CODE	0x2800	// use "Braille pattern" to show binary bytes
 	FILE *fp;
 	if ((fp = fopen(full_path, "rb")) == NULL) {
 		disp_status_bar_err(_("Can not read-open file [%s]: %s"),

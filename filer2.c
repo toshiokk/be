@@ -81,11 +81,11 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	int info_space;
 // *filename.ext 123456 070113-125959 user---- group---
 #define SELECTED_MARK_LEN	1
-#define FILE_NAME_INFO_BUF_LEN	(SELECTED_MARK_LEN + MAX_PATH_LEN*MAX_UTF8C_BYTES+1 +6+1+(6+1+6)+(8+1+8)+1)
+#define FILE_NAME_INFO_BUF_LEN	(SELECTED_MARK_LEN + MAX_PATH_LEN*MAX_UTF8C_BYTES)
 	static char buffer[FILE_NAME_INFO_BUF_LEN+1];
 #define MIN_FILE_NAME_SPACE		12		// "filename.ext"(DOS8.3)
 
-flf_d_printf("[%s], %d\n", file_info->file_name, get_file_type_num(file_info));
+/////flf_d_printf("[%s], %d\n", file_info->file_name, get_file_type_num(file_info));
 	st_ptr = &file_info->st;
 	lst_ptr = &file_info->lst;
 	is_link = S_ISLNK(lst_ptr->st_mode);
@@ -375,6 +375,7 @@ int make_file_list(filer_view_t *fv, const char *filter)
 	fv->cur_sel_idx = MIN_(fv->file_list_entries-1, fv->cur_sel_idx);
 
 make_file_list_ret:;
+_FLF_
 	change_cur_dir(dir_save);
 	return fv->file_list_entries;
 }
@@ -397,12 +398,13 @@ void free_file_list(filer_view_t *fv)
 
 //-----------------------------------------------------------------------------
 // sort file list
+PRIVATE int comp_file_type(file_info_t *aa, file_info_t *bb);
 PRIVATE int comp_file_info(const void *aa, const void *bb);
+PRIVATE int comp_file_info_(const void *aa, const void *bb);
 PRIVATE int comp_file_name(const void *aa, const void *bb);
 PRIVATE int comp_file_extension(const void *aa, const void *bb);
 PRIVATE int comp_file_time(const void *aa, const void *bb);
 PRIVATE int comp_file_size(const void *aa, const void *bb);
-PRIVATE int comp_file_type(file_info_t *aa, file_info_t *bb);
 PRIVATE int comp_file_executable(file_info_t *aa, file_info_t *bb);
 ////PRIVATE int get_file_type_num(file_info_t *info);
 PRIVATE int get_stat_file_type_num(struct stat *st, const char *file_name);
@@ -417,25 +419,61 @@ void sort_file_list(filer_view_t *fv)
 PRIVATE int comp_file_info(const void *aa, const void *bb)
 {
 	int ret;
-
 	if ((ret = comp_file_type((file_info_t *)aa, (file_info_t *)bb)) != 0) {
 		return ret;
 	}
-	if (get_file_type_num((file_info_t *)aa) <= 22) {
-		// always sort directory in forward order by name
-		return comp_file_name(aa, bb);
-	}
+	///if (get_file_type_num((file_info_t *)aa) <= 22) {
+	///	// always sort directory in first place
+	///	return comp_file_name(aa, bb);
+	///}
+	ret = comp_file_info_(aa, bb);
 	switch (GET_APPMD(fl_FILE_SORT_BY)) {
 	default:
 	case FILE_SORT_BY_NAME:
-		return comp_file_name(aa, bb);
 	case FILE_SORT_BY_EXT:
-		return comp_file_extension(aa, bb);
 	case FILE_SORT_BY_TIME:
+	case FILE_SORT_BY_SIZE:
+		break;
+	case FILE_SORT_BY_NAME_REV:
+	case FILE_SORT_BY_EXT_REV:
+	case FILE_SORT_BY_TIME_REV:
+	case FILE_SORT_BY_SIZE_REV:
+		ret = -ret;
+		break;
+	}
+	return ret;
+}
+PRIVATE int comp_file_info_(const void *aa, const void *bb)
+{
+	int ret;
+
+	switch (GET_APPMD(fl_FILE_SORT_BY)) {
+	default:
+	case FILE_SORT_BY_NAME:
+	case FILE_SORT_BY_NAME_REV:
+		if (ret = comp_file_name(aa, bb)) {			return ret;		}
+		if (ret = comp_file_extension(aa, bb)) {	return ret;		}
+		return ret;
+	case FILE_SORT_BY_EXT:
+	case FILE_SORT_BY_EXT_REV:
+		if (ret = comp_file_executable((file_info_t *)aa, (file_info_t *)bb)) {
+			return ret;
+		}
+		if (ret = comp_file_extension(aa, bb)) {	return ret;		}
+		if (ret = comp_file_name(aa, bb)) {			return ret;		}
+		return ret;
+	case FILE_SORT_BY_TIME:
+	case FILE_SORT_BY_TIME_REV:
 		return comp_file_time(aa, bb);
 	case FILE_SORT_BY_SIZE:
+	case FILE_SORT_BY_SIZE_REV:
 		return comp_file_size(aa, bb);
 	}
+}
+// compare file type
+PRIVATE int comp_file_type(file_info_t *aa, file_info_t *bb)
+{
+	return get_file_type_num(aa) - get_file_type_num(bb);
 }
 // sort directories before files,
 // sort by file name.
@@ -448,14 +486,8 @@ PRIVATE int comp_file_name(const void *aa, const void *bb)
 // sort by file extension then by file name.
 PRIVATE int comp_file_extension(const void *aa, const void *bb)
 {
-	int ret;
-
-	if ((ret = comp_file_executable((file_info_t *)aa, (file_info_t *)bb)) != 0)
-		return ret;
-	if ((ret = strcmp(get_file_name_extension(((file_info_t *)aa)->file_name),
-	 get_file_name_extension(((file_info_t *)bb)->file_name))) != 0)
-		return ret;
-	return comp_file_name(aa, bb);
+	return strcmp(get_file_name_extension(((file_info_t *)aa)->file_name),
+	 get_file_name_extension(((file_info_t *)bb)->file_name));
 }
 // sort directories before files,
 // and then by modification time stamp.
@@ -469,25 +501,10 @@ PRIVATE int comp_file_size(const void *aa, const void *bb)
 {
 	return ((file_info_t *)aa)->st.st_size - ((file_info_t *)bb)->st.st_size;
 }
-// compare file type
-PRIVATE int comp_file_type(file_info_t *aa, file_info_t *bb)
-{
-	int file_type_a;
-	int file_type_b;
-
-	file_type_a = get_file_type_num(aa);
-	file_type_b = get_file_type_num(bb);
-	return file_type_a - file_type_b;
-}
 // sort executable files before non-executables
 PRIVATE int comp_file_executable(file_info_t *aa, file_info_t *bb)
 {
-	int file_type_a;
-	int file_type_b;
-
-	file_type_a = get_file_executable(&aa->st);
-	file_type_b = get_file_executable(&bb->st);
-	return file_type_a - file_type_b;
+	return get_file_executable(&aa->st) - get_file_executable(&bb->st);
 }
 
 // rank of file type

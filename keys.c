@@ -468,13 +468,13 @@ key_code_t input_key_wait_return(void)
 // | current time update in title bar  | 1000            |
 // | recording key macro               |  200            |
 // | file list update                  | 1000            |
-// | splash screen when screen resized | 2000            |
+// | splash screen when screen resized | 1500            |
 // | splash screen by key              | infinite        |
 //
 #define DEFAULT_KEY_WAIT_MSEC		1000	// return every 1[Sec]
 #define KEY_MACRO_KEY_WAIT_MSEC		200
 #ifdef ENABLE_HELP
-#define SPLASH_KEY_WAIT_MSEC		2000
+#define SPLASH_KEY_WAIT_MSEC		1500
 #endif // ENABLE_HELP
 PRIVATE key_code_t input_key_timeout(void)
 {

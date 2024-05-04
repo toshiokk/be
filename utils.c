@@ -442,27 +442,32 @@ void test_nn_from_num(void)
 	char buf[2+1];
 #endif // ENABLE_DEBUG
 
-	for (num = -20; num < 260 + 260 + 100 + 20; num++) {
+	for (num = -20; num < 10 + 90 + 260 + 260 + 26*26 + 10; num++) {
 		flf_d_printf("%d ==> [%s]\n", num, nn_from_num(num, buf));
 	}
 }
 #endif // START_UP_TEST
 char *nn_from_num(int num, char *buf)
 {
-	if (num < 0) {
-		snprintf_(buf, 2+1, "-%d", (-num) % 10);	// -9 -- -1
+	if (num < -10) {
+		snprintf_(buf, 2+1, "-@");			// -@
+	} else if (num < 0) {
+		snprintf_(buf, 2+1, "-%d", -num);	// -9 -- -1
 	} else if (num < 10) {
-		snprintf_(buf, 2+1, "%d", num);				// 0 -- 9
-	} else if (num < 100) {
-		snprintf_(buf, 2+1, "%02d", num);			// 00 -- 99
-	} else if (num < 260 + 100) {
+		snprintf_(buf, 2+1, "%d", num);		// 0 -- 9
+	} else if (num < 10 + 90) {
+		snprintf_(buf, 2+1, "%02d", num);	// 10 -- 99
+	} else if (num < 100 + 260) {
 		num -= 100;
-		snprintf_(buf, 2+1, "%c%d", 'A' + num / 10, num % 10);	// a0 -- z9
-	} else if (num < 260 + 260 + 100) {
-		num -= (260 + 100);
-		snprintf_(buf, 2+1, "%d%c", num / 26, 'A' + num % 26);	// 0a -- 9z
+		snprintf_(buf, 2+1, "%c%d", 'A' + num / 10, num % 10);	// A0 -- Z9
+	} else if (num < 100 + 260 + 260) {
+		num -= (100 + 260);
+		snprintf_(buf, 2+1, "%d%c", num / 26, 'A' + num % 26);	// 0A -- 9Z
+	} else if (num < 100 + 260 + 260 + 26 * 26) {
+		num -= (100 + 260 + 260);
+		snprintf_(buf, 2+1, "%c%c", 'A' + num / 26, 'A' + num % 26);	// AA -- ZZ
 	} else {
-		snprintf_(buf, 2+1, "%c%d", '@', num % 10);
+		snprintf_(buf, 2+1, "%c%c", '@', '@');		// @@
 	}
 	return buf;
 }

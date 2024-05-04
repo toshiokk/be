@@ -27,6 +27,7 @@ int doe_switch_to_file_list(void)
 	be_line_t *line_to_go = NULL;
 	be_buf_t *edit_buf;
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
+	char buf[MAX_PATH_LEN+1];
 
 	prev_cur_edit_buf = get_cep_buf();
 	set_cep_buf(EDIT_BUFS_TOP_ANCH);
@@ -34,10 +35,11 @@ int doe_switch_to_file_list(void)
 	buf_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Files currently loaded"));
 	for (edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
 	 edit_buf = NODE_NEXT(edit_buf)) {
-		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-60s %-5s %s %s",
+		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-60s %-5s %s %s %s",
 		 quote_file_name_static(edit_buf->abs_path),
 		 buf_encode_str(edit_buf), buf_eol_str(edit_buf),
-		 BUF_STATE(edit_buf, buf_MODIFIED) ? "Mo" : "--");
+		 BUF_STATE(edit_buf, buf_MODIFIED) ? "Mo" : "--",
+		 quote_file_name_buf(buf, edit_buf->abs_path));
 		append_string_to_cur_edit_buf(buffer);
 		if (edit_buf == prev_cur_edit_buf)
 			line_to_go = CUR_EDIT_BUF_BOT_LINE;

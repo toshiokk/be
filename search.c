@@ -312,7 +312,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 #else // ENABLE_UNDO
 			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_FORWARD | ASK_END,
 #endif // ENABLE_UNDO
-			 _("[%s] not found :"), needle);
+			 _("Keyword [%s] not found"), needle);
 		}
 		if (ret == ANSWER_NO) {
 			// Not replace and search next
@@ -798,7 +798,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 
 void disp_status_bar_not_found_msg(const char *str)
 {
-	disp_status_bar_err(_("[%s] not found"), shrink_str_to_scr_static(str));
+	disp_status_bar_err(_("Keyword [%s] not found"), shrink_str_to_scr_static(str));
 	set_edit_win_update_needed(UPDATE_SCRN_ALL);
 }
 

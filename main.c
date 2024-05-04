@@ -60,14 +60,14 @@ int main(int argc, char *argv[])
 #endif // ENABLE_DEBUG
 flf_d_printf("Start %s ===================================\n", APP_NAME " " __DATE__ " " __TIME__);
 	_mlc_init
-	get_start_dir();
+	get_starting_dir();
 	signal_init();
 	init_locale();
 	_mlc_memorize_count
 	init_buffers();		// parse_options() needs cep_buf. So do here.
 	_mlc_differ_count
 #ifdef ENABLE_FILER
-	init_filer_panes(&root_filer_panes, get_start_dir());
+	init_filer_panes(&root_filer_panes, get_starting_dir());
 #endif // ENABLE_FILER
 	parse_options(argc, argv);		// parse command line options
 	cache_users();
@@ -432,10 +432,6 @@ PRIVATE void start_up_test(void)
 	void *allocated;
 
 ///	tio_test();
-	getcwd__(buf);
-	flf_d_printf("getcwd: [%s]\n", buf);
-	getenv_pwd(buf);
-	flf_d_printf("getenv(PWD): [%s]\n", buf);
 	flf_d_printf("getenv(USER): [%s]\n", getenv__("USER"));
 	flf_d_printf("getenv(HOSTNAME): [%s]\n", getenv__("HOSTNAME"));
 	flf_d_printf("getenv(LANG): [%s]\n", getenv__("LANG"));
@@ -476,16 +472,21 @@ PRIVATE void start_up_test(void)
 	flf_d_printf("#define KEY_F(0)		0x%04x\n", KEY_F(0));
 
 ///	test_wrap_line();
-	test_normalize_full_path();
+	test_cwd_PWD();
+	test_normalize_path();
 	test_get_full_path();
+#if defined(HAVE_REALPATH)
 	test_realpath();
+#endif // HAVE_REALPATH
+	test_my_realpath();
+
 	test_get_file_name_extension();
 	test_cat_dir_and_file();
 	test_separate_path_to_dir_and_file();
 
 ///	test_get_intersection();
 	get_mem_free_in_kb(1);
-///	test_nn_from_num();
+	test_nn_from_num();
 ///	test_utf8c_encode();
 	test_utf8c_bytes();
 ///	test_wcwidth();
@@ -521,7 +522,7 @@ PRIVATE int write_cur_dir_to_exit_file(void)
 	// write current directory to the $HOME/EXIT_FILE_NAME
 	snprintf(buffer, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), EXIT_FILE_NAME);
 	if ((fp = fopen(buffer, "w")) != NULL) {
-		fputs(get_cur_dir(buffer), fp);
+		fputs(get_full_path_of_cur_dir(buffer), fp);
 		if (fclose(fp) != 0) {
 			return -1;
 		}
@@ -729,7 +730,6 @@ const char *splash_text_b[] = {
  "b                            b",
  "b                            b",
  "b                            b",
- "b                            b",
  "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
  "",
 };
@@ -866,7 +866,7 @@ void disp_splash(int delay)
 			msg2_y = 2;
 			msg3_y = 3;
 			msg4_y = 4;
-			msg5_y = 6;
+			msg5_y = 5;
 			msg1_x = 3;
 			msg2_x = 3;
 			msg3_x = 3;

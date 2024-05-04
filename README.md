@@ -106,7 +106,7 @@ Start Editor loading files.
 You can start editor by passing file(s).
 ^q to quit editor saving modified text.
 
-### Command line option
+### Command line options
 
     Option       Long option          Meaning
     -C RCFILE    --rcfile=RCFILE      Read RCFILE
@@ -161,14 +161,15 @@ So BE editor is 微 editor, is Small-editor.
 | Origin                 | U.S.A | U.S.A | Japan |
 
 ## Requirement
-### Build and execution requirements:
+### Build and execution requirements
 - Linux OS
-- nkf (for Japanese character encoding converter between EUCJP, SJIS and UTF8)
+- nkf (for Japanese character encoding conversion between EUCJP, SJIS and UTF8)
 
+### Supplements
+- PCRE (powerful Perl Compatible Regular Expression library)
 - ncurses/ncursesw
-- PCRE (Perl Compatible Regular Expression library)
 
-## Build and execution environments tested:
+## Build and execution environments tested
 - Turbo Linux 11 (32 bit)
 - Slackware 12.2 (32 bit)
 - Ubuntu 12.04 (32 bit)
@@ -266,7 +267,7 @@ or
 
 ### How to use Project file
 
-You can load all of the files in your project by passing project file to BE editor like:
+You can load all of the files in your project by passing project file to BE editor, like:
 
     $ be my_proj.bep
 
@@ -278,6 +279,6 @@ Qt project file (Ex. my_proj.pro) can be used as BE project file.
 
 BE editor loads files on memory.
 The size of the largest editable file depends on the memory available.
-The maximum file size loadable is half the memory available.
+The maximum file size loadable is about half the memory available.
 
-## EOF
+##### EOF

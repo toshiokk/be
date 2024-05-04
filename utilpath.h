@@ -26,9 +26,10 @@
 
 
 #ifdef START_UP_TEST
-int test_normalize_full_path(void);
+void test_cwd_PWD();
+int test_normalize_path(void);
 #endif // START_UP_TEST
-char *normalize_full_path(char *abs_path);
+char *normalize_full_path(char *full_path);
 
 #ifdef START_UP_TEST
 void test_cat_dir_and_file();
@@ -41,15 +42,20 @@ void test_get_full_path(void);
 
 char *get_abs_path(const char *path, char *buf);
 char *get_real_path(const char *path, char *buf, int buf_len);
+char *get_full_path(const char *path, char *buf);
 
+// realpath() -------------------------
 #if defined(HAVE_REALPATH)
 #ifdef START_UP_TEST
 void test_realpath(void);
 #endif // START_UP_TEST
 char *realpath__(const char *path, char *buf, int buf_len);
-#else // HAVE_REALPATH
-char *my_realpath(const char *path, char *buf, int buf_len);
 #endif // HAVE_REALPATH
+
+#if !defined(HAVE_REALPATH) || defined(START_UP_TEST)
+void test_my_realpath();
+char *my_realpath(const char *path, char *buf, int buf_len);
+#endif // !defined(HAVE_REALPATH) || defined(START_UP_TEST)
 
 #ifdef START_UP_TEST
 void test_get_file_name_extension(void);
@@ -88,14 +94,15 @@ int is_path_wildcard(char *path);
 #endif // ENABLE_FILER
 
 char *get_home_dir(void);
-const char *get_start_dir(void);
+const char *get_starting_dir(void);
 
 int change_cur_dir_by_file_path_after_save(char *dir_save, char *file_path);
 int change_cur_dir_by_file_path(char *file_path);
 char *strip_file_if_path_is_file(char *path, char *dir);
 
 int change_cur_dir_after_save(char *dir_save, const char *dir);
-char *get_cur_dir(char *dir);
+char *get_full_path_of_cur_dir(char *dir);
+char *get_real_path_of_cur_dir(char *dir);
 int change_cur_dir(const char *dir);
 int is_dir_readable(const char *path);
 

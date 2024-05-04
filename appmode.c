@@ -380,6 +380,14 @@ const char *get_str_sort_by(void)
 		return "time";
 	case FILE_SORT_BY_SIZE:
 		return "size";
+	case FILE_SORT_BY_NAME_REV:
+		return "NAME(reverse)";
+	case FILE_SORT_BY_EXT_REV:
+		return "EXT(reverse)";
+	case FILE_SORT_BY_TIME_REV:
+		return "TIME(reverse)";
+	case FILE_SORT_BY_SIZE_REV:
+		return "SIZE(reverse)";
 	}
 }
 

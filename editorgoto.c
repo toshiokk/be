@@ -113,6 +113,7 @@ int doe_goto_file_in_cur_line(void)
 	// file_path is taken from the head of current line
 	int files = load_files_in_string(CEPBV_CL->data, 10,
 	 TUL1, OOE0, MOE1, LFH1, RECURSIVE1);
+_FLF_
 	change_cur_dir(dir_save);
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
@@ -128,6 +129,7 @@ int doe_goto_file_in_cur_cursor_pos(void)
 	// file_path is taken from the current cursor position
 	int files = load_files_in_string(&(CEPBV_CL->data[CEPBV_CLBI]), 1,
 	 TUL1, OOE0, MOE1, LFH1, RECURSIVE1);
+_FLF_
 	change_cur_dir(dir_save);
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
@@ -347,6 +349,7 @@ PRIVATE int load_files_in_cur_buf_(void)
 				change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->abs_path);
 				files += load_files_in_string_(CEPBV_CL->data, 10, TUL1, OOE0, MOE0,
 				 LFH0, RECURSIVE0);
+_FLF_
 				change_cur_dir(dir_save);
 
 				editor_disp_title_bar();
@@ -464,8 +467,10 @@ PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int m
 PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_err,
  int load_from_history)
 {
+	char full_path[MAX_PATH_LEN+1];
 	char abs_path[MAX_PATH_LEN+1];
 
+	get_full_path(file_name, full_path);
 	get_abs_path(file_name, abs_path);
 	// switch to if the file of the "file-path" already loaded
 	if (switch_cep_buf_by_abs_path(abs_path)) {
@@ -473,18 +478,18 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 		goto loaded;
 	}
 	// try to load the file
-	if (load_file_into_new_buf(abs_path, open_on_err, msg_on_err) > 0) {
+	if (load_file_into_new_buf(full_path, open_on_err, msg_on_err) > 0) {
 		goto loaded;
 	}
 	// switch to if the file of the "file-name" already loaded
-	if (switch_cep_buf_by_file_name(file_name)) {
+	if (switch_cep_buf_by_file_name(full_path)) {
 		// already loaded
 		goto loaded;
 	}
 #ifdef ENABLE_HISTORY
 	if (load_from_history) {
 		// try to load a file of the same "file-name" memorized in history
-		if (load_and_goto_from_history(file_name)) {
+		if (load_and_goto_from_history(full_path)) {
 			goto loaded;
 		}
 	}

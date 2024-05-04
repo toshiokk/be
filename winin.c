@@ -78,7 +78,7 @@ _FLF_
 
 	update_screen_app(1, 1, 1);
 
-	get_cur_dir(dir_save);
+	get_full_path_of_cur_dir(dir_save);
 	tio_set_cursor_on(1);
 	//---------------------------------------------------------------------------------
 	recursively_called++;
@@ -90,6 +90,7 @@ flf_d_printf("ret: %d\n", ret);
 	//  0: quited
 	//  1: string is normally input
 	tio_set_cursor_on(0);
+_FLF_
 	change_cur_dir(dir_save);
 
 	update_screen_app(1, 1, 1);

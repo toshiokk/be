@@ -1,0 +1,4 @@
+# put BE clipboard to Windows clipboard
+
+cat $HOME/.be/clipboard | clip.exe
+cat $HOME/.be/clipboard

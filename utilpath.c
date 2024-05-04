@@ -65,8 +65,10 @@ _FLF_
 		return 0;	// Error
 	}
 	strlcpy__(prev_path, cur_path, MAX_PATH_LEN);
+_FLF_
 	change_cur_dir(dir);
-	get_cur_dir(cur_path);
+	strlcpy__(cur_path, dir, MAX_PATH_LEN);
+	/////get_real_path_of_cur_dir(cur_path);
 	return 1;	// OK
 }
 
@@ -356,16 +358,17 @@ char *get_home_dir(void)
 // | change_cur_dir                           | No               | No                 |
 
 
-const char *get_start_dir(void)
+const char *get_starting_dir(void)
 {
-	static char start_dir[MAX_PATH_LEN+1] = "";
+	static char starting_dir[MAX_PATH_LEN+1] = "";
 
-	if (strcmp(start_dir, "") == 0) {
-		if (strlen(getcwd__(start_dir)) == 0) {
-			getenv_pwd(start_dir);
+	if (strlen_path(starting_dir) == 0) {
+		if (strlen_path(getenv_pwd(starting_dir)) == 0) {
+			getcwd__(starting_dir);
 		}
 	}
-	return start_dir;
+flf_d_printf("starting_dir: [%s]\n", starting_dir);
+	return starting_dir;
 }
 int change_cur_dir_by_file_path_after_save(char *dir_save, char *file_path)
 {
@@ -390,26 +393,34 @@ char *strip_file_if_path_is_file(char *path, char *dir)
 }
 int change_cur_dir_after_save(char *dir_save, const char *dir)
 {
-	get_cur_dir(dir_save);
+	get_full_path_of_cur_dir(dir_save);
+_FLF_
 	return change_cur_dir(dir);
 }
-PRIVATE char current_directory[MAX_PATH_LEN+1] = "";
-char *get_cur_dir(char *dir)
+
+PRIVATE char full_path_of_cur_dir[MAX_PATH_LEN+1] = "";
+PRIVATE char real_path_of_cur_dir[MAX_PATH_LEN+1] = "";
+char *get_full_path_of_cur_dir(char *dir)
 {
-	if (strcmp(current_directory, "") == 0) {
-		if (strlen(getcwd__(current_directory)) == 0) {
-			getenv_pwd(current_directory);
-		}
-	}
-	strlcpy__(dir, current_directory, MAX_PATH_LEN);
+	strlcpy__(dir, full_path_of_cur_dir, MAX_PATH_LEN);
+	return dir;
+}
+char *get_real_path_of_cur_dir(char *dir)
+{
+	strlcpy__(dir, real_path_of_cur_dir, MAX_PATH_LEN);
 	return dir;
 }
 int change_cur_dir(const char *dir)
 {
 	int ret;
 
+flf_d_printf("dir: [%s]\n", dir);
 	if ((ret = chdir(dir)) == 0) {
-		getcwd__(current_directory);
+		// update "full_path" and "real_path"
+		strlcpy__(full_path_of_cur_dir, dir, MAX_PATH_LEN);
+		getcwd__(real_path_of_cur_dir);
+flf_d_printf("full_path_of_cur_dir: [%s]\n", full_path_of_cur_dir);
+flf_d_printf("real_path_of_cur_dir: [%s]\n", real_path_of_cur_dir);
 	}
 	return ret;
 }
@@ -428,14 +439,18 @@ int is_dir_readable(const char *path)
 //------------------------------------------------------------------------------
 
 // get real current directory(symbolic link is expanded to absolute path)
+// NOTE: getcwd() returns real_path of the current directory
 char *getcwd__(char *cwd)
 {
 	if (getcwd(cwd, MAX_PATH_LEN) == NULL) {
 		strcpy__(cwd, "");
 	}
+/////flf_d_printf("getcwd: [%s]\n", cwd);
 	return cwd;
 }
 
+// NOTE: "PWD" environment not automatically updated after changing current directory
+//       so you can use this only for getting application startup directory
 char *getenv_pwd(char *cwd)
 {
 	strlcpy__(cwd, getenv__("PWD"), MAX_PATH_LEN);
@@ -524,16 +539,37 @@ int readlink__(const char *path, char *buffer, int len)
 }
 
 //-----------------------------------------------------------------------------------
-// NOTE: Meaning of file_name, file_path, full_path and abs_path(real_path)
-//  file_name          : filename.ext
-//  file_path          : ../src/filename.ext
-//  full_path          : /home/user/symlink/../src/filename.ext
+// NOTE: Meaning of file_name, file_path, full_path, normalized_path and abs_path(real_path)
+//  file_name          : Ex. "filename.ext"
+//						 not contain directory
+//  file_path          : Ex. "../src/filename.ext"
+//						 may contain symlinks and ".."
+//  full_path          : Ex. "/home/user/symlink/../src/filename.ext"
 //						 start by '/' and may contain symlinks and ".."
-//  abs_path(real_path): /home/user/tools/src/filename.ext
-//						 start by '/' and may not contain symlinks and ".."
+//  normalized_path    : Ex. "/home/user/symlink/src/filename.ext"
+//						 start by '/' and not contain ".." and may contain symlinks
+//  abs_path(real_path): Ex. "/home/user/tools/src/filename.ext"
+//						 start by '/' and not contain symlinks and ".."
+// TODO: full_path can be converted to abs_path but abs_path can not be converted to full_path
+//       so you may keep full_path as long as possible, not replacing with abs_path
 //-----------------------------------------------------------------------------------
 
 #ifdef START_UP_TEST
+void test_cwd_PWD()
+{
+	char buf[MAX_PATH_LEN+1];
+
+	flf_d_printf("getcwd: [%s]\n", getcwd__(buf));
+	flf_d_printf("getenv(PWD): [%s]\n", getenv_pwd(buf));
+
+	change_cur_dir("..");
+	flf_d_printf("getcwd: [%s]\n", getcwd__(buf));
+	flf_d_printf("getenv(PWD): [%s]\n", getenv_pwd(buf));
+
+	change_cur_dir("/home/user/tools/be/be/testfiles/symlinkd");
+	flf_d_printf("getcwd: [%s]\n", getcwd__(buf));
+	flf_d_printf("getenv(PWD): [%s]\n", getenv_pwd(buf));
+}
 // /aaa/bbb/.. ==> /aaa
 // /aaa/bbb/../ccc ==> /aaa/ccc
 // /aaa/bbb/../../ccc ==> /ccc
@@ -541,51 +577,51 @@ int readlink__(const char *path, char *buffer, int len)
 // /aaa/bbb/. ==> /aaa/bbb
 // /aaa/bbb/./ccc ==> /aaa/bbb/ccc
 // /. ==> /
-PRIVATE void test_normalize_full_path_(const char *abs_path);
-PRIVATE void test_normalize_full_path__(const char *abs_path);
-int test_normalize_full_path(void)
+PRIVATE void test_normalize_path_(const char *path);
+PRIVATE void test_normalize_path__(const char *path);
+int test_normalize_path(void)
 {
 	flf_d_printf("-----------------------\n");
-	test_normalize_full_path_("///");
-	test_normalize_full_path_("///dir///file///");
-	test_normalize_full_path_(".");
-	test_normalize_full_path_("././.");
-	test_normalize_full_path_("..");
-	test_normalize_full_path_("../../..");
-	test_normalize_full_path_("aaa/bbb/..");
-	test_normalize_full_path_("aaa/bbb/../ccc");
-	test_normalize_full_path_("aaa/bbb/../../ccc");
-	test_normalize_full_path_("aaa/bbb/ccc/../../ddd");
-	test_normalize_full_path_("aaa/bbb/ccc/../../../ddd");
-	test_normalize_full_path_("../ccc");
-	test_normalize_full_path_("../../../ccc");
-	test_normalize_full_path_("../aaa/bbb/..");
-	test_normalize_full_path_("aaa/bbb/.");
-	test_normalize_full_path_("aaa/bbb/./ccc");
-	test_normalize_full_path_(".");
-	test_normalize_full_path_("./aaa/bbb/.");
+	test_normalize_path_("///");
+	test_normalize_path_("///dir///file///");
+	test_normalize_path_(".");
+	test_normalize_path_("././.");
+	test_normalize_path_("..");
+	test_normalize_path_("../../..");
+	test_normalize_path_("aaa/bbb/..");
+	test_normalize_path_("aaa/bbb/../ccc");
+	test_normalize_path_("aaa/bbb/../../ccc");
+	test_normalize_path_("aaa/bbb/ccc/../../ddd");
+	test_normalize_path_("aaa/bbb/ccc/../../../ddd");
+	test_normalize_path_("../ccc");
+	test_normalize_path_("../../../ccc");
+	test_normalize_path_("../aaa/bbb/..");
+	test_normalize_path_("aaa/bbb/.");
+	test_normalize_path_("aaa/bbb/./ccc");
+	test_normalize_path_(".");
+	test_normalize_path_("./aaa/bbb/.");
 	return 0;
 }
-PRIVATE void test_normalize_full_path_(const char *abs_path)
+PRIVATE void test_normalize_path_(const char *path)
 {
 	char buffer[MAX_PATH_LEN+1];
 
-	snprintf(buffer, MAX_PATH_LEN, "%s", abs_path);
-	test_normalize_full_path__(buffer);
-	snprintf(buffer, MAX_PATH_LEN, "/%s", abs_path);
-	test_normalize_full_path__(buffer);
-	snprintf(buffer, MAX_PATH_LEN, "%s/", abs_path);
-	test_normalize_full_path__(buffer);
-	snprintf(buffer, MAX_PATH_LEN, "/%s/", abs_path);
-	test_normalize_full_path__(buffer);
+	snprintf(buffer, MAX_PATH_LEN, "%s", path);
+	test_normalize_path__(buffer);
+	snprintf(buffer, MAX_PATH_LEN, "/%s", path);
+	test_normalize_path__(buffer);
+	snprintf(buffer, MAX_PATH_LEN, "%s/", path);
+	test_normalize_path__(buffer);
+	snprintf(buffer, MAX_PATH_LEN, "/%s/", path);
+	test_normalize_path__(buffer);
 }
-PRIVATE void test_normalize_full_path__(const char *abs_path)
+PRIVATE void test_normalize_path__(const char *path)
 {
 	char buffer[MAX_PATH_LEN+1];
 
-	strlcpy__(buffer, abs_path, MAX_PATH_LEN);
+	strlcpy__(buffer, path, MAX_PATH_LEN);
 	normalize_full_path(buffer);
-	flf_d_printf("[%s] ==> [%s]\n", abs_path, buffer);
+	flf_d_printf("[%s] ==> [%s]\n", path, buffer);
 }
 #endif // START_UP_TEST
 
@@ -596,19 +632,19 @@ PRIVATE void test_normalize_full_path__(const char *abs_path)
 // /dir1/../dir2 ==> /dir2
 // /dir1/dir2/.. ==> /dir1/
 // /dir1/dir2/dir3/../../.. ==> /
-PRIVATE char *normalize_full_path__(char *abs_path, char *parent, char *child);
-char *normalize_full_path(char *abs_path)
+PRIVATE char *normalize_full_path__(char *full_path, char *parent, char *child);
+char *normalize_full_path(char *full_path)
 {
 	// "/dir1/../????"
 	//  ^
-	normalize_full_path__(abs_path, abs_path, abs_path);
-	remove_redundant_slash(abs_path);
-	remove_last_slash(abs_path);
-	return abs_path;
+	normalize_full_path__(full_path, full_path, full_path);
+	remove_redundant_slash(full_path);
+	remove_last_slash(full_path);
+	return full_path;
 }
 // "/dir1/../????"
 //   ^   ^
-PRIVATE char *normalize_full_path__(char *abs_path, char *parent, char *child)
+PRIVATE char *normalize_full_path__(char *full_path, char *parent, char *child)
 {
 	char *grandchild;
 
@@ -639,7 +675,7 @@ PRIVATE char *normalize_full_path__(char *abs_path, char *parent, char *child)
 			// "/../????"      ==> "/????"
 			strlcpy__(parent, child+3, MAX_PATH_LEN);
 			child = parent;
-			if (abs_path+1 < child) {
+			if (full_path+1 < child) {
 				// not string top
 				break;
 			}
@@ -652,7 +688,7 @@ PRIVATE char *normalize_full_path__(char *abs_path, char *parent, char *child)
 			if (*grandchild == '/') {
 				// "/dir1/../????"
 				//   ^   ^
-				child = normalize_full_path__(abs_path, child, grandchild);	// recursive call
+				child = normalize_full_path__(full_path, child, grandchild);	// recursive call
 			}
 		}
 	}
@@ -660,9 +696,6 @@ PRIVATE char *normalize_full_path__(char *abs_path, char *parent, char *child)
 }
 
 //-----------------------------------------------------------------------------------
-
-// get absolute path (not include symlinks)
-PRIVATE char *get_full_path(const char *path, char *buf);
 
 #ifdef START_UP_TEST
 PRIVATE void test_get_full_path_(const char *path);
@@ -702,6 +735,7 @@ PRIVATE void test_get_full_path_(const char *path)
 
 //-----------------------------------------------------------------------------------
 
+// get absolute path (not include symlinks)
 char *get_abs_path(const char *path, char *buf)
 {
 	char full_path[MAX_PATH_LEN+1];
@@ -711,60 +745,6 @@ char *get_abs_path(const char *path, char *buf)
 	return buf;
 }
 
-char *get_real_path(const char *path, char *buf, int buf_len)
-{
-#if defined(HAVE_REALPATH)
-	return realpath__(path, buf, buf_len);
-#else // HAVE_REALPATH
-	return my_realpath(path, buf, buf_len);
-#endif // HAVE_REALPATH
-}
-
-#if defined(HAVE_REALPATH)
-#ifdef START_UP_TEST
-PRIVATE void test_realpath_(const char *path);
-void test_realpath(void)
-{
-	flf_d_printf("-----------------------\n");
-	test_realpath_("~");
-	test_realpath_("~user");
-	test_realpath_("~root");
-
-	test_realpath_("/home/user/tools/be/src");
-	test_realpath_("/home/user/tools/./be/src");
-	test_realpath_("/home/user/../user/tools/be/src");
-
-	test_realpath_("/dev/stdin");
-	test_realpath_("/dev/fd");
-}
-PRIVATE void test_realpath_(const char *path)
-{
-	char buf[MAX_PATH_LEN+1];
-
-	realpath__(path, buf, MAX_PATH_LEN);
-	flf_d_printf("path:[%s] ==> buf:[%s]\n", path, buf);
-}
-#endif // START_UP_TEST
-// return normalized(canonicalized) absolute file path
-char *realpath__(const char *path, char *buf, int buf_len)
-{
-	char buffer[MAX_PATH_LEN+1];
-
-	if (realpath(path, buffer) == NULL) {
-		strlcpy__(buf, path, buf_len);	// error, return original path
-	} else {
-		strlcpy__(buf, buffer, buf_len);
-	}
-	return buf;
-}
-#else // HAVE_REALPATH
-char *my_realpath(const char *path, char *buf, int buf_len)
-{
-	strlcpy__(buf, path, buf_len);
-	return normalize_full_path(buf);
-}
-#endif // HAVE_REALPATH
-
 // get full path (path begins from "/") but do not resolve symlink
 //                                            (may contain symlink)
 // ~     ==> /home/user
@@ -772,7 +752,7 @@ char *my_realpath(const char *path, char *buf, int buf_len)
 // ~/tools/src/filename.ext     ==> /home/user/tools/src/filename.ext
 // ~user/tools/src/filename.ext ==> /home/user/tools/src/filename.ext
 // ./filename.ext               ==> /home/user/tools/src/filename.ext
-PRIVATE char *get_full_path(const char *path, char *buf)
+char *get_full_path(const char *path, char *buf)
 {
 	char user_name[MAX_PATH_LEN+1];
 	const char *user_dir;
@@ -807,7 +787,7 @@ PRIVATE char *get_full_path(const char *path, char *buf)
 		cat_dir_and_file(buf, user_dir, &path[len]);
 	} else {
 		// "./..." ==> "/home/user/tools/..."
-		get_cur_dir(cur_dir);
+		get_full_path_of_cur_dir(cur_dir);
 		cat_dir_and_file(buf, cur_dir, path);
 	}
 ///flf_d_printf("[%s] ==> [%s]\n", path, buf);
@@ -815,6 +795,91 @@ PRIVATE char *get_full_path(const char *path, char *buf)
 ///flf_d_printf("[%s] ==> [%s]\n", path, buf);
 	return buf;
 }
+
+char *get_real_path(const char *path, char *buf, int buf_len)
+{
+#if defined(HAVE_REALPATH)
+	return realpath__(path, buf, buf_len);
+#else // HAVE_REALPATH
+	return my_realpath(path, buf, buf_len);
+#endif // HAVE_REALPATH
+}
+
+#if defined(HAVE_REALPATH)
+#ifdef START_UP_TEST
+PRIVATE void test_realpath_(const char *path);
+void test_realpath(void)
+{
+	flf_d_printf("-----------------------\n");
+	test_realpath_("~");
+	test_realpath_("~user");
+	test_realpath_("~root");
+
+	test_realpath_("/home/user/tools/be/be");
+	test_realpath_("/home/user/tools/./be/be");
+	test_realpath_("/home/user/../user/tools/be/be");
+
+	test_realpath_("/home/user/tools/be/be/testfiles/symlinkd");
+	test_realpath_("/home/user/tools/be/be/testfiles/symlinkf");
+
+	test_realpath_("/dev/stdin");
+	test_realpath_("/dev/fd");
+}
+PRIVATE void test_realpath_(const char *path)
+{
+	char buf[MAX_PATH_LEN+1];
+
+	realpath__(path, buf, MAX_PATH_LEN);
+	flf_d_printf("path:[%s] ==> buf:[%s]\n", path, buf);
+}
+#endif // START_UP_TEST
+// return normalized(canonicalized) absolute file path
+char *realpath__(const char *path, char *buf, int buf_len)
+{
+	char buffer[MAX_PATH_LEN+1];
+
+	if (realpath(path, buffer) == NULL) {
+		strlcpy__(buffer, path, MAX_PATH_LEN);	// error, return original path
+	}
+	strlcpy__(buf, buffer, buf_len);
+	return buf;
+}
+#endif // HAVE_REALPATH
+
+#if !defined(HAVE_REALPATH) || defined(START_UP_TEST)
+#warning "my_realpath() is only partially implemented"
+
+PRIVATE void test_my_realpath_(const char *path);
+void test_my_realpath(void)
+{
+	flf_d_printf("-----------------------\n");
+	test_my_realpath_("~");
+	test_my_realpath_("~user");
+	test_my_realpath_("~root");
+
+	test_my_realpath_("/home/user/tools/be/be");
+	test_my_realpath_("/home/user/tools/./be/be");
+	test_my_realpath_("/home/user/../user/tools/be/be");
+
+	test_my_realpath_("/home/user/tools/be/be/testfiles/symlinkd");
+	test_my_realpath_("/home/user/tools/be/be/testfiles/symlinkf");
+
+	test_my_realpath_("/dev/stdin");
+	test_my_realpath_("/dev/fd");
+}
+PRIVATE void test_my_realpath_(const char *path)
+{
+	char buf[MAX_PATH_LEN+1];
+
+	my_realpath(path, buf, MAX_PATH_LEN);
+	flf_d_printf("path:[%s] ==> buf:[%s]\n", path, buf);
+}
+char *my_realpath(const char *path, char *buf, int buf_len)
+{
+	strlcpy__(buf, path, buf_len);
+	return normalize_full_path(buf);
+}
+#endif // !defined(HAVE_REALPATH) || defined(START_UP_TEST)
 
 #ifdef START_UP_TEST
 PRIVATE void get_file_name_extension_(char *file_name);

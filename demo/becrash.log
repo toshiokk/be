@@ -1,0 +1,10 @@
+editorgoto.c 100 doe_goto_directory_in_cur_line 
+filer.c 149 call_filer push_win:1, list_mode:0
+filer.c 150 call_filer <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+08:06:45.114 filer.c 212 filer_main_loop input_key:0x1b71(@q)=======================
+filer.c 282 filer_main_loop CALL_FILER_FUNC [dof_quit_filer] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+filer.c 287 filer_main_loop ret_val: 0    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+filer.c 290 filer_main_loop filer_do_next: 5
+filer.c 299 filer_main_loop filer_do_next: 5
+sig.c 129 handler_sigsegv Received SIGSEGV
+sig.c 141 handler_sigsegv 
