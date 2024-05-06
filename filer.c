@@ -461,7 +461,7 @@ PRIVATE void filer_disp_title_bar(const char *path,
 		}
 	}
 #endif // ENABLE_DEBUG
-	if ((get_win_depth() == 0) && (msec_past_input_key() >= 1000)) {
+	if ((get_win_depth() == 0) && (msec_past_input_key() < 1000)) {
 		snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%s%s:%d%c%s",
 		 root_notation(), get_at_host_name(),
 		 get_filer_cur_pane_idx()+1, separator_char, path);
@@ -475,7 +475,7 @@ PRIVATE void filer_disp_title_bar(const char *path,
 	// current date / time
 	snprintf_(buf_time, 1+HHCMMCSS_YY_MM_DD_LEN+1, " %s",
 	 cur_ctime_cdate(msec_past_input_key() < 1000));
-	if (msec_past_input_key() < 2000 || files_selected) {
+	if (msec_past_input_key() < 1000 || files_selected) {
 		if (files_selected == 0) {
 			snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, " %d %c%s",
 			 files_total, *get_str_sort_by(), buf_time);

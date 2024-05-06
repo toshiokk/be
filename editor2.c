@@ -155,13 +155,13 @@ void editor_disp_title_bar(void)
 
 	//-------------------------------------------------------------------------
 #ifdef SHOW_MEM_FREE
-	if (msec_past_input_key() < 2000) {
+	if (msec_past_input_key() < 1000) {
 		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s%s", buf_bufs, buf_mem, buf_time);
 	} else {
 		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_mem, buf_time);
 	}
 #else // SHOW_MEM_FREE
-	if (msec_past_input_key() < 2000) {
+	if (msec_past_input_key() < 1000) {
 		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_bufs, buf_time);
 	} else {
 		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s", buf_time);
