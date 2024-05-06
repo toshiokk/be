@@ -188,7 +188,7 @@ func_key_table_t editor_func_key_table[] = {
  { "Goto prev. pos",      "Goto previous pos.",             K_M_SLASH,    KNA, KNA,
    XL, F_I(doe_return_to_prev_file_pos), NULL },
  { "Goto next. pos",      "Goto next pos.",                 K_M_QUESTION, KNA, KNA,
-   XL, F_I(doe_return_to_next_file_pos), NULL },
+   XL, F_I(doe_return_to_prev_file_pos), NULL },
  { "Split pane",          "Split screen into panes",        K_MC_BACKSLASH, KNA, KNA,
    XL, F_I(doe_tog_panes), get_editor_panes },
  { "Switch pane",         "Switch editor pane",             K_M_TAB,      KNA, KNA,

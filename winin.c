@@ -65,12 +65,9 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 	int byte_idx;
 	int ret;
 
-_FLF_
 	if (recursively_called >= 3) {
-_FLF_
 		return -1;				// -1: recursive called
 	}
-_FLF_
 
 	vsnprintf(msg_buf, MAX_SCRN_LINE_BUF_LEN+1, msg, ap);
 	byte_idx = byte_idx_from_col_idx(msg_buf, main_win_get_columns(), CHAR_LEFT, NULL);
@@ -90,7 +87,6 @@ flf_d_printf("ret: %d\n", ret);
 	//  0: quited
 	//  1: string is normally input
 	tio_set_cursor_on(0);
-_FLF_
 	change_cur_dir(dir_save);
 
 	update_screen_app(1, 1, 1);

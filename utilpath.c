@@ -23,8 +23,8 @@
 
 // change direcotry independently from filer view
 //   cur_path:      current directory before changing directory and after changing directory
-//   prev_path:     previous current directory before changing directory
-//   next_dir_sel:  directory to be pointed after changing directory
+//   prev_path:     current directory before changing directory
+//   next_dir_sel:  directory to be pointed in filer after changing directory
 int change_cur_dir_saving_prev_next_dir(char *path,
  char *cur_path, char *prev_path, char *next_dir_sel)
 {
@@ -32,7 +32,6 @@ flf_d_printf("path: [%s]\n", path);
 	char dir[MAX_PATH_LEN+1];
 
 	if (is_path_regular_file(path) > 0) {
-_FLF_
 		// If path is pointing a file, change to the directory containing it.
 		separate_path_to_dir_and_file(path, dir, next_dir_sel);
 flf_d_printf("path: [%s]\n", path);
@@ -61,14 +60,12 @@ flf_d_printf("dir: [%s]\n", dir);
 flf_d_printf("dir: [%s]\n", dir);
 	if (is_dir_readable(dir) == 0) {
 		// We can't open this dir for some reason. Complain.
-_FLF_
 		return 0;	// Error
 	}
 	strlcpy__(prev_path, cur_path, MAX_PATH_LEN);
-_FLF_
 	change_cur_dir(dir);
-	strlcpy__(cur_path, dir, MAX_PATH_LEN);
-	/////get_real_path_of_cur_dir(cur_path);
+	/////strlcpy__(cur_path, dir, MAX_PATH_LEN);
+	get_full_path_of_cur_dir(cur_path);
 	return 1;	// OK
 }
 
@@ -307,10 +304,10 @@ int is_path_wildcard(char *path)
 char *separate_dir_part_and_file_part(const char *path,
  char *dir_part, char *file_part)
 {
-	struct stat fileinfo;
+	struct stat st;
 	char *last_slash;
 
-	if (stat(path, &fileinfo) == 0 && S_ISDIR(fileinfo.st_mode)) {
+	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode)) {
 		// /dir1/dir2
 		strlcpy__(dir_part, path, MAX_PATH_LEN);
 		strcpy__(file_part, "");
@@ -394,12 +391,25 @@ char *strip_file_if_path_is_file(char *path, char *dir)
 int change_cur_dir_after_save(char *dir_save, const char *dir)
 {
 	get_full_path_of_cur_dir(dir_save);
-_FLF_
 	return change_cur_dir(dir);
 }
 
 PRIVATE char full_path_of_cur_dir[MAX_PATH_LEN+1] = "";
 PRIVATE char real_path_of_cur_dir[MAX_PATH_LEN+1] = "";
+int change_cur_dir(const char *dir)
+{
+	int ret;
+
+/////flf_d_printf("dir: [%s]\n", dir);
+	if ((ret = chdir(dir)) == 0) {
+		// update "full_path" and "real_path"
+		strlcpy__(full_path_of_cur_dir, dir, MAX_PATH_LEN);
+		getcwd__(real_path_of_cur_dir);
+/////flf_d_printf("full_path_of_cur_dir: [%s]\n", full_path_of_cur_dir);
+/////flf_d_printf("real_path_of_cur_dir: [%s]\n", real_path_of_cur_dir);
+	}
+	return ret;
+}
 char *get_full_path_of_cur_dir(char *dir)
 {
 	strlcpy__(dir, full_path_of_cur_dir, MAX_PATH_LEN);
@@ -409,20 +419,6 @@ char *get_real_path_of_cur_dir(char *dir)
 {
 	strlcpy__(dir, real_path_of_cur_dir, MAX_PATH_LEN);
 	return dir;
-}
-int change_cur_dir(const char *dir)
-{
-	int ret;
-
-flf_d_printf("dir: [%s]\n", dir);
-	if ((ret = chdir(dir)) == 0) {
-		// update "full_path" and "real_path"
-		strlcpy__(full_path_of_cur_dir, dir, MAX_PATH_LEN);
-		getcwd__(real_path_of_cur_dir);
-flf_d_printf("full_path_of_cur_dir: [%s]\n", full_path_of_cur_dir);
-flf_d_printf("real_path_of_cur_dir: [%s]\n", real_path_of_cur_dir);
-	}
-	return ret;
 }
 
 int is_dir_readable(const char *path)
@@ -550,8 +546,15 @@ int readlink__(const char *path, char *buffer, int len)
 //						 start by '/' and not contain ".." and may contain symlinks
 //  abs_path(real_path): Ex. "/home/user/tools/src/filename.ext"
 //						 start by '/' and not contain symlinks and ".."
-// TODO: full_path can be converted to abs_path but abs_path can not be converted to full_path
-//       so you may keep full_path as long as possible, not replacing with abs_path
+
+// TODO: FULL_PATH can be converted to ABS_PATH
+//       but ABS_PATH can not be converted to FULL_PATH
+//       so you may keep FULL_PATH as long as possible, not replacing with ABS_PATH
+// TODO: switch_cep_buf...() shall compare file path in FULL_PATH first and then comare in ABS_PATH
+// TODO: memorize_file_pos() shall memorize file path as it is in FULL_PATH not in ABS_PATH
+//       recall_file_pos() shall open file path as it is
+//       goto_file_pos() shall open file path as it is
+
 //-----------------------------------------------------------------------------------
 
 #ifdef START_UP_TEST
@@ -740,8 +743,9 @@ char *get_abs_path(const char *path, char *buf)
 {
 	char full_path[MAX_PATH_LEN+1];
 
-	get_full_path(path, full_path);
-	get_real_path(full_path, buf, MAX_PATH_LEN);
+	get_full_path(path, full_path);					// --> full_path
+	get_real_path(full_path, buf, MAX_PATH_LEN);	// --> abs path (real path)
+///flf_d_printf("\n[%s]\n ==> [%s]\n", full_path, buf);
 	return buf;
 }
 

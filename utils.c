@@ -404,7 +404,6 @@ int get_mem_free_in_kb(int update)
 	static int kb = 256 * 1024;		// 256 MB
 
 	if (update) {
-///_TFLF_
 		if ((fp = fopen("/proc/meminfo", "r")) != NULL) {
 			while (fgets(buffer, 100, fp) != 0) {
 ///flf_d_printf("%s", buffer);
@@ -418,7 +417,6 @@ int get_mem_free_in_kb(int update)
 		if (fclose(fp) != 0) {
 			// error
 		}
-///_TFLF_
 	}
 
 #ifdef ENABLE_DEBUG

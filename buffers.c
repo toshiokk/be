@@ -261,9 +261,9 @@ void dump_editor_panes(void)
 
 //-----------------------------------------------------------------------------
 
-be_buf_t *get_edit_buf_by_abs_path(const char *abs_path)
+be_buf_t *get_edit_buf_by_file_path(const char *abs_path)
 {
-	return get_buf_from_bufs_by_abs_path(EDIT_BUFS_TOP_BUF, abs_path);
+	return get_buf_from_bufs_by_file_path(EDIT_BUFS_TOP_BUF, abs_path);
 }
 be_buf_t *get_edit_buf_by_file_name(const char *file_name)
 {
@@ -291,6 +291,7 @@ void create_edit_buf(const char *full_path)
 		// make view-1 buffer valid
 		editor_panes.bufs[1] = buf;
 	}
+/////_D_(buf_dump_state(buf))
 }
 
 //-----------------------------------------------------------------------------

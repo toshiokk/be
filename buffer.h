@@ -44,8 +44,8 @@ typedef struct be_buf_t {
 	struct be_buf_t *prev;		//!< Previous be_buf_t
 	struct be_buf_t *next;		//!< Next be_buf_t
 
-	char file_path[MAX_PATH_LEN+1];	//!< relative file path
-	char abs_path[MAX_PATH_LEN+1];	//!< absolute file path
+	char file_path[MAX_PATH_LEN+1];	//!< relative file path (use this as a file accessor)
+	char abs_path_[MAX_PATH_LEN+1];	//!< absolute file path (use this as a unique file ID)
 	struct stat orig_file_stat;		//!< original file status
 	unsigned short orig_file_crc;	//!< file CRC before modification
 
@@ -118,7 +118,9 @@ be_buf_t *buf_free_node(be_buf_t *buf);
 be_buf_t *buf_init(be_buf_t *buf, const char *file_path);
 void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf);
 be_buf_t *buf_init_line_anchors(be_buf_t *buf, char *initial_data);
+void buf_set_file_abs_path(be_buf_t *buf, const char *file_path);
 void buf_set_file_path(be_buf_t *buf, const char *file_path);
+void buf_set_abs_path(be_buf_t *buf, const char *file_path);
 void buf_get_file_path(be_buf_t *buf, char *file_path);
 be_buf_t *buf_insert_before(be_buf_t *buf, be_buf_t *new_buf);
 be_buf_t *buf_insert_after(be_buf_t *buf, be_buf_t *new_buf);
@@ -180,7 +182,7 @@ void init_bufs_top_bot_anchor(
 
 be_buf_t *get_buf_from_bufs_by_idx(be_buf_t *buf, int buf_idx);
 int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf);
-be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *bufs, const char *abs_path);
+be_buf_t *get_buf_from_bufs_by_file_path(be_buf_t *bufs, const char *abs_path);
 be_buf_t *get_buf_from_bufs_by_file_name(be_buf_t *buf, const char *file_name);
 
 void renumber_all_bufs_from_top(be_bufs_t *bufs);

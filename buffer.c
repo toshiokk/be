@@ -27,10 +27,8 @@
 // Create a new buffer be_buf_t
 be_buf_t *buf_create_node(const char *full_path)
 {
-	be_buf_t *buf;
-
 	_mlc_set_caller
-	buf = (be_buf_t *)malloc__(sizeof(be_buf_t));
+	be_buf_t *buf = (be_buf_t *)malloc__(sizeof(be_buf_t));
 	return buf_init(buf, full_path);
 }
 // Free a buffer be_buf_t
@@ -48,7 +46,7 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path)
 	memset(buf, 0x00, sizeof(*buf));
 
 	buf_clear_link(buf);
-	buf_set_file_path(buf, full_path);
+	buf_set_file_abs_path(buf, full_path);
 	buf->orig_file_stat.st_uid = geteuid();
 	buf->orig_file_stat.st_gid = getegid();
 	buf->orig_file_stat.st_mode = RW0RW0R00;		// regular file rw-rw-r--(664)
@@ -83,14 +81,23 @@ be_buf_t *buf_init_line_anchors(be_buf_t *buf, char *initial_data)
 	line_link(BUF_TOP_ANCH(buf), BUF_BOT_ANCH(buf));
 	return buf;
 }
+void buf_set_file_abs_path(be_buf_t *buf, const char *file_path)
+{
+	buf_set_file_path(buf, file_path);
+	/////if (IS_NODE_ANCH(buf)) {
+	/////	strlcpy__(buf->abs_path, "##", MAX_PATH_LEN);
+	/////	strlcat__(buf->abs_path, MAX_PATH_LEN, file_path);
+	/////	return;
+	/////}
+	buf_set_abs_path(buf, file_path);
+}
 void buf_set_file_path(be_buf_t *buf, const char *file_path)
 {
 	strlcpy__(buf->file_path, file_path, MAX_PATH_LEN);
-	if (IS_NODE_ANCH(buf)) {
-		strlcpy__(buf->abs_path, file_path, MAX_PATH_LEN);
-		return;
-	}
-	get_abs_path(file_path, buf->abs_path);
+}
+void buf_set_abs_path(be_buf_t *buf, const char *file_path)
+{
+	get_abs_path(file_path, buf->abs_path_);
 }
 void buf_get_file_path(be_buf_t *buf, char *file_path)
 {
@@ -125,7 +132,7 @@ be_buf_t *buf_link(be_buf_t *prev, be_buf_t *next)
 	return prev;
 }
 
-// This is NOT deep-copy
+// This does not deep-copy
 be_buf_t *buf_create_copy(be_buf_t *src)
 {
 	return buf_copy(buf_create_node(""), src);
@@ -265,7 +272,7 @@ int buf_is_orig_file_updated(be_buf_t *buf)
 {
 	struct stat st;
 
-	if (stat(buf->abs_path, &st)) {
+	if (stat(buf->file_path, &st)) {
 		return -1;
 	}
 	return st.st_mtime > buf->orig_file_stat.st_mtime;
@@ -475,11 +482,17 @@ int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf)
 	}
 	return -1;	// not found
 }
-be_buf_t *get_buf_from_bufs_by_abs_path(be_buf_t *buf, const char *abs_path)
+
+be_buf_t *get_buf_from_bufs_by_file_path(be_buf_t *buf, const char *file_path)
 {
 	buf = make_sure_buf_is_top_buf(buf);
 	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
-		if (strcmp(buf->abs_path, abs_path) == 0) {
+		if (strcmp(buf->file_path, file_path) == 0) {
+			return buf;	// found
+		}
+		char abs_path[MAX_PATH_LEN+1];
+		get_abs_path(file_path, abs_path);
+		if (strcmp(buf->abs_path_, abs_path) == 0) {
 			return buf;	// found
 		}
 	}
@@ -491,9 +504,13 @@ be_buf_t *get_buf_from_bufs_by_file_name(be_buf_t *buf, const char *file_name)
 	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
 		char dir[MAX_PATH_LEN+1];
 		char file[MAX_PATH_LEN+1];
-		separate_path_to_dir_and_file(buf->abs_path, dir, file);
+		separate_path_to_dir_and_file(buf->file_path, dir, file);
 		if (strcmp(file, file_name) == 0) {
-			return buf;	// found
+			return buf;	// found by file_path
+		}
+		separate_path_to_dir_and_file(buf->abs_path_, dir, file);
+		if (strcmp(file, file_name) == 0) {
+			return buf;	// found by abs_path
 		}
 	}
 	return NULL;		// not found
@@ -567,7 +584,8 @@ void buf_dump_state(be_buf_t *buf)
 	if (buf == NULL) {
 		return;
 	}
-flf_d_printf("file_path: [%s], abs_path: [%s]\n", buf->file_path, buf->abs_path);
+flf_d_printf("file_path: [%s]\n", buf->file_path);
+flf_d_printf("abs_path_: [%s]\n", buf->abs_path_);
 }
 /////be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
 /////{

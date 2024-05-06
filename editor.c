@@ -357,9 +357,9 @@ int doe_write_file_to(void)
 #endif // ENABLE_FILER
 		char org_file_path[MAX_PATH_LEN+1];
 		buf_get_file_path(get_cep_buf(), org_file_path);
-		buf_set_file_path(get_cep_buf(), file_path);	// set new file name
+		buf_set_file_abs_path(get_cep_buf(), file_path);	// set new file name
 		if (backup_and_save_cur_buf(file_path) < 0) {
-			buf_set_file_path(get_cep_buf(), org_file_path);
+			buf_set_file_abs_path(get_cep_buf(), org_file_path);
 			return -1;
 		}
 		break;
@@ -387,7 +387,7 @@ int doe_write_all_ask(void)
 	char file_pos_str[MAX_PATH_LEN+1];
 	memorize_cur_file_pos_null(file_pos_str);
 	write_all_ask(ANSWER_NO, NO_CLOSE_AFTER_SAVE_0);
-	recall_cur_file_pos_null(file_pos_str);
+	recall_file_pos_null(file_pos_str);
 	return 1;
 }
 int doe_write_all_modified(void)
@@ -395,7 +395,7 @@ int doe_write_all_modified(void)
 	char file_pos_str[MAX_PATH_LEN+1];
 	memorize_cur_file_pos_null(file_pos_str);
 	write_all_ask(ANSWER_ALL, NO_CLOSE_AFTER_SAVE_0);
-	recall_cur_file_pos_null(file_pos_str);
+	recall_file_pos_null(file_pos_str);
 	return 1;
 }
 
@@ -483,7 +483,7 @@ int doe_read_file_into_cur_pos(void)
 	doe_select_all_lines();
 	doe_copy_text();
 	doe_close_file_ask();
-	recall_cur_file_pos_null(file_pos_str);
+	recall_file_pos_null(file_pos_str);
 	doe_paste_text_with_pop();
 	return 0;
 }

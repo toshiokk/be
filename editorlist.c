@@ -32,14 +32,14 @@ int doe_switch_to_file_list(void)
 	prev_cur_edit_buf = get_cep_buf();
 	set_cep_buf(EDIT_BUFS_TOP_ANCH);
 	buf_free_lines(EDIT_BUFS_TOP_ANCH);
-	buf_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Files currently loaded"));
+	buf_set_file_abs_path(EDIT_BUFS_TOP_ANCH, _("#List of Files currently loaded"));
 	for (edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
 	 edit_buf = NODE_NEXT(edit_buf)) {
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-60s %-5s %s %s %s",
-		 quote_file_name_static(edit_buf->abs_path),
+		 quote_file_name_static(edit_buf->file_path),
 		 buf_encode_str(edit_buf), buf_eol_str(edit_buf),
 		 BUF_STATE(edit_buf, buf_MODIFIED) ? "Mo" : "--",
-		 quote_file_name_buf(buf, edit_buf->abs_path));
+		 quote_file_name_buf(buf, edit_buf->abs_path_));
 		append_string_to_cur_edit_buf(buffer);
 		if (edit_buf == prev_cur_edit_buf)
 			line_to_go = CUR_EDIT_BUF_BOT_LINE;
@@ -149,7 +149,7 @@ void make_help_key_list(void)
 	char *func_ = "--------------------------------";
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
-	buf_set_file_path(EDIT_BUFS_TOP_ANCH, _("#List of Editor Functions"));
+	buf_set_file_abs_path(EDIT_BUFS_TOP_ANCH, _("#List of Editor Functions"));
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, "Key", "Function", "func_id");
 	append_string_to_cur_edit_buf(buffer);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, key_, func_, func_);

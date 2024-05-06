@@ -543,7 +543,6 @@ PRIVATE int is_restoring_check_break_key(void)
 }
 void begin_check_break_key(void)
 {
-_FLF_
 	key_codes_saved = 0;		// start saving
 	key_codes_restored = -1;	// stop restoration
 	clear_sigint_signaled();
@@ -556,7 +555,6 @@ void end_check_break_key(void)
 		key_codes_saved = -1;		// clear saved keys
 		key_codes_restored = -1;	// stop restoration
 	}
-_FLF_
 }
 int check_break_key(void)
 {

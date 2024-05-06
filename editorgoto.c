@@ -21,7 +21,6 @@
 
 #include "headers.h"
 
-PRIVATE int load_files_in_cur_buf_(void);
 PRIVATE int load_files_in_string_(const char *string, int files_to_load,
  int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive);
 PRIVATE int load_file_in_string_(const char *string,
@@ -29,6 +28,7 @@ PRIVATE int load_file_in_string_(const char *string,
 
 PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int msg_on_err,
  int load_from_history, int recursive);
+PRIVATE int load_files_in_cur_buf_(void);
 PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_err,
  int load_from_history);
 
@@ -82,22 +82,18 @@ int doe_goto_input_line(void)
 int doe_goto_file_or_dir_in_cur_line(void)
 {
 	if (doe_goto_file_in_cur_line() > 0) {
-_FLF_
 		// files opened
 		return 1;
 	}
-_FLF_
 	// going to change directory
 	return doe_goto_directory_in_cur_line();
 }
 int doe_goto_file_or_dir_in_cur_cursor_pos(void)
 {
 	if (doe_goto_file_in_cur_cursor_pos() > 0) {
-_FLF_
 		// files opened
 		return 1;
 	}
-_FLF_
 	// going to change directory
 	return doe_goto_directory_in_cur_line();
 }
@@ -109,11 +105,10 @@ int doe_goto_file_in_cur_line(void)
 	clear_files_loaded();
 
 	// CURDIR: changed to cur-file's abs-dir
-	change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->abs_path);
+	change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->file_path);
 	// file_path is taken from the head of current line
 	int files = load_files_in_string(CEPBV_CL->data, 10,
 	 TUL1, OOE0, MOE1, LFH1, RECURSIVE1);
-_FLF_
 	change_cur_dir(dir_save);
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
@@ -125,11 +120,10 @@ int doe_goto_file_in_cur_cursor_pos(void)
 	clear_files_loaded();
 
 	// CURDIR: changed to cur-file's abs-dir
-	change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->abs_path);
+	change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->file_path);
 	// file_path is taken from the current cursor position
 	int files = load_files_in_string(&(CEPBV_CL->data[CEPBV_CLBI]), 1,
 	 TUL1, OOE0, MOE1, LFH1, RECURSIVE1);
-_FLF_
 	change_cur_dir(dir_save);
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
@@ -140,7 +134,7 @@ int doe_goto_directory_in_cur_line(void)
 {
 #ifdef ENABLE_FILER
 	char file_path[MAX_PATH_LEN+1];
-	change_cur_dir_by_file_path(get_cep_buf()->abs_path);
+	change_cur_dir_by_file_path(get_cep_buf()->file_path);
 	if (change_dirs_in_string(CEPBV_CL->data, get_cur_filer_view()->cur_dir,
 	 get_cur_filer_view()->prev_dir, get_cur_filer_view()->next_file) == 0) {
 		// directory can not be changed
@@ -248,36 +242,17 @@ int doe_switch_to_next_buffers(void)
 }
 #endif // APP_REL_LVL
 //-----------------------------------------------------------------------------
-PRIVATE int curs_pos_history_counter = 1;
-PRIVATE int return_to_history_file_pos(int file_pos_counter);
-void memorize_cur_file_pos_and_clear_prev_file_pos_cnt()
+PRIVATE char cur_file_pos_before_search[MAX_PATH_LEN+1] = "";
+void memorize_cur_file_pos_before_search()
 {
-	update_history(HISTORY_TYPE_IDX_CURSPOS, mk_cur_file_pos_str_static(), 0);
-	curs_pos_history_counter = 1;
+	memorize_cur_file_pos_null(cur_file_pos_before_search);
 }
 int doe_return_to_prev_file_pos(void)
 {
-	int file_pos_counter = curs_pos_history_counter;
-	///if (curs_pos_history_counter < MAX_HISTORY_LINES) {
-	///	curs_pos_history_counter++;
-	///}
-	return return_to_history_file_pos(file_pos_counter);
-}
-int doe_return_to_next_file_pos(void)
-{
-	int file_pos_counter = curs_pos_history_counter;
-	if (curs_pos_history_counter > 1) {
-		curs_pos_history_counter--;
-	}
-	return return_to_history_file_pos(file_pos_counter);
-}
-PRIVATE int return_to_history_file_pos(int file_pos_counter)
-{
-	recall_cur_file_pos_null(get_history_newest(HISTORY_TYPE_IDX_CURSPOS, file_pos_counter));
+	recall_file_pos_null(cur_file_pos_before_search);
 
-	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	doe_refresh_editor();
-	disp_status_bar_done(_("Returned to %d-th previous pos"), file_pos_counter);
+	disp_status_bar_done(_("Returned to previous pos"));
 	return 1;
 }
 //-----------------------------------------------------------------------------
@@ -318,57 +293,9 @@ int load_files_in_string(const char *string, int files_to_load,
 {
 flf_d_printf("string: [%s]\n", string);
 	begin_check_break_key();
-	int files = load_files_in_string_(string, files_to_load, try_upp_low, open_on_err, msg_on_err,
-	 load_from_history, recursive);
+	int files = load_files_in_string_(string, files_to_load,
+	 try_upp_low, open_on_err, msg_on_err, load_from_history, recursive);
 	end_check_break_key();
-	return files;
-}
-
-//-----------------------------------------------------------------------------
-
-// sub-function of load_files_in_cur_buf()
-PRIVATE int load_files_in_cur_buf_(void)
-{
-	char file_pos_str1[MAX_PATH_LEN+1];
-	int lines;
-	int files = 0;
-
-#define MAX_LINES_TO_TRY_TO_LOAD		10000
-#define MAX_FILES_TO_LOAD				2000
-#define MIN_FREE_MEM_KB					(100 * 1000)	// 100 MB
-	memorize_cur_file_pos_null(file_pos_str1);
-	first_line();
-	for (lines = 0; lines < MAX_LINES_TO_TRY_TO_LOAD; lines++) {
-		if (line_data_len(CEPBV_CL)) {
-			if (CEPBV_CL->data[0] != '#') {
-				char file_pos_str2[MAX_PATH_LEN+1];
-				char dir_save[MAX_PATH_LEN+1];
-
-				memorize_cur_file_pos_null(file_pos_str2);
-				// CURDIR: changed to cur-file's abs-dir
-				change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->abs_path);
-				files += load_files_in_string_(CEPBV_CL->data, 10, TUL1, OOE0, MOE0,
-				 LFH0, RECURSIVE0);
-_FLF_
-				change_cur_dir(dir_save);
-
-				editor_disp_title_bar();
-				tio_refresh();
-				recall_cur_file_pos_null(file_pos_str2);
-			}
-		}
-		if (cursor_next_line() == 0)
-			break;
-		if (files >= MAX_FILES_TO_LOAD)
-			break;
-		if (get_mem_free_in_kb(1) <= MIN_FREE_MEM_KB)
-			break;
-		if (check_break_key()) {
-flf_d_printf("sigint_signaled\n");
-			break;
-		}
-	}
-	recall_cur_file_pos_null(file_pos_str1);
 	return files;
 }
 
@@ -454,16 +381,65 @@ PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int m
 	int files = 0;
 
 	if (load_file_name__(file_name, open_on_err, msg_on_err, load_from_history) > 0) {
+		add_files_loaded(1);
 		files = 1;
-		if (recursive && recursive_call_count == 0 && is_file_name_proj_file(file_name, 0)) {
+		if (recursive && (recursive_call_count == 0) && is_file_name_proj_file(file_name, 0)) {
 			recursive_call_count++;
 			files += load_files_in_cur_buf_();		// recursive call
 			recursive_call_count--;
 		}
-		add_files_loaded(1);
 	}
 	return files;
 }
+
+// sub-function of load_files_in_cur_buf()
+PRIVATE int load_files_in_cur_buf_(void)
+{
+#define MAX_LINES_TO_TRY_TO_LOAD		10000
+#define MAX_FILES_TO_LOAD				2000
+#define MIN_FREE_MEM_KB					(100 * 1000)	// 100 MB
+	char file_pos_str1[MAX_PATH_LEN+1];
+	memorize_cur_file_pos_null(file_pos_str1);
+	first_line();
+	int files = 0;
+	for (int lines = 0; lines < MAX_LINES_TO_TRY_TO_LOAD; lines++) {
+		if (line_data_len(CEPBV_CL)) {
+			if (CEPBV_CL->data[0] != '#') {
+				char file_pos_str2[MAX_PATH_LEN+1];
+				char dir_save[MAX_PATH_LEN+1];
+
+/////_D_(buf_dump_state(get_cep_buf()))
+				memorize_cur_file_pos_null(file_pos_str2);
+/////flf_d_printf("[%s]\n", file_pos_str2);
+				// CURDIR: changed to cur-file's abs-dir
+				change_cur_dir_by_file_path_after_save(dir_save, get_cep_buf()->file_path);
+/////flf_d_printf("[%s]\n", CEPBV_CL->data);
+				files += load_files_in_string_(CEPBV_CL->data, 10,
+				 TUL1, OOE0, MOE0, LFH0, RECURSIVE0);
+				change_cur_dir(dir_save);
+
+				editor_disp_title_bar();
+				tio_refresh();
+/////flf_d_printf("[%s]\n", file_pos_str2);
+				recall_file_pos_null(file_pos_str2);
+/////_D_(buf_dump_state(get_cep_buf()))
+			}
+		}
+		if (cursor_next_line() == 0)
+			break;
+		if (files >= MAX_FILES_TO_LOAD)
+			break;
+		if (get_mem_free_in_kb(1) <= MIN_FREE_MEM_KB)
+			break;
+		if (check_break_key()) {
+flf_d_printf("sigint_signaled\n");
+			break;
+		}
+	}
+	recall_file_pos_null(file_pos_str1);
+	return files;
+}
+
 PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_err,
  int load_from_history)
 {
@@ -473,7 +449,7 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 	get_full_path(file_name, full_path);
 	get_abs_path(file_name, abs_path);
 	// switch to if the file of the "file-path" already loaded
-	if (switch_cep_buf_by_abs_path(abs_path)) {
+	if (switch_cep_buf_by_file_path(full_path)) {
 		// already loaded
 		goto loaded;
 	}
@@ -608,7 +584,7 @@ PRIVATE const char *skip_n_file_names(const char *line, int field_idx)
 
 //-----------------------------------------------------------------------------
 #ifdef ENABLE_HISTORY
-int goto_last_file_line_col_in_loaded()
+int goto_last_file_line_col_in_history()
 {
 	char file_path[MAX_PATH_LEN+1];
 	int line_num, col_num;
@@ -617,7 +593,7 @@ int goto_last_file_line_col_in_loaded()
 	 file_path, &line_num, &col_num) == 0) {
 		return 0;
 	}
-	if (switch_cep_buf_by_abs_path(file_path) == 0) {
+	if (switch_cep_buf_by_file_path(file_path) == 0) {
 		return 0;
 	}
 	return goto_line_col_in_cur_buf(line_num, col_num);
@@ -636,16 +612,16 @@ const char *get_memorized_file_pos_str(const char *str)
 char *memorize_cur_file_pos_null(char *buffer)
 {
 	buffer = get_memorized_file_pos_buf(buffer);
-	mk_cur_file_pos_str(buffer);
+	mk_cur_file_pos_str_buf(buffer);
 	return buffer;
 }
 
-int recall_cur_file_pos_null(const char *str)
+int recall_file_pos_null(const char *str)
 {
 	char file_path[MAX_PATH_LEN+1];
 
 	if (get_file_line_col_from_str_null(str, file_path, NULL, NULL)) {
-		if (switch_cep_buf_by_abs_path(file_path) == 0) {
+		if (switch_cep_buf_by_file_path(file_path) == 0) {
 			return 0;
 		}
 	}
@@ -670,34 +646,21 @@ int goto_line_col_in_cur_buf(int line_num, int col_num)
 	if (col_num <= 0) {
 		return 1;
 	}
-#ifdef CURSOR_POS_BYTE
 	// col_num is byte count
 	CEPBV_CLBI = byte_idx_from_byte_idx(CEPBV_CL->data, col_num-1);
-#endif // CURSOR_POS_BYTE
-#ifdef CURSOR_POS_COLUMN
-	// col_num is column in view
-	CEPBV_CLBI = byte_idx_from_col_idx(CEPBV_CL->data, col_num-1, CHAR_LEFT, NULL);
-#endif // CURSOR_POS_COLUMN
 	return 2;
 }
 //-----------------------------------------------------------------------------
 char *mk_cur_file_pos_str_static(void)
 {
 	static char buffer[MAX_PATH_LEN+1];
-	return mk_cur_file_pos_str(buffer);
+	return mk_cur_file_pos_str_buf(buffer);
 }
-char *mk_cur_file_pos_str(char *buffer)
+char *mk_cur_file_pos_str_buf(char *buffer)
 {
-#ifdef CURSOR_POS_BYTE
 	// memorize byte number
 	return mk_file_pos_str(buffer, get_cep_buf()->file_path, CEPBV_CL->line_num,
 	 CEPBV_CL->data ? byte_idx_from_byte_idx(CEPBV_CL->data, CEPBV_CLBI)+1 : 0);
-#endif // CURSOR_POS_BYTE
-#ifdef CURSOR_POS_COLUMN
-	// memorize column number
-	return mk_file_pos_str(buffer, get_cep_buf()->file_path, CEPBV_CL->line_num,
-	 CEPBV_CL->data ? col_idx_from_byte_idx(CEPBV_CL->data, 0, CEPBV_CLBI)+1 : 0);
-#endif // CURSOR_POS_COLUMN
 }
 char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col_num)
 {
@@ -795,19 +758,9 @@ int switch_cep_buf_by_file_name(const char *file_name)
 	}
 	return 0;		// not found
 }
-int switch_cep_buf_extending_file_name_to_path(const char *file_name)
+int switch_cep_buf_by_file_path(const char *file_path)
 {
-	char abs_path[MAX_PATH_LEN+1];
-
-	get_abs_path(file_name, abs_path);
-flf_d_printf("[%s]-->[%s]\n", file_name, abs_path);
-	return switch_cep_buf_by_abs_path(abs_path);
-}
-int switch_cep_buf_by_abs_path(const char *abs_path)
-{
-	be_buf_t *buf;
-
-	buf = get_edit_buf_by_abs_path(abs_path);
+	be_buf_t *buf = get_edit_buf_by_file_path(file_path);
 	if (buf) {
 		set_cep_buf(buf);
 		return 1;	// switched
@@ -872,6 +825,7 @@ int switch_cep_buf_to_another_buf(void)
 	}
 	return 1;
 }
+
 //-----------------------------------------------------------------------------
 // supported file names:
 //  |No.| file type                                                | command line | file list |

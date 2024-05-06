@@ -163,7 +163,6 @@ flf_d_printf("ret: %d\n", ret);
 
 	if (push_win) {
 		free_filer_panes(&next_filer_panes, prev_fps);
-_FLF_
 		change_cur_dir(get_cur_filer_view()->cur_dir);
 
 		win_pop_win_size();
@@ -307,7 +306,6 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 	if (filer_do_next == FILER_DO_QUIT) {
 		return 0;		// quit
 	}
-_FLF_
 	if (filer_do_next == FILER_DO_ENTER_FILE_NAME
 	 || filer_do_next == FILER_DO_ENTER_FILE_PATH) {
 		for (int file_idx = select_and_get_first_file_idx_selected();
@@ -327,7 +325,6 @@ _FLF_
 			}
 		}
 	}
-_FLF_
 	if (filer_do_next == FILER_DO_ENTER_CUR_DIR_PATH) {
 		strlcpy__(path_buf, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
 	}
@@ -351,7 +348,6 @@ PRIVATE int check_filer_cur_dir(void)
 	if (is_dir_readable(get_cur_filer_view()->cur_dir) == 0) {
 		get_full_path_of_cur_dir(get_cur_filer_view()->cur_dir);
 	}
-_FLF_
 	change_cur_dir(get_cur_filer_view()->cur_dir);
 	return 0;
 }
@@ -359,12 +355,9 @@ _FLF_
 PRIVATE int update_all_file_list(const char *filter, int force_update)
 {
 	if (GET_APPMD(fl_FILER_PANES) == 0) {
-///_FLF_
 		update_file_list(get_cur_filer_view(), filter, force_update);
 	} else {
-///_FLF_
 		update_file_list(get_filer_view(0), filter, force_update);
-///_FLF_
 		update_file_list(get_filer_view(1), filter, force_update);
 	}
 	return 0;

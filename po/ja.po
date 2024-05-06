@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-04 23:30+0900\n"
+"POT-Creation-Date: 2024-05-06 14:37+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -25,20 +25,20 @@ msgstr ""
 msgid "Key code: %04x"
 msgstr "キーコード: %04x"
 
-#: ../buffers.c:388 ../buffers.c:396
+#: ../buffers.c:389 ../buffers.c:397
 msgid "Calculating CRC..."
 msgstr "CRC を計算中..."
 
-#: ../buffers.c:595 ../buffers.c:602
+#: ../buffers.c:596 ../buffers.c:603
 msgid "Tab size"
 msgstr "タブサイズ"
 
-#: ../editor.c:124 ../filer.c:258
+#: ../editor.c:124 ../filer.c:257
 #, c-format
 msgid "No command assigned for the key: %04xh"
 msgstr "このキーにはコマンドが割り当てられていません: %04xh"
 
-#: ../editor.c:135 ../filer.c:270
+#: ../editor.c:135 ../filer.c:269
 #, c-format
 msgid "Can not execute this function: [%s]"
 msgstr ""
@@ -73,7 +73,7 @@ msgid "One buffer closed"
 msgstr "1 バッファを閉じました"
 
 #: ../editor.c:651 ../editor.c:720 ../fileio.c:144 ../fileio.c:149
-#: ../winin.c:99
+#: ../winin.c:95
 msgid "Cancelled"
 msgstr "キャンセルされました"
 
@@ -143,48 +143,47 @@ msgstr ""
 msgid "Cut-buffer cleared"
 msgstr "カットバッファをクリアしました"
 
-#: ../editorcut.c:101
+#: ../editorcut.c:95
 msgid "Cut to line head"
 msgstr "行頭までカットしました"
 
-#: ../editorcut.c:114
+#: ../editorcut.c:108
 msgid "Cut to line tail"
 msgstr "行末までカットしました"
 
-#: ../editorcut.c:134
+#: ../editorcut.c:128
 msgid "Mark Set"
 msgstr "マーク開始"
 
-#: ../editorcut.c:148
+#: ../editorcut.c:142
 msgid "Mark UNset"
 msgstr "マーク中止"
 
-#. ///_FLF_
-#: ../editorcut.c:167
+#: ../editorcut.c:158
 msgid "Text Copied to Cut-buffer"
 msgstr "テキストをカットバッファにコピーしました"
 
-#: ../editorcut.c:177
+#: ../editorcut.c:167
 msgid "Text Deleted"
 msgstr "テキストを削除しました"
 
-#: ../editorcut.c:186
+#: ../editorcut.c:176
 msgid "Text Cut to Cut-buffer"
 msgstr "テキストをカットバッファにカットしました"
 
-#: ../editorcut.c:195
+#: ../editorcut.c:185
 msgid "Text Duplicated"
 msgstr "テキストを複製しました"
 
-#: ../editorcut.c:206
+#: ../editorcut.c:196
 msgid "Text Pasted with popping Cut-buffer"
 msgstr "テキストを張り付けました(カットバッファをポップ)"
 
-#: ../editorcut.c:216
+#: ../editorcut.c:206
 msgid "Text Pasted without popping Cut-buffer"
 msgstr "テキストを張り付けました(カットバッファは変化なし)"
 
-#: ../editorcut.c:240 ../editorcut.c:270
+#: ../editorcut.c:230 ../editorcut.c:260
 msgid "Cut-buffer empty !!"
 msgstr "カットバッファが空です !!"
 
@@ -192,25 +191,24 @@ msgstr "カットバッファが空です !!"
 msgid "Enter line number:"
 msgstr "行番号入力:"
 
-#: ../editorgoto.c:210
+#: ../editorgoto.c:204
 msgid "No previous open files"
 msgstr "これ以上前にファイルがありません"
 
-#: ../editorgoto.c:215
+#: ../editorgoto.c:209
 msgid "Previous file"
 msgstr "一つ前のファイルにスイッチしました"
 
-#: ../editorgoto.c:223
+#: ../editorgoto.c:217
 msgid "No next open files"
 msgstr "これ以上後にファイルがありません"
 
-#: ../editorgoto.c:227
+#: ../editorgoto.c:221
 msgid "Next file"
 msgstr "一つ後のファイルにスイッチしました"
 
-#: ../editorgoto.c:280
-#, c-format
-msgid "Returned to %d-th previous pos"
+#: ../editorgoto.c:255
+msgid "Returned to previous pos"
 msgstr ""
 
 #: ../editorlist.c:35
@@ -514,12 +512,12 @@ msgid "File selection cleared"
 msgstr "ファイル選択をクリアしました"
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:786
+#: ../filercmd.c:787
 #, c-format
 msgid "Can not change current to [%s]: %s"
 msgstr "カレントディレクトリを変更できません [%s]: %s"
 
-#: ../filercmd.c:796
+#: ../filercmd.c:797
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr "カレントディレクトリを変更しました [%s]"
@@ -871,44 +869,44 @@ msgstr "文字列 [%s] を検索中..."
 msgid "Out of memory!"
 msgstr "メモリ不足!"
 
-#: ../winin.c:330
+#: ../winin.c:326
 msgid ""
 "UP:history, DOWN:browser, PgUp:insert from history, PgDn:insert from browser"
 msgstr ""
 
-#: ../winin.c:411
+#: ../winin.c:407
 msgid "Yes"
 msgstr "はい"
 
-#: ../winin.c:414
+#: ../winin.c:410
 msgid "No"
 msgstr "いいえ"
 
-#: ../winin.c:417
+#: ../winin.c:413
 msgid "All"
 msgstr "全て"
 
-#: ../winin.c:420
+#: ../winin.c:416
 msgid "Backward"
 msgstr "後方検索"
 
-#: ../winin.c:423
+#: ../winin.c:419
 msgid "Forward"
 msgstr "前方検索"
 
-#: ../winin.c:425
+#: ../winin.c:421
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: ../winin.c:427
+#: ../winin.c:423
 msgid "End"
 msgstr ""
 
-#: ../winin.c:430
+#: ../winin.c:426
 msgid "Undo"
 msgstr ""
 
-#: ../winin.c:433
+#: ../winin.c:429
 msgid "Redo"
 msgstr ""
 

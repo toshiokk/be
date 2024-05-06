@@ -96,7 +96,7 @@ void editor_disp_title_bar(void)
 	char buf_time[1+HHCMMCSS_LEN+1];
 
 	buf_idx = get_edit_buf_idx_from_buf(get_cep_buf());
-	path = get_cep_buf()->abs_path;
+	path = get_cep_buf()->file_path;
 
 	tio_set_cursor_on(0);
 
@@ -239,7 +239,7 @@ void disp_edit_win(int cur_pane)
 		sub_win_clear_lines(edit_win_get_path_y(), -1);
 		buf_idx = get_edit_buf_idx_from_buf(get_cep_buf());
 		snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%d%c%s",
-		 buf_idx+1, ':', get_cep_buf()->abs_path);
+		 buf_idx+1, ':', get_cep_buf()->abs_path_);
 		shrink_str(buf_path, sub_win_get_columns(), 2);
 		sub_win_output_string(edit_win_get_path_y(), 0, buf_path, -1);
 	}

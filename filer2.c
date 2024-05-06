@@ -375,7 +375,6 @@ int make_file_list(filer_view_t *fv, const char *filter)
 	fv->cur_sel_idx = MIN_(fv->file_list_entries-1, fv->cur_sel_idx);
 
 make_file_list_ret:;
-_FLF_
 	change_cur_dir(dir_save);
 	return fv->file_list_entries;
 }

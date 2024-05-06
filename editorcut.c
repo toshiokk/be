@@ -75,17 +75,11 @@ int doe_clear_cut_buf(void)
 
 int doe_select_all_lines(void)
 {
-_FLF_
 	doe_first_line();
-_FLF_
 	doe_start_of_line();
-_FLF_
 	do_set_mark();
-_FLF_
 	doe_last_line();
-_FLF_
 	doe_end_of_line();
-_FLF_
 	return 1;
 }
 
@@ -157,15 +151,11 @@ void do_clear_mark_(void)
 
 int doe_copy_text(void)
 {
-/////_FLF_
 	if (copy_delete_paste_pop(CDPP_COPY) <= 0) {
 		return 0;
 	}
-/////_FLF_
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
-/////_FLF_
 	disp_status_bar_done(_("Text Copied to Cut-buffer"));
-/////_FLF_
 	return 1;
 }
 

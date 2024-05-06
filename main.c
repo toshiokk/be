@@ -149,7 +149,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	}
 	if (count_edit_bufs()) {
 #ifdef ENABLE_HISTORY
-		if (goto_last_file_line_col_in_loaded() == 0) {
+		if (goto_last_file_line_col_in_history() == 0) {
 			doe_switch_to_top_file();
 		}
 #endif // ENABLE_HISTORY
@@ -486,7 +486,7 @@ PRIVATE void start_up_test(void)
 
 ///	test_get_intersection();
 	get_mem_free_in_kb(1);
-	test_nn_from_num();
+///	test_nn_from_num();
 ///	test_utf8c_encode();
 	test_utf8c_bytes();
 ///	test_wcwidth();
@@ -547,7 +547,7 @@ void app_die_on(const char *msg)
 		set_cep_buf(buf);
 		if (check_cur_buf_modified()) {
 			// save the file if it's been modified
-			die_save_file(get_cep_buf()->abs_path);
+			die_save_file(get_cep_buf()->file_path);
 		}
 	}
 

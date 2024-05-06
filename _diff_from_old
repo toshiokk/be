@@ -1,3 +1,5 @@
+# extract difference from old source directory
+
 diff_last()
 {
  echo $1 --------------------- >>../be/diff.txt

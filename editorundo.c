@@ -71,7 +71,7 @@ int delete_do_buf(be_buf_t *edit_buf, be_buf_t *buf)
 	int deleted = 0;
 
 	for ( ; IS_NODE_INT(buf); ) {
-		if (strcmp(buf->abs_path, edit_buf->abs_path) == 0) {
+		if (strcmp(buf->abs_path_, edit_buf->abs_path_) == 0) {
 			buf = buf_unlink_free(buf);
 			deleted++;
 		} else {
@@ -286,8 +286,8 @@ PRIVATE be_line_t *delete_region_in_buf(be_buf_t *buf)
 	be_line_t *edit_line;
 	be_line_t *undo_line;
 
-	if (switch_cep_buf_by_abs_path(buf->abs_path) == 0) {
-		progerr_printf("No such buffer: %s\n", buf->abs_path);
+	if (switch_cep_buf_by_file_path(buf->abs_path_) == 0) {
+		progerr_printf("No such buffer: %s\n", buf->abs_path_);
 		return CUR_EDIT_BUF_BOT_LINE;
 	}
 	edit_line = get_line_ptr_from_cur_buf_line_num(BUF_TOP_LINE(buf)->line_num);
@@ -301,8 +301,8 @@ PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 {
 	be_line_t *undo_line;
 
-	if (switch_cep_buf_by_abs_path(buf->abs_path) == 0) {
-		progerr_printf("No such buffer: %s\n", buf->abs_path);
+	if (switch_cep_buf_by_file_path(buf->abs_path_) == 0) {
+		progerr_printf("No such buffer: %s\n", buf->abs_path_);
 		return CUR_EDIT_BUF_BOT_LINE;
 	}
 	for (undo_line = BUF_TOP_LINE(buf); IS_NODE_INT(undo_line);

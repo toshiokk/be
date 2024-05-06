@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-04 23:30+0900\n"
+"POT-Creation-Date: 2024-05-06 14:37+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,20 +26,20 @@ msgstr ""
 msgid "Key code: %04x"
 msgstr ""
 
-#: ../buffers.c:388 ../buffers.c:396
+#: ../buffers.c:389 ../buffers.c:397
 msgid "Calculating CRC..."
 msgstr ""
 
-#: ../buffers.c:595 ../buffers.c:602
+#: ../buffers.c:596 ../buffers.c:603
 msgid "Tab size"
 msgstr ""
 
-#: ../editor.c:124 ../filer.c:258
+#: ../editor.c:124 ../filer.c:257
 #, c-format
 msgid "No command assigned for the key: %04xh"
 msgstr ""
 
-#: ../editor.c:135 ../filer.c:270
+#: ../editor.c:135 ../filer.c:269
 #, c-format
 msgid "Can not execute this function: [%s]"
 msgstr ""
@@ -74,7 +74,7 @@ msgid "One buffer closed"
 msgstr ""
 
 #: ../editor.c:651 ../editor.c:720 ../fileio.c:144 ../fileio.c:149
-#: ../winin.c:99
+#: ../winin.c:95
 msgid "Cancelled"
 msgstr ""
 
@@ -143,48 +143,47 @@ msgstr ""
 msgid "Cut-buffer cleared"
 msgstr ""
 
-#: ../editorcut.c:101
+#: ../editorcut.c:95
 msgid "Cut to line head"
 msgstr ""
 
-#: ../editorcut.c:114
+#: ../editorcut.c:108
 msgid "Cut to line tail"
 msgstr ""
 
-#: ../editorcut.c:134
+#: ../editorcut.c:128
 msgid "Mark Set"
 msgstr ""
 
-#: ../editorcut.c:148
+#: ../editorcut.c:142
 msgid "Mark UNset"
 msgstr ""
 
-#. ///_FLF_
-#: ../editorcut.c:167
+#: ../editorcut.c:158
 msgid "Text Copied to Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:177
+#: ../editorcut.c:167
 msgid "Text Deleted"
 msgstr ""
 
-#: ../editorcut.c:186
+#: ../editorcut.c:176
 msgid "Text Cut to Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:195
+#: ../editorcut.c:185
 msgid "Text Duplicated"
 msgstr ""
 
-#: ../editorcut.c:206
+#: ../editorcut.c:196
 msgid "Text Pasted with popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:216
+#: ../editorcut.c:206
 msgid "Text Pasted without popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:240 ../editorcut.c:270
+#: ../editorcut.c:230 ../editorcut.c:260
 msgid "Cut-buffer empty !!"
 msgstr ""
 
@@ -192,25 +191,24 @@ msgstr ""
 msgid "Enter line number:"
 msgstr ""
 
-#: ../editorgoto.c:210
+#: ../editorgoto.c:204
 msgid "No previous open files"
 msgstr ""
 
-#: ../editorgoto.c:215
+#: ../editorgoto.c:209
 msgid "Previous file"
 msgstr ""
 
-#: ../editorgoto.c:223
+#: ../editorgoto.c:217
 msgid "No next open files"
 msgstr ""
 
-#: ../editorgoto.c:227
+#: ../editorgoto.c:221
 msgid "Next file"
 msgstr ""
 
-#: ../editorgoto.c:280
-#, c-format
-msgid "Returned to %d-th previous pos"
+#: ../editorgoto.c:255
+msgid "Returned to previous pos"
 msgstr ""
 
 #: ../editorlist.c:35
@@ -514,12 +512,12 @@ msgid "File selection cleared"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:786
+#: ../filercmd.c:787
 #, c-format
 msgid "Can not change current to [%s]: %s"
 msgstr ""
 
-#: ../filercmd.c:796
+#: ../filercmd.c:797
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr ""
@@ -865,43 +863,43 @@ msgstr ""
 msgid "Out of memory!"
 msgstr ""
 
-#: ../winin.c:330
+#: ../winin.c:326
 msgid ""
 "UP:history, DOWN:browser, PgUp:insert from history, PgDn:insert from browser"
 msgstr ""
 
-#: ../winin.c:411
+#: ../winin.c:407
 msgid "Yes"
 msgstr ""
 
-#: ../winin.c:414
+#: ../winin.c:410
 msgid "No"
 msgstr ""
 
-#: ../winin.c:417
+#: ../winin.c:413
 msgid "All"
 msgstr ""
 
-#: ../winin.c:420
+#: ../winin.c:416
 msgid "Backward"
 msgstr ""
 
-#: ../winin.c:423
+#: ../winin.c:419
 msgid "Forward"
 msgstr ""
 
-#: ../winin.c:425
+#: ../winin.c:421
 msgid "Cancel"
 msgstr ""
 
-#: ../winin.c:427
+#: ../winin.c:423
 msgid "End"
 msgstr ""
 
-#: ../winin.c:430
+#: ../winin.c:426
 msgid "Undo"
 msgstr ""
 
-#: ../winin.c:433
+#: ../winin.c:429
 msgid "Redo"
 msgstr ""

@@ -46,9 +46,9 @@ int doe_switch_to_next_file(void);
 int doe_switch_to_prev_buffers(void);
 int doe_switch_to_next_buffers(void);
 #endif // APP_REL_LVL
-void memorize_cur_file_pos_and_clear_prev_file_pos_cnt();
+
+void memorize_cur_file_pos_before_search();
 int doe_return_to_prev_file_pos(void);
-int doe_return_to_next_file_pos(void);
 
 int doe_switch_editor_pane(void);
 void doe_switch_editor_pane_(void);
@@ -83,25 +83,24 @@ void test_get_n_th_file_name(void);
 #endif // START_UP_TEST
 
 #ifdef ENABLE_HISTORY
-int goto_last_file_line_col_in_loaded();
+int goto_last_file_line_col_in_history();
 #endif // ENABLE_HISTORY
 
 char *get_memorized_file_pos_buf(char *buffer);
 const char *get_memorized_file_pos_str(const char *str);
 char *memorize_cur_file_pos_null(char *buffer);
-int recall_cur_file_pos_null(const char *str);
+int recall_file_pos_null(const char *str);
 int goto_str_line_col_in_cur_buf(const char *str);
 int goto_line_col_in_cur_buf(int line_num, int col_no);
 
 char *mk_cur_file_pos_str_static(void);
-char *mk_cur_file_pos_str(char *buffer);
+char *mk_cur_file_pos_str_buf(char *buffer);
 char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col_no);
 int get_file_line_col_from_str_null(const char *str, char *file_path,
  int *line_num, int *col_num);
 
 int switch_cep_buf_by_file_name(const char *file_name);
-int switch_cep_buf_extending_file_name_to_path(const char *file_name);
-int switch_cep_buf_by_abs_path(const char *abs_path);
+int switch_cep_buf_by_file_path(const char *abs_path);
 
 int switch_cep_buf_to_top(void);
 int switch_cep_buf_to_bot(void);

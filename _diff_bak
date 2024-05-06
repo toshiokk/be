@@ -1,7 +1,9 @@
+# extract difference with backup files
+
 diff_bak()
 {
-  echo kdiff3 $1 $1~ >>_diff.txt
-  echo meld $1 $1~ >>_diff.txt
+  echo kdiff3 $1~ $1 >>_diff.txt
+  echo meld $1~ $1 >>_diff.txt
   diff $1~ $1 >>_diff.txt
   sdiff-ln 189 $1~ $1 >>_sdiff.txt
 }

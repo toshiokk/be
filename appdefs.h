@@ -57,14 +57,6 @@
 #define DEFAULT_TAB_SIZE		8
 #define MAX_TAB_SIZE			8
 
-#define CURSOR_POS_BYTE		// col_num is byte count
-#if (!defined(CURSOR_POS_BYTE) && !defined(CURSOR_POS_COLUMN)) \
- || (defined(CURSOR_POS_BYTE) && defined(CURSOR_POS_COLUMN))
-#warning "!!!! both of CURSOR_POS_BYTE and CURSOR_POS_COLUMN are defined !!!!"
-#warning " or "
-#warning "!!!! both of CURSOR_POS_BYTE and CURSOR_POS_COLUMN are NOT defined !!!!"
-#endif
-
 // NOTE: how to use single line comment "//", "///", "////" and "/////"
 //   simple comment
 //! "doxygen comment"

@@ -42,7 +42,7 @@ int doe_search_backward_first(void)
 	if (input_search_str(SEARCH0, needle) <= 0) {
 		return -1;
 	}
-	memorize_cur_file_pos_and_clear_prev_file_pos_cnt();
+	memorize_cur_file_pos_before_search();
 	found_in_prev_search = 1;
 	if (search_string_once(needle, 0))
 		return 1;
@@ -57,7 +57,7 @@ int doe_search_forward_first(void)
 	if (input_search_str(SEARCH0, needle) <= 0) {
 		return -1;
 	}
-	memorize_cur_file_pos_and_clear_prev_file_pos_cnt();
+	memorize_cur_file_pos_before_search();
 	found_in_prev_search = 1;
 	if (search_string_once(needle, 0))
 		return 1;
@@ -112,7 +112,7 @@ int doe_replace(void)
 
 	if (ret == ANSWER_END) {
 		// return to original file pos
-		recall_cur_file_pos_null(prev_file_pos);
+		recall_file_pos_null(prev_file_pos);
 	} else {
 		// not return to original file pos
 	}
@@ -792,7 +792,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 		return match_len;
 	}
 	// not found then return to begining position
-	recall_cur_file_pos_null(NULL);
+	recall_file_pos_null(NULL);
 	return match_len;
 }
 

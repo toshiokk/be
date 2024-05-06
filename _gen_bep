@@ -1,4 +1,7 @@
 echo "Generating BE project file __be.bep ..."
+if [ ! -f config.h ]; then
+  ./configure  # generate config.h
+fi
 {
   for file in *.h *.c berc emacs.berc wordstar.berc po/*.po README.md; do
     echo -n "`printf "%-16s  " $file`"

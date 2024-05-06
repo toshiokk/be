@@ -1,3 +1,5 @@
+# extract difference with old source
+
 proc_one()
 {
 OLD_DIR=../old/be

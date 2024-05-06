@@ -717,7 +717,7 @@ PRIVATE int dof_edit_file_(int recursive)
 	} else {
 #ifdef ENABLE_HISTORY
 		if (prev_count_edit_bufs == 0) {
-			goto_last_file_line_col_in_loaded();
+			goto_last_file_line_col_in_history();
 		}
 #endif // ENABLE_HISTORY
 		disp_files_loaded();
@@ -741,9 +741,10 @@ PRIVATE int filer_change_dir_to_cur_sel(void)
 }
 PRIVATE int filer_change_dir_if_not_yet(char *dir)
 {
-	char buf[MAX_PATH_LEN+1];
+	char buf1[MAX_PATH_LEN+1];
+	char buf2[MAX_PATH_LEN+1];
 
-	if (strcmp(get_cur_filer_view()->cur_dir, get_abs_path(dir, buf)) == 0) {
+	if (strcmp(get_abs_path(get_cur_filer_view()->cur_dir, buf1), get_abs_path(dir, buf2)) == 0) {
 		return filer_change_dir_to_prev_dir();
 	} else {
 		return filer_change_dir(dir);

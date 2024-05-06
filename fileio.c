@@ -73,11 +73,11 @@ int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_er
 }
 PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int msg_on_err)
 {
-	struct stat fileinfo;
+	struct stat st;
 	int ret = -1;
 
 	if (is_strlen_not_0(full_path)) {
-		ret = stat(full_path, &fileinfo);
+		ret = stat(full_path, &st);
 	}
 	if (ret < 0) {
 		// New file
@@ -92,17 +92,17 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 		disp_status_bar_ing(_("New File"));
 		return 1;		// new file
 	}
-	if (S_ISREG(fileinfo.st_mode) == 0) {
+	if (S_ISREG(st.st_mode) == 0) {
 		// special file
 		if (msg_on_err) {
-			disp_status_bar_err(S_ISDIR(fileinfo.st_mode)
+			disp_status_bar_err(S_ISDIR(st.st_mode)
 			 ? _("[%s] is a directory") : _("[%s] is a special file"),
 			 shrink_str_to_scr_static(full_path));
 		}
 		return -2;		// open error
 	}
 	// Max. file size loadable is half of free memory.
-	if ((fileinfo.st_size / 1000) >= get_mem_free_in_kb(1) / 2) {
+	if ((st.st_size / 1000) >= get_mem_free_in_kb(1) / 2) {
 		// file size too large
 		if (msg_on_err) {
 			disp_status_bar_err(_("[%s] is too large to read into buffer"),
@@ -113,7 +113,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 	// regular file
 	disp_status_bar_ing(_("Reading File %s ..."), shrink_str_to_scr_static(full_path));
 	create_edit_buf(full_path);
-	memcpy__(&(get_cep_buf()->orig_file_stat), &fileinfo, sizeof(fileinfo));
+	memcpy__(&(get_cep_buf()->orig_file_stat), &st, sizeof(st));
 
 	ret = load_file_into_cur_buf__(full_path, 1, msg_on_err);
 
@@ -130,7 +130,7 @@ int backup_and_save_cur_buf_ask(void)
 	char file_path[MAX_PATH_LEN+1];
 	int ret = 0;
 
-	strlcpy__(file_path, get_cep_buf()->abs_path, MAX_PATH_LEN);
+	strlcpy__(file_path, get_cep_buf()->file_path, MAX_PATH_LEN);
 	if (is_strlen_0(file_path)) {
 		if (input_new_file_name_n_ask(file_path) <= 0) {
 			return -1;
@@ -203,39 +203,39 @@ int input_new_file_name_n_ask(char *file_path)
 
 //-----------------------------------------------------------------------------
 
-int backup_and_save_cur_buf(const char *file_path)
+int backup_and_save_cur_buf(const char *file_path_to)
 {
-	char abs_path[MAX_PATH_LEN+1];
+	////char abs_path[MAX_PATH_LEN+1];
 	int mask = 0;
 	int lines_written;
 
-	get_abs_path(file_path, abs_path);
+	////get_abs_path(file_path, abs_path);
 	// TODO: do minimum check
 	//  file_path is regular file and not dir and special file
-	if (is_path_regular_file(file_path) == 0) {
+	if (is_path_regular_file(file_path_to) == 0) {
 		disp_status_bar_err(_("File [%s] is NOT regular file !!"),
-		 shrink_str_to_scr_static(file_path));
+		 shrink_str_to_scr_static(file_path_to));
 		return -1;
 	}
 	disp_status_bar_ing(_("Writing File %s ..."),
-	 shrink_str_to_scr_static(get_cep_buf()->abs_path));
+	 shrink_str_to_scr_static(file_path_to));
 	if (GET_APPMD(ed_BACKUP_FILES)) {
-		if (backup_files(file_path, get_backup_files()) < 0) {
+		if (backup_files(file_path_to, get_backup_files()) < 0) {
 			return -1;
 		}
 	}
 
-	lines_written = save_cur_buf_to_file(abs_path);
+	lines_written = save_cur_buf_to_file(file_path_to);
 
 	if (S_ISREG(get_cep_buf()->orig_file_stat.st_mode)) {
 		mask = get_cep_buf()->orig_file_stat.st_mode & 07777;
-		if (chmod(abs_path, mask) < 0) {
+		if (chmod(file_path_to, mask) < 0) {
 			disp_status_bar_err(_("Can not set permissions %1$o on [%2$s]: %3$s"),
-			 mask, shrink_str_to_scr_static(abs_path), strerror(errno));
+			 mask, shrink_str_to_scr_static(file_path_to), strerror(errno));
 		}
 	}
 
-	// get current file stat in orig_file_stat
+	// file may be overwritten, get current file stat into orig_file_stat
 	stat(get_cep_buf()->file_path, &(get_cep_buf()->orig_file_stat));
 	update_cur_buf_crc();
 

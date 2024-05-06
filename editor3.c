@@ -252,7 +252,7 @@ const char *te_tab_expand(const char *original)
 #endif // ENABLE_SYNTAX
 	*vis_ptr = '\0';
 	te_visible_code_columns = col_idx + 1;
-flf_d_printf("[%s]\n", te_visible_code_buf);
+///flf_d_printf("[%s]\n", te_visible_code_buf);
 	return te_visible_code_buf;
 }
 const char *te_concat_linefeed(const char *original)

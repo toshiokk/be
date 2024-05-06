@@ -101,9 +101,10 @@ int change_cur_dir_by_file_path(char *file_path);
 char *strip_file_if_path_is_file(char *path, char *dir);
 
 int change_cur_dir_after_save(char *dir_save, const char *dir);
+int change_cur_dir(const char *dir);
 char *get_full_path_of_cur_dir(char *dir);
 char *get_real_path_of_cur_dir(char *dir);
-int change_cur_dir(const char *dir);
+
 int is_dir_readable(const char *path);
 
 char *getcwd__(char *cwd);

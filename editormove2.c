@@ -90,14 +90,14 @@ void locate_curs_y_in_edit_win(locate_cursor_to_t locate_curs)
 			// LOCATE_CURS_CENTER
 			switch (locate_curs) {
 			default:
-			case LOCATE_CURS_JUMP_BACKWARD:	// 2 line upper than center
-				disp_y_preferred = edit_win_get_text_lines() / 2 - 2;
+			case LOCATE_CURS_JUMP_BACKWARD:	// upper one third of the screen
+				disp_y_preferred = edit_win_get_text_lines() * 1 / 3;
 				break;
 			case LOCATE_CURS_JUMP_CENTER:	// center
 				disp_y_preferred = edit_win_get_text_lines() / 2;
 				break;
-			case LOCATE_CURS_JUMP_FORWARD:	// 2 line lower than center
-				disp_y_preferred = edit_win_get_text_lines() / 2 + 2;
+			case LOCATE_CURS_JUMP_FORWARD:	// lower one third of the screen
+				disp_y_preferred = edit_win_get_text_lines() * 2 / 3;
 				break;
 			}
 			disp_y_preferred = MK_IN_RANGE(0, disp_y_preferred, edit_win_get_text_lines());
