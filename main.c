@@ -64,7 +64,7 @@ flf_d_printf("Start %s ===================================\n", APP_NAME " " __DA
 	signal_init();
 	init_locale();
 	_mlc_memorize_count
-	init_buffers();		// parse_options() needs cep_buf. So do here.
+	init_buffers();		// parse_options() needs epc_buf. So do here.
 	_mlc_differ_count
 #ifdef ENABLE_FILER
 	init_filer_panes(&root_filer_panes, get_starting_dir());
@@ -154,7 +154,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 		}
 #endif // ENABLE_HISTORY
 		if (start_line_num > 0) {
-			goto_line_col_in_cur_buf(start_line_num, 1);
+			goto_line_col_in_cur_buf(start_line_num, -1);
 		}
 		disp_files_loaded();
 	}
@@ -544,10 +544,10 @@ void app_die_on(const char *msg)
 
 	// then save all of the modified buffers, if any
 	for (buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
-		set_cep_buf(buf);
+		set_epc_buf(buf);
 		if (check_cur_buf_modified()) {
 			// save the file if it's been modified
-			die_save_file(get_cep_buf()->file_path);
+			die_save_file(get_epc_buf()->file_path);
 		}
 	}
 

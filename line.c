@@ -205,7 +205,7 @@ be_line_t *line_concat_with_prev(be_line_t *line)
 	}
 	//  aaaa
 	// >bbbb
-	line_insert_string(line, 0, NODE_PREV(line)->data, -1);
+	line_string_insert(line, 0, NODE_PREV(line)->data, -1);
 	//  aaaa
 	// >aaaabbbb
 	line_unlink_free(NODE_PREV(line));
@@ -230,7 +230,7 @@ be_line_t *line_concat_with_next(be_line_t *line)
 	}
 	// >aaaa
 	//  bbbb
-	line_insert_string(line, line_data_len(line), NODE_NEXT(line)->data, -1);
+	line_string_insert(line, line_data_len(line), NODE_NEXT(line)->data, -1);
 	// >aaaabbbb
 	//  bbbb
 	line_unlink_free(NODE_NEXT(line));
@@ -238,15 +238,15 @@ be_line_t *line_concat_with_next(be_line_t *line)
 	return line;
 }
 //-----------------------------------------------------------------------------
-be_line_t *line_delete_string(be_line_t *line, int byte_idx, int delete_len)
+be_line_t *line_string_delete(be_line_t *line, int byte_idx, int delete_len)
 {
-	return line_replace_string(line, byte_idx, delete_len, "", 0);
+	return line_string_replace(line, byte_idx, delete_len, "", 0);
 }
-be_line_t *line_insert_string(be_line_t *line, int byte_idx, const char *string, int insert_len)
+be_line_t *line_string_insert(be_line_t *line, int byte_idx, const char *string, int insert_len)
 {
-	return line_replace_string(line, byte_idx, 0, string, insert_len);
+	return line_string_replace(line, byte_idx, 0, string, insert_len);
 }
-be_line_t *line_replace_string(be_line_t *line, int byte_idx, int delete_len,
+be_line_t *line_string_replace(be_line_t *line, int byte_idx, int delete_len,
  const char *string, len_t insert_len)
 {
 	char buffer[MAX_EDIT_LINE_LEN + 1];
@@ -384,7 +384,7 @@ void line_dump_cur(const be_line_t *line, const be_line_t *cur_line)
 }
 void line_dump_byte_idx(const be_line_t *line, int byte_idx)
 {
-	flf_d_printf("%3d: ", line->line_num);	dump_str_w_caret(line->data, byte_idx);
+	flf_d_printf("line-%3d: ", line->line_num);	dump_str_w_caret(line->data, byte_idx);
 }
 #endif // ENABLE_DEBUG
 

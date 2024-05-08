@@ -120,6 +120,7 @@ int dof_tap_file(void)
 int dof_edit_file(void)
 {
 	dof_edit_file_(RECURSIVE1);
+_D_(dump_edit_bufs())
 	return 1;
 }
 int dof_edit_file_non_recursive(void)

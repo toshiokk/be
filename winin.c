@@ -275,9 +275,9 @@ flf_d_printf("ret: %d\n", ret);
 		 || cmp_func_id(func_id, "doe_replace")) {
 			// get string from edit buffer's current cursor position
 			if (count_edit_bufs()) {
-				char *line = CEPBV_CL->data;
+				char *line = EPCBVC_CL->data;
 				int byte_idx = byte_idx_from_byte_idx(line,
-				 CEPBV_CLBI + strlen_path(input_buf));
+				 EPCBVC_CLBI + strlen_path(input_buf));
 				// copy one token (at least copy one character)
 				cursor_byte_idx = 0;
 				for ( ;

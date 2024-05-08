@@ -99,15 +99,15 @@ char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col
 int get_file_line_col_from_str_null(const char *str, char *file_path,
  int *line_num, int *col_num);
 
-int switch_cep_buf_by_file_name(const char *file_name);
-int switch_cep_buf_by_file_path(const char *abs_path);
+int switch_epc_buf_by_file_name(const char *file_name);
+int switch_epc_buf_by_file_path(const char *abs_path);
 
-int switch_cep_buf_to_top(void);
-int switch_cep_buf_to_bot(void);
-int switch_cep_buf_to_next(int beep_at_end, int goto_top);
-int switch_cep_buf_to_prev(int beep_at_end, int goto_bottom);
-int switch_cep_buf_to_valid_buf(void);
-int switch_cep_buf_to_another_buf(void);
+int switch_epc_buf_to_top(void);
+int switch_epc_buf_to_bot(void);
+int switch_epc_buf_to_next(int beep_at_end, int goto_top);
+int switch_epc_buf_to_prev(int beep_at_end, int goto_bottom);
+int switch_epc_buf_to_valid_buf(void);
+int switch_epc_buf_to_another_buf(void);
 
 #endif // editorgoto_h
 

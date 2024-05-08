@@ -128,8 +128,8 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 #ifdef ENABLE_FILER
 	if (GET_APPMD(app_EDITOR_FILER) == 0) {
 #endif // ENABLE_FILER
-		dividend = CEPBV_CL->line_num-1;
-		divisor = get_cep_buf()->buf_lines-1;
+		dividend = EPCBVC_CL->line_num-1;
+		divisor = get_epc_buf()->buf_lines-1;
 #ifdef ENABLE_FILER
 	} else {
 		dividend = get_cur_filer_view()->cur_sel_idx;

@@ -131,7 +131,7 @@ int termif_begin(void)
 	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in getchar()
 	termif_get_screen_size_from_term();
 	termif_attrs = VSCR_CHAR_ATTRS_DEFAULT;
-	////termif_clear_screen();
+	termif_clear_screen();
 	return 0;
 }
 int termif_end(void)
@@ -184,7 +184,7 @@ int termif_get_columns(void)
 void termif_clear_screen(void)
 {
 	send_all_off_to_term();
-	send_printf_to_term("\x1b" "c");
+	/////send_printf_to_term("\x1b" "c");
 	memset((void *)vscreen_to_paint, 0x00, sizeof(vscreen_to_paint));
 	termif_clear_vscreen_painted();
 }

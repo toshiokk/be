@@ -93,6 +93,7 @@ const char *skip_file_path(const char *ptr);
 char *skip_file_name(char *ptr);
 /////const char *skip_separator(const char *ptr);
 const char *skip_one_separator(const char *ptr);
+const char *skip_two_spaces(const char *ptr);
 const char *skip_to_digit(const char *ptr);
 const char *skip_digits(const char *ptr);
 

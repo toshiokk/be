@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-06 20:33+0900\n"
+"POT-Creation-Date: 2024-05-08 23:31+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,7 +73,7 @@ msgstr ""
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editor.c:651 ../editor.c:720 ../fileio.c:144 ../fileio.c:149
+#: ../editor.c:651 ../editor.c:720 ../fileio.c:145 ../fileio.c:150
 #: ../winin.c:95
 msgid "Cancelled"
 msgstr ""
@@ -123,7 +123,7 @@ msgstr ""
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 
-#: ../editor2.c:119 ../fileio.c:92
+#: ../editor2.c:119 ../fileio.c:93
 msgid "New File"
 msgstr ""
 
@@ -259,150 +259,150 @@ msgstr ""
 msgid "Redo-buffer empty !!"
 msgstr ""
 
-#: ../fileio.c:67
+#: ../fileio.c:68
 #, c-format
 msgid "%d line read %s"
 msgstr ""
 
-#: ../fileio.c:68
+#: ../fileio.c:69
 #, c-format
 msgid "%d lines read %s"
 msgstr ""
 
-#: ../fileio.c:69
+#: ../fileio.c:70
 #, c-format
 msgid "%d liness read %s"
 msgstr ""
 
-#: ../fileio.c:70
+#: ../fileio.c:71
 #, c-format
 msgid "%d linesss read %s"
 msgstr ""
 
-#: ../fileio.c:86
+#: ../fileio.c:87
 #, c-format
 msgid "File [%s] not found"
 msgstr ""
 
-#: ../fileio.c:99
+#: ../fileio.c:100
 #, c-format
 msgid "[%s] is a directory"
 msgstr ""
 
-#: ../fileio.c:99
+#: ../fileio.c:100
 #, c-format
 msgid "[%s] is a special file"
 msgstr ""
 
-#: ../fileio.c:108
+#: ../fileio.c:109
 #, c-format
 msgid "[%s] is too large to read into buffer"
 msgstr ""
 
 #. regular file
-#: ../fileio.c:114
+#: ../fileio.c:115
 #, c-format
 msgid "Reading File %s ..."
 msgstr ""
 
-#: ../fileio.c:142
+#: ../fileio.c:143
 msgid "File has modified by another program, OVERWRITE ?"
 msgstr ""
 
-#: ../fileio.c:153
+#: ../fileio.c:154
 #, c-format
 msgid "File [%s] can NOT be written !!"
 msgstr ""
 
-#: ../fileio.c:165
+#: ../fileio.c:166
 msgid "File Name to Write"
 msgstr ""
 
-#: ../fileio.c:183
+#: ../fileio.c:184
 msgid "File exists, OVERWRITE it ?"
 msgstr ""
 
-#: ../fileio.c:192
+#: ../fileio.c:193
 msgid "Path is not file, can not WRITE it"
 msgstr ""
 
-#: ../fileio.c:216
+#: ../fileio.c:217
 #, c-format
 msgid "File [%s] is NOT regular file !!"
 msgstr ""
 
-#: ../fileio.c:220
+#: ../fileio.c:221
 #, c-format
 msgid "Writing File %s ..."
 msgstr ""
 
-#: ../fileio.c:233
+#: ../fileio.c:234
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr ""
 
-#: ../fileio.c:242
+#: ../fileio.c:243
 #, c-format
 msgid "%d line written"
 msgstr ""
 
-#: ../fileio.c:243
+#: ../fileio.c:244
 #, c-format
 msgid "%d lines written"
 msgstr ""
 
-#: ../fileio.c:244
+#: ../fileio.c:245
 #, c-format
 msgid "%d liness written"
 msgstr ""
 
-#: ../fileio.c:245
+#: ../fileio.c:246
 #, c-format
 msgid "%d linesss written"
 msgstr ""
 
-#: ../fileio.c:305
+#: ../fileio.c:306
 #, c-format
 msgid "BINARY file !! [%s]"
 msgstr ""
 
-#: ../fileio.c:421 ../fileio.c:507 ../fileio.c:525 ../fileio.c:542
+#: ../fileio.c:422 ../fileio.c:508 ../fileio.c:526 ../fileio.c:543
 #, c-format
 msgid "Can not read-open file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:695 ../fileio.c:717 ../fileio.c:736
+#: ../fileio.c:696 ../fileio.c:718 ../fileio.c:737
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr ""
 
 #. -1: error
-#: ../fileio.c:703 ../fileio.c:725 ../fileio.c:766
+#: ../fileio.c:704 ../fileio.c:726 ../fileio.c:767
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:755 ../fileio.c:787
+#: ../fileio.c:756 ../fileio.c:788
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:831
+#: ../fileio.c:832
 #, c-format
 msgid "%d file loaded"
 msgstr ""
 
-#: ../fileio.c:832
+#: ../fileio.c:833
 #, c-format
 msgid "%d files loaded"
 msgstr ""
 
-#: ../fileio.c:833
+#: ../fileio.c:834
 #, c-format
 msgid "%d filess loaded"
 msgstr ""
 
-#: ../fileio.c:834
+#: ../fileio.c:835
 #, c-format
 msgid "%d filesss loaded"
 msgstr ""
@@ -415,109 +415,109 @@ msgstr ""
 msgid "File view refreshed"
 msgstr ""
 
-#: ../filercmd.c:147
+#: ../filercmd.c:148
 msgid "Edit new file:"
 msgstr ""
 
-#: ../filercmd.c:198
+#: ../filercmd.c:199
 msgid "Copy to:"
 msgstr ""
 
-#: ../filercmd.c:230
+#: ../filercmd.c:231
 msgid "Copy to (Update):"
 msgstr ""
 
-#: ../filercmd.c:262
+#: ../filercmd.c:263
 msgid "Move to:"
 msgstr ""
 
-#: ../filercmd.c:291
+#: ../filercmd.c:292
 #, c-format
 msgid "Trash file %s ?"
 msgstr ""
 
-#: ../filercmd.c:294
+#: ../filercmd.c:295
 #, c-format
 msgid "Trash %d files ?"
 msgstr ""
 
-#: ../filercmd.c:325
+#: ../filercmd.c:326
 #, c-format
 msgid "Delete file %s ?"
 msgstr ""
 
-#: ../filercmd.c:328
+#: ../filercmd.c:329
 #, c-format
 msgid "Delete %d files ?"
 msgstr ""
 
-#: ../filercmd.c:356
+#: ../filercmd.c:357
 #, c-format
 msgid "Mark file %s to be Deleted later ?"
 msgstr ""
 
-#: ../filercmd.c:359
+#: ../filercmd.c:360
 #, c-format
 msgid "Mark %d files to be Deleted later ?"
 msgstr ""
 
-#: ../filercmd.c:391
+#: ../filercmd.c:392
 #, c-format
 msgid "Make size of file %s 0 ?"
 msgstr ""
 
-#: ../filercmd.c:394
+#: ../filercmd.c:395
 #, c-format
 msgid "Make size of %d files 0 ?"
 msgstr ""
 
-#: ../filercmd.c:428
+#: ../filercmd.c:429
 msgid "Rename to:"
 msgstr ""
 
-#: ../filercmd.c:449
+#: ../filercmd.c:450
 msgid "Find:"
 msgstr ""
 
-#: ../filercmd.c:467
+#: ../filercmd.c:468
 msgid "Mkdir:"
 msgstr ""
 
-#: ../filercmd.c:485
+#: ../filercmd.c:486
 msgid "Chdir to:"
-msgstr ""
-
-#: ../filercmd.c:538 ../filercmd.c:568
-#, c-format
-msgid "%d file selected"
 msgstr ""
 
 #: ../filercmd.c:539 ../filercmd.c:569
 #, c-format
-msgid "%d files selected"
+msgid "%d file selected"
 msgstr ""
 
 #: ../filercmd.c:540 ../filercmd.c:570
 #, c-format
-msgid "%d filess selected"
+msgid "%d files selected"
 msgstr ""
 
 #: ../filercmd.c:541 ../filercmd.c:571
 #, c-format
+msgid "%d filess selected"
+msgstr ""
+
+#: ../filercmd.c:542 ../filercmd.c:572
+#, c-format
 msgid "%d filesss selected"
 msgstr ""
 
-#: ../filercmd.c:552
+#: ../filercmd.c:553
 msgid "File selection cleared"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:787
+#: ../filercmd.c:788
 #, c-format
 msgid "Can not change current to [%s]: %s"
 msgstr ""
 
-#: ../filercmd.c:797
+#: ../filercmd.c:798
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr ""

@@ -29,8 +29,8 @@ int doe_switch_to_file_list(void)
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 	char buf[MAX_PATH_LEN+1];
 
-	prev_cur_edit_buf = get_cep_buf();
-	set_cep_buf(EDIT_BUFS_TOP_ANCH);
+	prev_cur_edit_buf = get_epc_buf();
+	set_epc_buf(EDIT_BUFS_TOP_ANCH);
 	buf_free_lines(EDIT_BUFS_TOP_ANCH);
 	buf_set_file_abs_path(EDIT_BUFS_TOP_ANCH, _("#List of Files currently loaded"));
 	for (edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
@@ -46,9 +46,9 @@ int doe_switch_to_file_list(void)
 	}
 	append_magic_line();
 	if (line_to_go) {
-		CEPBV_CL = line_to_go;
+		EPCBVC_CL = line_to_go;
 	} else {
-		CEPBV_CL = CUR_EDIT_BUF_TOP_LINE;
+		EPCBVC_CL = CUR_EDIT_BUF_TOP_LINE;
 	}
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
 
@@ -99,8 +99,8 @@ int make_help_buf_call_editor(int help_idx)
 	make_help_buf(HELP_BUF_IDX_KEY_LIST);
 	make_help_buf(HELP_BUF_IDX_FUNC_LIST);
 
-	be_buf_t *edit_buf_save = get_cep_buf();
-	set_cep_buf(get_help_buf(help_idx));
+	be_buf_t *edit_buf_save = get_epc_buf();
+	set_epc_buf(get_help_buf(help_idx));
 
 	switch (help_idx) {
 	default:
@@ -114,13 +114,13 @@ int make_help_buf_call_editor(int help_idx)
 
 	int ret = call_editor(1, 1);
 
-	set_cep_buf(edit_buf_save);
+	set_epc_buf(edit_buf_save);
 	return ret;
 }
 void make_help_buf(int help_idx)
 {
 	be_buf_t *buf = get_help_buf(help_idx);
-	set_cep_buf(buf);
+	set_epc_buf(buf);
 	buf_free_lines(buf);
 	switch (help_idx) {
 	default:
@@ -132,10 +132,10 @@ void make_help_buf(int help_idx)
 		break;
 	}
 	append_magic_line();
-	CEPBV_CL = CUR_EDIT_BUF_TOP_LINE;
+	EPCBVC_CL = CUR_EDIT_BUF_TOP_LINE;
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
 	// renumber
-	post_cmd_processing(CEPBV_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(EPCBVC_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 
 void make_help_key_list(void)

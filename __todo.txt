@@ -1,12 +1,15 @@
 #### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible)
 
+[h ] BUG: crash on editor pane-2
+[m ] How to link with static libraries
+[l ] differnciate "buffer saved" and "buffer checked"
+
 [v] BUG: open one file twice in different path(full_path/abs_path)
 [v] make capable to back scroll screen after executing shell command
 
 [v] treat symlink path as is and not in real-path
 [v] sort symlinks to the next of directories in file list
 
-[] differnciate "buffer saved" and "buffer checked"
 [v] delete "Save unmodified file ??"
 
 [v] show file path on the title bar as long as possible

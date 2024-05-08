@@ -550,7 +550,7 @@ int readlink__(const char *path, char *buffer, int len)
 // TODO: FULL_PATH can be converted to ABS_PATH
 //       but ABS_PATH can not be converted to FULL_PATH
 //       so you may keep FULL_PATH as long as possible, not replacing with ABS_PATH
-// TODO: switch_cep_buf...() shall compare file path in FULL_PATH first and then comare in ABS_PATH
+// TODO: switch_epc_buf...() shall compare file path in FULL_PATH first and then comare in ABS_PATH
 // TODO: memorize_file_pos() shall memorize file path as it is in FULL_PATH not in ABS_PATH
 //       recall_file_pos() shall open file path as it is
 //       goto_file_pos() shall open file path as it is

@@ -213,7 +213,7 @@ int search_string_once(const char *needle, int search_count)
 	int match_len;
 
 	if (found_in_prev_search == 0 && direction_of_prev_search == SEARCH_DIR()
-	 && line_of_prev_search == CEPBV_CL && byte_idx_of_prev_search == CEPBV_CLBI
+	 && line_of_prev_search == EPCBVC_CL && byte_idx_of_prev_search == EPCBVC_CLBI
 	 && strcmp(last_searched_needle, needle) == 0) {
 		disp_status_bar_not_found_msg(needle);
 		return 0;
@@ -245,8 +245,8 @@ int search_string_once(const char *needle, int search_count)
 
 	found_in_prev_search = match_len;
 	direction_of_prev_search = SEARCH_DIR();
-	line_of_prev_search = CEPBV_CL;
-	byte_idx_of_prev_search = CEPBV_CLBI;
+	line_of_prev_search = EPCBVC_CL;
+	byte_idx_of_prev_search = EPCBVC_CLBI;
 	return match_len;
 }
 
@@ -334,7 +334,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 #ifdef ENABLE_DEBUG
 				memorize_undo_state_before_change();
 #endif // ENABLE_DEBUG
-				undo_set_region_n_save_before_change(CEPBV_CL, CEPBV_CL, 1);
+				undo_set_region_n_save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
 #endif // ENABLE_UNDO
 				// ----------------------------------------------------------------------
 				length_change = replace_str_in_buffer(&search__, &matches__, replace_to);
@@ -349,13 +349,13 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 				// text, so searching will resume after the replacement text. */
 				if (GET_APPMD(ed_REVERSE_SEARCH) == 0) {
 					// forward search
-					CEPBV_CLBI += matches_match_len(&matches__) + length_change;
-					skip_here = NO_SKIP_HERE;	// CEPBV_CLBI already forwarded to skip word
+					EPCBVC_CLBI += matches_match_len(&matches__) + length_change;
+					skip_here = NO_SKIP_HERE;	// EPCBVC_CLBI already forwarded to skip word
 				} else {
 					// backward search
 					skip_here = SKIP_HERE;		// skip
 				}
-				get_cep_buf()->buf_size += length_change;
+				get_epc_buf()->buf_size += length_change;
 				set_cur_buf_modified();
 				num_replaced++;
 			}
@@ -392,8 +392,8 @@ int replace_str_in_buffer(search_t *search, matches_t *matches, const char *repl
 	char before[MAX_EDIT_LINE_LEN+1];
 	char after[MAX_EDIT_LINE_LEN+1];
 
-	strlcpy__(before, CEPBV_CL->data, MAX_EDIT_LINE_LEN);
-	strlcpy__(after, CEPBV_CL->data, MAX_EDIT_LINE_LEN);
+	strlcpy__(before, EPCBVC_CL->data, MAX_EDIT_LINE_LEN);
+	strlcpy__(after, EPCBVC_CL->data, MAX_EDIT_LINE_LEN);
 	// replace in buffer
 #ifdef ENABLE_REGEX
 	if (GET_APPMD(ed_USE_REGEXP) == 0) {
@@ -407,7 +407,7 @@ int replace_str_in_buffer(search_t *search, matches_t *matches, const char *repl
 		 after, MAX_EDIT_LINE_LEN, replace_to);
 	}
 #endif // ENABLE_REGEX
-	line_set_string(CEPBV_CL, after);		// replace whole of the line
+	line_set_string(EPCBVC_CL, after);		// replace whole of the line
 	return strlen(after) - strlen(before);
 }
 
@@ -467,7 +467,7 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair)
 	int skip_here;
 	int safe_cnt = 0;
 
-	char_under_cursor = *CEPBV_CL_CEPBV_CLBI;
+	char_under_cursor = *EPCBVC_CL_EPCBVC_CLBI;
 	search_dir = setup_bracket_search(char_under_cursor, reverse_pair, needle);
 	if (search_dir == 0) {
 		disp_status_bar_done(_("Not a bracket"));
@@ -479,8 +479,8 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair)
 	set_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);
 	blank_status_bar();
 
-	line = CEPBV_CL;
-	byte_idx = CEPBV_CLBI;
+	line = EPCBVC_CL;
+	byte_idx = EPCBVC_CLBI;
 
 	memorize_cursor_pos_before_move();
 
@@ -512,8 +512,8 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair)
 	if (depth == 0) {
 		// found peer bracket
 		if (search1_hilight0) {
-			CEPBV_CL = line;
-			CEPBV_CLBI = byte_idx;
+			EPCBVC_CL = line;
+			EPCBVC_CLBI = byte_idx;
 		}
 		if (search_dir < 0) {
 			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_BACKWARD, UPDATE_SCRN_ALL);
@@ -692,7 +692,7 @@ PRIVATE int search_needle_in_buffers(
 
 	disp_status_bar_ing(_("Searching word: [%s]..."), needle);
 
-	match_len = search_needle_in_buffer(&(CEPBV_CL), &(CEPBV_CLBI),
+	match_len = search_needle_in_buffer(&(EPCBVC_CL), &(EPCBVC_CLBI),
 	 needle, search_dir, ignore_case, skip_here, INTER_BUFFER_SEARCH);
 
 	if (match_len > 0) {
@@ -706,7 +706,7 @@ PRIVATE int search_needle_in_buffers(
 
 // search keyword in buffer (when global_search is false) or buffers (when true).
 // when keyword not found, return to original cursor position.
-// WARNING: When "global_search" is true, cep_buf may be changed.
+// WARNING: When "global_search" is true, epc_buf may be changed.
 PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
  const char *needle, int search_dir, int ignore_case, int skip_here, int global_search)
 {
@@ -732,11 +732,11 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 				} else if (IS_NODE_TOP(line) == 0) {
 					line = NODE_PREV(line);
 					byte_idx = line_data_len(line);
-				} else if (global_search && switch_cep_buf_to_prev(0, 0)) {
+				} else if (global_search && switch_epc_buf_to_prev(0, 0)) {
 					// update local pointers after switching buffer
 					// but not update pointers in buffer
-					ptr_line = &(CEPBV_CL);
-					ptr_byte_idx = &(CEPBV_CLBI);
+					ptr_line = &(EPCBVC_CL);
+					ptr_byte_idx = &(EPCBVC_CLBI);
 					line = CUR_EDIT_BUF_BOT_LINE;
 					byte_idx = line_data_len(line);
 				} else {
@@ -763,11 +763,11 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 				} else if (IS_NODE_BOT(line) == 0) {
 					line = NODE_NEXT(line);
 					byte_idx = 0;
-				} else if (global_search && switch_cep_buf_to_next(0, 0)) {
+				} else if (global_search && switch_epc_buf_to_next(0, 0)) {
 					// update local pointers after switching buffer
 					// but not update pointers in buffer
-					ptr_line = &(CEPBV_CL);
-					ptr_byte_idx = &(CEPBV_CLBI);
+					ptr_line = &(EPCBVC_CL);
+					ptr_byte_idx = &(EPCBVC_CLBI);
 					line = CUR_EDIT_BUF_TOP_LINE;
 					byte_idx = 0;
 				} else {

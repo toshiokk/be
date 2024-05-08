@@ -40,7 +40,7 @@ void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_
 	case CURS_POSITIONING_BOTTOM:	locate_cursor = LOCATE_CURS_BOTTOM;		break;
 	}
 	if (renum_from) {
-		buf_renumber_from_line(get_cep_buf(), renum_from);
+		buf_renumber_from_line(get_epc_buf(), renum_from);
 	}
 	adjust_curs_pos_after_cursor_move(cursor_move);
 	setup_cut_region_after_cursor_move(cursor_move);
@@ -73,7 +73,7 @@ void locate_curs_y_in_edit_win(locate_cursor_to_t locate_curs)
 	switch (locate_curs) {
 	default:
 	case LOCATE_CURS_NONE:
-		disp_y_preferred = CEPBV_CURSOR_Y;
+		disp_y_preferred = EPCBVC_CURSOR_Y;
 		break;
 	case LOCATE_CURS_JUMP_BACKWARD:	// locate cursor keeping screen if possible.
 	case LOCATE_CURS_JUMP_CENTER:	// locate cursor keeping screen if possible.
@@ -113,7 +113,7 @@ void locate_curs_y_in_edit_win(locate_cursor_to_t locate_curs)
 		disp_y_preferred = edit_win_get_text_lines() - 1;
 		break;
 	}
-	CEPBV_CURSOR_Y = disp_y_preferred;
+	EPCBVC_CURSOR_Y = disp_y_preferred;
 	fix_cursor_y_keeping_vert_scroll_margin();
 }
 
@@ -137,27 +137,27 @@ void fix_cursor_y_keeping_vert_scroll_margin(void)
 	// keep top/bottom scroll margin
 	disp_y_preferred = MIN_MAX_(
 	 TOP_SCROLL_MARGIN_Y,
-	 CEPBV_CURSOR_Y,
+	 EPCBVC_CURSOR_Y,
 	 BOTTOM_SCROLL_MARGIN_Y);
 
-	line = CEPBV_CL;
-	byte_idx = CEPBV_CLBI;
+	line = EPCBVC_CL;
+	byte_idx = EPCBVC_CLBI;
 	for (lines_go_up = 0; lines_go_up < disp_y_preferred; lines_go_up++) {
 		if (c_l_up(&line, &byte_idx) == 0) {
 			break;
 		}
 	}
-	CEPBV_CURSOR_Y = lines_go_up;
+	EPCBVC_CURSOR_Y = lines_go_up;
 }
 
-PRIVATE be_line_t *prev_cur_line = NULL;	// Previous CEPBV_CL
-PRIVATE int prev_cur_line_byte_idx = 0;		// Previous CEPBV_CLBI
+PRIVATE be_line_t *prev_cur_line = NULL;	// Previous EPCBVC_CL
+PRIVATE int prev_cur_line_byte_idx = 0;		// Previous EPCBVC_CLBI
 PRIVATE int prev_cursor_y = 0;				// Previous cursor_y
 void memorize_cursor_pos_before_move(void)
 {
-	prev_cur_line = CEPBV_CL;
-	prev_cur_line_byte_idx = CEPBV_CLBI;
-	prev_cursor_y = CEPBV_CURSOR_Y;
+	prev_cur_line = EPCBVC_CL;
+	prev_cur_line_byte_idx = EPCBVC_CLBI;
+	prev_cursor_y = EPCBVC_CURSOR_Y;
 }
 int get_disp_y_after_cursor_move(void)
 {
@@ -167,14 +167,14 @@ int get_disp_y_after_cursor_move(void)
 	int wl_idx;
 	int yy;
 
-	cur_wl_idx = start_wl_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1);
+	cur_wl_idx = start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
 
 	// check if cur_line is in [0, prev_cursor_y]
 	line = prev_cur_line;
 	byte_idx = prev_cur_line_byte_idx;
 	for (yy = prev_cursor_y; yy >= 0; yy--) {
 		wl_idx = start_wl_idx_of_wrap_line(line->data, byte_idx, -1);
-		if (line == CEPBV_CL && wl_idx == cur_wl_idx) {
+		if (line == EPCBVC_CL && wl_idx == cur_wl_idx) {
 			// found in screen
 			return yy;
 		}
@@ -188,7 +188,7 @@ int get_disp_y_after_cursor_move(void)
 	byte_idx = prev_cur_line_byte_idx;
 	for (yy = prev_cursor_y; yy < edit_win_get_text_lines(); yy++) {
 		wl_idx = start_wl_idx_of_wrap_line(line->data, byte_idx, -1);
-		if (line == CEPBV_CL && wl_idx == cur_wl_idx) {
+		if (line == EPCBVC_CL && wl_idx == cur_wl_idx) {
 			// found in screen
 			return yy;	// current line is in previous screen
 		}
@@ -202,7 +202,7 @@ int get_disp_y_after_cursor_move(void)
 
 int get_cur_screen_top(be_line_t **line, int *byte_idx)
 {
-	return get_screen_top(CEPBV_CL, CEPBV_CLBI, CEPBV_CURSOR_Y, line, byte_idx);
+	return get_screen_top(EPCBVC_CL, EPCBVC_CLBI, EPCBVC_CURSOR_Y, line, byte_idx);
 }
 // go backward to screen top and return line and byte_idx
 int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *byte_idx)
@@ -245,13 +245,13 @@ void adjust_curs_pos_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 
 	if (is_disabled_update_min_text_x_to_keep() == 0) {
 		if (cursor_move == CURS_MOVE_HORIZ) {
-			CEPBV_CURSOR_X_TO_KEEP = start_col_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1);
-			update_min_text_x_to_keep(CEPBV_CURSOR_X_TO_KEEP);
+			EPCBVC_CURSOR_X_TO_KEEP = start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
+			update_min_text_x_to_keep(EPCBVC_CURSOR_X_TO_KEEP);
 		} else {
-			wl_idx = start_wl_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1);
-			CEPBV_CLBI = end_byte_idx_of_wrap_line_le(CEPBV_CL->data, wl_idx,
-			 CEPBV_CURSOR_X_TO_KEEP, -1);
-			cursor_x_in_text = start_col_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1);
+			wl_idx = start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
+			EPCBVC_CLBI = end_byte_idx_of_wrap_line_le(EPCBVC_CL->data, wl_idx,
+			 EPCBVC_CURSOR_X_TO_KEEP, -1);
+			cursor_x_in_text = start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
 			update_min_text_x_to_keep(cursor_x_in_text);
 		}
 	}
@@ -274,19 +274,19 @@ PRIVATE int recalc_min_text_x_to_keep(int disp_width, int text_width, int margin
 void update_min_text_x_to_keep(int text_x)
 {
 	int min_text_x_to_keep = calc_min_text_x_to_keep(text_x);
-	if (min_text_x_to_keep != CEPBV_MIN_TEXT_X_TO_KEEP) {
-		CEPBV_MIN_TEXT_X_TO_KEEP = min_text_x_to_keep;
+	if (min_text_x_to_keep != EPCBVC_MIN_TEXT_X_TO_KEEP) {
+		EPCBVC_MIN_TEXT_X_TO_KEEP = min_text_x_to_keep;
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
 	}
 }
 PRIVATE int calc_min_text_x_to_keep()
 {
-	te_concat_linefeed(CEPBV_CL->data);
+	te_concat_linefeed(EPCBVC_CL->data);
 	return recalc_min_text_x_to_keep(get_edit_win_columns_for_text(),
 	 end_col_idx_of_wrap_line(te_concat_linefeed_buf, 0, INT_MAX, -1),
 	 HORIZ_SCROLL_MARGIN,
-	 start_col_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1),
-	 CEPBV_MIN_TEXT_X_TO_KEEP);
+	 start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1),
+	 EPCBVC_MIN_TEXT_X_TO_KEEP);
 }
 
 // Calculate the column number of the first character displayed left most

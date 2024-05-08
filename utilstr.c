@@ -545,6 +545,14 @@ const char *skip_one_separator(const char *ptr)
 	}
 	return ptr;
 }
+const char *skip_two_spaces(const char *ptr)
+{
+	if (IS_SPACE(ptr))
+		ptr++;
+	if (IS_SPACE(ptr))
+		ptr++;
+	return ptr;
+}
 const char *skip_to_digit(const char *ptr)
 {
 	for ( ; *ptr && isdigit(*ptr) == 0; ) {

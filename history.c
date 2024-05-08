@@ -144,9 +144,9 @@ void update_history(int hist_type_idx, const char *str, BOOL force_update)
 	be_line_t *line;
 
 	if ((force_update == FALSE) && (hist_type_idx == HISTORY_TYPE_IDX_CURSPOS)) {
-		if (check_file_pos_recorded_in_history(hist_type_idx, str)) {
-			return; // registered relatively newer, no need of update
-		}
+///PPP		if (check_file_pos_recorded_in_history(hist_type_idx, str)) {
+///PPP			return; // registered relatively newer, no need of update
+///PPP		}
 	} else {
 		if (is_the_last_line(hist_type_idx, str) != NULL) {
 			// str is registered in the last line, no need update
@@ -480,22 +480,22 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 	load_histories();
 	renumber_all_bufs_from_top(&history_buffers);
 
-	be_buf_t *edit_buf_save = get_cep_buf();
-	set_cep_buf(get_history_buf(hist_type_idx));
+	be_buf_t *edit_buf_save = get_epc_buf();
+	set_epc_buf(get_history_buf(hist_type_idx));
 
-	CEPBV_CL = CUR_EDIT_BUF_BOT_LINE;
+	EPCBVC_CL = CUR_EDIT_BUF_BOT_LINE;
 	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
 	 UPDATE_SCRN_ALL_SOON);
 
 	int ret = call_editor(1, 1);
 
 	if (ret > 0) {
-		strlcpy__(buffer, CEPBV_CL->data, MAX_EDIT_LINE_LEN);
+		strlcpy__(buffer, EPCBVC_CL->data, MAX_EDIT_LINE_LEN);
 	} else {
 		strcpy__(buffer, "");
 	}
 
-	set_cep_buf(edit_buf_save);
+	set_epc_buf(edit_buf_save);
 
 	return ret; // 1: selected, 0: done in editor, -1: cancelled
 }

@@ -95,8 +95,8 @@ void editor_disp_title_bar(void)
 #endif // SHOW_MEM_FREE
 	char buf_time[1+HHCMMCSS_LEN+1];
 
-	buf_idx = get_edit_buf_idx_from_buf(get_cep_buf());
-	path = get_cep_buf()->file_path;
+	buf_idx = get_edit_buf_idx_from_buf(get_epc_buf());
+	path = get_epc_buf()->file_path;
 
 	tio_set_cursor_on(0);
 
@@ -121,14 +121,14 @@ void editor_disp_title_bar(void)
 		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[Mod] "));
 	} else if (CUR_EBUF_STATE(buf_VIEW_MODE)) {
 		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[VM] "));
-	} else if (is_st_writable(&get_cep_buf()->orig_file_stat) == 0) {
+	} else if (is_st_writable(&get_epc_buf()->orig_file_stat) == 0) {
 		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[WP] "));
 	}
 
 	//-------------------------------------------------------------------------
 	// edit buffer cut mode
-	if (BUF_STATE(get_cep_buf(), buf_CUT_MODE) != CUT_MODE_0_LINE) {
-		strcat_printf(buf_bufs, MAX_SCRN_LINE_BUF_LEN, " %s", buf_cut_mode_str(get_cep_buf()));
+	if (BUF_STATE(get_epc_buf(), buf_CUT_MODE) != CUT_MODE_0_LINE) {
+		strcat_printf(buf_bufs, MAX_SCRN_LINE_BUF_LEN, " %s", buf_cut_mode_str(get_epc_buf()));
 	}
 	// edit buffers
 	edit_bufs = count_edit_bufs();
@@ -180,7 +180,7 @@ void editor_disp_title_bar(void)
 }
 PRIVATE void blink_editor_title_bar()
 {
-	set_title_bar_color_by_state(BUF_STATE(get_cep_buf(), buf_CUT_MODE),
+	set_title_bar_color_by_state(BUF_STATE(get_epc_buf(), buf_CUT_MODE),
 	 CUR_EBUF_STATE(buf_MODIFIED), get_title_bar_inversion());
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0, editor_title_bar_buf, -1);
 }
@@ -237,9 +237,9 @@ void disp_edit_win(int cur_pane)
 		// file path per pane
 		set_color_by_idx(ITEM_COLOR_IDX_TITLE, cur_pane);
 		sub_win_clear_lines(edit_win_get_path_y(), -1);
-		buf_idx = get_edit_buf_idx_from_buf(get_cep_buf());
+		buf_idx = get_edit_buf_idx_from_buf(get_epc_buf());
 		snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%d%c%s",
-		 buf_idx+1, ':', get_cep_buf()->file_path);
+		 buf_idx+1, ':', get_epc_buf()->file_path);
 		shrink_str(buf_path, sub_win_get_columns(), 2);
 		sub_win_output_string(edit_win_get_path_y(), 0, buf_path, -1);
 	}
@@ -256,8 +256,8 @@ void disp_edit_win(int cur_pane)
 			byte_idx_1 = start_byte_idx_of_wrap_line(te_concat_linefeed_buf, wl_idx, 0, -1);
 			byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_concat_linefeed_buf, wl_idx,
 			 INT_MAX, -1);
-			disp_edit_line(cur_pane, yy, get_cep_buf(), line, byte_idx_1, byte_idx_2);
-			if (yy == CEPBV_CURSOR_Y) {
+			disp_edit_line(cur_pane, yy, get_epc_buf(), line, byte_idx_1, byte_idx_2);
+			if (yy == EPCBVC_CURSOR_Y) {
 				cursor_line_right_text_x = end_col_idx_of_wrap_line(
 				 te_concat_linefeed_buf, wl_idx, byte_idx_2, -1);
 			}
@@ -294,20 +294,20 @@ void disp_edit_win(int cur_pane)
 			// display buffer total lines ("999 ")
 			set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 			sub_win_output_string(edit_win_get_ruler_y(), 0,
-			 get_line_num_string(get_cep_buf(), CUR_EDIT_BUF_BOT_LINE, buf_line_num),
+			 get_line_num_string(get_epc_buf(), CUR_EDIT_BUF_BOT_LINE, buf_line_num),
 			 edit_win_text_x);
 		}
 		// display ruler("1---5----10---15---20---25---30---35---40---45---50---55---60---65")
-		const char *ruler = get_ruler_text(CEPBV_MIN_TEXT_X_TO_KEEP);
+		const char *ruler = get_ruler_text(EPCBVC_MIN_TEXT_X_TO_KEEP);
 		set_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 0);
 		sub_win_output_string(edit_win_get_ruler_y(), edit_win_text_x, ruler, -1);
 		// display cursor column indicator in reverse text on ruler
 		set_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 1);
 		sub_win_output_string(edit_win_get_ruler_y(), get_edit_win_x_for_cursor_x(),
-		 &ruler[get_cursor_text_x() - CEPBV_MIN_TEXT_X_TO_KEEP], 1);
+		 &ruler[get_cursor_text_x() - EPCBVC_MIN_TEXT_X_TO_KEEP], 1);
 		// display line tail column indicator in reverse text on ruler
 		if (cursor_line_right_text_x >= 0) {
-			int view_x = cursor_line_right_text_x-1 - CEPBV_MIN_TEXT_X_TO_KEEP;
+			int view_x = cursor_line_right_text_x-1 - EPCBVC_MIN_TEXT_X_TO_KEEP;
 			if (view_x < get_edit_win_columns_for_text()) {
 				sub_win_output_string(edit_win_get_ruler_y(), get_edit_win_x_for_view_x(view_x),
 				 &ruler[view_x], 1);
@@ -336,7 +336,7 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 ///flf_d_printf("%d, [%d, %d]\n", yy, byte_idx_1, byte_idx_2);
 ///flf_d_printf("[%s]\n", te_concat_linefeed_buf);
 	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
-	if (line == CEPBV_CL) {
+	if (line == EPCBVC_CL) {
 		// highlight current line by painting background
 		set_color_by_idx(ITEM_COLOR_IDX_CURSOR_LINE, 0);
 	}
@@ -352,7 +352,7 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 	}
 
 	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
-	if (line == CEPBV_CL) {
+	if (line == EPCBVC_CL) {
 		set_color_by_idx(ITEM_COLOR_IDX_CURSOR_LINE, 0);
 	}
 	// display text simply =====================================================
@@ -461,14 +461,14 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 #endif // HL_SEARCH_OTHER
 	if (cur_pane) {
 #ifdef HL_SEARCH_CURSOR
-		if ((search_is_needle_set(&search__) == 1) && (line == CEPBV_CL)) {
+		if ((search_is_needle_set(&search__) == 1) && (line == EPCBVC_CL)) {
 			// display matched text at cursor pos ===========================================
 			if (search_str_in_line(&search__, &matches, NULL,
-			 FORWARD_SEARCH, CASE_SENSITIVE, line->data, CEPBV_CLBI)) {
+			 FORWARD_SEARCH, CASE_SENSITIVE, line->data, EPCBVC_CLBI)) {
 				// found
-				if (matches_start_idx(&matches) == CEPBV_CLBI) {
+				if (matches_start_idx(&matches) == EPCBVC_CLBI) {
 					if (get_intersection(byte_idx_1, byte_idx_2,
-					 CEPBV_CLBI, CEPBV_CLBI + matches_match_len(&matches),
+					 EPCBVC_CLBI, EPCBVC_CLBI + matches_match_len(&matches),
 					 &left_byte_idx, &right_byte_idx) > 0) {
 						set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, 0);
 						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
@@ -480,8 +480,8 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 		// draw cursor myself ===========================================================
 		if (GET_APPMD(app_DRAW_CURSOR)) {
 			set_color_by_idx(ITEM_COLOR_IDX_CURSOR_CHAR, 1);
-			vis_idx = vis_idx_from_byte_idx(CEPBV_CL->data, CEPBV_CLBI);
-			output_edit_line_text(CEPBV_CURSOR_Y, te_visible_code_buf,
+			vis_idx = vis_idx_from_byte_idx(EPCBVC_CL->data, EPCBVC_CLBI);
+			output_edit_line_text(EPCBVC_CURSOR_Y, te_visible_code_buf,
 			 vis_idx, vis_idx+utf8c_bytes(&te_visible_code_buf[vis_idx]));
 		}
 	}
@@ -648,7 +648,7 @@ PRIVATE void disp_edit_win_bracket_hl()
 	int display_direction;
 
 	prepare_colors_for_bracket_hl();
-	char_under_cursor = *CEPBV_CL_CEPBV_CLBI;
+	char_under_cursor = *EPCBVC_CL_EPCBVC_CLBI;
 
 	display_direction = setup_bracket_search(char_under_cursor, search__.direction, needle);
 
@@ -680,11 +680,11 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 	if (display_dir < 0) {
 #ifdef HL_BRACKET_BW
 		// draw backward [0, yy] from cursor pos
-		match_line = CEPBV_CL;
-		match_byte_idx = CEPBV_CLBI;
-		line = CEPBV_CL;
-		byte_idx = CEPBV_CLBI;
-		yy = CEPBV_CURSOR_Y;
+		match_line = EPCBVC_CL;
+		match_byte_idx = EPCBVC_CLBI;
+		line = EPCBVC_CL;
+		byte_idx = EPCBVC_CLBI;
+		yy = EPCBVC_CURSOR_Y;
 		skip_here = 0;
 		for (depth = 0, safe_cnt = 0;
 		 ((-MAX_BRACKET_NESTINGS < depth) && (depth < MAX_BRACKET_NESTINGS))
@@ -729,11 +729,11 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 	} else {
 #ifdef HL_BRACKET_FW
 		// draw forward [yy, edit_win_get_text_lines()-1] from cursor pos
-		match_line = CEPBV_CL;
-		match_byte_idx = CEPBV_CLBI;
-		line = CEPBV_CL;
-		byte_idx = CEPBV_CLBI;
-		yy = CEPBV_CURSOR_Y;
+		match_line = EPCBVC_CL;
+		match_byte_idx = EPCBVC_CLBI;
+		line = EPCBVC_CL;
+		byte_idx = EPCBVC_CLBI;
+		yy = EPCBVC_CURSOR_Y;
 		skip_here = 0;
 		for (depth = 0, safe_cnt = 0;
 		 ((-MAX_BRACKET_NESTINGS < depth) && (depth < MAX_BRACKET_NESTINGS))
@@ -801,7 +801,7 @@ PRIVATE int output_edit_line_num(int yy, const be_buf_t *buf, const be_line_t *l
 	if (GET_APPMD(ed_SHOW_LINE_NUMBER) == 0) {
 		return 0;
 	}
-	if (line == CEPBV_CL) {
+	if (line == EPCBVC_CL) {
 		set_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 1);
 	} else {
 		set_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 0);
@@ -814,7 +814,7 @@ PRIVATE int output_edit_line_num(int yy, const be_buf_t *buf, const be_line_t *l
 // Set cursor at (cursor_y, cur_line_byte_idx).
 void set_edit_cursor_pos(void)
 {
-	sub_win_set_cursor_pos(edit_win_get_text_y() + CEPBV_CURSOR_Y, get_edit_win_x_for_cursor_x());
+	sub_win_set_cursor_pos(edit_win_get_text_y() + EPCBVC_CURSOR_Y, get_edit_win_x_for_cursor_x());
 }
 
 PRIVATE int output_edit_line_text(int yy, const char *raw_code, int byte_idx_1, int byte_idx_2)
@@ -836,7 +836,7 @@ PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
 	wl_idx = start_wl_idx_of_wrap_line(raw_code, byte_idx_1, -1);
 	left_x = start_col_idx_of_wrap_line(raw_code, byte_idx_1, -1);
 	right_x = end_col_idx_of_wrap_line(raw_code, wl_idx, byte_idx_2, -1);
-	left_x = LIM_MIN(left_x, CEPBV_MIN_TEXT_X_TO_KEEP);
+	left_x = LIM_MIN(left_x, EPCBVC_MIN_TEXT_X_TO_KEEP);
 	right_x = LIM_MAX(right_x, get_max_text_x_to_keep());
 	left_byte_idx = end_byte_idx_of_wrap_line_ge(raw_code, wl_idx, left_x, -1);
 	right_byte_idx = end_byte_idx_of_wrap_line_le(raw_code, wl_idx, right_x, -1);
@@ -861,15 +861,15 @@ PRIVATE int get_edit_win_x_for_cursor_x(void)
 }
 PRIVATE int get_cursor_text_x(void)
 {
-	return start_col_idx_of_wrap_line(CEPBV_CL->data, CEPBV_CLBI, -1);
+	return start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
 }
 PRIVATE int get_max_text_x_to_keep(void)
 {
-	return CEPBV_MIN_TEXT_X_TO_KEEP + get_edit_win_columns_for_text();
+	return EPCBVC_MIN_TEXT_X_TO_KEEP + get_edit_win_columns_for_text();
 }
 PRIVATE int get_edit_win_x_for_text_x(int text_x)
 {
-	return get_edit_win_x_for_view_x(text_x - CEPBV_MIN_TEXT_X_TO_KEEP);
+	return get_edit_win_x_for_view_x(text_x - EPCBVC_MIN_TEXT_X_TO_KEEP);
 }
 PRIVATE int get_edit_win_x_for_view_x(int view_x)
 {
@@ -889,7 +889,7 @@ PRIVATE int get_cur_buf_line_num_columns(void)
 	// ^text-to-edit
 	 ? 0
 	// 999 ^text-to-edit
-	 : get_buf_line_num_columns(get_cep_buf());
+	 : get_buf_line_num_columns(get_epc_buf());
 }
 
 // End of editor2.c

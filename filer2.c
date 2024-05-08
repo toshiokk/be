@@ -89,9 +89,9 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	st_ptr = &file_info->st;
 	lst_ptr = &file_info->lst;
 	is_link = S_ISLNK(lst_ptr->st_mode);
-	if (is_link)
+	if (is_link) {
 		is_link_broken = (memcmp(st_ptr, lst_ptr, sizeof(*st_ptr)) == 0);
-
+	}
 	strcpy__(buf_name, "");
 	if (show_link && is_link) {
 		strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, file_info->file_name);

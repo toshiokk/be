@@ -155,9 +155,9 @@ be_line_t *line_link(be_line_t *prev, be_line_t *next);
 be_line_t *line_unlink_free(be_line_t *line);
 be_line_t *line_unlink(be_line_t *line);
 
-be_line_t *line_delete_string(be_line_t *line, int byte_idx, int delete_len);
-be_line_t *line_insert_string(be_line_t *line, int byte_idx, const char *string, int insert_len);
-be_line_t *line_replace_string(be_line_t *line, int byte_idx, int delete_len,
+be_line_t *line_string_delete(be_line_t *line, int byte_idx, int delete_len);
+be_line_t *line_string_insert(be_line_t *line, int byte_idx, const char *string, int insert_len);
+be_line_t *line_string_replace(be_line_t *line, int byte_idx, int delete_len,
  const char *string, len_t insert_len);
 
 be_line_t *line_separate(be_line_t *line, int byte_idx, insert_before_after_t before_after);

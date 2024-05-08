@@ -346,7 +346,7 @@ int doe_write_file_to(void)
 {
 	char file_path[MAX_PATH_LEN+1];
 
-	strlcpy__(file_path, get_cep_buf()->file_path, MAX_PATH_LEN);
+	strlcpy__(file_path, get_epc_buf()->file_path, MAX_PATH_LEN);
 	while (1) {
 		if (input_new_file_name_n_ask(file_path) <= 0) {
 			return -1;
@@ -356,10 +356,10 @@ int doe_write_file_to(void)
 			continue;
 #endif // ENABLE_FILER
 		char org_file_path[MAX_PATH_LEN+1];
-		buf_get_file_path(get_cep_buf(), org_file_path);
-		buf_set_file_abs_path(get_cep_buf(), file_path);	// set new file name
+		buf_get_file_path(get_epc_buf(), org_file_path);
+		buf_set_file_abs_path(get_epc_buf(), file_path);	// set new file name
 		if (backup_and_save_cur_buf(file_path) < 0) {
-			buf_set_file_abs_path(get_cep_buf(), org_file_path);
+			buf_set_file_abs_path(get_epc_buf(), org_file_path);
 			return -1;
 		}
 		break;
@@ -544,9 +544,9 @@ int doe_run_line_soon(void)
 {
 	char buffer[MAX_PATH_LEN+1];
 
-	// CEPBV_CL->data may be in history buffer and freed in calling update_history().
+	// EPCBVC_CL->data may be in history buffer and freed in calling update_history().
 	// So copy to local buffer.
-	strlcpy__(buffer, CEPBV_CL->data, MAX_PATH_LEN);
+	strlcpy__(buffer, EPCBVC_CL->data, MAX_PATH_LEN);
 
 	fork_exec_once_sh_c(SEPARATE1, PAUSE1, buffer);
 
@@ -644,14 +644,14 @@ int doe_editor_menu_9(void)
 //-----------------------------------------------------------------------------
 int write_all_ask(int yes_no, close_after_save_t close)
 {
-	switch_cep_buf_to_top();
-	while (is_cep_buf_valid()) {
+	switch_epc_buf_to_top();
+	while (is_epc_buf_valid()) {
 		int ret = write_file_ask(yes_no, close);
 		if (ret <= ANSWER_CANCEL) {
 			disp_status_bar_done(_("Cancelled"));
 			return -1;
 		}
-		if (switch_cep_buf_to_next(0, 0) == 0)
+		if (switch_epc_buf_to_next(0, 0) == 0)
 			break;
 	}
 	disp_status_bar_done(_("All buffers are checked(saved if modified)"));
@@ -660,10 +660,10 @@ int write_all_ask(int yes_no, close_after_save_t close)
 int close_all_not_modified(void)
 {
 	disp_status_bar_ing(_("Freeing buffers..."));
-	switch_cep_buf_to_top();
-	while (is_cep_buf_valid()) {
+	switch_epc_buf_to_top();
+	while (is_epc_buf_valid()) {
 		if (check_cur_buf_modified()) {
-			if (switch_cep_buf_to_next(0, 0) == 0)
+			if (switch_epc_buf_to_next(0, 0) == 0)
 				break;
 		} else {
 			free_cur_edit_buf();
@@ -675,7 +675,7 @@ int close_all_not_modified(void)
 int close_all(void)
 {
 	disp_status_bar_ing(_("Freeing all buffers..."));
-	switch_cep_buf_to_top();
+	switch_epc_buf_to_top();
 	while (free_cur_edit_buf()) {
 		// loop
 		tio_refresh();
@@ -694,7 +694,7 @@ int write_file_ask(int yes_no, close_after_save_t close)
 {
 	int ret = yes_no;
 
-	switch_cep_buf_to_valid_buf();
+	switch_epc_buf_to_valid_buf();
 
 	/////if (yes_no < ANSWER_FORCE && check_cur_buf_modified() == 0) {
 	if (check_cur_buf_modified() == 0) {
@@ -782,7 +782,7 @@ int update_screen_editor(int title_bar, int status_bar, int refresh)
 	int cur_pane_idx;		// pane index
 	int pane_idx;			// pane index
 
-	CEPBV_CURSOR_Y = MIN(edit_win_get_text_lines()-1, CEPBV_CURSOR_Y);
+	EPCBVC_CURSOR_Y = MIN(edit_win_get_text_lines()-1, EPCBVC_CURSOR_Y);
 ////mflf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 	// title bar
 	if (title_bar) {
@@ -847,21 +847,21 @@ int disp_status_bar_editor(void)
 	char buf_lines_sel[SEL_LINES_LEN] = "";
 	char buffer[MAX_EDIT_LINE_LEN+1];
 
-	xx = col_idx_from_byte_idx(CEPBV_CL->data, 0, CEPBV_CLBI) + 1;
-	disp_len = col_idx_from_byte_idx(CEPBV_CL->data, 0, MAX_EDIT_LINE_LEN) + 1;
+	xx = col_idx_from_byte_idx(EPCBVC_CL->data, 0, EPCBVC_CLBI) + 1;
+	disp_len = col_idx_from_byte_idx(EPCBVC_CL->data, 0, MAX_EDIT_LINE_LEN) + 1;
 
 	strcpy__(buf_char_code, "");
-	bytes = utf8c_bytes(&CEPBV_CL->data[CEPBV_CLBI]);
+	bytes = utf8c_bytes(&EPCBVC_CL->data[EPCBVC_CLBI]);
 	for (byte_idx = 0; byte_idx < bytes; byte_idx++) {
 		snprintf(&buf_char_code[strnlen(buf_char_code, UTF8_CODE_LEN)], 3+1,
 		 byte_idx == 0 ? "%02x" : "-%02x",
-		 (unsigned char)CEPBV_CL->data[CEPBV_CLBI + byte_idx]);
+		 (unsigned char)EPCBVC_CL->data[EPCBVC_CLBI + byte_idx]);
 	}
 #ifdef ENABLE_UTF8
 	// show Unicode
 	if (bytes >= 2) {
 		snprintf(&buf_char_code[strnlen(buf_char_code, UTF8_CODE_LEN)], 8+1, "(U+%04x)",
-		 (unsigned int)utf8c_decode(&CEPBV_CL->data[CEPBV_CLBI]));
+		 (unsigned int)utf8c_decode(&EPCBVC_CL->data[EPCBVC_CLBI]));
 	}
 #endif // ENABLE_UTF8
 
@@ -873,9 +873,9 @@ int disp_status_bar_editor(void)
 	strlcat__(buffer, MAX_EDIT_LINE_LEN,
 	 _("LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"));
 	disp_status_bar_percent_editor(
-	 buffer, CEPBV_CL->line_num, get_cep_buf()->buf_lines, xx, disp_len,
-	 get_cep_buf()->buf_size, buf_lines_sel, buf_char_code,
-	 buf_encode_str(get_cep_buf()), buf_eol_str(get_cep_buf()));
+	 buffer, EPCBVC_CL->line_num, get_epc_buf()->buf_lines, xx, disp_len,
+	 get_epc_buf()->buf_size, buf_lines_sel, buf_char_code,
+	 buf_encode_str(get_epc_buf()), buf_eol_str(get_epc_buf()));
 	return 1;
 }
 
@@ -926,7 +926,7 @@ int is_view_mode_then_warn_it(void)
 		disp_status_bar_done(_("Modification not allowed in LIST mode"));
 		return 1;
 	}
-	if (IS_NODE_ANCH(get_cep_buf())) {
+	if (IS_NODE_ANCH(get_epc_buf())) {
 		disp_status_bar_done(_("Modification not allowed in Anchor buffer"));
 		return 1;
 	}
@@ -941,12 +941,12 @@ int is_view_mode_then_warn_it(void)
 #ifdef ENABLE_DEBUG
 void dump_cur_pointers(void)
 {
-	flf_d_printf("cep_buf:[%s]\n", get_cep_buf()->file_path);
-	flf_d_printf("%d:[%s]\n", CEPBV_CL->line_num, CEPBV_CL->data);
-	flf_d_printf("CEPBV_CLBI:%d\n", CEPBV_CLBI);
-	flf_d_printf("cursor_y:%d\n", CEPBV_CURSOR_Y);
-	flf_d_printf("cursor_x_to_keep:%d\n", CEPBV_CURSOR_X_TO_KEEP);
-	flf_d_printf("min_text_x_to_keep:%d\n", CEPBV_MIN_TEXT_X_TO_KEEP);
+	flf_d_printf("epc_buf:[%s]\n", get_epc_buf()->file_path);
+	flf_d_printf("%d:[%s]\n", EPCBVC_CL->line_num, EPCBVC_CL->data);
+	flf_d_printf("EPCBVC_CLBI:%d\n", EPCBVC_CLBI);
+	flf_d_printf("cursor_y:%d\n", EPCBVC_CURSOR_Y);
+	flf_d_printf("cursor_x_to_keep:%d\n", EPCBVC_CURSOR_X_TO_KEEP);
+	flf_d_printf("min_text_x_to_keep:%d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 }
 #endif // ENABLE_DEBUG
 

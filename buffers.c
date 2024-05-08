@@ -102,7 +102,7 @@ void init_edit_bufs(void)
 // the next or previous buffer will be set to current
 int free_cur_edit_buf(void)
 {
-	return free_edit_buf(get_cep_buf());
+	return free_edit_buf(get_epc_buf());
 }
 int free_edit_buf(be_buf_t *edit_buf)
 {
@@ -114,9 +114,9 @@ int free_edit_buf(be_buf_t *edit_buf)
 #ifdef ENABLE_HISTORY
 	update_history(HISTORY_TYPE_IDX_CURSPOS, mk_cur_file_pos_str_static(), 0);
 #endif // ENABLE_HISTORY
-	if (edit_buf == get_cep_buf()) {
+	if (edit_buf == get_epc_buf()) {
 		// select other buffer
-		ret = switch_cep_buf_to_another_buf();
+		ret = switch_epc_buf_to_another_buf();
 	}
 #ifdef ENABLE_UNDO
 	// free undo/redo buffers related to this edit_buf
@@ -146,10 +146,10 @@ void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr)
 //-----------------------------------------------------------------------------
 void line_avoid_wild_ptr_cur(be_line_t *line)
 {
-	// avoid EPBVX_CL(0) becoming wild-pointer
-	line_avoid_wild_ptr(&EPBVX_CL(0), line);
-	// avoid EPBVX_CL(1) becoming wild-pointer
-	line_avoid_wild_ptr(&EPBVX_CL(1), line);
+	// avoid EPXBVX_CL(0) becoming wild-pointer
+	line_avoid_wild_ptr(&EPXBVX_CL(0), line);
+	// avoid EPXBVX_CL(1) becoming wild-pointer
+	line_avoid_wild_ptr(&EPXBVX_CL(1), line);
 }
 void line_avoid_wild_ptr(be_line_t **line_ptr, be_line_t *line)
 {
@@ -169,40 +169,36 @@ void init_editor_panes()
 	int pane_idx;
 
 	for (pane_idx = 0; pane_idx < EDITOR_PANES; pane_idx++) {
-		set_editor_pane_n_buf(pane_idx, EDIT_BUFS_TOP_ANCH);
+		set_epx_buf(pane_idx, EDIT_BUFS_TOP_ANCH);
 	}
 	set_editor_cur_pane_idx(0);
 }
 
 void set_editor_cur_pane_idx(int pane_idx)
 {
-	set_editor_pane_n_buf(pane_idx, NULL);
+	set_epx_buf(pane_idx, NULL);
 }
 int get_editor_cur_pane_idx(void)
 {
 	return editor_panes.cur_pane_idx;
 }
 
-void set_cep_buf(be_buf_t *buf)	// set edit buffer to current pane
+void set_epc_buf(be_buf_t *buf)	// set edit buffer to current pane
 {
-	set_editor_pane_n_buf(-1, buf);
+	set_epx_buf(-1, buf);
 }
 // be_buf_t *get_cur_editor_pane_buf(void)
-be_buf_t *get_cep_buf(void)
+be_buf_t *get_epc_buf(void)
 {
-	return get_editor_pane_buf(-1);
-}
-be_buf_t **get_cep_buf_ptr(void)
-{
-	return get_editor_pane_buf_ptr(-1);
+	return get_epx_buf(-1);
 }
 // be_buf_view_t *get_cur_editor_pane_view(void)
-be_buf_view_t *get_cep_buf_view(void)
+be_buf_view_t *get_epc_buf_view(void)
 {
-	return &(get_cep_buf()->buf_views[get_editor_cur_pane_idx()]);
+	return &(get_epc_buf()->buf_views[get_editor_cur_pane_idx()]);
 }
 
-void set_editor_pane_n_buf(int pane_idx, be_buf_t *buf)
+void set_epx_buf(int pane_idx, be_buf_t *buf)
 {
 	if (pane_idx < 0) {
 		pane_idx = editor_panes.cur_pane_idx;
@@ -219,43 +215,47 @@ void set_editor_pane_n_buf(int pane_idx, be_buf_t *buf)
 #endif // ENABLE_SYNTAX
 	update_tab_size();
 }
-be_buf_t *get_editor_pane_buf(int pane_idx)
+be_buf_t *get_epx_buf(int pane_idx)
 {
 	if (pane_idx < 0) {
 		pane_idx = editor_panes.cur_pane_idx;
 	}
 	return editor_panes.bufs[pane_idx];
 }
-be_buf_t **get_editor_pane_buf_ptr(int pane_idx)
-{
-	if (pane_idx < 0) {
-		pane_idx = editor_panes.cur_pane_idx;
-	}
-	return &(editor_panes.bufs[pane_idx]);
-}
 
 #ifdef ENABLE_DEBUG
 void dump_editor_panes(void)
 {
-	flf_d_printf("editor_panes.cur_pane_idx: %d ===========================\n",
+	flf_d_printf("editor_panes.cur_pane_idx: %d {{{{{\n",
 	 editor_panes.cur_pane_idx);
 	flf_d_printf("pane_idx-0 ---------------------------------------------\n");
-	buf_dump_state(editor_panes.bufs[0]);
-	flf_d_printf("get_cep_buf(): %p, &(get_cep_buf()->buf_views[0]): %p\n",
-	 get_cep_buf(), &(get_cep_buf()->buf_views[0]));
-	line_dump_byte_idx(EPBVX_CL(0), EPBVX_CLBI(0));
-	flf_d_printf(
-	 "EPBVX_CURSOR_Y(0): %d, EPBVX_CURSOR_X_TO_KEEP(0): %d, EPBVX_MIN_TEXT_X_TO_KEEP(0): %d\n",
-	 EPBVX_CURSOR_Y(0), EPBVX_CURSOR_X_TO_KEEP(0), EPBVX_MIN_TEXT_X_TO_KEEP(0));
+	dump_editor_pane_x(0);
 	flf_d_printf("pane_idx-1 ---------------------------------------------\n");
-	buf_dump_state(editor_panes.bufs[1]);
-	flf_d_printf("get_cep_buf(): %p, &(get_cep_buf()->buf_views[1]): %p\n",
-	 get_cep_buf(), &(get_cep_buf()->buf_views[1]));
-	line_dump_byte_idx(EPBVX_CL(1), EPBVX_CLBI(1));
+	dump_editor_pane_x(1);
+	flf_d_printf("}}}}}\n");
+}
+void dump_editor_pane_x(int pane_idx)
+{
+	flf_d_printf("get_epc_buf(): %p, &(get_epc_buf()->buf_views[pane_idx]): %p\n",
+	 get_epc_buf(), &(get_epc_buf()->buf_views[pane_idx]));
+	dump_buf_view_x(editor_panes.bufs[pane_idx], pane_idx);
+}
+void dump_buf_views(be_buf_t *buf)
+{
+	dump_buf_view_x(buf, 0);
+	dump_buf_view_x(buf, 1);
+}
+void dump_buf_view_x(be_buf_t *buf, int pane_idx)
+{
+	flf_d_printf("pane_idx: %d ------------------\n", pane_idx);
+	buf_dump_state(buf);
+	line_dump_byte_idx(BUFVX_CL(buf, pane_idx), BUFVX_CLBI(buf, pane_idx));
 	flf_d_printf(
-	 "EPBVX_CURSOR_Y(1): %d, EPBVX_CURSOR_X_TO_KEEP(1): %d, EPBVX_MIN_TEXT_X_TO_KEEP(1): %d\n",
-	 EPBVX_CURSOR_Y(1), EPBVX_CURSOR_X_TO_KEEP(1), EPBVX_MIN_TEXT_X_TO_KEEP(1));
-	flf_d_printf("========================================================\n");
+	 "BUFVX_CURSOR_Y(buf, pane_idx): %d, BUFVX_CURSOR_X_TO_KEEP(buf, pane_idx): %d, BUFVX_MIN_TEXT_X_TO_KEEP(buf, pane_idx): %d\n",
+	 BUFVX_CURSOR_Y(buf, pane_idx), BUFVX_CURSOR_X_TO_KEEP(buf, pane_idx), BUFVX_MIN_TEXT_X_TO_KEEP(buf, pane_idx));
+	if (buf_check_line_in_buf(buf, BUFVX_CL(buf, pane_idx)) == NULL) {
+		warning_printf("pane[%d].cur_line is not in cur_buf!!!!\n", pane_idx);
+	}
 }
 #endif // ENABLE_DEBUG
 
@@ -282,7 +282,7 @@ void create_edit_buf(const char *full_path)
 
 	buf = buf_create_node(full_path);
 	buf_insert_before(EDIT_BUFS_BOT_ANCH, buf);
-	set_cep_buf(buf);
+	set_epc_buf(buf);
 	if (IS_NODE_INT(editor_panes.bufs[0]) == 0) {
 		// make view-0 buffer valid
 		editor_panes.bufs[0] = buf;
@@ -298,16 +298,16 @@ void create_edit_buf(const char *full_path)
 // Append a new line to the bottom of the current buffer
 be_line_t *append_string_to_cur_edit_buf(const char *string)
 {
-	EPBVX_CL(0) = EPBVX_CL(1) = line_insert_with_string(CUR_EDIT_BUF_BOT_ANCH, INSERT_BEFORE,
+	EPXBVX_CL(0) = EPXBVX_CL(1) = line_insert_with_string(CUR_EDIT_BUF_BOT_ANCH, INSERT_BEFORE,
 	 string);
-	EPBVX_CLBI(0) = EPBVX_CLBI(1) = 0;
-	return CEPBV_CL;
+	EPXBVX_CLBI(0) = EPXBVX_CLBI(1) = 0;
+	return EPCBVC_CL;
 }
 
 // Append a new magic-line to the bottom of the current buffer
 void append_magic_line(void)
 {
-	int lines = buf_count_lines(get_cep_buf());
+	int lines = buf_count_lines(get_epc_buf());
 	if ((lines == 0)
 	 || (lines && line_data_len(CUR_EDIT_BUF_BOT_LINE))) {
 		append_string_to_cur_edit_buf("");
@@ -319,9 +319,9 @@ int count_edit_bufs(void)
 	return buf_count_bufs(&edit_buffers);
 }
 
-int is_cep_buf_valid(void)
+int is_epc_buf_valid(void)
 {
-	return IS_NODE_INT(get_cep_buf());
+	return IS_NODE_INT(get_epc_buf());
 }
 
 // Cut-buffers manipulation routines -----------------------------------------
@@ -374,12 +374,12 @@ int count_cur_cut_buf_lines(void)
 
 void renumber_cur_buf_from_top(void)
 {
-	buf_renumber_from_line(get_cep_buf(), CUR_EDIT_BUF_TOP_LINE);
+	buf_renumber_from_line(get_epc_buf(), CUR_EDIT_BUF_TOP_LINE);
 }
 
 be_line_t *get_line_ptr_from_cur_buf_line_num(int line_num)
 {
-	return buf_get_line_ptr_from_line_num(get_cep_buf(), line_num);
+	return buf_get_line_ptr_from_line_num(get_epc_buf(), line_num);
 }
 
 //-----------------------------------------------------------------------------
@@ -387,7 +387,7 @@ be_line_t *get_line_ptr_from_cur_buf_line_num(int line_num)
 void update_cur_buf_crc(void)
 {
 	disp_status_bar_ing(_("Calculating CRC..."));
-	buf_update_crc(get_cep_buf());
+	buf_update_crc(get_epc_buf());
 }
 int check_cur_buf_modified(void)
 {
@@ -395,7 +395,7 @@ int check_cur_buf_modified(void)
 
 	if (CUR_EBUF_STATE(buf_MODIFIED)) {
 		disp_status_bar_ing(_("Calculating CRC..."));
-		modified = buf_check_crc(get_cep_buf());
+		modified = buf_check_crc(get_epc_buf());
 		if (modified == 0) {
 			// clear "modified" flag if it's actually not modified
 			SET_CUR_EBUF_STATE(buf_MODIFIED, 0);
@@ -492,7 +492,7 @@ int set_eol(int eol)
 }
 const char *get_str_eol(void)
 {
-	return buf_eol_str(get_cep_buf());
+	return buf_eol_str(get_epc_buf());
 }
 
 #ifdef USE_NKF
@@ -558,7 +558,7 @@ int set_encode(int encode)
 }
 const char *get_str_encode(void)
 {
-	return buf_encode_str(get_cep_buf());
+	return buf_encode_str(get_epc_buf());
 }
 #endif // USE_NKF
 
@@ -586,7 +586,7 @@ int doe_tog_line_wrap_mode(void)
 	tog_line_wrap_mode();
 	SHOW_MODE("Line-wrap mode", get_str_line_wrap_mode());
 
-	CEPBV_MIN_TEXT_X_TO_KEEP = 0;
+	EPCBVC_MIN_TEXT_X_TO_KEEP = 0;
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
@@ -667,7 +667,7 @@ int doe_set_encode_binary(void)
 #ifdef ENABLE_DEBUG
 void dump_cur_edit_buf_lines(void)
 {
-	buf_dump_lines(get_cep_buf(), 3);
+	buf_dump_lines(get_epc_buf(), 3);
 }
 void dump_edit_bufs(void)
 {
@@ -698,11 +698,11 @@ flf_d_printf("CUR_EDIT_BUF_BOT_LINE:%08lx\n", CUR_EDIT_BUF_BOT_LINE);
 	if (CUR_EDIT_BUF_BOT_LINE) {
 		flf_d_printf("CUR_EDIT_BUF_BOT_LINE->data:%08lx\n", CUR_EDIT_BUF_BOT_LINE->data);
 	}
-flf_d_printf("cur_line:%08lx\n", CEPBV_CL);
-	if (CEPBV_CL) {
-		flf_d_printf("cur_line->data:%08lx\n", CEPBV_CL->data);
+flf_d_printf("cur_line:%08lx\n", EPCBVC_CL);
+	if (EPCBVC_CL) {
+		flf_d_printf("cur_line->data:%08lx\n", EPCBVC_CL->data);
 	}
-	line_dump_lines(CUR_EDIT_BUF_TOP_ANCH, INT_MAX, CEPBV_CL);
+	line_dump_lines(CUR_EDIT_BUF_TOP_ANCH, INT_MAX, EPCBVC_CL);
 flf_d_printf(">>>>>>>>>>>>>>>>>>>\n");
 }
 #endif // ENABLE_DEBUG

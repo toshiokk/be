@@ -157,7 +157,7 @@ int set_file_type_by_cur_file_path(void)
 {
 	int ret;
 
-	if ((ret = set_file_type_by_file_name(get_cep_buf()->file_path)) != 0) {
+	if ((ret = set_file_type_by_file_name(get_epc_buf()->file_path)) != 0) {
 		CUR_EBUF_STATE(buf_TAB_SIZE) = cur_file_type->tab_size;
 	}
 	return ret;
