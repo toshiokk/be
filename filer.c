@@ -25,7 +25,7 @@
 
 filer_panes_t *cur_filer_panes;		// Current Filer Panes
 
-PRIVATE char filer_cur_path[MAX_PATH_LEN+1];	// /directory/filter.*
+PRIVATE char filer_cur_path[MAX_PATH_LEN+1];	// /cur/directory
 filer_do_next_t filer_do_next = FILER_DO_NOTHING;
 
 PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir);
@@ -193,7 +193,8 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 
 	while (1) {
 		check_filer_cur_dir();
-		cat_dir_and_file(filer_cur_path, get_cur_filer_view()->cur_dir, filter);
+		strcpy(filer_cur_path, get_cur_filer_view()->cur_dir);
+		/////cat_dir_and_file(filer_cur_path, get_cur_filer_view()->cur_dir, filter);
 #ifdef ENABLE_HISTORY
 		if (strcmp(prev_cur_dir, get_cur_filer_view()->cur_dir) != 0) {
 			update_history(HISTORY_TYPE_IDX_DIR, get_cur_filer_view()->cur_dir, 0);
@@ -461,10 +462,10 @@ PRIVATE void filer_disp_title_bar(const char *path,
 		}
 	}
 #endif // ENABLE_DEBUG
-	if ((get_win_depth() == 0) && (msec_past_input_key() < 1000)) {
-		snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%s%s:%d%c%s",
-		 root_notation(), get_at_host_name(),
-		 get_filer_cur_pane_idx()+1, separator_char, path);
+	if ((get_win_depth() == 0) && (strcmp(path, get_home_dir()) == 0)) {
+		snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%s%d%c  [%s]  %s",
+		 root_notation(),
+		 get_filer_cur_pane_idx()+1, separator_char, get_at_host_name(), path);
 	} else {
 		snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%s%d%c%s",
 		 root_notation(),

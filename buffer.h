@@ -191,13 +191,13 @@ void renumber_all_bufs_from_top(be_bufs_t *bufs);
 //-----------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
+be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_);
+be_line_t *buf_check_line_in_buf_anchs(be_buf_t *buf, be_line_t *line_);
 void buf_dump_bufs(be_buf_t *buf);
 void buf_dump_bufs_lines(be_buf_t *buf, const char *label);
 void buf_dump_lines(be_buf_t *buf, int lines);
 void buf_dump_ptrs(be_buf_t *buf);
 void buf_dump_state(be_buf_t *buf);
-be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_);
-be_line_t *buf_check_line_in_buf_anchs(be_buf_t *buf, be_line_t *line_);
 
 void bufs_dump_all_bufs(be_bufs_t *buf);
 #endif // ENABLE_DEBUG

@@ -1176,9 +1176,10 @@ winout.o: winout.c headers.h stdincs.h config.h utilincs.h debug.h \
 # Include the output of "gcc -MM *.c"
 
 #man_MANS = be.1 berc.5
-#be_LDADD = @GLIB_LIBS@ @LIBINTL@
-#be_LDADD = -Wl,-Bstatic
-#LDADD = -Wl,-Bstatic
+###be_LDADD = @GLIB_LIBS@ @LIBINTL@
+###be_LDADD = -Wl,-Bstatic
+
+#be_LDFLAGS = -Wl,-Bdynamic,-lc -Wl,-Bstatic
 
 #info_TEXINFOS = be.texi
 #MAKEINFO = makeinfo --no-split

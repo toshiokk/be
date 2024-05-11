@@ -326,29 +326,19 @@ char *get_home_dir(void)
 {
 	char *env_home;
 	const struct passwd *userdata = 0;
-	static char buffer[MAX_PATH_LEN+1];
+	static char home_dir[MAX_PATH_LEN+1] = "";
 
-	if (strlen(env_home = getenv__("HOME"))) {
-		strlcpy__(buffer, env_home, MAX_PATH_LEN);
-		return buffer;
+	if (strlen_path(home_dir) == 0) {
+		if (strlen(env_home = getenv__("HOME"))) {
+			strlcpy__(home_dir, env_home, MAX_PATH_LEN);
+		} else if ((userdata = getpwuid(geteuid())) != NULL) {
+			strlcpy__(home_dir, userdata->pw_dir, MAX_PATH_LEN);
+		} else {
+			strcpy__(home_dir, "/");
+		}
 	}
-	if ((userdata = getpwuid(geteuid())) != NULL) {
-		strlcpy__(buffer, userdata->pw_dir, MAX_PATH_LEN);
-		return buffer;
-	}
-	strcpy__(buffer, "/");
-	return buffer;
+	return home_dir;
 }
-
-//------------------------------------------------------------------------------
-// comparison of change current dir functions
-// | func                                     |save before change|may change to parent|
-// |------------------------------------------|------------------|--------------------|
-// | change_cur_dir_by_file_path_after_save   | Yes              | Yes                |
-// | change_cur_dir_by_file_path              | No               | Yes                |
-// | change_cur_dir_after_save                | Yes              | No                 |
-// | change_cur_dir                           | No               | No                 |
-
 
 const char *get_starting_dir(void)
 {
@@ -362,6 +352,16 @@ const char *get_starting_dir(void)
 flf_d_printf("starting_dir: [%s]\n", starting_dir);
 	return starting_dir;
 }
+
+//------------------------------------------------------------------------------
+// comparison of change current dir functions
+// | func                                     |save before change|may change to parent|
+// |------------------------------------------|------------------|--------------------|
+// | change_cur_dir_by_file_path_after_save   | Yes              | Yes                |
+// | change_cur_dir_by_file_path              | No               | Yes                |
+// | change_cur_dir_after_save                | Yes              | No                 |
+// | change_cur_dir                           | No               | No                 |
+
 int change_cur_dir_by_file_path_after_save(char *dir_save, char *file_path)
 {
 	char dir[MAX_PATH_LEN+1];

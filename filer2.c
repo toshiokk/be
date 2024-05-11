@@ -64,7 +64,7 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	int is_link;
 	int is_link_broken = 0;
 	struct tm *tm_ptr;
-	char buf_name[MAX_PATH_LEN*MAX_UTF8C_BYTES+1];		// for UTF8 file name
+	char buf_name[MAX_PATH_LEN+1];
 	loff_t size;
 	char buf_size[20+1];
 	char buf_time[20+1];
@@ -94,32 +94,36 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	}
 	strcpy__(buf_name, "");
 	if (show_link && is_link) {
-		strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, file_info->file_name);
-		if (S_ISDIR(lst_ptr->st_mode)) {
-			strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, "/");
-		} else if (lst_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) {
-			// Symlink's 'x' bits are usually set.
-			// strlcat__(buf_name, "*", MAX_PATH_LEN*MAX_UTF8C_BYTES);
-		}
-#define LINK_ARROW		" ->"
+		strlcat__(buf_name, MAX_PATH_LEN, file_info->file_name);
+		///if (S_ISDIR(lst_ptr->st_mode)) {
+		///	strlcat__(buf_name, MAX_PATH_LEN, "/");
+		///} else if (lst_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) {
+		///	// Symlink's 'x' bits are usually set.
+		///	// strlcat__(buf_name, "*", MAX_PATH_LEN);
+		///}
+#define LINK_ARROW		" -> "
 ///#define LINK_ARROW		" >>"
 ///#define LINK_ARROW		" > "
-		strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, LINK_ARROW);
+		strlcat__(buf_name, MAX_PATH_LEN, LINK_ARROW);
 		if (file_info->symlink)
-			strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, file_info->symlink);
+			strlcat__(buf_name, MAX_PATH_LEN, file_info->symlink);
 		if (is_link_broken)
-			strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, "!");
+			strlcat__(buf_name, MAX_PATH_LEN, "!");
 	} else {
 		if (is_link)
-			strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, file_info->symlink);
+			strlcat__(buf_name, MAX_PATH_LEN, file_info->symlink);
 		else
-			strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, file_info->file_name);
+			strlcat__(buf_name, MAX_PATH_LEN, file_info->file_name);
 	}
 	if (S_ISDIR(st_ptr->st_mode)) {
-		strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, "/");
+		strlcat__(buf_name, MAX_PATH_LEN, "/");
+		/////if (strcmp(file_info->file_name, "..") == 0) {
+		/////	// show "../" like "../ [@host-name]"
+		/////	strcat_printf(buf_name, MAX_PATH_LEN, " [%s]", get_at_host_name());
+		/////}
 	} else if (is_link_broken == 0
 	 && (st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
-		strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, "*");
+		strlcat__(buf_name, MAX_PATH_LEN, "*");
 	}
 
 	strcpy__(buf_size, "");
@@ -241,7 +245,7 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	}
 	if (file_name_cols > file_name_space) {
 		truncate_tail_utf8s_columns(buf_name, file_name_space-1);
-		strlcat__(buf_name, MAX_PATH_LEN*MAX_UTF8C_BYTES, "~");	// add truncated-mark
+		strlcat__(buf_name, MAX_PATH_LEN, "~");	// add truncated-mark
 	}
 	expand_utf8s_columns(buf_name, file_name_space);
 	info_space = LIM_MIN(0, sub_win_get_columns() - (SELECTED_MARK_LEN + file_name_space));

@@ -1,6 +1,7 @@
 #### BE-editor to do list (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible)
 
-[ ] simple indication of SSH console
+[v] show "@host-name" when current directory is $HOME
+[x] show "@host-name" after "../" like "../ [@host-name]"
 [v ] Writing file loaded through symlink to symlinked file not file of symlink name.
    XX Current state : rename symlink name to symlink~ and write to a file named symlink
    OO Required state: write to the file of real_path.

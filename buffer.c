@@ -76,9 +76,11 @@ void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf)
 }
 void buf_set_view_x_cur_line(be_buf_t *buf, int pane_idx, be_line_t *line)
 {
+#ifdef ENABLE_DEBUG
 	if (buf_check_line_in_buf(buf, line) == 0) {
 		warning_printf("line:[%s] is not in buf[%s] !!!!\n", line->data, buf->file_path);
 	}
+#endif // ENABLE_DEBUG
 	BUFVX_CL(buf, pane_idx) = line;
 }
 
@@ -548,6 +550,23 @@ void renumber_all_bufs_from_top(be_bufs_t *bufs)
 //-----------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
+be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
+{
+	be_line_t *line;
+
+	for (line = BUF_TOP_LINE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
+		if (line == line_)
+			return line_;
+	}
+	return NULL;
+}
+be_line_t *buf_check_line_in_buf_anchs(be_buf_t *buf, be_line_t *line_)
+{
+	if ((line_ == BUF_TOP_ANCH(buf)) || (line_ == BUF_BOT_ANCH(buf))) {
+		return line_;
+	}
+	return NULL;
+}
 void buf_dump_bufs(be_buf_t *buf)
 {
 	int cnt;
@@ -599,23 +618,6 @@ void buf_dump_state(be_buf_t *buf)
 	}
 flf_d_printf("file_path: [%s]\n", buf->file_path);
 flf_d_printf("abs_path_: [%s]\n", buf->abs_path_);
-}
-be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
-{
-	be_line_t *line;
-
-	for (line = BUF_TOP_LINE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
-		if (line == line_)
-			return line_;
-	}
-	return NULL;
-}
-be_line_t *buf_check_line_in_buf_anchs(be_buf_t *buf, be_line_t *line_)
-{
-	if ((line_ == BUF_TOP_ANCH(buf)) || (line_ == BUF_BOT_ANCH(buf))) {
-		return line_;
-	}
-	return NULL;
 }
 
 void bufs_dump_all_bufs(be_bufs_t *bufs)
