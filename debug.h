@@ -64,9 +64,9 @@
 
 #endif // ENABLE_DEBUG
 
-#define progerr_printf(args...)		flfl_d_printf("PROGERR", args);
-#define warning_printf(args...)		flfl_d_printf("WARNING", args);
-#define fatalerr_printf(args...)	flfl_d_printf("FATALERR", args);
+#define progerr_printf(args...)		flfl_d_printf("PROGERR !!", args);
+#define warning_printf(args...)		flfl_d_printf("WARNING !!", args);
+#define fatalerr_printf(args...)	flfl_d_printf("FATALERR !!!!", args);
 #define _TFLF_						tflf_d_printf("\n");
 #define _MFLF_						mflf_d_printf("\n");
 #define _UFLF_						uflf_d_printf("\n");

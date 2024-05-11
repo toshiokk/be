@@ -583,9 +583,6 @@ const char *get_at_host_name()
 	static char buf_user_at_host[USER_AT_HOST_NAME_LEN+1];
 	// @hostname
 	snprintf_(buf_user_at_host, USER_AT_HOST_NAME_LEN+1, "@%s", get_host_name());
-	////// username@hostname
-	////snprintf_(buf_user_at_host, USER_AT_HOST_NAME_LEN+1, "%s@%s",
-	//// get_user_name(geteuid()), get_host_name());
 	return buf_user_at_host;
 }
 

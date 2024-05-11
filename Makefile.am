@@ -111,6 +111,8 @@ include be.dep
 
 #man_MANS = be.1 berc.5
 #be_LDADD = @GLIB_LIBS@ @LIBINTL@
+#be_LDADD = -Wl,-Bstatic
+#LDADD = -Wl,-Bstatic
 
 #info_TEXINFOS = be.texi
 #MAKEINFO = makeinfo --no-split

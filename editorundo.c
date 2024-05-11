@@ -318,11 +318,13 @@ PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 #ifdef ENABLE_DEBUG
 void dump_undo_bufs_lines(void)
 {
-	buf_dump_bufs_lines(UNDO_BUFS_TOP_ANCH, "undo-bufs");
+///	buf_dump_bufs_lines(UNDO_BUFS_TOP_ANCH, "undo-bufs");
+	buf_dump_bufs_lines(UNDO_BUFS_TOP_BUF, "undo-bufs");
 }
 void dump_redo_bufs_lines(void)
 {
-	buf_dump_bufs_lines(REDO_BUFS_TOP_ANCH, "redo-bufs");
+///	buf_dump_bufs_lines(REDO_BUFS_TOP_ANCH, "redo-bufs");
+	buf_dump_bufs_lines(REDO_BUFS_TOP_BUF, "redo-bufs");
 }
 #endif // ENABLE_DEBUG
 

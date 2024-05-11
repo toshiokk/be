@@ -76,7 +76,6 @@ char *remove_last_slash(char *path);
 int contain_redundant_slash(char *path);
 char *remove_redundant_slash(char *path);
 char *get_last_slash(char *path);
-/////int is_path_only_file_name(const char *path);
 
 char *separate_dir_part_and_file_part(const char *path,
  char *dir_part, char *file_part);

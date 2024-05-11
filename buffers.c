@@ -126,6 +126,13 @@ int free_edit_buf(be_buf_t *edit_buf)
 	return ret;		// 0: no buffer remains
 }
 //-----------------------------------------------------------------------------
+
+// 4 line pointers are referenced from one editor_panes
+//	editor_panes.bufs[0]->buf_views[0]
+//	editor_panes.bufs[0]->buf_views[1] (This pass would be accessed usually)
+//	editor_panes.bufs[1]->buf_views[0] (This pass would be accessed usually)
+//	editor_panes.bufs[1]->buf_views[1]
+
 void buf_avoid_wild_ptr_cur(be_buf_t *buf)
 {
 	// avoid editor_panes.bufs[0] becoming wild-pointer 
@@ -146,10 +153,10 @@ void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr)
 //-----------------------------------------------------------------------------
 void line_avoid_wild_ptr_cur(be_line_t *line)
 {
-	// avoid EPXBVX_CL(0) becoming wild-pointer
-	line_avoid_wild_ptr(&EPXBVX_CL(0), line);
-	// avoid EPXBVX_CL(1) becoming wild-pointer
-	line_avoid_wild_ptr(&EPXBVX_CL(1), line);
+	// avoid EPCBVX_CL(0) becoming wild-pointer
+	line_avoid_wild_ptr(&EPCBVX_CL(0), line);
+	// avoid EPCBVX_CL(1) becoming wild-pointer
+	line_avoid_wild_ptr(&EPCBVX_CL(1), line);
 }
 void line_avoid_wild_ptr(be_line_t **line_ptr, be_line_t *line)
 {
@@ -176,7 +183,7 @@ void init_editor_panes()
 
 void set_editor_cur_pane_idx(int pane_idx)
 {
-	set_epx_buf(pane_idx, NULL);
+	editor_panes.cur_pane_idx = pane_idx;
 }
 int get_editor_cur_pane_idx(void)
 {
@@ -202,13 +209,11 @@ void set_epx_buf(int pane_idx, be_buf_t *buf)
 {
 	if (pane_idx < 0) {
 		pane_idx = editor_panes.cur_pane_idx;
-	} else {
-		editor_panes.cur_pane_idx = pane_idx;
 	}
 	if (buf) {
 		editor_panes.bufs[pane_idx] = buf;
 	}
-///_D_(dump_editor_panes())
+////_D_(dump_editor_panes())
 
 #ifdef ENABLE_SYNTAX
 	set_file_type_by_cur_file_path();
@@ -226,8 +231,7 @@ be_buf_t *get_epx_buf(int pane_idx)
 #ifdef ENABLE_DEBUG
 void dump_editor_panes(void)
 {
-	flf_d_printf("editor_panes.cur_pane_idx: %d {{{{{\n",
-	 editor_panes.cur_pane_idx);
+	flf_d_printf("editor_panes.cur_pane_idx: %d {{{{{\n", editor_panes.cur_pane_idx);
 	flf_d_printf("pane_idx-0 ---------------------------------------------\n");
 	dump_editor_pane_x(0);
 	flf_d_printf("pane_idx-1 ---------------------------------------------\n");
@@ -248,14 +252,17 @@ void dump_buf_views(be_buf_t *buf)
 void dump_buf_view_x(be_buf_t *buf, int pane_idx)
 {
 	flf_d_printf("pane_idx: %d ------------------\n", pane_idx);
+	if ((buf_check_line_in_buf(buf, BUFVX_CL(buf, pane_idx)) == NULL)
+	 && (buf_check_line_in_buf_anchs(buf, BUFVX_CL(buf, pane_idx)) == NULL)) {
+		warning_printf("pane[%d].cur_line is not in cur_buf!!!!\n", pane_idx);
+	}
 	buf_dump_state(buf);
 	line_dump_byte_idx(BUFVX_CL(buf, pane_idx), BUFVX_CLBI(buf, pane_idx));
 	flf_d_printf(
-	 "BUFVX_CURSOR_Y(buf, pane_idx): %d, BUFVX_CURSOR_X_TO_KEEP(buf, pane_idx): %d, BUFVX_MIN_TEXT_X_TO_KEEP(buf, pane_idx): %d\n",
-	 BUFVX_CURSOR_Y(buf, pane_idx), BUFVX_CURSOR_X_TO_KEEP(buf, pane_idx), BUFVX_MIN_TEXT_X_TO_KEEP(buf, pane_idx));
-	if (buf_check_line_in_buf(buf, BUFVX_CL(buf, pane_idx)) == NULL) {
-		warning_printf("pane[%d].cur_line is not in cur_buf!!!!\n", pane_idx);
-	}
+	 "BUFVX_CURSOR_Y(buf, pane_idx): %d, BUFVX_CURSOR_X_TO_KEEP(buf, pane_idx): %d,"
+	 " BUFVX_MIN_TEXT_X_TO_KEEP(buf, pane_idx): %d\n",
+	 BUFVX_CURSOR_Y(buf, pane_idx), BUFVX_CURSOR_X_TO_KEEP(buf, pane_idx),
+	 BUFVX_MIN_TEXT_X_TO_KEEP(buf, pane_idx));
 }
 #endif // ENABLE_DEBUG
 
@@ -298,9 +305,9 @@ void create_edit_buf(const char *full_path)
 // Append a new line to the bottom of the current buffer
 be_line_t *append_string_to_cur_edit_buf(const char *string)
 {
-	EPXBVX_CL(0) = EPXBVX_CL(1) = line_insert_with_string(CUR_EDIT_BUF_BOT_ANCH, INSERT_BEFORE,
+	EPCBVX_CL(0) = EPCBVX_CL(1) = line_insert_with_string(CUR_EDIT_BUF_BOT_ANCH, INSERT_BEFORE,
 	 string);
-	EPXBVX_CLBI(0) = EPXBVX_CLBI(1) = 0;
+	EPCBVX_CLBI(0) = EPCBVX_CLBI(1) = 0;
 	return EPCBVC_CL;
 }
 
@@ -671,19 +678,23 @@ void dump_cur_edit_buf_lines(void)
 }
 void dump_edit_bufs(void)
 {
-	buf_dump_bufs(EDIT_BUFS_TOP_ANCH);
+///	buf_dump_bufs(EDIT_BUFS_TOP_ANCH);
+	buf_dump_bufs(EDIT_BUFS_TOP_BUF);
 }
 void dump_edit_bufs_lines(void)
 {
-	buf_dump_bufs_lines(EDIT_BUFS_TOP_ANCH, "edit-bufs");
+///	buf_dump_bufs_lines(EDIT_BUFS_TOP_ANCH, "edit-bufs");
+	buf_dump_bufs_lines(EDIT_BUFS_TOP_BUF, "edit-bufs");
 }
 void dump_cut_bufs(void)
 {
-	buf_dump_bufs(CUT_BUFS_TOP_ANCH);
+///	buf_dump_bufs(CUT_BUFS_TOP_ANCH);
+	buf_dump_bufs(CUT_BUFS_TOP_BUF);
 }
 void dump_cut_bufs_lines(void)
 {
-	buf_dump_bufs_lines(CUT_BUFS_TOP_ANCH, "cut-bufs");
+///	buf_dump_bufs_lines(CUT_BUFS_TOP_ANCH, "cut-bufs");
+	buf_dump_bufs_lines(CUT_BUFS_TOP_BUF, "cut-bufs");
 }
 
 // dump current buffer

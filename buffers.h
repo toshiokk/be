@@ -81,6 +81,7 @@ extern be_bufs_t edit_buffers;
 #define BUFV_CURSOR_Y(b_v)					((b_v)->cursor_y)
 #define BUFV_CURSOR_X_TO_KEEP(b_v)			((b_v)->cursor_x_to_keep)
 #define BUFV_MIN_TEXT_X_TO_KEEP(b_v)		((b_v)->min_text_x_to_keep)
+
 #define BUFVX_CL(buf, idx)					BUFV_CL(BUF_VX((buf), (idx)))
 #define BUFVX_CLBI(buf, idx)				BUFV_CLBI(BUF_VX((buf), (idx)))
 #define BUFVX_CURSOR_Y(buf, idx)			BUFV_CURSOR_Y(BUF_VX((buf), (idx)))
@@ -89,21 +90,18 @@ extern be_bufs_t edit_buffers;
 #define BUFV0_CL(buf)						BUFVX_CL((buf), 0)
 #define BUFV1_CL(buf)						BUFVX_CL((buf), 1)
 
-#define EPCBVC_CL						BUFV_CL(get_epc_buf_view())
-#define EPCBVC_CLBI						BUFV_CLBI(get_epc_buf_view())
-#define EPCBVC_CURSOR_Y					BUFV_CURSOR_Y(get_epc_buf_view())
-#define EPCBVC_CURSOR_X_TO_KEEP			BUFV_CURSOR_X_TO_KEEP(get_epc_buf_view())
-#define EPCBVC_MIN_TEXT_X_TO_KEEP		BUFV_MIN_TEXT_X_TO_KEEP(get_epc_buf_view())
-#define EPCBVC_CL_EPCBVC_CLBI			(&(EPCBVC_CL->data[EPCBVC_CLBI]))
+#define EPCBVC_CL							BUFV_CL(get_epc_buf_view())
+#define EPCBVC_CLBI							BUFV_CLBI(get_epc_buf_view())
+#define EPCBVC_CURSOR_Y						BUFV_CURSOR_Y(get_epc_buf_view())
+#define EPCBVC_CURSOR_X_TO_KEEP				BUFV_CURSOR_X_TO_KEEP(get_epc_buf_view())
+#define EPCBVC_MIN_TEXT_X_TO_KEEP			BUFV_MIN_TEXT_X_TO_KEEP(get_epc_buf_view())
+#define EPCBVC_CL_EPCBVC_CLBI				(&(EPCBVC_CL->data[EPCBVC_CLBI]))
 
-#define EPXBVX_CL(idx)					BUFVX_CL(get_epx_buf(idx), idx)
-#define EPXBVX_CLBI(idx)				BUFVX_CLBI(get_epx_buf(idx), idx)
-#define EPXBVX_CURSOR_Y(idx)			BUFVX_CURSOR_Y(get_epx_buf(idx), idx)
-#define EPXBVX_CURSOR_X_TO_KEEP(idx)	BUFVX_CURSOR_X_TO_KEEP(get_epx_buf(idx), idx)
-#define EPXBVX_MIN_TEXT_X_TO_KEEP(idx)	BUFVX_MIN_TEXT_X_TO_KEEP(get_epx_buf(idx), idx)
+#define EPCBVX_CL(idx)						BUFVX_CL(get_epc_buf(), (idx))
+#define EPCBVX_CLBI(idx)					BUFVX_CLBI(get_epc_buf(), (idx))
 
-#define EPCB_ML							(get_epc_buf()->mark_line)
-#define EPCB_MLBI						(get_epc_buf()->mark_line_byte_idx)
+#define EPCB_ML								(get_epc_buf()->mark_line)
+#define EPCB_MLBI							(get_epc_buf()->mark_line_byte_idx)
 
 // Cut buffers ----------------------------------------------------------------
 extern be_bufs_t cut_buffers;

@@ -508,11 +508,13 @@ void dump_history_ix(int hist_type_idx)
 }
 void dump_hist_bufs(void)
 {
-	buf_dump_bufs(HIST_BUFS_TOP_ANCH);
+///	buf_dump_bufs(HIST_BUFS_TOP_ANCH);
+	buf_dump_bufs(HIST_BUFS_TOP_BUF);
 }
 void dump_hist_bufs_lines(void)
 {
-	buf_dump_bufs_lines(HIST_BUFS_TOP_ANCH, "hist-bufs");
+///	buf_dump_bufs_lines(HIST_BUFS_TOP_ANCH, "hist-bufs");
+	buf_dump_bufs_lines(HIST_BUFS_TOP_BUF, "hist-bufs");
 }
 #endif // ENABLE_DEBUG
 

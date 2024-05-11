@@ -184,7 +184,7 @@ int termif_get_columns(void)
 void termif_clear_screen(void)
 {
 	send_all_off_to_term();
-	/////send_printf_to_term("\x1b" "c");
+///	send_printf_to_term("\x1b" "c");
 	memset((void *)vscreen_to_paint, 0x00, sizeof(vscreen_to_paint));
 	termif_clear_vscreen_painted();
 }

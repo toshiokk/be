@@ -31,8 +31,8 @@ typedef enum /*s_b_d*/ {	// Status Bar Displayed
 	S_B_D_PERCENT_EDITOR,	//! 1 cursor movement in editor
 	S_B_D_PERCENT_FILER,	//! 2 cursor movement in filer
 	S_B_D_ING,				//! 3 doing (overwritable by DONE or ERR)
-	S_B_D_DONE,				//! 4 done  (overwritable by ERR)
-	S_B_D_ERR,				//! 5 error (overwritable after one second)
+	S_B_D_ERR,				//! 4 error (overwritable by DONE and after one second)
+	S_B_D_DONE,				//! 5 done  (this message shall be output on completion of a command)
 } s_b_d_t;
 void clear_status_bar_displayed(void);
 void set_status_bar_displayed(s_b_d_t status_bar_to_display);

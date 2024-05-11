@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-08 23:31+0900\n"
+"POT-Creation-Date: 2024-05-09 21:33+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,11 +26,11 @@ msgstr ""
 msgid "Key code: %04x"
 msgstr ""
 
-#: ../buffers.c:389 ../buffers.c:397
+#: ../buffers.c:396 ../buffers.c:404
 msgid "Calculating CRC..."
 msgstr ""
 
-#: ../buffers.c:596 ../buffers.c:603
+#: ../buffers.c:603 ../buffers.c:610
 msgid "Tab size"
 msgstr ""
 
@@ -73,7 +73,7 @@ msgstr ""
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editor.c:651 ../editor.c:720 ../fileio.c:145 ../fileio.c:150
+#: ../editor.c:651 ../editor.c:720 ../fileio.c:149 ../fileio.c:154
 #: ../winin.c:95
 msgid "Cancelled"
 msgstr ""
@@ -123,7 +123,7 @@ msgstr ""
 msgid "Modification not allowed in VIEW mode"
 msgstr ""
 
-#: ../editor2.c:119 ../fileio.c:93
+#: ../editor2.c:119 ../fileio.c:96
 msgid "New File"
 msgstr ""
 
@@ -191,23 +191,23 @@ msgstr ""
 msgid "Enter line number:"
 msgstr ""
 
-#: ../editorgoto.c:204
+#: ../editorgoto.c:200
 msgid "No previous open files"
 msgstr ""
 
-#: ../editorgoto.c:209
+#: ../editorgoto.c:205
 msgid "Previous file"
 msgstr ""
 
-#: ../editorgoto.c:217
+#: ../editorgoto.c:213
 msgid "No next open files"
 msgstr ""
 
-#: ../editorgoto.c:221
+#: ../editorgoto.c:217
 msgid "Next file"
 msgstr ""
 
-#: ../editorgoto.c:255
+#: ../editorgoto.c:251
 msgid "Returned to previous pos"
 msgstr ""
 
@@ -259,150 +259,150 @@ msgstr ""
 msgid "Redo-buffer empty !!"
 msgstr ""
 
-#: ../fileio.c:68
+#: ../fileio.c:71
 #, c-format
 msgid "%d line read %s"
 msgstr ""
 
-#: ../fileio.c:69
+#: ../fileio.c:72
 #, c-format
 msgid "%d lines read %s"
 msgstr ""
 
-#: ../fileio.c:70
+#: ../fileio.c:73
 #, c-format
 msgid "%d liness read %s"
 msgstr ""
 
-#: ../fileio.c:71
+#: ../fileio.c:74
 #, c-format
 msgid "%d linesss read %s"
 msgstr ""
 
-#: ../fileio.c:87
+#: ../fileio.c:90
 #, c-format
 msgid "File [%s] not found"
 msgstr ""
 
-#: ../fileio.c:100
+#: ../fileio.c:103
 #, c-format
 msgid "[%s] is a directory"
 msgstr ""
 
-#: ../fileio.c:100
+#: ../fileio.c:103
 #, c-format
 msgid "[%s] is a special file"
 msgstr ""
 
-#: ../fileio.c:109
+#: ../fileio.c:112
 #, c-format
 msgid "[%s] is too large to read into buffer"
 msgstr ""
 
 #. regular file
-#: ../fileio.c:115
+#: ../fileio.c:118
 #, c-format
 msgid "Reading File %s ..."
 msgstr ""
 
-#: ../fileio.c:143
+#: ../fileio.c:147
 msgid "File has modified by another program, OVERWRITE ?"
 msgstr ""
 
-#: ../fileio.c:154
+#: ../fileio.c:158
 #, c-format
 msgid "File [%s] can NOT be written !!"
 msgstr ""
 
-#: ../fileio.c:166
+#: ../fileio.c:170
 msgid "File Name to Write"
 msgstr ""
 
-#: ../fileio.c:184
+#: ../fileio.c:188
 msgid "File exists, OVERWRITE it ?"
 msgstr ""
 
-#: ../fileio.c:193
+#: ../fileio.c:197
 msgid "Path is not file, can not WRITE it"
-msgstr ""
-
-#: ../fileio.c:217
-#, c-format
-msgid "File [%s] is NOT regular file !!"
 msgstr ""
 
 #: ../fileio.c:221
 #, c-format
+msgid "File [%s] is NOT regular file !!"
+msgstr ""
+
+#: ../fileio.c:225
+#, c-format
 msgid "Writing File %s ..."
 msgstr ""
 
-#: ../fileio.c:234
+#: ../fileio.c:238
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr ""
 
-#: ../fileio.c:243
+#: ../fileio.c:247
 #, c-format
 msgid "%d line written"
 msgstr ""
 
-#: ../fileio.c:244
+#: ../fileio.c:248
 #, c-format
 msgid "%d lines written"
 msgstr ""
 
-#: ../fileio.c:245
+#: ../fileio.c:249
 #, c-format
 msgid "%d liness written"
 msgstr ""
 
-#: ../fileio.c:246
+#: ../fileio.c:250
 #, c-format
 msgid "%d linesss written"
 msgstr ""
 
-#: ../fileio.c:306
+#: ../fileio.c:310
 #, c-format
 msgid "BINARY file !! [%s]"
 msgstr ""
 
-#: ../fileio.c:422 ../fileio.c:508 ../fileio.c:526 ../fileio.c:543
+#: ../fileio.c:426 ../fileio.c:512 ../fileio.c:530 ../fileio.c:547
 #, c-format
 msgid "Can not read-open file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:696 ../fileio.c:718 ../fileio.c:737
+#: ../fileio.c:700 ../fileio.c:722 ../fileio.c:741
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr ""
 
 #. -1: error
-#: ../fileio.c:704 ../fileio.c:726 ../fileio.c:767
+#: ../fileio.c:708 ../fileio.c:730 ../fileio.c:771
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:756 ../fileio.c:788
+#: ../fileio.c:760 ../fileio.c:792
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:832
+#: ../fileio.c:836
 #, c-format
 msgid "%d file loaded"
 msgstr ""
 
-#: ../fileio.c:833
+#: ../fileio.c:837
 #, c-format
 msgid "%d files loaded"
 msgstr ""
 
-#: ../fileio.c:834
+#: ../fileio.c:838
 #, c-format
 msgid "%d filess loaded"
 msgstr ""
 
-#: ../fileio.c:835
+#: ../fileio.c:839
 #, c-format
 msgid "%d filesss loaded"
 msgstr ""

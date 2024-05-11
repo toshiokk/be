@@ -117,6 +117,7 @@ be_buf_t *buf_free_node(be_buf_t *buf);
 
 be_buf_t *buf_init(be_buf_t *buf, const char *file_path);
 void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf);
+void buf_set_view_x_cur_line(be_buf_t *buf, int pane_idx, be_line_t *line);
 be_buf_t *buf_init_line_anchors(be_buf_t *buf, char *initial_data);
 void buf_set_file_abs_path(be_buf_t *buf, const char *file_path);
 void buf_set_file_path(be_buf_t *buf, const char *file_path);
@@ -196,6 +197,7 @@ void buf_dump_lines(be_buf_t *buf, int lines);
 void buf_dump_ptrs(be_buf_t *buf);
 void buf_dump_state(be_buf_t *buf);
 be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_);
+be_line_t *buf_check_line_in_buf_anchs(be_buf_t *buf, be_line_t *line_);
 
 void bufs_dump_all_bufs(be_bufs_t *buf);
 #endif // ENABLE_DEBUG

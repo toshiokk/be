@@ -98,34 +98,30 @@ int doe_goto_file_or_dir_in_cur_cursor_pos(void)
 	return doe_goto_directory_in_cur_line();
 }
 
-// TAG JUMP
+PRIVATE int _doe_goto_file_in_cur_line_byte_idx(int line_byte_idx);
+// TAG JUMP (file_path is taken from the head of current line)
 int doe_goto_file_in_cur_line(void)
 {
-	char dir_save[MAX_PATH_LEN+1];
-	clear_files_loaded();
-
-	// CURDIR: changed to cur-file's abs-dir
-	change_cur_dir_by_file_path_after_save(dir_save, get_epc_buf()->file_path);
-	// file_path is taken from the head of current line
-	int files = load_files_in_string(EPCBVC_CL->data, 10,
-	 TUL1, OOE0, MOE1, LFH1, RECURSIVE1);
-	change_cur_dir(dir_save);
-
-	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
-	return files;
+	return _doe_goto_file_in_cur_line_byte_idx(0);
 }
+// TAG JUMP (file_path is taken from the current cursor position)
 int doe_goto_file_in_cur_cursor_pos(void)
+{
+	return _doe_goto_file_in_cur_line_byte_idx(EPCBVC_CLBI);
+}
+PRIVATE int _doe_goto_file_in_cur_line_byte_idx(int line_byte_idx)
 {
 	char dir_save[MAX_PATH_LEN+1];
 	clear_files_loaded();
 
 	// CURDIR: changed to cur-file's abs-dir
 	change_cur_dir_by_file_path_after_save(dir_save, get_epc_buf()->file_path);
-	// file_path is taken from the current cursor position
-	int files = load_files_in_string(&(EPCBVC_CL->data[EPCBVC_CLBI]), 1,
+	// file_path is taken from the line_byte_idx of current line
+	int files = load_files_in_string(&(EPCBVC_CL->data[line_byte_idx]), 1,
 	 TUL1, OOE0, MOE1, LFH1, RECURSIVE1);
 	change_cur_dir(dir_save);
 
+	disp_files_loaded_ifnon0();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return files;
 }
@@ -204,7 +200,7 @@ int doe_switch_to_prev_file(void)
 		disp_status_bar_err(_("No previous open files"));
 		return ret;
 	}
-/////_D_(dump_editor_panes())
+////_D_(dump_editor_panes())
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	disp_status_bar_done(_("Previous file"));
 	return ret;
@@ -217,6 +213,7 @@ int doe_switch_to_next_file(void)
 		disp_status_bar_err(_("No next open files"));
 		return ret;
 	}
+////_D_(dump_editor_panes())
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	disp_status_bar_done(_("Next file"));
 	return ret;
@@ -260,14 +257,14 @@ int doe_switch_editor_pane(void)
 {
 	doe_switch_editor_pane_();
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	disp_status_bar_done(_("Switched current editor pane to %d"), get_editor_cur_pane_idx()+1);
 	return 1;
 }
 void doe_switch_editor_pane_(void)
 {
 	int pane_idx = get_editor_cur_pane_idx() ? 0 : 1;
 	set_editor_cur_pane_idx(pane_idx);
-_D_(buf_dump_state(get_epx_buf(-1)))
-_D_(dump_editor_panes())
+/////_D_(dump_editor_panes())
 }
 
 //-----------------------------------------------------------------------------
@@ -315,7 +312,7 @@ PRIVATE int load_files_in_string_(const char *string, int files_to_load,
 		 try_upp_low, open_on_err, msg_on_err, load_from_history, recursive);
 		if (files > 0) {
 			// once any file has loaded, show no more error message
- 			files_loaded++;
+			files_loaded++;
 			open_on_err = 0;
 			msg_on_err = 0;
 		}
@@ -335,8 +332,10 @@ PRIVATE int load_file_in_string_(const char *string,
 	if ((files = load_file_name_upp_low_(file_path,
 	 try_upp_low, open_on_err, msg_on_err, load_from_history, recursive)) > 0) {
 		if (recursive) {
+/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 			// Tag-jump to line, col
 			goto_line_col_in_cur_buf(line_num, col_num);	// appdefs.h|100,8
+/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 		}
 	}
 	return files;
@@ -385,6 +384,7 @@ PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int m
 	int files = 0;
 
 	if (load_file_name__(file_name, open_on_err, msg_on_err, load_from_history) > 0) {
+/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 		add_files_loaded(1);
 		files = 1;
 		if (recursive && (recursive_call_count == 0) && is_file_name_proj_file(file_name, 0)) {
@@ -413,20 +413,24 @@ PRIVATE int load_files_in_cur_buf_(void)
 				char dir_save[MAX_PATH_LEN+1];
 
 /////_D_(buf_dump_state(get_epc_buf()))
+/////_D_(dump_buf_views(get_epc_buf()))
 				memorize_cur_file_pos_null(file_pos_str2);
+/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 /////flf_d_printf("[%s]\n", file_pos_str2);
 				// CURDIR: changed to cur-file's abs-dir
 				change_cur_dir_by_file_path_after_save(dir_save, get_epc_buf()->file_path);
+/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 /////flf_d_printf("[%s]\n", EPCBVC_CL->data);
 				files += load_files_in_string_(EPCBVC_CL->data, 10,
 				 TUL1, OOE0, MOE0, LFH0, RECURSIVE0);
+/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 				change_cur_dir(dir_save);
 
 				editor_disp_title_bar();
 				tio_refresh();
 /////flf_d_printf("[%s]\n", file_pos_str2);
 				recall_file_pos_null(file_pos_str2);
-/////_D_(buf_dump_state(get_epc_buf()))
+/////_D_(dump_buf_views(get_epc_buf()))
 			}
 		}
 		if (cursor_next_line() == 0)
@@ -450,29 +454,33 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 	char full_path[MAX_PATH_LEN+1];
 	char abs_path[MAX_PATH_LEN+1];
 
-flf_d_printf("file_name:[%s]-----------\n", file_name);
+/////flf_d_printf("file_name:[%s]-----------\n", file_name);
 	get_full_path(file_name, full_path);
 	get_abs_path(file_name, abs_path);
 	// switch to if the file of the "file-path" already loaded
 	if (switch_epc_buf_by_file_path(full_path)) {
-		// already loaded
+/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+		// already loaded and select it
 		goto loaded;
 	}
 	// try to load the file
 	if (load_file_into_new_buf(full_path, open_on_err, msg_on_err) > 0) {
+/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 		goto loaded;
 	}
 	// switch to if the file of the "file-name" already loaded
 	if (switch_epc_buf_by_file_name(full_path)) {
-		// already loaded
+/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+		// already loaded and select it
 		goto loaded;
 	}
 #ifdef ENABLE_HISTORY
-////flf_d_printf("full_path:[%s]\n", file_name);
+/////flf_d_printf("full_path:[%s]\n", file_name);
 	if (load_from_history) {
 		// try to load a file of the same "file-name" memorized in history
-flf_d_printf("file_name:[%s]\n", file_name);
+/////flf_d_printf("file_name:[%s]\n", file_name);
 		if (load_and_goto_from_history(file_name)) {
+/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 			goto loaded;
 		}
 	}
@@ -480,10 +488,9 @@ flf_d_printf("file_name:[%s]\n", file_name);
 	return 0;
 loaded:
 #ifdef ENABLE_HISTORY
-	/////goto_pos_by_history(abs_path);
 	goto_pos_by_history(full_path);
 #endif // ENABLE_HISTORY
-_D_(dump_buf_views(get_epc_buf()))
+/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	return 1;
 }
 
@@ -525,8 +532,8 @@ PRIVATE void goto_pos_by_history(const char *full_path)
 	if (goto_str_line_col_in_cur_buf(str)) {
 flf_d_printf("full_path:[%s]\n", full_path);
 flf_d_printf("history  :[%s]\n", str);
-		EPXBVX_CL(0) = EPXBVX_CL(1) = EPCBVC_CL;
-		EPXBVX_CLBI(0) = EPXBVX_CLBI(1) = EPCBVC_CLBI;
+		EPCBVX_CL(0) = EPCBVX_CL(1) = EPCBVC_CL;
+		EPCBVX_CLBI(0) = EPCBVX_CLBI(1) = EPCBVC_CLBI;
 	}
 }
 #endif // ENABLE_HISTORY
@@ -631,11 +638,13 @@ int recall_file_pos_null(const char *str)
 {
 	char file_path[MAX_PATH_LEN+1];
 
+/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	if (get_file_line_col_from_str_null(str, file_path, NULL, NULL)) {
 		if (switch_epc_buf_by_file_path(file_path) == 0) {
 			return 0;
 		}
 	}
+/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	return goto_str_line_col_in_cur_buf(str);
 }
 int goto_str_line_col_in_cur_buf(const char *str)
@@ -654,14 +663,18 @@ int goto_line_col_in_cur_buf(int line_num, int col_num)
 	EPCBVC_CL = get_line_ptr_from_cur_buf_line_num(line_num);
 	EPCBVC_CLBI = 0;
 	if (col_num < 0) {	// if colnum == -1, updata both pane
-		EPXBVX_CL(0) = EPXBVX_CL(1) = EPCBVC_CL;
-		EPXBVX_CLBI(0) = EPXBVX_CLBI(1) = EPCBVC_CLBI;
+		buf_set_view_x_cur_line(get_epc_buf(), 0, EPCBVC_CL);
+		buf_set_view_x_cur_line(get_epc_buf(), 1, EPCBVC_CL);
+		BUFVX_CLBI(get_epc_buf(), 0) = EPCBVC_CLBI;
+		BUFVX_CLBI(get_epc_buf(), 1) = EPCBVC_CLBI;
 	}
 	if (col_num <= 0) {
 		return 1;
 	}
 	// col_num is byte count
 	EPCBVC_CLBI = byte_idx_from_byte_idx(EPCBVC_CL->data, col_num-1);
+///	BUFVX_CLBI(get_epc_buf(), 0) = EPCBVC_CLBI;
+///	BUFVX_CLBI(get_epc_buf(), 1) = EPCBVC_CLBI;
 	return 2;
 }
 //-----------------------------------------------------------------------------

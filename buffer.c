@@ -58,7 +58,8 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path)
 	buf_view_init(&(buf->buf_views[0]), buf);
 	buf_view_init(&(buf->buf_views[1]), buf);
 
-	buf->mark_line = BUF_TOP_ANCH(buf);
+	////buf->mark_line = BUF_TOP_ANCH(buf);
+	buf->mark_line = BUF_BOT_ANCH(buf);
 	buf->mark_line_byte_idx = 0;
 	buf->buf_lines = 0;
 	buf->buf_size = 0;
@@ -73,6 +74,14 @@ void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf)
 	BUFV_CURSOR_X_TO_KEEP(b_v) = 0;
 	BUFV_MIN_TEXT_X_TO_KEEP(b_v) = 0;
 }
+void buf_set_view_x_cur_line(be_buf_t *buf, int pane_idx, be_line_t *line)
+{
+	if (buf_check_line_in_buf(buf, line) == 0) {
+		warning_printf("line:[%s] is not in buf[%s] !!!!\n", line->data, buf->file_path);
+	}
+	BUFVX_CL(buf, pane_idx) = line;
+}
+
 be_buf_t *buf_init_line_anchors(be_buf_t *buf, char *initial_data)
 {
 	_mlc_set_caller
@@ -544,8 +553,8 @@ void buf_dump_bufs(be_buf_t *buf)
 	int cnt;
 
 flf_d_printf("0============================================\n");
-	for (cnt = 0; cnt < 100 && IS_PTR_VALID(buf); cnt++, buf = NODE_NEXT(buf)) {
-		buf_dump_ptrs(buf);
+	for (cnt = 0; cnt < 100 && IS_NODE_INT(buf); cnt++, buf = NODE_NEXT(buf)) {
+		///buf_dump_ptrs(buf);
 		dump_buf_view_x(buf, 0);
 		dump_buf_view_x(buf, 1);
 		if (IS_NODE_BOT_ANCH(buf))
@@ -598,6 +607,13 @@ be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
 	for (line = BUF_TOP_LINE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		if (line == line_)
 			return line_;
+	}
+	return NULL;
+}
+be_line_t *buf_check_line_in_buf_anchs(be_buf_t *buf, be_line_t *line_)
+{
+	if ((line_ == BUF_TOP_ANCH(buf)) || (line_ == BUF_BOT_ANCH(buf))) {
+		return line_;
 	}
 	return NULL;
 }

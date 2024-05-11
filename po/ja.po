@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-08 23:31+0900\n"
+"POT-Creation-Date: 2024-05-09 21:33+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -25,11 +25,11 @@ msgstr ""
 msgid "Key code: %04x"
 msgstr "キーコード: %04x"
 
-#: ../buffers.c:389 ../buffers.c:397
+#: ../buffers.c:396 ../buffers.c:404
 msgid "Calculating CRC..."
 msgstr "CRC を計算中..."
 
-#: ../buffers.c:596 ../buffers.c:603
+#: ../buffers.c:603 ../buffers.c:610
 msgid "Tab size"
 msgstr "タブサイズ"
 
@@ -72,7 +72,7 @@ msgstr "ファイルに書き込みました: %s"
 msgid "One buffer closed"
 msgstr "1 バッファを閉じました"
 
-#: ../editor.c:651 ../editor.c:720 ../fileio.c:145 ../fileio.c:150
+#: ../editor.c:651 ../editor.c:720 ../fileio.c:149 ../fileio.c:154
 #: ../winin.c:95
 msgid "Cancelled"
 msgstr "キャンセルされました"
@@ -123,7 +123,7 @@ msgstr "Anchor buffer は編集できません"
 msgid "Modification not allowed in VIEW mode"
 msgstr "VIEWモードでは編集できません"
 
-#: ../editor2.c:119 ../fileio.c:93
+#: ../editor2.c:119 ../fileio.c:96
 msgid "New File"
 msgstr "新規ファイル"
 
@@ -191,23 +191,23 @@ msgstr "カットバッファが空です !!"
 msgid "Enter line number:"
 msgstr "行番号入力:"
 
-#: ../editorgoto.c:204
+#: ../editorgoto.c:200
 msgid "No previous open files"
 msgstr "これ以上前にファイルがありません"
 
-#: ../editorgoto.c:209
+#: ../editorgoto.c:205
 msgid "Previous file"
 msgstr "一つ前のファイルにスイッチしました"
 
-#: ../editorgoto.c:217
+#: ../editorgoto.c:213
 msgid "No next open files"
 msgstr "これ以上後にファイルがありません"
 
-#: ../editorgoto.c:221
+#: ../editorgoto.c:217
 msgid "Next file"
 msgstr "一つ後のファイルにスイッチしました"
 
-#: ../editorgoto.c:255
+#: ../editorgoto.c:251
 msgid "Returned to previous pos"
 msgstr ""
 
@@ -259,150 +259,150 @@ msgstr "Undoバッファが空です!!"
 msgid "Redo-buffer empty !!"
 msgstr "Redoバッファが空です!!"
 
-#: ../fileio.c:68
+#: ../fileio.c:71
 #, c-format
 msgid "%d line read %s"
 msgstr "%d 行を読み込みました %s"
 
-#: ../fileio.c:69
+#: ../fileio.c:72
 #, c-format
 msgid "%d lines read %s"
 msgstr "%d 行を読み込みました %s"
 
-#: ../fileio.c:70
+#: ../fileio.c:73
 #, c-format
 msgid "%d liness read %s"
 msgstr "%d 行を読み込みました %s"
 
-#: ../fileio.c:71
+#: ../fileio.c:74
 #, c-format
 msgid "%d linesss read %s"
 msgstr "%d 行を読み込みました %s"
 
-#: ../fileio.c:87
+#: ../fileio.c:90
 #, c-format
 msgid "File [%s] not found"
 msgstr "ファイル [%s] が見つかりません"
 
-#: ../fileio.c:100
+#: ../fileio.c:103
 #, c-format
 msgid "[%s] is a directory"
 msgstr "[%s] はディレクトリです"
 
-#: ../fileio.c:100
+#: ../fileio.c:103
 #, c-format
 msgid "[%s] is a special file"
 msgstr "[%s] はデバイスファイルです"
 
-#: ../fileio.c:109
+#: ../fileio.c:112
 #, c-format
 msgid "[%s] is too large to read into buffer"
 msgstr "[%s] は大き過ぎてバッファに読み込めません"
 
 #. regular file
-#: ../fileio.c:115
+#: ../fileio.c:118
 #, c-format
 msgid "Reading File %s ..."
 msgstr "ファイル %s を読み込み中..."
 
-#: ../fileio.c:143
+#: ../fileio.c:147
 msgid "File has modified by another program, OVERWRITE ?"
 msgstr "ファイルは他のプログラムから書き換えられました。上書きしますか ?"
 
-#: ../fileio.c:154
+#: ../fileio.c:158
 #, c-format
 msgid "File [%s] can NOT be written !!"
 msgstr ""
 
-#: ../fileio.c:166
+#: ../fileio.c:170
 msgid "File Name to Write"
 msgstr "書き込みファイル名"
 
-#: ../fileio.c:184
+#: ../fileio.c:188
 msgid "File exists, OVERWRITE it ?"
 msgstr "同名ファイルが存在します。上書きしますか ?"
 
-#: ../fileio.c:193
+#: ../fileio.c:197
 msgid "Path is not file, can not WRITE it"
 msgstr "パスがファイルではありません。書き込めません"
 
-#: ../fileio.c:217
+#: ../fileio.c:221
 #, c-format
 msgid "File [%s] is NOT regular file !!"
 msgstr ""
 
-#: ../fileio.c:221
+#: ../fileio.c:225
 #, c-format
 msgid "Writing File %s ..."
 msgstr "ファイル %s を書き込み中..."
 
-#: ../fileio.c:234
+#: ../fileio.c:238
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr "ファイル %2$s にパーミッション %1$o をセットできません: %3$s"
 
-#: ../fileio.c:243
+#: ../fileio.c:247
 #, c-format
 msgid "%d line written"
 msgstr "%d 行を書き込みました"
 
-#: ../fileio.c:244
+#: ../fileio.c:248
 #, c-format
 msgid "%d lines written"
 msgstr "%d 行を書き込みました"
 
-#: ../fileio.c:245
+#: ../fileio.c:249
 #, c-format
 msgid "%d liness written"
 msgstr "%d 行を書き込みました"
 
-#: ../fileio.c:246
+#: ../fileio.c:250
 #, c-format
 msgid "%d linesss written"
 msgstr "%d 行を書き込みました"
 
-#: ../fileio.c:306
+#: ../fileio.c:310
 #, c-format
 msgid "BINARY file !! [%s]"
 msgstr ""
 
-#: ../fileio.c:422 ../fileio.c:508 ../fileio.c:526 ../fileio.c:543
+#: ../fileio.c:426 ../fileio.c:512 ../fileio.c:530 ../fileio.c:547
 #, c-format
 msgid "Can not read-open file [%s]: %s"
 msgstr "ファイルを読込オープン出来ません [%s]: %s"
 
-#: ../fileio.c:696 ../fileio.c:718 ../fileio.c:737
+#: ../fileio.c:700 ../fileio.c:722 ../fileio.c:741
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr "ファイルを書込オープン出来ません [%s]: %s"
 
 #. -1: error
-#: ../fileio.c:704 ../fileio.c:726 ../fileio.c:767
+#: ../fileio.c:708 ../fileio.c:730 ../fileio.c:771
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr "ファイルがクローズできません [%s]: %s"
 
-#: ../fileio.c:756 ../fileio.c:788
+#: ../fileio.c:760 ../fileio.c:792
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr "ファイルを書込オープン出来ません [%s]: %s"
 
-#: ../fileio.c:832
+#: ../fileio.c:836
 #, c-format
 msgid "%d file loaded"
 msgstr "%d ファイルを読み込みました"
 
-#: ../fileio.c:833
+#: ../fileio.c:837
 #, c-format
 msgid "%d files loaded"
 msgstr "%d ファイルを読み込みました"
 
-#: ../fileio.c:834
+#: ../fileio.c:838
 #, c-format
 msgid "%d filess loaded"
 msgstr "%d ファイルを読み込みました"
 
-#: ../fileio.c:835
+#: ../fileio.c:839
 #, c-format
 msgid "%d filesss loaded"
 msgstr "%d ファイルを読み込みました"

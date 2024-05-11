@@ -64,7 +64,6 @@ flf_d_printf("dir: [%s]\n", dir);
 	}
 	strlcpy__(prev_path, cur_path, MAX_PATH_LEN);
 	change_cur_dir(dir);
-	/////strlcpy__(cur_path, dir, MAX_PATH_LEN);
 	get_full_path_of_cur_dir(cur_path);
 	return 1;	// OK
 }
@@ -226,10 +225,6 @@ char *get_last_slash(char *path)
 		ptr = path;
 	return ptr;
 }
-/////int is_path_only_file_name(const char *path)
-/////{
-/////	return strchr(path, '/') == NULL;
-/////}
 
 /////int get_file_type_by_file_path(const char *file_path)
 /////{

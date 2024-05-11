@@ -46,7 +46,7 @@ int call_editor(int push_win, int list_mode)
 	set_app_func_key_table();
 	set_work_space_color_on_app_list_mode();
 
-////_D_(dump_cur_pointers())
+/////_D_(dump_cur_pointers())
 flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
 flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 	int ret = editor_main_loop();
@@ -54,7 +54,7 @@ flf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
 flf_d_printf("ret: %d\n", ret);
 	editor_quit = EDITOR_NONE;	// for caller of call_editor(), clear "editor_quit"
 	_mlc_check_count
-////_D_(dump_cur_pointers())
+/////_D_(dump_cur_pointers())
 
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 	SET_APPMD_VAL(app_LIST_MODE, GET_APPMD_PTR(&appmode_save, app_LIST_MODE));
@@ -160,7 +160,7 @@ flf_d_printf("ret_val: %d, editor_quit: %d\n", ret, editor_quit);
 			// If all files closed on edit mode, exit editor.
 			break;
 		}
-////_D_(dump_cur_pointers())
+/////_D_(dump_cur_pointers())
 		if (editor_quit) {
 			break;
 		}
@@ -168,7 +168,7 @@ flf_d_printf("ret_val: %d, editor_quit: %d\n", ret, editor_quit);
 #ifdef ENABLE_HISTORY
 	key_macro_cancel_recording();
 #endif // ENABLE_HISTORY
-////_D_(dump_cur_pointers())
+/////_D_(dump_cur_pointers())
 	if (editor_quit == EDITOR_CANCELLED) {
 		return -1;	// cancelled
 	} else

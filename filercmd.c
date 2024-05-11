@@ -120,7 +120,7 @@ int dof_tap_file(void)
 int dof_edit_file(void)
 {
 	dof_edit_file_(RECURSIVE1);
-_D_(dump_edit_bufs())
+/////_D_(dump_edit_bufs())
 	return 1;
 }
 int dof_edit_file_non_recursive(void)
@@ -718,12 +718,11 @@ PRIVATE int dof_edit_file_(int recursive)
 	} else {
 #ifdef ENABLE_HISTORY
 		if (prev_count_edit_bufs == 0) {
+/////_D_(dump_edit_bufs())
 			goto_last_file_line_col_in_history();
 		}
 #endif // ENABLE_HISTORY
 		disp_files_loaded();
-
-		////call_editor(0, 0);
 		filer_do_next = FILER_DO_FILE_LOADED;
 	}
 	unselect_all_files_auto(_FILE_SEL_MAN_ | _FILE_SEL_AUTO_);
