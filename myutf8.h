@@ -9,7 +9,8 @@
 extern "C" {
 #endif // __cplusplus
 
-#define MAX_UTF8C_BYTES			4
+// DNU: MB_LEN_MAX is defined to "16" in the latest Glibc header.
+#define MAX_UTF8C_BYTES			6
 
 #ifdef ENABLE_DEBUG
 #ifdef ENABLE_UTF8

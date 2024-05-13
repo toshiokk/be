@@ -33,10 +33,9 @@ int input_string_tail(const char *default__, char *input_buf,
  int hist_type_idx, const char *msg, ...)
 {
 	va_list ap;
-	int ret;
 
 	va_start(ap, msg);
-	ret = input_str_pos_(default__, input_buf, MAX_PATH_LEN, hist_type_idx, msg, ap);
+	int ret = input_str_pos_(default__, input_buf, MAX_PATH_LEN, hist_type_idx, msg, ap);
 	va_end(ap);
 	return ret;
 }
@@ -45,10 +44,9 @@ int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx
  int hist_type_idx, const char *msg, ...)
 {
 	va_list ap;
-	int ret;
 
 	va_start(ap, msg);
-	ret = input_str_pos_(default__, input_buf, cursor_byte_idx, hist_type_idx, msg, ap);
+	int ret = input_str_pos_(default__, input_buf, cursor_byte_idx, hist_type_idx, msg, ap);
 	va_end(ap);
 	return ret;
 }
@@ -63,7 +61,6 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 	char dir_save[MAX_PATH_LEN + 1];
 	char msg_buf[MAX_SCRN_LINE_BUF_LEN+1];
 	int byte_idx;
-	int ret;
 
 	if (recursively_called >= 3) {
 		return -1;				// -1: recursive called
@@ -79,7 +76,7 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 	tio_set_cursor_on(1);
 	//---------------------------------------------------------------------------------
 	recursively_called++;
-	ret = input_str_pos__(default__, input_buf, cursor_byte_idx, hist_type_idx, msg_buf);
+	int ret = input_str_pos__(default__, input_buf, cursor_byte_idx, hist_type_idx, msg_buf);
 	recursively_called--;
 	//---------------------------------------------------------------------------------
 flf_d_printf("ret: %d\n", ret);
@@ -323,7 +320,8 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 	set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
 	main_win_output_string(get_input_line_y(), 1, msg, -1);
 	main_win_output_string(get_input_line_y()+2, 1,
-	 _("UP:history, DOWN:browser, PgUp:insert from history, PgDn:insert from browser"), -1);
+	 _("UP:open history, DOWN:open filer, PgUp:insert from history, PgDn:insert from filer"),
+	 -1);
 	set_color_by_idx(ITEM_COLOR_IDX_INPUT, 0);
 
 	input_area_width = main_win_get_columns()-2;
@@ -347,11 +345,11 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 		start_byte_idx = byte_idx_from_col_idx(input_buf,
 		 cursor_col_idx - (input_area_width-2), CHAR_RIGHT, NULL);
 		bytes = byte_idx_from_col_idx(&input_buf[start_byte_idx],
-		 input_area_width-utf8s_columns(TRUNCATION_MARK, INT_MAX), CHAR_LEFT, NULL);
+		 input_area_width - utf8s_columns(TRUNCATION_MARK, MAX_SCRN_COLS), CHAR_LEFT, NULL);
 		main_win_output_string(get_input_line_y()+1, 1, TRUNCATION_MARK, -1);
 		main_win_output_string(-1, -1, &input_buf[start_byte_idx], bytes);
 		main_win_set_cursor_pos(get_input_line_y()+1,
-		 1 + utf8s_columns(TRUNCATION_MARK, INT_MAX)
+		 1 + utf8s_columns(TRUNCATION_MARK, MAX_SCRN_COLS)
 		 + col_idx_from_byte_idx(&input_buf[start_byte_idx],
 		 0, cursor_byte_idx - start_byte_idx));
 	}
@@ -535,7 +533,7 @@ void display_reverse_text(int yy, char *text)
 			if (delimiter == '<') {
 				strlcpy__(buf, short_key_name_from_func_id(buf), MAX_SCRN_LINE_BUF_LEN);
 			}
-			columns = LIM_MAX(main_win_get_columns() - xx, utf8s_columns(buf, INT_MAX));
+			columns = LIM_MAX(main_win_get_columns() - xx, utf8s_columns(buf, MAX_SCRN_COLS));
 			truncate_tail_utf8s_columns(buf, columns);
 			expand_utf8s_columns(buf, columns);
 			if (delimiter == '{' || delimiter == '<') {

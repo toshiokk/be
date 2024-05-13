@@ -75,6 +75,7 @@ int tolower_if_alpha(int chr);
 char *strupper(char *buffer);
 char *strlower(char *buffer);
 
+char *shrink_str__adjust_col(char *str, int space, int n_over_10);
 char *shrink_str(char *str, int space, int n_over_10);
 char *shrink_str_static(const char *str, int space, int n_over_10);
 char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10);

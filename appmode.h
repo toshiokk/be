@@ -160,7 +160,7 @@ typedef struct /*buf_state*/ {
 #endif // USE_NKF
 } buf_state_t;
 
-typedef enum /*_mode_idx_*/ {
+typedef enum /*mode_idx*/ {
 	APMD_DRAW_CURSOR,
 	APMD_KEY_LINES,
 	APMD_MAP_KEY_7F_BS,

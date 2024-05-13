@@ -374,6 +374,12 @@ char *strlower(char *buffer)
 
 //-----------------------------------------------------------------------------
 
+char *shrink_str__adjust_col(char *str, int space, int n_over_10)
+{
+	shrink_str(str, space, n_over_10);
+	expand_utf8s_columns(str, space);
+	return str;
+}
 char *shrink_str(char *str, int space, int n_over_10)
 {
 	char buf_[MAX_PATH_LEN+1];
@@ -397,7 +403,7 @@ char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10)
 	int space1 = 0, space2 = 0;
 	int byte_idx1, byte_idx2;
 
-	str_cols = utf8s_columns(str, INT_MAX);
+	str_cols = utf8s_columns(str, MAX_PATH_LEN);
 	if (str_cols <= space) {
 		// enough space
 		strlcpy__(buf, str, MAX_PATH_LEN);
@@ -464,7 +470,7 @@ int expand_utf8s_columns(char *utf8s, int columns)
 	int cols;
 	int bytes;
 
-	cols = utf8s_columns(utf8s, INT_MAX);
+	cols = utf8s_columns(utf8s, MAX_PATH_LEN);
 	if (columns - cols > 0) {
 		bytes = strlen(utf8s);
 		strnset__(&utf8s[bytes], ' ', columns - cols);
@@ -596,7 +602,7 @@ int is_separator(char chr)
 }
 int is_non_white_space_separator(char chr)
 {
-	return strchr__(" \t,:|()", chr) != NULL;
+	return strchr__(" ,:|()", chr) != NULL;
 }
 int is_white_space_separator(char chr)
 {

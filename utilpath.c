@@ -348,8 +348,8 @@ const char *get_starting_dir(void)
 		if (strlen_path(getenv_pwd(starting_dir)) == 0) {
 			getcwd__(starting_dir);
 		}
-	}
 flf_d_printf("starting_dir: [%s]\n", starting_dir);
+	}
 	return starting_dir;
 }
 

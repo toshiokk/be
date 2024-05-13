@@ -118,7 +118,7 @@ func_key_table_t editor_func_key_table[] = {
  { "Char code",           "Input character code",           K_M_AT, K_M_0,     KNA,
    XL, F_I(doe_charcode), NULL },
  { "Paste history",       "Paste from history",             K_M_h,        KNA, KNA,
-   XL, F_I(doe_paste_history), NULL },
+   XL, F_I(doe_paste_from_history), NULL },
  { "Record/Stop-rec",     "Start/Stop recording key-macro", K_F01, K_M_r     , KNA,
    XL, F_I(doe_start_rec__cancel_rec), NULL },
  { "End-rec/Playback",    "End-rec/Playback key-macro",     K_F02, K_M_p     , KNA,

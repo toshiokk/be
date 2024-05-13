@@ -44,11 +44,9 @@ PRIVATE const char *skip_n_file_names(const char *line, int field_idx);
 int doe_goto_input_line(void)
 {
 	char string[MAX_PATH_LEN+1];
-	int ret;
 	int line_num;
 
-	ret = input_string_tail("", string, HISTORY_TYPE_IDX_CURSPOS, _("Enter line number:"));
-
+	int ret = input_string_tail("", string, HISTORY_TYPE_IDX_CURSPOS, _("Enter line number:"));
 	if (ret < 0) {
 		return 0;
 	}
@@ -114,6 +112,7 @@ PRIVATE int _doe_goto_file_in_cur_line_byte_idx(int line_byte_idx)
 	char dir_save[MAX_PATH_LEN+1];
 	clear_files_loaded();
 
+	memorize_cur_file_pos_before_jump();
 	// CURDIR: changed to cur-file's abs-dir
 	change_cur_dir_by_file_path_after_save(dir_save, get_epc_buf()->file_path);
 	// file_path is taken from the line_byte_idx of current line
@@ -239,14 +238,14 @@ int doe_switch_to_next_buffers(void)
 }
 #endif // APP_REL_LVL
 //-----------------------------------------------------------------------------
-PRIVATE char cur_file_pos_before_search[MAX_PATH_LEN+1] = "";
-void memorize_cur_file_pos_before_search()
+PRIVATE char cur_file_pos_before_jump[MAX_PATH_LEN+1] = "";
+void memorize_cur_file_pos_before_jump()
 {
-	memorize_cur_file_pos_null(cur_file_pos_before_search);
+	memorize_cur_file_pos_null(cur_file_pos_before_jump);
 }
 int doe_return_to_prev_file_pos(void)
 {
-	recall_file_pos_null(cur_file_pos_before_search);
+	recall_file_pos_null(cur_file_pos_before_jump);
 
 	doe_refresh_editor();
 	disp_status_bar_done(_("Returned to previous pos"));
@@ -461,18 +460,18 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 	if (switch_epc_buf_by_file_path(full_path)) {
 /////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 		// already loaded and select it
-		goto loaded;
+		goto not_goto_line;
 	}
 	// try to load the file
 	if (load_file_into_new_buf(full_path, open_on_err, msg_on_err) > 0) {
 /////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
-		goto loaded;
+		goto goto_line;
 	}
 	// switch to if the file of the "file-name" already loaded
 	if (switch_epc_buf_by_file_name(full_path)) {
 /////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 		// already loaded and select it
-		goto loaded;
+		goto not_goto_line;
 	}
 #ifdef ENABLE_HISTORY
 /////flf_d_printf("full_path:[%s]\n", file_name);
@@ -481,15 +480,16 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 /////flf_d_printf("file_name:[%s]\n", file_name);
 		if (load_and_goto_from_history(file_name)) {
 /////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
-			goto loaded;
+			goto goto_line;
 		}
 	}
 #endif // ENABLE_HISTORY
 	return 0;
-loaded:
+goto_line:
 #ifdef ENABLE_HISTORY
 	goto_pos_by_history(full_path);
 #endif // ENABLE_HISTORY
+not_goto_line:
 /////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	return 1;
 }
@@ -507,8 +507,7 @@ PRIVATE int load_and_goto_from_history(const char *file_name)
 		if (strlen_path(history) == 0) {
 			break;
 		}
-/////
-flf_d_printf("history:[%s]\n", history);
+/////flf_d_printf("history:[%s]\n", history);
 		char file_path[MAX_PATH_LEN+1];
 		if (get_file_line_col_from_str_null(history, file_path, NULL, NULL)) {
 			char dir[MAX_PATH_LEN+1];
@@ -516,7 +515,7 @@ flf_d_printf("history:[%s]\n", history);
 			separate_path_to_dir_and_file(file_path, dir, file);
 /////flf_d_printf("file:[%s]\n", file);
 			if (strcmp(file, file_name) == 0) {
-flf_d_printf("history:[%s]\n", history);
+/////flf_d_printf("history:[%s]\n", history);
 				return load_file_in_string_(history, TUL0, OOE0, MOE0, LFH0, RECURSIVE0);
 			}
 		}
@@ -530,8 +529,8 @@ PRIVATE void goto_pos_by_history(const char *full_path)
 	const char *str = search_history_file_path(HISTORY_TYPE_IDX_CURSPOS, full_path);
 	// get line-num and col-num
 	if (goto_str_line_col_in_cur_buf(str)) {
-flf_d_printf("full_path:[%s]\n", full_path);
-flf_d_printf("history  :[%s]\n", str);
+////flf_d_printf("full_path:[%s]\n", full_path);
+////flf_d_printf("history  :[%s]\n", str);
 		EPCBVX_CL(0) = EPCBVX_CL(1) = EPCBVC_CL;
 		EPCBVX_CLBI(0) = EPCBVX_CLBI(1) = EPCBVC_CLBI;
 	}
@@ -727,14 +726,17 @@ int get_file_line_col_from_str_null(const char *str, char *file_path,
 //  fileio.h(20:10)			// M$ C compiler error message
 //  #:fileio.h,10			// gettext *.po file
 //  fileio.h 20:10			// file-name line-num:col-num
+//  fileio.h   20 10		// (separate by less than 4 spaces -> goto line-N)
 //  11/04/13 16:40:00, fileio.h:20:10,	// event log file
 //  <location filename="fileio.h" line="10"/>	// Qt-lupdate
-//  diff fileio.h fileio.h~		// command line
+//  diff fileio.h fileio.h~	// command line
 //  SOURCES += fileio.h		// Qt project file
 //  /home/user/tools/be/be/editorgoto.c|400:10 // BE file pos format
 //	  => "/home/user/tools/be/src/editorgoto.c", 400, 10
 //  '/home/user/tools/be/src/ file name.txt '|400:10 // BE file pos format (quoted)
 //	  => "/home/user/tools/be/src/ file name.txt ", 400, 10
+// un-supported or avoided formats:
+//  fileio.h    20 10		// (separate by more than 4 spaces -> does not goto line-N)
 
 PRIVATE int get_file_line_col_from_str(const char *str, char *file_path,
  int *line_num_, int *col_num_)

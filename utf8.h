@@ -22,8 +22,7 @@
 #ifndef utf8_h
 #define utf8_h
 
-// DNU: MB_LEN_MAX is defined to "16" in the latest Glibc header.
-#define MAX_UTF8C_BYTES		4
+#include "myutf8.h"
 
 #define UTF8_ZEN_SPACE				"　"	// Zenkaku(full width) space    "\xe3\x80\x80"
 #define UTF8_ZEN_SPACE_NOTATION		"＿"	// Zenkaku(full width) low line "\xef\xbc\xbf"

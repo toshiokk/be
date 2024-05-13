@@ -415,12 +415,14 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 			}
 		}
 	}
-	// status bar
-	disp_status_bar_percent_filer(
-	 "%s", file_info_str(&(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]),
-	 0, 1, 0));
-	// key list
-	disp_key_list_filer();
+	if (status_bar) {
+		// status bar
+		disp_status_bar_percent_filer(
+		 "%s", file_info_str(&(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]),
+		 0, 1, 0));
+		// key list
+		disp_key_list_filer();
+	}
 
 	// Set cursor position
 	sub_win_set_cursor_pos(filer_win_get_file_list_y()
@@ -441,7 +443,7 @@ PRIVATE void filer_disp_title_bar(const char *path,
 {
 	char separator_char;
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
-	char buf_dir[MAX_PATH_LEN+1];
+	char buf_dir_path[MAX_PATH_LEN+1];
 	char buf_files[MAX_SCRN_LINE_BUF_LEN+1];
 	char buf_time[1+HHCMMCSS_LEN+1];
 
@@ -463,11 +465,11 @@ PRIVATE void filer_disp_title_bar(const char *path,
 	}
 #endif // ENABLE_DEBUG
 	if ((get_win_depth() == 0) && (strcmp(path, get_home_dir()) == 0)) {
-		snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%s%d%c  [%s]  %s",
+		snprintf_(buf_dir_path, MAX_SCRN_LINE_BUF_LEN, "%s%d%c  [%s]  %s",
 		 root_notation(),
 		 get_filer_cur_pane_idx()+1, separator_char, get_at_host_name(), path);
 	} else {
-		snprintf_(buf_dir, MAX_SCRN_LINE_BUF_LEN, "%s%d%c%s",
+		snprintf_(buf_dir_path, MAX_SCRN_LINE_BUF_LEN, "%s%d%c%s",
 		 root_notation(),
 		 get_filer_cur_pane_idx()+1, separator_char, path);
 	}
@@ -488,8 +490,8 @@ PRIVATE void filer_disp_title_bar(const char *path,
 		snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, "%s", buf_time);
 	}
 	int path_cols = LIM_MIN(0, main_win_get_columns() - strlen_path(buf_files));
-	shrink_str(buf_dir, path_cols, 2);
-	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN, "%-*s%s", path_cols, buf_dir, buf_files);
+	shrink_str__adjust_col(buf_dir_path, path_cols, 2);
+	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_dir_path, buf_files);
 
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0, buffer, -1);
 }

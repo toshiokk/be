@@ -342,7 +342,6 @@ int doe_control_code(void)
 int doe_charcode(void)
 {
 	char string[MAX_PATH_LEN+1];
-	int ret;
 	unsigned int chr;
 #ifdef ENABLE_UTF8
 	char utf8c[MAX_UTF8C_BYTES+1];
@@ -351,9 +350,8 @@ int doe_charcode(void)
 	if (is_view_mode_then_warn_it())
 		return 0;
 
-	ret = input_string_tail("", string,
+	int ret = input_string_tail("", string,
 	 HISTORY_TYPE_IDX_SEARCH, _("Enter Unicode number in hex:"));
-
 	if (ret < 0) {
 		return 0;
 	}
@@ -373,17 +371,15 @@ int doe_charcode(void)
 	return 0;
 }
 
-int doe_paste_history(void)
+int doe_paste_from_history(void)
 {
 	char string[MAX_PATH_LEN+1];
-	int ret;
 
 	if (is_view_mode_then_warn_it())
 		return 0;
 
-	ret = input_string_tail("", string,
+	int ret = input_string_tail("", string,
 	 HISTORY_TYPE_IDX_SEARCH, _("Select history string to paste:"));
-
 	if (ret < 0) {
 		return 0;
 	}

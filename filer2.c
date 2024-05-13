@@ -227,7 +227,7 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	}
 	info_str_len = strnlen(info_str_ptr, FILE_INFO_BUF_LEN);
 
-	file_name_cols = utf8s_columns(buf_name, INT_MAX);
+	file_name_cols = utf8s_columns(buf_name, main_win_get_columns());
 	rest_space_for_file_name = LIM_MIN(0,
 	 sub_win_get_columns() - (SELECTED_MARK_LEN + info_str_len));
 	if (trunc_file_name) {

@@ -73,16 +73,11 @@ flf_d_printf("ret: %d\n", ret);
 }
 
 //-----------------------------------------------------------------------------
-int prev_key_executed;
-int key_executed;
 char prev_func_id[MAX_PATH_LEN+1];
 PRIVATE int editor_main_loop(void)
 {
 	key_code_t key_input;
 	func_key_table_t *func_key_table;
-
-	prev_key_executed = 0;
-	key_executed = 0;
 
 	search_clear(&search__);
 #ifdef ENABLE_REGEX
@@ -138,14 +133,12 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 					// FALLTHROUGH
 				case XA:		// executable all Normal/List mode
 					search_clear(&search__);
-					key_executed = key_input;
 flf_d_printf("CALL_EDITOR_FUNC [%s]\n", func_key_table->func_id);
 					//=========================
 					int ret = (*func_key_table->func)();	// call function "doe_...()"
 					//=========================
 					count_easy_buffer_switching();
 flf_d_printf("ret_val: %d, editor_quit: %d\n", ret, editor_quit);
-					prev_key_executed = key_executed;
 					strlcpy__(prev_func_id, func_key_table->func_id, MAX_PATH_LEN);
 					break;
 				}
@@ -187,10 +180,10 @@ int doe_open_file(void)
 PRIVATE int open_file_recursive(int recursive)
 {
 	char file_path[MAX_PATH_LEN+1];
-	int ret;
 
 	clear_files_loaded();
 	while (1) {
+		int ret;
 #ifdef ENABLE_FILER
 		ret = call_filer(1, 0, "", file_path, file_path, MAX_PATH_LEN);
 		if (ret > 0)
@@ -219,10 +212,8 @@ PRIVATE int open_file_recursive(int recursive)
 int doe_open_new_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
-	int ret;
 
-	ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_DIR, _("Open new file:"));
-
+	int ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_DIR, _("Open new file:"));
 	if (ret < 0) {
 		return 0;
 	}
@@ -514,13 +505,13 @@ int load_clipboard_into_cut_buf()
 
 int doe_read_clipboard_into_cur_char()
 {
-	return do_read_clipboard_into_cur_pos(0);
+	return doe_read_clipboard_into_cur_pos_(0);
 }
 int doe_read_clipboard_into_cur_line()
 {
-	return do_read_clipboard_into_cur_pos(1);
+	return doe_read_clipboard_into_cur_pos_(1);
 }
-int do_read_clipboard_into_cur_pos(int char0_line1)
+int doe_read_clipboard_into_cur_pos_(int char0_line1)
 {
 	push_cut_buf();
 	if (load_clipboard_into_cut_buf() <= 0) {

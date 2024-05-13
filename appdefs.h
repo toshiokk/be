@@ -64,12 +64,12 @@
 ////  code commented out
 ///// code obsolete and to be removed
 
-///PPP pending(temporarily commented-out) code
-///TTT temporary test code
-///DDD to be deleted code
+///PPP : pending(temporarily commented-out) code
+///TTT : temporary test code
+///DDD : code to be deleted
 
 // NOTE: length of string buffer must be categorized into three types
-//	MAX_SCRN_LINE_BUF_LEN	384*3 = 1152
+//	MAX_SCRN_LINE_BUF_LEN	768*6 = 4608
 //	MAX_PATH_LEN			4096
 //	MAX_EDIT_LINE_LEN		4096
 

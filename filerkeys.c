@@ -112,7 +112,7 @@ func_key_table_t filer_func_key_table[] = {
    XA, F_I(dof_home_directory), NULL },
  { "Root directory",      "Root directory",                 K_('/'),      KNA, KNA,
    XA, F_I(dof_root_directory), NULL },
- { "Previous dir.",       "Previous directory",             K_('b'),      KNA, KNA,
+ { "Previous dir.",       "Previous directory",             K_('b'), K_M_SLASH, KNA,
    XA, F_I(dof_prev_directory), NULL },
 
  { "",                    "Filer Menu-4",                   KNA,          KNA, KNA,
@@ -142,7 +142,7 @@ func_key_table_t filer_func_key_table[] = {
 
  { "",                    "Filer Menu-5",                   KNA,          KNA, KNA,
    XL, F_I(dof_filer_menu_5), NULL },
- { "Split pane",          "Split screen into panes",        '\\', K_MC_BACKSLASH, KNA,
+ { "Split pane",          "Split screen into panes",        K_('\\'), K_MC_BACKSLASH, KNA,
    XA, F_I(dof_tog_panes), get_str_filer_panes },
  { "Switch pane",         "Switch filer pane",              K_TAB, K_M_TAB, KNA,
    XA, F_I(dof_switch_filer_pane), NULL },

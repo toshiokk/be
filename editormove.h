@@ -50,7 +50,7 @@ int doe_first_line(void);
 int doe_last_line(void);
 int doe_control_code(void);
 int doe_charcode(void);
-int doe_paste_history(void);
+int doe_paste_from_history(void);
 
 int doe_tab(void);
 int doe_enter_char(char chr);

@@ -1,5 +1,5 @@
 /**************************************************************************
- *   sig.c                                                                *
+ *   sig.c - signal management                                            *
  *                                                                        *
  *   Copyright (C) 1999-2003 Chris Allegretta                             *
  *                                                                        *

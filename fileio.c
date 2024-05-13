@@ -169,12 +169,9 @@ int backup_and_save_cur_buf_ask(void)
 
 int input_new_file_name_n_ask(char *file_path)
 {
-	int ret = 0;
-
 	while (1) {
-		ret = input_string_tail(file_path, file_path,
+		int ret = input_string_tail(file_path, file_path,
 		 HISTORY_TYPE_IDX_DIR, "%s:", _("File Name to Write"));
-
 		if (ret <= 0) {
 			set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 			return 0;		// cancelled

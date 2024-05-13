@@ -22,8 +22,6 @@
 #ifndef editor_h
 #define editor_h
 
-extern int prev_key_executed;
-extern int key_executed;
 extern char prev_func_id[MAX_PATH_LEN+1];
 typedef enum {
 	EDITOR_NONE = 0,
@@ -63,7 +61,7 @@ int load_clipboard_into_cut_buf();
 
 int doe_read_clipboard_into_cur_char();
 int doe_read_clipboard_into_cur_line();
-int do_read_clipboard_into_cur_pos(int char0_line1);
+int doe_read_clipboard_into_cur_pos_(int char0_line1);
 
 //-----------------------------------------------------------------------------
 

@@ -143,10 +143,8 @@ int dof_call_editor()
 int dof_edit_new_file(void)
 {
 	char file_name[MAX_PATH_LEN+1];
-	int ret;
 
-	ret = input_string_tail("", file_name, HISTORY_TYPE_IDX_CURSPOS , _("Edit new file:"));
-
+	int ret = input_string_tail("", file_name, HISTORY_TYPE_IDX_CURSPOS , _("Edit new file:"));
 	if (ret < 0) {
 		return 0;
 	}
@@ -195,9 +193,9 @@ int dof_tail_file(void)	// view file with "tail" command
 int dof_copy_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
+
 	int ret = input_string_tail(get_other_filer_view()->cur_dir, file_path,
 	 HISTORY_TYPE_IDX_DIR, _("Copy to:"));
-
 	if (ret < 0) {
 		return 0;
 	}
@@ -225,11 +223,9 @@ int dof_copy_file(void)
 int dof_copy_file_update(void)
 {
 	char file_path[MAX_PATH_LEN+1];
-	int ret;
 
-	ret = input_string_tail(get_other_filer_view()->cur_dir, file_path,
+	int ret = input_string_tail(get_other_filer_view()->cur_dir, file_path,
 	 HISTORY_TYPE_IDX_DIR, _("Copy to (Update):"));
-
 	if (ret < 0) {
 		return 0;
 	}
@@ -261,7 +257,6 @@ int dof_move_file(void)
 
 	ret = input_string_tail(get_other_filer_view()->cur_dir, file_path,
 	 HISTORY_TYPE_IDX_DIR, _("Move to:"));
-
 	if (ret <= 0) {
 		return 0;
 	}
@@ -421,13 +416,11 @@ int dof_size_zero_file(void)
 int dof_rename_file(void)
 {
 	char file_name[MAX_PATH_LEN+1];
-	int ret;
 
 	strlcpy__(file_name, get_cur_filer_view()
 	 ->file_list[get_cur_filer_view()->cur_sel_idx].file_name, MAX_PATH_LEN);
 
-	ret = input_string_tail(file_name, file_name, HISTORY_TYPE_IDX_EXEC, _("Rename to:"));
-
+	int ret = input_string_tail(file_name, file_name, HISTORY_TYPE_IDX_EXEC, _("Rename to:"));
 	if (ret < 0) {
 		return 0;
 	}
@@ -445,10 +438,8 @@ int dof_rename_file(void)
 int dof_find_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
-	int ret;
 
-	ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_DIR, _("Find:"));
-
+	int ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_DIR, _("Find:"));
 	if (ret < 0) {
 		return 0;
 	}
@@ -463,10 +454,8 @@ int dof_find_file(void)
 int dof_make_directory(void)
 {
 	char file_path[MAX_PATH_LEN+1];
-	int ret;
 
-	ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_DIR, _("Mkdir:"));
-
+	int ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_DIR, _("Mkdir:"));
 	if (ret < 0) {
 		return 0;
 	}
@@ -481,17 +470,15 @@ int dof_change_directory(void)
 {
 	char string[MAX_PATH_LEN+1];
 	char file_path[MAX_PATH_LEN+1];
-	int ret;
 
-	ret = input_string_tail("", string, HISTORY_TYPE_IDX_DIR, _("Chdir to:"));
-	get_file_line_col_from_str_null(string, file_path, NULL, NULL);
-
+	int ret = input_string_tail("", string, HISTORY_TYPE_IDX_DIR, _("Chdir to:"));
 	if (ret < 0) {
 		return 0;
 	}
 	if (ret <= 0) {
 		return 0;
 	}
+	get_file_line_col_from_str_null(string, file_path, NULL, NULL);
 	return filer_change_dir_parent(file_path);
 }
 
@@ -744,7 +731,8 @@ PRIVATE int filer_change_dir_if_not_yet(char *dir)
 	char buf1[MAX_PATH_LEN+1];
 	char buf2[MAX_PATH_LEN+1];
 
-	if (strcmp(get_abs_path(get_cur_filer_view()->cur_dir, buf1), get_abs_path(dir, buf2)) == 0) {
+	if (strcmp(get_cur_filer_view()->cur_dir, dir) == 0) {
+	/////if (strcmp(get_abs_path(get_cur_filer_view()->cur_dir, buf1), get_abs_path(dir, buf2)) == 0) {
 		return filer_change_dir_to_prev_dir();
 	} else {
 		return filer_change_dir(dir);

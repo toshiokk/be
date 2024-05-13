@@ -490,6 +490,8 @@ PRIVATE key_code_t input_key_timeout(void)
 			win_reinit_win_size();
 #ifdef ENABLE_HELP
 			disp_splash(-1);
+			disp_status_bar_ing(_("Window resized to (%d, %d)"),
+			 tio_get_columns(), tio_get_lines());
 			msec_enter = get_msec();	// restart time monitoring
 			key_wait_time_msec = SPLASH_KEY_WAIT_MSEC;
 #endif // ENABLE_HELP

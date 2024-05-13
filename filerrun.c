@@ -42,15 +42,13 @@ PRIVATE int dof_run_command_(int mode);
 int dof_exec_command_with_file(void)
 {
 	char command_str[MAX_PATH_LEN+1];
-	int ret;
 	char *ptr_replace;
 	char buffer[MAX_PATH_LEN+1];
 #define MAX_REPLACEMENTS	10
 	int cnt;
 
-	ret = input_string_tail("", command_str,
-	 HISTORY_TYPE_IDX_EXEC, _("Execute({} will be replaced with file-name):"));
-
+	int ret = input_string_tail("", command_str, HISTORY_TYPE_IDX_EXEC,
+	 _("Execute({} will be replaced with file-name):"));
 	if (ret < 0) {
 		return 0;
 	}

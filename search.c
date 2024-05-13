@@ -31,36 +31,32 @@ PRIVATE int direction_of_prev_search = 0;
 PRIVATE be_line_t *line_of_prev_search = NULL;
 PRIVATE int byte_idx_of_prev_search = 0;
 
+PRIVATE int doe_search_forward_first_(void);
 PRIVATE int input_search_str(int search0_replace1, char *input_buf);
 PRIVATE int input_replace_str(char *input_buf);
 
 int doe_search_backward_first(void)
 {
-	char needle[MAX_PATH_LEN+1];
-
 	SET_APPMD(ed_REVERSE_SEARCH);
-	if (input_search_str(SEARCH0, needle) <= 0) {
-		return -1;
-	}
-	memorize_cur_file_pos_before_search();
-	found_in_prev_search = 1;
-	if (search_string_once(needle, 0))
-		return 1;
-	TOGGLE_APPMD(ed_REVERSE_SEARCH);
-	return search_string_once(needle, 0);
+	return doe_search_forward_first_();
 }
 int doe_search_forward_first(void)
 {
+	CLR_APPMD(ed_REVERSE_SEARCH);
+	return doe_search_forward_first_();
+}
+PRIVATE int doe_search_forward_first_(void)
+{
 	char needle[MAX_PATH_LEN+1];
 
-	CLR_APPMD(ed_REVERSE_SEARCH);
 	if (input_search_str(SEARCH0, needle) <= 0) {
 		return -1;
 	}
-	memorize_cur_file_pos_before_search();
+	memorize_cur_file_pos_before_jump();
 	found_in_prev_search = 1;
 	if (search_string_once(needle, 0))
 		return 1;
+	// not found in the first direction, search to the reverse direction
 	TOGGLE_APPMD(ed_REVERSE_SEARCH);
 	return search_string_once(needle, 0);
 }
@@ -136,7 +132,6 @@ int doe_replace(void)
 int input_search_str(int search0_replace1, char *input_buf)
 {
 	char default_needle[MAX_PATH_LEN+1];
-	int ret = 0;
 
 	if (strlen(last_searched_needle)) {
 		// We use main_win_get_columns() / 3 here because we need to see more on the line
@@ -147,7 +142,7 @@ int input_search_str(int search0_replace1, char *input_buf)
 		strcpy__(default_needle, "");
 	}
 
-	ret = input_string_tail("", input_buf, HISTORY_TYPE_IDX_SEARCH, "%s%s%s%s%s:",
+	int ret = input_string_tail("", input_buf, HISTORY_TYPE_IDX_SEARCH, "%s%s%s%s%s:",
 	 search0_replace1 == 0 ? _("Search") : _("Replace"),
 	 GET_APPMD(ed_IGNORE_CASE) ? _("[Ignore-case]") : _("[Differenciate-case]"),
 #ifdef ENABLE_REGEX
@@ -181,10 +176,7 @@ int input_search_str(int search0_replace1, char *input_buf)
 
 int input_replace_str(char *input_buf)
 {
-	int ret;
-
-	ret = input_string_tail("", input_buf, HISTORY_TYPE_IDX_SEARCH, "%s:", _("Replace with"));
-
+	int ret = input_string_tail("", input_buf, HISTORY_TYPE_IDX_SEARCH, "%s:", _("Replace with"));
 	if (ret <= 0) {
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
 	}
