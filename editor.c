@@ -514,7 +514,7 @@ int doe_read_clipboard_into_cur_line()
 int doe_read_clipboard_into_cur_pos_(int char0_line1)
 {
 	push_cut_buf();
-	if (load_clipboard_into_cut_buf() <= 0) {
+	if (load_clipboard_into_cut_buf() < 0) {
 		pop_n_free_from_cut_buf();
 		return 0;
 	}

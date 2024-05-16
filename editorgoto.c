@@ -463,7 +463,7 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 		goto not_goto_line;
 	}
 	// try to load the file
-	if (load_file_into_new_buf(full_path, open_on_err, msg_on_err) > 0) {
+	if (load_file_into_new_buf(full_path, open_on_err, msg_on_err) >= 0) {
 /////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 		goto goto_line;
 	}

@@ -91,6 +91,7 @@ PRIVATE void test_separate_path_to_dir_and_file__(char *path, char *buf_dir, cha
  const char *exp_dir, const char *exp_file);
 void test_separate_path_to_dir_and_file()
 {
+	flf_d_printf("-----------------------\n");
 	char buf_dir[MAX_PATH_LEN+1];
 	char buf_file[MAX_PATH_LEN+1];
 	test_separate_path_to_dir_and_file__("/dir/to/file", buf_dir, buf_file,
@@ -115,12 +116,15 @@ void test_separate_path_to_dir_and_file()
 PRIVATE void test_separate_path_to_dir_and_file__(char *path, char *buf_dir, char *buf_file,
  const char *exp_dir, const char *exp_file)
 {
-#define EXPECTED_STR(gotten, expected)		((strcmp(gotten, expected) == 0) ? '=' : '!')
-flf_d_printf("path[%s]\n", path);
+#define IS_EQ_STR(gotten, expected)		(strcmp(gotten, expected) == 0)
+#define EQU_STR(gotten, expected)		(IS_EQ_STR(gotten, expected) ? '=' : '!')
 	separate_path_to_dir_and_file(path, buf_dir, buf_file);
-flf_d_printf("  dir[%s]%c[%s], file[%s]%c[%s]\n",
- buf_dir, EXPECTED_STR(buf_dir, exp_dir), exp_dir,
- buf_file, EXPECTED_STR(buf_file, exp_file), exp_file);
+	if ((! IS_EQ_STR(buf_dir, exp_dir)) || (! IS_EQ_STR(buf_file, exp_file))) {
+		flf_d_printf("path[%s]\n", path);
+		flf_d_printf("  dir[%s]%c[%s], file[%s]%c[%s]\n",
+		 buf_dir, EQU_STR(buf_dir, exp_dir), exp_dir,
+		 buf_file, EQU_STR(buf_file, exp_file), exp_file);
+	}
 }
 
 // path                buf_dir     buf_file
@@ -336,6 +340,7 @@ char *get_home_dir(void)
 		} else {
 			strcpy__(home_dir, "/");
 		}
+flf_d_printf("home_dir: [%s]\n", home_dir);
 	}
 	return home_dir;
 }
@@ -471,6 +476,7 @@ PRIVATE void test_cat_dir_and_file_(char *buf, const char *dir, const char *file
  const char *expected);
 void test_cat_dir_and_file()
 {
+	flf_d_printf("-----------------------\n");
 	char buf[MAX_PATH_LEN+1];
 	test_cat_dir_and_file_(buf, "/dir1/dir2", "/file", "/dir1/dir2/file");
 	test_cat_dir_and_file_(buf, "/dir1/dir2/", "/file", "/dir1/dir2/file");
@@ -482,9 +488,11 @@ void test_cat_dir_and_file()
 PRIVATE void test_cat_dir_and_file_(char *buf, const char *dir, const char *file,
  const char *expected)
 {
-flf_d_printf("dir: [%s], file: [%s]\n", dir, file);
 	cat_dir_and_file(buf, dir, file);
-flf_d_printf("  buf: [%s]%c[%s]\n", buf, EXPECTED_STR(buf, expected), expected);
+	if (! IS_EQ_STR(buf, expected)) {
+		flf_d_printf("dir: [%s], file: [%s]\n", dir, file);
+		flf_d_printf("  buf: [%s]%c[%s]\n", buf, EQU_STR(buf, expected), expected);
+	}
 }
 #endif // START_UP_TEST
 
@@ -567,6 +575,9 @@ void test_cwd_PWD()
 	change_cur_dir("/home/user/tools/be/be/testfiles/symlinkd");
 	flf_d_printf("getcwd: [%s]\n", getcwd__(buf));
 	flf_d_printf("getenv(PWD): [%s]\n", getenv_pwd(buf));
+
+	change_cur_dir(get_starting_dir());
+	flf_d_printf("getcwd: [%s]\n", getcwd__(buf));
 }
 // /aaa/bbb/.. ==> /aaa
 // /aaa/bbb/../ccc ==> /aaa/ccc
@@ -575,51 +586,119 @@ void test_cwd_PWD()
 // /aaa/bbb/. ==> /aaa/bbb
 // /aaa/bbb/./ccc ==> /aaa/bbb/ccc
 // /. ==> /
-PRIVATE void test_normalize_path_(const char *path);
-PRIVATE void test_normalize_path__(const char *path);
+PRIVATE const char *test_normalize_path_1(const char *path);
+PRIVATE const char *test_normalize_path_2(const char *path);
+PRIVATE const char *test_normalize_path_3(const char *path);
+PRIVATE const char *test_normalize_path_4(const char *path);
+PRIVATE const char *test_normalize_path__(const char *path);
 int test_normalize_path(void)
 {
 	flf_d_printf("-----------------------\n");
-	test_normalize_path_("///");
-	test_normalize_path_("///dir///file///");
-	test_normalize_path_(".");
-	test_normalize_path_("././.");
-	test_normalize_path_("..");
-	test_normalize_path_("../../..");
-	test_normalize_path_("aaa/bbb/..");
-	test_normalize_path_("aaa/bbb/../ccc");
-	test_normalize_path_("aaa/bbb/../../ccc");
-	test_normalize_path_("aaa/bbb/ccc/../../ddd");
-	test_normalize_path_("aaa/bbb/ccc/../../../ddd");
-	test_normalize_path_("../ccc");
-	test_normalize_path_("../../../ccc");
-	test_normalize_path_("../aaa/bbb/..");
-	test_normalize_path_("aaa/bbb/.");
-	test_normalize_path_("aaa/bbb/./ccc");
-	test_normalize_path_(".");
-	test_normalize_path_("./aaa/bbb/.");
+	MY_UT_STR(test_normalize_path_1("///"), "/");
+	MY_UT_STR(test_normalize_path_2("///"), "/");
+	MY_UT_STR(test_normalize_path_3("///"), "/");
+	MY_UT_STR(test_normalize_path_4("///"), "/");
+	MY_UT_STR(test_normalize_path_1("///dir///file///"), "/dir/file");
+	MY_UT_STR(test_normalize_path_2("///dir///file///"), "/dir/file");
+	MY_UT_STR(test_normalize_path_3("///dir///file///"), "/dir/file");
+	MY_UT_STR(test_normalize_path_4("///dir///file///"), "/dir/file");
+	MY_UT_STR(test_normalize_path_1("."), "");
+	MY_UT_STR(test_normalize_path_2("."), "/");
+	MY_UT_STR(test_normalize_path_3("."), "");
+	MY_UT_STR(test_normalize_path_4("."), "/");
+	MY_UT_STR(test_normalize_path_1("././."), "");
+	MY_UT_STR(test_normalize_path_2("././."), "/");
+	MY_UT_STR(test_normalize_path_3("././."), "");
+	MY_UT_STR(test_normalize_path_4("././."), "/");
+	MY_UT_STR(test_normalize_path_1(".."), "");
+	MY_UT_STR(test_normalize_path_2(".."), "/");
+	MY_UT_STR(test_normalize_path_3(".."), "");
+	MY_UT_STR(test_normalize_path_4(".."), "/");
+	MY_UT_STR(test_normalize_path_1("../../.."), "");
+	MY_UT_STR(test_normalize_path_2("../../.."), "/");
+	MY_UT_STR(test_normalize_path_3("../../.."), "");
+	MY_UT_STR(test_normalize_path_4("../../.."), "/");
+	MY_UT_STR(test_normalize_path_1("aaa/bbb/.."), "aaa");
+	MY_UT_STR(test_normalize_path_2("aaa/bbb/.."), "/aaa");
+	MY_UT_STR(test_normalize_path_3("aaa/bbb/.."), "aaa");
+	MY_UT_STR(test_normalize_path_4("aaa/bbb/.."), "/aaa");
+	MY_UT_STR(test_normalize_path_1("aaa/bbb/../ccc"), "aaa/ccc");
+	MY_UT_STR(test_normalize_path_2("aaa/bbb/../ccc"), "/aaa/ccc");
+	MY_UT_STR(test_normalize_path_3("aaa/bbb/../ccc"), "aaa/ccc");
+	MY_UT_STR(test_normalize_path_4("aaa/bbb/../ccc"), "/aaa/ccc");
+	MY_UT_STR(test_normalize_path_1("aaa/bbb/../../ccc"), "ccc");
+	MY_UT_STR(test_normalize_path_2("aaa/bbb/../../ccc"), "/ccc");
+	MY_UT_STR(test_normalize_path_3("aaa/bbb/../../ccc"), "ccc");
+	MY_UT_STR(test_normalize_path_4("aaa/bbb/../../ccc"), "/ccc");
+	MY_UT_STR(test_normalize_path_1("aaa/bbb/ccc/../../ddd"), "aaa/ddd");
+	MY_UT_STR(test_normalize_path_2("aaa/bbb/ccc/../../ddd"), "/aaa/ddd");
+	MY_UT_STR(test_normalize_path_3("aaa/bbb/ccc/../../ddd"), "aaa/ddd");
+	MY_UT_STR(test_normalize_path_4("aaa/bbb/ccc/../../ddd"), "/aaa/ddd");
+	MY_UT_STR(test_normalize_path_1("aaa/bbb/ccc/../../../ddd"), "ddd");
+	MY_UT_STR(test_normalize_path_2("aaa/bbb/ccc/../../../ddd"), "/ddd");
+	MY_UT_STR(test_normalize_path_3("aaa/bbb/ccc/../../../ddd"), "ddd");
+	MY_UT_STR(test_normalize_path_4("aaa/bbb/ccc/../../../ddd"), "/ddd");
+	MY_UT_STR(test_normalize_path_1("../ccc"), "ccc");
+	MY_UT_STR(test_normalize_path_2("../ccc"), "/ccc");
+	MY_UT_STR(test_normalize_path_3("../ccc"), "ccc");
+	MY_UT_STR(test_normalize_path_4("../ccc"), "/ccc");
+	MY_UT_STR(test_normalize_path_1("../../../ccc"), "ccc");
+	MY_UT_STR(test_normalize_path_2("../../../ccc"), "/ccc");
+	MY_UT_STR(test_normalize_path_3("../../../ccc"), "ccc");
+	MY_UT_STR(test_normalize_path_4("../../../ccc"), "/ccc");
+	MY_UT_STR(test_normalize_path_1("../aaa/bbb/.."), "aaa");
+	MY_UT_STR(test_normalize_path_2("../aaa/bbb/.."), "/aaa");
+	MY_UT_STR(test_normalize_path_3("../aaa/bbb/.."), "aaa");
+	MY_UT_STR(test_normalize_path_4("../aaa/bbb/.."), "/aaa");
+	MY_UT_STR(test_normalize_path_1("aaa/bbb/."), "aaa/bbb");
+	MY_UT_STR(test_normalize_path_2("aaa/bbb/."), "/aaa/bbb");
+	MY_UT_STR(test_normalize_path_3("aaa/bbb/."), "aaa/bbb");
+	MY_UT_STR(test_normalize_path_4("aaa/bbb/."), "/aaa/bbb");
+	MY_UT_STR(test_normalize_path_1("aaa/bbb/./ccc"), "aaa/bbb/ccc");
+	MY_UT_STR(test_normalize_path_2("aaa/bbb/./ccc"), "/aaa/bbb/ccc");
+	MY_UT_STR(test_normalize_path_3("aaa/bbb/./ccc"), "aaa/bbb/ccc");
+	MY_UT_STR(test_normalize_path_4("aaa/bbb/./ccc"), "/aaa/bbb/ccc");
+	MY_UT_STR(test_normalize_path_1("."), "");
+	MY_UT_STR(test_normalize_path_2("."), "/");
+	MY_UT_STR(test_normalize_path_3("."), "");
+	MY_UT_STR(test_normalize_path_4("."), "/");
+	MY_UT_STR(test_normalize_path_1("./aaa/bbb/."), "aaa/bbb");
+	MY_UT_STR(test_normalize_path_2("./aaa/bbb/."), "/aaa/bbb");
+	MY_UT_STR(test_normalize_path_3("./aaa/bbb/."), "aaa/bbb");
+	MY_UT_STR(test_normalize_path_4("./aaa/bbb/."), "/aaa/bbb");
 	return 0;
 }
-PRIVATE void test_normalize_path_(const char *path)
+PRIVATE const char *test_normalize_path_1(const char *path)
 {
 	char buffer[MAX_PATH_LEN+1];
-
 	snprintf(buffer, MAX_PATH_LEN, "%s", path);
-	test_normalize_path__(buffer);
-	snprintf(buffer, MAX_PATH_LEN, "/%s", path);
-	test_normalize_path__(buffer);
-	snprintf(buffer, MAX_PATH_LEN, "%s/", path);
-	test_normalize_path__(buffer);
-	snprintf(buffer, MAX_PATH_LEN, "/%s/", path);
-	test_normalize_path__(buffer);
+	return test_normalize_path__(buffer);
 }
-PRIVATE void test_normalize_path__(const char *path)
+PRIVATE const char *test_normalize_path_2(const char *path)
 {
 	char buffer[MAX_PATH_LEN+1];
-
+	snprintf(buffer, MAX_PATH_LEN, "/%s", path);
+	return test_normalize_path__(buffer);
+}
+PRIVATE const char *test_normalize_path_3(const char *path)
+{
+	char buffer[MAX_PATH_LEN+1];
+	snprintf(buffer, MAX_PATH_LEN, "%s/", path);
+	return test_normalize_path__(buffer);
+}
+PRIVATE const char *test_normalize_path_4(const char *path)
+{
+	char buffer[MAX_PATH_LEN+1];
+	snprintf(buffer, MAX_PATH_LEN, "/%s/", path);
+	return test_normalize_path__(buffer);
+}
+PRIVATE const char *test_normalize_path__(const char *path)
+{
+	static char buffer[MAX_PATH_LEN+1];
 	strlcpy__(buffer, path, MAX_PATH_LEN);
 	normalize_full_path(buffer);
-	flf_d_printf("[%s] ==> [%s]\n", path, buffer);
+	////flf_d_printf("[%s] ==> [%s]\n", path, buffer);
+	return buffer;
 }
 #endif // START_UP_TEST
 
@@ -703,6 +782,8 @@ void test_get_full_path(void)
 	test_get_full_path_("~");
 	test_get_full_path_("~user");
 	test_get_full_path_("~root");
+	test_get_full_path_("~hoge");
+	test_get_full_path_("~hoge/abc");
 
 	test_get_full_path_("~/abc");
 	test_get_full_path_("~user/abc");

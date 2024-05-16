@@ -31,8 +31,21 @@
 #endif // ENABLE_DEBUG
 
 #ifdef ENABLE_DEBUG
-///#define START_UP_TEST
+///
+#define START_UP_TEST
 #endif // ENABLE_DEBUG
+
+#ifdef START_UP_TEST
+#define MY_UT_INT(actual, expected)		if ((actual) != (expected)) {			\
+  warning_printf("[%d] != [%d]\n", actual, expected); assert(1);			\
+}
+#define MY_UT_UINT(actual, expected)	if ((actual) != (expected)) {			\
+  warning_printf("[%u] != [%u]\n", actual, expected); assert(1);			\
+}
+#define MY_UT_STR(actual, expected)		if (strcmp((actual), (expected))) {		\
+  warning_printf("[%s] != [%s]\n", actual, expected); assert(1);			\
+}
+#endif // START_UP_TEST
 
 #ifdef ENABLE_DEBUG
 

@@ -52,14 +52,15 @@ int main(int argc, char *argv[])
 #ifdef ENABLE_FILER
 	filer_panes_t root_filer_panes;
 #endif // ENABLE_FILER
-	int start_line_num = 0;			// Line to start at
 
 	init_app_mode();
 #ifdef ENABLE_DEBUG
 	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
+	////set_debug_printf_output(1);
 #endif // ENABLE_DEBUG
 flf_d_printf("Start %s ===================================\n", APP_NAME " " __DATE__ " " __TIME__);
 	_mlc_init
+	get_home_dir();
 	get_starting_dir();
 	signal_init();
 	init_locale();
@@ -124,6 +125,7 @@ flf_d_printf("opening files --------------------------------------------\n");
 	MSLEEP(500);
 #endif // ENABLE_HELP
 	// If there's a +LINE flag, it is the first non-option argument
+	int start_line_num = 0;			// Line to start at
 	if (0 < optind && optind < argc && argv[optind][0] == '+') {
 flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 		sscanf(&argv[optind][1], "%d", &start_line_num);
@@ -436,6 +438,7 @@ PRIVATE void start_up_test(void)
 	flf_d_printf("getenv(HOSTNAME): [%s]\n", getenv__("HOSTNAME"));
 	flf_d_printf("getenv(LANG): [%s]\n", getenv__("LANG"));
 	flf_d_printf("ttyname(0): [%s]\n", ttyname(0));
+	flf_d_printf("getenv(HOME): [%s]\n", get_home_dir());
 
 	flf_d_printf("sizeof(int): %d\n", sizeof(int));
 	flf_d_printf("sizeof(long): %d\n", sizeof(long));
@@ -484,7 +487,8 @@ PRIVATE void start_up_test(void)
 	test_cat_dir_and_file();
 	test_separate_path_to_dir_and_file();
 
-///	test_get_intersection();
+///	
+test_get_intersection();
 	get_mem_free_in_kb(1);
 ///	test_nn_from_num();
 ///	test_utf8c_encode();

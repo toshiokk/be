@@ -27,13 +27,14 @@ PRIVATE int get_line_num_digits(int max_line_num);
 // ruler ======================================================================
 
 #ifdef START_UP_TEST
+
 void test_make_ruler_text(void)
 {
-flf_d_printf("[%s]\n", make_ruler_text(0, 40));
-flf_d_printf("[%s]\n", make_ruler_text(97, 40));
-flf_d_printf("[%s]\n", make_ruler_text(98, 40));
-flf_d_printf("[%s]\n", make_ruler_text(99, 40));
-flf_d_printf("[%s]\n", make_ruler_text(100, 40));
+	MY_UT_STR(make_ruler_text(0, 40), "1---5----10---15---20---25---30---35---4");
+	MY_UT_STR(make_ruler_text(97, 40), "--100--105--110--115--120--125--130--135");
+	MY_UT_STR(make_ruler_text(98, 40), "-100--105--110--115--120--125--130--135-");
+	MY_UT_STR(make_ruler_text(99, 40), "100--105--110--115--120--125--130--135--");
+	MY_UT_STR(make_ruler_text(100, 40), "----105--110--115--120--125--130--135--1");
 }
 #endif // START_UP_TEST
 

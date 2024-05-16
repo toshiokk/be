@@ -49,12 +49,12 @@ const char *dump_utf8c(const char *utf8c, char *buf)
 void test_utf8c_bytes(void)
 {
 	const char str[] = "\xed\xa0\x80\xed\xa0\x81 \xed\xa0\xa0\xed\xa0\xa1";
-	const char *ptr;
-
-	for (ptr = str; *ptr; ) {
-		flf_d_printf("%d\n", ptr - str);
-		ptr += utf8c_bytes(ptr);
-	}
+	const char *ptr = str;
+	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 3);
+	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 6);
+	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 7);
+	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 10);
+	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 13);
 }
 void test_wcwidth(void)
 {

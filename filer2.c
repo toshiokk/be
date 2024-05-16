@@ -30,6 +30,7 @@ PRIVATE const char *get_1k_to_999k_str(long size, char *buf);
 #ifdef START_UP_TEST
 void test_get_file_size_str(void)
 {
+_FLF_
 	loff_t size;
 	loff_t zeros;
 	int bits;
@@ -37,20 +38,108 @@ void test_get_file_size_str(void)
 /////#ifdef ENABLE_DEBUG
 	char buf_size[20+1];
 /////#endif // ENABLE_DEBUG
+	const char *expected_strs[] = {
+		"     1",
+		"     3",
+		"     7",
+		"    15",
+		"    31",
+		"    63",
+		"   127",
+		"   255",
+		"   511",
+		"  1023",
+		"  2047",
+		"  4095",
+		"  8191",
+		" 16383",
+		" 32767",
+		" 65535",
+		"131071",
+		"262143",
+		"524287",
+		"1.048M",
+		"2.097M",
+		"4.194M",
+		"8.388M",
+		"16.77M",
+		"33.55M",
+		"67.10M",
+		"134.2M",
+		"268.4M",
+		"536.8M",
+		"1.073G",
+		"2.147G",
+		"4.294G",
+		"8.589G",
+		"17.17G",
+		"34.35G",
+		"68.71G",
+		"137.4G",
+		"274.8G",
+		"549.7G",
+		"1.099T",
+		"2.199T",
+		"4.398T",
+		"8.796T",
+		"17.59T",
+		"35.18T",
+		"70.36T",
+		"140.7T",
+		"281.4T",
+		"562.9T",
+		"1.125P",
+		"2.251P",
+		"4.503P",
+		"9.007P",
+		"18.01P",
+		"36.02P",
+		"72.05P",
+		"144.1P",
+		"288.2P",
+		"576.4P",
+		"1.152E",
+		"2.305E",
+		"4.611E",
+		"9.223E",
+		"18.44E",
 
+		" 12345",
+		"123450",
+		"1.234M",
+		"12.34M",
+		"123.4M",
+		"1.234G",
+		"12.34G",
+		"123.4G",
+		"1.234T",
+		"12.34T",
+		"123.4T",
+		"1.234P",
+		"12.34P",
+		"123.4P",
+		"1.234E",
+		"12.34E",
+	};
+
+	int expected_idx = 0;
 	for (bits = 1; bits <= 64; bits++) {
 		// 0x01, 0x03, ... 0x7fffffffffffffff, 0xffffffffffffffff
 		size = 0;
 		for (bit = 0; bit < bits; bit++) {
 			size |= ((loff_t)1) << bit;
 		}
-		flf_d_printf("%16llx ==> %20llu ==> %s\n", size, size, get_file_size_str(buf_size, size));
+		get_file_size_str(buf_size, size);
+		////flf_d_printf("%16llx ==> %20llu ==> %s\n", size, size, buf_size);
+		MY_UT_STR(buf_size, expected_strs[expected_idx]);	expected_idx++;
 	}
 	//                   PPPPPTTTGGGMMMKKK000
 	for (zeros = 1; zeros <= 1000000000000000; zeros *= 10) {
 		// 12345, 123450, ... 12,345,000,000,000,000
 		size = 12345 * zeros;
-		flf_d_printf("%16llx ==> %20llu ==> %s\n", size, size, get_file_size_str(buf_size, size));
+		get_file_size_str(buf_size, size);
+		////flf_d_printf("%16llx ==> %20llu ==> %s\n", size, size, buf_size);
+		MY_UT_STR(buf_size, expected_strs[expected_idx]);	expected_idx++;
 	}
 }
 #endif // START_UP_TEST

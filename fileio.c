@@ -49,10 +49,8 @@ PRIVATE int save_cur_buf_to_file_binary(const char *file_path);
 int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_err)
 {
 	int tab_size;
-	int lines;
 
-	lines = load_file_into_new_buf__(full_path, open_on_err, msg_on_err);
-
+	int lines = load_file_into_new_buf__(full_path, open_on_err, msg_on_err);
 	if (lines < 0) {
 		return lines;
 	}
@@ -76,7 +74,7 @@ int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_er
 						   _("%d liness read %s"),
 						   _("%d linesss read %s"),
 	 lines), lines, buf_eol_str(get_epc_buf()));
-	return lines;
+	return lines;	// >= 0: success
 }
 PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int msg_on_err)
 {
@@ -130,7 +128,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 		free_cur_edit_buf();
 		return -1;
 	}
-	return ret;				// loaded
+	return ret;		// >= 0: loaded
 }
 
 //-----------------------------------------------------------------------------
@@ -294,7 +292,7 @@ int load_file_into_buf(be_buf_t *buf, const char *full_path)
 	int ret = load_file_into_cur_buf__(full_path, 1, 0);
 
 	set_epc_buf(buf_save);
-	return ret;
+	return ret;		// >= 0: success
 }
 
 PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file, int msg_on_err)
@@ -656,7 +654,8 @@ PRIVATE int load_into_cur_buf_fp(FILE *fp)
 	if (check_break_key()) {
 		lines_read = -1;
 	}
-	return lines_read;
+	// 0 bytes of file returns 0
+	return lines_read;	// >= 0: succeeded, < 0: error or stopped
 }
 
 PRIVATE char fgetc_buffered_buf[MAX_EDIT_LINE_LEN+1];

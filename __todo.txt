@@ -1,6 +1,11 @@
 #### BE-editor to do list
  (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible/pending)
 
+[v] 0 bytes file can not be loaded
+[ ] START_UP_TEST --> UT(assert)
+[m ] How to link with static libraries
+[l ] differenciate "buffer saved" and "buffer checked"
+
 [v] Show window size on status-bar when resized
 [v] fix: path displayed on filer title-bar 
 [v] fix: dof_previous_dir() on symlinked dir
@@ -11,8 +16,6 @@
 [v] Writing file loaded through symlink to symlinked file not file of symlink name.
    XX Current state : rename symlink name to symlink~ and write to a file named symlink
    OO Required state: write to the file of real_path.
-[m ] How to link with static libraries
-[l ] differenciate "buffer saved" and "buffer checked"
 
 [hv] BUG: crash on editor pane-2
 [v] Do not show error message when finaly succeeded in command execution (Ex. loading-file, searching KW)

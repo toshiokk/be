@@ -527,33 +527,35 @@ int vis_idx_from_col_idx(const char *utf8s, int columns)
 
 //------------------------------------------------------------------------------
 #ifdef START_UP_TEST
-PRIVATE void test_get_intersection_(int min1, int max1, int min2, int max2);
+PRIVATE int test_get_intersection_(int min1, int max1, int min2, int max2,
+ int expected_ret, int expected_min, int expected_max);
 void test_get_intersection(void)
 {
+	flf_d_printf("-----------------------\n");
 	// aaaaaa bbbbbb
-	test_get_intersection_(0, 54, 64, 65);
+	MY_UT_INT(test_get_intersection_(0, 54, 64, 65, -10, 64, 54), 0);
 	// aaaaaa bbbbbb
-	test_get_intersection_(10, 20, 30, 40);
+	MY_UT_INT(test_get_intersection_(10, 20, 30, 40, -10, 30, 20), 0);
 	// bbbbbb aaaaaa
-	test_get_intersection_(60, 100, 10, 50);
+	MY_UT_INT(test_get_intersection_(60, 100, 10, 50, -10, 60, 50), 0);
 
 	// aaaaaabbbbbb
-	test_get_intersection_(10, 20, 20, 40);
+	MY_UT_INT(test_get_intersection_(10, 20, 20, 40, 0, 20, 20), 0);
 	// bbbbbbaaaaaa
-	test_get_intersection_(60, 100, 10, 60);
+	MY_UT_INT(test_get_intersection_(60, 100, 10, 60, 0, 60, 60), 0);
 
 	// aaaaaa
 	//    bbbbbb
-	test_get_intersection_(10, 100, 90, 110);
+	MY_UT_INT(test_get_intersection_(10, 100, 90, 110, 10, 90, 100), 0);
 	//   aaaaaa
 	// bbbbbb
-	test_get_intersection_(50, 100, 10, 60);
+	MY_UT_INT(test_get_intersection_(50, 100, 10, 60, 10, 50, 60), 0);
 	//   aaaaaa
 	// bbbbbbbbbb
-	test_get_intersection_(20, 100, 10, 110);
+	MY_UT_INT(test_get_intersection_(20, 100, 10, 110, 80, 20, 100), 0);
 	// aaaaaaaaaa
 	//   bbbbbb
-	test_get_intersection_(10, 100, 50, 60);
+	MY_UT_INT(test_get_intersection_(10, 100, 50, 60, 10, 50, 60), 0);
 }
 // [not intersect]
 //  <-------->
@@ -564,15 +566,21 @@ void test_get_intersection(void)
 // [intersect pattern 2]
 //    <-------->
 //  <------------>
-PRIVATE void test_get_intersection_(int min1, int max1, int min2, int max2)
+PRIVATE int test_get_intersection_(int min1, int max1, int min2, int max2,
+ int expected_ret, int expected_min, int expected_max)
 {
 	int min;
 	int max;
+	int ret;
 
-	get_intersection(min1, max1, min2, max2, &min, &max);
-flf_d_printf("get_intersection(min1:%d, max1:%d, min2:%d, max2:%d)\n"
- " ==> %d, min:%d, max:%d\n",
- min1, max1, min2, max2, get_intersection(min1, max1, min2, max2, &min, &max), min, max);
+	ret = get_intersection(min1, max1, min2, max2, &min, &max);
+	if ((ret != expected_ret) || (min != expected_min) || (max != expected_max)) {
+warning_printf("get_intersection(min1:%d, max1:%d, min2:%d, max2:%d)\n"
+ " ==> %d, min:%d, max:%d ?? %d, %d, %d\n", min1, max1, min2, max2,
+ ret, min, max, expected_ret, expected_min, expected_max);
+		return 1;
+	}
+	return 0;
 }
 #endif // START_UP_TEST
 int get_intersection(int min1, int max1, int min2, int max2, int *min, int *max)
