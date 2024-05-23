@@ -478,7 +478,7 @@ PRIVATE void filer_disp_title_bar(const char *path,
 	// current date / time
 	snprintf_(buf_time, 1+HHCMMCSS_YY_MM_DD_LEN+1, " %s",
 	 cur_ctime_cdate(msec_past_input_key() < 1000));
-	if (msec_past_input_key() < 1000 || files_selected) {
+	///if (msec_past_input_key() < 1000 || files_selected) {
 		if (files_selected == 0) {
 			snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, " %d %c%s",
 			 files_total, *get_str_sort_by(), buf_time);
@@ -486,9 +486,9 @@ PRIVATE void filer_disp_title_bar(const char *path,
 			snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, " %d %c%s",
 			 files_selected, *get_str_sort_by(), buf_time);
 		}
-	} else {
-		snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, "%s", buf_time);
-	}
+	///} else {
+	///	snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, "%s", buf_time);
+	///}
 	int path_cols = LIM_MIN(0, main_win_get_columns() - strlen_path(buf_files));
 	shrink_str__adjust_col(buf_dir_path, path_cols, 2);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_dir_path, buf_files);

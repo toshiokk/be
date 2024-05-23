@@ -777,7 +777,7 @@ int research_file_name_in_file_list(filer_view_t *fv)
 int search_file_name_in_file_list(filer_view_t *fv, const char *file_name)
 {
 	int file_name_len;
-	// 0,1: regular <-> non-regular file, 2,3: all file
+	// 0,1: the same file type, 2,3: all file
 	// 0,2: case sensitive, 1,3: case ignorant
 	// 0: the same file type    , case sensitive
 	// 1: the same file type    , case ignorant
@@ -791,30 +791,23 @@ int search_file_name_in_file_list(filer_view_t *fv, const char *file_name)
 			return file_idx;
 		}
 	}
-	// partial match in regular file
-	for (cmp_type = 0; cmp_type < 4; cmp_type++) {
-		for (file_name_len = strlen(file_name); file_name_len; file_name_len--) {
+	// partial match
+	for (file_name_len = strlen(file_name); file_name_len; file_name_len--) {
+		for (cmp_type = 0; cmp_type < 4; cmp_type++) {
 			for (int file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
-				if (cmp_type < 2) {		// cmp_type = 0, 1
-					if ((S_ISREG(get_cur_filer_view()
+				if (((cmp_type < 2)		// cmp_type = 0, 1
+				  && (S_ISREG(get_cur_filer_view()
 					   ->file_list[get_cur_filer_view()->cur_sel_idx].st.st_mode)
 					  == S_ISREG(get_cur_filer_view()
-					   ->file_list[file_idx].st.st_mode))
-					 && (cmp_type == 0
+					   ->file_list[file_idx].st.st_mode)))
+				 || (cmp_type >= 2)) {	// cmp_type = 2, 3
+					if (((cmp_type % 2) == 0)
 						// case sensitive
-					  ? strncmp(fv->file_list[file_idx].file_name, file_name, file_name_len) == 0
+					  ? (strncmp(fv->file_list[file_idx].file_name, file_name,
+						 file_name_len) == 0)
 						// case ignorant
-					  : strncasecmp(fv->file_list[file_idx].file_name, file_name,
+					  : (strncasecmp(fv->file_list[file_idx].file_name, file_name,
 						 file_name_len) == 0)) {
-						return file_idx;
-					}
-				} else {	// cmp_type = 2, 3
-					if (cmp_type == 2
-						// case sensitive
-					  ? strncmp(fv->file_list[file_idx].file_name, file_name, file_name_len) == 0
-						// case ignorant
-					  : strncasecmp(fv->file_list[file_idx].file_name, file_name,
-						 file_name_len) == 0) {
 						return file_idx;
 					}
 				}

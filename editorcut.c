@@ -159,6 +159,12 @@ int doe_copy_text(void)
 	return 1;
 }
 
+int doe_copy_text_to_system_clipboard(void)
+{
+	doe_copy_text();
+	send_to_system_clipboard();
+}
+
 int doe_delete_text(void)
 {
 	if (copy_delete_paste_pop(CDPP_DELETE) <= 0) {
@@ -209,16 +215,12 @@ int doe_paste_text_without_pop(void)
 
 PRIVATE int copy_delete_paste_pop(int cp_del_paste_pop)
 {
-	int ret;
-
-	ret = copy_delete_paste_pop__(cp_del_paste_pop);
+	int ret = copy_delete_paste_pop__(cp_del_paste_pop);
 	do_clear_mark_();	// always clear mark
 	return ret;
 }
 PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 {
-	be_line_t *top_line;
-
 	if (cp_del_paste_pop & CDPP_REPLACE) {
 		// in view mode, DELETE and PASTE may not be performed
 		if (is_view_mode_then_warn_it())
@@ -237,7 +239,7 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 		set_mark_pos();
 		setup_cut_region();
 	}
-	top_line = NODE_PREV(mark_min_line);
+	be_line_t *top_line = NODE_PREV(mark_min_line);
 	// ====  COPY  ====
 	if (cp_del_paste_pop & CDPP_COPY) {
 		copy_text_to_cut_buf();

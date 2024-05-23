@@ -542,14 +542,11 @@ int do_inc_key_list_lines_(void)
 	return 0;
 }
 
-int doe_examine_key_code(void)
+void examine_key_code(void)
 {
-	key_code_t key;
-
 	disp_status_bar_ing(_("Input key to show key code"));
-	key = input_key_loop();
-	disp_status_bar_done(_("Key code: %04x"), key);
-	return 0;
+	key_code_t key = input_key_loop();
+	disp_status_bar_done(_("Key code input: %04x: [%s]"), key, key_name_from_key_code(key, NULL));
 }
 
 // End of appmode.c

@@ -27,6 +27,7 @@ int doe_clear_cut_buf(void);
 
 int doe_select_all_lines(void);
 int doe_copy_text(void);
+int doe_copy_text_to_system_clipboard(void);
 int doe_cut_to_head(void);
 int doe_cut_to_tail(void);
 

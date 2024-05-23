@@ -176,7 +176,8 @@ void init_editor_panes()
 	int pane_idx;
 
 	for (pane_idx = 0; pane_idx < EDITOR_PANES; pane_idx++) {
-		set_epx_buf(pane_idx, EDIT_BUFS_TOP_ANCH);
+///		set_epx_buf(pane_idx, EDIT_BUFS_TOP_ANCH);
+		set_epx_buf(pane_idx, EDIT_BUFS_TOP_BUF);
 	}
 	set_editor_cur_pane_idx(0);
 }

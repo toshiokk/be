@@ -807,18 +807,19 @@ key_name_table_t key_name_table[] = {
 const char *short_key_name_from_key_code(key_code_t key_code, char *buf)
 {
 	static char buf_s_[MAX_KEY_NAME_LEN+1];
-	char buf_key_name[MAX_KEY_NAME_LEN+1];		// "RIGHT"
-
 	if (buf == NULL) {
 		buf = buf_s_;
 	}
+	char buf_key_name[MAX_KEY_NAME_LEN+1];		// "RIGHT"
 	return short_key_name_from_key_name(key_name_from_key_code(key_code, buf_key_name), buf);
 }
 const char *key_name_from_key_code(key_code_t key_code, char *buf)
 {
-	int idx;
-
-	for (idx = 0; idx < ARRAY_SIZE_OF(key_name_table); idx++) {
+	static char buf_s_[MAX_KEY_NAME_LEN+1];
+	if (buf == NULL) {
+		buf = buf_s_;
+	}
+	for (int idx = 0; idx < ARRAY_SIZE_OF(key_name_table); idx++) {
 		if (key_name_table[idx].key_code == key_code)
 			return key_name_table[idx].key_name;
 	}

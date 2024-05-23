@@ -74,7 +74,7 @@ int dof_clr_sort_by(void);
 int dof_inc_sort_by(void);
 int dof_tog_panes(void);
 int dof_inc_key_list_lines(void);
-int dof_display_color_pairs(void);
+int dof_display_color_settings(void);
 #ifdef ENABLE_HELP
 int dof_filer_splash(void);
 #endif // ENABLE_HELP

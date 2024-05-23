@@ -65,7 +65,8 @@ PRIVATE int get_title_bar_inversion();
 PRIVATE void blink_editor_title_bar();
 
 #ifdef ENABLE_UNDO
-///#define SHOW_UNDO_BUFS
+///
+#define SHOW_UNDO_BUFS
 #endif // ENABLE_UNDO
 ///#define SHOW_MEM_FREE
 								//  012345678901234
@@ -73,7 +74,7 @@ PRIVATE void blink_editor_title_bar();
 #define MEM_BUF_LEN			7	// "999000M" (999G)
 #define HHCMMCSS_LEN		8	// "23:59:59"
 PRIVATE char editor_title_bar_buf[MAX_SCRN_LINE_BUF_LEN+1] = "";
-//1:/home/...editor2.c[Mod]    Mc E99 C0 U0 R0 1234M 11:55:04
+//1:/home/...editor2.c[Mod]    Mc e99c0u0r0 1234M 11:55:04
 void editor_disp_title_bar(void)
 {
 	int buf_idx;
@@ -155,17 +156,17 @@ void editor_disp_title_bar(void)
 
 	//-------------------------------------------------------------------------
 #ifdef SHOW_MEM_FREE
-	if (msec_past_input_key() < 1000) {
+	///if (msec_past_input_key() < 1000) {
 		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s%s", buf_bufs, buf_mem, buf_time);
-	} else {
-		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_mem, buf_time);
-	}
+	///} else {
+	///	snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_mem, buf_time);
+	///}
 #else // SHOW_MEM_FREE
-	if (msec_past_input_key() < 1000) {
+	///if (msec_past_input_key() < 1000) {
 		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_bufs, buf_time);
-	} else {
-		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s", buf_time);
-	}
+	///} else {
+	///	snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s", buf_time);
+	///}
 #endif // SHOW_MEM_FREE
 
 	int path_cols = LIM_MIN(0, main_win_get_columns() - strlen_path(buf_status));

@@ -498,6 +498,7 @@ int save_cut_buf_to_clipboard_file()
 {
 	return save_buf_to_file(CUT_BUFS_TOP_BUF, get_clipboard_file_path());
 }
+
 int load_clipboard_into_cut_buf()
 {
 	return load_file_into_buf(CUT_BUFS_TOP_BUF, get_clipboard_file_path());
@@ -530,7 +531,6 @@ int doe_read_clipboard_into_cur_pos_(int char0_line1)
 }
 
 //-----------------------------------------------------------------------------
-#ifdef ENABLE_FILER
 int doe_run_line_soon(void)
 {
 	char buffer[MAX_PATH_LEN+1];
@@ -539,7 +539,8 @@ int doe_run_line_soon(void)
 	// So copy to local buffer.
 	strlcpy__(buffer, EPCBVC_CL->data, MAX_PATH_LEN);
 
-	fork_exec_once_sh_c(SEPARATE1, PAUSE1, buffer);
+	clear_fork_exec_counter();
+	fork_exec_sh_c(SETTERM1, SEPARATE1, PAUSE1, buffer);
 
 	if (is_app_list_mode()) {
 		editor_quit = EDITOR_DONE;
@@ -548,6 +549,8 @@ int doe_run_line_soon(void)
 	doe_refresh_editor();
 	return 0;
 }
+
+#ifdef ENABLE_FILER
 int doe_call_filer(void)
 {
 	char file_path[MAX_PATH_LEN+1];
@@ -561,24 +564,34 @@ int doe_call_filer(void)
 int doe_editor_splash(void)
 {
 	disp_splash(100);
-	input_key_loop();
+
+	examine_key_code();
+
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
 #endif // ENABLE_HELP
 
-int doe_display_color_pairs(void)
+int doe_display_color_settings(void)
+{
+	display_color_settings();
+	return 0;
+}
+void display_color_settings(void)
 {
 	display_color_pairs(0, 0);
 	input_key_loop();
+
 #ifdef ENABLE_DEBUG
+	tio_clear_flash_screen(1);
 	display_item_colors(0, 0);
-#ifdef ENABLE_REGEX
-	display_bracket_hl_colors(0, 40);
-#endif // ENABLE_REGEX
 	input_key_loop();
+#ifdef ENABLE_REGEX
+	tio_clear_flash_screen(1);
+	display_bracket_hl_colors(0, 0);
+	input_key_loop();
+#endif // ENABLE_REGEX
 #endif // ENABLE_DEBUG
-	return 0;
 }
 
 int doe_editor_menu_0(void)

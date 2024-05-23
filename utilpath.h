@@ -94,6 +94,7 @@ int is_path_wildcard(char *path);
 
 char *get_home_dir(void);
 const char *get_starting_dir(void);
+int check_wsl();
 
 int change_cur_dir_by_file_path_after_save(char *dir_save, char *file_path);
 int change_cur_dir_by_file_path(char *file_path);

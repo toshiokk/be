@@ -293,7 +293,7 @@ int doe_inc_backup_files(void);
 int do_tog_show_dot_file(void);
 int do_inc_key_list_lines_(void);
 
-int doe_examine_key_code(void);
+void examine_key_code(void);
 
 #endif // appmode_h
 

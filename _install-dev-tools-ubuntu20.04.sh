@@ -6,5 +6,6 @@ echo "pausing ..."; read key
 sudo apt install make automake g++ nkf cppcheck gettext
 echo "pausing ..."; read key
 
-# install clipboard tool "xsel"
+# install clipboard tool "xsel" and "xclip"
 sudo apt install xsel
+sudo apt install xclip

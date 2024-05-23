@@ -852,7 +852,8 @@ int switch_epc_buf_to_another_buf(void)
 {
 	if (switch_epc_buf_to_next(0, 0) == 0) {
 		if (switch_epc_buf_to_prev(0, 0) == 0) {
-			set_epc_buf(EDIT_BUFS_TOP_ANCH);
+///			set_epc_buf(EDIT_BUFS_TOP_ANCH);
+			set_epc_buf(EDIT_BUFS_TOP_BUF);
 			return 0;
 		}
 	}

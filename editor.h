@@ -65,8 +65,9 @@ int doe_read_clipboard_into_cur_pos_(int char0_line1);
 
 //-----------------------------------------------------------------------------
 
-#ifdef ENABLE_FILER
 int doe_run_line_soon(void);
+
+#ifdef ENABLE_FILER
 int doe_call_filer(void);
 #endif // ENABLE_FILER
 
@@ -76,7 +77,8 @@ int doe_call_filer(void);
 int doe_editor_splash(void);
 #endif // ENABLE_HELP
 
-int doe_display_color_pairs(void);
+int doe_display_color_settings(void);
+void display_color_settings(void);
 
 int doe_editor_menu_0(void);
 int doe_editor_menu_1(void);

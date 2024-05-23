@@ -74,6 +74,7 @@ flf_d_printf("Start %s ===================================\n", APP_NAME " " __DA
 	cache_users();
 	cache_groups();
 	init_default_app_color();
+	check_wsl();
 #ifdef START_UP_TEST
 	start_up_test();
 #endif // START_UP_TEST

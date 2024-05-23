@@ -129,10 +129,8 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_playback_last_1), NULL },
  { "Playback-2",          "Playback 2nd newest key-macro",  K_S_F02,       KNA, KNA,
    XL, F_I(doe_playback_last_2), NULL },
-#ifdef ENABLE_FILER
  { "Run line soon",       "Run current line as command",    K_M_x,        KNA, KNA,
    XA, F_I(doe_run_line_soon), NULL },
-#endif // ENABLE_FILER
 #ifdef ENABLE_UNDO
  { "Undo",                "Undo",                           K_M_u, K_M_z,      KNA,
    XL, F_I(doe_undo), NULL },
@@ -217,7 +215,7 @@ func_key_table_t editor_func_key_table[] = {
  { "Duplic Text",         "Duplicate line",                 K_C_U, K_F10,      KNA,
    XL, F_I(doe_duplicate_text), NULL },
  { "Copy to clip-board",  "Copy to clip-board",             K_S_F07,       KNA, KNA,
-   XL, F_I(doe_read_clipboard_into_cur_char), NULL },
+   XL, F_I(doe_copy_text_to_system_clipboard), NULL },
  { "Paste clip-board",    "Paste clip-board",               K_S_F08,       KNA, KNA,
    XL, F_I(doe_read_clipboard_into_cur_line), NULL },
  { "CutToHead",           "Cut to head of the line",        K_C_J,        KNA, KNA,
@@ -300,7 +298,7 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_editor_splash), NULL },
 #endif // ENABLE_HELP
  { "Color pairs",         "Display color pairs",            K_M_c,        KNA, KNA,
-   XL, F_I(doe_display_color_pairs), NULL },
+   XL, F_I(doe_display_color_settings), NULL },
  { "Refresh",             "Refresh editor screen",          K_M_ASTERISK, KNA, KNA,
    XA, F_I(doe_refresh_editor), NULL },
 

@@ -138,7 +138,7 @@ func_key_table_t filer_func_key_table[] = {
    XL, F_I(dof_filer_splash), NULL },
 #endif // ENABLE_HELP
  { "Color pairs",         "Display color pairs",            K_M_c,        KNA, KNA,
-   XL, F_I(dof_display_color_pairs), NULL },
+   XL, F_I(dof_display_color_settings), NULL },
 
  { "",                    "Filer Menu-5",                   KNA,          KNA, KNA,
    XL, F_I(dof_filer_menu_5), NULL },
@@ -160,8 +160,6 @@ func_key_table_t filer_func_key_table[] = {
    XA, F_I(dof_inc_key_list_lines), get_str_key_list_lines },
  { "Code-7F Key-BS",      "Toggle Code-7F Key-BS",          K_M_D,        KNA, KNA,
    XA, F_I(doe_tog_map_key_7f_bs), get_str_map_key_7f_bs },
- { "Exam key code",       "Examine key code",               K_M_k,        KNA, KNA,
-   XA, F_I(doe_examine_key_code), NULL },
 
  { "",                    "",                               KNA,          KNA, KNA,
    XA, F_I(NULL),            NULL },

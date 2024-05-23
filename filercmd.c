@@ -170,9 +170,9 @@ int dof_view_file(void)
 	int file_idx = get_cur_filer_view()->cur_sel_idx;
 	file_name = get_cur_filer_view()->file_list[file_idx].file_name;
 	if (S_ISREG(get_cur_filer_view()->file_list[file_idx].st.st_mode)) {
-		if (fork_exec_once(SEPARATE1, PAUSE0, BEPAGER, file_name, 0))
-			if (fork_exec_once(SEPARATE1, PAUSE0, "less", file_name, 0))
-				fork_exec_once(SEPARATE1, PAUSE0, "more", file_name, 0);
+		if (fork_exec_args_once(PAUSE0, BEPAGER, file_name, 0))
+			if (fork_exec_args_once(PAUSE0, "less", file_name, 0))
+				fork_exec_args_once(PAUSE0, "more", file_name, 0);
 	}
 	return 0;
 }
@@ -186,7 +186,7 @@ int dof_tail_file(void)	// view file with "tail" command
 	int file_idx = get_cur_filer_view()->cur_sel_idx;
 	file_name = get_cur_filer_view()->file_list[file_idx].file_name;
 	if (S_ISREG(get_cur_filer_view()->file_list[file_idx].st.st_mode)) {
-		fork_exec_once(SEPARATE1, PAUSE0, BETAIL, file_name, 0);
+		fork_exec_args_once(PAUSE0, BETAIL, file_name, 0);
 	}
 	return 0;
 }
@@ -209,10 +209,10 @@ int dof_copy_file(void)
 		if (is_sigint_signaled())
 			break;
 #ifndef	USE_BUSYBOX
-		fork_exec_repeat(SEPARATE1, "cp", "-afv",
+		fork_exec_args_repeat(SEPARATE1, "cp", "-afv",
 		 get_cur_filer_view()->file_list[file_idx].file_name, file_path, 0);
 #else
-		fork_exec_repeat(SEPARATE1, "cp", "-a",
+		fork_exec_args_repeat(SEPARATE1, "cp", "-a",
 		 get_cur_filer_view()->file_list[file_idx].file_name, file_path, 0);
 #endif
 	}
@@ -239,10 +239,10 @@ int dof_copy_file_update(void)
 		if (is_sigint_signaled())
 			break;
 #ifndef	USE_BUSYBOX
-		fork_exec_repeat(SEPARATE1, "cp", "-aufv",
+		fork_exec_args_repeat(SEPARATE1, "cp", "-aufv",
 		 get_cur_filer_view()->file_list[file_idx].file_name, file_path, 0);
 #else
-		fork_exec_repeat(SEPARATE1, "cp", "-a",
+		fork_exec_args_repeat(SEPARATE1, "cp", "-a",
 		 get_cur_filer_view()->file_list[file_idx].file_name, file_path, 0);
 #endif
 	}
@@ -267,10 +267,10 @@ int dof_move_file(void)
 		if (is_sigint_signaled())
 			break;
 #ifndef	USE_BUSYBOX
-		fork_exec_repeat(SEPARATE1, "mv", "-ufv",
+		fork_exec_args_repeat(SEPARATE1, "mv", "-ufv",
 		 get_cur_filer_view()->file_list[file_idx].file_name, file_path, 0);
 #else
-		fork_exec_repeat(SEPARATE1, "mv",
+		fork_exec_args_repeat(SEPARATE1, "mv",
 		 get_cur_filer_view()->file_list[file_idx].file_name, file_path, 0);
 #endif
 	}
@@ -297,13 +297,13 @@ int dof_trash_file(void)
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if (is_sigint_signaled())
 			break;
-		if (fork_exec_repeat(SEPARATE1, BETRASH,
+		if (fork_exec_args_repeat(SEPARATE1, BETRASH,
 		 get_cur_filer_view()->file_list[file_idx].file_name, 0)) {
 #ifndef	USE_BUSYBOX
-			fork_exec_repeat(SEPARATE1, "rm", "-rv",
+			fork_exec_args_repeat(SEPARATE1, "rm", "-rv",
 			 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #else
-			fork_exec_repeat(SEPARATE1, "rm", "-r",
+			fork_exec_args_repeat(SEPARATE1, "rm", "-r",
 			 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #endif
 		}
@@ -332,10 +332,10 @@ int dof_delete_file(void)
 		if (is_sigint_signaled())
 			break;
 #ifndef	USE_BUSYBOX
-		fork_exec_repeat(SEPARATE1, "rm", "-rv",
+		fork_exec_args_repeat(SEPARATE1, "rm", "-rv",
 		 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #else
-		fork_exec_repeat(SEPARATE1, "rm", "-r",
+		fork_exec_args_repeat(SEPARATE1, "rm", "-r",
 		 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #endif
 	}
@@ -363,13 +363,13 @@ int dof_mark_to_delete_file(void)
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if (is_sigint_signaled())
 			break;
-		if (fork_exec_repeat(SEPARATE1, BEMARKDEL,
+		if (fork_exec_args_repeat(SEPARATE0, BEMARKDEL,
 		 get_cur_filer_view()->file_list[file_idx].file_name, 0)) {
 #ifndef	USE_BUSYBOX
-			fork_exec_repeat(SEPARATE1, "chmod", "-v", "606",
+			fork_exec_args_repeat(SEPARATE0, "chmod", "-v", "606",
 			 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #else
-			fork_exec_repeat(SEPARATE1, "chmod", "606",
+			fork_exec_args_repeat(SEPARATE0, "chmod", "606",
 			 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #endif
 		}
@@ -398,13 +398,13 @@ int dof_size_zero_file(void)
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if (is_sigint_signaled())
 			break;
-		if (fork_exec_repeat(SEPARATE1, BESIZE0,
+		if (fork_exec_args_repeat(SEPARATE0, BESIZE0,
 		 get_cur_filer_view()->file_list[file_idx].file_name, 0)) {
 #ifndef	USE_BUSYBOX
-			fork_exec_repeat(SEPARATE1, "chmod", "-v", "000",
+			fork_exec_args_repeat(SEPARATE0, "chmod", "-v", "000",
 			 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #else
-			fork_exec_repeat(SEPARATE1, "chmod", "000",
+			fork_exec_args_repeat(SEPARATE0, "chmod", "000",
 			 get_cur_filer_view()->file_list[file_idx].file_name, 0);
 #endif
 		}
@@ -427,7 +427,7 @@ int dof_rename_file(void)
 	if (ret <= 0) {
 		return 0;
 	}
-	if (fork_exec_once(SEPARATE1, PAUSE1, "mv", "-i",
+	if (fork_exec_args_once(PAUSE1, "mv", "-i",
 	 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name,
 	 file_name, 0) == 0) {
 		strlcpy__(get_cur_filer_view()->next_file, file_name, MAX_PATH_LEN);
@@ -462,7 +462,7 @@ int dof_make_directory(void)
 	if (ret <= 0) {
 		return 0;
 	}
-	fork_exec_once(SEPARATE1, PAUSE1, "mkdir", "-p", file_path, 0);
+	fork_exec_args_once(PAUSE1, "mkdir", "-p", file_path, 0);
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -610,17 +610,9 @@ int dof_inc_key_list_lines(void)
 	return 0;
 }
 
-int dof_display_color_pairs(void)
+int dof_display_color_settings(void)
 {
-	display_color_pairs(0, 0);
-	input_key_loop();
-#ifdef ENABLE_DEBUG
-	display_item_colors(0, 0);
-#ifdef ENABLE_REGEX
-	display_bracket_hl_colors(0, 40);
-#endif // ENABLE_REGEX
-	input_key_loop();
-#endif // ENABLE_DEBUG
+	display_color_settings();
 	return 0;
 }
 
@@ -628,7 +620,9 @@ int dof_display_color_pairs(void)
 int dof_filer_splash(void)
 {
 	disp_splash(100);
-	input_key_loop();
+
+	examine_key_code();
+
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }

@@ -1,6 +1,13 @@
 #### BE-editor to do list
  (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible/pending)
 
+[] treat situation of ENABLE_FILER undefined
+
+[v] exchange clip-board with GUI session on X-Window/MS-Windows
+- check system type Linux/WSL on app startup
+	- on Linux: run clipboard-update.sh continuously from the system boot up
+	- on WSL: run clipboard-update.sh every time cut/copy performed
+		[v] do not switch terminal on execution of clip.exe
 [v] 0 bytes file can not be loaded
 [ ] START_UP_TEST --> UT(assert)
 [m ] How to link with static libraries

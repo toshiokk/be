@@ -358,6 +358,20 @@ flf_d_printf("starting_dir: [%s]\n", starting_dir);
 	return starting_dir;
 }
 
+int check_wsl()
+{
+	static int checked = 0;
+	if (! checked) {
+		checked = (is_path_exist("/mnt/c") ? 1 : -1);
+	}
+	if (checked > 0) {
+		flf_d_printf("WSL(Linux running on Windows)\n");
+	} else {
+		flf_d_printf("Native Linux\n");
+	}
+	return checked > 0;
+}
+
 //------------------------------------------------------------------------------
 // comparison of change current dir functions
 // | func                                     |save before change|may change to parent|
