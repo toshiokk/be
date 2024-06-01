@@ -102,6 +102,14 @@
 #ifndef BOOL
 #define BOOL	unsigned char
 #endif
+
+#define UINT8	unsigned char
+#define INT8	char
+#define UINT16	unsigned short
+#define INT16	short
+#define UINT32	unsigned long
+#define INT32	long
+
 #ifndef TRUE
 #define TRUE	1
 #endif

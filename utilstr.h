@@ -65,7 +65,7 @@ char *strlncat__(char *dest, size_t buf_len, const char *src, size_t cat_len);
 char *strcut__(char *buffer, size_t buf_len, const char *string, size_t so, size_t eo);
 int strlcmp__(const char *dest, const char *src);
 int strlcasecmp(const char *str1, const char *str2);
-/////int strcmp_from_tail(const char *dest, const char *src);
+int strcmp_from_tail(const char *dest, const char *src);
 char *strchr__(const char *str, char chr);
 char *strnset__(char *buf, char chr, size_t len);
 char *strncpy__(char *dest, const char *src, size_t buf_len);

@@ -27,7 +27,6 @@ PRIVATE int get_line_num_digits(int max_line_num);
 // ruler ======================================================================
 
 #ifdef START_UP_TEST
-
 void test_make_ruler_text(void)
 {
 	MY_UT_STR(make_ruler_text(0, 40), "1---5----10---15---20---25---30---35---4");

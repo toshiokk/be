@@ -545,7 +545,7 @@ void test_get_intersection(void)
 	MY_UT_INT(test_get_intersection_(60, 100, 10, 60, 0, 60, 60), 0);
 
 	// aaaaaa
-	//    bbbbbb
+	//   bbbbbb
 	MY_UT_INT(test_get_intersection_(10, 100, 90, 110, 10, 90, 100), 0);
 	//   aaaaaa
 	// bbbbbb

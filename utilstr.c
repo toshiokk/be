@@ -308,16 +308,18 @@ int strlcasecmp(const char *str1, const char *str2)
 	return strncasecmp(str1, str2, strlen(str2));
 }
 
-/////// dest: "/home/user/tools/be/file_name.ext"
-/////// src :                              ".ext"
-/////int strcmp_from_tail(const char *dest, const char *src)
-/////{
-/////	ssize_t diff = strlen_path(dest) - strlen_path(src);
-/////	if (diff < 0) {
-/////		return -1;
-/////	}
-/////	return strcmp(&dest[diff], src);
-/////}
+// dest: "/home/user/tools/be/file_name.ext"
+// src :            "tools/be/file_name.ext"
+// src :                     "file_name.ext"
+// src :                              ".ext"
+int strcmp_from_tail(const char *dest, const char *src)
+{
+	ssize_t diff = strlen_path(dest) - strlen_path(src);
+	if (diff < 0) {
+		return -1;
+	}
+	return strcmp(&dest[diff], src);
+}
 
 char *strchr__(const char *str, char chr)
 {

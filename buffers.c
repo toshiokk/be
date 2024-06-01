@@ -173,13 +173,11 @@ void line_avoid_wild_ptr(be_line_t **line_ptr, be_line_t *line)
 
 void init_editor_panes()
 {
-	int pane_idx;
-
-	for (pane_idx = 0; pane_idx < EDITOR_PANES; pane_idx++) {
+	set_editor_cur_pane_idx(0);
+	for (int pane_idx = 0; pane_idx < EDITOR_PANES; pane_idx++) {
 ///		set_epx_buf(pane_idx, EDIT_BUFS_TOP_ANCH);
 		set_epx_buf(pane_idx, EDIT_BUFS_TOP_BUF);
 	}
-	set_editor_cur_pane_idx(0);
 }
 
 void set_editor_cur_pane_idx(int pane_idx)
@@ -289,6 +287,8 @@ void create_edit_buf(const char *full_path)
 	be_buf_t *buf;
 
 	buf = buf_create_node(full_path);
+	// copy default encoding from EDIT_BUFS_BOT_ANCH
+	SET_BUF_STATE(buf, buf_ENCODE, BUF_STATE(EDIT_BUFS_BOT_ANCH, buf_ENCODE));
 	buf_insert_before(EDIT_BUFS_BOT_ANCH, buf);
 	set_epc_buf(buf);
 	if (IS_NODE_INT(editor_panes.bufs[0]) == 0) {

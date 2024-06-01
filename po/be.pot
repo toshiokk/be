@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-23 23:39+0900\n"
+"POT-Creation-Date: 2024-06-01 14:31+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,7 +73,7 @@ msgstr ""
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editor.c:655 ../editor.c:724 ../fileio.c:153 ../fileio.c:158
+#: ../editor.c:655 ../editor.c:724 ../fileio.c:152 ../fileio.c:157
 #: ../winin.c:92
 msgid "Cancelled"
 msgstr ""
@@ -315,104 +315,104 @@ msgstr ""
 msgid "Reading File %s ..."
 msgstr ""
 
-#: ../fileio.c:151
+#: ../fileio.c:150
 msgid "File has modified by another program, OVERWRITE ?"
 msgstr ""
 
-#: ../fileio.c:162
+#: ../fileio.c:161
 #, c-format
 msgid "File [%s] can NOT be written !!"
 msgstr ""
 
-#: ../fileio.c:172
+#: ../fileio.c:171
 msgid "File Name to Write"
 msgstr ""
 
-#: ../fileio.c:189
+#: ../fileio.c:188
 msgid "File exists, OVERWRITE it ?"
 msgstr ""
 
-#: ../fileio.c:198
+#: ../fileio.c:197
 msgid "Path is not file, can not WRITE it"
 msgstr ""
 
-#: ../fileio.c:222
+#: ../fileio.c:221
 #, c-format
 msgid "File [%s] is NOT regular file !!"
 msgstr ""
 
-#: ../fileio.c:226
+#: ../fileio.c:225
 #, c-format
 msgid "Writing File %s ..."
 msgstr ""
 
-#: ../fileio.c:239
+#: ../fileio.c:238
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr ""
 
-#: ../fileio.c:248
+#: ../fileio.c:247
 #, c-format
 msgid "%d line written"
 msgstr ""
 
-#: ../fileio.c:249
+#: ../fileio.c:248
 #, c-format
 msgid "%d lines written"
 msgstr ""
 
-#: ../fileio.c:250
+#: ../fileio.c:249
 #, c-format
 msgid "%d liness written"
 msgstr ""
 
-#: ../fileio.c:251
+#: ../fileio.c:250
 #, c-format
 msgid "%d linesss written"
 msgstr ""
 
-#: ../fileio.c:311
+#: ../fileio.c:310
 #, c-format
 msgid "BINARY file !! [%s]"
 msgstr ""
 
-#: ../fileio.c:427 ../fileio.c:513 ../fileio.c:531 ../fileio.c:548
+#: ../fileio.c:426 ../fileio.c:512 ../fileio.c:530 ../fileio.c:547
 #, c-format
 msgid "Can not read-open file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:702 ../fileio.c:724 ../fileio.c:743
+#: ../fileio.c:701 ../fileio.c:723 ../fileio.c:742
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr ""
 
 #. -1: error
-#: ../fileio.c:710 ../fileio.c:732 ../fileio.c:773
+#: ../fileio.c:709 ../fileio.c:731 ../fileio.c:772
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:762 ../fileio.c:794
+#: ../fileio.c:761 ../fileio.c:793
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:838
+#: ../fileio.c:837
 #, c-format
 msgid "%d file loaded"
 msgstr ""
 
-#: ../fileio.c:839
+#: ../fileio.c:838
 #, c-format
 msgid "%d files loaded"
 msgstr ""
 
-#: ../fileio.c:840
+#: ../fileio.c:839
 #, c-format
 msgid "%d filess loaded"
 msgstr ""
 
-#: ../fileio.c:841
+#: ../fileio.c:840
 #, c-format
 msgid "%d filesss loaded"
 msgstr ""
@@ -619,20 +619,20 @@ msgstr ""
 msgid "Window resized to (%d, %d)"
 msgstr ""
 
-#: ../main.c:571
+#: ../main.c:575
 msgid ""
 "\n"
 "No file written\n"
 msgstr ""
 
-#: ../main.c:580
+#: ../main.c:584
 #, c-format
 msgid ""
 "\n"
 "Buffer written to %s\n"
 msgstr ""
 
-#: ../main.c:608
+#: ../main.c:612
 #, c-format
 msgid ""
 "\n"
@@ -640,98 +640,98 @@ msgid ""
 msgstr ""
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:610
+#: ../main.c:614
 msgid "Option"
 msgstr ""
 
-#: ../main.c:610
+#: ../main.c:614
 msgid "Long option"
 msgstr ""
 
-#: ../main.c:610
+#: ../main.c:614
 msgid "Meaning"
 msgstr ""
 
-#: ../main.c:612
+#: ../main.c:616
 msgid "Read RCFILE"
 msgstr ""
 
-#: ../main.c:613
+#: ../main.c:617
 msgid "Don't look at berc files"
 msgstr ""
 
-#: ../main.c:616
+#: ../main.c:620
 msgid "Don't use history file"
 msgstr ""
 
-#: ../main.c:618
+#: ../main.c:622
 msgid "Set tab-size to NUM[1-15]"
 msgstr ""
 
-#: ../main.c:619
+#: ../main.c:623
 msgid "View mode(Read only mode)"
 msgstr ""
 
-#: ../main.c:621
+#: ../main.c:625
 msgid "Don't use nkf"
 msgstr ""
 
-#: ../main.c:622
+#: ../main.c:626
 msgid "ASCII character encoding"
 msgstr ""
 
-#: ../main.c:623
+#: ../main.c:627
 msgid "JIS character encoding"
 msgstr ""
 
-#: ../main.c:624
+#: ../main.c:628
 msgid "EUCJP character encoding"
 msgstr ""
 
-#: ../main.c:625
+#: ../main.c:629
 msgid "SJIS character encoding"
 msgstr ""
 
-#: ../main.c:626
+#: ../main.c:630
 msgid "UTF8 character encoding"
 msgstr ""
 
-#: ../main.c:629
+#: ../main.c:633
 msgid "Output debug log to stderr"
 msgstr ""
 
-#: ../main.c:631
+#: ../main.c:635
 msgid "Show version information"
 msgstr ""
 
-#: ../main.c:632
+#: ../main.c:636
 msgid "Show this message"
 msgstr ""
 
-#: ../main.c:633
+#: ../main.c:637
 msgid "Start at line number NUM"
 msgstr ""
 
-#: ../main.c:635
+#: ../main.c:639
 msgid "Investigate key codes"
 msgstr ""
 
-#: ../main.c:652
+#: ../main.c:656
 #, c-format
 msgid "%s editor version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:654
+#: ../main.c:658
 #, c-format
 msgid " Build Options:\n"
 msgstr ""
 
-#: ../main.c:911
+#: ../main.c:915
 #, c-format
 msgid "Screen size: %dx%d"
 msgstr ""
 
-#: ../main.c:917
+#: ../main.c:921
 msgid "We're invincible with this !!"
 msgstr ""
 

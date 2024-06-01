@@ -468,7 +468,7 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 		goto goto_line;
 	}
 	// switch to if the file of the "file-name" already loaded
-	if (switch_epc_buf_by_file_name(full_path)) {
+	if (switch_epc_buf_by_file_name(file_name)) {
 /////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 		// already loaded and select it
 		goto not_goto_line;
@@ -510,11 +510,11 @@ PRIVATE int load_and_goto_from_history(const char *file_name)
 /////flf_d_printf("history:[%s]\n", history);
 		char file_path[MAX_PATH_LEN+1];
 		if (get_file_line_col_from_str_null(history, file_path, NULL, NULL)) {
-			char dir[MAX_PATH_LEN+1];
-			char file[MAX_PATH_LEN+1];
-			separate_path_to_dir_and_file(file_path, dir, file);
+			/////char dir[MAX_PATH_LEN+1];
+			/////char file[MAX_PATH_LEN+1];
+			/////separate_path_to_dir_and_file(file_path, dir, file);
 /////flf_d_printf("file:[%s]\n", file);
-			if (strcmp(file, file_name) == 0) {
+			if (compare_file_path_from_tail(file_path, file_name) == 0) {
 /////flf_d_printf("history:[%s]\n", history);
 				return load_file_in_string_(history, TUL0, OOE0, MOE0, LFH0, RECURSIVE0);
 			}
@@ -782,18 +782,18 @@ no_file_path:;
 	return strlen_path(file_path);
 }
 //-----------------------------------------------------------------------------
-int switch_epc_buf_by_file_name(const char *file_name)
+int switch_epc_buf_by_file_path(const char *file_path)
 {
-	be_buf_t *buf = get_edit_buf_by_file_name(file_name);
+	be_buf_t *buf = get_edit_buf_by_file_path(file_path);
 	if (buf) {
 		set_epc_buf(buf);
 		return 1;	// switched
 	}
 	return 0;		// not found
 }
-int switch_epc_buf_by_file_path(const char *file_path)
+int switch_epc_buf_by_file_name(const char *file_name)
 {
-	be_buf_t *buf = get_edit_buf_by_file_path(file_path);
+	be_buf_t *buf = get_edit_buf_by_file_name(file_name);
 	if (buf) {
 		set_epc_buf(buf);
 		return 1;	// switched

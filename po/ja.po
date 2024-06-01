@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-23 23:39+0900\n"
+"POT-Creation-Date: 2024-06-01 14:31+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -72,7 +72,7 @@ msgstr "ファイルに書き込みました: %s"
 msgid "One buffer closed"
 msgstr "1 バッファを閉じました"
 
-#: ../editor.c:655 ../editor.c:724 ../fileio.c:153 ../fileio.c:158
+#: ../editor.c:655 ../editor.c:724 ../fileio.c:152 ../fileio.c:157
 #: ../winin.c:92
 msgid "Cancelled"
 msgstr "キャンセルされました"
@@ -315,104 +315,104 @@ msgstr "[%s] は大き過ぎてバッファに読み込めません"
 msgid "Reading File %s ..."
 msgstr "ファイル %s を読み込み中..."
 
-#: ../fileio.c:151
+#: ../fileio.c:150
 msgid "File has modified by another program, OVERWRITE ?"
 msgstr "ファイルは他のプログラムから書き換えられました。上書きしますか ?"
 
-#: ../fileio.c:162
+#: ../fileio.c:161
 #, c-format
 msgid "File [%s] can NOT be written !!"
 msgstr ""
 
-#: ../fileio.c:172
+#: ../fileio.c:171
 msgid "File Name to Write"
 msgstr "書き込みファイル名"
 
-#: ../fileio.c:189
+#: ../fileio.c:188
 msgid "File exists, OVERWRITE it ?"
 msgstr "同名ファイルが存在します。上書きしますか ?"
 
-#: ../fileio.c:198
+#: ../fileio.c:197
 msgid "Path is not file, can not WRITE it"
 msgstr "パスがファイルではありません。書き込めません"
 
-#: ../fileio.c:222
+#: ../fileio.c:221
 #, c-format
 msgid "File [%s] is NOT regular file !!"
 msgstr ""
 
-#: ../fileio.c:226
+#: ../fileio.c:225
 #, c-format
 msgid "Writing File %s ..."
 msgstr "ファイル %s を書き込み中..."
 
-#: ../fileio.c:239
+#: ../fileio.c:238
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr "ファイル %2$s にパーミッション %1$o をセットできません: %3$s"
 
-#: ../fileio.c:248
+#: ../fileio.c:247
 #, c-format
 msgid "%d line written"
 msgstr "%d 行を書き込みました"
 
-#: ../fileio.c:249
+#: ../fileio.c:248
 #, c-format
 msgid "%d lines written"
 msgstr "%d 行を書き込みました"
 
-#: ../fileio.c:250
+#: ../fileio.c:249
 #, c-format
 msgid "%d liness written"
 msgstr "%d 行を書き込みました"
 
-#: ../fileio.c:251
+#: ../fileio.c:250
 #, c-format
 msgid "%d linesss written"
 msgstr "%d 行を書き込みました"
 
-#: ../fileio.c:311
+#: ../fileio.c:310
 #, c-format
 msgid "BINARY file !! [%s]"
 msgstr ""
 
-#: ../fileio.c:427 ../fileio.c:513 ../fileio.c:531 ../fileio.c:548
+#: ../fileio.c:426 ../fileio.c:512 ../fileio.c:530 ../fileio.c:547
 #, c-format
 msgid "Can not read-open file [%s]: %s"
 msgstr "ファイルを読込オープン出来ません [%s]: %s"
 
-#: ../fileio.c:702 ../fileio.c:724 ../fileio.c:743
+#: ../fileio.c:701 ../fileio.c:723 ../fileio.c:742
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr "ファイルを書込オープン出来ません [%s]: %s"
 
 #. -1: error
-#: ../fileio.c:710 ../fileio.c:732 ../fileio.c:773
+#: ../fileio.c:709 ../fileio.c:731 ../fileio.c:772
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr "ファイルがクローズできません [%s]: %s"
 
-#: ../fileio.c:762 ../fileio.c:794
+#: ../fileio.c:761 ../fileio.c:793
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr "ファイルを書込オープン出来ません [%s]: %s"
 
-#: ../fileio.c:838
+#: ../fileio.c:837
 #, c-format
 msgid "%d file loaded"
 msgstr "%d ファイルを読み込みました"
 
-#: ../fileio.c:839
+#: ../fileio.c:838
 #, c-format
 msgid "%d files loaded"
 msgstr "%d ファイルを読み込みました"
 
-#: ../fileio.c:840
+#: ../fileio.c:839
 #, c-format
 msgid "%d filess loaded"
 msgstr "%d ファイルを読み込みました"
 
-#: ../fileio.c:841
+#: ../fileio.c:840
 #, c-format
 msgid "%d filesss loaded"
 msgstr "%d ファイルを読み込みました"
@@ -619,7 +619,7 @@ msgstr ""
 msgid "Window resized to (%d, %d)"
 msgstr "画面サイズ: (%d, %d)"
 
-#: ../main.c:571
+#: ../main.c:575
 msgid ""
 "\n"
 "No file written\n"
@@ -627,7 +627,7 @@ msgstr ""
 "\n"
 "書き込まれたファイルはありません\n"
 
-#: ../main.c:580
+#: ../main.c:584
 #, c-format
 msgid ""
 "\n"
@@ -636,7 +636,7 @@ msgstr ""
 "\n"
 "ファイル %s に書き込みました\n"
 
-#: ../main.c:608
+#: ../main.c:612
 #, c-format
 msgid ""
 "\n"
@@ -646,98 +646,98 @@ msgstr ""
 "使用法"
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:610
+#: ../main.c:614
 msgid "Option"
 msgstr ""
 
-#: ../main.c:610
+#: ../main.c:614
 msgid "Long option"
 msgstr ""
 
-#: ../main.c:610
+#: ../main.c:614
 msgid "Meaning"
 msgstr "意味"
 
-#: ../main.c:612
+#: ../main.c:616
 msgid "Read RCFILE"
 msgstr ""
 
-#: ../main.c:613
+#: ../main.c:617
 msgid "Don't look at berc files"
 msgstr "bercファイルを無視"
 
-#: ../main.c:616
+#: ../main.c:620
 msgid "Don't use history file"
 msgstr "ヒストリファイルを使用しない"
 
-#: ../main.c:618
+#: ../main.c:622
 msgid "Set tab-size to NUM[1-15]"
 msgstr "タブサイズをNUM[1-15]に設定"
 
-#: ../main.c:619
+#: ../main.c:623
 msgid "View mode(Read only mode)"
 msgstr "閲覧(読込専用)モード"
 
-#: ../main.c:621
+#: ../main.c:625
 msgid "Don't use nkf"
 msgstr "nkf を使用しない"
 
-#: ../main.c:622
+#: ../main.c:626
 msgid "ASCII character encoding"
 msgstr "ASCII エンコーディング"
 
-#: ../main.c:623
+#: ../main.c:627
 msgid "JIS character encoding"
 msgstr "JIS エンコーディング"
 
-#: ../main.c:624
+#: ../main.c:628
 msgid "EUCJP character encoding"
 msgstr "EUCJP エンコーディング"
 
-#: ../main.c:625
+#: ../main.c:629
 msgid "SJIS character encoding"
 msgstr "SJIS エンコーディング"
 
-#: ../main.c:626
+#: ../main.c:630
 msgid "UTF8 character encoding"
 msgstr "UTF8 エンコーディング"
 
-#: ../main.c:629
+#: ../main.c:633
 msgid "Output debug log to stderr"
 msgstr "stderrにデバッグログを出力"
 
-#: ../main.c:631
+#: ../main.c:635
 msgid "Show version information"
 msgstr "バージョン情報を表示"
 
-#: ../main.c:632
+#: ../main.c:636
 msgid "Show this message"
 msgstr "このメッセージを表示"
 
-#: ../main.c:633
+#: ../main.c:637
 msgid "Start at line number NUM"
 msgstr "NUM 行から開始"
 
-#: ../main.c:635
+#: ../main.c:639
 msgid "Investigate key codes"
 msgstr ""
 
-#: ../main.c:652
+#: ../main.c:656
 #, c-format
 msgid "%s editor version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:654
+#: ../main.c:658
 #, c-format
 msgid " Build Options:\n"
 msgstr " ビルドオプション:\n"
 
-#: ../main.c:911
+#: ../main.c:915
 #, c-format
 msgid "Screen size: %dx%d"
 msgstr "画面サイズ: %dx%d"
 
-#: ../main.c:917
+#: ../main.c:921
 msgid "We're invincible with this !!"
 msgstr "これさえあれば俺達は無敵だ!!"
 

@@ -198,6 +198,14 @@ char *remove_last_slash(char *path)
 	return path;
 }
 
+char *add_last_slash_to_dir(char *dir)
+{
+	if (strcmp(dir, "/") != 0 && strlen(dir) && dir[strlen(dir) - 1] != '/') {
+		strlcat__(dir, MAX_PATH_LEN, "/");
+	}
+	return dir;
+}
+
 int contain_redundant_slash(char *path)
 {
 	return strstr(path, "//") != NULL;
@@ -300,8 +308,7 @@ int is_path_wildcard(char *path)
 }
 #endif // ENABLE_FILER
 
-char *separate_dir_part_and_file_part(const char *path,
- char *dir_part, char *file_part)
+char *separate_dir_part_and_file_part(const char *path, char *dir_part, char *file_part)
 {
 	struct stat st;
 	char *last_slash;
@@ -324,6 +331,23 @@ char *separate_dir_part_and_file_part(const char *path,
 		}
 	}
 	return dir_part;
+}
+
+// dest: "/home/user/tools/be/file_name.ext"
+// src : "/home/user/tools/be/file_name.ext" --> match
+// src :  "home/user/tools/be/file_name.ext" --> match
+// src :            "tools/be/file_name.ext" --> match
+// src :             "ools/be/file_name.ext" --> not match
+// src :                     "file_name.ext" --> match
+// src :                          "name.ext" --> not match
+// src :                              ".ext" --> not match
+int compare_file_path_from_tail(const char *full_path, const char *file_path) {
+	if ((strcmp_from_tail(full_path, file_path) == 0)
+	 && (strlen_path(full_path) > strlen_path(file_path))
+	 && (full_path[strlen_path(full_path) - strlen_path(file_path) - 1] == '/')) {
+		return 0;	// match
+	}
+	return -1;		// not match
 }
 
 char *get_home_dir(void)
@@ -477,39 +501,6 @@ char *getenv__(char *env)
 	return ptr;
 }
 
-char *add_last_slash_to_dir(char *dir)
-{
-	if (strcmp(dir, "/") != 0 && strlen(dir) && dir[strlen(dir) - 1] != '/') {
-		strlcat__(dir, MAX_PATH_LEN, "/");
-	}
-	return dir;
-}
-
-#ifdef START_UP_TEST
-PRIVATE void test_cat_dir_and_file_(char *buf, const char *dir, const char *file,
- const char *expected);
-void test_cat_dir_and_file()
-{
-	flf_d_printf("-----------------------\n");
-	char buf[MAX_PATH_LEN+1];
-	test_cat_dir_and_file_(buf, "/dir1/dir2", "/file", "/dir1/dir2/file");
-	test_cat_dir_and_file_(buf, "/dir1/dir2/", "/file", "/dir1/dir2/file");
-	strcpy(buf, "/dir1/dir2");
-	test_cat_dir_and_file_(buf, buf, "/file", "/dir1/dir2/file");
-	strcpy(buf, "/dir1/dir2/");
-	test_cat_dir_and_file_(buf, buf, "/file", "/dir1/dir2/file");
-}
-PRIVATE void test_cat_dir_and_file_(char *buf, const char *dir, const char *file,
- const char *expected)
-{
-	cat_dir_and_file(buf, dir, file);
-	if (! IS_EQ_STR(buf, expected)) {
-		flf_d_printf("dir: [%s], file: [%s]\n", dir, file);
-		flf_d_printf("  buf: [%s]%c[%s]\n", buf, EQU_STR(buf, expected), expected);
-	}
-}
-#endif // START_UP_TEST
-
 // Concatenate path and file
 // "/dir1/dir2"   "file"       ==> "/dir1/dir2/file"
 // "/dir1/dir2/"  "file"       ==> "/dir1/dir2/file"
@@ -574,7 +565,200 @@ int readlink__(const char *path, char *buffer, int len)
 
 //-----------------------------------------------------------------------------------
 
+// /dir1/.  ==> /dir1/
+// /dir1/.. ==> /
+// /..      ==> /
+// /dir1/./dir2  ==> /dir1/dir2
+// /dir1/../dir2 ==> /dir2
+// /dir1/dir2/.. ==> /dir1/
+// /dir1/dir2/dir3/../../.. ==> /
+PRIVATE char *normalize_full_path__(char *full_path, char *parent, char *child);
+
+char *normalize_full_path(char *full_path)
+{
+	// "/dir1/../????"
+	//  ^
+	normalize_full_path__(full_path, full_path, full_path);
+	remove_redundant_slash(full_path);
+	remove_last_slash(full_path);
+	return full_path;
+}
+// "/dir1/../????"
+//   ^   ^
+PRIVATE char *normalize_full_path__(char *full_path, char *parent, char *child)
+{
+	char *grandchild;
+
+	if (*parent == '/')
+		parent++;
+	if (*child == '/')
+		child++;
+	for ( ; is_file_path_char(child); ) {
+		if (strcmp(child, ".") == 0) {
+			// "/dir1/." ==> "/dir1/"
+			// "/."      ==> "/"
+			strlcpy__(child, child+1, MAX_PATH_LEN);
+		} else
+		if (strlcmp__(child, "./") == 0) {
+			// "/dir1/./????" ==> "/dir1/????"
+			// "/./????"      ==> "/????"
+			strlcpy__(child, child+2, MAX_PATH_LEN);
+			child = parent;
+		} else
+		if (strcmp(child, "..") == 0) {
+			// "/dir1/.." ==> "/"
+			// "/.."      ==> "/"
+			strlcpy__(parent, child+2, MAX_PATH_LEN);
+			child = parent;
+		} else
+		if (strlcmp__(child, "../") == 0) {
+			// "/dir1/../????" ==> "/????"
+			// "/../????"      ==> "/????"
+			strlcpy__(parent, child+3, MAX_PATH_LEN);
+			child = parent;
+			if (full_path+1 < child) {
+				// not string top
+				break;
+			}
+		} else {
+			grandchild = skip_file_name(child);
+			if (is_file_path_char(grandchild) == 0) {
+				child = grandchild;
+				break;
+			}
+			if (*grandchild == '/') {
+				// "/dir1/../????"
+				//   ^   ^
+				child = normalize_full_path__(full_path, child, grandchild);	// recursive call
+			}
+		}
+	}
+	return child;
+}
+
+//-----------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------------
+
+// get absolute path (not include symlinks)
+char *get_abs_path(const char *path, char *buf)
+{
+	char full_path[MAX_PATH_LEN+1];
+
+	get_full_path(path, full_path);					// --> full_path
+	get_real_path(full_path, buf, MAX_PATH_LEN);	// --> abs path (real path)
+///flf_d_printf("\n[%s]\n ==> [%s]\n", full_path, buf);
+	return buf;
+}
+
+// get full path (path begins from "/") but do not resolve symlink
+//                                            (may contain symlink)
+// ~     ==> /home/user
+// ~user ==> /home/user
+// ~/tools/src/filename.ext     ==> /home/user/tools/src/filename.ext
+// ~user/tools/src/filename.ext ==> /home/user/tools/src/filename.ext
+// ./filename.ext               ==> /home/user/tools/src/filename.ext
+char *get_full_path(const char *path, char *buf)
+{
+	char user_name[MAX_PATH_LEN+1];
+	const char *user_dir;
+	char cur_dir[MAX_PATH_LEN+1];
+	size_t len;
+	const struct passwd *user_data = 0;
+
+	strlcpy__(buf, path, MAX_PATH_LEN);
+	if (path[0] == '/') {
+		// "/..." already full path
+	} else if (path[0] == '~') {
+		// "~", "~user", "~/..." or "~user/..."
+		for (len = 0; path[len]; len++) {
+			if (path[len] == '/') {
+				break;
+			}
+		}
+		// Determine home directory using getpwuid() or getpwent(), don't rely on $HOME
+		if (len == 1) {		// "~"
+			user_data = getpwuid(geteuid());
+			user_dir = user_data->pw_dir;
+		} else {			// "~user"
+			strlcpy__(user_name, &path[1], len);
+			user_dir = get_user_home_dir(user_name);
+///flf_d_printf("[%s] ==> [%s]\n", user_name, user_dir);
+		}
+		if (path[len] == '/') {
+			// "~/..."   "~/..."
+			//   ^    ==>   ^
+			len++;
+		}
+		cat_dir_and_file(buf, user_dir, &path[len]);
+	} else {
+		// "./..." ==> "/home/user/tools/..."
+		get_full_path_of_cur_dir(cur_dir);
+		cat_dir_and_file(buf, cur_dir, path);
+	}
+///flf_d_printf("[%s] ==> [%s]\n", path, buf);
+	normalize_full_path(buf);
+///flf_d_printf("[%s] ==> [%s]\n", path, buf);
+	return buf;
+}
+
+char *get_real_path(const char *path, char *buf, int buf_len)
+{
+#if defined(HAVE_REALPATH)
+	return realpath__(path, buf, buf_len);
+#else // HAVE_REALPATH
+#error "HAVE_REALPATH not defined"
+#endif // HAVE_REALPATH
+}
+
+#if defined(HAVE_REALPATH)
+// return normalized(canonicalized) absolute file path
+char *realpath__(const char *path, char *buf, int buf_len)
+{
+	char buffer[MAX_PATH_LEN+1];
+
+	if (realpath(path, buffer) == NULL) {
+		strlcpy__(buffer, path, MAX_PATH_LEN);	// error, return original path
+	}
+	strlcpy__(buf, buffer, buf_len);
+	return buf;
+}
+#endif // HAVE_REALPATH
+// "filename.ext" ==> "ext"
+// "filename" ==> ""
+// "." ==> ""
+// "filename." ==> ""
+// ".filename" ==> "filename"
+// ".filename.ext" ==> "ext"
+char *get_file_name_extension(char *file_name)
+{
+	char *last_period = NULL;
+	char *ptr;
+
+	ptr = file_name;
+	if (*ptr == '.') {
+		// "." ==> ""
+		// ".filename" ==> "filename"
+		ptr++;
+	}
+	for ( ; *ptr; ptr++) {
+		if (*ptr == '.') {
+			last_period = ptr;
+		}
+	}
+	if (last_period == NULL) {
+		last_period = ptr;
+	}
+	if (*last_period == '.') {
+		last_period++;
+	}
+	return last_period;
+}
+
+// tests ==============================
+
 #ifdef START_UP_TEST
+
 void test_cwd_PWD()
 {
 	char buf[MAX_PATH_LEN+1];
@@ -592,6 +776,29 @@ void test_cwd_PWD()
 
 	change_cur_dir(get_starting_dir());
 	flf_d_printf("getcwd: [%s]\n", getcwd__(buf));
+}
+
+PRIVATE void test_cat_dir_and_file_(char *buf, const char *dir, const char *file,
+ const char *expected);
+void test_cat_dir_and_file()
+{
+	flf_d_printf("-----------------------\n");
+	char buf[MAX_PATH_LEN+1];
+	test_cat_dir_and_file_(buf, "/dir1/dir2", "/file", "/dir1/dir2/file");
+	test_cat_dir_and_file_(buf, "/dir1/dir2/", "/file", "/dir1/dir2/file");
+	strcpy(buf, "/dir1/dir2");
+	test_cat_dir_and_file_(buf, buf, "/file", "/dir1/dir2/file");
+	strcpy(buf, "/dir1/dir2/");
+	test_cat_dir_and_file_(buf, buf, "/file", "/dir1/dir2/file");
+}
+PRIVATE void test_cat_dir_and_file_(char *buf, const char *dir, const char *file,
+ const char *expected)
+{
+	cat_dir_and_file(buf, dir, file);
+	if (! IS_EQ_STR(buf, expected)) {
+		flf_d_printf("dir: [%s], file: [%s]\n", dir, file);
+		flf_d_printf("  buf: [%s]%c[%s]\n", buf, EQU_STR(buf, expected), expected);
+	}
 }
 // /aaa/bbb/.. ==> /aaa
 // /aaa/bbb/../ccc ==> /aaa/ccc
@@ -714,81 +921,7 @@ PRIVATE const char *test_normalize_path__(const char *path)
 	////flf_d_printf("[%s] ==> [%s]\n", path, buffer);
 	return buffer;
 }
-#endif // START_UP_TEST
 
-// /dir1/.  ==> /dir1/
-// /dir1/.. ==> /
-// /..      ==> /
-// /dir1/./dir2  ==> /dir1/dir2
-// /dir1/../dir2 ==> /dir2
-// /dir1/dir2/.. ==> /dir1/
-// /dir1/dir2/dir3/../../.. ==> /
-PRIVATE char *normalize_full_path__(char *full_path, char *parent, char *child);
-char *normalize_full_path(char *full_path)
-{
-	// "/dir1/../????"
-	//  ^
-	normalize_full_path__(full_path, full_path, full_path);
-	remove_redundant_slash(full_path);
-	remove_last_slash(full_path);
-	return full_path;
-}
-// "/dir1/../????"
-//   ^   ^
-PRIVATE char *normalize_full_path__(char *full_path, char *parent, char *child)
-{
-	char *grandchild;
-
-	if (*parent == '/')
-		parent++;
-	if (*child == '/')
-		child++;
-	for ( ; is_file_path_char(child); ) {
-		if (strcmp(child, ".") == 0) {
-			// "/dir1/." ==> "/dir1/"
-			// "/."      ==> "/"
-			strlcpy__(child, child+1, MAX_PATH_LEN);
-		} else
-		if (strlcmp__(child, "./") == 0) {
-			// "/dir1/./????" ==> "/dir1/????"
-			// "/./????"      ==> "/????"
-			strlcpy__(child, child+2, MAX_PATH_LEN);
-			child = parent;
-		} else
-		if (strcmp(child, "..") == 0) {
-			// "/dir1/.." ==> "/"
-			// "/.."      ==> "/"
-			strlcpy__(parent, child+2, MAX_PATH_LEN);
-			child = parent;
-		} else
-		if (strlcmp__(child, "../") == 0) {
-			// "/dir1/../????" ==> "/????"
-			// "/../????"      ==> "/????"
-			strlcpy__(parent, child+3, MAX_PATH_LEN);
-			child = parent;
-			if (full_path+1 < child) {
-				// not string top
-				break;
-			}
-		} else {
-			grandchild = skip_file_name(child);
-			if (is_file_path_char(grandchild) == 0) {
-				child = grandchild;
-				break;
-			}
-			if (*grandchild == '/') {
-				// "/dir1/../????"
-				//   ^   ^
-				child = normalize_full_path__(full_path, child, grandchild);	// recursive call
-			}
-		}
-	}
-	return child;
-}
-
-//-----------------------------------------------------------------------------------
-
-#ifdef START_UP_TEST
 PRIVATE void test_get_full_path_(const char *path);
 void test_get_full_path(void)
 {
@@ -824,83 +957,8 @@ PRIVATE void test_get_full_path_(const char *path)
 	get_full_path(path, full_path);
 	flf_d_printf("path:[%s] ==> full_path:[%s]\n", path, full_path);
 }
-#endif // START_UP_TEST
-
-//-----------------------------------------------------------------------------------
-
-// get absolute path (not include symlinks)
-char *get_abs_path(const char *path, char *buf)
-{
-	char full_path[MAX_PATH_LEN+1];
-
-	get_full_path(path, full_path);					// --> full_path
-	get_real_path(full_path, buf, MAX_PATH_LEN);	// --> abs path (real path)
-///flf_d_printf("\n[%s]\n ==> [%s]\n", full_path, buf);
-	return buf;
-}
-
-// get full path (path begins from "/") but do not resolve symlink
-//                                            (may contain symlink)
-// ~     ==> /home/user
-// ~user ==> /home/user
-// ~/tools/src/filename.ext     ==> /home/user/tools/src/filename.ext
-// ~user/tools/src/filename.ext ==> /home/user/tools/src/filename.ext
-// ./filename.ext               ==> /home/user/tools/src/filename.ext
-char *get_full_path(const char *path, char *buf)
-{
-	char user_name[MAX_PATH_LEN+1];
-	const char *user_dir;
-	char cur_dir[MAX_PATH_LEN+1];
-	size_t len;
-	const struct passwd *user_data = 0;
-
-	strlcpy__(buf, path, MAX_PATH_LEN);
-	if (path[0] == '/') {
-		// "/..." already full path
-	} else if (path[0] == '~') {
-		// "~", "~user", "~/..." or "~user/..."
-		for (len = 0; path[len]; len++) {
-			if (path[len] == '/') {
-				break;
-			}
-		}
-		// Determine home directory using getpwuid() or getpwent(), don't rely on $HOME
-		if (len == 1) {		// "~"
-			user_data = getpwuid(geteuid());
-			user_dir = user_data->pw_dir;
-		} else {			// "~user"
-			strlcpy__(user_name, &path[1], len);
-			user_dir = get_user_home_dir(user_name);
-///flf_d_printf("[%s] ==> [%s]\n", user_name, user_dir);
-		}
-		if (path[len] == '/') {
-			// "~/..."   "~/..."
-			//   ^    ==>   ^
-			len++;
-		}
-		cat_dir_and_file(buf, user_dir, &path[len]);
-	} else {
-		// "./..." ==> "/home/user/tools/..."
-		get_full_path_of_cur_dir(cur_dir);
-		cat_dir_and_file(buf, cur_dir, path);
-	}
-///flf_d_printf("[%s] ==> [%s]\n", path, buf);
-	normalize_full_path(buf);
-///flf_d_printf("[%s] ==> [%s]\n", path, buf);
-	return buf;
-}
-
-char *get_real_path(const char *path, char *buf, int buf_len)
-{
-#if defined(HAVE_REALPATH)
-	return realpath__(path, buf, buf_len);
-#else // HAVE_REALPATH
-	return my_realpath(path, buf, buf_len);
-#endif // HAVE_REALPATH
-}
 
 #if defined(HAVE_REALPATH)
-#ifdef START_UP_TEST
 PRIVATE void test_realpath_(const char *path);
 void test_realpath(void)
 {
@@ -926,56 +984,8 @@ PRIVATE void test_realpath_(const char *path)
 	realpath__(path, buf, MAX_PATH_LEN);
 	flf_d_printf("path:[%s] ==> buf:[%s]\n", path, buf);
 }
-#endif // START_UP_TEST
-// return normalized(canonicalized) absolute file path
-char *realpath__(const char *path, char *buf, int buf_len)
-{
-	char buffer[MAX_PATH_LEN+1];
-
-	if (realpath(path, buffer) == NULL) {
-		strlcpy__(buffer, path, MAX_PATH_LEN);	// error, return original path
-	}
-	strlcpy__(buf, buffer, buf_len);
-	return buf;
-}
 #endif // HAVE_REALPATH
 
-#if !defined(HAVE_REALPATH) || defined(START_UP_TEST)
-#warning "my_realpath() is only partially implemented"
-
-PRIVATE void test_my_realpath_(const char *path);
-void test_my_realpath(void)
-{
-	flf_d_printf("-----------------------\n");
-	test_my_realpath_("~");
-	test_my_realpath_("~user");
-	test_my_realpath_("~root");
-
-	test_my_realpath_("/home/user/tools/be/be");
-	test_my_realpath_("/home/user/tools/./be/be");
-	test_my_realpath_("/home/user/../user/tools/be/be");
-
-	test_my_realpath_("/home/user/tools/be/be/testfiles/symlinkd");
-	test_my_realpath_("/home/user/tools/be/be/testfiles/symlinkf");
-
-	test_my_realpath_("/dev/stdin");
-	test_my_realpath_("/dev/fd");
-}
-PRIVATE void test_my_realpath_(const char *path)
-{
-	char buf[MAX_PATH_LEN+1];
-
-	my_realpath(path, buf, MAX_PATH_LEN);
-	flf_d_printf("path:[%s] ==> buf:[%s]\n", path, buf);
-}
-char *my_realpath(const char *path, char *buf, int buf_len)
-{
-	strlcpy__(buf, path, buf_len);
-	return normalize_full_path(buf);
-}
-#endif // !defined(HAVE_REALPATH) || defined(START_UP_TEST)
-
-#ifdef START_UP_TEST
 PRIVATE void get_file_name_extension_(char *file_name);
 void test_get_file_name_extension(void)
 {
@@ -991,36 +1001,7 @@ PRIVATE void get_file_name_extension_(char *file_name)
 {
 	flf_d_printf("[%s] ==> [%s]\n", file_name, get_file_name_extension(file_name));
 }
-#endif // START_UP_TEST
-// "filename.ext" ==> "ext"
-// "filename" ==> ""
-// "." ==> ""
-// "filename." ==> ""
-// ".filename" ==> "filename"
-// ".filename.ext" ==> "ext"
-char *get_file_name_extension(char *file_name)
-{
-	char *last_period = NULL;
-	char *ptr;
 
-	ptr = file_name;
-	if (*ptr == '.') {
-		// "." ==> ""
-		// ".filename" ==> "filename"
-		ptr++;
-	}
-	for ( ; *ptr; ptr++) {
-		if (*ptr == '.') {
-			last_period = ptr;
-		}
-	}
-	if (last_period == NULL) {
-		last_period = ptr;
-	}
-	if (*last_period == '.') {
-		last_period++;
-	}
-	return last_period;
-}
+#endif // START_UP_TEST
 
 // End of utilpath.c

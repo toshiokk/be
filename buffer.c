@@ -96,11 +96,6 @@ be_buf_t *buf_init_line_anchors(be_buf_t *buf, char *initial_data)
 void buf_set_file_abs_path(be_buf_t *buf, const char *file_path)
 {
 	buf_set_file_path(buf, file_path);
-	/////if (IS_NODE_ANCH(buf)) {
-	/////	strlcpy__(buf->abs_path, "##", MAX_PATH_LEN);
-	/////	strlcat__(buf->abs_path, MAX_PATH_LEN, file_path);
-	/////	return;
-	/////}
 	buf_set_abs_path(buf, file_path);
 }
 void buf_set_file_path(be_buf_t *buf, const char *file_path)
@@ -514,14 +509,10 @@ be_buf_t *get_buf_from_bufs_by_file_name(be_buf_t *buf, const char *file_name)
 {
 	buf = make_sure_buf_is_top_buf(buf);
 	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
-		char dir[MAX_PATH_LEN+1];
-		char file[MAX_PATH_LEN+1];
-		separate_path_to_dir_and_file(buf->file_path, dir, file);
-		if (strcmp(file, file_name) == 0) {
+		if (compare_file_path_from_tail(buf->file_path, file_name) == 0) {
 			return buf;	// found by file_path
 		}
-		separate_path_to_dir_and_file(buf->abs_path_, dir, file);
-		if (strcmp(file, file_name) == 0) {
+		if (compare_file_path_from_tail(buf->abs_path_, file_name) == 0) {
 			return buf;	// found by abs_path
 		}
 	}

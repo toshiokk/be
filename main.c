@@ -191,17 +191,20 @@ flf_d_printf("Exit %s ====================================\n", APP_NAME " " __DA
 int app_main_loop(void)
 {
 #ifdef ENABLE_FILER
-	char file_path[MAX_PATH_LEN+1];
-
-	// application was started as a FILER
-	while (1) {
-		if (count_edit_bufs() == 0) {
+	if (count_edit_bufs()) {
+		// application was started as a EDITOR
+		while (count_edit_bufs()) {
+			call_editor(0, 0);
+		}
+	} else {
+		// application was started as a FILER
+		while (1) {
+			char file_path[MAX_PATH_LEN+1];
 			call_filer(0, 0, "", "", file_path, MAX_PATH_LEN);
 			if (count_edit_bufs() == 0) {
 				// no file loaded in filer
 				break;
 			}
-		} else {
 			call_editor(0, 0);
 		}
 	}
@@ -373,8 +376,8 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 		case 'e':
 			if (optarg) {
 				switch (optarg[0]) {
-				case 'j':
-					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_JIS);
+				case 'u':
+					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_UTF8);
 					break;
 				case 'e':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_EUCJP);
@@ -382,17 +385,19 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 				case 's':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_SJIS);
 					break;
-				case 'u':
-					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_UTF8);
+				case 'j':
+					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_JIS);
 					break;
 				case 'b':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_BINARY);
 					break;
 				case 'a':
 				default:
+					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_ASCII);
 					break;
 				}
 			}
+/////flf_d_printf("CUR_EBUF_STATE(buf_ENCODE): %d\n", CUR_EBUF_STATE(buf_ENCODE));
 			break;
 #endif // USE_NKF
 #ifdef ENABLE_FILER
@@ -482,7 +487,6 @@ PRIVATE void start_up_test(void)
 #if defined(HAVE_REALPATH)
 	test_realpath();
 #endif // HAVE_REALPATH
-	test_my_realpath();
 
 	test_get_file_name_extension();
 	test_cat_dir_and_file();

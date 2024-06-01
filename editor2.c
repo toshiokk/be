@@ -206,7 +206,7 @@ void clear_edit_win_update_needed(void)
 #ifdef ENABLE_REGEX
 PRIVATE void disp_edit_win_bracket_hl();
 PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
- char char_under_cursor, char *needle, int depth_increase);
+ char char_under_cursor, char *needle, char depth_increase);
 #endif // ENABLE_REGEX
 
 //-111111111111<   |
@@ -658,7 +658,7 @@ PRIVATE void disp_edit_win_bracket_hl()
 }
 
 PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
- char char_under_cursor, char *needle, int depth_increase)
+ char char_under_cursor, char *needle, char depth_increase)
 {
 	be_line_t *match_line;
 	int match_byte_idx;
@@ -677,7 +677,10 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 	int right_byte_idx;
 #define MAX_BRACKET_HL		100	// for avoiding infinite loop
 	int safe_cnt = 0;
+	UINT8 zero_occurance = 0;
 
+flf_d_printf("display_dir: %d, char_under_cursor: [%c], depth_increase: %d\n",
+ display_dir, char_under_cursor, depth_increase);
 	if (display_dir < 0) {
 #ifdef HL_BRACKET_BW
 		// draw backward [0, yy] from cursor pos
@@ -709,7 +712,7 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 					 match_byte_idx, match_byte_idx + match_len,
 					 &left_byte_idx, &right_byte_idx) > 0) {
 						// select color by depth
-						set_color_for_bracket_hl(depth_increase, prev_depth);
+						set_color_for_bracket_hl(depth_increase, &zero_occurance, prev_depth);
 						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 						match_len = 0;	// clear match_len so that go to next bracket
 						break;
@@ -758,7 +761,7 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 					 match_byte_idx, match_byte_idx + match_len,
 					 &left_byte_idx, &right_byte_idx) > 0) {
 						// select color by depth
-						set_color_for_bracket_hl(depth_increase, prev_depth);
+						set_color_for_bracket_hl(depth_increase, &zero_occurance, prev_depth);
 						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 						match_len = 0;	// clear match_len so that go to next bracket
 						break;

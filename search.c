@@ -556,21 +556,8 @@ flf_d_printf("search_dir/needle: [%d][%s]\n", search_dir, needle);
 	return search_dir;
 }
 
-// center of color_idx: 5
-// center of depth    : 0
-//
-// BRACKET_HL_TEST                   V                                 
-//         ( ( ( ( ( ( ( ( ( ( ) ) ( ( ( ) ) ) ( ( ) ) ) ) ) ) ) ) ) ) 
-// depth  3 4 5 6 7 0 1 2 3 4 5 4 3 4 5 6 5 4 3 4 5 6 7 2 1 0 7 6 5 4 3
-// color   7 0 1 2 3 4 5 6 7 0 0 7 7 * 1 1 * 7 7 7 7 7 6 5 4 3 2 1 0 7 
-//
-// BRACKET_HL_TEST                         V                           
-//         ( ( ( ( ( ( ( ( ( ( ) ) ( ( ( ) ) ) ( ( ) ) ) ) ) ) ) ) ) ) 
-// depth  3 4 5 6 7 0 1 2 3 4 5 4 3 4 5 6 5 4 3 4 5 6 7 2 1 0 7 6 5 4 3
-// color   7 0 1 2 3 4 5 6 7 0 0 7 7 * 1 1 * 7 7 0 0 7 6 5 4 3 2 1 0 7 
-
 int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
- char char_under_cursor, const char *needle, int search_dir, int skip_here, int depth_increase,
+ char char_under_cursor, const char *needle, int search_dir, int skip_here, char depth_increase,
  int *ptr_depth, int *prev_depth)
 {
 	int match_len = search_needle_in_buffer(ptr_line, ptr_byte_idx,
@@ -633,33 +620,46 @@ int get_colors_for_bracket_hl()
 	}
 	return num_colors_for_bracket_hl;
 }
+
+// BRACKET_HL_TEST       reverse <-- v --> forward
+//              (  (  (  (  )  )  (  (  (  )  )  )  (  (  (  )  )  )  )  )
+// depth       -3 -2 -1  0  0 -1 -1  0  1  1  0 -1 -1  0  1  1  0 -1 -2 -3
+// zero_occurance  -  -  -  -  -  -  1  1  1  2  2  2  3  3  3  4  4  4  4
+// color_idx    2  1  8  7  7  8  8  0  1  1  0  7  7  8  1  1  8  7  6  5
+
+// (zero_occurance <  2):  4 5 6 7 0 1 2 3 4 5 6 7 0 ...
+// (zero_occurance >= 2):  5 6 7 8 1 2 3 4 5 6 7 8 1 ...
+
+void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurance, int depth)
+{
+flf_d_printf("depth_increase: %d, depth: %d\n", depth_increase, depth);
+	char fgc, bgc;
+	int num_colors_m1 = get_colors_for_bracket_hl() - 1;
+
+	depth %= num_colors_m1;		// [-num_colors_m1+1, _num_colors_m1-1]
+	depth += num_colors_m1;		// make [0, 2*num_colors_m1-1]
+	depth %= num_colors_m1;		// [0, _num_colors_m1-1]
+	if ((depth_increase < 0) || (*zero_occurance >= 2)) {
+		// [0, _num_colors_m1-1]
+		depth++;	// shift 1 to avoid 0
+		// [1, _num_colors_m1]
+	}
+	get_color_for_bracket_hl(depth, &fgc, &bgc);
+	tio_set_attrs(bgc, fgc, 0);
+	if (depth == 0) {
+		(*zero_occurance)++;
+	}
+flf_d_printf("bgc: %d, fgc: %d\n", bgc, fgc);
+}
 void get_color_for_bracket_hl(int color_idx, char *fgc, char *bgc)
 {
 	if (get_colors_for_bracket_hl() == 0) {
 		get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, fgc, bgc);
 	} else {
+		color_idx = MK_IN_RANGE(0, color_idx, COLORS_FOR_BRACKET_HL);
 		*bgc = colors_for_bracket_hl[color_idx].bgc;
 		*fgc = colors_for_bracket_hl[color_idx].fgc;
 	}
-}
-void set_color_for_bracket_hl(int depth_increase, int color_idx)
-{
-	char fgc, bgc;
-	int num_colors_m1 = get_colors_for_bracket_hl() - 1;
-
-#define	SIGN(integer)	(((integer) < 0) ? -1 : +1)
-	if (color_idx) {
-		color_idx -= SIGN(color_idx);	// shift by 1 toward 0
-		color_idx %= num_colors_m1;		// [-num_colors_m1+1, _num_colors_m1-1]
-		color_idx += num_colors_m1;		// make [0, 2*num_colors_m1-1]
-		color_idx %= num_colors_m1;		// [0, _num_colors_m1-1]
-		color_idx += SIGN(color_idx);	// [1, num_colors_m1]
-		// color-0 emerges only once at the begining
-		//   depth_increase > 0: color_idx = 0,   1,   2, ... ,N-2, N-1,   1,   2, ...
-		//   depth_increase < 0: color_idx = 0, N-1, N-2, ... ,  2,   1, N-1, N-2, ...
-	}
-	get_color_for_bracket_hl(color_idx, &fgc, &bgc);
-	tio_set_attrs(bgc, fgc, 0);
 }
 
 #endif // ENABLE_REGEX

@@ -137,9 +137,8 @@ int backup_and_save_cur_buf_ask(void)
 	char file_path[MAX_PATH_LEN+1];
 	int ret = 0;
 
-	// write to "abs_path" so that not change a symlink but a file pointed by symlink
+	// write to "abs_path" so that not change symlink but change file pointed by symlink
 	strlcpy__(file_path, get_epc_buf()->abs_path_, MAX_PATH_LEN);
-	/////strlcpy__(file_path, get_epc_buf()->file_path, MAX_PATH_LEN);
 	if (is_strlen_0(file_path)) {
 		if (input_new_file_name_n_ask(file_path) <= 0) {
 			return -1;
@@ -306,7 +305,7 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file
 		if (CUR_EBUF_STATE(buf_ENCODE) == ENCODE_ASCII) {
 			// encoding is not specified on command line
 			guess_encoding_by_nkf(full_path);
-			if (CUR_EBUF_STATE(buf_ENCODE) == ENCODE_BINARY && load_binary_file == 0) {
+			if ((CUR_EBUF_STATE(buf_ENCODE) == ENCODE_BINARY) && (load_binary_file == 0)) {
 				if (msg_on_err) {
 					disp_status_bar_err(_("BINARY file !! [%s]"),
 					 shrink_str_to_scr_static(full_path));
