@@ -25,7 +25,6 @@
 
 PRIVATE int save_history_if_modified(int hist_type_idx);
 PRIVATE be_buf_t *get_history_buf(int hist_type_idx);
-PRIVATE int check_file_pos_recorded_in_history(int hist_type_idx, const char *str);
 
 PRIVATE int save_history_idx(int hist_type_idx);
 PRIVATE int load_history_idx(int hist_type_idx);
@@ -44,7 +43,10 @@ PRIVATE const char *get_history_newer(int hist_type_idx);
 
 PRIVATE const char *is_the_last_line(int hist_type_idx, const char *str);
 PRIVATE be_line_t *search_history_exact_match(int hist_type_idx, const char *str);
+#if 0
+PRIVATE int check_file_pos_recorded_in_history(int hist_type_idx, const char *str);
 PRIVATE int search_history_from_newest(int hist_type_idx, const char *str);
+#endif
 PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str);
 
 // search/replace(directory and execution) history support functions
@@ -121,9 +123,6 @@ void load_last_searched_needle(void)
 //-----------------------------------------------------------------------------
 PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 {
-	be_buf_t *buf;
-	int idx;
-
 	if ((0 <= hist_type_idx && hist_type_idx < HISTORY_TYPES_APP_AND_SHELL) == 0) {
 		e_printf(_("hist_type_idx out of range: %d"), hist_type_idx);
 		hist_type_idx = 0;
@@ -143,16 +142,16 @@ void update_history(int hist_type_idx, const char *str, BOOL force_update)
 {
 	be_line_t *line;
 
-	if ((force_update == FALSE) && (hist_type_idx == HISTORY_TYPE_IDX_CURSPOS)) {
-///PPP		if (check_file_pos_recorded_in_history(hist_type_idx, str)) {
-///PPP			return; // registered relatively newer, no need of update
-///PPP		}
-	} else {
+/////	if ((force_update == FALSE) && (hist_type_idx == HISTORY_TYPE_IDX_CURSPOS)) {
+////////PPP		if (check_file_pos_recorded_in_history(hist_type_idx, str)) {
+////////PPP			return; // registered relatively newer, no need of update
+////////PPP		}
+/////	} else {
 		if (is_the_last_line(hist_type_idx, str) != NULL) {
 			// str is registered in the last line, no need update
 			return;
 		}
-	}
+/////	}
 	// load-modify(free old entry and append new entry)-save
 	load_history_idx(hist_type_idx);
 	if ((line = search_history_exact_match(hist_type_idx, str)) != NULL) {
@@ -162,6 +161,7 @@ void update_history(int hist_type_idx, const char *str, BOOL force_update)
 	save_history_idx(hist_type_idx);
 }
 
+#if 0
 PRIVATE int check_file_pos_recorded_in_history(int hist_type_idx, const char *str)
 {
 	char file_path[MAX_PATH_LEN+1];
@@ -177,6 +177,19 @@ PRIVATE int check_file_pos_recorded_in_history(int hist_type_idx, const char *st
 	}
 	return 0;
 }
+PRIVATE int search_history_from_newest(int hist_type_idx, const char *str)
+{
+	be_buf_t *buf = get_history_buf(hist_type_idx);
+	be_line_t *line;
+	int line_num_from_bottom = 0;
+	for (line = BUF_BOT_LINE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
+		line_num_from_bottom++;
+		if (strcmp(line->data, str) == 0)	// exact match
+			return line_num_from_bottom;	// return line count from the newest
+	}
+	return 0; // not found
+}
+#endif
 
 // last_n: 1, 2, 3, ....
 const char *get_history_newest(int hist_type_idx, int last_n)
@@ -348,6 +361,7 @@ PRIVATE void append_history(int hist_type_idx, const char *str)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	buf_set_cur_line(buf, line_insert_with_string(BUF_BOT_ANCH(buf), INSERT_BEFORE, str));
+	set_history_modified(hist_type_idx);
 }
 PRIVATE void clear_history(int hist_type_idx)
 {
@@ -426,18 +440,6 @@ PRIVATE be_line_t *search_history_exact_match(int hist_type_idx, const char *str
 			return line;	// return line
 	}
 	return NULL;
-}
-PRIVATE int search_history_from_newest(int hist_type_idx, const char *str)
-{
-	be_buf_t *buf = get_history_buf(hist_type_idx);
-	be_line_t *line;
-	int line_num_from_bottom = 0;
-	for (line = BUF_BOT_LINE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
-		line_num_from_bottom++;
-		if (strcmp(line->data, str) == 0)	// exact match
-			return line_num_from_bottom;	// return line count from the newest
-	}
-	return 0; // not found
 }
 PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str)
 {

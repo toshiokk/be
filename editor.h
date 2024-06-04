@@ -38,6 +38,7 @@ int call_editor(int push_win, int list_mode);
 int doe_open_file(void);
 int doe_open_new_file(void);
 int doe_open_proj_file(void);
+int do_open_proj_file(void);
 int doe_reopen_file_last_line(void);
 int doe_reopen_file(void);
 

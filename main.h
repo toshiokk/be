@@ -65,8 +65,6 @@ void show_version(void);
 void disp_splash(int delay);
 #endif // ENABLE_HELP
 
-char *get_app_dir(void);
-
 #endif // main_h
 
 // End of main.h

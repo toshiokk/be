@@ -44,7 +44,7 @@ int save_cur_buf_to_file(const char *file_path);
 void clear_files_loaded(void);
 int add_files_loaded(int files);
 int get_files_loaded(void);
-void disp_files_loaded_ifnon0(void);
+void disp_files_loaded_if_ge_0(void);
 void disp_files_loaded(void);
 
 #endif // fileio_h

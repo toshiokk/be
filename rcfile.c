@@ -181,12 +181,9 @@ PRIVATE int rc_line_num = 0;
 
 PRIVATE int read_rc_path(const char *rc_file_path, int complain)
 {
-	const char *rc_file_path_save;
-	int ret;
-
-	rc_file_path_save = rc_file_path_reading;
+	const char *rc_file_path_save = rc_file_path_reading;
 	rc_file_path_reading = rc_file_path;
-	ret = read_rc_path__(rc_file_path, complain);
+	int ret = read_rc_path__(rc_file_path, complain);
 	rc_file_path_reading = rc_file_path_save;
 	return ret;
 }
@@ -445,7 +442,7 @@ PRIVATE int parse_include(void)
 	SKIP_SPACE(rc_line_ptr);
 	if (rc_file_nest_count < MAX_RC_NEST_COUNT) {
 		++rc_file_nest_count;
-		separate_dir_part_and_file_part(rc_file_path_reading, dir_part, file_part);
+		separate_path_to_dir_and_file(rc_file_path_reading, dir_part, file_part);
 		snprintf_(rc_file_path, MAX_PATH_LEN+1, "%s/%s", dir_part, rc_line_ptr);
 		ret = read_rc_path(rc_file_path, 1);
 		--rc_file_nest_count;

@@ -2,6 +2,12 @@
  (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible/pending)
 
 [ ] START_UP_TEST --> UT(assert)
+
+[v] M-P load project file in filer and editor
+[v] discrimination of open and load
+	open -> load -> edit -> save -> close
+
+[v] shown 2 files loaded, when only 1
 [v] fix reverse direction color in bracket hl 
 [v] switch to a preloaded file matching from the tail of path (compo_ctrl/src/component/stt/sagitta/frame/param.h)
 

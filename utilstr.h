@@ -92,11 +92,15 @@ const char *skip_chars(const char *ptr, const char *chars);
 const char *skip_to_file_path(const char *ptr);
 const char *skip_file_path(const char *ptr);
 char *skip_file_name(char *ptr);
-/////const char *skip_separator(const char *ptr);
+#if 0
+const char *skip_separator(const char *ptr);
+#endif
 const char *skip_one_separator(const char *ptr);
 const char *skip_two_spaces(const char *ptr);
 const char *skip_to_digit(const char *ptr);
 const char *skip_digits(const char *ptr);
+const char *skip_string_const(const char *ptr);
+char *skip_string_mutable(char *ptr);
 
 char *remove_line_tail_lf(char *line);
 int is_file_path_char(const char *ptr);

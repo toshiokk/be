@@ -35,9 +35,7 @@ _FLF_
 	loff_t zeros;
 	int bits;
 	int bit;
-/////#ifdef ENABLE_DEBUG
 	char buf_size[20+1];
-/////#endif // ENABLE_DEBUG
 	const char *expected_strs[] = {
 		"     1",
 		"     3",
@@ -206,12 +204,7 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	}
 	if (S_ISDIR(st_ptr->st_mode)) {
 		strlcat__(buf_name, MAX_PATH_LEN, "/");
-		/////if (strcmp(file_info->file_name, "..") == 0) {
-		/////	// show "../" like "../ [@host-name]"
-		/////	strcat_printf(buf_name, MAX_PATH_LEN, " [%s]", get_at_host_name());
-		/////}
-	} else if (is_link_broken == 0
-	 && (st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
+	} else if (is_link_broken == 0 && (st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
 		strlcat__(buf_name, MAX_PATH_LEN, "*");
 	}
 
@@ -543,16 +536,16 @@ PRIVATE int comp_file_info_(const void *aa, const void *bb)
 	default:
 	case FILE_SORT_BY_NAME:
 	case FILE_SORT_BY_NAME_REV:
-		if (ret = comp_file_name(aa, bb)) {			return ret;		}
-		if (ret = comp_file_extension(aa, bb)) {	return ret;		}
+		if ((ret = comp_file_name(aa, bb)))		 {	return ret;		}
+		if ((ret = comp_file_extension(aa, bb))) {	return ret;		}
 		return ret;
 	case FILE_SORT_BY_EXT:
 	case FILE_SORT_BY_EXT_REV:
-		if (ret = comp_file_executable((file_info_t *)aa, (file_info_t *)bb)) {
+		if ((ret = comp_file_executable((file_info_t *)aa, (file_info_t *)bb))) {
 			return ret;
 		}
-		if (ret = comp_file_extension(aa, bb)) {	return ret;		}
-		if (ret = comp_file_name(aa, bb)) {			return ret;		}
+		if ((ret = comp_file_extension(aa, bb))) {	return ret;		}
+		if ((ret = comp_file_name(aa, bb)))		 {	return ret;		}
 		return ret;
 	case FILE_SORT_BY_TIME:
 	case FILE_SORT_BY_TIME_REV:

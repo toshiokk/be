@@ -179,8 +179,8 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 #ifdef ENABLE_HISTORY
 	char prev_cur_dir[MAX_PATH_LEN+1];
 #endif // ENABLE_HISTORY
-	key_code_t key_input;
-	func_key_table_t *func_key_table;
+	key_code_t key_input = K_C_AT;		// show status bar at the first loop
+	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 
 #ifdef ENABLE_HISTORY
 	get_full_path_of_cur_dir(prev_cur_dir);		// memorize prev. current dir
@@ -189,12 +189,12 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 		strlcpy__(get_cur_filer_view()->cur_dir, dir, MAX_PATH_LEN);
 	}
 
-	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 
 	while (1) {
+		func_key_table_t *func_key_table;
+
 		check_filer_cur_dir();
 		strcpy(filer_cur_path, get_cur_filer_view()->cur_dir);
-		/////cat_dir_and_file(filer_cur_path, get_cur_filer_view()->cur_dir, filter);
 #ifdef ENABLE_HISTORY
 		if (strcmp(prev_cur_dir, get_cur_filer_view()->cur_dir) != 0) {
 			update_history(HISTORY_TYPE_IDX_DIR, get_cur_filer_view()->cur_dir, 0);
@@ -500,9 +500,7 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 {
 	int cur_sel_idx;
 	int bottom_idx;
-	int file_idx;
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
-	char *ptr;
 
 	cur_sel_idx = fv->cur_sel_idx;
 	if (cur_sel_idx < fv->top_idx + FILER_VERT_SCROLL_MARGIN_LINES) {
@@ -526,11 +524,12 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 		sub_win_output_string(filer_win_get_file_path_y(), 0, buffer, -1);
 	}
 
-	for (int line_idx = 0, file_idx = fv->top_idx;
+	int file_idx = fv->top_idx;
+	for (int line_idx = 0;
 	 line_idx < filer_win_get_file_list_lines() && file_idx < fv->file_list_entries;
 	 line_idx++, file_idx++) {
 		// Highlight the currently selected file/dir.
-		ptr = file_info_str(&(fv->file_list[file_idx]),
+		char *ptr = file_info_str(&(fv->file_list[file_idx]),
 		 1, file_idx != cur_sel_idx, fv->file_list[file_idx].selected);
 		adjust_utf8s_columns(ptr, main_win_get_columns());
 		if (fv->file_list[file_idx].selected) {
@@ -538,11 +537,11 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 		} else {
 			set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 		}
-		if (cur_pane && file_idx == cur_sel_idx) {
+		if (cur_pane && (file_idx == cur_sel_idx)) {
 			tio_set_attr_rev(1);		// display current line inverted
 		}
 		sub_win_output_string(filer_win_get_file_list_y() + line_idx, 0, ptr, -1);
-		if (cur_pane && file_idx == cur_sel_idx) {
+		if (cur_pane && (file_idx == cur_sel_idx)) {
 			tio_set_attr_rev(0);
 		}
 	}
@@ -584,7 +583,7 @@ PRIVATE void disp_key_list_filer(void)
  "  {ChDir} {Exec } {Edit } {Edit }",
 
  "<dof_quit_filer>Quit "
- "<dof_edit_file>Edit "
+ "<dof_open_file>Edit "
  "<dof_edit_new_file>EditNewFile "
  "<dof_copy_file>Copy "
  "<dof_copy_file_update>UpdateCopy "

@@ -299,7 +299,7 @@ void create_edit_buf(const char *full_path)
 		// make view-1 buffer valid
 		editor_panes.bufs[1] = buf;
 	}
-/////_D_(buf_dump_state(buf))
+////_D_(buf_dump_state(buf))
 }
 
 //-----------------------------------------------------------------------------

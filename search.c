@@ -439,7 +439,6 @@ int doe_highlight_bracket_reverse(void)
 PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair)
 {
 	char char_under_cursor;
-	char char_counterpart;
 	char needle[BRACKET_SEARCH_REGEXP_STR_LEN+1];
 	int search_dir;			// search direction (FORWARD_SEARCH / BACKWARD_SEARCH)
 	be_line_t *line;

@@ -159,7 +159,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 		if (start_line_num > 0) {
 			goto_line_col_in_cur_buf(start_line_num, -1);
 		}
-		disp_files_loaded();
+		disp_files_loaded_if_ge_0();
 	}
 
 	app_main_loop();
@@ -515,9 +515,8 @@ PRIVATE void start_up_test2(void)
 {
 flf_d_printf("modulo test --------------\n");
 	for (int nn = -9; nn < 10; nn++) {
-flf_d_printf("%2d mod 7 = %2d, ", nn, nn % 7);
-flf_d_printf("%2d mod 5 = %2d, ", nn, nn % 5);
-flf_d_printf("%2d mod 3 = %2d\n", nn, nn % 3);
+flf_d_printf("%2d mod 7 = %2d, %2d mod 5 = %2d, %2d mod 3 = %2d\n",
+ nn, nn % 7, nn, nn % 5, nn, nn % 3);
 	}
 }
 #endif // START_UP_TEST
@@ -605,8 +604,7 @@ void free_all_allocated_memory(void)
 
 //-----------------------------------------------------------------------------
 
-PRIVATE void show_one_option(const char *shortflag, const char *longflag,
- const char *desc);
+PRIVATE void show_one_option(const char *shortflag, const char *longflag, const char *desc);
 void show_usage(void)
 {
 	printf(_("\nUsage: " BIN_NAME " [+LINE] [option] [file(s)]\n"));
@@ -641,8 +639,7 @@ void show_usage(void)
 }
 
 // Print one option explanation to the screen
-PRIVATE void show_one_option(const char *shortflag, const char *longflag,
- const char *desc)
+PRIVATE void show_one_option(const char *shortflag, const char *longflag, const char *desc)
 {
 	printf(" %-20s", shortflag);
 #ifdef HAVE_GETOPT_LONG
@@ -924,17 +921,5 @@ void disp_splash(int delay)
 }
 #endif // ENABLE_HELP
 
-//------------------------------------------------------------------------------------
-char *get_app_dir(void)
-{
-	static char dir[MAX_PATH_LEN+1];
-
-#if defined(APP_DIR)
-	snprintf_(dir, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), APP_DIR);
-#else
-	snprintf_(dir, MAX_PATH_LEN+1, "%s", get_home_dir());
-#endif
-	return dir;
-}
 
 // End of main.c

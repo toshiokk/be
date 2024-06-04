@@ -645,7 +645,6 @@ PRIVATE void disp_edit_win_bracket_hl()
 {
 	char char_under_cursor;
 	char needle[BRACKET_SEARCH_REGEXP_STR_LEN+1];
-	int search_dir;
 	int display_direction;
 
 	prepare_colors_for_bracket_hl();

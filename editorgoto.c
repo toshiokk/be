@@ -67,16 +67,6 @@ int doe_goto_input_line(void)
 	return 1;
 }
 
-/////PRIVATE int check_cur_line_file_or_directory(void);
-/////PRIVATE int check_cur_line_file_or_directory(void)
-/////{
-/////	char file_path[MAX_PATH_LEN+1];
-/////	if (get_file_line_col_from_str_null(EPCBVC_CL->data, file_path, NULL, NULL) == 0) {
-/////		return 0;
-/////	}
-/////	return get_file_type_by_file_path(file_path);
-/////}
-
 int doe_goto_file_or_dir_in_cur_line(void)
 {
 	if (doe_goto_file_in_cur_line() > 0) {
@@ -120,7 +110,7 @@ PRIVATE int _doe_goto_file_in_cur_line_byte_idx(int line_byte_idx)
 	 TUL1, OOE0, MOE1, LFH1, RECURSIVE1);
 	change_cur_dir(dir_save);
 
-	disp_files_loaded_ifnon0();
+	disp_files_loaded_if_ge_0();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return files;
 }
@@ -169,7 +159,7 @@ int doe_open_files_in_buf(void)
 {
 	clear_files_loaded();
 	load_files_in_cur_buf();
-	disp_files_loaded();
+	disp_files_loaded_if_ge_0();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
@@ -263,7 +253,7 @@ void doe_switch_editor_pane_(void)
 {
 	int pane_idx = get_editor_cur_pane_idx() ? 0 : 1;
 	set_editor_cur_pane_idx(pane_idx);
-/////_D_(dump_editor_panes())
+////_D_(dump_editor_panes())
 }
 
 //-----------------------------------------------------------------------------
@@ -271,6 +261,7 @@ void doe_switch_editor_pane_(void)
 int load_file_name_upp_low(const char *file_name,
  int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive)
 {
+	clear_files_loaded();
 	begin_check_break_key();
 	int ret = load_file_name_upp_low_(file_name,
 	 try_upp_low, open_on_err, msg_on_err, load_from_history, recursive);
@@ -331,10 +322,10 @@ PRIVATE int load_file_in_string_(const char *string,
 	if ((files = load_file_name_upp_low_(file_path,
 	 try_upp_low, open_on_err, msg_on_err, load_from_history, recursive)) > 0) {
 		if (recursive) {
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 			// Tag-jump to line, col
 			goto_line_col_in_cur_buf(line_num, col_num);	// appdefs.h|100,8
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 		}
 	}
 	return files;
@@ -383,8 +374,7 @@ PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int m
 	int files = 0;
 
 	if (load_file_name__(file_name, open_on_err, msg_on_err, load_from_history) > 0) {
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
-		add_files_loaded(1);
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 		files = 1;
 		if (recursive && (recursive_call_count == 0) && is_file_name_proj_file(file_name, 0)) {
 			recursive_call_count++;
@@ -411,25 +401,25 @@ PRIVATE int load_files_in_cur_buf_(void)
 				char file_pos_str2[MAX_PATH_LEN+1];
 				char dir_save[MAX_PATH_LEN+1];
 
-/////_D_(buf_dump_state(get_epc_buf()))
-/////_D_(dump_buf_views(get_epc_buf()))
+////_D_(buf_dump_state(get_epc_buf()))
+////_D_(dump_buf_views(get_epc_buf()))
 				memorize_cur_file_pos_null(file_pos_str2);
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
-/////flf_d_printf("[%s]\n", file_pos_str2);
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+////flf_d_printf("[%s]\n", file_pos_str2);
 				// CURDIR: changed to cur-file's abs-dir
 				change_cur_dir_by_file_path_after_save(dir_save, get_epc_buf()->file_path);
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
-/////flf_d_printf("[%s]\n", EPCBVC_CL->data);
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+////flf_d_printf("[%s]\n", EPCBVC_CL->data);
 				files += load_files_in_string_(EPCBVC_CL->data, 10,
 				 TUL1, OOE0, MOE0, LFH0, RECURSIVE0);
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 				change_cur_dir(dir_save);
 
 				editor_disp_title_bar();
 				tio_refresh();
-/////flf_d_printf("[%s]\n", file_pos_str2);
+////flf_d_printf("[%s]\n", file_pos_str2);
 				recall_file_pos_null(file_pos_str2);
-/////_D_(dump_buf_views(get_epc_buf()))
+////_D_(dump_buf_views(get_epc_buf()))
 			}
 		}
 		if (cursor_next_line() == 0)
@@ -453,23 +443,26 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 	char full_path[MAX_PATH_LEN+1];
 	char abs_path[MAX_PATH_LEN+1];
 
-/////flf_d_printf("file_name:[%s]-----------\n", file_name);
+////flf_d_printf("file_name:[%s]-----------\n", file_name);
 	get_full_path(file_name, full_path);
 	get_abs_path(file_name, abs_path);
 	// switch to if the file of the "file-path" already loaded
 	if (switch_epc_buf_by_file_path(full_path)) {
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+		add_files_loaded(0);	// switched
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 		// already loaded and select it
 		goto not_goto_line;
 	}
 	// try to load the file
 	if (load_file_into_new_buf(full_path, open_on_err, msg_on_err) >= 0) {
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+		add_files_loaded(1);
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 		goto goto_line;
 	}
 	// switch to if the file of the "file-name" already loaded
 	if (switch_epc_buf_by_file_name(file_name)) {
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+		add_files_loaded(0);	// switched
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 		// already loaded and select it
 		goto not_goto_line;
 	}
@@ -479,7 +472,8 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 		// try to load a file of the same "file-name" memorized in history
 /////flf_d_printf("file_name:[%s]\n", file_name);
 		if (load_and_goto_from_history(file_name)) {
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+			add_files_loaded(0);	// switched
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 			goto goto_line;
 		}
 	}
@@ -490,7 +484,7 @@ goto_line:
 	goto_pos_by_history(full_path);
 #endif // ENABLE_HISTORY
 not_goto_line:
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	return 1;
 }
 
@@ -510,9 +504,6 @@ PRIVATE int load_and_goto_from_history(const char *file_name)
 /////flf_d_printf("history:[%s]\n", history);
 		char file_path[MAX_PATH_LEN+1];
 		if (get_file_line_col_from_str_null(history, file_path, NULL, NULL)) {
-			/////char dir[MAX_PATH_LEN+1];
-			/////char file[MAX_PATH_LEN+1];
-			/////separate_path_to_dir_and_file(file_path, dir, file);
 /////flf_d_printf("file:[%s]\n", file);
 			if (compare_file_path_from_tail(file_path, file_name) == 0) {
 /////flf_d_printf("history:[%s]\n", history);
@@ -567,6 +558,7 @@ void test_get_n_th_file_name(void)
 	char file_path[MAX_PATH_LEN+1];
 	int line_num, col_num;
 
+	flf_d_printf("test_str:[%s]\n", test_str);
 	for (int field_idx = 0; field_idx < 10; field_idx++) {
 		ptr = skip_n_file_names(test_str, field_idx);
 		if (*ptr == '\0')
@@ -637,13 +629,13 @@ int recall_file_pos_null(const char *str)
 {
 	char file_path[MAX_PATH_LEN+1];
 
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	if (get_file_line_col_from_str_null(str, file_path, NULL, NULL)) {
 		if (switch_epc_buf_by_file_path(file_path) == 0) {
 			return 0;
 		}
 	}
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	return goto_str_line_col_in_cur_buf(str);
 }
 int goto_str_line_col_in_cur_buf(const char *str)

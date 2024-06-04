@@ -780,6 +780,7 @@ int first_line(void)
 int last_line(void)
 {
 	EPCBVC_CL = CUR_EDIT_BUF_BOT_LINE;
+	return 1;
 }
 
 // End of editormove.c

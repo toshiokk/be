@@ -54,17 +54,17 @@ int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_er
 	if (lines < 0) {
 		return lines;
 	}
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	append_magic_line();
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	buf_set_view_x_cur_line(get_epc_buf(), 0, CUR_EDIT_BUF_TOP_LINE);
 	buf_set_view_x_cur_line(get_epc_buf(), 1, CUR_EDIT_BUF_TOP_LINE);
 	BUFVX_CLBI(get_epc_buf(), 0) = 0;
 	BUFVX_CLBI(get_epc_buf(), 1) = 0;
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	renumber_cur_buf_from_top();
 	update_cur_buf_crc();
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 
 	if ((tab_size = buf_guess_tab_size(get_epc_buf())) != 0) {
 		CUR_EBUF_STATE(buf_TAB_SIZE) = tab_size;
@@ -118,11 +118,11 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 	// regular file
 	disp_status_bar_ing(_("Reading File %s ..."), shrink_str_to_scr_static(full_path));
 	create_edit_buf(full_path);
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	memcpy__(&(get_epc_buf()->orig_file_stat), &st, sizeof(st));
 
 	ret = load_file_into_cur_buf__(full_path, 1, msg_on_err);
-/////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
+////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 
 	if (ret < 0) {
 		free_cur_edit_buf();
@@ -297,7 +297,7 @@ int load_file_into_buf(be_buf_t *buf, const char *full_path)
 PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file, int msg_on_err)
 {
 #ifdef USE_NKF
-	const char *nkf_options;
+	const char *nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
 #endif // USE_NKF
 
 #ifdef USE_NKF
@@ -343,7 +343,6 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file
 			return load_file_into_cur_buf_nkf(full_path, nkf_options);
 		case ENCODE_BINARY:
 			return load_file_into_cur_buf_binary(full_path);
-			/////break;
 		}
 	} // if (GET_APPMD(ed_USE_NKF))
 #endif // USE_NKF
@@ -366,7 +365,7 @@ int save_buf_to_file(be_buf_t *buf, const char *file_path)
 int save_cur_buf_to_file(const char *file_path)
 {
 #ifdef USE_NKF
-	const char *nkf_options;
+	const char *nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
 #endif // USE_NKF
 
 #ifdef USE_NKF
@@ -404,7 +403,6 @@ int save_cur_buf_to_file(const char *file_path)
 			break;
 		case ENCODE_BINARY:
 			return save_cur_buf_to_file_binary(file_path);
-			/////break;
 		}
 	}
 #endif // USE_NKF
@@ -540,8 +538,8 @@ PRIVATE int load_file_into_cur_buf_ascii(const char *full_path)
 
 PRIVATE int load_file_into_cur_buf_binary(const char *full_path)
 {
-#define	BIN_LINE_LEN	64
-#define	BIN_BASE_CODE	0x2800	// use "Braille pattern" to show binary bytes
+#define BIN_LINE_LEN	64
+#define BIN_BASE_CODE	0x2800	// use "Braille pattern" to show binary bytes
 	FILE *fp;
 	if ((fp = fopen(full_path, "rb")) == NULL) {
 		disp_status_bar_err(_("Can not read-open file [%s]: %s"),
@@ -555,7 +553,7 @@ PRIVATE int load_file_into_cur_buf_binary(const char *full_path)
 		if (bytes <= 0) {
 			break;
 		}
-		unsigned char text_buf[BIN_LINE_LEN * MAX_UTF8C_BYTES + 1];
+		char text_buf[BIN_LINE_LEN * MAX_UTF8C_BYTES + 1];
 		strcpy(text_buf, "");
 		for (int off = 0; off < bytes; off++) {
 			unsigned char byte = bin_buf[off];
@@ -813,22 +811,25 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 }
 
 //-----------------------------------------------------------------------------
-PRIVATE int files_loaded = 0;
+PRIVATE int files_loaded = -1;	// -1: no file switched/loaded, 0: reloaded, 1: loaded
 void clear_files_loaded(void)
 {
-	files_loaded = 0;
+	files_loaded = -1;
 }
-int add_files_loaded(int files)
+int add_files_loaded(int files)	// files = 0: not loaded but switched
 {
+	if (files_loaded < 0) {
+		files_loaded = 0;
+	}
 	return files_loaded += files;
 }
 int get_files_loaded(void)
 {
 	return files_loaded;
 }
-void disp_files_loaded_ifnon0(void)
+void disp_files_loaded_if_ge_0(void)
 {
-	if (files_loaded > 0) {
+	if (files_loaded >= 0) {
 		disp_files_loaded();
 	}
 }

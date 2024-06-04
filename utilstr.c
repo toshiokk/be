@@ -538,14 +538,16 @@ char *skip_file_name(char *ptr)
 	}
 	return ptr;
 }
-/////const char *skip_separator(const char *ptr)
-/////{
-/////	for ( ; is_separator(*ptr); ) {
-/////		ptr++;
-/////		// skip to the next token
-/////	}
-/////	return ptr;
-/////}
+#if 0
+const char *skip_separator(const char *ptr)
+{
+	for ( ; is_separator(*ptr); ) {
+		ptr++;
+		// skip to the next token
+	}
+	return ptr;
+}
+#endif
 const char *skip_one_separator(const char *ptr)
 {
 	if (is_separator(*ptr)) {
@@ -576,6 +578,14 @@ const char *skip_digits(const char *ptr)
 		// skip digits
 	}
 	return ptr;
+}
+const char *skip_string_const(const char *ptr)
+{
+	return ptr + strlen(ptr);
+}
+char *skip_string_mutable(char *ptr)
+{
+	return ptr + strlen(ptr);
 }
 
 char *remove_line_tail_lf(char *line)
@@ -616,7 +626,7 @@ int contain_chr(const char *string, char chr)
 }
 char *quote_string(char *buffer, const char *string, char quote_chr)
 {
-	char buf[MAX_PATH_LEN+1];
+	char buf[MAX_PATH_LEN-2+1];
 	// file name ==> "file name" or 'file name'
 	if (contain_chr(string, '\'')) {
 		// "'file'name'" ==> "'\'file\'name\''"

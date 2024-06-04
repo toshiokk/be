@@ -65,7 +65,6 @@ int dof_exec_command_with_file(void)
 	}
 	if (get_files_selected_cfv() == 0) {
 		fork_exec_sh_c_once(PAUSE1, command_str);
-		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	} else {
 		begin_fork_exec_repeat();
 		for (int file_idx = select_and_get_first_file_idx_selected();
@@ -87,8 +86,8 @@ int dof_exec_command_with_file(void)
 			fork_exec_sh_c_repeat(SEPARATE1, buffer);
 		}
 		end_fork_exec_repeat();
-		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	}
+	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
 // If two or more files selected, pass all to command line at once.

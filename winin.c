@@ -389,10 +389,8 @@ int ask_yes_no(int flags, const char *msg, ...)
 	const char *chars_end = "QqRr" S_ESC S_C_Q;	// Quit/Return/ESC/Ctrl-Q
 	const char *chars_undo = "Uu";				// Undo
 	const char *chars_redo = "Oo";				// redO
-	key_code_t key_input;
 	int answer;
 	int byte_idx;
-	const char *func_id;
 
 	key_lines_save = GET_APPMD(app_KEY_LINES);		// save KEY_LINES
 	SET_APPMD_VAL(app_KEY_LINES, LIM_MIN(1, key_lines_save));	// set lines more than 1
@@ -446,29 +444,31 @@ int ask_yes_no(int flags, const char *msg, ...)
 	for (answer = ANSWER_NONE; answer == ANSWER_NONE; ) {
 		tio_set_cursor_on(1);
 		//---------------------------
-		key_input = input_key_loop();
-		func_id = get_func_id_from_key(key_input);
+		key_code_t key_input = input_key_loop();
+		const char *func_id = get_func_id_from_key(key_input);
 		//---------------------------
 		// Look for the key_input in yes/no/all
 		if (strchr__(chars_yes, key_input) != NULL)
 			answer = ANSWER_YES;
 		else if (strchr__(chars_no, key_input) != NULL)
 			answer = ANSWER_NO;
-		else if ((flags & ASK_ALL) && strchr__(chars_all, key_input) != NULL)
+		else if ((flags & ASK_ALL) && (strchr__(chars_all, key_input) != NULL))
 			answer = ANSWER_ALL;
-		else if ((flags & ASK_BACKWARD) && (strchr__(chars_backward, key_input) != NULL)
-		 || cmp_func_id(func_id, "doe_search_backward_next"))
+		else if ((flags & ASK_BACKWARD)
+		 && ((strchr__(chars_backward, key_input) != NULL)
+		  || cmp_func_id(func_id, "doe_search_backward_next")))
 			answer = ANSWER_BACKWARD;
-		else if ((flags & ASK_FORWARD) && (strchr__(chars_forward, key_input) != NULL)
-		 || cmp_func_id(func_id, "doe_search_forward_next"))
+		else if ((flags & ASK_FORWARD)
+		 && ((strchr__(chars_forward, key_input) != NULL)
+		  || cmp_func_id(func_id, "doe_search_forward_next")))
 			answer = ANSWER_FORWARD;
 		else if (strchr__(chars_cancel, key_input) != NULL)
 			answer = ANSWER_CANCEL;
-		else if ((flags & ASK_END || flags & ASK_NO) && strchr__(chars_end, key_input) != NULL)
+		else if ((flags & ASK_END || flags & ASK_NO) && (strchr__(chars_end, key_input) != NULL))
 			answer = ANSWER_END;
-		else if ((flags & ASK_UNDO) && strchr__(chars_undo, key_input) != NULL)
+		else if ((flags & ASK_UNDO) && (strchr__(chars_undo, key_input) != NULL))
 			answer = ANSWER_UNDO;
-		else if ((flags & ASK_REDO) && strchr__(chars_redo, key_input) != NULL)
+		else if ((flags & ASK_REDO) && (strchr__(chars_redo, key_input) != NULL))
 			answer = ANSWER_REDO;
 	}
 

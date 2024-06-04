@@ -205,7 +205,7 @@ PRIVATE int open_file_recursive(int recursive)
 		}
 		break;
 	}
-	disp_files_loaded_ifnon0();
+	disp_files_loaded_if_ge_0();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
@@ -220,20 +220,25 @@ int doe_open_new_file(void)
 	if (ret <= 0) {
 		return 0;
 	}
-	clear_files_loaded();
 	// CURDIR: changed in editor
 	if (load_file_name_upp_low(file_path, TUL0, OOE1, MOE0, LFH0, RECURSIVE0) <= 0) {
 		tio_beep();
 		return 0;
 	}
-	disp_files_loaded_ifnon0();
+	disp_files_loaded_if_ge_0();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 
 int doe_open_proj_file(void)
 {
-	char filter[MAX_PATH_LEN+1];
+	do_open_proj_file();
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	return 1;
+}
+
+int do_open_proj_file(void)
+{
 	int loop;
 	DIR *dir;
 	struct dirent *dirent;
@@ -273,7 +278,7 @@ int doe_open_proj_file(void)
 		tio_beep();
 		return 0;
 	}
-	disp_files_loaded();
+	disp_files_loaded_if_ge_0();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
@@ -468,7 +473,7 @@ int doe_read_file_into_cur_pos(void)
 	char file_pos_str[MAX_PATH_LEN+1];
 	memorize_cur_file_pos_null(file_pos_str);
 	open_file_recursive(RECURSIVE0);
-	if (get_files_loaded() <= 0) {
+	if (get_files_loaded() < 0) {
 		return 0;
 	}
 	doe_select_all_lines();
@@ -658,7 +663,7 @@ int write_all_ask(int yes_no, close_after_save_t close)
 		if (switch_epc_buf_to_next(0, 0) == 0)
 			break;
 	}
-	disp_status_bar_done(_("All buffers are checked(saved if modified)"));
+	disp_status_bar_done(_("All buffers are checked and saved if modified"));
 	return 1;
 }
 int close_all_not_modified(void)

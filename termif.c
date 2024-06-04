@@ -97,7 +97,9 @@ PRIVATE void put_narrow_char_to_vscreen(vscreen_char_t ucs21);
 PRIVATE void put_wide_char_to_vscreen(vscreen_char_t ucs21);
 
 #ifdef ENABLE_DEBUG
+#if 0
 PRIVATE void dump_vscreen(int yy, int len);
+#endif
 #endif // ENABLE_DEBUG
 
 PRIVATE void send_cursor_pos_string_to_term(int yy, int xx, const char *string, int bytes);
@@ -211,7 +213,6 @@ int termif_get_cursor_pos(int *yy, int *xx)
 
 	fflush(stdin);
 	send_printf_to_term("\x1b[6n");
-	int tries;
 #define MAX_RX_TRIES	3
 	for (int tries = 0; tries < MAX_RX_TRIES; tries++) {
 		MSLEEP(100);	// wait for receiving answer back
@@ -351,6 +352,7 @@ PRIVATE void put_wide_char_to_vscreen(vscreen_char_t ucs21)
 	}
 }
 #ifdef ENABLE_DEBUG
+#if 0
 PRIVATE void dump_vscreen(int yy, int len)
 {
 	char utf8c[MAX_UTF8C_BYTES + 1];
@@ -364,6 +366,7 @@ PRIVATE void dump_vscreen(int yy, int len)
 		d_printf("\n");
 	}
 }
+#endif
 #endif // ENABLE_DEBUG
 //-----------------------------------------------------------------------------
 // If narrow char, compare 1st place.
@@ -785,20 +788,20 @@ PRIVATE int strcmp_match_len(const char *str1, size_t str1_len, const char *str2
 
 PRIVATE key_code_t input_and_decode_key_sequences(void)
 {
-	PRIVATE unsigned char key_buffer[MAX_KEY_SEQ+1] = "";	// 1 for NUL terminator
-	PRIVATE int key_cnt = 0;
-	key_code_t key;
+	// NOTE: This MUST be `unsigned` for UTF8 8bit character.
+	static unsigned char key_buffer[MAX_KEY_SEQ+1] = "";	// 1 for NUL terminator
+	static int key_cnt = 0;
 
 	inline int get_key_from_buf_len(int len) {
 		key_code_t key = KEY_NONE;
 		if (len == 1) {
 			key = key_buffer[0];
-			memmove(key_buffer, &key_buffer[1], key_cnt - 1);
-			key_cnt -= 1;
+			key_cnt -= len;
+			memmove(key_buffer, &key_buffer[len], key_cnt);
 		} else if (len == 2) {
 			key = TBKC(key_buffer[0], key_buffer[1]);
-			memmove(key_buffer, &key_buffer[2], key_cnt - 2);
-			key_cnt -= 2;
+			key_cnt -= len;
+			memmove(key_buffer, &key_buffer[len], key_cnt);
 		}
 		return key;
 	}
@@ -820,6 +823,7 @@ PRIVATE key_code_t input_and_decode_key_sequences(void)
 		return key;
 	}
 
+	key_code_t key = KEY_NONE;
 	for ( ; key_cnt < MAX_KEY_SEQ; ) {
 		key = input_key();
 		if (key < 0) {
@@ -837,7 +841,7 @@ PRIVATE key_code_t input_and_decode_key_sequences(void)
 			//     return 0x1bXX
 			int max_match_len = 0;
 			for (int seq_idx = 0; seq_idx < SIZEOF_KEY_SEQ_TABLE; seq_idx++) {
-				int len = strcmp_match_len(key_buffer, key_cnt,
+				int len = strcmp_match_len((char *)key_buffer, key_cnt,
 				 key_seq_table[seq_idx].sequences);
 				if (len == strlen(key_seq_table[seq_idx].sequences)) {
 					// full match, return decoded key code

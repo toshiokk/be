@@ -181,7 +181,7 @@ func_key_table_t editor_func_key_table[] = {
  { "Func List",           "Display Function List",          K_M_F,        KNA, KNA,
    XL, F_I(doe_switch_to_func_list), NULL },
 #endif // ENABLE_HELP
- { "Open Proj File",      "Open Project file",              K_M_l,        KNA, KNA,
+ { "Open project file",   "Open project file",              K_M_P,        KNA, KNA,
    XL, F_I(doe_open_proj_file), NULL },
  { "Goto prev. pos",      "Goto previous pos.",             K_M_SLASH,    KNA, KNA,
    XL, F_I(doe_return_to_prev_file_pos), NULL },
@@ -198,8 +198,10 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_tog_mark), NULL },
  { "Clear Cut-buf",       "Clear Cut-buffers",              K_S_F05,       KNA, KNA,
    XL, F_I(doe_clear_cut_buf), NULL },
+#if 0
 ///// { "Pop Cut-buf",         "Pop Cut-buffer",                 K_S_F06,       KNA, KNA,
 /////   XL, F_I(doe_pop_cut_buf), NULL },
+#endif
  { "Select all",          "Select all of buffer",           K_M_m,        KNA, KNA,
    XL, F_I(doe_select_all_lines), NULL },
  { "Cut Text",            "Cut into Cut-buffer",            K_C_K, K_F06,      KNA,

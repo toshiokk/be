@@ -23,7 +23,7 @@
 
 #ifdef ENABLE_FILER
 
-PRIVATE int dof_edit_file_(int recursive);
+PRIVATE int dof_open_file_(int recursive);
 
 PRIVATE int filer_change_dir_to_cur_sel(void);
 PRIVATE int filer_change_dir_if_not_yet(char *dir);
@@ -41,7 +41,6 @@ PRIVATE int is_reg_file_and_app_list_mode_then_enter_file_name()
 {
 	if (S_ISREG(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].st.st_mode)
 	 && is_app_list_mode()) {
-		// dof_edit_file_ -> FILER_DO_ENTER_FILE_NAME
 		filer_do_next = FILER_DO_ENTER_FILE_NAME;
 		return -1;
 	}
@@ -112,25 +111,37 @@ int dof_tap_file(void)
 		if (count_edit_bufs() == 0) {
 			return dof_view_file();
 		} else {
-			return dof_edit_file_non_recursive();
+			return dof_open_file_non_recursive();
 		}
 	}
 	return 0;
 }
-int dof_edit_file(void)
+int dof_open_file(void)
 {
-	dof_edit_file_(RECURSIVE1);
-/////_D_(dump_edit_bufs())
+	dof_open_file_(RECURSIVE1);
+////_D_(dump_edit_bufs())
 	return 1;
 }
-int dof_edit_file_non_recursive(void)
+int dof_open_file_non_recursive(void)
 {
 	if (count_edit_bufs()) {
 		return dof_call_editor();
 	}
-	dof_edit_file_(RECURSIVE0);
+	dof_open_file_(RECURSIVE0);
 	return 1;
 }
+
+int dof_open_proj_file(void)
+{
+	do_open_proj_file();
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	if (get_files_loaded() >= 0) {
+		filer_do_next = FILER_DO_FILE_LOADED;
+	}
+	clear_files_loaded();
+	return 1;
+}
+
 int dof_call_editor()
 {
 	if (count_edit_bufs() == 0) {
@@ -151,12 +162,11 @@ int dof_edit_new_file(void)
 	if (ret <= 0) {
 		return 0;
 	}
-	clear_files_loaded();
 	if (load_file_name_upp_low(file_name, TUL0, OOE1, MOE0, LFH0, RECURSIVE0) <= 0) {
 		tio_beep();
 		return 0;
 	}
-	disp_files_loaded_ifnon0();
+	disp_files_loaded_if_ge_0();
 	filer_do_next = FILER_DO_FILE_LOADED;
 	return 1;
 }
@@ -620,9 +630,7 @@ int dof_display_color_settings(void)
 int dof_filer_splash(void)
 {
 	disp_splash(100);
-
 	examine_key_code();
-
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -665,7 +673,7 @@ int dof_filer_menu_5(void)
 }
 
 //-----------------------------------------------------------------------------
-PRIVATE int dof_edit_file_(int recursive)
+PRIVATE int dof_open_file_(int recursive)
 {
 	int prev_count_edit_bufs = count_edit_bufs();
 
@@ -677,7 +685,6 @@ PRIVATE int dof_edit_file_(int recursive)
 	}
 
 	clear_files_loaded();
-
 	begin_check_break_key();
 	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
@@ -694,20 +701,21 @@ PRIVATE int dof_edit_file_(int recursive)
 	}
 	end_check_break_key();
 
-	if (get_files_loaded() == 0) {
-		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
-	} else {
+	if (get_files_loaded() >= 0) {
 #ifdef ENABLE_HISTORY
 		if (prev_count_edit_bufs == 0) {
-/////_D_(dump_edit_bufs())
+////_D_(dump_edit_bufs())
 			goto_last_file_line_col_in_history();
 		}
 #endif // ENABLE_HISTORY
-		disp_files_loaded();
-		filer_do_next = FILER_DO_FILE_LOADED;
 	}
 	unselect_all_files_auto(_FILE_SEL_MAN_ | _FILE_SEL_AUTO_);
-
+	disp_files_loaded_if_ge_0();
+	if (get_files_loaded() < 0) {
+		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
+	} else {
+		filer_do_next = FILER_DO_FILE_LOADED;
+	}
 	return 0;
 }
 
@@ -722,11 +730,7 @@ PRIVATE int filer_change_dir_to_cur_sel(void)
 }
 PRIVATE int filer_change_dir_if_not_yet(char *dir)
 {
-	char buf1[MAX_PATH_LEN+1];
-	char buf2[MAX_PATH_LEN+1];
-
 	if (strcmp(get_cur_filer_view()->cur_dir, dir) == 0) {
-	/////if (strcmp(get_abs_path(get_cur_filer_view()->cur_dir, buf1), get_abs_path(dir, buf2)) == 0) {
 		return filer_change_dir_to_prev_dir();
 	} else {
 		return filer_change_dir(dir);
@@ -744,7 +748,6 @@ PRIVATE int filer_change_dir_to_prev_dir(void)
 int filer_change_dir_parent(char *path)
 {
 	char dir[MAX_PATH_LEN+1];
-	char file[MAX_PATH_LEN+1];
 
 	strlcpy__(dir, path, MAX_PATH_LEN);
 	for ( ; ; ) {
@@ -775,9 +778,9 @@ int filer_change_dir(char *dir)
 	update_dir_history(get_cur_filer_view()->prev_dir, get_cur_filer_view()->cur_dir);
 #endif // ENABLE_HISTORY
 	get_cur_filer_view()->top_idx = 0;
-	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	disp_status_bar_done(_("Changed current directory to [%s]"),
 	 shrink_str_to_scr_static(get_cur_filer_view()->cur_dir));
+	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 1;		// OK
 }
 
