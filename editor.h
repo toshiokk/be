@@ -56,6 +56,8 @@ int doe_close_all_modified(void);
 
 int doe_read_file_into_cur_pos(void);
 
+char *get_app_dir(void);
+
 const char *get_clipboard_file_path();
 int save_cut_buf_to_clipboard_file();
 int load_clipboard_into_cut_buf();

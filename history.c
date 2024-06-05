@@ -41,7 +41,7 @@ PRIVATE int is_history_modified(int hist_type_idx);
 PRIVATE void set_history_oldest(int hist_type_idx);
 PRIVATE const char *get_history_newer(int hist_type_idx);
 
-PRIVATE const char *is_the_last_line(int hist_type_idx, const char *str);
+PRIVATE const char *has_str_registered_in_the_last_line(int hist_type_idx, const char *str);
 PRIVATE be_line_t *search_history_exact_match(int hist_type_idx, const char *str);
 #if 0
 PRIVATE int check_file_pos_recorded_in_history(int hist_type_idx, const char *str);
@@ -142,23 +142,18 @@ void update_history(int hist_type_idx, const char *str, BOOL force_update)
 {
 	be_line_t *line;
 
-/////	if ((force_update == FALSE) && (hist_type_idx == HISTORY_TYPE_IDX_CURSPOS)) {
-////////PPP		if (check_file_pos_recorded_in_history(hist_type_idx, str)) {
-////////PPP			return; // registered relatively newer, no need of update
-////////PPP		}
-/////	} else {
-		if (is_the_last_line(hist_type_idx, str) != NULL) {
-			// str is registered in the last line, no need update
-			return;
-		}
-/////	}
+	if (has_str_registered_in_the_last_line(hist_type_idx, str) != NULL) {
+		// str is registered in the last line, no need update
+		return;
+	}
 	// load-modify(free old entry and append new entry)-save
 	load_history_idx(hist_type_idx);
 	if ((line = search_history_exact_match(hist_type_idx, str)) != NULL) {
 		line_unlink_free(line);	// delete older line
 	}
 	append_history(hist_type_idx, str);
-	save_history_idx(hist_type_idx);
+	// update history files soon so that other BE-editor instances can get recent information
+	save_history_if_modified(hist_type_idx);
 }
 
 #if 0
@@ -419,12 +414,10 @@ PRIVATE const char *get_history_newer(int hist_type_idx)
 	return "";			// end of list
 }
 
-PRIVATE const char *is_the_last_line(int hist_type_idx, const char *str)
+PRIVATE const char *has_str_registered_in_the_last_line(int hist_type_idx, const char *str)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
-	be_line_t *line;
-
-	line = BUF_BOT_LINE(buf);
+	be_line_t *line = BUF_BOT_LINE(buf);
 	if (IS_NODE_INT(line) && (strcmp(line->data, str) == 0))	// exact match
 		return line->data;
 	return NULL;

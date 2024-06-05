@@ -135,7 +135,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 					search_clear(&search__);
 flf_d_printf("CALL_EDITOR_FUNC [%s]\n", func_key_table->func_id);
 					//=========================
-					int ret = (*func_key_table->func)();	// call function "doe_...()"
+					(*func_key_table->func)();	// call function "doe_...()"
 					//=========================
 					count_easy_buffer_switching();
 flf_d_printf("ret_val: %d, editor_quit: %d\n", ret, editor_quit);
@@ -482,6 +482,19 @@ int doe_read_file_into_cur_pos(void)
 	recall_file_pos_null(file_pos_str);
 	doe_paste_text_with_pop();
 	return 0;
+}
+
+//-----------------------------------------------------------------------------
+char *get_app_dir(void)
+{
+	static char dir[MAX_PATH_LEN+1];
+
+#if defined(APP_DIR)
+	snprintf_(dir, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), APP_DIR);
+#else
+	snprintf_(dir, MAX_PATH_LEN+1, "%s", get_home_dir());
+#endif
+	return dir;
 }
 
 #define _CLIPBOARD_FILE_NAME	"clipboard"		// default clipboard file name

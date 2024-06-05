@@ -285,7 +285,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 flf_d_printf("CALL_FILER_FUNC [%s] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n",
  func_key_table->func_id);
 					//=========================
-					int ret = (*func_key_table->func)();	// call function "dof_...()"
+					(*func_key_table->func)();	// call function "dof_...()"
 					//=========================
 flf_d_printf("ret_val: %d    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", ret);
 					unselect_all_files_auto(_FILE_SEL_AUTO_);

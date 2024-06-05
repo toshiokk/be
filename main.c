@@ -591,7 +591,7 @@ PRIVATE void die_save_file(const char *die_file_path)
 void free_all_allocated_memory(void)
 {
 #ifdef ENABLE_HISTORY
-///	save_key_macro();
+	save_histories();
 #endif // ENABLE_HISTORY
 	_mlc_memorize_count
 	free_all_buffers();

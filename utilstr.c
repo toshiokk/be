@@ -626,7 +626,7 @@ int contain_chr(const char *string, char chr)
 }
 char *quote_string(char *buffer, const char *string, char quote_chr)
 {
-	char buf[MAX_PATH_LEN-2+1];
+	char buf[MAX_PATH_LEN+1];
 	// file name ==> "file name" or 'file name'
 	if (contain_chr(string, '\'')) {
 		// "'file'name'" ==> "'\'file\'name\''"
@@ -641,15 +641,13 @@ char *quote_string(char *buffer, const char *string, char quote_chr)
 // "'file'name'" ==> "\'file\'name\'"
 char *escape_quote_chr(char *buffer, const char *string, char quote_chr)
 {
-	char buf[2+1];	// "\'"
 	buffer[0] = '\0';
 	for ( ; *string; string++) {
 		if (*string == quote_chr) {
-			snprintf(buf, 2+1, "%c%c", '\\', quote_chr);
+			strcat_printf(buffer, MAX_PATH_LEN, "%c%c", '\\', quote_chr);
 		} else {
-			snprintf(buf, 1+1, "%c", *string);
+			strcat_printf(buffer, MAX_PATH_LEN, "%c", *string);
 		}
-		strlcat__(buffer, MAX_PATH_LEN+1, buf);
 	}
 	return buffer;
 }

@@ -265,19 +265,6 @@ char *get_last_slash(char *path)
 	return ptr;
 }
 
-/////int get_file_type_by_file_path(const char *file_path)
-/////{
-/////	if (is_path_exist(file_path) == 0) {
-/////		return 0;	// not exist
-/////	}
-/////	if (is_path_regular_file(file_path) > 0) {
-/////		return 1;	// regular file
-/////	} else
-/////	if (is_path_dir(file_path) > 0) {
-/////		return 2;	// directory
-/////	}
-/////	return 3;		// not directory and regular file
-/////}
 int is_path_exist(const char *path)
 {
 	struct stat st;
@@ -363,18 +350,6 @@ int is_path_wildcard(char *path)
 }
 #endif // ENABLE_FILER
 
-char *get_app_dir(void)
-{
-	static char dir[MAX_PATH_LEN+1];
-
-#if defined(APP_DIR)
-	snprintf_(dir, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), APP_DIR);
-#else
-	snprintf_(dir, MAX_PATH_LEN+1, "%s", get_home_dir());
-#endif
-	return dir;
-}
-
 char *get_home_dir(void)
 {
 	char *env_home;
@@ -427,13 +402,10 @@ int change_cur_dir(const char *dir)
 {
 	int ret;
 
-/////flf_d_printf("dir: [%s]\n", dir);
 	if ((ret = chdir(dir)) == 0) {
 		// update "full_path" and "real_path"
 		strlcpy__(full_path_of_cur_dir, dir, MAX_PATH_LEN);
 		getcwd__(real_path_of_cur_dir);
-/////flf_d_printf("full_path_of_cur_dir: [%s]\n", full_path_of_cur_dir);
-/////flf_d_printf("real_path_of_cur_dir: [%s]\n", real_path_of_cur_dir);
 	}
 	return ret;
 }
@@ -457,7 +429,6 @@ char *getcwd__(char *cwd)
 	if (getcwd(cwd, MAX_PATH_LEN) == NULL) {
 		strcpy__(cwd, "");
 	}
-/////flf_d_printf("getcwd: [%s]\n", cwd);
 	return cwd;
 }
 
@@ -489,7 +460,6 @@ char *getenv__(char *env)
 // buf and dir can be the same address
 char *cat_dir_and_file(char *buf, const char *dir, const char *file)
 {
-////flf_d_printf("dir: [%s], file: [%s]\n", dir, file);
 	char tmp_buf[MAX_PATH_LEN+1];
 	if (file[0] == '/') {
 		// "/file" ==> "file"
@@ -497,15 +467,12 @@ char *cat_dir_and_file(char *buf, const char *dir, const char *file)
 	}
 	int last = LIM_MIN(0, strlen_path(dir) - 1);
 	if (is_strlen_0(dir) || dir[last] == '/') {
-///flf_d_printf("dir file [%s %s]\n", dir, file);
 		// "/dir1/dir2/" + "file" ==> "/dir1/dir2/file"
 		snprintf(tmp_buf, MAX_PATH_LEN+1, "%s%s", dir, file);
 	} else {
-///flf_d_printf("dir / file [%s / %s]\n", dir, file);
 		// "/dir1/dir2" + "/" + "file" ==> "/dir1/dir2/file"
 		snprintf(tmp_buf, MAX_PATH_LEN+1, "%s/%s", dir, file);
 	}
-////flf_d_printf("buf: [%s]\n", buf);
 	strlcpy__(buf, tmp_buf, MAX_PATH_LEN);
 	return buf;
 }

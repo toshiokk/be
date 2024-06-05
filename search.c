@@ -287,7 +287,6 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 				// break ALL-replacing loop
 				if ((key = tio_input_key()) >= 0) {
 					if (key == K_ESC) {
-					////if (key == K_M_ESC) {
 						ret = ANSWER_END;
 					} else if (key == K_C_C) {
 						ret = ANSWER_CANCEL;

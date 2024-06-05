@@ -69,14 +69,12 @@ int is_path_wildcard(char *path);
 
 // directory
 
-char *get_app_dir(void);
 char *get_home_dir(void);
 const char *get_starting_dir(void);
 int check_wsl();
 
 // file permission --------------------
 
-/////int get_file_type_by_file_path(const char *file_path);
 int is_path_exist(const char *path);
 int is_path_regular_file(const char *path);
 int is_path_dir(const char *path);

@@ -259,7 +259,9 @@ unsigned short calc_crc16ccitt(unsigned char byte)
 	return crc16ccitt;
 }
 //-----------------------------------------------------------------------------
-#define YYYY_MM_DD_HHCMMCSS_LEN		(4+1+2+1+2+1+2+1+2+1+2 + 20)	// "2037/12/31 23:59:59"
+// NOTE: to avoid snprintf trancation warning of C compiler, add 20 bytes
+////#define YYYY_MM_DD_HHCMMCSS_LEN		(4+1+2+1+2+1+2+1+2+1+2 + 20)	// "2037/12/31 23:59:59"
+#define YYYY_MM_DD_HHCMMCSS_LEN		(4+1+2+1+2+1+2+1+2+1+2)	// "2037/12/31 23:59:59"
 PRIVATE char *get_yyyysmmsdd_hhcmmcss(time_t abs_time, char *buf);
 
 const char *cur_ctime_cdate(int time0_date1)
@@ -374,7 +376,7 @@ PRIVATE char *get_yyyysmmsdd_hhcmmcss(time_t abs_time, char *buf)
 		strcpy(buf, "----/--/-- --:--:--");
 	} else {
 		tm = localtime_r(&abs_time, &tm_);		// THREAD_SAFE
-		snprintf(buf, YYYY_MM_DD_HHCMMCSS_LEN+1, "%04d/%02d/%02d %02d:%02d:%02d",
+		snprintf_(buf, YYYY_MM_DD_HHCMMCSS_LEN+1, "%04d/%02d/%02d %02d:%02d:%02d",
 		 1900 + tm->tm_year, (char)(tm->tm_mon+1), (char)(tm->tm_mday),
 		 (char)(tm->tm_hour), (char)(tm->tm_min), (char)(tm->tm_sec));
 	}

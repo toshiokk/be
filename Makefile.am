@@ -5,9 +5,9 @@ AUTOMAKE_OPTIONS = gnu no-dependencies
 DEFS= -DSYSCONFDIR=\"$(sysconfdir)\"
 
 #AM_CFLAGS = -O0 -Wformat-truncation=0 -D_FILE_OFFSET_BITS=64
-AM_CFLAGS = -O2 -Wformat-truncation=0 -D_FILE_OFFSET_BITS=64
+#AM_CFLAGS = -O2 -Wformat-truncation=0 -D_FILE_OFFSET_BITS=64
 #AM_CFLAGS = -Wformat-truncation=0 -D_FILE_OFFSET_BITS=64
-#AM_CFLAGS = -Wall -D_FILE_OFFSET_BITS=64
+AM_CFLAGS = -Wall -D_FILE_OFFSET_BITS=64
 
 #AM_CPPFLAGS = -O0 -Iintl -DLOCALEDIR=\"$(localedir)\" -I@includedir@
 AM_CPPFLAGS = -O2 -Iintl -DLOCALEDIR=\"$(localedir)\" -I@includedir@
