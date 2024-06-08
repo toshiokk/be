@@ -172,7 +172,7 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	static char buffer[FILE_NAME_INFO_BUF_LEN+1];
 #define MIN_FILE_NAME_SPACE		12		// "filename.ext"(DOS8.3)
 
-/////flf_d_printf("[%s], %d\n", file_info->file_name, get_file_type_num(file_info));
+////flf_d_printf("[%s], %d\n", file_info->file_name, get_file_type_num(file_info));
 	st_ptr = &file_info->st;
 	lst_ptr = &file_info->lst;
 	is_link = S_ISLNK(lst_ptr->st_mode);
@@ -182,12 +182,6 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	strcpy__(buf_name, "");
 	if (show_link && is_link) {
 		strlcat__(buf_name, MAX_PATH_LEN, file_info->file_name);
-		///if (S_ISDIR(lst_ptr->st_mode)) {
-		///	strlcat__(buf_name, MAX_PATH_LEN, "/");
-		///} else if (lst_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) {
-		///	// Symlink's 'x' bits are usually set.
-		///	// strlcat__(buf_name, "*", MAX_PATH_LEN);
-		///}
 #define LINK_ARROW		" -> "
 ///#define LINK_ARROW		" >>"
 ///#define LINK_ARROW		" > "
@@ -491,7 +485,6 @@ PRIVATE int comp_file_extension(const void *aa, const void *bb);
 PRIVATE int comp_file_time(const void *aa, const void *bb);
 PRIVATE int comp_file_size(const void *aa, const void *bb);
 PRIVATE int comp_file_executable(file_info_t *aa, file_info_t *bb);
-////PRIVATE int get_file_type_num(file_info_t *info);
 PRIVATE int get_stat_file_type_num(struct stat *st, const char *file_name);
 PRIVATE int get_file_executable(struct stat *st);
 PRIVATE int strtypecasecmp(const char *s1, const char *s2);
@@ -612,7 +605,6 @@ PRIVATE int comp_file_executable(file_info_t *aa, file_info_t *bb)
 // 70: block device
 // 80: regular file
 
-////PRIVATE 
 int get_file_type_num(file_info_t *info)
 {
 	int file_type_num = 0;

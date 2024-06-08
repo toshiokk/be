@@ -397,7 +397,7 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 					break;
 				}
 			}
-/////flf_d_printf("CUR_EBUF_STATE(buf_ENCODE): %d\n", CUR_EBUF_STATE(buf_ENCODE));
+////flf_d_printf("CUR_EBUF_STATE(buf_ENCODE): %d\n", CUR_EBUF_STATE(buf_ENCODE));
 			break;
 #endif // USE_NKF
 #ifdef ENABLE_FILER

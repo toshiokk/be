@@ -689,6 +689,7 @@ void test_cwd_PWD()
 
 	change_cur_dir(get_starting_dir());
 	flf_d_printf("getcwd: [%s]\n", getcwd__(buf));
+	flf_d_printf("getenv(PWD): [%s]\n", getenv_pwd(buf));
 }
 
 PRIVATE void test_cat_dir_and_file_(char *buf, const char *dir, const char *file,

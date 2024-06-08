@@ -3,6 +3,7 @@
 
 [ ] START_UP_TEST --> UT(assert)
 
+[v] Backspace limited by line top
 [v] M-P load project file in filer and editor
 [v] discrimination of open and load
 	open -> load -> edit -> save -> close
@@ -12,7 +13,7 @@
 [v] switch to a preloaded file matching from the tail of path (compo_ctrl/src/component/stt/sagitta/frame/param.h)
 
 [v] When started as a editor, do not return to filer.
-[v] Encoding options("-e u") does not work for "©®" (misrecognize as EUCJP)
+[v] Encoding options("-e u") does not work for "©®" (misrecognized as EUCJP)
 
 [v] treat situation of ENABLE_FILER undefined
 

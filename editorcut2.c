@@ -346,16 +346,16 @@ void setup_cut_region(void)
 		}
 		break;
 	}
-/////flf_d_printf("EPCB_ML: [%s]\n", EPCB_ML->data);
-/////flf_d_printf("EPCB_MLBI: %d\n", EPCB_MLBI);
-/////flf_d_printf("EPCBVC_CL: [%s]\n", EPCBVC_CL->data);
-/////flf_d_printf("EPCBVC_CLBI: %d\n", EPCBVC_CLBI);
-/////flf_d_printf("mark_min_line: [%s]\n", mark_min_line->data);
-/////flf_d_printf("mark_min_byte_idx: %d\n", mark_min_byte_idx);
-/////flf_d_printf("mark_max_line: [%s]\n", mark_max_line->data);
-/////flf_d_printf("mark_max_byte_idx: %d\n", mark_max_byte_idx);
-/////flf_d_printf("mark_min_col_idx: %d\n", mark_min_col_idx);
-/////flf_d_printf("mark_max_col_idx: %d\n", mark_max_col_idx);
+////flf_d_printf("EPCB_ML: [%s]\n", EPCB_ML->data);
+////flf_d_printf("EPCB_MLBI: %d\n", EPCB_MLBI);
+////flf_d_printf("EPCBVC_CL: [%s]\n", EPCBVC_CL->data);
+////flf_d_printf("EPCBVC_CLBI: %d\n", EPCBVC_CLBI);
+////flf_d_printf("mark_min_line: [%s]\n", mark_min_line->data);
+////flf_d_printf("mark_min_byte_idx: %d\n", mark_min_byte_idx);
+////flf_d_printf("mark_max_line: [%s]\n", mark_max_line->data);
+////flf_d_printf("mark_max_byte_idx: %d\n", mark_max_byte_idx);
+////flf_d_printf("mark_min_col_idx: %d\n", mark_min_col_idx);
+////flf_d_printf("mark_max_col_idx: %d\n", mark_max_col_idx);
 }
 
 int is_there_cut_region(void)

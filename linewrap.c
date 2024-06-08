@@ -516,7 +516,7 @@ int vis_idx_from_col_idx(const char *utf8s, int columns)
 	int col_idx;
 	const char *ptr;
 
-/////_D_(dump_memory("vis_idx_from_col_idx\n", utf8s, strlen(utf8s)))
+////_D_(dump_memory("vis_idx_from_col_idx\n", utf8s, strlen(utf8s)))
 	for (ptr = utf8s, col_idx = 0, vis_idx = 0; *ptr && col_idx < columns; ) {
 		FORWARD_VIS_IDX()
 	}

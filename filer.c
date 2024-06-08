@@ -287,7 +287,7 @@ flf_d_printf("CALL_FILER_FUNC [%s] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n",
 					//=========================
 					(*func_key_table->func)();	// call function "dof_...()"
 					//=========================
-flf_d_printf("ret_val: %d    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", ret);
+flf_d_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 					unselect_all_files_auto(_FILE_SEL_AUTO_);
 				}
 flf_d_printf("filer_do_next: %d\n", filer_do_next);

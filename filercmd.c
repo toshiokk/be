@@ -119,7 +119,6 @@ int dof_tap_file(void)
 int dof_open_file(void)
 {
 	dof_open_file_(RECURSIVE1);
-////_D_(dump_edit_bufs())
 	return 1;
 }
 int dof_open_file_non_recursive(void)
@@ -704,7 +703,6 @@ PRIVATE int dof_open_file_(int recursive)
 	if (get_files_loaded() >= 0) {
 #ifdef ENABLE_HISTORY
 		if (prev_count_edit_bufs == 0) {
-////_D_(dump_edit_bufs())
 			goto_last_file_line_col_in_history();
 		}
 #endif // ENABLE_HISTORY

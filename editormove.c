@@ -527,6 +527,13 @@ int doe_carriage_return(void)
 	return 1;
 }
 
+int doe_backspace_limited(void)
+{
+	if (EPCBVC_CLBI <= 0) {
+		return 0;
+	}
+	return doe_backspace();
+}
 int doe_backspace(void)
 {
 	int bytes;

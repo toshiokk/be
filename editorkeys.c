@@ -109,6 +109,8 @@ func_key_table_t editor_func_key_table[] = {
    XA, F_I(doe_carriage_return), NULL },
  { "Backspace",           "Backspace",                      K_C_H, KNA,   K_BS,
    XL, F_I(doe_backspace), NULL },
+ { "Backspace(limited)",   "Backspace(limited)",            K_MC_H,       KNA, KNA,
+   XL, F_I(doe_backspace_limited), NULL },
  { "Delete",              "Delete a character",             K_C_G, K_DEL,      KNA,
    XL, F_I(doe_delete_char), NULL },
  { "UpperLower",          "Invert upper/lower letter",      K_C_W,        KNA, KNA,
@@ -199,8 +201,8 @@ func_key_table_t editor_func_key_table[] = {
  { "Clear Cut-buf",       "Clear Cut-buffers",              K_S_F05,       KNA, KNA,
    XL, F_I(doe_clear_cut_buf), NULL },
 #if 0
-///// { "Pop Cut-buf",         "Pop Cut-buffer",                 K_S_F06,       KNA, KNA,
-/////   XL, F_I(doe_pop_cut_buf), NULL },
+//// { "Pop Cut-buf",         "Pop Cut-buffer",                 K_S_F06,       KNA, KNA,
+////   XL, F_I(doe_pop_cut_buf), NULL },
 #endif
  { "Select all",          "Select all of buffer",           K_M_m,        KNA, KNA,
    XL, F_I(doe_select_all_lines), NULL },
@@ -265,7 +267,7 @@ func_key_table_t editor_func_key_table[] = {
  { "Line-wrap mode",      "Toggle Line-wrap mode",          K_MC_L,       KNA, KNA,
    XL, F_I(doe_tog_line_wrap_mode), get_str_line_wrap_mode },
 #ifdef ENABLE_SYNTAX
- { "Syntax HL",           "Toggle Syntax Highlighting",     K_MC_H,        KNA, KNA,
+ { "Syntax HL",           "Toggle Syntax Highlighting",     K_M_H,        KNA, KNA,
    XL, F_I(doe_tog_syntax_hl),      get_str_syntax_hl },
  { "TAB/EOL notation",    "Toggle TAB/EOL notation",        K_MC_Z,       KNA, KNA,
    XL, F_I(doe_tog_tab_eol_notation), get_str_tab_eol_notation },

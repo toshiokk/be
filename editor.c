@@ -46,7 +46,6 @@ int call_editor(int push_win, int list_mode)
 	set_app_func_key_table();
 	set_work_space_color_on_app_list_mode();
 
-/////_D_(dump_cur_pointers())
 flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
 flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 	int ret = editor_main_loop();
@@ -54,7 +53,6 @@ flf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
 flf_d_printf("ret: %d\n", ret);
 	editor_quit = EDITOR_NONE;	// for caller of call_editor(), clear "editor_quit"
 	_mlc_check_count
-/////_D_(dump_cur_pointers())
 
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 	SET_APPMD_VAL(app_LIST_MODE, GET_APPMD_PTR(&appmode_save, app_LIST_MODE));
@@ -138,7 +136,7 @@ flf_d_printf("CALL_EDITOR_FUNC [%s]\n", func_key_table->func_id);
 					(*func_key_table->func)();	// call function "doe_...()"
 					//=========================
 					count_easy_buffer_switching();
-flf_d_printf("ret_val: %d, editor_quit: %d\n", ret, editor_quit);
+flf_d_printf("editor_quit: %d\n", editor_quit);
 					strlcpy__(prev_func_id, func_key_table->func_id, MAX_PATH_LEN);
 					break;
 				}
@@ -153,7 +151,6 @@ flf_d_printf("ret_val: %d, editor_quit: %d\n", ret, editor_quit);
 			// If all files closed on edit mode, exit editor.
 			break;
 		}
-/////_D_(dump_cur_pointers())
 		if (editor_quit) {
 			break;
 		}
@@ -161,7 +158,6 @@ flf_d_printf("ret_val: %d, editor_quit: %d\n", ret, editor_quit);
 #ifdef ENABLE_HISTORY
 	key_macro_cancel_recording();
 #endif // ENABLE_HISTORY
-/////_D_(dump_cur_pointers())
 	if (editor_quit == EDITOR_CANCELLED) {
 		return -1;	// cancelled
 	} else
@@ -718,19 +714,10 @@ int write_file_ask(int yes_no, close_after_save_t close)
 
 	switch_epc_buf_to_valid_buf();
 
-	/////if (yes_no < ANSWER_FORCE && check_cur_buf_modified() == 0) {
 	if (check_cur_buf_modified() == 0) {
 		disp_status_bar_done(_("Buffer is NOT modified"));
 		return ANSWER_NO;
 	}
-	/////if (yes_no == ANSWER_FORCE && check_cur_buf_modified() == 0) {
-	/////	ret = ask_yes_no(ASK_YES_NO | ASK_ALL, _("Save unmodified buffer ?"));
-	/////	if (ret <= 0) {
-	/////		disp_status_bar_done(_("Cancelled"));
-	/////		return ANSWER_CANCEL;
-	/////	}
-	/////	ret = ANSWER_FORCE;
-	/////}
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	update_screen_editor(1, 1, 1);
 	if (ret < ANSWER_ALL) {

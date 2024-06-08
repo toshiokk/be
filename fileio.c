@@ -54,17 +54,13 @@ int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_er
 	if (lines < 0) {
 		return lines;
 	}
-////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	append_magic_line();
-////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	buf_set_view_x_cur_line(get_epc_buf(), 0, CUR_EDIT_BUF_TOP_LINE);
 	buf_set_view_x_cur_line(get_epc_buf(), 1, CUR_EDIT_BUF_TOP_LINE);
 	BUFVX_CLBI(get_epc_buf(), 0) = 0;
 	BUFVX_CLBI(get_epc_buf(), 1) = 0;
-////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	renumber_cur_buf_from_top();
 	update_cur_buf_crc();
-////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 
 	if ((tab_size = buf_guess_tab_size(get_epc_buf())) != 0) {
 		CUR_EBUF_STATE(buf_TAB_SIZE) = tab_size;
@@ -118,11 +114,9 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 	// regular file
 	disp_status_bar_ing(_("Reading File %s ..."), shrink_str_to_scr_static(full_path));
 	create_edit_buf(full_path);
-////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 	memcpy__(&(get_epc_buf()->orig_file_stat), &st, sizeof(st));
 
 	ret = load_file_into_cur_buf__(full_path, 1, msg_on_err);
-////_D_(dump_buf_views(EDIT_BUFS_TOP_BUF))
 
 	if (ret < 0) {
 		free_cur_edit_buf();
@@ -210,11 +204,9 @@ int input_new_file_name_n_ask(char *file_path)
 
 int backup_and_save_cur_buf(const char *file_path_to)
 {
-	////char abs_path[MAX_PATH_LEN+1];
 	int mask = 0;
 	int lines_written;
 
-	////get_abs_path(file_path, abs_path);
 	// TODO: do minimum check
 	//  file_path is regular file and not dir and special file
 	if (is_path_regular_file(file_path_to) == 0) {

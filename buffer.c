@@ -58,7 +58,6 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path)
 	buf_view_init(&(buf->buf_views[0]), buf);
 	buf_view_init(&(buf->buf_views[1]), buf);
 
-	////buf->mark_line = BUF_TOP_ANCH(buf);
 	buf->mark_line = BUF_BOT_ANCH(buf);
 	buf->mark_line_byte_idx = 0;
 	buf->buf_lines = 0;
@@ -67,7 +66,6 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path)
 }
 void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf)
 {
-	////BUFV_CL(b_v) = BUF_TOP_ANCH(buf);
 	BUFV_CL(b_v) = BUF_BOT_ANCH(buf);
 	BUFV_CLBI(b_v) = 0;
 	BUFV_CURSOR_Y(b_v) = 0;

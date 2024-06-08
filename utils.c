@@ -260,7 +260,6 @@ unsigned short calc_crc16ccitt(unsigned char byte)
 }
 //-----------------------------------------------------------------------------
 // NOTE: to avoid snprintf trancation warning of C compiler, add 20 bytes
-////#define YYYY_MM_DD_HHCMMCSS_LEN		(4+1+2+1+2+1+2+1+2+1+2 + 20)	// "2037/12/31 23:59:59"
 #define YYYY_MM_DD_HHCMMCSS_LEN		(4+1+2+1+2+1+2+1+2+1+2)	// "2037/12/31 23:59:59"
 PRIVATE char *get_yyyysmmsdd_hhcmmcss(time_t abs_time, char *buf);
 

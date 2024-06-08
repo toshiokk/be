@@ -56,6 +56,7 @@ int doe_tab(void);
 int doe_enter_char(char chr);
 int doe_enter_char_send(void);
 int doe_carriage_return(void);
+int doe_backspace_limited(void);
 int doe_backspace(void);
 int doe_delete_char(void);
 int doe_conv_upp_low_letter(void);
