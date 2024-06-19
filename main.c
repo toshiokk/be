@@ -54,10 +54,6 @@ int main(int argc, char *argv[])
 #endif // ENABLE_FILER
 
 	init_app_mode();
-#ifdef ENABLE_DEBUG
-	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
-	////set_debug_printf_output(1);
-#endif // ENABLE_DEBUG
 flf_d_printf("Start %s ===================================\n", APP_NAME " " __DATE__ " " __TIME__);
 	_mlc_init
 	get_home_dir();
@@ -225,14 +221,14 @@ PRIVATE int init_locale(void)
 {
 	// setup system environment
 	setlocale(LC_ALL, "");	// set locale so that wchar related functions work
-#if defined(ENABLE_NLS) && defined(ENABLE_UTF8)
+#if defined(ENABLE_NLS)
 e_printf("LANG: [%s]\n", getenv__("LANG"));
 	setlocale(LC_ALL, getenv__("LANG"));
 e_printf("cur locale: %s\n", setlocale(LC_ALL, NULL));
 e_printf("PACKAGE: %s, LOCALEDIR: %s\n", PACKAGE, LOCALEDIR);
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-#endif // defined(ENABLE_NLS) && defined(ENABLE_UTF8)
+#endif // defined(ENABLE_NLS)
 	return 0;
 }
 
@@ -251,11 +247,14 @@ PRIVATE int init_app_mode(void)
 	CLR_APPMD(app_DRAW_CURSOR);
 	SET_APPMD_VAL(app_KEY_LINES, 3);
 	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
+#ifdef ENABLE_DEBUG
+	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
+	////set_debug_printf_output(1);
+#endif // ENABLE_DEBUG
 	// editor mode
 	CLR_APPMD(app_EDITOR_FILER);
 	set_app_func_key_table();
 	CLR_APPMD(app_LIST_MODE);
-	SET_APPMD(app_UTF8);
 ///	CLR_APPMD(app_MAP_KEY_7F_BS);
 	SET_APPMD(app_MAP_KEY_7F_BS);
 
@@ -278,7 +277,7 @@ PRIVATE int init_app_mode(void)
 #endif // ENABLE_REGEX
 
 	// filer mode
-	SET_APPMD_VAL(fl_SHOW_FILE_INFO, SHOW_FILE_INFO_5);
+	SET_APPMD_VAL(fl_SHOW_FILE_INFO, SHOW_FILE_INFO_4);
 	SET_APPMD_VAL(fl_FILE_SORT_BY, 0);
 	CLR_APPMD(fl_FILER_PANES);
 
@@ -371,14 +370,17 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 		case 'n':
 			CLR_APPMD(ed_USE_NKF);
 			break;
-#endif // USE_NKF
-#ifdef USE_NKF
 		case 'e':
 			if (optarg) {
 				switch (optarg[0]) {
+				default:
+				case 'a':
+					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_ASCII);
+					break;
 				case 'u':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_UTF8);
 					break;
+#ifdef USE_NKF
 				case 'e':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_EUCJP);
 					break;
@@ -388,12 +390,9 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 				case 'j':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_JIS);
 					break;
+#endif // USE_NKF
 				case 'b':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_BINARY);
-					break;
-				case 'a':
-				default:
-					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_ASCII);
 					break;
 				}
 			}
@@ -404,7 +403,6 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 		case 'w':
 			SET_APPMD(fl_FILER_PANES);
 			SET_APPMD_VAL(fl_SHOW_FILE_INFO, SHOW_FILE_INFO_1);
-///			SET_APPMD_VAL(fl_SHOW_FILE_INFO, SHOW_FILE_INFO_3);
 			break;
 #endif // ENABLE_FILER
 #ifdef ENABLE_DEBUG
@@ -439,6 +437,7 @@ PRIVATE void start_up_test(void)
 	char buf[MAX_PATH_LEN+1];
 	void *allocated;
 
+	flf_d_printf("{{{{---------------------------------------------------------\n");
 ///	tio_test();
 	flf_d_printf("getenv(USER): [%s]\n", getenv__("USER"));
 	flf_d_printf("getenv(HOSTNAME): [%s]\n", getenv__("HOSTNAME"));
@@ -493,7 +492,7 @@ PRIVATE void start_up_test(void)
 	test_separate_path_to_dir_and_file();
 
 ///	
-test_get_intersection();
+	test_get_intersection();
 	get_mem_free_in_kb(1);
 ///	test_nn_from_num();
 ///	test_utf8c_encode();
@@ -510,16 +509,22 @@ test_get_intersection();
 	test_replace_str();
 
 	test_get_n_th_file_name();
+	flf_d_printf("}}}}---------------------------------------------------------\n");
 }
 PRIVATE void start_up_test2(void)
 {
+	flf_d_printf("{{{{---------------------------------------------------------\n");
+	check_all_functions_accessible_without_function_key();
+	check_duplicate_assinment_of_key();
 flf_d_printf("modulo test --------------\n");
 	for (int nn = -9; nn < 10; nn++) {
 flf_d_printf("%2d mod 7 = %2d, %2d mod 5 = %2d, %2d mod 3 = %2d\n",
  nn, nn % 7, nn, nn % 5, nn, nn % 3);
 	}
+	flf_d_printf("}}}}---------------------------------------------------------\n");
 }
 #endif // START_UP_TEST
+
 //-----------------------------------------------------------------------------
 
 PRIVATE int write_cur_dir_to_exit_file(void)
@@ -668,11 +673,7 @@ void show_version(void)
 #else
 	printf("   --disable-rc\n");
 #endif
-#ifdef ENABLE_UTF8
 	printf("   --enable-utf8\n");
-#else
-	printf("   --disable-utf8\n");
-#endif
 #if defined(USE_NCURSES) || defined(USE_NCURSESW)
 	printf("   --enable-ncurses\n");
 #else
@@ -920,6 +921,5 @@ void disp_splash(int delay)
 	tio_refresh();
 }
 #endif // ENABLE_HELP
-
 
 // End of main.c

@@ -32,9 +32,11 @@
 int doe_goto_input_line(void);
 int doe_goto_file_or_dir_in_cur_line(void);
 int doe_goto_file_or_dir_in_cur_cursor_pos(void);
+#if 0
 int doe_goto_file_in_cur_line(void);
 int doe_goto_file_in_cur_cursor_pos(void);
-int doe_goto_directory_in_cur_line(void);
+#endif
+
 int change_dirs_in_string(const char *string, char *cur_dir, char *prev_dir, char *next_file);
 
 int doe_open_files_in_buf(void);
@@ -70,7 +72,7 @@ void doe_switch_editor_pane_(void);
 int load_file_name_upp_low(const char *file_name,
  int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive);
 int load_files_in_cur_buf(void);
-int load_files_in_string(const char *string, int files_to_load,
+int load_files_in_string(const char *string,
  int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive);
 
 int load_file_name_upp_low_(const char *file_name,

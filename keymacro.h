@@ -33,7 +33,6 @@ int doe_end_rec__playback(void);
 int doe_start_recording(void);
 int doe_cancel_recording(void);
 int doe_end_recording(void);
-int doe_playback(void);
 int doe_playback_last_1(void);
 int doe_playback_last_2(void);
 
@@ -47,13 +46,6 @@ int key_macro_start_playback(void);
 key_code_t key_macro_get_key(void);
 void key_macro_end_playback(void);
 int key_macro_is_playing_back(void);
-
-const char *short_key_name_from_key_code(key_code_t key_code, char *buf);
-const char *key_name_from_key_code(key_code_t key_code, char *buf);
-const char *short_key_name_from_key_name(const char *key_name, char *buf);
-key_code_t key_code_from_key_name(char *key_name);
-key_code_t key_code_from_short_key_name(char *short_key_name);
-int get_key_name_table_entries(void);
 
 char *get_string_from_key_macro(void);
 void get_key_macro_from_string(const char *string);

@@ -78,7 +78,7 @@ int check_easy_buffer_switching(easy_buffer_switching_t top_bottom)
 int doe_left(void)
 {
 	if (is_app_list_mode()) {
-		return doe_page_up();
+		return doe_switch_to_prev_file();
 	}
 	move_cursor_left(1);
 
@@ -89,7 +89,7 @@ int doe_left(void)
 int doe_right(void)
 {
 	if (is_app_list_mode()) {
-		return doe_page_down();
+		return doe_switch_to_next_file();
 	}
 	move_cursor_right();
 
@@ -343,9 +343,7 @@ int doe_charcode(void)
 {
 	char string[MAX_PATH_LEN+1];
 	unsigned int chr;
-#ifdef ENABLE_UTF8
 	char utf8c[MAX_UTF8C_BYTES+1];
-#endif // ENABLE_UTF8
 
 	if (is_view_mode_then_warn_it())
 		return 0;
@@ -360,12 +358,8 @@ int doe_charcode(void)
 		return 0;
 	}
 	if (sscanf(string, "%x", &chr) == 1) {
-#ifdef ENABLE_UTF8
 		utf8c_encode(chr, utf8c);
 		do_enter_utf8s(utf8c);
-#else // ENABLE_UTF8
-		doe_enter_char(chr);
-#endif // ENABLE_UTF8
 		return 1;
 	}
 	return 0;
@@ -430,9 +424,7 @@ PRIVATE int do_enter_utf8s(const char *utf8s)
 {
 	int bytes_str;
 	int byte_idx;
-#ifdef ENABLE_UTF8
 	int bytes_chr;
-#endif // ENABLE_UTF8
 	char utf8c[MAX_UTF8C_BYTES+1];
 
 flf_d_printf("[%s]\n", utf8s);
@@ -445,19 +437,11 @@ flf_d_printf("[%s]\n", utf8s);
 #endif // ENABLE_UNDO
 
 	bytes_str = strlen_path(utf8s);
-#ifdef ENABLE_UTF8
 	for (byte_idx = 0; byte_idx < bytes_str; byte_idx += bytes_chr) {
 		bytes_chr = utf8c_bytes(&utf8s[byte_idx]);
 		strlcpy__(utf8c, &utf8s[byte_idx], bytes_chr);
 		do_enter_utf8c(utf8c);
 	}
-#else // ENABLE_UTF8
-	for (byte_idx = 0; byte_idx < bytes_str; byte_idx++) {
-		utf8c[0] = utf8s[byte_idx];
-		utf8c[1] = '\0';
-		do_enter_utf8c(utf8c);
-	}
-#endif // ENABLE_UTF8
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	return 1;
 }

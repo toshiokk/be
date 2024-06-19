@@ -58,46 +58,82 @@ void setup_cut_region_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 	setup_cut_region();	// cut-mode may be changed, setup mark region again
 	set_edit_win_update_needed(UPDATE_SCRN_ALL);
 }
+
 // [cut-mode transition]
+//  | previous mode  | event / cursor movement | next mode      |
+//  |----------------|-------------------------|----------------|
+//  |CUT_MODE_0_LINE |start regioning          |CUT_MODE_N_LINE |
+//  | CUT_MODE_N_LINE | ← →                     |CUT_MODE_H_CHAR |enter HV transition mode|
+//  | CUT_MODE_N_LINE | ↑ ↓                     |CUT_MODE_V_LINE |enter VH transition mode|
+//  | CUT_MODE_N_LINE |return to start position |CUT_MODE_N_LINE |
+//  |  CUT_MODE_H_CHAR | ← →                     |CUT_MODE_H_CHAR |
+//  |  CUT_MODE_H_CHAR | ↑ ↓                     |CUT_MODE_HV_BOX |if HV_IS_BOX_VH_IS_CHAR defined|
+//  |  CUT_MODE_H_CHAR | ↑ ↓                     |CUT_MODE_HV_LINE|if HV_IS_LINE_VH_IS_BOX defined|
+//  |  CUT_MODE_H_CHAR |return to start position |CUT_MODE_N_LINE |
+//  |   CUT_MODE_HV_BOX | ← →                     |CUT_MODE_H_CHAR |if HV_IS_BOX_VH_IS_CHAR defined|
+//  |   CUT_MODE_HV_BOX | ↑ ↓                     |CUT_MODE_HV_BOX |if HV_IS_BOX_VH_IS_CHAR defined|
+//  |   CUT_MODE_HV_BOX |return to start position |CUT_MODE_N_LINE |
+//  |   CUT_MODE_HV_LINE| ← →                     |CUT_MODE_H_CHAR |if HV_IS_LINE_VH_IS_BOX defined|
+//  |   CUT_MODE_HV_LINE| ↑ ↓                     |CUT_MODE_HV_LINE|if HV_IS_LINE_VH_IS_BOX defined|
+//  |   CUT_MODE_HV_LINE|return to start position |CUT_MODE_N_LINE |
+//  |  CUT_MODE_V_LINE | ← →                     |CUT_MODE_VH_CHAR|if HV_IS_BOX_VH_IS_CHAR defined|
+//  |  CUT_MODE_V_LINE | ← →                     |CUT_MODE_VH_BOX |if HV_IS_LINE_VH_IS_BOX defined|
+//  |  CUT_MODE_V_LINE | ↑ ↓                     |CUT_MODE_V_LINE |
+//  |  CUT_MODE_V_LINE |return to start position |CUT_MODE_N_LINE |
+//  |   CUT_MODE_VH_CHAR| ← →                     |CUT_MODE_VH_CHAR|if HV_IS_BOX_VH_IS_CHAR defined|
+//  |   CUT_MODE_VH_CHAR| ↑ ↓                     |CUT_MODE_V_LINE |if HV_IS_BOX_VH_IS_CHAR defined|
+//  |   CUT_MODE_VH_CHAR|return to start position |CUT_MODE_N_LINE |
+//  |   CUT_MODE_VH_BOX | ← →                     |CUT_MODE_VH_CHAR|if HV_IS_LINE_VH_IS_BOX defined|
+//  |   CUT_MODE_VH_BOX | ↑ ↓                     |CUT_MODE_VH_BOX |if HV_IS_LINE_VH_IS_BOX defined|
+//  |   CUT_MODE_VH_BOX |return to start position |CUT_MODE_N_LINE |
+
 //
 // CUT_MODE_0_LINE:
-// CUT_MODE_N_LINE:
 //  (no move)
+// CUT_MODE_N_LINE:
 //
-// CUT_MODE_H_CHAR:
-//  ====>
+// CUT_MODE_N_LINE:
+//   -->
+//   CUT_MODE_H_CHAR:
+//     -->
+//       |
+//       v
+//     CUT_MODE_HV_LINE:
+//     CUT_MODE_HV_BOX:
+//       -->
+//         |
+//         v
+//         -->
+//       CUT_MODE_H_CHAR:
 //
-// CUT_MODE_HV_LINE:
-// CUT_MODE_HV_BOX:
-//  ====>
-//      |
-//      v
+// CUT_MODE_N_LINE:
+//   |
+//   v
+//   CUT_MODE_V_LINE:
+//     |
+//     v
+//     -->
+//     CUT_MODE_VH_CHAR:
+//     CUT_MODE_VH_BOX:
+//       |
+//       v
+//       -->
+//         |
+//         v
+//       CUT_MODE_V_LINE:
 //
-// CUT_MODE_H_CHAR:
-//  ====>
-//      |
-//      v
-//      ====>
-//
-// CUT_MODE_V_LINE:
-//  |
-//  v
-//
-// CUT_MODE_VH_CHAR:
-// CUT_MODE_VH_BOX:
-//  |
-//  v
-//  ====>
-//
-// CUT_MODE_V_LINE:
-//  |
-//  v
-//  ====>
-//      |
-//      v
-//
+
 PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move_t cursor_move)
 {
+flf_d_printf("cut_mode: %d:%s -->\n", CUR_EBUF_STATE(buf_CUT_MODE), buf_cut_mode_str(get_epc_buf()));
+	if (cursor_move == CURS_MOVE_JUMP) {
+#ifdef HV_IS_BOX_VH_IS_CHAR
+		CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
+#endif
+#ifdef HV_IS_LINE_VH_IS_BOX
+		CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_LINE;
+#endif
+	} else {
 	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
@@ -115,7 +151,8 @@ PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move
 		} else if (cursor_move == CURS_MOVE_VERT) {
 #ifdef HV_IS_BOX_VH_IS_CHAR
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_BOX;
-#else
+#endif
+#ifdef HV_IS_LINE_VH_IS_BOX
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_LINE;
 #endif
 		}
@@ -131,7 +168,8 @@ PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move
 		if (cursor_move == CURS_MOVE_HORIZ) {
 #ifdef HV_IS_BOX_VH_IS_CHAR
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_CHAR;
-#else
+#endif
+#ifdef HV_IS_LINE_VH_IS_BOX
 			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_BOX;
 #endif
 		} else if (cursor_move == CURS_MOVE_VERT) {
@@ -160,6 +198,8 @@ PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move
 		}
 		break;
 	}
+	}
+flf_d_printf("  cut_mode: %d:%s\n", CUR_EBUF_STATE(buf_CUT_MODE), buf_cut_mode_str(get_epc_buf()));
 }
 PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 {
@@ -346,16 +386,18 @@ void setup_cut_region(void)
 		}
 		break;
 	}
-////flf_d_printf("EPCB_ML: [%s]\n", EPCB_ML->data);
-////flf_d_printf("EPCB_MLBI: %d\n", EPCB_MLBI);
-////flf_d_printf("EPCBVC_CL: [%s]\n", EPCBVC_CL->data);
-////flf_d_printf("EPCBVC_CLBI: %d\n", EPCBVC_CLBI);
-////flf_d_printf("mark_min_line: [%s]\n", mark_min_line->data);
-////flf_d_printf("mark_min_byte_idx: %d\n", mark_min_byte_idx);
-////flf_d_printf("mark_max_line: [%s]\n", mark_max_line->data);
-////flf_d_printf("mark_max_byte_idx: %d\n", mark_max_byte_idx);
-////flf_d_printf("mark_min_col_idx: %d\n", mark_min_col_idx);
-////flf_d_printf("mark_max_col_idx: %d\n", mark_max_col_idx);
+#if 0
+flf_d_printf("EPCB_ML: [%s]\n", EPCB_ML->data);
+flf_d_printf("EPCB_MLBI: %d\n", EPCB_MLBI);
+flf_d_printf("EPCBVC_CL: [%s]\n", EPCBVC_CL->data);
+flf_d_printf("EPCBVC_CLBI: %d\n", EPCBVC_CLBI);
+flf_d_printf("mark_min_line: [%s]\n", mark_min_line->data);
+flf_d_printf("mark_min_byte_idx: %d\n", mark_min_byte_idx);
+flf_d_printf("mark_max_line: [%s]\n", mark_max_line->data);
+flf_d_printf("mark_max_byte_idx: %d\n", mark_max_byte_idx);
+flf_d_printf("mark_min_col_idx: %d\n", mark_min_col_idx);
+flf_d_printf("mark_max_col_idx: %d\n", mark_max_col_idx);
+#endif
 }
 
 int is_there_cut_region(void)

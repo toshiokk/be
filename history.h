@@ -68,7 +68,7 @@ void save_histories(void);
 void load_last_searched_needle(void);
 
 void update_dir_history(const char *prev_dir, const char *cur_dir);
-void update_history(int hist_type_idx, const char *str, BOOL force_update);
+void update_history(int hist_type_idx, const char *str, BOOL update_request);
 const char *get_history_newest(int hist_type_idx, int last_n);
 const char *get_history_completion(int hist_type_idx, const char *str);
 const char *search_history_file_path(int hist_type_idx, const char *path);

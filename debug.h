@@ -91,7 +91,6 @@
 
 #ifdef ENABLE_DEBUG
 void dump_memory(char *message, void *memory, int bytes);
-char *dump_str(char *str);
 void tflfl_d_printf_(int time, const char *file, int line,
  const char *func, const char *label,
  const char *format, ...);

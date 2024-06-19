@@ -166,7 +166,6 @@ void line_avoid_wild_ptr(be_line_t **line_ptr, be_line_t *line);
 
 be_buf_t *get_edit_buf_by_file_path(const char *abs_path);
 be_buf_t *get_edit_buf_by_file_name(const char *file_name);
-int get_edit_buf_idx_from_buf(be_buf_t *edit_buf);
 
 void create_edit_buf(const char *file_path);
 
@@ -253,13 +252,13 @@ const char *get_str_dos_file(void);
 int set_eol(int eol);
 const char *get_str_eol(void);
 
-#ifdef USE_NKF
 int set_encode_ascii(void);
 const char *get_str_encode_ascii(void);
 
 int set_encode_utf8(void);
 const char *get_str_encode_utf8(void);
 
+#ifdef USE_NKF
 int set_encode_eucjp(void);
 const char *get_str_encode_eucjp(void);
 
@@ -268,15 +267,16 @@ const char *get_str_encode_sjis(void);
 
 int set_encode_jis(void);
 const char *get_str_encode_jis(void);
+#endif // USE_NKF
 
 int set_encode_binary(void);
 const char *get_str_encode_binary(void);
 
 int set_encode(int encode);
 const char *get_str_encode(void);
-#endif // USE_NKF
 
 void set_cur_buf_modified(void);
+int is_any_edit_buf_modified(void);
 
 int doe_tog_view_mode(void);
 int doe_tog_line_wrap_mode(void);
@@ -286,14 +286,14 @@ int doe_set_nix_file(void);
 int doe_set_mac_file(void);
 int doe_set_dos_file(void);
 
-#ifdef USE_NKF
 int doe_set_encode_ascii(void);
 int doe_set_encode_utf8(void);
+#ifdef USE_NKF
 int doe_set_encode_eucjp(void);
 int doe_set_encode_sjis(void);
 int doe_set_encode_jis(void);
-int doe_set_encode_binary(void);
 #endif // USE_NKF
+int doe_set_encode_binary(void);
 
 //-----------------------------------------------------------------------------
 

@@ -42,33 +42,6 @@ void dump_memory(char *message, void *memory, int bytes)
 		e_printf("\n");
 	}
 }
-char *dump_str(char *str)
-{
-#define MAX_LN	(65536 * 2)
-	static char buf[MAX_LN + 1];
-	int cnt;
-	int len;
-
-	strcpy__(buf, "");
-	len = 0;
-	for (cnt = 0; str[cnt]; cnt++) {
-		len = strnlen(buf, MAX_LN);
-		if (str[cnt] == '\t') {
-			strlcat__(buf, MAX_LN-len, "{TB}");
-		} else if (str[cnt] == '\n') {
-			strlcat__(buf, MAX_LN-len, "{NL}");
-		} else if (str[cnt] == '\x7f') {
-			strlcat__(buf, MAX_LN-len, "{DL}");
-		} else {
-			buf[len] = str[cnt];
-			buf[len+1] = '\0';
-		}
-		len = strnlen(buf, MAX_LN);
-		if (len >= MAX_LN-10)
-			break;
-	}
-	return buf;
-}
 
 #define DEBUG_BUF_LEN	4096
 

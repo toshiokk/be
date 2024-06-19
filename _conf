@@ -27,25 +27,25 @@ cmd_line_16="./configure --enable-busybox"
 cmd_line_17="./configure --disable-help"
 cmd_line_18="./configure --enable-debug"
 if [ -z "$conf_num" ]; then
-  echo  0: $cmd_line_0
-  echo  1: $cmd_line_1
-  echo  2: $cmd_line_2
-  echo  3: $cmd_line_3
-  echo  4: $cmd_line_4
-  echo  5: $cmd_line_5
-  echo  6: $cmd_line_6
-  echo  7: $cmd_line_7
-  echo  8: $cmd_line_8
-  echo  9: $cmd_line_9
-  echo 10: $cmd_line_10
-  echo 11: $cmd_line_11
-  echo 12: $cmd_line_12
-  echo 13: $cmd_line_13
-  echo 14: $cmd_line_14
-  echo 15: $cmd_line_15
-  echo 16: $cmd_line_16
-  echo 17: $cmd_line_17
-  echo 18: $cmd_line_18
+  echo " 0: $cmd_line_0"
+  echo " 1: $cmd_line_1"
+  echo " 2: $cmd_line_2"
+  echo " 3: $cmd_line_3"
+  echo " 4: $cmd_line_4"
+  echo " 5: $cmd_line_5"
+  echo " 6: $cmd_line_6"
+  echo " 7: $cmd_line_7"
+  echo " 8: $cmd_line_8"
+  echo " 9: $cmd_line_9"
+  echo "10: $cmd_line_10"
+  echo "11: $cmd_line_11"
+  echo "12: $cmd_line_12"
+  echo "13: $cmd_line_13"
+  echo "14: $cmd_line_14"
+  echo "15: $cmd_line_15"
+  echo "16: $cmd_line_16"
+  echo "17: $cmd_line_17"
+  echo "18: $cmd_line_18"
   echo -n "Input configuration No.: "; read conf_num
   if [ -z "$conf_num" ]; then
     conf_num=0

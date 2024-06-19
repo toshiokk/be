@@ -51,12 +51,15 @@
 #define COLOR_PAIRS		((COLORS) * (COLORS))
 
 // NOTE: Linux console supports highlight only for foreground
-//       and does not support highlight for background
+//       and does not support highlight for background. So DNU in Linux console.
 ///#define ENABLE_16_BCG	// use lighter background color (color number 8 -- 15)
 
 int termif_init(void);
 int termif_begin(void);
 int termif_end(void);
+
+char investigate_wcwidth(wchar_t wc);
+char investigate_utf8c_width(const char *utf8c);
 
 int termif_get_screen_size_from_term(void);
 void termif_set_screen_size(int lines, int columns);

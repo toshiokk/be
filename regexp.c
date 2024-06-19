@@ -280,22 +280,34 @@ void test_regexp(void)
 	ret = regexp_search(&regexp, &regexp_matches, needle, haystack, 0, REG_NONE, REG_NONE, 3);
 	flf_d_printf("ret: %d\n", ret);
 	regexp_dump_matches(&regexp, &regexp_matches, haystack);
+	MY_UT_INT(ret, 0);
+	MY_UT_INT(regexp.regex_compiled.re_nsub, 0);
+	MY_UT_INT(regexp_matches_start_idx(&regexp_matches, 0), 3);
+	MY_UT_INT(regexp_matches_end_idx(&regexp_matches, 0), 5);
 
 	needle = "\\t";
 	haystack = "aaa\t\nbbbtnccc";
 	ret = regexp_search(&regexp, &regexp_matches, needle, haystack, 0, REG_NONE, REG_NONE, 3);
 	flf_d_printf("ret: %d\n", ret);
 	regexp_dump_matches(&regexp, &regexp_matches, haystack);
+	MY_UT_INT(ret, 0);
+	MY_UT_INT(regexp.regex_compiled.re_nsub, 0);
+	MY_UT_INT(regexp_matches_start_idx(&regexp_matches, 0), 3);
+	MY_UT_INT(regexp_matches_end_idx(&regexp_matches, 0), 4);
 
 	needle = "\\n";
 	haystack = "aaa\t\nbbbtnccc";
 	ret = regexp_search(&regexp, &regexp_matches, needle, haystack, 0, REG_NONE, REG_NONE, 3);
 	flf_d_printf("ret: %d\n", ret);
 	regexp_dump_matches(&regexp, &regexp_matches, haystack);
+	MY_UT_INT(ret, 0);
+	MY_UT_INT(regexp.regex_compiled.re_nsub, 0);
+	MY_UT_INT(regexp_matches_start_idx(&regexp_matches, 0), 4);
+	MY_UT_INT(regexp_matches_end_idx(&regexp_matches, 0), 5);
 
 	// test replacement in sub-expression
-// REGEX: "abc(def|ghi)(jkl|mno)pqr" REPLACE-TO: "123\\2\\1456"
-// INPUT-TEXT: "abcghijklpqr" OUTPUT-TEXT: "123jklghi456"
+	// REGEX: "abc(def|ghi)(jkl|mno)pqr" REPLACE-TO: "123\\2\\1456"
+	// INPUT-TEXT: "abcghijklpqr" OUTPUT-TEXT: "123jklghi456"
 	needle = "abc(def|ghi)(jkl|mno)pqr";
 	haystack = "xxxxxabcghijklpqryyyyy";
 	strlcpy__(output, haystack, MAX_EDIT_LINE_LEN);
@@ -308,6 +320,15 @@ void test_regexp(void)
 	flf_d_printf("replace_to: [%s]\n", replace_to);
 	flf_d_printf("before: [%s]\n", haystack);
 	flf_d_printf("after : [%s]\n", output);
+	MY_UT_INT(ret, 0);
+	MY_UT_INT(regexp.regex_compiled.re_nsub, 2);
+	MY_UT_INT(regexp_matches_start_idx(&regexp_matches, 0), 5);
+	MY_UT_INT(regexp_matches_end_idx(&regexp_matches, 0), 17);
+	MY_UT_INT(regexp_matches_start_idx(&regexp_matches, 1), 8);
+	MY_UT_INT(regexp_matches_end_idx(&regexp_matches, 1), 11);
+	MY_UT_INT(regexp_matches_start_idx(&regexp_matches, 2), 11);
+	MY_UT_INT(regexp_matches_end_idx(&regexp_matches, 2), 14);
+	MY_UT_STR(output, "xxxxx123jklghi456yyyyy");
 	flf_d_printf("---------------------------------------------------------\n");
 }
 #endif // START_UP_TEST
@@ -403,10 +424,11 @@ void regexp_dump_matches(regexp_t *regexp, regexp_matches_t *regexp_matches,
  const char *haystack)
 {
 	int match_idx;
-	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
+	char buf1[MAX_SCRN_LINE_BUF_LEN+1];
+	char buf2[MAX_SCRN_LINE_BUF_LEN+1];
 
 	flf_d_printf("needle[%s]\n", regexp->needle_compiled);
-	flf_d_printf("haystack[%s]\n", haystack);
+	flf_d_printf("haystack[%s]\n", dump_str(haystack, buf1));
 	if (regexp_matches_match_len(regexp_matches, 0) == 0) {
 		flf_d_printf("match_len: %d\n", regexp_matches_match_len(regexp_matches, 0));
 		return;
@@ -416,9 +438,9 @@ void regexp_dump_matches(regexp_t *regexp, regexp_matches_t *regexp_matches,
 			flf_d_printf("regexp_matches[%d]=%d,%d[%s]\n", match_idx,
 			 regexp_matches_start_idx(regexp_matches, match_idx),
 			 regexp_matches_end_idx(regexp_matches, match_idx),
-			 strcut__(buffer, MAX_SCRN_LINE_BUF_LEN, haystack,
+			 dump_str(strcut__(buf1, MAX_SCRN_LINE_BUF_LEN, haystack,
 			  regexp_matches_start_idx(regexp_matches, match_idx),
-			  regexp_matches_end_idx(regexp_matches, match_idx)));
+			  regexp_matches_end_idx(regexp_matches, match_idx)), buf2));
 		}
 	}
 }

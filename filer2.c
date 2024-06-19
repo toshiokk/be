@@ -252,14 +252,13 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	case SHOW_FILE_INFO_0:
 	case SHOW_FILE_INFO_1:
 	case SHOW_FILE_INFO_2:
-	case SHOW_FILE_INFO_3:
 		snprintf_(buf_mode, 20+1, "%s", "");
 		break;
-	case SHOW_FILE_INFO_4:
+	case SHOW_FILE_INFO_3:
 		//						   t7777
 		snprintf_(buf_mode, 20+1, "%s%04o", type_str, mode & 07777);
 		break;
-	case SHOW_FILE_INFO_5:
+	case SHOW_FILE_INFO_4:
 		//						   t r w x r w x r w x
 		snprintf_(buf_mode, 20+1, "%s%c%c%c%c%c%c%c%c%c", type_str,
 		 (mode & S_IRUSR) ? 'r' : '-', (mode & S_IWUSR) ? 'w' : '-',
@@ -280,17 +279,14 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 		snprintf_(buf_info, FILE_INFO_BUF_LEN+1, " %s", buf_size);
 		break;
 	case SHOW_FILE_INFO_2:
-		snprintf_(buf_info, FILE_INFO_BUF_LEN+1, " %s", buf_time);
-		break;
-	case SHOW_FILE_INFO_3:
 		snprintf_(buf_info, FILE_INFO_BUF_LEN+1, " %s %s", buf_size, buf_time);
 		break;
-	case SHOW_FILE_INFO_4:
+	case SHOW_FILE_INFO_3:
 		snprintf_(buf_info, FILE_INFO_BUF_LEN+1, " %s %s %s %-8s",
 		 buf_size, buf_time, buf_mode,
 		 get_user_name(show_link ? lst_ptr->st_uid : st_ptr->st_uid));
 		break;
-	case SHOW_FILE_INFO_5:
+	case SHOW_FILE_INFO_4:
 		snprintf_(buf_info, FILE_INFO_BUF_LEN+1, " %s %s %s %-8s %-8s",
 		 buf_size, buf_time, buf_mode,
 		 get_user_name(show_link ? lst_ptr->st_uid : st_ptr->st_uid),
@@ -402,9 +398,11 @@ int make_file_list(filer_view_t *fv, const char *filter)
 
 	free_file_list(fv);
 
-	if (strcmp(filter, "") == 0)
+	if (strcmp(filter, "") == 0) {
 		filter = "*";
+	}
 	if ((dir = opendir(fv->cur_dir)) == NULL) {
+		strcpy__(fv->listed_dir, "");
 		goto make_file_list_ret;
 	}
 	for (file_idx = 0; (dirent = readdir(dir)) != NULL; file_idx++) {
@@ -412,7 +410,7 @@ int make_file_list(filer_view_t *fv, const char *filter)
 	}
 	entries = file_idx;
 	_mlc_set_caller
-	fv->file_list = (file_info_t *)malloc__(sizeof(file_info_t) * entries);
+	fv->file_list_ptr = (file_info_t *)malloc__(sizeof(file_info_t) * entries);
 
 	rewinddir(dir);
 	for (file_idx = 0; file_idx < entries && (dirent = readdir(dir)) != NULL; ) {
@@ -433,7 +431,7 @@ int make_file_list(filer_view_t *fv, const char *filter)
 			  || ((st.st_mode & RWXRWXRWX) == RW0000RW0)))
 				// ".", ".????" or (mode == 000)
 				continue;
-			ent_ptr = &fv->file_list[file_idx];
+			ent_ptr = &fv->file_list_ptr[file_idx];
 			// fill file_info_t
 			_mlc_set_caller
 			ent_ptr->file_name = malloc_strcpy(dirent->d_name);
@@ -452,7 +450,8 @@ int make_file_list(filer_view_t *fv, const char *filter)
 	}
 	closedir(dir);
 	fv->file_list_entries = file_idx;
-	fv->cur_sel_idx = MIN_(fv->file_list_entries-1, fv->cur_sel_idx);
+	fv->cur_file_idx = MIN_MAX_(0, fv->cur_file_idx, fv->file_list_entries-1);
+	strcpy__(fv->listed_dir, fv->cur_dir);
 
 make_file_list_ret:;
 	change_cur_dir(dir_save);
@@ -461,16 +460,17 @@ make_file_list_ret:;
 // Free malloc()ed memory
 void free_file_list(filer_view_t *fv)
 {
-	if (fv->file_list) {
+	if (fv->file_list_ptr) {
 		for (int file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
-			if (fv->file_list[file_idx].file_name) {
-				FREE_CLR_PTR(fv->file_list[file_idx].file_name);
+			if (fv->file_list_ptr[file_idx].file_name) {
+				FREE_CLR_PTR(fv->file_list_ptr[file_idx].file_name);
 			}
-			if (fv->file_list[file_idx].symlink) {
-				FREE_CLR_PTR(fv->file_list[file_idx].symlink);
+			if (fv->file_list_ptr[file_idx].symlink) {
+				FREE_CLR_PTR(fv->file_list_ptr[file_idx].symlink);
 			}
 		}
-		FREE_CLR_PTR(fv->file_list);
+		FREE_CLR_PTR(fv->file_list_ptr);
+		strcpy__(fv->listed_dir, "");
 	}
 	fv->file_list_entries = 0;
 }
@@ -490,7 +490,7 @@ PRIVATE int get_file_executable(struct stat *st);
 PRIVATE int strtypecasecmp(const char *s1, const char *s2);
 void sort_file_list(filer_view_t *fv)
 {
-	qsort(fv->file_list, fv->file_list_entries, sizeof(file_info_t), comp_file_info);
+	qsort(fv->file_list_ptr, fv->file_list_entries, sizeof(file_info_t), comp_file_info);
 }
 
 // Comparison functions for file list ------------------------------------------
@@ -684,11 +684,10 @@ int get_files_selected_cfv(void)
 }
 int get_files_selected(filer_view_t *fv)
 {
-	int idx;
 	int files_selected = 0;
 
-	for (idx = 0; idx < fv->file_list_entries; idx++) {
-		if (fv->file_list[idx].selected) {
+	for (int idx = 0; idx < fv->file_list_entries; idx++) {
+		if (fv->file_list_ptr[idx].selected) {
 			files_selected++;
 		}
 	}
@@ -702,12 +701,11 @@ int select_and_get_first_file_idx_selected(void)
 }
 int select_file_if_none_selected(void)
 {
-	int files_selected;
-	int sel_idx = get_cur_filer_view()->cur_sel_idx;
+	int sel_idx = get_cur_fv_file_idx();
 
-	files_selected = get_files_selected_cfv();
+	int files_selected = get_files_selected_cfv();
 	if (files_selected == 0) {
-		get_cur_filer_view()->file_list[sel_idx].selected = _FILE_SEL_AUTO_;
+		get_cur_fv_file_list_ptr()[sel_idx].selected = _FILE_SEL_AUTO_;
 	}
 	return files_selected;
 }
@@ -716,20 +714,20 @@ int get_first_file_idx_selected(void)
 	int file_idx;
 
 	for (file_idx = 0; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
-		if (get_cur_filer_view()->file_list[file_idx].selected)
+		if (get_cur_fv_file_list_ptr()[file_idx].selected)
 			break;
 	}
 	if (file_idx < get_cur_filer_view()->file_list_entries)
 		return file_idx;
 	// no file selected, return current file
-	return get_cur_filer_view()->cur_sel_idx;
+	return get_cur_fv_file_idx();
 }
-int get_next_file_idx_selected(int start_file_idx)
+int get_next_file_idx_selected(int file_idx)
 {
-	int file_idx = start_file_idx < 0 ? 0 : start_file_idx+1;
+	file_idx = file_idx < 0 ? 0 : file_idx+1;
 
 	for ( ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
-		if (get_cur_filer_view()->file_list[file_idx].selected)
+		if (get_cur_fv_file_list_ptr()[file_idx].selected)
 			break;
 	}
 	if (file_idx < get_cur_filer_view()->file_list_entries)
@@ -739,23 +737,24 @@ int get_next_file_idx_selected(int start_file_idx)
 void unselect_all_files_auto(char selection_bit)
 {
 	for (int file_idx = 0 ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
-		get_cur_filer_view()->file_list[file_idx].selected
-		 = get_cur_filer_view()->file_list[file_idx].selected & ~selection_bit;
+		get_cur_fv_file_list_ptr()[file_idx].selected
+		 = get_cur_fv_file_list_ptr()[file_idx].selected & ~selection_bit;
 	}
 }
 
 //-----------------------------------------------------------------------------
-int research_file_name_in_file_list(filer_view_t *fv)
+int research_file_name_in_file_list(filer_view_t *fv, const char *file_name)
 {
-	int file_idx = search_file_name_in_file_list(fv, fv->next_file);
+/////flf_d_printf("[%s]\n", file_name);
+	int file_idx = search_file_name_in_file_list(fv, file_name);
 	if (file_idx < 0) {
-		if (fv->cur_sel_idx >= 0)
-			file_idx = fv->cur_sel_idx;
+		if (fv->cur_file_idx >= 0)
+			file_idx = fv->cur_file_idx;
 		else
 			file_idx = 0;
 	}
 	file_idx = MIN_MAX_(0, file_idx, fv->file_list_entries-1);
-	fv->cur_sel_idx = file_idx;
+	fv->cur_file_idx = file_idx;
 	return 0;
 }
 
@@ -772,7 +771,7 @@ int search_file_name_in_file_list(filer_view_t *fv, const char *file_name)
 
 	// exact match
 	for (int file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
-		if (strcmp(fv->file_list[file_idx].file_name, file_name) == 0) {
+		if (strcmp(fv->file_list_ptr[file_idx].file_name, file_name) == 0) {
 			return file_idx;
 		}
 	}
@@ -780,21 +779,18 @@ int search_file_name_in_file_list(filer_view_t *fv, const char *file_name)
 	for (file_name_len = strlen(file_name); file_name_len; file_name_len--) {
 		for (cmp_type = 0; cmp_type < 4; cmp_type++) {
 			for (int file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
-				if (((cmp_type < 2)		// cmp_type = 0, 1
-				  && (S_ISREG(get_cur_filer_view()
-					   ->file_list[get_cur_filer_view()->cur_sel_idx].st.st_mode)
-					  == S_ISREG(get_cur_filer_view()
-					   ->file_list[file_idx].st.st_mode)))
-				 || (cmp_type >= 2)) {	// cmp_type = 2, 3
-					if (((cmp_type % 2) == 0)
-						// case sensitive
-					  ? (strncmp(fv->file_list[file_idx].file_name, file_name,
-						 file_name_len) == 0)
-						// case ignorant
-					  : (strncasecmp(fv->file_list[file_idx].file_name, file_name,
-						 file_name_len) == 0)) {
-						return file_idx;
-					}
+				if ((((cmp_type < 2)		// cmp_type = 0, 1
+				   && (S_ISREG(fv->file_list_ptr[fv->cur_file_idx].st.st_mode)
+					  == S_ISREG(fv->file_list_ptr[file_idx].st.st_mode)))
+				  || (cmp_type >= 2))	// cmp_type = 2, 3
+				 && (((cmp_type % 2) == 0)
+				  // case sensitive
+				  ? (strncmp(fv->file_list_ptr[file_idx].file_name, file_name,
+					  file_name_len) == 0)
+				  // case ignorant
+				  : (strncasecmp(fv->file_list_ptr[file_idx].file_name, file_name,
+					  file_name_len) == 0))) {
+					return file_idx;
 				}
 			}
 		}

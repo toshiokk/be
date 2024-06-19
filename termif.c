@@ -144,6 +144,25 @@ int termif_end(void)
 	return 0;
 }
 //-----------------------------------------------------------------------------
+
+char investigate_wcwidth(wchar_t wc)
+{
+	char utf8c[MAX_UTF8C_BYTES+1];
+	utf8c_encode(wc, utf8c);
+	return investigate_utf8c_width(utf8c);
+}
+char investigate_utf8c_width(const char *utf8c)
+{
+	int yy;
+	int xx;
+	termif_set_cursor_pos(0, 0);
+	send_string_to_term(utf8c, -1);
+	if (termif_get_cursor_pos(&yy, &xx)) {
+		return MIN_MAX_(1, xx - 0, 2);	// 1 / 2
+	}
+	return -1;	// not gotten
+}
+//-----------------------------------------------------------------------------
 // get screen size from terminal
 int termif_get_screen_size_from_term(void)
 {
@@ -158,10 +177,10 @@ int termif_get_screen_size_from_term(void)
 	termif_set_screen_size(TERMIF_MAX_SCRN_LINES, TERMIF_MAX_SCRN_COLS);
 	for (int tries = 0; tries < MAX_REPORT_TRIES; tries++) {
 		send_cursor_pos_to_term(TERMIF_MAX_SCRN_LINES-1, TERMIF_MAX_SCRN_COLS-1);
-flf_d_printf("(%d, %d)\n", TERMIF_MAX_SCRN_LINES-1, TERMIF_MAX_SCRN_COLS-1);
+////flf_d_printf("(%d, %d)\n", TERMIF_MAX_SCRN_LINES-1, TERMIF_MAX_SCRN_COLS-1);
 		if (termif_get_cursor_pos(&lines, &cols)) {
-			if (lines <= TERMIF_MAX_SCRN_LINES && cols <= TERMIF_MAX_SCRN_COLS) {
-				termif_set_screen_size(lines, cols);
+			if (lines < TERMIF_MAX_SCRN_LINES && cols < TERMIF_MAX_SCRN_COLS) {
+				termif_set_screen_size(lines + 1, cols + 1);
 				return 1;
 			}
 		}
@@ -207,28 +226,44 @@ int termif_get_cursor_pos(int *yy, int *xx)
 #define MIN_REPORT_LEN		6		// "e[9;9R"
 #define MAX_REPORT_LEN		(11+11)	// "e[999;9999R"
 	char buf[MAX_REPORT_LEN+1];		// "e[999;9999R"
-	int len;
-	const char *ptr;
-	int lines, cols;
+	char bufr[MAX_REPORT_LEN+1];	// "e[999;9999R"
 
 	fflush(stdin);
 	send_printf_to_term("\x1b[6n");
-#define MAX_RX_TRIES	3
+#define MAX_WAIT_USEC	1000000
+#define SLEEP_USEC		1
+#define MAX_RX_TRIES	((MAX_WAIT_USEC) / (SLEEP_USEC))
+	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in read()
+	strcpy(buf, "");
+	long usec_enter = get_usec();
 	for (int tries = 0; tries < MAX_RX_TRIES; tries++) {
-		MSLEEP(100);	// wait for receiving answer back
-		fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in read()
-		if ((len = read(STDIN_FILENO, buf, MAX_REPORT_LEN)) >= MIN_REPORT_LEN) {
-			buf[len] = '\0';
-			for (ptr = buf; *ptr; ptr++) {
-				if (isdigit(*ptr))
-					break;
+		usleep(SLEEP_USEC);	// wait for receiving answer back
+		char time_out = 0;
+		if ((get_usec() - usec_enter) >= MAX_WAIT_USEC) {
+			time_out = 1;	// time out
+		}
+		int len;
+		if ((len = read(STDIN_FILENO, bufr, MAX_REPORT_LEN)) > 0) {
+			bufr[len] = '\0';
+			strlcat__(buf, MAX_REPORT_LEN, bufr);
+			if ((strlen(buf) >= MAX_REPORT_LEN) || (tail_char(buf) == 'R')) {
+				// ESC [ lines ; cols R
+				const char *ptr;
+				for (ptr = buf; *ptr; ptr++) {
+					// skip to a number character
+					if (isdigit(*ptr))
+						break;
+				}
+				int lines, cols;
+				if (sscanf(ptr, "%d;%d", &lines, &cols) >= 2) {
+					*yy = lines - 1;	// 0 --
+					*xx = cols - 1;		// 0 --
+					return 1;
+				}
 			}
-			// ESC [ lines ; cols R
-			if (sscanf(ptr, "%d;%d", &lines, &cols) >= 2) {
-				*yy = lines;
-				*xx = cols;
-				return 1;
-			}
+		}
+		if (time_out) {
+			break;
 		}
 	}
 	return 0;
@@ -368,6 +403,7 @@ PRIVATE void dump_vscreen(int yy, int len)
 }
 #endif
 #endif // ENABLE_DEBUG
+
 //-----------------------------------------------------------------------------
 // If narrow char, compare 1st place.
 // If wide   char, compare 1st and 2nd place.
@@ -376,18 +412,6 @@ PRIVATE void dump_vscreen(int yy, int len)
 	 ? (vscreen_painted[yy][xx] != vscreen_to_paint[yy][xx])		\
 	 : (vscreen_painted[yy][xx] != vscreen_to_paint[yy][xx]			\
 	  || vscreen_painted[yy][xx+1] != vscreen_to_paint[yy][xx+1]))
-
-#ifdef VAGUE_WIDE_CHR
-///
-#define OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
-#endif // VAGUE_WIDE_CHR
-#ifdef OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
-// If is_vague_wide_chr(), display this char as a wide char.
-// (display "  " and display this wide char to 1st place)
-// Expected effect:
-//   If this char is narrow char, displayed "N ".
-//   If this char is wide   char, displayed "WW".
-#endif // OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
 
 // refresh screen by sending pending data in vscreen_to_paint to the screen.
 void termif_refresh(void)
@@ -404,58 +428,33 @@ void termif_refresh(void)
 		for (xx = 0; xx < termif_columns; ) {
 			start_attrs = (vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS);
 			if (CMP_NARR_OR_WIDE_CHR()) {
-#ifdef OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
-				ucs21 = vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21;
-				if (is_vague_wide_chr(ucs21)) {
-					if (cursor_on) {
-						// erase cursor before painting
-						send_cursor_on_to_term(0);
-						cursor_on = 0;
+				start_xx = xx;
+				strcpy(line_buf, "");
+				for ( ; xx < termif_columns; ) {
+					ucs21 = vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21;
+					if (((vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS) != start_attrs)
+					 || CMP_NARR_OR_WIDE_CHR() == 0) {
+						break;
 					}
-					send_attrs_to_term(start_attrs);
-					send_cursor_pos_string_to_term(yy, xx, "  ", -1);	// "  "
 					utf8c_encode(ucs21, utf8c);
-					send_cursor_pos_string_to_term(yy, xx, utf8c, -1);	// "H " or "WW"
-					vscreen_painted[yy][xx] = vscreen_to_paint[yy][xx];
-					xx++;
-					vscreen_painted[yy][xx] = vscreen_to_paint[yy][xx];
-					xx++;
-				} else {
-#endif // OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
-					start_xx = xx;
-					strcpy(line_buf, "");
-					for ( ; xx < termif_columns; ) {
-						ucs21 = vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21;
-						if (((vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS) != start_attrs)
-						 || CMP_NARR_OR_WIDE_CHR() == 0
-#ifdef OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
-						 || is_vague_wide_chr(ucs21)
-#endif // OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
-													) {
-							break;
-						}
-						utf8c_encode(ucs21, utf8c);
-						strlcat__(line_buf, TERMIF_LINE_BUF_LEN, utf8c);
-						if (VSCR_IS_COL1_WIDE_CHAR(vscreen_to_paint[yy][xx])
-						 && ((vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21)
-						  == (vscreen_to_paint[yy][xx+1] & VSCR_CHAR_UCS21))) {
-							// wide char and, 1st and 2nd UCS are the same.
-							vscreen_painted[yy][xx] = vscreen_to_paint[yy][xx];
-							xx++;
-						}
+					strlcat__(line_buf, TERMIF_LINE_BUF_LEN, utf8c);
+					if (VSCR_IS_COL1_WIDE_CHAR(vscreen_to_paint[yy][xx])
+					 && ((vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21)
+					  == (vscreen_to_paint[yy][xx+1] & VSCR_CHAR_UCS21))) {
+						// wide char and, 1st and 2nd UCS are the same.
 						vscreen_painted[yy][xx] = vscreen_to_paint[yy][xx];
 						xx++;
 					}
-					if (cursor_on) {
-						// erase cursor before painting
-						send_cursor_on_to_term(0);
-						cursor_on = 0;
-					}
-					send_attrs_to_term(start_attrs);
-					send_cursor_pos_string_to_term(yy, start_xx, line_buf, -1);
-#ifdef OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
+					vscreen_painted[yy][xx] = vscreen_to_paint[yy][xx];
+					xx++;
 				}
-#endif // OUTPUT_VAGUE_WIDE_CHAR_AS_WIDE
+				if (cursor_on) {
+					// erase cursor before painting
+					send_cursor_on_to_term(0);
+					cursor_on = 0;
+				}
+				send_attrs_to_term(start_attrs);
+				send_cursor_pos_string_to_term(yy, start_xx, line_buf, -1);
 			} else {
 				xx++;
 			}

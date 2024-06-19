@@ -175,7 +175,6 @@ void init_editor_panes()
 {
 	set_editor_cur_pane_idx(0);
 	for (int pane_idx = 0; pane_idx < EDITOR_PANES; pane_idx++) {
-///		set_epx_buf(pane_idx, EDIT_BUFS_TOP_ANCH);
 		set_epx_buf(pane_idx, EDIT_BUFS_TOP_BUF);
 	}
 }
@@ -275,10 +274,6 @@ be_buf_t *get_edit_buf_by_file_name(const char *file_name)
 {
 	return get_buf_from_bufs_by_file_name(EDIT_BUFS_TOP_BUF, file_name);
 }
-int get_edit_buf_idx_from_buf(be_buf_t *edit_buf)
-{
-	return get_buf_idx_in_bufs(EDIT_BUFS_TOP_BUF, edit_buf);
-}
 
 //-----------------------------------------------------------------------------
 // create new be_buf_t
@@ -288,7 +283,9 @@ void create_edit_buf(const char *full_path)
 
 	buf = buf_create_node(full_path);
 	// copy default encoding from EDIT_BUFS_BOT_ANCH
+#ifdef USE_NKF
 	SET_BUF_STATE(buf, buf_ENCODE, BUF_STATE(EDIT_BUFS_BOT_ANCH, buf_ENCODE));
+#endif // USE_NKF
 	buf_insert_before(EDIT_BUFS_BOT_ANCH, buf);
 	set_epc_buf(buf);
 	if (IS_NODE_INT(editor_panes.bufs[0]) == 0) {
@@ -503,7 +500,6 @@ const char *get_str_eol(void)
 	return buf_eol_str(get_epc_buf());
 }
 
-#ifdef USE_NKF
 int set_encode_ascii(void)
 {
 	set_encode(ENCODE_ASCII);
@@ -522,6 +518,7 @@ const char *get_str_encode_utf8(void)
 {
 	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_UTF8));
 }
+#ifdef USE_NKF
 int set_encode_eucjp(void)
 {
 	set_encode(ENCODE_EUCJP);
@@ -549,6 +546,7 @@ const char *get_str_encode_jis(void)
 {
 	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_JIS));
 }
+#endif // USE_NKF
 int set_encode_binary(void)
 {
 	set_encode(ENCODE_BINARY);
@@ -568,7 +566,6 @@ const char *get_str_encode(void)
 {
 	return buf_encode_str(get_epc_buf());
 }
-#endif // USE_NKF
 
 //-----------------------------------------------------------------------------
 
@@ -579,6 +576,17 @@ void set_cur_buf_modified(void)
 		SET_CUR_EBUF_STATE(buf_MODIFIED, 1);
 		editor_disp_title_bar();
 	}
+}
+
+int is_any_edit_buf_modified(void)
+{
+	for (be_buf_t *edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
+	 edit_buf = NODE_NEXT(edit_buf)) {
+		if (BUF_STATE(edit_buf, buf_MODIFIED)) {
+			return 1;
+		}
+	}
+	return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -631,7 +639,6 @@ int doe_set_dos_file(void)
 	return 0;
 }
 //-----------------------------------------------------------------------------
-#ifdef USE_NKF
 int doe_set_encode_ascii(void)
 {
 	set_encode_ascii();
@@ -644,6 +651,7 @@ int doe_set_encode_utf8(void)
 	SHOW_MODE("UTF-8 format", get_str_encode_utf8());
 	return 0;
 }
+#ifdef USE_NKF
 int doe_set_encode_eucjp(void)
 {
 	set_encode_eucjp();
@@ -662,13 +670,13 @@ int doe_set_encode_jis(void)
 	SHOW_MODE("JIS format", get_str_encode_jis());
 	return 0;
 }
+#endif // USE_NKF
 int doe_set_encode_binary(void)
 {
 	set_encode_binary();
 	SHOW_MODE("BINARY format", get_str_encode_binary());
 	return 0;
 }
-#endif // USE_NKF
 
 //-----------------------------------------------------------------------------
 
@@ -679,22 +687,18 @@ void dump_cur_edit_buf_lines(void)
 }
 void dump_edit_bufs(void)
 {
-///	buf_dump_bufs(EDIT_BUFS_TOP_ANCH);
 	buf_dump_bufs(EDIT_BUFS_TOP_BUF);
 }
 void dump_edit_bufs_lines(void)
 {
-///	buf_dump_bufs_lines(EDIT_BUFS_TOP_ANCH, "edit-bufs");
 	buf_dump_bufs_lines(EDIT_BUFS_TOP_BUF, "edit-bufs");
 }
 void dump_cut_bufs(void)
 {
-///	buf_dump_bufs(CUT_BUFS_TOP_ANCH);
 	buf_dump_bufs(CUT_BUFS_TOP_BUF);
 }
 void dump_cut_bufs_lines(void)
 {
-///	buf_dump_bufs_lines(CUT_BUFS_TOP_ANCH, "cut-bufs");
 	buf_dump_bufs_lines(CUT_BUFS_TOP_BUF, "cut-bufs");
 }
 

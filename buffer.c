@@ -68,7 +68,7 @@ void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf)
 {
 	BUFV_CL(b_v) = BUF_BOT_ANCH(buf);
 	BUFV_CLBI(b_v) = 0;
-	BUFV_CURSOR_Y(b_v) = 0;
+	BUFV_CURSOR_Y(b_v) = 100;		// to locate cursor as larger Y position as possible
 	BUFV_CURSOR_X_TO_KEEP(b_v) = 0;
 	BUFV_MIN_TEXT_X_TO_KEEP(b_v) = 0;
 }
@@ -297,19 +297,17 @@ const char *buf_eol_str(be_buf_t *buf)
 }
 const char *buf_encode_str(be_buf_t *buf)
 {
-#ifdef USE_NKF
 	switch (BUF_STATE(buf, buf_ENCODE)) {
 	default:
 	case ENCODE_ASCII:		return "ASCII";
 	case ENCODE_UTF8:		return "UTF8";
+#ifdef USE_NKF
 	case ENCODE_EUCJP:		return "EUCJP";
 	case ENCODE_SJIS:		return "SJIS";
 	case ENCODE_JIS:		return "JIS";
+#endif // USE_NKF
 	case ENCODE_BINARY:		return "BIN";
 	}
-#else // USE_NKF
-	return "ASCII";
-#endif // USE_NKF
 }
 const char *buf_cut_mode_str(be_buf_t *buf)
 {

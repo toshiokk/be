@@ -31,9 +31,11 @@ typedef enum {
 	ITEM_COLOR_IDX_TEXT_NORMAL,			// contents
 	ITEM_COLOR_IDX_TEXT_SELECTED,		// contents selected
 	ITEM_COLOR_IDX_TEXT_SELECTED2,		// contents selected-2
+	ITEM_COLOR_IDX_TEXT_SELECTED3,		// contents selected-3
 	ITEM_COLOR_IDX_WARNING,				// warning
 	ITEM_COLOR_IDX_WARNING2,			// warning-2
 	ITEM_COLOR_IDX_WARNING3,			// warning-3
+	ITEM_COLOR_IDX_WARNING4,			// warning-4
 	ITEM_COLOR_IDX_CURSOR_CHAR,			// cursor
 	ITEM_COLOR_IDX_CURSOR_LINE,			// cursor line
 	ITEM_COLOR_IDX_LINE_NUMBER,			// line number / ruler

@@ -26,6 +26,7 @@
 #define K_NONE				KEY_NONE
 #define KEY_NOT_ASSIGNED	KEY_NONE
 #define KNA					KEY_NOT_ASSIGNED
+#define IS_KEY_VALID(key)	((key) > KEY_NONE)
 
 // HP-UX 10 & 11 do not seem to support KEY_HOME and KEY_END
 #if !defined(KEY_HOME) || !defined(KEY_END)
@@ -46,7 +47,8 @@
 #define TBKC(h, l)			TWO_BYTE_KEY_CODE((h), (l))
 #define KEY_META(key)		TWO_BYTE_KEY_CODE(CHAR_ESC, key)	// Alt-x
 #define KEY_META_CTRL(chr)	KEY_META(CTRL_CHAR(chr))			// Alt-Ctrl-x
-#define IS_META_KEY(key)	(((key) & 0xff00) == KEY_META(0x00))
+#define IS_ONE_BYTE_KEY(key)	(IS_KEY_VALID(key) && (((key) & 0xff00) == 0x0000))
+#define IS_META_KEY(key)		(((key) & 0xff00) == KEY_META(0x00))
 
 #define K_(chr)				(chr)
 #define K_C(chr)			CTRL_CHAR(chr)				// Ctrl-x
@@ -417,6 +419,8 @@ typedef enum {
 typedef struct {
 	char *desc;					// short description
 	char *help;					// explanation
+
+#define MAX_KEYS_BOUND	3
 	key_code_t key1;
 	key_code_t key2;
 	key_code_t key3;
@@ -472,6 +476,18 @@ key_code_t input_key_wait_return(void);
 void begin_check_break_key(void);
 void end_check_break_key(void);
 int check_break_key(void);
+
+const char *short_key_name_from_key_code(key_code_t key_code, char *buf);
+const char *key_name_from_key_code(key_code_t key_code, char *buf);
+const char *short_key_name_from_key_name(const char *key_name, char *buf);
+key_code_t key_code_from_key_name(char *key_name);
+key_code_t key_code_from_short_key_name(char *short_key_name);
+int get_key_name_table_entries(void);
+
+#ifdef ENABLE_DEBUG
+int check_all_functions_accessible_without_function_key();
+int check_duplicate_assinment_of_key();
+#endif // ENABLE_DEBUG
 
 #endif // keys_h
 

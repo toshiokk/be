@@ -46,20 +46,20 @@
 #define HORIZ_SCROLL_MARGIN		5
 
 typedef enum {
-	LOCATE_CURS_NONE,	// not adjust cursor pos
+	LOCATE_CURS_NONE,			// not adjust cursor pos
 	LOCATE_CURS_JUMP_BACKWARD,	// keep contents pos if possible after jumping cursor pos,
 								//  otherwise locate center - 2 lines
 	LOCATE_CURS_JUMP_CENTER,	// keep contents pos if possible after jumping cursor pos,
 								//  otherwise locate center line
 	LOCATE_CURS_JUMP_FORWARD,	// keep contents pos if possible after jumping cursor pos,
 								//  otherwise locate center + 2 lines
-	LOCATE_CURS_TOP,	// locate top    of screen
-	LOCATE_CURS_CENTER,	// locate center of screen
-	LOCATE_CURS_BOTTOM	// locate bottom of screen
+	LOCATE_CURS_TOP,			// locate top    of screen
+	LOCATE_CURS_CENTER,			// locate center of screen
+	LOCATE_CURS_BOTTOM			// locate bottom of screen
 } locate_cursor_to_t;
 
 typedef enum {
-	CURS_MOVE_NONE, CURS_MOVE_HORIZ, CURS_MOVE_VERT,
+	CURS_MOVE_NONE, CURS_MOVE_HORIZ, CURS_MOVE_VERT, CURS_MOVE_JUMP,
 } cursor_horiz_vert_move_t;
 
 void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_move,

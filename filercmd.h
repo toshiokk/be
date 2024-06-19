@@ -65,13 +65,15 @@ int dof_prev_directory(void);
 int dof_select_file(void);
 int dof_select_no_file(void);
 int dof_select_all_files(void);
+void disp_files_selected();
+
 int dof_real_path(void);
 int dof_quit_filer(void);
 int dof_quit_home_dir(void);
 
 int dof_tog_show_dot_file(void);
 int dof_inc_show_file_info(void);
-int dof_clr_sort_by(void);
+int dof_clear_sort_by(void);
 int dof_inc_sort_by(void);
 int dof_tog_panes(void);
 int dof_inc_key_list_lines(void);

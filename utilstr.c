@@ -107,12 +107,13 @@ void test_replace_str(void)
 	char buffer[100+1];
 
 	strcpy(buffer, "abcdefghijklmnop");
-	flf_d_printf("%s\n", buffer);
-	flf_d_printf("%s\n", replace_str(buffer, 100, 7, 4, "HIJK", 4));
+	MY_UT_STR(replace_str(buffer, 100, 7, 4, "HIJK", 4), "abcdefgHIJKlmnop");
+
 	strcpy(buffer, "abcdefghijklmnop");
-	flf_d_printf("%s\n", replace_str(buffer, 100, 7, 4, "", 0));
+	MY_UT_STR(replace_str(buffer, 100, 7, 4, "", 0), "abcdefglmnop");
+
 	strcpy(buffer, "abcdefghijklmnop");
-	flf_d_printf("%s\n", replace_str(buffer, 100, 7, 0, "HIJK", 4));
+	MY_UT_STR(replace_str(buffer, 100, 7, 0, "HIJK", 4), "abcdefgHIJKhijklmnop");
 }
 #endif // START_UP_TEST
 
@@ -681,6 +682,15 @@ char is_quoted(const char *str, char quote_chr)
 	return '\0';
 }
 
+char tail_char(const char *str)
+{
+	int len = strlen(str);
+	if (len > 0) {
+		len--;
+	}
+	return str[len];
+}
+
 //-----------------------------------------------------------------------------------
 
 char *select_plural_form(char *singular, char *plural, char *type3, char *type4, int number)
@@ -886,6 +896,18 @@ void dump_str_w_caret2(const char *string, int byte_idx_1, int byte_idx_2)
 	strcut__(buf2, STR_BUF_LEN, string, byte_idx_1, byte_idx_2);
 	strcut__(buf3, STR_BUF_LEN, string, byte_idx_2, strlen(string));
 	flf_d_printf("[%s{%s}%s]\n", buf1, buf2, buf3);
+}
+
+char *dump_str(const char *str, char *buf)
+{
+	for (const char *ptr = str; *ptr; ptr++) {
+		if ((*ptr < ' ') || (*ptr == 0x7f)) {
+			strcat_printf(buf, STR_BUF_LEN, "{%02x}", *ptr);
+		} else {
+			strcat_printf(buf, STR_BUF_LEN, "%c", *ptr);
+		}
+	}
+	return buf;
 }
 #endif // ENABLE_DEBUG
 

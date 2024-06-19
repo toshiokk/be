@@ -134,7 +134,6 @@ void make_help_buf(int help_idx)
 	append_magic_line();
 	EPCBVC_CL = CUR_EDIT_BUF_TOP_LINE;
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
-	// renumber
 	post_cmd_processing(EPCBVC_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 

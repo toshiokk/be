@@ -113,6 +113,7 @@ char *quote_string(char *buf, const char *string, char quote_chr);
 char *escape_quote_chr(char *buffer, const char *string, char quote_chr);
 char *unquote_string(char *buffer);
 char is_quoted(const char *str, char quote_chr);
+char tail_char(const char *str);
 
 char *select_plural_form(char *singular, char *plural, char *type3, char *type4, int number);
 int get_plural_form_index(int number);
@@ -122,6 +123,7 @@ int get_plural_form_index(int number);
 #ifdef ENABLE_DEBUG
 void dump_str_w_caret(const char *string, int byte_idx);
 void dump_str_w_caret2(const char *string, int byte_idx_1, int byte_idx_2);
+char *dump_str(const char *str, char *buf);
 #endif // ENABLE_DEBUG
 
 #endif // utilstr_h

@@ -31,9 +31,13 @@ void set_title_bar_color_by_state(int mode1, int mode2, char invert)
 		// Marking text, you see strange color on title bar.
 		set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, invert);
 	} else
-	if (mode2) {
-		// File is modified, you see strange color on title bar.
+	if (mode2 >= 2) {
+		// Current file is modified, you see strange color on title bar.
 		set_color_by_idx(ITEM_COLOR_IDX_WARNING3, invert);
+	} else
+	if (mode2 >= 1) {
+		// More than one file are modified, you see strange color on title bar.
+		set_color_by_idx(ITEM_COLOR_IDX_WARNING4, invert);
 	} else
 	if (geteuid() == 0) {
 		// If you are super user, you see strange color on title bar.
@@ -132,7 +136,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		divisor = get_epc_buf()->buf_lines-1;
 #ifdef ENABLE_FILER
 	} else {
-		dividend = get_cur_filer_view()->cur_sel_idx;
+		dividend = get_cur_fv_file_idx();
 		divisor = get_cur_filer_view()->file_list_entries;
 	}
 #endif // ENABLE_FILER

@@ -57,13 +57,13 @@ PRIVATE int paste_cut_buf_char(void);
 PRIVATE int paste_cut_buf_line(void);
 PRIVATE int paste_cut_buf_rect(void);
 
+#if 0
 int doe_clear_cut_buf(void)
 {
 	free_all_cut_bufs();
 	disp_status_bar_done(_("Cut-buffer cleared"));
 	return 1;
 }
-#if 0
 int doe_pop_cut_buf(void)
 {
 	if (pop_n_free_from_cut_buf() == 0) {

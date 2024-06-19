@@ -82,22 +82,22 @@ PRIVATE int editor_main_loop(void)
 	matches_clear(&matches__);
 #endif // ENABLE_REGEX
 
-	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL_SOON);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 
 	// Main input loop
-	key_input = 0;
+	key_input = K_C_AT;
 	while (1) {
 		editor_quit = EDITOR_NONE;
 		if (key_macro_is_playing_back()) {
 			// When playing back key-macro, do not update screen for speed up.
 		} else {
 			set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
-			update_screen_editor(1, key_input >= 0, 1);
+			update_screen_editor(1, IS_KEY_VALID(key_input), 1);
 		}
 		//----------------------------------
 		key_input = input_key_wait_return();
 		//----------------------------------
-		if (key_input < 0) {
+		if (IS_KEY_VALID(key_input) == 0) {
 			// no key input
 		} else {
 mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
@@ -164,7 +164,9 @@ flf_d_printf("editor_quit: %d\n", editor_quit);
 	if (editor_quit == EDITOR_DONE) {
 		return 0;	// done
 	}
-	return IS_META_KEY(key_input) ? 2 : 1;	// selected
+	return IS_META_KEY(key_input)
+	 ? APPEND_STR_2		// Append input file/dir name
+	 : REPLACE_STR_1;	// input file/dir name
 }
 
 //-----------------------------------------------------------------------------
@@ -208,7 +210,6 @@ PRIVATE int open_file_recursive(int recursive)
 int doe_open_new_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
-
 	int ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_DIR, _("Open new file:"));
 	if (ret < 0) {
 		return 0;
@@ -308,7 +309,7 @@ int doe_reopen_file(void)
 		tio_beep();
 		return 0;
 	}
-	goto_str_line_col_in_cur_buf(NULL);
+	goto_str_line_col_in_cur_buf(file_pos_str);
 #ifdef ENABLE_UNDO
 #ifdef ENABLE_DEBUG
 	// file was reopened, re-memorize undo state.
@@ -321,7 +322,7 @@ int doe_reopen_file(void)
 }
 
 //-----------------------------------------------------------------------------
-//|Func name               |files|close|un-mod|ask Y/N|file-name|Key  |
+//|Func saving function    |files|close|un-mod|ask Y/N|file-name|Key  |
 //|                        |     |     | ified|       |         |     |
 //|------------------------|-----|-----|------|-------|---------|-----|
 //|doe_write_file_to()     | one |no   | Yes  | none  |New-name |@s   |write to new file
@@ -330,7 +331,7 @@ int doe_reopen_file(void)
 //|doe_write_all_ask()     | All |no   | no   | Ask   |cur-name |@a   |
 //|doe_write_all_modified()| All |no   | no   | none  |cur-name |@A   |
 //|doe_close_file_ask()    | one |Close| no   | Ask   |cur-name |^Q   |
-//|doe_close_file_always() | one |Close| no   | none  |cur-name |(@^Q)|
+//|doe_close_file_always() | one |Close| no   | none  |cur-name |@^Q  |
 //|doe_close_all_ask()     | All |Close| no   | Ask   |cur-name |@q   |
 //|doe_close_all_modified()| All |Close| no   | none  |cur-name |@Q   |
 
@@ -364,7 +365,7 @@ int doe_write_file_to(void)
 #endif // ENABLE_FILER
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	disp_status_bar_done(_("Written to the file: %s"), file_name);
-	return 0;
+	return 1;
 }
 int doe_write_file_ask(void)
 {
@@ -866,13 +867,11 @@ int disp_status_bar_editor(void)
 		 byte_idx == 0 ? "%02x" : "-%02x",
 		 (unsigned char)EPCBVC_CL->data[EPCBVC_CLBI + byte_idx]);
 	}
-#ifdef ENABLE_UTF8
 	// show Unicode
 	if (bytes >= 2) {
 		snprintf(&buf_char_code[strnlen(buf_char_code, UTF8_CODE_LEN)], 8+1, "(U+%04x)",
 		 (unsigned int)utf8c_decode(&EPCBVC_CL->data[EPCBVC_CLBI]));
 	}
-#endif // ENABLE_UTF8
 
 	if (IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE))) {
 		snprintf(buf_lines_sel, SEL_LINES_LEN, " LNS:%2d", lines_selected());

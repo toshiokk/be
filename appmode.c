@@ -51,11 +51,6 @@ void set_mode_idx_val(mode_idx_t mode_idx, int val)
 	case APMD_MAP_KEY_7F_BS:
 		SET_APPMD_VAL(app_MAP_KEY_7F_BS, val);
 		break;
-#ifdef ENABLE_UTF8
-	case APMD_UTF8:
-		SET_APPMD_VAL(app_UTF8, val);
-		break;
-#endif // ENABLE_UTF8
 
 	case EDMD_EDITOR_PANES:
 	case EDMD_CONT_VIEW:
@@ -122,10 +117,6 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 		return get_str_key_list_lines();
 	case APMD_MAP_KEY_7F_BS:
 		return get_str_map_key_7f_bs();
-#ifdef ENABLE_UTF8
-	case APMD_UTF8:
-		return get_str_utf8();
-#endif // ENABLE_UTF8
 
 	case EDMD_EDITOR_PANES:
 	case EDMD_CONT_VIEW:
@@ -223,18 +214,6 @@ const char *get_str_regexp(void)
 	return BOOL_TO_ON_OFF(GET_APPMD(ed_USE_REGEXP));
 }
 #endif // ENABLE_REGEX
-
-#ifdef ENABLE_UTF8
-int tog_utf8(void)
-{
-	TOGGLE_APPMD(app_UTF8);
-	return 0;
-}
-const char *get_str_utf8(void)
-{
-	return BOOL_TO_ON_OFF(GET_APPMD(app_UTF8));
-}
-#endif // ENABLE_UTF8
 
 int inc_cursor_positioning(void)
 {
@@ -350,15 +329,14 @@ const char *get_str_show_file_info(void)
 	switch (GET_APPMD(fl_SHOW_FILE_INFO)) {
 	case SHOW_FILE_INFO_0:		return "None";
 	case SHOW_FILE_INFO_1:		return "Siz";
-	case SHOW_FILE_INFO_2:		return "Tim";
-	case SHOW_FILE_INFO_3:		return "Siz+Tim";
-	case SHOW_FILE_INFO_4:		return "SzTmt7777Us";
-	case SHOW_FILE_INFO_5:		return "SzTmRwxUG";
+	case SHOW_FILE_INFO_2:		return "Siz+Tim";
+	case SHOW_FILE_INFO_3:		return "SzTmt7777Us";
+	case SHOW_FILE_INFO_4:		return "SzTmRwxUG";
 	default:	return "";
 	}
 }
 
-int clr_sort_by(void)
+int clear_sort_by(void)
 {
 	CLR_APPMD(fl_FILE_SORT_BY);
 	return 0;
@@ -467,15 +445,6 @@ int doe_tog_regexp(void)
 	return 0;
 }
 #endif // ENABLE_REGEX
-
-#ifdef ENABLE_UTF8
-int doe_tog_utf8(void)
-{
-	tog_utf8();
-	SHOW_MODE("UTF-8", get_str_utf8());
-	return 0;
-}
-#endif // ENABLE_UTF8
 
 int doe_inc_cursor_positioning(void)
 {

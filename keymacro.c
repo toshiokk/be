@@ -48,7 +48,7 @@ int doe_end_rec__playback(void)
 	if (key_macro_is_recording()) {
 		doe_end_recording();
 	} else {
-		doe_playback();
+		doe_playback_last_1();
 	}
 	return 0;
 }
@@ -83,15 +83,6 @@ int doe_end_recording(void)
 
 	editor_disp_title_bar();
 	tio_refresh();
-	return 0;
-}
-int doe_playback(void)
-{
-	if (key_macro_start_playback() == 0) {
-		disp_status_bar_done(_("No key macro recorded"));
-	} else {
-		disp_status_bar_done(_("Start key macro playback"));
-	}
 	return 0;
 }
 int doe_playback_last_1(void)

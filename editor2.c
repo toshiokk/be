@@ -79,7 +79,6 @@ void editor_disp_title_bar(void)
 {
 	int buf_idx;
 	char *path;
-	char separator_char;
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 	char buf_path[MAX_SCRN_LINE_BUF_LEN+1];
 	char buf_status[MAX_SCRN_LINE_BUF_LEN+1];
@@ -96,24 +95,13 @@ void editor_disp_title_bar(void)
 #endif // SHOW_MEM_FREE
 	char buf_time[1+HHCMMCSS_LEN+1];
 
-	buf_idx = get_edit_buf_idx_from_buf(get_epc_buf());
+	buf_idx = get_buf_idx_in_bufs(get_epc_buf(), get_epc_buf());
 	path = get_epc_buf()->file_path;
 
 	tio_set_cursor_on(0);
 
 	//-------------------------------------------------------------------------
-	separator_char = ':';
-	if (is_app_list_mode()) {
-		separator_char = '.';
-	}
-#ifdef ENABLE_DEBUG
-	if (GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF) {
-		separator_char = ';';
-		if (is_app_list_mode()) {
-			separator_char = ',';
-		}
-	}
-#endif // ENABLE_DEBUG
+	char separator_char = indication_of_app_mode();
 	snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%s%d%c%d:%s",
 	 root_notation(),
 	 get_editor_cur_pane_idx()+1, separator_char, buf_idx+1,
@@ -156,17 +144,9 @@ void editor_disp_title_bar(void)
 
 	//-------------------------------------------------------------------------
 #ifdef SHOW_MEM_FREE
-	///if (msec_past_input_key() < 1000) {
-		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s%s", buf_bufs, buf_mem, buf_time);
-	///} else {
-	///	snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_mem, buf_time);
-	///}
+	snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s%s", buf_bufs, buf_mem, buf_time);
 #else // SHOW_MEM_FREE
-	///if (msec_past_input_key() < 1000) {
-		snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_bufs, buf_time);
-	///} else {
-	///	snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s", buf_time);
-	///}
+	snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_bufs, buf_time);
 #endif // SHOW_MEM_FREE
 
 	int path_cols = LIM_MIN(0, main_win_get_columns() - strlen_path(buf_status));
@@ -182,7 +162,8 @@ void editor_disp_title_bar(void)
 PRIVATE void blink_editor_title_bar()
 {
 	set_title_bar_color_by_state(BUF_STATE(get_epc_buf(), buf_CUT_MODE),
-	 CUR_EBUF_STATE(buf_MODIFIED), get_title_bar_inversion());
+	 CUR_EBUF_STATE(buf_MODIFIED) ? 2 : (is_any_edit_buf_modified() ? 1 : 0),
+	 get_title_bar_inversion());
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0, editor_title_bar_buf, -1);
 }
 
@@ -238,7 +219,7 @@ void disp_edit_win(int cur_pane)
 		// file path per pane
 		set_color_by_idx(ITEM_COLOR_IDX_TITLE, cur_pane);
 		sub_win_clear_lines(edit_win_get_path_y(), -1);
-		buf_idx = get_edit_buf_idx_from_buf(get_epc_buf());
+		buf_idx = get_buf_idx_in_bufs(get_epc_buf(), get_epc_buf());
 		snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%d%c%s",
 		 buf_idx+1, ':', get_epc_buf()->file_path);
 		shrink_str(buf_path, sub_win_get_columns(), 2);
@@ -331,8 +312,9 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 #endif // ENABLE_SYNTAX
 	int left_byte_idx = 0, right_byte_idx = 0;
 	int vis_idx;
-	int byte_idx;
+#ifdef ENABLE_REGEX
 	matches_t matches;
+#endif // ENABLE_REGEX
 
 ///flf_d_printf("%d, [%d, %d]\n", yy, byte_idx_1, byte_idx_2);
 ///flf_d_printf("[%s]\n", te_concat_linefeed_buf);
@@ -435,7 +417,7 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 		}
 		if (get_intersection(byte_idx_1, byte_idx_2,
 		 left_byte_idx, right_byte_idx, &left_byte_idx, &right_byte_idx) > 0) {
-			set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 0);
+			set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED3, 0);
 			output_edit_line_text(yy, te_concat_linefeed_buf, left_byte_idx, right_byte_idx);
 		}
 	}
@@ -443,7 +425,7 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 #ifdef HL_SEARCH_OTHER
 	if (search_is_needle_set(&search__) == 1) {
 		// display all text matched in the screen =======================================
-		for (byte_idx = 0; byte_idx < byte_idx_2; ) {
+		for (int byte_idx = 0; byte_idx < byte_idx_2; ) {
 			if (search_str_in_line(&search__, &matches, NULL,
 			 FORWARD_SEARCH, CASE_SENSITIVE, line->data, byte_idx) == 0) {
 				// not found
@@ -849,8 +831,6 @@ PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
 	left_vis_idx = vis_idx_from_byte_idx(raw_code, left_byte_idx);
 	right_vis_idx = vis_idx_from_byte_idx(raw_code, right_byte_idx);
 	bytes = right_vis_idx - left_vis_idx;
-////flf_d_printf("left_x:%d,right_x:%d,left_vis_idx:%d,right_vis_idx:%d,bytes:%d,[%s]\n",
-//// left_x,right_x,left_vis_idx,right_vis_idx,bytes, &vis_code[left_vis_idx]);
 	if (bytes > 0) {	// if (bytes <= 0), no output neccesary
 		sub_win_output_string(edit_win_get_text_y() + yy,
 		 get_edit_win_x_for_text_x(left_x), &vis_code[left_vis_idx], bytes);

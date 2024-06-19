@@ -24,13 +24,12 @@
 #ifdef START_UP_TEST
 void test_utf8c_encode(void)
 {
-	wchar_t wc;
 	char utf8c[MAX_UTF8C_BYTES+1];
 #ifdef ENABLE_DEBUG
 	char buf[DUMP_UTF8_BUF_LEN+1];
 #endif // ENABLE_DEBUG
 
-	for (wc = 0x0000; wc < 0xffff; wc++) {
+	for (wchar_t wc = 0x0000; wc < 0xffff; wc++) {
 		utf8c_encode(wc, utf8c);
 		flf_d_printf("%04x ==> [%s]\n", wc, dump_utf8c(utf8c, buf));
 	}
@@ -103,11 +102,7 @@ int utf8s_columns(const char *utf8s, int bytes)
 
 int utf8c_bytes(const char *utf8s)
 {
-#ifndef ENABLE_UTF8
-	return 1;
-#else // ENABLE_UTF8
 	return my_mblen(utf8s, MAX_UTF8C_BYTES);
-#endif // ENABLE_UTF8
 }
 
 int utf8c_len(char utf8c_state, char utf8c)
@@ -142,9 +137,6 @@ int utf8c_len(char utf8c_state, char utf8c)
 
 int utf8c_prev_bytes(const char *utf8s_min, const char *utf8s)
 {
-#ifndef ENABLE_UTF8
-	return (utf8s_min < utf8s) ? 1 : 0;
-#else // ENABLE_UTF8
 	int bytes;
 	const char *ptr;
 
@@ -158,43 +150,28 @@ int utf8c_prev_bytes(const char *utf8s_min, const char *utf8s)
 ///	if (bytes < 1)
 ///		bytes = 1;
 	return bytes;
-#endif // ENABLE_UTF8
 }
 
 int utf8c_columns(const char *utf8c)
 {
-#ifndef ENABLE_UTF8
-	return *utf8c ? 1 : 0;
-#else // ENABLE_UTF8
 	return my_mbwidth(utf8c, MAX_UTF8C_BYTES);
-#endif // ENABLE_UTF8
 }
 
 wchar_t utf8c_decode(const char *utf8c)
 {
-#ifndef ENABLE_UTF8
-	return utf8c[0];
-#else // ENABLE_UTF8
 	wchar_t wc;
 
 	wc = my_mbtowc(utf8c, MAX_UTF8C_BYTES);
 	return wc;
-#endif // ENABLE_UTF8
 }
 
 int utf8c_encode(wchar_t wc, char *utf8c)
 {
-#ifndef ENABLE_UTF8
-	utf8c[0] = wc;
-	utf8c[1] = '\0';
-	return 1;
-#else // ENABLE_UTF8
 	int bytes;
 
 	bytes = wctomb(utf8c, wc);
 	utf8c[bytes] = '\0';
 	return bytes;
-#endif // ENABLE_UTF8
 }
 
 // End of utf8.c

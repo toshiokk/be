@@ -235,16 +235,18 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			ret = select_from_history_list(hist_type_idx, buffer);
 			//----------------------------------------------------
 			if (ret > 0) {
-				if (ret < 2 || cmp_func_id(func_id, "doe_page_up")) {
+				if (ret < APPEND_STR_2 || cmp_func_id(func_id, "doe_page_up")) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
+				} else {
+					// insert string into buffer without clearing buffer
 				}
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
 				 cursor_byte_idx, buffer);
 			} else
 			if (ret == 0) {
-				key_input = KNA;	// quit
+				key_input = KEY_NONE;	// quit
 			}
 #endif // ENABLE_HISTORY
 #ifdef ENABLE_FILER
@@ -257,10 +259,12 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			//---------------------------------------------------
 flf_d_printf("ret: %d\n", ret);
 			if (ret > 0) {
-				if (ret < 2 || cmp_func_id(func_id, "doe_page_down")) {
+				if (ret < APPEND_STR_2 || cmp_func_id(func_id, "doe_page_down")) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
+				} else {
+					// insert string into buffer without clearing buffer
 				}
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
 				 cursor_byte_idx, buffer);
@@ -290,13 +294,13 @@ flf_d_printf("ret: %d\n", ret);
 				cursor_byte_idx = strlen_path(input_buf);
 			}
 		}
-		if (key_input == K_ESC || key_input == KNA || key_input == K_C_M)
+		if (key_input == K_ESC || key_input == KEY_NONE || key_input == K_C_M)
 			break;
 	}
 
 	if (key_input == K_ESC)
 		return -1;						// cancelled, no input
-	if (key_input == KNA)
+	if (key_input == KEY_NONE)
 		return 0;						// done in editor
 	return 1;							// input
 }

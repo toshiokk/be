@@ -78,6 +78,7 @@ PRIVATE int parse_color_key_list2(void);
 PRIVATE int parse_color_text_normal(void);
 PRIVATE int parse_color_text_selected(void);
 PRIVATE int parse_color_text_selected2(void);
+PRIVATE int parse_color_text_selected3(void);
 PRIVATE int parse_color_warning(void);
 PRIVATE int parse_color_warning2(void);
 PRIVATE int parse_color_warning3(void);
@@ -115,9 +116,6 @@ struct /*_rc_cmd_idx_*/ {
  { "draw_cursor",		APMD_DRAW_CURSOR,		},
  { "key_list_lines",	APMD_KEY_LINES,			},
  { "map_key_7f_bs",		APMD_MAP_KEY_7F_BS,		},
-#ifdef ENABLE_UTF8
- { "utf8",				APMD_UTF8,				},
-#endif // ENABLE_UTF8
 
  { "editor_panes",		EDMD_EDITOR_PANES,		},
  { "dual_scroll",		EDMD_DUAL_SCROLL,		},
@@ -156,6 +154,7 @@ struct /*_rc_cmd_func_*/ {
 	{ "color_text_normal",		parse_color_text_normal,	},
 	{ "color_text_selected",	parse_color_text_selected,	},
 	{ "color_text_selected2",	parse_color_text_selected2,	},
+	{ "color_text_selected3",	parse_color_text_selected3,	},
 	{ "color_warning",			parse_color_warning,		},
 	{ "color_warning2",			parse_color_warning2,		},
 	{ "color_warning3",			parse_color_warning3,		},
@@ -196,7 +195,6 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 	int idx;
 	int val;
 	func_key_table_t *func_key_table;
-#define MAX_KEYS_BOUND	3
 	key_code_t keys[MAX_KEYS_BOUND];
 
 ///#ifdef ENABLE_SYNTAX
@@ -321,6 +319,10 @@ PRIVATE int parse_color_text_selected(void)
 PRIVATE int parse_color_text_selected2(void)
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_TEXT_SELECTED2);
+}
+PRIVATE int parse_color_text_selected3(void)
+{
+	return parse_bgc_fgc_register(ITEM_COLOR_IDX_TEXT_SELECTED3);
 }
 PRIVATE int parse_color_warning(void)
 {
@@ -622,9 +624,7 @@ int register_default_color_syntax(void)
 
 	add_file_type("*", ".*");
 	cur_file_type->tab_size = DEFAULT_TAB_SIZE;	// set default tab size
-#if defined(ENABLE_UTF8)
 	add_color_syntax(UTF8_ZEN_SPACE, "", -1, CL_TAB_EOL);	// Full width space
-#endif // ENABLE_UTF8
 	add_color_syntax("[\\t]", "", -1, CL_TAB_EOL);		// TAB
 	add_color_syntax("[\\n]", "", -1, CL_TAB_EOL);		// EOL(End of line)
 	default_color_syntax = cur_file_type;	// memorize this color syntax

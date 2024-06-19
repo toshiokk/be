@@ -36,14 +36,15 @@ typedef struct {
 
 typedef struct {
 	char cur_dir[MAX_PATH_LEN+1];		// current directory
-	char cur_filter[MAX_PATH_LEN+1];	// file name or file filter
-	char listed_dir[MAX_PATH_LEN+1];	// directory file list gotten
+	char listed_dir[MAX_PATH_LEN+1];	// directory from which file list gotten
 	int file_list_entries;
-	file_info_t *file_list;
-	int cur_sel_idx;
-	int top_idx;
+	file_info_t *file_list_ptr;
+	int prev_file_idx;
+	int cur_file_idx;
+	int top_file_idx;
 	char prev_dir[MAX_PATH_LEN+1];		// previous current directory
 	char next_file[MAX_PATH_LEN+1];		// next file to be selected after changing dir
+										//  or after updating file list
 } filer_view_t;
 
 int get_file_type_num(file_info_t *info);
@@ -63,10 +64,10 @@ int get_files_selected(filer_view_t *fv);
 int select_and_get_first_file_idx_selected(void);
 int select_file_if_none_selected(void);
 int get_first_file_idx_selected(void);
-int get_next_file_idx_selected(int start_file_idx);
+int get_next_file_idx_selected(int file_idx);
 void unselect_all_files_auto(char selection_bit);
 
-int research_file_name_in_file_list(filer_view_t *fv);
+int research_file_name_in_file_list(filer_view_t *fv, const char *file_name);
 int search_file_name_in_file_list(filer_view_t *fv, const char *file_name);
 
 #endif // ENABLE_FILER

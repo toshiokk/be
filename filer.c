@@ -34,8 +34,8 @@ PRIVATE int get_other_filer_pane_idx(int filer_pane_idx);
 
 PRIVATE int filer_main_loop(const char *dir, const char *filter, char *path_buf, int buf_len);
 PRIVATE int check_filer_cur_dir(void);
-PRIVATE int update_all_file_list(const char *filter, int force_update);
-PRIVATE int update_file_list(filer_view_t *fv, const char *filter, int force_update);
+PRIVATE int update_file_list_of_all_panes(const char *filter, int update_request);
+PRIVATE int update_file_list(filer_view_t *fv, const char *filter, int update_request);
 
 PRIVATE void filer_disp_title_bar(const char *path,
  int cur_idx, int files_selected, int files_total);
@@ -63,8 +63,8 @@ filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps)
 		// set initial value
 		init_filer_view(&next_fps->filer_views[filer_pane_idx],
 		 prev_fps->filer_views[filer_pane_idx].cur_dir);
-		next_fps->filer_views[filer_pane_idx].cur_sel_idx = 
-		 prev_fps->filer_views[filer_pane_idx].cur_sel_idx;
+		next_fps->filer_views[filer_pane_idx].cur_file_idx = 
+		 prev_fps->filer_views[filer_pane_idx].cur_file_idx;
 	}
 	return prev_fps;
 }
@@ -93,12 +93,12 @@ PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir)
 {
 	memset(fv, 0x00, sizeof(*fv));
 	strlcpy__(fv->cur_dir, cur_dir, MAX_PATH_LEN);
-	strcpy__(fv->cur_filter, "");
 	strcpy__(fv->listed_dir, "");
 	fv->file_list_entries = 0;
-	fv->file_list = NULL;
-	fv->cur_sel_idx = -1;
-	fv->top_idx = 0;
+	fv->file_list_ptr = NULL;
+	fv->prev_file_idx = 0;
+	fv->cur_file_idx = -1;
+	fv->top_file_idx = 0;
 	strcpy__(fv->prev_dir, "");
 	strcpy__(fv->next_file, "");
 }
@@ -113,7 +113,6 @@ filer_view_t *get_cur_filer_view(void)
 {
 	return &cur_filer_panes->filer_views[get_filer_cur_pane_idx()];
 }
-
 filer_view_t *get_other_filer_view(void)
 {
 	return &cur_filer_panes->filer_views[get_other_filer_pane_idx(get_filer_cur_pane_idx())];
@@ -122,6 +121,19 @@ PRIVATE int get_other_filer_pane_idx(int filer_pane_idx)
 {
 	return filer_pane_idx == 0 ? 1 : 0;
 }
+file_info_t *get_cur_fv_file_list_ptr()
+{
+	return get_cur_filer_view()->file_list_ptr;
+}
+int get_cur_fv_file_idx()
+{
+	return get_cur_filer_view()->cur_file_idx;
+}
+void set_cur_fv_file_idx(int file_idx)
+{
+	get_cur_filer_view()->cur_file_idx = file_idx;
+}
+
 
 //-----------------------------------------------------------------------------
 
@@ -189,7 +201,6 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 		strlcpy__(get_cur_filer_view()->cur_dir, dir, MAX_PATH_LEN);
 	}
 
-
 	while (1) {
 		func_key_table_t *func_key_table;
 
@@ -201,16 +212,12 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 			strlcpy__(prev_cur_dir, get_cur_filer_view()->cur_dir, MAX_PATH_LEN);
 		}
 #endif // ENABLE_HISTORY
-		if (filer_do_next >= FILER_DO_UPDATE_FILE_LIST_AUTO) {
-			update_all_file_list(filter, filer_do_next == FILER_DO_UPDATE_FILE_LIST_FORCE
-			 ? 2
-			 : (filer_do_next == FILER_DO_UPDATE_FILE_LIST_AUTO ? 1 : 0));
-		}
-		update_screen_filer(1, key_input >= 0, 1);
+		update_file_list_of_all_panes(filter, filer_do_next);
+		update_screen_filer(1, IS_KEY_VALID(key_input), 1);
 		//----------------------------------
 		key_input = input_key_wait_return();
 		//----------------------------------
-		if (key_input >= 0) {
+		if (IS_KEY_VALID(key_input)) {
 			// some key input
 mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
  '_', key_input, short_key_name_from_key_code(key_input, NULL));
@@ -259,7 +266,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 				filer_do_next = FILER_DO_UPDATE_FILE_LIST_AUTO;
 			} else {
 				strlcpy__(get_cur_filer_view()->next_file,
-				 get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx].file_name,
+				 get_cur_fv_file_list_ptr()[get_cur_fv_file_idx()].file_name,
 				  MAX_PATH_LEN);
 				if (is_app_list_mode()) {
 					switch (func_key_table->list_mode) {
@@ -315,13 +322,13 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 			if (filer_do_next == FILER_DO_ENTER_FILE_NAME) {
 				// file-1 "file name 2" "file name 3"
 				concat_file_name_separating_by_space(path_buf, buf_len,
-				 get_cur_filer_view()->file_list[file_idx].file_name);
-			} else {
+				 get_cur_fv_file_list_ptr()[file_idx].file_name);
+			} else /* if (filer_do_next == FILER_DO_ENTER_FILE_PATH) */ {
 				// /dir/to/file-path-1 "/dir/to/file path 2" "/dir/to/file path 3"
 				char path[MAX_PATH_LEN];
 				cat_dir_and_file(path,
 				 get_cur_filer_view()->cur_dir,
-				 get_cur_filer_view()->file_list[file_idx].file_name);
+				 get_cur_fv_file_list_ptr()[file_idx].file_name);
 				concat_file_name_separating_by_space(path_buf, buf_len, path);
 			}
 		}
@@ -331,8 +338,8 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 	}
 flf_d_printf("[%s]\n", path_buf);
 	return IS_META_KEY(key_input)
-	 ? 2	// Append input file/dir name
-	 : 1;	// input file/dir name
+	 ? APPEND_STR_2		// Append input file/dir name
+	 : REPLACE_STR_1;	// input file/dir name
 }
 
 PRIVATE int check_filer_cur_dir(void)
@@ -353,28 +360,39 @@ PRIVATE int check_filer_cur_dir(void)
 	return 0;
 }
 
-PRIVATE int update_all_file_list(const char *filter, int force_update)
+PRIVATE int update_file_list_of_all_panes(const char *filter, int update_request)
 {
 	if (GET_APPMD(fl_FILER_PANES) == 0) {
-		update_file_list(get_cur_filer_view(), filter, force_update);
+		update_file_list(get_cur_filer_view(), filter, update_request);
 	} else {
-		update_file_list(get_filer_view(0), filter, force_update);
-		update_file_list(get_filer_view(1), filter, force_update);
+		update_file_list(get_filer_view(0), filter, update_request);
+		update_file_list(get_filer_view(1), filter, update_request);
 	}
 	return 0;
 }
-PRIVATE int update_file_list(filer_view_t *fv, const char *filter, int force_update)
+// the occasions file list to be updated
+//  - the first time a filer displays file list
+//  - command requests updating file list (force update or after changing current directory)
+//  - periodic update of file list
+// the occasion file list update stopped
+//  - when some files are selected (for file processing e.g. copy, move, delete, ...)
+PRIVATE int update_file_list(filer_view_t *fv, const char *filter, int update_request)
 {
 	int files = 0;
 
-	if (get_cur_filer_view()->file_list == NULL
-	 || strcmp(fv->listed_dir, fv->cur_dir) != 0
-	 || (force_update == 1 && get_files_selected(fv) == 0)
-	 || force_update >= 2) {
+	fv->prev_file_idx = fv->cur_file_idx;
+	if ((fv->file_list_ptr == NULL)
+	 || (strcmp(fv->listed_dir, fv->cur_dir) != 0)
+	 || ((update_request == FILER_DO_UPDATE_FILE_LIST_AUTO) && (get_files_selected(fv) == 0))
+	 || (update_request == FILER_DO_UPDATE_FILE_LIST_FORCE)) {
+		if ((update_request < FILER_DO_UPDATE_FILE_LIST_FORCE) && (fv->file_list_ptr != NULL)) {
+			strlcpy__(fv->next_file, fv->file_list_ptr[fv->cur_file_idx].file_name, MAX_PATH_LEN);
+		} else {
+			// 'fv->next_file' has set by the requester
+		}
 		files = make_file_list(fv, filter);
-		strcpy__(fv->listed_dir, fv->cur_dir);
 		sort_file_list(fv);
-		research_file_name_in_file_list(fv);
+		research_file_name_in_file_list(fv, fv->next_file);
 	}
 	return files;
 }
@@ -391,7 +409,7 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 
 	// title bar
 	filer_disp_title_bar(filer_cur_path,
-	 get_cur_filer_view()->cur_sel_idx, files_selected, get_cur_filer_view()->file_list_entries);
+	 get_cur_fv_file_idx(), files_selected, get_cur_filer_view()->file_list_entries);
 
 	if (GET_APPMD(fl_FILER_PANES) == 0) {		// 1 pane
 		win_select_win(WIN_IDX_SUB_WHOLE);
@@ -418,7 +436,7 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 	if (status_bar) {
 		// status bar
 		disp_status_bar_percent_filer(
-		 "%s", file_info_str(&(get_cur_filer_view()->file_list[get_cur_filer_view()->cur_sel_idx]),
+		 "%s", file_info_str(&(get_cur_fv_file_list_ptr()[get_cur_fv_file_idx()]),
 		 0, 1, 0));
 		// key list
 		disp_key_list_filer();
@@ -426,8 +444,7 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 
 	// Set cursor position
 	sub_win_set_cursor_pos(filer_win_get_file_list_y()
-	 + get_cur_filer_view()->cur_sel_idx
-	 - get_cur_filer_view()->top_idx, 0);
+	 + get_cur_fv_file_idx() - get_cur_filer_view()->top_file_idx, 0);
 
 	if (refresh) {
 		tio_refresh();
@@ -441,7 +458,6 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 PRIVATE void filer_disp_title_bar(const char *path,
  int cur_idx, int files_selected, int files_total)
 {
-	char separator_char;
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 	char buf_dir_path[MAX_PATH_LEN+1];
 	char buf_files[MAX_SCRN_LINE_BUF_LEN+1];
@@ -452,18 +468,7 @@ PRIVATE void filer_disp_title_bar(const char *path,
 	 tio_blank_line(), main_win_get_columns());
 
 	//-------------------------------------------------------------------------
-	separator_char = ':';
-	if (is_app_list_mode()) {
-		separator_char = '.';
-	}
-#ifdef ENABLE_DEBUG
-	if (GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF) {
-		separator_char = ';';
-		if (is_app_list_mode()) {
-			separator_char = ',';
-		}
-	}
-#endif // ENABLE_DEBUG
+	char separator_char = indication_of_app_mode();
 	if ((get_win_depth() == 0) && (strcmp(path, get_home_dir()) == 0)) {
 		snprintf_(buf_dir_path, MAX_SCRN_LINE_BUF_LEN, "%s%d%c  [%s]  %s",
 		 root_notation(),
@@ -478,17 +483,13 @@ PRIVATE void filer_disp_title_bar(const char *path,
 	// current date / time
 	snprintf_(buf_time, 1+HHCMMCSS_YY_MM_DD_LEN+1, " %s",
 	 cur_ctime_cdate(msec_past_input_key() < 1000));
-	///if (msec_past_input_key() < 1000 || files_selected) {
-		if (files_selected == 0) {
-			snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, " %d %c%s",
-			 files_total, *get_str_sort_by(), buf_time);
-		} else {
-			snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, " %d %c%s",
-			 files_selected, *get_str_sort_by(), buf_time);
-		}
-	///} else {
-	///	snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, "%s", buf_time);
-	///}
+	if (files_selected == 0) {
+		snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, " %d %c%s",
+		 files_total, *get_str_sort_by(), buf_time);
+	} else {
+		snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, " %d %c%s",
+		 files_selected, *get_str_sort_by(), buf_time);
+	}
 	int path_cols = LIM_MIN(0, main_win_get_columns() - strlen_path(buf_files));
 	shrink_str__adjust_col(buf_dir_path, path_cols, 2);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_dir_path, buf_files);
@@ -496,22 +497,17 @@ PRIVATE void filer_disp_title_bar(const char *path,
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0, buffer, -1);
 }
 
+PRIVATE void adjust_top_file_idx(filer_view_t *fv)
+{
+	// keep row position of current file as same as possible
+	int disp_line_idx_to_keep = MIN_MAX_(FILER_VERT_SCROLL_MARGIN_LINES,
+	 fv->prev_file_idx - fv->top_file_idx,
+	 filer_win_get_file_list_lines() - FILER_VERT_SCROLL_MARGIN_LINES);
+	fv->top_file_idx = MIN_MAX_(0, fv->cur_file_idx - disp_line_idx_to_keep, fv->file_list_entries-1);
+}
 PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 {
-	int cur_sel_idx;
-	int bottom_idx;
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
-
-	cur_sel_idx = fv->cur_sel_idx;
-	if (cur_sel_idx < fv->top_idx + FILER_VERT_SCROLL_MARGIN_LINES) {
-		fv->top_idx = LIM_MIN(0, cur_sel_idx - FILER_VERT_SCROLL_MARGIN_LINES);
-	}
-	bottom_idx = fv->top_idx + (filer_win_get_file_list_lines()-1);
-	if (bottom_idx - FILER_VERT_SCROLL_MARGIN_LINES < cur_sel_idx) {
-		bottom_idx = LIM_MAX(fv->file_list_entries-1,
-		 cur_sel_idx) + FILER_VERT_SCROLL_MARGIN_LINES;
-		fv->top_idx = LIM_MIN(0, bottom_idx - (filer_win_get_file_list_lines()-1));
-	}
 
 	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 	sub_win_clear_screen();
@@ -524,30 +520,35 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 		sub_win_output_string(filer_win_get_file_path_y(), 0, buffer, -1);
 	}
 
-	int file_idx = fv->top_idx;
+	adjust_top_file_idx(fv);
+	int file_idx = fv->top_file_idx;
+	int cur_file_idx = fv->cur_file_idx;
+
 	for (int line_idx = 0;
 	 line_idx < filer_win_get_file_list_lines() && file_idx < fv->file_list_entries;
 	 line_idx++, file_idx++) {
 		// Highlight the currently selected file/dir.
-		char *ptr = file_info_str(&(fv->file_list[file_idx]),
-		 1, file_idx != cur_sel_idx, fv->file_list[file_idx].selected);
+		char *ptr = file_info_str(&(fv->file_list_ptr[file_idx]),
+		 1, file_idx != cur_file_idx, fv->file_list_ptr[file_idx].selected);
 		adjust_utf8s_columns(ptr, main_win_get_columns());
-		if (fv->file_list[file_idx].selected) {
-			set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 0);
-		} else {
+		if (cur_pane && (file_idx == cur_file_idx)) {
 			set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
-		}
-		if (cur_pane && (file_idx == cur_sel_idx)) {
 			tio_set_attr_rev(1);		// display current line inverted
+		} else {
+			if (fv->file_list_ptr[file_idx].selected) {
+				set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 0);
+			} else {
+				set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
+			}
 		}
 		sub_win_output_string(filer_win_get_file_list_y() + line_idx, 0, ptr, -1);
-		if (cur_pane && (file_idx == cur_sel_idx)) {
+		if (cur_pane && (file_idx == cur_file_idx)) {
 			tio_set_attr_rev(0);
 		}
 	}
 	if (cur_pane) {
 		// Set cursor position
-		sub_win_set_cursor_pos(filer_win_get_file_list_y() + cur_sel_idx - fv->top_idx, 0);
+		sub_win_set_cursor_pos(filer_win_get_file_list_y() + cur_file_idx - fv->top_file_idx, 0);
 	}
 	return 0;
 }

@@ -268,15 +268,13 @@ save_history_2:;
 
 PRIVATE int load_history_idx(int hist_type_idx)
 {
-	const char *file_path;
 	FILE *fp;
 	int lines;
-	char str[MAX_EDIT_LINE_LEN+1];
 	int error = 0;
 
 	if (GET_APPMD(app_HISTORY) == 0)
 		return 0;
-	file_path = get_history_file_path(hist_type_idx);
+	const char *file_path = get_history_file_path(hist_type_idx);
 flf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, file_path);
 	clear_history(hist_type_idx);
 
@@ -286,6 +284,7 @@ flf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, file_path);
 			 file_path, strerror(errno));
 		}
 	} else {
+		char str[MAX_EDIT_LINE_LEN+1];
 		// count total lines
 		for (lines = 0; fgets(str, MAX_EDIT_LINE_LEN, fp) != NULL; ) {
 			// count lines
@@ -478,9 +477,9 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 	be_buf_t *edit_buf_save = get_epc_buf();
 	set_epc_buf(get_history_buf(hist_type_idx));
 
-	EPCBVC_CL = CUR_EDIT_BUF_BOT_LINE;
-	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
-	 UPDATE_SCRN_ALL_SOON);
+/////	EPCBVC_CL = CUR_EDIT_BUF_BOT_LINE;
+/////	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
+/////	 UPDATE_SCRN_ALL_SOON);
 
 	int ret = call_editor(1, 1);
 
@@ -503,12 +502,10 @@ void dump_history_ix(int hist_type_idx)
 }
 void dump_hist_bufs(void)
 {
-///	buf_dump_bufs(HIST_BUFS_TOP_ANCH);
 	buf_dump_bufs(HIST_BUFS_TOP_BUF);
 }
 void dump_hist_bufs_lines(void)
 {
-///	buf_dump_bufs_lines(HIST_BUFS_TOP_ANCH, "hist-bufs");
 	buf_dump_bufs_lines(HIST_BUFS_TOP_BUF, "hist-bufs");
 }
 #endif // ENABLE_DEBUG

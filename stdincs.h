@@ -37,12 +37,10 @@
 #include <assert.h>
 #include <fnmatch.h>
 
-#ifdef ENABLE_UTF8
 #ifndef __USE_XOPEN
 #define __USE_XOPEN
 #endif // __USE_XOPEN
 #include <wchar.h>		// wcwidth()
-#endif // ENABLE_UTF8
 
 #ifdef HAVE_TERMIOS_H
 #include <termios.h>
@@ -85,7 +83,6 @@
 
 #endif // ENABLE_REGEX
 
-
 #ifdef ENABLE_NLS
 #  ifdef HAVE_LIBINTL_H
 #    include <libintl.h>
@@ -97,7 +94,6 @@
 
 #define P_(singular, plural, type3, type4, number)	\
  select_plural_form(singular, plural, type3, type4, number)
-
 
 #ifndef BOOL
 #define BOOL	unsigned char

@@ -1,7 +1,7 @@
 BE-EDITOR 0.500 2006.9.30
 - General:
 	- First release.
-	- Simple text editor delived from nano 1.2.2
+	- Simple text editor derived from nano 1.2.2
 	- Include simple file manager (filer).
 	- Support UTF8 terminal.
 	- Support Kanji code auto conversion from UTF8, EUCJP, SJIS and JIS.

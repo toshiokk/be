@@ -137,7 +137,7 @@ app_menu_n_up_down:;
 			break;
 		case K_ESC:
 		case K_M_ESC:
-			key_input = -1;
+			key_input = KEY_NONE;
 			again_ret = 2;
 			break;
 		default:
@@ -153,11 +153,14 @@ app_menu_n_up_down:;
 		goto app_menu_n_again;
 
 #ifndef ENABLE_FILER
-	if (count_edit_bufs())
-#else // ENABLE_FILER
-	if (count_edit_bufs() || GET_APPMD(app_EDITOR_FILER))
-#endif // ENABLE_FILER
+	if (count_edit_bufs()) {
 		update_screen_app(1, 1, 1);
+	}
+#else // ENABLE_FILER
+	if (count_edit_bufs() || GET_APPMD(app_EDITOR_FILER)) {
+		update_screen_app(1, 1, 1);
+	}
+#endif // ENABLE_FILER
 
 	tio_set_cursor_on(1);
 	*group_idx_ = group_idx;
@@ -834,7 +837,7 @@ const char *key_name_from_key_code(key_code_t key_code, char *buf)
 		} else {
 			snprintf(buf, MAX_KEY_NAME_LEN+1, "%04x", key_code);
 		}
-	} else if (key_code == KNA) {
+	} else if (key_code == KEY_NONE) {
 		snprintf(buf, MAX_KEY_NAME_LEN+1, "---");
 	} else {
 		snprintf(buf, MAX_KEY_NAME_LEN+1, "%04x", key_code);
@@ -887,5 +890,100 @@ int get_key_name_table_entries(void)
 {
 	return ARRAY_SIZE_OF(key_name_table);
 }
+
+//-----------------------------------------------------------------------------
+#ifdef ENABLE_DEBUG
+
+PRIVATE int check_all_functions_accessible_without_function_key_(func_key_table_t *key_table);
+int check_all_functions_accessible_without_function_key()
+{
+flf_d_printf("-------------------------\n");
+	int err = check_all_functions_accessible_without_function_key_(editor_func_key_table);
+#ifdef ENABLE_FILER
+	err += check_all_functions_accessible_without_function_key_(filer_func_key_table);
+#endif // ENABLE_FILER
+	return err;
+}
+PRIVATE int check_all_functions_accessible_without_function_key_(func_key_table_t *key_table)
+{
+	for (int func_idx = 0; key_table[func_idx].help[0]; func_idx++) {
+		int accessible = 0;
+		int accessible_without_fkey = 0;
+		for (int key_idx = 0; key_idx < MAX_KEYS_BOUND; key_idx++) {
+			key_code_t key;
+#define ACCESSIBLE_WITHOUT_FKEY(key)	(IS_ONE_BYTE_KEY(key) || IS_META_KEY(key))
+			switch (key_idx) {
+			case 0:
+				key = key_table[func_idx].key1;	break;
+			case 1:
+				key = key_table[func_idx].key2;	break;
+			case 2:
+				key = key_table[func_idx].key3;	break;
+			}
+			if (IS_KEY_VALID(key)) {
+				accessible++;
+			}
+			if (ACCESSIBLE_WITHOUT_FKEY(key)) {
+				accessible_without_fkey++;
+			}
+		}
+		if (accessible && (accessible_without_fkey == 0)) {
+			warning_printf("func:[%s] is not accessible without Func-key\n",
+			 key_table[func_idx].desc);
+		}
+	}
+	return 0;
+}
+
+PRIVATE int check_duplicate_assinment_of_key_(func_key_table_t *key_table);
+int check_duplicate_assinment_of_key()
+{
+flf_d_printf("-------------------------\n");
+	int err = check_duplicate_assinment_of_key_(editor_func_key_table);
+#ifdef ENABLE_FILER
+	err += check_duplicate_assinment_of_key_(filer_func_key_table);
+#endif // ENABLE_FILER
+	return err;
+}
+
+PRIVATE int check_duplicate_assinment_of_key_(func_key_table_t *key_table)
+{
+	for (int func_idx = 0; key_table[func_idx].help[0]; func_idx++) {
+		for (int key_idx = 0; key_idx < MAX_KEYS_BOUND; key_idx++) {
+			key_code_t key;
+			switch (key_idx) {
+			case 0:
+				key = key_table[func_idx].key1;	break;
+			case 1:
+				key = key_table[func_idx].key2;	break;
+			case 2:
+				key = key_table[func_idx].key3;	break;
+			}
+			if (key == KEY_NONE) {
+				continue;
+			}
+			for (int func_idx2 = func_idx + 1; key_table[func_idx2].help[0] ; func_idx2++) {
+				for (int key_idx2 = 0; key_idx2 < MAX_KEYS_BOUND; key_idx2++) {
+					key_code_t key2;
+					switch (key_idx2) {
+					case 0:
+						key2 = key_table[func_idx2].key1;	break;
+					case 1:
+						key2 = key_table[func_idx2].key2;	break;
+					case 2:
+						key2 = key_table[func_idx2].key3;	break;
+					}
+					if (key2 == key) {
+						warning_printf("key: %04x assigned more than once in func:[%s] and [%s]\n",
+						 key, key_table[func_idx].desc, key_table[func_idx2].desc);
+					}
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+#endif // ENABLE_DEBUG
 
 // End of keys.c

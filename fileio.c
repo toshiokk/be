@@ -30,21 +30,22 @@ PRIVATE char *make_backup_file_path(const char *orig_path, char *backup_path, in
 
 PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int msg_on_err);
 PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file, int msg_on_err);
-PRIVATE int load_file_into_cur_buf_ascii(const char *file_name);
-PRIVATE int load_file_into_cur_buf_binary(const char *full_path);
+
 #ifdef USE_NKF
 PRIVATE int guess_encoding_by_nkf(const char *full_path);
 PRIVATE int my_guess_bin_file(const char *full_path);
 PRIVATE int load_file_into_cur_buf_nkf(const char *full_path, const char *nkf_options);
 #endif // USE_NKF
+PRIVATE int load_file_into_cur_buf_ascii(const char *file_name);
+PRIVATE int load_file_into_cur_buf_binary(const char *full_path);
 PRIVATE int load_into_cur_buf_fp(FILE *fp);
 
-PRIVATE int save_cur_buf_to_file_ascii(const char *file_path);
 #ifdef USE_NKF
 PRIVATE int save_cur_buf_to_file_nkf(const char *file_path, const char *nkf_options);
 #endif // USE_NKF
-PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp);
+PRIVATE int save_cur_buf_to_file_ascii(const char *file_path);
 PRIVATE int save_cur_buf_to_file_binary(const char *file_path);
+PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp);
 
 int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_err)
 {
@@ -338,7 +339,19 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file
 		}
 	} // if (GET_APPMD(ed_USE_NKF))
 #endif // USE_NKF
-	return load_file_into_cur_buf_ascii(full_path);
+	switch (CUR_EBUF_STATE(buf_ENCODE)) {
+	default:
+	case ENCODE_ASCII:
+	case ENCODE_UTF8:
+#ifdef USE_NKF
+	case ENCODE_EUCJP:
+	case ENCODE_SJIS:
+	case ENCODE_JIS:
+#endif // USE_NKF
+		return load_file_into_cur_buf_ascii(full_path);
+	case ENCODE_BINARY:
+		return load_file_into_cur_buf_binary(full_path);
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -398,7 +411,19 @@ int save_cur_buf_to_file(const char *file_path)
 		}
 	}
 #endif // USE_NKF
-	return save_cur_buf_to_file_ascii(file_path);
+	switch (CUR_EBUF_STATE(buf_ENCODE)) {
+	default:
+	case ENCODE_ASCII:
+	case ENCODE_UTF8:
+#ifdef USE_NKF
+	case ENCODE_EUCJP:
+	case ENCODE_SJIS:
+	case ENCODE_JIS:
+#endif // USE_NKF
+		return save_cur_buf_to_file_ascii(file_path);
+	case ENCODE_BINARY:
+		return save_cur_buf_to_file_binary(file_path);
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -803,7 +828,7 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 }
 
 //-----------------------------------------------------------------------------
-PRIVATE int files_loaded = -1;	// -1: no file switched/loaded, 0: reloaded, 1: loaded
+PRIVATE int files_loaded = -1;	// -1: no file switched/loaded, 0: switched, 1: loaded
 void clear_files_loaded(void)
 {
 	files_loaded = -1;

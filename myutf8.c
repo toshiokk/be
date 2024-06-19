@@ -3,99 +3,88 @@
  *****************************************************************************/
 
 #include "utilincs.h"
-
-#ifdef ENABLE_UTF8
-#define WIDE_CHARS		(20 + 12 + 14 + 1)
-const char *my_wide_utf8c[WIDE_CHARS] = {
- "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩",
- "⑪", "⑫", "⑬", "⑭", "⑮", "⑯", "⑰", "⑱", "⑲", "⑳",
- "■", "□", "◆", "◇", "○", "◎", "●", "★", "☆", "☐", "☑", "☒",
- "", "", "", "", "", "", "", "", "", "", "", "", "", "",
- "" };
-PRIVATE wchar_t my_wide_wchar[WIDE_CHARS] = { 0 };
-#endif // ENABLE_UTF8
+#include "tio.h"
+#include "termif.h"
 
 PRIVATE int my_mbtowc__(wchar_t *pwc, const char *utf8c, int max_len);
 
-#ifdef ENABLE_UTF8
-#ifdef ENABLE_DEBUG
-void test_my_mbwidth(void)
-{
-	int chr_idx;
-
-	for (chr_idx = 0; *my_wide_utf8c[chr_idx]; chr_idx++) {
-		flf_d_printf("[%s]: %d\n", my_wide_utf8c[chr_idx],
-		 my_mbwidth(my_wide_utf8c[chr_idx], MAX_UTF8C_BYTES));
-		flf_d_printf("[%s]: %04x\n", my_wide_utf8c[chr_idx],
-		 my_mbtowc(my_wide_utf8c[chr_idx], MAX_UTF8C_BYTES));
-	}
-}
-#endif // ENABLE_DEBUG
-PRIVATE int make_my_wcwidth_table(void)
-{
-	int chr_idx;
-
-	if (my_wide_wchar[0])
-		return 0;	// already made
-	for (chr_idx = 0; *my_wide_utf8c[chr_idx]; chr_idx++) {
-		my_wide_wchar[chr_idx] = my_mbtowc(my_wide_utf8c[chr_idx], MAX_UTF8C_BYTES);
-	}
-	return 1;
-}
-#endif // ENABLE_UTF8
 int my_mbwidth(const char *utf8c, int max_len)
 {
-#ifndef VAGUE_WIDE_CHR
+#ifndef VAGUE_WIDTH_CHAR
 	return my_wcwidth(my_mbtowc(utf8c, max_len));
-#else // VAGUE_WIDE_CHR
+#else // VAGUE_WIDTH_CHAR
 	wchar_t wc = my_mbtowc(utf8c, max_len);
-	return is_vague_wide_chr(wc) ? 2 : my_wcwidth(wc);
-#endif // VAGUE_WIDE_CHR
+	return my_wcwidth(wc);
+#endif // VAGUE_WIDTH_CHAR
 }
 int my_wcwidth(wchar_t wc)
 {
-#ifndef ENABLE_UTF8
-	return 1;
-#else // ENABLE_UTF8
-	int chr_idx;
 	int columns;
 
-	make_my_wcwidth_table();
-	for (chr_idx = 0; *my_wide_utf8c[chr_idx]; chr_idx++) {
-		if (my_wide_wchar[chr_idx] == wc)
-			return 2;
+#ifdef ON_DEMAND_WCWIDTH
+	if (is_vague_width_chr(wc)) {
+		columns = get_wcwidth_cache(wc);
+		if (columns) {
+			return columns;
+		}
 	}
+#endif // ON_DEMAND_WCWIDTH
 	columns = wcwidth(wc);
 	if (columns < 1)
 		columns = 1;		// narrow char.
 	return columns;
-#endif // ENABLE_UTF8
 }
 
-#ifdef VAGUE_WIDE_CHR
-int is_vague_wide_chr(wchar_t wc)
+#ifdef VAGUE_WIDTH_CHAR
+#ifdef ON_DEMAND_WCWIDTH
+int is_vague_width_chr(wchar_t wc)
 {
 	return 0
-	// WIDE_CHAR_LIST
+	// VAGUE_WIDTH_CHAR_LIST
+	 || (0x02c0 <= wc && wc < 0x03a0)
 	 || (0x2000 <= wc && wc < 0x2800)
-	 || (0x2900 <= wc && wc < 0x33e0)
+	 || (0x2900 <= wc && wc < 0x2e80)
+	 || (0x2fc0 <= wc && wc < 0x3400)
 	 || (0xa000 <= wc && wc < 0xac00)
 	 || (0xe000 <= wc && wc < 0xf900)
 	;
 }
-#endif // VAGUE_WIDE_CHR
+// -1: not investigated yet
+//  0: investigation failed
+//  1: narrow character
+//  2: wide character
+char wcwidth_cache[65536] = { 0 };	// 0x0000 -- 0xffff
+void clear_wcwidth_cache()
+{
+	if (wcwidth_cache[0] == 0) {
+		memset(wcwidth_cache, -1, sizeof(wcwidth_cache));
+	}
+}
+char get_wcwidth_cache(wchar_t wc)
+{
+	clear_wcwidth_cache();
+	wc = MIN_MAX_(0, wc, 65535);
+	if (wcwidth_cache[wc] < 0) {
+		char width = investigate_wcwidth(wc);
+		if (width < 0) {
+			width = 0;
+		}
+		wcwidth_cache[wc] = width;
+	}
+	return wcwidth_cache[wc];	// 0, 1, 2
+}
+#endif // ON_DEMAND_WCWIDTH
+#endif // VAGUE_WIDTH_CHAR
 
 // UTF8 character byte length
 int my_mblen(const char *utf8c, int max_len)
 {
 	wchar_t wc;
-
 	return my_mbtowc__(&wc, utf8c, max_len);
 }
 int my_mbtowc(const char *utf8c, int max_len)
 {
 	wchar_t wc;
-
 	my_mbtowc__(&wc, utf8c, max_len);
 	return wc;
 }
@@ -104,7 +93,6 @@ PRIVATE int my_mbtowc__(wchar_t *pwc, const char *utf8c, int max_len)
 {
 	wchar_t wc = 0;
 	int len = 1;
-	int idx;
 
 	if (max_len < 1) {
 		*pwc = wc;
@@ -135,6 +123,7 @@ PRIVATE int my_mbtowc__(wchar_t *pwc, const char *utf8c, int max_len)
 		wc = utf8c[0] & 0x01;			// 1111110x
 		len = 6;
 	}
+	int idx;
 	for (idx = 1; idx < max_len; idx++) {
 		if (idx >= len)
 			break;

@@ -12,19 +12,28 @@ extern "C" {
 // DNU: MB_LEN_MAX is defined to "16" in the latest Glibc header.
 #define MAX_UTF8C_BYTES			6
 
-#ifdef ENABLE_DEBUG
-#ifdef ENABLE_UTF8
-void test_my_mbwidth(void);
-#endif // ENABLE_UTF8
-#endif // ENABLE_DEBUG
-
 int my_mbwidth(const char *utf8c, int max_len);
 int my_wcwidth(wchar_t wc);
 
-#define VAGUE_WIDE_CHR	// treat characters which width(narrow/wide) is vague as to be wide
-#ifdef VAGUE_WIDE_CHR
-int is_vague_wide_chr(wchar_t wc);
-#endif // VAGUE_WIDE_CHR
+#define VAGUE_WIDTH_CHAR	// treat characters which width is vague as a wide character
+#ifdef VAGUE_WIDTH_CHAR
+#define ON_DEMAND_WCWIDTH	// make wcwidth table on demand (when displaying the character)
+#endif // VAGUE_WIDTH_CHAR
+
+// |ON_DEMAND_WCWIDTH|VAGUE_WIDTH_CHAR| meaning                 |
+// |-----------------|----------------|-------------------------|
+// |     DEFINED     |    DEFINED     | vague character's width will be investigated on demand |
+// |     undefined   |    DEFINED     | vague character's width is assumed as `wide`           |
+// |     undefined   |    undefined   | invalid setting (error) |
+// |     DEFINED     |    undefined   | invalid setting (error) |
+
+#ifdef VAGUE_WIDTH_CHAR
+#ifdef ON_DEMAND_WCWIDTH
+int is_vague_width_chr(wchar_t wc);
+void clear_wcwidth_cache();
+char get_wcwidth_cache(wchar_t wc);
+#endif // ON_DEMAND_WCWIDTH
+#endif // VAGUE_WIDTH_CHAR
 
 int my_mblen(const char *utf8c, int max_len);
 int my_mbtowc(const char *utf8c, int max_len);

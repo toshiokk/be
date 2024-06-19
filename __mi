@@ -1,6 +1,7 @@
 echo make and install
 
 if [ -n "$1" ]; then
+  ./__set_app_rel_lvl.sh -
   mk_backup_file appdefs.h
   ./__set_app_rel_lvl.sh "$1"
 fi
@@ -18,4 +19,5 @@ sh _cp_berc
 
 if [ -n "@1" ]; then
   cp -v appdefs.h~ appdefs.h
+  ./__set_app_rel_lvl.sh -
 fi

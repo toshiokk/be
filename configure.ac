@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.71])
-AC_INIT([BE],[240604],[BUG-REPORT-ADDRESS])
+AC_INIT([BE],[240614],[BUG-REPORT-ADDRESS])
 AC_CONFIG_SRCDIR([buffers.h])
 AC_CONFIG_HEADERS([config.h])
 
@@ -68,7 +68,6 @@ yes)
 	enable_history=yes
 	enable_undo=yes
 	enable_nls=yes
-	enable_utf8=yes
 	enable_syntax=yes
 	enable_rc=yes
 	enable_regex=yes
@@ -84,7 +83,6 @@ no)
 	enable_history=no
 	enable_undo=no
 	enable_nls=no
-	enable_utf8=no
 	enable_syntax=no
 	enable_rc=no
 	enable_regex=no
@@ -121,12 +119,6 @@ AC_ARG_ENABLE(nls, [  --enable-nls  Enable NLS (enabled by default)])
 case "$enable_nls" in
 yes|no)		;;
 *)	enable_nls=yes		;;
-esac
-
-AC_ARG_ENABLE(utf8, [  --enable-utf8  Enable UTF8 support (enabled by default)])
-case "$enable_utf8" in
-yes|no)		;;
-*)	enable_utf8=yes		;;
 esac
 
 AC_ARG_ENABLE(syntax, [  --enable-syntax  Enable syntax highlighting (enabled by default)])
@@ -187,7 +179,6 @@ echo "enable_filer=$enable_filer"
 echo "enable_history=$enable_history"
 echo "enable_undo=$enable_undo"
 echo "enable_nls=$enable_nls"
-echo "enable_utf8=$enable_utf8"
 echo "enable_syntax=$enable_syntax"
 echo "enable_rc=$enable_rc"
 echo "enable_regex=$enable_regex"
@@ -262,13 +253,6 @@ AC_MSG_RESULT($enable_nkf)
 # check configuration dependencies
 # ---------------------------------------------------------------------------
 
-if test "$enable_nls" = yes ; then
-	if test "$enable_utf8" = no ; then
-		echo "FIXED: --enable-nls requires --enable-utf8."
-		echo "  So turn on --enable-utf8."
-		enable_utf8=yes
-	fi
-fi
 if test "$enable_syntax" = yes ; then
 	if test "$enable_rc" = no ; then
 		echo "FIXED: --enable-syntax requires --enable-rc."
@@ -314,9 +298,6 @@ fi
 if test "$enable_nls" = yes ; then
 	AC_DEFINE(ENABLE_NLS, 1, [Define this to use NLS.])
 fi
-if test "$enable_utf8" = yes ; then
-	AC_DEFINE(ENABLE_UTF8, 1, [Define this to use UTF8.])
-fi
 if test "$enable_syntax" = yes ; then
 	AC_DEFINE(ENABLE_SYNTAX, 1, [Define this to have syntax highlighting, requires ENABLE_RC and ENABLE_REGEX too!])
 fi
@@ -350,7 +331,6 @@ echo "enable_filer=$enable_filer"
 echo "enable_history=$enable_history"
 echo "enable_undo=$enable_undo"
 echo "enable_nls=$enable_nls"
-echo "enable_utf8=$enable_utf8"
 echo "enable_syntax=$enable_syntax"
 echo "enable_rc=$enable_rc"
 echo "enable_regex=$enable_regex"

@@ -244,10 +244,14 @@ void adjust_curs_pos_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 	int cursor_x_in_text;
 
 	if (is_disabled_update_min_text_x_to_keep() == 0) {
-		if (cursor_move == CURS_MOVE_HORIZ) {
+		if ((cursor_move == CURS_MOVE_HORIZ) || (cursor_move == CURS_MOVE_JUMP)) {
+			// update `buf_view->cursor_x_to_keep`
+			// and    `buf_view->min_text_x_to_keep`
 			EPCBVC_CURSOR_X_TO_KEEP = start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
 			update_min_text_x_to_keep(EPCBVC_CURSOR_X_TO_KEEP);
 		} else {
+			// not upate  `buf_view->cursor_x_to_keep`
+			// and update `buf_view->min_text_x_to_keep`
 			wl_idx = start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
 			EPCBVC_CLBI = end_byte_idx_of_wrap_line_le(EPCBVC_CL->data, wl_idx,
 			 EPCBVC_CURSOR_X_TO_KEEP, -1);

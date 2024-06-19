@@ -22,6 +22,13 @@
 #ifndef winin_h
 #define winin_h
 
+// | command modifier key | replace/append string       | return value  |
+// |----------------------|-----------------------------|---------------|
+// | none                 | replace input file/dir name | REPLACE_STR_1 |
+// | ALT                  | append input file/dir name  | APPEND_STR_2  |
+#define REPLACE_STR_1	1	// input file/dir name
+#define APPEND_STR_2	2	// Append input file/dir name
+
 int input_string_tail(const char *default__, char *input_buf,
  int hist_type_idx, const char *msg, ...);
 int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx,

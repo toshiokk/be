@@ -22,8 +22,8 @@
 #ifndef editorcut_h
 #define editorcut_h
 
-int doe_clear_cut_buf(void);
 #if 0
+int doe_clear_cut_buf(void);
 int doe_pop_cut_buf(void);
 #endif
 
