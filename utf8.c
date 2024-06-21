@@ -119,7 +119,13 @@ int utf8c_len(char utf8c_state, char utf8c)
 		} else
 		if ((utf8c & 0xf8) == 0xf0) {		// 11110xxx-10xxxxxx-10xxxxxx-10xxxxxx
 			utf8c_state = 3;
-		} else {							// 11111xxx
+		} else
+		if ((utf8c & 0xfc) == 0xf8) {		// 111110xx-10xxxxxx-10xxxxxx-10xxxxxx-10xxxxxx
+			utf8c_state = 4;
+		} else
+		if ((utf8c & 0xfe) == 0xfc) {		// 1111110x-10xxxxxx-10xxxxxx-10xxxxxx-10xxxxxx-10xxxxxx
+			utf8c_state = 5;
+		} else {							// 1111111x
 			utf8c_state = 0;
 		}
 	} else {

@@ -68,9 +68,8 @@ int termif_get_columns(void);
 
 void termif_clear_screen(void);
 void termif_clear_vscreen_painted(void);
-void termif_set_cursor_on(int on_off);
-void termif_set_cursor_pos(int yy, int xx);
-int termif_get_cursor_pos(int *yy, int *xx);
+void termif_send_cursor_on(int on_off);
+void termif_send_cursor_pos(int yy, int xx);
 void termif_set_attrs(int bgc, int fgc, int rev);
 
 void termif_output_string(int yy, int xx, const char *string, int bytes);

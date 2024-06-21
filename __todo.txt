@@ -1,13 +1,19 @@
 #### BE-editor to do list
  (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible/pending)
 
+[] capture stdout/stderr into be-editor buffer
+[v ] rearrange function keys for entering path from filer
+[ ] update vague width char list
+[d] make goodly UTF8 supported `screen`
+
+[v] properly input UTF8 string even when ON_DEMAND... enabled
+[v] list symlink on top of file list
 [v] character cut mode after KW search --> line cut
 [v] crash on KW search in processing KW search --> disable in the List mode
 [v] current line position when it displays history file first time
 [v] Hang up on F12 in editor
 [v] Crash on \ in filer
-[v] make always ENABLE_UTF8 is ON
-    [ ] delete ENABLE_UTF8.
+[v] make always ENABLE_UTF8 is ON  [v] delete ENABLE_UTF8.
 
 [v] Show title bar in Yellow if there is any file modified.
 [v] Show title bar in Red if the current file is modified.
@@ -15,7 +21,6 @@
 [v] switch buffers by left/right arrow keys in editor in view mode
 [d] automatically check wide character by using terminal's "report cursor position" function
     [v] check on demand (when displaying it)
-    [ ] update vague width char list
 [v] point the same file after updating file list
     [v] fix when file is selected
 

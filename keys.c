@@ -439,7 +439,6 @@ unsigned long msec_past_input_key()
 }
 
 PRIVATE key_code_t input_key_timeout(void);
-PRIVATE key_code_t input_key_macro(void);
 PRIVATE key_code_t input_key_check_break_key(void);
 PRIVATE key_code_t map_key_code(key_code_t key);
 
@@ -509,7 +508,7 @@ PRIVATE key_code_t input_key_timeout(void)
 	return key;
 }
 
-PRIVATE key_code_t input_key_macro(void)
+key_code_t input_key_macro(void)
 {
 	key_code_t key = -1;
 

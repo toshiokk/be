@@ -29,7 +29,7 @@
 //	| ------------------------------ | --------------------- | -------------------- |
 //	| tap_file()                     | return file name/path | change cur dir       |
 //	| edit/rename/copy/delete file() | return file name/path | return dir name/path |
-//	| make_directory()/move_file()   | return cur path       | return cur path      |
+//	| move_file()                    | return cur path       | return cur path      |
 
 func_key_table_t filer_func_key_table[] = {
 //  12345678901234567890   123456789012345678901234567890   123456789012345678901234567890

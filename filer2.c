@@ -589,16 +589,16 @@ PRIVATE int comp_file_executable(file_info_t *aa, file_info_t *bb)
 //  1: ..
 //  2: .
 // 10: unknown type
-// 20: dir
-// 30: symlink broken
-// 31: symlink to unknown type
-// 32: symlink to dir
-// 33: symlink to symlink
-// 34: symlink to FIFO
-// 35: symlink to socket
-// 36: symlink to char device
-// 37: symlink to block device
-// 38: symlink to regular file
+// 20: symlink broken
+// 21: symlink to unknown type
+// 22: symlink to symlink
+// 23: symlink to dir
+// 24: symlink to FIFO
+// 25: symlink to socket
+// 26: symlink to char device
+// 27: symlink to block device
+// 28: symlink to regular file
+// 30: dir
 // 40: FIFO
 // 50: socket
 // 60: char device
@@ -610,9 +610,9 @@ int get_file_type_num(file_info_t *info)
 	int file_type_num = 0;
 	if (S_ISLNK(info->lst.st_mode)) {
 		if (memcmp(&(info->st), &(info->lst), sizeof(info->st)) != 0) {
-			file_type_num = 30 + get_stat_file_type_num(&(info->st), info->file_name) / 10;
+			file_type_num = 20 + get_stat_file_type_num(&(info->st), info->file_name) / 10;
 		} else {
-			file_type_num = 30;	// broken symlink
+			file_type_num = 20;	// broken symlink
 		}
 	} else {
 		file_type_num = get_stat_file_type_num(&(info->st), info->file_name);
@@ -629,11 +629,11 @@ PRIVATE int get_stat_file_type_num(struct stat *st, const char *file_name)
 		if (strcmp(file_name, ".") == 0) {
 			file_type_num = 2;	// "."
 		} else {
-			file_type_num = 20;	// dir
+			file_type_num = 30;	// dir
 		}
 	} else
 	if (S_ISLNK(st->st_mode)) {
-		file_type_num = 30;		// symlink
+		file_type_num = 20;		// symlink
 	} else
 	if (S_ISFIFO(st->st_mode)) {
 		file_type_num = 40;		// FIFO

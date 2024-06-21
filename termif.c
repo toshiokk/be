@@ -105,6 +105,7 @@ PRIVATE void dump_vscreen(int yy, int len);
 PRIVATE void send_cursor_pos_string_to_term(int yy, int xx, const char *string, int bytes);
 PRIVATE void send_cursor_on_to_term(int on_off);
 PRIVATE void send_cursor_pos_to_term(int yy, int xx);
+PRIVATE int receive_cursor_pos_from_term(int *yy, int *xx);
 PRIVATE vscreen_char_t attrs_sent = VSCR_CHAR_ATTRS_DEFAULT;	// attributes sent to terminal
 PRIVATE void send_attrs_to_term(vscreen_char_t attrs);
 PRIVATE void send_all_off_to_term(void);
@@ -155,9 +156,9 @@ char investigate_utf8c_width(const char *utf8c)
 {
 	int yy;
 	int xx;
-	termif_set_cursor_pos(0, 0);
+	send_cursor_pos_to_term(0, 0);
 	send_string_to_term(utf8c, -1);
-	if (termif_get_cursor_pos(&yy, &xx)) {
+	if (receive_cursor_pos_from_term(&yy, &xx)) {
 		return MIN_MAX_(1, xx - 0, 2);	// 1 / 2
 	}
 	return -1;	// not gotten
@@ -178,7 +179,7 @@ int termif_get_screen_size_from_term(void)
 	for (int tries = 0; tries < MAX_REPORT_TRIES; tries++) {
 		send_cursor_pos_to_term(TERMIF_MAX_SCRN_LINES-1, TERMIF_MAX_SCRN_COLS-1);
 ////flf_d_printf("(%d, %d)\n", TERMIF_MAX_SCRN_LINES-1, TERMIF_MAX_SCRN_COLS-1);
-		if (termif_get_cursor_pos(&lines, &cols)) {
+		if (receive_cursor_pos_from_term(&lines, &cols)) {
 			if (lines < TERMIF_MAX_SCRN_LINES && cols < TERMIF_MAX_SCRN_COLS) {
 				termif_set_screen_size(lines + 1, cols + 1);
 				return 1;
@@ -205,7 +206,7 @@ int termif_get_columns(void)
 void termif_clear_screen(void)
 {
 	send_all_off_to_term();
-///	send_printf_to_term("\x1b" "c");
+///	send_string_to_term("\x1b" "c", -1);
 	memset((void *)vscreen_to_paint, 0x00, sizeof(vscreen_to_paint));
 	termif_clear_vscreen_painted();
 }
@@ -213,60 +214,13 @@ void termif_clear_vscreen_painted(void)
 {
 	memset((void *)vscreen_painted, 0x00, sizeof(vscreen_painted));
 }
-void termif_set_cursor_pos(int yy, int xx)
+void termif_send_cursor_pos(int yy, int xx)
 {
 	if (yy >= 0 && xx >= 0) {
 		termif_cursor_yy = yy;
 		termif_cursor_xx = xx;
-		send_cursor_pos_to_term(termif_cursor_yy, termif_cursor_xx);
+		send_cursor_pos_to_term(yy, xx);
 	}
-}
-int termif_get_cursor_pos(int *yy, int *xx)
-{
-#define MIN_REPORT_LEN		6		// "e[9;9R"
-#define MAX_REPORT_LEN		(11+11)	// "e[999;9999R"
-	char buf[MAX_REPORT_LEN+1];		// "e[999;9999R"
-	char bufr[MAX_REPORT_LEN+1];	// "e[999;9999R"
-
-	fflush(stdin);
-	send_printf_to_term("\x1b[6n");
-#define MAX_WAIT_USEC	1000000
-#define SLEEP_USEC		1
-#define MAX_RX_TRIES	((MAX_WAIT_USEC) / (SLEEP_USEC))
-	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in read()
-	strcpy(buf, "");
-	long usec_enter = get_usec();
-	for (int tries = 0; tries < MAX_RX_TRIES; tries++) {
-		usleep(SLEEP_USEC);	// wait for receiving answer back
-		char time_out = 0;
-		if ((get_usec() - usec_enter) >= MAX_WAIT_USEC) {
-			time_out = 1;	// time out
-		}
-		int len;
-		if ((len = read(STDIN_FILENO, bufr, MAX_REPORT_LEN)) > 0) {
-			bufr[len] = '\0';
-			strlcat__(buf, MAX_REPORT_LEN, bufr);
-			if ((strlen(buf) >= MAX_REPORT_LEN) || (tail_char(buf) == 'R')) {
-				// ESC [ lines ; cols R
-				const char *ptr;
-				for (ptr = buf; *ptr; ptr++) {
-					// skip to a number character
-					if (isdigit(*ptr))
-						break;
-				}
-				int lines, cols;
-				if (sscanf(ptr, "%d;%d", &lines, &cols) >= 2) {
-					*yy = lines - 1;	// 0 --
-					*xx = cols - 1;		// 0 --
-					return 1;
-				}
-			}
-		}
-		if (time_out) {
-			break;
-		}
-	}
-	return 0;
 }
 void termif_set_attrs(int bgc, int fgc, int rev)
 {
@@ -287,14 +241,14 @@ void termif_set_attrs(int bgc, int fgc, int rev)
 ///flf_d_printf("attrs: %08lx\n", termif_attrs);
 }
 
-void termif_set_cursor_on(int on_off)
+void termif_send_cursor_on(int on_off)
 {
 	termif_cursor_on = on_off;
 	send_cursor_on_to_term(on_off);
 }
 void termif_beep(void)
 {
-	send_printf_to_term("\x07");	// "\a"(^G)
+	send_string_to_term("\x07", -1);	// "\a"(^G)
 }
 void termif_output_string(int yy, int xx, const char *string, int bytes)
 {
@@ -476,9 +430,9 @@ PRIVATE void send_cursor_pos_string_to_term(int yy, int xx, const char *string, 
 PRIVATE void send_cursor_on_to_term(int on_off)
 {
 	if (on_off) {
-		send_printf_to_term("\x1b[?25h");
+		send_string_to_term("\x1b[?25h", -1);
 	} else {
-		send_printf_to_term("\x1b[?25l");
+		send_string_to_term("\x1b[?25l", -1);
 	}
 }
 PRIVATE void send_cursor_pos_to_term(int yy, int xx)
@@ -494,6 +448,52 @@ PRIVATE void send_cursor_pos_to_term(int yy, int xx)
 ///		warning_printf("(%d, %d)\n", xx, yy);	// not warn this
 ///mflf_d_printf("(%d, %d)\n", termif_columns, termif_lines);
 	}
+}
+PRIVATE int receive_cursor_pos_from_term(int *yy, int *xx)
+{
+#define MAX_REPORT_LEN		(11+11)	// "e[9;9R" -- "e[999;9999R"
+	char buf[MAX_REPORT_LEN+1];		// "e[999;9999R"
+	char bufr[MAX_REPORT_LEN+1];	// "e[999;9999R"
+
+	fflush(stdin);
+	send_string_to_term("\x1b[6n", -1);
+#define MAX_WAIT_USEC	1000000
+#define SLEEP_USEC		1
+#define MAX_RX_TRIES	((MAX_WAIT_USEC) / (SLEEP_USEC))
+	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in read()
+	strcpy(buf, "");
+	long usec_enter = get_usec();
+	for (int tries = 0; tries < MAX_RX_TRIES; tries++) {
+		usleep(SLEEP_USEC);	// wait for receiving answer back
+		char time_out = 0;
+		if ((get_usec() - usec_enter) >= MAX_WAIT_USEC) {
+			time_out = 1;	// time out
+		}
+		int len;
+		if ((len = read(STDIN_FILENO, bufr, MAX_REPORT_LEN)) > 0) {
+			bufr[len] = '\0';
+			strlcat__(buf, MAX_REPORT_LEN, bufr);
+			if ((strlen(buf) >= MAX_REPORT_LEN) || (tail_char(buf) == 'R')) {
+				// ESC [ lines ; cols R
+				const char *ptr;
+				for (ptr = buf; *ptr; ptr++) {
+					// skip to a number character
+					if (isdigit(*ptr))
+						break;
+				}
+				int lines, cols;
+				if (sscanf(ptr, "%d;%d", &lines, &cols) >= 2) {
+					*yy = lines - 1;	// 0 --
+					*xx = cols - 1;		// 0 --
+					return 1;
+				}
+			}
+		}
+		if (time_out) {
+			break;
+		}
+	}
+	return 0;
 }
 PRIVATE void send_attrs_to_term(vscreen_char_t attrs)
 {
@@ -529,23 +529,23 @@ PRIVATE void send_all_off_to_term(void)
 {
 ///	send_fgc_to_term(7);
 ///	send_bgc_to_term(0);
-	send_printf_to_term("\x1b[0m");
+	send_string_to_term("\x1b[0m", -1);
 	attrs_sent = VSCR_CHAR_ATTRS_DEFAULT;
 }
 PRIVATE void send_bold_to_term(int bold)
 {
 	if (bold) {
-		send_printf_to_term("\x1b[1m");
+		send_string_to_term("\x1b[1m", -1);
 ///	} else {
-///		send_printf_to_term("\x1b[21m");	// DNU: Linux console does NOT support this.
+///		send_string_to_term("\x1b[21m", -1);	// DNU: Linux console does NOT support this.
 	}
 }
 ///PRIVATE void send_reverse_to_term(int reverse)
 ///{
 ///	if (reverse) {
-///		send_printf_to_term("\x1b[7m");
+///		send_string_to_term("\x1b[7m", -1);
 ////	} else {
-////		send_printf_to_term("\x1b[27m");	// DNU: Linux console does NOT support this.
+////		send_string_to_term("\x1b[27m", -1);	// DNU: Linux console does NOT support this.
 ///	}
 ///}
 PRIVATE void send_bgc_to_term(int bgc)
@@ -582,9 +582,9 @@ PRIVATE void send_printf_to_term(const char *format, ...)
 	char buffer[MAX_ESC_SEQ_LEN+1];
 
 	va_start(ap, format);
-	vsnprintf(buffer, MAX_ESC_SEQ_LEN+1, format, ap);
+	int len = vsnprintf(buffer, MAX_ESC_SEQ_LEN+1, format, ap);
 	va_end(ap);
-	send_string_to_term__(buffer, -1);
+	send_string_to_term__(buffer, len);
 }
 PRIVATE void send_string_to_term(const char *string, int bytes)
 {

@@ -322,20 +322,20 @@ int doe_last_line(void)
 	return 1;
 }
 
+PRIVATE int do_enter_char(char chr);
 PRIVATE int do_enter_utf8s(const char *utf8s);
 PRIVATE int do_enter_utf8c(const char *utf8c);
 int doe_control_code(void)
 {
-	key_code_t key;
-
-	if (is_view_mode_then_warn_it())
+	if (is_view_mode_then_warn_it()) {
 		return 0;
+	}
 
 	disp_status_bar_ing(_("Input control character [^A-^Z,^[,^\\,^],^^,^_,\x7f]"));
-	key = input_key_loop();
+	key_code_t key = input_key_loop();
 	disp_status_bar_ing(_("Key code: %04x"), key);
 	if ((0x01 <= key && key < 0x20) || key == CHAR_DEL) {
-		doe_enter_char(key);
+		do_enter_char(key);
 	}
 	return 1;
 }
@@ -345,8 +345,9 @@ int doe_charcode(void)
 	unsigned int chr;
 	char utf8c[MAX_UTF8C_BYTES+1];
 
-	if (is_view_mode_then_warn_it())
+	if (is_view_mode_then_warn_it()) {
 		return 0;
+	}
 
 	int ret = input_string_tail("", string,
 	 HISTORY_TYPE_IDX_SEARCH, _("Enter Unicode number in hex:"));
@@ -369,8 +370,9 @@ int doe_paste_from_history(void)
 {
 	char string[MAX_PATH_LEN+1];
 
-	if (is_view_mode_then_warn_it())
+	if (is_view_mode_then_warn_it()) {
 		return 0;
+	}
 
 	int ret = input_string_tail("", string,
 	 HISTORY_TYPE_IDX_SEARCH, _("Select history string to paste:"));
@@ -387,29 +389,28 @@ int doe_paste_from_history(void)
 
 int doe_tab(void)
 {
-	return doe_enter_char('\t');
+	return do_enter_char('\t');
 }
 
-#define UTF8S_SEND_BUF_LEN			(MAX_UTF8C_BYTES * 2)
+#define UTF8S_SEND_LEN				(MAX_UTF8C_BYTES * 100)
+#define UTF8S_SEND_BUF_LEN			(UTF8S_SEND_LEN + MAX_UTF8C_BYTES * 1)
 PRIVATE int utf8s_send_buf_bytes = 0;
 PRIVATE char utf8s_send_buf[UTF8S_SEND_BUF_LEN+1] = "";
-int doe_enter_char(char chr)
+int doe_buffer_utf8c_bytes(char chr)
 {
 	static char utf8c_state = 0;
 
 	utf8c_state = utf8c_len(utf8c_state, chr);
 flf_d_printf("<%02x>\n", (unsigned char)chr);
 	// put to send buffer
-	if (utf8s_send_buf_bytes < UTF8S_SEND_BUF_LEN) {
-		utf8s_send_buf[utf8s_send_buf_bytes++] = chr;
-		utf8s_send_buf[utf8s_send_buf_bytes] = '\0';
-	}
-	if (utf8c_state == 0) {
-		doe_enter_char_send();
+	utf8s_send_buf[utf8s_send_buf_bytes++] = chr;
+	utf8s_send_buf[utf8s_send_buf_bytes] = '\0';
+	if ((utf8c_state == 0) && (utf8s_send_buf_bytes >= UTF8S_SEND_LEN)) {
+		doe_enter_buffered_utf8c_bytes();
 	}
 	return 1;
 }
-int doe_enter_char_send(void)
+int doe_enter_buffered_utf8c_bytes(void)
 {
 	if (utf8s_send_buf_bytes == 0) {
 		return 0;	// no character sent
@@ -420,37 +421,44 @@ int doe_enter_char_send(void)
 	utf8s_send_buf[utf8s_send_buf_bytes] = '\0';
 	return 1;	// sent
 }
+PRIVATE int do_enter_char(char chr)
+{
+	char utf8s[1+1];
+	utf8s[0] = chr;
+	utf8s[1] = '\0';
+	return do_enter_utf8s(utf8s);
+}
 PRIVATE int do_enter_utf8s(const char *utf8s)
 {
 	int bytes_str;
-	int byte_idx;
 	int bytes_chr;
 	char utf8c[MAX_UTF8C_BYTES+1];
 
 flf_d_printf("[%s]\n", utf8s);
 	do_clear_mark_();
-	if (is_view_mode_then_warn_it())
+	if (is_view_mode_then_warn_it()) {
 		return 0;
+	}
 
 #ifdef ENABLE_UNDO
 	undo_set_region_n_save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
 #endif // ENABLE_UNDO
 
 	bytes_str = strlen_path(utf8s);
-	for (byte_idx = 0; byte_idx < bytes_str; byte_idx += bytes_chr) {
+	for (int byte_idx = 0; byte_idx < bytes_str; byte_idx += bytes_chr) {
 		bytes_chr = utf8c_bytes(&utf8s[byte_idx]);
 		strlcpy__(utf8c, &utf8s[byte_idx], bytes_chr);
 		do_enter_utf8c(utf8c);
 	}
+
+	set_cur_buf_modified();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	return 1;
 }
 PRIVATE int do_enter_utf8c(const char *utf8c)
 {
-	int bytes_insert;
-
 flf_d_printf("[%s]\n", utf8c);
-	bytes_insert = strnlen(utf8c, MAX_UTF8C_BYTES);
+	int bytes_insert = strnlen(utf8c, MAX_UTF8C_BYTES);
 	if (line_data_len(EPCBVC_CL) + bytes_insert > MAX_EDIT_LINE_LEN) {
 		// exceeds MAX_EDIT_LINE_LEN, do not enter
 		return 0;
@@ -458,9 +466,6 @@ flf_d_printf("[%s]\n", utf8c);
 	line_string_insert(EPCBVC_CL, EPCBVC_CLBI, utf8c, bytes_insert);
 	EPCBVC_CLBI += bytes_insert;
 	get_epc_buf()->buf_size += bytes_insert;
-
-	set_cur_buf_modified();
-	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	return 1;
 }
 
@@ -474,8 +479,9 @@ int doe_carriage_return(void)
 		editor_quit = EDITOR_ENTERED;
 		return 0;
 	}
-	if (is_view_mode_then_warn_it())
+	if (is_view_mode_then_warn_it()) {
 		return 0;
+	}
 
 #ifdef ENABLE_UNDO
 	undo_set_region_n_save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
@@ -523,8 +529,9 @@ int doe_backspace(void)
 	int bytes;
 
 	do_clear_mark_();
-	if (is_view_mode_then_warn_it())
+	if (is_view_mode_then_warn_it()) {
 		return 0;
+	}
 
 	if (EPCBVC_CLBI <= 0) {
 		if (IS_NODE_TOP(EPCBVC_CL)) {
@@ -561,8 +568,9 @@ int doe_delete_char(void)
 	int bytes;
 
 	do_clear_mark_();
-	if (is_view_mode_then_warn_it())
+	if (is_view_mode_then_warn_it()) {
 		return 0;
+	}
 
 	if (EPCBVC_CLBI < line_data_len(EPCBVC_CL)) {
 		// not line end
@@ -611,8 +619,9 @@ int doe_conv_upp_low_letter(void)
 	char chr;
 
 	do_clear_mark_();
-	if (is_view_mode_then_warn_it())
+	if (is_view_mode_then_warn_it()) {
 		return 0;
+	}
 
 	byte_idx = EPCBVC_CLBI;
 	data = EPCBVC_CL->data;

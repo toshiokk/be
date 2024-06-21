@@ -472,6 +472,7 @@ unsigned long msec_past_input_key();
 
 key_code_t input_key_loop(void);
 key_code_t input_key_wait_return(void);
+key_code_t input_key_macro(void);
 
 void begin_check_break_key(void);
 void end_check_break_key(void);

@@ -96,6 +96,16 @@ PRIVATE int editor_main_loop(void)
 		}
 		//----------------------------------
 		key_input = input_key_wait_return();
+		if (IS_CHAR_KEY(key_input)) {
+			doe_buffer_utf8c_bytes(key_input);	// put the first char
+			for ( ; ; ) {
+				key_input = input_key_macro();
+				if (IS_CHAR_KEY(key_input) == 0)
+					break;
+				doe_buffer_utf8c_bytes(key_input);	// put trailing chars
+			}
+			doe_enter_buffered_utf8c_bytes();
+		}
 		//----------------------------------
 		if (IS_KEY_VALID(key_input) == 0) {
 			// no key input
@@ -113,13 +123,8 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 #endif // ENABLE_UNDO
 			if ((func_key_table = get_func_key_table_from_key(editor_func_key_table, key_input))
 			 == NULL) {
-				if (IS_CHAR_KEY(key_input) == 0) {
-					disp_status_bar_err(_("No command assigned for the key: %04xh"), key_input);
-				} else {
-					doe_enter_char(key_input);
-				}
+				disp_status_bar_err(_("No command assigned for the key: %04xh"), key_input);
 			} else {
-				doe_enter_char_send();
 				switch (func_key_table->list_mode) {
 				default:
 				case XL:		// not executable in List mode

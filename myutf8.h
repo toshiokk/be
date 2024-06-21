@@ -17,19 +17,19 @@ int my_wcwidth(wchar_t wc);
 
 #define VAGUE_WIDTH_CHAR	// treat characters which width is vague as a wide character
 #ifdef VAGUE_WIDTH_CHAR
+////
 #define ON_DEMAND_WCWIDTH	// make wcwidth table on demand (when displaying the character)
-#endif // VAGUE_WIDTH_CHAR
 
-// |ON_DEMAND_WCWIDTH|VAGUE_WIDTH_CHAR| meaning                 |
-// |-----------------|----------------|-------------------------|
-// |     DEFINED     |    DEFINED     | vague character's width will be investigated on demand |
-// |     undefined   |    DEFINED     | vague character's width is assumed as `wide`           |
-// |     undefined   |    undefined   | invalid setting (error) |
-// |     DEFINED     |    undefined   | invalid setting (error) |
+// |VAGUE_WIDTH_CHAR|ON_DEMAND_WCWIDTH| meaning                 |
+// |----------------|-----------------|-------------------------|
+// |    DEFINED     |    DEFINED      | vague character's width will be investigated on demand |
+// |    DEFINED     |    undefined    | vague character's width is assumed as `wide`           |
+// |    undefined   |    undefined    | invalid setting (error) |
+// |    undefined   |    DEFINED      | invalid setting (error) |
 
-#ifdef VAGUE_WIDTH_CHAR
-#ifdef ON_DEMAND_WCWIDTH
+int is_wide_chr(wchar_t wc);
 int is_vague_width_chr(wchar_t wc);
+#ifdef ON_DEMAND_WCWIDTH
 void clear_wcwidth_cache();
 char get_wcwidth_cache(wchar_t wc);
 #endif // ON_DEMAND_WCWIDTH

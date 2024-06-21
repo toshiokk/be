@@ -21,14 +21,19 @@ int my_wcwidth(wchar_t wc)
 {
 	int columns;
 
-#ifdef ON_DEMAND_WCWIDTH
+	if (is_wide_chr(wc)) {
+		return 2;
+	}
 	if (is_vague_width_chr(wc)) {
+#ifndef ON_DEMAND_WCWIDTH
+		return 2;
+#else // ON_DEMAND_WCWIDTH
 		columns = get_wcwidth_cache(wc);
 		if (columns) {
 			return columns;
 		}
-	}
 #endif // ON_DEMAND_WCWIDTH
+	}
 	columns = wcwidth(wc);
 	if (columns < 1)
 		columns = 1;		// narrow char.
@@ -36,7 +41,13 @@ int my_wcwidth(wchar_t wc)
 }
 
 #ifdef VAGUE_WIDTH_CHAR
-#ifdef ON_DEMAND_WCWIDTH
+int is_wide_chr(wchar_t wc)
+{
+	return 0
+	// WIDE_CHAR_LIST
+	 || (0x3000 <= wc && wc < 0xa000)
+	;
+}
 int is_vague_width_chr(wchar_t wc)
 {
 	return 0
@@ -49,6 +60,7 @@ int is_vague_width_chr(wchar_t wc)
 	 || (0xe000 <= wc && wc < 0xf900)
 	;
 }
+#ifdef ON_DEMAND_WCWIDTH
 // -1: not investigated yet
 //  0: investigation failed
 //  1: narrow character

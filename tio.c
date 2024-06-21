@@ -260,7 +260,7 @@ void tio_set_cursor_on(int on_off)
 #ifdef ENABLE_NCURSES
 	curses_set_cursor_on(on_off);
 #else // ENABLE_NCURSES
-	termif_set_cursor_on(on_off);
+	termif_send_cursor_on(on_off);
 #endif // ENABLE_NCURSES
 }
 
@@ -269,7 +269,7 @@ void tio_set_cursor_pos(int yy, int xx)
 #ifdef ENABLE_NCURSES
 	curses_set_cursor_pos(yy, xx);
 #else // ENABLE_NCURSES
-	termif_set_cursor_pos(yy, xx);
+	termif_send_cursor_pos(yy, xx);
 #endif // ENABLE_NCURSES
 }
 
