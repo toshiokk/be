@@ -23,14 +23,6 @@
 #define debug_h
 
 #ifdef ENABLE_DEBUG
-#if ENABLE_DEBUG
-#define ENABLE_DEBUG	1	// Enable debug output
-#else
-#undef ENABLE_DEBUG			// Disable debug output
-#endif
-#endif // ENABLE_DEBUG
-
-#ifdef ENABLE_DEBUG
 ///
 #define START_UP_TEST
 #endif // ENABLE_DEBUG

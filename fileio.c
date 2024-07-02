@@ -49,8 +49,6 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp);
 
 int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_err)
 {
-	int tab_size;
-
 	int lines = load_file_into_new_buf__(full_path, open_on_err, msg_on_err);
 	if (lines < 0) {
 		return lines;
@@ -63,6 +61,7 @@ int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_er
 	renumber_cur_buf_from_top();
 	update_cur_buf_crc();
 
+	int tab_size;
 	if ((tab_size = buf_guess_tab_size(get_epc_buf())) != 0) {
 		CUR_EBUF_STATE(buf_TAB_SIZE) = tab_size;
 	}
@@ -92,7 +91,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 		}
 		create_edit_buf(full_path);
 		disp_status_bar_ing(_("New File"));
-		return 1;		// new file
+		return 0;		// new file (0 line)
 	}
 	if (S_ISREG(st.st_mode) == 0) {
 		// special file
@@ -123,7 +122,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 		free_cur_edit_buf();
 		return -1;
 	}
-	return ret;		// >= 0: loaded
+	return ret;		// >= 0: loaded(lines)
 }
 
 //-----------------------------------------------------------------------------
@@ -161,21 +160,13 @@ int backup_and_save_cur_buf_ask(void)
 
 int input_new_file_name_n_ask(char *file_path)
 {
-	while (1) {
-		int ret = input_string_tail(file_path, file_path,
-		 HISTORY_TYPE_IDX_DIR, "%s:", _("File Name to Write"));
-		if (ret <= 0) {
-			set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
+	for ( ; ; ) {
+		int ret = input_string_tail(file_path, file_path, HISTORY_TYPE_IDX_DIR,
+		 "%s:", _("File Name to Write"));
+		if (ret <= INPUT_LOADED) {
+			///set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 			return 0;		// cancelled
 		}
-#ifdef ENABLE_FILER
-		if (strcmp(file_path, "") == 0 || is_path_wildcard(file_path)) {
-			ret = call_filer(1, 1, "", "", file_path, MAX_PATH_LEN);
-			if (ret <= 0)
-				continue;
-			strlcpy__(file_path, file_path, MAX_PATH_LEN);
-		}
-#endif // ENABLE_FILER
 		if (is_path_exist(file_path)) {
 			if (is_path_regular_file(file_path) > 0) {
 				// ask overwrite
@@ -475,9 +466,9 @@ PRIVATE int guess_encoding_by_nkf(const char *full_path)
 // use my own guessing of binary file.
 PRIVATE int my_guess_bin_file(const char *full_path)
 {
-#define BYTES_TO_BE_CHKED		MAX_PATH_LEN
 #define BYTES_READ_ONCE			MAX_PATH_LEN
-#define BYTES_TO_BE_GUESSED_BIN	10
+#define BYTES_TO_BE_CHKED		MAX_PATH_LEN
+#define BYTES_TO_BE_GUESSED_BIN	((BYTES_TO_BE_CHKED) / 20)
 	FILE *fp;
 
 	if ((fp = fopen(full_path, "rb")) == NULL) {
@@ -493,7 +484,7 @@ PRIVATE int my_guess_bin_file(const char *full_path)
 		}
 		for (int off = 0; off < bytes; off++) {
 			switch (bin_buf[off]) {
-			// 07: BEL, 09: TAB, 0a: LF, 0c: FF, 0d: CR, 1b: ESC
+			// 07:BEL, 09:TAB, 0a:LF, 0c:FF, 0d:CR, 1b:ESC
 			case 0x00: case 0x01: case 0x02: case 0x03: case 0x04: case 0x05: case 0x06:
 			case 0x08:                       case 0x0b:                       case 0x0e:
 			case 0x10: case 0x11: case 0x12: case 0x13: case 0x14: case 0x15: case 0x16: case 0x17:

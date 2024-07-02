@@ -43,7 +43,7 @@
 #define CTRL_CHAR(chr)		((chr) - '@')				// Ctrl-x
 #define CHAR_ESC			0x1b						// ASCII ESC
 #define CHAR_DEL			0x7f						// ASCII DEL
-#define TWO_BYTE_KEY_CODE(h, l)	((key_code_t)(h) << 8 | (l))
+#define TWO_BYTE_KEY_CODE(h, l)	(((key_code_t)(h) << 8) | (l))
 #define TBKC(h, l)			TWO_BYTE_KEY_CODE((h), (l))
 #define KEY_META(key)		TWO_BYTE_KEY_CODE(CHAR_ESC, key)	// Alt-x
 #define KEY_META_CTRL(chr)	KEY_META(CTRL_CHAR(chr))			// Alt-Ctrl-x

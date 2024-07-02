@@ -93,6 +93,8 @@ rm -f _conf_make_all_patterns.log
   conf_make 18
 ##  ./_c_debug
   fi
+  echo "-------------------------------"
 } | tee _conf_make_all_patterns.log
+
 grep "Summary" _conf_make_all_patterns.log >__error
 cat __error >>_conf_make_all_patterns.log

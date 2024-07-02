@@ -93,11 +93,15 @@ int count_redo_bufs(void)
 PRIVATE be_buf_t *prev_epc_buf;
 PRIVATE size_t prev_epc_buf_size;
 PRIVATE int prev_count_undo_bufs;
-void memorize_undo_state_before_change(void)
+PRIVATE char func_id_done[MAX_PATH_LEN+1];
+void memorize_undo_state_before_change(const char *func_id)
 {
 	prev_epc_buf = get_epc_buf();
 	prev_epc_buf_size = get_epc_buf()->buf_size;
 	prev_count_undo_bufs = count_undo_bufs();
+	if (func_id) {
+		strlcpy__(func_id_done, func_id, MAX_PATH_LEN);
+	}
 }
 void check_undo_state_after_change(void)
 {
@@ -107,10 +111,11 @@ void check_undo_state_after_change(void)
 	 && count_undo_bufs() == prev_count_undo_bufs) {
 		// but no undo info pushed
 		// warn it by setting unusual application color
-		set_work_space_color_dark();
+		set_work_space_color_warn();
 		disp_status_bar_err(_("!!!! No UNDO info pushed !!!!"));
-		progerr_printf("No UNDO info pushed for %s\n", prev_func_id);
+		progerr_printf("No UNDO info pushed for %s\n", func_id_done);
 	}
+	strcpy__(func_id_done, "");
 }
 #endif // ENABLE_DEBUG
 

@@ -84,9 +84,13 @@ extern file_type_t *default_color_syntax;
 
 void init_default_app_color(void);
 void set_work_space_color_on_app_list_mode();
+
 void set_work_space_color_dark(void);
-void set_work_space_color_normal(void);
+void clear_work_space_color_dark(void);
 int is_work_space_color_dark(void);
+
+void set_work_space_color_warn(void);
+int is_work_space_color_warn(void);
 
 void register_item_color(item_color_idx_t color_idx, int bgc, int fgc);
 void get_color_by_idx(item_color_idx_t color_idx, char *fgc, char *bgc);

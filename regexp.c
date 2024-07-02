@@ -132,7 +132,7 @@ int search_str_in_line_regexp(regexp_t *regexp, regexp_matches_t *regexp_matches
 		 haystack, 0, cflags, REG_NONE, 1);
 		if (ret == 0 && regexp_matches_start_idx(regexp_matches, 0) <= byte_idx) {
 			// Search forward until there is no more match.
-			while (1) {
+			for ( ; ; ) {
 				prev_match_byte_idx = regexp_matches_start_idx(regexp_matches, 0);
 				// Second, search from the next byte of previous match pos
 				ret = regexp_search(regexp, regexp_matches, needle,

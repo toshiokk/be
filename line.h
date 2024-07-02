@@ -40,22 +40,13 @@
 #define NODES_BOT_ANCH(nodes)		(&((nodes)->bot_anchor))
 
 //|Node pos.     |IS_PTR_NULL     |IS_TOP_MOST    |IS_NODE_INT    |IS_BOT_MOST    |IS_PTR_NULL|
-//|              |        |IS_TOP_ANCH    |IS_TOP_NODE    |IS_BOT_NODE    |IS_BOT_ANCH        |
+//|              |        |IS_TOP_ANCH    |IS_NODE_TOP    |IS_NODE_BOT    |IS_BOT_ANCH        |
 //|--------------|--------|-------|-------|-------|-------|-------|-------|-------|-----------|
 //|TOP_ANCH->prev|    1   |   0   |   1   |   0   |   0   |   0   |   0   |   0   |   0       |
 //|TOP_ANCH      |    0   |   1   |   1   |   0   |   0   |   0   |   0   |   0   |   0       |
 //|TOP_NODE      |    0   |   0   |   1   |   1   |   1   |   0   |   0   |   0   |   0       |
 //|INT_NODE      |    0   |   0   |   0   |   0   |   1   |   0   |   0   |   0   |   0       |
 //|BOT_NODE      |    0   |   0   |   0   |   0   |   1   |   1   |   1   |   0   |   0       |
-//|BOT_ANCH      |    0   |   0   |   0   |   0   |   0   |   0   |   1   |   1   |   0       |
-//|BOT_ANCH->next|    0   |   0   |   0   |   0   |   0   |   0   |   1   |   0   |   1       |
-
-//|Node pos.     |IS_PTR_NULL     |IS_TOP_MOST    |IS_NODE_INT    |IS_BOT_MOST    |IS_PTR_NULL|
-//|              |        |IS_TOP_ANCH    |IS_TOP_NODE    |IS_BOT_NODE    |IS_BOT_ANCH        |
-//|--------------|--------|-------|-------|-------|-------|-------|-------|-------|-----------|
-//|TOP_ANCH->prev|    1   |   0   |   1   |   0   |   0   |   0   |   0   |   0   |   0       |
-//|TOP_ANCH      |    0   |   1   |   1   |   0   |   0   |   0   |   0   |   0   |   0       |
-//|no-valid-node |    -   |   -   |   -   |   -   |   -   |   -   |   -   |   -   |   -       |
 //|BOT_ANCH      |    0   |   0   |   0   |   0   |   0   |   0   |   1   |   1   |   0       |
 //|BOT_ANCH->next|    0   |   0   |   0   |   0   |   0   |   0   |   1   |   0   |   1       |
 

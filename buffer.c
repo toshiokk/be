@@ -108,6 +108,10 @@ void buf_get_file_path(be_buf_t *buf, char *file_path)
 {
 	strlcpy__(file_path, buf->file_path, MAX_PATH_LEN);
 }
+BOOL buf_is_empty(be_buf_t *buf)
+{
+	return BUF_TOP_LINE(buf) == BUF_BOT_ANCH(buf);
+}
 
 // Splice a buffer into an existing be_buf_t
 PRIVATE be_buf_t *buf_insert_between(be_buf_t *prev, be_buf_t *new_buf, be_buf_t *next);
@@ -221,7 +225,7 @@ int buf_compare(be_buf_t *buf1, be_buf_t *buf2)
 
 int buf_renumber_from_top(be_buf_t *buf)
 {
-	return buf->buf_lines = buf_renumber_from_line(buf, NODES_TOP_NODE(buf));
+	return buf_renumber_from_line(buf, NODES_TOP_NODE(buf));
 }
 
 int buf_renumber_from_line(be_buf_t *buf, be_line_t *line)
@@ -474,7 +478,7 @@ be_buf_t *get_buf_from_bufs_by_idx(be_buf_t *buf, int buf_idx)
 	for ( ; buf_idx > 0 && IS_NODE_INT(buf); buf_idx--, buf = NODE_NEXT(buf)) {
 		// NOTHING_TO_DO
 	}
-	return buf;	// buf may be top/bottom anchor
+	return buf;	// buf may(possibly) be top/bottom anchor
 }
 int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf)
 {
@@ -537,6 +541,7 @@ void renumber_all_bufs_from_top(be_bufs_t *bufs)
 //-----------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
+
 be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_)
 {
 	be_line_t *line;
@@ -601,6 +606,7 @@ void buf_dump_ptrs(be_buf_t *buf)
 void buf_dump_state(be_buf_t *buf)
 {
 	if (buf == NULL) {
+flf_d_printf("buf: NULL\n");
 		return;
 	}
 flf_d_printf("file_path: [%s]\n", buf->file_path);

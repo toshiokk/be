@@ -389,3 +389,4 @@ void line_dump_byte_idx(const be_line_t *line, int byte_idx)
 #endif // ENABLE_DEBUG
 
 // End of line.c
+

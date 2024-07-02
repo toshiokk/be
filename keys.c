@@ -42,8 +42,8 @@ void set_app_func_key_table(void)
 
 void editor_menu_n(int grp_idx)
 {
-	if (is_app_list_mode()) {
-		editor_quit = EDITOR_CANCELLED;
+	if (is_app_list_help_mode()) {
+		editor_quit = EDITOR_DO_QUIT;
 		return;
 	}
 	static int prev_group_idx;
@@ -78,7 +78,7 @@ PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_)
 	int entry_idx = *entry_idx_;
 
 app_menu_n_again:;
-	while (1) {
+	for ( ; ; ) {
 		again_ret = 0;
 		update_screen_app(1, 1, 0);
 		disp_drop_down_menu(group_idx, entry_idx, main_win_get_top_win_y(), group_idx * 2);
@@ -313,9 +313,7 @@ func_key_table_t *get_func_key_table_from_key(func_key_table_t *key_table, key_c
 }
 key_code_t get_key_for_func_id(char *func_id)
 {
-	func_key_table_t *func_key_table;
-
-	func_key_table = get_func_table_from_func_id(func_id);
+	func_key_table_t *func_key_table = get_func_table_from_func_id(func_id);
 	if (func_key_table == NULL)
 		return 0;
 	return func_key_table->key1;
@@ -324,9 +322,8 @@ PRIVATE func_key_table_t *get_func_table_from_func_id__(func_key_table_t *func_k
  const char *func_id);
 func_key_table_t *get_func_table_from_func_id(const char *func_id)
 {
-	func_key_table_t *func_key_table;
-
-	func_key_table = get_func_table_from_func_id__(editor_func_key_table, func_id);
+	func_key_table_t *func_key_table
+	 = get_func_table_from_func_id__(editor_func_key_table, func_id);
 	if (func_key_table)
 		return func_key_table;
 #ifdef ENABLE_FILER
@@ -734,6 +731,7 @@ key_name_table_t key_name_table[] = {
 	{ K_M_N			, "M-N", },
 	{ K_M_O			, "M-O", },
 	{ K_M_P			, "M-P", },
+
 	{ K_M_Q			, "M-Q", },
 	{ K_M_R			, "M-R", },
 	{ K_M_S			, "M-S", },

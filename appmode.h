@@ -47,37 +47,40 @@ typedef struct /*app_mode*/ {
 #define KEY_LINES_3				3
 #define KEY_LINES_MAX			KEY_LINES_3
 	unsigned char app_KEY_LINES:2;			// bit 4,5
-#define DEBUG_NONE			0
-#define DEBUG_PRINTF		1
+#define DEBUG_NONE				0
+#define DEBUG_PRINTF			1
 	unsigned char app_DEBUG_PRINTF:1;		// bit 6
 #define EF_EDITOR				0
 #define EF_FILER				1
 	unsigned char app_EDITOR_FILER:1;		// bit 7
-	unsigned char app_LIST_MODE:1;			// bit 8
+											// editor------	filer-------
+#define APP_MODE_NORMAL			0			// editable		file manager
+#define APP_MODE_LIST			1			// list			select file/dir
+#define APP_MODE_HELP			2			// read-only	----
+	unsigned char app_LIST_MODE:2;			// bit 8,9
 
 	// editor settings
-	unsigned char ed_EDITOR_PANES:1;		// bit 9 (0: 1 pane / 1: 2 panes)
-	unsigned char ed_DUAL_SCROLL:1;			// bit 10
-	unsigned char ed_CONT_VIEW:1;			// bit 11
+	unsigned char ed_EDITOR_PANES:1;		// bit 10 (0: 1 pane / 1: 2 panes)
+	unsigned char ed_DUAL_SCROLL:1;			// bit 11
 	unsigned char ed_SHOW_RULER:1;			// bit 12
 	unsigned char ed_SHOW_LINE_NUMBER:1;	// bit 13
 #define CURS_POSITIONING_NONE		0
 #define CURS_POSITIONING_TOP		1
 #define CURS_POSITIONING_CENTER		2
 #define CURS_POSITIONING_BOTTOM		3
-	unsigned char ed_CURS_POSITIONING:2;	// bit 14
+	unsigned char ed_CURS_POSITIONING:2;	// bit 14,15
 #ifdef ENABLE_SYNTAX
-	unsigned char ed_SYNTAX_HIGHLIGHT:1;	// bit 15
-	unsigned char ed_TAB_EOL_NOTATION:1;	// bit 16
+	unsigned char ed_SYNTAX_HIGHLIGHT:1;	// bit 16
+	unsigned char ed_TAB_EOL_NOTATION:1;	// bit 17
 #endif // ENABLE_SYNTAX
-	unsigned char ed_AUTO_INDENT:1;			// bit 17
-	unsigned char ed_REVERSE_SEARCH:1;		// bit 18
-	unsigned char ed_IGNORE_CASE:1;			// bit 19
+	unsigned char ed_AUTO_INDENT:1;			// bit 18
+	unsigned char ed_REVERSE_SEARCH:1;		// bit 19
+	unsigned char ed_IGNORE_CASE:1;			// bit 20
 #ifdef ENABLE_REGEX
-	unsigned char ed_USE_REGEXP:1;			// bit 20
+	unsigned char ed_USE_REGEXP:1;			// bit 21
 #endif // ENABLE_REGEX
 #ifdef USE_NKF
-	unsigned char ed_USE_NKF:1;				// bit 21
+	unsigned char ed_USE_NKF:1;				// bit 22
 #endif // USE_NKF
 #define BACKUP_FILES_0			0
 #define BACKUP_FILES_1			1
@@ -86,10 +89,11 @@ typedef struct /*app_mode*/ {
 #define BACKUP_FILES_10			10
 #define BACKUP_FILES_15			15
 #define BACKUP_FILES_MAX		BACKUP_FILES_15
-	unsigned char ed_BACKUP_FILES:4;		// bit 22-25
+	unsigned char ed_BACKUP_FILES:4;		// bit 23-26
 
 	// filer settings
-	unsigned char fl_SHOW_DOT_FILE:1;		// bit 26
+	unsigned char fl_FILER_PANES:1;			// bit 27 (0: 1 pane / 1: 2 panes)
+	unsigned char fl_SHOW_DOT_FILE:1;		// bit 28
 #define FILE_SORT_BY_NAME		0
 #define FILE_SORT_BY_EXT		1
 #define FILE_SORT_BY_TIME		2
@@ -99,22 +103,21 @@ typedef struct /*app_mode*/ {
 #define FILE_SORT_BY_TIME_REV	6
 #define FILE_SORT_BY_SIZE_REV	7
 #define FILE_SORT_BY_MAX		FILE_SORT_BY_SIZE_REV
-	unsigned char fl_FILE_SORT_BY:3;		// bit 27-29
+	unsigned char fl_FILE_SORT_BY:3;		// bit 29-31
 #define SHOW_FILE_INFO_0				0	// None
 #define SHOW_FILE_INFO_1				1	// Size
 #define SHOW_FILE_INFO_2				2	// Size Time
 #define SHOW_FILE_INFO_3				3	// Size Time 1777 User
 #define SHOW_FILE_INFO_4				4	// Size Time lrwxrwxrwx User:group
 #define SHOW_FILE_INFO_MAX				SHOW_FILE_INFO_4
-	unsigned char fl_SHOW_FILE_INFO:3;		// bit 30-32
-	unsigned char fl_FILER_PANES:1;			// bit 33 (0: 1 pane / 1: 2 panes)
+	unsigned char fl_SHOW_FILE_INFO:3;		// bit 32-34
 } app_mode_t;
 
 typedef struct /*buf_state*/ {
 	unsigned char buf_MODIFIED:1;			// bit 0
 	unsigned char buf_VIEW_MODE:1;			// bit 1
 	unsigned char buf_LINE_WRAP_MODE:1;		// bit 2
-#if 0 // 1
+#if 0 // 0
 #define HV_IS_BOX_VH_IS_CHAR
 #else
 #define HV_IS_LINE_VH_IS_BOX
@@ -129,7 +132,7 @@ typedef struct /*buf_state*/ {
 #define CUT_MODE_VH_CHAR		6	//  and cursor moved vertically then horizontally (char cut)
 #define CUT_MODE_VH_BOX			7	//  and cursor moved vertically then horizontally (box cut)
 #define IS_MARK_SET(cut_mode)	((cut_mode) != CUT_MODE_0_LINE)
-	unsigned char buf_CUT_MODE:3;			// bit 3--5
+	unsigned char buf_CUT_MODE:3;			// bit 3-5
 #define TAB_SIZE_MIN			1
 #define TAB_SIZE_1				1
 #define TAB_SIZE_2				2
@@ -140,7 +143,7 @@ typedef struct /*buf_state*/ {
 #define TAB_SIZE_7				7
 #define TAB_SIZE_8				8
 #define TAB_SIZE_MAX			TAB_SIZE_8
-	unsigned char buf_TAB_SIZE:4;			// bit 6--9
+	unsigned char buf_TAB_SIZE:4;			// bit 6-9
 #define EOL_NIX					0
 #define EOL_MAC					1
 #define EOL_DOS					2
@@ -265,7 +268,20 @@ int inc_key_list_lines(void);
 const char *get_str_key_list_lines(void);
 int get_key_list_lines(void);
 
-int is_app_list_mode(void);
+// |editor-mode|buffer |contents                      |action                  |
+// |-----------|-------|------------------------------|------------------------|
+// |normal-mode|normal |ordinary files                |editable, cut/copy/paste|
+// |list-mode  |normal |history                       |up/down only cursor move|
+// |view-mode  |RO-mode|file-list, key-list, func-list|free cursor, copy       |
+// 
+// |filer-mode |buffer |contents                      |action                    |
+// |-----------|-------|------------------------------|--------------------------|
+// |normal-mode|N/A    |N/A                           |chdir/copy/delete/move/...|
+// |list-mode  |N/A    |N/A                           |chdir/select-file         |
+BOOL is_app_normal_mode(void);
+BOOL is_app_list_mode(void);
+BOOL is_app_help_mode(void);
+BOOL is_app_list_help_mode(void);
 
 int doe_tog_panes(void);
 int doe_tog_draw_cursor(void);
@@ -288,12 +304,16 @@ inline char indication_of_app_mode()
 	char separator_char = ':';
 	if (is_app_list_mode()) {
 		separator_char = '.';
+	} else if (is_app_help_mode()) {
+		separator_char = '!';
 	}
 #ifdef ENABLE_DEBUG
 	if (GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF) {
 		separator_char = ';';
 		if (is_app_list_mode()) {
 			separator_char = ',';
+		} else if (is_app_help_mode()) {
+			separator_char = '?';
 		}
 	}
 #endif // ENABLE_DEBUG

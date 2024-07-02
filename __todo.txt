@@ -2,8 +2,49 @@
  (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible/pending)
 
 [] capture stdout/stderr into be-editor buffer
-[v ] rearrange function keys for entering path from filer
-[ ] update vague width char list
+[] open symlinked file's dir not file itself
+[x] crash after closing key-func/func-key binding view by Alt-q
+[x] crash after closing key-func/func-key binding view
+[x] on tag jump in `paste from history`, return to editor soon not staying in view mode.
+
+[] tests of switching policy of filer and editor	operations-------------------------
+- [xx] tag-jump in editor:				open file with tag and tag-jump
+- [xx] tag-jump in history called from editor:		open files M-h UP LEFT... UP... F12
+- [xx] tag-jump in file list:				open files M-; UP... F12
+- [xx] tag-jump in history called from filer:		start filer, x UP UP... F12
+- [xx] key-list view and func-list view:		open file, M-U ESC or M-? ESC
+- [xx] input from history (replace/append(Alt)):	open file, M-h UP Enter or M-Enter
+- [xx] input from filer (replace/append(Alt), file/full-path(Shift)):	start filer, x DOWN select file, e or M-e or E or M-E
+- [xx] start as a editor:				start with argument of file name, ^Q
+- [xx] call-filer:					open file, M-F
+- [xx] call-filer and open file:			open file, M-F select file, e
+
+[x] switching policy of filer and editor
+switching filer and editor
+  filer +-- editor-list
+    ^   \-- filer-list
+    |
+    v
+  editor +-- editor-list
+         \-- filer-list
+[x] editor: stay in editor while `get_edit_bufs() > 0` and exit when `get_edit_bufs() == 0`
+
+editor(edit mode)   : load, edit, save file
+editor(history mode): automatically load/save, can not edit, can only see contents
+editor(help mode)   : no load operation, can not edit, can not save, can search/cut/copy
+
+|editor mode |load|edit|save|select by tap|search/cut/copy|comment                |on code         |
+|------------|----|----|----|-------------|---------------|-----------------------|----------------|
+|edit mode   |yes |yes |yes |no           |yes            |all editing            |APP_MODE_NORMAL |
+|history mode|auto|no  |auto|yes          |no             |history viewer/selector|APP_MODE_LIST   |
+|help mode   |no  |no  |no  |no           |yes            |help viewer            |APP_MODE_HELP   |
+
+[] operation policy
+- always works on ESC, Enter key.
+
+[-] Is it good to migrate to C++ ? --> No, C++ library is too big.
+[v ] rearrange function keys for entering file/path from filer
+[v ] update vague width char list
 [d] make goodly UTF8 supported `screen`
 
 [v] properly input UTF8 string even when ON_DEMAND... enabled

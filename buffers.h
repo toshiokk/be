@@ -26,6 +26,7 @@ typedef struct {
 	int cur_pane_idx;				// 0: left pane, 1: right pane
 	be_buf_t *bufs[EDITOR_PANES];	// edit-buffers shown in the left and the right pane
 } editor_panes_t;
+extern editor_panes_t *cur_editor_panes;	// Current Editor Panes
 
 // two panes of editor(editor_panes)
 // - each pane reference a `buffer`
@@ -169,7 +170,11 @@ be_buf_t *get_edit_buf_by_file_name(const char *file_name);
 
 void create_edit_buf(const char *file_path);
 
-void init_editor_panes();
+void init_cur_editor_panes(editor_panes_t *eps);
+void copy_editor_panes(editor_panes_t *dest, editor_panes_t *src);
+editor_panes_t *push_editor_panes(editor_panes_t *next_eps);
+void pop_editor_panes(editor_panes_t *prev_eps, editor_panes_t *eps, BOOL copy_back);
+
 void set_editor_cur_pane_idx(int pane_idx);
 int get_editor_cur_pane_idx(void);
 

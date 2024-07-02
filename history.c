@@ -43,10 +43,8 @@ PRIVATE const char *get_history_newer(int hist_type_idx);
 
 PRIVATE const char *has_str_registered_in_the_last_line(int hist_type_idx, const char *str);
 PRIVATE be_line_t *search_history_exact_match(int hist_type_idx, const char *str);
-#if 0
 PRIVATE int check_file_pos_recorded_in_history(int hist_type_idx, const char *str);
 PRIVATE int search_history_from_newest(int hist_type_idx, const char *str);
-#endif
 PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str);
 
 // search/replace(directory and execution) history support functions
@@ -142,9 +140,15 @@ void update_history(int hist_type_idx, const char *str, BOOL force_update)
 {
 	be_line_t *line;
 
-	if (has_str_registered_in_the_last_line(hist_type_idx, str) != NULL) {
-		// str is registered in the last line, no need update
-		return;
+	if ((! force_update) && (hist_type_idx == HISTORY_TYPE_IDX_CURSPOS)) {
+		if (check_file_pos_recorded_in_history(hist_type_idx, str)) {
+			return; // registered relatively newer, no need of update
+		}
+	} else {
+		if (has_str_registered_in_the_last_line(hist_type_idx, str) != NULL) {
+			// str is registered in the last line, no need update
+			return;
+		}
 	}
 	// load-modify(free old entry and append new entry)-save
 	load_history_idx(hist_type_idx);
@@ -156,7 +160,6 @@ void update_history(int hist_type_idx, const char *str, BOOL force_update)
 	save_history_if_modified(hist_type_idx);
 }
 
-#if 0
 PRIVATE int check_file_pos_recorded_in_history(int hist_type_idx, const char *str)
 {
 	char file_path[MAX_PATH_LEN+1];
@@ -166,7 +169,7 @@ PRIVATE int check_file_pos_recorded_in_history(int hist_type_idx, const char *st
 	if (strcmp(line, str) == 0) {
 		// exact the same line registered
 		int line_num_from_bottom = search_history_from_newest(hist_type_idx, line);
-		if (0 < line_num_from_bottom && line_num_from_bottom <= MAX_HISTORY_LINES / 2) {
+		if (0 < line_num_from_bottom) {
 			return 1; // registered relatively newer, no need of update
 		}
 	}
@@ -180,11 +183,10 @@ PRIVATE int search_history_from_newest(int hist_type_idx, const char *str)
 	for (line = BUF_BOT_LINE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
 		line_num_from_bottom++;
 		if (strcmp(line->data, str) == 0)	// exact match
-			return line_num_from_bottom;	// return line count from the newest
+			return line_num_from_bottom;	// return line count from the newest [1--]
 	}
 	return 0; // not found
 }
-#endif
 
 // last_n: 1, 2, 3, ....
 const char *get_history_newest(int hist_type_idx, int last_n)
@@ -471,27 +473,27 @@ const char *search_history_file_path(int hist_type_idx, const char *path)
 //-----------------------------------------------------------------------------
 int select_from_history_list(int hist_type_idx, char *buffer)
 {
+	be_buf_t *edit_buf_save = get_epc_buf();
+
 	load_histories();
 	renumber_all_bufs_from_top(&history_buffers);
 
-	be_buf_t *edit_buf_save = get_epc_buf();
 	set_epc_buf(get_history_buf(hist_type_idx));
 
-/////	EPCBVC_CL = CUR_EDIT_BUF_BOT_LINE;
-/////	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
-/////	 UPDATE_SCRN_ALL_SOON);
+	int ret = call_editor(1, APP_MODE_LIST, buffer, MAX_PATH_LEN);
 
-	int ret = call_editor(1, 1);
-
-	if (ret > 0) {
+flf_d_printf("ret: %d\n", ret);
+	if (ret >= EDITOR_INPUT) {
 		strlcpy__(buffer, EPCBVC_CL->data, MAX_EDIT_LINE_LEN);
 	} else {
 		strcpy__(buffer, "");
 	}
 
-	set_epc_buf(edit_buf_save);
+	if (ret != EDITOR_LOADED) {
+		set_epc_buf(edit_buf_save);
+	}
 
-	return ret; // 1: selected, 0: done in editor, -1: cancelled
+	return ret;
 }
 
 //------------------------------------------------------------------------------------

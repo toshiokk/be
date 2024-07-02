@@ -53,7 +53,7 @@
  )
 #endif
 
-int app_main_loop(void);
+void app_main_loop(void);
 
 void app_die_on(const char *msg);
 void free_all_allocated_memory(void);

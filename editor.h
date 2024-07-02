@@ -22,16 +22,17 @@
 #ifndef editor_h
 #define editor_h
 
-extern char prev_func_id[MAX_PATH_LEN+1];
 typedef enum {
-	EDITOR_NONE = 0,
-	EDITOR_CANCELLED = 1,
-	EDITOR_DONE = 2,
-	EDITOR_ENTERED = 3,
+	EDITOR_NONE				= 0,
+	EDITOR_DO_QUIT			= 1,	// quit/cancelled
+	EDITOR_LOADED			= 2,	// file is loaded
+	EDITOR_INPUT			= 3,	// input string
+	EDITOR_INPUT_TO_REPLACE	= 3,	// input string to replace
+	EDITOR_INPUT_TO_APPEND	= 4,	// input string to append
 } editor_quit_t;
 extern editor_quit_t editor_quit;
 
-int call_editor(int push_win, int list_mode);
+int call_editor(int push_win, int list_mode, char *str_buf, int buf_len);
 
 //-----------------------------------------------------------------------------
 // "doe_..."  DO Editor function
@@ -54,7 +55,7 @@ int doe_close_file_always(void);
 int doe_close_all_ask(void);
 int doe_close_all_modified(void);
 
-int doe_read_file_into_cur_pos(void);
+int doe_read_file_into_cur_buf(void);
 
 char *get_app_dir(void);
 
@@ -115,7 +116,9 @@ int update_screen_editor(int title_bar, int status_bar, int refresh);
 int disp_status_bar_editor(void);
 void disp_key_list_editor(void);
 
-int is_view_mode_then_warn_it(void);
+int is_editor_view_mode_then_warn_it(void);
+int is_editor_view_mode(void);
+int is_epc_view_mode(void);
 
 #ifdef ENABLE_DEBUG
 void dump_cur_pointers(void);

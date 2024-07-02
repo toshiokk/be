@@ -125,7 +125,8 @@ void setup_cut_region_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 
 PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move_t cursor_move)
 {
-flf_d_printf("cut_mode: %d:%s -->\n", CUR_EBUF_STATE(buf_CUT_MODE), buf_cut_mode_str(get_epc_buf()));
+flf_d_printf("cut_mode: %d:%s -->\n",
+ CUR_EBUF_STATE(buf_CUT_MODE), buf_cut_mode_str(get_epc_buf()));
 	switch (cursor_move) {
 	default:
 	case CURS_MOVE_NONE:
@@ -205,7 +206,8 @@ flf_d_printf("cut_mode: %d:%s -->\n", CUR_EBUF_STATE(buf_CUT_MODE), buf_cut_mode
 #endif
 		break;
 	}
-flf_d_printf("  cut_mode: %d:%s\n", CUR_EBUF_STATE(buf_CUT_MODE), buf_cut_mode_str(get_epc_buf()));
+flf_d_printf("  cut_mode: %d:%s\n",
+ CUR_EBUF_STATE(buf_CUT_MODE), buf_cut_mode_str(get_epc_buf()));
 }
 PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 {

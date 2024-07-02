@@ -80,9 +80,6 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 	recursively_called--;
 	//---------------------------------------------------------------------------------
 flf_d_printf("ret: %d\n", ret);
-	// -1: cancelled
-	//  0: quited
-	//  1: string is normally input
 	tio_set_cursor_on(0);
 	change_cur_dir(dir_save);
 
@@ -104,8 +101,8 @@ flf_d_printf("ret: %d\n", ret);
 }
 
 // Input string. This should only be called from input_string_xxx().
-// return 0 : cancelled
-// return 1 : input normally
+//  return 0 : cancelled
+//  return 1 : input normally
 PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg)
 {
@@ -234,8 +231,9 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			//----------------------------------------------------
 			ret = select_from_history_list(hist_type_idx, buffer);
 			//----------------------------------------------------
-			if (ret > 0) {
-				if (ret < APPEND_STR_2 || cmp_func_id(func_id, "doe_page_up")) {
+flf_d_printf("ret: %d\n", ret);
+			if ((ret == EDITOR_INPUT_TO_REPLACE) || (ret == EDITOR_INPUT_TO_APPEND)) {
+				if ((ret == EDITOR_INPUT_TO_REPLACE) || cmp_func_id(func_id, "doe_page_up")) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
@@ -245,8 +243,11 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
 				 cursor_byte_idx, buffer);
 			} else
-			if (ret == 0) {
-				key_input = KEY_NONE;	// quit
+			///if (ret == EDITOR_DO_QUIT) {
+			///	key_input = K_ESC;	// quit
+			///} else
+			if (ret == EDITOR_LOADED) {
+				key_input = K_NONE;	// quit
 			}
 #endif // ENABLE_HISTORY
 #ifdef ENABLE_FILER
@@ -255,11 +256,11 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		 || cmp_func_id(func_id, "doe_page_down")
 		 || cmp_func_id(func_id, "doe_last_line")) {
 			//---------------------------------------------------
-			ret = call_filer(1, 1, "", "", buffer, MAX_PATH_LEN);
+			ret = call_filer(1, APP_MODE_LIST, "", "", buffer, MAX_PATH_LEN);
 			//---------------------------------------------------
 flf_d_printf("ret: %d\n", ret);
-			if (ret > 0) {
-				if (ret < APPEND_STR_2 || cmp_func_id(func_id, "doe_page_down")) {
+			if ((ret == FILER_INPUT_TO_REPLACE) || (ret == FILER_INPUT_TO_APPEND)) {
+				if ((ret == FILER_INPUT_TO_REPLACE) || cmp_func_id(func_id, "doe_page_down")) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
@@ -268,6 +269,9 @@ flf_d_printf("ret: %d\n", ret);
 				}
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
 				 cursor_byte_idx, buffer);
+			} else
+			if (ret == FILER_LOADED) {
+				key_input = K_NONE;	// quit
 			}
 #endif // ENABLE_FILER
 		} else
@@ -294,15 +298,18 @@ flf_d_printf("ret: %d\n", ret);
 				cursor_byte_idx = strlen_path(input_buf);
 			}
 		}
-		if (key_input == K_ESC || key_input == KEY_NONE || key_input == K_C_M)
+		if (key_input == K_ESC || key_input == KEY_NONE || key_input == K_C_M) {
 			break;
+		}
 	}
 
-	if (key_input == K_ESC)
-		return -1;						// cancelled, no input
-	if (key_input == KEY_NONE)
-		return 0;						// done in editor
-	return 1;							// input
+	if (key_input == K_ESC) {
+		return INPUT_CANCELLED;		// cancelled, no input
+	}
+	if (key_input == KEY_NONE) {
+		return INPUT_LOADED;		// file loaded
+	}
+	return INPUT_DONE;				// string input
 }
 
 /* display input box
@@ -505,9 +512,7 @@ PRIVATE void list_one_key(char key, const char *desc)
 
 void disp_key_list(char *key_lists[])
 {
-	int idx;
-
-	for (idx = 0; idx < get_key_list_lines(); idx++) {
+	for (int idx = 0; idx < get_key_list_lines(); idx++) {
 		display_reverse_text(main_win_get_bottom_win_y() + KEY_LIST_LINE + idx,
 		 key_lists[idx]);
 	}

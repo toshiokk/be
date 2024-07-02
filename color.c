@@ -81,26 +81,35 @@ void init_default_app_color(void)
 
 void set_work_space_color_on_app_list_mode()
 {
-	if (is_app_list_mode()) {
-		set_work_space_color_dark();
+	if (is_app_normal_mode()) {
+		clear_work_space_color_dark();
 	} else {
-		set_work_space_color_normal();
+		set_work_space_color_dark();
 	}
 }
 
-PRIVATE int work_space_color_dark = 0;
+PRIVATE char work_space_color_dark = 0;
 void set_work_space_color_dark(void)
 {
-	work_space_color_dark++;
+	work_space_color_dark = 1;
 }
-void set_work_space_color_normal(void)
+void clear_work_space_color_dark(void)
 {
-	if (work_space_color_dark)
-		work_space_color_dark--;
+	work_space_color_dark = 0;
 }
 int is_work_space_color_dark(void)
 {
 	return work_space_color_dark;
+}
+
+PRIVATE char work_space_color_warn = 0;
+void set_work_space_color_warn(void)
+{
+	work_space_color_warn = 1;
+}
+int is_work_space_color_warn(void)
+{
+	return work_space_color_warn;
 }
 
 //-----------------------------------------------------------------------------
@@ -127,17 +136,14 @@ void get_color_by_idx(item_color_idx_t color_idx, char *fgc, char *bgc)
 void set_color_by_idx(item_color_idx_t color_idx, int reverse)
 {
 	if (0 <= color_idx && color_idx < MAX_ITEM_COLORS) {
-		if (is_work_space_color_dark() && (color_idx == ITEM_COLOR_IDX_TEXT_NORMAL)) {
-			color_idx = ITEM_COLOR_IDX_DEFAULT;
+		if (color_idx == ITEM_COLOR_IDX_TEXT_NORMAL) {
+			if (is_work_space_color_warn()) {
+				color_idx = ITEM_COLOR_IDX_TEXT_SELECTED2;
+			} else if (is_work_space_color_dark()) {
+				color_idx = ITEM_COLOR_IDX_DEFAULT;
+			}
 		}
 		tio_set_attrs(item_colors[color_idx].bgc, item_colors[color_idx].fgc, reverse);
-		///int bgc = item_colors[color_idx].bgc;
-		///if (is_work_space_color_dark()) {
-		///	if (bgc == CL_WH) {
-		///		bgc = CL_BR;
-		///	}
-		///}
-		///tio_set_attrs(bgc, item_colors[color_idx].fgc, reverse);
 	}
 }
 

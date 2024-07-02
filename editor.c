@@ -22,22 +22,18 @@
 #include "headers.h"
 
 editor_quit_t editor_quit = EDITOR_NONE;
-PRIVATE int editor_main_loop(void);
+PRIVATE int editor_main_loop(char *str_buf, int buf_len);
 
-int call_editor(int push_win, int list_mode)
+int call_editor(int push_win, int list_mode, char *str_buf, int buf_len)
 {
-#ifdef ENABLE_FILER
-	filer_panes_t *prev_fps = NULL;
-	filer_panes_t next_filer_panes;
-#endif // ENABLE_FILER
+	editor_panes_t *prev_eps = NULL;
+	editor_panes_t next_editor_panes;
 	app_mode_t appmode_save;
 
 	if (push_win) {
 		win_push_win_size();
+		prev_eps = push_editor_panes(&next_editor_panes);
 	}
-#ifdef ENABLE_FILER
-	prev_fps = inherit_filer_panes(&next_filer_panes);
-#endif // ENABLE_FILER
 
 	memcpy(&appmode_save, &app_mode__, sizeof(app_mode__));
 	CLR_APPMD(app_EDITOR_FILER);
@@ -48,10 +44,11 @@ int call_editor(int push_win, int list_mode)
 
 flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
 flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
-	int ret = editor_main_loop();
+	int ret = editor_main_loop(str_buf, buf_len);
 flf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
-flf_d_printf("ret: %d\n", ret);
-	editor_quit = EDITOR_NONE;	// for caller of call_editor(), clear "editor_quit"
+flf_d_printf("push_win:%d, list_mode:%d --> ret: %d\n", push_win, list_mode, ret);
+_D_(dump_editor_panes())
+	/////editor_quit = EDITOR_NONE;	// for caller of call_editor(), clear "editor_quit"
 	_mlc_check_count
 
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
@@ -60,23 +57,24 @@ flf_d_printf("ret: %d\n", ret);
 	set_app_func_key_table();
 	set_work_space_color_on_app_list_mode();
 
-#ifdef ENABLE_FILER
-	free_filer_panes(&next_filer_panes, prev_fps);
-#endif // ENABLE_FILER
 	if (push_win) {
+		pop_editor_panes(prev_eps, &next_editor_panes, ret == EDITOR_LOADED);
 		win_pop_win_size();
 	}
+_D_(dump_editor_panes())
 
-	return ret;		// 1: input, 0: cancelled
+	return ret;		// EDITOR_DO_QUIT
 }
 
 //-----------------------------------------------------------------------------
-char prev_func_id[MAX_PATH_LEN+1];
-PRIVATE int editor_main_loop(void)
+PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 {
 	key_code_t key_input;
 	func_key_table_t *func_key_table;
 
+	if (str_buf) {
+		strcpy(str_buf, "");
+	}
 	search_clear(&search__);
 #ifdef ENABLE_REGEX
 	matches_clear(&matches__);
@@ -86,7 +84,7 @@ PRIVATE int editor_main_loop(void)
 
 	// Main input loop
 	key_input = K_C_AT;
-	while (1) {
+	for ( ; ; ) {
 		editor_quit = EDITOR_NONE;
 		if (key_macro_is_playing_back()) {
 			// When playing back key-macro, do not update screen for speed up.
@@ -116,11 +114,6 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 #ifdef ENABLE_REGEX
 			matches_clear(&matches__);
 #endif // ENABLE_REGEX
-#ifdef ENABLE_UNDO
-#ifdef ENABLE_DEBUG
-			memorize_undo_state_before_change();
-#endif // ENABLE_DEBUG
-#endif // ENABLE_UNDO
 			if ((func_key_table = get_func_key_table_from_key(editor_func_key_table, key_input))
 			 == NULL) {
 				disp_status_bar_err(_("No command assigned for the key: %04xh"), key_input);
@@ -135,43 +128,53 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 					}
 					// FALLTHROUGH
 				case XA:		// executable all Normal/List mode
+#if defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
+					memorize_undo_state_before_change(func_key_table->func_id);
+#endif // defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
 					search_clear(&search__);
-flf_d_printf("CALL_EDITOR_FUNC [%s]\n", func_key_table->func_id);
+mflf_d_printf("CALL_EDITOR_FUNC [%s]\n", func_key_table->func_id);
 					//=========================
 					(*func_key_table->func)();	// call function "doe_...()"
 					//=========================
-					count_easy_buffer_switching();
-flf_d_printf("editor_quit: %d\n", editor_quit);
-					strlcpy__(prev_func_id, func_key_table->func_id, MAX_PATH_LEN);
+_D_(dump_editor_panes())
+mflf_d_printf("editor_quit: %d\n", editor_quit);
+					easy_buffer_switching_count();
+#if defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
+					check_undo_state_after_change();
+#endif // defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
 					break;
 				}
 			}
-#ifdef ENABLE_UNDO
-#ifdef ENABLE_DEBUG
-			check_undo_state_after_change();
-#endif // ENABLE_DEBUG
-#endif // ENABLE_UNDO
 		}
-		if (is_app_list_mode() == 0 && count_edit_bufs() == 0) {
-			// If all files closed on edit mode, exit editor.
-			break;
+		if (is_app_normal_mode()) {
+			if (count_edit_bufs() == 0) {
+flf_d_printf("all files closed\n");
+				// If all files closed on editor, exit editor.
+				break;
+			}
+		} else
+		if (is_app_list_help_mode()) {
+			/////if (editor_quit == EDITOR_LOADED) {
+			/////	break;
+			/////} else
+			if (editor_quit) {
+				break;
+			}
 		}
-		if (editor_quit) {
-			break;
-		}
+/////_D_(dump_editor_panes())
 	}
 #ifdef ENABLE_HISTORY
 	key_macro_cancel_recording();
 #endif // ENABLE_HISTORY
-	if (editor_quit == EDITOR_CANCELLED) {
-		return -1;	// cancelled
-	} else
-	if (editor_quit == EDITOR_DONE) {
-		return 0;	// done
+	if ((editor_quit == EDITOR_DO_QUIT) || (editor_quit == EDITOR_LOADED)) {
+		return editor_quit;
+	}
+	if (str_buf) {
+		strlcpy__(str_buf, EPCBVC_CL->data, buf_len);
 	}
 	return IS_META_KEY(key_input)
-	 ? APPEND_STR_2		// Append input file/dir name
-	 : REPLACE_STR_1;	// input file/dir name
+	 ? EDITOR_INPUT_TO_APPEND		// Append input file/dir name
+	 : EDITOR_INPUT_TO_REPLACE;		// input file/dir name
 }
 
 //-----------------------------------------------------------------------------
@@ -185,29 +188,20 @@ PRIVATE int open_file_recursive(int recursive)
 	char file_path[MAX_PATH_LEN+1];
 
 	clear_files_loaded();
-	while (1) {
-		int ret;
-#ifdef ENABLE_FILER
-		ret = call_filer(1, 0, "", file_path, file_path, MAX_PATH_LEN);
-		if (ret > 0)
-			break;
-#endif // ENABLE_FILER
-
-		ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_CURSPOS, _("Open existing file:"));
-
-		if (ret <= 0) {
-			break;
-		}
-#ifdef ENABLE_FILER
-		if (is_path_wildcard(file_path))
-			continue;
-#endif // ENABLE_FILER
-		// CURDIR: changed in editor
-		if (load_file_name_upp_low(file_path, TUL0, OOE0, MOE1, LFH0, recursive) <= 0) {
-			tio_beep();
-		}
-		break;
+#ifndef ENABLE_FILER
+	int ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_CURSPOS,
+	 _("Open existing file:"));
+	if (ret <= INPUT_LOADED) {
+		return 0;
 	}
+	// CURDIR: changed in editor
+	if (load_file_name_upp_low(file_path, TUL0, OOE0, MOE1, LFH0, recursive) <= 0) {
+		tio_beep();
+		return 0;
+	}
+#else // ENABLE_FILER
+	call_filer(1, APP_MODE_NORMAL, "", file_path, file_path, MAX_PATH_LEN);
+#endif // ENABLE_FILER
 	disp_files_loaded_if_ge_0();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
@@ -215,11 +209,9 @@ PRIVATE int open_file_recursive(int recursive)
 int doe_open_new_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
-	int ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_DIR, _("Open new file:"));
-	if (ret < 0) {
-		return 0;
-	}
-	if (ret <= 0) {
+	int ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_DIR,
+	 _("Open new file:"));
+	if (ret <= INPUT_LOADED) {
 		return 0;
 	}
 	// CURDIR: changed in editor
@@ -318,7 +310,7 @@ int doe_reopen_file(void)
 #ifdef ENABLE_UNDO
 #ifdef ENABLE_DEBUG
 	// file was reopened, re-memorize undo state.
-	memorize_undo_state_before_change();
+	memorize_undo_state_before_change(NULL);
 #endif // ENABLE_DEBUG
 #endif // ENABLE_UNDO
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL_SOON);
@@ -327,7 +319,7 @@ int doe_reopen_file(void)
 }
 
 //-----------------------------------------------------------------------------
-//|Func saving function    |files|close|un-mod|ask Y/N|file-name|Key  |
+//|file saving function    |files|close|un-mod|ask Y/N|file-name|Key  |
 //|                        |     |     | ified|       |         |     |
 //|------------------------|-----|-----|------|-------|---------|-----|
 //|doe_write_file_to()     | one |no   | Yes  | none  |New-name |@s   |write to new file
@@ -336,16 +328,16 @@ int doe_reopen_file(void)
 //|doe_write_all_ask()     | All |no   | no   | Ask   |cur-name |@a   |
 //|doe_write_all_modified()| All |no   | no   | none  |cur-name |@A   |
 //|doe_close_file_ask()    | one |Close| no   | Ask   |cur-name |^Q   |
-//|doe_close_file_always() | one |Close| no   | none  |cur-name |@^Q  |
+//|doe_close_file_always() | one |Close| no   | none  |cur-name |@Q   |@^Q
 //|doe_close_all_ask()     | All |Close| no   | Ask   |cur-name |@q   |
-//|doe_close_all_modified()| All |Close| no   | none  |cur-name |@Q   |
+//|doe_close_all_modified()| All |Close| no   | none  |cur-name |@^Q  |@Q
 
 int doe_write_file_to(void)
 {
 	char file_path[MAX_PATH_LEN+1];
 
 	strlcpy__(file_path, get_epc_buf()->file_path, MAX_PATH_LEN);
-	while (1) {
+	for ( ; ; ) {
 		if (input_new_file_name_n_ask(file_path) <= 0) {
 			return -1;
 		}
@@ -397,21 +389,20 @@ int doe_write_all_modified(void)
 	return 1;
 }
 
-PRIVATE int close_file(int yes_no);
+PRIVATE int close_file_ask(int yes_no);
 int doe_close_file_ask(void)
 {
-	return close_file(ANSWER_NO);
+	return close_file_ask(ANSWER_NO);
 }
 int doe_close_file_always(void)
 {
-	return close_file(ANSWER_FORCE);
+	return close_file_ask(ANSWER_FORCE);
 }
-PRIVATE int close_file(int yes_no)
+PRIVATE int close_file_ask(int yes_no)
 {
-	char file_pos_str[MAX_PATH_LEN+1];
-
-	if (is_app_list_mode()) {
-		editor_quit = EDITOR_CANCELLED;
+	if (is_editor_view_mode()) {
+		/////switch_epc_buf_to_valid_edit_buf();
+		editor_quit = EDITOR_DO_QUIT;
 		return 0;
 	}
 	int ret = write_file_ask(yes_no, CLOSE_AFTER_SAVE_1);
@@ -421,6 +412,7 @@ PRIVATE int close_file(int yes_no)
 	}
 	// Yes/No
 
+	char file_pos_str[MAX_PATH_LEN+1];
 	// If the current file has been the last open file, memorize it later.
 	memorize_cur_file_pos_null(file_pos_str);
 	free_cur_edit_buf();
@@ -449,11 +441,11 @@ int doe_close_all_modified(void)
 }
 PRIVATE int write_close_all(int yes_no)
 {
-	char file_pos_str[MAX_PATH_LEN+1];
-	if (is_app_list_mode()) {
-		editor_quit = EDITOR_CANCELLED;
+	if (is_editor_view_mode()) {
+		editor_quit = EDITOR_DO_QUIT;
 		return 0;
 	}
+	char file_pos_str[MAX_PATH_LEN+1];
 	// memorize the last current file.
 	memorize_cur_file_pos_null(file_pos_str);
 
@@ -470,7 +462,7 @@ PRIVATE int write_close_all(int yes_no)
 }
 
 //-----------------------------------------------------------------------------
-int doe_read_file_into_cur_pos(void)
+int doe_read_file_into_cur_buf(void)
 {
 	char file_pos_str[MAX_PATH_LEN+1];
 	memorize_cur_file_pos_null(file_pos_str);
@@ -563,7 +555,7 @@ int doe_run_line_soon(void)
 	fork_exec_sh_c(SETTERM1, SEPARATE1, PAUSE1, buffer);
 
 	if (is_app_list_mode()) {
-		editor_quit = EDITOR_DONE;
+		editor_quit = EDITOR_DO_QUIT;
 		return 0;
 	}
 	doe_refresh_editor();
@@ -574,7 +566,7 @@ int doe_run_line_soon(void)
 int doe_call_filer(void)
 {
 	char file_path[MAX_PATH_LEN+1];
-	call_filer(1, 0, "", "", file_path, MAX_PATH_LEN);
+	call_filer(1, APP_MODE_NORMAL, "", "", file_path, MAX_PATH_LEN);
 	return 0;
 }
 #endif // ENABLE_FILER
@@ -707,18 +699,18 @@ int close_all(void)
 	return 0;
 }
 
-// | "yes_no" value | ask yes / no          | save or not           |
-// |----------------|-----------------------|-----------------------|
-// | ANSWER_FORCE   | save soon if modified | save soon if modified |
-// | < ANSWER_FORCE | ask if not modified   | save if answered YES  |
-// | ANSWER_ALL     | save soon if modified | save soon if modified |
-// | < ANSWER_ALL   | ask if modified       | save if answered YES  |
+// | "yes_no" value   | ask yes / no          | save or not           |
+// |------------------|-----------------------|-----------------------|
+// | ANSWER_FORCE     | save soon if modified | save soon if modified |
+// | x < ANSWER_FORCE | ask if not modified   | save if answered YES  |
+// | ANSWER_ALL       | save soon if modified | save soon if modified |
+// | x < ANSWER_ALL   | ask if modified       | save if answered YES  |
 
 int write_file_ask(int yes_no, close_after_save_t close)
 {
 	int ret = yes_no;
 
-	switch_epc_buf_to_valid_buf();
+///	switch_epc_buf_to_valid_buf();
 
 	if (check_cur_buf_modified() == 0) {
 		disp_status_bar_done(_("Buffer is NOT modified"));
@@ -828,7 +820,7 @@ int update_screen_editor(int title_bar, int status_bar, int refresh)
 				set_editor_cur_pane_idx(pane_idx);
 				disp_edit_win(pane_sel_idx);
 				if (pane_sel_idx == 0) {
-					set_work_space_color_normal();
+					clear_work_space_color_dark();
 				}
 			}
 		}
@@ -918,22 +910,24 @@ void disp_key_list_editor(void)
  "<doe_search_backward_first>Search BW "
  "<doe_search_forward_first>Search FW "
  "<doe_replace>Replace "
- "<doe_switch_to_file_list>FileList "
+ "<doe_view_file_list>FileList "
+#ifdef ENABLE_HELP
+ "<doe_view_key_list>KeyList "
+ "<doe_view_func_list>FuncList ",
+#endif // ENABLE_HELP
  "<doe_switch_to_prev_file>PrevFile "
  "<doe_switch_to_next_file>NextFile "
 #if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
  "<doe_switch_to_prev_buffers>PrevBufs "
  "<doe_switch_to_next_buffers>NextBufs "
 #endif // APP_REL_LVL
- "<doe_switch_to_key_list>KeyList "
- "<doe_switch_to_func_list>FuncList ",
 	};
 	disp_key_list(editor_key_lists);
 }
 
 //-----------------------------------------------------------------------------
 
-int is_view_mode_then_warn_it(void)
+int is_editor_view_mode_then_warn_it(void)
 {
 	if (is_app_list_mode()) {
 		disp_status_bar_done(_("Modification not allowed in LIST mode"));
@@ -944,10 +938,20 @@ int is_view_mode_then_warn_it(void)
 		return 1;
 	}
 	if (CUR_EBUF_STATE(buf_VIEW_MODE)) {
-		disp_status_bar_done(_("Modification not allowed in VIEW mode"));
+		disp_status_bar_done(_("Modification not allowed in VIEW mode buffer"));
 		return 1;
 	}
 	return 0;
+}
+int is_editor_view_mode(void)
+{
+	return is_app_list_mode()
+	 || is_epc_view_mode();
+}
+int is_epc_view_mode(void)
+{
+	return IS_NODE_ANCH(get_epc_buf())
+	 || CUR_EBUF_STATE(buf_VIEW_MODE);
 }
 
 //-----------------------------------------------------------------------------

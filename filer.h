@@ -33,23 +33,24 @@ typedef struct {
 extern filer_panes_t *cur_filer_panes;	// Current Filer Panes (instance is allocated locally)
 
 typedef enum {
-	FILER_DO_NOTHING = 					0,
-	FILER_DO_UPDATE_FILE_LIST_AUTO = 	1,	// periodic file list update
-	FILER_DO_UPDATE_FILE_LIST_FORCE = 	2,	// force file list update
+	FILER_DO_NOTHING				= 0,
+	FILER_DO_UPDATE_FILE_LIST_AUTO	= 1,	// periodic file list update
+	FILER_DO_UPDATE_FILE_LIST_FORCE	= 2,	// force file list update
 											// quit:
-	FILER_DO_QUIT = 					5,	//   quit        and return from filer
-	FILER_DO_ABORT = 					6,	//   abort       and return from filer
-	FILER_DO_FILE_LOADED = 				7,	//   file loaded and return from filer
+	FILER_DO_QUIT					= 5,	//   quit and return from filer
+	FILER_LOADED					= 6,	//   file loaded and return from filer
+	FILER_INPUT_TO_REPLACE			= 7,	//   input file/dir name to replace
+	FILER_INPUT_TO_APPEND			= 8,	//   input file/dir name to append
 											// list mode:
-	FILER_DO_ENTER_FILE_NAME =			8,	//   return file name (file, dir)
-	FILER_DO_ENTER_FILE_PATH = 			9,	//   return file path (/path/to/file, /path/to/dir)
-	FILER_DO_ENTER_CUR_DIR_PATH = 		10,	//   return current directory path (/path/to/dir)
+	FILER_DO_ENTER_FILE_NAME		= 9,	//   return file name (file, dir)
+	FILER_DO_ENTER_FILE_PATH		= 10,	//   return file path (/path/to/file, /path/to/dir)
+	FILER_DO_ENTER_CUR_DIR_PATH		= 11,	//   return current directory path (/path/to/dir)
 } filer_do_next_t;
 extern filer_do_next_t filer_do_next;
 
-void init_filer_panes(filer_panes_t *fps, const char *cur_dir);
-filer_panes_t *inherit_filer_panes(filer_panes_t *next_fps);
-void free_filer_panes(filer_panes_t *fps, filer_panes_t *prev_fps);
+filer_panes_t *push_filer_panes(filer_panes_t *next_fps);
+void init_cur_filer_panes(filer_panes_t *fps, const char *cur_dir);	// TODO: rename
+void pop_filer_panes(filer_panes_t *fps, filer_panes_t *prev_fps);
 void set_filer_cur_pane_idx(int cur_pane_idx);
 int get_filer_cur_pane_idx();
 

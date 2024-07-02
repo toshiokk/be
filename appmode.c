@@ -327,11 +327,11 @@ int inc_show_file_info(void)
 const char *get_str_show_file_info(void)
 {
 	switch (GET_APPMD(fl_SHOW_FILE_INFO)) {
-	case SHOW_FILE_INFO_0:		return "None";
-	case SHOW_FILE_INFO_1:		return "Siz";
-	case SHOW_FILE_INFO_2:		return "Siz+Tim";
-	case SHOW_FILE_INFO_3:		return "SzTmt7777Us";
-	case SHOW_FILE_INFO_4:		return "SzTmRwxUG";
+	case SHOW_FILE_INFO_0:	return "None";			// ""
+	case SHOW_FILE_INFO_1:	return "Siz";			// " 4096"
+	case SHOW_FILE_INFO_2:	return "Siz+Tim";		// " 4096 240628-124240"
+	case SHOW_FILE_INFO_3:	return "SzTmT7777Us";	// " 4096 240628-124240 d0755 user"
+	case SHOW_FILE_INFO_4:	return "SzTmRwxUG";		// " 4096 240628-124240  rwxr--r-- user user"
 	default:	return "";
 	}
 }
@@ -399,9 +399,21 @@ int get_key_list_lines(void)
 	return GET_APPMD(app_KEY_LINES);
 }
 
-int is_app_list_mode(void)	// in editor: text view mode, in filer: file list mode
+BOOL is_app_normal_mode(void)	// in editor: text editor mode, in filer: file manager mode
 {
-	return GET_APPMD(app_LIST_MODE);			// 0: edit mode, 1: list mode
+	return GET_APPMD(app_LIST_MODE) == APP_MODE_NORMAL;
+}
+BOOL is_app_list_mode(void)		// in editor: text list mode, in filer: file list mode
+{
+	return GET_APPMD(app_LIST_MODE) == APP_MODE_LIST;
+}
+BOOL is_app_help_mode(void)		// in editor: read only mode, in filer: N/A
+{
+	return GET_APPMD(app_LIST_MODE) == APP_MODE_HELP;
+}
+BOOL is_app_list_help_mode(void)
+{
+	return is_app_list_mode() || is_app_help_mode();
 }
 
 //=============================================================================

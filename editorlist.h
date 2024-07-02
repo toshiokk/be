@@ -22,15 +22,15 @@
 #ifndef editorlist_h
 #define editorlist_h
 
-int doe_switch_to_file_list(void);
+int doe_view_file_list(void);
+#ifdef ENABLE_HELP
+int doe_view_key_list(void);
+int doe_view_func_list(void);
+#endif // ENABLE_HELP
 
 void init_help_bufs(void);
 be_buf_t *get_help_buf(int help_buf_idx);
 
-#ifdef ENABLE_HELP
-int doe_switch_to_key_list(void);
-int doe_switch_to_func_list(void);
-#endif // ENABLE_HELP
 
 #endif // editorlist_h
 

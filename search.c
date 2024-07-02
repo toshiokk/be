@@ -86,7 +86,7 @@ int doe_replace(void)
 	char prev_file_pos[MAX_PATH_LEN+1];
 	int num_replaced;
 
-	if (is_view_mode_then_warn_it()) {
+	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
 
@@ -153,7 +153,7 @@ int input_search_str(int search0_replace1, char *input_buf)
 #endif // ENABLE_REGEX
 	 GET_APPMD(ed_REVERSE_SEARCH) ? _("[Backward]") : _("[Forward]"), default_needle);
 
-	if (ret <= 0) {
+	if (ret <= INPUT_LOADED) {
 		// cancelled
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
 		return ret;						// cancelled
@@ -177,8 +177,9 @@ int input_search_str(int search0_replace1, char *input_buf)
 
 int input_replace_str(char *input_buf)
 {
-	int ret = input_string_tail("", input_buf, HISTORY_TYPE_IDX_SEARCH, "%s:", _("Replace with"));
-	if (ret <= 0) {
+	int ret = input_string_tail("", input_buf, HISTORY_TYPE_IDX_SEARCH,
+	 "%s:", _("Replace with"));
+	if (ret <= INPUT_LOADED) {
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
 	}
 	return ret;
@@ -324,7 +325,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			if (match_len) {
 #ifdef ENABLE_UNDO
 #ifdef ENABLE_DEBUG
-				memorize_undo_state_before_change();
+				memorize_undo_state_before_change(NULL);
 #endif // ENABLE_DEBUG
 				undo_set_region_n_save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
 #endif // ENABLE_UNDO
@@ -703,7 +704,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 
 	if (search_dir <= BACKWARD_SEARCH) {
 		// search backward -----------------------------------------------------
-		while (1) {
+		for ( ; ; ) {
 			if (skip_here) {
 				// move cur-pos left at least one char
 				// if cur-pos is left most, move cur-pos up at least one line
@@ -734,7 +735,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 		}
 	} else {
 		// search forward ------------------------------------------------------
-		while (1) {
+		for ( ; ; ) {
 			if (skip_here) {
 				// move cur-pos right at least one char
 				// if cur-pos is right most, move cur-pos down at least one line

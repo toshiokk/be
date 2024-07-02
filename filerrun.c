@@ -54,10 +54,7 @@ int dof_exec_command_with_file(void)
 
 	int ret = input_string_tail("", command_str, HISTORY_TYPE_IDX_EXEC,
 	 _("Execute({} will be replaced with file-name):"));
-	if (ret < 0) {
-		return 0;
-	}
-	if (ret <= 0) {
+	if (set_filer_do_next(ret)) {
 		return 0;
 	}
 	if (is_path_dir(command_str) > 0) {
@@ -94,7 +91,6 @@ int dof_exec_command_with_file(void)
 int dof_exec_command_with_files(void)
 {
 	char command_str[MAX_PATH_LEN+1];
-	int ret;
 
 	// "file1 file2 ..."
 	command_str[0] = '\0';
@@ -105,13 +101,9 @@ int dof_exec_command_with_files(void)
 		 get_cur_fv_file_list_ptr()[file_idx].file_name);
 	}
 
-	ret = input_string_pos(command_str, command_str, 0,
-	 HISTORY_TYPE_IDX_EXEC, _("Execute with files:"));
-
-	if (ret < 0) {
-		return 0;
-	}
-	if (ret <= 0) {
+	int ret = input_string_pos(command_str, command_str, 0, HISTORY_TYPE_IDX_EXEC,
+	 _("Execute with files:"));
+	if (set_filer_do_next(ret)) {
 		return 0;
 	}
 	fork_exec_sh_c_once(PAUSE1, command_str);
@@ -160,7 +152,6 @@ PRIVATE int dof_run_command_(int mode)
 	struct stat *st_ptr;
 	int src_fv_idx = 0;
 	int dst_fv_idx = 1;
-	int ret = 0;
 
 	st_ptr = &get_cur_fv_file_list_ptr()[get_cur_fv_file_idx()].st;
 	switch (mode % 10) {
@@ -168,14 +159,12 @@ PRIVATE int dof_run_command_(int mode)
 	case 0:
 		explanation = _("Run (with file):");
 		snprintf_(command_str, MAX_PATH_LEN+1, " %s",
-		 quote_file_name_static(get_cur_fv_file_list_ptr()[get_cur_fv_file_idx()]
-		  .file_name));
+		 quote_file_name_static(get_cur_fv_file_list_ptr()[get_cur_fv_file_idx()].file_name));
 		break;
 	case 1:
 		explanation = _("Run (current-directory-file):");
 		snprintf_(command_str, MAX_PATH_LEN+1, "./%s ",
-		 quote_file_name_static(get_cur_fv_file_list_ptr()[get_cur_fv_file_idx()]
-		  .file_name));
+		 quote_file_name_static(get_cur_fv_file_list_ptr()[get_cur_fv_file_idx()].file_name));
 		break;
 	case 2:
 		explanation = _("Run (with real-path):");
@@ -187,14 +176,12 @@ PRIVATE int dof_run_command_(int mode)
 	case 3:
 		explanation = _("Run (script):");
 		snprintf_(command_str, MAX_PATH_LEN+1, ". %s",
-		 quote_file_name_static(get_cur_fv_file_list_ptr()[get_cur_fv_file_idx()]
-		  .file_name));
+		 quote_file_name_static(get_cur_fv_file_list_ptr()[get_cur_fv_file_idx()].file_name));
 		break;
 	case 4:
 		explanation = _("Run (script by shell):");
 		snprintf_(command_str, MAX_PATH_LEN+1, "sh %s",
-		 quote_file_name_static(get_cur_fv_file_list_ptr()[get_cur_fv_file_idx()]
-		  .file_name));
+		 quote_file_name_static(get_cur_fv_file_list_ptr()[get_cur_fv_file_idx()].file_name));
 		break;
 	case 5:
 		explanation = _("Run (with SRC-path and DEST-path):");
@@ -218,26 +205,25 @@ PRIVATE int dof_run_command_(int mode)
 	}
 
 	if (mode >= 10) {
-		ret = 1;	// run soon without editing command line
+		// run soon without editing command line
 	} else {
-		ret = input_string_pos(command_str, command_str,
+		int ret = input_string_pos(command_str, command_str,
 		 (S_ISREG(st_ptr->st_mode) && (st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
 		  ? MAX_PATH_LEN : 0,
 		 HISTORY_TYPE_IDX_EXEC, explanation);
-	}
 flf_d_printf("ret: %d\n", ret);
+		if (set_filer_do_next(ret)) {
+			return 0;
+		}
+	}
 
-	if (ret < 0) {
-		return 0;
-	}
-	if (ret == 0) {
-		return 0;
-	}
 	if (is_path_dir(command_str) > 0) {
 		return filer_change_dir(command_str);
 	}
+
 flf_d_printf("command_str [%s]\n", command_str);
 	fork_exec_sh_c_once(PAUSE1, command_str);
+
 	if (is_app_list_mode()) {
 		filer_do_next = FILER_DO_QUIT;
 	} else {

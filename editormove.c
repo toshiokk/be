@@ -22,23 +22,23 @@
 #include "headers.h"
 
 PRIVATE easy_buffer_switching_t easy_buffer_switching = 0;
-PRIVATE char easy_buffer_switching_count = 0;
+PRIVATE char easy_buffer_switching_count_ = 0;
 
-void clear_easy_buffer_switching()
+void easy_buffer_switching_clear()
 {
 	easy_buffer_switching = EBS_NONE;
-	easy_buffer_switching_count = 0;
+	easy_buffer_switching_count_ = 0;
 }
-void count_easy_buffer_switching()
+void easy_buffer_switching_count()
 {
 	if (easy_buffer_switching != EBS_NONE) {
-		easy_buffer_switching_count++;
-		if (easy_buffer_switching_count >= 2) {
-			clear_easy_buffer_switching();
+		easy_buffer_switching_count_++;
+		if (easy_buffer_switching_count_ >= 2) {
+			easy_buffer_switching_clear();
 		}
 	}
 }
-int check_easy_buffer_switching(easy_buffer_switching_t top_bottom)
+int easy_buffer_switching_check(easy_buffer_switching_t top_bottom)
 {
 	switch (easy_buffer_switching) {
 	default:
@@ -46,31 +46,31 @@ int check_easy_buffer_switching(easy_buffer_switching_t top_bottom)
 		break;
 	case EBS_UP_AT_TOP:
 		if (top_bottom == EBS_PAGEUP_AT_TOP) {
-			clear_easy_buffer_switching();
+			easy_buffer_switching_clear();
 			return 1;
 		}
 		break;
 	case EBS_PAGEUP_AT_TOP:
 		if (top_bottom == EBS_UP_AT_TOP) {
-			clear_easy_buffer_switching();
+			easy_buffer_switching_clear();
 			return 1;
 		}
 		break;
 	case EBS_DOWN_AT_BOTTOM:
 		if (top_bottom == EBS_PAGEDOWN_AT_BOTTOM) {
-			clear_easy_buffer_switching();
+			easy_buffer_switching_clear();
 			return 1;
 		}
 		break;
 	case EBS_PAGEDOWN_AT_BOTTOM:
 		if (top_bottom == EBS_DOWN_AT_BOTTOM) {
-			clear_easy_buffer_switching();
+			easy_buffer_switching_clear();
 			return 1;
 		}
 		break;
 	}
 	easy_buffer_switching = top_bottom;
-	easy_buffer_switching_count = 0;
+	easy_buffer_switching_count_ = 0;
 	return 0;
 }
 
@@ -191,7 +191,7 @@ PRIVATE void doe_up_(void)
 	if (c_l_up(&EPCBVC_CL, &EPCBVC_CLBI)) {
 		EPCBVC_CURSOR_Y--;
 	} else {
-		if (check_easy_buffer_switching(EBS_UP_AT_TOP)) {
+		if (easy_buffer_switching_check(EBS_UP_AT_TOP)) {
 			// already top of buffer, go to the previous buffer's last line
 			tio_beep();
 			if (switch_epc_buf_to_prev(1, 1)) {
@@ -219,7 +219,7 @@ PRIVATE void doe_down_(void)
 	if (c_l_down(&EPCBVC_CL, &EPCBVC_CLBI)) {
 		EPCBVC_CURSOR_Y++;
 	} else {
-		if (check_easy_buffer_switching(EBS_DOWN_AT_BOTTOM)) {
+		if (easy_buffer_switching_check(EBS_DOWN_AT_BOTTOM)) {
 			// already bottom of buffer, go to the next buffer's top line
 			tio_beep();
 			if (switch_epc_buf_to_next(1, 1)) {
@@ -249,7 +249,7 @@ PRIVATE void doe_page_up_(void)
 	int cnt;
 
 	if (c_l_up(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
-		if (check_easy_buffer_switching(EBS_PAGEUP_AT_TOP)) {
+		if (easy_buffer_switching_check(EBS_PAGEUP_AT_TOP)) {
 			// already top of buffer, go to the previous buffer's last line
 			tio_beep();
 			if (switch_epc_buf_to_prev(1, 1)) {
@@ -288,7 +288,7 @@ PRIVATE int doe_page_down_(void)
 	int cnt;
 
 	if (c_l_down(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
-		if (check_easy_buffer_switching(EBS_PAGEDOWN_AT_BOTTOM)) {
+		if (easy_buffer_switching_check(EBS_PAGEDOWN_AT_BOTTOM)) {
 			// already bottom of buffer, go to the next buffer's top line
 			tio_beep();
 			if (switch_epc_buf_to_next(1, 1)) {
@@ -327,7 +327,7 @@ PRIVATE int do_enter_utf8s(const char *utf8s);
 PRIVATE int do_enter_utf8c(const char *utf8c);
 int doe_control_code(void)
 {
-	if (is_view_mode_then_warn_it()) {
+	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
 
@@ -342,22 +342,22 @@ int doe_control_code(void)
 int doe_charcode(void)
 {
 	char string[MAX_PATH_LEN+1];
+
+	if (is_editor_view_mode_then_warn_it()) {
+		return 0;
+	}
+
+	int ret = input_string_tail("", string, HISTORY_TYPE_IDX_SEARCH,
+	 _("Enter Unicode number in hex:"));
+	if (ret <= INPUT_LOADED) {
+		return 0;
+	}
+	///if (ret <= 0) {
+	///	disp_key_list_editor();
+	///	return 0;
+	///}
 	unsigned int chr;
 	char utf8c[MAX_UTF8C_BYTES+1];
-
-	if (is_view_mode_then_warn_it()) {
-		return 0;
-	}
-
-	int ret = input_string_tail("", string,
-	 HISTORY_TYPE_IDX_SEARCH, _("Enter Unicode number in hex:"));
-	if (ret < 0) {
-		return 0;
-	}
-	if (ret <= 0) {
-		disp_key_list_editor();
-		return 0;
-	}
 	if (sscanf(string, "%x", &chr) == 1) {
 		utf8c_encode(chr, utf8c);
 		do_enter_utf8s(utf8c);
@@ -370,19 +370,19 @@ int doe_paste_from_history(void)
 {
 	char string[MAX_PATH_LEN+1];
 
-	if (is_view_mode_then_warn_it()) {
+	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
 
-	int ret = input_string_tail("", string,
-	 HISTORY_TYPE_IDX_SEARCH, _("Select history string to paste:"));
-	if (ret < 0) {
+	int ret = input_string_tail("", string, HISTORY_TYPE_IDX_SEARCH,
+	 _("Select history string to paste:"));
+	if (ret <= INPUT_LOADED) {
 		return 0;
 	}
-	if (ret <= 0) {
-		disp_key_list_editor();
-		return 0;
-	}
+	///if (ret <= 0) {
+	///	disp_key_list_editor();
+	///	return 0;
+	///}
 	do_enter_utf8s(string);
 	return 0;
 }
@@ -436,7 +436,7 @@ PRIVATE int do_enter_utf8s(const char *utf8s)
 
 flf_d_printf("[%s]\n", utf8s);
 	do_clear_mark_();
-	if (is_view_mode_then_warn_it()) {
+	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
 
@@ -476,10 +476,10 @@ int doe_carriage_return(void)
 
 	do_clear_mark_();
 	if (is_app_list_mode()) {
-		editor_quit = EDITOR_ENTERED;
+		editor_quit = EDITOR_INPUT;
 		return 0;
 	}
-	if (is_view_mode_then_warn_it()) {
+	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
 
@@ -529,7 +529,7 @@ int doe_backspace(void)
 	int bytes;
 
 	do_clear_mark_();
-	if (is_view_mode_then_warn_it()) {
+	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
 
@@ -568,7 +568,7 @@ int doe_delete_char(void)
 	int bytes;
 
 	do_clear_mark_();
-	if (is_view_mode_then_warn_it()) {
+	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
 
@@ -619,7 +619,7 @@ int doe_conv_upp_low_letter(void)
 	char chr;
 
 	do_clear_mark_();
-	if (is_view_mode_then_warn_it()) {
+	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
 

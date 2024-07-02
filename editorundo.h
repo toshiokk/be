@@ -37,7 +37,8 @@ int count_redo_bufs(void);
 //-----------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
-void memorize_undo_state_before_change(void);
+extern char prev_func_id[MAX_PATH_LEN+1];
+void memorize_undo_state_before_change(const char *func_id);
 void check_undo_state_after_change(void);
 #endif // ENABLE_DEBUG
 

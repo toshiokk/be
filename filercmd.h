@@ -27,6 +27,8 @@
 #define FILER_VERT_SCROLL_MARGIN_LINES	LIM_MAX(5, filer_win_get_file_list_lines() / 3)
 #define FILER_VERT_SCROLL_LINES			MIN_MAX_(1, filer_win_get_file_list_lines() / 2, 20)
 
+BOOL set_filer_do_next(int ret);
+
 // "dof_..."  DO Editor function
 int dof_up(void);
 int dof_down(void);
@@ -41,7 +43,6 @@ int dof_tap_file(void);
 int dof_open_file(void);
 int dof_open_file_non_recursive(void);
 int dof_open_proj_file(void);
-int dof_call_editor();
 int dof_edit_new_file(void);
 int dof_view_file(void);
 int dof_copy_file(void);

@@ -111,7 +111,8 @@ void editor_disp_title_bar(void)
 	} else if (CUR_EBUF_STATE(buf_VIEW_MODE)) {
 		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[VM] "));
 	} else if (is_st_writable(&get_epc_buf()->orig_file_stat) == 0) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[WP] "));
+		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[RO] "));
+///		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[WP] "));
 	}
 
 	//-------------------------------------------------------------------------

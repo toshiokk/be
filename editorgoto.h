@@ -110,6 +110,7 @@ int switch_epc_buf_to_next(int beep_at_end, int goto_top);
 int switch_epc_buf_to_prev(int beep_at_end, int goto_bottom);
 int switch_epc_buf_to_valid_buf(void);
 int switch_epc_buf_to_another_buf(void);
+/////int switch_epc_buf_to_valid_edit_buf(void);
 
 #endif // editorgoto_h
 

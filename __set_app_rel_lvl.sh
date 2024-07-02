@@ -17,13 +17,12 @@ sed_define()
   fi
 }
 
-#{
-  if [ "$1" = 0 -o "$1" = 1 -o "$1" = 2 -o "$1" = 3 ]; then
-    sed_define $1
-  else
-    if [ -z "$1" ]; then
-      show_help
-    fi
+if [ "$1" = 0 -o "$1" = 1 -o "$1" = 2 -o "$1" = 3 ]; then
+  sed_define $1
+else
+  if [ -z "$1" ]; then
+    show_help
   fi
-  grep "define APP_REL_LVL " appdefs.h
-#} | grep APP_REL_LVL
+fi
+echo ""
+grep "define APP_REL_LVL " appdefs.h

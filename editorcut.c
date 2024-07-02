@@ -226,7 +226,7 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 {
 	if (cp_del_paste_pop & CDPP_REPLACE) {
 		// in view mode, DELETE and PASTE may not be performed
-		if (is_view_mode_then_warn_it()) {
+		if (is_editor_view_mode_then_warn_it()) {
 			return -1;		// error
 		}
 	}

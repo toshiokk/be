@@ -22,6 +22,9 @@
 #include "utilincs.h"
 
 #ifdef ENABLE_DEBUG
+#ifdef ENABLE_DEBUG
+#warning "**** ENABLE_DEBUG defined (debug output is ENABLED) ****"
+#endif // ENABLE_DEBUG
 
 void dump_memory(char *message, void *memory, int bytes)
 {

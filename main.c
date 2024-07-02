@@ -25,10 +25,6 @@
 #include <getopt.h>
 #endif // HAVE_GETOPT_H
 
-#ifdef ENABLE_DEBUG
-#warning "**** ENABLE_DEBUG defined (debug output is ENABLED) ****"
-#endif // ENABLE_DEBUG
-
 #ifdef ENABLE_NCURSES
 #warning "Terminal control via ncurses (curses_...)"
 #else // ENABLE_NCURSES
@@ -49,6 +45,7 @@ char *main_rc_file_name = RC_FILE_NAME;	// standard rc file
 
 int main(int argc, char *argv[])
 {
+	editor_panes_t root_editor_panes;
 #ifdef ENABLE_FILER
 	filer_panes_t root_filer_panes;
 #endif // ENABLE_FILER
@@ -61,11 +58,12 @@ flf_d_printf("Start %s ===================================\n", APP_NAME " " __DA
 	signal_init();
 	init_locale();
 	_mlc_memorize_count
+	init_cur_editor_panes(&root_editor_panes);
+#ifdef ENABLE_FILER
+	init_cur_filer_panes(&root_filer_panes, get_starting_dir());
+#endif // ENABLE_FILER
 	init_buffers();		// parse_options() needs epc_buf. So do here.
 	_mlc_differ_count
-#ifdef ENABLE_FILER
-	init_filer_panes(&root_filer_panes, get_starting_dir());
-#endif // ENABLE_FILER
 	parse_options(argc, argv);		// parse command line options
 	cache_users();
 	cache_groups();
@@ -119,7 +117,7 @@ flf_d_printf("load_key_macro()\n");
 flf_d_printf("opening files --------------------------------------------\n");
 #ifdef ENABLE_HELP
 	disp_splash(0);
-	MSLEEP(500);
+	MSLEEP(300);
 #endif // ENABLE_HELP
 	// If there's a +LINE flag, it is the first non-option argument
 	int start_line_num = 0;			// Line to start at
@@ -160,6 +158,11 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 
 	app_main_loop();
 
+#ifdef ENABLE_HELP
+	disp_splash(-1);
+	MSLEEP(100);
+#endif // ENABLE_HELP
+
 	set_die_on_callback(NULL);
 
 	set_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
@@ -171,9 +174,9 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	_mlc_check_count
 	free_all_allocated_memory();
 #ifdef ENABLE_FILER
-	free_filer_panes(&root_filer_panes, NULL);
+	pop_filer_panes(&root_filer_panes, NULL);
 #endif // ENABLE_FILER
-
+	pop_editor_panes(&root_editor_panes, NULL, FALSE);
 	signal_clear();
 
 	_mlc_check_count
@@ -184,35 +187,34 @@ flf_d_printf("Exit %s ====================================\n", APP_NAME " " __DA
 	return 0;
 }
 
-int app_main_loop(void)
+void app_main_loop(void)
 {
-#ifdef ENABLE_FILER
-	if (count_edit_bufs()) {
-		// application was started as a EDITOR
-		while (count_edit_bufs()) {
-			call_editor(0, 0);
-		}
-	} else {
-		// application was started as a FILER
-		while (1) {
-			char file_path[MAX_PATH_LEN+1];
-			call_filer(0, 0, "", "", file_path, MAX_PATH_LEN);
-			if (count_edit_bufs() == 0) {
-				// no file loaded in filer
-				break;
-			}
-			call_editor(0, 0);
-		}
-	}
-#else // ENABLE_FILER
+#ifndef ENABLE_FILER
 	if (count_edit_bufs() == 0) {
 		doe_open_file();
 	}
 	while (count_edit_bufs()) {
-		call_editor(0, 0);
+		call_editor(0, APP_MODE_NORMAL, NULL, 0);
+	}
+#else // ENABLE_FILER
+	if (count_edit_bufs()) {
+		// application was started as a EDITOR
+		while (count_edit_bufs()) {
+			call_editor(0, APP_MODE_NORMAL, NULL, 0);
+		}
+	} else {
+		// application was started as a FILER
+		for ( ; ; ) {
+			char file_path[MAX_PATH_LEN+1];
+			call_filer(0, APP_MODE_NORMAL, "", "", file_path, MAX_PATH_LEN);
+			if (count_edit_bufs() == 0) {
+				// no file loaded in filer
+				break;
+			}
+			call_editor(0, APP_MODE_NORMAL, NULL, 0);
+		}
 	}
 #endif // ENABLE_FILER
-	return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -254,7 +256,7 @@ PRIVATE int init_app_mode(void)
 	// editor mode
 	CLR_APPMD(app_EDITOR_FILER);
 	set_app_func_key_table();
-	CLR_APPMD(app_LIST_MODE);
+	SET_APPMD_VAL(app_LIST_MODE, APP_MODE_NORMAL);
 ///	CLR_APPMD(app_MAP_KEY_7F_BS);
 	SET_APPMD(app_MAP_KEY_7F_BS);
 
@@ -921,5 +923,41 @@ void disp_splash(int delay)
 	tio_refresh();
 }
 #endif // ENABLE_HELP
+
+// Transitions between filer and editor:
+//	filer(NORMAL)																						return code-------------
+//		dof_open_file()			open file by selecting file								RETURN to editor on success(quit/loaded)
+//		input_string()			editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
+//												TAG-JUMP(updating root-editor)			RETURN to editor on success(quit/loaded)
+//		input_string()			filer(LIST)		input file path by selecting file/dir	RETURN to editor(quit/input)
+//		dof_run_command_soon()
+//	editor(NORMAL)
+//		input_string()			editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
+//												TAG-JUMP(updating root-editor)			RETURN to editor on success(quit/loaded)
+//												doe_run_line_soon()						RETURN to editor on success(quit/loaded)
+//		input_string()		 	filer(LIST)		input file path by selecting file/dir	RETURN to editor(quit/input)
+//												open file								RETURN to editor on success(quit/loaded)
+//		doe_open_file()			filer(NORMAL)	open file by selecting file				RETURN to editor on success(quit/loaded)
+//		doe_read_file_into_cur_buf()
+//								filer(NORMAL)	read file into selecting file			RETURN to editor
+//		doe_call_filer()					 		manage file in filer(NORMAL), return to editor when quit(quit)
+//		doe_tag_jump() 			TAG-JUMP to dir and manage file in filer(NORMAL), return to editor when quit(quit)
+//		doe_view_file_list()	editor(HELP)	TAG-JUMP to file(updating root-editor)	RETURN to editor(quit/loaded)
+//		doe_view_key_list()		editor(HELP)	view help text, return to editor when quit              (quit)
+//		doe_view_func_list()	editor(HELP)	view help text, return to editor when quit              (quit)
+//		doe_run_line_soon()
+//
+// return code from editor:
+//		quit		--> EDITOR_DO_QUIT
+//		loaded		--> EDITOR_LOADED
+//		input		--> EDITOR_INPUT_TO_REPLACE
+//		input		--> EDITOR_INPUT_TO_APPEND
+// return code from filer
+//		quit		--> FILER_DO_QUIT
+//		loaded		--> FILER_LOADED
+//		input		--> FILER_INPUT_TO_REPLASE (file/file_path/dir_path)
+//		input		--> FILER_INPUT_TO_APPEND  (file/file_path/dir_path)
+
+// open file:	load file and assign it as a current file in the editor pane
 
 // End of main.c

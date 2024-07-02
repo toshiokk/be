@@ -29,9 +29,9 @@ typedef enum {
 	EBS_DOWN_AT_BOTTOM,		// cursor down requested at bottom of buffer
 	EBS_PAGEDOWN_AT_BOTTOM,	// page   down requested at bottom of buffer
 } easy_buffer_switching_t;
-void clear_easy_buffer_switching();
-void count_easy_buffer_switching();
-int check_easy_buffer_switching(easy_buffer_switching_t top_bottom);
+void easy_buffer_switching_clear();
+void easy_buffer_switching_count();
+int easy_buffer_switching_check(easy_buffer_switching_t top_bottom);
 
 int doe_left(void);
 int doe_right(void);

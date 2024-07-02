@@ -29,8 +29,7 @@
 //   ESC [ ?25h"				// cursor ON
 //   ESC [ ?25l"				// cursor OFF
 //   ESC [ {row} ; {col} H		// set cursor pos.
-//   ESC [ {n} m				// set attributes
-//     n : 0, 1, 7, 30--37, 40--47
+//   ESC [ {n} m				// set attributes (n : 0, 1, 7, 30--37, 40--47)
 
 ///#define TERMIF_MAX_SCRN_COLS		384		// = 1920[pixels] / 5[pixels/char] (Full HD)
 ///#define TERMIF_MAX_SCRN_COLS		512		// = 2560[pixels] / 5[pixels/char] (WQXGA)
@@ -113,6 +112,7 @@ PRIVATE void send_bold_to_term(int bold);
 ///PRIVATE void send_reverse_to_term(int reverse);
 PRIVATE void send_bgc_to_term(int bgc);
 PRIVATE void send_fgc_to_term(int fgc);
+
 PRIVATE void send_printf_to_term(const char *format, ...);
 PRIVATE void send_string_to_term(const char *string, int bytes);
 PRIVATE void send_string_to_term__(const char *string, int bytes);
@@ -140,6 +140,7 @@ int termif_begin(void)
 int termif_end(void)
 {
 	send_all_off_to_term();
+	send_cursor_on_to_term(1);
 	fcntl(STDIN_FILENO, F_SETFL, 0);				// block in getchar()
 	restore_term_settings(&term_settings_save);
 	return 0;
@@ -495,6 +496,7 @@ PRIVATE int receive_cursor_pos_from_term(int *yy, int *xx)
 	}
 	return 0;
 }
+
 PRIVATE void send_attrs_to_term(vscreen_char_t attrs)
 {
 	vscreen_char_t attrs_xor;
@@ -575,6 +577,7 @@ PRIVATE void send_fgc_to_term(int fgc)
 	}
 #endif // ENABLE_16_BCG
 }
+
 PRIVATE void send_printf_to_term(const char *format, ...)
 {
 #define MAX_ESC_SEQ_LEN		(10+10)	// "e[999;999R"
