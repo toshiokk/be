@@ -342,12 +342,14 @@ int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_exec, cons
 #define TEE_PROG	"tee"
 	args[0] = SH_PROG;
 	args[1] = "-c";
-///	args[2] = (char *)command;
 	char buffer[MAX_PATH_LEN+1] = "";
+#if 1
 	snprintf_(buffer, MAX_PATH_LEN, "%s 2>&1 | %s %s", command, TEE_PROG, get_exec_log_file_path());
+#else
 ///	// Use bash's "process substitution"
 ///	snprintf_(buffer, MAX_PATH_LEN, "%s 1> >(%s %s) 2> >(%s -a %s >&2)",
 ///	 command, TEE_PROG, get_exec_log_file_path(), TEE_PROG, get_exec_log_file_path());
+#endif
 	args[2] = (char *)buffer;
 	args[3] = NULL;
 
