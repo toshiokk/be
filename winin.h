@@ -29,7 +29,7 @@
 
 #define INPUT_CANCELLED		-1	// cancelled
 #define INPUT_LOADED		0	// file loaded
-#define INPUT_DONE			1	// input
+#define INPUT_INPUT			1	// input
 
 int input_string_tail(const char *default__, char *input_buf,
  int hist_type_idx, const char *msg, ...);
@@ -47,7 +47,7 @@ int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx
 #define ASK_YES_NO		(ASK_YES | ASK_NO)
 
 #define ANSWER_FORCE	9	// force save even if not-modified
-#define ANSWER_ALL		8	// save or replace all
+#define ANSWER_ALL		8	// force save if modified or replace all
 #define ANSWER_REDO		5	// Redo replace
 #define ANSWER_UNDO		4	// Undo replace
 #define ANSWER_FORWARD	3	// search Forward

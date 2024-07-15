@@ -482,9 +482,9 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 
 	int ret = call_editor(1, APP_MODE_LIST, buffer, MAX_PATH_LEN);
 
-flf_d_printf("ret: %d\n", ret);
+flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
 	if (ret >= EDITOR_INPUT) {
-		strlcpy__(buffer, EPCBVC_CL->data, MAX_EDIT_LINE_LEN);
+///		strlcpy__(buffer, EPCBVC_CL->data, MAX_EDIT_LINE_LEN);
 	} else {
 		strcpy__(buffer, "");
 	}

@@ -47,7 +47,7 @@ filer_panes_t *push_filer_panes(filer_panes_t *next_fps)
 {
 	int cur_pane_idx = get_filer_cur_pane_idx();
 	filer_panes_t *prev_fps = cur_filer_panes;	// previous filer panes
-	init_cur_filer_panes(next_fps, prev_fps->filer_views[get_filer_cur_pane_idx()].cur_dir);
+	init_cur_filer_panes(next_fps, prev_fps->filer_views[cur_pane_idx].cur_dir);
 	set_filer_cur_pane_idx(cur_pane_idx);
 	for (int filer_pane_idx = 0; filer_pane_idx < FILER_PANES; filer_pane_idx++) {
 		// set initial value
@@ -124,6 +124,10 @@ PRIVATE int get_other_filer_pane_idx(int filer_pane_idx)
 file_info_t *get_cur_fv_file_list_ptr()
 {
 	return get_cur_filer_view()->file_list_ptr;
+}
+file_info_t *get_cur_fv_file_ptr(int file_idx)
+{
+	return &(get_cur_fv_file_list_ptr()[file_idx]);
 }
 int get_cur_fv_file_idx()
 {
@@ -265,7 +269,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 				filer_do_next = FILER_DO_UPDATE_FILE_LIST_AUTO;
 			} else {
 				strlcpy__(get_cur_filer_view()->next_file,
-				 get_cur_fv_file_list_ptr()[get_cur_fv_file_idx()].file_name,
+				 get_cur_fv_file_ptr(get_cur_fv_file_idx())->file_name,
 				  MAX_PATH_LEN);
 				if (is_app_list_mode()) {
 					switch (func_key_table->list_mode) {
@@ -322,13 +326,13 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 			if (filer_do_next == FILER_DO_ENTER_FILE_NAME) {
 				// file-1 "file name 2" "file name 3"
 				concat_file_name_separating_by_space(path_buf, buf_len,
-				 get_cur_fv_file_list_ptr()[file_idx].file_name);
+				 get_cur_fv_file_ptr(file_idx)->file_name);
 			} else /* if (filer_do_next == FILER_DO_ENTER_FILE_PATH) */ {
 				// /dir/to/file-path-1 "/dir/to/file path 2" "/dir/to/file path 3"
 				char path[MAX_PATH_LEN];
 				cat_dir_and_file(path,
 				 get_cur_filer_view()->cur_dir,
-				 get_cur_fv_file_list_ptr()[file_idx].file_name);
+				 get_cur_fv_file_ptr(file_idx)->file_name);
 				concat_file_name_separating_by_space(path_buf, buf_len, path);
 			}
 		}
@@ -436,8 +440,7 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 	if (status_bar) {
 		// status bar
 		disp_status_bar_percent_filer(
-		 "%s", file_info_str(&(get_cur_fv_file_list_ptr()[get_cur_fv_file_idx()]),
-		 0, 1, 0));
+		 "%s", file_info_str(get_cur_fv_file_ptr(get_cur_fv_file_idx()), 0, 1, 0));
 		// key list
 		disp_key_list_filer();
 	}

@@ -48,6 +48,8 @@ func_key_table_t filer_func_key_table[] = {
    XF, F_I(dof_open_file_non_recursive), NULL },
  { "Edit new file",       "Edit new file",                  K_('E'), K_M_E,    KNA,
    XP, F_I(dof_edit_new_file), NULL },
+ { "Open execution log file", "Open exec. log file",        K_M_l,        KNA, KNA,
+   XA, F_I(dof_open_exec_log_file), NULL },
  { "Open project file",   "Open project file",              K_M_p, K_M_P,      KNA,
    XA, F_I(dof_open_proj_file), NULL },
  { "Enter file/dir",      "Enter file/directory",           K_C_M, K_MC_M, K_ENTER,
@@ -133,7 +135,7 @@ func_key_table_t filer_func_key_table[] = {
    XP, F_I(dof_run_command_sh), NULL },
  { "Run soon",            "Run command soon",               K_M_x,        KNA, KNA,
    XL, F_I(dof_run_command_soon), NULL },
- { "Real path",           "Convert Symlink to Real path",   K_M_l,        KNA, KNA,
+ { "Real path",           "Convert Symlink to Real path",   K_M_L,        KNA, KNA,
    XL, F_I(dof_real_path),    NULL },
 #ifdef ENABLE_HELP
  { "Splash",              "Splash screen",                  K_M_v,        KNA, KNA,

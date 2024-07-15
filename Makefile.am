@@ -111,9 +111,9 @@ include be.dep
 
 #man_MANS = be.1 berc.5
 ###be_LDADD = @GLIB_LIBS@ @LIBINTL@
-###be_LDADD = -Wl,-Bstatic
+##be_LDADD = -Wl,-Bstatic
 
-#be_LDFLAGS = -Wl,-Bdynamic,-lc -Wl,-Bstatic
+##be_LDFLAGS = -Wl,-Bdynamic,-lc -Wl,-Bstatic
 ##be_LDFLAGS = -Wl,-Bdynamic -Wl,-Bstatic -L /usr/lib/x86_64-linux-gnu
 ##be_LDFLAGS = -Wl,-Bdynamic -Wl,-Bstatic,-lc -L /usr/lib/x86_64-linux-gnu
 ##be_LDFLAGS = -Wl,-Bdynamic,-lc -Wl,-Bstatic -L /usr/lib/x86_64-linux-gnu

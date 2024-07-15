@@ -368,7 +368,6 @@ flf_d_printf("home_dir: [%s]\n", home_dir);
 	}
 	return home_dir;
 }
-
 const char *get_starting_dir(void)
 {
 	static char starting_dir[MAX_PATH_LEN+1] = "";
@@ -380,6 +379,19 @@ const char *get_starting_dir(void)
 flf_d_printf("starting_dir: [%s]\n", starting_dir);
 	}
 	return starting_dir;
+}
+const char *get_tty_name(void)
+{
+	static char tty_name[MAX_PATH_LEN+1] = "";
+
+	if (strlen_path(tty_name) == 0) {
+		strlcpy__(tty_name, ttyname(0), MAX_PATH_LEN);	// /dev/pts/99
+		if (strlen_path(tty_name) == 0) {
+			strlcpy__(tty_name, cur_hhmmss(), MAX_PATH_LEN);
+		}
+flf_d_printf("tty_name: [%s]\n", tty_name);
+	}
+	return tty_name;
 }
 
 int check_wsl()
@@ -467,6 +479,7 @@ char *cat_dir_and_file(char *buf, const char *dir, const char *file)
 	}
 	int last = LIM_MIN(0, strlen_path(dir) - 1);
 	if (is_strlen_0(dir) || dir[last] == '/') {
+		// ""            + "file" ==> "file"
 		// "/dir1/dir2/" + "file" ==> "/dir1/dir2/file"
 		snprintf(tmp_buf, MAX_PATH_LEN+1, "%s%s", dir, file);
 	} else {
@@ -600,7 +613,7 @@ char *get_full_path(const char *path, char *buf)
 	const struct passwd *user_data = 0;
 
 	strlcpy__(buf, path, MAX_PATH_LEN);
-	if (path[0] == '/') {
+	if (is_abs_path(path)) {
 		// "/..." already full path
 	} else if (path[0] == '~') {
 		// "~", "~user", "~/..." or "~user/..."
@@ -666,6 +679,11 @@ int readlink__(const char *path, char *buffer, int len)
 	if ((ret = readlink(path, buffer, len)) > 0)
 		buffer[ret] = '\0';
 	return ret;
+}
+
+BOOL is_abs_path(const char *path)
+{
+	return path[0] == '/';
 }
 
 // tests ==============================

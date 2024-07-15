@@ -60,32 +60,32 @@ void setup_cut_region_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 }
 
 // [cut-mode transition]
-//  | previous mode  | event / cursor movement | next mode      |
-//  |----------------|-------------------------|----------------|
-//  |CUT_MODE_0_LINE |start regioning          |CUT_MODE_N_LINE |
-//  | CUT_MODE_N_LINE | ← → (CURS_MOVE_HORIZ)   |CUT_MODE_H_CHAR |enter HV transition mode|
-//  | CUT_MODE_N_LINE | ↑ ↓ (CURS_MOVE_VERT)    |CUT_MODE_V_LINE |enter VH transition mode|
-//  | CUT_MODE_N_LINE |return to start position |CUT_MODE_N_LINE |
-//  |  CUT_MODE_H_CHAR | ← → (CURS_MOVE_HORIZ)   |CUT_MODE_H_CHAR |
-//  |  CUT_MODE_H_CHAR | ↑ ↓ (CURS_MOVE_VERT)    |CUT_MODE_HV_BOX |if HV_IS_BOX_VH_IS_CHAR defined|
-//  |  CUT_MODE_H_CHAR | ↑ ↓ (CURS_MOVE_VERT)    |CUT_MODE_HV_LINE|if HV_IS_LINE_VH_IS_BOX defined|
-//  |  CUT_MODE_H_CHAR |return to start position |CUT_MODE_N_LINE |
-//  |   CUT_MODE_HV_BOX | ← → (CURS_MOVE_HORIZ)   |CUT_MODE_H_CHAR |if HV_IS_BOX_VH_IS_CHAR defined|
-//  |   CUT_MODE_HV_BOX | ↑ ↓ (CURS_MOVE_VERT)    |CUT_MODE_HV_BOX |if HV_IS_BOX_VH_IS_CHAR defined|
-//  |   CUT_MODE_HV_BOX |return to start position |CUT_MODE_N_LINE |
-//  |   CUT_MODE_HV_LINE| ← → (CURS_MOVE_HORIZ)   |CUT_MODE_H_CHAR |if HV_IS_LINE_VH_IS_BOX defined|
-//  |   CUT_MODE_HV_LINE| ↑ ↓ (CURS_MOVE_VERT)    |CUT_MODE_HV_LINE|if HV_IS_LINE_VH_IS_BOX defined|
-//  |   CUT_MODE_HV_LINE|return to start position |CUT_MODE_N_LINE |
-//  |  CUT_MODE_V_LINE | ← → (CURS_MOVE_HORIZ)   |CUT_MODE_VH_CHAR|if HV_IS_BOX_VH_IS_CHAR defined|
-//  |  CUT_MODE_V_LINE | ← → (CURS_MOVE_HORIZ)   |CUT_MODE_VH_BOX |if HV_IS_LINE_VH_IS_BOX defined|
-//  |  CUT_MODE_V_LINE | ↑ ↓ (CURS_MOVE_VERT)    |CUT_MODE_V_LINE |
-//  |  CUT_MODE_V_LINE |return to start position |CUT_MODE_N_LINE |
-//  |   CUT_MODE_VH_CHAR| ← → (CURS_MOVE_HORIZ)   |CUT_MODE_VH_CHAR|if HV_IS_BOX_VH_IS_CHAR defined|
-//  |   CUT_MODE_VH_CHAR| ↑ ↓ (CURS_MOVE_VERT)    |CUT_MODE_V_LINE |if HV_IS_BOX_VH_IS_CHAR defined|
-//  |   CUT_MODE_VH_CHAR|return to start position |CUT_MODE_N_LINE |
-//  |   CUT_MODE_VH_BOX | ← → (CURS_MOVE_HORIZ)   |CUT_MODE_VH_CHAR|if HV_IS_LINE_VH_IS_BOX defined|
-//  |   CUT_MODE_VH_BOX | ↑ ↓ (CURS_MOVE_VERT)    |CUT_MODE_VH_BOX |if HV_IS_LINE_VH_IS_BOX defined|
-//  |   CUT_MODE_VH_BOX |return to start position |CUT_MODE_N_LINE |
+// |previous mode      |event / cursor movement |next mode       |comments                |
+// |-------------------|------------------------|----------------|------------------------|
+// |CUT_MODE_0_LINE    |start regioning         |CUT_MODE_N_LINE |                        |
+// | CUT_MODE_N_LINE   | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_H_CHAR |enter HV transition mode|
+// | CUT_MODE_N_LINE   | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_V_LINE |enter VH transition mode|
+// | CUT_MODE_N_LINE   |return to start position|CUT_MODE_N_LINE |                        |
+// |  CUT_MODE_H_CHAR  | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_H_CHAR |                        |
+// |  CUT_MODE_H_CHAR  | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_HV_BOX |if HV_IS_BOX_VH_IS_CHAR defined|
+// |  CUT_MODE_H_CHAR  | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_HV_LINE|if HV_IS_LINE_VH_IS_BOX defined|
+// |  CUT_MODE_H_CHAR  |return to start position|CUT_MODE_N_LINE |                        |
+// |   CUT_MODE_HV_BOX | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_H_CHAR |if HV_IS_BOX_VH_IS_CHAR defined|
+// |   CUT_MODE_HV_BOX | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_HV_BOX |if HV_IS_BOX_VH_IS_CHAR defined|
+// |   CUT_MODE_HV_BOX |return to start position|CUT_MODE_N_LINE |                        |
+// |   CUT_MODE_HV_LINE| ← → (CURS_MOVE_HORIZ)  |CUT_MODE_H_CHAR |if HV_IS_LINE_VH_IS_BOX defined|
+// |   CUT_MODE_HV_LINE| ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_HV_LINE|if HV_IS_LINE_VH_IS_BOX defined|
+// |   CUT_MODE_HV_LINE|return to start position|CUT_MODE_N_LINE |                        |
+// |  CUT_MODE_V_LINE  | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_VH_CHAR|if HV_IS_BOX_VH_IS_CHAR defined|
+// |  CUT_MODE_V_LINE  | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_VH_BOX |if HV_IS_LINE_VH_IS_BOX defined|
+// |  CUT_MODE_V_LINE  | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_V_LINE |                        |
+// |  CUT_MODE_V_LINE  |return to start position|CUT_MODE_N_LINE |                        |
+// |   CUT_MODE_VH_CHAR| ← → (CURS_MOVE_HORIZ)  |CUT_MODE_VH_CHAR|if HV_IS_BOX_VH_IS_CHAR defined|
+// |   CUT_MODE_VH_CHAR| ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_V_LINE |if HV_IS_BOX_VH_IS_CHAR defined|
+// |   CUT_MODE_VH_CHAR|return to start position|CUT_MODE_N_LINE |                        |
+// |   CUT_MODE_VH_BOX | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_VH_CHAR|if HV_IS_LINE_VH_IS_BOX defined|
+// |   CUT_MODE_VH_BOX | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_VH_BOX |if HV_IS_LINE_VH_IS_BOX defined|
+// |   CUT_MODE_VH_BOX |return to start position|CUT_MODE_N_LINE |                        |
 
 //
 // CUT_MODE_0_LINE:

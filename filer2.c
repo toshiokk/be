@@ -180,20 +180,22 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 		is_link_broken = (memcmp(st_ptr, lst_ptr, sizeof(*st_ptr)) == 0);
 	}
 	strcpy__(buf_name, "");
-	if (show_link && is_link) {
-		strlcat__(buf_name, MAX_PATH_LEN, file_info->file_name);
+	if (is_link) {
+		if (show_link) {
+			strlcat__(buf_name, MAX_PATH_LEN, file_info->file_name);
 #define LINK_ARROW		" -> "
 ///#define LINK_ARROW		" >>"
 ///#define LINK_ARROW		" > "
-		strlcat__(buf_name, MAX_PATH_LEN, LINK_ARROW);
-		if (file_info->symlink)
-			strlcat__(buf_name, MAX_PATH_LEN, file_info->symlink);
-		if (is_link_broken)
-			strlcat__(buf_name, MAX_PATH_LEN, "!");
+			strlcat__(buf_name, MAX_PATH_LEN, LINK_ARROW);
+			if (file_info->symlink)
+				strlcat__(buf_name, MAX_PATH_LEN, file_info->symlink);
+			if (is_link_broken)
+				strlcat__(buf_name, MAX_PATH_LEN, "!");
+		} else {
+			if (file_info->symlink)
+				strlcat__(buf_name, MAX_PATH_LEN, file_info->symlink);
+		}
 	} else {
-		if (is_link)
-			strlcat__(buf_name, MAX_PATH_LEN, file_info->symlink);
-		else
 			strlcat__(buf_name, MAX_PATH_LEN, file_info->file_name);
 	}
 	if (S_ISDIR(st_ptr->st_mode)) {
@@ -388,8 +390,8 @@ int make_file_list(filer_view_t *fv, const char *filter)
 	struct dirent *dirent;
 	char symlink[MAX_PATH_LEN+1];
 	file_info_t *ent_ptr;	// file entry
-	struct stat st;
 	struct stat lst;
+	struct stat st;
 	int entries;
 	int file_idx;
 	int len;
@@ -420,7 +422,7 @@ int make_file_list(filer_view_t *fv, const char *filter)
 		 && stat(dirent->d_name, &st) >= 0) {	// stat linked file
 			// stating file succeeded
 		} else {
-			// copy from lst to st
+			// stating file succeeded, copy from lst to st
 			memcpy__(&st, &lst, sizeof(struct stat));
 		}
 		if (S_ISDIR(st.st_mode)
@@ -442,6 +444,8 @@ int make_file_list(filer_view_t *fv, const char *filter)
 				if ((len = readlink__(dirent->d_name, symlink, MAX_PATH_LEN)) > 0) {
 					_mlc_set_caller
 					ent_ptr->symlink = malloc_strcpy(symlink);
+				} else {
+					// WARN: ent_ptr->symlink == NULL !!
 				}
 			}
 			ent_ptr->selected = 0;
@@ -701,11 +705,9 @@ int select_and_get_first_file_idx_selected(void)
 }
 int select_file_if_none_selected(void)
 {
-	int sel_idx = get_cur_fv_file_idx();
-
 	int files_selected = get_files_selected_cfv();
 	if (files_selected == 0) {
-		get_cur_fv_file_list_ptr()[sel_idx].selected = _FILE_SEL_AUTO_;
+		get_cur_fv_file_ptr(get_cur_fv_file_idx())->selected = _FILE_SEL_AUTO_;
 	}
 	return files_selected;
 }
@@ -714,7 +716,7 @@ int get_first_file_idx_selected(void)
 	int file_idx;
 
 	for (file_idx = 0; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
-		if (get_cur_fv_file_list_ptr()[file_idx].selected)
+		if (get_cur_fv_file_ptr(file_idx)->selected)
 			break;
 	}
 	if (file_idx < get_cur_filer_view()->file_list_entries)
@@ -727,7 +729,7 @@ int get_next_file_idx_selected(int file_idx)
 	file_idx = file_idx < 0 ? 0 : file_idx+1;
 
 	for ( ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
-		if (get_cur_fv_file_list_ptr()[file_idx].selected)
+		if (get_cur_fv_file_ptr(file_idx)->selected)
 			break;
 	}
 	if (file_idx < get_cur_filer_view()->file_list_entries)
@@ -737,8 +739,8 @@ int get_next_file_idx_selected(int file_idx)
 void unselect_all_files_auto(char selection_bit)
 {
 	for (int file_idx = 0 ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
-		get_cur_fv_file_list_ptr()[file_idx].selected
-		 = get_cur_fv_file_list_ptr()[file_idx].selected & ~selection_bit;
+		get_cur_fv_file_ptr(file_idx)->selected
+		 = get_cur_fv_file_ptr(file_idx)->selected & ~selection_bit;
 	}
 }
 

@@ -43,6 +43,7 @@ int dof_tap_file(void);
 int dof_open_file(void);
 int dof_open_file_non_recursive(void);
 int dof_open_proj_file(void);
+int dof_open_exec_log_file(void);
 int dof_edit_new_file(void);
 int dof_view_file(void);
 int dof_copy_file(void);

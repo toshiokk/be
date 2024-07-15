@@ -242,6 +242,45 @@ int tio_get_columns(void)
 
 //-----------------------------------------------------------------------------
 
+int tio_differ_fgc_from_bgc(int bgc, int fgc)
+{
+	if (fgc == bgc) {
+		// select different color as foreground color with background color
+		// so that you can recognize character
+		switch (fgc) {
+		default:
+		case CL_BK:		fgc = CL_DG;	break;
+		case CL_RD:		fgc = CL_LR;	break;
+		case CL_GR:		fgc = CL_LG;	break;
+		case CL_BR:		fgc = CL_YL;	break;
+		case CL_BL:		fgc = CL_LB;	break;
+		case CL_MG:		fgc = CL_LM;	break;
+		case CL_CY:		fgc = CL_LC;	break;
+		case CL_GY:		fgc = CL_DG;	break;
+		case CL_DG:		fgc = CL_BK;	break;
+		case CL_LR:		fgc = CL_RD;	break;
+		case CL_LG:		fgc = CL_GR;	break;
+		case CL_YL:		fgc = CL_BR;	break;
+		case CL_LB:		fgc = CL_BL;	break;
+		case CL_LM:		fgc = CL_MG;	break;
+		case CL_LC:		fgc = CL_CY;	break;
+		case CL_WH:		fgc = CL_DG;	break;
+		}
+	}
+#if 1 // Avoid similar fgc/bgc
+	if ((bgc == CL_CY) && (fgc == CL_GR)) {
+		fgc = CL_LG;
+	}
+	if ((bgc == CL_GR) && (fgc == CL_CY)) {
+		fgc = CL_LC;
+	}
+	if ((bgc == CL_BR) && (fgc == CL_DG)) {
+		fgc = CL_GY;
+	}
+#endif
+	return fgc;
+}
+
 void tio_set_attrs(int bgc, int fgc, int rev)
 {
 #ifdef ENABLE_NCURSES
@@ -276,12 +315,21 @@ void tio_set_cursor_pos(int yy, int xx)
 void tio_clear_flash_screen(int delay)
 {
 	tio_set_attrs(CL_WH, CL_BK, 1);
-	tio_clear_screen();
+	tio_clear_screen_with_color();
 	MSLEEP(delay);
 	tio_set_attrs(CL_WH, CL_BK, 0);
-	tio_clear_screen();
+	tio_clear_screen_with_color();
 }
 void tio_clear_screen(void)
+{
+#ifdef ENABLE_NCURSES
+	curses_clear_screen();
+#else // ENABLE_NCURSES
+	termif_clear_screen();
+#endif // ENABLE_NCURSES
+	tio_refresh();
+}
+void tio_clear_screen_with_color(void)
 {
 	tio_clear_lines(0, tio_get_lines());
 	tio_refresh();
@@ -411,45 +459,6 @@ void set_term_raw(void)
 int init_stderr(void)
 {
 	return dup2(STDOUT_FILENO, STDERR_FILENO);
-}
-
-int differ_fgc_to_bgc(int bgc, int fgc)
-{
-	if (fgc == bgc) {
-		// select different color as foreground color with background color
-		// so that you can recognize character
-		switch (fgc) {
-		default:
-		case CL_BK:		fgc = CL_DG;	break;
-		case CL_RD:		fgc = CL_LR;	break;
-		case CL_GR:		fgc = CL_LG;	break;
-		case CL_BR:		fgc = CL_YL;	break;
-		case CL_BL:		fgc = CL_LB;	break;
-		case CL_MG:		fgc = CL_LM;	break;
-		case CL_CY:		fgc = CL_LC;	break;
-		case CL_GY:		fgc = CL_DG;	break;
-		case CL_DG:		fgc = CL_BK;	break;
-		case CL_LR:		fgc = CL_RD;	break;
-		case CL_LG:		fgc = CL_GR;	break;
-		case CL_YL:		fgc = CL_BR;	break;
-		case CL_LB:		fgc = CL_BL;	break;
-		case CL_LM:		fgc = CL_MG;	break;
-		case CL_LC:		fgc = CL_CY;	break;
-		case CL_WH:		fgc = CL_DG;	break;
-		}
-	}
-#if 1 // Avoid similar fgc/bgc
-	if ((bgc == CL_CY) && (fgc == CL_GR)) {
-		fgc = CL_LG;
-	}
-	if ((bgc == CL_GR) && (fgc == CL_CY)) {
-		fgc = CL_LC;
-	}
-	if ((bgc == CL_BR) && (fgc == CL_DG)) {
-		fgc = CL_GY;
-	}
-#endif
-	return fgc;
 }
 
 // End of tio.c

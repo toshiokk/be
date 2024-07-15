@@ -4,7 +4,7 @@
 
 #include "utilincs.h"
 #include "tio.h"
-#include "termif.h"
+/////#include "termif.h"
 
 PRIVATE int my_mbtowc__(wchar_t *pwc, const char *utf8c, int max_len);
 

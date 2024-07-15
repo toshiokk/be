@@ -1,11 +1,34 @@
 #### BE-editor to do list
  (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible/pending)
 
-[] capture stdout/stderr into be-editor buffer
-[] open symlinked file's dir not file itself
-[x] crash after closing key-func/func-key binding view by Alt-q
-[x] crash after closing key-func/func-key binding view
-[x] on tag jump in `paste from history`, return to editor soon not staying in view mode.
+[x] different string is paste from bash history
+[x] after execution from history in filer-x command, does not return to filer
+[x] capture stdout/stderr into be-editor buffer
+  back-scroll vs log-file
+  - [-] back-scroll  Good: easy to use, Bad: hard to handle(get, edit, copy). a limit in size.
+  - [x] log-file     Bad: not easy to use, Good: easy to handle(get, edit, copy). almost no limit in size.
+  - [x] stderr is not captured
+  - [ ] when you start BE from BE, `1.log` might be overwritten.
+
+  standard
+   +----------------------+
+   |application--+--FD:1--->----/dev/pts/1
+   |             \--FD:2--->----/dev/pts/1
+   +----------------------+
+  tee
+   +----------------------+      /--->1.log
+   |application--+--FD:1----+--[tee]->/dev/pts/1
+   |             \--FD:2----/
+   +----------------------+
+
+[d ] How to link with static libraries
+[x] open symlinked file's dir not file itself (dof_real_path: Alt-L)
+[x] force loading as a binary(-b/-binary) / text(-x/-text) file
+[x] crash on browsing /proc/1/pwd
+[x] crash after closing key-func/func-key view by Alt-q
+[x] crash after closing key-func/func-key view
+[x] on tag jump in `paste from history`, return to editor soon, not staying in view mode.
+[x] doe_close_all_modified --> write soon all modified file and close all
 
 [] tests of switching policy of filer and editor	operations-------------------------
 - [xx] tag-jump in editor:				open file with tag and tag-jump
@@ -39,8 +62,8 @@ editor(help mode)   : no load operation, can not edit, can not save, can search/
 |history mode|auto|no  |auto|yes          |no             |history viewer/selector|APP_MODE_LIST   |
 |help mode   |no  |no  |no  |no           |yes            |help viewer            |APP_MODE_HELP   |
 
-[] operation policy
-- always works on ESC, Enter key.
+[?] operation policy
+- always works on ESC key to exit from current screen and Enter key to enter the selected item.
 
 [-] Is it good to migrate to C++ ? --> No, C++ library is too big.
 [v ] rearrange function keys for entering file/path from filer
@@ -88,7 +111,6 @@ editor(help mode)   : no load operation, can not edit, can not save, can search/
 	- on WSL: run clipboard-update.sh every time cut/copy performed
 		[v] do not switch terminal on execution of clip.exe
 [v] 0 bytes file can not be loaded
-[m ] How to link with static libraries
 [l ] differenciate "buffer saved" and "buffer checked"
 
 [v] Show window size on status-bar when resized
@@ -647,6 +669,22 @@ int main(void)
 //[pe]cursor positioning after reopening file
 
 --------------------------------------------------------------------------------------
+### LHV, RHV
+int x = 1;
+"1" is a right hand value.
+  1. It may allocated in memory.
+    value_1: dw 0001h
+      mov ax,(value_1)
+  2. or immediate value in assembly code.
+      mov ax, 0001h
+"x" is a left hand value.
+  1. It may allocated in stack memory.
+      mov [bp + 2], ax
+  2. or allocated in static memory.
+    variable_x: dw ?
+      mov (variable_x), ax
+
+-------------------------------------------------------------------------------
 
 open/close(device)
 begin/end

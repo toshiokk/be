@@ -195,7 +195,7 @@ PRIVATE int open_file_recursive(int recursive)
 		return 0;
 	}
 	// CURDIR: changed in editor
-	if (load_file_name_upp_low(file_path, TUL0, OOE0, MOE1, LFH0, recursive) <= 0) {
+	if (load_file_name_upp_low(file_path, TUL0, OOE0, MOE1, LFH0, recursive) < 0) {
 		tio_beep();
 		return 0;
 	}
@@ -215,7 +215,7 @@ int doe_open_new_file(void)
 		return 0;
 	}
 	// CURDIR: changed in editor
-	if (load_file_name_upp_low(file_path, TUL0, OOE1, MOE0, LFH0, RECURSIVE0) <= 0) {
+	if (load_file_name_upp_low(file_path, TUL0, OOE1, MOE0, LFH0, RECURSIVE0) < 0) {
 		tio_beep();
 		return 0;
 	}
@@ -227,6 +227,12 @@ int doe_open_new_file(void)
 int doe_open_proj_file(void)
 {
 	do_open_proj_file();
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	return 1;
+}
+int doe_open_exec_log_file(void)
+{
+	do_open_exec_log_file();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
@@ -268,7 +274,18 @@ int do_open_proj_file(void)
 	}
 
 	// CURDIR: changed in editor
-	if (load_file_name_upp_low(file_name, TUL0, OOE0, MOE1, LFH0, RECURSIVE1) <= 0) {
+	if (load_file_name_upp_low(file_name, TUL0, OOE0, MOE1, LFH0, RECURSIVE1) < 0) {
+		tio_beep();
+		return 0;
+	}
+	disp_files_loaded_if_ge_0();
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	return 1;
+}
+int do_open_exec_log_file(void)
+{
+	// CURDIR: changed in editor
+	if (load_file_name_upp_low(get_exec_log_file_path(), TUL0, OOE0, MOE1, LFH0, RECURSIVE1) < 0) {
 		tio_beep();
 		return 0;
 	}
@@ -302,7 +319,7 @@ int doe_reopen_file(void)
 	free_cur_edit_buf();
 	// CURDIR: abs-path is specified
 	get_file_line_col_from_str_null(file_pos_str, file_path, NULL, NULL);
-	if (load_file_name_upp_low(file_path, TUL0, OOE0, MOE1, LFH0, RECURSIVE1) <= 0) {
+	if (load_file_name_upp_low(file_path, TUL0, OOE0, MOE1, LFH0, RECURSIVE1) < 0) {
 		tio_beep();
 		return 0;
 	}
@@ -324,13 +341,13 @@ int doe_reopen_file(void)
 //|------------------------|-----|-----|------|-------|---------|-----|
 //|doe_write_file_to()     | one |no   | Yes  | none  |New-name |@s   |write to new file
 //|doe_write_file_ask()    | one |no   | no   | Ask   |cur-name |@w   |
-//|doe_write_file_always() | one |no   | no   | none  |cur-name |@W   |
+//|doe_write_file_always() | one |no   | no   | none  |cur-name |@W   |write soon if modified
 //|doe_write_all_ask()     | All |no   | no   | Ask   |cur-name |@a   |
 //|doe_write_all_modified()| All |no   | no   | none  |cur-name |@A   |
 //|doe_close_file_ask()    | one |Close| no   | Ask   |cur-name |^Q   |
-//|doe_close_file_always() | one |Close| no   | none  |cur-name |@Q   |@^Q
+//|doe_close_file_always() | one |Close| no   | none  |cur-name |@^Q  |write soon if modified and close
 //|doe_close_all_ask()     | All |Close| no   | Ask   |cur-name |@q   |
-//|doe_close_all_modified()| All |Close| no   | none  |cur-name |@^Q  |@Q
+//|doe_close_all_modified()| All |Close| no   | none  |cur-name |@Q   |write soon if modified and close
 
 int doe_write_file_to(void)
 {
@@ -436,7 +453,7 @@ int doe_close_all_ask(void)
 }
 int doe_close_all_modified(void)
 {
-	write_close_all(ANSWER_YES);
+	write_close_all(ANSWER_ALL);
 	return 0;
 }
 PRIVATE int write_close_all(int yes_no)
@@ -591,6 +608,7 @@ int doe_display_color_settings(void)
 }
 void display_color_settings(void)
 {
+	tio_clear_flash_screen(1);
 	display_color_pairs(0, 0);
 	input_key_loop();
 
@@ -699,25 +717,24 @@ int close_all(void)
 	return 0;
 }
 
-// | "yes_no" value   | ask yes / no          | save or not           |
-// |------------------|-----------------------|-----------------------|
-// | ANSWER_FORCE     | save soon if modified | save soon if modified |
-// | x < ANSWER_FORCE | ask if not modified   | save if answered YES  |
-// | ANSWER_ALL       | save soon if modified | save soon if modified |
-// | x < ANSWER_ALL   | ask if modified       | save if answered YES  |
+// | "yes_no" value   | ask (YES / NO)  | save                            |
+// |------------------|-----------------|---------------------------------|
+// | ANSWER_FORCE     | not ask         | save soon event if not modified |
+// | ANSWER_ALL       | not ask         | save soon if modified           |
+// | x < ANSWER_ALL   | ask if modified | save if answered YES            |
 
 int write_file_ask(int yes_no, close_after_save_t close)
 {
 	int ret = yes_no;
 
 ///	switch_epc_buf_to_valid_buf();
-
 	if (check_cur_buf_modified() == 0) {
 		disp_status_bar_done(_("Buffer is NOT modified"));
 		return ANSWER_NO;
 	}
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	update_screen_editor(1, 1, 1);
+flf_d_printf("ret: %d\n", ret);
 	if (ret < ANSWER_ALL) {
 		ret = ask_yes_no(ASK_YES_NO | ASK_ALL,
 		 close == 0

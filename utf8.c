@@ -29,9 +29,14 @@ void test_utf8c_encode(void)
 	char buf[DUMP_UTF8_BUF_LEN+1];
 #endif // ENABLE_DEBUG
 
-	for (wchar_t wc = 0x0000; wc < 0xffff; wc++) {
+	for (wchar_t wc = 0x0000; wc <= 0x1fffff; wc++) {	// 21 bits(UCS21)
 		utf8c_encode(wc, utf8c);
-		flf_d_printf("%04x ==> [%s]\n", wc, dump_utf8c(utf8c, buf));
+		flf_d_printf("%06x ==> [%s] ==> %06x\n", wc, dump_utf8c(utf8c, buf), utf8c_decode(utf8c));
+		if (wc >= 0x10000) {
+			wc += (0x1000 - 1);
+		} else if (wc >= 0x100) {
+			wc += (0x100 - 1);
+		}
 	}
 }
 const char *dump_utf8c(const char *utf8c, char *buf)
@@ -165,17 +170,13 @@ int utf8c_columns(const char *utf8c)
 
 wchar_t utf8c_decode(const char *utf8c)
 {
-	wchar_t wc;
-
-	wc = my_mbtowc(utf8c, MAX_UTF8C_BYTES);
+	wchar_t wc = my_mbtowc(utf8c, MAX_UTF8C_BYTES);
 	return wc;
 }
 
 int utf8c_encode(wchar_t wc, char *utf8c)
 {
-	int bytes;
-
-	bytes = wctomb(utf8c, wc);
+	int bytes = wctomb(utf8c, wc);
 	utf8c[bytes] = '\0';
 	return bytes;
 }

@@ -28,8 +28,10 @@
 #define _FILE_SEL_AUTO_	0x01	// file selected automatically on execution of a command
 typedef struct {
 	char *file_name;
-	struct stat st;
-	struct stat lst;
+						// | regular file | symlink               |
+						// |--------------|-----------------------|
+	struct stat lst;	// | file itself  | symlink               |
+	struct stat st;		// | file itself  | symlinked file or dir |
 	char *symlink;
 	char selected;
 } file_info_t;

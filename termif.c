@@ -206,14 +206,26 @@ int termif_get_columns(void)
 //-----------------------------------------------------------------------------
 void termif_clear_screen(void)
 {
-	send_all_off_to_term();
 ///	send_string_to_term("\x1b" "c", -1);
-	memset((void *)vscreen_to_paint, 0x00, sizeof(vscreen_to_paint));
+	///memset((void *)vscreen_to_paint, 0x00, sizeof(vscreen_to_paint));
+	termif_clear_vscreen_to_paint();
 	termif_clear_vscreen_painted();
+}
+void termif_clear_vscreen_to_paint(void)
+{
+	for (int yy = 0; yy < termif_lines; yy++) {
+		for (int xx = 0; xx < termif_columns; xx++) {
+			vscreen_to_paint[yy][xx] = VSCR_CHAR_ATTRS_DEFAULT | VSCR_CHAR_UCS21_SPACE;
+		}
+	}
 }
 void termif_clear_vscreen_painted(void)
 {
-	memset((void *)vscreen_painted, 0x00, sizeof(vscreen_painted));
+	for (int yy = 0; yy < termif_lines; yy++) {
+		for (int xx = 0; xx < termif_columns; xx++) {
+			vscreen_painted[yy][xx] = VSCR_CHAR_ATTRS_DEFAULT | VSCR_CHAR_UCS21;
+		}
+	}
 }
 void termif_send_cursor_pos(int yy, int xx)
 {
@@ -361,7 +373,7 @@ PRIVATE void dump_vscreen(int yy, int len)
 
 //-----------------------------------------------------------------------------
 // If narrow char, compare 1st place.
-// If wide   char, compare 1st and 2nd place.
+// If wide   char, compare 1st and 2nd places.
 #define CMP_NARR_OR_WIDE_CHR()										\
 	(VSCR_IS_COL1_WIDE_CHAR(vscreen_to_paint[yy][xx]) == 0			\
 	 ? (vscreen_painted[yy][xx] != vscreen_to_paint[yy][xx])		\
@@ -372,15 +384,15 @@ PRIVATE void dump_vscreen(int yy, int len)
 void termif_refresh(void)
 {
 	int cursor_on = 1;
-	int yy, xx;
+///	int yy, xx;
 	int start_xx;
 	vscreen_char_t start_attrs;
 	char utf8c[MAX_UTF8C_BYTES + 1];
 	wchar_t ucs21;
 	char line_buf[TERMIF_LINE_BUF_LEN + 1];
 
-	for (yy = 0; yy < termif_lines; yy++) {
-		for (xx = 0; xx < termif_columns; ) {
+	for (int yy = 0; yy < termif_lines; yy++) {
+		for (int xx = 0; xx < termif_columns; ) {
 			start_attrs = (vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS);
 			if (CMP_NARR_OR_WIDE_CHR()) {
 				start_xx = xx;
@@ -521,7 +533,7 @@ PRIVATE void send_attrs_to_term(vscreen_char_t attrs)
 	}
 	real_bgc = LIMIT_BGC(real_bgc);
 	real_fgc = LIMIT_FGC(real_fgc);
-	real_fgc = differ_fgc_to_bgc(real_bgc, real_fgc);
+	real_fgc = tio_differ_fgc_from_bgc(real_bgc, real_fgc);
 	send_all_off_to_term();
 	send_bgc_to_term(real_bgc);
 	send_fgc_to_term(real_fgc);

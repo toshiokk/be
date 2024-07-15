@@ -94,6 +94,7 @@ void tio_set_screen_size(int lines, int columns);
 int tio_get_lines(void);
 int tio_get_columns(void);
 
+int tio_differ_fgc_from_bgc(int bgc, int fgc);
 void tio_set_attrs(int bgc, int fgc, int rev);
 void tio_set_attr_rev(int rev);
 
@@ -102,6 +103,7 @@ void tio_set_cursor_pos(int yy, int xx);
 
 void tio_clear_flash_screen(int delay);
 void tio_clear_screen(void);
+void tio_clear_screen_with_color(void);
 void tio_clear_lines(int line_1, int line_2);
 const char *tio_blank_line(void);
 
@@ -117,8 +119,6 @@ void restore_term_settings(struct termios *term_settings);
 void set_term_no_intr(void);
 void set_term_raw(void);
 int init_stderr(void);
-
-int differ_fgc_to_bgc(int bgc, int fgc);
 
 #endif // tio_h
 

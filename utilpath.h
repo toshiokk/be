@@ -71,6 +71,7 @@ int is_path_wildcard(char *path);
 
 char *get_home_dir(void);
 const char *get_starting_dir(void);
+const char *get_tty_name(void);
 int check_wsl();
 
 // file permission --------------------
@@ -93,6 +94,8 @@ char *realpath__(const char *path, char *buf, int buf_len);
 
 // readlink() -------------------------
 int readlink__(const char *path, char *buffer, int len);
+
+BOOL is_abs_path(const char *path);
 
 // tests ======================================================================
 

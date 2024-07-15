@@ -55,6 +55,7 @@ flf_d_printf("Start %s ===================================\n", APP_NAME " " __DA
 	_mlc_init
 	get_home_dir();
 	get_starting_dir();
+	get_tty_name();
 	signal_init();
 	init_locale();
 	_mlc_memorize_count
@@ -286,7 +287,7 @@ PRIVATE int init_app_mode(void)
 	return 0;
 }
 
-const char short_options[] = "C:cht:rne:wdv?k";
+const char short_options[] = "C:cht:rne:bxwdv?k";
 #ifdef HAVE_GETOPT_LONG
 int option_index = 0;
 const struct option long_options[] = {
@@ -302,6 +303,8 @@ const struct option long_options[] = {
 #ifdef USE_NKF
 	{ "nonkf",         no_argument,       0, 'n' },
 	{ "encoding",      required_argument, 0, 'e' },
+	{ "binary",        no_argument,       0, 'b' },
+	{ "text",          no_argument,       0, 'x' },
 #endif // USE_NKF
 #ifdef ENABLE_FILER
 	{ "twopane",       no_argument,       0, 'w' },
@@ -400,6 +403,14 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 			}
 ////flf_d_printf("CUR_EBUF_STATE(buf_ENCODE): %d\n", CUR_EBUF_STATE(buf_ENCODE));
 			break;
+		case 'b':
+			// same as "-encoding b"
+			SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_BINARY);
+			break;
+		case 'x':
+			// same as "-encoding u"
+			SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_UTF8);
+			break;
 #endif // USE_NKF
 #ifdef ENABLE_FILER
 		case 'w':
@@ -444,7 +455,8 @@ PRIVATE void start_up_test(void)
 	flf_d_printf("getenv(USER): [%s]\n", getenv__("USER"));
 	flf_d_printf("getenv(HOSTNAME): [%s]\n", getenv__("HOSTNAME"));
 	flf_d_printf("getenv(LANG): [%s]\n", getenv__("LANG"));
-	flf_d_printf("ttyname(0): [%s]\n", ttyname(0));
+	flf_d_printf("get_tty_name(): [%s]\n", get_tty_name());
+	flf_d_printf("exec_log_file_path: [%s]\n", get_exec_log_file_path());
 	flf_d_printf("getenv(HOME): [%s]\n", get_home_dir());
 
 	flf_d_printf("sizeof(int): %d\n", sizeof(int));
@@ -493,8 +505,7 @@ PRIVATE void start_up_test(void)
 	test_cat_dir_and_file();
 	test_separate_path_to_dir_and_file();
 
-///	
-	test_get_intersection();
+///	test_get_intersection();
 	get_mem_free_in_kb(1);
 ///	test_nn_from_num();
 ///	test_utf8c_encode();
@@ -633,6 +644,9 @@ void show_usage(void)
 	show_one_option("-e e",              "--encoding=e",      _("EUCJP character encoding"));
 	show_one_option("-e s",              "--encoding=s",      _("SJIS character encoding"));
 	show_one_option("-e u",              "--encoding=u",      _("UTF8 character encoding"));
+	show_one_option("-e b",              "--encoding=b",      _("BINARY file"));
+	show_one_option("-b",                "--binary",          _("BINARY file (same as '-e b')"));
+	show_one_option("-x",                "--text",            _("TEXT file (same as '-e u')"));
 #endif // USE_NKF
 #ifdef ENABLE_DEBUG
 	show_one_option("-d",                "--debug",           _("Output debug log to stderr"));
@@ -955,7 +969,7 @@ void disp_splash(int delay)
 // return code from filer
 //		quit		--> FILER_DO_QUIT
 //		loaded		--> FILER_LOADED
-//		input		--> FILER_INPUT_TO_REPLASE (file/file_path/dir_path)
+//		input		--> FILER_INPUT_TO_REPLACE (file/file_path/dir_path)
 //		input		--> FILER_INPUT_TO_APPEND  (file/file_path/dir_path)
 
 // open file:	load file and assign it as a current file in the editor pane

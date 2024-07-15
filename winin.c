@@ -85,19 +85,19 @@ flf_d_printf("ret: %d\n", ret);
 
 	update_screen_app(1, 1, 1);
 
-	if (ret < 0) {
+	if (ret == INPUT_CANCELLED) {
 		disp_status_bar_done(_("Cancelled"));
-		return ret;			// -1: cancelled
+		return ret;				// cancelled
 	}
-	if (ret == 0) {
-		return ret;			// 0: something done and quited input
+	if (ret == INPUT_LOADED) {	// file loaded
+		return ret;				// something done
 	}
 #ifdef ENABLE_HISTORY
 	if (is_strlen_not_0(input_buf)) {
 		update_history(hist_type_idx, input_buf, 0);
 	}
 #endif
-	return 1;					// 1: input normally
+	return INPUT_INPUT;			// input normally
 }
 
 // Input string. This should only be called from input_string_xxx().
@@ -231,7 +231,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			//----------------------------------------------------
 			ret = select_from_history_list(hist_type_idx, buffer);
 			//----------------------------------------------------
-flf_d_printf("ret: %d\n", ret);
+flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
 			if ((ret == EDITOR_INPUT_TO_REPLACE) || (ret == EDITOR_INPUT_TO_APPEND)) {
 				if ((ret == EDITOR_INPUT_TO_REPLACE) || cmp_func_id(func_id, "doe_page_up")) {
 					// clear input buffer
@@ -243,9 +243,9 @@ flf_d_printf("ret: %d\n", ret);
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
 				 cursor_byte_idx, buffer);
 			} else
-			///if (ret == EDITOR_DO_QUIT) {
-			///	key_input = K_ESC;	// quit
-			///} else
+			if (ret == EDITOR_DO_QUIT) {	// doe_run_line_soon()
+				key_input = K_ESC;	// quit
+			} else
 			if (ret == EDITOR_LOADED) {
 				key_input = K_NONE;	// quit
 			}
@@ -258,7 +258,7 @@ flf_d_printf("ret: %d\n", ret);
 			//---------------------------------------------------
 			ret = call_filer(1, APP_MODE_LIST, "", "", buffer, MAX_PATH_LEN);
 			//---------------------------------------------------
-flf_d_printf("ret: %d\n", ret);
+flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
 			if ((ret == FILER_INPUT_TO_REPLACE) || (ret == FILER_INPUT_TO_APPEND)) {
 				if ((ret == FILER_INPUT_TO_REPLACE) || cmp_func_id(func_id, "doe_page_down")) {
 					// clear input buffer
@@ -309,7 +309,7 @@ flf_d_printf("ret: %d\n", ret);
 	if (key_input == KEY_NONE) {
 		return INPUT_LOADED;		// file loaded
 	}
-	return INPUT_DONE;				// string input
+	return INPUT_INPUT;				// string input
 }
 
 /* display input box

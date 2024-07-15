@@ -53,6 +53,7 @@ int fork_exec_args_repeat(int separate_bef_exec, ...);
 int send_to_system_clipboard();
 
 int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_exec, const char *command);
+const char *get_exec_log_file_path();
 
 void clear_fork_exec_counter(void);
 int get_fork_exec_counter(void);
