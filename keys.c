@@ -932,29 +932,26 @@ PRIVATE int check_all_functions_accessible_without_function_key_(func_key_table_
 	return 0;
 }
 
-PRIVATE int check_duplicate_assinment_of_key_(func_key_table_t *key_table);
-int check_duplicate_assinment_of_key()
+PRIVATE int check_multiple_assignment_of_key_(func_key_table_t *key_table);
+int check_multiple_assignment_of_key()
 {
 flf_d_printf("-------------------------\n");
-	int err = check_duplicate_assinment_of_key_(editor_func_key_table);
+	int err = check_multiple_assignment_of_key_(editor_func_key_table);
 #ifdef ENABLE_FILER
-	err += check_duplicate_assinment_of_key_(filer_func_key_table);
+	err += check_multiple_assignment_of_key_(filer_func_key_table);
 #endif // ENABLE_FILER
 	return err;
 }
 
-PRIVATE int check_duplicate_assinment_of_key_(func_key_table_t *key_table)
+PRIVATE int check_multiple_assignment_of_key_(func_key_table_t *key_table)
 {
 	for (int func_idx = 0; key_table[func_idx].help[0]; func_idx++) {
 		for (int key_idx = 0; key_idx < MAX_KEYS_BOUND; key_idx++) {
 			key_code_t key;
 			switch (key_idx) {
-			case 0:
-				key = key_table[func_idx].key1;	break;
-			case 1:
-				key = key_table[func_idx].key2;	break;
-			case 2:
-				key = key_table[func_idx].key3;	break;
+			case 0:		key = key_table[func_idx].key1;	break;
+			case 1:		key = key_table[func_idx].key2;	break;
+			case 2:		key = key_table[func_idx].key3;	break;
 			}
 			if (key == KEY_NONE) {
 				continue;
@@ -963,15 +960,12 @@ PRIVATE int check_duplicate_assinment_of_key_(func_key_table_t *key_table)
 				for (int key_idx2 = 0; key_idx2 < MAX_KEYS_BOUND; key_idx2++) {
 					key_code_t key2;
 					switch (key_idx2) {
-					case 0:
-						key2 = key_table[func_idx2].key1;	break;
-					case 1:
-						key2 = key_table[func_idx2].key2;	break;
-					case 2:
-						key2 = key_table[func_idx2].key3;	break;
+					case 0:		key2 = key_table[func_idx2].key1;	break;
+					case 1:		key2 = key_table[func_idx2].key2;	break;
+					case 2:		key2 = key_table[func_idx2].key3;	break;
 					}
 					if (key2 == key) {
-						warning_printf("key: %04x assigned more than once in func:[%s] and [%s]\n",
+						warning_printf("key: %04x assigned multiple to func:[%s] and [%s]\n",
 						 key, key_table[func_idx].desc, key_table[func_idx2].desc);
 					}
 				}

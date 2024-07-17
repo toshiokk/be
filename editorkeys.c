@@ -94,7 +94,7 @@ func_key_table_t editor_func_key_table[] = {
    XA, F_I(doe_goto_input_line), NULL },
  { "Tag-Jump",            "Tag-jump to file or directory",  K_F12, K_M_j,      KNA,
    XA, F_I(doe_goto_file_or_dir_in_cur_line), NULL },
- { "Tag-Jump to directory","Tag-jump to file or directory", K_F11, K_M_J,      KNA,
+ { "Tag-Jump",            "Tag-jump to file or directory",  K_F11, K_M_J,      KNA,
    XA, F_I(doe_goto_file_or_dir_in_cur_cursor_pos), NULL },
 
  { "",                    "Edit Menu",                      KNA,          KNA, KNA,

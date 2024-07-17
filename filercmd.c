@@ -23,7 +23,7 @@
 
 #ifdef ENABLE_FILER
 
-PRIVATE int dof_open_file_(int recursive);
+PRIVATE int dof_open_file_(int load_from_history, int recursive);
 
 PRIVATE int filer_change_dir_to_cur_sel(void);
 PRIVATE int filer_change_dir_if_not_yet(char *dir);
@@ -126,12 +126,17 @@ int dof_tap_file(void)
 
 int dof_open_file(void)
 {
-	dof_open_file_(RECURSIVE1);
+	dof_open_file_(LFH0, RECURSIVE1);
 	return 1;
 }
 int dof_open_file_non_recursive(void)
 {
-	dof_open_file_(RECURSIVE0);
+	dof_open_file_(LFH0, RECURSIVE0);
+	return 1;
+}
+int dof_open_file_from_history(void)
+{
+	dof_open_file_(LFH1, RECURSIVE1);
 	return 1;
 }
 
@@ -161,7 +166,7 @@ int dof_open_exec_log_file(void)
 int dof_edit_new_file(void)
 {
 	char file_name[MAX_PATH_LEN+1];
-	int ret = input_string_tail("", file_name, HISTORY_TYPE_IDX_CURSPOS,
+	int ret = input_string_tail("", file_name, HISTORY_TYPE_IDX_FILEPOS,
 	 _("Edit new file:"));
 	if (set_filer_do_next(ret)) {
 		return 0;
@@ -666,7 +671,7 @@ int dof_filer_menu_5(void)
 }
 
 //-----------------------------------------------------------------------------
-PRIVATE int dof_open_file_(int recursive)
+PRIVATE int dof_open_file_(int load_from_history, int recursive)
 {
 #ifdef ENABLE_HISTORY
 	int prev_count_edit_bufs = count_edit_bufs();
@@ -686,7 +691,7 @@ PRIVATE int dof_open_file_(int recursive)
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if (S_ISREG(get_cur_fv_file_ptr(file_idx)->st.st_mode)) {
 			if (load_file_name_upp_low_(get_cur_fv_file_ptr(file_idx)->file_name,
-			 TUL0, OOE0, MOE1, LFH0, recursive) <= 0) {
+			 TUL0, OOE0, MOE1, load_from_history, recursive) <= 0) {
 				tio_beep();
 			}
 		}
@@ -761,8 +766,7 @@ flf_d_printf("try to dir[%s]\n", dir);
 }
 int filer_change_dir(char *dir)
 {
-	if (change_cur_dir_saving_prev_next_dir(dir, get_cur_filer_view()->cur_dir,
-	 get_cur_filer_view()->prev_dir, get_cur_filer_view()->next_file) == 0) {
+	if (change_cur_dir_saving_prev_next(dir) == 0) {
 		// We can't open this dir for some reason. Complain.
 		disp_status_bar_err(_("Can not change current to [%s]: %s"),
 		 shrink_str_to_scr_static(dir), strerror(errno));
@@ -777,6 +781,14 @@ int filer_change_dir(char *dir)
 	 shrink_str_to_scr_static(get_cur_filer_view()->cur_dir));
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 1;		// OK
+}
+
+int change_cur_dir_saving_prev_next(char *dir)
+{
+	return change_cur_dir_saving_prev_next_dir(dir,
+	 get_cur_filer_view()->cur_dir,
+	 get_cur_filer_view()->prev_dir,
+	 get_cur_filer_view()->next_file);
 }
 
 #endif // ENABLE_FILER

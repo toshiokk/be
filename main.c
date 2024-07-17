@@ -37,6 +37,7 @@ PRIVATE int parse_options(int argc, char *argv[]);
 #ifdef START_UP_TEST
 PRIVATE void start_up_test(void);
 PRIVATE void start_up_test2(void);
+PRIVATE void test_modulo();
 #endif // START_UP_TEST
 PRIVATE int write_cur_dir_to_exit_file(void);
 PRIVATE void die_save_file(const char *die_file_path);
@@ -524,17 +525,23 @@ PRIVATE void start_up_test(void)
 	test_get_n_th_file_name();
 	flf_d_printf("}}}}---------------------------------------------------------\n");
 }
+#endif // START_UP_TEST
+#ifdef START_UP_TEST
 PRIVATE void start_up_test2(void)
 {
 	flf_d_printf("{{{{---------------------------------------------------------\n");
 	check_all_functions_accessible_without_function_key();
-	check_duplicate_assinment_of_key();
+	check_multiple_assignment_of_key();
+	test_modulo();
+	flf_d_printf("}}}}---------------------------------------------------------\n");
+}
+PRIVATE void test_modulo()
+{
 flf_d_printf("modulo test --------------\n");
 	for (int nn = -9; nn < 10; nn++) {
 flf_d_printf("%2d mod 7 = %2d, %2d mod 5 = %2d, %2d mod 3 = %2d\n",
  nn, nn % 7, nn, nn % 5, nn, nn % 3);
 	}
-	flf_d_printf("}}}}---------------------------------------------------------\n");
 }
 #endif // START_UP_TEST
 

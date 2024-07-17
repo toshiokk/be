@@ -42,6 +42,7 @@ int dof_refresh_filer(void);
 int dof_tap_file(void);
 int dof_open_file(void);
 int dof_open_file_non_recursive(void);
+int dof_open_file_from_history(void);
 int dof_open_proj_file(void);
 int dof_open_exec_log_file(void);
 int dof_edit_new_file(void);
@@ -93,6 +94,8 @@ int dof_filer_menu_5(void);
 
 int filer_change_dir_parent(char *path);
 int filer_change_dir(char *dir);
+
+int change_cur_dir_saving_prev_next(char *dir);
 
 #endif // ENABLE_FILER
 

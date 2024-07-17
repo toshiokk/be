@@ -36,8 +36,10 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	{ CL_BK, CL_WH, S(ITEM_COLOR_IDX_DEFAULT)			},
 #if APP_REL_LVL == APP_REL_LVL_STABLE
 	// official release
-	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_TITLE)				},
-	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_STATUS)			},
+	{ CL_BL, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
+	{ CL_BL, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
+///	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_TITLE)				},
+///	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_STATUS)			},
 #endif
 #if APP_REL_LVL == APP_REL_LVL_TEST2
 	// test release-2

@@ -189,7 +189,7 @@ PRIVATE int open_file_recursive(int recursive)
 
 	clear_files_loaded();
 #ifndef ENABLE_FILER
-	int ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_CURSPOS,
+	int ret = input_string_tail("", file_path, HISTORY_TYPE_IDX_FILEPOS,
 	 _("Open existing file:"));
 	if (ret <= INPUT_LOADED) {
 		return 0;
@@ -440,7 +440,7 @@ PRIVATE int close_file_ask(int yes_no)
 	if (count_edit_bufs() == 0) {
 		// This file is the last open file.
 		// Memorize the last open file's cursor pos.
-		update_history(HISTORY_TYPE_IDX_CURSPOS, file_pos_str, 1);
+		update_history(HISTORY_TYPE_IDX_FILEPOS, file_pos_str, 1);
 	}
 #endif // ENABLE_HISTORY
 	return 2;
@@ -473,7 +473,7 @@ PRIVATE int write_close_all(int yes_no)
 
 #ifdef ENABLE_HISTORY
 	// memorize the last current file's cursor pos.
-	update_history(HISTORY_TYPE_IDX_CURSPOS, file_pos_str, 1);
+	update_history(HISTORY_TYPE_IDX_FILEPOS, file_pos_str, 1);
 #endif // ENABLE_HISTORY
 	return 0;
 }

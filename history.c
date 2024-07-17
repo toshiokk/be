@@ -140,7 +140,7 @@ void update_history(int hist_type_idx, const char *str, BOOL force_update)
 {
 	be_line_t *line;
 
-	if ((! force_update) && (hist_type_idx == HISTORY_TYPE_IDX_CURSPOS)) {
+	if ((! force_update) && (hist_type_idx == HISTORY_TYPE_IDX_FILEPOS)) {
 		if (check_file_pos_recorded_in_history(hist_type_idx, str)) {
 			return; // registered relatively newer, no need of update
 		}
@@ -324,14 +324,14 @@ PRIVATE char *get_history_file_path(int hist_type_idx)
 	case HISTORY_TYPE_IDX_KEYMACRO:
 		file = KEYMACRO_HISTORY_FILE_NAME;
 		break;
-	case HISTORY_TYPE_IDX_SEARCH:
-		file = SEARCH_HISTORY_FILE_NAME;
-		break;
-	case HISTORY_TYPE_IDX_CURSPOS:
+	case HISTORY_TYPE_IDX_FILEPOS:
 		file = OPENFILE_HISTORY_FILE_NAME;
 		break;
 	case HISTORY_TYPE_IDX_DIR:
 		file = DIR_HISTORY_FILE_NAME;
+		break;
+	case HISTORY_TYPE_IDX_SEARCH:
+		file = SEARCH_HISTORY_FILE_NAME;
 		break;
 	case HISTORY_TYPE_IDX_EXEC:
 		file = EXEC_HISTORY_FILE_NAME;

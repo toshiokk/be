@@ -1,6 +1,14 @@
 #### BE-editor to do list
  (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible/pending)
 
+[ ] can not open recursively from __be_test.pro and __be_test2.pro
+[x] 0 length file --> 1 file loaded
+[x] testfiles --> change cur-dir to be/testfiles
+   [x] (based on the directory of current file)
+   [x] (searching from the dir history)
+[x] F11/F12 is not working to directory
+[d ] make goodly UTF8 supported `screen`
+[d-] How to link with static libraries
 [x] different string is paste from bash history
 [x] after execution from history in filer-x command, does not return to filer
 [x] capture stdout/stderr into be-editor buffer
@@ -21,7 +29,6 @@
    |             \--FD:2----/
    +----------------------+
 
-[d ] How to link with static libraries
 [x] open symlinked file's dir not file itself (dof_real_path: Alt-L)
 [x] force loading as a binary(-b/-binary) / text(-x/-text) file
 [x] crash on browsing /proc/1/pwd
@@ -30,7 +37,7 @@
 [x] on tag jump in `paste from history`, return to editor soon, not staying in view mode.
 [x] doe_close_all_modified --> write soon all modified file and close all
 
-[] tests of switching policy of filer and editor	operations-------------------------
+[x] tests of switching policy of filer and editor	operations-------------------------
 - [xx] tag-jump in editor:				open file with tag and tag-jump
 - [xx] tag-jump in history called from editor:		open files M-h UP LEFT... UP... F12
 - [xx] tag-jump in file list:				open files M-; UP... F12
@@ -66,9 +73,8 @@ editor(help mode)   : no load operation, can not edit, can not save, can search/
 - always works on ESC key to exit from current screen and Enter key to enter the selected item.
 
 [-] Is it good to migrate to C++ ? --> No, C++ library is too big.
-[v ] rearrange function keys for entering file/path from filer
-[v ] update vague width char list
-[d] make goodly UTF8 supported `screen`
+[v] rearrange function keys for entering file/path from filer
+[v] update vague width char list
 
 [v] properly input UTF8 string even when ON_DEMAND... enabled
 [v] list symlink on top of file list
@@ -673,16 +679,37 @@ int main(void)
 int x = 1;
 "1" is a right hand value.
   1. It may allocated in memory.
-    value_1: dw 0001h
+    val_1: dd 00000001h
       mov ax,(value_1)
   2. or immediate value in assembly code.
-      mov ax, 0001h
+      mov ax, 00000001h
 "x" is a left hand value.
   1. It may allocated in stack memory.
       mov [bp + 2], ax
   2. or allocated in static memory.
-    variable_x: dw ?
+    var_x: dd 00000000h
       mov (variable_x), ax
+
+int* ptr_x = &x;
+    ptr_x: dp 00000000h  ; dp: define pointer
+      mov eax, variable_x
+      mov di, (ptr_x)
+      mov (di), eax
+int y = *ptr_x;
+    var_y: dw 00000000h
+      mov si, (ptr_x);
+      mov eax, (si)
+      mov (var_y), eax
+
+int& ref_x = x;
+    ref_x: dp 00000000h
+      mov eax, (var_x)
+      mov (ref_x), eax
+int y = ref_x;
+    var_y: dw 00000000h
+      mov si, (ref_x);
+      mov eax, (si)
+      mov (var_y), eax
 
 -------------------------------------------------------------------------------
 

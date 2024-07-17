@@ -819,25 +819,25 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 }
 
 //-----------------------------------------------------------------------------
-PRIVATE int files_loaded = -1;	// -1: no file switched/loaded, 0: switched, 1: loaded
+PRIVATE int cnt_files_loaded = -1;	// -1: no file switched/loaded, 0: switched, 1--: loaded
 void clear_files_loaded(void)
 {
-	files_loaded = -1;
+	cnt_files_loaded = -1;
 }
 int add_files_loaded(int files)	// files = 0: not loaded but switched
 {
-	if (files_loaded < 0) {
-		files_loaded = 0;
+	if (files >= 0) {
+		cnt_files_loaded = LIM_MIN(0, cnt_files_loaded);
 	}
-	return files_loaded += files;
+	return cnt_files_loaded += files;
 }
 int get_files_loaded(void)
 {
-	return files_loaded;
+	return cnt_files_loaded;
 }
 void disp_files_loaded_if_ge_0(void)
 {
-	if (files_loaded >= 0) {
+	if (cnt_files_loaded >= 0) {
 		disp_files_loaded();
 	}
 }
@@ -847,7 +847,7 @@ void disp_files_loaded(void)
 							_("%d files loaded"),
 							_("%d filess loaded"),
 							_("%d filesss loaded"),
-	 files_loaded), files_loaded);
+	 cnt_files_loaded), cnt_files_loaded);
 }
 
 // End of fileio.c

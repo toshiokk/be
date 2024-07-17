@@ -112,7 +112,7 @@ int free_edit_buf(be_buf_t *edit_buf)
 		return 0;
 	}
 #ifdef ENABLE_HISTORY
-	update_history(HISTORY_TYPE_IDX_CURSPOS, mk_cur_file_pos_str_static(), 0);
+	update_history(HISTORY_TYPE_IDX_FILEPOS, mk_cur_file_pos_str_static(), 0);
 #endif // ENABLE_HISTORY
 	if (edit_buf == get_epc_buf()) {
 		// select other buffer
@@ -729,7 +729,7 @@ void dump_cut_bufs_lines(void)
 // dump current buffer
 void dump_cur_edit_buf(void)
 {
-flf_d_printf("<<<<<<<<<<<<<<<<<<<\n");
+flf_d_printf("<<<\n");
 flf_d_printf("CUR_EDIT_BUF_TOP_LINE:%08lx\n", CUR_EDIT_BUF_TOP_LINE);
 	if (CUR_EDIT_BUF_TOP_LINE) {
 		flf_d_printf("CUR_EDIT_BUF_TOP_LINE->data:%08lx\n", CUR_EDIT_BUF_TOP_LINE->data);
@@ -743,7 +743,7 @@ flf_d_printf("cur_line:%08lx\n", EPCBVC_CL);
 		flf_d_printf("cur_line->data:%08lx\n", EPCBVC_CL->data);
 	}
 	line_dump_lines(CUR_EDIT_BUF_TOP_ANCH, INT_MAX, EPCBVC_CL);
-flf_d_printf(">>>>>>>>>>>>>>>>>>>\n");
+flf_d_printf(">>>\n");
 }
 #endif // ENABLE_DEBUG
 

@@ -23,7 +23,7 @@
 #define history_h
 
 #define HISTORY_TYPE_IDX_KEYMACRO	0	// app
-#define HISTORY_TYPE_IDX_CURSPOS	1	// app
+#define HISTORY_TYPE_IDX_FILEPOS	1	// app
 #define HISTORY_TYPE_IDX_DIR		2	// app
 #define HISTORY_TYPE_IDX_SEARCH		3	// app
 #define HISTORY_TYPE_IDX_EXEC		4	// app

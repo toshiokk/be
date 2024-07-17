@@ -487,7 +487,7 @@ int get_key_name_table_entries(void);
 
 #ifdef ENABLE_DEBUG
 int check_all_functions_accessible_without_function_key();
-int check_duplicate_assinment_of_key();
+int check_multiple_assignment_of_key();
 #endif // ENABLE_DEBUG
 
 #endif // keys_h

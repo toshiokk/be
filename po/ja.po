@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-15 16:36+0900\n"
+"POT-Creation-Date: 2024-07-17 20:42+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -198,27 +198,27 @@ msgstr "テキストを張り付けました(カットバッファは変化な�
 msgid "Enter line number:"
 msgstr "行番号入力:"
 
-#: ../editorgoto.c:196
+#: ../editorgoto.c:232
 msgid "No previous open files"
 msgstr "これ以上前にファイルがありません"
 
-#: ../editorgoto.c:201
+#: ../editorgoto.c:237
 msgid "Previous file"
 msgstr "一つ前のファイルにスイッチしました"
 
-#: ../editorgoto.c:209
+#: ../editorgoto.c:245
 msgid "No next open files"
 msgstr "これ以上後にファイルがありません"
 
-#: ../editorgoto.c:214
+#: ../editorgoto.c:250
 msgid "Next file"
 msgstr "一つ後のファイルにスイッチしました"
 
-#: ../editorgoto.c:248
+#: ../editorgoto.c:284
 msgid "Returned to previous pos"
 msgstr ""
 
-#: ../editorgoto.c:256
+#: ../editorgoto.c:292
 #, fuzzy, c-format
 msgid "Switched current editor pane to %d"
 msgstr "カレントディレクトリを変更しました [%s]"
@@ -623,7 +623,7 @@ msgstr ""
 msgid "Window resized to (%d, %d)"
 msgstr "画面サイズ: (%d, %d)"
 
-#: ../main.c:592
+#: ../main.c:599
 msgid ""
 "\n"
 "No file written\n"
@@ -631,7 +631,7 @@ msgstr ""
 "\n"
 "書き込まれたファイルはありません\n"
 
-#: ../main.c:601
+#: ../main.c:608
 #, c-format
 msgid ""
 "\n"
@@ -640,7 +640,7 @@ msgstr ""
 "\n"
 "ファイル %s に書き込みました\n"
 
-#: ../main.c:628
+#: ../main.c:635
 #, c-format
 msgid ""
 "\n"
@@ -650,111 +650,111 @@ msgstr ""
 "使用法"
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:630
+#: ../main.c:637
 msgid "Option"
 msgstr ""
 
-#: ../main.c:630
+#: ../main.c:637
 msgid "Long option"
 msgstr ""
 
-#: ../main.c:630
+#: ../main.c:637
 msgid "Meaning"
 msgstr "意味"
 
-#: ../main.c:632
+#: ../main.c:639
 msgid "Read RCFILE"
 msgstr ""
 
-#: ../main.c:633
+#: ../main.c:640
 msgid "Don't look at berc files"
 msgstr "bercファイルを無視"
 
-#: ../main.c:636
+#: ../main.c:643
 msgid "Don't use history file"
 msgstr "ヒストリファイルを使用しない"
 
-#: ../main.c:638
+#: ../main.c:645
 msgid "Set tab-size to NUM[1-15]"
 msgstr "タブサイズをNUM[1-15]に設定"
 
-#: ../main.c:639
+#: ../main.c:646
 msgid "View mode(Read only mode)"
 msgstr "閲覧(読込専用)モード"
 
-#: ../main.c:641
+#: ../main.c:648
 msgid "Don't use nkf"
 msgstr "nkf を使用しない"
 
-#: ../main.c:642
+#: ../main.c:649
 msgid "ASCII character encoding"
 msgstr "ASCII エンコーディング"
 
-#: ../main.c:643
+#: ../main.c:650
 msgid "JIS character encoding"
 msgstr "JIS エンコーディング"
 
-#: ../main.c:644
+#: ../main.c:651
 msgid "EUCJP character encoding"
 msgstr "EUCJP エンコーディング"
 
-#: ../main.c:645
+#: ../main.c:652
 msgid "SJIS character encoding"
 msgstr "SJIS エンコーディング"
 
-#: ../main.c:646
+#: ../main.c:653
 msgid "UTF8 character encoding"
 msgstr "UTF8 エンコーディング"
 
-#: ../main.c:647
+#: ../main.c:654
 #, fuzzy
 msgid "BINARY file"
 msgstr "一つ後のファイルにスイッチしました"
 
-#: ../main.c:648
+#: ../main.c:655
 msgid "BINARY file (same as '-e b')"
 msgstr ""
 
-#: ../main.c:649
+#: ../main.c:656
 msgid "TEXT file (same as '-e u')"
 msgstr ""
 
-#: ../main.c:652
+#: ../main.c:659
 msgid "Output debug log to stderr"
 msgstr "stderrにデバッグログを出力"
 
-#: ../main.c:654
+#: ../main.c:661
 msgid "Show version information"
 msgstr "バージョン情報を表示"
 
-#: ../main.c:655
+#: ../main.c:662
 msgid "Show this message"
 msgstr "このメッセージを表示"
 
-#: ../main.c:656
+#: ../main.c:663
 msgid "Start at line number NUM"
 msgstr "NUM 行から開始"
 
-#: ../main.c:658
+#: ../main.c:665
 msgid "Investigate key codes"
 msgstr ""
 
-#: ../main.c:674
+#: ../main.c:681
 #, c-format
 msgid "%s editor version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:676
+#: ../main.c:683
 #, c-format
 msgid " Build Options:\n"
 msgstr " ビルドオプション:\n"
 
-#: ../main.c:929
+#: ../main.c:936
 #, c-format
 msgid "Screen size: %dx%d"
 msgstr "画面サイズ: %dx%d"
 
-#: ../main.c:935
+#: ../main.c:942
 msgid "We're invincible with this !!"
 msgstr "これさえあれば俺達は無敵だ!!"
 

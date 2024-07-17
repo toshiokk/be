@@ -78,6 +78,7 @@ extern be_bufs_t edit_buffers;
 #define BUF_VX(buf, idx)					(&((buf)->buf_views[idx]))
 
 #define BUFV_CL(b_v)						((b_v)->cur_line)
+#define BUFV_CL_DATA(b_v)					((b_v)->cur_line->data)
 #define BUFV_CLBI(b_v)						((b_v)->cur_line_byte_idx)
 #define BUFV_CURSOR_Y(b_v)					((b_v)->cursor_y)
 #define BUFV_CURSOR_X_TO_KEEP(b_v)			((b_v)->cursor_x_to_keep)
