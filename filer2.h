@@ -24,8 +24,9 @@
 
 #ifdef ENABLE_FILER
 
-#define _FILE_SEL_MAN_	0x02	// file selected manually
-#define _FILE_SEL_AUTO_	0x01	// file selected automatically on execution of a command
+#define _FILE_SEL_NONE_	0x00	// file un-selected
+#define _FILE_SEL_MAN_	0x01	// file selected manually
+#define _FILE_SEL_AUTO_	0x02	// file selected automatically on execution of a command
 typedef struct {
 	char *file_name;
 						// | regular file | symlink               |
@@ -64,7 +65,7 @@ int get_files_selected_cfv(void);
 int get_files_selected(filer_view_t *fv);
 
 int select_and_get_first_file_idx_selected(void);
-int select_file_if_none_selected(void);
+void select_file_if_none_selected(void);
 int get_first_file_idx_selected(void);
 int get_next_file_idx_selected(int file_idx);
 void unselect_all_files_auto(char selection_bit);

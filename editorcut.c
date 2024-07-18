@@ -66,7 +66,7 @@ int doe_clear_cut_buf(void)
 }
 int doe_pop_cut_buf(void)
 {
-	if (pop_n_free_from_cut_buf() == 0) {
+	if (pop__free_from_cut_buf() == 0) {
 		disp_status_bar_err(_("Cut-buffer empty !!"));
 	} else {
 		disp_status_bar_done(_("Cut-buffer popped"));
@@ -252,7 +252,7 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 	if (((cp_del_paste_pop & CDPP_DELETE) && is_there_cut_region())
 	 || ((cp_del_paste_pop & CDPP_PASTE) && count_cut_bufs())) {
 		// buffer will be modified
-		undo_set_region_n_save_before_change(mark_min_line, mark_max_line,
+		undo_set_region__save_before_change(mark_min_line, mark_max_line,
 		 count_cur_cut_buf_lines());
 	}
 #endif // ENABLE_UNDO
@@ -297,7 +297,7 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 	}
 	// ====  POP  ====
 	if (cp_del_paste_pop & CDPP_POP) {
-		pop_n_free_from_cut_buf();
+		pop__free_from_cut_buf();
 	}
 	return 1;		// done
 }

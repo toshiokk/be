@@ -134,7 +134,7 @@ int backup_and_save_cur_buf_ask(void)
 	// write to "abs_path" so that not change symlink but change file pointed by symlink
 	strlcpy__(file_path, get_epc_buf()->abs_path_, MAX_PATH_LEN);
 	if (is_strlen_0(file_path)) {
-		if (input_new_file_name_n_ask(file_path) <= 0) {
+		if (input_new_file_name__ask(file_path) <= 0) {
 			return -1;
 		}
 	}
@@ -158,7 +158,7 @@ int backup_and_save_cur_buf_ask(void)
 	return ret;
 }
 
-int input_new_file_name_n_ask(char *file_path)
+int input_new_file_name__ask(char *file_path)
 {
 	for ( ; ; ) {
 		int ret = input_string_tail(file_path, file_path, HISTORY_TYPE_IDX_DIR,

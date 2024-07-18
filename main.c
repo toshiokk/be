@@ -309,7 +309,7 @@ const struct option long_options[] = {
 #endif // USE_NKF
 #ifdef ENABLE_FILER
 	{ "twopane",       no_argument,       0, 'w' },
-#endif // ENABLE_HISTORY
+#endif // ENABLE_FILER
 #ifdef ENABLE_DEBUG
 	{ "debug",         no_argument,       0, 'd' },
 #endif // ENABLE_DEBUG
@@ -519,10 +519,10 @@ PRIVATE void start_up_test(void)
 	test_make_ruler_text();
 #ifdef ENABLE_FILER
 	test_get_file_size_str();
+	test_get_n_th_file();
 #endif // ENABLE_FILER
 	test_replace_str();
 
-	test_get_n_th_file_name();
 	flf_d_printf("}}}}---------------------------------------------------------\n");
 }
 #endif // START_UP_TEST

@@ -529,8 +529,7 @@ int dof_real_path(void)
 int dof_select_file(void)
 {
 	get_cur_fv_file_ptr(get_cur_fv_file_idx())->selected
-	 = get_cur_fv_file_ptr(get_cur_fv_file_idx())->selected
-	  ^ _FILE_SEL_MAN_;
+	 = get_cur_fv_file_ptr(get_cur_fv_file_idx())->selected ^ _FILE_SEL_MAN_;
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() + 1, get_cur_filer_view()->file_list_entries-1));
 	disp_files_selected();
@@ -539,7 +538,7 @@ int dof_select_file(void)
 int dof_select_no_file(void)
 {
 	for (int file_idx = 0 ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
-		get_cur_fv_file_ptr(file_idx)->selected = 0;
+		get_cur_fv_file_ptr(file_idx)->selected = _FILE_SEL_NONE_;
 	}
 	disp_status_bar_done(_("File selection cleared"));
 	return 0;

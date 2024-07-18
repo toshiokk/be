@@ -205,7 +205,7 @@ int is_epc_buf_valid(void);
 void init_cut_bufs(void);
 void free_all_cut_bufs(void);
 be_buf_t *push_cut_buf(void);
-int pop_n_free_from_cut_buf(void);
+int pop__free_from_cut_buf(void);
 be_line_t *append_string_to_cur_cut_buf(const char *string);
 int count_cut_bufs(void);
 int count_cur_cut_buf_lines(void);

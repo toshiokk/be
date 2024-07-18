@@ -473,8 +473,8 @@ PRIVATE void filer_disp_title_bar(const char *path,
 	//-------------------------------------------------------------------------
 	char separator_char = indication_of_app_mode();
 	if ((get_win_depth() == 0) && (strcmp(path, get_home_dir()) == 0)) {
-		snprintf_(buf_dir_path, MAX_SCRN_LINE_BUF_LEN, "[%s]%s%d%c%s",
-		 get_at_host_name(), root_notation(),
+		snprintf_(buf_dir_path, MAX_SCRN_LINE_BUF_LEN, "[%s|%s]%s%d%c%s",
+		 get_at_host_name(), get_tty_name(), root_notation(),
 		 get_filer_cur_pane_idx()+1, separator_char, path);
 	} else {
 		snprintf_(buf_dir_path, MAX_SCRN_LINE_BUF_LEN, "%s%d%c%s",

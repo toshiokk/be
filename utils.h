@@ -149,8 +149,8 @@ const char *get_group_name(gid_t gid);
 int cache_users(void);
 int cache_groups(void);
 
-const char *get_host_name();
 const char *get_at_host_name();
+const char *get_host_name();
 
 #endif // utils_h
 

@@ -364,7 +364,7 @@ void init_cut_bufs(void)
 void free_all_cut_bufs(void)
 {
 	while (IS_NODE_INT(TOP_BUF_OF_CUT_BUFS)) {
-		pop_n_free_from_cut_buf();
+		pop__free_from_cut_buf();
 	}
 }
 be_buf_t *push_cut_buf(void)
@@ -379,7 +379,7 @@ be_buf_t *push_cut_buf(void)
 	SET_CUR_CBUF_STATE(buf_CUT_MODE, CUR_EBUF_STATE(buf_CUT_MODE));
 	return buf;
 }
-int pop_n_free_from_cut_buf(void)
+int pop__free_from_cut_buf(void)
 {
 	if (IS_NODE_BOT_ANCH(TOP_BUF_OF_CUT_BUFS))
 		return 0;

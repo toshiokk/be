@@ -132,7 +132,7 @@ PRIVATE be_line_t *append_line_to_cur_undo_buf(be_line_t *line);
 
 PRIVATE void undo_set_region(be_line_t *min_line, be_line_t *max_line, int cut_buf_lines);
 // set region and save before change
-void undo_set_region_n_save_before_change(be_line_t *min_line, be_line_t *max_line,
+void undo_set_region__save_before_change(be_line_t *min_line, be_line_t *max_line,
  int cut_buf_lines)
 {
 	undo_set_region(min_line, max_line, cut_buf_lines);

@@ -78,9 +78,11 @@ int load_file_name_upp_low_(const char *file_name,
 
 int is_file_name_proj_file(const char *file_name, int type);
 
+#ifdef ENABLE_FILER
 #ifdef START_UP_TEST
-void test_get_n_th_file_name(void);
+void test_get_n_th_file(void);
 #endif // START_UP_TEST
+#endif // ENABLE_FILER
 
 #ifdef ENABLE_HISTORY
 int goto_last_file_line_col_in_history();

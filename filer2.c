@@ -703,13 +703,11 @@ int select_and_get_first_file_idx_selected(void)
 	select_file_if_none_selected();
 	return get_first_file_idx_selected();
 }
-int select_file_if_none_selected(void)
+void select_file_if_none_selected(void)
 {
-	int files_selected = get_files_selected_cfv();
-	if (files_selected == 0) {
+	if (get_files_selected_cfv() == 0) {
 		get_cur_fv_file_ptr(get_cur_fv_file_idx())->selected = _FILE_SEL_AUTO_;
 	}
-	return files_selected;
 }
 int get_first_file_idx_selected(void)
 {

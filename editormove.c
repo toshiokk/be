@@ -441,7 +441,7 @@ flf_d_printf("[%s]\n", utf8s);
 	}
 
 #ifdef ENABLE_UNDO
-	undo_set_region_n_save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
+	undo_set_region__save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
 #endif // ENABLE_UNDO
 
 	bytes_str = strlen_path(utf8s);
@@ -484,7 +484,7 @@ int doe_carriage_return(void)
 	}
 
 #ifdef ENABLE_UNDO
-	undo_set_region_n_save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
+	undo_set_region__save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
 #endif // ENABLE_UNDO
 
 	set_cur_buf_modified();
@@ -540,7 +540,7 @@ int doe_backspace(void)
 		}
 		// line top, concatenate to the previous line
 #ifdef ENABLE_UNDO
-		undo_set_region_n_save_before_change(NODE_PREV(EPCBVC_CL), EPCBVC_CL, 1);
+		undo_set_region__save_before_change(NODE_PREV(EPCBVC_CL), EPCBVC_CL, 1);
 #endif // ENABLE_UNDO
 		EPCBVC_CLBI = line_data_len(NODE_PREV(EPCBVC_CL));
 		EPCBVC_CL = line_concat_with_prev(EPCBVC_CL);
@@ -550,7 +550,7 @@ int doe_backspace(void)
 		post_cmd_processing(EPCBVC_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
 	} else {
 #ifdef ENABLE_UNDO
-		undo_set_region_n_save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
+		undo_set_region__save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
 #endif // ENABLE_UNDO
 		// not line top, delete character
 		bytes = utf8c_prev_bytes(EPCBVC_CL->data, &EPCBVC_CL->data[EPCBVC_CLBI]);
@@ -575,7 +575,7 @@ int doe_delete_char(void)
 	if (EPCBVC_CLBI < line_data_len(EPCBVC_CL)) {
 		// not line end
 #ifdef ENABLE_UNDO
-		undo_set_region_n_save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
+		undo_set_region__save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
 #endif // ENABLE_UNDO
 		bytes = utf8c_bytes(&EPCBVC_CL->data[EPCBVC_CLBI]);
 		line_string_delete(EPCBVC_CL, EPCBVC_CLBI, bytes);
@@ -594,7 +594,7 @@ int doe_delete_char(void)
 		}
 		// line end, concatenate with the next line
 #ifdef ENABLE_UNDO
-		undo_set_region_n_save_before_change(EPCBVC_CL, NODE_NEXT(EPCBVC_CL), 1);
+		undo_set_region__save_before_change(EPCBVC_CL, NODE_NEXT(EPCBVC_CL), 1);
 #endif // ENABLE_UNDO
 		if (EPCB_ML == NODE_NEXT(EPCBVC_CL)) {
 			// next line will be freed, adjust mark position
@@ -627,7 +627,7 @@ int doe_conv_upp_low_letter(void)
 	data = EPCBVC_CL->data;
 	if (isalpha(data[byte_idx])) {
 #ifdef ENABLE_UNDO
-		undo_set_region_n_save_before_change(EPCBVC_CL, NODE_NEXT(EPCBVC_CL), 1);
+		undo_set_region__save_before_change(EPCBVC_CL, NODE_NEXT(EPCBVC_CL), 1);
 #endif // ENABLE_UNDO
 		first_chr = data[byte_idx];
 		while ((chr = data[byte_idx]) != '\0') {

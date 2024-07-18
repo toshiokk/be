@@ -355,7 +355,7 @@ int doe_write_file_to(void)
 
 	strlcpy__(file_path, get_epc_buf()->file_path, MAX_PATH_LEN);
 	for ( ; ; ) {
-		if (input_new_file_name_n_ask(file_path) <= 0) {
+		if (input_new_file_name__ask(file_path) <= 0) {
 			return -1;
 		}
 #ifdef ENABLE_FILER
@@ -545,7 +545,7 @@ int doe_read_clipboard_into_cur_pos_(int char0_line1)
 {
 	push_cut_buf();
 	if (load_clipboard_into_cut_buf() < 0) {
-		pop_n_free_from_cut_buf();
+		pop__free_from_cut_buf();
 		return 0;
 	}
 	if (char0_line1 == 0) {
@@ -610,16 +610,16 @@ void display_color_settings(void)
 {
 	tio_clear_flash_screen(1);
 	display_color_pairs(0, 0);
-	input_key_loop();
+	examine_key_code();
 
 #ifdef ENABLE_DEBUG
 	tio_clear_flash_screen(1);
 	display_item_colors(0, 0);
-	input_key_loop();
+	examine_key_code();
 #ifdef ENABLE_REGEX
 	tio_clear_flash_screen(1);
 	display_bracket_hl_colors(0, 0);
-	input_key_loop();
+	examine_key_code();
 #endif // ENABLE_REGEX
 #endif // ENABLE_DEBUG
 }

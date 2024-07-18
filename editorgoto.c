@@ -33,12 +33,14 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
  int load_from_history);
 
 #ifdef ENABLE_HISTORY
-PRIVATE int load_and_goto_from_history(const char *file_name);
+PRIVATE int load_file_from_history(const char *file_name);
 PRIVATE void goto_pos_by_history(const char *full_path);
 #endif // ENABLE_HISTORY
 
+#ifdef ENABLE_FILER
 PRIVATE int  get_n_th_file_line_col_from_str_null(const char *str, int field_idx,
  char *file_path, int *line_num, int *col_num);
+#endif // ENABLE_FILER
 PRIVATE const char *skip_n_file_names(const char *line, int field_idx);
 
 // 123
@@ -125,9 +127,14 @@ PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx)
 	}
 	return files;
 }
+#ifdef ENABLE_FILER
+#ifdef ENABLE_HISTORY
 PRIVATE int change_cur_dir_from_history(const char *dir);
+#endif // ENABLE_HISTORY
+#endif // ENABLE_FILER
 PRIVATE int goto_dir_in_cur_line_byte_idx(int line_byte_idx)
 {
+#ifdef ENABLE_FILER
 	char dir_save[MAX_PATH_LEN+1];
 	change_cur_dir_by_file_path_after_save(dir_save, get_epc_buf()->file_path);
 
@@ -136,7 +143,6 @@ PRIVATE int goto_dir_in_cur_line_byte_idx(int line_byte_idx)
 		if (get_n_th_file_line_col_from_str_null(&(EPCBVC_CL->data[line_byte_idx]),
 		 field_idx, dir, NULL, NULL) > 0) {
 			// directory gotten
-#ifdef ENABLE_FILER
 			if (change_cur_dir_saving_prev_next(dir)) {
 				// directory changed
 				goto changed;
@@ -146,9 +152,9 @@ PRIVATE int goto_dir_in_cur_line_byte_idx(int line_byte_idx)
 				// directory changed
 				goto changed;
 			}
+#endif // ENABLE_HISTORY
 		}
 	}
-#endif // ENABLE_HISTORY
 
 	change_cur_dir(dir_save);
 	return 0;
@@ -163,6 +169,8 @@ changed:;
 	editor_quit = EDITOR_DO_QUIT;
 	return 1;
 }
+#ifdef ENABLE_FILER
+#ifdef ENABLE_HISTORY
 PRIVATE int change_cur_dir_from_history(const char *dir)
 {
 	set_history_newest(HISTORY_TYPE_IDX_DIR);
@@ -180,6 +188,8 @@ PRIVATE int change_cur_dir_from_history(const char *dir)
 	}
 	return 0;
 }
+#endif // ENABLE_HISTORY
+#endif // ENABLE_FILER
 
 int doe_open_files_in_buf(void)
 {
@@ -343,13 +353,16 @@ PRIVATE int load_file_in_string_(const char *string,
 	char file_path[MAX_PATH_LEN+1];
 	int line_num, col_num;
 
-/////flf_d_printf("string: [%s]\n", string);
+/////
+flf_d_printf("string: [%s]\n", string);
 	if (get_file_line_col_from_str_null(string, file_path, &line_num, &col_num) == 0) {
-		return 0;
+		return -1;	// nothing loaded nor selected
 	}
 	int files = load_file_name_upp_low_(file_path,
 	 try_upp_low, open_on_err, msg_on_err, load_from_history, recursive);
 	if (files >= 0) {
+/////
+flf_d_printf("line, col: %d, %d\n", line_num, col_num);
 		// Tag-jump to line, col
 		goto_line_col_in_cur_buf(line_num, col_num);	// appdefs.h|100,8
 	}
@@ -470,14 +483,15 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 	char abs_path[MAX_PATH_LEN+1];
 	int files_loaded = -1;
 
-/////flf_d_printf("file_name:[%s]-----------\n", file_name);
+/////
+flf_d_printf("file_name:[%s]-----------\n", file_name);
 	get_full_path(file_name, full_path);
 	get_abs_path(file_name, abs_path);
 	// switch to the file of "full_path" if it already loaded
 	if (switch_epc_buf_by_file_path(full_path)) {
 /////flf_d_printf("full_path:[%s]-----------\n", full_path);
 /////flf_d_printf("__1__\n");
-		add_files_loaded(0);	// switched
+		add_files_loaded(0);		// switched
 		// already loaded and select it
 		goto not_goto_line;
 	}
@@ -493,7 +507,7 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 	// switch to if the file of the "file-name" already loaded
 	if (switch_epc_buf_by_file_name(file_name)) {
 /////flf_d_printf("__3__\n");
-		add_files_loaded(0);	// switched
+		add_files_loaded(0);		// switched
 		// already loaded and select it
 		goto not_goto_line;
 	}
@@ -501,7 +515,7 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 	if (load_from_history) {
 flf_d_printf("__4__\n");
 		// try to load a file of the same "file-name" memorized in history
-		if (load_and_goto_from_history(file_name)) {
+		if (load_file_from_history(file_name) >= 0) {
 flf_d_printf("__5__\n");
 			add_files_loaded(0);	// switched
 			goto goto_line;
@@ -509,7 +523,7 @@ flf_d_printf("__5__\n");
 	}
 #endif // ENABLE_HISTORY
 /////flf_d_printf("__9__\n");
-	return -1;
+	return -1;				// loading failed
 
 goto_line:
 #ifdef ENABLE_HISTORY
@@ -518,7 +532,7 @@ goto_line:
 not_goto_line:
 	files_loaded = LIM_MIN(0, files_loaded);
 /////flf_d_printf("files_loaded: %d\n", files_loaded);
-	return files_loaded;	// TODO: x > 0: files newly loaded, x == 0: file switched
+	return files_loaded;	// x > 0: files newly loaded, x == 0: file selected
 }
 
 #ifdef ENABLE_HISTORY
@@ -526,7 +540,7 @@ not_goto_line:
 // /path/to/filename.ext
 // /path/to/dir1/filename.ext
 // /path/to/dir1/dir2/filename.ext
-PRIVATE int load_and_goto_from_history(const char *file_name)
+PRIVATE int load_file_from_history(const char *file_name)
 {
 	set_history_newest(HISTORY_TYPE_IDX_FILEPOS);
 	for ( ; ; ) {
@@ -541,7 +555,7 @@ PRIVATE int load_and_goto_from_history(const char *file_name)
 			}
 		}
 	}
-	return 0;
+	return -1;		// nothing loaded nor selected
 }
 
 PRIVATE void goto_pos_by_history(const char *full_path)
@@ -577,8 +591,9 @@ int is_file_name_proj_file(const char *file_name, int type)
 	return 0;	// not project file
 }
 
+#ifdef ENABLE_FILER
 #ifdef START_UP_TEST
-void test_get_n_th_file_name(void)
+void test_get_n_th_file(void)
 {
 	char test_str[] =
 	 "history.c 345 hist_type_idx:3:['/home/user/ filename including space .txt '|1:1]";
@@ -633,14 +648,12 @@ PRIVATE int get_n_th_file_line_col_from_str_null(const char *str, int field_idx,
 	}
 	return get_file_line_col_from_str_null(ptr, file_path, line_num, col_num);
 }
+#endif // ENABLE_FILER
 
 PRIVATE const char *skip_n_file_names(const char *line, int field_idx)
 {
-	const char *ptr;
-	int field_cnt;
-
-	ptr = line;
-	for (field_cnt = 0; ; field_cnt++) {
+	const char *ptr = line;
+	for (int field_cnt = 0; ; field_cnt++) {
 		ptr = skip_to_file_path(ptr);
 		if (*ptr == '\0')
 			break;		// EOL

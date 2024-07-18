@@ -1,1 +1,1 @@
-sh _autotools 2>/dev/stdout | tee error
+sh _autotools 2>/dev/stdout | tee __error

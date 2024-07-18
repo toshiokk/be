@@ -1,10 +1,14 @@
 # archive source files
 #make clean
-make distclean
-rm -f *.log
-rm -f _cppcheck.out
+if [ -z "$1" ]; then
+  make distclean
+  rm -f *.log
+  rm -f _cppcheck.out
+fi
+
 cd ..
 rm_tildes
+
 tar -czvf be`yymmdd-hhmm`.tgz be/*
 
 cd be

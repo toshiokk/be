@@ -598,22 +598,22 @@ int cache_groups(void)
 	return num_groups;
 }
 
-const char *get_host_name()
-{
-#define HOST_NAME_LEN		20
-	static char hostname[HOST_NAME_LEN+1];
-
-	gethostname(hostname, HOST_NAME_LEN);
-	return hostname;
-}
-
 const char *get_at_host_name()
 {
+#define HOST_NAME_LEN		20
 #define USER_AT_HOST_NAME_LEN		(USER_ID_LEN + 1 + HOST_NAME_LEN)
 	static char buf_user_at_host[USER_AT_HOST_NAME_LEN+1];
 	// @hostname
 	snprintf_(buf_user_at_host, USER_AT_HOST_NAME_LEN+1, "@%s", get_host_name());
 	return buf_user_at_host;
+}
+
+const char *get_host_name()
+{
+	static char hostname[HOST_NAME_LEN+1];
+
+	gethostname(hostname, HOST_NAME_LEN);
+	return hostname;
 }
 
 // End of utils.c
