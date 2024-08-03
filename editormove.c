@@ -194,7 +194,8 @@ PRIVATE void doe_up_(void)
 		if (easy_buffer_switching_check(EBS_UP_AT_TOP)) {
 			// already top of buffer, go to the previous buffer's last line
 			tio_beep();
-			if (switch_epc_buf_to_prev(1, 1)) {
+			if (doe_switch_to_prev_file() == 0) {
+///			if (switch_epc_buf_to_prev(1, 1)) {
 				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 			}
 		}
@@ -222,7 +223,8 @@ PRIVATE void doe_down_(void)
 		if (easy_buffer_switching_check(EBS_DOWN_AT_BOTTOM)) {
 			// already bottom of buffer, go to the next buffer's top line
 			tio_beep();
-			if (switch_epc_buf_to_next(1, 1)) {
+			if (doe_switch_to_next_file() == 0) {
+///			if (switch_epc_buf_to_next(1, 1)) {
 				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_TOP, UPDATE_SCRN_ALL);
 			}
 		}
@@ -252,7 +254,8 @@ PRIVATE void doe_page_up_(void)
 		if (easy_buffer_switching_check(EBS_PAGEUP_AT_TOP)) {
 			// already top of buffer, go to the previous buffer's last line
 			tio_beep();
-			if (switch_epc_buf_to_prev(1, 1)) {
+			if (doe_switch_to_prev_file() == 0) {
+///			if (switch_epc_buf_to_prev(1, 1)) {
 				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 			}
 		}
@@ -291,7 +294,8 @@ PRIVATE int doe_page_down_(void)
 		if (easy_buffer_switching_check(EBS_PAGEDOWN_AT_BOTTOM)) {
 			// already bottom of buffer, go to the next buffer's top line
 			tio_beep();
-			if (switch_epc_buf_to_next(1, 1)) {
+			if (doe_switch_to_next_file() == 0) {
+///			if (switch_epc_buf_to_next(1, 1)) {
 				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_TOP, UPDATE_SCRN_ALL);
 			}
 		}

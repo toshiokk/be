@@ -123,7 +123,7 @@ extern be_bufs_t history_buffers;
 #define HIST_BUFS_BOT_BUF		BUFS_BOT_BUF(&history_buffers)
 #define HIST_BUFS_BOT_ANCH		BUFS_BOT_ANCH(&history_buffers)
 
-// Help buffers ------------------------------------------------------------
+// Help buffers ---------------------------------------------------------------
 extern be_bufs_t help_buffers;
 #define HELP_BUFS_TOP_ANCH		BUFS_TOP_ANCH(&help_buffers)
 #define HELP_BUFS_TOP_BUF		BUFS_TOP_BUF(&help_buffers)

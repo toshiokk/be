@@ -895,7 +895,7 @@ int switch_epc_buf_to_another_buf(void)
 //  |No.| command line      | file list                 | project file             |
 //  |---|-------------------|---------------------------|--------------------------|
 //  | 1 | " file name.txt " | " file name.txt ",100,10  | 100,10," file name.txt " |
-//  | 2 | "filename".txt    | "\"filename.txt\"",100,10 | 100,10,"\"filename.txt\""|
+//  | 2 | "filename.txt"    | "\"filename.txt\"",100,10 | 100,10,"\"filename.txt\""|
 //  | 2 | "file|name.txt"   | "file|name.txt",100,10    | 100,10,"file|name.txt"   |
 //  | 2 | "file'name.txt"   | "file'name.txt",100,10    | 100,10,"file|name.txt"   |
 

@@ -31,7 +31,6 @@ int doe_view_func_list(void);
 void init_help_bufs(void);
 be_buf_t *get_help_buf(int help_buf_idx);
 
-
 #endif // editorlist_h
 
 // End of editorlist.h
