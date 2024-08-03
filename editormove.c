@@ -193,11 +193,7 @@ PRIVATE void doe_up_(void)
 	} else {
 		if (easy_buffer_switching_check(EBS_UP_AT_TOP)) {
 			// already top of buffer, go to the previous buffer's last line
-			tio_beep();
-			if (doe_switch_to_prev_file() == 0) {
-///			if (switch_epc_buf_to_prev(1, 1)) {
-				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
-			}
+			doe_switch_to_prev_file();
 		}
 	}
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
@@ -222,11 +218,7 @@ PRIVATE void doe_down_(void)
 	} else {
 		if (easy_buffer_switching_check(EBS_DOWN_AT_BOTTOM)) {
 			// already bottom of buffer, go to the next buffer's top line
-			tio_beep();
-			if (doe_switch_to_next_file() == 0) {
-///			if (switch_epc_buf_to_next(1, 1)) {
-				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_TOP, UPDATE_SCRN_ALL);
-			}
+			doe_switch_to_next_file();
 		}
 	}
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
@@ -253,11 +245,7 @@ PRIVATE void doe_page_up_(void)
 	if (c_l_up(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 		if (easy_buffer_switching_check(EBS_PAGEUP_AT_TOP)) {
 			// already top of buffer, go to the previous buffer's last line
-			tio_beep();
-			if (doe_switch_to_prev_file() == 0) {
-///			if (switch_epc_buf_to_prev(1, 1)) {
-				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
-			}
+			doe_switch_to_prev_file();
 		}
 	} else {
 		lines = (EPCBVC_CURSOR_Y - TOP_SCROLL_MARGIN_Y) + EDITOR_VERT_SCROLL_LINES - 1;
@@ -293,11 +281,7 @@ PRIVATE int doe_page_down_(void)
 	if (c_l_down(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 		if (easy_buffer_switching_check(EBS_PAGEDOWN_AT_BOTTOM)) {
 			// already bottom of buffer, go to the next buffer's top line
-			tio_beep();
-			if (doe_switch_to_next_file() == 0) {
-///			if (switch_epc_buf_to_next(1, 1)) {
-				post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_TOP, UPDATE_SCRN_ALL);
-			}
+			doe_switch_to_next_file();
 		}
 	} else {
 		lines = (BOTTOM_SCROLL_MARGIN_Y - EPCBVC_CURSOR_Y) + EDITOR_VERT_SCROLL_LINES - 1;

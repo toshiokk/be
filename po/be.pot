@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-03 14:19+0900\n"
+"POT-Creation-Date: 2024-08-03 15:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -237,20 +237,20 @@ msgstr ""
 msgid "Function List"
 msgstr ""
 
-#: ../editormove.c:334
+#: ../editormove.c:322
 msgid "Input control character [^A-^Z,^[,^\\,^],^^,^_,]"
 msgstr ""
 
-#: ../editormove.c:336
+#: ../editormove.c:324
 #, c-format
 msgid "Key code: %04x"
 msgstr ""
 
-#: ../editormove.c:351
+#: ../editormove.c:339
 msgid "Enter Unicode number in hex:"
 msgstr ""
 
-#: ../editormove.c:378
+#: ../editormove.c:366
 msgid "Select history string to paste:"
 msgstr ""
 
