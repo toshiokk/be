@@ -28,6 +28,8 @@
 #define SEPARATE1	1		// output separator line before executing sub process
 #define PAUSE0		0
 #define PAUSE1		1		// pause after execution of sub process
+#define LOGGING0	0
+#define LOGGING1	1
 
 #ifdef ENABLE_FILER
 
@@ -38,6 +40,7 @@ int dof_run_command_abs(void);
 int dof_run_command_src_dst(void);
 int dof_run_command_sh(void);
 int dof_run_command_soon(void);
+int dof_run_command_soon_wo_log(void);
 
 //-----------------------------------------------------------------------------
 
@@ -52,8 +55,8 @@ int fork_exec_args_repeat(int separate_bef_exec, ...);
 
 int send_to_system_clipboard();
 
-int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_exec, const char *command);
-const char *get_exec_log_file_path();
+int fork_exec_sh_c(int set_term, int separate_bef_exec, int logging, int pause_aft_exec,
+ const char *command);
 
 void clear_fork_exec_counter(void);
 int get_fork_exec_counter(void);
@@ -62,6 +65,8 @@ int inc_fork_exec_counter(void);
 void pause_after_exec(void);
 int restore_term_for_shell(void);
 int reinit_term_for_filer(void);
+
+const char *get_exec_log_file_path();
 
 #endif // filerrun_h
 

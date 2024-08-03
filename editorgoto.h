@@ -32,10 +32,8 @@
 int doe_goto_input_line(void);
 int doe_goto_file_or_dir_in_cur_line(void);
 int doe_goto_file_or_dir_in_cur_cursor_pos(void);
-#if 0
-int doe_goto_file_in_cur_line(void);
-int doe_goto_file_in_cur_cursor_pos(void);
-#endif
+
+int goto_dir_in_str__call_filer(const char *str);
 
 int doe_open_files_in_buf(void);
 int doe_switch_to_top_file(void);
@@ -82,6 +80,8 @@ int is_file_name_proj_file(const char *file_name, int type);
 #ifdef START_UP_TEST
 void test_get_n_th_file(void);
 #endif // START_UP_TEST
+int get_n_th_file_line_col_from_str_null(const char *str, int field_idx,
+ char *file_path, int *line_num, int *col_num);
 #endif // ENABLE_FILER
 
 #ifdef ENABLE_HISTORY

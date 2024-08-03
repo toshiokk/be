@@ -23,7 +23,7 @@
 
 #define MAX_EXECV_ARGS		10
 
-PRIVATE int fork_execv_before_after(int set_term, int separate_bef_exec, int pause_aft_exec,
+PRIVATE int fork_exec_before_after(int set_term, int separate_bef_exec, int pause_aft_exec,
  char * const args[]);
 
 #ifdef ENABLE_FILER
@@ -129,6 +129,11 @@ int dof_run_command_sh(void)
 int dof_run_command_soon(void)
 {
 	dof_run_command_(10 + 1);	// rwx: executable file
+	return 0;
+}
+int dof_run_command_soon_wo_log(void)
+{
+	dof_run_command_(20 + 1);	// rwx: executable file
 	return 0;
 }
 PRIVATE int dof_run_command_(int mode)
@@ -237,7 +242,7 @@ void end_fork_exec_repeat(void)
 //-----------------------------------------------------------------------------
 
 PRIVATE int args_from_va_list(char **args, va_list ap);
-PRIVATE int fork_execv_args(int set_term, int separate_bef_exec, int pause_aft_exec,
+PRIVATE int fork_exec_args(int set_term, int separate_bef_exec, int pause_aft_exec,
  char * const args[]);
 #ifdef ENABLE_HISTORY
 PRIVATE void output_exec_args_to_history(char * const *args);
@@ -245,11 +250,11 @@ PRIVATE void output_exec_args_to_history(char * const *args);
 
 int fork_exec_sh_c_once(int pause_aft_exec, const char *command)
 {
-	return fork_exec_sh_c(SETTERM1, SEPARATE1, pause_aft_exec, command);
+	return fork_exec_sh_c(SETTERM1, SEPARATE1, LOGGING0, pause_aft_exec, command);
 }
 int fork_exec_sh_c_repeat(int separate_bef_exec, const char *command)
 {
-	return fork_exec_sh_c(SETTERM0, separate_bef_exec, PAUSE0, command);
+	return fork_exec_sh_c(SETTERM0, separate_bef_exec, LOGGING0, PAUSE0, command);
 }
 
 int fork_exec_args_once(int pause_aft_exec, ...)
@@ -260,7 +265,7 @@ int fork_exec_args_once(int pause_aft_exec, ...)
 	args_from_va_list(args, ap);
 	va_end(ap);
 
-	return fork_execv_args(SETTERM1, SEPARATE1, pause_aft_exec, args);
+	return fork_exec_args(SETTERM1, SEPARATE1, pause_aft_exec, args);
 }
 int fork_exec_args_repeat(int separate_bef_exec, ...)
 {
@@ -270,7 +275,7 @@ int fork_exec_args_repeat(int separate_bef_exec, ...)
 	args_from_va_list(args, ap);
 	va_end(ap);
 
-	return fork_execv_args(SETTERM0, separate_bef_exec, PAUSE0, args);
+	return fork_exec_args(SETTERM0, separate_bef_exec, PAUSE0, args);
 }
 
 // convert va_list to "char *argv[]"
@@ -286,7 +291,7 @@ PRIVATE int args_from_va_list(char **args, va_list ap)
 	return arg_idx;
 }
 
-PRIVATE int fork_execv_args(int set_term, int separate_bef_exec, int pause_aft_exec,
+PRIVATE int fork_exec_args(int set_term, int separate_bef_exec, int pause_aft_exec,
  char * const args[])
 {
 	if (set_term) {
@@ -297,7 +302,7 @@ PRIVATE int fork_execv_args(int set_term, int separate_bef_exec, int pause_aft_e
 		output_exec_args_to_history(args);
 	}
 #endif // ENABLE_HISTORY
-	return fork_execv_before_after(set_term, separate_bef_exec, pause_aft_exec, args);
+	return fork_exec_before_after(set_term, separate_bef_exec, pause_aft_exec, args);
 }
 
 #ifdef ENABLE_HISTORY
@@ -323,16 +328,18 @@ int send_to_system_clipboard()
 {
 	if (check_wsl()) {
 		tio_set_cursor_pos(main_win_get_bottom_win_y() + STATUS_LINE, 0);
-		return fork_exec_sh_c(SETTERM0, SEPARATE0, PAUSE0, "update-system-clipboard.sh");
+		return fork_exec_sh_c(SETTERM0, SEPARATE0, PAUSE0, LOGGING0, "update-system-clipboard.sh");
 	}
 	return 0;
 }
 
 //-----------------------------------------------------------------------------
 
-int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_exec, const char *command)
+int fork_exec_sh_c(int set_term, int separate_bef_exec, int logging, int pause_aft_exec,
+ const char *command)
 {
 	char *args[MAX_EXECV_ARGS+1];
+	char buffer[MAX_PATH_LEN+1] = "";
 
 	if (set_term) {
 		clear_fork_exec_counter();
@@ -342,9 +349,13 @@ int fork_exec_sh_c(int set_term, int separate_bef_exec, int pause_aft_exec, cons
 #define TEE_PROG	"tee"
 	args[0] = SH_PROG;
 	args[1] = "-c";
-	char buffer[MAX_PATH_LEN+1] = "";
-	snprintf_(buffer, MAX_PATH_LEN, "%s 2>&1 | %s %s", command, TEE_PROG, get_exec_log_file_path());
-	args[2] = (char *)buffer;
+	if (logging == LOGGING0) {
+		args[2] = (char *)command;
+	} else {
+		snprintf_(buffer, MAX_PATH_LEN, "%s 2>&1 | %s %s",
+		 command, TEE_PROG, get_exec_log_file_path());
+		args[2] = (char *)buffer;
+	}
 	args[3] = NULL;
 
 mflf_d_printf("exec: {{%s} {%s} {%s}}\n", args[0], args[1], args[2]);
@@ -355,22 +366,10 @@ mflf_d_printf("exec: {{%s} {%s} {%s}}\n", args[0], args[1], args[2]);
 		update_history(HISTORY_TYPE_IDX_EXEC, command, 0);
 	}
 #endif // ENABLE_HISTORY
-	return fork_execv_before_after(set_term, separate_bef_exec, pause_aft_exec, args);
-}
-const char *get_exec_log_file_path()
-{
-	static char file_path[MAX_PATH_LEN+1] = "";
-	char dir[MAX_PATH_LEN+1];
-	char file[MAX_PATH_LEN+1];
-	if (strlen_path(file_path) == 0) {
-		separate_path_to_dir_and_file(get_tty_name(), dir, file);
-		snprintf_(file_path, MAX_PATH_LEN, "%s/%s.log", get_app_dir(), file);
-flf_d_printf("file_path: [%s]\n", file_path);
-	}
-	return file_path;
+	return fork_exec_before_after(set_term, separate_bef_exec, pause_aft_exec, args);
 }
 
-PRIVATE int fork_execv_before_after(int set_term, int separate_bef_exec, int pause_aft_exec,
+PRIVATE int fork_exec_before_after(int set_term, int separate_bef_exec, int pause_aft_exec,
  char * const args[])
 {
 	if (set_term && get_fork_exec_counter() == 0) {
@@ -457,6 +456,19 @@ int reinit_term_for_filer(void)
 	tio_resume();
 	tio_clear_flash_screen(1);
 	return 0;
+}
+//-----------------------------------------------------------------------------
+const char *get_exec_log_file_path()
+{
+	static char file_path[MAX_PATH_LEN+1] = "";
+	char dir[MAX_PATH_LEN+1];
+	char file[MAX_PATH_LEN+1];
+	if (strlen_path(file_path) == 0) {
+		separate_path_to_dir_and_file(get_tty_name(), dir, file);
+		snprintf_(file_path, MAX_PATH_LEN, "%s/%s.log", get_app_dir(), file);
+flf_d_printf("file_path: [%s]\n", file_path);
+	}
+	return file_path;
 }
 
 // End of filerrun.c

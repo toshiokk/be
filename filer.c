@@ -589,7 +589,7 @@ PRIVATE void disp_key_list_filer(void)
 
  "<dof_quit_filer>Quit "
  "<dof_open_file>Edit "
- "<dof_edit_new_file>EditNewFile "
+ "<dof_open_new_file>EditNewFile "
  "<dof_copy_file>Copy "
  "<dof_copy_file_update>UpdateCopy "
  "<dof_move_file>Move "

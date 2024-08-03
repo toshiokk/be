@@ -53,7 +53,7 @@ typedef struct /*item_color*/ {
 	char fgc;			// fg color
 #ifdef ENABLE_DEBUG
 #define S(str)		#str,
-	char *item_name;	// "ITEM_COLOR_IDX_DEFAULT"
+	char *item_name;	// "ITEM_COLOR_IDX_DEFAULT" ...
 #else // ENABLE_DEBUG
 #define S(str)
 #endif // ENABLE_DEBUG

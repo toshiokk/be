@@ -1,4 +1,6 @@
-echo make and install
+echo "make and install"
+echo "Usage: %0               ... build on the currently assigned Release level"
+echo "Usage: %0 [|0|1|2|3|4]  ... build on Release level 0--4"
 
 if [ -n "$1" ]; then
   ./__set_app_rel_lvl.sh -

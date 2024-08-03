@@ -127,6 +127,8 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_playback_last_2), NULL },
  { "Run line soon",       "Run current line as command",    K_M_x,        KNA, KNA,
    XA, F_I(doe_run_line_soon), NULL },
+ { "Run line soon(w/o logging)", "Run current line as command(w/o loggging)", K_M_X, KNA, KNA,
+   XA, F_I(doe_run_line_soon_wo_log), NULL },
 #ifdef ENABLE_UNDO
  { "Undo",                "Undo",                           K_M_u, K_M_z,      KNA,
    XL, F_I(doe_undo), NULL },
@@ -192,12 +194,6 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_editor_menu_6), NULL },
  { "Mark Text",           "Mark text",                      K_C_N, K_F05,      KNA,
    XL, F_I(doe_tog_mark), NULL },
-#if 0
- { "Clear Cut-buf",       "Clear Cut-buffers",              K_S_F05,      KNA, KNA,
-   XL, F_I(doe_clear_cut_buf), NULL },
- { "Pop Cut-buf",         "Pop Cut-buffer",                 K_S_F06,      KNA, KNA,
-   XL, F_I(doe_pop_cut_buf), NULL },
-#endif
  { "Select all",          "Select all of buffer",           K_M_m,        KNA, KNA,
    XL, F_I(doe_select_all_lines), NULL },
  { "Cut Text",            "Cut into Cut-buffer",            K_C_K, K_F06,      KNA,

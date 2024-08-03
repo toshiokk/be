@@ -37,10 +37,6 @@ PRIVATE int load_file_from_history(const char *file_name);
 PRIVATE void goto_pos_by_history(const char *full_path);
 #endif // ENABLE_HISTORY
 
-#ifdef ENABLE_FILER
-PRIVATE int  get_n_th_file_line_col_from_str_null(const char *str, int field_idx,
- char *file_path, int *line_num, int *col_num);
-#endif // ENABLE_FILER
 PRIVATE const char *skip_n_file_names(const char *line, int field_idx);
 
 // 123
@@ -75,6 +71,7 @@ int doe_goto_input_line(void)
 
 PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx);
 PRIVATE int goto_dir_in_cur_line_byte_idx(int line_byte_idx);
+
 // TAG JUMP (file_path is taken from the head of current line)
 int doe_goto_file_or_dir_in_cur_line(void)
 {
@@ -96,16 +93,6 @@ int doe_goto_file_or_dir_in_cur_cursor_pos(void)
 	return goto_dir_in_cur_line_byte_idx(EPCBVC_CLBI);
 }
 
-#if 0
-int doe_goto_file_in_cur_line(void)
-{
-	return goto_file_in_cur_line_byte_idx(0);
-}
-int doe_goto_file_in_cur_cursor_pos(void)
-{
-	return goto_file_in_cur_line_byte_idx(EPCBVC_CLBI);
-}
-#endif
 PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx)
 {
 	char dir_save[MAX_PATH_LEN+1];
@@ -127,69 +114,26 @@ PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx)
 	}
 	return files;
 }
-#ifdef ENABLE_FILER
-#ifdef ENABLE_HISTORY
-PRIVATE int change_cur_dir_from_history(const char *dir);
-#endif // ENABLE_HISTORY
-#endif // ENABLE_FILER
+
 PRIVATE int goto_dir_in_cur_line_byte_idx(int line_byte_idx)
 {
+	return goto_dir_in_str__call_filer(&(EPCBVC_CL->data[line_byte_idx]));
+}
+
+int goto_dir_in_str__call_filer(const char *str)
+{
 #ifdef ENABLE_FILER
-	char dir_save[MAX_PATH_LEN+1];
-	change_cur_dir_by_file_path_after_save(dir_save, get_epc_buf()->file_path);
-
-	char dir[MAX_PATH_LEN+1];
-	for (int field_idx = 0; field_idx < 10; field_idx++) {
-		if (get_n_th_file_line_col_from_str_null(&(EPCBVC_CL->data[line_byte_idx]),
-		 field_idx, dir, NULL, NULL) > 0) {
-			// directory gotten
-			if (change_cur_dir_saving_prev_next(dir)) {
-				// directory changed
-				goto changed;
-			}
-#ifdef ENABLE_HISTORY
-			if (change_cur_dir_from_history(dir)) {
-				// directory changed
-				goto changed;
-			}
-#endif // ENABLE_HISTORY
-		}
+	if (goto_dir_in_string(str) == 0) {
+		return 0;
 	}
-
-	change_cur_dir(dir_save);
-	return 0;
-
-changed:;
-#ifdef ENABLE_HISTORY
-	update_dir_history(get_cur_filer_view()->prev_dir, get_cur_filer_view()->cur_dir);
-#endif // ENABLE_HISTORY
 	char file_path[MAX_PATH_LEN+1];
 	call_filer(1, APP_MODE_NORMAL, get_cur_filer_view()->cur_dir, "", file_path, MAX_PATH_LEN);
-#endif // ENABLE_FILER
 	editor_quit = EDITOR_DO_QUIT;
 	return 1;
-}
-#ifdef ENABLE_FILER
-#ifdef ENABLE_HISTORY
-PRIVATE int change_cur_dir_from_history(const char *dir)
-{
-	set_history_newest(HISTORY_TYPE_IDX_DIR);
-	for ( ; ; ) {
-		char *history = get_history_older(HISTORY_TYPE_IDX_DIR);
-		if (strlen_path(history) == 0) {
-			break;
-		}
-/////flf_d_printf("history: [%s]\n", history);
-		if (compare_file_path_from_tail(history, dir) == 0) {
-			if (change_cur_dir_saving_prev_next(history)) {
-				return 1;
-			}
-		}
-	}
+#else // ENABLE_FILER
 	return 0;
-}
-#endif // ENABLE_HISTORY
 #endif // ENABLE_FILER
+}
 
 int doe_open_files_in_buf(void)
 {
@@ -358,6 +302,7 @@ flf_d_printf("string: [%s]\n", string);
 	if (get_file_line_col_from_str_null(string, file_path, &line_num, &col_num) == 0) {
 		return -1;	// nothing loaded nor selected
 	}
+flf_d_printf("file_path: [%s]\n", file_path);
 	int files = load_file_name_upp_low_(file_path,
 	 try_upp_low, open_on_err, msg_on_err, load_from_history, recursive);
 	if (files >= 0) {
@@ -522,7 +467,8 @@ flf_d_printf("__5__\n");
 		}
 	}
 #endif // ENABLE_HISTORY
-/////flf_d_printf("__9__\n");
+/////
+flf_d_printf("__9__\n");
 	return -1;				// loading failed
 
 goto_line:
@@ -638,7 +584,7 @@ _FLF_
 }
 #endif // START_UP_TEST
 
-PRIVATE int get_n_th_file_line_col_from_str_null(const char *str, int field_idx,
+int get_n_th_file_line_col_from_str_null(const char *str, int field_idx,
  char *file_path, int *line_num, int *col_num)
 {
 	strcpy(file_path, "");

@@ -47,7 +47,7 @@ flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 	int ret = editor_main_loop(str_buf, buf_len);
 flf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
 flf_d_printf("push_win:%d, list_mode:%d --> ret: %d\n", push_win, list_mode, ret);
-_D_(dump_editor_panes())
+/////_D_(dump_editor_panes())
 	/////editor_quit = EDITOR_NONE;	// for caller of call_editor(), clear "editor_quit"
 	_mlc_check_count
 
@@ -61,7 +61,7 @@ _D_(dump_editor_panes())
 		pop_editor_panes(prev_eps, &next_editor_panes, ret == EDITOR_LOADED);
 		win_pop_win_size();
 	}
-_D_(dump_editor_panes())
+/////_D_(dump_editor_panes())
 
 	return ret;		// EDITOR_DO_QUIT
 }
@@ -136,7 +136,7 @@ mflf_d_printf("CALL_EDITOR_FUNC [%s]\n", func_key_table->func_id);
 					//=========================
 					(*func_key_table->func)();	// call function "doe_...()"
 					//=========================
-_D_(dump_editor_panes())
+/////_D_(dump_editor_panes())
 mflf_d_printf("editor_quit: %d\n", editor_quit);
 					easy_buffer_switching_count();
 #if defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
@@ -214,14 +214,23 @@ int doe_open_new_file(void)
 	if (ret <= INPUT_LOADED) {
 		return 0;
 	}
+
 	// CURDIR: changed in editor
-	if (load_file_name_upp_low(file_path, TUL0, OOE1, MOE0, LFH0, RECURSIVE0) < 0) {
-		tio_beep();
-		return 0;
+	if (load_files_in_string(file_path, TUL0, OOE1, MOE0, LFH1, RECURSIVE0) >= 0) {
+		disp_files_loaded_if_ge_0();
+
+		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+_FLF_
+		return 1;
 	}
-	disp_files_loaded_if_ge_0();
-	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
-	return 1;
+_FLF_
+	if (goto_dir_in_str__call_filer(file_path)) {
+_FLF_
+		return 1;
+	}
+	tio_beep();
+_FLF_
+	return 0;
 }
 
 int doe_open_proj_file(void)
@@ -345,9 +354,9 @@ int doe_reopen_file(void)
 //|doe_write_all_ask()     | All |no   | no   | Ask   |cur-name |@a   |
 //|doe_write_all_modified()| All |no   | no   | none  |cur-name |@A   |
 //|doe_close_file_ask()    | one |Close| no   | Ask   |cur-name |^Q   |
-//|doe_close_file_always() | one |Close| no   | none  |cur-name |@^Q  |write soon if modified and close
+//|doe_close_file_always() | one |Close| no   | none  |cur-name |@^Q  |write soon if mod. and close
 //|doe_close_all_ask()     | All |Close| no   | Ask   |cur-name |@q   |
-//|doe_close_all_modified()| All |Close| no   | none  |cur-name |@Q   |write soon if modified and close
+//|doe_close_all_modified()| All |Close| no   | none  |cur-name |@Q   |write soon if mod. and close
 
 int doe_write_file_to(void)
 {
@@ -562,6 +571,14 @@ int doe_read_clipboard_into_cur_pos_(int char0_line1)
 //-----------------------------------------------------------------------------
 int doe_run_line_soon(void)
 {
+	return doe_run_line_soon__(LOGGING1);
+}
+int doe_run_line_soon_wo_log(void)
+{
+	return doe_run_line_soon__(LOGGING0);
+}
+int doe_run_line_soon__(int logging)
+{
 	char buffer[MAX_PATH_LEN+1];
 
 	// EPCBVC_CL->data may be in history buffer and freed in calling update_history().
@@ -569,7 +586,7 @@ int doe_run_line_soon(void)
 	strlcpy__(buffer, EPCBVC_CL->data, MAX_PATH_LEN);
 
 	clear_fork_exec_counter();
-	fork_exec_sh_c(SETTERM1, SEPARATE1, PAUSE1, buffer);
+	fork_exec_sh_c(SETTERM1, SEPARATE1, logging, PAUSE1, buffer);
 
 	if (is_app_list_mode()) {
 		editor_quit = EDITOR_DO_QUIT;

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-18 22:33+0900\n"
+"POT-Creation-Date: 2024-08-03 14:19+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,78 +48,78 @@ msgstr ""
 msgid "Open existing file:"
 msgstr ""
 
-#: ../editor.c:213
+#: ../editor.c:213 ../filercmd.c:178
 msgid "Open new file:"
 msgstr ""
 
-#: ../editor.c:272
+#: ../editor.c:281
 msgid "No project file found"
 msgstr ""
 
-#: ../editor.c:313
+#: ../editor.c:322
 msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr ""
 
-#: ../editor.c:334
+#: ../editor.c:343
 msgid "File re-loaded"
 msgstr ""
 
-#: ../editor.c:381
+#: ../editor.c:390
 #, c-format
 msgid "Written to the file: %s"
 msgstr ""
 
-#: ../editor.c:438
+#: ../editor.c:447
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editor.c:685 ../editor.c:744 ../fileio.c:146 ../fileio.c:151
+#: ../editor.c:702 ../editor.c:761 ../fileio.c:146 ../fileio.c:151
 #: ../winin.c:89
 msgid "Cancelled"
 msgstr ""
 
-#: ../editor.c:691
+#: ../editor.c:708
 msgid "All buffers are checked and saved if modified"
 msgstr ""
 
-#: ../editor.c:696
+#: ../editor.c:713
 msgid "Freeing buffers..."
 msgstr ""
 
-#: ../editor.c:711
+#: ../editor.c:728
 msgid "Freeing all buffers..."
 msgstr ""
 
-#: ../editor.c:732
+#: ../editor.c:749
 msgid "Buffer is NOT modified"
 msgstr ""
 
-#: ../editor.c:741
+#: ../editor.c:758
 msgid "Save modified buffer ?"
 msgstr ""
 
-#: ../editor.c:742
+#: ../editor.c:759
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr ""
 
-#: ../editor.c:752
+#: ../editor.c:769
 msgid "Buffer saved to file"
 msgstr ""
 
-#: ../editor.c:896
+#: ../editor.c:913
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:950
+#: ../editor.c:967
 msgid "Modification not allowed in LIST mode"
 msgstr ""
 
-#: ../editor.c:954
+#: ../editor.c:971
 msgid "Modification not allowed in Anchor buffer"
 msgstr ""
 
-#: ../editor.c:958
+#: ../editor.c:975
 msgid "Modification not allowed in VIEW mode buffer"
 msgstr ""
 
@@ -139,83 +139,75 @@ msgstr ""
 msgid "[RO] "
 msgstr ""
 
-#: ../editorcut.c:64
-msgid "Cut-buffer cleared"
-msgstr ""
-
-#: ../editorcut.c:70 ../editorcut.c:236 ../editorcut.c:266
-msgid "Cut-buffer empty !!"
-msgstr ""
-
-#: ../editorcut.c:72
-msgid "Cut-buffer popped"
-msgstr ""
-
-#: ../editorcut.c:97
+#: ../editorcut.c:79
 msgid "Cut to line head"
 msgstr ""
 
-#: ../editorcut.c:110
+#: ../editorcut.c:92
 msgid "Cut to line tail"
 msgstr ""
 
-#: ../editorcut.c:130
+#: ../editorcut.c:112
 msgid "Mark Set"
 msgstr ""
 
-#: ../editorcut.c:144
+#: ../editorcut.c:126
 msgid "Mark UNset"
 msgstr ""
 
-#: ../editorcut.c:160
+#: ../editorcut.c:142
 msgid "Text Copied to Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:176
+#: ../editorcut.c:158
 msgid "Text Deleted"
 msgstr ""
 
-#: ../editorcut.c:185
+#: ../editorcut.c:167
 msgid "Text Cut to Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:194
+#: ../editorcut.c:176
 msgid "Text Duplicated"
 msgstr ""
 
-#: ../editorcut.c:205
+#: ../editorcut.c:187
 msgid "Text Pasted with popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:215
+#: ../editorcut.c:197
 msgid "Text Pasted without popping Cut-buffer"
 msgstr ""
 
-#: ../editorgoto.c:52
+#: ../editorcut.c:218 ../editorcut.c:248
+msgid "Cut-buffer empty !!"
+msgstr ""
+
+#: ../editorgoto.c:48
 msgid "Enter line number:"
 msgstr ""
 
-#: ../editorgoto.c:225
+#: ../editorgoto.c:169
 msgid "No previous open files"
 msgstr ""
 
-#: ../editorgoto.c:230
+#: ../editorgoto.c:174
 msgid "Previous file"
 msgstr ""
 
-#: ../editorgoto.c:238
+#: ../editorgoto.c:182
 msgid "No next open files"
 msgstr ""
 
-#: ../editorgoto.c:243
+#: ../editorgoto.c:187
 msgid "Next file"
 msgstr ""
 
-#: ../editorgoto.c:277
+#: ../editorgoto.c:221
 msgid "Returned to previous pos"
 msgstr ""
 
-#: ../editorgoto.c:285
+#: ../editorgoto.c:229
 #, c-format
 msgid "Switched current editor pane to %d"
 msgstr ""
@@ -430,109 +422,110 @@ msgstr ""
 msgid "File view refreshed"
 msgstr ""
 
-#: ../filercmd.c:170
-msgid "Edit new file:"
-msgstr ""
-
-#: ../filercmd.c:214
+#: ../filercmd.c:224
 msgid "Copy to:"
 msgstr ""
 
-#: ../filercmd.c:240
+#: ../filercmd.c:250
 msgid "Copy to (Update):"
 msgstr ""
 
-#: ../filercmd.c:266
+#: ../filercmd.c:276
 msgid "Move to:"
 msgstr ""
 
-#: ../filercmd.c:294
+#: ../filercmd.c:304
 #, c-format
 msgid "Trash file %s ?"
 msgstr ""
 
-#: ../filercmd.c:297
+#: ../filercmd.c:307
 #, c-format
 msgid "Trash %d files ?"
 msgstr ""
 
-#: ../filercmd.c:328
+#: ../filercmd.c:338
 #, c-format
 msgid "Delete file %s ?"
 msgstr ""
 
-#: ../filercmd.c:331
+#: ../filercmd.c:341
 #, c-format
 msgid "Delete %d files ?"
 msgstr ""
 
-#: ../filercmd.c:359
+#: ../filercmd.c:369
 #, c-format
 msgid "Mark file %s to be Deleted later ?"
 msgstr ""
 
-#: ../filercmd.c:362
+#: ../filercmd.c:372
 #, c-format
 msgid "Mark %d files to be Deleted later ?"
 msgstr ""
 
-#: ../filercmd.c:394
+#: ../filercmd.c:404
 #, c-format
 msgid "Make size of file %s 0 ?"
 msgstr ""
 
-#: ../filercmd.c:397
+#: ../filercmd.c:407
 #, c-format
 msgid "Make size of %d files 0 ?"
 msgstr ""
 
-#: ../filercmd.c:431
+#: ../filercmd.c:441
 msgid "Rename to:"
 msgstr ""
 
-#: ../filercmd.c:447
+#: ../filercmd.c:457
 msgid "Find:"
 msgstr ""
 
-#: ../filercmd.c:460
+#: ../filercmd.c:470
 msgid "Mkdir:"
 msgstr ""
 
-#: ../filercmd.c:472
+#: ../filercmd.c:482
 msgid "Chdir to:"
 msgstr ""
 
-#: ../filercmd.c:543
+#: ../filercmd.c:553
 msgid "File selection cleared"
 msgstr ""
 
-#: ../filercmd.c:562
+#: ../filercmd.c:572
 #, c-format
 msgid "%d file selected"
 msgstr ""
 
-#: ../filercmd.c:563
+#: ../filercmd.c:573
 #, c-format
 msgid "%d files selected"
 msgstr ""
 
-#: ../filercmd.c:564
+#: ../filercmd.c:574
 #, c-format
 msgid "%d filess selected"
 msgstr ""
 
-#: ../filercmd.c:565
+#: ../filercmd.c:575
 #, c-format
 msgid "%d filesss selected"
 msgstr ""
 
+#: ../filercmd.c:760
+#, c-format
+msgid "Can not change directory to [%s]"
+msgstr ""
+
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:770
+#: ../filercmd.c:843
 #, c-format
 msgid "Can not change current to [%s]: %s"
 msgstr ""
 
-#: ../filercmd.c:779
+#: ../filercmd.c:852
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr ""
@@ -545,27 +538,27 @@ msgstr ""
 msgid "Execute with files:"
 msgstr ""
 
-#: ../filerrun.c:149
+#: ../filerrun.c:154
 msgid "Run (with file):"
 msgstr ""
 
-#: ../filerrun.c:154
+#: ../filerrun.c:159
 msgid "Run (current-directory-file):"
 msgstr ""
 
-#: ../filerrun.c:159
+#: ../filerrun.c:164
 msgid "Run (with real-path):"
 msgstr ""
 
-#: ../filerrun.c:166
+#: ../filerrun.c:171
 msgid "Run (script):"
 msgstr ""
 
-#: ../filerrun.c:171
+#: ../filerrun.c:176
 msgid "Run (script by shell):"
 msgstr ""
 
-#: ../filerrun.c:176
+#: ../filerrun.c:181
 msgid "Run (with SRC-path and DEST-path):"
 msgstr ""
 

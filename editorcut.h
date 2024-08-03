@@ -22,11 +22,6 @@
 #ifndef editorcut_h
 #define editorcut_h
 
-#if 0
-int doe_clear_cut_buf(void);
-int doe_pop_cut_buf(void);
-#endif
-
 int doe_select_all_lines(void);
 int doe_copy_text(void);
 int doe_copy_text_to_system_clipboard(void);

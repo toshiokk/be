@@ -145,7 +145,6 @@ int dof_open_proj_file(void)
 	do_open_proj_file();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	if (get_files_loaded() >= 0) {
-		///filer_do_next = FILER_DO_QUIT;
 		filer_do_next = FILER_LOADED;
 	}
 	clear_files_loaded();
@@ -156,33 +155,44 @@ int dof_open_exec_log_file(void)
 	do_open_exec_log_file();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	if (get_files_loaded() >= 0) {
-		///filer_do_next = FILER_DO_QUIT;
 		filer_do_next = FILER_LOADED;
 	}
 	clear_files_loaded();
 	return 1;
 }
 
-int dof_edit_new_file(void)
+PRIVATE int dof_open_new_file_(const char *str);
+int dof_open_new_file(void)
 {
-	char file_name[MAX_PATH_LEN+1];
-	int ret = input_string_tail("", file_name, HISTORY_TYPE_IDX_FILEPOS,
-	 _("Edit new file:"));
+	return dof_open_new_file_("");
+}
+// open files dropped by Window manager 'file-1' 'file-2' ...
+int dof_open_new_file_dropped(void)
+{
+	return dof_open_new_file_("'");
+}
+PRIVATE int dof_open_new_file_(const char *str)
+{
+	char file_path[MAX_PATH_LEN+1];
+	int ret = input_string_tail(str, file_path, HISTORY_TYPE_IDX_FILEPOS,
+	 _("Open new file:"));
 	if (set_filer_do_next(ret)) {
 		return 0;
 	}
-	if (load_file_name_upp_low(file_name, TUL0, OOE1, MOE0, LFH0, RECURSIVE0) <= 0) {
-		tio_beep();
-		return 0;
+
+	if (load_files_in_string(file_path, TUL0, OOE1, MOE0, LFH1, RECURSIVE0) >= 0) {
+		disp_files_loaded_if_ge_0();
+		filer_do_next = FILER_LOADED;
+		return 1;
 	}
-	disp_files_loaded_if_ge_0();
-	///filer_do_next = FILER_DO_QUIT;
-	filer_do_next = FILER_LOADED;
-	return 1;
+	if (goto_dir_in_string(file_path)) {
+		return 1;
+	}
+	tio_beep();
+	return 0;
 }
 int dof_view_file(void)
 {
-
 	if (filer_change_dir_to_cur_sel()) {
 		return 0;
 	}
@@ -712,11 +722,74 @@ PRIVATE int dof_open_file_(int load_from_history, int recursive)
 	if (get_files_loaded() < 0) {
 		filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	} else {
-		///filer_do_next = FILER_DO_QUIT;
 		filer_do_next = FILER_LOADED;
 	}
 	return 0;
 }
+
+//-----------------------------------------------------------------------------
+
+#ifdef ENABLE_FILER
+#ifdef ENABLE_HISTORY
+PRIVATE int change_cur_dir_from_history(const char *dir);
+#endif // ENABLE_HISTORY
+#endif // ENABLE_FILER
+
+int goto_dir_in_string(const char *str)
+{
+	char dir_save[MAX_PATH_LEN+1];
+	change_cur_dir_by_file_path_after_save(dir_save, get_epc_buf()->file_path);
+
+	char dir[MAX_PATH_LEN+1];
+	for (int field_idx = 0; field_idx < 10; field_idx++) {
+		if (get_n_th_file_line_col_from_str_null(str, field_idx, dir, NULL, NULL) > 0) {
+			// directory gotten
+			if (change_cur_dir_saving_prev_next(dir)) {
+				// directory changed
+				goto changed;
+			}
+#ifdef ENABLE_HISTORY
+			if (change_cur_dir_from_history(dir)) {
+				// directory changed
+				goto changed;
+			}
+#endif // ENABLE_HISTORY
+		}
+	}
+	change_cur_dir(dir_save);
+	disp_status_bar_err(_("Can not change directory to [%s]"), str);
+_FLF_
+	return 0;
+
+changed:;
+#ifdef ENABLE_HISTORY
+	update_dir_history(get_cur_filer_view()->prev_dir, get_cur_filer_view()->cur_dir);
+#endif // ENABLE_HISTORY
+_FLF_
+	return 1;
+}
+
+#ifdef ENABLE_FILER
+#ifdef ENABLE_HISTORY
+PRIVATE int change_cur_dir_from_history(const char *dir)
+{
+	set_history_newest(HISTORY_TYPE_IDX_DIR);
+	for ( ; ; ) {
+		char *history = get_history_older(HISTORY_TYPE_IDX_DIR);
+		if (strlen_path(history) == 0) {
+			break;
+		}
+/////flf_d_printf("history: [%s]\n", history);
+		if (compare_file_path_from_tail(history, dir) == 0) {
+			if (change_cur_dir_saving_prev_next(history)) {
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+#endif // ENABLE_HISTORY
+#endif // ENABLE_FILER
 
 PRIVATE int filer_change_dir_to_cur_sel(void)
 {

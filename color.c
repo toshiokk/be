@@ -32,32 +32,27 @@ item_color_t item_colors[MAX_ITEM_COLORS];
 
 item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	//  bgc, fgc
-///	{ CL_BG, CL_BK, S(ITEM_COLOR_IDX_DEFAULT)			},
 	{ CL_BK, CL_WH, S(ITEM_COLOR_IDX_DEFAULT)			},
 #if APP_REL_LVL == APP_REL_LVL_STABLE
 	// official release
 	{ CL_BL, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
 	{ CL_BL, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
+///	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_TITLE)				},
+///	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_STATUS)			},
+///	{ CL_BL, CL_GR, S(ITEM_COLOR_IDX_TITLE)				},
+///	{ CL_BL, CL_GR, S(ITEM_COLOR_IDX_STATUS)			},
 #endif
-#if APP_REL_LVL == APP_REL_LVL_TEST3
-	// test release-3
-	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_TITLE)				},
-	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_STATUS)			},
-#endif
-#if APP_REL_LVL == APP_REL_LVL_TEST2
-	// test release-2
-	{ CL_BL, CL_GR, S(ITEM_COLOR_IDX_TITLE)				},
-	{ CL_BL, CL_GR, S(ITEM_COLOR_IDX_STATUS)			},
-#endif
-#if APP_REL_LVL == APP_REL_LVL_TEST1
+#if APP_REL_LVL == APP_REL_LVL_TEST
 	// test release-1
-	{ CL_CY, CL_BL, S(ITEM_COLOR_IDX_TITLE)				},
-	{ CL_CY, CL_BL, S(ITEM_COLOR_IDX_STATUS)			},
+	{ CL_CY, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
+	{ CL_CY, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
 #endif
 #if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
 	// experimental release
-	{ CL_CY, CL_GR, S(ITEM_COLOR_IDX_TITLE)				},
-	{ CL_CY, CL_GR, S(ITEM_COLOR_IDX_STATUS)			},
+///	{ CL_CY, CL_BL, S(ITEM_COLOR_IDX_TITLE)				},
+///	{ CL_CY, CL_BL, S(ITEM_COLOR_IDX_STATUS)			},
+	{ CL_CY, CL_BR, S(ITEM_COLOR_IDX_TITLE)				},
+	{ CL_CY, CL_BR, S(ITEM_COLOR_IDX_STATUS)			},
 #endif
 	{ CL_BG, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
 	{ CL_BK, CL_BR, S(ITEM_COLOR_IDX_KEY_LIST2)			},

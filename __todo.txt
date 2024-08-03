@@ -1,6 +1,34 @@
 #### BE-editor to do list
  (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible/pending)
 
+[] It works editor and filer seamless as possible.
+[x] Handle WSL drop event like: '/mnt/c/Users/t_koike/Downloads/20240731_DMU30_MG370S_D-SAIL.zip'
+  |   state                      | event                              | event                           |
+  |------------------------------| drop files "'file-1' 'file-2' ..." | drop dirs "'dir-1' 'dir-2' ..." |
+  |[x]in filer                   | [x]open these files                | [x]open dir                     |
+  |[x]in filer  - "Open new file"| [x]open these files                | [x]open dir                     |
+  |[-]in editor                  | can not handle it because "'" is ordinary charactor                  |
+  |[x]in editor - "Open new file"| open these files                   | [x]open dir                     |
+[x] capture stdout/err into be-editor buffer
+  back-scroll vs log-file
+  - [-] back-scroll method - Bad: hard to handle(get, edit, copy).
+  - [x] log-file    method - Good: easy to handle(get, edit, copy).
+  - [x] stderr is not captured
+  - [d-] when you start BE from BE, `1.log` might be overwritten.
+  - [x] `less file.txt` does not pause scrolling because less's FD-1 is not actual console
+        K_M_x capture stdout/err, K_M_X does not capture stdout/err
+
+  standard
+   +----------------------+
+   |application--+--FD:1--->----/dev/pts/1
+   |             \--FD:2--->----/dev/pts/1
+   +----------------------+
+  tee
+   +----------------------+      /--->1.log
+   |application--+--FD:1----+--[tee]->/dev/pts/1
+   |             \--FD:2----/
+   +----------------------+
+
 [x] arrange ENABLE_FILER and ENABLE_HISTORY sections
 [x] can not open recursively from __be_test.pro and __be_test2.pro --> K_M_E (load-from-history)
 [x] tag-jump goes to line-1
@@ -14,23 +42,6 @@
 [d-] How to link with static libraries
 [x] different string is paste from bash history
 [x] after execution from history in filer-x command, does not return to filer
-[x] capture stdout/stderr into be-editor buffer
-  back-scroll vs log-file
-  - [-] back-scroll  Good: easy to use, Bad: hard to handle(get, edit, copy). a limit in size.
-  - [x] log-file     Bad: not easy to use, Good: easy to handle(get, edit, copy). almost no limit in size.
-  - [x] stderr is not captured
-  - [d-] when you start BE from BE, `1.log` might be overwritten.
-
-  standard
-   +----------------------+
-   |application--+--FD:1--->----/dev/pts/1
-   |             \--FD:2--->----/dev/pts/1
-   +----------------------+
-  tee
-   +----------------------+      /--->1.log
-   |application--+--FD:1----+--[tee]->/dev/pts/1
-   |             \--FD:2----/
-   +----------------------+
 
 [x] open symlinked file's dir not file itself (dof_real_path: Alt-L)
 [x] force loading as a binary(-b/-binary) / text(-x/-text) file
@@ -62,15 +73,47 @@ switching filer and editor
          \-- filer-list
 [x] editor: stay in editor while `get_edit_bufs() > 0` and exit when `get_edit_bufs() == 0`
 
-editor(edit mode)   : load, edit, save file
-editor(history mode): automatically load/save, can not edit, can only see contents
-editor(help mode)   : no load operation, can not edit, can not save, can search/cut/copy
-
-|editor mode |load|edit|save|select by tap|search/cut/copy|comment                |on code         |
+|editor mode |load|edit|save|select by tap|search/cut/copy|comment                |in code         |
 |------------|----|----|----|-------------|---------------|-----------------------|----------------|
 |edit mode   |yes |yes |yes |no           |yes            |all editing            |APP_MODE_NORMAL |
 |history mode|auto|no  |auto|yes          |no             |history viewer/selector|APP_MODE_LIST   |
 |help mode   |no  |no  |no  |no           |yes            |help viewer            |APP_MODE_HELP   |
+
+// Transitions between filer and editor:
+//	filer(NORMAL)																						return code-------------
+//		dof_open_file()			open file by selecting file								RETURN to editor on success(quit/loaded)
+//		input_string()			editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
+//												TAG-JUMP(updating root-editor)			RETURN to editor on success(quit/loaded)
+//		input_string()			filer(LIST)		input file path by selecting file/dir	RETURN to editor(quit/input)
+//		dof_run_command_soon()
+//	editor(NORMAL)
+//		input_string()			editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
+//												TAG-JUMP(updating root-editor)			RETURN to editor on success(quit/loaded)
+//												doe_run_line_soon()						RETURN to editor on success(quit/loaded)
+//		input_string()		 	filer(LIST)		input file path by selecting file/dir	RETURN to editor(quit/input)
+//												open file								RETURN to editor on success(quit/loaded)
+//		doe_open_file()			filer(NORMAL)	open file by selecting file				RETURN to editor on success(quit/loaded)
+//		doe_read_file_into_cur_buf()
+//								filer(NORMAL)	read file into selecting file			RETURN to editor
+//		doe_call_filer()					 		manage file in filer(NORMAL), return to editor when quit(quit)
+//		doe_tag_jump() 			TAG-JUMP to dir and manage file in filer(NORMAL), return to editor when quit(quit)
+//		doe_view_file_list()	editor(HELP)	TAG-JUMP to file(updating root-editor)	RETURN to editor(quit/loaded)
+//		doe_view_key_list()		editor(HELP)	view help text, return to editor when quit              (quit)
+//		doe_view_func_list()	editor(HELP)	view help text, return to editor when quit              (quit)
+//		doe_run_line_soon()
+//
+// return code from editor:
+//		quit		--> EDITOR_DO_QUIT
+//		loaded		--> EDITOR_LOADED
+//		input		--> EDITOR_INPUT_TO_REPLACE
+//		input		--> EDITOR_INPUT_TO_APPEND
+// return code from filer
+//		quit		--> FILER_DO_QUIT
+//		loaded		--> FILER_LOADED
+//		input		--> FILER_INPUT_TO_REPLACE (file/file_path/dir_path)
+//		input		--> FILER_INPUT_TO_APPEND  (file/file_path/dir_path)
+
+// open file:	load file and assign it as a current file in the editor pane
 
 [?] operation policy
 - always works on ESC key to exit from current screen and Enter key to enter the selected item.
@@ -660,7 +703,7 @@ int _abc; // not-recommended
 int main(void)
 {
   int abc__def; // not-recommended
-  int _Abc; // not-recommended
+  int _Abc;     // not-recommended
 }
 //--------------------------------
 
@@ -676,43 +719,6 @@ int main(void)
 
 [pe]input from stdin
 //[pe]cursor positioning after reopening file
-
---------------------------------------------------------------------------------------
-### LHV, RHV
-int x = 1;
-"1" is a right hand value.
-  1. It may allocated in memory.
-    val_1: dd 00000001h
-      mov ax,(value_1)
-  2. or immediate value in assembly code.
-      mov ax, 00000001h
-"x" is a left hand value.
-  1. It may allocated in stack memory.
-      mov [bp + 2], ax
-  2. or allocated in static memory.
-    var_x: dd 00000000h
-      mov (variable_x), ax
-
-int* ptr_x = &x;
-    ptr_x: dp 00000000h  ; dp: define pointer
-      mov eax, variable_x
-      mov di, (ptr_x)
-      mov (di), eax
-int y = *ptr_x;
-    var_y: dw 00000000h
-      mov si, (ptr_x);
-      mov eax, (si)
-      mov (var_y), eax
-
-int& ref_x = x;
-    ref_x: dp 00000000h
-      mov eax, (var_x)
-      mov (ref_x), eax
-int y = ref_x;
-    var_y: dw 00000000h
-      mov si, (ref_x);
-      mov eax, (si)
-      mov (var_y), eax
 
 -------------------------------------------------------------------------------
 
@@ -733,14 +739,14 @@ USB からブート可能なOS(Linux)は、きっとWindoseに対するキラー
 Linux は便利な利用法としてUSBディスクからのブートが可能である。
 しかし、Mirocsoft は Linux のこの利便性を真似する事が出来ない。
 
-なぜなら、そうすることは彼らのもっとも重要なソフトウエア製品の野放図なコピーを
+なぜなら、そうすることは彼らのもっとも重要なソフトウエア製品の野放図な使用を
 許すことになってしまうからである。
 
 M$のソフトウエアはPCにインストール後、ソフトウエア・アクティベーションを行う必要がある。
 アクティベートされたソフトウエアは異なるコンピュータ上で実行できない様になっている。
 LANチップ中のMACアドレスや、CPUやマザーボードのシリアルNo.などを記憶しておき、
 それらが変わった時は異なるPC上で実行されたと判断し、使用できなくしている。
-そうする事によって、彼らの製品の野放図なコピーを行えなくしているのだ。
+そうする事によって、彼らの製品の野放図な使用を行えなくしているのだ。
 
 ソフトウエア・アクティベーションの回数はM$の社内でカウントされていて、
 可能なアクティベーションの回数は3回とか5回とかに制限されている。

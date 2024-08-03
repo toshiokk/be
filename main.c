@@ -116,11 +116,11 @@ flf_d_printf("load_key_macro()\n");
 
 	set_die_on_callback(app_die_on);
 
-flf_d_printf("opening files --------------------------------------------\n");
 #ifdef ENABLE_HELP
 	disp_splash(0);
 	MSLEEP(300);
 #endif // ENABLE_HELP
+flf_d_printf("opening files --------------------------------------------\n");
 	// If there's a +LINE flag, it is the first non-option argument
 	int start_line_num = 0;			// Line to start at
 	if (0 < optind && optind < argc && argv[optind][0] == '+') {
@@ -252,8 +252,8 @@ PRIVATE int init_app_mode(void)
 	SET_APPMD_VAL(app_KEY_LINES, 3);
 	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
 #ifdef ENABLE_DEBUG
+	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);
 	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
-	////set_debug_printf_output(1);
 #endif // ENABLE_DEBUG
 	// editor mode
 	CLR_APPMD(app_EDITOR_FILER);
@@ -944,41 +944,5 @@ void disp_splash(int delay)
 	tio_refresh();
 }
 #endif // ENABLE_HELP
-
-// Transitions between filer and editor:
-//	filer(NORMAL)																						return code-------------
-//		dof_open_file()			open file by selecting file								RETURN to editor on success(quit/loaded)
-//		input_string()			editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
-//												TAG-JUMP(updating root-editor)			RETURN to editor on success(quit/loaded)
-//		input_string()			filer(LIST)		input file path by selecting file/dir	RETURN to editor(quit/input)
-//		dof_run_command_soon()
-//	editor(NORMAL)
-//		input_string()			editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
-//												TAG-JUMP(updating root-editor)			RETURN to editor on success(quit/loaded)
-//												doe_run_line_soon()						RETURN to editor on success(quit/loaded)
-//		input_string()		 	filer(LIST)		input file path by selecting file/dir	RETURN to editor(quit/input)
-//												open file								RETURN to editor on success(quit/loaded)
-//		doe_open_file()			filer(NORMAL)	open file by selecting file				RETURN to editor on success(quit/loaded)
-//		doe_read_file_into_cur_buf()
-//								filer(NORMAL)	read file into selecting file			RETURN to editor
-//		doe_call_filer()					 		manage file in filer(NORMAL), return to editor when quit(quit)
-//		doe_tag_jump() 			TAG-JUMP to dir and manage file in filer(NORMAL), return to editor when quit(quit)
-//		doe_view_file_list()	editor(HELP)	TAG-JUMP to file(updating root-editor)	RETURN to editor(quit/loaded)
-//		doe_view_key_list()		editor(HELP)	view help text, return to editor when quit              (quit)
-//		doe_view_func_list()	editor(HELP)	view help text, return to editor when quit              (quit)
-//		doe_run_line_soon()
-//
-// return code from editor:
-//		quit		--> EDITOR_DO_QUIT
-//		loaded		--> EDITOR_LOADED
-//		input		--> EDITOR_INPUT_TO_REPLACE
-//		input		--> EDITOR_INPUT_TO_APPEND
-// return code from filer
-//		quit		--> FILER_DO_QUIT
-//		loaded		--> FILER_LOADED
-//		input		--> FILER_INPUT_TO_REPLACE (file/file_path/dir_path)
-//		input		--> FILER_INPUT_TO_APPEND  (file/file_path/dir_path)
-
-// open file:	load file and assign it as a current file in the editor pane
 
 // End of main.c

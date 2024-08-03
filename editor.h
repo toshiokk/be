@@ -72,6 +72,8 @@ int doe_read_clipboard_into_cur_pos_(int char0_line1);
 //-----------------------------------------------------------------------------
 
 int doe_run_line_soon(void);
+int doe_run_line_soon_wo_log(void);
+int doe_run_line_soon__(int logging);
 
 #ifdef ENABLE_FILER
 int doe_call_filer(void);

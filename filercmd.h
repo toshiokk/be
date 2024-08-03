@@ -45,7 +45,8 @@ int dof_open_file_non_recursive(void);
 int dof_open_file_from_history(void);
 int dof_open_proj_file(void);
 int dof_open_exec_log_file(void);
-int dof_edit_new_file(void);
+int dof_open_new_file(void);
+int dof_open_new_file_dropped(void);
 int dof_view_file(void);
 int dof_copy_file(void);
 int dof_copy_file_update(void);
@@ -91,6 +92,8 @@ int dof_filer_menu_2(void);
 int dof_filer_menu_3(void);
 int dof_filer_menu_4(void);
 int dof_filer_menu_5(void);
+
+int goto_dir_in_string(const char *str);
 
 int filer_change_dir_parent(char *path);
 int filer_change_dir(char *dir);

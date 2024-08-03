@@ -90,6 +90,7 @@ void disp_status_bar_err(const char *msg, ...)
 	va_list ap;
 
 	va_start(ap, msg);
+mflf_d_printf("SBERR: [%s]\n", msg);
 	disp_status_bar_percent_va(S_B_D_ERR, msg, ap);
 	va_end(ap);
 	tio_beep();
@@ -233,7 +234,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 				 &buffer[byte_idx_1], byte_idx_2 - byte_idx_1);
 			}
 		}
-///mflf_d_printf("SB: [%s]\n", buffer);
+mflf_d_printf("SB: [%s]\n", buffer);
 	}
 
 	if (status_bar_to_display == S_B_D_PERCENT_FILER
