@@ -23,8 +23,7 @@
 #define debug_h
 
 #ifdef ENABLE_DEBUG
-///
-#define START_UP_TEST
+///#define START_UP_TEST
 #endif // ENABLE_DEBUG
 
 #ifdef START_UP_TEST

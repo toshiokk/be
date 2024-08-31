@@ -41,8 +41,8 @@ int end_byte_idx_of_wrap_line_ge(const char *line, int wl_idx, int column, int w
 int wrap_line_length(int width);
 
 typedef enum {
-	CHAR_LEFT,
-	CHAR_RIGHT,
+	CHAR_LEFT = -1,
+	CHAR_RIGHT = +1,
 } char_left_right_t;
 int byte_idx_from_byte_idx(const char *utf8s, int bytes);
 int byte_idx_from_col_idx(const char *utf8s, int columns, char_left_right_t left_right,

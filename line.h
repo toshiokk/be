@@ -39,26 +39,30 @@
 #define NODES_BOT_NODE(nodes)		(NODE_PREV(NODES_BOT_ANCH(nodes)))
 #define NODES_BOT_ANCH(nodes)		(&((nodes)->bot_anchor))
 
-//|Node pos.     |IS_PTR_NULL     |IS_TOP_MOST    |IS_NODE_INT    |IS_BOT_MOST    |IS_PTR_NULL|
-//|              |        |IS_TOP_ANCH    |IS_NODE_TOP    |IS_NODE_BOT    |IS_BOT_ANCH        |
-//|--------------|--------|-------|-------|-------|-------|-------|-------|-------|-----------|
-//|TOP_ANCH->prev|    1   |   0   |   1   |   0   |   0   |   0   |   0   |   0   |   0       |
-//|TOP_ANCH      |    0   |   1   |   1   |   0   |   0   |   0   |   0   |   0   |   0       |
-//|TOP_NODE      |    0   |   0   |   1   |   1   |   1   |   0   |   0   |   0   |   0       |
-//|INT_NODE      |    0   |   0   |   0   |   0   |   1   |   0   |   0   |   0   |   0       |
-//|BOT_NODE      |    0   |   0   |   0   |   0   |   1   |   1   |   1   |   0   |   0       |
-//|BOT_ANCH      |    0   |   0   |   0   |   0   |   0   |   0   |   1   |   1   |   0       |
-//|BOT_ANCH->next|    0   |   0   |   0   |   0   |   0   |   0   |   1   |   0   |   1       |
+//|Node pos.     |IS_PTR_NULL  |IS_TOP_ANCH  |IS_NODE_TOP  |IS_NODE_BOT  |IS_BOT_ANCH| |
+//|              |      |IS_TOP_OOL   |IS_TOP_MOST  |IS_NODE_INT  |IS_BOT_MOST  |IS_BOT_OOL|
+//|--------------|------|------|------|------|------|------|------|------|------|------|
+//|TOP_ANCH->prev|   1  |   1  |   0  |   1  |   0  |   0  |   0  |   0  |   0  |   0  |
+//|TOP_ANCH      |   0  |   1  |   1  |   1  |   0  |   0  |   0  |   0  |   0  |   0  |
+//|TOP_NODE      |   0  |   0  |   0  |   1  |   1  |   1  |   0  |   0  |   0  |   0  |
+//|INT_NODE      |   0  |   0  |   0  |   0  |   0  |   1  |   0  |   0  |   0  |   0  |
+//|BOT_NODE      |   0  |   0  |   0  |   0  |   0  |   1  |   1  |   1  |   0  |   0  |
+//|BOT_ANCH      |   0  |   0  |   0  |   0  |   0  |   0  |   0  |   1  |   1  |   1  |
+//|BOT_ANCH->next|   1  |   0  |   0  |   0  |   0  |   0  |   0  |   1  |   0  |   1  |
+
+// OOL: Out Of Limit
 
 // "NODE" is "BUFFER" or "LINE"
-#define IS_NODE_TOP_MOST(node)	(IS_NODE_TOP(node) || IS_NODE_TOP_ANCH(node) || IS_PTR_NULL(node))
+#define IS_NODE_TOP_OOL(node)	(IS_NODE_TOP_ANCH(node) || IS_PTR_NULL(node))
 #define IS_NODE_TOP_ANCH(node)	(IS_PTR_VALID(node) && IS_PTR_NULL(NODE_PREV(node)))
+#define IS_NODE_TOP_MOST(node)	(IS_NODE_TOP(node) || IS_NODE_TOP_OOL(node))
 #define IS_NODE_TOP(node)		(IS_NODE_INT(node) && IS_NODE_TOP_ANCH(NODE_PREV(node)))
 #define IS_NODE_INT(node)		(IS_PTR_VALID(node) \
 							 && IS_PTR_VALID(NODE_PREV(node)) && IS_PTR_VALID(NODE_NEXT(node)))
 #define IS_NODE_BOT(node)		(IS_NODE_INT(node) && IS_NODE_BOT_ANCH(NODE_NEXT(node)))
+#define IS_NODE_BOT_MOST(node)	(IS_NODE_BOT(node) || IS_NODE_BOT_OOL(node))
 #define IS_NODE_BOT_ANCH(node)	(IS_PTR_VALID(node) && IS_PTR_NULL(NODE_NEXT(node)))
-#define IS_NODE_BOT_MOST(node)	(IS_NODE_BOT(node) || IS_NODE_BOT_ANCH(node) || IS_PTR_NULL(node))
+#define IS_NODE_BOT_OOL(node)	(IS_NODE_BOT_ANCH(node) || IS_PTR_NULL(node))
 
 #define IS_NODE_ANCH(node)		(IS_NODE_TOP_ANCH(node) || IS_NODE_BOT_ANCH(node))
 
@@ -84,8 +88,8 @@
 //     bottom-anch.prev ==> node(N)
 //     bottom-anch.next = NULL
 //
-// ## Node handling policy =======================================================
-// ### Node insertion ----------------------------------------------------------
+// ## Node handling policy ====================================================
+// ### Node insertion ---------------------------------------------------------
 // - Insert to top:
 //     insert between NODES_TOP_ANCH(nodes) and NODES_TOP_ANCH(nodes).next
 //     insert_after(NODES_TOP_ANCH(nodes))

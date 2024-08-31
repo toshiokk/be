@@ -225,7 +225,7 @@ int backup_and_save_cur_buf(const char *file_path_to)
 	}
 
 	// file may be overwritten, get current file stat into orig_file_stat
-	stat(get_epc_buf()->file_path, &(get_epc_buf()->orig_file_stat));
+	stat(get_epc_buf()->file_path_, &(get_epc_buf()->orig_file_stat));
 	update_cur_buf_crc();
 
 	disp_status_bar_ing(P_(_("%d line written"),

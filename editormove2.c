@@ -202,6 +202,7 @@ int get_disp_y_after_cursor_move(void)
 
 int get_cur_screen_top(be_line_t **line, int *byte_idx)
 {
+/////_D_(line_dump(EPCBVC_CL))
 	return get_screen_top(EPCBVC_CL, EPCBVC_CLBI, EPCBVC_CURSOR_Y, line, byte_idx);
 }
 // go backward to screen top and return line and byte_idx
@@ -210,6 +211,7 @@ int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *b
 	int line_cnt = 0;
 	int wl_idx;
 
+flf_d_printf("yy: %d\n", EPCBVC_CURSOR_Y);
 	if (_cl_->data == NULL) {
 		*line = _cl_;
 		*byte_idx = _clbi_;
@@ -217,20 +219,6 @@ int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *b
 	}
 	te_concat_linefeed(_cl_->data);
 	wl_idx = start_wl_idx_of_wrap_line(te_concat_linefeed_buf, _clbi_, -1);
-#if 1
-	for ( ; IS_NODE_INT(_cl_); _cl_ = NODE_PREV(_cl_)) {
-		if (yy <= 0)
-			break;
-		if (wl_idx <= 0) {
-			te_concat_linefeed(_cl_->data);
-			wl_idx = max_wrap_line_idx(te_concat_linefeed_buf, -1);
-		} else {
-			wl_idx--;
-		}
-		yy--;
-		line_cnt++;
-	}
-#else
 	for ( ; ; ) {
 		if (yy <= 0)
 			break;
@@ -245,7 +233,6 @@ int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *b
 		yy--;
 		line_cnt++;
 	}
-#endif
 	*line = _cl_;
 	*byte_idx = start_byte_idx_of_wrap_line(te_concat_linefeed_buf, wl_idx, 0, -1);
 	return line_cnt;

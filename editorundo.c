@@ -39,7 +39,7 @@ void init_undo_redo_bufs(void)
 be_buf_t *push_undo_buf(be_buf_t *buf)
 {
 	buf = buf_create_copy(buf);
-	snprintf(buf->file_path, MAX_PATH_LEN, "undo-buf-%02d", count_undo_bufs());
+	snprintf(buf->file_path_, MAX_PATH_LEN, "undo-buf-%02d", count_undo_bufs());
 	return buf_insert_after(UNDO_BUFS_TOP_ANCH, buf);
 }
 be_buf_t *pop_undo_buf(void)
@@ -51,7 +51,7 @@ be_buf_t *pop_undo_buf(void)
 be_buf_t *push_redo_buf(be_buf_t *buf)
 {
 	buf = buf_create_copy(buf);
-	snprintf(buf->file_path, MAX_PATH_LEN, "redo-buf-%02d", count_redo_bufs());
+	snprintf(buf->file_path_, MAX_PATH_LEN, "redo-buf-%02d", count_redo_bufs());
 	return buf_insert_after(REDO_BUFS_TOP_ANCH, buf);
 }
 be_buf_t *pop_redo_buf(void)

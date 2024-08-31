@@ -165,7 +165,7 @@ int set_file_type_by_cur_file_path(void)
 {
 	int ret;
 
-	if ((ret = set_file_type_by_file_name(get_epc_buf()->file_path)) != 0) {
+	if ((ret = set_file_type_by_file_name(get_epc_buf()->file_path_)) != 0) {
 		CUR_EBUF_STATE(buf_TAB_SIZE) = cur_file_type->tab_size;
 	}
 	return ret;
@@ -191,7 +191,7 @@ int set_file_type_by_file_name(const char *file_path)
 		cur_file_type = last_file_type;
 		return 0;
 	}
-////_D_(dump_file_type(cur_file_type, 0))
+/////_D_(dump_file_type(cur_file_type, 0))
 	return 1;
 }
 

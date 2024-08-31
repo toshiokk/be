@@ -100,12 +100,14 @@ int doe_right(void)
 PRIVATE int get_char_type(char chr)
 {
 /* '\0':0, space:1, alpha-numeric:2, others:3, UTF-8:4 */
-#define CHR_TYPE(chr)	((chr) == '\0' ? 0 :								\
-						 (((chr) == ' ' || (chr) == '\t') ? 1 :				\
-						  ((isalnum(chr) || (chr) == '_') ? 2 :				\
-						    (((unsigned char)(chr)) < 0x80 ? 3 : 4)			\
-						  )													\
-						 )													\
+#define CHR_TYPE(chr)	((chr) == '\0' ? 0 :							\
+						 (is_char_white_space(chr) ? 1 :				\
+						  (is_char_id(chr) ? 2 :						\
+						    (ispunct(chr) ? (chr) :						\
+						     (((unsigned char)(chr)) < 0x80 ? 3 : 4)	\
+						    )											\
+						  )												\
+						 )												\
 						)
 	return CHR_TYPE(chr);
 }
@@ -163,7 +165,6 @@ int doe_start_of_line(void)
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	return 1;
 }
-
 int doe_end_of_line(void)
 {
 	EPCBVC_CLBI = line_data_len(EPCBVC_CL);
@@ -329,12 +330,11 @@ int doe_control_code(void)
 }
 int doe_charcode(void)
 {
-	char string[MAX_PATH_LEN+1];
-
 	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
 
+	char string[MAX_PATH_LEN+1];
 	int ret = input_string_tail("", string, HISTORY_TYPE_IDX_SEARCH,
 	 _("Enter Unicode number in hex:"));
 	if (ret <= INPUT_LOADED) {
@@ -345,8 +345,8 @@ int doe_charcode(void)
 	///	return 0;
 	///}
 	unsigned int chr;
-	char utf8c[MAX_UTF8C_BYTES+1];
 	if (sscanf(string, "%x", &chr) == 1) {
+		char utf8c[MAX_UTF8C_BYTES+1];
 		utf8c_encode(chr, utf8c);
 		do_enter_utf8s(utf8c);
 		return 1;
@@ -599,11 +599,23 @@ int doe_delete_char(void)
 	return 1;
 }
 
+#define	BIDIR_LOW_UPP	0
+#define	UPP_TO_LOW		1
+#define	LOW_TO_UPP		2
+PRIVATE int doe_conv_upp_low_letter_(char dir);
+
 int doe_conv_upp_low_letter(void)
+{
+	return doe_conv_upp_low_letter_(BIDIR_LOW_UPP);
+}
+int doe_conv_upp_letter(void)
+{
+	return doe_conv_upp_low_letter_(LOW_TO_UPP);
+}
+PRIVATE int doe_conv_upp_low_letter_(char dir)
 {
 	int byte_idx;
 	char *data;
-	char first_chr;
 	char chr;
 
 	do_clear_mark_();
@@ -617,13 +629,15 @@ int doe_conv_upp_low_letter(void)
 #ifdef ENABLE_UNDO
 		undo_set_region__save_before_change(EPCBVC_CL, NODE_NEXT(EPCBVC_CL), 1);
 #endif // ENABLE_UNDO
-		first_chr = data[byte_idx];
+		if (dir == BIDIR_LOW_UPP) {
+			dir = islower(data[byte_idx]) ? LOW_TO_UPP : UPP_TO_LOW;
+		}
 		while ((chr = data[byte_idx]) != '\0') {
-			if ((isalpha(chr) || chr == '_' || isalnum(chr)) == 0)
+			if (is_char_id(chr) == 0)
 				break;
 			if (isalpha(chr)) {
-				// Upper ==> Lower, Lower ==> Upper ==> Lower
-				data[byte_idx] = isupper(first_chr) ? tolower(chr) : toupper(chr);
+				// Lower ==> Upper, Upper ==> Lower
+				data[byte_idx] = (dir == LOW_TO_UPP) ? toupper(chr) : tolower(chr);
 				set_cur_buf_modified();
 			}
 			byte_idx++;

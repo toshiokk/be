@@ -95,7 +95,6 @@ void init_edit_bufs(void)
 	init_bufs_top_bot_anchor(
 	 EDIT_BUFS_TOP_ANCH, "#Edit-bufs-top-anchor",
 	 EDIT_BUFS_BOT_ANCH, "#Edit-bufs-bot-anchor");
-	init_cur_editor_panes(NULL);
 }
 
 // free current be_buf_t
@@ -129,8 +128,8 @@ int free_edit_buf(be_buf_t *edit_buf)
 
 // 4 line pointers are referenced from one editor_panes
 //	cur_editor_panes->bufs[0]->buf_views[0]
-//	cur_editor_panes->bufs[0]->buf_views[1] (This pass would be accessed usually)
-//	cur_editor_panes->bufs[1]->buf_views[0] (This pass would be accessed usually)
+//	cur_editor_panes->bufs[0]->buf_views[1] (This pass would be accessed usually) ????
+//	cur_editor_panes->bufs[1]->buf_views[0] (This pass would be accessed usually) ????
 //	cur_editor_panes->bufs[1]->buf_views[1]
 
 void buf_avoid_wild_ptr_cur(be_buf_t *buf)
@@ -175,11 +174,10 @@ void init_cur_editor_panes(editor_panes_t *eps)
 {
 	if (eps) {
 		cur_editor_panes = eps;
-	} else {
-		set_editor_cur_pane_idx(0);
-		for (int pane_idx = 0; pane_idx < EDITOR_PANES; pane_idx++) {
-			set_epx_buf(pane_idx, EDIT_BUFS_TOP_BUF);
-		}
+	}
+	set_editor_cur_pane_idx(0);
+	for (int pane_idx = 0; pane_idx < EDITOR_PANES; pane_idx++) {
+		set_epx_buf(pane_idx, EDIT_BUFS_TOP_BUF);
 	}
 }
 void copy_editor_panes(editor_panes_t *dest, editor_panes_t *src)
@@ -188,18 +186,19 @@ void copy_editor_panes(editor_panes_t *dest, editor_panes_t *src)
 }
 editor_panes_t *push_editor_panes(editor_panes_t *next_eps)
 {
-	editor_panes_t *prev_eps = cur_editor_panes;
-	copy_editor_panes(next_eps, cur_editor_panes);
+	editor_panes_t *prev_eps = cur_editor_panes;	// save pointer
 	init_cur_editor_panes(next_eps);
+	copy_editor_panes(cur_editor_panes, prev_eps);
+/////_D_(dump_editor_panes())
 	return prev_eps;
 }
 void pop_editor_panes(editor_panes_t *prev_eps, editor_panes_t *eps, BOOL copy_back)
 {
 	if (copy_back) {
-_FLF_
 		copy_editor_panes(prev_eps, eps);
 	}
-	cur_editor_panes = prev_eps;
+	cur_editor_panes = prev_eps;	// recover pointer
+/////_D_(dump_editor_panes())
 }
 
 void set_editor_cur_pane_idx(int pane_idx)
@@ -321,7 +320,7 @@ void create_edit_buf(const char *full_path)
 		// make view-1 buffer valid
 		cur_editor_panes->bufs[1] = buf;
 	}
-////_D_(buf_dump_state(buf))
+/////_D_(buf_dump_state(buf))
 }
 
 //-----------------------------------------------------------------------------

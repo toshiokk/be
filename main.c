@@ -59,13 +59,15 @@ flf_d_printf("Start %s ===================================\n", APP_NAME " " __DA
 	get_tty_name();
 	signal_init();
 	init_locale();
+
 	_mlc_memorize_count
+	init_buffers();		// parse_options() needs epc_buf. So do here.
 	init_cur_editor_panes(&root_editor_panes);
 #ifdef ENABLE_FILER
 	init_cur_filer_panes(&root_filer_panes, get_starting_dir());
 #endif // ENABLE_FILER
-	init_buffers();		// parse_options() needs epc_buf. So do here.
 	_mlc_differ_count
+
 	parse_options(argc, argv);		// parse command line options
 	cache_users();
 	cache_groups();
@@ -580,7 +582,7 @@ void app_die_on(const char *msg)
 		set_epc_buf(buf);
 		if (check_cur_buf_modified()) {
 			// save the file if it's been modified
-			die_save_file(get_epc_buf()->file_path);
+			die_save_file(get_epc_buf()->file_path_);
 		}
 	}
 

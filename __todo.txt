@@ -1,7 +1,17 @@
 #### BE-editor to do list
  (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible/pending)
 
-[] It works editor and filer seamless as possible.
+[x] 240830 show from the top of the file if file contains less lines than the screen lines.
+
+[x] return a valid value from the execution (may because of pipe line)
+    [-] --> No good way to do `set -o pipefail` in each time before execution
+    [x] --> ..._wo_log() show a valid value
+[x] improve previous_word(), next_word()
+[x] improve get string from editor text in search_string()
+[x] crash on opening from editor by Alt-e, change to sub-dir, open html file
+[x] convert upper letter "Alt-Ctrl-W"
+[x] goto colmuns "Alt-Ctrl-F columns"
+[ ] works editor and filer seamless as possible.
 [x] Handle WSL drop event like: '/mnt/c/Users/t_koike/Downloads/20240731_DMU30_MG370S_D-SAIL.zip'
   |   state                      | event                              | event                           |
   |------------------------------| drop files "'file-1' 'file-2' ..." | drop dirs "'dir-1' 'dir-2' ..." |
@@ -17,6 +27,7 @@
   - [d-] when you start BE from BE, `1.log` might be overwritten.
   - [x] `less file.txt` does not pause scrolling because less's FD-1 is not actual console
         K_M_x capture stdout/err, K_M_X does not capture stdout/err
+  - [x] cat all output when "command {}" executed to files
 
   standard
    +----------------------+

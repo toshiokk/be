@@ -32,6 +32,13 @@ tab_size		8
 #color_menu_selected -white +black
 #color_input         -white +black
 
+# sh/bash
+file_type "shell" "\.(sh|SH)$"
+color_syntax ="\b(if|then|else|elif|fi|for|while|break|do|done)\b" +red
+color_syntax ="\b(case|esac|function|trap|echo|wire|reg)\b"        +red
+color_syntax ="#.*"                                                +brown
+tab_size	4
+
 # C/C++ files
 file_type "C" "\.(c|C|cc|CC|cpp|CPP|h|H)[0-9~]*$"
 color_syntax ="\b[0-9]+\b"                                             +blue

@@ -30,7 +30,7 @@ be_line_t *line_create(void)
 	_mlc_set_caller
 	line = (be_line_t *)malloc__(sizeof(be_line_t));
 	_mlc_set_caller
-	return line_init(line, NULL);
+	return line_init(line, NULL);		// set NULL to `data` for an ordinary edit line
 }
 be_line_t *line_init(be_line_t *line, char *initial_data)
 {
@@ -195,11 +195,13 @@ be_line_t *line_unlink(be_line_t *line)
 // >aaaabbbb
 be_line_t *line_concat_with_prev(be_line_t *line)
 {
-	if (IS_NODE_TOP_ANCH(line)) {
+	if (IS_NODE_TOP_OOL(NODE_PREV(line))) {
+		// previous line is top_anchor
 		_PROGERR_
 		return line;
 	}
-	if (IS_NODE_BOT_ANCH(NODE_PREV(line))) {
+	if (IS_NODE_BOT_OOL(line)) {
+		// current line is bottom_anchor
 		_PROGERR_
 		return line;
 	}
@@ -220,11 +222,13 @@ be_line_t *line_concat_with_prev(be_line_t *line)
 // >aaaabbbb
 be_line_t *line_concat_with_next(be_line_t *line)
 {
-	if (IS_NODE_TOP_ANCH(line)) {
+	if (IS_NODE_TOP_OOL(line)) {
+		// current line is top_anchor
 		_PROGERR_
 		return line;
 	}
-	if (IS_NODE_BOT_ANCH(NODE_NEXT(line))) {
+	if (IS_NODE_BOT_OOL(NODE_NEXT(line))) {
+		// next line is bottom_anchor
 		_PROGERR_
 		return line;
 	}
@@ -389,4 +393,3 @@ void line_dump_byte_idx(const be_line_t *line, int byte_idx)
 #endif // ENABLE_DEBUG
 
 // End of line.c
-

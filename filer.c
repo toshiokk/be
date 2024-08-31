@@ -165,7 +165,9 @@ flf_d_printf("push: %d, list: %d, dir: %s, filter: [%s]\n", push_win, list_mode,
 
 flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
 flf_d_printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
+
 	int ret = filer_main_loop(dir, filter, path_buf, buf_len);
+
 flf_d_printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 flf_d_printf("ret: %d\n", ret);
 	filer_do_next = FILER_DO_NOTHING;	// for caller of call_filer(), clear "filer_do_next"
@@ -180,6 +182,8 @@ flf_d_printf("ret: %d\n", ret);
 		pop_filer_panes(&next_filer_panes, prev_fps);
 		change_cur_dir(get_cur_filer_view()->cur_dir);
 
+/////_D_(line_dump(EPCBVC_CL))
+/////_D_(dump_editor_panes())
 		win_pop_win_size();
 	}
 
@@ -473,7 +477,7 @@ PRIVATE void filer_disp_title_bar(const char *path,
 	//-------------------------------------------------------------------------
 	char separator_char = indication_of_app_mode();
 	if ((get_win_depth() == 0) && (strcmp(path, get_home_dir()) == 0)) {
-		snprintf_(buf_dir_path, MAX_SCRN_LINE_BUF_LEN, "[%s|%s]%s%d%c%s",
+		snprintf_(buf_dir_path, MAX_SCRN_LINE_BUF_LEN, "[%s|%s]  %s%d%c%s",
 		 get_at_host_name(), get_tty_name(), root_notation(),
 		 get_filer_cur_pane_idx()+1, separator_char, path);
 	} else {

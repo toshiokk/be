@@ -1,10 +1,9 @@
-19:56:53.266 filer.c 214 filer_main_loop input_key:0x0103(UP)=======================
-19:56:53.302 filer.c 214 filer_main_loop input_key:0x0103(UP)=======================
-19:56:53.338 filer.c 214 filer_main_loop input_key:0x0103(UP)=======================
-19:56:54.111 filer.c 214 filer_main_loop input_key:0x0103(UP)=======================
-19:56:54.290 filer.c 214 filer_main_loop input_key:0x0103(UP)=======================
-19:56:54.562 filer.c 214 filer_main_loop input_key:0x0065(e)=======================
-filer.c 284 filer_main_loop CALL_FILER_FUNC [dof_edit_file] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-keys.c 546 begin_check_break_key 
-sig.c 129 handler_sigsegv Received SIGSEGV
+editor.c 50 call_editor }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+editor.c 51 call_editor push_win:0, list_mode:0 --> ret: 4
+editor.c 67 call_editor 
+buffers.c 258 dump_editor_panes {{ cur_editor_panes->cur_pane_idx: 0
+buffers.c 282 dump_buf_view_x pane_idx: 0 ------------------
+buffer.c 614 buf_dump_state file_path: [#Edit-bufs-top-anchor]
+buffer.c 615 buf_dump_state abs_path_: [#Edit-bufs-top-anchor]
+line.c 392 line_dump_byte_idx line-  0: sig.c 129 handler_sigsegv Received SIGSEGV
 sig.c 141 handler_sigsegv 

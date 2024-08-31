@@ -45,8 +45,8 @@ int dof_run_command_soon_wo_log(void);
 //-----------------------------------------------------------------------------
 
 void begin_fork_exec_repeat(void);
-void end_fork_exec_repeat(void);
-int fork_exec_sh_c_once(int pause_aft_exec, const char *command);
+void end_fork_exec_repeat(int exit_status);
+int fork_exec_sh_c_once(int logging, int pause_aft_exec, const char *command);
 int fork_exec_sh_c_repeat(int separate_bef_exec, const char *command);
 int fork_exec_args_once(int pause_aft_exec, ...);
 int fork_exec_args_repeat(int separate_bef_exec, ...);
@@ -62,7 +62,7 @@ void clear_fork_exec_counter(void);
 int get_fork_exec_counter(void);
 int inc_fork_exec_counter(void);
 
-void pause_after_exec(void);
+void pause_after_exec(int exit_status);
 int restore_term_for_shell(void);
 int reinit_term_for_filer(void);
 

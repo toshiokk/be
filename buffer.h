@@ -44,10 +44,10 @@ typedef struct be_buf_t {
 	struct be_buf_t *prev;		//!< Previous be_buf_t
 	struct be_buf_t *next;		//!< Next be_buf_t
 
-	char file_path[MAX_PATH_LEN+1];	//!< relative file path (use this as a file accessor)
-	char abs_path_[MAX_PATH_LEN+1];	//!< absolute file path (use this as a unique file ID)
-	struct stat orig_file_stat;		//!< original file status
-	unsigned short orig_file_crc;	//!< file CRC before modification
+	char file_path_[MAX_PATH_LEN+1];	//!< relative file path (use this as a file accessor)
+	char abs_path_[MAX_PATH_LEN+1];		//!< absolute file path (use this as a unique file ID)
+	struct stat orig_file_stat;			//!< original file status
+	unsigned short orig_file_crc;		//!< file CRC before modification
 
 	be_line_t top_anchor;		//!< top line
 	be_line_t bot_anchor;		//!< bottom line

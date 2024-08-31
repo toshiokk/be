@@ -406,6 +406,7 @@ int regexp_search_compiled(regexp_t *regexp, const char *haystack, int byte_idx,
 {
 	int ret;
 
+/////flf_d_printf("needle[%s]\n", regexp->needle_compiled);
 	if (regexp->is_compiled < 2) {
 		return -1;	// compilation error
 	}

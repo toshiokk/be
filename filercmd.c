@@ -225,6 +225,7 @@ int dof_copy_file(void)
 	if (set_filer_do_next(ret)) {
 		return 0;
 	}
+	int exit_status = 0;
 	begin_fork_exec_repeat();
 	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
@@ -232,14 +233,14 @@ int dof_copy_file(void)
 		if (is_sigint_signaled())
 			break;
 #ifndef	USE_BUSYBOX
-		fork_exec_args_repeat(SEPARATE1, "cp", "-afv",
+		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-afv",
 		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
 #else
-		fork_exec_args_repeat(SEPARATE1, "cp", "-a",
+		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-a",
 		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
 #endif
 	}
-	end_fork_exec_repeat();
+	end_fork_exec_repeat(exit_status);
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -251,6 +252,7 @@ int dof_copy_file_update(void)
 	if (set_filer_do_next(ret)) {
 		return 0;
 	}
+	int exit_status = 0;
 	begin_fork_exec_repeat();
 	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
@@ -258,14 +260,14 @@ int dof_copy_file_update(void)
 		if (is_sigint_signaled())
 			break;
 #ifndef	USE_BUSYBOX
-		fork_exec_args_repeat(SEPARATE1, "cp", "-aufv",
+		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-aufv",
 		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
 #else
-		fork_exec_args_repeat(SEPARATE1, "cp", "-a",
+		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-a",
 		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
 #endif
 	}
-	end_fork_exec_repeat();
+	end_fork_exec_repeat(exit_status);
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -277,6 +279,7 @@ int dof_move_file(void)
 	if (set_filer_do_next(ret)) {
 		return 0;
 	}
+	int exit_status = 0;
 	begin_fork_exec_repeat();
 	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
@@ -284,14 +287,14 @@ int dof_move_file(void)
 		if (is_sigint_signaled())
 			break;
 #ifndef	USE_BUSYBOX
-		fork_exec_args_repeat(SEPARATE1, "mv", "-ufv",
+		exit_status = fork_exec_args_repeat(SEPARATE1, "mv", "-ufv",
 		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
 #else
-		fork_exec_args_repeat(SEPARATE1, "mv",
+		exit_status = fork_exec_args_repeat(SEPARATE1, "mv",
 		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
 #endif
 	}
-	end_fork_exec_repeat();
+	end_fork_exec_repeat(exit_status);
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -308,6 +311,7 @@ int dof_trash_file(void)
 	if (ret <= 0) {
 		return 0;
 	}
+	int exit_status = 0;
 	begin_fork_exec_repeat();
 	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
@@ -317,15 +321,15 @@ int dof_trash_file(void)
 		if (fork_exec_args_repeat(SEPARATE1, BETRASH,
 		 get_cur_fv_file_ptr(file_idx)->file_name, 0)) {
 #ifndef	USE_BUSYBOX
-			fork_exec_args_repeat(SEPARATE1, "rm", "-rv",
+			exit_status = fork_exec_args_repeat(SEPARATE1, "rm", "-rv",
 			 get_cur_fv_file_ptr(file_idx)->file_name, 0);
 #else
-			fork_exec_args_repeat(SEPARATE1, "rm", "-r",
+			exit_status = fork_exec_args_repeat(SEPARATE1, "rm", "-r",
 			 get_cur_fv_file_ptr(file_idx)->file_name, 0);
 #endif
 		}
 	}
-	end_fork_exec_repeat();
+	end_fork_exec_repeat(exit_status);
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -342,6 +346,7 @@ int dof_delete_file(void)
 	if (ret <= 0) {
 		return 0;
 	}
+	int exit_status = 0;
 	begin_fork_exec_repeat();
 	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
@@ -349,14 +354,14 @@ int dof_delete_file(void)
 		if (is_sigint_signaled())
 			break;
 #ifndef	USE_BUSYBOX
-		fork_exec_args_repeat(SEPARATE1, "rm", "-rv",
+		exit_status = fork_exec_args_repeat(SEPARATE1, "rm", "-rv",
 		 get_cur_fv_file_ptr(file_idx)->file_name, 0);
 #else
-		fork_exec_args_repeat(SEPARATE1, "rm", "-r",
+		exit_status = fork_exec_args_repeat(SEPARATE1, "rm", "-r",
 		 get_cur_fv_file_ptr(file_idx)->file_name, 0);
 #endif
 	}
-	end_fork_exec_repeat();
+	end_fork_exec_repeat(exit_status);
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -374,6 +379,7 @@ int dof_mark_to_delete_file(void)
 	if (ret <= 0) {
 		return 0;
 	}
+	int exit_status = 0;
 	begin_fork_exec_repeat();
 	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
@@ -383,15 +389,15 @@ int dof_mark_to_delete_file(void)
 		if (fork_exec_args_repeat(SEPARATE0, BEMARKDEL,
 		 get_cur_fv_file_ptr(file_idx)->file_name, 0)) {
 #ifndef	USE_BUSYBOX
-			fork_exec_args_repeat(SEPARATE0, "chmod", "-v", "606",
+			exit_status = fork_exec_args_repeat(SEPARATE0, "chmod", "-v", "606",
 			 get_cur_fv_file_ptr(file_idx)->file_name, 0);
 #else
-			fork_exec_args_repeat(SEPARATE0, "chmod", "606",
+			exit_status = fork_exec_args_repeat(SEPARATE0, "chmod", "606",
 			 get_cur_fv_file_ptr(file_idx)->file_name, 0);
 #endif
 		}
 	}
-	end_fork_exec_repeat();
+	end_fork_exec_repeat(exit_status);
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -409,6 +415,7 @@ int dof_size_zero_file(void)
 	if (ret <= 0) {
 		return 0;
 	}
+	int exit_status = 0;
 	begin_fork_exec_repeat();
 	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
@@ -418,15 +425,15 @@ int dof_size_zero_file(void)
 		if (fork_exec_args_repeat(SEPARATE0, BESIZE0,
 		 get_cur_fv_file_ptr(file_idx)->file_name, 0)) {
 #ifndef	USE_BUSYBOX
-			fork_exec_args_repeat(SEPARATE0, "chmod", "-v", "000",
+			exit_status = fork_exec_args_repeat(SEPARATE0, "chmod", "-v", "000",
 			 get_cur_fv_file_ptr(file_idx)->file_name, 0);
 #else
-			fork_exec_args_repeat(SEPARATE0, "chmod", "000",
+			exit_status = fork_exec_args_repeat(SEPARATE0, "chmod", "000",
 			 get_cur_fv_file_ptr(file_idx)->file_name, 0);
 #endif
 		}
 	}
-	end_fork_exec_repeat();
+	end_fork_exec_repeat(exit_status);
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -738,7 +745,7 @@ PRIVATE int change_cur_dir_from_history(const char *dir);
 int goto_dir_in_string(const char *str)
 {
 	char dir_save[MAX_PATH_LEN+1];
-	change_cur_dir_by_file_path_after_save(dir_save, get_epc_buf()->file_path);
+	change_cur_dir_by_file_path_after_save(dir_save, get_epc_buf()->file_path_);
 
 	char dir[MAX_PATH_LEN+1];
 	for (int field_idx = 0; field_idx < 10; field_idx++) {
@@ -758,14 +765,12 @@ int goto_dir_in_string(const char *str)
 	}
 	change_cur_dir(dir_save);
 	disp_status_bar_err(_("Can not change directory to [%s]"), str);
-_FLF_
 	return 0;
 
 changed:;
 #ifdef ENABLE_HISTORY
 	update_dir_history(get_cur_filer_view()->prev_dir, get_cur_filer_view()->cur_dir);
 #endif // ENABLE_HISTORY
-_FLF_
 	return 1;
 }
 

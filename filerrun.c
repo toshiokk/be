@@ -43,6 +43,7 @@ int dof_exec_command_with_file(void)
 	char buffer[MAX_PATH_LEN+1];
 #define MAX_REPLACEMENTS	10
 	int cnt;
+	int exit_status = 0;
 
 	int ret = input_string_tail("", command_str, HISTORY_TYPE_IDX_EXEC,
 	 _("Execute({} will be replaced with file-name):"));
@@ -53,7 +54,8 @@ int dof_exec_command_with_file(void)
 		return filer_change_dir(command_str);
 	}
 	if (get_files_selected_cfv() == 0) {
-		fork_exec_sh_c_once(PAUSE1, command_str);
+		// no file selected, not replace "{}" with filename
+		fork_exec_sh_c_once(LOGGING0, PAUSE1, command_str);
 	} else {
 		begin_fork_exec_repeat();
 		for (int file_idx = select_and_get_first_file_idx_selected();
@@ -72,9 +74,9 @@ int dof_exec_command_with_file(void)
 				 ptr_replace - buffer, STR_TO_BE_REPLACED_WITH_FILE_NAME_LEN,
 				 quote_file_name_static(get_cur_fv_file_ptr(file_idx)->file_name), -1);
 			}
-			fork_exec_sh_c_repeat(SEPARATE1, buffer);
+			exit_status = fork_exec_sh_c_repeat(SEPARATE1, buffer);
 		}
-		end_fork_exec_repeat();
+		end_fork_exec_repeat(exit_status);
 	}
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
@@ -98,7 +100,7 @@ int dof_exec_command_with_files(void)
 	if (set_filer_do_next(ret)) {
 		return 0;
 	}
-	fork_exec_sh_c_once(PAUSE1, command_str);
+	fork_exec_sh_c_once(LOGGING0, PAUSE1, command_str);
 	filer_do_next = FILER_DO_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -216,7 +218,7 @@ flf_d_printf("ret: %d\n", ret);
 	}
 
 flf_d_printf("command_str [%s]\n", command_str);
-	fork_exec_sh_c_once(PAUSE1, command_str);
+	fork_exec_sh_c_once(mode >= 20 ? LOGGING0 : LOGGING1, PAUSE1, command_str);
 
 	if (is_app_list_mode()) {
 		filer_do_next = FILER_DO_QUIT;
@@ -233,9 +235,9 @@ void begin_fork_exec_repeat(void)
 	clear_fork_exec_counter();
 	clear_sigint_signaled();
 }
-void end_fork_exec_repeat(void)
+void end_fork_exec_repeat(int exit_status)
 {
-	pause_after_exec();
+	pause_after_exec(exit_status);
 	reinit_term_for_filer();
 }
 
@@ -248,13 +250,13 @@ PRIVATE int fork_exec_args(int set_term, int separate_bef_exec, int pause_aft_ex
 PRIVATE void output_exec_args_to_history(char * const *args);
 #endif // ENABLE_HISTORY
 
-int fork_exec_sh_c_once(int pause_aft_exec, const char *command)
+int fork_exec_sh_c_once(int logging, int pause_aft_exec, const char *command)
 {
-	return fork_exec_sh_c(SETTERM1, SEPARATE1, LOGGING0, pause_aft_exec, command);
+	return fork_exec_sh_c(SETTERM1, SEPARATE1, logging, pause_aft_exec, command);
 }
 int fork_exec_sh_c_repeat(int separate_bef_exec, const char *command)
 {
-	return fork_exec_sh_c(SETTERM0, separate_bef_exec, LOGGING0, PAUSE0, command);
+	return fork_exec_sh_c(SETTERM0, separate_bef_exec, LOGGING1, PAUSE0, command);
 }
 
 int fork_exec_args_once(int pause_aft_exec, ...)
@@ -345,24 +347,29 @@ int fork_exec_sh_c(int set_term, int separate_bef_exec, int logging, int pause_a
 		clear_fork_exec_counter();
 	}
 	// sh -c "command ..."
-#define SH_PROG		"sh"
-#define TEE_PROG	"tee"
+#define SH_PROG			"sh"
+#define TEE_PROG		"tee"
+#define TEE_PROG_APPEND	"tee -a"
 	args[0] = SH_PROG;
 	args[1] = "-c";
 	if (logging == LOGGING0) {
 		args[2] = (char *)command;
 	} else {
+		// sh -c "command ... 2>&1 | tee    /home/user/.be/1.long"
+		// sh -c "command ... 2>&1 | tee -a /home/user/.be/1.long"
 		snprintf_(buffer, MAX_PATH_LEN, "%s 2>&1 | %s %s",
-		 command, TEE_PROG, get_exec_log_file_path());
+		 command,
+		 (get_fork_exec_counter() == 0) ? TEE_PROG : TEE_PROG_APPEND,
+		 get_exec_log_file_path());
 		args[2] = (char *)buffer;
 	}
 	args[3] = NULL;
 
-mflf_d_printf("exec: {{%s} {%s} {%s}}\n", args[0], args[1], args[2]);
+mflf_d_printf("logging: %d, exec: {{%s} {%s} {%s}}\n", logging, args[0], args[1], args[2]);
+	// It does not output "sh -c [command arg1 arg2]"
+	//           but output only "command arg1 arg2"
 #ifdef ENABLE_HISTORY
 	if (get_fork_exec_counter() == 0) {
-		// It does not output "sh -c [command arg1 arg2 arg3]"
-		//           but output only "command arg1 arg2 arg3"
 		update_history(HISTORY_TYPE_IDX_EXEC, command, 0);
 	}
 #endif // ENABLE_HISTORY
@@ -400,8 +407,7 @@ mflf_d_printf("ret: %d, exit_status: %d\n", ret, exit_status);
 	}
 
 	if (pause_aft_exec) {
-		printf("\n\aStatus:%d ", exit_status);
-		pause_after_exec();
+		pause_after_exec(exit_status);
 	}
 	if (set_term && get_fork_exec_counter() == 0) {
 		reinit_term_for_filer();
@@ -424,8 +430,9 @@ int inc_fork_exec_counter(void)
 	return fork_exec_counter++;
 }
 
-void pause_after_exec(void)
+void pause_after_exec(int exit_status)
 {
+	printf("\n\aStatus:%d ", exit_status);
 	set_term_raw();
 	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in getchar()
 	for (int chars = 0; chars < 1000; chars++) {

@@ -67,6 +67,7 @@ int strlcmp__(const char *dest, const char *src);
 int strlcasecmp(const char *str1, const char *str2);
 int strcmp_from_tail(const char *dest, const char *src);
 char *strchr__(const char *str, char chr);
+int contain_chr(const char *string, char chr);
 char *strnset__(char *buf, char chr, size_t len);
 char *strncpy__(char *dest, const char *src, size_t buf_len);
 void *memcpy__(void *dest, const void *src, size_t len);
@@ -103,12 +104,14 @@ const char *skip_string_const(const char *ptr);
 char *skip_string_mutable(char *ptr);
 
 char *remove_line_tail_lf(char *line);
-int is_file_path_char(const char *ptr);
-int is_file_name_char(const char *ptr);
-int is_separator(char chr);
-int is_white_space_separator(char chr);
-int is_non_white_space_separator(char chr);
-int contain_chr(const char *string, char chr);
+
+int is_char_file_path(const char *ptr);
+int is_char_file_name(const char *ptr);
+int is_char_id(char chr);
+int is_char_separator(char chr);
+int is_char_non_white_space_separator(char chr);
+int is_char_white_space(char chr);
+
 char *quote_string(char *buf, const char *string, char quote_chr);
 char *escape_quote_chr(char *buffer, const char *string, char quote_chr);
 char *unquote_string(char *buffer);

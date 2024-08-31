@@ -44,11 +44,12 @@ int call_editor(int push_win, int list_mode, char *str_buf, int buf_len)
 
 flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
 flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
+
 	int ret = editor_main_loop(str_buf, buf_len);
+
 flf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
 flf_d_printf("push_win:%d, list_mode:%d --> ret: %d\n", push_win, list_mode, ret);
 /////_D_(dump_editor_panes())
-	/////editor_quit = EDITOR_NONE;	// for caller of call_editor(), clear "editor_quit"
 	_mlc_check_count
 
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
@@ -154,9 +155,6 @@ flf_d_printf("all files closed\n");
 			}
 		} else
 		if (is_app_list_help_mode()) {
-			/////if (editor_quit == EDITOR_LOADED) {
-			/////	break;
-			/////} else
 			if (editor_quit) {
 				break;
 			}
@@ -178,12 +176,12 @@ flf_d_printf("all files closed\n");
 }
 
 //-----------------------------------------------------------------------------
-PRIVATE int open_file_recursive(int recursive);
+PRIVATE int doe_open_file_recursive(int recursive);
 int doe_open_file(void)
 {
-	return open_file_recursive(RECURSIVE1);
+	return doe_open_file_recursive(RECURSIVE1);
 }
-PRIVATE int open_file_recursive(int recursive)
+PRIVATE int doe_open_file_recursive(int recursive)
 {
 	char file_path[MAX_PATH_LEN+1];
 
@@ -201,6 +199,7 @@ PRIVATE int open_file_recursive(int recursive)
 	}
 #else // ENABLE_FILER
 	call_filer(1, APP_MODE_NORMAL, "", file_path, file_path, MAX_PATH_LEN);
+/////_D_(dump_editor_panes())
 #endif // ENABLE_FILER
 	disp_files_loaded_if_ge_0();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
@@ -220,16 +219,12 @@ int doe_open_new_file(void)
 		disp_files_loaded_if_ge_0();
 
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
-_FLF_
 		return 1;
 	}
-_FLF_
 	if (goto_dir_in_str__call_filer(file_path)) {
-_FLF_
 		return 1;
 	}
 	tio_beep();
-_FLF_
 	return 0;
 }
 
@@ -362,7 +357,7 @@ int doe_write_file_to(void)
 {
 	char file_path[MAX_PATH_LEN+1];
 
-	strlcpy__(file_path, get_epc_buf()->file_path, MAX_PATH_LEN);
+	strlcpy__(file_path, get_epc_buf()->file_path_, MAX_PATH_LEN);
 	for ( ; ; ) {
 		if (input_new_file_name__ask(file_path) <= 0) {
 			return -1;
@@ -427,7 +422,6 @@ int doe_close_file_always(void)
 PRIVATE int close_file_ask(int yes_no)
 {
 	if (is_editor_view_mode()) {
-		/////switch_epc_buf_to_valid_edit_buf();
 		editor_quit = EDITOR_DO_QUIT;
 		return 0;
 	}
@@ -492,7 +486,7 @@ int doe_read_file_into_cur_buf(void)
 {
 	char file_pos_str[MAX_PATH_LEN+1];
 	memorize_cur_file_pos_null(file_pos_str);
-	open_file_recursive(RECURSIVE0);
+	doe_open_file_recursive(RECURSIVE0);
 	if (get_files_loaded() < 0) {
 		return 0;
 	}
@@ -992,7 +986,7 @@ int is_epc_view_mode(void)
 #ifdef ENABLE_DEBUG
 void dump_cur_pointers(void)
 {
-	flf_d_printf("epc_buf:[%s]\n", get_epc_buf()->file_path);
+	flf_d_printf("epc_buf:[%s]\n", get_epc_buf()->file_path_);
 	flf_d_printf("%d:[%s]\n", EPCBVC_CL->line_num, EPCBVC_CL->data);
 	flf_d_printf("EPCBVC_CLBI:%d\n", EPCBVC_CLBI);
 	flf_d_printf("cursor_y:%d\n", EPCBVC_CURSOR_Y);

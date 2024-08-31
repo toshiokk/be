@@ -1,0 +1,11 @@
+imjcuitest.cpp 43 main() start
+imj.cpp 106 im_open()
+imj.cpp 2691 test_imjatoh_functions()
+imj.cpp 2693 test_imjatoh_functions() roman1:[ hiragana] ==> pronun[　ひらがな]
+imj.cpp 2696 test_imjatoh_functions() imjatoh_romaji_offset([ hiragana], strlen([ひら])) ==> 3
+imj.cpp 2699 test_imjatoh_functions() imjatoh_romaji_offset([kanji], strlen([かん])) ==> 3
+imj.cpp 2702 test_imjatoh_functions() imjatoh_hira_offset([ hiragana], [ひらがな], 6) ==> 12
+imj.cpp 1176 imjdic_open() dic-file-path:[./.imj/imj.dic]
+imj.cpp 1917 imjhst_load() hst-file-path:[./.imj/imj.hst]
+imj.cpp 1928 imjhst_load() history entries: 1144
+imj.cpp 3114 test_hira_kata_han_conversion() 

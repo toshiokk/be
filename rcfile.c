@@ -174,7 +174,6 @@ struct /*_rc_cmd_func_*/ {
 };
 
 // Parse the RC file
-#define IS_CHAR_FOR_ID(chr)			(isalnum(chr) || strchr__("_-", chr) != NULL)
 PRIVATE const char *rc_line_ptr;
 PRIVATE int rc_line_num = 0;
 
@@ -226,7 +225,7 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 		}
 		begin = rc_line_ptr;
 		for ( ; *rc_line_ptr; rc_line_ptr++) {
-			if (IS_CHAR_FOR_ID(*rc_line_ptr) == 0)
+			if (is_char_id(*rc_line_ptr) == 0)
 				break;
 		}
 		strlcpy__(cmd, begin, rc_line_ptr - begin);
@@ -781,11 +780,11 @@ void dump_file_type(const file_type_t *file_type, int syntax)
 }
 void dump_color_syntax(const color_syntax_t *clr_syntax)
 {
-	flf_d_printf("%p: [%s]-[%s] %d/%d ->%p\n",
+	flf_d_printf("%p: [%s]-[%s] %d/%d ->next:%p\n",
 	 clr_syntax,
 	 clr_syntax->regexp_start->needle_compiled,
 	 clr_syntax->regexp_end ? clr_syntax->regexp_end->needle_compiled : "",
-	 clr_syntax->color.bgc, clr_syntax->color.fgc,
+	 clr_syntax->color.fgc, clr_syntax->color.bgc,
 	 clr_syntax->next);
 }
 #endif // ENABLE_DEBUG

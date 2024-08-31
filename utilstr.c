@@ -322,10 +322,23 @@ int strcmp_from_tail(const char *dest, const char *src)
 	return strcmp(&dest[diff], src);
 }
 
+// strchr("abc", chr);
+//
+// | chr  | strchr() | strchr__() |
+// |------|----------|------------|
+// | 'a'  | non-NULL | non-NULL   |
+// | 'z'  | NULL     | NULL       |
+// | '\0' | non-null | NULL       | <-- problem of strchr()
+
 char *strchr__(const char *str, char chr)
 {
 	return chr ? strchr(str, chr) : NULL;
 }
+int contain_chr(const char *string, char chr)
+{
+	return strchr__(string, chr) != NULL;
+}
+
 char *strnset__(char *buf, char chr, size_t len)
 {
 	memset(buf, chr, len);
@@ -499,7 +512,7 @@ const char *skip_chars(const char *ptr, const char *chars)
 
 const char *skip_to_file_path(const char *ptr)
 {
-	while (*ptr && is_file_path_char(ptr) == 0) {
+	while (*ptr && is_char_file_path(ptr) == 0) {
 		// skip to beginning of a file path
 		ptr++;
 	}
@@ -525,7 +538,7 @@ const char *skip_file_path(const char *ptr)
 		}
 	} else {
 		// filename.txt
-		while (is_file_path_char(ptr)) {
+		while (is_char_file_path(ptr)) {
 			ptr += utf8c_bytes(ptr);
 		}
 	}
@@ -533,7 +546,7 @@ const char *skip_file_path(const char *ptr)
 }
 char *skip_file_name(char *ptr)
 {
-	while (is_file_name_char(ptr)) {
+	while (is_char_file_name(ptr)) {
 		// skip file name
 		ptr += utf8c_bytes(ptr);
 	}
@@ -542,7 +555,7 @@ char *skip_file_name(char *ptr)
 #if 0
 const char *skip_separator(const char *ptr)
 {
-	for ( ; is_separator(*ptr); ) {
+	for ( ; is_char_separator(*ptr); ) {
 		ptr++;
 		// skip to the next token
 	}
@@ -551,7 +564,7 @@ const char *skip_separator(const char *ptr)
 #endif
 const char *skip_one_separator(const char *ptr)
 {
-	if (is_separator(*ptr)) {
+	if (is_char_separator(*ptr)) {
 		ptr++;	// skip it
 	}
 	return ptr;
@@ -599,32 +612,33 @@ char *remove_line_tail_lf(char *line)
 	return line;
 }
 
-int is_file_path_char(const char *ptr)
+int is_char_file_path(const char *ptr)
 {
-	return is_file_name_char(ptr) || strchr__("/", *ptr);
+	return is_char_file_name(ptr) || strchr__("/", *ptr);
 }
-int is_file_name_char(const char *ptr)
+int is_char_file_name(const char *ptr)
 {
 ///	return (((' ' < *ptr) && (*ptr < 0x80) && (*ptr != '/')) || (utf8c_bytes(ptr) >= 2));
 	return isalnum(*ptr) || strchr__("_-+.~!#$%&@=\"\'", *ptr) || (utf8c_bytes(ptr) >= 2);
 	// non-file-name-chars are ' ' '\t' '/' '|' ':'
 }
-int is_separator(char chr)
+int is_char_id(char chr)
 {
-	return is_white_space_separator(chr) || is_non_white_space_separator(chr);
+	return isalnum(chr) || (strchr__("_", chr) != NULL);
 }
-int is_non_white_space_separator(char chr)
+int is_char_separator(char chr)
+{
+	return is_char_white_space(chr) || is_char_non_white_space_separator(chr);
+}
+int is_char_non_white_space_separator(char chr)
 {
 	return strchr__(" ,:|()", chr) != NULL;
 }
-int is_white_space_separator(char chr)
+int is_char_white_space(char chr)
 {
 	return strchr__(" \t", chr) != NULL;
 }
-int contain_chr(const char *string, char chr)
-{
-	return strchr(string, chr) != NULL;
-}
+
 char *quote_string(char *buffer, const char *string, char quote_chr)
 {
 	char buf[MAX_PATH_LEN+1];

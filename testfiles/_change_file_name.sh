@@ -1,5 +1,6 @@
+# comments ...
 cd ..
-while : ; do
+while : ; do  # comments ...
   mv -f __error~ z__error~
   mv -f __todo.txt~ z__todo.txt~
   echo -n "z"

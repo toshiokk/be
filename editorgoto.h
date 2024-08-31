@@ -29,7 +29,8 @@
 #define RECURSIVE0	0	// Not recursively open files
 #define RECURSIVE1	1	// Recursively open files
 
-int doe_goto_input_line(void);
+int doe_goto_column(void);
+int doe_goto_line(void);
 int doe_goto_file_or_dir_in_cur_line(void);
 int doe_goto_file_or_dir_in_cur_cursor_pos(void);
 
@@ -110,7 +111,6 @@ int switch_epc_buf_to_next(int beep_at_end, int goto_top);
 int switch_epc_buf_to_prev(int beep_at_end, int goto_bottom);
 int switch_epc_buf_to_valid_buf(void);
 int switch_epc_buf_to_another_buf(void);
-/////int switch_epc_buf_to_valid_edit_buf(void);
 
 #endif // editorgoto_h
 

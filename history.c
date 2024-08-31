@@ -86,18 +86,7 @@ void init_histories(void)
 // load history files into buffers
 void load_histories(void)
 {
-	int hist_type_idx;
-
-///	_mlc_memorize_count
-///	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
-///		load_history_idx(hist_type_idx);
-///	}
-///	_mlc_check_count
-///	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
-///		clear_history(hist_type_idx);
-///	}
-///	_mlc_differ_count
-	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
+	for (int hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
 		load_history_idx(hist_type_idx);
 	}
 }

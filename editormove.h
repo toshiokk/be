@@ -60,6 +60,7 @@ int doe_backspace_limited(void);
 int doe_backspace(void);
 int doe_delete_char(void);
 int doe_conv_upp_low_letter(void);
+int doe_conv_upp_letter(void);
 
 int doe_refresh_editor(void);
 

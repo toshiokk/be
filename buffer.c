@@ -53,7 +53,7 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path)
 	buf->orig_file_stat.st_mtime = time(NULL);		// time file was created
 	buf->orig_file_crc = 0;
 
-	buf_init_line_anchors(buf, buf->file_path);
+	buf_init_line_anchors(buf, buf->file_path_);
 
 	buf_view_init(&(buf->buf_views[0]), buf);
 	buf_view_init(&(buf->buf_views[1]), buf);
@@ -68,7 +68,7 @@ void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf)
 {
 	BUFV_CL(b_v) = BUF_BOT_ANCH(buf);
 	BUFV_CLBI(b_v) = 0;
-	BUFV_CURSOR_Y(b_v) = 100;		// to locate cursor as larger Y position as possible
+	BUFV_CURSOR_Y(b_v) = MAX_SCRN_LINES;
 	BUFV_CURSOR_X_TO_KEEP(b_v) = 0;
 	BUFV_MIN_TEXT_X_TO_KEEP(b_v) = 0;
 }
@@ -76,7 +76,7 @@ void buf_set_view_x_cur_line(be_buf_t *buf, int pane_idx, be_line_t *line)
 {
 #ifdef ENABLE_DEBUG
 	if (buf_check_line_in_buf(buf, line) == 0) {
-		warning_printf("line:[%s] is not in buf[%s] !!!!\n", line->data, buf->file_path);
+		warning_printf("line:[%s] is not in buf[%s] !!!!\n", line->data, buf->file_path_);
 	}
 #endif // ENABLE_DEBUG
 	BUFVX_CL(buf, pane_idx) = line;
@@ -85,9 +85,9 @@ void buf_set_view_x_cur_line(be_buf_t *buf, int pane_idx, be_line_t *line)
 be_buf_t *buf_init_line_anchors(be_buf_t *buf, char *initial_data)
 {
 	_mlc_set_caller
-	line_init(BUF_TOP_ANCH(buf), initial_data);
+	line_init(BUF_TOP_ANCH(buf), initial_data);		// set something to data for an anchor
 	_mlc_set_caller
-	line_init(BUF_BOT_ANCH(buf), initial_data);
+	line_init(BUF_BOT_ANCH(buf), initial_data);		// set something to data for an anchor
 	line_link(BUF_TOP_ANCH(buf), BUF_BOT_ANCH(buf));
 	return buf;
 }
@@ -98,7 +98,7 @@ void buf_set_file_abs_path(be_buf_t *buf, const char *file_path)
 }
 void buf_set_file_path(be_buf_t *buf, const char *file_path)
 {
-	strlcpy__(buf->file_path, file_path, MAX_PATH_LEN);
+	strlcpy__(buf->file_path_, file_path, MAX_PATH_LEN);
 }
 void buf_set_abs_path(be_buf_t *buf, const char *file_path)
 {
@@ -106,7 +106,7 @@ void buf_set_abs_path(be_buf_t *buf, const char *file_path)
 }
 void buf_get_file_path(be_buf_t *buf, char *file_path)
 {
-	strlcpy__(file_path, buf->file_path, MAX_PATH_LEN);
+	strlcpy__(file_path, buf->file_path_, MAX_PATH_LEN);
 }
 BOOL buf_is_empty(be_buf_t *buf)
 {
@@ -281,7 +281,7 @@ int buf_is_orig_file_updated(be_buf_t *buf)
 {
 	struct stat st;
 
-	if (stat(buf->file_path, &st)) {
+	if (stat(buf->file_path_, &st)) {
 		return -1;
 	}
 	return st.st_mtime > buf->orig_file_stat.st_mtime;
@@ -372,7 +372,7 @@ be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num)
 	if (IS_NODE_BOT_ANCH(line)) {
 		line = NODE_PREV(line);
 	}
-////_D_(line_dump(line))
+/////_D_(line_dump(line))
 	return line;
 }
 
@@ -494,7 +494,7 @@ be_buf_t *get_buf_from_bufs_by_file_path(be_buf_t *buf, const char *file_path)
 {
 	buf = make_sure_buf_is_top_buf(buf);
 	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
-		if (strcmp(buf->file_path, file_path) == 0) {
+		if (strcmp(buf->file_path_, file_path) == 0) {
 			return buf;	// found
 		}
 		char abs_path[MAX_PATH_LEN+1];
@@ -509,7 +509,7 @@ be_buf_t *get_buf_from_bufs_by_file_name(be_buf_t *buf, const char *file_name)
 {
 	buf = make_sure_buf_is_top_buf(buf);
 	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
-		if (compare_file_path_from_tail(buf->file_path, file_name) == 0) {
+		if (compare_file_path_from_tail(buf->file_path_, file_name) == 0) {
 			return buf;	// found by file_path
 		}
 		if (compare_file_path_from_tail(buf->abs_path_, file_name) == 0) {
@@ -609,8 +609,8 @@ void buf_dump_state(be_buf_t *buf)
 flf_d_printf("buf: NULL\n");
 		return;
 	}
-flf_d_printf("file_path: [%s]\n", buf->file_path);
-flf_d_printf("abs_path_: [%s]\n", buf->abs_path_);
+	flf_d_printf("file_path: [%s]\n", buf->file_path_);
+	flf_d_printf("abs_path_: [%s]\n", buf->abs_path_);
 }
 
 void bufs_dump_all_bufs(be_bufs_t *bufs)
@@ -619,7 +619,7 @@ flf_d_printf("00============================================\n");
 	for ( ; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs)) {
 		flf_d_printf("bufs: [%s]\n", bufs->name);
 		for (be_buf_t *buf = BUFS_TOP_ANCH(bufs); IS_PTR_VALID(buf); buf = NODE_NEXT(buf)) {
-			flf_d_printf(" %cbuf: [%s]\n", (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path);
+			flf_d_printf(" %cbuf: [%s]\n", (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path_);
 			flf_d_printf("    buf->v0_str: [%s]\n", buf->buf_views[0].cur_line->data);
 			flf_d_printf("    buf->v1_str: [%s]\n", buf->buf_views[1].cur_line->data);
 		}

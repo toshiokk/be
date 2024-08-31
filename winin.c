@@ -281,20 +281,24 @@ flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
 			// get string from edit buffer's current cursor position
 			if (count_edit_bufs()) {
 				char *line = EPCBVC_CL->data;
-				int byte_idx = byte_idx_from_byte_idx(line,
-				 EPCBVC_CLBI + strlen_path(input_buf));
-				// copy one token (at least copy one character)
-				cursor_byte_idx = 0;
-				for ( ;
-				 (strlen_path(input_buf) < MAX_PATH_LEN - MAX_UTF8C_BYTES)
-				  && (byte_idx < strlen_path(line))
-				  && (cursor_byte_idx == 0
-				   || (isalnum(line[byte_idx]) || line[byte_idx] == '_')); ) {
-					strlncat__(input_buf, MAX_PATH_LEN, &line[byte_idx],
-					 utf8c_bytes(&line[byte_idx]));
-					cursor_byte_idx++;
+				cursor_byte_idx = strlen_path(input_buf);
+				int start_byte_idx = byte_idx_from_byte_idx(line, EPCBVC_CLBI + cursor_byte_idx);
+				int byte_idx = start_byte_idx;
+				if (cursor_byte_idx == 0) {
+					// copy one token
+					for ( ; (byte_idx - start_byte_idx) < (MAX_PATH_LEN - MAX_UTF8C_BYTES); ) {
+						if (is_char_id(line[byte_idx]) == 0) {
+							break;
+						}
+						byte_idx++;
+					}
+				}
+				if ((byte_idx - start_byte_idx) == 0) {
+					// copy one character
 					byte_idx += utf8c_bytes(&line[byte_idx]);
 				}
+				strlncat__(input_buf, MAX_PATH_LEN, &line[start_byte_idx],
+				 byte_idx - start_byte_idx);
 				cursor_byte_idx = strlen_path(input_buf);
 			}
 		}

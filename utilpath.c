@@ -337,9 +337,7 @@ int compare_file_path_from_tail(const char *full_path, const char *file_path) {
 int is_path_wildcard(char *path)
 {
 #ifdef ENABLE_DEBUG
-	char *ptr;
-
-	ptr = strchr(path, '*');
+	char *ptr = strchr(path, '*');
 	if (ptr)
 		flf_d_printf("strchr(path, '*') ==> [%s]\n", ptr);
 	ptr = strchr(path, '?');
@@ -541,7 +539,7 @@ PRIVATE char *normalize_full_path__(char *full_path, char *parent, char *child)
 		parent++;
 	if (*child == '/')
 		child++;
-	for ( ; is_file_path_char(child); ) {
+	for ( ; is_char_file_path(child); ) {
 		if (strcmp(child, ".") == 0) {
 			// "/dir1/." ==> "/dir1/"
 			// "/."      ==> "/"
@@ -570,7 +568,7 @@ PRIVATE char *normalize_full_path__(char *full_path, char *parent, char *child)
 			}
 		} else {
 			grandchild = skip_file_name(child);
-			if (is_file_path_char(grandchild) == 0) {
+			if (is_char_file_path(grandchild) == 0) {
 				child = grandchild;
 				break;
 			}

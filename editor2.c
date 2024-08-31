@@ -21,7 +21,7 @@
 
 #include "headers.h"
 
-PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_line_t *line,
+PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
  int byte_idx_1, int byte_idx_2);
 #ifdef ENABLE_SYNTAX
 PRIVATE void disp_edit_line_single_line_regexp(int yy, const be_line_t *line,
@@ -32,7 +32,7 @@ PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
 
 PRIVATE int output_edit_line_text(int yy, const char *raw_code,
  int byte_idx_1, int byte_idx_2);
-PRIVATE int output_edit_line_num(int yy, const be_buf_t *buf, const be_line_t *line);
+PRIVATE int output_edit_line_num(int yy, const be_line_t *line);
 PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
  int byte_idx_1, int byte_idx_2, const char *vis_code);
 
@@ -96,7 +96,7 @@ void editor_disp_title_bar(void)
 	char buf_time[1+HHCMMCSS_LEN+1];
 
 	buf_idx = get_buf_idx_in_bufs(get_epc_buf(), get_epc_buf());
-	path = get_epc_buf()->file_path;
+	path = get_epc_buf()->file_path_;
 
 	tio_set_cursor_on(0);
 
@@ -222,12 +222,13 @@ void disp_edit_win(int cur_pane)
 		sub_win_clear_lines(edit_win_get_path_y(), -1);
 		buf_idx = get_buf_idx_in_bufs(get_epc_buf(), get_epc_buf());
 		snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%d%c%s",
-		 buf_idx+1, ':', get_epc_buf()->file_path);
+		 buf_idx+1, ':', get_epc_buf()->file_path_);
 		shrink_str(buf_path, sub_win_get_columns(), 2);
 		sub_win_output_string(edit_win_get_path_y(), 0, buf_path, -1);
 	}
 
 	get_cur_screen_top(&line, &byte_idx);
+/////_D_(line_dump(line))
 	for (yy = 0; yy < edit_win_get_text_lines(); ) {
 		if (IS_NODE_BOT_ANCH(line))
 			break;
@@ -239,7 +240,8 @@ void disp_edit_win(int cur_pane)
 			byte_idx_1 = start_byte_idx_of_wrap_line(te_concat_linefeed_buf, wl_idx, 0, -1);
 			byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_concat_linefeed_buf, wl_idx,
 			 INT_MAX, -1);
-			disp_edit_line(cur_pane, yy, get_epc_buf(), line, byte_idx_1, byte_idx_2);
+/////_D_(dump_editor_panes())
+			disp_edit_line__(cur_pane, yy, line, byte_idx_1, byte_idx_2);
 			if (yy == EPCBVC_CURSOR_Y) {
 				cursor_line_right_text_x = end_col_idx_of_wrap_line(
 				 te_concat_linefeed_buf, wl_idx, byte_idx_2, -1);
@@ -304,12 +306,11 @@ void disp_edit_win(int cur_pane)
 //-----------------------------------------------------------------------------
 
 // Just update one line in the edit buffer.
-PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_line_t *line,
+PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
  int byte_idx_1, int byte_idx_2)
 {
 #ifdef ENABLE_SYNTAX
 	int syntax_idx;
-	const color_syntax_t *clr_syntax = NULL;
 #endif // ENABLE_SYNTAX
 	int left_byte_idx = 0, right_byte_idx = 0;
 	int vis_idx;
@@ -330,9 +331,9 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 	// output line number -----------------------------------------------------
 	if (byte_idx_1 == 0) {
 		// first line of line wrapping, display line number
-		output_edit_line_num(yy, buf, line);	// "9999 "
+		output_edit_line_num(yy, line);	// "9999 "
 	} else {
-		output_edit_line_num(yy, buf, NULL);	// "     "
+		output_edit_line_num(yy, NULL);	// "     "
 	}
 
 	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
@@ -342,17 +343,19 @@ PRIVATE void disp_edit_line(int cur_pane, int yy, const be_buf_t *buf, const be_
 	// display text simply =====================================================
 	output_edit_line_text(yy, line->data, byte_idx_1, byte_idx_2);
 
+/////_D_(line_dump(line))
 #ifdef ENABLE_SYNTAX
 	// display syntax color highlighting =======================================
 	if (GET_APPMD(ed_SYNTAX_HIGHLIGHT)) {
 		// check for all of syntaxes
 		for (syntax_idx = 0; syntax_idx < 2; syntax_idx++) {
+			const color_syntax_t *clr_syntax = NULL;
 			if (syntax_idx == 0) {
-				// syntax_idx = 0: loop 0
+				// syntax_idx = 0: loop 0: user defined color syntax
 				clr_syntax = get_color_syntax_head();
 			} else {
+				// syntax_idx = 1: loop 1: default color syntax
 				// clr_syntax == NULL
-				// syntax_idx = 1: loop 1
 				if (GET_APPMD(ed_TAB_EOL_NOTATION)) {
 					clr_syntax = get_default_color_syntax_head();
 				}
@@ -519,8 +522,9 @@ PRIVATE void disp_edit_line_single_line_regexp(int yy, const be_line_t *line,
 PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
  int byte_idx_1, int byte_idx_2, const color_syntax_t *clr_syntax)
 {
+/////_D_(line_dump(line))
 	// This is a multi-line regexp. There are two steps.
-	// First step, we have to see if the beginning is there
+	// [First step] We have to see if the beginning is there
 	// on an earlier line, and an end on this line or later.
 	// We find the first line before line_ptr matching the
 	// start. If every match on that line is followed by an
@@ -539,10 +543,13 @@ PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
 	for (line_cnt = 0, start_line = NODE_PREV(line); ;
 	 line_cnt++, start_line = NODE_PREV(start_line)) {
 #define MAX_SYNTAX_SEARCH_LINES		LIM_MIN(25, edit_win_get_text_lines() * 2)
-		if (IS_NODE_TOP_ANCH(start_line) || line_cnt >= MAX_SYNTAX_SEARCH_LINES) {
+		if (! IS_NODE_INT(start_line) || line_cnt >= MAX_SYNTAX_SEARCH_LINES) {
 			// No syntax found, so skip to the next step.
 			goto step_two;
 		}
+/////flf_d_printf("regexp_start[%p]\n", clr_syntax->regexp_start);
+/////flf_d_printf("start_line[%p]\n", start_line);
+/////flf_d_printf("start_line->data[%p]\n", start_line->data);
 		if (regexp_search_compiled(clr_syntax->regexp_start, start_line->data, 0,
 		 REG_NONE, &matches_begin, 1) == 0) {
 			// A start found before current line
@@ -592,7 +599,7 @@ PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
 	}
 
 step_two:
-	// Second step, we look for start in the current line.
+	// [Second step] We look for start in the current line.
 	for (byte_idx = 0; byte_idx < te_concat_linefeed_bytes; ) {
 		if (regexp_search_compiled(clr_syntax->regexp_start, line->data, byte_idx,
 		 REG_NONE, &matches_begin, 1) != 0)
@@ -780,7 +787,7 @@ yyyyyyyyyy+----------------------------------------------------+yyyyyyyyyyyyyyy
 zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
 */
 
-PRIVATE int output_edit_line_num(int yy, const be_buf_t *buf, const be_line_t *line)
+PRIVATE int output_edit_line_num(int yy, const be_line_t *line)
 {
 	char buf_line_num[MAX_LINE_NUM_STR_LEN+1];
 
@@ -793,7 +800,7 @@ PRIVATE int output_edit_line_num(int yy, const be_buf_t *buf, const be_line_t *l
 		set_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 0);
 	}
 	sub_win_output_string(edit_win_get_text_y() + yy, 0,
-	 get_line_num_string(buf, line, buf_line_num), -1);
+	 get_line_num_string(get_epc_buf(), line, buf_line_num), -1);
 	return 1;
 }
 
