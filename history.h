@@ -28,10 +28,9 @@
 #define HISTORY_TYPE_IDX_SEARCH		3	// app
 #define HISTORY_TYPE_IDX_EXEC		4	// app
 #define HISTORY_TYPE_IDX_SHELL		5	// shell
+
 #define HISTORY_TYPES_APP			5	// types of app histories (5)
 #define HISTORY_TYPES_APP_AND_SHELL	6	// types of app and shell histories (5+1)
-
-#define FILE_PATH_SEPARATOR		"|"		// candidates are "|", "//", ""\\"
 
 #ifdef ENABLE_HISTORY
 
@@ -57,6 +56,7 @@
 
 // Maximum number of search/execution/directory history strings saved
 #define MAX_HISTORY_LINES		1000
+#define MAX_HISTORY_LINES_10K	10000
 
 void init_hist_bufs(void);
 
@@ -68,13 +68,13 @@ void save_histories(void);
 void load_last_searched_needle(void);
 
 void update_dir_history(const char *prev_dir, const char *cur_dir);
-void update_history(int hist_type_idx, const char *str, BOOL update_request);
+void update_history(int hist_type_idx, const char *str);
 const char *get_history_newest(int hist_type_idx, int last_n);
 const char *get_history_completion(int hist_type_idx, const char *str);
 const char *search_history_file_path(int hist_type_idx, const char *path);
 
 void set_history_newest(int hist_type_idx);
-char *get_history_older(int hist_type_idx);
+const char *get_history_older(int hist_type_idx);
 
 int select_from_history_list(int hist_type_idx, char *buffer);
 

@@ -111,7 +111,8 @@ PRIVATE int view_help(int help_idx)
 	int ret = call_editor(1, APP_MODE_HELP, NULL, 0);
 
 flf_d_printf("ret: %d\n", ret);
-	if (ret != EDITOR_LOADED) {
+	if (ret != EF_LOADED) {
+		// No new file has been loaded, recover previous state
 		set_epc_buf(edit_buf_save);
 	}
 /////_D_(dump_buf_views(edit_buf_save))
@@ -175,10 +176,10 @@ PRIVATE void make_help_file_list(be_buf_t *cur_edit_buf)
 	for (be_buf_t *edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
 	 edit_buf = NODE_NEXT(edit_buf)) {
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-60s %-5s %s %s %s",
-		 quote_file_name_static(edit_buf->file_path_),
+		 quote_file_path_static(edit_buf->file_path_),
 		 buf_encode_str(edit_buf), buf_eol_str(edit_buf),
 		 BUF_STATE(edit_buf, buf_MODIFIED) ? "Mo" : "--",
-		 quote_file_name_buf(buf, edit_buf->abs_path_));
+		 quote_file_path_buf(buf, edit_buf->abs_path_));
 		append_string_to_cur_edit_buf(buffer);
 /////_D_(buf_dump_state(edit_buf))
 /////_D_(line_dump_byte_idx(EPCBVC_CL, 0))

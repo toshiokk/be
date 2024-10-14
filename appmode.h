@@ -253,6 +253,7 @@ int inc_backup_files(void);
 const char *get_str_backup_files(void);
 int get_backup_files(void);
 
+int tog_editor_panes();
 const char *get_editor_panes(void);
 
 int tog_show_dot_file(void);
@@ -262,15 +263,17 @@ const char *get_str_show_file_info(void);
 int clear_sort_by(void);
 int inc_sort_by(void);
 const char *get_str_sort_by(void);
+
 int tog_filer_panes(void);
 const char *get_str_filer_panes(void);
+
 int inc_key_list_lines(void);
 const char *get_str_key_list_lines(void);
 int get_key_list_lines(void);
 
 // |editor-mode|buffer |contents                      |action                  |
 // |-----------|-------|------------------------------|------------------------|
-// |normal-mode|normal |ordinary files                |editable, cut/copy/paste|
+// |normal-mode|normal |ordinary files                |all editing             |
 // |list-mode  |normal |history                       |up/down only cursor move|
 // |view-mode  |RO-mode|file-list, key-list, func-list|free cursor, copy       |
 // 

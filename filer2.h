@@ -50,7 +50,6 @@ typedef struct {
 										//  or after updating file list
 } filer_view_t;
 
-int get_file_type_num(file_info_t *info);
 
 #ifdef START_UP_TEST
 void test_get_file_size_str(void);
@@ -61,11 +60,13 @@ int make_file_list(filer_view_t *fv, const char *filter);
 void free_file_list(filer_view_t *fv);
 
 void sort_file_list(filer_view_t *fv);
+int get_file_type_num(file_info_t *info);
+
 int get_files_selected_cfv(void);
 int get_files_selected(filer_view_t *fv);
 
+file_info_t *select_and_get_first_file_ptr();
 int select_and_get_first_file_idx_selected(void);
-void select_file_if_none_selected(void);
 int get_first_file_idx_selected(void);
 int get_next_file_idx_selected(int file_idx);
 void unselect_all_files_auto(char selection_bit);

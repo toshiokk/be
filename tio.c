@@ -311,6 +311,14 @@ void tio_set_cursor_pos(int yy, int xx)
 	termif_send_cursor_pos(yy, xx);
 #endif // ENABLE_NCURSES
 }
+void tio_get_cursor_pos(int *yy, int *xx)
+{
+#ifdef ENABLE_NCURSES
+	curses_get_cursor_pos(yy, xx);
+#else // ENABLE_NCURSES
+	termif_get_cursor_pos(yy, xx);
+#endif // ENABLE_NCURSES
+}
 
 void tio_clear_flash_screen(int delay)
 {

@@ -22,17 +22,28 @@
 #ifndef winin_h
 #define winin_h
 
-// | command modifier key | replace/append string         | return value        |
-// |----------------------|-------------------------------|---------------------|
-// | none                 | replacing input file/dir name | ...INPUT_TO_REPLACE |
-// | ALT                  | appending input file/dir name | ...INPUT_TO_APPEND  |
+// EF__
+typedef enum {
+	EF_NONE						= 0,	// nothing done yet and nothing to do next
+										// in filer loop:
+	FL_UPDATE_FILE_LIST_AUTO	= 1,	//   periodic file list update
+	FL_UPDATE_FILE_LIST_FORCE	= 2,	//   force immediate file list update
+										// quit from editor/filer:
+	EF_CANCELLED				= 3,	//   cancelled
+	EF_QUIT						= 4,	//   quit editor/filer
+	EF_LOADED					= 5,	//   file was loaded and return from editor/filer
+	EF_EXECUTED					= 6,	//   command was executed and return from editor/filer
+										// enter file/dir path in filer:
+	FL_ENTER_FILE_NAME_OR_PATH	= 8,	//   return file name(file, dir)
+										//       or file path(/path/to/file, /path/to/dir)
+	FL_ENTER_CUR_DIR_PATH		= 9,	//   return current directory path (/path/to/dir)
+										// input text from editor/filer:
+	EF_INPUT_TO_REPLACE			= 10,	//   input string(file/dir name or path) to replace
+	EF_INPUT_TO_APPEND			= 11,	//   input string(file/dir name or path) to append
+										// input text:
+	EF_INPUT					= 12,	//   input string(file/dir name or path)
+} ef_do_next_t;
 
-#define INPUT_CANCELLED		-1	// cancelled
-#define INPUT_LOADED		0	// file loaded
-#define INPUT_INPUT			1	// input
-
-int input_string_tail(const char *default__, char *input_buf,
- int hist_type_idx, const char *msg, ...);
 int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, ...);
 

@@ -295,7 +295,7 @@ void setup_cut_region(void)
 			mark_min_line = EPCBVC_CL;
 			mark_max_line = EPCBVC_CL;
 			mark_min_byte_idx = 0;
-			mark_max_byte_idx = line_data_len(EPCBVC_CL);
+			mark_max_byte_idx = line_data_strlen(EPCBVC_CL);
 		} else {
 			// There is next line
 			// {aaaaaaaaaaaaaaaaaaa

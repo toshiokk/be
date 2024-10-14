@@ -10,8 +10,10 @@
  disp.h \
  editor.h \
  editor2.h \
+ editor3.h \
  editorcut.h \
  editorcut2.h \
+ editorfile.h \
  editorgoto.h \
  editorkeys.h \
  editorlist.h \
@@ -55,8 +57,10 @@
  disp.c \
  editor.c \
  editor2.c \
+ editor3.c \
  editorcut.c \
  editorcut2.c \
+ editorfile.c \
  editorgoto.c \
  editorkeys.c \
  editorlist.c \

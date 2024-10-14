@@ -22,42 +22,11 @@
 #ifndef editor_h
 #define editor_h
 
-typedef enum {
-	EDITOR_NONE				= 0,
-	EDITOR_DO_QUIT			= 1,	// quit/cancelled
-	EDITOR_LOADED			= 2,	// file is loaded
-	EDITOR_INPUT			= 3,	// input string
-	EDITOR_INPUT_TO_REPLACE	= 3,	// input string to replace
-	EDITOR_INPUT_TO_APPEND	= 4,	// input string to append
-} editor_quit_t;
-extern editor_quit_t editor_quit;
+extern ef_do_next_t editor_do_next;
 
 int call_editor(int push_win, int list_mode, char *str_buf, int buf_len);
 
-//-----------------------------------------------------------------------------
-// "doe_..."  DO Editor function
-int doe_open_file(void);
-int doe_open_new_file(void);
-int doe_open_proj_file(void);
-int doe_open_exec_log_file(void);
-int do_open_proj_file(void);
-int do_open_exec_log_file(void);
-int doe_reopen_file_last_line(void);
-int doe_reopen_file(void);
-
-int doe_write_file_to(void);
-
-int doe_write_file_ask(void);
-int doe_write_file_always(void);
-int doe_write_all_ask(void);
-int doe_write_all_modified(void);
-
-int doe_close_file_ask(void);
-int doe_close_file_always(void);
-int doe_close_all_ask(void);
-int doe_close_all_modified(void);
-
-int doe_read_file_into_cur_buf(void);
+int chk_inp_str_ret_val_editor(int ret);
 
 char *get_app_dir(void);
 
@@ -72,7 +41,7 @@ int doe_read_clipboard_into_cur_pos_(int char0_line1);
 //-----------------------------------------------------------------------------
 
 int doe_run_line_soon(void);
-int doe_run_line_soon_wo_log(void);
+int doe_run_line_soon_w_log(void);
 int doe_run_line_soon__(int logging);
 
 #ifdef ENABLE_FILER
@@ -98,17 +67,6 @@ int doe_editor_menu_6(void);
 int doe_editor_menu_7(void);
 int doe_editor_menu_8(void);
 int doe_editor_menu_9(void);
-
-typedef enum {
-	NO_CLOSE_AFTER_SAVE_0,	// 0: File will be kept open
-	CLOSE_AFTER_SAVE_1		// 1: File will be closed after save
-							//    (ANSWERING No WILL DISCARD CHANGES)
-} close_after_save_t;
-
-int write_all_ask(int yes_no, close_after_save_t close);
-int close_all_not_modified(void);
-int close_all();
-int write_file_ask(int yes_no, close_after_save_t close);
 
 int doe_inc_key_list_lines(void);
 

@@ -81,7 +81,7 @@ int doe_cut_to_head(void)
 }
 int doe_cut_to_tail(void)
 {
-	if (EPCBVC_CLBI == line_data_len(EPCBVC_CL)) {
+	if (EPCBVC_CLBI == line_data_strlen(EPCBVC_CL)) {
 		return 0;
 	}
 	set_disabled_update_min_text_x_to_keep();	// avoid contents jump around
@@ -375,10 +375,10 @@ PRIVATE int paste_text_from_cut_buf(void)
 	return 1;
 }
 
-//-------------------------------------------------------------------------------------------------
-// Ex.1
+//-----------------------------------------------------------------------------
+// e.g.1
 //  aaaaAAAAAAAAAAAAAaaaa
-// Ex.2
+// e.g.2
 //  aaaaAAAAAAAAAAAAAAAAA
 //  BBBBbbbbbbbbbbbbbbbbb
 PRIVATE void copy_region_to_cut_buf(
@@ -397,7 +397,7 @@ PRIVATE void copy_region_to_cut_buf(
 		if (line != max_line) {
 			// first and intermediate line
 			append_string_to_cur_cut_buf(
-			 strcut__(buf, MAX_EDIT_LINE_LEN, line->data, min_byte_idx, line_data_len(line)));
+			 strcut__(buf, MAX_EDIT_LINE_LEN, line->data, min_byte_idx, line_data_strlen(line)));
 		} else {
 			// last line
 			if (char_cut ? (min_byte_idx <= max_byte_idx) : (min_byte_idx < max_byte_idx)) {
@@ -410,12 +410,12 @@ PRIVATE void copy_region_to_cut_buf(
 	}
 }
 
-// Ex.1
+// e.g.1
 //  [Before]
 //  aaaa<BBBBBBBBBBBBB>cccccc
 //  [After]
 //  aaaacccccc
-// Ex.2
+// e.g.2
 //  [Before]
 //  aaaaaaaaaaaaaaaaaaaaa
 //  <BBBBBBBBBBBBBBBBBBBBB>
@@ -424,7 +424,7 @@ PRIVATE void copy_region_to_cut_buf(
 //  aaaaaaaaaaaaaaaaaaaaa
 //  
 //  ccccccccccccccccccccc
-// Ex.3
+// e.g.3
 //  [Before]
 //  aaaaaaaaaaaaaaaaaaaaa
 //  <BBBBBBBBBBBBBBBBBBBBB
@@ -432,7 +432,7 @@ PRIVATE void copy_region_to_cut_buf(
 //  [After]
 //  aaaaaaaaaaaaaaaaaaaaa
 //  ccccccccccccccccccccc
-// Ex.4
+// e.g.4
 //  [Before]
 //  aaaa<AAAAAAAAAAAAAAAAAAAAA
 //  BBBBBBBBBBBBBBBBBBBBBBBBBB
@@ -466,7 +466,7 @@ PRIVATE void delete_region(
 				// >aaaaDDDD
 				//  DDDDDDDD
 				//  DDDDbbbb
-				line_string_delete(line, min_byte_idx, line_data_len(line) - min_byte_idx);
+				line_string_delete(line, min_byte_idx, line_data_strlen(line) - min_byte_idx);
 				// >aaaa
 				//  DDDDDDDD
 				//  DDDDbbbb
@@ -544,7 +544,7 @@ PRIVATE void delete_rect_region(
 
 //-----------------------------------------------------------------------------
 // paste data into edit buffer streamlike
-// Ex.
+// e.g.
 //  [CUT-BUFFER]
 //   AAAA
 //   BBBB
@@ -585,13 +585,13 @@ PRIVATE int paste_cut_buf_char(void)
 		//  aaaaAAAA
 		//  BBBB
 		// >bbbb
-		EPCBVC_CURSOR_Y++;
+		EPCBVC_CURS_Y++;
 	}
 	//  aaaaAAAA
 	//  BBBB
 	//  CCCC
 	// >bbbb
-	EPCBVC_CLBI = line_data_len(inserted_line);
+	EPCBVC_CLBI = line_data_strlen(inserted_line);
 	line_concat_with_prev(EPCBVC_CL);
 	//  aaaaAAAA
 	//  BBBB
@@ -599,7 +599,7 @@ PRIVATE int paste_cut_buf_char(void)
 	return 1;		// pasted
 }
 // paste cut-buffer data line by line
-// Ex.
+// e.g.
 //  [CUT-BUFFER]
 //   AAAA
 //   BBBB
@@ -620,18 +620,18 @@ PRIVATE int paste_cut_buf_line(void)
 		cut_line = NODE_NEXT(cut_line);
 		if (IS_MARK_SET(CUR_CBUF_STATE(buf_CUT_MODE))) {
 			// marked cut/copy
-			EPCBVC_CURSOR_Y++;
+			EPCBVC_CURS_Y++;
 		}
 	}
 	if (IS_MARK_SET(CUR_CBUF_STATE(buf_CUT_MODE)) == 0) {
 		// unmarked cut/copy
 		EPCBVC_CL = NODE_PREV(EPCBVC_CL);
-		EPCBVC_CLBI = LIM_MAX(EPCBVC_CLBI, line_data_len(EPCBVC_CL));	// limit cursor pos
+		EPCBVC_CLBI = LIM_MAX(EPCBVC_CLBI, line_data_strlen(EPCBVC_CL));	// limit cursor pos
 	}
 	return 1;		// pasted
 }
 // paste data into edit buffer rectangular
-// Ex.1
+// e.g.1
 //  [CUT-BUFFER]
 //   AAAA
 //   BBBB
@@ -641,7 +641,7 @@ PRIVATE int paste_cut_buf_line(void)
 //  [AFTER]
 //   aaaaAAAAbbbb
 //   ccccBBBB^dddd
-// Ex.2
+// e.g.2
 //  [CUT-BUFFER]
 //   AAAA
 //   BBBB
@@ -666,7 +666,7 @@ PRIVATE int paste_cut_buf_rect(void)
 		EPCBVC_CLBI = byte_idx_from_col_idx(EPCBVC_CL->data, cur_line_col_idx,
 		 CHAR_LEFT, NULL);
 		line_string_replace(EPCBVC_CL, EPCBVC_CLBI, 0, cut_line->data, -1);
-		EPCBVC_CLBI += line_data_len(cut_line);
+		EPCBVC_CLBI += line_data_strlen(cut_line);
 		cut_line = NODE_NEXT(cut_line);
 		if (IS_NODE_BOT_ANCH(cut_line))
 			break;

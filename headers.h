@@ -60,6 +60,7 @@
 #include "editorlist.h"
 #include "editor3.h"
 #include "editor2.h"
+#include "editorfile.h"
 #include "editor.h"
 #include "main.h"
 

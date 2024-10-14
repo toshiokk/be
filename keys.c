@@ -40,12 +40,8 @@ void set_app_func_key_table(void)
 #endif // ENABLE_FILER
 }
 
-void editor_menu_n(int grp_idx)
+int editor_menu_n(int grp_idx)
 {
-	if (is_app_list_help_mode()) {
-		editor_quit = EDITOR_DO_QUIT;
-		return;
-	}
 	static int prev_group_idx;
 	static int prev_entry_idx;
 
@@ -54,10 +50,11 @@ void editor_menu_n(int grp_idx)
 		prev_entry_idx = 1;
 	}
 	app_menu_n(&prev_group_idx, &prev_entry_idx);
+	return 0;
 }
 
 #ifdef ENABLE_FILER
-void filer_menu_n(int grp_idx)
+int filer_menu_n(int grp_idx)
 {
 	static int prev_group_idx;
 	static int prev_entry_idx;
@@ -67,6 +64,7 @@ void filer_menu_n(int grp_idx)
 		prev_entry_idx = 1;
 	}
 	app_menu_n(&prev_group_idx, &prev_entry_idx);
+	return 0;
 }
 #endif // ENABLE_FILER
 
@@ -128,9 +126,9 @@ app_menu_n_up_down:;
 		case K_ENTER:
 			exec_func(group_idx, entry_idx);
 #ifndef ENABLE_FILER
-			if (count_edit_bufs())
+			if (edit_bufs_count_bufs())
 #else // ENABLE_FILER
-			if (count_edit_bufs() || GET_APPMD(app_EDITOR_FILER))
+			if (edit_bufs_count_bufs() || GET_APPMD(app_EDITOR_FILER))
 #endif // ENABLE_FILER
 				set_menu_key_for_do_app_menu_0();
 			again_ret = 2;
@@ -153,11 +151,11 @@ app_menu_n_up_down:;
 		goto app_menu_n_again;
 
 #ifndef ENABLE_FILER
-	if (count_edit_bufs()) {
+	if (edit_bufs_count_bufs()) {
 		update_screen_app(1, 1, 1);
 	}
 #else // ENABLE_FILER
-	if (count_edit_bufs() || GET_APPMD(app_EDITOR_FILER)) {
+	if (edit_bufs_count_bufs() || GET_APPMD(app_EDITOR_FILER)) {
 		update_screen_app(1, 1, 1);
 	}
 #endif // ENABLE_FILER
@@ -472,35 +470,25 @@ key_code_t input_key_wait_return(void)
 //
 #define DEFAULT_KEY_WAIT_MSEC		1000	// return every 1[Sec]
 #define KEY_MACRO_KEY_WAIT_MSEC		200
-#ifdef ENABLE_HELP
-#define SPLASH_KEY_WAIT_MSEC		1000
-#endif // ENABLE_HELP
 PRIVATE key_code_t input_key_timeout(void)
 {
-	key_code_t key;
-	key_code_t key_resized = KEY_NONE;
 	long key_wait_time_msec = DEFAULT_KEY_WAIT_MSEC;
 	if (key_macro_is_recording()) {
 		key_wait_time_msec = KEY_MACRO_KEY_WAIT_MSEC;
 	}
 	long msec_enter = get_msec();
+	key_code_t key;
 	while ((key = input_key_macro()) < 0) {
 		if (tio_check_update_terminal_size()) {
 			win_reinit_win_size();
-#ifdef ENABLE_HELP
-			disp_splash(-1);
+			update_screen_app(1, 1, 0);
 			disp_status_bar_ing(_("Window resized to (%d, %d)"),
 			 tio_get_columns(), tio_get_lines());
 			msec_enter = get_msec();	// restart time monitoring
-			key_wait_time_msec = SPLASH_KEY_WAIT_MSEC;
-#endif // ENABLE_HELP
 		}
 		if ((long)(get_msec() - msec_enter) >= key_wait_time_msec)
 			break;
 		MSLEEP(10);		// wait 10[mS]
-	}
-	if (key < 0) {
-		key = key_resized;
 	}
 	return key;
 }
@@ -891,6 +879,7 @@ int get_key_name_table_entries(void)
 //-----------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 
+#ifdef START_UP_TEST
 PRIVATE int check_all_functions_accessible_without_function_key_(func_key_table_t *key_table);
 int check_all_functions_accessible_without_function_key()
 {
@@ -908,7 +897,6 @@ PRIVATE int check_all_functions_accessible_without_function_key_(func_key_table_
 		int accessible_without_fkey = 0;
 		for (int key_idx = 0; key_idx < MAX_KEYS_BOUND; key_idx++) {
 			key_code_t key;
-#define ACCESSIBLE_WITHOUT_FKEY(key)	(IS_ONE_BYTE_KEY(key) || IS_META_KEY(key))
 			switch (key_idx) {
 			case 0:
 				key = key_table[func_idx].key1;	break;
@@ -919,9 +907,9 @@ PRIVATE int check_all_functions_accessible_without_function_key_(func_key_table_
 			}
 			if (IS_KEY_VALID(key)) {
 				accessible++;
-			}
-			if (ACCESSIBLE_WITHOUT_FKEY(key)) {
-				accessible_without_fkey++;
+				if (IS_BYTE_KEY(key) || IS_META_KEY(key)) {
+					accessible_without_fkey++;
+				}
 			}
 		}
 		if (accessible && (accessible_without_fkey == 0)) {
@@ -974,6 +962,7 @@ PRIVATE int check_multiple_assignment_of_key_(func_key_table_t *key_table)
 	}
 	return 0;
 }
+#endif // START_UP_TEST
 
 #endif // ENABLE_DEBUG
 

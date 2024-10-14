@@ -26,7 +26,7 @@
 
 // change current directory -----------
 
-int change_cur_dir_saving_prev_next_dir(char *path,
+int change_cur_dir_saving_prev_next_dir(const char *path,
  char *cur_path, char *prev_path, char *next_dir_sel);
 
 int change_cur_dir_by_file_path_after_save(char *dir_save, char *file_path);
@@ -37,6 +37,7 @@ char *strip_file_if_path_is_file(char *path, char *dir);
 char *strip_file_from_path(char *path, char *dir);
 
 int change_cur_dir(const char *dir);
+const char *full_path_of_cur_dir_static();
 char *get_full_path_of_cur_dir(char *dir);
 char *get_real_path_of_cur_dir(char *dir);
 

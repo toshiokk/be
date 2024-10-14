@@ -184,12 +184,12 @@ int edit_win_get_text_y(void)
 
 #define TAB_NOTATION	'>'
 #define EOL_NOTATION	'<'
-// string linefeed('\n') concatenated
-int te_concat_linefeed_bytes = 0;						// bytes of (raw_byte + line-feed)
-char te_concat_linefeed_buf[MAX_EDIT_LINE_LEN * 2 +1];	// raw_byte + line-feed
+// string that is tab('\t')-expanded and linefeed('\n')-concatenated
+int te_lf_concat_bytes = 0;								// bytes of (raw_byte + line-feed)
+char te_lf_concat_buf[MAX_EDIT_LINE_LEN * 2 +1];		// raw_byte + line-feed
 // string invisible code(TAB, Zenkaku-space, EOL) converted to character('>', '__', '<')
-int te_visible_code_columns;							// length of tab-expanded line
-char te_visible_code_buf[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];	// tab-expanded-visible-code
+int te_vis_code_columns;										// length of tab-expanded line
+char te_vis_code_buf[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];		// tab-expanded-visible-code
 // tab-expansion
 /* T:TAB, C:control-code ZZ:Zenkaku-space, L:'\n' */
 /* original:     "TabcdCefghZZijkl" */
@@ -210,7 +210,7 @@ const char *te_tab_expand(const char *original)
 	te_concat_linefeed(original);
 ///flf_d_printf("original:%s\n", original);
 	orig_ptr = original;
-	vis_ptr = te_visible_code_buf;
+	vis_ptr = te_vis_code_buf;
 	for (col_idx = 0; *orig_ptr; ) {
 		if (*orig_ptr == '\t') {
 #ifdef ENABLE_SYNTAX
@@ -251,24 +251,24 @@ const char *te_tab_expand(const char *original)
 	*vis_ptr++ = ' ';
 #endif // ENABLE_SYNTAX
 	*vis_ptr = '\0';
-	te_visible_code_columns = col_idx + 1;
-///flf_d_printf("[%s]\n", te_visible_code_buf);
-	return te_visible_code_buf;
+	te_vis_code_columns = col_idx + 1;
+///flf_d_printf("[%s]\n", te_vis_code_buf);
+	return te_vis_code_buf;
 }
 const char *te_concat_linefeed(const char *original)
 {
 ///flf_d_printf("[%s]\n", original);
-	te_visible_code_buf[0] = '\0';	// clear te_visible_code_buf
-	strlcpy__(te_concat_linefeed_buf, original, MAX_EDIT_LINE_LEN * 2);
-	strlcat__(te_concat_linefeed_buf, MAX_EDIT_LINE_LEN * 2, "\n");
-	te_concat_linefeed_bytes = strnlen(te_concat_linefeed_buf, MAX_EDIT_LINE_LEN * 2);
-	return te_concat_linefeed_buf;
+	te_vis_code_buf[0] = '\0';	// clear te_vis_code_buf
+	strlcpy__(te_lf_concat_buf, original, MAX_EDIT_LINE_LEN * 2);
+	strlcat__(te_lf_concat_buf, MAX_EDIT_LINE_LEN * 2, "\n");
+	te_lf_concat_bytes = strnlen(te_lf_concat_buf, MAX_EDIT_LINE_LEN * 2);
+	return te_lf_concat_buf;
 }
 
 int te_tab_expand__max_wl_idx(const char *original)
 {
 	te_tab_expand(original);
-	return max_wrap_line_idx(te_concat_linefeed_buf, -1);
+	return max_wrap_line_idx(te_lf_concat_buf, -1);
 }
 
 // End of editor3.c

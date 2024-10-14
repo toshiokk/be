@@ -1,5 +1,30 @@
 #### BE-editor to do list
- (H: high priority, L: Low priority, e: easy, d: difficult, v: done, -: impossible/pending)
+ (H: high priority, L: Low priority, e: easy, d: difficult, x/v: done, -: impossible/pending)
+
+- [] built in logger(record stdout to both of console and log file)
+- [x] 241011 do not show splash when screen size resized
+- [x] 241007 goto the last touched file when reloading files
+- [x] 241007 minimize file open history on exitting editor
+- [x] 241007 enter into directory by 'e' key
+- [x] 241006 cursor jumps even after no jump on tag jump
+- [x] 241004 main filer quit on EF_CANDELLED and EF_EXECUTED
+- [x] 241004 can not go up dir by BS
+- [x] relationship of list-mode and help-mode
+- [x] relationship of edit-bufs and help-bufs
+- [x] 241003 it's not good not to be able to use pager.
+      --> Make "No log output" default action.
+- [x] 241003 not able to quit help viewer
+- [x] 241001 Avoid showing input box over the current line
+- [x] 241002 remove duplicate lines as below:
+  /home/user/tools/be/be/editormove.h|1:1
+  /home/user/tools/be/be/editormove.h|84:1
+  /home/user/tools/be/be/editormove.h|100:1
+- [x] 241002 increase open file history size from 1000 to 10000
+- [x] 241001 fill spaces to columns (e.g. 80 columns)
+  1. memorize columns number                   (MC-] : 1b1d)
+  2. fill to the memorized columns with spaces (M-_  : 1b5f)
+
+[x] 240926 execute_line_soon
 
 [x] 240830 show from the top of the file if file contains less lines than the screen lines.
 
@@ -9,11 +34,14 @@
 [x] improve previous_word(), next_word()
 [x] improve get string from editor text in search_string()
 [x] crash on opening from editor by Alt-e, change to sub-dir, open html file
-[x] convert upper letter "Alt-Ctrl-W"
+[x] 240910 convert lower letter "Alt-Ctrl-W"
+  [x] 240909 convert camel case "camel" -> "Camel" -> "CAMEL" -> "cAMEL" ->
+  [x] 240910 convert camel case "camel" -> "CAMEL" -> "Camel" -> "cAMEL" ->
+  [x] 240926 "F_A..." can not be converted
 [x] goto colmuns "Alt-Ctrl-F columns"
-[ ] works editor and filer seamless as possible.
-[x] Handle WSL drop event like: '/mnt/c/Users/t_koike/Downloads/20240731_DMU30_MG370S_D-SAIL.zip'
-  |   state                      | event                              | event                           |
+[d] works editor and filer seamless as possible.
+[x] Handle WSL drop event like: '/mnt/c/Users/t_koike/Downloads/20240731.zip'
+  | state                        | event                              | event                           |
   |------------------------------| drop files "'file-1' 'file-2' ..." | drop dirs "'dir-1' 'dir-2' ..." |
   |[x]in filer                   | [x]open these files                | [x]open dir                     |
   |[x]in filer  - "Open new file"| [x]open these files                | [x]open dir                     |
@@ -25,9 +53,21 @@
   - [x] log-file    method - Good: easy to handle(get, edit, copy).
   - [x] stderr is not captured
   - [d-] when you start BE from BE, `1.log` might be overwritten.
-  - [x] `less file.txt` does not pause scrolling because less's FD-1 is not actual console
-        K_M_x capture stdout/err, K_M_X does not capture stdout/err
+  - [d] `less file.txt` does not pause scrolling because less's FD-1 is not actual console
   - [x] cat all output when "command {}" executed to files
+
+    | command execution function  | Log output |
+    |-----------------------------|------------|
+    | dof_exec_command_with_file  | No   |
+    | dof_exec_command_with_files | No   |
+    | dof_run_command_rel         | Yes  |
+    | dof_run_command_abs         | Yes  |
+    | dof_run_command_src_dst     | Yes  |
+    | dof_run_command_sh          | Yes  |
+    | doe_run_line_soon           | Yes  |
+    | doe_run_line_soon_wo_log    | No   |
+    | dof_run_command_soon        | Yes  |
+    | dof_run_command_soon_wo_log | No   |
 
   standard
    +----------------------+
@@ -74,6 +114,22 @@
 - [xx] call-filer:					open file, M-F
 - [xx] call-filer and open file:			open file, M-F select file, e
 
+  Entering text from editor:
+  |command key    |Text entered |Replace/Insert|comments|
+  |---------------|-------------|--------------|--------|
+  |Enter          |selected line|Replace       |-- |
+  |@Enter         |selected line|Insert        |-- |
+
+  Entering text from filer:
+  |command key    |Text entered |Replace/Insert|comments|
+  |---------------|-------------|--------------|--------|
+  |e,d,c,Enter    |file name    |Replace       |-- |
+  |@e,@d,@c,@Enter|file name    |Insert        |-- |
+  |E,D,C          |file path    |Replace       |-- |
+  |@E,@D,@C       |file path    |Insert        |-- |
+  |m              |cur dir path |Replace       |-- |
+  |@m             |cur dir path |Insert        |-- |
+
 [x] switching policy of filer and editor
 switching filer and editor
   filer +-- editor-list
@@ -84,47 +140,47 @@ switching filer and editor
          \-- filer-list
 [x] editor: stay in editor while `get_edit_bufs() > 0` and exit when `get_edit_bufs() == 0`
 
-|editor mode |load|edit|save|select by tap|search/cut/copy|comment                |in code         |
-|------------|----|----|----|-------------|---------------|-----------------------|----------------|
-|edit mode   |yes |yes |yes |no           |yes            |all editing            |APP_MODE_NORMAL |
-|history mode|auto|no  |auto|yes          |no             |history viewer/selector|APP_MODE_LIST   |
-|help mode   |no  |no  |no  |no           |yes            |help viewer            |APP_MODE_HELP   |
+|editor mode |load|edit|save|select by tap|search/cut/copy|possible actions|in code        |buf-RO|
+|------------|----|----|----|-------------|---------------|----------------|---------------|------|
+|edit mode   |yes |yes |yes |no           |yes            |all editing     |APP_MODE_NORMAL| R/W  |
+|history mode|auto|no  |auto|yes          |no             |view/select     |APP_MODE_LIST  | R/O  |
+|help mode   |no  |no  |no  |no           |yes            |view/search     |APP_MODE_HELP  | R/O  |
 
-// Transitions between filer and editor:
-//	filer(NORMAL)																						return code-------------
-//		dof_open_file()			open file by selecting file								RETURN to editor on success(quit/loaded)
-//		input_string()			editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
-//												TAG-JUMP(updating root-editor)			RETURN to editor on success(quit/loaded)
-//		input_string()			filer(LIST)		input file path by selecting file/dir	RETURN to editor(quit/input)
-//		dof_run_command_soon()
-//	editor(NORMAL)
-//		input_string()			editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
-//												TAG-JUMP(updating root-editor)			RETURN to editor on success(quit/loaded)
-//												doe_run_line_soon()						RETURN to editor on success(quit/loaded)
-//		input_string()		 	filer(LIST)		input file path by selecting file/dir	RETURN to editor(quit/input)
-//												open file								RETURN to editor on success(quit/loaded)
-//		doe_open_file()			filer(NORMAL)	open file by selecting file				RETURN to editor on success(quit/loaded)
-//		doe_read_file_into_cur_buf()
-//								filer(NORMAL)	read file into selecting file			RETURN to editor
-//		doe_call_filer()					 		manage file in filer(NORMAL), return to editor when quit(quit)
-//		doe_tag_jump() 			TAG-JUMP to dir and manage file in filer(NORMAL), return to editor when quit(quit)
-//		doe_view_file_list()	editor(HELP)	TAG-JUMP to file(updating root-editor)	RETURN to editor(quit/loaded)
-//		doe_view_key_list()		editor(HELP)	view help text, return to editor when quit              (quit)
-//		doe_view_func_list()	editor(HELP)	view help text, return to editor when quit              (quit)
-//		doe_run_line_soon()
-//
-// return code from editor:
-//		quit		--> EDITOR_DO_QUIT
-//		loaded		--> EDITOR_LOADED
-//		input		--> EDITOR_INPUT_TO_REPLACE
-//		input		--> EDITOR_INPUT_TO_APPEND
-// return code from filer
-//		quit		--> FILER_DO_QUIT
-//		loaded		--> FILER_LOADED
-//		input		--> FILER_INPUT_TO_REPLACE (file/file_path/dir_path)
-//		input		--> FILER_INPUT_TO_APPEND  (file/file_path/dir_path)
+//Transitions between filer and editor:
+// filer(NORMAL)									return code-------------
+//	dof_open_file()		open file by selecting file				RETURN to editor on success(quit/loaded)
+//	input_string()		editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
+//						TAG-JUMP(updating root-editor)		RETURN to editor on success(quit/loaded)
+//				filer(LIST)	input file path by selecting file/dir	RETURN to editor(quit/input)
+//	dof_run_command_soon()
+// editor(NORMAL)
+//	input_string()		editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
+//						TAG-JUMP(updating root-editor)		RETURN to editor on success(quit/loaded)
+//						doe_run_line_soon()			RETURN to editor on success(quit/loaded)
+//				filer(LIST)	input file path by selecting file/dir	RETURN to editor(quit/input)
+//						open file				RETURN to editor on success(quit/loaded)
+//	doe_open_file()		filer(NORMAL)	open file by selecting file		RETURN to editor on success(quit/loaded)
+//	doe_read_file_into_cur_buf()
+//				filer(NORMAL)	read file into selecting file		RETURN to editor
+//	doe_call_filer()			manage file in filer(NORMAL)		return to editor when quit(quit)
+//	doe_tag_jump() 		TAG-JUMP to dir and manage file in filer(NORMAL)	return to editor when quit(quit)
+//	doe_view_file_list()	editor(HELP)	TAG-JUMP to file(updating root-editor)	RETURN to editor(quit/loaded)
+//	doe_view_key_list()	editor(HELP)	view help text				return to editor when quit(quit)
+//	doe_view_func_list()	editor(HELP)	view help text				return to editor when quit(quit)
+//	doe_run_line_soon()
 
-// open file:	load file and assign it as a current file in the editor pane
+editor/filer	input_string()
+--------------->
+		--> editor(LIST)
+		 <-----	QUIT
+		 <-----	INPUT
+ <---------------------	LOADED
+ <---------------------	EXECUTED
+		--> filer(LIST)
+		 <-----	QUIT
+		 <-----	INPUT
+ <---------------------	LOADED
+ <---------------------	EXECUTED
 
 [?] operation policy
 - always works on ESC key to exit from current screen and Enter key to enter the selected item.
@@ -748,14 +804,13 @@ USB bootable Linux can be a killer application to Windose.
 USB からブート可能なOS(Linux)は、きっとWindoseに対するキラーアプリになる。
 
 Linux は便利な利用法としてUSBディスクからのブートが可能である。
-しかし、Mirocsoft は Linux のこの利便性を真似する事が出来ない。
-
+しかし、M$ は Linux のこの利便性を真似する事が出来ない。
 なぜなら、そうすることは彼らのもっとも重要なソフトウエア製品の野放図な使用を
 許すことになってしまうからである。
 
 M$のソフトウエアはPCにインストール後、ソフトウエア・アクティベーションを行う必要がある。
 アクティベートされたソフトウエアは異なるコンピュータ上で実行できない様になっている。
-LANチップ中のMACアドレスや、CPUやマザーボードのシリアルNo.などを記憶しておき、
+LANチップ中のMACアドレスや、CPUやマザーボードのシリアルNo.などを記憶し、
 それらが変わった時は異なるPC上で実行されたと判断し、使用できなくしている。
 そうする事によって、彼らの製品の野放図な使用を行えなくしているのだ。
 

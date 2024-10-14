@@ -44,8 +44,14 @@ void disp_status_bar_percent_filer(const char *msg, ...);
 
 void blank_status_bar(void);
 void blank_key_list_lines(void);
+
+int determine_input_line_y();
 int get_input_line_y(void);
+int default_input_line_y(void);
+
 int get_yes_no_line_y(void);
+int get_status_line_y(void);
+int get_key_list_line_y(void);
 
 #endif // disp_h
 

@@ -235,6 +235,12 @@ void termif_send_cursor_pos(int yy, int xx)
 		send_cursor_pos_to_term(yy, xx);
 	}
 }
+void termif_get_cursor_pos(int *yy, int *xx)
+{
+	*yy = termif_cursor_yy;
+	*xx = termif_cursor_xx;
+}
+
 void termif_set_attrs(int bgc, int fgc, int rev)
 {
 ///flf_d_printf("bgc:%d, fgc:%d, rev:%d, bold:%d\n", bgc, fgc, rev, bold);
@@ -384,19 +390,17 @@ PRIVATE void dump_vscreen(int yy, int len)
 void termif_refresh(void)
 {
 	int cursor_on = 1;
-///	int yy, xx;
 	int start_xx;
 	vscreen_char_t start_attrs;
 	char utf8c[MAX_UTF8C_BYTES + 1];
 	wchar_t ucs21;
-	char line_buf[TERMIF_LINE_BUF_LEN + 1];
 
 	for (int yy = 0; yy < termif_lines; yy++) {
 		for (int xx = 0; xx < termif_columns; ) {
 			start_attrs = (vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS);
 			if (CMP_NARR_OR_WIDE_CHR()) {
+				char line_buf[TERMIF_LINE_BUF_LEN + 1] = "";
 				start_xx = xx;
-				strcpy(line_buf, "");
 				for ( ; xx < termif_columns; ) {
 					ucs21 = vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21;
 					if (((vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS) != start_attrs)
@@ -464,9 +468,9 @@ PRIVATE void send_cursor_pos_to_term(int yy, int xx)
 }
 PRIVATE int receive_cursor_pos_from_term(int *yy, int *xx)
 {
-#define MAX_REPORT_LEN		(11+11)	// "e[9;9R" -- "e[999;9999R"
-	char buf[MAX_REPORT_LEN+1];		// "e[999;9999R"
-	char bufr[MAX_REPORT_LEN+1];	// "e[999;9999R"
+#define MAX_REPORT_LEN		(11+11)		// "e[9;9R" -- "e[999;9999R"
+	char buf[MAX_REPORT_LEN+1] = "";	// "e[999;9999R"
+	char bufr[MAX_REPORT_LEN+1];		// "e[999;9999R"
 
 	fflush(stdin);
 	send_string_to_term("\x1b[6n", -1);
@@ -474,7 +478,6 @@ PRIVATE int receive_cursor_pos_from_term(int *yy, int *xx)
 #define SLEEP_USEC		1
 #define MAX_RX_TRIES	((MAX_WAIT_USEC) / (SLEEP_USEC))
 	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);		// Not block in read()
-	strcpy(buf, "");
 	long usec_enter = get_usec();
 	for (int tries = 0; tries < MAX_RX_TRIES; tries++) {
 		usleep(SLEEP_USEC);	// wait for receiving answer back

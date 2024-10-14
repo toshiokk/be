@@ -1,9 +1,7 @@
 # archive source files
 #make clean
 if [ -z "$1" ]; then
-  make distclean
-  rm -f *.log
-  rm -f _cppcheck.out
+  ./_distclean
 fi
 
 cd ..

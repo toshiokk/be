@@ -146,10 +146,20 @@ void curses_set_cursor_on(int on_off)
 {
 	curs_set(on_off);
 }
+PRIVATE int cursor_yy = 0;
+PRIVATE int cursor_xx = 0;
 void curses_set_cursor_pos(int yy, int xx)
 {
+	cursor_yy = yy;
+	cursor_xx = xx;
 	wmove(curses_win, yy, xx);
 }
+void curses_get_cursor_pos(int *yy, int *xx)
+{
+	*yy = cursor_yy;
+	*xx = cursor_xx;
+}
+
 void curses_clear_screen(void)
 {
 	clear();

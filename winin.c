@@ -21,32 +21,21 @@
 
 #include "headers.h"
 
-PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_byte_idx,
+PRIVATE int input_string_pos_(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, va_list ap);
-PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_byte_idx,
+PRIVATE int input_string_pos__(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg);
 PRIVATE void disp_input_box(const char *buf, const char *input_buf, int x);
 PRIVATE void blank_input_box(void);
 
 // input string
-int input_string_tail(const char *default__, char *input_buf,
- int hist_type_idx, const char *msg, ...)
-{
-	va_list ap;
-
-	va_start(ap, msg);
-	int ret = input_str_pos_(default__, input_buf, MAX_PATH_LEN, hist_type_idx, msg, ap);
-	va_end(ap);
-	return ret;
-}
-
 int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, ...)
 {
 	va_list ap;
 
 	va_start(ap, msg);
-	int ret = input_str_pos_(default__, input_buf, cursor_byte_idx, hist_type_idx, msg, ap);
+	int ret = input_string_pos_(default__, input_buf, cursor_byte_idx, hist_type_idx, msg, ap);
 	va_end(ap);
 	return ret;
 }
@@ -54,7 +43,7 @@ int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx
 // return -1: recursively called
 // return 0 : cancelled
 // return 1 : input normally
-PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_byte_idx,
+PRIVATE int input_string_pos_(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, va_list ap)
 {
 	static int recursively_called = 0;
@@ -74,36 +63,35 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 
 	get_full_path_of_cur_dir(dir_save);
 	tio_set_cursor_on(1);
-	//---------------------------------------------------------------------------------
 	recursively_called++;
-	int ret = input_str_pos__(default__, input_buf, cursor_byte_idx, hist_type_idx, msg_buf);
-	recursively_called--;
 	//---------------------------------------------------------------------------------
+	int ret = input_string_pos__(default__, input_buf, cursor_byte_idx, hist_type_idx, msg_buf);
+	//---------------------------------------------------------------------------------
+	recursively_called--;
 flf_d_printf("ret: %d\n", ret);
 	tio_set_cursor_on(0);
 	change_cur_dir(dir_save);
 
 	update_screen_app(1, 1, 1);
 
-	if (ret == INPUT_CANCELLED) {
+	if (ret <= EF_QUIT) {
 		disp_status_bar_done(_("Cancelled"));
-		return ret;				// cancelled
-	}
-	if (ret == INPUT_LOADED) {	// file loaded
-		return ret;				// something done
 	}
 #ifdef ENABLE_HISTORY
-	if (is_strlen_not_0(input_buf)) {
-		update_history(hist_type_idx, input_buf, 0);
+	if (ret == EF_INPUT) {
+		// input normally
+		if (is_strlen_not_0(input_buf)) {
+			update_history(hist_type_idx, input_buf);
+		}
 	}
 #endif
-	return INPUT_INPUT;			// input normally
+	return ret;
 }
 
 // Input string. This should only be called from input_string_xxx().
 //  return 0 : cancelled
 //  return 1 : input normally
-PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_byte_idx,
+PRIVATE int input_string_pos__(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg)
 {
 	int key_input;
@@ -111,15 +99,16 @@ PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_b
 	int bytes;
 #if defined(ENABLE_HISTORY) || defined(ENABLE_FILER)
 	char buffer[MAX_PATH_LEN+1];
-	int ret;
 #endif
 	char cut_buf[MAX_PATH_LEN+1] = "";
+	int ret = EF_NONE;
 
 	strlcpy__(input_buf, default__, MAX_PATH_LEN);
 	cursor_byte_idx = MIN_MAX_(0, cursor_byte_idx, strlen_path(default__));
 
 	blank_key_list_lines();
 	for ( ; ; ) {
+		ret = EF_NONE;
 		disp_input_box(msg, input_buf, cursor_byte_idx);
 		tio_refresh();
 		//---------------------------
@@ -131,9 +120,7 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		if (IS_CHAR_KEY(key_input)) {
 			// character key
 			if (strlen_path(input_buf) < MAX_PATH_LEN) {
-				memmove(input_buf + cursor_byte_idx + 1, input_buf + cursor_byte_idx,
-				 strlen_path(input_buf) - cursor_byte_idx + 1);
-				input_buf[cursor_byte_idx] = key_input;
+				insert_str_chr(input_buf, MAX_PATH_LEN, cursor_byte_idx, key_input);
 				cursor_byte_idx++;
 			}
 			func_id = "";
@@ -141,14 +128,14 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			// function key
 			func_id = get_func_id_from_key(key_input);
 		}
-		if (key_input == K_ESC || key_input == K_M_ESC
+		if ((key_input == K_ESC) || (key_input == K_M_ESC)
 		 || cmp_func_id(func_id, "doe_close_file_ask")
 		 || cmp_func_id(func_id, "doe_close_all_ask")) {
 			strcpy__(input_buf, "");
-			key_input = K_ESC;
+			ret = EF_CANCELLED;		// cancelled, return
 		} else
-		if (key_input == K_C_M || key_input == K_ENTER) {
-			key_input = K_C_M;
+		if (key_input == K_ENTER) {
+			ret = EF_INPUT;			// confirm a string input
 		} else
 		if (cmp_func_id(func_id, "doe_left")) {
 			// cursor left
@@ -231,9 +218,9 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 			//----------------------------------------------------
 			ret = select_from_history_list(hist_type_idx, buffer);
 			//----------------------------------------------------
-flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
-			if ((ret == EDITOR_INPUT_TO_REPLACE) || (ret == EDITOR_INPUT_TO_APPEND)) {
-				if ((ret == EDITOR_INPUT_TO_REPLACE) || cmp_func_id(func_id, "doe_page_up")) {
+flf_d_printf("call_editor ret: EF__%d, buffer: [%s]\n", ret, buffer);
+			if ((ret == EF_INPUT_TO_REPLACE) || (ret == EF_INPUT_TO_APPEND)) {
+				if ((ret == EF_INPUT_TO_REPLACE) || cmp_func_id(func_id, "doe_page_up")) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
@@ -242,12 +229,6 @@ flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
 				}
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
 				 cursor_byte_idx, buffer);
-			} else
-			if (ret == EDITOR_DO_QUIT) {	// doe_run_line_soon()
-				key_input = K_ESC;	// quit
-			} else
-			if (ret == EDITOR_LOADED) {
-				key_input = K_NONE;	// quit
 			}
 #endif // ENABLE_HISTORY
 #ifdef ENABLE_FILER
@@ -258,9 +239,9 @@ flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
 			//---------------------------------------------------
 			ret = call_filer(1, APP_MODE_LIST, "", "", buffer, MAX_PATH_LEN);
 			//---------------------------------------------------
-flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
-			if ((ret == FILER_INPUT_TO_REPLACE) || (ret == FILER_INPUT_TO_APPEND)) {
-				if ((ret == FILER_INPUT_TO_REPLACE) || cmp_func_id(func_id, "doe_page_down")) {
+flf_d_printf("call_filer ret: EF__%d, buffer: [%s]\n", ret, buffer);
+			if ((ret == EF_INPUT_TO_REPLACE) || (ret == EF_INPUT_TO_APPEND)) {
+				if ((ret == EF_INPUT_TO_REPLACE) || cmp_func_id(func_id, "doe_page_down")) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
@@ -269,9 +250,6 @@ flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
 				}
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
 				 cursor_byte_idx, buffer);
-			} else
-			if (ret == FILER_LOADED) {
-				key_input = K_NONE;	// quit
 			}
 #endif // ENABLE_FILER
 		} else
@@ -279,7 +257,7 @@ flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
 		 || cmp_func_id(func_id, "doe_search_forward_first")
 		 || cmp_func_id(func_id, "doe_replace")) {
 			// get string from edit buffer's current cursor position
-			if (count_edit_bufs()) {
+			if (edit_bufs_count_bufs()) {
 				char *line = EPCBVC_CL->data;
 				cursor_byte_idx = strlen_path(input_buf);
 				int start_byte_idx = byte_idx_from_byte_idx(line, EPCBVC_CLBI + cursor_byte_idx);
@@ -302,18 +280,14 @@ flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
 				cursor_byte_idx = strlen_path(input_buf);
 			}
 		}
-		if (key_input == K_ESC || key_input == KEY_NONE || key_input == K_C_M) {
+		// EF_QUIT: stay in this loop
+		if ((ret == EF_CANCELLED) || (ret == EF_INPUT)
+		 || (ret == EF_LOADED) || (ret == EF_EXECUTED)) {
 			break;
 		}
 	}
-
-	if (key_input == K_ESC) {
-		return INPUT_CANCELLED;		// cancelled, no input
-	}
-	if (key_input == KEY_NONE) {
-		return INPUT_LOADED;		// file loaded
-	}
-	return INPUT_INPUT;				// string input
+flf_d_printf("ret: EF__%d, input_buf: [%s]\n", ret, input_buf);
+	return ret;		// return from input_string_pos__()
 }
 
 /* display input box
@@ -331,6 +305,7 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 	int start_byte_idx;
 	int bytes;
 
+	determine_input_line_y();
 	blank_input_box();
 	set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
 	main_win_output_string(get_input_line_y(), 1, msg, -1);
@@ -369,6 +344,7 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 		 0, cursor_byte_idx - start_byte_idx));
 	}
 }
+
 PRIVATE void blank_input_box(void)
 {
 	// display frame
@@ -400,7 +376,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 	const char *chars_all = "Aa";				// All
 	const char *chars_backward = "Bb";			// Backward search
 	const char *chars_forward = "Ff ";			// Forward search
-	const char *chars_cancel = "EeSsXx";		// End/Stop/eXit
+	const char *chars_cancel = "SsEeXx";		// Stop/End/eXit
 	const char *chars_end = "QqRr" S_ESC S_C_Q;	// Quit/Return/ESC/Ctrl-Q
 	const char *chars_undo = "Uu";				// Undo
 	const char *chars_redo = "Oo";				// redO
@@ -429,7 +405,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 		if (flags & ASK_FORWARD) {
 			list_one_key(chars_forward[0], _("Forward"));
 		}
-		list_one_key(chars_cancel[0], _("Cancel"));
+		list_one_key(chars_cancel[0], _("Stop"));
 		if (flags & ASK_END || flags & ASK_NO) {
 			list_one_key(chars_end[0], _("End"));
 		}
@@ -451,7 +427,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 		msg_buf[byte_idx] = '\0';
 		set_color_by_idx(ITEM_COLOR_IDX_WARNING, 0);
 		blank_status_bar();
-		main_win_output_string(main_win_get_bottom_win_y() + STATUS_LINE, 0, msg_buf, -1);
+		main_win_output_string(get_status_line_y(), 0, msg_buf, -1);
 	}
 
 	tio_refresh();
@@ -517,8 +493,7 @@ PRIVATE void list_one_key(char key, const char *desc)
 void disp_key_list(char *key_lists[])
 {
 	for (int idx = 0; idx < get_key_list_lines(); idx++) {
-		display_reverse_text(main_win_get_bottom_win_y() + KEY_LIST_LINE + idx,
-		 key_lists[idx]);
+		display_reverse_text(get_key_list_line_y() + idx, key_lists[idx]);
 	}
 }
 // text parenthesized by {} are displayed in reversed

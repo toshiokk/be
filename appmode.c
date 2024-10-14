@@ -304,6 +304,11 @@ int get_backup_files(void)
 {
 	return GET_APPMD(ed_BACKUP_FILES);
 }
+int tog_editor_panes()
+{
+	TOGGLE_APPMD(ed_EDITOR_PANES);
+	return 0;
+}
 const char *get_editor_panes(void)
 {
 	return BOOL_TO_ON_OFF(GET_APPMD(ed_EDITOR_PANES));
@@ -420,7 +425,7 @@ BOOL is_app_list_help_mode(void)
 
 int doe_tog_panes(void)
 {
-	TOGGLE_APPMD(ed_EDITOR_PANES);
+	tog_editor_panes();
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }

@@ -37,10 +37,6 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	// official release
 	{ CL_BL, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
 	{ CL_BL, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
-///	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_TITLE)				},
-///	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_STATUS)			},
-///	{ CL_BL, CL_GR, S(ITEM_COLOR_IDX_TITLE)				},
-///	{ CL_BL, CL_GR, S(ITEM_COLOR_IDX_STATUS)			},
 #endif
 #if APP_REL_LVL == APP_REL_LVL_TEST
 	// test release-1
@@ -49,10 +45,8 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 #endif
 #if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
 	// experimental release
-///	{ CL_CY, CL_BL, S(ITEM_COLOR_IDX_TITLE)				},
-///	{ CL_CY, CL_BL, S(ITEM_COLOR_IDX_STATUS)			},
-	{ CL_CY, CL_BR, S(ITEM_COLOR_IDX_TITLE)				},
-	{ CL_CY, CL_BR, S(ITEM_COLOR_IDX_STATUS)			},
+	{ CL_CY, CL_YL, S(ITEM_COLOR_IDX_TITLE)				},
+	{ CL_CY, CL_YL, S(ITEM_COLOR_IDX_STATUS)			},
 #endif
 	{ CL_BG, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
 	{ CL_BK, CL_BR, S(ITEM_COLOR_IDX_KEY_LIST2)			},

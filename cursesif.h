@@ -50,6 +50,8 @@ int curses_get_columns(void);
 void curses_clear_screen(void);
 void curses_set_cursor_on(int on_off);
 void curses_set_cursor_pos(int yy, int xx);
+void curses_get_cursor_pos(int *yy, int *xx);
+
 void curses_set_attrs(int bgc, int fgc, int rev);
 
 void curses_output_string(int yy, int xx, const char *string, int bytes);

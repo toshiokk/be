@@ -50,7 +50,7 @@ PRIVATE int doe_search_forward_first_(void)
 	char needle[MAX_PATH_LEN+1];
 
 	if (input_search_str(SEARCH0, needle) <= 0) {
-		return -1;
+		return 0;
 	}
 	memorize_cur_file_pos_before_jump();
 	found_in_prev_search = 1;
@@ -82,7 +82,6 @@ int doe_replace(void)
 {
 	char replace_from[MAX_PATH_LEN+1];
 	char replace_to[MAX_PATH_LEN+1];
-	int ret;
 	char prev_file_pos[MAX_PATH_LEN+1];
 	int num_replaced;
 
@@ -92,20 +91,17 @@ int doe_replace(void)
 
 	CLR_APPMD(ed_REVERSE_SEARCH);
 
-	ret = input_search_str(REPLACE1, replace_from);
-	if (ret <= 0) {
+	if (input_search_str(REPLACE1, replace_from) <= 0) {
 		return 0;
 	}
-
-	ret = input_replace_str(replace_to);
-	if (ret <= 0) {
+	if (input_replace_str(replace_to) <= 0) {
 		return 0;
 	}
 	conv_esc_str(replace_to);
 
 	memorize_cur_file_pos_null(prev_file_pos);
 
-	ret = replace_string_loop(replace_from, replace_to, &num_replaced);
+	int ret = replace_string_loop(replace_from, replace_to, &num_replaced);
 
 	if (ret == ANSWER_END) {
 		// return to original file pos
@@ -143,7 +139,8 @@ int input_search_str(int search0_replace1, char *input_buf)
 		strcpy__(default_needle, "");
 	}
 
-	int ret = input_string_tail("", input_buf, HISTORY_TYPE_IDX_SEARCH, "%s%s%s%s%s:",
+	if (input_string_pos("", input_buf,
+	 MAX_PATH_LEN, HISTORY_TYPE_IDX_SEARCH, "%s%s%s%s%s:",
 	 search0_replace1 == 0 ? _("Search") : _("Replace"),
 	 GET_APPMD(ed_IGNORE_CASE) ? _("[Ignore-case]") : _("[Differenciate-case]"),
 #ifdef ENABLE_REGEX
@@ -151,19 +148,18 @@ int input_search_str(int search0_replace1, char *input_buf)
 #else // ENABLE_REGEX
 	 "",
 #endif // ENABLE_REGEX
-	 GET_APPMD(ed_REVERSE_SEARCH) ? _("[Backward]") : _("[Forward]"), default_needle);
-
-	if (ret <= INPUT_LOADED) {
+	 GET_APPMD(ed_REVERSE_SEARCH) ? _("[Backward]") : _("[Forward]"), default_needle)
+	 <= EF_EXECUTED) {
 		// cancelled
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
-		return ret;						// cancelled
+		return 0;						// cancelled
 	}
 	if (strlen(input_buf) == 0) {
 		// nothing input, get last searched string
 		strlcpy__(input_buf, last_searched_needle, MAX_PATH_LEN);
 	}
 #ifdef ENABLE_REGEX
-	if (GET_APPMD(ed_USE_REGEXP))
+	if (GET_APPMD(ed_USE_REGEXP)) {
 		if (regexp_compile(&search__.regexp, input_buf,
 		 GET_APPMD(ed_IGNORE_CASE) ? REG_ICASE : 0)) {
 			disp_status_bar_err(_("Invalid regexp: [%s]:%s"),
@@ -171,18 +167,20 @@ int input_search_str(int search0_replace1, char *input_buf)
 			set_edit_win_update_needed(UPDATE_SCRN_ALL);
 			return -1;			// regexp error
 		}
+	}
 #endif // ENABLE_REGEX
 	return 1;							// input normally
 }
 
 int input_replace_str(char *input_buf)
 {
-	int ret = input_string_tail("", input_buf, HISTORY_TYPE_IDX_SEARCH,
-	 "%s:", _("Replace with"));
-	if (ret <= INPUT_LOADED) {
+	if (input_string_pos("", input_buf,
+	 MAX_PATH_LEN, HISTORY_TYPE_IDX_SEARCH,
+	 "%s:", _("Replace with:")) <= EF_EXECUTED) {
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
+		return 0;
 	}
-	return ret;
+	return 1;
 }
 
 //=============================================================================
@@ -231,7 +229,8 @@ int search_string_once(const char *needle, int search_count)
 			}
 		} else {
 			// next time
-			post_cmd_processing(NULL, CURS_MOVE_JUMP, LOCATE_CURS_JUMP_CENTER, UPDATE_SCRN_ALL);
+			post_cmd_processing(NULL, CURS_MOVE_JUMP, LOCATE_CURS_JUMP_CENTER,
+			 UPDATE_SCRN_ALL);
 		}
 		disp_status_bar_done(_("[%s] found in %s search"), needle,
 		 GET_APPMD(ed_REVERSE_SEARCH) ? _("backward") : _("forward"));
@@ -275,7 +274,8 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 
 		if (match_len) {
 			// found
-			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_CENTER, UPDATE_SCRN_ALL);
+			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_CENTER,
+			 UPDATE_SCRN_ALL);
 			update_screen_editor(1, 1, 1);
 			if (ret < ANSWER_ALL) {
 #ifdef ENABLE_UNDO
@@ -296,7 +296,8 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 				}
 			}
 		} else {
-			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_CENTER, UPDATE_SCRN_ALL);
+			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_CENTER,
+			 UPDATE_SCRN_ALL);
 			update_screen_editor(1, 1, 1);
 			// not found message has been displayed
 #ifdef ENABLE_UNDO
@@ -498,9 +499,11 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair)
 			EPCBVC_CLBI = byte_idx;
 		}
 		if (search_dir < 0) {
-			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_BACKWARD, UPDATE_SCRN_ALL);
+			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_BACKWARD,
+			 UPDATE_SCRN_ALL);
 		} else {
-			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_FORWARD, UPDATE_SCRN_ALL);
+			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_FORWARD,
+			 UPDATE_SCRN_ALL);
 		}
 	}
 	return 0;
@@ -712,14 +715,14 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 					byte_idx--;
 				} else if (IS_NODE_TOP(line) == 0) {
 					line = NODE_PREV(line);
-					byte_idx = line_data_len(line);
+					byte_idx = line_data_strlen(line);
 				} else if (global_search && switch_epc_buf_to_prev(0, 0)) {
 					// update local pointers after switching buffer
 					// but not update pointers in buffer
 					ptr_line = &(EPCBVC_CL);
 					ptr_byte_idx = &(EPCBVC_CLBI);
 					line = CUR_EDIT_BUF_BOT_LINE;
-					byte_idx = line_data_len(line);
+					byte_idx = line_data_strlen(line);
 				} else {
 					break;
 				}
@@ -739,7 +742,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 			if (skip_here) {
 				// move cur-pos right at least one char
 				// if cur-pos is right most, move cur-pos down at least one line
-				if (byte_idx < line_data_len(line)) {
+				if (byte_idx < line_data_strlen(line)) {
 					byte_idx++;
 				} else if (IS_NODE_BOT(line) == 0) {
 					line = NODE_NEXT(line);
@@ -761,7 +764,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 				// found
 				break;
 			}
-			byte_idx = line_data_len(line);
+			byte_idx = line_data_strlen(line);
 			skip_here = 1;
 		}
 	}

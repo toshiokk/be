@@ -240,6 +240,18 @@ PRIVATE void win_set_cursor_pos(win_rect_t *win, int yy, int xx)
 	}
 	tio_set_cursor_pos(yy, xx);
 }
+
+PRIVATE int cursor_yy = 0;
+PRIVATE int cursor_xx = 0;
+void win_save_cursor_pos()
+{
+	tio_get_cursor_pos(&cursor_yy, &cursor_xx);
+}
+int win_get_saved_cursor_y()
+{
+	return cursor_yy;
+}
+
 PRIVATE void win_clear_screen(win_rect_t *win)
 {
 	win_clear_lines(win, 0, win_get_lines(win));

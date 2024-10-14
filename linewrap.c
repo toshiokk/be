@@ -232,15 +232,15 @@ flf_d_printf("priv_tab_size: %d\n", priv_tab_size);
 	}
 
 //[全角wrapping]
-// Ex1
+// e.g.1
 //  "aaaaaaaa漢"
 //  |aaaaaaaa漢|
-// Ex2
+// e.g.2
 //  "aaaaaaaaa漢"
 //  |aaaaaaaaa |
 //  |漢        |
 //[TAB wrapping]
-// Ex1
+// e.g.1
 //  "aaaaaaaa>>>>bbbb"
 //  |aaaaaaaa>>|
 //  |>>bbbb    |

@@ -28,7 +28,7 @@ void load_key_macro(int last_n)
 }
 void save_key_macro(void)
 {
-	update_history(HISTORY_TYPE_IDX_KEYMACRO, get_string_from_key_macro(), 0);
+	update_history(HISTORY_TYPE_IDX_KEYMACRO, get_string_from_key_macro());
 }
 #endif // ENABLE_HISTORY
 
@@ -162,14 +162,11 @@ flf_d_printf("key_macro_recording: %d\n", key_macro_recording);
 //-----------------------------------------------------------------------------
 int key_macro_start_playback(void)
 {
-//#ifdef ENABLE_HISTORY
-//	load_key_macro(1);
-//#endif // ENABLE_HISTORY
 	if (key_macro_is_recording()) {
 		key_macro_delete_last_key();	// cancel the last key (Start-playback Key)
 	}
-	if (key_macro_recorded > 0) {	// recorded ?
-		key_macro_playing_back = 0;	// playback key strokes
+	if (key_macro_recorded > 0) {		// recorded ?
+		key_macro_playing_back = 0;		// playback key strokes
 	}
 	return key_macro_recorded;
 }

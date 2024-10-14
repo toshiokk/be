@@ -34,6 +34,9 @@
 
 #define BOOL_TO_ON_OFF(is_on)		((is_on) ? "ON" : "off")
 
+#define FROM_IDX(idx)	((idx) + 1)		// get number from index
+#define FROM_NUM(num)	((num) - 1)		// get index from number
+
 //-----------------------------------------------------------------------------
 
 void set_die_on_callback(void (*die_on_cb)(const char *msg));
@@ -101,7 +104,9 @@ unsigned short clear_crc16ccitt(void);
 unsigned short calc_crc16ccitt(unsigned char byte);
 
 //-----------------------------------------------------------------------------
-#define HHCMMCSS_YY_MM_DD_LEN	HHCMMCSS_LEN
+#define YYSMMSDD_LEN			8	// "24/12/31"
+#define HHCMMCSS_LEN			8	// "23:59:59"
+#define HHCMMCSS_YYSMMSDD_LEN	8	// "23:59:59" / "24/10/09"
 const char *cur_ctime_cdate(int time0_date1);
 const char *cur_cdate(void);
 const char *cur_ctime(void);
@@ -112,6 +117,7 @@ const char *cur_hhmmss(void);
 #define USEC_END	flf_d_printf("%d[usec]\n", get_usec() - usec); USEC_BEGIN
 char *get_ssspuuuuuu(char *buf);
 char *get_sssssspmmm(char *buf);
+////time_t get_sec(void);
 unsigned long get_msec(void);
 unsigned long get_usec(void);
 const char *cur_hhcmmcss_mmm(void);
@@ -139,9 +145,9 @@ int int_max(int aa, int bb);
 int get_mem_free_in_kb(int update);
 
 #ifdef START_UP_TEST
-void test_nn_from_num(void);
+void test_zz_from_num(void);
 #endif // START_UP_TEST
-char *nn_from_num(int num, char *buf);
+char *zz_from_num(int num, char *buf);
 
 const char *get_user_name(uid_t uid);
 const char *get_user_home_dir(const char *user_name);

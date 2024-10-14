@@ -271,7 +271,7 @@ You can load all of the files in your project by passing project file to BE edit
 
     $ be my_proj.bep
 
-Qt project file (Ex. my_proj.pro) can be used as BE project file.
+Qt project file (e.g. my_proj.pro) can be used as BE project file.
 
     $ be my_proj.pro
 

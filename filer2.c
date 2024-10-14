@@ -151,9 +151,9 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	int is_link;
 	int is_link_broken = 0;
 	struct tm *tm_ptr;
-	char buf_name[MAX_PATH_LEN+1];
+	char buf_name[MAX_PATH_LEN+1] = "";
 	loff_t size;
-	char buf_size[20+1];
+	char buf_size[20+1] = "";
 	char buf_time[20+1];
 	int mode;
 	char *type_str;
@@ -179,7 +179,6 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	if (is_link) {
 		is_link_broken = (memcmp(st_ptr, lst_ptr, sizeof(*st_ptr)) == 0);
 	}
-	strcpy__(buf_name, "");
 	if (is_link) {
 		if (show_link) {
 			strlcat__(buf_name, MAX_PATH_LEN, file_info->file_name);
@@ -204,7 +203,6 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 		strlcat__(buf_name, MAX_PATH_LEN, "*");
 	}
 
-	strcpy__(buf_size, "");
 	size = show_link ? lst_ptr->st_size : st_ptr->st_size;
 ///#define TEST_HUGE_SIZE
 #ifdef	TEST_HUGE_SIZE
@@ -496,7 +494,6 @@ void sort_file_list(filer_view_t *fv)
 {
 	qsort(fv->file_list_ptr, fv->file_list_entries, sizeof(file_info_t), comp_file_info);
 }
-
 // Comparison functions for file list ------------------------------------------
 PRIVATE int comp_file_info(const void *aa, const void *bb)
 {
@@ -504,10 +501,6 @@ PRIVATE int comp_file_info(const void *aa, const void *bb)
 	if ((ret = comp_file_type((file_info_t *)aa, (file_info_t *)bb)) != 0) {
 		return ret;
 	}
-	///if (get_file_type_num((file_info_t *)aa) <= 22) {
-	///	// always sort directory in first place
-	///	return comp_file_name(aa, bb);
-	///}
 	ret = comp_file_info_(aa, bb);
 	switch (GET_APPMD(fl_FILE_SORT_BY)) {
 	default:
@@ -533,16 +526,16 @@ PRIVATE int comp_file_info_(const void *aa, const void *bb)
 	default:
 	case FILE_SORT_BY_NAME:
 	case FILE_SORT_BY_NAME_REV:
-		if ((ret = comp_file_name(aa, bb)))		 {	return ret;		}
-		if ((ret = comp_file_extension(aa, bb))) {	return ret;		}
+		if ((ret = comp_file_name(aa, bb)))			{	return ret;		}
+		if ((ret = comp_file_extension(aa, bb)))	{	return ret;		}
 		return ret;
 	case FILE_SORT_BY_EXT:
 	case FILE_SORT_BY_EXT_REV:
 		if ((ret = comp_file_executable((file_info_t *)aa, (file_info_t *)bb))) {
 			return ret;
 		}
-		if ((ret = comp_file_extension(aa, bb))) {	return ret;		}
-		if ((ret = comp_file_name(aa, bb)))		 {	return ret;		}
+		if ((ret = comp_file_extension(aa, bb)))	{	return ret;		}
+		if ((ret = comp_file_name(aa, bb)))			{	return ret;		}
 		return ret;
 	case FILE_SORT_BY_TIME:
 	case FILE_SORT_BY_TIME_REV:
@@ -557,28 +550,24 @@ PRIVATE int comp_file_type(file_info_t *aa, file_info_t *bb)
 {
 	return get_file_type_num(aa) - get_file_type_num(bb);
 }
-// sort directories before files,
-// sort by file name.
+// sort directories before files and then by file name.
 PRIVATE int comp_file_name(const void *aa, const void *bb)
 {
 	return strtypecasecmp(((file_info_t *)aa)->file_name, ((file_info_t *)bb)->file_name);
 }
-// sort directories before files,
-// sort executable files before non-executables,
-// sort by file extension then by file name.
+// sort directories before files executable files before non-executables,
+// and then by file extension then by file name.
 PRIVATE int comp_file_extension(const void *aa, const void *bb)
 {
 	return strcmp(get_file_name_extension(((file_info_t *)aa)->file_name),
 	 get_file_name_extension(((file_info_t *)bb)->file_name));
 }
-// sort directories before files,
-// and then by modification time stamp.
+// sort directories before files and then by modification time stamp.
 PRIVATE int comp_file_time(const void *aa, const void *bb)
 {
 	return ((file_info_t *)aa)->st.st_mtime - ((file_info_t *)bb)->st.st_mtime;
 }
-// sort directories before files,
-// and then by file size.
+// sort directories before files and then by file size.
 PRIVATE int comp_file_size(const void *aa, const void *bb)
 {
 	return ((file_info_t *)aa)->st.st_size - ((file_info_t *)bb)->st.st_size;
@@ -698,15 +687,21 @@ int get_files_selected(filer_view_t *fv)
 	return files_selected;
 }
 
+file_info_t *select_and_get_first_file_ptr()
+{
+	return get_cur_fv_file_ptr(select_and_get_first_file_idx_selected());
+}
+
+PRIVATE void select_file_if_none_selected(void);
 int select_and_get_first_file_idx_selected(void)
 {
 	select_file_if_none_selected();
 	return get_first_file_idx_selected();
 }
-void select_file_if_none_selected(void)
+PRIVATE void select_file_if_none_selected(void)
 {
 	if (get_files_selected_cfv() == 0) {
-		get_cur_fv_file_ptr(get_cur_fv_file_idx())->selected = _FILE_SEL_AUTO_;
+		get_cur_fv_cur_file_ptr()->selected = _FILE_SEL_AUTO_;
 	}
 }
 int get_first_file_idx_selected(void)

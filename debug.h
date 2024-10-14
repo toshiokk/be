@@ -23,32 +23,35 @@
 #define debug_h
 
 #ifdef ENABLE_DEBUG
-///#define START_UP_TEST
+///
+#define START_UP_TEST
 #endif // ENABLE_DEBUG
 
 #ifdef START_UP_TEST
-#define MY_UT_INT(actual, expected)		if ((actual) != (expected)) {			\
+#define MY_UT_INT(actual, expected)		if ((actual) != (expected)) {		\
   warning_printf("[%d] != [%d]\n", actual, expected); assert(1);			\
 }
-#define MY_UT_UINT(actual, expected)	if ((actual) != (expected)) {			\
+#define MY_UT_UINT(actual, expected)	if ((actual) != (expected)) {		\
   warning_printf("[%u] != [%u]\n", actual, expected); assert(1);			\
 }
-#define MY_UT_STR(actual, expected)		if (strcmp((actual), (expected))) {		\
+#define MY_UT_STR(actual, expected)		if (strcmp((actual), (expected))) {	\
   warning_printf("[%s] != [%s]\n", actual, expected); assert(1);			\
 }
 #endif // START_UP_TEST
 
 #ifdef ENABLE_DEBUG
 
-#define __FN__		__FUNCTION__
+#define _FN_		__FUNCTION__
+#define _FL_		__FILE__
+#define _LN_		__LINE__
 
 #define _D_(debug)						_FLF_;	debug;
 #define _D(debug)						_FLF;	debug;
-#define flf_d_printf(args...)			tflfl_d_printf_(0, __FILE__, __LINE__, __FN__, "", args)
-#define tflf_d_printf(args...)			tflfl_d_printf_(1, __FILE__, __LINE__, __FN__, "", args)
-#define mflf_d_printf(args...)			tflfl_d_printf_(3, __FILE__, __LINE__, __FN__, "", args)
-#define uflf_d_printf(args...)			tflfl_d_printf_(6, __FILE__, __LINE__, __FN__, "", args)
-#define flfl_d_printf(label, args...)	tflfl_d_printf_(0, __FILE__, __LINE__, __FN__, label, args)
+#define flf_d_printf(args...)			tflfl_d_printf_(0, _FL_, _LN_, _FN_, "", args)
+#define tflf_d_printf(args...)			tflfl_d_printf_(1, _FL_, _LN_, _FN_, "", args)
+#define mflf_d_printf(args...)			tflfl_d_printf_(3, _FL_, _LN_, _FN_, "", args)
+#define uflf_d_printf(args...)			tflfl_d_printf_(6, _FL_, _LN_, _FN_, "", args)
+#define flfl_d_printf(label, args...)	tflfl_d_printf_(0, _FL_, _LN_, _FN_, label, args)
 #define d_printf(args...)				tflfl_d_printf_(0, "", 0, "", "", args)
 #define e_printf(args...)				debug_printf(args)
 #define e_vprintf(args...)				debug_vprintf(args)

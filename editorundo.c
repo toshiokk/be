@@ -82,11 +82,11 @@ int delete_do_buf(be_buf_t *edit_buf, be_buf_t *buf)
 }
 int count_undo_bufs(void)
 {
-	return buf_count_bufs(&undo_buffers);
+	return bufs_count_bufs(&undo_buffers);
 }
 int count_redo_bufs(void)
 {
-	return buf_count_bufs(&redo_buffers);
+	return bufs_count_bufs(&redo_buffers);
 }
 
 #ifdef ENABLE_DEBUG
@@ -174,16 +174,21 @@ void undo_adjust_max_line(void)
 void undo_save_after_change(void)
 {
 	if (count_undo_bufs() % 2) {
+_FLF_
 		// count_undo_bufs() is odd.
 		// The state before change was saved.
 		// Save the state after change.
 		save_region_to_undo_buf();	// save the state after change
 		if (count_undo_bufs() >= 2) {
+_FLF_
 			// compare buffer after change and buffer before change
 			if (buf_compare(TOP_BUF_OF_UNDO_BUFS, NODE_NEXT(TOP_BUF_OF_UNDO_BUFS)) == 0) {
+_FLF_
 				// not changed, pop two buffer (after and before)
 				buf_free_node(pop_undo_buf());
 				buf_free_node(pop_undo_buf());
+			} else {
+				set_cur_buf_modified();
 			}
 		}
 	}

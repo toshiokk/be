@@ -3,10 +3,10 @@ if [ ! -f config.h ]; then
   ./configure  # generate config.h
 fi
 {
-  for file in *.h *.c berc emacs.berc wordstar.berc po/*.po README.md; do
+  for file in *.h *.c berc emacs.berc wordstar.berc po/*.po README.md __todo.txt; do
     echo -n "`printf "%-16s  " $file`"
     echo -n `cat $file | wc`
-    echo " " `expand -t 4 $file | wc -L`
+    echo "    " `expand -t 4 $file | wc -L`
   done
   echo -n "Total lines, words, bytes, Max length: "
   echo -n `expand -t 4 *.c *.h | wc`

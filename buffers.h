@@ -80,22 +80,22 @@ extern be_bufs_t edit_buffers;
 #define BUFV_CL(b_v)						((b_v)->cur_line)
 #define BUFV_CL_DATA(b_v)					((b_v)->cur_line->data)
 #define BUFV_CLBI(b_v)						((b_v)->cur_line_byte_idx)
-#define BUFV_CURSOR_Y(b_v)					((b_v)->cursor_y)
-#define BUFV_CURSOR_X_TO_KEEP(b_v)			((b_v)->cursor_x_to_keep)
+#define BUFV_CURS_Y(b_v)					((b_v)->cursor_y)
+#define BUFV_CURS_X_TO_KEEP(b_v)			((b_v)->cursor_x_to_keep)
 #define BUFV_MIN_TEXT_X_TO_KEEP(b_v)		((b_v)->min_text_x_to_keep)
 
 #define BUFVX_CL(buf, idx)					BUFV_CL(BUF_VX((buf), (idx)))
 #define BUFVX_CLBI(buf, idx)				BUFV_CLBI(BUF_VX((buf), (idx)))
-#define BUFVX_CURSOR_Y(buf, idx)			BUFV_CURSOR_Y(BUF_VX((buf), (idx)))
-#define BUFVX_CURSOR_X_TO_KEEP(buf, idx)	BUFV_CURSOR_X_TO_KEEP(BUF_VX((buf), (idx)))
+#define BUFVX_CURS_Y(buf, idx)				BUFV_CURS_Y(BUF_VX((buf), (idx)))
+#define BUFVX_CURS_X_TO_KEEP(buf, idx)		BUFV_CURS_X_TO_KEEP(BUF_VX((buf), (idx)))
 #define BUFVX_MIN_TEXT_X_TO_KEEP(buf, idx)	BUFV_MIN_TEXT_X_TO_KEEP(BUF_VX((buf), (idx)))
 #define BUFV0_CL(buf)						BUFVX_CL((buf), 0)
 #define BUFV1_CL(buf)						BUFVX_CL((buf), 1)
 
 #define EPCBVC_CL							BUFV_CL(get_epc_buf_view())
 #define EPCBVC_CLBI							BUFV_CLBI(get_epc_buf_view())
-#define EPCBVC_CURSOR_Y						BUFV_CURSOR_Y(get_epc_buf_view())
-#define EPCBVC_CURSOR_X_TO_KEEP				BUFV_CURSOR_X_TO_KEEP(get_epc_buf_view())
+#define EPCBVC_CURS_Y						BUFV_CURS_Y(get_epc_buf_view())
+#define EPCBVC_CURS_X_TO_KEEP				BUFV_CURS_X_TO_KEEP(get_epc_buf_view())
 #define EPCBVC_MIN_TEXT_X_TO_KEEP			BUFV_MIN_TEXT_X_TO_KEEP(get_epc_buf_view())
 #define EPCBVC_CL_EPCBVC_CLBI				(&(EPCBVC_CL->data[EPCBVC_CLBI]))
 
@@ -197,7 +197,8 @@ void dump_buf_view_x(be_buf_t *buf, int pane_idx);
 
 be_line_t *append_string_to_cur_edit_buf(const char *string);
 void append_magic_line(void);
-int count_edit_bufs(void);
+int edit_bufs_count_bufs(void);
+int epc_buf_count_bufs(void);
 int is_epc_buf_valid(void);
 
 //-----------------------------------------------------------------------------

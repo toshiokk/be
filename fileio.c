@@ -29,7 +29,7 @@ PRIVATE int backup_files(const char *file_path, int depth);
 PRIVATE char *make_backup_file_path(const char *orig_path, char *backup_path, int depth);
 
 PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int msg_on_err);
-PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file, int msg_on_err);
+PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_bin_file, int msg_on_err);
 
 #ifdef USE_NKF
 PRIVATE int guess_encoding_by_nkf(const char *full_path);
@@ -161,13 +161,13 @@ int backup_and_save_cur_buf_ask(void)
 int input_new_file_name__ask(char *file_path)
 {
 	for ( ; ; ) {
-		int ret = input_string_tail(file_path, file_path, HISTORY_TYPE_IDX_DIR,
-		 "%s:", _("File Name to Write"));
-		if (ret <= INPUT_LOADED) {
-			///set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
-			return 0;		// cancelled
+		if (input_string_pos(file_path, file_path,
+		 MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
+		 "%s:", _("File Name to Write:")) <= EF_EXECUTED) {
+			return 0;
 		}
 		if (is_path_exist(file_path)) {
+			int ret;
 			if (is_path_regular_file(file_path) > 0) {
 				// ask overwrite
 				ret = ask_yes_no(ASK_YES_NO,
@@ -278,7 +278,7 @@ int load_file_into_buf(be_buf_t *buf, const char *full_path)
 	return ret;		// >= 0: success
 }
 
-PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file, int msg_on_err)
+PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_bin_file, int msg_on_err)
 {
 #ifdef USE_NKF
 	const char *nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
@@ -289,7 +289,7 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_binary_file
 		if (CUR_EBUF_STATE(buf_ENCODE) == ENCODE_ASCII) {
 			// encoding is not specified on command line
 			guess_encoding_by_nkf(full_path);
-			if ((CUR_EBUF_STATE(buf_ENCODE) == ENCODE_BINARY) && (load_binary_file == 0)) {
+			if ((CUR_EBUF_STATE(buf_ENCODE) == ENCODE_BINARY) && (load_bin_file == 0)) {
 				if (msg_on_err) {
 					disp_status_bar_err(_("BINARY file !! [%s]"),
 					 shrink_str_to_scr_static(full_path));
@@ -485,14 +485,12 @@ PRIVATE int my_guess_bin_file(const char *full_path)
 		for (int off = 0; off < bytes; off++) {
 			switch (bin_buf[off]) {
 			// 07:BEL, 09:TAB, 0a:LF, 0c:FF, 0d:CR, 1b:ESC
-			case 0x00: case 0x01: case 0x02: case 0x03: case 0x04: case 0x05: case 0x06:
-			case 0x08:                       case 0x0b:                       case 0x0e:
-			case 0x10: case 0x11: case 0x12: case 0x13: case 0x14: case 0x15: case 0x16: case 0x17:
-			case 0x18: case 0x19: case 0x1a:            case 0x1c: case 0x1d: case 0x1e: case 0x1f:
-			case 0x7f:
-				bin_bytes_found++;
+			case 0x07: case 0x09: case 0x0a: case 0x0c: case 0x0d: case 0x1b:
 				break;
 			default:
+				if ((bin_buf[off] < 0x20) || (bin_buf[off] == 0x7f)) {
+					bin_bytes_found++;
+				}
 				break;
 			}
 		}
@@ -561,8 +559,7 @@ PRIVATE int load_file_into_cur_buf_binary(const char *full_path)
 		if (bytes <= 0) {
 			break;
 		}
-		char text_buf[BIN_LINE_LEN * MAX_UTF8C_BYTES + 1];
-		strcpy(text_buf, "");
+		char text_buf[BIN_LINE_LEN * MAX_UTF8C_BYTES + 1] = "";
 		for (int off = 0; off < bytes; off++) {
 			unsigned char byte = bin_buf[off];
 			char utf8c[MAX_UTF8C_BYTES+1];
@@ -586,7 +583,7 @@ PRIVATE int load_file_into_cur_buf_binary(const char *full_path)
 	return lines;
 }
 
-PRIVATE void fgetc_buffered_clear(void);
+PRIVATE void fgetc_bufed_clear(void);
 PRIVATE int fgetc_buffered(FILE *fp);
 
 PRIVATE inline void load_into_cur_buf_append_line(be_line_t* line, char *line_buf, int* len,
@@ -610,7 +607,7 @@ PRIVATE int load_into_cur_buf_fp(FILE *fp)
 	line = CUR_EDIT_BUF_BOT_ANCH;
 	len = 0;
 	line_buf[len] = '\0';
-	fgetc_buffered_clear();
+	fgetc_bufed_clear();
 	for ( ; ; ) {
 		chr_int = fgetc_buffered(fp);
 		switch (chr_int) {
@@ -663,29 +660,31 @@ PRIVATE int load_into_cur_buf_fp(FILE *fp)
 	return lines_read;	// >= 0: succeeded, < 0: error or stopped
 }
 
-PRIVATE char fgetc_buffered_buf[MAX_EDIT_LINE_LEN+1];
-PRIVATE int fgetc_buffered_read_len = 0;
-PRIVATE int fgetc_buffered_byte_idx = 0;
+// buffered file input
+PRIVATE char fgetc_bufed_buf[MAX_EDIT_LINE_LEN+1];
+PRIVATE int fgetc_bufed_read_len = 0;
+PRIVATE int fgetc_bufed_byte_idx = 0;
 
-PRIVATE void fgetc_buffered_clear(void)
+PRIVATE void fgetc_bufed_clear(void)
 {
-	fgetc_buffered_read_len = 0;
-	fgetc_buffered_byte_idx = 0;
+	fgetc_bufed_read_len = 0;
+	fgetc_bufed_byte_idx = 0;
 }
 PRIVATE int fgetc_buffered(FILE *fp)
 {
 	int chr;
 
-	if (fgetc_buffered_byte_idx >= fgetc_buffered_read_len) {
+	if (fgetc_bufed_byte_idx >= fgetc_bufed_read_len) {
 		if (check_break_key()) {
 			return EOF;
 		}
-		if ((fgetc_buffered_read_len = fread(fgetc_buffered_buf, 1, MAX_EDIT_LINE_LEN, fp)) <= 0) {
+		if ((fgetc_bufed_read_len = fread(fgetc_bufed_buf, 1, MAX_EDIT_LINE_LEN, fp))
+		 <= 0) {
 			return EOF;
 		}
-		fgetc_buffered_byte_idx = 0;
+		fgetc_bufed_byte_idx = 0;
 	}
-	chr = (unsigned char)fgetc_buffered_buf[fgetc_buffered_byte_idx++];
+	chr = (unsigned char)fgetc_bufed_buf[fgetc_bufed_byte_idx++];
 #define NUL_REPLACE_CHR		' '		// replace '\0' to ' '
 	if (chr == '\0') {
 		chr = NUL_REPLACE_CHR;		// replace '\0'
@@ -752,7 +751,7 @@ PRIVATE int save_cur_buf_to_file_binary(const char *file_path)
 	int lines = 0;
 	for (const be_line_t *line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_INT(line);
 	 line = NODE_NEXT(line)) {
-		if (IS_NODE_BOT(line) && (line_data_len(line) == 0)) {
+		if (IS_NODE_BOT(line) && (line_data_strlen(line) == 0)) {
 			break;			// do not output the magic line
 		}
 		unsigned char bin_buf[BIN_LINE_LEN];
@@ -791,9 +790,9 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 
 	lines_written = 0;
 	for (line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_INT(line); line = NODE_NEXT(line)) {
-		if (IS_NODE_BOT(line) && line_data_len(line) == 0)
+		if (IS_NODE_BOT(line) && line_data_strlen(line) == 0)
 			break;			// do not output the magic line
-		line_len = line_data_len(line);
+		line_len = line_data_strlen(line);
 		size = fwrite(line->data, 1, line_len, fp);
 		if (size < line_len) {
 			disp_status_bar_err(_("Can not write file [%s]: %s"),

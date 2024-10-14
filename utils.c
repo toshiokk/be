@@ -49,7 +49,6 @@ char *malloc_strcpy(const char *string)
 //-----------------------------------------------------------------------------
 #ifdef MEMORY_LEAK_CHECKER
 
-#define MAX_MALLOCS_TO_MONITOR	2000000	// 2,000,00
 static struct malloc_caller malloc_callers[MAX_MALLOCS_TO_MONITOR];
 
 static const char *caller_file_name = NULL;	// "filename.c"
@@ -260,7 +259,8 @@ unsigned short calc_crc16ccitt(unsigned char byte)
 }
 //-----------------------------------------------------------------------------
 // NOTE: to avoid snprintf trancation warning of C compiler, add 20 bytes
-#define YYYY_MM_DD_HHCMMCSS_LEN		(4+1+2+1+2+1+2+1+2+1+2)	// "2037/12/31 23:59:59"
+#define YYYYSMMSDD_HHCMMCSS_LEN		(4+1+2+1+2+1+2+1+2+1+2)	// "2037/12/31 23:59:59"
+#define YYYYMMDD_HHMMSS_LEN			(8+1+6)					// "20241009-235959"
 PRIVATE char *get_yyyysmmsdd_hhcmmcss(time_t abs_time, char *buf);
 PRIVATE char *get_yyyymmdd_hhmmss(time_t abs_time, char *buf);
 
@@ -275,19 +275,17 @@ const char *cur_ctime_cdate(int time0_date1)
 const char *cur_cdate(void)
 {
 	time_t cur_time;
-#define YY_MM_DD_LEN		8	// "2037-12-31 23:59:59"
-	char buf_ymd_hms[YYYY_MM_DD_HHCMMCSS_LEN+1];
-	static char buf_date[YYYY_MM_DD_HHCMMCSS_LEN+1];
+	char buf_ymd_hms[YYYYSMMSDD_HHCMMCSS_LEN+1];
+	static char buf_date[YYYYSMMSDD_HHCMMCSS_LEN+1];
 
 	cur_time = time(NULL);
 	get_yyyysmmsdd_hhcmmcss(cur_time, buf_ymd_hms);
-	strlcpy__(buf_date, &(buf_ymd_hms[2]), YY_MM_DD_LEN);
+	strlcpy__(buf_date, &(buf_ymd_hms[2]), YYSMMSDD_LEN);
 	return buf_date;
 }
 const char *cur_ctime(void)
 {
 	time_t cur_time;
-#define HHCMMCSS_LEN		8	// "23:59:59"
 	static char buf_time[HHCMMCSS_LEN+1];
 
 	cur_time = time(NULL);
@@ -298,7 +296,7 @@ const char *cur_hhmmss(void)
 {
 	time_t cur_time;
 #define HHMMSS_LEN		6	// "235959"
-	static char buf_time[YYYY_MM_DD_HHCMMCSS_LEN+1];
+	static char buf_time[YYYYMMDD_HHMMSS_LEN+1];
 
 	cur_time = time(NULL);
 	strlcpy__(buf_time, &(get_yyyymmdd_hhmmss(cur_time, buf_time)[8+1]), HHMMSS_LEN);
@@ -323,6 +321,14 @@ char *get_sssssspmmm(char *buf)
 	 (int)(msec / 1000), (int)(msec % 1000));
 	return buf;
 }
+////time_t get_sec(void)
+////{
+////	struct timeval tv;
+////	struct timezone tz;
+////
+////	gettimeofday(&tv, &tz);
+////	return tv.tv_sec;
+////}
 unsigned long get_msec(void)
 {
 	struct timeval tv;
@@ -343,7 +349,6 @@ unsigned long get_usec(void)
 }
 const char *cur_hhcmmcss_mmm(void)
 {
-#define HHCMMCSS_LEN		8	// "23:59:59"
 	struct timeval tv;
 	struct timezone tz;
 	time_t cur_time;
@@ -360,7 +365,6 @@ const char *cur_hhcmmcss_mmm(void)
 }
 const char *cur_hhcmmcss_uuuuuu(void)
 {
-#define HHCMMCSS_LEN		8	// "23:59:59"
 	struct timeval tv;
 	struct timezone tz;
 	time_t cur_time;
@@ -381,12 +385,10 @@ PRIVATE char *get_yyyysmmsdd_hhcmmcss(time_t abs_time, char *buf)
 	struct tm *tm;
 
 	if (abs_time == 0) {
-//		strcpy(buf, "???\?/?\?/?? ??:??:??");
-//		strcpy(buf, "0000/00/00 00:00:00");
-		strcpy(buf, "----/--/-- --:--:--");
+		strcpy__(buf, "----/--/-- --:--:--");
 	} else {
 		tm = localtime_r(&abs_time, &tm_);		// THREAD_SAFE
-		snprintf_(buf, YYYY_MM_DD_HHCMMCSS_LEN+1, "%04d/%02d/%02d %02d:%02d:%02d",
+		snprintf_(buf, YYYYSMMSDD_HHCMMCSS_LEN+1, "%04d/%02d/%02d %02d:%02d:%02d",
 		 1900 + tm->tm_year, (char)(tm->tm_mon+1), (char)(tm->tm_mday),
 		 (char)(tm->tm_hour), (char)(tm->tm_min), (char)(tm->tm_sec));
 	}
@@ -398,12 +400,10 @@ PRIVATE char *get_yyyymmdd_hhmmss(time_t abs_time, char *buf)
 	struct tm *tm;
 
 	if (abs_time == 0) {
-//		strcpy(buf, "???????? ??????");
-//		strcpy(buf, "00000000 000000");
-		strcpy(buf, "-------- ------");
+		strcpy__(buf, "-------- ------");
 	} else {
 		tm = localtime_r(&abs_time, &tm_);		// THREAD_SAFE
-		snprintf_(buf, YYYY_MM_DD_HHCMMCSS_LEN+1, "%04d%02d%02d-%02d%02d%02d",
+		snprintf_(buf, YYYYMMDD_HHMMSS_LEN+1, "%04d%02d%02d-%02d%02d%02d",
 		 1900 + tm->tm_year, (char)(tm->tm_mon+1), (char)(tm->tm_mday),
 		 (char)(tm->tm_hour), (char)(tm->tm_min), (char)(tm->tm_sec));
 	}
@@ -463,37 +463,64 @@ int get_mem_free_in_kb(int update)
 //-----------------------------------------------------------------------------------
 
 #ifdef START_UP_TEST
-void test_nn_from_num(void)
+void test_zz_from_num(void)
 {
 	int num;
 #ifdef ENABLE_DEBUG
 	char buf[2+1];
 #endif // ENABLE_DEBUG
 
-	for (num = -20; num < 10 + 90 + 260 + 260 + 26*26 + 10; num++) {
-		flf_d_printf("%d ==> [%s]\n", num, nn_from_num(num, buf));
+	// (10 + 26 + 26) * (10 + 26 + 26) = 62 * 62 = 3844
+	for (num = -20; num < (100 + 1040 + 2704) + 10; num++) {
+		flf_d_printf("%d ==> [%s]\n", num, zz_from_num(num, buf));
 	}
 }
 #endif // START_UP_TEST
-char *nn_from_num(int num, char *buf)
+// 00 - 99: 100   =  100
+// 0A - 0z:
+//   :
+// 9A - 9z: 10*52 =  520
+// A0 - Az:
+//   :
+// z0 - zz: 52*62 = 3224
+// ---------------- 3844
+char *zz_from_num(int num, char *buf)
 {
-	if (num < -10) {
+	inline char AZaz_from_num(int num) { // [0, 51] ==> [A-Za-z]
+		char chr = '_';
+		if (num < 26) {
+			chr = 'A' + num % 26;
+		} else
+		if (num < 26 + 26) {
+			num -= 26;
+			chr = 'a' + num % 26;
+		}
+		return chr;
+	}
+	inline char _09AZaz_from_num(int num) { // [0, 61] ==> [0-9A-Za-z]
+		char chr = '_';
+		if (num < 10) {
+			chr = '0' + num % 10;
+		} else
+		if (num < 10 + 26 + 26) {
+			num -= 10;
+			chr = AZaz_from_num(num);
+		}
+		return chr;
+	}
+	if (num < -9) {
 		snprintf_(buf, 2+1, "-@");			// -@
 	} else if (num < 0) {
 		snprintf_(buf, 2+1, "-%d", -num);	// -9 -- -1
-	} else if (num < 10) {
-		snprintf_(buf, 2+1, "%d", num);		// 0 -- 9
-	} else if (num < 10 + 90) {
-		snprintf_(buf, 2+1, "%02d", num);	// 10 -- 99
-	} else if (num < 100 + 260) {
+	} else if (num < 100) {
+		snprintf_(buf, 2+1, "%02d", num);	// 00 -- 99
+	} else if (num < 100 + 520) {
 		num -= 100;
-		snprintf_(buf, 2+1, "%c%d", 'A' + num / 10, num % 10);	// A0 -- Z9
-	} else if (num < 100 + 260 + 260) {
-		num -= (100 + 260);
-		snprintf_(buf, 2+1, "%d%c", num / 26, 'A' + num % 26);	// 0A -- 9Z
-	} else if (num < 100 + 260 + 260 + 26 * 26) {
-		num -= (100 + 260 + 260);
-		snprintf_(buf, 2+1, "%c%c", 'A' + num / 26, 'A' + num % 26);	// AA -- ZZ
+		snprintf_(buf, 2+1, "%d%c", num / 52, AZaz_from_num(num % 52));	// 0A -- 0z, 9A -- 9z
+	} else if (num < 100 + 520 + 3224) {
+		num -= (100 + 520);
+		snprintf_(buf, 2+1, "%c%c",
+		 AZaz_from_num(num / 62), _09AZaz_from_num(num % 62));			// A0 -- Az, z0 -- zz
 	} else {
 		snprintf_(buf, 2+1, "%c%c", '@', '@');		// @@
 	}

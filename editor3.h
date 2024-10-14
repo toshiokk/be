@@ -42,10 +42,10 @@ int edit_win_get_path_y(void);
 int edit_win_get_ruler_y(void);
 int edit_win_get_text_y(void);
 
-extern int te_concat_linefeed_bytes;
-extern char te_concat_linefeed_buf[MAX_EDIT_LINE_LEN * 2 +1];
-extern int te_visible_code_columns;
-extern char te_visible_code_buf[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];
+extern int te_lf_concat_bytes;
+extern char te_lf_concat_buf[MAX_EDIT_LINE_LEN * 2 +1];
+extern int te_vis_code_columns;
+extern char te_vis_code_buf[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];
 const char *te_tab_expand(const char *original);
 const char *te_concat_linefeed(const char *original);
 int te_tab_expand__max_wl_idx(const char *original);

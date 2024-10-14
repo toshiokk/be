@@ -32,21 +32,7 @@ typedef struct {
 } filer_panes_t;
 extern filer_panes_t *cur_filer_panes;	// Current Filer Panes (instance is allocated locally)
 
-typedef enum {
-	FILER_DO_NOTHING				= 0,
-	FILER_DO_UPDATE_FILE_LIST_AUTO	= 1,	// periodic file list update
-	FILER_DO_UPDATE_FILE_LIST_FORCE	= 2,	// force file list update
-											// quit:
-	FILER_DO_QUIT					= 5,	//   quit and return from filer
-	FILER_LOADED					= 6,	//   file loaded and return from filer
-	FILER_INPUT_TO_REPLACE			= 7,	//   input file/dir name to replace
-	FILER_INPUT_TO_APPEND			= 8,	//   input file/dir name to append
-											// list mode:
-	FILER_DO_ENTER_FILE_NAME		= 9,	//   return file name (file, dir)
-	FILER_DO_ENTER_FILE_PATH		= 10,	//   return file path (/path/to/file, /path/to/dir)
-	FILER_DO_ENTER_CUR_DIR_PATH		= 11,	//   return current directory path (/path/to/dir)
-} filer_do_next_t;
-extern filer_do_next_t filer_do_next;
+extern ef_do_next_t filer_do_next;
 
 filer_panes_t *push_filer_panes(filer_panes_t *next_fps);
 void init_cur_filer_panes(filer_panes_t *fps, const char *cur_dir);	// TODO: rename
@@ -57,6 +43,7 @@ int get_filer_cur_pane_idx();
 filer_view_t *get_cur_filer_view(void);
 filer_view_t *get_other_filer_view(void);
 file_info_t *get_cur_fv_file_list_ptr();
+file_info_t *get_cur_fv_cur_file_ptr();
 file_info_t *get_cur_fv_file_ptr(int file_idx);
 int get_cur_fv_file_idx();
 void set_cur_fv_file_idx(int file_idx);

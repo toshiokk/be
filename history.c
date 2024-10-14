@@ -23,12 +23,19 @@
 
 #ifdef ENABLE_HISTORY
 
+time_t abs_msec_history_modified[HISTORY_TYPES_APP_AND_SHELL];
+time_t abs_msec_history_loaded[HISTORY_TYPES_APP_AND_SHELL];
+
+PRIVATE int load_history_if_reloadable(int hist_type_idx);
+PRIVATE int load_history_if_needed_and_reloadable(int hist_type_idx);
+PRIVATE int save_history_if_modified_and_expired(int hist_type_idx);
 PRIVATE int save_history_if_modified(int hist_type_idx);
 PRIVATE be_buf_t *get_history_buf(int hist_type_idx);
 
 PRIVATE int save_history_idx(int hist_type_idx);
 PRIVATE int load_history_idx(int hist_type_idx);
 PRIVATE char *get_history_file_path(int hist_type_idx);
+PRIVATE int get_history_max_lines(int hist_type_idx);
 
 PRIVATE void init_history(int hist_type_idx);
 PRIVATE void append_history(int hist_type_idx, const char *str);
@@ -37,14 +44,19 @@ PRIVATE void clear_history(int hist_type_idx);
 PRIVATE void clear_history_modified(int hist_type_idx);
 PRIVATE void set_history_modified(int hist_type_idx);
 PRIVATE int is_history_modified(int hist_type_idx);
+PRIVATE int is_history_modified_and_expired(int hist_type_idx);
+PRIVATE int is_history_reload_needed_and_not_modified(int hist_type_idx);
 
 PRIVATE void set_history_oldest(int hist_type_idx);
 PRIVATE const char *get_history_newer(int hist_type_idx);
 
-PRIVATE const char *has_str_registered_in_the_last_line(int hist_type_idx, const char *str);
-PRIVATE be_line_t *search_history_exact_match(int hist_type_idx, const char *str);
-PRIVATE int check_file_pos_recorded_in_history(int hist_type_idx, const char *str);
-PRIVATE int search_history_from_newest(int hist_type_idx, const char *str);
+PRIVATE const char *the_same_str_registered_in_the_last_line(int hist_type_idx, const char *str);
+
+PRIVATE void remove_all_exact_match(int hist_type_idx, const char *str);
+PRIVATE void remove_all_file_path_match(int hist_type_idx, const char *str);
+
+PRIVATE int compare_file_path_str(const char *str, const char *file_path);
+
 PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str);
 
 // search/replace(directory and execution) history support functions
@@ -79,6 +91,7 @@ void init_histories(void)
 		 get_history_file_path(hist_type_idx));
 		buf_insert_before(HIST_BUFS_BOT_ANCH, buf_create_node(buf_name));
 		init_history(hist_type_idx);
+		SET_BUF_STATE(get_history_buf(hist_type_idx), buf_VIEW_MODE, 1);
 	}
 }
 
@@ -87,16 +100,14 @@ void init_histories(void)
 void load_histories(void)
 {
 	for (int hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
-		load_history_idx(hist_type_idx);
+		load_history_if_reloadable(hist_type_idx);
 	}
 }
 
 // save histories to file
 void save_histories(void)
 {
-	int hist_type_idx;
-
-	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP; hist_type_idx++) {
+	for (int hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP; hist_type_idx++) {
 		save_history_if_modified(hist_type_idx);
 	}
 }
@@ -120,61 +131,28 @@ PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 void update_dir_history(const char *prev_dir, const char *cur_dir)
 {
 	// previous dir
-	update_history(HISTORY_TYPE_IDX_DIR, prev_dir, 0);
+	update_history(HISTORY_TYPE_IDX_DIR, prev_dir);
 	// next dir
-	update_history(HISTORY_TYPE_IDX_DIR, cur_dir, 0);
+	update_history(HISTORY_TYPE_IDX_DIR, cur_dir);
 }
 // update history list (load, modify, save)
-void update_history(int hist_type_idx, const char *str, BOOL force_update)
+void update_history(int hist_type_idx, const char *str)
 {
-	be_line_t *line;
-
-	if ((! force_update) && (hist_type_idx == HISTORY_TYPE_IDX_FILEPOS)) {
-		if (check_file_pos_recorded_in_history(hist_type_idx, str)) {
-			return; // registered relatively newer, no need of update
-		}
-	} else {
-		if (has_str_registered_in_the_last_line(hist_type_idx, str) != NULL) {
-			// str is registered in the last line, no need update
-			return;
-		}
+/////mflf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, str);
+	if (the_same_str_registered_in_the_last_line(hist_type_idx, str) != NULL) {
+		// the str is registered in the last line, no need update
+		return;
 	}
 	// load-modify(free old entry and append new entry)-save
-	load_history_idx(hist_type_idx);
-	if ((line = search_history_exact_match(hist_type_idx, str)) != NULL) {
-		line_unlink_free(line);	// delete older line
+	load_history_if_needed_and_reloadable(hist_type_idx);
+	if (hist_type_idx == HISTORY_TYPE_IDX_FILEPOS) {
+		remove_all_file_path_match(hist_type_idx, str);
+	} else {
+		remove_all_exact_match(hist_type_idx, str);
 	}
 	append_history(hist_type_idx, str);
 	// update history files soon so that other BE-editor instances can get recent information
-	save_history_if_modified(hist_type_idx);
-}
-
-PRIVATE int check_file_pos_recorded_in_history(int hist_type_idx, const char *str)
-{
-	char file_path[MAX_PATH_LEN+1];
-	// "/dir/file.txt|100,40" ==> "/dir/file.txt"
-	get_file_line_col_from_str_null(str, file_path, NULL, NULL);
-	const char *line = search_history_file_path(hist_type_idx, file_path);
-	if (strcmp(line, str) == 0) {
-		// exact the same line registered
-		int line_num_from_bottom = search_history_from_newest(hist_type_idx, line);
-		if (0 < line_num_from_bottom) {
-			return 1; // registered relatively newer, no need of update
-		}
-	}
-	return 0;
-}
-PRIVATE int search_history_from_newest(int hist_type_idx, const char *str)
-{
-	be_buf_t *buf = get_history_buf(hist_type_idx);
-	be_line_t *line;
-	int line_num_from_bottom = 0;
-	for (line = BUF_BOT_LINE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
-		line_num_from_bottom++;
-		if (strcmp(line->data, str) == 0)	// exact match
-			return line_num_from_bottom;	// return line count from the newest [1--]
-	}
-	return 0; // not found
+	save_history_if_modified_and_expired(hist_type_idx);
 }
 
 // last_n: 1, 2, 3, ....
@@ -202,10 +180,45 @@ const char *get_history_completion(int hist_type_idx, const char *str)
 }
 
 //-----------------------------------------------------------------------------
+//|        | write  | reload |       |              |                |
+//|modified| timer  | timer  |save   |load          |comment         |
+//|        | expired| expired|       |              |                |
+//|--------|--------|--------|-------|--------------|----------------|
+//|   0    |   0    |   0    |   -   |   -          |--              |
+//|   0    |   0    |   1    |   -   |needed        |reload needed   |
+//|   0    |   1    |   1    |   -   |   -          |N/A             |
+//|   1    |   0    |   1    |pending|not reloadable|write           |
+//|   1    |   1    |   1    |needed |needed        |write needed    |
+//|   0    |   1    |   0    |   -   |   -          |N/A             |
+//|   1    |   0    |   0    |pending|not reloadable|write is pending|
+//|   1    |   1    |   0    |needed |not reloadable|write needed    |
+
+PRIVATE int load_history_if_reloadable(int hist_type_idx)
+{
+	if (is_history_modified(hist_type_idx)) {
+		return -1;
+	}
+	return load_history_idx(hist_type_idx);
+}
+PRIVATE int load_history_if_needed_and_reloadable(int hist_type_idx)
+{
+	if (is_history_reload_needed_and_not_modified(hist_type_idx) == 0) {
+		return -1;
+	}
+	return load_history_idx(hist_type_idx);
+}
+PRIVATE int save_history_if_modified_and_expired(int hist_type_idx)
+{
+	if (is_history_modified_and_expired(hist_type_idx) == 0) {
+		return -1;
+	}
+	return save_history_idx(hist_type_idx);
+}
 PRIVATE int save_history_if_modified(int hist_type_idx)
 {
-	if (is_history_modified(hist_type_idx) == 0)
+	if (is_history_modified(hist_type_idx) == 0) {
 		return -1;
+	}
 	return save_history_idx(hist_type_idx);
 }
 
@@ -221,7 +234,7 @@ PRIVATE int save_history_idx(int hist_type_idx)
 	if (GET_APPMD(app_HISTORY) == 0)
 		return 0;
 	file_path = get_history_file_path(hist_type_idx);
-flf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, file_path);
+/////mflf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, file_path);
 	if ((fp = fopen(file_path, "w")) == NULL) {
 		e_printf(_("Unable to create history file: %s, %s"),
 		 file_path, strerror(errno));
@@ -233,7 +246,7 @@ flf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, file_path);
 		// count lines
 		lines++;
 	}
-	lines = LIM_MIN(0, lines - MAX_HISTORY_LINES); // lines to skip
+	lines = LIM_MIN(0, lines - get_history_max_lines(hist_type_idx)); // lines to skip
 	// write oldest first
 	for (set_history_oldest(hist_type_idx); *(str = get_history_newer(hist_type_idx)); ) {
 		if (lines-- > 0)
@@ -247,6 +260,7 @@ flf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, file_path);
 		}
 	}
 save_history_1:;
+	set_history_newest(hist_type_idx);
 	if (fclose(fp) != 0) {
 		error = 1;
 	}
@@ -266,7 +280,7 @@ PRIVATE int load_history_idx(int hist_type_idx)
 	if (GET_APPMD(app_HISTORY) == 0)
 		return 0;
 	const char *file_path = get_history_file_path(hist_type_idx);
-flf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, file_path);
+/////mflf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, file_path);
 	clear_history(hist_type_idx);
 
 	if ((fp = fopen(file_path, "r")) == NULL) {
@@ -281,7 +295,7 @@ flf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, file_path);
 			// count lines
 			lines++;
 		}
-		lines = LIM_MIN(0, lines - MAX_HISTORY_LINES);
+		lines = LIM_MIN(0, lines - get_history_max_lines(hist_type_idx));
 		fseek(fp, 0, SEEK_SET);
 		// skip lines
 		for ( ; fgets(str, MAX_EDIT_LINE_LEN, fp) != NULL; ) {
@@ -333,6 +347,32 @@ PRIVATE char *get_history_file_path(int hist_type_idx)
 	snprintf_(file_path, MAX_PATH_LEN+1, "%s/%s", dir, file);
 	return file_path;
 }
+PRIVATE int get_history_max_lines(int hist_type_idx)
+{
+	int lines = 0;
+	switch (hist_type_idx) {
+	default:
+	case HISTORY_TYPE_IDX_KEYMACRO:
+		lines = MAX_HISTORY_LINES;
+		break;
+	case HISTORY_TYPE_IDX_FILEPOS:
+		lines = MAX_HISTORY_LINES_10K;
+		break;
+	case HISTORY_TYPE_IDX_DIR:
+		lines = MAX_HISTORY_LINES;
+		break;
+	case HISTORY_TYPE_IDX_SEARCH:
+		lines = MAX_HISTORY_LINES;
+		break;
+	case HISTORY_TYPE_IDX_EXEC:
+		lines = MAX_HISTORY_LINES;
+		break;
+	case HISTORY_TYPE_IDX_SHELL:
+		lines = MAX_HISTORY_LINES;
+		break;
+	}
+	return lines;
+}
 
 //-----------------------------------------------------------------------------
 // initialize search and replace history lists
@@ -350,23 +390,38 @@ PRIVATE void append_history(int hist_type_idx, const char *str)
 }
 PRIVATE void clear_history(int hist_type_idx)
 {
-	be_buf_t *buf = get_history_buf(hist_type_idx);
-	buf_free_lines(buf);
+	buf_free_lines(get_history_buf(hist_type_idx));
 }
 PRIVATE void clear_history_modified(int hist_type_idx)
 {
-	be_buf_t *buf = get_history_buf(hist_type_idx);
-	BUF_STATE(buf, buf_MODIFIED) = 0;
+	BUF_STATE(get_history_buf(hist_type_idx), buf_MODIFIED) = 0;
+	abs_msec_history_modified[hist_type_idx] = get_msec();
+	abs_msec_history_loaded[hist_type_idx] = get_msec();
 }
 PRIVATE void set_history_modified(int hist_type_idx)
 {
-	be_buf_t *buf = get_history_buf(hist_type_idx);
-	BUF_STATE(buf, buf_MODIFIED) = 1;
+	if (BUF_STATE(get_history_buf(hist_type_idx), buf_MODIFIED) == 0) {
+		BUF_STATE(get_history_buf(hist_type_idx), buf_MODIFIED) = 1;
+		abs_msec_history_modified[hist_type_idx] = get_msec();
+	}
 }
 PRIVATE int is_history_modified(int hist_type_idx)
 {
-	be_buf_t *buf = get_history_buf(hist_type_idx);
-	return BUF_STATE(buf, buf_MODIFIED);
+	return BUF_STATE(get_history_buf(hist_type_idx), buf_MODIFIED);
+}
+#define HISTORY_EXPIRATION_MSEC		100		// 1000
+PRIVATE int is_history_modified_and_expired(int hist_type_idx)
+{
+/////mflf_d_printf("%d - %d --> %d\n",
+///// get_msec(), abs_msec_history_modified[hist_type_idx],
+///// get_msec() - abs_msec_history_modified[hist_type_idx]);
+	return is_history_modified(hist_type_idx)
+	 && ((get_msec() - abs_msec_history_modified[hist_type_idx]) >= HISTORY_EXPIRATION_MSEC);
+}
+PRIVATE int is_history_reload_needed_and_not_modified(int hist_type_idx)
+{
+	return ((get_msec() - abs_msec_history_loaded[hist_type_idx]) >= HISTORY_EXPIRATION_MSEC)
+	 && (is_history_modified(hist_type_idx) == 0);
 }
 
 PRIVATE void set_history_oldest(int hist_type_idx)
@@ -374,29 +429,27 @@ PRIVATE void set_history_oldest(int hist_type_idx)
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	buf_set_cur_line(buf, BUF_TOP_LINE(buf));
 }
+PRIVATE const char *get_history_newer(int hist_type_idx)
+{
+	be_line_t *line;
+
+	if ((line = buf_move_cur_line_to_next(get_history_buf(hist_type_idx))) != NULL) {
+		if (line->data) {
+			return line->data;
+		}
+	}
+	return "";			// end of list
+}
 void set_history_newest(int hist_type_idx)
 {
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	buf_set_cur_line(buf, BUF_BOT_LINE(buf));
 }
-char *get_history_older(int hist_type_idx)
+const char *get_history_older(int hist_type_idx)
 {
-	be_buf_t *buf = get_history_buf(hist_type_idx);
 	be_line_t *line;
 
-	if ((line = buf_move_cur_line_to_prev(buf)) != NULL) {
-		if (line->data) {
-			return line->data;
-		}
-	}
-	return "";			// end of list
-}
-PRIVATE const char *get_history_newer(int hist_type_idx)
-{
-	be_buf_t *buf = get_history_buf(hist_type_idx);
-	be_line_t *line;
-
-	if ((line = buf_move_cur_line_to_next(buf)) != NULL) {
+	if ((line = buf_move_cur_line_to_prev(get_history_buf(hist_type_idx))) != NULL) {
 		if (line->data) {
 			return line->data;
 		}
@@ -404,32 +457,51 @@ PRIVATE const char *get_history_newer(int hist_type_idx)
 	return "";			// end of list
 }
 
-PRIVATE const char *has_str_registered_in_the_last_line(int hist_type_idx, const char *str)
+PRIVATE const char *the_same_str_registered_in_the_last_line(int hist_type_idx, const char *str)
 {
-	be_buf_t *buf = get_history_buf(hist_type_idx);
-	be_line_t *line = BUF_BOT_LINE(buf);
+	be_line_t *line = BUF_BOT_LINE(get_history_buf(hist_type_idx));
 	if (IS_NODE_INT(line) && (strcmp(line->data, str) == 0))	// exact match
 		return line->data;
 	return NULL;
 }
-// find first line containing string str in history list
-PRIVATE be_line_t *search_history_exact_match(int hist_type_idx, const char *str)
-{
-	be_buf_t *buf = get_history_buf(hist_type_idx);
-	be_line_t *line;
 
-	for (line = BUF_BOT_LINE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
-		if (strcmp(line->data, str) == 0)	// exact match
-			return line;	// return line
+// remove all line the same to str
+PRIVATE void remove_all_exact_match(int hist_type_idx, const char *str)
+{
+	be_line_t *line;
+	be_line_t *prev;
+	for (line = BUF_BOT_LINE(get_history_buf(hist_type_idx)); IS_NODE_INT(line); ) {
+		prev = NODE_PREV(line);
+		if (strcmp(line->data, str) == 0) {	// exact match
+			line_unlink_free(line);		// delete older line
+			set_history_modified(hist_type_idx);
+		}
+		line = prev;
 	}
-	return NULL;
 }
+PRIVATE void remove_all_file_path_match(int hist_type_idx, const char *str)
+{
+	char file_path[MAX_PATH_LEN+1];
+	// "/dir/file.txt|100,40" ==> "/dir/file.txt"
+	get_file_line_col_from_str_null(str, file_path, NULL, NULL);
+	const char *path = quote_file_path_static(file_path);
+	be_line_t *line;
+	be_line_t *prev;
+	for (line = BUF_BOT_LINE(get_history_buf(hist_type_idx)); IS_NODE_INT(line); ) {
+		prev = NODE_PREV(line);
+		if (compare_file_path_str(line->data, path) == 0) {	// file path match
+			line_unlink_free(line);		// delete older line
+			set_history_modified(hist_type_idx);
+		}
+		line = prev;
+	}
+}
+
+// find first line containing string str in history list
 PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str)
 {
-	be_buf_t *buf = get_history_buf(hist_type_idx);
-	be_line_t *line;
-
-	for (line = BUF_BOT_LINE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
+	for (be_line_t *line = BUF_BOT_LINE(get_history_buf(hist_type_idx)); IS_NODE_INT(line);
+	 line = NODE_PREV(line)) {
 		if (strlcmp__(line->data, str) == 0)	// partial match
 			return line;
 	}
@@ -437,26 +509,39 @@ PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *s
 }
 const char *search_history_file_path(int hist_type_idx, const char *path)
 {
-	be_buf_t *buf = get_history_buf(hist_type_idx);
-	be_line_t *line;
 	const char *ptr;
 	size_t len;
 
-	path = quote_file_name_static(path);
+	path = quote_file_path_static(path);
 	// search from the newest to the oldest
-	for (line = BUF_BOT_LINE(buf); IS_NODE_INT(line); line = NODE_PREV(line)) {
+	for (be_line_t *line = BUF_BOT_LINE(get_history_buf(hist_type_idx)); IS_NODE_INT(line);
+	 line = NODE_PREV(line)) {
 		// /home/user/filename.exp|1234
 		// '/home/user/ filename.exp '|1234
 		if ((ptr = strstr(line->data, FILE_PATH_SEPARATOR)) != NULL) {
 			len = ptr - line->data;
 		} else {
-			len = line_data_len(line);
+			len = line_data_strlen(line);
 		}
+/////flf_d_printf("path[%s],line[%s],%d\n", path, line->data, len);
 		if (strncmp(line->data, path, len) == 0) {
 			return line->data;
 		}
 	}
 	return path;		// return original string
+}
+PRIVATE int compare_file_path_str(const char *str, const char *file_path)
+{
+	// /home/user/filename.exp|1234
+	// '/home/user/ filename.exp '
+	const char *ptr;
+	int len;
+	if ((ptr = strstr(str, FILE_PATH_SEPARATOR)) != NULL) {
+		len = ptr - str;
+	} else {
+		len = line_strlen(str);
+	}
+	return strncmp(str, file_path, len);
 }
 
 //-----------------------------------------------------------------------------
@@ -472,13 +557,11 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 	int ret = call_editor(1, APP_MODE_LIST, buffer, MAX_PATH_LEN);
 
 flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
-	if (ret >= EDITOR_INPUT) {
-///		strlcpy__(buffer, EPCBVC_CL->data, MAX_EDIT_LINE_LEN);
-	} else {
-		strcpy__(buffer, "");
-	}
-
-	if (ret != EDITOR_LOADED) {
+///	if (ret < EF_INPUT_TO_REPLACE) {
+///		strcpy__(buffer, "");
+///	}
+	if (ret != EF_LOADED) {
+		// No new file has been loaded, recover previous state
 		set_epc_buf(edit_buf_save);
 	}
 

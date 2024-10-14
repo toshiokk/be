@@ -466,7 +466,7 @@ int regexp_replace(regexp_t *regexp, regexp_matches_t *regexp_matches,
 			subexp_num = replace_ptr[1] - '0';	// "\1" ==> 1
 			if (1 <= subexp_num && subexp_num <= 9
 			 && subexp_num <= regexp->regex_compiled.re_nsub) {
-				replace_ptr += 2;	// Skip over the replacement expression (Ex. "\1")
+				replace_ptr += 2;	// Skip over the replacement expression (e.g. "\1")
 				match_len = regexp_matches_match_len(regexp_matches, subexp_num);
 				if (output_ptr - output + match_len < buf_len) {
 					strlcpy__(output_ptr,

@@ -20,6 +20,7 @@ be_SOURCES = \
 	main.c \
 	appmode.c \
 	editor.c \
+	editorfile.c \
 	editor2.c \
 	editor3.c \
 	editormove.c \
@@ -67,6 +68,7 @@ be_SOURCES = \
 	color.h \
 	debug.h \
 	editor.h \
+	editorfile.h \
 	editor2.h \
 	editor3.h \
 	editormove.h \

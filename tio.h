@@ -101,6 +101,7 @@ void tio_set_attr_rev(int rev);
 
 void tio_set_cursor_on(int on_off);
 void tio_set_cursor_pos(int yy, int xx);
+void tio_get_cursor_pos(int *yy, int *xx);
 
 void tio_clear_flash_screen(int delay);
 void tio_clear_screen(void);

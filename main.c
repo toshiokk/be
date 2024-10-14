@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 #endif // ENABLE_FILER
 
 	init_app_mode();
-flf_d_printf("Start %s ===================================\n", APP_NAME " " __DATE__ " " __TIME__);
+flf_d_printf("Start %s ==============================\n", APP_NAME " " __DATE__ " " __TIME__);
 	_mlc_init
 	get_home_dir();
 	get_starting_dir();
@@ -61,7 +61,7 @@ flf_d_printf("Start %s ===================================\n", APP_NAME " " __DA
 	init_locale();
 
 	_mlc_memorize_count
-	init_buffers();		// parse_options() needs epc_buf. So do here.
+	init_buffers();		// parse_options() needs epc_buf. So create here.
 	init_cur_editor_panes(&root_editor_panes);
 #ifdef ENABLE_FILER
 	init_cur_filer_panes(&root_filer_panes, get_starting_dir());
@@ -148,7 +148,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 		}
 		end_check_break_key();
 	}
-	if (count_edit_bufs()) {
+	if (edit_bufs_count_bufs()) {
 #ifdef ENABLE_HISTORY
 		if (goto_last_file_line_col_in_history() == 0) {
 			doe_switch_to_top_file();
@@ -186,7 +186,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	_mlc_check_count
 	_D_(_mlc_check_leak)
 
-flf_d_printf("Exit %s ====================================\n", APP_NAME " " __DATE__ " " __TIME__);
+flf_d_printf("Exit %s ===============================\n", APP_NAME " " __DATE__ " " __TIME__);
 	printf("\n");
 	return 0;
 }
@@ -194,16 +194,16 @@ flf_d_printf("Exit %s ====================================\n", APP_NAME " " __DA
 void app_main_loop(void)
 {
 #ifndef ENABLE_FILER
-	if (count_edit_bufs() == 0) {
+	if (edit_bufs_count_bufs() == 0) {
 		doe_open_file();
 	}
-	while (count_edit_bufs()) {
+	while (edit_bufs_count_bufs()) {
 		call_editor(0, APP_MODE_NORMAL, NULL, 0);
 	}
 #else // ENABLE_FILER
-	if (count_edit_bufs()) {
+	if (edit_bufs_count_bufs()) {
 		// application was started as a EDITOR
-		while (count_edit_bufs()) {
+		while (edit_bufs_count_bufs()) {
 			call_editor(0, APP_MODE_NORMAL, NULL, 0);
 		}
 	} else {
@@ -211,7 +211,7 @@ void app_main_loop(void)
 		for ( ; ; ) {
 			char file_path[MAX_PATH_LEN+1];
 			call_filer(0, APP_MODE_NORMAL, "", "", file_path, MAX_PATH_LEN);
-			if (count_edit_bufs() == 0) {
+			if (edit_bufs_count_bufs() == 0) {
 				// no file loaded in filer
 				break;
 			}
@@ -255,6 +255,7 @@ PRIVATE int init_app_mode(void)
 	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
 #ifdef ENABLE_DEBUG
 	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);
+	SET_APPMD_VAL(app_DEBUG_PRINTF, 0);
 	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
 #endif // ENABLE_DEBUG
 	// editor mode
@@ -474,7 +475,7 @@ PRIVATE void start_up_test(void)
 	flf_d_printf("MAX_EDIT_LINE_LEN: %d\n", MAX_EDIT_LINE_LEN);
 
 	// memory address of various object
-	flf_d_printf("mem type: 0x1234567890123456\n");
+	flf_d_printf("mem adrs: 0x1234567890123456\n");
 	flf_d_printf("auto buf: %p\n", buf);
 	flf_d_printf("\"string\": %p\n", "string");
 	allocated = malloc__(100);
@@ -510,7 +511,7 @@ PRIVATE void start_up_test(void)
 
 ///	test_get_intersection();
 	get_mem_free_in_kb(1);
-///	test_nn_from_num();
+///	test_zz_from_num();
 ///	test_utf8c_encode();
 	test_utf8c_bytes();
 ///	test_wcwidth();
@@ -539,10 +540,10 @@ PRIVATE void start_up_test2(void)
 }
 PRIVATE void test_modulo()
 {
-flf_d_printf("modulo test --------------\n");
+	flf_d_printf("modulo test --------------\n");
 	for (int nn = -9; nn < 10; nn++) {
-flf_d_printf("%2d mod 7 = %2d, %2d mod 5 = %2d, %2d mod 3 = %2d\n",
- nn, nn % 7, nn, nn % 5, nn, nn % 3);
+		flf_d_printf("%2d mod 7 = %2d, %2d mod 5 = %2d, %2d mod 3 = %2d\n",
+		 nn, nn % 7, nn, nn % 5, nn, nn % 3);
 	}
 }
 #endif // START_UP_TEST
@@ -551,13 +552,16 @@ flf_d_printf("%2d mod 7 = %2d, %2d mod 5 = %2d, %2d mod 3 = %2d\n",
 
 PRIVATE int write_cur_dir_to_exit_file(void)
 {
-	char buffer[MAX_PATH_LEN+1];
-	FILE *fp;
-
+	char file_path[MAX_PATH_LEN+1];
 	// write current directory to the $HOME/EXIT_FILE_NAME
-	snprintf(buffer, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), EXIT_FILE_NAME);
-	if ((fp = fopen(buffer, "w")) != NULL) {
-		fputs(get_full_path_of_cur_dir(buffer), fp);
+	snprintf(file_path, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), EXIT_FILE_NAME);
+	return write_text_to_file(file_path, full_path_of_cur_dir_static());
+}
+int write_text_to_file(const char *file_path, const char *text)
+{
+	FILE *fp;
+	if ((fp = fopen(file_path, "w")) != NULL) {
+		fputs(text, fp);
 		if (fclose(fp) != 0) {
 			return -1;
 		}

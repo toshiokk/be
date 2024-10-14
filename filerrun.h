@@ -34,20 +34,24 @@
 #ifdef ENABLE_FILER
 
 int dof_exec_command_with_file(void);
+int dof_exec_command_with_file_w_log(void);
 int dof_exec_command_with_files(void);
+int dof_exec_command_with_files_w_log(void);
 int dof_run_command_rel(void);
+int dof_run_command_rel_w_log();
 int dof_run_command_abs(void);
+int dof_run_command_abs_w_log(void);
 int dof_run_command_src_dst(void);
 int dof_run_command_sh(void);
 int dof_run_command_soon(void);
-int dof_run_command_soon_wo_log(void);
+int dof_run_command_soon_w_log(void);
 
 //-----------------------------------------------------------------------------
 
 void begin_fork_exec_repeat(void);
 void end_fork_exec_repeat(int exit_status);
 int fork_exec_sh_c_once(int logging, int pause_aft_exec, const char *command);
-int fork_exec_sh_c_repeat(int separate_bef_exec, const char *command);
+int fork_exec_sh_c_repeat(int separate_bef_exec, int logging, const char *command);
 int fork_exec_args_once(int pause_aft_exec, ...);
 int fork_exec_args_repeat(int separate_bef_exec, ...);
 

@@ -41,10 +41,8 @@ void test_utf8c_encode(void)
 }
 const char *dump_utf8c(const char *utf8c, char *buf)
 {
-	int idx;
-
-	strcpy(buf, "");
-	for (idx = 0; idx < strlen(utf8c); idx++) {
+	strcpy__(buf, "");
+	for (int idx = 0; idx < strlen(utf8c); idx++) {
 		strcat_printf(buf, DUMP_UTF8_BUF_LEN+1, "%02x-", (unsigned char)utf8c[idx]);
 	}
 	return buf;

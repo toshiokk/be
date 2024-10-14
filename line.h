@@ -171,8 +171,8 @@ be_line_t *line_concat_with_next(be_line_t *line);
 int line_renumber_from_line(be_line_t *line, size_t *_buf_size_);
 const be_line_t *line_get_top_anch(const be_line_t *line);
 
-size_t line_data_len(const be_line_t *line);
-size_t line_data_strlen(const char *str);
+size_t line_data_strlen(const be_line_t *line);
+size_t line_strlen(const char *str);
 
 //-----------------------------------------------------------------------------
 

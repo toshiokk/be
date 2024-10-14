@@ -28,7 +28,7 @@
 //   cur_path:      current directory before changing directory and after changing directory
 //   prev_path:     current directory before changing directory
 //   next_dir_sel:  directory to be pointed in filer after changing directory
-int change_cur_dir_saving_prev_next_dir(char *path,
+int change_cur_dir_saving_prev_next_dir(const char *path,
  char *cur_path, char *prev_path, char *next_dir_sel)
 {
 flf_d_printf("path: [%s]\n", path);
@@ -186,7 +186,7 @@ char *separate_path_to_dir_and_file(const char *path, char *buf_dir, char *buf_f
 			//  ^
 			// ".file" ==> ".", ".file"
 			//  ^
-			strcpy(buf_dir, ".");						// "."
+			strcpy__(buf_dir, ".");						// "."
 		}
 		strlcpy__(buf_file, ptr, MAX_PATH_LEN);			// "" or "file"
 	} else {
@@ -419,6 +419,10 @@ int change_cur_dir(const char *dir)
 	}
 	return ret;
 }
+const char *full_path_of_cur_dir_static()
+{
+	return full_path_of_cur_dir;
+}
 char *get_full_path_of_cur_dir(char *dir)
 {
 	strlcpy__(dir, full_path_of_cur_dir, MAX_PATH_LEN);
@@ -490,21 +494,21 @@ char *cat_dir_and_file(char *buf, const char *dir, const char *file)
 
 //-----------------------------------------------------------------------------------
 // NOTE: Meaning of file_name, file_path, full_path, normalized_path and abs_path(real_path)
-//  file_name          : Ex. "filename.ext"
+//  file_name          : e.g. "filename.ext"
 //						 not contain directory
-//  file_path          : Ex. "../src/filename.ext"
+//  file_path          : e.g. "../src/filename.ext"
 //						 may contain symlinks and ".."
-//  full_path          : Ex. "/home/user/symlink/../src/filename.ext"
+//  full_path          : e.g. "/home/user/symlink/../src/filename.ext"
 //						 start by '/' and may contain symlinks and ".."
-//  normalized_path    : Ex. "/home/user/symlink/src/filename.ext"
+//  normalized_path    : e.g. "/home/user/symlink/src/filename.ext"
 //						 start by '/' and not contain ".." and may contain symlinks
-//  abs_path(real_path): Ex. "/home/user/tools/src/filename.ext"
+//  abs_path(real_path): e.g. "/home/user/tools/src/filename.ext"
 //						 start by '/' and not contain symlinks and ".."
 
 // TODO: FULL_PATH can be converted to ABS_PATH
 //       but ABS_PATH can not be converted to FULL_PATH
 //       so you may keep FULL_PATH as long as possible, not replacing with ABS_PATH
-// TODO: switch_epc_buf...() shall compare file path in FULL_PATH first and then comare in ABS_PATH
+// TODO: switch_epc_buf...() shall compare file path in FULL_PATH first and in ABS_PATH next
 // TODO: memorize_file_pos() shall memorize file path as it is in FULL_PATH not in ABS_PATH
 //       recall_file_pos() shall open file path as it is
 //       goto_file_pos() shall open file path as it is
@@ -575,7 +579,8 @@ PRIVATE char *normalize_full_path__(char *full_path, char *parent, char *child)
 			if (*grandchild == '/') {
 				// "/dir1/../????"
 				//   ^   ^
-				child = normalize_full_path__(full_path, child, grandchild);	// recursive call
+				// recursive call
+				child = normalize_full_path__(full_path, child, grandchild);
 			}
 		}
 	}
@@ -716,9 +721,9 @@ void test_cat_dir_and_file()
 	char buf[MAX_PATH_LEN+1];
 	test_cat_dir_and_file_(buf, "/dir1/dir2", "/file", "/dir1/dir2/file");
 	test_cat_dir_and_file_(buf, "/dir1/dir2/", "/file", "/dir1/dir2/file");
-	strcpy(buf, "/dir1/dir2");
+	strcpy__(buf, "/dir1/dir2");
 	test_cat_dir_and_file_(buf, buf, "/file", "/dir1/dir2/file");
-	strcpy(buf, "/dir1/dir2/");
+	strcpy__(buf, "/dir1/dir2/");
 	test_cat_dir_and_file_(buf, buf, "/file", "/dir1/dir2/file");
 }
 PRIVATE void test_cat_dir_and_file_(char *buf, const char *dir, const char *file,
@@ -914,10 +919,10 @@ void test_separate_path_to_dir_and_file()
 	char buf_file[MAX_PATH_LEN+1];
 	test_separate_path_to_dir_and_file__("/dir/to/file", buf_dir, buf_file,
 	 "/dir/to", "file");
-	strcpy(buf_dir, "/dir/to/file");
+	strcpy__(buf_dir, "/dir/to/file");
 	test_separate_path_to_dir_and_file__(buf_dir, buf_dir, buf_file,
 	 "/dir/to", "file");
-	strcpy(buf_dir, "dir/to/file");
+	strcpy__(buf_dir, "dir/to/file");
 	test_separate_path_to_dir_and_file__(buf_dir, buf_dir, buf_file,
 	 "dir/to", "file");
 	test_separate_path_to_dir_and_file__("", buf_dir, buf_file, ".", "");

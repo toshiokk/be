@@ -38,7 +38,7 @@
 #define BIN_NAME		"be"
 
 #define APP_DIR				".be"
-#define RC_FILE_NAME		"berc"		// default RC file name (changeable by command line option)
+#define RC_FILE_NAME		"berc"	// default RC file name (changeable by command line option)
 #define EXIT_FILE_NAME		".beexit"
 
 #define MAX_APP_PANES_2		2
@@ -56,7 +56,7 @@
 #define DEFAULT_TAB_SIZE		8
 #define MAX_TAB_SIZE			8
 
-// NOTE: how to use single line comment "//", "///", "////" and "/////"
+// NOTE: how to use single line comment
 //   simple comment
 //! "doxygen comment"
 /// "doxygen comment"

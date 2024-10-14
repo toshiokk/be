@@ -18,7 +18,7 @@ int my_wcwidth(wchar_t wc);
 #define VAGUE_WIDTH_CHAR	// treat characters which width is vague as a wide character
 #ifdef VAGUE_WIDTH_CHAR
 #ifndef ENABLE_NCURSES
-////
+///
 #define ON_DEMAND_WCWIDTH	// make wcwidth table on demand (when displaying the character)
 #endif // ENABLE_NCURSES
 

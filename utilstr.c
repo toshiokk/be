@@ -26,8 +26,6 @@
 // [0x00, 0x1f], 0x7f
 int is_ctrl_char(unsigned char uchar)
 {
-///	int chr = uchar;
-///	return (0x00 <= chr && chr < 0x20) || (0x7f <= chr && chr < 0x80);
 	return (uchar < 0x20) || (uchar == 0x7f);
 }
 
@@ -106,13 +104,13 @@ void test_replace_str(void)
 {
 	char buffer[100+1];
 
-	strcpy(buffer, "abcdefghijklmnop");
+	strcpy__(buffer, "abcdefghijklmnop");
 	MY_UT_STR(replace_str(buffer, 100, 7, 4, "HIJK", 4), "abcdefgHIJKlmnop");
 
-	strcpy(buffer, "abcdefghijklmnop");
+	strcpy__(buffer, "abcdefghijklmnop");
 	MY_UT_STR(replace_str(buffer, 100, 7, 4, "", 0), "abcdefglmnop");
 
-	strcpy(buffer, "abcdefghijklmnop");
+	strcpy__(buffer, "abcdefghijklmnop");
 	MY_UT_STR(replace_str(buffer, 100, 7, 0, "HIJK", 4), "abcdefgHIJKhijklmnop");
 }
 #endif // START_UP_TEST
@@ -132,7 +130,6 @@ char *replace_str(char *buffer, size_t buf_len, size_t start, int delete_len,
 int insert_str_separating_by_space(char *buffer, size_t buf_len, size_t offset,
  const char *str)
 {
-///	offset = strnlen(buffer, buf_len);
 	if (offset) {
 		// not head of line
 		if (buffer[offset-1] != ' ') {
@@ -166,6 +163,14 @@ char *delete_str(char *buffer, size_t start, len_t delete_len)
 	return buffer;
 }
 
+char *insert_str_chr(char *buffer, size_t buf_len, size_t offset, char chr)
+{
+	char buf[sizeof(char) + 1];
+	buf[0] = chr;
+	buf[sizeof(char)] = '0';
+	return insert_str(buffer, buf_len, offset, buf, sizeof(char));
+}
+
 // "AAAACCCC", "bbbb" ==> "AAAAbbbbCCCC"
 char *insert_str(char *buffer, size_t buf_len, size_t offset,
  const char *string, len_t insert_len)
@@ -186,30 +191,29 @@ char *insert_str(char *buffer, size_t buf_len, size_t offset,
 	}
 	return buffer;
 }
-char *concat_file_name_separating_by_space(char *buffer, size_t buf_len,
- const char *string)
+char *concat_file_path_separating_by_space(char *buffer, size_t buf_len, const char *string)
 {
 	if (is_strlen_not_0(buffer) && buffer[strlen(buffer)-1] != ' ') {
 		// "command" ==> "command "
 		strlcat__(buffer, buf_len, " ");
 	}
-	string = quote_file_name_static(string);
+	string = quote_file_path_static(string);
 	if (strnlen(buffer, buf_len) + strnlen(string, buf_len) <= buf_len) {
 		strlcat__(buffer, buf_len, string);
 	}
 	return buffer;
 }
-const char *quote_file_name_static(const char *string)
+const char *quote_file_path_static(const char *string)
 {
 	static char buf[MAX_PATH_LEN+1];
 
-	return quote_file_name_if_necessary(buf, string);
+	return quote_file_path_if_necessary(buf, string);
 }
-const char *quote_file_name_buf(char *buf, const char *string)
+const char *quote_file_path_buf(char *buf, const char *string)
 {
-	return quote_file_name_if_necessary(buf, string);
+	return quote_file_path_if_necessary(buf, string);
 }
-const char *quote_file_name_if_necessary(char *buf, const char *string)
+const char *quote_file_path_if_necessary(char *buf, const char *string)
 {
 	if (contain_chr(string, ' ')
 	 || contain_chr(string, '\'') || contain_chr(string, '"')) {

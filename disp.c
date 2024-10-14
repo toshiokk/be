@@ -123,7 +123,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 	int dividend = 1; int divisor = 1;
 	int update = 0;
 	char buf[MAX_SCRN_LINE_BUF_LEN+1];
-	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
+	char buffer[MAX_SCRN_LINE_BUF_LEN+1] = "";
 	static char prev_msg[MAX_SCRN_LINE_BUF_LEN+1];
 	int color_idx;
 	int col_idx;
@@ -156,7 +156,8 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		}
 		break;
 	case S_B_D_ERR:
-		if (status_bar_to_display > status_bar_displayed) {
+///		if (status_bar_to_display > status_bar_displayed) {}
+		if (status_bar_to_display >= status_bar_displayed) {
 			// display this if higher priority
 			status_bar_displayed = status_bar_to_display;
 			update = 1;
@@ -175,7 +176,6 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		case S_B_D_NONE:
 		case S_B_D_PERCENT_EDITOR:
 			// this time: "PREV_MSG || NEW_MSG"
-			strcpy__(buffer, "");
 			if (strnlen(prev_msg, MAX_SCRN_LINE_BUF_LEN)) {
 				strlcat__(buffer, MAX_SCRN_LINE_BUF_LEN, prev_msg);
 				strlcat__(buffer, MAX_SCRN_LINE_BUF_LEN, "  |  ");
@@ -220,7 +220,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 			set_color_by_idx(color_idx, 0);
 			blank_status_bar();
 			// display status bar
-			main_win_output_string(main_win_get_bottom_win_y() + STATUS_LINE, 0, buffer, -1);
+			main_win_output_string(get_status_line_y(), 0, buffer, -1);
 			if (divisor > 0) {
 				// display percent indicator
 				col_idx = (main_win_get_columns() - 1) * dividend / divisor;
@@ -230,7 +230,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 				set_color_by_idx(color_idx, 1);
 				// display percent indicator
 ///mflf_d_printf("%d  %d, %d  %d, %d\n", col_idx, byte_idx_1, byte_idx_2, col_idx_1, col_idx_2);
-				main_win_output_string(main_win_get_bottom_win_y() + STATUS_LINE, col_idx_1,
+				main_win_output_string(get_status_line_y(), col_idx_1,
 				 &buffer[byte_idx_1], byte_idx_2 - byte_idx_1);
 			}
 		}
@@ -245,25 +245,53 @@ mflf_d_printf("SB: [%s]\n", buffer);
 
 void blank_status_bar(void)
 {
-	main_win_clear_lines(main_win_get_bottom_win_y() + STATUS_LINE, -1);
+	main_win_clear_lines(get_status_line_y(), -1);
 }
 
 void blank_key_list_lines(void)
 {
 	set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
-	main_win_clear_lines(main_win_get_bottom_win_y() + KEY_LIST_LINE,
-	 main_win_get_bottom_win_y() + KEY_LIST_LINE + get_key_list_lines());
+	main_win_clear_lines(get_key_list_line_y(), get_key_list_line_y() + get_key_list_lines());
 }
 
+PRIVATE int input_line_y = 2;
+// determines Y position of input-box avoiding the current cursor line
+int determine_input_line_y()
+{
+	int cursor_y = win_get_saved_cursor_y();
+	input_line_y = default_input_line_y();
+	if (IS_IN_RANGE(input_line_y-1, cursor_y, input_line_y + 3+1)) {
+		// avoid showing input box over the current cursor line
+		if (input_line_y < cursor_y) {
+			input_line_y = cursor_y - (3+1);
+		} else {
+			input_line_y = cursor_y + 1+1;
+		}
+	}
+	return input_line_y = MIN_MAX_(TITLE_LINES, input_line_y, get_status_line_y());
+}
 int get_input_line_y(void)
+{
+	return input_line_y;
+}
+int default_input_line_y(void)
 {
 	return main_win_get_mid_win_y() + main_win_get_mid_win_lines() / 2;
 }
+
 int get_yes_no_line_y(void)
 {
 	// if there is key-list-line, input on KEY_LIST_LINE otherwise STATUS_LINE
-	return main_win_get_bottom_win_y()
-	 + (get_key_list_lines() ? KEY_LIST_LINE : STATUS_LINE);
+	return get_key_list_lines() ? get_key_list_line_y() : get_status_line_y();
+}
+
+int get_status_line_y(void)
+{
+	return main_win_get_bottom_win_y() + STATUS_LINE;
+}
+int get_key_list_line_y(void)
+{
+	return main_win_get_bottom_win_y() + KEY_LIST_LINE;
 }
 
 // End of disp.c

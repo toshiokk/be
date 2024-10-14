@@ -66,9 +66,21 @@ conf_make()
   echo_run $cmd_line
 } 2>&1
 
+if [ -n "$1" ]; then
+  while : ; do
+    grep Summary _conf_make_all_patterns.log
+    grep complete _conf_make_all_patterns.log
+    if [ "$?" = 0 ]; then
+      exit
+    fi
+    sleep 5
+  done
+fi
+
 rm -f _conf_make_all_patterns.log
 
 {
+  echo "----conf_make_all_patterns-start----"
   if [ "$1" ]; then
     conf_make "$1"
   else
@@ -93,7 +105,7 @@ rm -f _conf_make_all_patterns.log
   conf_make 18
 ##  ./_c_debug
   fi
-  echo "-------------------------------"
+  echo "----conf_make_all_patterns-complete----"
 } | tee _conf_make_all_patterns.log
 
 grep "Summary" _conf_make_all_patterns.log >__error

@@ -56,11 +56,16 @@ int doe_tab(void);
 int doe_buffer_utf8c_bytes(char chr);
 int doe_enter_buffered_utf8c_bytes(void);
 int doe_carriage_return(void);
+int doe_carriage_return_with_auto_indent(void);
 int doe_backspace_limited(void);
 int doe_backspace(void);
 int doe_delete_char(void);
 int doe_conv_upp_low_letter(void);
 int doe_conv_upp_letter(void);
+int doe_conv_low_letter(void);
+
+int doe_memorize_columns();
+int doe_fill_spaces_to_columns();
 
 int doe_refresh_editor(void);
 

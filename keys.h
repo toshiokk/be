@@ -47,8 +47,18 @@
 #define TBKC(h, l)			TWO_BYTE_KEY_CODE((h), (l))
 #define KEY_META(key)		TWO_BYTE_KEY_CODE(CHAR_ESC, key)	// Alt-x
 #define KEY_META_CTRL(chr)	KEY_META(CTRL_CHAR(chr))			// Alt-Ctrl-x
-#define IS_ONE_BYTE_KEY(key)	(IS_KEY_VALID(key) && (((key) & 0xff00) == 0x0000))
+#define IS_BYTE_KEY(key)		(((key) & 0xff00) == 0x0000)
+#define IS_WORD_KEY(key)		(((key) & 0xff00) != 0x0000)
 #define IS_META_KEY(key)		(((key) & 0xff00) == KEY_META(0x00))
+#define IS_LOWER_KEY(key)		((IS_BYTE_KEY(key) || IS_META_KEY(key)) && islower(key & 0xff))
+#define IS_UPPER_KEY(key)		((IS_BYTE_KEY(key) || IS_META_KEY(key)) && isupper(key & 0xff))
+// | func          | ^M | '0' | 'a' | 'A' |0x0101| @0  | @a  | @A  |
+// |---------------|----|-----|-----|-----|------|-----|-----|-----|
+// | IS_BYTE_KEY() |  1 |  1  |  1  |  1  |   0  |  0  |  0  |  0  |
+// | IS_WORD_KEY() |  0 |  0  |  0  |  0  |   1  |  1  |  1  |  1  |
+// | IS_META_KEY() |  0 |  0  |  0  |  0  |   0  |  1  |  1  |  1  |
+// | IS_LOWER_KEY()|  0 |  0  |  1  |  0  |   0  |  0  |  1  |  0  |
+// | IS_UPPER_KEY()|  0 |  0  |  0  |  1  |   0  |  0  |  0  |  1  |
 
 #define K_(chr)				(chr)
 #define K_C(chr)			CTRL_CHAR(chr)				// Ctrl-x
@@ -88,7 +98,7 @@
 #define K_C_K			K_C('K')
 #define K_C_L			K_C('L')
 #define K_C_M			K_C('M')
-#define K_ENTER			K_C_M		// 0d
+#define K_ENTER			K_C_M		// same as K_C_M
 #define K_C_N			K_C('N')
 #define K_C_O			K_C('O')
 #define K_C_P			K_C('P')
@@ -185,7 +195,7 @@
 #define K_MC_K			K_M(K_C('K'))
 #define K_MC_L			K_M(K_C('L'))
 #define K_MC_M			K_M(K_C('M'))
-#define K_M_ENTER		K_M(K_ENTER)
+#define K_M_ENTER		K_M(K_ENTER)	// same as K_MC_M
 #define K_MC_N			K_M(K_C('N'))
 #define K_MC_O			K_M(K_C('O'))
 #define K_MC_P			K_M(K_C('P'))
@@ -409,11 +419,14 @@
 #define F_I(func)		FUNC_ID(func)
 
 typedef enum {
-	XA,		// executable all (Normal/List) mode
-	XL,		// not executable in List mode
-	XF,		// not executable in List mode and FILER_DO_ENTER_FILE_NAME
-	XP,		// not executable in List mode and FILER_DO_ENTER_FILE_PATH
-	XC,		// not executable in List mode and FILER_DO_ENTER_CUR_DIR_PATH
+	XA,		// executable in all editor/filer (Normal/List) mode
+	XL,		// not executable in editor/filer List mode and quit editor/filer
+	XI,		// not executable in editor List mode, get a text in current line
+			//  and return FL_INPUT
+	XF,		// not executable in filer List mode, input file name/path
+			//  and return FL_ENTER_FILE_NAME_OR_PATH
+	XC,		// not executable in filer List mode, input current directory
+			//  and return FL_ENTER_CUR_DIR_PATH
 } list_mode_t;
 
 typedef struct {
@@ -439,8 +452,8 @@ extern key_name_table_t key_name_table[];
 
 void set_app_func_key_table(void);
 
-void editor_menu_n(int group_idx);
-void filer_menu_n(int group_idx);
+int editor_menu_n(int group_idx);
+int filer_menu_n(int group_idx);
 
 int disp_drop_down_menu(int group_idx, int sel_idx, int yy, int xx);
 int get_func_key_table_from_key_groups(void);
@@ -486,8 +499,10 @@ key_code_t key_code_from_short_key_name(char *short_key_name);
 int get_key_name_table_entries(void);
 
 #ifdef ENABLE_DEBUG
+#ifdef START_UP_TEST
 int check_all_functions_accessible_without_function_key();
 int check_multiple_assignment_of_key();
+#endif // START_UP_TEST
 #endif // ENABLE_DEBUG
 
 #endif // keys_h

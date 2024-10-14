@@ -86,7 +86,7 @@ typedef struct be_bufs_t {
 //     be_buf_t key_macro_hist
 //     be_buf_t shell_hist
 //     be_buf_t file_pos_hist
-//   be_bufs_t temp-bufs
+//   be_bufs_t help_bufs
 //     be_buf_t file_list
 //     be_buf_t key_binding_list
 //     be_buf_t func_list
@@ -143,7 +143,6 @@ int buf_renumber_from_top(be_buf_t *buf);
 int buf_renumber_from_line(be_buf_t *buf, be_line_t *line);
 int buf_guess_tab_size(be_buf_t *buf);
 
-int buf_count_bufs(be_bufs_t *bufs);
 int buf_count_lines(be_buf_t *buf);
 int buf_is_orig_file_updated(be_buf_t *buf);
 
@@ -164,8 +163,8 @@ void buf_update_crc(be_buf_t *buf);
 int buf_check_crc(be_buf_t *buf);
 unsigned short buf_calc_crc(be_buf_t *buf);
 
-const char *buf_get_enc_str(be_buf_t *buf);
-const char *buf_get_eol_str(be_buf_t *buf);
+int buf_count_bufs(be_buf_t *buf);
+be_buf_t *buf_get_another_buf(be_buf_t *buf);
 
 //-----------------------------------------------------------------------------
 
@@ -175,6 +174,7 @@ be_bufs_t *bufs_insert_before(be_bufs_t *bufs, be_bufs_t *other);
 be_bufs_t *bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next);
 be_bufs_t *bufs_free_all_bufs(be_bufs_t *bufs);
 be_bufs_t *get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf);
+int bufs_count_bufs(be_bufs_t *bufs);
 
 //-----------------------------------------------------------------------------
 

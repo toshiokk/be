@@ -43,13 +43,14 @@ char *replace_str(char *buffer, size_t buf_len, size_t start, int delete_len,
 int insert_str_separating_by_space(char *buffer, size_t buf_len,
  size_t offset, const char *str);
 char *delete_str(char *buffer, size_t start, len_t delete_len);
+char *insert_str_chr(char *buffer, size_t buf_len, size_t offset, char chr);
 char *insert_str(char *buffer, size_t buf_len, size_t offset,
  const char *string, len_t insert_len);
-char *concat_file_name_separating_by_space(char *buffer, size_t buf_len,
+char *concat_file_path_separating_by_space(char *buffer, size_t buf_len,
  const char *string);
-const char *quote_file_name_static(const char *string);
-const char *quote_file_name_buf(char *buf, const char *string);
-const char *quote_file_name_if_necessary(char *buf, const char *string);
+const char *quote_file_path_static(const char *string);
+const char *quote_file_path_buf(char *buf, const char *string);
+const char *quote_file_path_if_necessary(char *buf, const char *string);
 
 int is_strlen_0(const char *str);
 int is_strlen_not_0(const char *str);

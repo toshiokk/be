@@ -167,7 +167,7 @@ int doe_start_of_line(void)
 }
 int doe_end_of_line(void)
 {
-	EPCBVC_CLBI = line_data_len(EPCBVC_CL);
+	EPCBVC_CLBI = line_data_strlen(EPCBVC_CL);
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	return 1;
@@ -190,7 +190,7 @@ int doe_up(void)
 PRIVATE void doe_up_(void)
 {
 	if (c_l_up(&EPCBVC_CL, &EPCBVC_CLBI)) {
-		EPCBVC_CURSOR_Y--;
+		EPCBVC_CURS_Y--;
 	} else {
 		if (easy_buffer_switching_check(EBS_UP_AT_TOP)) {
 			// already top of buffer, go to the previous buffer's last line
@@ -215,7 +215,7 @@ int doe_down(void)
 PRIVATE void doe_down_(void)
 {
 	if (c_l_down(&EPCBVC_CL, &EPCBVC_CLBI)) {
-		EPCBVC_CURSOR_Y++;
+		EPCBVC_CURS_Y++;
 	} else {
 		if (easy_buffer_switching_check(EBS_DOWN_AT_BOTTOM)) {
 			// already bottom of buffer, go to the next buffer's top line
@@ -249,10 +249,10 @@ PRIVATE void doe_page_up_(void)
 			doe_switch_to_prev_file();
 		}
 	} else {
-		lines = (EPCBVC_CURSOR_Y - TOP_SCROLL_MARGIN_Y) + EDITOR_VERT_SCROLL_LINES - 1;
+		lines = (EPCBVC_CURS_Y - TOP_SCROLL_MARGIN_Y) + EDITOR_VERT_SCROLL_LINES - 1;
 ///		lines = EDITOR_VERT_SCROLL_LINES - 1;	// smaller scroll
 		for (cnt = 0; cnt < lines; cnt++) {
-			EPCBVC_CURSOR_Y--;
+			EPCBVC_CURS_Y--;
 			if (c_l_up(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 				break;
 			}
@@ -285,10 +285,10 @@ PRIVATE int doe_page_down_(void)
 			doe_switch_to_next_file();
 		}
 	} else {
-		lines = (BOTTOM_SCROLL_MARGIN_Y - EPCBVC_CURSOR_Y) + EDITOR_VERT_SCROLL_LINES - 1;
+		lines = (BOTTOM_SCROLL_MARGIN_Y - EPCBVC_CURS_Y) + EDITOR_VERT_SCROLL_LINES - 1;
 ///		lines = EDITOR_VERT_SCROLL_LINES - 1;	// smaller scroll
 		for (cnt = 0; cnt < lines; cnt++) {
-			EPCBVC_CURSOR_Y++;
+			EPCBVC_CURS_Y++;
 			if (c_l_down(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 				break;
 			}
@@ -335,15 +335,11 @@ int doe_charcode(void)
 	}
 
 	char string[MAX_PATH_LEN+1];
-	int ret = input_string_tail("", string, HISTORY_TYPE_IDX_SEARCH,
-	 _("Enter Unicode number in hex:"));
-	if (ret <= INPUT_LOADED) {
+	if (chk_inp_str_ret_val_editor(input_string_pos("", string,
+	 MAX_PATH_LEN, HISTORY_TYPE_IDX_SEARCH,
+	 _("Enter Unicode number in hex:")))) {
 		return 0;
 	}
-	///if (ret <= 0) {
-	///	disp_key_list_editor();
-	///	return 0;
-	///}
 	unsigned int chr;
 	if (sscanf(string, "%x", &chr) == 1) {
 		char utf8c[MAX_UTF8C_BYTES+1];
@@ -356,21 +352,16 @@ int doe_charcode(void)
 
 int doe_paste_from_history(void)
 {
-	char string[MAX_PATH_LEN+1];
-
 	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
 
-	int ret = input_string_tail("", string, HISTORY_TYPE_IDX_SEARCH,
-	 _("Select history string to paste:"));
-	if (ret <= INPUT_LOADED) {
+	char string[MAX_PATH_LEN+1];
+	if (chk_inp_str_ret_val_editor(input_string_pos("", string,
+	 MAX_PATH_LEN, HISTORY_TYPE_IDX_SEARCH,
+	 _("Select history string to paste:")))) {
 		return 0;
 	}
-	///if (ret <= 0) {
-	///	disp_key_list_editor();
-	///	return 0;
-	///}
 	do_enter_utf8s(string);
 	return 0;
 }
@@ -423,10 +414,11 @@ PRIVATE int do_enter_utf8s(const char *utf8s)
 	char utf8c[MAX_UTF8C_BYTES+1];
 
 flf_d_printf("[%s]\n", utf8s);
-	do_clear_mark_();
 	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
+
+	do_clear_mark_();
 
 #ifdef ENABLE_UNDO
 	undo_set_region__save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
@@ -447,7 +439,7 @@ PRIVATE int do_enter_utf8c(const char *utf8c)
 {
 flf_d_printf("[%s]\n", utf8c);
 	int bytes_insert = strnlen(utf8c, MAX_UTF8C_BYTES);
-	if (line_data_len(EPCBVC_CL) + bytes_insert > MAX_EDIT_LINE_LEN) {
+	if (line_data_strlen(EPCBVC_CL) + bytes_insert > MAX_EDIT_LINE_LEN) {
 		// exceeds MAX_EDIT_LINE_LEN, do not enter
 		return 0;
 	}
@@ -462,14 +454,11 @@ int doe_carriage_return(void)
 	const char *ptr_s, *ptr_d;
 	int len_s, len_d;
 
-	do_clear_mark_();
-	if (is_app_list_mode()) {
-		editor_quit = EDITOR_INPUT;
-		return 0;
-	}
 	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
+
+	do_clear_mark_();
 
 #ifdef ENABLE_UNDO
 	undo_set_region__save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
@@ -494,13 +483,24 @@ int doe_carriage_return(void)
 		EPCBVC_CLBI = len_s;
 	}
 
-	if (EPCBVC_CURSOR_Y < BOTTOM_SCROLL_MARGIN_Y) {
-		EPCBVC_CURSOR_Y++;
+	if (EPCBVC_CURS_Y < BOTTOM_SCROLL_MARGIN_Y) {
+		EPCBVC_CURS_Y++;
 		post_cmd_processing(NODE_PREV(EPCBVC_CL), CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
 		 UPDATE_SCRN_FORWARD);
 	} else {
 		post_cmd_processing(NODE_PREV(EPCBVC_CL), CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
 		 UPDATE_SCRN_ALL);
+	}
+	return 1;
+}
+int doe_carriage_return_with_auto_indent(void)
+{
+	if (doe_carriage_return() == 0) {
+		return 0;
+	}
+	// TODO: auto indent if not already indented
+	for (int tab = 0; tab < CUR_EBUF_STATE(buf_TAB_SIZE); tab++) {
+		do_enter_char(' ');
 	}
 	return 1;
 }
@@ -514,12 +514,11 @@ int doe_backspace_limited(void)
 }
 int doe_backspace(void)
 {
-	int bytes;
-
-	do_clear_mark_();
 	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
+
+	do_clear_mark_();
 
 	if (EPCBVC_CLBI <= 0) {
 		if (IS_NODE_TOP(EPCBVC_CL)) {
@@ -530,10 +529,10 @@ int doe_backspace(void)
 #ifdef ENABLE_UNDO
 		undo_set_region__save_before_change(NODE_PREV(EPCBVC_CL), EPCBVC_CL, 1);
 #endif // ENABLE_UNDO
-		EPCBVC_CLBI = line_data_len(NODE_PREV(EPCBVC_CL));
+		EPCBVC_CLBI = line_data_strlen(NODE_PREV(EPCBVC_CL));
 		EPCBVC_CL = line_concat_with_prev(EPCBVC_CL);
-		if (EPCBVC_CURSOR_Y > 0) {
-			EPCBVC_CURSOR_Y--;
+		if (EPCBVC_CURS_Y > 0) {
+			EPCBVC_CURS_Y--;
 		}
 		post_cmd_processing(EPCBVC_CL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_FORWARD);
 	} else {
@@ -541,7 +540,7 @@ int doe_backspace(void)
 		undo_set_region__save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
 #endif // ENABLE_UNDO
 		// not line top, delete character
-		bytes = utf8c_prev_bytes(EPCBVC_CL->data, &EPCBVC_CL->data[EPCBVC_CLBI]);
+		int bytes = utf8c_prev_bytes(EPCBVC_CL->data, &EPCBVC_CL->data[EPCBVC_CLBI]);
 		EPCBVC_CLBI -= bytes;
 		line_string_delete(EPCBVC_CL, EPCBVC_CLBI, bytes);
 		get_epc_buf()->buf_size -= bytes;
@@ -553,19 +552,18 @@ int doe_backspace(void)
 
 int doe_delete_char(void)
 {
-	int bytes;
-
-	do_clear_mark_();
 	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
 
-	if (EPCBVC_CLBI < line_data_len(EPCBVC_CL)) {
+	do_clear_mark_();
+
+	if (EPCBVC_CLBI < line_data_strlen(EPCBVC_CL)) {
 		// not line end
 #ifdef ENABLE_UNDO
 		undo_set_region__save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
 #endif // ENABLE_UNDO
-		bytes = utf8c_bytes(&EPCBVC_CL->data[EPCBVC_CLBI]);
+		int bytes = utf8c_bytes(&EPCBVC_CL->data[EPCBVC_CLBI]);
 		line_string_delete(EPCBVC_CL, EPCBVC_CLBI, bytes);
 		if (EPCB_ML == EPCBVC_CL && EPCBVC_CLBI < EPCB_MLBI) {
 			// adjust mark position
@@ -587,7 +585,7 @@ int doe_delete_char(void)
 		if (EPCB_ML == NODE_NEXT(EPCBVC_CL)) {
 			// next line will be freed, adjust mark position
 			EPCB_ML = EPCBVC_CL;
-			EPCB_MLBI += line_data_len(EPCB_ML);
+			EPCB_MLBI += line_data_strlen(EPCB_ML);
 		}
 		line_concat_with_next(EPCBVC_CL);
 
@@ -599,52 +597,168 @@ int doe_delete_char(void)
 	return 1;
 }
 
-#define	BIDIR_LOW_UPP	0
-#define	UPP_TO_LOW		1
-#define	LOW_TO_UPP		2
-PRIVATE int doe_conv_upp_low_letter_(char dir);
+#define	LETTER_BIDIR		0	// camel -> Camel -> CAMEL -> cAMEL
+#define	LETTER_TO_UPP		1	// -> CAMEL
+#define	LETTER_TO_LOW		2	// -> camel
+#define	LETTER_TO_UPPLOW	3	// -> Camel
+#define	LETTER_TO_LOWUPP	4	// -> cAMEL
+PRIVATE int doe_conv_upp_low_letter_(char mode);
+#define CAMEL_CASE	// "Camel" / "cAMEL"
+#ifdef CAMEL_CASE
+PRIVATE void change_str_letters(char *str, size_t len, char mode);
+#endif // CAMEL_CASE
 
 int doe_conv_upp_low_letter(void)
 {
-	return doe_conv_upp_low_letter_(BIDIR_LOW_UPP);
+	return doe_conv_upp_low_letter_(LETTER_BIDIR);
 }
 int doe_conv_upp_letter(void)
 {
-	return doe_conv_upp_low_letter_(LOW_TO_UPP);
+	return doe_conv_upp_low_letter_(LETTER_TO_UPP);
 }
-PRIVATE int doe_conv_upp_low_letter_(char dir)
+int doe_conv_low_letter(void)
+{
+	return doe_conv_upp_low_letter_(LETTER_TO_LOW);
+}
+// "_camel" --> "_CAMEL"
+PRIVATE int doe_conv_upp_low_letter_(char mode)
 {
 	int byte_idx;
 	char *data;
-	char chr;
 
-	do_clear_mark_();
 	if (is_editor_view_mode_then_warn_it()) {
 		return 0;
 	}
 
+	do_clear_mark_();
+
 	byte_idx = EPCBVC_CLBI;
 	data = EPCBVC_CL->data;
-	if (isalpha(data[byte_idx])) {
+	if (is_char_id(data[byte_idx])) {
 #ifdef ENABLE_UNDO
 		undo_set_region__save_before_change(EPCBVC_CL, NODE_NEXT(EPCBVC_CL), 1);
 #endif // ENABLE_UNDO
-		if (dir == BIDIR_LOW_UPP) {
-			dir = islower(data[byte_idx]) ? LOW_TO_UPP : UPP_TO_LOW;
-		}
-		while ((chr = data[byte_idx]) != '\0') {
-			if (is_char_id(chr) == 0)
-				break;
+		char chr;
+		while (chr = data[byte_idx], is_char_id(chr)) {
 			if (isalpha(chr)) {
-				// Lower ==> Upper, Upper ==> Lower
-				data[byte_idx] = (dir == LOW_TO_UPP) ? toupper(chr) : tolower(chr);
-				set_cur_buf_modified();
+				break;
 			}
 			byte_idx++;
 		}
+#ifndef CAMEL_CASE
+		if (mode == LETTER_BIDIR) {
+			mode = islower(data[byte_idx]) ? LETTER_TO_UPP : LETTER_TO_LOW;
+		}
+		while (chr = data[byte_idx], is_char_id(chr)) {
+			if (isalpha(chr)) {
+				// Lower ==> Upper, Upper ==> Lower
+				data[byte_idx] = (mode == LETTER_TO_UPP) ? toupper(chr) : tolower(chr);
+			}
+			byte_idx++;
+		}
+#else // CAMEL_CASE
+		int len;
+		for (len = 0; is_char_id(data[byte_idx + len]); len++) {
+			// nothing to do
+		}
+		change_str_letters(&data[byte_idx], len, mode);
+#endif // CAMEL_CASE
+		set_cur_buf_modified();
 	}
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	return 1;
+}
+
+PRIVATE void change_str_letters(char *str, size_t len, char mode)
+{
+	if (mode == LETTER_BIDIR) {
+		if (len <= 0) {
+			mode = LETTER_TO_UPP;
+		} else if (len <= 1) {
+			if (islower(str[0])) {
+				mode = LETTER_TO_UPP;
+			} else
+			if (isupper(str[0])) {
+				mode = LETTER_TO_LOW;
+			} else {
+				mode = LETTER_TO_UPP;
+			}
+		} else {
+			if (islower(str[0]) && islower(str[1])) {	// camel -> CAMEL
+				mode = LETTER_TO_UPP;
+			} else
+			if (isupper(str[0]) && isupper(str[1])) {	// CAMEL -> Camel
+				mode = LETTER_TO_UPPLOW;
+			} else
+			if (isupper(str[0]) && islower(str[1])) {	// Camel -> cAMEL
+				mode = LETTER_TO_LOWUPP;
+			} else
+			if (islower(str[0]) && isupper(str[1])) {	// cAMEL -> camel
+				mode = LETTER_TO_LOW;
+			} else
+			if (isupper(str[0])) {						// C_AMEL -> c_amel
+				mode = LETTER_TO_LOW;
+			} else {									// c_amel -> C_AMEL
+				mode = LETTER_TO_UPP;
+			}
+		}
+	}
+	for (int off = 0; off < len; off++) {
+		if (isalpha(str[off])) {
+			if (off == 0) {
+				switch(mode) {
+				case LETTER_TO_UPP:
+				case LETTER_TO_UPPLOW:
+				default:
+					str[off] = toupper(str[off]);
+					break;
+				case LETTER_TO_LOW:
+				case LETTER_TO_LOWUPP:
+					str[off] = tolower(str[off]);
+					break;
+				}
+			} else {
+				switch(mode) {
+				case LETTER_TO_UPP:
+				case LETTER_TO_LOWUPP:
+				default:
+					str[off] = toupper(str[off]);
+					break;
+				case LETTER_TO_LOW:
+				case LETTER_TO_UPPLOW:
+					str[off] = tolower(str[off]);
+					break;
+				}
+			}
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+PRIVATE int memorized_columns = 0;
+PRIVATE int doe_fill_spaces_to_columns__(int column_idx);
+int doe_memorize_columns()
+{
+	memorized_columns = start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
+	disp_status_bar_done(_("Column position %d was memorized"), FROM_IDX(memorized_columns));
+	return 0;
+}
+int doe_fill_spaces_to_columns()
+{
+	int col_idx = start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
+	doe_fill_spaces_to_columns__(memorized_columns);
+	disp_status_bar_done(_("Space characters are filled from column %d to %d"),
+	 FROM_IDX(col_idx), FROM_IDX(memorized_columns));
+	return 0;
+}
+PRIVATE int doe_fill_spaces_to_columns__(int column_idx)
+{
+	int col_idx = start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
+	for (int loop = 0; col_idx < column_idx && loop < column_idx; loop++) {
+		do_enter_utf8s(" ");
+		col_idx = start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
+	}
+	return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -665,10 +779,10 @@ int move_cursor_left(int move_disp_y)
 			return 0;
 		}
 		EPCBVC_CL = NODE_PREV(EPCBVC_CL);
-		EPCBVC_CLBI = line_data_len(EPCBVC_CL);
+		EPCBVC_CLBI = line_data_strlen(EPCBVC_CL);
 		if (move_disp_y) {
-			if (EPCBVC_CURSOR_Y > EDITOR_VERT_SCROLL_MARGIN_LINES) {
-				EPCBVC_CURSOR_Y--;
+			if (EPCBVC_CURS_Y > EDITOR_VERT_SCROLL_MARGIN_LINES) {
+				EPCBVC_CURS_Y--;
 				set_edit_win_update_needed(UPDATE_SCRN_CUR_NEXT);
 			}
 		}
@@ -677,7 +791,7 @@ int move_cursor_left(int move_disp_y)
 		EPCBVC_CLBI -= utf8c_prev_bytes(EPCBVC_CL->data, &EPCBVC_CL->data[EPCBVC_CLBI]);
 		if (move_disp_y) {
 			if (start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1) < wl_idx) {
-				EPCBVC_CURSOR_Y--;
+				EPCBVC_CURS_Y--;
 			}
 		}
 		set_edit_win_update_needed(UPDATE_SCRN_CUR_NEXT);
@@ -689,11 +803,11 @@ int move_cursor_right(void)
 {
 	int wl_idx;
 
-	if (EPCBVC_CLBI < line_data_len(EPCBVC_CL)) {
+	if (EPCBVC_CLBI < line_data_strlen(EPCBVC_CL)) {
 		wl_idx = start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
 		EPCBVC_CLBI += utf8c_bytes(&EPCBVC_CL->data[EPCBVC_CLBI]);
 		if (start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1) > wl_idx) {
-			EPCBVC_CURSOR_Y++;
+			EPCBVC_CURS_Y++;
 		}
 		set_edit_win_update_needed(UPDATE_SCRN_CUR_PREV);
 	} else {
@@ -702,8 +816,8 @@ int move_cursor_right(void)
 		}
 		EPCBVC_CL = NODE_NEXT(EPCBVC_CL);
 		EPCBVC_CLBI = 0;
-		if (EPCBVC_CURSOR_Y < BOTTOM_SCROLL_MARGIN_Y) {
-			EPCBVC_CURSOR_Y++;
+		if (EPCBVC_CURS_Y < BOTTOM_SCROLL_MARGIN_Y) {
+			EPCBVC_CURS_Y++;
 			set_edit_win_update_needed(UPDATE_SCRN_CUR_PREV);
 		}
 	}
@@ -719,19 +833,19 @@ int c_l_up(be_line_t **line, int *byte_idx)
 	line_byte_idx = *byte_idx;
 
 	te_concat_linefeed((*line)->data);
-	wl_idx = start_wl_idx_of_wrap_line(te_concat_linefeed_buf, line_byte_idx, -1);
-	col_idx = start_col_idx_of_wrap_line(te_concat_linefeed_buf, line_byte_idx, -1);
+	wl_idx = start_wl_idx_of_wrap_line(te_lf_concat_buf, line_byte_idx, -1);
+	col_idx = start_col_idx_of_wrap_line(te_lf_concat_buf, line_byte_idx, -1);
 	if (wl_idx > 0) {
 		wl_idx--;
-		line_byte_idx = end_byte_idx_of_wrap_line_le(te_concat_linefeed_buf, wl_idx, col_idx, -1);
+		line_byte_idx = end_byte_idx_of_wrap_line_le(te_lf_concat_buf, wl_idx, col_idx, -1);
 	} else {
 		if (IS_NODE_TOP_MOST(*line)) {
 			return 0;	// no move
 		}
 		*line = NODE_PREV(*line);
 		te_concat_linefeed((*line)->data);
-		wl_idx = max_wrap_line_idx(te_concat_linefeed_buf, -1);
-		line_byte_idx = start_byte_idx_of_wrap_line(te_concat_linefeed_buf, wl_idx, col_idx, -1);
+		wl_idx = max_wrap_line_idx(te_lf_concat_buf, -1);
+		line_byte_idx = start_byte_idx_of_wrap_line(te_lf_concat_buf, wl_idx, col_idx, -1);
 	}
 
 	*byte_idx = line_byte_idx;
@@ -746,11 +860,11 @@ int c_l_down(be_line_t **line, int *byte_idx)
 	line_byte_idx = *byte_idx;
 
 	te_concat_linefeed((*line)->data);
-	wl_idx = start_wl_idx_of_wrap_line(te_concat_linefeed_buf, line_byte_idx, -1);
-	col_idx = start_col_idx_of_wrap_line(te_concat_linefeed_buf, line_byte_idx, -1);
-	if (wl_idx < max_wrap_line_idx(te_concat_linefeed_buf, -1)) {
+	wl_idx = start_wl_idx_of_wrap_line(te_lf_concat_buf, line_byte_idx, -1);
+	col_idx = start_col_idx_of_wrap_line(te_lf_concat_buf, line_byte_idx, -1);
+	if (wl_idx < max_wrap_line_idx(te_lf_concat_buf, -1)) {
 		wl_idx++;
-		line_byte_idx = end_byte_idx_of_wrap_line_le(te_concat_linefeed_buf, wl_idx, col_idx, -1);
+		line_byte_idx = end_byte_idx_of_wrap_line_le(te_lf_concat_buf, wl_idx, col_idx, -1);
 	} else {
 		if (IS_NODE_BOT_MOST(*line)) {
 			return 0;	// no move
@@ -758,7 +872,7 @@ int c_l_down(be_line_t **line, int *byte_idx)
 		*line = NODE_NEXT(*line);
 		te_concat_linefeed((*line)->data);
 		wl_idx = 0;
-		line_byte_idx = end_byte_idx_of_wrap_line_ge(te_concat_linefeed_buf, wl_idx, col_idx, -1);
+		line_byte_idx = end_byte_idx_of_wrap_line_ge(te_lf_concat_buf, wl_idx, col_idx, -1);
 	}
 
 	*byte_idx = line_byte_idx;

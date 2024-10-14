@@ -101,6 +101,7 @@ void init_edit_bufs(void)
 // the next or previous buffer will be set to current
 int free_cur_edit_buf(void)
 {
+	disp_status_bar_ing(_("Freeing edit buffer %s ..."), get_epc_buf()->file_path_);
 	return free_edit_buf(get_epc_buf());
 }
 int free_edit_buf(be_buf_t *edit_buf)
@@ -111,7 +112,7 @@ int free_edit_buf(be_buf_t *edit_buf)
 		return 0;
 	}
 #ifdef ENABLE_HISTORY
-	update_history(HISTORY_TYPE_IDX_FILEPOS, mk_cur_file_pos_str_static(), 0);
+	update_history(HISTORY_TYPE_IDX_FILEPOS, mk_cur_file_pos_str_static());
 #endif // ENABLE_HISTORY
 	if (edit_buf == get_epc_buf()) {
 		// select other buffer
@@ -283,9 +284,9 @@ void dump_buf_view_x(be_buf_t *buf, int pane_idx)
 	buf_dump_state(buf);
 	line_dump_byte_idx(BUFVX_CL(buf, pane_idx), BUFVX_CLBI(buf, pane_idx));
 	flf_d_printf(
-	 "BUFVX_CURSOR_Y(buf, pane_idx): %d, BUFVX_CURSOR_X_TO_KEEP(buf, pane_idx): %d,"
+	 "BUFVX_CURS_Y(buf, pane_idx): %d, BUFVX_CURS_X_TO_KEEP(buf, pane_idx): %d,"
 	 " BUFVX_MIN_TEXT_X_TO_KEEP(buf, pane_idx): %d\n",
-	 BUFVX_CURSOR_Y(buf, pane_idx), BUFVX_CURSOR_X_TO_KEEP(buf, pane_idx),
+	 BUFVX_CURS_Y(buf, pane_idx), BUFVX_CURS_X_TO_KEEP(buf, pane_idx),
 	 BUFVX_MIN_TEXT_X_TO_KEEP(buf, pane_idx));
 }
 #endif // ENABLE_DEBUG
@@ -337,14 +338,18 @@ be_line_t *append_string_to_cur_edit_buf(const char *string)
 void append_magic_line(void)
 {
 	if (buf_is_empty(get_epc_buf())
-	 || ((buf_is_empty(get_epc_buf()) == 0) && line_data_len(CUR_EDIT_BUF_BOT_LINE))) {
+	 || ((buf_is_empty(get_epc_buf()) == 0) && line_data_strlen(CUR_EDIT_BUF_BOT_LINE))) {
 		append_string_to_cur_edit_buf("");
 	}
 }
 
-int count_edit_bufs(void)
+int edit_bufs_count_bufs(void)
 {
-	return buf_count_bufs(&edit_buffers);
+	return bufs_count_bufs(&edit_buffers);
+}
+int epc_buf_count_bufs(void)
+{
+	return buf_count_bufs(get_epc_buf());
 }
 
 int is_epc_buf_valid(void)
@@ -391,7 +396,7 @@ be_line_t *append_string_to_cur_cut_buf(const char *string)
 }
 int count_cut_bufs(void)
 {
-	return buf_count_bufs(&cut_buffers);
+	return bufs_count_bufs(&cut_buffers);
 }
 int count_cur_cut_buf_lines(void)
 {

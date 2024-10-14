@@ -21,6 +21,8 @@
 
 #include "headers.h"
 
+PRIVATE be_buf_t *make_sure_buf_is_top_buf(be_buf_t *buf);
+
 // be_buf_t manipulation routines ==========================================
 // (common to edit-buffer, cut-buffer, undo-redo-buffer and history)
 
@@ -68,8 +70,8 @@ void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf)
 {
 	BUFV_CL(b_v) = BUF_BOT_ANCH(buf);
 	BUFV_CLBI(b_v) = 0;
-	BUFV_CURSOR_Y(b_v) = MAX_SCRN_LINES;
-	BUFV_CURSOR_X_TO_KEEP(b_v) = 0;
+	BUFV_CURS_Y(b_v) = MAX_SCRN_LINES;
+	BUFV_CURS_X_TO_KEEP(b_v) = 0;
 	BUFV_MIN_TEXT_X_TO_KEEP(b_v) = 0;
 }
 void buf_set_view_x_cur_line(be_buf_t *buf, int pane_idx, be_line_t *line)
@@ -206,7 +208,7 @@ void buf_free_lines(be_buf_t *buf)
 	}
 }
 
-// compare two buffers
+// compare two buffers in only contents
 int buf_compare(be_buf_t *buf1, be_buf_t *buf2)
 {
 	be_line_t *line1;
@@ -241,7 +243,7 @@ int buf_guess_tab_size(be_buf_t *buf)
 	be_line_t *line;
 
 	for (line = BUF_TOP_LINE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
-		if (line_data_len(line) > 4) {
+		if (line_data_strlen(line) > 4) {
 			if (strlcmp__(line->data, "    ") == 0 && line->data[4] != ' ')
 				lines_space4++;
 		}
@@ -252,18 +254,6 @@ int buf_guess_tab_size(be_buf_t *buf)
 	if (lines_space4 >= lines_checked / 10)
 		return 8;
 	return 0;
-}
-
-int buf_count_bufs(be_bufs_t *bufs)
-{
-	be_buf_t *buf;
-	int count;
-
-	for (buf = NODES_TOP_NODE(bufs), count = 0; IS_NODE_INT(buf);
-	 buf = NODE_NEXT(buf), count++) {
-		// NOTHING_TO_DO
-	}
-	return count;
 }
 int buf_count_lines(be_buf_t *buf)
 {
@@ -397,7 +387,7 @@ unsigned short buf_calc_crc(be_buf_t *buf)
 	file_size = 0;
 	clear_crc16ccitt();
 	for (line = BUF_TOP_LINE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
-		file_size += line_data_len(line) + 1;
+		file_size += line_data_strlen(line) + 1;
 		for (ptr = line->data; ; ptr++) {
 			file_crc = calc_crc16ccitt(*ptr);
 			if (*ptr == 0)	// count including last NUL code
@@ -406,6 +396,29 @@ unsigned short buf_calc_crc(be_buf_t *buf)
 	}
 	return file_crc;
 }
+
+int buf_count_bufs(be_buf_t *buf)
+{
+	buf = make_sure_buf_is_top_buf(buf);
+	int cnt;
+	for (cnt = 0; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+		cnt++;
+	}
+	return cnt;
+}
+
+be_buf_t *buf_get_another_buf(be_buf_t *buf)
+{
+	if (IS_NODE_TOP(buf) || IS_PTR_VALID(NODE_NEXT(buf))) {
+		return NODE_NEXT(buf);
+	}
+	if (IS_NODE_BOT(buf) || IS_PTR_VALID(NODE_PREV(buf))) {
+		return NODE_PREV(buf);
+	}
+	// error
+	return buf;
+}
+
 //-----------------------------------------------------------------------------
 
 be_bufs_t *bufs_init(be_bufs_t *bufs, const char* buf_name)
@@ -458,6 +471,19 @@ be_bufs_t *get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf)
 	return NULL;
 }
 
+int bufs_count_bufs(be_bufs_t *bufs)
+{
+	return buf_count_bufs(NODES_TOP_NODE(bufs));
+///	be_buf_t *buf;
+///	int count;
+///
+///	for (buf = NODES_TOP_NODE(bufs), count = 0; IS_NODE_INT(buf);
+///	 buf = NODE_NEXT(buf), count++) {
+///		// NOTHING_TO_DO
+///	}
+///	return count;
+}
+
 //-----------------------------------------------------------------------------
 
 void init_bufs_top_bot_anchor(
@@ -468,8 +494,6 @@ void init_bufs_top_bot_anchor(
 	buf_init(buf_bot, full_path_bot);
 	buf_link(buf_top, buf_bot);
 }
-
-PRIVATE be_buf_t *make_sure_buf_is_top_buf(be_buf_t *buf);
 
 be_buf_t *get_buf_from_bufs_by_idx(be_buf_t *buf, int buf_idx)
 {
@@ -565,7 +589,7 @@ void buf_dump_bufs(be_buf_t *buf)
 
 flf_d_printf("0============================================\n");
 	for (cnt = 0; cnt < 100 && IS_NODE_INT(buf); cnt++, buf = NODE_NEXT(buf)) {
-		///buf_dump_ptrs(buf);
+///		buf_dump_ptrs(buf);
 		dump_buf_view_x(buf, 0);
 		dump_buf_view_x(buf, 1);
 		if (IS_NODE_BOT_ANCH(buf))
