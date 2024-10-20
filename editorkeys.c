@@ -99,6 +99,10 @@ func_key_table_t editor_func_key_table[] = {
    XA, F_I(doe_goto_file_or_dir_in_cur_line), NULL },
  { "Tag-Jump",            "Tag-jump to file or directory",           K_F11, K_M_J,      KNA,
    XA, F_I(doe_goto_file_or_dir_in_cur_cursor_pos), NULL },
+ { "Run line soon",       "Run current line soon",                   K_M_x,        KNA, KNA,
+   XA, F_I(doe_run_line_soon), NULL },
+ { "Run line soon(w/ logging)", "Run current line soon w/ log",      K_M_X,    KNA, KNA,
+   XA, F_I(doe_run_line_soon_w_log), NULL },
 
  { "",                    "Edit Menu",                               KNA,          KNA, KNA,
    XL, F_I(doe_editor_menu_3), NULL },
@@ -136,10 +140,6 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_playback_last_1), NULL },
  { "Playback-2",          "Playback 2nd newest key-macro",           K_S_F02, K_M_2,    KNA,
    XL, F_I(doe_playback_last_2), NULL },
- { "Run line soon",       "Run current line soon",                   K_M_x,        KNA, KNA,
-   XA, F_I(doe_run_line_soon), NULL },
- { "Run line soon(w/ logging)", "Run current line soon w/ log",      K_M_X,    KNA, KNA,
-   XA, F_I(doe_run_line_soon_w_log), NULL },
 #ifdef ENABLE_UNDO
  { "Undo",                "Undo",                                    K_M_u, K_M_z,      KNA,
    XL, F_I(doe_undo), NULL },
@@ -176,13 +176,13 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_switch_to_top_file), NULL },
  { "Bottom File",         "Open bottom file",                        K_M_GREATERTHAN, KNA, KNA,
    XL, F_I(doe_switch_to_bot_file), NULL },
- { "File List",           "Display File List",                       K_M_SEMICOLON,   KNA, KNA,
+ { "File List",           "Display File List",                       K_M_SEMICOLON, KNA, KNA,
    XL, F_I(doe_view_file_list), NULL },
 #ifdef ENABLE_HELP
  { "Key List",            "Display Key List",                        K_M_QUESTION, KNA, KNA,
    XL, F_I(doe_view_key_list), NULL },
- { "Func List",           "Display Function List",                   K_M_U,        KNA, KNA,
-   XL, F_I(doe_view_func_list), NULL },
+/// { "Func List",           "Display Function List",                   K_M_U,        KNA, KNA,
+///   XL, F_I(doe_view_func_list), NULL },
 #endif // ENABLE_HELP
 #if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
  { "Previous buffers",    "Goto previous buffers",                   K_M_LPARENTHESIS, KNA, KNA,
@@ -228,7 +228,7 @@ func_key_table_t editor_func_key_table[] = {
  { "CutToTail",           "Cut to tail of the line",                 K_C_L,        KNA, KNA,
    XL, F_I(doe_cut_to_tail), NULL },
 
- { "",                    "Settings Menu-1",                         KNA,          KNA, KNA,
+ { "",                    "Settings Menu",                           KNA,          KNA, KNA,
    XL, F_I(doe_editor_menu_7), NULL },
  { "Tab size",            "Toggle Tab size",                         K_MC_T,       KNA, KNA,
    XL, F_I(doe_tog_tab_size),       get_str_tab_size },
@@ -248,9 +248,6 @@ func_key_table_t editor_func_key_table[] = {
  { "RegExp",              "Toggle Regex search/replace",             K_MC_X,       KNA, KNA,
    XL, F_I(doe_tog_regexp),         get_str_regexp },
 #endif // ENABLE_REGEX
-
- { "",                    "Settings Menu-2",                         KNA,          KNA, KNA,
-   XL, F_I(doe_editor_menu_8), NULL },
  { "Cursor center",       "Toggle Cursor-center mode",               K_MC_S,       KNA, KNA,
    XL, F_I(doe_inc_cursor_positioning),  get_str_cursor_positioning },
  { "Dual scroll",         "Toggle Dual scroll",                      K_MC_D,       KNA, KNA,
@@ -273,7 +270,7 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_tog_map_key_7f_bs), get_str_map_key_7f_bs },
 
  { "",                    "File type Menu",                          KNA,          KNA, KNA,
-   XL, F_I(doe_editor_menu_9), NULL },
+   XL, F_I(doe_editor_menu_8), NULL },
  { "nix format",          "Set nix format (LF)",                     KNA,          KNA, KNA,
    XL, F_I(doe_set_nix_file),       get_str_nix_file },
  { "Mac format",          "Set Mac format (CR)",                     KNA,          KNA, KNA,
@@ -296,7 +293,7 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_set_encode_binary),  get_str_encode_binary },
 #ifdef ENABLE_HELP
  { "Splash",              "Splash screen",                           K_M_v,        KNA, KNA,
-   XL, F_I(doe_editor_splash), NULL },
+   XL, F_I(doe_splash), NULL },
 #endif // ENABLE_HELP
  { "Color pairs",         "Display color pairs",                     K_M_c,        KNA, KNA,
    XL, F_I(doe_display_color_settings), NULL },

@@ -21,21 +21,6 @@
 
 #include "headers.h"
 
-#ifndef ENABLE_HELP
-
-#define HELP_BUF_IDX_FILE_LIST		0
-#define HELP_BUFS					1
-
-#else // ENABLE_HELP
-
-#define HELP_BUF_IDX_FILE_LIST		0
-#define HELP_BUF_IDX_KEY_LIST		1
-#define HELP_BUF_IDX_FUNC_LIST		2
-#define HELP_BUFS					3
-
-#endif // ENABLE_HELP
-
-PRIVATE int view_help(int help_idx);
 PRIVATE void make_help_buf(int help_idx);
 
 PRIVATE void make_help_file_list(be_buf_t *cur_edit_buf);
@@ -53,6 +38,8 @@ void init_help_bufs(void)
 #ifdef ENABLE_HELP
 	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create_node(_("#List of Editor Key Bindings")));
 	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create_node(_("#List of Editor Functions")));
+	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create_node(_("#List of Filer Key Bindings")));
+	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create_node(_("#List of Filer Functions")));
 #endif // ENABLE_HELP
 }
 be_buf_t *get_help_buf(int help_buf_idx)
@@ -62,49 +49,48 @@ be_buf_t *get_help_buf(int help_buf_idx)
 
 int doe_view_file_list(void)
 {
-	view_help(HELP_BUF_IDX_FILE_LIST);
+	view_help(HELP_BUF_IDX_EDITOR_FILE_LIST);
 	return 1;
 }
-
-#ifdef ENABLE_HELP
-int doe_view_key_list(void)
-{
-	view_help(HELP_BUF_IDX_KEY_LIST);
-	return 1;
-}
-int doe_view_func_list(void)
-{
-	view_help(HELP_BUF_IDX_FUNC_LIST);
-	return 1;
-}
-#endif // ENABLE_HELP
 
 //-----------------------------------------------------------------------------
 
 // make help text in help-buffer and view by editor
-PRIVATE int view_help(int help_idx)
+int view_help(int help_idx)
 {
 	be_buf_t *edit_buf_save = get_epc_buf();
 /////_D_(dump_buf_views(edit_buf_save))
-	make_help_buf(HELP_BUF_IDX_FILE_LIST);
+	make_help_buf(HELP_BUF_IDX_EDITOR_FILE_LIST);
 #ifdef ENABLE_HELP
-	make_help_buf(HELP_BUF_IDX_KEY_LIST);
-	make_help_buf(HELP_BUF_IDX_FUNC_LIST);
+	make_help_buf(HELP_BUF_IDX_EDITOR_KEY_LIST);
+	make_help_buf(HELP_BUF_IDX_EDITOR_FUNC_LIST);
+#ifdef ENABLE_FILER
+	make_help_buf(HELP_BUF_IDX_FILER_KEY_LIST);
+	make_help_buf(HELP_BUF_IDX_FILER_FUNC_LIST);
+#endif // ENABLE_FILER
 #endif // ENABLE_HELP
 	set_epc_buf(get_help_buf(help_idx));
 
 	switch (help_idx) {
 	default:
-	case HELP_BUF_IDX_FILE_LIST:
+	case HELP_BUF_IDX_EDITOR_FILE_LIST:
 		disp_status_bar_done(_("File List"));
 		break;
 #ifdef ENABLE_HELP
-	case HELP_BUF_IDX_KEY_LIST:
-		disp_status_bar_done(_("Key List"));
+	case HELP_BUF_IDX_EDITOR_KEY_LIST:
+		disp_status_bar_done(_("Editor Key List"));
 		break;
-	case HELP_BUF_IDX_FUNC_LIST:
-		disp_status_bar_done(_("Function List"));
+	case HELP_BUF_IDX_EDITOR_FUNC_LIST:
+		disp_status_bar_done(_("Editor Function List"));
 		break;
+#ifdef ENABLE_FILER
+	case HELP_BUF_IDX_FILER_KEY_LIST:
+		disp_status_bar_done(_("Filer Key List"));
+		break;
+	case HELP_BUF_IDX_FILER_FUNC_LIST:
+		disp_status_bar_done(_("Filer Function List"));
+		break;
+#endif // ENABLE_FILER
 #endif // ENABLE_HELP
 	}
 
@@ -126,32 +112,51 @@ PRIVATE void make_help_buf(int help_idx)
 	buf_free_lines(buf);
 	EPCBVC_CL = NULL;
 
+	app_mode_t appmode_save;
+	appmode_save = app_mode__;
 	switch (help_idx) {
 	default:
-	case HELP_BUF_IDX_FILE_LIST:
+	case HELP_BUF_IDX_EDITOR_FILE_LIST:
 		make_help_file_list(cur_edit_buf);
 		break;
 #ifdef ENABLE_HELP
-	case HELP_BUF_IDX_KEY_LIST:
+	case HELP_BUF_IDX_EDITOR_KEY_LIST:
+		SET_APPMD_VAL(app_EDITOR_FILER, EF_EDITOR);
 		make_help_key_list();
 		break;
-	case HELP_BUF_IDX_FUNC_LIST:
+	case HELP_BUF_IDX_EDITOR_FUNC_LIST:
+		SET_APPMD_VAL(app_EDITOR_FILER, EF_EDITOR);
 		make_help_func_list();
 		break;
+#ifdef ENABLE_FILER
+	case HELP_BUF_IDX_FILER_KEY_LIST:
+		SET_APPMD_VAL(app_EDITOR_FILER, EF_FILER);
+		make_help_key_list();
+		break;
+	case HELP_BUF_IDX_FILER_FUNC_LIST:
+		SET_APPMD_VAL(app_EDITOR_FILER, EF_FILER);
+		make_help_func_list();
+		break;
+#endif // ENABLE_FILER
 #endif // ENABLE_HELP
 	}
+	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 
 /////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
 	switch (help_idx) {
 	default:
-	case HELP_BUF_IDX_FILE_LIST:
+	case HELP_BUF_IDX_EDITOR_FILE_LIST:
 		if (EPCBVC_CL == NULL) {
 			EPCBVC_CL = CUR_EDIT_BUF_BOT_LINE;
 		}
 		break;
 #ifdef ENABLE_HELP
-	case HELP_BUF_IDX_KEY_LIST:
-	case HELP_BUF_IDX_FUNC_LIST:
+	case HELP_BUF_IDX_EDITOR_KEY_LIST:
+	case HELP_BUF_IDX_EDITOR_FUNC_LIST:
+#ifdef ENABLE_FILER
+	case HELP_BUF_IDX_FILER_KEY_LIST:
+	case HELP_BUF_IDX_FILER_FUNC_LIST:
+#endif // ENABLE_FILER
 		append_magic_line();
 		EPCBVC_CL = CUR_EDIT_BUF_TOP_LINE;
 		break;
@@ -201,8 +206,6 @@ PRIVATE void make_help_key_list(void)
 	char *func_ = "--------------------------------";
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
-	buf_set_file_abs_path(get_epc_buf(), _("#List of Editor Key Bindings"));
-
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, "Key", "Function", "func_id");
 	append_string_to_cur_edit_buf(buffer);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, key_, func_, func_);
@@ -210,7 +213,7 @@ PRIVATE void make_help_key_list(void)
 	for (int key_idx = 0; key_idx < get_key_name_table_entries(); key_idx++) {
 		key_code_t key = key_name_table[key_idx].key_code;
 		func_key_table_t *func_key_table
-		 = get_func_key_table_from_key(editor_func_key_table, key);
+		 = get_func_key_table_from_key(app_func_key_table, key);
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
 		 key_name_table[key_idx].key_name,
 		 func_key_table ? func_key_table->help : "-- No function assigned --",
@@ -228,8 +231,6 @@ PRIVATE void make_help_func_list(void)
 	char *key_  = "-----";
 	char *func_ = "--------------------------------";
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
-
-	buf_set_file_abs_path(get_epc_buf(), _("#List of Editor Functions"));
 
 	func_key_table_t *table = get_func_key_table_from_key_group(0);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,

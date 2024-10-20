@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-11 22:36+0900\n"
+"POT-Creation-Date: 2024-10-20 22:24+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,20 +49,20 @@ msgstr ""
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr ""
 
-#: ../editor.c:515
+#: ../editor.c:521
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:569
+#: ../editor.c:575
 msgid "Modification not allowed in LIST mode"
 msgstr ""
 
-#: ../editor.c:573
+#: ../editor.c:579
 msgid "Modification not allowed in Anchor buffer"
 msgstr ""
 
-#: ../editor.c:577
+#: ../editor.c:583
 msgid "Modification not allowed in VIEW mode buffer"
 msgstr ""
 
@@ -214,28 +214,44 @@ msgid "Switched current editor pane to %d"
 msgstr ""
 
 #. ///_D_(buf_dump_state(cur_edit_buf))
-#: ../editorlist.c:52 ../editorlist.c:174
+#: ../editorlist.c:37 ../editorlist.c:179
 msgid "#List of Files currently loaded"
 msgstr ""
 
-#: ../editorlist.c:54 ../editorlist.c:204
+#: ../editorlist.c:39
 msgid "#List of Editor Key Bindings"
 msgstr ""
 
-#: ../editorlist.c:55 ../editorlist.c:232
+#: ../editorlist.c:40
 msgid "#List of Editor Functions"
 msgstr ""
 
-#: ../editorlist.c:99
+#: ../editorlist.c:41
+msgid "#List of Filer Key Bindings"
+msgstr ""
+
+#: ../editorlist.c:42
+msgid "#List of Filer Functions"
+msgstr ""
+
+#: ../editorlist.c:77
 msgid "File List"
 msgstr ""
 
-#: ../editorlist.c:103
-msgid "Key List"
+#: ../editorlist.c:81
+msgid "Editor Key List"
 msgstr ""
 
-#: ../editorlist.c:106
-msgid "Function List"
+#: ../editorlist.c:84
+msgid "Editor Function List"
+msgstr ""
+
+#: ../editorlist.c:88
+msgid "Filer Key List"
+msgstr ""
+
+#: ../editorlist.c:91
+msgid "Filer Function List"
 msgstr ""
 
 #: ../editormove.c:323
@@ -530,18 +546,18 @@ msgstr ""
 msgid "%d filesss selected"
 msgstr ""
 
-#: ../filercmd.c:749
+#: ../filercmd.c:759
 #, c-format
 msgid "Can not change directory to [%s]"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:830
+#: ../filercmd.c:840
 #, c-format
 msgid "Can not change current to [%s]: %s"
 msgstr ""
 
-#: ../filercmd.c:839
+#: ../filercmd.c:849
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr ""
@@ -598,17 +614,17 @@ msgstr ""
 msgid "hist_type_idx out of range: %d"
 msgstr ""
 
-#: ../history.c:239
+#: ../history.c:240
 #, c-format
 msgid "Unable to create history file: %s, %s"
 msgstr ""
 
-#: ../history.c:256
+#: ../history.c:257
 #, c-format
 msgid "Unable to write history file: %s, %s"
 msgstr ""
 
-#: ../history.c:288
+#: ../history.c:289
 #, c-format
 msgid "Unable to open history file: %s, %s"
 msgstr ""
@@ -629,7 +645,7 @@ msgstr ""
 msgid "Start key macro playback"
 msgstr ""
 
-#: ../keys.c:485
+#: ../keys.c:486
 #, c-format
 msgid "Window resized to (%d, %d)"
 msgstr ""

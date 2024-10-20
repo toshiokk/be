@@ -80,9 +80,9 @@ flf_d_printf("ret: %d\n", ret);
 #ifdef ENABLE_HISTORY
 	if (ret == EF_INPUT) {
 		// input normally
-		if (is_strlen_not_0(input_buf)) {
+///		if (is_strlen_not_0(input_buf)) {
 			update_history(hist_type_idx, input_buf);
-		}
+///		}
 	}
 #endif
 	return ret;

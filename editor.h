@@ -42,7 +42,7 @@ int doe_read_clipboard_into_cur_pos_(int char0_line1);
 
 int doe_run_line_soon(void);
 int doe_run_line_soon_w_log(void);
-int doe_run_line_soon__(int logging);
+int doe_run_line_soon_(int logging);
 
 #ifdef ENABLE_FILER
 int doe_call_filer(void);
@@ -51,7 +51,9 @@ int doe_call_filer(void);
 //-----------------------------------------------------------------------------
 
 #ifdef ENABLE_HELP
-int doe_editor_splash(void);
+int doe_splash(void);
+int doe_view_key_list(void);
+int doe_view_func_list(void);
 #endif // ENABLE_HELP
 
 int doe_display_color_settings(void);
@@ -66,7 +68,6 @@ int doe_editor_menu_5(void);
 int doe_editor_menu_6(void);
 int doe_editor_menu_7(void);
 int doe_editor_menu_8(void);
-int doe_editor_menu_9(void);
 
 int doe_inc_key_list_lines(void);
 

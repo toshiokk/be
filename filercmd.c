@@ -680,7 +680,7 @@ int dof_display_color_settings(void)
 }
 
 #ifdef ENABLE_HELP
-int dof_filer_splash(void)
+int dof_splash(void)
 {
 	disp_splash(100);
 
@@ -688,6 +688,16 @@ int dof_filer_splash(void)
 
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
+}
+int dof_view_key_list(void)
+{
+	view_help(HELP_BUF_IDX_FILER_KEY_LIST);
+	return 1;
+}
+int dof_view_func_list(void)
+{
+	view_help(HELP_BUF_IDX_FILER_FUNC_LIST);
+	return 1;
 }
 #endif // ENABLE_HELP
 

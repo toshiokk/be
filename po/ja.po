@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-11 22:36+0900\n"
+"POT-Creation-Date: 2024-10-20 22:24+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -48,21 +48,21 @@ msgstr "このキーにはコマンドが割り当てられていません: %04x
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr "このコマンドは List mode では実行できません: [%s]"
 
-#: ../editor.c:515
+#: ../editor.c:521
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 "行:%4lu/%-4lu 桁:%3lu/%-3lu サイズ:%6lu%s 文字コード:%s エンコード:%s 行末:%s"
 
-#: ../editor.c:569
+#: ../editor.c:575
 msgid "Modification not allowed in LIST mode"
 msgstr "LISTモードでは編集できません"
 
-#: ../editor.c:573
+#: ../editor.c:579
 msgid "Modification not allowed in Anchor buffer"
 msgstr "Anchor buffer は編集できません"
 
-#: ../editor.c:577
+#: ../editor.c:583
 #, fuzzy
 msgid "Modification not allowed in VIEW mode buffer"
 msgstr "VIEWモードでは編集できません"
@@ -217,29 +217,51 @@ msgid "Switched current editor pane to %d"
 msgstr "カレントディレクトリを変更しました [%s]"
 
 #. ///_D_(buf_dump_state(cur_edit_buf))
-#: ../editorlist.c:52 ../editorlist.c:174
+#: ../editorlist.c:37 ../editorlist.c:179
 msgid "#List of Files currently loaded"
 msgstr "#編集中ファイル一覧"
 
-#: ../editorlist.c:54 ../editorlist.c:204
+#: ../editorlist.c:39
 msgid "#List of Editor Key Bindings"
-msgstr "#キー割り当て一覧"
+msgstr "#Editor キー割り当て一覧"
 
-#: ../editorlist.c:55 ../editorlist.c:232
+#: ../editorlist.c:40
 msgid "#List of Editor Functions"
-msgstr "#ファンクション一覧"
+msgstr "#Editor ファンクション一覧"
 
-#: ../editorlist.c:99
+#: ../editorlist.c:41
+#, fuzzy
+msgid "#List of Filer Key Bindings"
+msgstr "#Filer キー割り当て一覧"
+
+#: ../editorlist.c:42
+#, fuzzy
+msgid "#List of Filer Functions"
+msgstr "#Filer ファンクション一覧"
+
+#: ../editorlist.c:77
 msgid "File List"
-msgstr "ファイルリスト"
+msgstr "Editor ファイルリスト"
 
-#: ../editorlist.c:103
-msgid "Key List"
-msgstr "キーリスト"
+#: ../editorlist.c:81
+#, fuzzy
+msgid "Editor Key List"
+msgstr "Editor キーリスト"
 
-#: ../editorlist.c:106
-msgid "Function List"
-msgstr "ファンクションリスト"
+#: ../editorlist.c:84
+#, fuzzy
+msgid "Editor Function List"
+msgstr "Editor ファンクションリスト"
+
+#: ../editorlist.c:88
+#, fuzzy
+msgid "Filer Key List"
+msgstr "Filer ファイルリスト"
+
+#: ../editorlist.c:91
+#, fuzzy
+msgid "Filer Function List"
+msgstr "Filer ファンクションリスト"
 
 #: ../editormove.c:323
 msgid "Input control character [^A-^Z,^[,^\\,^],^^,^_,]"
@@ -534,18 +556,18 @@ msgstr "%d ファイルを選択しました"
 msgid "%d filesss selected"
 msgstr "%d ファイルを選択しました"
 
-#: ../filercmd.c:749
+#: ../filercmd.c:759
 #, fuzzy, c-format
 msgid "Can not change directory to [%s]"
 msgstr "カレントディレクトリを変更できません [%s]: %s"
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:830
+#: ../filercmd.c:840
 #, c-format
 msgid "Can not change current to [%s]: %s"
 msgstr "カレントディレクトリを変更できません [%s]: %s"
 
-#: ../filercmd.c:839
+#: ../filercmd.c:849
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr "カレントディレクトリを変更しました [%s]"
@@ -609,17 +631,17 @@ msgstr "ディレクトリを作成できません %s"
 msgid "hist_type_idx out of range: %d"
 msgstr ""
 
-#: ../history.c:239
+#: ../history.c:240
 #, c-format
 msgid "Unable to create history file: %s, %s"
 msgstr "ヒストリファイル %s を作成出来ません, %s"
 
-#: ../history.c:256
+#: ../history.c:257
 #, c-format
 msgid "Unable to write history file: %s, %s"
 msgstr "ヒストリファイル %s に書き込めません, %s"
 
-#: ../history.c:288
+#: ../history.c:289
 #, c-format
 msgid "Unable to open history file: %s, %s"
 msgstr "ヒストリファイル %s が読み込めません, %s"
@@ -640,7 +662,7 @@ msgstr ""
 msgid "Start key macro playback"
 msgstr ""
 
-#: ../keys.c:485
+#: ../keys.c:486
 #, fuzzy, c-format
 msgid "Window resized to (%d, %d)"
 msgstr "画面サイズ: (%d, %d)"

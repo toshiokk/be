@@ -1,8 +1,9 @@
 #### BE-editor to do list
  (H: high priority, L: Low priority, e: easy, d: difficult, x/v: done, -: impossible/pending)
 
-- [] built in logger(record stdout to both of console and log file)
-- [x] 241011 do not show splash when screen size resized
+- [x] 241020 Not update common history files soon
+- [x] 241018 add filer funckey list
+- [x] 241011 do not show splash when screen resized
 - [x] 241007 goto the last touched file when reloading files
 - [x] 241007 minimize file open history on exitting editor
 - [x] 241007 enter into directory by 'e' key
@@ -24,9 +25,9 @@
   1. memorize columns number                   (MC-] : 1b1d)
   2. fill to the memorized columns with spaces (M-_  : 1b5f)
 
-[x] 240926 execute_line_soon
+[x] 240926 after execute_line_soon
 
-[x] 240830 show from the top of the file if file contains less lines than the screen lines.
+[x] 240830 show  from the top of the file if file contains less lines than the screen lines.
 
 [x] return a valid value from the execution (may because of pipe line)
     [-] --> No good way to do `set -o pipefail` in each time before execution

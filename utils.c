@@ -321,14 +321,14 @@ char *get_sssssspmmm(char *buf)
 	 (int)(msec / 1000), (int)(msec % 1000));
 	return buf;
 }
-////time_t get_sec(void)
-////{
-////	struct timeval tv;
-////	struct timezone tz;
-////
-////	gettimeofday(&tv, &tz);
-////	return tv.tv_sec;
-////}
+/////time_t get_sec(void)
+/////{
+/////	struct timeval tv;
+/////	struct timezone tz;
+/////
+/////	gettimeofday(&tv, &tz);
+/////	return tv.tv_sec;
+/////}
 unsigned long get_msec(void)
 {
 	struct timeval tv;

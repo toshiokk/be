@@ -3,7 +3,7 @@ if [ ! -f config.h ]; then
   ./configure  # generate config.h
 fi
 {
-  for file in *.h *.c berc emacs.berc wordstar.berc po/*.po README.md __todo.txt; do
+  for file in *.h *.c berc emacs.berc wordstar.berc po/*.po README.md; do
     echo -n "`printf "%-16s  " $file`"
     echo -n `cat $file | wc`
     echo "    " `expand -t 4 $file | wc -L`

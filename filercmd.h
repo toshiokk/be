@@ -40,8 +40,8 @@ int dof_bottom_of_list(void);
 int dof_switch_filer_pane(void);
 int dof_refresh_filer(void);
 
-// current : currently selected file
-// marked  : marked files
+// current : subject currently selected file to command
+// marked  : subject marked files to command
 //|function                   | current | marked |
 //|---------------------------|---------|--------|
 //|dof_tap_file               | v       | -      |
@@ -69,7 +69,6 @@ int dof_refresh_filer(void);
 //|dof_run_command_src_dst    | v       | -      |
 //|dof_run_command_sh         | v       | -      |
 //|dof_run_command_soon       | v       | -      |
-//|dof_run_command_soon_w_log | v       | -      |
 
 int dof_tap_file(void);
 int dof_view_file(void);
@@ -115,7 +114,9 @@ int dof_tog_panes(void);
 int dof_inc_key_list_lines(void);
 int dof_display_color_settings(void);
 #ifdef ENABLE_HELP
-int dof_filer_splash(void);
+int dof_splash(void);
+int dof_view_key_list(void);
+int dof_view_func_list(void);
 #endif // ENABLE_HELP
 
 int dof_filer_menu_0(void);

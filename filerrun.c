@@ -423,7 +423,8 @@ PRIVATE int fork_exec_before_after(int set_term, int separate_bef_exec, int logg
 	if (separate_bef_exec && (get_fork_exec_counter() == 0)) {
 ///		printf("-------- command execution started here --------\n");
 		char header[MAX_PATH_LEN+1];
-		snprintf(header, MAX_PATH_LEN, "== [%s][ %c %s ] execution started here ==\n",
+///		snprintf(header, MAX_PATH_LEN, "== [%s][ %c %s ] ==\n",
+		snprintf(header, MAX_PATH_LEN, "== [%s]%c %s ==\n",
 		 full_path_of_cur_dir_static(), (geteuid() == 0) ? '#' : '$', command);
 		// output separator line to log file
 		if (logging) {

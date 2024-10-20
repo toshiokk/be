@@ -3,7 +3,7 @@ appmode.h         330 1171 11560     96
 buffer.h          208 816 8164     94
 buffers.h         319 967 12205     89
 color.h           118 455 4637     87
-config.h          291 1383 7977     78
+config.h          291 1376 7956     78
 cursesif.h        65 258 2570     98
 debug.h           100 411 4151     89
 disp.h            58 289 2751     97
@@ -55,7 +55,7 @@ cursesif.c        208 621 5244     91
 debug.c           148 493 4307     76
 disp.c            297 944 9206     96
 editor.c          604 1500 17388     96
-editor2.c         888 3075 31680     96
+editor2.c         888 3075 31679     96
 editor3.c         274 959 9918     94
 editorcut.c       678 1726 17054     97
 editorcut2.c      436 1363 14338     98
@@ -74,7 +74,7 @@ filerkeys.c       188 1140 11686     99
 filerrun.c        529 1518 15538     91
 history.c         589 1821 18462     98
 keymacro.c        286 822 8659     92
-keys.c            969 3104 26313     95
+keys.c            977 3128 26510     95
 line.c            395 1209 11094     96
 linewrap.c        598 2158 24714     98
 main.c            954 2814 29351     97
@@ -96,5 +96,4 @@ emacs.berc        13 26 459     36
 wordstar.berc     13 26 459     36
 po/ja.po          983 2388 22376     79
 README.md         284 1366 8383     94
-__todo.txt        817 4445 34517     125
-Total lines, words, bytes, Max length: 29602 96458 1033149  99
+Total lines, words, bytes, Max length: 29610 96475 1033351  99

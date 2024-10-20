@@ -117,7 +117,7 @@ const char *cur_hhmmss(void);
 #define USEC_END	flf_d_printf("%d[usec]\n", get_usec() - usec); USEC_BEGIN
 char *get_ssspuuuuuu(char *buf);
 char *get_sssssspmmm(char *buf);
-////time_t get_sec(void);
+/////time_t get_sec(void);
 unsigned long get_msec(void);
 unsigned long get_usec(void);
 const char *cur_hhcmmcss_mmm(void);

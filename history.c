@@ -209,7 +209,8 @@ PRIVATE int load_history_if_needed_and_reloadable(int hist_type_idx)
 }
 PRIVATE int save_history_if_modified_and_expired(int hist_type_idx)
 {
-	if (is_history_modified_and_expired(hist_type_idx) == 0) {
+	if ((hist_type_idx == HISTORY_TYPE_IDX_FILEPOS)
+	 && (is_history_modified_and_expired(hist_type_idx) == 0)) {
 		return -1;
 	}
 	return save_history_idx(hist_type_idx);
@@ -304,9 +305,7 @@ PRIVATE int load_history_idx(int hist_type_idx)
 			// load the last MAX_HISTORY_LINES lines
 			str[MAX_EDIT_LINE_LEN] = '\0';
 			remove_line_tail_lf(str);
-			if (strlen(str) > 0) {
-				append_history(hist_type_idx, str);
-			}
+			append_history(hist_type_idx, str);
 		}
 		if (fclose(fp) != 0) {
 			error = 1;
@@ -384,6 +383,10 @@ PRIVATE void init_history(int hist_type_idx)
 // add string to the bottom of history list
 PRIVATE void append_history(int hist_type_idx, const char *str)
 {
+	if (is_strlen_0(str)) {
+		return;
+	}
+/////mflf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, str);
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	buf_set_cur_line(buf, line_insert_with_string(BUF_BOT_ANCH(buf), INSERT_BEFORE, str));
 	set_history_modified(hist_type_idx);

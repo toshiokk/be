@@ -265,13 +265,13 @@ int doe_read_clipboard_into_cur_pos_(int char0_line1)
 //-----------------------------------------------------------------------------
 int doe_run_line_soon(void)
 {
-	return doe_run_line_soon__(LOGGING0);
+	return doe_run_line_soon_(LOGGING0);
 }
 int doe_run_line_soon_w_log(void)
 {
-	return doe_run_line_soon__(LOGGING1);
+	return doe_run_line_soon_(LOGGING1);
 }
-int doe_run_line_soon__(int logging)
+int doe_run_line_soon_(int logging)
 {
 	char buffer[MAX_PATH_LEN+1];
 
@@ -298,7 +298,7 @@ int doe_call_filer(void)
 
 //-----------------------------------------------------------------------------
 #ifdef ENABLE_HELP
-int doe_editor_splash(void)
+int doe_splash(void)
 {
 	disp_splash(100);
 
@@ -306,6 +306,16 @@ int doe_editor_splash(void)
 
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	return 0;
+}
+int doe_view_key_list(void)
+{
+	view_help(HELP_BUF_IDX_EDITOR_KEY_LIST);
+	return 1;
+}
+int doe_view_func_list(void)
+{
+	view_help(HELP_BUF_IDX_EDITOR_FUNC_LIST);
+	return 1;
 }
 #endif // ENABLE_HELP
 
@@ -367,10 +377,6 @@ int doe_editor_menu_7(void)
 int doe_editor_menu_8(void)
 {
 	return editor_menu_n(7);
-}
-int doe_editor_menu_9(void)
-{
-	return editor_menu_n(8);
 }
 
 //-----------------------------------------------------------------------------

@@ -25,6 +25,7 @@
 //-----------------------------------------------------------------------------
 
 func_key_table_t *app_func_key_table = editor_func_key_table;
+
 PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_);
 
 void set_app_func_key_table(void)
