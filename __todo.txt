@@ -1,6 +1,7 @@
 #### BE-editor to do list
  (H: high priority, L: Low priority, e: easy, d: difficult, x/v: done, -: impossible/pending)
 
+- [x] 241020 fix editor key/func list
 - [x] 241020 Not update common history files soon
 - [x] 241018 add filer funckey list
 - [x] 241011 do not show splash when screen resized

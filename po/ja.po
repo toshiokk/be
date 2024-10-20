@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-20 22:24+0900\n"
+"POT-Creation-Date: 2024-10-20 22:47+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -662,7 +662,7 @@ msgstr ""
 msgid "Start key macro playback"
 msgstr ""
 
-#: ../keys.c:486
+#: ../keys.c:495
 #, fuzzy, c-format
 msgid "Window resized to (%d, %d)"
 msgstr "画面サイズ: (%d, %d)"

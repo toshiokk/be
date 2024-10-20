@@ -450,8 +450,9 @@ typedef struct /*key_name_table_t*/ {
 } key_name_table_t;
 extern key_name_table_t key_name_table[];
 
-extern func_key_table_t *app_func_key_table;
+///extern func_key_table_t *app_func_key_table;
 void set_app_func_key_table(void);
+func_key_table_t *get_app_func_key_table(void);
 
 int editor_menu_n(int group_idx);
 int filer_menu_n(int group_idx);

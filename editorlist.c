@@ -213,7 +213,7 @@ PRIVATE void make_help_key_list(void)
 	for (int key_idx = 0; key_idx < get_key_name_table_entries(); key_idx++) {
 		key_code_t key = key_name_table[key_idx].key_code;
 		func_key_table_t *func_key_table
-		 = get_func_key_table_from_key(app_func_key_table, key);
+		 = get_func_key_table_from_key(get_app_func_key_table(), key);
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
 		 key_name_table[key_idx].key_name,
 		 func_key_table ? func_key_table->help : "-- No function assigned --",

@@ -24,7 +24,7 @@
 
 //-----------------------------------------------------------------------------
 
-func_key_table_t *app_func_key_table = editor_func_key_table;
+///func_key_table_t *app_func_key_table = editor_func_key_table;
 
 PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_);
 
@@ -33,10 +33,22 @@ void set_app_func_key_table(void)
 #ifdef ENABLE_FILER
 	if (GET_APPMD(app_EDITOR_FILER) == 0) {
 #endif // ENABLE_FILER
-		app_func_key_table = editor_func_key_table;
+///		app_func_key_table = editor_func_key_table;
 #ifdef ENABLE_FILER
 	} else {
-		app_func_key_table = filer_func_key_table;
+///		app_func_key_table = filer_func_key_table;
+	}
+#endif // ENABLE_FILER
+}
+func_key_table_t *get_app_func_key_table(void)
+{
+#ifdef ENABLE_FILER
+	if (GET_APPMD(app_EDITOR_FILER) == 0) {
+#endif // ENABLE_FILER
+		return editor_func_key_table;
+#ifdef ENABLE_FILER
+	} else {
+		return filer_func_key_table;
 	}
 #endif // ENABLE_FILER
 }
@@ -214,11 +226,9 @@ int disp_drop_down_menu(int group_idx, int entry_idx, int yy, int xx)
 
 int get_func_key_table_from_key_groups(void)
 {
-	int idx;
-	int group_idx;
-
-	group_idx = 0;
-	for (idx = 0; app_func_key_table[idx].help[0]; idx++) {
+	func_key_table_t *app_func_key_table = get_app_func_key_table();
+	int group_idx = 0;
+	for (int idx = 0; app_func_key_table[idx].help[0]; idx++) {
 		if (app_func_key_table[idx].desc[0] == 0) {
 			group_idx++;
 		}
@@ -259,9 +269,8 @@ void exec_func(int group_idx, int entry_idx)
 
 func_key_table_t *get_func_key_table_from_key_group(int group_idx)
 {
-	int idx;
-
-	for (idx = 0; app_func_key_table[idx].help[0]; idx++) {
+	func_key_table_t *app_func_key_table = get_app_func_key_table();
+	for (int idx = 0; app_func_key_table[idx].help[0]; idx++) {
 		if (app_func_key_table[idx].desc[0] == 0) {
 			if (group_idx == 0)
 				return &app_func_key_table[idx];
@@ -280,7 +289,7 @@ void *get_app_function_for_key(key_code_t key)
 {
 	func_key_table_t *func_key_table;
 
-	func_key_table = get_func_key_table_from_key(app_func_key_table, key);
+	func_key_table = get_func_key_table_from_key(get_app_func_key_table(), key);
 	if (func_key_table)
 		return (void *)func_key_table->func;
 	return NULL;
