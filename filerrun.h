@@ -29,18 +29,15 @@
 #define PAUSE0		0
 #define PAUSE1		1		// pause after execution of sub process
 #define LOGGING0	0
-#define LOGGING1	1
+#define LOGGING1	1		// truncate
+#define LOGGING2	2		// append
 
 #ifdef ENABLE_FILER
 
 int dof_exec_command_with_file(void);
-int dof_exec_command_with_file_w_log(void);
 int dof_exec_command_with_files(void);
-int dof_exec_command_with_files_w_log(void);
 int dof_run_command_rel(void);
-int dof_run_command_rel_w_log();
 int dof_run_command_abs(void);
-int dof_run_command_abs_w_log(void);
 int dof_run_command_src_dst(void);
 int dof_run_command_sh(void);
 int dof_run_command_soon(void);

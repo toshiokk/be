@@ -55,7 +55,7 @@
 
 void app_main_loop(void);
 
-int write_text_to_file(const char *file_path, const char *text);
+int write_text_to_file(const char *file_path, char append, const char *text);
 
 void app_die_on(const char *msg);
 void free_all_allocated_memory(void);

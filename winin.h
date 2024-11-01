@@ -42,6 +42,7 @@ typedef enum {
 	EF_INPUT_TO_APPEND			= 11,	//   input string(file/dir name or path) to append
 										// input text:
 	EF_INPUT					= 12,	//   input string(file/dir name or path)
+	EF_INPUT_W_ALT				= 13,	//   input string(by Enter key with Alt key)
 } ef_do_next_t;
 
 int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx,

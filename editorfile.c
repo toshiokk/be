@@ -138,7 +138,7 @@ int do_open_exec_log_file(void)
 		return 0;
 	}
 	disp_files_loaded_if_ge_0();
-	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	doe_last_line();
 	return 1;
 }
 

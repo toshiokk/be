@@ -195,7 +195,7 @@
 #define K_MC_K			K_M(K_C('K'))
 #define K_MC_L			K_M(K_C('L'))
 #define K_MC_M			K_M(K_C('M'))
-#define K_M_ENTER		K_M(K_ENTER)	// same as K_MC_M
+#define K_M_ENTER		K_MC_M
 #define K_MC_N			K_M(K_C('N'))
 #define K_MC_O			K_M(K_C('O'))
 #define K_MC_P			K_M(K_C('P'))
@@ -450,8 +450,6 @@ typedef struct /*key_name_table_t*/ {
 } key_name_table_t;
 extern key_name_table_t key_name_table[];
 
-///extern func_key_table_t *app_func_key_table;
-void set_app_func_key_table(void);
 func_key_table_t *get_app_func_key_table(void);
 
 int editor_menu_n(int group_idx);

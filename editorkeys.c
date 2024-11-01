@@ -101,7 +101,7 @@ func_key_table_t editor_func_key_table[] = {
    XA, F_I(doe_goto_file_or_dir_in_cur_cursor_pos), NULL },
  { "Run line soon",       "Run current line soon",                   K_M_x,        KNA, KNA,
    XA, F_I(doe_run_line_soon), NULL },
- { "Run line soon(w/ logging)", "Run current line soon w/ log",      K_M_X,    KNA, KNA,
+ { "Run line soon(w/ logging)", "Run current line soon w/ log",      K_M_X,        KNA, KNA,
    XA, F_I(doe_run_line_soon_w_log), NULL },
 
  { "",                    "Edit Menu",                               KNA,          KNA, KNA,
@@ -110,7 +110,7 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_tab), NULL },
  { "Enter",               "Insert a carriage return",                K_ENTER,      KNA, KNA,
    XI, F_I(doe_carriage_return), NULL },
- { "Enter with auto indent", "Insert a carriage return",             K_MC_M,       KNA, KNA,
+ { "Enter with auto indent", "Insert a carriage return",             K_M_ENTER,    KNA, KNA,
    XI, F_I(doe_carriage_return_with_auto_indent), NULL },
  { "Backspace",           "Backspace",                               K_C_H, K_BS,       KNA,
    XL, F_I(doe_backspace), NULL },
@@ -181,8 +181,6 @@ func_key_table_t editor_func_key_table[] = {
 #ifdef ENABLE_HELP
  { "Key List",            "Display Key List",                        K_M_QUESTION, KNA, KNA,
    XL, F_I(doe_view_key_list), NULL },
-/// { "Func List",           "Display Function List",                   K_M_U,        KNA, KNA,
-///   XL, F_I(doe_view_func_list), NULL },
 #endif // ENABLE_HELP
 #if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
  { "Previous buffers",    "Goto previous buffers",                   K_M_LPARENTHESIS, KNA, KNA,
@@ -297,8 +295,6 @@ func_key_table_t editor_func_key_table[] = {
 #endif // ENABLE_HELP
  { "Color pairs",         "Display color pairs",                     K_M_c,        KNA, KNA,
    XL, F_I(doe_display_color_settings), NULL },
-/// { "Refresh",             "Refresh editor screen",                K_M_ASTERISK, KNA, KNA,
-///   XA, F_I(doe_refresh_editor), NULL },
 
  { "",                    "",                                        KNA,          KNA, KNA,
    XA, F_I(NULL), NULL },

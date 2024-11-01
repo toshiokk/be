@@ -42,33 +42,36 @@ int dof_refresh_filer(void);
 
 // current : subject currently selected file to command
 // marked  : subject marked files to command
-//|function                   | current | marked |
-//|---------------------------|---------|--------|
-//|dof_tap_file               | v       | -      |
-//|dof_view_file              | v       | -      |
-//|dof_tail_file              | v       | -      |
-//|dof_open_file              | -       | v      |
-//|dof_open_file_non_recursive| -       | v      |
-//|dof_open_file_from_history | -       | v      |
-//|dof_open_proj_file         | -       | -      |
-//|dof_open_exec_log_file     | -       | -      |
-//|dof_open_new_file          | v       | -      |
-//|dof_open_new_file_dropped  | -       | -      |
-//|dof_copy_file              | -       | v      |
-//|dof_copy_file_update       | -       | v      |
-//|dof_move_file              | -       | v      |
-//|dof_rename_file            | v       | -      |
-//|dof_trash_file             | -       | v      |
-//|dof_delete_file            | -       | v      |
-//|dof_mark_to_delete_file    | -       | v      |
-//|dof_size_zero_file         | -       | v      |
-//|dof_exec_command_with_file | -       | v      |
-//|dof_exec_command_with_files| -       | v      |
+//|function                   | current | marked | logging |
+//|---------------------------|---------|--------|---------|
+//|dof_tap_file               | v       | -      | -- |
+//|dof_view_file              | v       | -      | -- |
+//|dof_tail_file              | v       | -      | -- |
+//|dof_open_file              | -       | v      | -- |
+//|dof_open_file_non_recursive| -       | v      | -- |
+//|dof_open_file_from_history | -       | v      | -- |
+//|dof_open_proj_file         | -       | -      | -- |
+//|dof_open_exec_log_file     | -       | -      | -- |
+//|dof_open_new_file          | v       | -      | -- |
+//|dof_open_new_file_dropped  | -       | -      | -- |
+//|dof_copy_file              | -       | v      | -- |
+//|dof_copy_file_update       | -       | v      | -- |
+//|dof_move_file              | -       | v      | -- |
+//|dof_rename_file            | v       | -      | -- |
+//|dof_trash_file             | -       | v      | -- |
+//|dof_delete_file            | -       | v      | -- |
+//|dof_mark_to_delete_file    | -       | v      | -- |
+//|dof_size_zero_file         | -       | v      | -- |
+//|dof_exec_command_with_file | -       | v      | no  |
+//|dof_exec_command_with_files| -       | v      | no  |
 //|dof_run_command_rel        | v       | -      |
 //|dof_run_command_abs        | v       | -      |
 //|dof_run_command_src_dst    | v       | -      |
 //|dof_run_command_sh         | v       | -      |
-//|dof_run_command_soon       | v       | -      |
+//|dof_run_command_soon       | --      | --     |
+//|dof_run_command_soon_w_log | --      | --     |
+//|doe_run_line_soon          | --      | --     |
+//|doe_run_line_soon_w_log    | --      | --     |
 
 int dof_tap_file(void);
 int dof_view_file(void);
@@ -116,7 +119,6 @@ int dof_display_color_settings(void);
 #ifdef ENABLE_HELP
 int dof_splash(void);
 int dof_view_key_list(void);
-int dof_view_func_list(void);
 #endif // ENABLE_HELP
 
 int dof_filer_menu_0(void);

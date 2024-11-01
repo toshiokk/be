@@ -226,7 +226,6 @@ char *get_string_from_key_macro(void)
 		}
 	}
 flf_d_printf("%d [%s]\n", key_macro_recorded, line_buf);
-///get_key_macro_from_string(line_buf);
 	return line_buf;
 }
 void get_key_macro_from_string(const char *string)

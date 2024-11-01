@@ -260,7 +260,6 @@ PRIVATE int init_app_mode(void)
 #endif // ENABLE_DEBUG
 	// editor mode
 	CLR_APPMD(app_EDITOR_FILER);
-	set_app_func_key_table();
 	SET_APPMD_VAL(app_LIST_MODE, APP_MODE_NORMAL);
 ///	CLR_APPMD(app_MAP_KEY_7F_BS);
 	SET_APPMD(app_MAP_KEY_7F_BS);
@@ -555,12 +554,12 @@ PRIVATE int write_cur_dir_to_exit_file(void)
 	char file_path[MAX_PATH_LEN+1];
 	// write current directory to the $HOME/EXIT_FILE_NAME
 	snprintf(file_path, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), EXIT_FILE_NAME);
-	return write_text_to_file(file_path, full_path_of_cur_dir_static());
+	return write_text_to_file(file_path, 0, full_path_of_cur_dir_static());
 }
-int write_text_to_file(const char *file_path, const char *text)
+int write_text_to_file(const char *file_path, char append, const char *text)
 {
 	FILE *fp;
-	if ((fp = fopen(file_path, "w")) != NULL) {
+	if ((fp = fopen(file_path, append ? "a" : "w")) != NULL) {
 		fputs(text, fp);
 		if (fclose(fp) != 0) {
 			return -1;

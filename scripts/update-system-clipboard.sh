@@ -1,7 +1,7 @@
 # "update-system-clipboard.sh"
 # on Linux
 # - Start and continuously Run this script at system startup from GUI process
-# - monitor BE clipboard file and update system clipboard if updated
+# - monitor BE clipboard file and update system clipboard when updated
 # on WSL
 # - Run this script every time you cut/copy text
 if [ ! -d /mnt/c ]; then

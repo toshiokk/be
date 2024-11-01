@@ -43,7 +43,6 @@ int call_editor(int push_win, int list_mode, char *str_buf, int buf_len)
 	CLR_APPMD(app_EDITOR_FILER);
 	SET_APPMD_VAL(app_LIST_MODE, list_mode);
 	SET_APPMD_VAL(ed_EDITOR_PANES, 0);
-	set_app_func_key_table();
 	set_work_space_color_on_app_list_mode();
 
 flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
@@ -58,7 +57,6 @@ flf_d_printf("push_win:%d, list_mode:%d --> ret: %d\n", push_win, list_mode, ret
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 	SET_APPMD_VAL(app_LIST_MODE, GET_APPMD_PTR(&appmode_save, app_LIST_MODE));
 	SET_APPMD_VAL(ed_EDITOR_PANES, GET_APPMD_PTR(&appmode_save, ed_EDITOR_PANES));
-	set_app_func_key_table();
 	set_work_space_color_on_app_list_mode();
 
 	if (push_win) {
@@ -269,7 +267,7 @@ int doe_run_line_soon(void)
 }
 int doe_run_line_soon_w_log(void)
 {
-	return doe_run_line_soon_(LOGGING1);
+	return doe_run_line_soon_(LOGGING2);
 }
 int doe_run_line_soon_(int logging)
 {
@@ -310,11 +308,6 @@ int doe_splash(void)
 int doe_view_key_list(void)
 {
 	view_help(HELP_BUF_IDX_EDITOR_KEY_LIST);
-	return 1;
-}
-int doe_view_func_list(void)
-{
-	view_help(HELP_BUF_IDX_EDITOR_FUNC_LIST);
 	return 1;
 }
 #endif // ENABLE_HELP
@@ -555,7 +548,6 @@ void disp_key_list_editor(void)
  "<doe_view_file_list>FileList "
 #ifdef ENABLE_HELP
  "<doe_view_key_list>KeyList "
- "<doe_view_func_list>FuncList ",
 #endif // ENABLE_HELP
  "<doe_switch_to_prev_file>PrevFile "
  "<doe_switch_to_next_file>NextFile "

@@ -167,7 +167,6 @@ flf_d_printf("push: %d, list: %d, dir: %s, filter: [%s]\n", push_win, list_mode,
 	SET_APPMD(app_EDITOR_FILER);
 	SET_APPMD_VAL(app_LIST_MODE, list_mode);
 	SET_APPMD_VAL(ed_EDITOR_PANES, 0);
-	set_app_func_key_table();
 	set_work_space_color_on_app_list_mode();
 
 flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
@@ -182,7 +181,6 @@ flf_d_printf("ret: %d\n", ret);
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 	SET_APPMD_VAL(app_LIST_MODE, GET_APPMD_PTR(&appmode_save, app_LIST_MODE));
 	SET_APPMD_VAL(ed_EDITOR_PANES, GET_APPMD_PTR(&appmode_save, ed_EDITOR_PANES));
-	set_app_func_key_table();
 	set_work_space_color_on_app_list_mode();
 
 	if (push_win) {
@@ -482,10 +480,6 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 			}
 		}
 	}
-
-///	// Set cursor position
-///	sub_win_set_cursor_pos(filer_win_get_file_list_y()
-///	 + get_cur_fv_file_idx() - get_cur_filer_view()->top_file_idx, 0);
 
 	if (refresh) {
 		tio_refresh();

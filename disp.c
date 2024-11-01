@@ -156,7 +156,6 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		}
 		break;
 	case S_B_D_ERR:
-///		if (status_bar_to_display > status_bar_displayed) {}
 		if (status_bar_to_display >= status_bar_displayed) {
 			// display this if higher priority
 			status_bar_displayed = status_bar_to_display;
@@ -165,12 +164,8 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		break;
 	}
 
-///mflf_d_printf("SBD: %d,%d [%s]\n", status_bar_displayed, status_bar_to_display, prev_msg);
 	if (update) {
-///mflf_d_printf("%d:[%s]\n", status_bar_displayed, buffer);
 		vsnprintf(buf, MAX_SCRN_LINE_BUF_LEN+1, msg, ap);
-///mflf_d_printf("msg:[%s]\n", msg);
-///mflf_d_printf("[%s]\n", buf);
 		switch (status_bar_to_display) {
 		default:
 		case S_B_D_NONE:
@@ -229,7 +224,6 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 				byte_idx_2 = byte_idx_from_col_idx(buffer, col_idx+1, CHAR_RIGHT, &col_idx_2);
 				set_color_by_idx(color_idx, 1);
 				// display percent indicator
-///mflf_d_printf("%d  %d, %d  %d, %d\n", col_idx, byte_idx_1, byte_idx_2, col_idx_1, col_idx_2);
 				main_win_output_string(get_status_line_y(), col_idx_1,
 				 &buffer[byte_idx_1], byte_idx_2 - byte_idx_1);
 			}

@@ -1,6 +1,15 @@
 #### BE-editor to do list
  (H: high priority, L: Low priority, e: easy, d: difficult, x/v: done, -: impossible/pending)
 
+- [ ] Use pty for logging not "| tee -a file"
+  app --> pty-master, pty-slave --> | tee
+- [ ] 241022 record start time of execution to log file
+- [x] 241021 be able to output log in all execution command
+  |Entering key|logging in execution|comments|
+  |------------|--------------------|--------|
+  |Enter       |None                |-- |
+  |@Enter      |Logging             |-- |
+
 - [x] 241020 fix editor key/func list
 - [x] 241020 Not update common history files soon
 - [x] 241018 add filer funckey list
@@ -9,7 +18,7 @@
 - [x] 241007 minimize file open history on exitting editor
 - [x] 241007 enter into directory by 'e' key
 - [x] 241006 cursor jumps even after no jump on tag jump
-- [x] 241004 main filer quit on EF_CANDELLED and EF_EXECUTED
+- [x] 241004 main filer quit on EF_CANCELLED and EF_EXECUTED
 - [x] 241004 can not go up dir by BS
 - [x] relationship of list-mode and help-mode
 - [x] relationship of edit-bufs and help-bufs
@@ -26,9 +35,7 @@
   1. memorize columns number                   (MC-] : 1b1d)
   2. fill to the memorized columns with spaces (M-_  : 1b5f)
 
-[x] 240926 after execute_line_soon
-
-[x] 240830 show  from the top of the file if file contains less lines than the screen lines.
+[x] 240830 show from the top of the file if file contains less lines than the screen lines.
 
 [x] return a valid value from the execution (may because of pipe line)
     [-] --> No good way to do `set -o pipefail` in each time before execution
@@ -57,19 +64,6 @@
   - [d-] when you start BE from BE, `1.log` might be overwritten.
   - [d] `less file.txt` does not pause scrolling because less's FD-1 is not actual console
   - [x] cat all output when "command {}" executed to files
-
-    | command execution function  | Log output |
-    |-----------------------------|------------|
-    | dof_exec_command_with_file  | No   |
-    | dof_exec_command_with_files | No   |
-    | dof_run_command_rel         | Yes  |
-    | dof_run_command_abs         | Yes  |
-    | dof_run_command_src_dst     | Yes  |
-    | dof_run_command_sh          | Yes  |
-    | doe_run_line_soon           | Yes  |
-    | doe_run_line_soon_wo_log    | No   |
-    | dof_run_command_soon        | Yes  |
-    | dof_run_command_soon_wo_log | No   |
 
   standard
    +----------------------+
@@ -125,12 +119,12 @@
   Entering text from filer:
   |command key    |Text entered |Replace/Insert|comments|
   |---------------|-------------|--------------|--------|
-  |e,d,c,Enter    |file name    |Replace       |-- |
-  |@e,@d,@c,@Enter|file name    |Insert        |-- |
-  |E,D,C          |file path    |Replace       |-- |
-  |@E,@D,@C       |file path    |Insert        |-- |
-  |m              |cur dir path |Replace       |-- |
-  |@m             |cur dir path |Insert        |-- |
+  |e,d,c,Enter    |file name    |Replace       | input file name replacing previous string    |
+  |@e,@d,@c,@Enter|file name    |Insert        | input file path replacing previous string    |
+  |E,D,C          |file path    |Replace       | input file name appending to previous string |
+  |@E,@D,@C       |file path    |Insert        | input file path appending to previous string |
+  |m              |cur dir path |Replace       | input dir path replacing previous string     |
+  |@m             |cur dir path |Insert        | input dir path appending to previous string  |
 
 [x] switching policy of filer and editor
 switching filer and editor
@@ -273,15 +267,6 @@ editor/filer	input_string()
 	[v] support both character copy and line copy (on GUI based app. there is the only character based cut)
 
 [] difficult to memorize below function keys for human
-[v] input_string() by filer
-  | key         | string to be input | replace/append  | action                                       |
-  |-------------|--------------------|-----------------|----------------------------------------------|
-  | e,d,c       | file name          | replace         | input file name replacing previous string    |
-  | E,D,C       | file path          | replace         | input file path replacing previous string    |
-  | M-e,M-d,M-c | file name          | append          | input file name appending to previous string |
-  | M-E,M-D,M-C | file path          | append          | input file path appending to previous string |
-  | m,M         | dir path           | replace         | input dir path replacing previous string     |
-  | M-m,M-M     | dir path           | append          | input dir path appending to previous string  |
 
 [v] The same data should be saved after loading binary file.(Ex. PNG file)
   load: 0x00--0x1f,0x7f--0xff ==> 0x0100--0x011f, 0x17f--0x1ff
@@ -544,7 +529,6 @@ Editor 2 pane mode
 //ChDir to ..
 //Shift-F4 hang-up on Slang-1.4.9
 //red screen for super user
-//libslang-utf8-1.4.9 + mbctowc
 //[pe]file sort by name or extension
 //[pd]box cut/paste
 //[nd]backward replace search yes/no/back/undo/cancel
@@ -698,7 +682,7 @@ FC4
 FC5
 VINE
 TL10
-TL11	No-ncurses.h,slang.h,pcre.h libslang-utf8-1.4.9
+TL11	No-ncurses.h,pcre.h
 Ubuntu
 SUSE
 

@@ -78,19 +78,15 @@ flf_d_printf("ret: %d\n", ret);
 		disp_status_bar_done(_("Cancelled"));
 	}
 #ifdef ENABLE_HISTORY
-	if (ret == EF_INPUT) {
+	if ((ret == EF_INPUT) || (ret == EF_INPUT_W_ALT)) {
 		// input normally
-///		if (is_strlen_not_0(input_buf)) {
-			update_history(hist_type_idx, input_buf);
-///		}
+		update_history(hist_type_idx, input_buf);
 	}
 #endif
 	return ret;
 }
 
 // Input string. This should only be called from input_string_xxx().
-//  return 0 : cancelled
-//  return 1 : input normally
 PRIVATE int input_string_pos__(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg)
 {
@@ -136,6 +132,9 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		} else
 		if (key_input == K_ENTER) {
 			ret = EF_INPUT;			// confirm a string input
+		} else
+		if (key_input == K_M_ENTER) {
+			ret = EF_INPUT_W_ALT;			// confirm a string input
 		} else
 		if (cmp_func_id(func_id, "doe_left")) {
 			// cursor left
@@ -281,7 +280,7 @@ flf_d_printf("call_filer ret: EF__%d, buffer: [%s]\n", ret, buffer);
 			}
 		}
 		// EF_QUIT: stay in this loop
-		if ((ret == EF_CANCELLED) || (ret == EF_INPUT)
+		if ((ret == EF_CANCELLED) || (ret == EF_INPUT) || (ret == EF_INPUT_W_ALT)
 		 || (ret == EF_LOADED) || (ret == EF_EXECUTED)) {
 			break;
 		}

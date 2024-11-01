@@ -415,9 +415,6 @@ PRIVATE int is_history_modified(int hist_type_idx)
 #define HISTORY_EXPIRATION_MSEC		100		// 1000
 PRIVATE int is_history_modified_and_expired(int hist_type_idx)
 {
-/////mflf_d_printf("%d - %d --> %d\n",
-///// get_msec(), abs_msec_history_modified[hist_type_idx],
-///// get_msec() - abs_msec_history_modified[hist_type_idx]);
 	return is_history_modified(hist_type_idx)
 	 && ((get_msec() - abs_msec_history_modified[hist_type_idx]) >= HISTORY_EXPIRATION_MSEC);
 }
@@ -526,7 +523,6 @@ const char *search_history_file_path(int hist_type_idx, const char *path)
 		} else {
 			len = line_data_strlen(line);
 		}
-/////flf_d_printf("path[%s],line[%s],%d\n", path, line->data, len);
 		if (strncmp(line->data, path, len) == 0) {
 			return line->data;
 		}
@@ -560,9 +556,6 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 	int ret = call_editor(1, APP_MODE_LIST, buffer, MAX_PATH_LEN);
 
 flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
-///	if (ret < EF_INPUT_TO_REPLACE) {
-///		strcpy__(buffer, "");
-///	}
 	if (ret != EF_LOADED) {
 		// No new file has been loaded, recover previous state
 		set_epc_buf(edit_buf_save);

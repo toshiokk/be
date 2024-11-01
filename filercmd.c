@@ -43,7 +43,7 @@ int chk_inp_str_ret_val_filer(int ret)
 		filer_do_next = EF_NONE;
 	}
 flf_d_printf("filer_do_next: EF__%d\n", filer_do_next);
-	return ret != EF_INPUT;
+	return (ret != EF_INPUT) && (ret != EF_INPUT_W_ALT);
 }
 
 int dof_up(void)
@@ -694,11 +694,6 @@ int dof_view_key_list(void)
 	view_help(HELP_BUF_IDX_FILER_KEY_LIST);
 	return 1;
 }
-int dof_view_func_list(void)
-{
-	view_help(HELP_BUF_IDX_FILER_FUNC_LIST);
-	return 1;
-}
 #endif // ENABLE_HELP
 
 int dof_filer_menu_0(void)
@@ -776,7 +771,6 @@ PRIVATE int change_cur_dir_from_history(const char *dir)
 		if (strlen_path(history) == 0) {
 			break;
 		}
-/////flf_d_printf("history: [%s]\n", history);
 		if (compare_file_path_from_tail(history, dir) == 0) {
 			if (change_cur_dir_saving_prev_next(history)) {
 				return 1;

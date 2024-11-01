@@ -190,7 +190,6 @@ editor_panes_t *push_editor_panes(editor_panes_t *next_eps)
 	editor_panes_t *prev_eps = cur_editor_panes;	// save pointer
 	init_cur_editor_panes(next_eps);
 	copy_editor_panes(cur_editor_panes, prev_eps);
-/////_D_(dump_editor_panes())
 	return prev_eps;
 }
 void pop_editor_panes(editor_panes_t *prev_eps, editor_panes_t *eps, BOOL copy_back)
@@ -199,7 +198,6 @@ void pop_editor_panes(editor_panes_t *prev_eps, editor_panes_t *eps, BOOL copy_b
 		copy_editor_panes(prev_eps, eps);
 	}
 	cur_editor_panes = prev_eps;	// recover pointer
-/////_D_(dump_editor_panes())
 }
 
 void set_editor_cur_pane_idx(int pane_idx)
@@ -234,7 +232,6 @@ void set_epx_buf(int pane_idx, be_buf_t *buf)
 	if (buf) {
 		cur_editor_panes->bufs[pane_idx] = buf;
 	}
-/////_D_(dump_editor_panes())
 
 #ifdef ENABLE_SYNTAX
 	set_file_type_by_cur_file_path();
@@ -321,7 +318,6 @@ void create_edit_buf(const char *full_path)
 		// make view-1 buffer valid
 		cur_editor_panes->bufs[1] = buf;
 	}
-/////_D_(buf_dump_state(buf))
 }
 
 //-----------------------------------------------------------------------------
@@ -750,5 +746,33 @@ flf_d_printf("cur_line:%08lx\n", EPCBVC_CL);
 flf_d_printf(">>>\n");
 }
 #endif // ENABLE_DEBUG
+
+/////_D_(line_dump(line))
+/////_D_(dump_editor_panes())
+/////_D_(dump_editor_panes())
+/////_D_(dump_editor_panes())
+/////_D_(buf_dump_state(buf))
+/////_D_(dump_file_type(cur_file_type, 0))
+/////_D_(line_dump(line))
+/////_D_(dump_editor_panes())
+/////_D_(line_dump(line))
+/////_D_(line_dump(line))
+/////_D_(dump_editor_panes())
+/////_D_(dump_editor_panes())
+/////_D_(dump_editor_panes())
+/////_D_(line_dump_byte_idx(EPCBVC_CL, EPCBVC_CLBI))
+/////_D_(dump_editor_panes())
+/////_D_(dump_editor_panes())
+/////_D_(dump_buf_views(edit_buf_save))
+/////_D_(dump_buf_views(edit_buf_save))
+/////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
+/////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
+/////_D_(buf_dump_state(cur_edit_buf))
+/////_D_(buf_dump_state(edit_buf))
+/////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
+/////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
+/////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
+/////_D_(line_dump(EPCBVC_CL))
+/////_D_(line_dump(line))
 
 // End of buffers.c

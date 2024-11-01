@@ -179,7 +179,6 @@ int termif_get_screen_size_from_term(void)
 	termif_set_screen_size(TERMIF_MAX_SCRN_LINES, TERMIF_MAX_SCRN_COLS);
 	for (int tries = 0; tries < MAX_REPORT_TRIES; tries++) {
 		send_cursor_pos_to_term(TERMIF_MAX_SCRN_LINES-1, TERMIF_MAX_SCRN_COLS-1);
-////flf_d_printf("(%d, %d)\n", TERMIF_MAX_SCRN_LINES-1, TERMIF_MAX_SCRN_COLS-1);
 		if (receive_cursor_pos_from_term(&lines, &cols)) {
 			if (lines < TERMIF_MAX_SCRN_LINES && cols < TERMIF_MAX_SCRN_COLS) {
 				termif_set_screen_size(lines + 1, cols + 1);
@@ -207,7 +206,6 @@ int termif_get_columns(void)
 void termif_clear_screen(void)
 {
 ///	send_string_to_term("\x1b" "c", -1);
-	///memset((void *)vscreen_to_paint, 0x00, sizeof(vscreen_to_paint));
 	termif_clear_vscreen_to_paint();
 	termif_clear_vscreen_painted();
 }
@@ -243,7 +241,6 @@ void termif_get_cursor_pos(int *yy, int *xx)
 
 void termif_set_attrs(int bgc, int fgc, int rev)
 {
-///flf_d_printf("bgc:%d, fgc:%d, rev:%d, bold:%d\n", bgc, fgc, rev, bold);
 	if (rev >= 0) {
 		if (rev == 0) {
 			termif_attrs &= ~VSCR_CHAR_REV;
@@ -257,7 +254,6 @@ void termif_set_attrs(int bgc, int fgc, int rev)
 	if (fgc >= 0) {
 		SET_ATTRS_FROM_FGC(termif_attrs, fgc);
 	}
-///flf_d_printf("attrs: %08lx\n", termif_attrs);
 }
 
 void termif_send_cursor_on(int on_off)

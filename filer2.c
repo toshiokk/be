@@ -172,7 +172,6 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	static char buffer[FILE_NAME_INFO_BUF_LEN+1];
 #define MIN_FILE_NAME_SPACE		12		// "filename.ext"(DOS8.3)
 
-////flf_d_printf("[%s], %d\n", file_info->file_name, get_file_type_num(file_info));
 	st_ptr = &file_info->st;
 	lst_ptr = &file_info->lst;
 	is_link = S_ISLNK(lst_ptr->st_mode);
@@ -740,7 +739,6 @@ void unselect_all_files_auto(char selection_bit)
 //-----------------------------------------------------------------------------
 int research_file_name_in_file_list(filer_view_t *fv, const char *file_name)
 {
-/////flf_d_printf("[%s]\n", file_name);
 	int file_idx = search_file_name_in_file_list(fv, file_name);
 	if (file_idx < 0) {
 		if (fv->cur_file_idx >= 0)

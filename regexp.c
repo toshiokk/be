@@ -344,9 +344,6 @@ regexp_t *regexp_alloc(void)
 regexp_t *regexp_init(regexp_t *regexp)
 {
 	memset(regexp, 0x00, sizeof(regexp_t));
-///	regexp->is_compiled = 0;
-///	strcpy__(regexp->needle_compiled, "");
-///	regexp->cflags_compiled = 0;
 	return regexp;
 }
 void regexp_free_regex_compiled(regexp_t *regexp)
@@ -406,7 +403,6 @@ int regexp_search_compiled(regexp_t *regexp, const char *haystack, int byte_idx,
 {
 	int ret;
 
-/////flf_d_printf("needle[%s]\n", regexp->needle_compiled);
 	if (regexp->is_compiled < 2) {
 		return -1;	// compilation error
 	}

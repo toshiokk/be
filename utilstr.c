@@ -431,7 +431,6 @@ char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10)
 #define STR_TILDE		"~~"
 #define STR_TILDE_LEN	2	// strlen(STR_TILDE)
 		if (space > STR_TILDE_LEN) {
-			///space1 = LIM_MIN(0, (space - STR_TILDE_LEN) / 10 * n_over_10);
 			space1 = LIM_MIN(0, (space - STR_TILDE_LEN) * n_over_10 / 10);
 			space2 = LIM_MIN(0, (space - STR_TILDE_LEN) - space1);
 			byte_idx1 = get_byte_idx_from_col_idx(str, space1, -1, NULL);
@@ -622,7 +621,6 @@ int is_char_file_path(const char *ptr)
 }
 int is_char_file_name(const char *ptr)
 {
-///	return (((' ' < *ptr) && (*ptr < 0x80) && (*ptr != '/')) || (utf8c_bytes(ptr) >= 2));
 	return isalnum(*ptr) || strchr__("_-+.~!#$%&@=\"\'", *ptr) || (utf8c_bytes(ptr) >= 2);
 	// non-file-name-chars are ' ' '\t' '/' '|' ':'
 }

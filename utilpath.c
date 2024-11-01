@@ -596,7 +596,6 @@ char *get_abs_path(const char *path, char *buf)
 
 	get_full_path(path, full_path);					// --> full_path
 	get_real_path(full_path, buf, MAX_PATH_LEN);	// --> abs path (real path)
-///flf_d_printf("\n[%s]\n ==> [%s]\n", full_path, buf);
 	return buf;
 }
 
@@ -632,7 +631,6 @@ char *get_full_path(const char *path, char *buf)
 		} else {			// "~user"
 			strlcpy__(user_name, &path[1], len);
 			user_dir = get_user_home_dir(user_name);
-///flf_d_printf("[%s] ==> [%s]\n", user_name, user_dir);
 		}
 		if (path[len] == '/') {
 			// "~/..."   "~/..."
@@ -645,9 +643,7 @@ char *get_full_path(const char *path, char *buf)
 		get_full_path_of_cur_dir(cur_dir);
 		cat_dir_and_file(buf, cur_dir, path);
 	}
-///flf_d_printf("[%s] ==> [%s]\n", path, buf);
 	normalize_full_path(buf);
-///flf_d_printf("[%s] ==> [%s]\n", path, buf);
 	return buf;
 }
 
@@ -825,7 +821,7 @@ PRIVATE const char *test_normalize_path_(const char *templ, const char *path)
 	static char buffer[MAX_PATH_LEN+1];
 	snprintf(buffer, MAX_PATH_LEN, templ, path);
 	normalize_full_path(buffer);
-	////flf_d_printf("[%s] ==> [%s]\n", path, buffer);
+	///flf_d_printf("[%s] ==> [%s]\n", path, buffer);
 	return buffer;
 }
 
@@ -906,7 +902,6 @@ void test_get_file_name_extension(void)
 }
 PRIVATE const char *get_file_name_extension_(char *file_name)
 {
-	///flf_d_printf("[%s] ==> [%s]\n", file_name, get_file_name_extension(file_name));
 	return get_file_name_extension(file_name);
 }
 

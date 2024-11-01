@@ -72,11 +72,11 @@ int doe_refresh_editor(void);
 int move_cursor_left(int move_disp_y);
 int move_cursor_right(void);
 
-int c_l_up(be_line_t **line, int *byte_idx);
-int c_l_down(be_line_t **line, int *byte_idx);
-int cursor_next_line(void);
-int first_line(void);
-int last_line(void);
+int cur_line_up(be_line_t **line, int *byte_idx);
+int cur_line_down(be_line_t **line, int *byte_idx);
+int next_line(void);
+void first_line(void);
+void last_line(void);
 
 #endif // editormove_h
 

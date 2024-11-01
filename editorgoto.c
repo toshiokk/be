@@ -124,7 +124,6 @@ PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx)
 	change_cur_dir(dir_save);
 
 	disp_files_loaded_if_ge_0();
-/////flf_d_printf("files: %d\n", files);
 	if (files >= 0) {
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 		editor_do_next = EF_LOADED;
@@ -147,7 +146,6 @@ int goto_dir_in_str__call_filer(const char *str)
 	}
 	char file_path[MAX_PATH_LEN+1];
 	call_filer(1, APP_MODE_NORMAL, get_cur_filer_view()->cur_dir, "", file_path, MAX_PATH_LEN);
-///	editor_do_next = EF_QUIT;
 	return 1;
 #endif // ENABLE_FILER
 }
@@ -186,7 +184,6 @@ int doe_switch_to_prev_file(void)
 		disp_status_bar_err(_("No previous open files"));
 		return ret;
 	}
-/////_D_(dump_editor_panes())
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	disp_status_bar_done(_("Previous file"));
 	return ret;
@@ -199,7 +196,6 @@ int doe_switch_to_next_file(void)
 		disp_status_bar_err(_("No next open files"));
 		return ret;
 	}
-/////_D_(dump_editor_panes())
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	disp_status_bar_done(_("Next file"));
 	return ret;
@@ -250,7 +246,6 @@ void doe_switch_editor_pane_(void)
 {
 	int pane_idx = get_editor_cur_pane_idx() ? 0 : 1;
 	set_editor_cur_pane_idx(pane_idx);
-/////_D_(dump_editor_panes())
 }
 
 //-----------------------------------------------------------------------------
@@ -275,7 +270,6 @@ int load_files_in_cur_buf(void)
 int load_files_in_string(const char *string,
  int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive)
 {
-/////flf_d_printf("string: [%s]\n", string);
 	begin_check_break_key();
 	int files = load_files_in_string_(string,
 	 try_upp_low, open_on_err, msg_on_err, load_from_history, recursive);
@@ -297,7 +291,6 @@ PRIVATE int load_files_in_string_(const char *string,
 			break;
 		int files = load_file_in_string_(ptr,
 		 try_upp_low, open_on_err, msg_on_err, load_from_history, recursive);
-/////flf_d_printf("ptr: [%s], files: %d\n", ptr, files);
 		if (files >= 0) {
 			// once any file has loaded, show no more error message
 			files_loaded = LIM_MIN(0, files_loaded);
@@ -314,15 +307,12 @@ PRIVATE int load_file_in_string_(const char *string,
 	char file_path[MAX_PATH_LEN+1];
 	int line_num, col_num;
 
-/////flf_d_printf("string: [%s]\n", string);
 	if (get_file_line_col_from_str_null(string, file_path, &line_num, &col_num) == 0) {
 		return -1;	// nothing loaded nor selected
 	}
-/////flf_d_printf("file_path: [%s]\n", file_path);
 	int files = load_file_name_upp_low_(file_path,
 	 try_upp_low, open_on_err, msg_on_err, load_from_history, recursive);
 	if (files >= 0) {
-/////flf_d_printf("line, col: %d, %d\n", line_num, col_num);
 		// Tag-jump to line, col
 		goto_line_col_in_cur_buf(line_num, col_num);	// appdefs.h|100,8
 	}
@@ -332,7 +322,6 @@ PRIVATE int load_file_in_string_(const char *string,
 int load_file_name_upp_low_(const char *file_name,
  int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive)
 {
-/////flf_d_printf("file_name: [%s]\n", file_name);
 	char file_name_buf[MAX_PATH_LEN+1];
 	char file_name_prev[MAX_PATH_LEN+1];
 
@@ -355,7 +344,6 @@ int load_file_name_upp_low_(const char *file_name,
 			int files = load_file_name_recurs_(file_name_buf, open_on_err, msg_on_err,
 			 load_from_history, recursive);
 			if (files >= 0) {
-/////flf_d_printf("files: %d\n", files);
 				return files;
 			}
 		}
@@ -373,7 +361,6 @@ PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int m
 {
 	static int recursive_call_count = 0;
 
-/////flf_d_printf("file_name: [%s]\n", file_name);
 	int files = load_file_name__(file_name, open_on_err, msg_on_err, load_from_history);
 	if (files >= 0) {
 		if (recursive && (recursive_call_count == 0) && is_file_name_proj_file(file_name, 0)) {
@@ -382,7 +369,6 @@ PRIVATE int load_file_name_recurs_(const char *file_name, int open_on_err, int m
 			recursive_call_count--;
 		}
 	}
-/////flf_d_printf("files: %d\n", files);
 	return files;
 }
 
@@ -399,7 +385,6 @@ PRIVATE int load_files_in_cur_buf_(int load_from_history)
 	int ret = -1;
 	for (int lines = 0; lines < MAX_LINES_TO_TRY_TO_LOAD; lines++) {
 		if (line_data_strlen(EPCBVC_CL) && (EPCBVC_CL->data[0] != '#')) {
-/////flf_d_printf("line: [%s]\n", EPCBVC_CL->data);
 			char file_pos_str2[MAX_PATH_LEN+1];
 			char dir_save[MAX_PATH_LEN+1];
 
@@ -414,11 +399,10 @@ PRIVATE int load_files_in_cur_buf_(int load_from_history)
 			tio_refresh();
 			recall_file_pos_null(file_pos_str2);
 		}
-/////flf_d_printf("ret: %d\n", ret);
 		if (ret >= 0) {
 			files += ret;
 		}
-		if (cursor_next_line() == 0) {
+		if (next_line() == 0) {
 			break;
 		}
 		if (files >= MAX_FILES_TO_LOAD) {
@@ -443,13 +427,10 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 	char abs_path[MAX_PATH_LEN+1];
 	int files_loaded = -1;
 
-/////flf_d_printf("file_name:[%s]-----------\n", file_name);
 	get_full_path(file_name, full_path);
 	get_abs_path(file_name, abs_path);
 	// switch to the file of "full_path" if it already loaded
 	if (switch_epc_buf_by_file_path(full_path)) {
-/////flf_d_printf("full_path:[%s]-----------\n", full_path);
-/////flf_d_printf("__1__\n");
 		add_files_loaded(0);		// switched
 		// already loaded and select it
 		goto not_goto_line;
@@ -457,7 +438,6 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 	// try to load the file
 	int lines = load_file_into_new_buf(full_path, open_on_err, msg_on_err);
 	if (lines >= 0) {
-/////flf_d_printf("__2__\n");
 		add_files_loaded(1);
 		files_loaded = LIM_MIN(0, files_loaded);
 		files_loaded++;
@@ -465,7 +445,6 @@ PRIVATE int load_file_name__(const char *file_name, int open_on_err, int msg_on_
 	}
 	// switch to if the file of the "file-name" already loaded
 	if (switch_epc_buf_by_file_name(file_name)) {
-/////flf_d_printf("__3__\n");
 		add_files_loaded(0);		// switched
 		// already loaded and select it
 		goto not_goto_line;
@@ -481,7 +460,6 @@ flf_d_printf("__5__\n");
 		}
 	}
 #endif // ENABLE_HISTORY
-/////flf_d_printf("__9__\n");
 	return -1;				// loading failed
 
 goto_line:
@@ -490,7 +468,6 @@ goto_line:
 #endif // ENABLE_HISTORY
 not_goto_line:
 	files_loaded = LIM_MIN(0, files_loaded);
-/////flf_d_printf("files_loaded: %d\n", files_loaded);
 	return files_loaded;	// x > 0: files newly loaded, x == 0: file selected
 }
 
@@ -682,7 +659,6 @@ int goto_str_line_col_in_cur_buf(const char *str)
 }
 int goto_line_col_in_cur_buf(int line_num, int col_num)
 {
-/////flf_d_printf("line:%d, col:%d\n", line_num, col_num);
 	if (line_num <= 0) {
 		return 0;
 	}
@@ -699,9 +675,6 @@ int goto_line_col_in_cur_buf(int line_num, int col_num)
 	}
 	// col_num is byte count
 	EPCBVC_CLBI = byte_idx_from_byte_idx(EPCBVC_CL->data, col_num-1);
-/////_D_(line_dump_byte_idx(EPCBVC_CL, EPCBVC_CLBI))
-///	BUFVX_CLBI(get_epc_buf(), 0) = EPCBVC_CLBI;
-///	BUFVX_CLBI(get_epc_buf(), 1) = EPCBVC_CLBI;
 	return 2;
 }
 //-----------------------------------------------------------------------------
@@ -807,7 +780,6 @@ no_file_path:;
 		*line_num_ = line_num;
 	if (col_num_)
 		*col_num_ = col_num;
-/////flf_d_printf("file_path:[%s], line:%d, col:%d\n", file_path, line_num, col_num);
 	return strlen_path(file_path);
 }
 //-----------------------------------------------------------------------------
@@ -816,7 +788,6 @@ int switch_epc_buf_by_file_path(const char *file_path)
 	be_buf_t *buf = get_edit_buf_by_file_path(file_path);
 	if (buf) {
 		set_epc_buf(buf);
-/////_D_(dump_editor_panes())
 		return 1;	// switched
 	}
 	return 0;		// not found
@@ -826,7 +797,6 @@ int switch_epc_buf_by_file_name(const char *file_name)
 	be_buf_t *buf = get_edit_buf_by_file_name(file_name);
 	if (buf) {
 		set_epc_buf(buf);
-/////_D_(dump_editor_panes())
 		return 1;	// switched
 	}
 	return 0;		// not found
@@ -855,7 +825,7 @@ int switch_epc_buf_to_prev(int beep_at_end, int goto_bottom)
 	}
 	set_epc_buf(NODE_PREV(get_epc_buf()));
 	if (goto_bottom) {
-		EPCBVC_CL = CUR_EDIT_BUF_BOT_LINE;
+		last_line();
 	}
 	return 1;
 }
@@ -868,7 +838,7 @@ int switch_epc_buf_to_next(int beep_at_end, int goto_top)
 	}
 	set_epc_buf(NODE_NEXT(get_epc_buf()));
 	if (goto_top) {
-		EPCBVC_CL = CUR_EDIT_BUF_TOP_LINE;
+		first_line();
 	}
 	return 1;
 }

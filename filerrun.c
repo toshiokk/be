@@ -39,16 +39,7 @@ PRIVATE int dof_run_command_(int mode);
 // "command file-1"
 // "command file-2"
 // "command ..."
-PRIVATE int dof_exec_command_with_file_(int logging);
 int dof_exec_command_with_file(void)
-{
-	return dof_exec_command_with_file_(LOGGING0);
-}
-int dof_exec_command_with_file_w_log(void)
-{
-	return dof_exec_command_with_file_(LOGGING1);
-}
-PRIVATE int dof_exec_command_with_file_(int logging)
 {
 	char command_str[MAX_PATH_LEN+1];
 	char *ptr_replace;
@@ -56,11 +47,15 @@ PRIVATE int dof_exec_command_with_file_(int logging)
 #define MAX_REPLACEMENTS	10
 	int cnt;
 	int exit_status = 0;
+	int logging = LOGGING0;
 
 	if (chk_inp_str_ret_val_filer(input_string_pos("", command_str,
 	 MAX_PATH_LEN, HISTORY_TYPE_IDX_EXEC,
 	 _("Execute({} will be replaced with file-name):")))) {
 		return 0;
+	}
+	if (filer_do_next == EF_INPUT_W_ALT) {
+		logging = LOGGING2;	// set logging ON
 	}
 	if (is_path_dir(command_str) > 0) {
 		return filer_change_dir(command_str);
@@ -90,18 +85,10 @@ PRIVATE int dof_exec_command_with_file_(int logging)
 }
 // If two or more files selected, pass all to command line at once.
 // "command file-1 file-2 ..."
-PRIVATE int dof_exec_command_with_files_(int logging);
 int dof_exec_command_with_files(void)
 {
-	return dof_exec_command_with_files_(LOGGING0);
-}
-int dof_exec_command_with_files_w_log(void)
-{
-	return dof_exec_command_with_files_(LOGGING1);
-}
-PRIVATE int dof_exec_command_with_files_(int logging)
-{
 	char command_str[MAX_PATH_LEN+1] = "";
+	int logging = LOGGING0;
 
 	// "file1 file2 ..."
 	for (int file_idx = select_and_get_first_file_idx_selected();
@@ -116,48 +103,30 @@ PRIVATE int dof_exec_command_with_files_(int logging)
 	 _("Execute with files%s:"), (logging == 0) ? "" : _("(WITH LOG)")))) {
 		return 0;
 	}
+	if (filer_do_next == EF_INPUT_W_ALT) {
+		logging = LOGGING2;	// set logging ON
+	}
 	fork_exec_sh_c_once(logging, PAUSE1, command_str);
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
 
-PRIVATE int dof_run_command_rel_(int logging);
-int dof_run_command_rel()
-{
-	return dof_run_command_rel_(LOGGING0);
-}
-int dof_run_command_rel_w_log()
-{
-	return dof_run_command_rel_(LOGGING1);
-}
 #define RUN_MOD_MASK	0x0f
 #define RUN_WITH_LOG	0x10
 #define RUN_SOON		0x20
-PRIVATE int dof_run_command_rel_(int logging)
+int dof_run_command_rel()
 {
 	struct stat *st_ptr = &get_cur_fv_cur_file_ptr()->st;
 	if ((st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
-		if (logging == 0) {
-			dof_run_command_(0);
-		} else {
-			dof_run_command_(0 | RUN_WITH_LOG);
-		}
+		dof_run_command_(0);
 	} else {
-		if (logging == 0) {
-			dof_run_command_(1);
-		} else {
-			dof_run_command_(1 | RUN_WITH_LOG);
-		}
+		dof_run_command_(1);
 	}
 	return 0;
 }
 int dof_run_command_abs(void)
 {
 	return dof_run_command_(2);
-}
-int dof_run_command_abs_w_log(void)
-{
-	return dof_run_command_(2 | RUN_WITH_LOG);
 }
 int dof_run_command_src_dst(void)
 {
@@ -237,17 +206,24 @@ PRIVATE int dof_run_command_(int mode)
 		break;
 	}
 
+	int logging = LOGGING0;
+	if (mode & RUN_WITH_LOG) {
+		logging = LOGGING2;
+	}
 	if (mode & RUN_SOON) {
 		// run soon without editing command line
 	} else {
 		snprintf(explanation, MAX_PATH_LEN, "%s%s:",
-		 expl, ((mode & RUN_WITH_LOG) == 0) ? "" : _("(WITH LOG)"));
+		 expl, (logging == 0) ? "" : _("(WITH LOG)"));
 		struct stat *st_ptr = &get_cur_fv_cur_file_ptr()->st;
 		if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str,
 		 (S_ISREG(st_ptr->st_mode) && (st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
 		  ? MAX_PATH_LEN : 0,
 		 HISTORY_TYPE_IDX_EXEC, explanation))) {
 			return 0;
+		}
+		if (filer_do_next == EF_INPUT_W_ALT) {
+			logging = LOGGING2;	// set logging ON
 		}
 	}
 
@@ -256,7 +232,7 @@ PRIVATE int dof_run_command_(int mode)
 	}
 
 flf_d_printf("command_str [%s]\n", command_str);
-	fork_exec_sh_c_once((mode & RUN_WITH_LOG) ? LOGGING1 : LOGGING0, PAUSE1, command_str);
+	fork_exec_sh_c_once(logging, PAUSE1, command_str);
 
 	if (is_app_list_mode()) {
 		filer_do_next = EF_EXECUTED;
@@ -421,14 +397,13 @@ PRIVATE int fork_exec_before_after(int set_term, int separate_bef_exec, int logg
 		restore_term_for_shell();
 	}
 	if (separate_bef_exec && (get_fork_exec_counter() == 0)) {
-///		printf("-------- command execution started here --------\n");
 		char header[MAX_PATH_LEN+1];
-///		snprintf(header, MAX_PATH_LEN, "== [%s][ %c %s ] ==\n",
-		snprintf(header, MAX_PATH_LEN, "== [%s]%c %s ==\n",
-		 full_path_of_cur_dir_static(), (geteuid() == 0) ? '#' : '$', command);
+		snprintf(header, MAX_PATH_LEN, "== %c%s%c%c %s ==\n",
+		 logging ? '<' : '[', full_path_of_cur_dir_static(), logging ? '>' : ']',
+		 (geteuid() == 0) ? '#' : '$', command);
 		// output separator line to log file
 		if (logging) {
-			write_text_to_file(get_exec_log_file_path(), header);
+			write_text_to_file(get_exec_log_file_path(), logging == LOGGING2, header);
 		}
 		// output separator line to console
 		printf("\n%s", header);

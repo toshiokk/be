@@ -19,7 +19,7 @@ sh _cp_be_scripts
 sh _cp_berc
 ./_xi18n
 
-if [ -n "@1" ]; then
+if [ -n "$1" ]; then
   cp -v appdefs.h~ appdefs.h
   ./__set_app_rel_lvl.sh -
 fi

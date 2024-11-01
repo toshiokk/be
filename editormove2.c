@@ -143,7 +143,7 @@ void fix_cursor_y_keeping_vert_scroll_margin(void)
 	line = EPCBVC_CL;
 	byte_idx = EPCBVC_CLBI;
 	for (lines_go_up = 0; lines_go_up < disp_y_preferred; lines_go_up++) {
-		if (c_l_up(&line, &byte_idx) == 0) {
+		if (cur_line_up(&line, &byte_idx) == 0) {
 			break;
 		}
 	}
@@ -178,7 +178,7 @@ int get_disp_y_after_cursor_move(void)
 			// found in screen
 			return yy;
 		}
-		if (c_l_up(&line, &byte_idx) == 0) {
+		if (cur_line_up(&line, &byte_idx) == 0) {
 			break;
 		}
 	}
@@ -192,7 +192,7 @@ int get_disp_y_after_cursor_move(void)
 			// found in screen
 			return yy;	// current line is in previous screen
 		}
-		if (c_l_down(&line, &byte_idx) == 0) {
+		if (cur_line_down(&line, &byte_idx) == 0) {
 			break;
 		}
 	}
@@ -202,7 +202,6 @@ int get_disp_y_after_cursor_move(void)
 
 int get_cur_screen_top(be_line_t **line, int *byte_idx)
 {
-/////_D_(line_dump(EPCBVC_CL))
 	return get_screen_top(EPCBVC_CL, EPCBVC_CLBI, EPCBVC_CURS_Y, line, byte_idx);
 }
 // go backward to screen top and return line and byte_idx

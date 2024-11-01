@@ -240,9 +240,8 @@ int buf_guess_tab_size(be_buf_t *buf)
 #define LINES_TO_GUESS_TAB_SIZE		1000
 	int lines_checked = 0;
 	int lines_space4 = 0;
-	be_line_t *line;
 
-	for (line = BUF_TOP_LINE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
+	for (be_line_t *line = BUF_TOP_LINE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		if (line_data_strlen(line) > 4) {
 			if (strlcmp__(line->data, "    ") == 0 && line->data[4] != ' ')
 				lines_space4++;
@@ -362,7 +361,6 @@ be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num)
 	if (IS_NODE_BOT_ANCH(line)) {
 		line = NODE_PREV(line);
 	}
-/////_D_(line_dump(line))
 	return line;
 }
 
@@ -474,14 +472,6 @@ be_bufs_t *get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf)
 int bufs_count_bufs(be_bufs_t *bufs)
 {
 	return buf_count_bufs(NODES_TOP_NODE(bufs));
-///	be_buf_t *buf;
-///	int count;
-///
-///	for (buf = NODES_TOP_NODE(bufs), count = 0; IS_NODE_INT(buf);
-///	 buf = NODE_NEXT(buf), count++) {
-///		// NOTHING_TO_DO
-///	}
-///	return count;
 }
 
 //-----------------------------------------------------------------------------

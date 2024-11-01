@@ -185,7 +185,6 @@ int set_file_type_by_file_name(const char *file_path)
 		cur_file_type = last_file_type;
 		return 0;
 	}
-/////_D_(dump_file_type(cur_file_type, 0))
 	return 1;
 }
 

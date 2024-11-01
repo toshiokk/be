@@ -24,22 +24,8 @@
 
 //-----------------------------------------------------------------------------
 
-///func_key_table_t *app_func_key_table = editor_func_key_table;
-
 PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_);
 
-void set_app_func_key_table(void)
-{
-#ifdef ENABLE_FILER
-	if (GET_APPMD(app_EDITOR_FILER) == 0) {
-#endif // ENABLE_FILER
-///		app_func_key_table = editor_func_key_table;
-#ifdef ENABLE_FILER
-	} else {
-///		app_func_key_table = filer_func_key_table;
-	}
-#endif // ENABLE_FILER
-}
 func_key_table_t *get_app_func_key_table(void)
 {
 #ifdef ENABLE_FILER
@@ -364,9 +350,7 @@ int is_key_bound_to_func(key_code_t key, func_key_table_t *func_key_table)
 void clear_keys_if_bound(key_code_t *keys)
 {
 	func_key_table_t *func_key_table = editor_func_key_table;
-	int idx;
-
-	for (idx = 0; func_key_table[idx].func != NULL; idx++) {
+	for (int idx = 0; func_key_table[idx].func != NULL; idx++) {
 		clear_key_if_bound_to_func(keys[0], &func_key_table[idx]);
 		clear_key_if_bound_to_func(keys[1], &func_key_table[idx]);
 	}
@@ -821,7 +805,6 @@ const char *key_name_from_key_code(key_code_t key_code, char *buf)
 		if (key_name_table[idx].key_code == key_code)
 			return key_name_table[idx].key_name;
 	}
-///flf_d_printf("key_code:[%d]\n", key_code);
 	if (isgraph(key_code)) {
 		snprintf(buf, MAX_KEY_NAME_LEN+1, "%c", key_code);
 	} else if ((key_code & 0xff00) == K_M(0)) {	// 0x1bxx

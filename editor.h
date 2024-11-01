@@ -53,7 +53,6 @@ int doe_call_filer(void);
 #ifdef ENABLE_HELP
 int doe_splash(void);
 int doe_view_key_list(void);
-int doe_view_func_list(void);
 #endif // ENABLE_HELP
 
 int doe_display_color_settings(void);

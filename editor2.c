@@ -112,7 +112,6 @@ void editor_disp_title_bar(void)
 		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[VM] "));
 	} else if (is_st_writable(&get_epc_buf()->orig_file_stat) == 0) {
 		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[RO] "));
-///		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[WP] "));
 	}
 
 	//-------------------------------------------------------------------------
@@ -231,19 +230,15 @@ void disp_edit_win(int cur_pane)
 	}
 
 	get_cur_screen_top(&line, &byte_idx);
-/////_D_(line_dump(line))
 	for (yy = 0; yy < edit_win_get_text_lines(); ) {
 		if (IS_NODE_BOT_ANCH(line))
 			break;
 		max_wl_idx = te_tab_expand__max_wl_idx(line->data);
-///flf_d_printf("[%s]\n", te_lf_concat_buf);
-///flf_d_printf("max_wl_idx: %d\n", max_wl_idx);
 		wl_idx = start_wl_idx_of_wrap_line(te_lf_concat_buf, byte_idx, -1);
 		for ( ; wl_idx <= max_wl_idx; wl_idx++) {
 			byte_idx_1 = start_byte_idx_of_wrap_line(te_lf_concat_buf, wl_idx, 0, -1);
 			byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_lf_concat_buf, wl_idx,
 			 INT_MAX, -1);
-/////_D_(dump_editor_panes())
 			disp_edit_line__(cur_pane, yy, line, byte_idx_1, byte_idx_2);
 			if (yy == EPCBVC_CURS_Y) {
 				cursor_line_right_text_x = end_col_idx_of_wrap_line(
@@ -318,8 +313,6 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 	matches_t matches;
 #endif // ENABLE_REGEX
 
-///flf_d_printf("%d, [%d, %d]\n", yy, byte_idx_1, byte_idx_2);
-///flf_d_printf("[%s]\n", te_lf_concat_buf);
 	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 	if (line == EPCBVC_CL) {
 		// highlight current line by painting background
@@ -343,7 +336,6 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 	// display text simply =====================================================
 	output_edit_line_text(yy, line->data, byte_idx_1, byte_idx_2);
 
-/////_D_(line_dump(line))
 #ifdef ENABLE_SYNTAX
 	// display syntax color highlighting =======================================
 	if (GET_APPMD(ed_SYNTAX_HIGHLIGHT)) {
@@ -361,7 +353,6 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 				}
 			}
 			for ( ; clr_syntax; clr_syntax = clr_syntax->next) {
-///dump_color_syntax(clr_syntax);
 				if (clr_syntax->regexp_end == NULL) {
 					// single-line regexp
 					disp_edit_line_single_line_regexp(yy, line,
@@ -522,7 +513,6 @@ PRIVATE void disp_edit_line_single_line_regexp(int yy, const be_line_t *line,
 PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
  int byte_idx_1, int byte_idx_2, const color_syntax_t *clr_syntax)
 {
-/////_D_(line_dump(line))
 	// This is a multi-line regexp. There are two steps.
 
 	// [First step] We have to see if the beginning is there
@@ -548,9 +538,6 @@ PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
 			// No syntax found, so skip to the next step.
 			goto step_two;
 		}
-/////flf_d_printf("regexp_start[%p]\n", clr_syntax->regexp_start);
-/////flf_d_printf("start_line[%p]\n", start_line);
-/////flf_d_printf("start_line->data[%p]\n", start_line->data);
 		if (regexp_search_compiled(clr_syntax->regexp_start, start_line->data, 0,
 		 REG_NONE, &matches_begin, 1) == 0) {
 			// A start found before current line

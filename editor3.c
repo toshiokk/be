@@ -90,9 +90,7 @@ const char *make_ruler_text(int start_col_idx, int length)
 			if (strnlen(ruler_line_buf, MAX_RULER_STR_LEN) >= length)
 				break;
 		}
-///flf_d_printf("[%s]\n", ruler_line_buf);
 		ruler_line_buf[length] = '\0';	// limit length
-///flf_d_printf("[%s]\n", ruler_line_buf);
 	}
 	return ruler_line_buf;
 }
@@ -208,7 +206,6 @@ const char *te_tab_expand(const char *original)
 #endif // ENABLE_SYNTAX
 
 	te_concat_linefeed(original);
-///flf_d_printf("original:%s\n", original);
 	orig_ptr = original;
 	vis_ptr = te_vis_code_buf;
 	for (col_idx = 0; *orig_ptr; ) {
@@ -252,12 +249,10 @@ const char *te_tab_expand(const char *original)
 #endif // ENABLE_SYNTAX
 	*vis_ptr = '\0';
 	te_vis_code_columns = col_idx + 1;
-///flf_d_printf("[%s]\n", te_vis_code_buf);
 	return te_vis_code_buf;
 }
 const char *te_concat_linefeed(const char *original)
 {
-///flf_d_printf("[%s]\n", original);
 	te_vis_code_buf[0] = '\0';	// clear te_vis_code_buf
 	strlcpy__(te_lf_concat_buf, original, MAX_EDIT_LINE_LEN * 2);
 	strlcat__(te_lf_concat_buf, MAX_EDIT_LINE_LEN * 2, "\n");

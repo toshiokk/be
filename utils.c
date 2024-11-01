@@ -436,7 +436,6 @@ int get_mem_free_in_kb(int update)
 	if (update) {
 		if ((fp = fopen("/proc/meminfo", "r")) != NULL) {
 			while (fgets(buffer, 100, fp) != 0) {
-///flf_d_printf("%s", buffer);
 				if (strncmp(buffer, "MemFree:", 8) == 0) {
 					if (sscanf(buffer, "%10s %d", buf, &kb) >= 2) {
 						break;
@@ -455,8 +454,6 @@ int get_mem_free_in_kb(int update)
 	kb /= 100;		// 1GB ==> 10MB
 #endif // DEBUG_MEM_SHORTAGE
 #endif // ENABLE_DEBUG
-
-///flf_d_printf("MemFree:%d\n", kb);
 	return kb;
 }
 
@@ -600,11 +597,6 @@ int cache_users(void)
 		uid_name_cache[num_users].uid = pwent->pw_uid;
 		strlcpy__(uid_name_cache[num_users].user_name, pwent->pw_name, USR_NAME_LEN);
 		strlcpy__(uid_name_cache[num_users].homedir, pwent->pw_dir, MAX_PATH_LEN);
-///flf_d_printf("%2d:%4d:[%s]:[%s]\n",
-/// num_users,
-/// uid_name_cache[num_users].uid,
-/// uid_name_cache[num_users].user_name,
-/// uid_name_cache[num_users].homedir);
 	}
 	endpwent();
 	return num_users;

@@ -462,7 +462,6 @@ int byte_idx_from_col_idx(const char *utf8s, int columns, char_left_right_t left
 		prev_ptr = ptr;
 		FORWARD_COL_IDX()
 	}
-///flf_d_printf("([%s], %d) ==> %d\n", utf8s, columns, ptr - utf8s);
 	if (left_right == CHAR_LEFT && columns < col_idx) {
 		col_idx = prev_col_idx;
 		ptr = prev_ptr;

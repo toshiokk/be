@@ -189,7 +189,7 @@ int doe_up(void)
 }
 PRIVATE void doe_up_(void)
 {
-	if (c_l_up(&EPCBVC_CL, &EPCBVC_CLBI)) {
+	if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI)) {
 		EPCBVC_CURS_Y--;
 	} else {
 		if (easy_buffer_switching_check(EBS_UP_AT_TOP)) {
@@ -214,7 +214,7 @@ int doe_down(void)
 }
 PRIVATE void doe_down_(void)
 {
-	if (c_l_down(&EPCBVC_CL, &EPCBVC_CLBI)) {
+	if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI)) {
 		EPCBVC_CURS_Y++;
 	} else {
 		if (easy_buffer_switching_check(EBS_DOWN_AT_BOTTOM)) {
@@ -243,17 +243,16 @@ PRIVATE void doe_page_up_(void)
 	int lines;
 	int cnt;
 
-	if (c_l_up(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
+	if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 		if (easy_buffer_switching_check(EBS_PAGEUP_AT_TOP)) {
 			// already top of buffer, go to the previous buffer's last line
 			doe_switch_to_prev_file();
 		}
 	} else {
 		lines = (EPCBVC_CURS_Y - TOP_SCROLL_MARGIN_Y) + EDITOR_VERT_SCROLL_LINES - 1;
-///		lines = EDITOR_VERT_SCROLL_LINES - 1;	// smaller scroll
 		for (cnt = 0; cnt < lines; cnt++) {
 			EPCBVC_CURS_Y--;
-			if (c_l_up(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
+			if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 				break;
 			}
 		}
@@ -279,17 +278,16 @@ PRIVATE int doe_page_down_(void)
 	int lines;
 	int cnt;
 
-	if (c_l_down(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
+	if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 		if (easy_buffer_switching_check(EBS_PAGEDOWN_AT_BOTTOM)) {
 			// already bottom of buffer, go to the next buffer's top line
 			doe_switch_to_next_file();
 		}
 	} else {
 		lines = (BOTTOM_SCROLL_MARGIN_Y - EPCBVC_CURS_Y) + EDITOR_VERT_SCROLL_LINES - 1;
-///		lines = EDITOR_VERT_SCROLL_LINES - 1;	// smaller scroll
 		for (cnt = 0; cnt < lines; cnt++) {
 			EPCBVC_CURS_Y++;
-			if (c_l_down(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
+			if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 				break;
 			}
 		}
@@ -824,7 +822,7 @@ int move_cursor_right(void)
 	return 1;
 }
 
-int c_l_up(be_line_t **line, int *byte_idx)
+int cur_line_up(be_line_t **line, int *byte_idx)
 {
 	int line_byte_idx;
 	int wl_idx;
@@ -851,7 +849,7 @@ int c_l_up(be_line_t **line, int *byte_idx)
 	*byte_idx = line_byte_idx;
 	return 1;
 }
-int c_l_down(be_line_t **line, int *byte_idx)
+int cur_line_down(be_line_t **line, int *byte_idx)
 {
 	int line_byte_idx;
 	int wl_idx;
@@ -878,7 +876,7 @@ int c_l_down(be_line_t **line, int *byte_idx)
 	*byte_idx = line_byte_idx;
 	return 1;
 }
-int cursor_next_line(void)
+int next_line(void)
 {
 	if (IS_NODE_BOT_MOST(EPCBVC_CL))
 		return 0;
@@ -888,15 +886,13 @@ int cursor_next_line(void)
 }
 
 //-----------------------------------------------------------------------------
-int first_line(void)
+void first_line(void)
 {
 	EPCBVC_CL = CUR_EDIT_BUF_TOP_LINE;
-	return 1;
 }
-int last_line(void)
+void last_line(void)
 {
 	EPCBVC_CL = CUR_EDIT_BUF_BOT_LINE;
-	return 1;
 }
 
 // End of editormove.c

@@ -38,8 +38,10 @@ void init_help_bufs(void)
 #ifdef ENABLE_HELP
 	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create_node(_("#List of Editor Key Bindings")));
 	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create_node(_("#List of Editor Functions")));
+#ifdef ENABLE_FILER
 	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create_node(_("#List of Filer Key Bindings")));
 	buf_insert_before(HELP_BUFS_BOT_ANCH, buf_create_node(_("#List of Filer Functions")));
+#endif // ENABLE_FILER
 #endif // ENABLE_HELP
 }
 be_buf_t *get_help_buf(int help_buf_idx)
@@ -59,7 +61,6 @@ int doe_view_file_list(void)
 int view_help(int help_idx)
 {
 	be_buf_t *edit_buf_save = get_epc_buf();
-/////_D_(dump_buf_views(edit_buf_save))
 	make_help_buf(HELP_BUF_IDX_EDITOR_FILE_LIST);
 #ifdef ENABLE_HELP
 	make_help_buf(HELP_BUF_IDX_EDITOR_KEY_LIST);
@@ -101,7 +102,6 @@ flf_d_printf("ret: %d\n", ret);
 		// No new file has been loaded, recover previous state
 		set_epc_buf(edit_buf_save);
 	}
-/////_D_(dump_buf_views(edit_buf_save))
 	return ret;
 }
 PRIVATE void make_help_buf(int help_idx)
@@ -142,12 +142,11 @@ PRIVATE void make_help_buf(int help_idx)
 	}
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 
-/////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
 	switch (help_idx) {
 	default:
 	case HELP_BUF_IDX_EDITOR_FILE_LIST:
 		if (EPCBVC_CL == NULL) {
-			EPCBVC_CL = CUR_EDIT_BUF_BOT_LINE;
+			last_line();
 		}
 		break;
 #ifdef ENABLE_HELP
@@ -158,11 +157,10 @@ PRIVATE void make_help_buf(int help_idx)
 	case HELP_BUF_IDX_FILER_FUNC_LIST:
 #endif // ENABLE_FILER
 		append_magic_line();
-		EPCBVC_CL = CUR_EDIT_BUF_TOP_LINE;
+		first_line();
 		break;
 #endif // ENABLE_HELP
 	}
-/////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
 
 	SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
 	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
@@ -175,7 +173,6 @@ PRIVATE void make_help_file_list(be_buf_t *cur_edit_buf)
 	char buf[MAX_PATH_LEN+1];
 	be_line_t *line_to_go = NULL;
 
-/////_D_(buf_dump_state(cur_edit_buf))
 	buf_set_file_abs_path(get_epc_buf(), _("#List of Files currently loaded"));
 
 	for (be_buf_t *edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
@@ -186,15 +183,11 @@ PRIVATE void make_help_file_list(be_buf_t *cur_edit_buf)
 		 BUF_STATE(edit_buf, buf_MODIFIED) ? "Mo" : "--",
 		 quote_file_path_buf(buf, edit_buf->abs_path_));
 		append_string_to_cur_edit_buf(buffer);
-/////_D_(buf_dump_state(edit_buf))
-/////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
 		if (edit_buf == cur_edit_buf) {
-/////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
 			line_to_go = EPCBVC_CL;
 		}
 	}
 	EPCBVC_CL = line_to_go;
-/////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
 }
 
 #ifdef ENABLE_HELP
