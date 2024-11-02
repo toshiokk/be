@@ -1,5 +1,5 @@
 cp -auv _cppcheck.out _cppcheck.out~
-cppcheck --enable=all --includes-file=_cppcheck.inc --force *.c 2>_cppcheck.out | grep "done"
-#cppcheck --enable=all --include=_cppcheck.inc --force . 2>_cppcheck.out | grep "done"
+#cppcheck --enable=all --includes-file=_cppcheck.inc --force *.c 2>_cppcheck.out | grep "done"
+cppcheck --enable=all --include=_cppcheck.inc --force . 2>_cppcheck.out | grep "done"
 cat _cppcheck.out
 diff _cppcheck.out~ _cppcheck.out

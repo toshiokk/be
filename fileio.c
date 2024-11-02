@@ -842,6 +842,7 @@ void disp_files_loaded_if_ge_0(void)
 }
 void disp_files_loaded(void)
 {
+buf_dump_state(get_epc_buf());
 	disp_status_bar_done(P_(_("%d file loaded"),
 							_("%d files loaded"),
 							_("%d filess loaded"),

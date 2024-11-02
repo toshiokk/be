@@ -242,7 +242,7 @@ PRIVATE int dof_open_new_file_(const char *str)
 {
 	char file_path[MAX_PATH_LEN+1];
 	if (chk_inp_str_ret_val_filer(input_string_pos(str, file_path,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_FILEPOS,
+	 MAX_PATH_LEN, HISTORY_TYPE_IDX_FILE,
 	 _("Open new file:")))) {
 		return 0;
 	}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-01 23:55+0900\n"
+"POT-Creation-Date: 2024-11-02 23:00+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,30 +39,30 @@ msgstr ""
 msgid "Tab size"
 msgstr ""
 
-#: ../editor.c:122 ../filer.c:277
+#: ../editor.c:121 ../filer.c:277
 #, c-format
 msgid "No command assigned for the key: %04xh"
 msgstr ""
 
-#: ../editor.c:128
+#: ../editor.c:127
 #, c-format
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr ""
 
-#: ../editor.c:514
+#: ../editor.c:513
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:567
+#: ../editor.c:566
 msgid "Modification not allowed in LIST mode"
 msgstr ""
 
-#: ../editor.c:571
+#: ../editor.c:570
 msgid "Modification not allowed in Anchor buffer"
 msgstr ""
 
-#: ../editor.c:575
+#: ../editor.c:574
 msgid "Modification not allowed in VIEW mode buffer"
 msgstr ""
 
@@ -122,7 +122,7 @@ msgstr ""
 msgid "Text Pasted without popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:218 ../editorcut.c:248
+#: ../editorcut.c:218 ../editorcut.c:250
 msgid "Cut-buffer empty !!"
 msgstr ""
 
@@ -134,49 +134,49 @@ msgstr ""
 msgid "Open new file:"
 msgstr ""
 
-#: ../editorfile.c:119
+#: ../editorfile.c:118
 msgid "No project file found"
 msgstr ""
 
-#: ../editorfile.c:161
+#: ../editorfile.c:160
 msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr ""
 
-#: ../editorfile.c:182
+#: ../editorfile.c:181
 msgid "File re-loaded"
 msgstr ""
 
-#: ../editorfile.c:229
+#: ../editorfile.c:228
 #, c-format
 msgid "Written to the file: %s"
 msgstr ""
 
-#: ../editorfile.c:278
+#: ../editorfile.c:277
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editorfile.c:325 ../editorfile.c:381 ../editorgoto.c:56 ../fileio.c:146
+#: ../editorfile.c:324 ../editorfile.c:380 ../editorgoto.c:56 ../fileio.c:146
 #: ../fileio.c:151 ../winin.c:78
 msgid "Cancelled"
 msgstr ""
 
-#: ../editorfile.c:331
+#: ../editorfile.c:330
 msgid "All buffers are checked and saved if modified"
 msgstr ""
 
-#: ../editorfile.c:369
+#: ../editorfile.c:368
 msgid "Buffer is NOT modified"
 msgstr ""
 
-#: ../editorfile.c:378
+#: ../editorfile.c:377
 msgid "Save modified buffer ?"
 msgstr ""
 
-#: ../editorfile.c:379
+#: ../editorfile.c:378
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr ""
 
-#: ../editorfile.c:389
+#: ../editorfile.c:388
 msgid "Buffer saved to file"
 msgstr ""
 
@@ -420,22 +420,22 @@ msgstr ""
 msgid "Can not write file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:845
+#: ../fileio.c:846
 #, c-format
 msgid "%d file loaded"
 msgstr ""
 
-#: ../fileio.c:846
+#: ../fileio.c:847
 #, c-format
 msgid "%d files loaded"
 msgstr ""
 
-#: ../fileio.c:847
+#: ../fileio.c:848
 #, c-format
 msgid "%d filess loaded"
 msgstr ""
 
-#: ../fileio.c:848
+#: ../fileio.c:849
 #, c-format
 msgid "%d filesss loaded"
 msgstr ""

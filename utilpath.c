@@ -350,9 +350,9 @@ int is_path_wildcard(char *path)
 
 char *get_home_dir(void)
 {
+	static char home_dir[MAX_PATH_LEN+1] = "";
 	char *env_home;
 	const struct passwd *userdata = 0;
-	static char home_dir[MAX_PATH_LEN+1] = "";
 
 	if (strlen_path(home_dir) == 0) {
 		if (strlen(env_home = getenv__("HOME"))) {

@@ -274,9 +274,9 @@ const char *cur_ctime_cdate(int time0_date1)
 }
 const char *cur_cdate(void)
 {
+	static char buf_date[YYYYSMMSDD_HHCMMCSS_LEN+1];
 	time_t cur_time;
 	char buf_ymd_hms[YYYYSMMSDD_HHCMMCSS_LEN+1];
-	static char buf_date[YYYYSMMSDD_HHCMMCSS_LEN+1];
 
 	cur_time = time(NULL);
 	get_yyyysmmsdd_hhcmmcss(cur_time, buf_ymd_hms);
@@ -285,8 +285,8 @@ const char *cur_cdate(void)
 }
 const char *cur_ctime(void)
 {
-	time_t cur_time;
 	static char buf_time[HHCMMCSS_LEN+1];
+	time_t cur_time;
 
 	cur_time = time(NULL);
 	strlcpy__(buf_time, &(ctime(&cur_time)[11]), HHCMMCSS_LEN);
@@ -294,9 +294,9 @@ const char *cur_ctime(void)
 }
 const char *cur_hhmmss(void)
 {
-	time_t cur_time;
 #define HHMMSS_LEN		6	// "235959"
 	static char buf_time[YYYYMMDD_HHMMSS_LEN+1];
+	time_t cur_time;
 
 	cur_time = time(NULL);
 	strlcpy__(buf_time, &(get_yyyymmdd_hhmmss(cur_time, buf_time)[8+1]), HHMMSS_LEN);
@@ -349,12 +349,12 @@ unsigned long get_usec(void)
 }
 const char *cur_hhcmmcss_mmm(void)
 {
+#define HHCMMCSS_MMM_LEN		(8+1+3)
+	static char buf_time[HHCMMCSS_MMM_LEN+1];
 	struct timeval tv;
 	struct timezone tz;
 	time_t cur_time;
 	char hhcmmcss[HHCMMCSS_LEN+1];
-#define HHCMMCSS_MMM_LEN		(8+1+3)
-	static char buf_time[HHCMMCSS_MMM_LEN+1];
 
 	gettimeofday(&tv, &tz);
 	cur_time = tv.tv_sec;
@@ -365,12 +365,12 @@ const char *cur_hhcmmcss_mmm(void)
 }
 const char *cur_hhcmmcss_uuuuuu(void)
 {
+#define HHCMMCSS_UUUUUU_LEN		(8+1+6)
+	static char buf_time[HHCMMCSS_UUUUUU_LEN+1];
 	struct timeval tv;
 	struct timezone tz;
 	time_t cur_time;
 	char hhcmmcss[HHCMMCSS_LEN+1];
-#define HHCMMCSS_UUUUUU_LEN		(8+1+6)
-	static char buf_time[HHCMMCSS_UUUUUU_LEN+1];
 
 	gettimeofday(&tv, &tz);
 	cur_time = tv.tv_sec;
@@ -428,10 +428,10 @@ int int_max(int aa, int bb)
 // MemFree:         2777988 kB
 int get_mem_free_in_kb(int update)
 {
+	static int kb = 256 * 1024;		// 256 MB
 	FILE *fp;
 	char buffer[100+1];
 	char buf[100+1];
-	static int kb = 256 * 1024;		// 256 MB
 
 	if (update) {
 		if ((fp = fopen("/proc/meminfo", "r")) != NULL) {

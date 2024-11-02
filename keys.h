@@ -26,7 +26,7 @@
 #define K_NONE				KEY_NONE
 #define KEY_NOT_ASSIGNED	KEY_NONE
 #define KNA					KEY_NOT_ASSIGNED
-#define IS_KEY_VALID(key)	((key) > KEY_NONE)
+#define IS_KEY_VALID(key)	((int)(key) > KEY_NONE)
 
 // HP-UX 10 & 11 do not seem to support KEY_HOME and KEY_END
 #if !defined(KEY_HOME) || !defined(KEY_END)

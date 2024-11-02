@@ -62,7 +62,7 @@ int doe_goto_line(void)
 {
 	char buf[MAX_PATH_LEN+1] = "";
 	if (chk_inp_str_ret_val_editor(input_string_pos(buf, buf,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_FILEPOS,
+	 MAX_PATH_LEN, HISTORY_TYPE_IDX_FILE,
 	 _("Enter line number:")))) {
 		return 0;
 	}
@@ -478,9 +478,9 @@ not_goto_line:
 // /path/to/dir1/dir2/filename.ext
 PRIVATE int load_file_from_history(const char *file_name)
 {
-	set_history_newest(HISTORY_TYPE_IDX_FILEPOS);
+	set_history_newest(HISTORY_TYPE_IDX_FILE);
 	for ( ; ; ) {
-		const char *history = get_history_older(HISTORY_TYPE_IDX_FILEPOS);
+		const char *history = get_history_older(HISTORY_TYPE_IDX_FILE);
 		if (strlen_path(history) == 0) {
 			break;
 		}
@@ -497,7 +497,7 @@ PRIVATE int load_file_from_history(const char *file_name)
 PRIVATE void goto_pos_by_history(const char *full_path)
 {
 	// search in history
-	const char *str = search_history_file_path(HISTORY_TYPE_IDX_FILEPOS, full_path);
+	const char *str = search_history_file_path(HISTORY_TYPE_IDX_FILE, full_path);
 	// get line-num and col-num
 	if (goto_str_line_col_in_cur_buf(str)) {
 		EPCBVX_CL(0) = EPCBVX_CL(1) = EPCBVC_CL;
@@ -611,7 +611,7 @@ int goto_last_file_line_col_in_history()
 	char file_path[MAX_PATH_LEN+1];
 	int line_num, col_num;
 
-	if (get_file_line_col_from_str_null(get_history_newest(HISTORY_TYPE_IDX_FILEPOS, 1),
+	if (get_file_line_col_from_str_null(get_history_newest(HISTORY_TYPE_IDX_FILE, 1),
 	 file_path, &line_num, &col_num) == 0) {
 		return 0;
 	}

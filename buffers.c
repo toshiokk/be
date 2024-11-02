@@ -112,7 +112,7 @@ int free_edit_buf(be_buf_t *edit_buf)
 		return 0;
 	}
 #ifdef ENABLE_HISTORY
-	update_history(HISTORY_TYPE_IDX_FILEPOS, mk_cur_file_pos_str_static());
+	update_history(HISTORY_TYPE_IDX_FILE, mk_cur_file_pos_str_static());
 #endif // ENABLE_HISTORY
 	if (edit_buf == get_epc_buf()) {
 		// select other buffer

@@ -33,7 +33,7 @@ PRIVATE int doe_open_file_recursive(int recursive)
 	clear_files_loaded();
 #ifndef ENABLE_FILER
 	if (chk_inp_str_ret_val_editor(input_string_pos("", file_path,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_FILEPOS,
+	 MAX_PATH_LEN, HISTORY_TYPE_IDX_FILE,
 	 _("Open existing file:")))) {
 		return 0;
 	}
@@ -61,7 +61,6 @@ int doe_open_new_file(void)
 	// CURDIR: changed in editor
 	if (load_files_in_string(file_path, TUL0, OOE1, MOE0, LFH1, RECURSIVE0) >= 0) {
 		disp_files_loaded_if_ge_0();
-
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 		return 1;
 	}

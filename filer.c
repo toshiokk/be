@@ -452,6 +452,7 @@ int update_screen_filer(int title_bar, int status_bar, int refresh)
 
 	if (status_bar) {
 		// status bar
+		win_select_win(WIN_IDX_MAIN);
 		disp_status_bar_percent_filer(
 		 "%s", file_info_str(get_cur_fv_cur_file_ptr(), 0, 1, 0));
 		// key list

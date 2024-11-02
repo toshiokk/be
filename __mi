@@ -2,11 +2,24 @@ echo "make and install"
 echo "Usage: %0          ... build on the currently assigned Release level"
 echo "Usage: %0 [0|1|2]  ... build on Release level 0--2"
 
-if [ -n "$1" ]; then
-  ./__set_app_rel_lvl.sh -
-  mk_backup_file appdefs.h
-  ./__set_app_rel_lvl.sh "$1"
+rel_lvl="$1"
+
+recover_appdef_h()
+{
+  if [ -n "$rel_lvl" ]; then
+    cp -v appdefs.h0 appdefs.h
+  fi
+  ./__set_app_rel_lvl.sh
+  exit
+}
+
+if [ -n "$rel_lvl" ]; then
+  ./__set_app_rel_lvl.sh "$rel_lvl"
+else
+  ./__set_app_rel_lvl.sh
 fi
+
+trap recover_appdef_h 2
 
 ./__m
 
@@ -19,7 +32,4 @@ sh _cp_be_scripts
 sh _cp_berc
 ./_xi18n
 
-if [ -n "$1" ]; then
-  cp -v appdefs.h~ appdefs.h
-  ./__set_app_rel_lvl.sh -
-fi
+recover_appdef_h

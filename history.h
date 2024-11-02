@@ -23,7 +23,7 @@
 #define history_h
 
 #define HISTORY_TYPE_IDX_KEYMACRO	0	// app
-#define HISTORY_TYPE_IDX_FILEPOS	1	// app
+#define HISTORY_TYPE_IDX_FILE		1	// app
 #define HISTORY_TYPE_IDX_DIR		2	// app
 #define HISTORY_TYPE_IDX_SEARCH		3	// app
 #define HISTORY_TYPE_IDX_EXEC		4	// app
@@ -37,7 +37,7 @@
 #define _SEARCH_HISTORY_FILE_NAME		"search_history"
 #define _EXEC_HISTORY_FILE_NAME			"exec_history"
 #define _DIR_HISTORY_FILE_NAME			"dir_history"
-#define _OPENFILE_HISTORY_FILE_NAME		"openfile_history"
+#define _OPENFILE_HISTORY_FILE_NAME		"file_history"
 #define _KEYMACRO_HISTORY_FILE_NAME		"keymacro_history"
 #if defined(APP_DIR)
 #define SEARCH_HISTORY_FILE_NAME		_SEARCH_HISTORY_FILE_NAME

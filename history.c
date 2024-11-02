@@ -145,7 +145,7 @@ void update_history(int hist_type_idx, const char *str)
 	}
 	// load-modify(free old entry and append new entry)-save
 	load_history_if_needed_and_reloadable(hist_type_idx);
-	if (hist_type_idx == HISTORY_TYPE_IDX_FILEPOS) {
+	if (hist_type_idx == HISTORY_TYPE_IDX_FILE) {
 		remove_all_file_path_match(hist_type_idx, str);
 	} else {
 		remove_all_exact_match(hist_type_idx, str);
@@ -209,7 +209,7 @@ PRIVATE int load_history_if_needed_and_reloadable(int hist_type_idx)
 }
 PRIVATE int save_history_if_modified_and_expired(int hist_type_idx)
 {
-	if ((hist_type_idx == HISTORY_TYPE_IDX_FILEPOS)
+	if ((hist_type_idx == HISTORY_TYPE_IDX_FILE)
 	 && (is_history_modified_and_expired(hist_type_idx) == 0)) {
 		return -1;
 	}
@@ -316,9 +316,9 @@ PRIVATE int load_history_idx(int hist_type_idx)
 }
 PRIVATE char *get_history_file_path(int hist_type_idx)
 {
+	static char file_path[MAX_PATH_LEN+1];
 	const char *dir;
 	const char *file;
-	static char file_path[MAX_PATH_LEN+1];
 
 	dir = get_app_dir();
 	switch (hist_type_idx) {
@@ -326,7 +326,7 @@ PRIVATE char *get_history_file_path(int hist_type_idx)
 	case HISTORY_TYPE_IDX_KEYMACRO:
 		file = KEYMACRO_HISTORY_FILE_NAME;
 		break;
-	case HISTORY_TYPE_IDX_FILEPOS:
+	case HISTORY_TYPE_IDX_FILE:
 		file = OPENFILE_HISTORY_FILE_NAME;
 		break;
 	case HISTORY_TYPE_IDX_DIR:
@@ -354,7 +354,7 @@ PRIVATE int get_history_max_lines(int hist_type_idx)
 	case HISTORY_TYPE_IDX_KEYMACRO:
 		lines = MAX_HISTORY_LINES;
 		break;
-	case HISTORY_TYPE_IDX_FILEPOS:
+	case HISTORY_TYPE_IDX_FILE:
 		lines = MAX_HISTORY_LINES_10K;
 		break;
 	case HISTORY_TYPE_IDX_DIR:

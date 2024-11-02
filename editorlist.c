@@ -216,9 +216,9 @@ PRIVATE void make_help_key_list(void)
 }
 PRIVATE void make_help_func_list(void)
 {
-	static char buf1[MAX_KEY_NAME_LEN+1];
-	static char buf2[MAX_KEY_NAME_LEN+1];
-	static char buf3[MAX_KEY_NAME_LEN+1];
+	char buf1[MAX_KEY_NAME_LEN+1];
+	char buf2[MAX_KEY_NAME_LEN+1];
+	char buf3[MAX_KEY_NAME_LEN+1];
 	char *template_ = "%-32s  %-5s %-5s %-5s  %-32s";
 	//			   12345678901234567890123456789012
 	char *key_  = "-----";

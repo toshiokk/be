@@ -77,8 +77,6 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 	if (str_buf) {
 		strcpy__(str_buf, "");
 	}
-	key_code_t key_input;
-	func_key_table_t *func_key_table;
 
 	search_clear(&search__);
 #ifdef ENABLE_REGEX
@@ -87,8 +85,8 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 
+	key_code_t key_input = K_C_AT;
 	// Main input loop
-	key_input = K_C_AT;
 	for ( ; ; ) {
 		editor_do_next = EF_NONE;
 		if (key_macro_is_playing_back()) {
@@ -111,6 +109,7 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 			doe_enter_buffered_utf8c_bytes();
 		}
 		if (IS_KEY_VALID(key_input)) {
+			func_key_table_t *func_key_table;
 mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
  '_', key_input, short_key_name_from_key_code(key_input, NULL));
 
@@ -164,7 +163,7 @@ mflf_d_printf(">>>> editor_do_next: EF__%d\n", editor_do_next);
 			if (epc_buf_count_bufs() == 0) {
 flf_d_printf("all files closed\n");
 #ifdef ENABLE_HISTORY
-				update_history(HISTORY_TYPE_IDX_FILEPOS, last_touched_file_pos_str);
+				update_history(HISTORY_TYPE_IDX_FILE, last_touched_file_pos_str);
 #endif // ENABLE_HISTORY
 				// If all files closed on editor, exit editor.
 				break;
