@@ -410,7 +410,7 @@ PRIVATE int parse_color_syntax(void)
 			parse_bgc_fgc(&bgc, &fgc);
 			break;
 		default:
-			rcfile_error(_("color %s not understood.\n"), rc_line_ptr);
+			rcfile_error(_("unknown color name %s\n"), rc_line_ptr);
 			return 1;
 		}
 	}
@@ -477,7 +477,7 @@ PRIVATE int parse_bgc_fgc(int *bgc, int *fgc)
 			parse_color_name(&bright, fgc);
 			break;
 		default:
-			rcfile_error(_("color %s not understood.\n"), rc_line_ptr);
+			rcfile_error(_("unknown color name %s\n"), rc_line_ptr);
 			return 1;
 		}
 	}
@@ -600,7 +600,7 @@ PRIVATE int parse_color_name(int *bright, int *color)
 		}
 	}
 	if (index >= ARRAY_SIZE_OF(color_names)) {
-		rcfile_error(_("color name %s not understood.\n"), rc_line_ptr);
+		rcfile_error(_("unknown color name %s\n"), rc_line_ptr);
 		return 1;
 	}
 	return 0;
@@ -797,7 +797,7 @@ PRIVATE void rcfile_error(const char *msg, ...)
 
 	e_printf("\n");
 	if (rc_line_num > 0) {
-		e_printf(_("Error in file: %s on line: %d"), rc_file_path_reading, rc_line_num);
+		e_printf("Error in file: %s on line: %d", rc_file_path_reading, rc_line_num);
 	}
 	va_start(ap, msg);
 	e_vprintf(msg, ap);

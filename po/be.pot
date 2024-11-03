@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-02 23:00+0900\n"
+"POT-Creation-Date: 2024-11-03 10:26+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -598,36 +598,6 @@ msgstr ""
 msgid "Run (with SRC-path and DEST-path)"
 msgstr ""
 
-#: ../history.c:80
-#, c-format
-msgid "Unable to create directory %s, %s"
-msgstr ""
-
-#: ../history.c:85
-#, c-format
-msgid "No application directory %s"
-msgstr ""
-
-#: ../history.c:125
-#, c-format
-msgid "hist_type_idx out of range: %d"
-msgstr ""
-
-#: ../history.c:240
-#, c-format
-msgid "Unable to create history file: %s, %s"
-msgstr ""
-
-#: ../history.c:257
-#, c-format
-msgid "Unable to write history file: %s, %s"
-msgstr ""
-
-#: ../history.c:289
-#, c-format
-msgid "Unable to open history file: %s, %s"
-msgstr ""
-
 #: ../keymacro.c:59
 msgid "Start key macro recording"
 msgstr ""
@@ -647,19 +617,6 @@ msgstr ""
 #: ../keys.c:479
 #, c-format
 msgid "Window resized to (%d, %d)"
-msgstr ""
-
-#: ../main.c:604
-msgid ""
-"\n"
-"No file written\n"
-msgstr ""
-
-#: ../main.c:613
-#, c-format
-msgid ""
-"\n"
-"Buffer written to %s\n"
 msgstr ""
 
 #: ../main.c:640
@@ -755,7 +712,7 @@ msgid "Start at line number NUM"
 msgstr ""
 
 #: ../main.c:670
-msgid "Investigate key codes"
+msgid "Investigate key sequence"
 msgstr ""
 
 #: ../main.c:686
@@ -787,24 +744,14 @@ msgstr ""
 msgid "Not valid number: %s\n"
 msgstr ""
 
-#: ../rcfile.c:413 ../rcfile.c:480
+#: ../rcfile.c:413 ../rcfile.c:480 ../rcfile.c:603
 #, c-format
-msgid "color %s not understood.\n"
-msgstr ""
-
-#: ../rcfile.c:603
-#, c-format
-msgid "color name %s not understood.\n"
+msgid "unknown color name %s\n"
 msgstr ""
 
 #: ../rcfile.c:643 ../rcfile.c:677 ../rcfile.c:685
 #, c-format
 msgid "Bad regexp: [%s]:%s\n"
-msgstr ""
-
-#: ../rcfile.c:800
-#, c-format
-msgid "Error in file: %s on line: %d"
 msgstr ""
 
 #: ../search.c:115
@@ -922,8 +869,7 @@ msgstr ""
 
 #: ../winin.c:312
 msgid ""
-"UP:open history, DOWN:open filer, PgUp:insert from history, PgDn:insert from "
-"filer"
+"UP:history, DOWN:filer, PgUp:insert from history, PgDn:insert from filer"
 msgstr ""
 
 #: ../winin.c:393

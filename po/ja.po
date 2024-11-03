@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-02 23:00+0900\n"
+"POT-Creation-Date: 2024-11-03 10:26+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -598,73 +598,26 @@ msgstr "実行(シェルによるスクリプト実行)"
 msgid "Run (with SRC-path and DEST-path)"
 msgstr "実行(元ファイルパス、先ファイルパス付き)"
 
-#: ../history.c:80
-#, c-format
-msgid "Unable to create directory %s, %s"
-msgstr "ディレクトリを作成できません %s, %s"
-
-#: ../history.c:85
-#, c-format
-msgid "No application directory %s"
-msgstr "ディレクトリを作成できません %s"
-
-#: ../history.c:125
-#, c-format
-msgid "hist_type_idx out of range: %d"
-msgstr ""
-
-#: ../history.c:240
-#, c-format
-msgid "Unable to create history file: %s, %s"
-msgstr "ヒストリファイル %s を作成出来ません, %s"
-
-#: ../history.c:257
-#, c-format
-msgid "Unable to write history file: %s, %s"
-msgstr "ヒストリファイル %s に書き込めません, %s"
-
-#: ../history.c:289
-#, c-format
-msgid "Unable to open history file: %s, %s"
-msgstr "ヒストリファイル %s が読み込めません, %s"
-
 #: ../keymacro.c:59
 msgid "Start key macro recording"
-msgstr ""
+msgstr "キーマクロ記録開始"
 
 #: ../keymacro.c:68
 msgid "Cancel key macro recording"
-msgstr ""
+msgstr "キーマクロ記録中止"
 
 #: ../keymacro.c:77
 msgid "End key macro recording"
-msgstr ""
+msgstr "キーマクロ記録終了"
 
 #: ../keymacro.c:100
 msgid "Start key macro playback"
-msgstr ""
+msgstr "キーマクロ再生開始"
 
 #: ../keys.c:479
 #, c-format
 msgid "Window resized to (%d, %d)"
 msgstr "画面サイズ変更 (%d, %d)"
-
-#: ../main.c:604
-msgid ""
-"\n"
-"No file written\n"
-msgstr ""
-"\n"
-"書き込まれたファイルはありません\n"
-
-#: ../main.c:613
-#, c-format
-msgid ""
-"\n"
-"Buffer written to %s\n"
-msgstr ""
-"\n"
-"ファイル %s に書き込みました\n"
 
 #: ../main.c:640
 #, c-format
@@ -678,11 +631,11 @@ msgstr ""
 #. 12345678901234567890 12345678901234567890 12345678901234567890
 #: ../main.c:642
 msgid "Option"
-msgstr ""
+msgstr "オプション"
 
 #: ../main.c:642
 msgid "Long option"
-msgstr ""
+msgstr "長いオプション"
 
 #: ../main.c:642
 msgid "Meaning"
@@ -690,7 +643,7 @@ msgstr "意味"
 
 #: ../main.c:644
 msgid "Read RCFILE"
-msgstr ""
+msgstr "RCFILE 読み込み"
 
 #: ../main.c:645
 msgid "Don't look at berc files"
@@ -738,11 +691,11 @@ msgstr "BINARY ファイル"
 
 #: ../main.c:660
 msgid "BINARY file (same as '-e b')"
-msgstr ""
+msgstr "BINARY ファイル ('-e b')"
 
 #: ../main.c:661
 msgid "TEXT file (same as '-e u')"
-msgstr ""
+msgstr "TEXT ファイル ('-e u')"
 
 #: ../main.c:664
 msgid "Output debug log to stderr"
@@ -761,7 +714,7 @@ msgid "Start at line number NUM"
 msgstr "NUM 行から開始"
 
 #: ../main.c:670
-msgid "Investigate key codes"
+msgid "Investigate key sequence"
 msgstr ""
 
 #: ../main.c:686
@@ -793,25 +746,15 @@ msgstr "configファイル %s が読み込めません: %s\n"
 msgid "Not valid number: %s\n"
 msgstr "数値が異常です: %s\n"
 
-#: ../rcfile.c:413 ../rcfile.c:480
+#: ../rcfile.c:413 ../rcfile.c:480 ../rcfile.c:603
 #, c-format
-msgid "color %s not understood.\n"
-msgstr "不正な color %s です。\n"
-
-#: ../rcfile.c:603
-#, c-format
-msgid "color name %s not understood.\n"
-msgstr ""
+msgid "unknown color name %s\n"
+msgstr "不正な色名 %s\n"
 
 #: ../rcfile.c:643 ../rcfile.c:677 ../rcfile.c:685
 #, c-format
 msgid "Bad regexp: [%s]:%s\n"
 msgstr "不正な正規表現です: [%s]:%s\n"
-
-#: ../rcfile.c:800
-#, c-format
-msgid "Error in file: %s on line: %d"
-msgstr "ファイル: %s 行: %d でエラー"
 
 #: ../search.c:115
 #, c-format
@@ -909,7 +852,7 @@ msgstr "対向括弧が見つかりません"
 #: ../search.c:489
 #, c-format
 msgid "Too many bracket pairs (%d)"
-msgstr ""
+msgstr "括弧が多過ぎます (%d)"
 
 #. didn't find peer bracket
 #: ../search.c:493
@@ -928,9 +871,9 @@ msgstr "メモリ不足!"
 
 #: ../winin.c:312
 msgid ""
-"UP:open history, DOWN:open filer, PgUp:insert from history, PgDn:insert from "
-"filer"
+"UP:history, DOWN:filer, PgUp:insert from history, PgDn:insert from filer"
 msgstr ""
+"UP:ヒストリー, DOWN:ファイラー, PgUp:ヒストリー(挿入), PgDn:ファイラー(挿入)"
 
 #: ../winin.c:393
 msgid "Yes"
@@ -967,6 +910,45 @@ msgstr ""
 #: ../winin.c:415
 msgid "Redo"
 msgstr ""
+
+#, c-format
+#~ msgid "Unable to create directory %s, %s"
+#~ msgstr "ディレクトリを作成できません %s, %s"
+
+#, c-format
+#~ msgid "No application directory %s"
+#~ msgstr "ディレクトリを作成できません %s"
+
+#, c-format
+#~ msgid "Unable to create history file: %s, %s"
+#~ msgstr "ヒストリファイル %s を作成出来ません, %s"
+
+#, c-format
+#~ msgid "Unable to write history file: %s, %s"
+#~ msgstr "ヒストリファイル %s に書き込めません, %s"
+
+#, c-format
+#~ msgid "Unable to open history file: %s, %s"
+#~ msgstr "ヒストリファイル %s が読み込めません, %s"
+
+#~ msgid ""
+#~ "\n"
+#~ "No file written\n"
+#~ msgstr ""
+#~ "\n"
+#~ "書き込まれたファイルはありません\n"
+
+#, c-format
+#~ msgid ""
+#~ "\n"
+#~ "Buffer written to %s\n"
+#~ msgstr ""
+#~ "\n"
+#~ "ファイル %s に書き込みました\n"
+
+#, c-format
+#~ msgid "Error in file: %s on line: %d"
+#~ msgstr "ファイル: %s 行: %d でエラー"
 
 #~ msgid "Freeing all buffers..."
 #~ msgstr "全バッファを開放中..."

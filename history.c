@@ -77,12 +77,12 @@ void init_histories(void)
 	// prepare ~/.be directory
 	if (is_path_exist(get_app_dir()) == 0) {
 		if (mkdir(get_app_dir(), S_IRUSR | S_IWUSR | S_IXUSR) < 0) {
-			e_printf(_("Unable to create directory %s, %s"),
+			e_printf("Unable to create directory %s, %s",
 			 get_app_dir(), strerror(errno));
 		}
 	} else {
 		if (is_path_dir(get_app_dir()) == 0) {
-			e_printf(_("No application directory %s"),
+			e_printf("No application directory %s",
 			 get_app_dir());
 		}
 	}
@@ -122,7 +122,7 @@ void load_last_searched_needle(void)
 PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 {
 	if ((0 <= hist_type_idx && hist_type_idx < HISTORY_TYPES_APP_AND_SHELL) == 0) {
-		e_printf(_("hist_type_idx out of range: %d"), hist_type_idx);
+		e_printf("hist_type_idx out of range: %d", hist_type_idx);
 		hist_type_idx = 0;
 	}
 	return get_buf_from_bufs_by_idx(HIST_BUFS_TOP_BUF, hist_type_idx);
@@ -237,7 +237,7 @@ PRIVATE int save_history_idx(int hist_type_idx)
 	file_path = get_history_file_path(hist_type_idx);
 /////mflf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, file_path);
 	if ((fp = fopen(file_path, "w")) == NULL) {
-		e_printf(_("Unable to create history file: %s, %s"),
+		e_printf("Unable to create history file: %s, %s",
 		 file_path, strerror(errno));
 		error = 1;
 		goto save_history_2;
@@ -254,7 +254,7 @@ PRIVATE int save_history_idx(int hist_type_idx)
 			continue;
 		snprintf_(buf, MAX_EDIT_LINE_LEN+1, "%s\n", str);
 		if (fputs(buf, fp) == EOF) {
-			e_printf(_("Unable to write history file: %s, %s"),
+			e_printf("Unable to write history file: %s, %s",
 			 file_path, strerror(errno));
 			error = 1;
 			goto save_history_1;
@@ -286,7 +286,7 @@ PRIVATE int load_history_idx(int hist_type_idx)
 
 	if ((fp = fopen(file_path, "r")) == NULL) {
 		if (errno != ENOENT) {
-			e_printf(_("Unable to open history file: %s, %s"),
+			e_printf("Unable to open history file: %s, %s",
 			 file_path, strerror(errno));
 		}
 	} else {

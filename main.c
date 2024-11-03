@@ -601,7 +601,7 @@ PRIVATE void die_save_file(const char *die_file_path)
 
 	// If we can't save, we have REAL bad problems, but we might as well TRY.
 	if (die_file_path[0] == '\0') {
-		e_printf(_("\nNo file written\n"));
+		e_printf("\nNo file written\n");
 		return;
 	} else {
 		strlcpy__(file_path, die_file_path, MAX_PATH_LEN);
@@ -610,7 +610,7 @@ PRIVATE void die_save_file(const char *die_file_path)
 	if (is_strlen_not_0(file_path)) {
 		ret = backup_and_save_cur_buf(file_path);
 		if (ret == 0) {
-			e_printf(_("\nBuffer written to %s\n"), file_path);
+			e_printf("\nBuffer written to %s\n", file_path);
 			return;
 		}
 	}
@@ -667,7 +667,7 @@ void show_usage(void)
 	show_one_option("-?",                "--help",            _("Show this message"));
 	show_one_option("+NUM",              "",                  _("Start at line number NUM"));
 #ifndef ENABLE_NCURSES
-	show_one_option("-k",                "--keyseq",          _("Investigate key codes"));
+	show_one_option("-k",                "--keyseq",          _("Investigate key sequence"));
 #endif // ENABLE_NCURSES
 }
 

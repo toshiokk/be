@@ -309,7 +309,7 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 	set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
 	main_win_output_string(get_input_line_y(), 1, msg, -1);
 	main_win_output_string(get_input_line_y()+2, 1,
-	 _("UP:open history, DOWN:open filer, PgUp:insert from history, PgDn:insert from filer"),
+	 _("UP:history, DOWN:filer, PgUp:insert from history, PgDn:insert from filer"),
 	 -1);
 	set_color_by_idx(ITEM_COLOR_IDX_INPUT, 0);
 

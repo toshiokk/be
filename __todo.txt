@@ -4,7 +4,7 @@
 - [x] The position indicator is not shown in currect position after file opening.
 
 - [ ] Use pty for logging not using "| tee -a file"
-  app --> pty-master, pty-slave --> | tee
+  app --> pty-master, pty-slave --> log file
 - [ ] 241022 record start time of execution to log file
 - [x] 241021 be able to output log in all execution command
   |Entering key|logging in execution|comments|
@@ -13,7 +13,7 @@
   |@Enter      |Logging             |-- |
 
 - [] works editor and filer seamless as possible.
-  - [x] cut-copy 1 line ==> search history
+  - [x] cut-copy 1 line ==> execution history
 - [x] 241020 fix editor key/func list
 - [x] 241020 Not update common history files soon
 - [x] 241018 add filer funckey list
