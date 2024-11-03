@@ -109,4 +109,4 @@ rm -f _conf_make_all_patterns.log
 } | tee _conf_make_all_patterns.log
 
 grep "Summary" _conf_make_all_patterns.log >__error
-cat __error >>_conf_make_all_patterns.log
+cat __error | tee _conf_make_all_patterns.log

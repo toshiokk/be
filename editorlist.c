@@ -205,12 +205,11 @@ PRIVATE void make_help_key_list(void)
 	append_string_to_cur_edit_buf(buffer);
 	for (int key_idx = 0; key_idx < get_key_name_table_entries(); key_idx++) {
 		key_code_t key = key_name_table[key_idx].key_code;
-		func_key_table_t *func_key_table
-		 = get_func_key_table_from_key(get_app_func_key_table(), key);
+		func_key_table_t *fkey_table = get_func_key_table_from_key(get_app_func_key_table(), key);
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
 		 key_name_table[key_idx].key_name,
-		 func_key_table ? func_key_table->help : "-- No function assigned --",
-		 func_key_table ? func_key_table->func_id : "-- None --");
+		 fkey_table ? fkey_table->help : "-- No function assigned --",
+		 fkey_table ? fkey_table->func_id : "-- None --");
 		append_string_to_cur_edit_buf(buffer);
 	}
 }
@@ -225,22 +224,22 @@ PRIVATE void make_help_func_list(void)
 	char *func_ = "--------------------------------";
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
-	func_key_table_t *table = get_func_key_table_from_key_group(0);
+	func_key_table_t *fkey_table = get_func_key_table_from_key_group(0);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
 	 "Function", "Key1", "Key2", "Key3", "func_id");
 	append_string_to_cur_edit_buf(buffer);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, func_, key_, key_, key_, func_);
 	append_string_to_cur_edit_buf(buffer);
-	for (int idx = 0; table[idx].help[0]; idx++) {
-		if (idx != 0 && table[idx].desc[0] == 0) {
+	for (int idx = 0; fkey_table[idx].help[0]; idx++) {
+		if (idx != 0 && fkey_table[idx].desc[0] == 0) {
 			append_string_to_cur_edit_buf("");
 		}
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
-		 table[idx].help,
-		 short_key_name_from_key_code(table[idx].key1, buf1),
-		 short_key_name_from_key_code(table[idx].key2, buf2),
-		 short_key_name_from_key_code(table[idx].key3, buf3),
-		 table[idx].func_id);
+		 fkey_table[idx].help,
+		 short_key_name_from_key_code(fkey_table[idx].key1, buf1),
+		 short_key_name_from_key_code(fkey_table[idx].key2, buf2),
+		 short_key_name_from_key_code(fkey_table[idx].key3, buf3),
+		 fkey_table[idx].func_id);
 		append_string_to_cur_edit_buf(buffer);
 	}
 }

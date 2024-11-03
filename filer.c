@@ -204,8 +204,6 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 #ifdef ENABLE_HISTORY
 	char prev_cur_dir[MAX_PATH_LEN+1];
 #endif // ENABLE_HISTORY
-	key_code_t key_input = K_C_AT;		// show status bar at the first loop
-	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 
 #ifdef ENABLE_HISTORY
 	get_full_path_of_cur_dir(prev_cur_dir);		// memorize prev. current dir
@@ -214,9 +212,12 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 		strlcpy__(get_cur_filer_view()->cur_dir, dir, MAX_PATH_LEN);
 	}
 
-	for ( ; ; ) {
-		func_key_table_t *func_key_table;
+	key_code_t key_input = K_C_AT;		// show status bar at the first loop
+	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 
+	// Main input loop
+	for ( ; ; ) {
+mflf_d_printf("key_input: (%s):%d\n", short_key_name_from_key_code(key_input, NULL), IS_KEY_VALID(key_input));
 		check_filer_cur_dir();
 #ifdef ENABLE_HISTORY
 		if (strcmp(prev_cur_dir, get_cur_filer_view()->cur_dir) != 0) {
@@ -268,24 +269,26 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 			break;
 		default:
 			filer_do_next = EF_NONE;
-			if ((func_key_table = get_func_key_table_from_key(filer_func_key_table,
+			func_key_table_t *fkey_table;
+			if ((fkey_table = get_func_key_table_from_key(filer_func_key_table,
 			 key_input)) == NULL) {
-				func_key_table = get_func_key_table_from_key(filer_func_key_table,
+				fkey_table = get_func_key_table_from_key(filer_func_key_table,
 				 tolower_if_alpha(key_input));
 			}
-			if (func_key_table == NULL) {
+			if (fkey_table == NULL) {
 				disp_status_bar_err(_("No command assigned for the key: %04xh"), key_input);
-				filer_do_next = FL_UPDATE_FILE_LIST_AUTO;
+				key_input = KEY_NONE;
+///				filer_do_next = FL_UPDATE_FILE_LIST_AUTO;
 			} else {
 				strlcpy__(get_cur_filer_view()->next_file,
 				 get_cur_fv_cur_file_ptr()->file_name,
 				  MAX_PATH_LEN);
 				if (is_app_list_mode()) {
-					switch (func_key_table->list_mode) {
+					switch (fkey_table->list_mode) {
 					case XL:		// not executable in List mode
 						disp_status_bar_done(
 						 _("Can not execute this function in filer List mode: [%s]"),
-						 func_key_table->func_id);
+						 fkey_table->func_id);
 						filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 						break;
 					case XF:		// not executable in filer List mode and return FILE_NAME
@@ -299,9 +302,9 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 					}
 				}
 				if (filer_do_next == EF_NONE) {
-flf_d_printf("<<<< CALL_FILER_FUNC [%s]\n", func_key_table->func_id);
+flf_d_printf("<<<< CALL_FILER_FUNC [%s]\n", fkey_table->func_id);
 					//=========================
-					(*func_key_table->func)();	// call function "dof__...()"
+					(*fkey_table->func)();	// call function "dof__...()"
 					//=========================
 flf_d_printf(">>>> filer_do_next: EF__%d\n", filer_do_next);
 					unselect_all_files_auto(_FILE_SEL_AUTO_);

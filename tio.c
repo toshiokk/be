@@ -203,6 +203,7 @@ int tio_resume(void)
 int tio_check_update_terminal_size(void)
 {
 	if (is_sigwinch_signaled()) {
+mflf_d_printf("sigwinch_signaled\n");
 		clear_sigwinch_signaled();
 		tio_resize();
 		return 1;

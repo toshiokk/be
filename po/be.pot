@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-03 10:26+0900\n"
+"POT-Creation-Date: 2024-11-03 23:20+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,30 +39,30 @@ msgstr ""
 msgid "Tab size"
 msgstr ""
 
-#: ../editor.c:121 ../filer.c:277
+#: ../editor.c:123 ../filer.c:279
 #, c-format
 msgid "No command assigned for the key: %04xh"
 msgstr ""
 
-#: ../editor.c:127
+#: ../editor.c:130
 #, c-format
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr ""
 
-#: ../editor.c:513
+#: ../editor.c:516
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:566
+#: ../editor.c:569
 msgid "Modification not allowed in LIST mode"
 msgstr ""
 
-#: ../editor.c:570
+#: ../editor.c:573
 msgid "Modification not allowed in Anchor buffer"
 msgstr ""
 
-#: ../editor.c:574
+#: ../editor.c:577
 msgid "Modification not allowed in VIEW mode buffer"
 msgstr ""
 
@@ -122,7 +122,7 @@ msgstr ""
 msgid "Text Pasted without popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:218 ../editorcut.c:250
+#: ../editorcut.c:218 ../editorcut.c:252
 msgid "Cut-buffer empty !!"
 msgstr ""
 
@@ -440,7 +440,7 @@ msgstr ""
 msgid "%d filesss loaded"
 msgstr ""
 
-#: ../filer.c:287
+#: ../filer.c:290
 #, c-format
 msgid "Can not execute this function in filer List mode: [%s]"
 msgstr ""
@@ -510,7 +510,7 @@ msgid "Make size of %d files 0 ?"
 msgstr ""
 
 #: ../filercmd.c:504
-msgid "Find:"
+msgid "Find file:"
 msgstr ""
 
 #: ../filercmd.c:517
@@ -614,7 +614,7 @@ msgstr ""
 msgid "Start key macro playback"
 msgstr ""
 
-#: ../keys.c:479
+#: ../keys.c:470
 #, c-format
 msgid "Window resized to (%d, %d)"
 msgstr ""
@@ -734,7 +734,7 @@ msgstr ""
 msgid "We're invincible with this !!"
 msgstr ""
 
-#: ../rcfile.c:209
+#: ../rcfile.c:208
 #, c-format
 msgid "Unable to open config file: %s, %s\n"
 msgstr ""

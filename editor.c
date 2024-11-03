@@ -86,8 +86,10 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 
 	key_code_t key_input = K_C_AT;
+
 	// Main input loop
 	for ( ; ; ) {
+mflf_d_printf("key_input: (%s):%d\n", short_key_name_from_key_code(key_input, NULL), IS_KEY_VALID(key_input));
 		editor_do_next = EF_NONE;
 		if (key_macro_is_playing_back()) {
 			// During playing back key-macro, do not update screen for speed up.
@@ -109,23 +111,24 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 			doe_enter_buffered_utf8c_bytes();
 		}
 		if (IS_KEY_VALID(key_input)) {
-			func_key_table_t *func_key_table;
 mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
  '_', key_input, short_key_name_from_key_code(key_input, NULL));
 
 #ifdef ENABLE_REGEX
 			matches_clear(&matches__);
 #endif // ENABLE_REGEX
-			if ((func_key_table = get_func_key_table_from_key(editor_func_key_table, key_input))
+			func_key_table_t *fkey_table;
+			if ((fkey_table = get_func_key_table_from_key(editor_func_key_table, key_input))
 			 == NULL) {
 				disp_status_bar_err(_("No command assigned for the key: %04xh"), key_input);
+				key_input = KEY_NONE;
 			} else {
 				if (is_app_list_help_mode()) {
-					switch (func_key_table->list_mode) {
+					switch (fkey_table->list_mode) {
 					case XL:	// not executable in editor List mode
 						disp_status_bar_done(
 						 _("Can not execute this function in editor List mode: [%s]"),
-						 func_key_table->func_id);
+						 fkey_table->func_id);
 						editor_do_next = EF_QUIT;
 						break;
 					case XI:	// not executable in editor List mode, get a text
@@ -140,12 +143,12 @@ mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
 					memorize_cur_file_pos_null(last_touched_file_pos_str);
 #endif // ENABLE_HISTORY
 #if defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
-					memorize_undo_state_before_change(func_key_table->func_id);
+					memorize_undo_state_before_change(fkey_table->func_id);
 #endif // defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
 					search_clear(&search__);
-mflf_d_printf("<<<< CALL_EDITOR_FUNC [%s]\n", func_key_table->func_id);
+mflf_d_printf("<<<< CALL_EDITOR_FUNC [%s]\n", fkey_table->func_id);
 					//=========================
-					(*func_key_table->func)();	// call function "doe__...()"
+					(*fkey_table->func)();	// call function "doe__...()"
 					//=========================
 mflf_d_printf(">>>> editor_do_next: EF__%d\n", editor_do_next);
 					easy_buffer_switching_count();

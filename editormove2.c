@@ -210,8 +210,7 @@ int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *b
 	int line_cnt = 0;
 	int wl_idx;
 
-/////
-mflf_d_printf("yy: %d\n", EPCBVC_CURS_Y);
+/////mflf_d_printf("yy: %d\n", EPCBVC_CURS_Y);
 	if (_cl_->data == NULL) {
 		*line = _cl_;
 		*byte_idx = _clbi_;

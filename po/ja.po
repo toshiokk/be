@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-03 10:26+0900\n"
+"POT-Creation-Date: 2024-11-03 23:20+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 #: ../appmode.c:533
 msgid "Input key to show key code"
-msgstr ""
+msgstr "キーコードを表示するキーを入力してください"
 
 #: ../appmode.c:535
 #, c-format
@@ -38,31 +38,31 @@ msgstr "CRC を計算中..."
 msgid "Tab size"
 msgstr "タブサイズ"
 
-#: ../editor.c:121 ../filer.c:277
+#: ../editor.c:123 ../filer.c:279
 #, c-format
 msgid "No command assigned for the key: %04xh"
 msgstr "このキーにはコマンドが割り当てられていません: %04xh"
 
-#: ../editor.c:127
+#: ../editor.c:130
 #, c-format
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr "このコマンドは List mode では実行できません: [%s]"
 
-#: ../editor.c:513
+#: ../editor.c:516
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 "行:%4lu/%-4lu 桁:%3lu/%-3lu サイズ:%6lu%s 文字コード:%s エンコード:%s 行末:%s"
 
-#: ../editor.c:566
+#: ../editor.c:569
 msgid "Modification not allowed in LIST mode"
 msgstr "LISTモードでは編集できません"
 
-#: ../editor.c:570
+#: ../editor.c:573
 msgid "Modification not allowed in Anchor buffer"
 msgstr "Anchor buffer は編集できません"
 
-#: ../editor.c:574
+#: ../editor.c:577
 msgid "Modification not allowed in VIEW mode buffer"
 msgstr "VIEWモードでは編集できません"
 
@@ -72,15 +72,15 @@ msgstr "新規ファイル"
 
 #: ../editor2.c:110
 msgid "[Mod] "
-msgstr ""
+msgstr "[変更済]"
 
 #: ../editor2.c:112
 msgid "[VM] "
-msgstr ""
+msgstr "[閲覧モード]"
 
 #: ../editor2.c:114
 msgid "[RO] "
-msgstr ""
+msgstr "読出専用"
 
 #: ../editorcut.c:79
 msgid "Cut to line head"
@@ -122,7 +122,7 @@ msgstr "テキストを張り付けました(カットバッファをポップ)"
 msgid "Text Pasted without popping Cut-buffer"
 msgstr "テキストを張り付けました(カットバッファは変化なし)"
 
-#: ../editorcut.c:218 ../editorcut.c:250
+#: ../editorcut.c:218 ../editorcut.c:252
 msgid "Cut-buffer empty !!"
 msgstr "カットバッファが空です !!"
 
@@ -136,7 +136,7 @@ msgstr "新しいファイルを開く:"
 
 #: ../editorfile.c:118
 msgid "No project file found"
-msgstr ""
+msgstr "プロジェクトファイルが見つかりません"
 
 #: ../editorfile.c:160
 msgid "Buffer is modified, Are you OK to reopen file ?"
@@ -206,7 +206,7 @@ msgstr "一つ後のファイルにスイッチしました"
 
 #: ../editorgoto.c:234
 msgid "Returned to previous pos"
-msgstr ""
+msgstr "以前の位置に戻りました"
 
 #: ../editorgoto.c:242
 #, c-format
@@ -273,24 +273,24 @@ msgstr "ヒストリー文字列を張り付けます:"
 #: ../editormove.c:741
 #, c-format
 msgid "Column position %d was memorized"
-msgstr ""
+msgstr "カラム位置 %d を記憶しました"
 
 #: ../editormove.c:748
 #, c-format
 msgid "Space characters are filled from column %d to %d"
-msgstr ""
+msgstr "スペース文字をカラム %d から %d まで満たしました"
 
 #: ../editorundo.c:115
 msgid "!!!! No UNDO info pushed !!!!"
-msgstr ""
+msgstr "!!!! UNDO 情報がありません !!!!"
 
 #: ../editorundo.c:224
 msgid "Undo-buffer empty !!"
-msgstr "Undoバッファが空です!!"
+msgstr "Undoバッファが空です !!"
 
 #: ../editorundo.c:233
 msgid "Redo-buffer empty !!"
-msgstr "Redoバッファが空です!!"
+msgstr "Redoバッファが空です !!"
 
 #: ../fileio.c:68
 #, c-format
@@ -345,7 +345,7 @@ msgstr "ファイルは他のプログラムから書き換えられました。
 #: ../fileio.c:155
 #, c-format
 msgid "File [%s] can NOT be written !!"
-msgstr ""
+msgstr "ファイル [%s] に書き込めません !!"
 
 #: ../fileio.c:166
 msgid "File Name to Write:"
@@ -362,7 +362,7 @@ msgstr "パスがファイルではありません。書き込めません"
 #: ../fileio.c:205
 #, c-format
 msgid "File [%s] is NOT regular file !!"
-msgstr ""
+msgstr "ファイル [%s] は通常ファイルではありません !!"
 
 #: ../fileio.c:209
 #, c-format
@@ -397,7 +397,7 @@ msgstr "%d 行を書き込みました"
 #: ../fileio.c:294
 #, c-format
 msgid "BINARY file !! [%s]"
-msgstr ""
+msgstr "バイナリーファイルです !! [%s]"
 
 #: ../fileio.c:432 ../fileio.c:516 ../fileio.c:534 ../fileio.c:551
 #, c-format
@@ -440,14 +440,14 @@ msgstr "%d ファイルを読み込みました"
 msgid "%d filesss loaded"
 msgstr "%d ファイルを読み込みました"
 
-#: ../filer.c:287
+#: ../filer.c:290
 #, c-format
 msgid "Can not execute this function in filer List mode: [%s]"
 msgstr "このコマンドは List mode では実行できません: [%s]"
 
 #: ../filer2.c:332
 msgid " <<broken-link>>"
-msgstr ""
+msgstr " <<リンク切れ>>"
 
 #: ../filercmd.c:96
 msgid "File view refreshed"
@@ -510,8 +510,8 @@ msgid "Make size of %d files 0 ?"
 msgstr "%d ファイルを削除しますか ?"
 
 #: ../filercmd.c:504
-msgid "Find:"
-msgstr ""
+msgid "Find file:"
+msgstr "ファイル検索:"
 
 #: ../filercmd.c:517
 msgid "Mkdir:"
@@ -614,7 +614,7 @@ msgstr "キーマクロ記録終了"
 msgid "Start key macro playback"
 msgstr "キーマクロ再生開始"
 
-#: ../keys.c:479
+#: ../keys.c:470
 #, c-format
 msgid "Window resized to (%d, %d)"
 msgstr "画面サイズ変更 (%d, %d)"
@@ -715,7 +715,7 @@ msgstr "NUM 行から開始"
 
 #: ../main.c:670
 msgid "Investigate key sequence"
-msgstr ""
+msgstr "キーシーケンス調査"
 
 #: ../main.c:686
 #, c-format
@@ -736,7 +736,7 @@ msgstr "画面サイズ: %dx%d"
 msgid "We're invincible with this !!"
 msgstr "これさえあれば俺達は無敵だ!!"
 
-#: ../rcfile.c:209
+#: ../rcfile.c:208
 #, c-format
 msgid "Unable to open config file: %s, %s\n"
 msgstr "configファイル %s が読み込めません: %s\n"
@@ -905,11 +905,11 @@ msgstr "終了"
 
 #: ../winin.c:412
 msgid "Undo"
-msgstr ""
+msgstr "アンドゥ-"
 
 #: ../winin.c:415
 msgid "Redo"
-msgstr ""
+msgstr "リドゥ-"
 
 #, c-format
 #~ msgid "Unable to create directory %s, %s"

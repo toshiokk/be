@@ -181,6 +181,7 @@ int termif_get_screen_size_from_term(void)
 		send_cursor_pos_to_term(TERMIF_MAX_SCRN_LINES-1, TERMIF_MAX_SCRN_COLS-1);
 		if (receive_cursor_pos_from_term(&lines, &cols)) {
 			if (lines < TERMIF_MAX_SCRN_LINES && cols < TERMIF_MAX_SCRN_COLS) {
+mflf_d_printf("cols: %d, lines: %d\n", cols + 1, lines + 1);
 				termif_set_screen_size(lines + 1, cols + 1);
 				return 1;
 			}

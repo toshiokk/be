@@ -221,8 +221,10 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 	}
 
 	if (IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
+#ifdef ENABLE_HISTORY
 		// current line ==> search history
 		update_history(HISTORY_TYPE_IDX_EXEC, EPCBVC_CL->data);
+#endif // ENABLE_HISTORY
 		// no mark set, setup cut-region
 		set_mark_pos();
 		setup_cut_region();

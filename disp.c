@@ -68,28 +68,30 @@ void disp_status_bar_ing(const char *msg, ...)
 {
 	va_list ap;
 
+///mflf_d_printf("SBDING: [%s]\n", msg);
 	va_start(ap, msg);
 	disp_status_bar_percent_va(S_B_D_ING, msg, ap);
 	va_end(ap);
 	tio_refresh();	// update screen soon
-}
-void disp_status_bar_done(const char *msg, ...)
-{
-	va_list ap;
-
-	va_start(ap, msg);
-	disp_status_bar_percent_va(S_B_D_DONE, msg, ap);
-	va_end(ap);
 }
 void disp_status_bar_err(const char *msg, ...)
 {
 	va_list ap;
 
 	va_start(ap, msg);
-mflf_d_printf("SBERR: [%s]\n", msg);
+///mflf_d_printf("SBERR: [%s]\n", msg);
 	disp_status_bar_percent_va(S_B_D_ERR, msg, ap);
 	va_end(ap);
 	tio_beep();
+}
+void disp_status_bar_done(const char *msg, ...)
+{
+	va_list ap;
+
+///mflf_d_printf("SBDONE: [%s]\n", msg);
+	va_start(ap, msg);
+	disp_status_bar_percent_va(S_B_D_DONE, msg, ap);
+	va_end(ap);
 }
 void disp_status_bar_percent_editor(const char *msg, ...)
 {
@@ -120,7 +122,6 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 	int dividend = 1; int divisor = 1;
 	char buf[MAX_SCRN_LINE_BUF_LEN+1];
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1] = "";
-	int color_idx;
 	int col_idx;
 	int byte_idx_1, byte_idx_2;
 	int col_idx_1, col_idx_2;
@@ -146,8 +147,8 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 	case S_B_D_ING:
 		update = 1;			// overlap
 		break;
-	case S_B_D_DONE:
 	case S_B_D_ERR:
+	case S_B_D_DONE:
 		switch (status_bar_to_display) {
 		default:
 		case S_B_D_ING:
@@ -156,8 +157,8 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		case S_B_D_PERC_ED:
 			update = 2;		// "PREV : NEXT"
 			break;
-		case S_B_D_DONE:
 		case S_B_D_ERR:
+		case S_B_D_DONE:
 			update = 1;		// overlap
 			break;
 		}
@@ -187,15 +188,10 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 			// next time: "NEXT"
 			break;
 		}
+		int color_idx = ITEM_COLOR_IDX_STATUS;
 		adjust_utf8s_columns(buffer, main_win_get_columns());
 		switch (status_bar_to_display) {
 		default:
-		case S_B_D_NONE:
-		case S_B_D_PERC_FL:
-		case S_B_D_PERC_ED:
-		case S_B_D_ING:
-		case S_B_D_DONE:
-			color_idx = ITEM_COLOR_IDX_STATUS;
 			break;
 		case S_B_D_ERR:
 			color_idx = ITEM_COLOR_IDX_WARNING;
@@ -222,7 +218,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 			}
 		}
 		status_bar_displayed = status_bar_to_display;
-mflf_d_printf("SB: [%s]\n", buffer);
+mflf_d_printf("SB(%d): [%s]\n", status_bar_to_display, buffer);
 	}
 
 	if (status_bar_to_display == S_B_D_PERC_FL

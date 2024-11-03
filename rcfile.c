@@ -193,7 +193,6 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 	char cmd[MAX_SCRN_LINE_BUF_LEN+1];
 	int idx;
 	int val;
-	func_key_table_t *func_key_table;
 	key_code_t keys[MAX_KEYS_BOUND];
 
 ///#ifdef ENABLE_SYNTAX
@@ -245,12 +244,13 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 					goto read_rc_path_match;
 				}
 			}
-			if ((func_key_table = get_func_table_from_func_id(cmd)) != NULL) {
+			func_key_table_t *fkey_table;
+			if ((fkey_table = get_func_table_from_func_id(cmd)) != NULL) {
 				parse_key_names(keys, MAX_KEYS_BOUND);
 				if (keys[0] >= 0) {
 					clear_keys_if_bound(keys);
-					clear_keys_bound_to_func(func_key_table);
-					bind_key_to_func(func_key_table, keys);
+					clear_keys_bound_to_func(fkey_table);
+					bind_key_to_func(fkey_table, keys);
 					goto read_rc_path_match;
 				}
 			}

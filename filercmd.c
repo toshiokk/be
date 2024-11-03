@@ -501,7 +501,7 @@ int dof_find_file(void)
 	char file_path[MAX_PATH_LEN+1];
 	if (chk_inp_str_ret_val_filer(input_string_pos("", file_path,
 	 MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
-	 _("Find:")))) {
+	 _("Find file:")))) {
 		return 0;
 	}
 	strlcpy__(get_cur_filer_view()->next_file, file_path, MAX_PATH_LEN);

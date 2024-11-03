@@ -22,11 +22,11 @@
 #ifndef keys_h
 #define keys_h
 
-#define KEY_NONE			(-1)
+#define KEY_NONE			((key_code_t)(-1))
 #define K_NONE				KEY_NONE
 #define KEY_NOT_ASSIGNED	KEY_NONE
 #define KNA					KEY_NOT_ASSIGNED
-#define IS_KEY_VALID(key)	((int)(key) > KEY_NONE)
+#define IS_KEY_VALID(key)	((key) != KEY_NONE)
 
 // HP-UX 10 & 11 do not seem to support KEY_HOME and KEY_END
 #if !defined(KEY_HOME) || !defined(KEY_END)
@@ -465,15 +465,15 @@ func_key_table_t *get_func_key_table_from_key_group(int group_idx);
 int cmp_func_id(const char *func_id_1, const char *func_id_2);
 void *get_app_function_for_key(key_code_t key);
 const char *get_func_id_from_key(key_code_t key);
-func_key_table_t *get_func_key_table_from_key(func_key_table_t *key_table, key_code_t key);
+func_key_table_t *get_func_key_table_from_key(func_key_table_t *fkey_table, key_code_t key);
 key_code_t get_key_for_func_id(char *func_id);
 func_key_table_t *get_func_table_from_func_id(const char *func_id);
 
-int is_key_bound_to_func(key_code_t key, func_key_table_t *func_key_table);
+int is_key_bound_to_func(key_code_t key, func_key_table_t *fkey_table);
 void clear_keys_if_bound(key_code_t *keys);
-void clear_key_if_bound_to_func(key_code_t key, func_key_table_t *func_key_table);
-void clear_keys_bound_to_func(func_key_table_t *func_key_table);
-void bind_key_to_func(func_key_table_t *func_key_table, key_code_t *keys);
+void clear_key_if_bound_to_func(key_code_t key, func_key_table_t *fkey_table);
+void clear_keys_bound_to_func(func_key_table_t *fkey_table);
+void bind_key_to_func(func_key_table_t *fkey_table, key_code_t *keys);
 
 const char *short_key_name_from_func_id(char *buf);
 
