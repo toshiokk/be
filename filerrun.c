@@ -474,7 +474,7 @@ void pause_after_exec(int exit_status)
 //-----------------------------------------------------------------------------
 int restore_term_for_shell(void)
 {
-	tio_clear_screen();
+	tio_fill_screen(0);
 	tio_set_cursor_on(1);
 	tio_suspend();
 	signal_fork();
@@ -484,7 +484,7 @@ int reinit_term_for_filer(void)
 {
 	signal_init();
 	tio_resume();
-	tio_clear_flash_screen(1);
+	tio_fill_screen(0);
 	return 0;
 }
 //-----------------------------------------------------------------------------

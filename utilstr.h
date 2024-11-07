@@ -52,6 +52,11 @@ const char *quote_file_path_static(const char *string);
 const char *quote_file_path_buf(char *buf, const char *string);
 const char *quote_file_path_if_necessary(char *buf, const char *string);
 
+#ifdef START_UP_TEST
+void test_get_one_file_path();
+#endif // START_UP_TEST
+const char *get_one_file_path(const char *ptr, char *buf);
+
 int is_strlen_0(const char *str);
 int is_strlen_not_0(const char *str);
 size_t strlen_path(const char *str);
@@ -87,6 +92,8 @@ int truncate_tail_utf8s_columns(char *utf8s, int columns);
 int get_byte_idx_from_col_idx(const char *utf8s, int columns, int left_right,
  int *col_idx__);
 int expand_utf8s_columns(char *utf8s, int columns);
+
+char *utf8s_strnset__(char *buf, const char *utf8c, size_t len);
 
 //-----------------------------------------------------------------------------
 int skip_space(const char **ptr);

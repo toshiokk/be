@@ -83,9 +83,14 @@ int dof_open_proj_file(void);
 int dof_open_exec_log_file(void);
 int dof_open_new_file(void);
 int dof_open_new_file_dropped(void);
+
 int dof_copy_file(void);
 int dof_copy_file_update(void);
+int dof_drop_to_copy_file(void);
+
 int dof_move_file(void);
+int dof_drop_to_move_file();
+
 int dof_rename_file(void);
 int dof_trash_file(void);
 int dof_delete_file(void);
@@ -128,6 +133,7 @@ int dof_filer_menu_3(void);
 int dof_filer_menu_4(void);
 int dof_filer_menu_5(void);
 
+int goto_dir_in_str__call_filer(const char *str);
 int goto_dir_in_string(const char *str);
 
 int filer_change_dir_parent(char *path);

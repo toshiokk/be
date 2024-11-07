@@ -1,7 +1,13 @@
 #### BE-editor to do list
  (H: high priority, L: Low priority, e: easy, d: difficult, x/v: done, -: impossible/pending)
 
-- [x] The position indicator is not shown in currect position after file opening.
+- [ ] search in editor list mode
+- [x] repaint on laptop rid opened (10 secs)
+- [ ] redraw whole windows after screen resizing
+  - [-] redraw input box after screen resizing
+  - [ ] redraw parent window after screen resizing
+- [x] place cursor on the head of file name in filer
+- [x] The position indicator is shown on not currect position after file opening.
 
 - [ ] Use pty for logging not using "| tee -a file"
   app --> pty-master, pty-slave --> log file
@@ -59,6 +65,9 @@
   |[x]in filer  - "Open new file"| [x]open these files                | [x]open dir                     |
   |[-]in editor                  | can not handle it because "'" is ordinary charactor                  |
   |[x]in editor - "Open new file"| open these files                   | [x]open dir                     |
+  - [x] open file
+  - [x ] copy(K_M_C), move(K_M_M)
+  - [ ] process by command
 [x] capture stdout/err into be-editor buffer
   back-scroll vs log-file
   - [-] back-scroll method - Bad: hard to handle(get, edit, copy).
@@ -131,12 +140,15 @@
 
 [x] switching policy of filer and editor
 switching filer and editor
-  filer +-- editor-list
-    ^   \-- filer-list
-    |
-    v
-  editor +-- editor-list
-         \-- filer-list
+  -+- call_filer -+- input_string() +-- call_editor
+   |              |                 +-- call_filer
+   |              +- view_help() -- call_editor
+   |
+   +- call_editor -+- input_string() +-- call_editor
+                   |                 +-- call_filer
+                   +- view_help() -- call_editor
+                   +- call_filer
+
 [x] editor: stay in editor while `get_edit_bufs() > 0` and exit when `get_edit_bufs() == 0`
 
 |editor mode |load|edit|save|select by tap|search/cut/copy|possible actions|in code        |buf-RO|
@@ -231,7 +243,7 @@ editor/filer	input_string()
 [v] 0 bytes file can not be loaded
 [l ] differenciate "buffer saved" and "buffer checked"
 
-[v] Show window size on status-bar when resized
+[v] Show screen size on status-bar when resized
 [v] fix: path displayed on filer title-bar 
 [v] fix: dof_previous_dir() on symlinked dir
 [v] fix: goto real-path from symlinked-path (M-l)
@@ -400,7 +412,7 @@ v F: Input keyword to search
 [v] Highlight only current cursor position's peer of brackets in first-highlight-color.
   [v] Highlight not-current-peer in second-hightlight-color.
 [v] go back to the last cursor pos. in the last file.
-[v] limit current y position of editor screen on resize window
+[v] limit current y position of editor on screen resizing
 [v] directory invert search direction on Key B and F.
 [v] line tail indicator when line shift
 [v] If not-modified in write_file_modified, clear [Modified] flag.
@@ -610,7 +622,7 @@ Editor 2 pane mode
 //[pe]Cancel key = ^Z
 //[p]make block cursor visible in Xterm
 //  Alt-C toggles block cursor on and off
-//[ne]action when window resized
+//[ne]action when screen resized
 //[pe]make "previous word/next word" efficient
 //speed up file browser
 //[pe]TAB color, EOL color, normal color, cursor color

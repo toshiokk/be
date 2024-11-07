@@ -36,8 +36,6 @@ int doe_goto_line(void);
 int doe_goto_file_or_dir_in_cur_line(void);
 int doe_goto_file_or_dir_in_cur_cursor_pos(void);
 
-int goto_dir_in_str__call_filer(const char *str);
-
 int doe_open_files_in_buf(void);
 int doe_switch_to_top_file(void);
 int doe_switch_to_bot_file(void);

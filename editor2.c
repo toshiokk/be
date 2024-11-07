@@ -134,7 +134,7 @@ void editor_disp_title_bar(void)
 	strcat_printf(buf_bufs, MAX_SCRN_LINE_BUF_LEN, "r%s", zz_from_num(redo_bufs, buf_num));
 #endif // SHOW_UNDO_BUFS
 
-	// current time
+	// current date / time
 	snprintf_(buf_time, HHCMMCSS_BUF_LEN+1, " %s",
 	 cur_ctime_cdate(msec_past_input_key() < 1000));
 

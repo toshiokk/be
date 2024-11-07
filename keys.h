@@ -481,6 +481,7 @@ void set_menu_key(key_code_t key);
 key_code_t get_menu_key(void);
 void set_menu_key_for_do_app_menu_0(void);
 
+void update_msec_when_input_key();
 unsigned long msec_past_input_key();
 
 key_code_t input_key_loop(void);

@@ -103,12 +103,13 @@ PRIVATE int input_string_pos__(const char *default__, char *input_buf, int curso
 	cursor_byte_idx = MIN_MAX_(0, cursor_byte_idx, strlen_path(default__));
 
 	blank_key_list_lines();
+	// Main input loop
 	for ( ; ; ) {
 		ret = EF_NONE;
 		disp_input_box(msg, input_buf, cursor_byte_idx);
 		tio_refresh();
 		//---------------------------
-		key_input = input_key_loop();
+		key_input = input_key_wait_return();
 		//---------------------------
 mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
  '_', key_input, short_key_name_from_key_code(key_input, NULL));
@@ -357,7 +358,7 @@ PRIVATE void blank_input_box(void)
 	//+--------------------------------------------------------------------+
 	//|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|
 	//+--------------------------------------------------------------------+
-	main_win_output_string(get_input_line_y()+1, 1, tio_blank_line(), main_win_get_columns()-2);
+	main_win_output_string(get_input_line_y()+1, 1, tio_blank_line(0), main_win_get_columns()-2);
 }
 
 //-----------------------------------------------------------------------------

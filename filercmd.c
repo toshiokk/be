@@ -312,6 +312,33 @@ int dof_copy_file_update(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
+int dof_drop_to_copy_file(void)
+{
+	char file_path[MAX_PATH_LEN+1];
+	if (chk_inp_str_ret_val_filer(input_string_pos("", file_path,
+	 MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
+	 _("Drop files to Copy here")))) {
+		return 0;
+	}
+	begin_fork_exec_repeat();
+	char path[MAX_PATH_LEN+1];
+	int exit_status = 0;
+	for (const char *ptr = file_path; *(ptr = get_one_file_path(ptr, path)); ) {
+		if (is_sigint_signaled())
+			break;
+#ifndef	USE_BUSYBOX
+		// "cp -afv <file/path/be/copied> ."
+		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-afv", path, ".", 0);
+#else
+		// "cp -a <file/path/be/copied> ."
+		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-a", path, ".", 0);
+#endif
+	}
+	end_fork_exec_repeat(exit_status);
+	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
+	return 0;
+}
+
 int dof_move_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
@@ -339,6 +366,33 @@ int dof_move_file(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
+int dof_drop_to_move_file()
+{
+	char file_path[MAX_PATH_LEN+1];
+	if (chk_inp_str_ret_val_filer(input_string_pos("", file_path,
+	 MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
+	 _("Drop files to Move here")))) {
+		return 0;
+	}
+	begin_fork_exec_repeat();
+	char path[MAX_PATH_LEN+1];
+	int exit_status = 0;
+	for (const char *ptr = file_path; *(ptr = get_one_file_path(ptr, path)); ) {
+		if (is_sigint_signaled())
+			break;
+#ifndef	USE_BUSYBOX
+		// "cp -afv <file/path/be/copied> ."
+		exit_status = fork_exec_args_repeat(SEPARATE1, "mv", "-ufv", path, ".", 0);
+#else
+		// "cp -a <file/path/be/copied> ."
+		exit_status = fork_exec_args_repeat(SEPARATE1, "mv", "-a", path, ".", 0);
+#endif
+	}
+	end_fork_exec_repeat(exit_status);
+	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
+	return 0;
+}
+
 int dof_rename_file(void)
 {
 	char file_name[MAX_PATH_LEN+1];
@@ -723,11 +777,19 @@ int dof_filer_menu_5(void)
 
 //-----------------------------------------------------------------------------
 
-#ifdef ENABLE_FILER
+int goto_dir_in_str__call_filer(const char *str)
+{
+	if (goto_dir_in_string(str) == 0) {
+		return 0;
+	}
+	char file_path[MAX_PATH_LEN+1];
+	call_filer(1, APP_MODE_NORMAL, get_cur_filer_view()->cur_dir, "", file_path, MAX_PATH_LEN);
+	return 1;
+}
+
 #ifdef ENABLE_HISTORY
 PRIVATE int change_cur_dir_from_history(const char *dir);
 #endif // ENABLE_HISTORY
-#endif // ENABLE_FILER
 
 int goto_dir_in_string(const char *str)
 {
@@ -761,7 +823,6 @@ changed:;
 	return 1;
 }
 
-#ifdef ENABLE_FILER
 #ifdef ENABLE_HISTORY
 PRIVATE int change_cur_dir_from_history(const char *dir)
 {
@@ -780,7 +841,6 @@ PRIVATE int change_cur_dir_from_history(const char *dir)
 	return 0;
 }
 #endif // ENABLE_HISTORY
-#endif // ENABLE_FILER
 
 PRIVATE int filer_change_dir_to_cur_sel(void)
 {

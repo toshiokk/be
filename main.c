@@ -170,7 +170,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	set_die_on_callback(NULL);
 
 	set_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
-	tio_clear_screen();
+	tio_fill_screen(0);
 	tio_destroy();
 
 	write_cur_dir_to_exit_file();
@@ -193,6 +193,7 @@ flf_d_printf("Exit %s ===============================\n", APP_NAME " " __DATE__ 
 
 void app_main_loop(void)
 {
+	update_msec_when_input_key();	// avoid screen flashing on the first key input
 #ifndef ENABLE_FILER
 	if (edit_bufs_count_bufs() == 0) {
 		doe_open_file();
@@ -507,6 +508,7 @@ PRIVATE void start_up_test(void)
 	test_get_file_name_extension();
 	test_cat_dir_and_file();
 	test_separate_path_to_dir_and_file();
+	test_get_one_file_path();
 
 ///	test_get_intersection();
 	get_mem_free_in_kb(1);
@@ -851,7 +853,7 @@ void disp_splash(int delay)
 	tio_set_cursor_on(0);
 	if (delay >= 0) {
 		// refresh whole screen
-		tio_clear_flash_screen(delay);
+		tio_flash_screen(delay);
 	}
 	for (splash_size_idx = 3; splash_size_idx >= 0; splash_size_idx--) {
 		switch (splash_size_idx) {

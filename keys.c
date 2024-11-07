@@ -413,6 +413,10 @@ void set_menu_key_for_do_app_menu_0(void)
 
 //-----------------------------------------------------------------------------
 PRIVATE unsigned long msec_when_input_key = 0;
+void update_msec_when_input_key()
+{
+	msec_when_input_key = get_msec();
+}
 unsigned long msec_past_input_key()
 {
 	return get_msec() - msec_when_input_key;
@@ -430,6 +434,12 @@ key_code_t input_key_loop(void)
 	}
 	return key;
 }
+// Key input interval:
+// | type                  | duration [mSec] |
+// |-----------------------|-----------------|
+// | repaint all of screen | 10000           |
+//
+#define WHOLE_UPDATE_INTERVAL_MSEC		10000	// 10[Sec]
 key_code_t input_key_wait_return(void)
 {
 	static key_code_t prev_key = KEY_NONE;
@@ -439,7 +449,10 @@ key_code_t input_key_wait_return(void)
 	}
 	prev_key = key;
 	if (key >= 0) {
-		msec_when_input_key = get_msec();
+		if (msec_past_input_key() >= WHOLE_UPDATE_INTERVAL_MSEC) {
+			tio_flash_screen(0);
+		}
+		update_msec_when_input_key();
 	}
 	return key;
 }
@@ -448,9 +461,8 @@ key_code_t input_key_wait_return(void)
 // | type                              | duration [mSec] |
 // |-----------------------------------|-----------------|
 // | current time update in title bar  | 1000            |
-// | recording key macro               |  200            |
 // | file list update                  | 1000            |
-// | splash screen when screen resized | 1000            |
+// | recording key macro               |  200            |
 // | splash screen by key              | infinite        |
 //
 #define DEFAULT_KEY_WAIT_MSEC		1000	// return every 1[Sec]
@@ -467,13 +479,14 @@ PRIVATE key_code_t input_key_timeout(void)
 		if (tio_check_update_terminal_size()) {
 			win_reinit_win_size();
 			update_screen_app(1, 0, 1);
-			disp_status_bar_done(_("Window resized to (%d, %d)"),
+			disp_status_bar_done(_("Screen resized to (%d, %d)"),
 			 tio_get_columns(), tio_get_lines());
 			tio_refresh();
-			msec_enter = get_msec();	// restart time monitoring
+			break;		// return after "Screen resizing"
 		}
-		if ((long)(get_msec() - msec_enter) >= key_wait_time_msec)
+		if ((long)(get_msec() - msec_enter) >= key_wait_time_msec) {
 			break;
+		}
 		MSLEEP(10);		// wait 10[mS]
 	}
 	return key;

@@ -528,11 +528,12 @@ int do_inc_key_list_lines_(void)
 	return 0;
 }
 
-void examine_key_code(void)
+int examine_key_code(void)
 {
 	disp_status_bar_ing(_("Input key to show key code"));
 	key_code_t key = input_key_loop();
 	disp_status_bar_done(_("Key code input: %04x: [%s]"), key, key_name_from_key_code(key, NULL));
+	return key == K_ESC;
 }
 
 // End of appmode.c

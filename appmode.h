@@ -323,7 +323,7 @@ inline char indication_of_app_mode()
 	return separator_char;
 }
 
-void examine_key_code(void);
+int examine_key_code(void);
 
 #endif // appmode_h
 

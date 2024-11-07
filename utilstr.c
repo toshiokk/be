@@ -230,6 +230,49 @@ const char *quote_file_path_if_necessary(char *buf, const char *string)
 	return string;	// no quotation necessary
 }
 
+#ifdef START_UP_TEST
+PRIVATE void test_get_one_file_path__();
+void test_get_one_file_path()
+{
+	test_get_one_file_path__(" '/path/to/file 1' '/path/to/file 2' '/path/to/file 3' ");
+	test_get_one_file_path__(" \" path/to/file 1 \" ' path/to/file 2 ' \" path/to/file 3 \" ");
+	test_get_one_file_path__(" /path/to/file-1 /path/to/file-2 /path/to/file-3 ");
+}
+PRIVATE void test_get_one_file_path__(const char *file_paths)
+{
+	char path[MAX_PATH_LEN+1];
+	flf_d_printf("[%s]:\n", file_paths);
+	for (const char *ptr = file_paths; ; ) {
+		ptr = get_one_file_path(ptr, path);
+		if (is_strlen_0(path)) {
+			break;
+		}
+		flf_d_printf(" ->[%s]\n", path);
+	}
+}
+#endif // START_UP_TEST
+
+// "'/path/to/file1' '/path/to/file2' ..."
+// "\"/path/to/file1\" \"/path/to/file2\" ..."
+const char *get_one_file_path(const char *ptr, char *buf)
+{
+	skip_space(&ptr);
+	char *dest = buf;
+	char quote_chr = ' ';
+	if ((*ptr == '\'') || (*ptr == '\"')) {
+		quote_chr = *ptr++;
+	}
+	for ( ; *ptr; ) {
+		if (*ptr == quote_chr) {
+			ptr++;
+			break;
+		}
+		*dest++ = *ptr++;
+	}
+	*dest = '\0';
+	return ptr;
+}
+
 int is_strlen_0(const char *str)
 {
 	return is_strlen_not_0(str) == '\0';
@@ -495,6 +538,15 @@ int expand_utf8s_columns(char *utf8s, int columns)
 		strnset__(&utf8s[bytes], ' ', columns - cols);
 	}
 	return LIM_MIN(columns, cols);
+}
+
+char *utf8s_strnset__(char *buf, const char *utf8c, size_t len)
+{
+	strcpy(buf, "");
+	for ( ; strnlen(buf, len) + strlen(utf8c) > len; ) {
+		strlcat__(buf, len, utf8c);
+	}
+	return buf;
 }
 
 //-----------------------------------------------------------------------------

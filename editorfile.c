@@ -64,9 +64,11 @@ int doe_open_new_file(void)
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 		return 1;
 	}
+#ifdef ENABLE_FILER
 	if (goto_dir_in_str__call_filer(file_path)) {
 		return 1;
 	}
+#endif // ENABLE_FILER
 	tio_beep();
 	return 0;
 }

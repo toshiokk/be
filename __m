@@ -1,5 +1,3 @@
-echo make
-
 LANG=C; export LANG
 mk_backup_file2 __error
 if [ ! -f Makefile ]; then
@@ -9,6 +7,8 @@ if [ ! -f Makefile ]; then
   ./_c_debug
 ##  ./_c_release
 fi
+
+./__set_app_rel_lvl.sh
 
 make $1 2>&1 | tee __error
 strip be

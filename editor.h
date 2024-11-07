@@ -44,10 +44,6 @@ int doe_run_line_soon(void);
 int doe_run_line_soon_w_log(void);
 int doe_run_line_soon_(int logging);
 
-#ifdef ENABLE_FILER
-int doe_call_filer(void);
-#endif // ENABLE_FILER
-
 //-----------------------------------------------------------------------------
 
 #ifdef ENABLE_HELP

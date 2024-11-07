@@ -133,20 +133,10 @@ PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx)
 
 PRIVATE int goto_dir_in_cur_line_byte_idx(int line_byte_idx)
 {
-	return goto_dir_in_str__call_filer(&(EPCBVC_CL->data[line_byte_idx]));
-}
-
-int goto_dir_in_str__call_filer(const char *str)
-{
 #ifndef ENABLE_FILER
 	return 0;
 #else // ENABLE_FILER
-	if (goto_dir_in_string(str) == 0) {
-		return 0;
-	}
-	char file_path[MAX_PATH_LEN+1];
-	call_filer(1, APP_MODE_NORMAL, get_cur_filer_view()->cur_dir, "", file_path, MAX_PATH_LEN);
-	return 1;
+	return goto_dir_in_str__call_filer(&(EPCBVC_CL->data[line_byte_idx]));
 #endif // ENABLE_FILER
 }
 

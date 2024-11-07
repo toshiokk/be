@@ -15,8 +15,6 @@ recover_appdef_h()
 
 if [ -n "$rel_lvl" ]; then
   ./__set_app_rel_lvl.sh "$rel_lvl"
-else
-  ./__set_app_rel_lvl.sh
 fi
 
 trap recover_appdef_h 2

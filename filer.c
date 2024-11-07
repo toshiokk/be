@@ -217,7 +217,8 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 
 	// Main input loop
 	for ( ; ; ) {
-mflf_d_printf("key_input: (%s):%d\n", short_key_name_from_key_code(key_input, NULL), IS_KEY_VALID(key_input));
+mflf_d_printf("key_input: (%s):%d\n",
+ short_key_name_from_key_code(key_input, NULL), IS_KEY_VALID(key_input));
 		check_filer_cur_dir();
 #ifdef ENABLE_HISTORY
 		if (strcmp(prev_cur_dir, get_cur_filer_view()->cur_dir) != 0) {
@@ -504,7 +505,7 @@ PRIVATE void filer_disp_title_bar(const char *path,
 
 	set_title_bar_color_by_state(0, 0, 0);
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0,
-	 tio_blank_line(), main_win_get_columns());
+	 tio_blank_line(0), main_win_get_columns());
 
 	//-------------------------------------------------------------------------
 	char separator_char = indication_of_app_mode();
@@ -588,7 +589,7 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 	}
 	if (cur_pane) {
 		// Set cursor position
-		sub_win_set_cursor_pos(filer_win_get_file_list_y() + cur_file_idx - fv->top_file_idx, 0);
+		sub_win_set_cursor_pos(filer_win_get_file_list_y() + cur_file_idx - fv->top_file_idx, 1);
 		win_save_cursor_pos();
 	}
 	return 0;

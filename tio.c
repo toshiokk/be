@@ -21,7 +21,8 @@
 
 #include "headers.h"
 
-PRIVATE char tio_blank_line_buf[MAX_SCRN_LINE_BUF_LEN+1] = "";	// A blank line
+PRIVATE char tio_blank_line_buf[MAX_SCRN_LINE_BUF_LEN+1] = "";		// A blank line ' '
+PRIVATE char tio_blank_line_2_buf[MAX_SCRN_LINE_BUF_LEN+1] = "";	// A blank line " "
 
 #ifdef START_UP_TEST
 void tio_test(void)
@@ -36,7 +37,7 @@ void tio_test(void)
 
 	tio_init();
 
-	tio_clear_screen();
+	tio_fill_screen(0);
 	tio_set_cursor_on(1);
 	tio_set_attrs(-1, -1, 0);
 #ifdef ENABLE_NCURSES
@@ -55,7 +56,7 @@ void tio_test(void)
 		}
 		switch (key) {
 		case 'c':
-			tio_clear_screen();
+			tio_fill_screen(0);
 			break;
 		case 'o':
 			tio_set_cursor_on(1);
@@ -137,6 +138,8 @@ int tio_is_initialized(void)
 int tio_init(void)
 {
 	strnset__(tio_blank_line_buf, ' ', MAX_SCRN_LINE_BUF_LEN);
+	///strnset__(tio_blank_line_2_buf, '_', MAX_SCRN_LINE_BUF_LEN);
+	utf8s_strnset__(tio_blank_line_2_buf, " ", MAX_SCRN_LINE_BUF_LEN);
 #ifdef ENABLE_NCURSES
 	flf_d_printf("Using curses (cursesif)\n");
 	curses_init();
@@ -321,14 +324,6 @@ void tio_get_cursor_pos(int *yy, int *xx)
 #endif // ENABLE_NCURSES
 }
 
-void tio_clear_flash_screen(int delay)
-{
-	tio_set_attrs(CL_WH, CL_BK, 1);
-	tio_clear_screen_with_color();
-	MSLEEP(delay);
-	tio_set_attrs(CL_WH, CL_BK, 0);
-	tio_clear_screen_with_color();
-}
 void tio_clear_screen(void)
 {
 #ifdef ENABLE_NCURSES
@@ -338,22 +333,28 @@ void tio_clear_screen(void)
 #endif // ENABLE_NCURSES
 	tio_refresh();
 }
-void tio_clear_screen_with_color(void)
+void tio_flash_screen(int delay)
 {
-	tio_clear_lines(0, tio_get_lines());
+	tio_set_attrs(CL_WH, CL_BK, 1);
+	tio_fill_screen(1);
+	MSLEEP(delay);
+	tio_set_attrs(CL_WH, CL_BK, 0);
+	tio_fill_screen(0);
+}
+void tio_fill_screen(int type)
+{
+	tio_fill_lines(0, tio_get_lines(), type);
 	tio_refresh();
 }
-void tio_clear_lines(int line_1, int line_2)
+void tio_fill_lines(int line_1, int line_2, int type)
 {
-	int yy;
-
-	for (yy = line_1; yy < line_2; yy++) {
-		tio_output_string(yy, 0, tio_blank_line(), tio_get_columns());
+	for (int yy = line_1; yy < line_2; yy++) {
+		tio_output_string(yy, 0, tio_blank_line(type), tio_get_columns());
 	}
 }
-const char *tio_blank_line(void)
+const char *tio_blank_line(int type)
 {
-	return tio_blank_line_buf;
+	return (type == 0) ? tio_blank_line_buf : tio_blank_line_2_buf;
 }
 
 void tio_output_string(int yy, int xx, const char *string, int bytes)

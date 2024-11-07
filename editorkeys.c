@@ -60,10 +60,6 @@ func_key_table_t editor_func_key_table[] = {
    XL, F_I(doe_open_files_in_buf), NULL },
  { "Read into buffer",    "Read file into current pos",              K_M_i,        KNA, KNA,
    XL, F_I(doe_read_file_into_cur_buf), NULL },
-#ifdef ENABLE_FILER
- { "Filer",               "Open filer",                              K_M_F,        KNA, KNA,
-   XA, F_I(doe_call_filer), NULL },
-#endif // ENABLE_FILER
 
  { "",                    "Cursor Menu",                             KNA,          KNA, KNA,
    XL, F_I(doe_editor_menu_2), NULL },

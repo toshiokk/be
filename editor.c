@@ -89,7 +89,8 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 
 	// Main input loop
 	for ( ; ; ) {
-mflf_d_printf("key_input: (%s):%d\n", short_key_name_from_key_code(key_input, NULL), IS_KEY_VALID(key_input));
+mflf_d_printf("key_input: (%s):%d\n",
+ short_key_name_from_key_code(key_input, NULL), IS_KEY_VALID(key_input));
 		editor_do_next = EF_NONE;
 		if (key_macro_is_playing_back()) {
 			// During playing back key-macro, do not update screen for speed up.
@@ -287,15 +288,6 @@ int doe_run_line_soon_(int logging)
 	return 0;
 }
 
-#ifdef ENABLE_FILER
-int doe_call_filer(void)
-{
-	char file_path[MAX_PATH_LEN+1];
-	call_filer(1, APP_MODE_NORMAL, "", "", file_path, MAX_PATH_LEN);
-	return 0;
-}
-#endif // ENABLE_FILER
-
 //-----------------------------------------------------------------------------
 #ifdef ENABLE_HELP
 int doe_splash(void)
@@ -321,18 +313,21 @@ int doe_display_color_settings(void)
 }
 void display_color_settings(void)
 {
-	tio_clear_flash_screen(1);
+	tio_fill_screen(0);
 	display_color_pairs(0, 0);
-	examine_key_code();
+	if (examine_key_code()) {
+		return;
+	}
 
 #ifdef ENABLE_DEBUG
-	tio_clear_flash_screen(1);
+	tio_fill_screen(0);
 	display_item_colors(0, 0);
-	examine_key_code();
+	if (examine_key_code()) {
+		return;
+	}
 #ifdef ENABLE_REGEX
-	tio_clear_flash_screen(1);
+	tio_fill_screen(0);
 	display_bracket_hl_colors(0, 0);
-	examine_key_code();
 #endif // ENABLE_REGEX
 #endif // ENABLE_DEBUG
 }

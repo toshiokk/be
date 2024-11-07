@@ -241,15 +241,15 @@ PRIVATE void win_set_cursor_pos(win_rect_t *win, int yy, int xx)
 	tio_set_cursor_pos(yy, xx);
 }
 
-PRIVATE int cursor_yy = 0;
-PRIVATE int cursor_xx = 0;
+PRIVATE int win_cursor_yy = 0;
+PRIVATE int win_cursor_xx = 0;
 void win_save_cursor_pos()
 {
-	tio_get_cursor_pos(&cursor_yy, &cursor_xx);
+	tio_get_cursor_pos(&win_cursor_yy, &win_cursor_xx);
 }
 int win_get_saved_cursor_y()
 {
-	return cursor_yy;
+	return win_cursor_yy;
 }
 
 PRIVATE void win_clear_screen(win_rect_t *win)
@@ -264,7 +264,7 @@ PRIVATE void win_clear_lines(win_rect_t *win, int line_1, int line_2)
 		line_2 = line_1 + 1;
 	}
 	for (yy = line_1; yy < line_2; yy++) {
-		win_output_string(win, yy, 0, tio_blank_line(), win_get_columns(win));
+		win_output_string(win, yy, 0, tio_blank_line(0), win_get_columns(win));
 	}
 }
 PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *string, int bytes)
