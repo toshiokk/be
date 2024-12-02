@@ -49,9 +49,7 @@ be_line_t *line_create_with_string(const char *string)
 }
 be_line_t *line_create_with_string_len(const char *string, len_t len)
 {
-	be_line_t *new_line;
-
-	new_line = line_create();
+	be_line_t *new_line = line_create();
 	_mlc_set_caller
 	return line_set_string_len(new_line, string, len);
 }
@@ -296,9 +294,7 @@ be_line_t *line_insert_with_string(be_line_t *line, insert_before_after_t before
 be_line_t *line_insert_with_string_len(be_line_t *line, insert_before_after_t before_after,
  const char *string, len_t len)
 {
-	be_line_t *new_line;
-
-	new_line = line_create_with_string_len(string, len);
+	be_line_t *new_line = line_create_with_string_len(string, len);
 	line_insert(line, new_line, before_after);
 	return new_line;			// return inserted line
 }
@@ -313,6 +309,9 @@ int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 	int line_num = 0;
 	size_t buf_size = 0;
 
+	if (IS_PTR_NULL(line)) {
+		return 0;
+	}
 	if (IS_NODE_TOP_ANCH(line)) {
 		line = NODE_NEXT(line);
 	} else if (IS_NODE_TOP(line)) {
@@ -322,7 +321,7 @@ int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 		line_num = NODE_PREV(line)->line_num;
 		buf_size = NODE_PREV(line)->buf_size;
 	}
-	for ( ; line && IS_NODE_INT(line); line = NODE_NEXT(line)) {
+	for ( ; IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		line->line_num = ++line_num;
 		if (line->size <= 0) {
 			if (line->data == NULL) {
@@ -368,10 +367,6 @@ void line_dump_lines(const be_line_t *line, int lines, const be_line_t *cur_line
 	for ( ; line && lines > 0; line = NODE_NEXT(line), lines--) {
 		line_dump_cur(line, cur_line);
 	}
-}
-void line_dump(const be_line_t *line)
-{
-	line_dump_cur(line, NULL);
 }
 void line_dump_cur(const be_line_t *line, const be_line_t *cur_line)
 {

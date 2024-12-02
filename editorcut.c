@@ -67,29 +67,57 @@ int doe_select_all_lines(void)
 	return 1;
 }
 
+PRIVATE int doe_cut_to_head_(int delete0_cut1);
+int doe_delete_to_head(void)
+{
+	return doe_cut_to_head_(0);
+}
 int doe_cut_to_head(void)
 {
+	return doe_cut_to_head_(1);
+}
+PRIVATE int doe_cut_to_head_(int delete0_cut1)
+{
+	disp_status_bar_done(_("Delete/Cut to line head"));
 	if (EPCBVC_CLBI == 0) {
 		return 0;
 	}
 	do_set_mark();
 	doe_start_of_line();
-	doe_delete_text();
-
-	disp_status_bar_done(_("Cut to line head"));
+	if (delete0_cut1 == 0) {
+		doe_delete_text();
+		disp_status_bar_done(_("Deleted to line head"));
+	} else {
+		doe_cut_text();
+		disp_status_bar_done(_("Cut to line head"));
+	}
 	return 1;
+}
+PRIVATE int doe_cut_to_tail_(int delete0_cut1);
+int doe_delete_to_tail(void)
+{
+	return doe_cut_to_tail_(0);
 }
 int doe_cut_to_tail(void)
 {
+	return doe_cut_to_tail_(1);
+}
+PRIVATE int doe_cut_to_tail_(int delete0_cut1)
+{
+	disp_status_bar_done(_("Delete/Cut to line tail"));
 	if (EPCBVC_CLBI == line_data_strlen(EPCBVC_CL)) {
 		return 0;
 	}
 	set_disabled_update_min_text_x_to_keep();	// avoid contents jump around
 	do_set_mark();
 	doe_end_of_line();
-	doe_delete_text();
-
-	disp_status_bar_done(_("Cut to line tail"));
+	if (delete0_cut1 == 0) {
+		doe_delete_text();
+		disp_status_bar_done(_("Deleted to line tail"));
+	} else {
+		doe_cut_text();
+		disp_status_bar_done(_("Cut to line tail"));
+	}
 	return 1;
 }
 
@@ -221,10 +249,6 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 	}
 
 	if (IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
-#ifdef ENABLE_HISTORY
-		// current line ==> search history
-		update_history(HISTORY_TYPE_IDX_EXEC, EPCBVC_CL->data);
-#endif // ENABLE_HISTORY
 		// no mark set, setup cut-region
 		set_mark_pos();
 		setup_cut_region();
@@ -330,6 +354,13 @@ PRIVATE int copy_text_to_cut_buf(void)
 		 mark_max_line, mark_max_col_idx);
 		break;
 	}
+#ifdef ENABLE_HISTORY
+	// add cut text to search history
+	if (count_cut_bufs() && buf_count_lines(TOP_BUF_OF_CUT_BUFS)) {
+		update_history(HISTORY_TYPE_IDX_SEARCH, NODES_TOP_NODE(CUT_BUFS_TOP_NODE)->data);
+	}
+#endif // ENABLE_HISTORY
+	// copy cut text to clip board file
 	save_cut_buf_to_clipboard_file();
 	return 1;
 }
@@ -561,17 +592,13 @@ PRIVATE void delete_rect_region(
 //   CCCC^bbbb
 PRIVATE int paste_cut_buf_char(void)
 {
-	be_line_t *inserted_line;
-	int cur_byte_idx;
-	be_line_t *cut_line;
-
 	set_cur_buf_modified();
 
-	cur_byte_idx = EPCBVC_CLBI;
-	cut_line = CUR_CUT_BUF_TOP_LINE;
+	int cur_byte_idx = EPCBVC_CLBI;
+	be_line_t *cut_line = CUR_CUT_BUFS_TOP_NODE;
 	// Paste the first line of the cut-buffer
 	// >aaaa^bbbb
-	inserted_line = line_separate(EPCBVC_CL, cur_byte_idx, INSERT_BEFORE);
+	be_line_t *inserted_line = line_separate(EPCBVC_CL, cur_byte_idx, INSERT_BEFORE);
 	//  aaaa
 	// >bbbb
 	line_insert_with_string(EPCBVC_CL, INSERT_BEFORE, cut_line->data);
@@ -619,7 +646,7 @@ PRIVATE int paste_cut_buf_line(void)
 
 	set_cur_buf_modified();
 
-	for (cut_line = CUR_CUT_BUF_TOP_LINE; IS_NODE_INT(cut_line); ) {
+	for (cut_line = CUR_CUT_BUFS_TOP_NODE; IS_NODE_INT(cut_line); ) {
 		line_insert_with_string(EPCBVC_CL, INSERT_BEFORE, cut_line->data);
 		cut_line = NODE_NEXT(cut_line);
 		if (IS_MARK_SET(CUR_CBUF_STATE(buf_CUT_MODE))) {
@@ -662,7 +689,7 @@ PRIVATE int paste_cut_buf_rect(void)
 	set_cur_buf_modified();
 
 	cur_line_col_idx = col_idx_from_byte_idx(EPCBVC_CL->data, 0, EPCBVC_CLBI);
-	for (cut_line = CUR_CUT_BUF_TOP_LINE; IS_NODE_INT(cut_line); ) {
+	for (cut_line = CUR_CUT_BUFS_TOP_NODE; IS_NODE_INT(cut_line); ) {
 		if (IS_NODE_BOT_ANCH(EPCBVC_CL)) {
 			// if no more lines in edit buffer, append line automatically
 			EPCBVC_CL = line_insert_with_string(EPCBVC_CL, INSERT_BEFORE, "");

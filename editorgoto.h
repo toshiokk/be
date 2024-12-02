@@ -37,20 +37,17 @@ int doe_goto_file_or_dir_in_cur_line(void);
 int doe_goto_file_or_dir_in_cur_cursor_pos(void);
 
 int doe_open_files_in_buf(void);
-int doe_switch_to_top_file(void);
-int doe_switch_to_bot_file(void);
-int doe_switch_to_prev_file(void);
-int doe_switch_to_next_file(void);
-#if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
+int doe_switch_to_top_buffer(void);
+int doe_switch_to_bot_buffer(void);
+int doe_switch_to_prev_buffer(void);
+int doe_switch_to_next_buffer(void);
+#if APP_REL_LVL <= APP_REL_LVL_TEST
 int doe_switch_to_prev_buffers(void);
 int doe_switch_to_next_buffers(void);
 #endif // APP_REL_LVL
 
 void memorize_cur_file_pos_before_jump();
 int doe_return_to_prev_file_pos(void);
-
-int doe_switch_editor_pane(void);
-void doe_switch_editor_pane_(void);
 
 //-----------------------------------------------------------------------------
 // Top level functions - never called recursively
@@ -59,12 +56,12 @@ void doe_switch_editor_pane_(void);
 // | load_files_in_cur_buf()  | Load files listed in current buffer							|
 // | load_files_in_string()   | Load files listed in one line of string						|
 // | load_file_name_upp_low() | Try to open file with name in as-it-is, UPPER or lower case	|
-// | load_file_name__         | Load file and goto pos (memorized in 'openfile_history')	|
 //
-// Top level functions must:
-//  1. call begin_check_break_key()
-//  2. call equivalent sub-function (sub-function can be called recursively)
-//  3. call end_check_break_key()
+// Top level functions must do below steps:
+//  1. call clear_files_loaded()		# clear counter
+//  2. call begin_check_break_key()		# begin checking break-key
+//  3. call equivalent sub-function		# sub-function can be called recursively
+//  4. call end_check_break_key()		# end   checking break-key
 
 int load_file_name_upp_low(const char *file_name,
  int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive);

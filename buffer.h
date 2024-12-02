@@ -70,8 +70,18 @@ typedef struct be_bufs_t {
 	be_buf_t *cur_buf;			//!< current buffer
 } be_bufs_t;
 
+//! bufferss, collection of bufferss
+typedef struct be_bufss_t {
+///	struct be_bufss_t *prev;		//!< Previous be_bufss_t
+///	struct be_bufss_t *next;		//!< Next     be_bufss_t
+	char name[MAX_NAME_LEN+1];	//! name
+	be_bufs_t top_anchor;		//!< top    buffer
+	be_bufs_t bot_anchor;		//!< bottom buffer
+	be_bufs_t *cur_bufs;		//!< current buffer
+} be_bufss_t;
+
 // Structure of collections of buffers:
-//   be_bufs_t bufss_top_anchor
+//   be_bufs_t all_bufferss.top_anchor
 //   be_bufs_t edit_bufs
 //     be_buf_t main.c
 //          :
@@ -98,27 +108,17 @@ typedef struct be_bufs_t {
 //     be_buf_t redo-1
 //          :
 //     be_buf_t redo-n
-//   be_bufs_t bufss_bot_anchor
-
-// buffers ==> buffer
-#define BUFS_TOP_ANCH(bufs)		NODES_TOP_ANCH(bufs)
-#define BUFS_TOP_BUF(bufs)		NODES_TOP_NODE(bufs)
-#define BUFS_BOT_BUF(bufs)		NODES_BOT_NODE(bufs)
-#define BUFS_BOT_ANCH(bufs)		NODES_BOT_ANCH(bufs)
-
-// buffer ==> line
-#define BUF_TOP_ANCH(buf)		NODES_TOP_ANCH(buf)
-#define BUF_TOP_LINE(buf)		NODES_TOP_NODE(buf)
-#define BUF_BOT_LINE(buf)		NODES_BOT_NODE(buf)
-#define BUF_BOT_ANCH(buf)		NODES_BOT_ANCH(buf)
+//   be_bufs_t all_bufferss.bot_anchor
 
 be_buf_t *buf_create_node(const char *file_path);
 be_buf_t *buf_free_node(be_buf_t *buf);
 
 be_buf_t *buf_init(be_buf_t *buf, const char *file_path);
+void buf_views_init(be_buf_t *buf);
 void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf);
+void buf_view_copy(be_buf_view_t *dest, be_buf_view_t *src);
 void buf_set_view_x_cur_line(be_buf_t *buf, int pane_idx, be_line_t *line);
-be_buf_t *buf_init_line_anchors(be_buf_t *buf, char *initial_data);
+be_buf_t *buf_init_anchors(be_buf_t *buf, char *initial_data);
 void buf_set_file_abs_path(be_buf_t *buf, const char *file_path);
 void buf_set_file_path(be_buf_t *buf, const char *file_path);
 void buf_set_abs_path(be_buf_t *buf, const char *file_path);
@@ -128,7 +128,7 @@ be_buf_t *buf_insert_before(be_buf_t *buf, be_buf_t *new_buf);
 be_buf_t *buf_insert_after(be_buf_t *buf, be_buf_t *new_buf);
 be_buf_t *buf_link(be_buf_t *prev, be_buf_t *next);
 
-be_buf_t *buf_create_copy(be_buf_t *src);
+be_buf_t *buf_create_copy(be_buf_t *buf);
 be_buf_t *buf_copy(be_buf_t *dest, be_buf_t *src);
 
 be_buf_t *buf_unlink_free(be_buf_t *buf);
@@ -136,6 +136,8 @@ be_buf_t *buf_unlink(be_buf_t *buf);
 void buf_clear_link(be_buf_t *buf);
 
 void buf_free_lines(be_buf_t *buf);
+
+be_line_t *buf_append_line_to_bottom(be_buf_t *buf, be_line_t *line);
 
 int buf_compare(be_buf_t *buf1, be_buf_t *buf2);
 
@@ -146,12 +148,12 @@ int buf_guess_tab_size(be_buf_t *buf);
 int buf_count_lines(be_buf_t *buf);
 int buf_is_orig_file_updated(be_buf_t *buf);
 
+const char *buf_mode_str(be_buf_t *buf);
 const char *buf_eol_str(be_buf_t *buf);
-const char *buf_encode_str(be_buf_t *buf);
+const char *buf_enc_str(be_buf_t *buf);
 const char *buf_cut_mode_str(be_buf_t *buf);
 
 //-----------------------------------------------------------------------------
-
 be_line_t *buf_set_cur_line(be_buf_t *buf, be_line_t *line);
 be_line_t *buf_cur_line(be_buf_t *buf);
 be_line_t *buf_move_cur_line_to_prev(be_buf_t *buf);
@@ -164,33 +166,40 @@ int buf_check_crc(be_buf_t *buf);
 unsigned short buf_calc_crc(be_buf_t *buf);
 
 int buf_count_bufs(be_buf_t *buf);
+be_buf_t *buf_make_buf_intermediate(be_buf_t *buf);
 be_buf_t *buf_get_another_buf(be_buf_t *buf);
 
 //-----------------------------------------------------------------------------
-
-be_bufs_t *bufs_init(be_bufs_t *bufs, const char* buf_name);
-be_bufs_t *bufs_link(be_bufs_t *top_anchor, be_bufs_t *bot_anchor);
-be_bufs_t *bufs_insert_before(be_bufs_t *bufs, be_bufs_t *other);
-be_bufs_t *bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next);
+be_bufs_t *bufs_init(be_bufs_t *bufs, const char* name,
+ const char* name_top, const char* name_bottom);
+void bufs_init_anchors(be_bufs_t *bufs, const char *full_path_top, const char *full_path_bot);
+void bufs_link(be_bufs_t *top_anchor, be_bufs_t *bot_anchor);
+void bufs_insert_buf_to_bottom(be_bufs_t *bufs, be_buf_t *buf);
+void bufs_insert_before(be_bufs_t *bufs, be_bufs_t *other);
+void bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next);
 be_bufs_t *bufs_free_all_bufs(be_bufs_t *bufs);
-be_bufs_t *get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf);
+be_bufs_t *bufs_get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf);
+void bufs_fix_cur_buf(be_bufs_t *bufs);
 int bufs_count_bufs(be_bufs_t *bufs);
 
 //-----------------------------------------------------------------------------
+be_buf_t *buf_get_buf_by_idx(be_buf_t *buf, int buf_idx);
+int buf_get_buf_idx(be_buf_t *buf);
+int buf_get_buf_idx_in_bufs(be_bufs_t *bufs, be_buf_t *buf);
 
-void init_bufs_top_bot_anchor(
- be_buf_t *buf_top, const char *full_path_top,
- be_buf_t *buf_bot, const char *full_path_bot);
+be_buf_t *buf_get_buf_by_file_path(be_buf_t *buf, const char *abs_path);
+be_buf_t *buf_get_buf_by_file_name(be_buf_t *buf, const char *file_name);
 
-be_buf_t *get_buf_from_bufs_by_idx(be_buf_t *buf, int buf_idx);
-int get_buf_idx_in_bufs(be_buf_t *bufs, be_buf_t *buf);
-be_buf_t *get_buf_from_bufs_by_file_path(be_buf_t *buf, const char *abs_path);
-be_buf_t *get_buf_from_bufs_by_file_name(be_buf_t *buf, const char *file_name);
-
-void renumber_all_bufs_from_top(be_bufs_t *bufs);
+void bufs_renumber_all_bufs_from_top(be_bufs_t *bufs);
 
 //-----------------------------------------------------------------------------
+void bufss_init(be_bufss_t *bufss, const char *name,
+ const char *name_top, const char *name_bottom);
+void bufss_insert_bufs_to_bottom(be_bufss_t *bufss, be_bufs_t *bufs);
 
+int bufs_get_bufs_idx_in_bufss(be_bufs_t *bufs, be_buf_t *buf);
+
+//-----------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_);
 be_line_t *buf_check_line_in_buf_anchs(be_buf_t *buf, be_line_t *line_);
@@ -198,9 +207,10 @@ void buf_dump_bufs(be_buf_t *buf);
 void buf_dump_bufs_lines(be_buf_t *buf, const char *label);
 void buf_dump_lines(be_buf_t *buf, int lines);
 void buf_dump_ptrs(be_buf_t *buf);
-void buf_dump_state(be_buf_t *buf);
+void buf_dump_name(be_buf_t *buf);
 
 void bufs_dump_all_bufs(be_bufs_t *buf);
+void bufs_dump_name(be_bufs_t *bufs);
 #endif // ENABLE_DEBUG
 
 #endif // buffer_h

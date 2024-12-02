@@ -59,7 +59,7 @@ int search_string_once(const char *needle, int search_count);
 int replace_string_loop(const char *replace_from, const char *replace_to, int *num_replaced_);
 int replace_str_in_buffer(search_t *search, matches_t *matches, const char *replace_to);
 
-void disp_status_bar_not_found_msg(const char *str);
+void disp_status_bar_not_found_msg(const char *str, int search_count);
 
 #endif // search_h
 

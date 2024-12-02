@@ -35,6 +35,7 @@
 #define APP_REL_LVL_STABLE			2	// stable       release
 
 #define APP_NAME		"BE"
+#define APP_LONG_NAME	APP_NAME " editor"
 #define BIN_NAME		"be"
 
 #define APP_DIR				".be"

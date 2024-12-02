@@ -155,14 +155,18 @@ file_type_t *cur_file_type = NULL;			//!< current file type
 file_type_t *default_color_syntax = NULL;	//!< default color syntax
 
 // Select color set by current file name
-int set_file_type_by_cur_file_path(void)
+int set_file_type_and_tab_size_by_cur_file_path(void)
 {
 	int ret;
 
-	if ((ret = set_file_type_by_file_name(get_epc_buf()->file_path_)) != 0) {
+	if ((ret = set_file_type_by_cur_file_path()) != 0) {
 		CUR_EBUF_STATE(buf_TAB_SIZE) = cur_file_type->tab_size;
 	}
 	return ret;
+}
+int set_file_type_by_cur_file_path(void)
+{
+	return set_file_type_by_file_name(get_epc_buf()->file_path_);
 }
 int set_file_type_by_file_name(const char *file_path)
 {

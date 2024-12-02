@@ -132,13 +132,13 @@ int utf8c_len(char utf8c_state, char utf8c)
 			utf8c_state = 0;
 		}
 	} else {
-		if ((unsigned char)utf8c < 0x80) {	// 0xxxxxxx
-			utf8c_state = 0;
+		if ((unsigned char)utf8c < 0x80) {	// 0xxxxxxx (illegal sequence)
+			utf8c_state = -1;
 		} else
 		if ((utf8c & 0xc0) == 0x80) {		// 10xxxxxx
 			utf8c_state--;
-		} else {							// 11xxxxxx
-			utf8c_state = 0;
+		} else {							// 11xxxxxx (illegal sequence)
+			utf8c_state = -1;
 		}
 	}
 	return utf8c_state;				// return remaining bytes

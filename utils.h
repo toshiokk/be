@@ -33,6 +33,9 @@
 #define IDIV(xx, yy)	((xx) / ((yy) != 0 ? (yy) : 1))
 
 #define BOOL_TO_ON_OFF(is_on)		((is_on) ? "ON" : "off")
+#define BOOL_TO_0_1(is_on)			((is_on) ? "1" : "0")
+#define BOOL_TO_1_2(is_on)			((is_on) ? "2" : "1")
+#define BOOL_INV(is_on)				((is_on) ? 0 : 1)
 
 #define FROM_IDX(idx)	((idx) + 1)		// get number from index
 #define FROM_NUM(num)	((num) - 1)		// get index from number
@@ -46,7 +49,7 @@ void die_on(const char *msg);
 #define char_malloc(bytes)			(char *)malloc__(bytes)
 #define char_remalloc(ptr, bytes)	(char *)remalloc__(ptr, bytes)
 
-///#define MEMORY_LEAK_CHECKER
+////#define MEMORY_LEAK_CHECKER
 #ifndef MEMORY_LEAK_CHECKER
 
 #define _mlc_init
@@ -157,6 +160,9 @@ int cache_groups(void);
 
 const char *get_at_host_name();
 const char *get_host_name();
+
+char *select_plural_form(char *singular, char *plural, char *type3, char *type4, int number);
+int get_plural_form_index(int number);
 
 #endif // utils_h
 

@@ -22,11 +22,6 @@
 #ifndef editor2_h
 #define editor2_h
 
-void start_title_bar_blinking();
-void stop_title_bar_blinking();
-
-void editor_disp_title_bar(void);
-
 #define UPDATE_SCRN_NONE		0x00
 #define UPDATE_SCRN_BACKWARD	0x01	// 0000 0001
 #define UPDATE_SCRN_PREV		0x02	// 0000 0010

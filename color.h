@@ -98,6 +98,7 @@ void set_color_by_idx(item_color_idx_t color_idx, int reverse);
 void set_item_color(const item_color_t *item_color);
 
 #ifdef ENABLE_SYNTAX
+int set_file_type_and_tab_size_by_cur_file_path(void);
 int set_file_type_by_cur_file_path(void);
 int set_file_type_by_file_name(const char *file_path);
 const color_syntax_t *get_color_syntax_head(void);

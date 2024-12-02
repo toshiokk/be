@@ -47,6 +47,7 @@ be_SOURCES = \
 	history.c \
 	keymacro.c \
 	keys.c \
+	menu.c \
 	rcfile.c \
 	regexp.c \
 	search.c \
@@ -89,6 +90,7 @@ be_SOURCES = \
 	history.h \
 	keymacro.h \
 	keys.h \
+	menu.h \
 	line.h \
 	linewrap.h \
 	main.h \

@@ -126,9 +126,6 @@ char *unquote_string(char *buffer);
 char is_quoted(const char *str, char quote_chr);
 char tail_char(const char *str);
 
-char *select_plural_form(char *singular, char *plural, char *type3, char *type4, int number);
-int get_plural_form_index(int number);
-
 //-----------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG

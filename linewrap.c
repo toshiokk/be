@@ -189,7 +189,7 @@ flf_d_printf("priv_tab_size: %d\n", priv_tab_size);
 	int chr_cols;
 #define CHAR_COLUMNS(ptr)													\
 	((*ptr == '\0') ? 0 :													\
-	 ((*ptr == '\t') ? (priv_tab_size - total_col_idx % priv_tab_size) :	\
+	 ((*ptr == '\t') ? (priv_tab_size - (total_col_idx % priv_tab_size)) :	\
 	  ((*ptr == '\n') ? 1 :													\
 	   ((is_ctrl_char((unsigned char)*ptr)) ? 2 :							\
 	    (((unsigned char)*ptr < 0x80) ? 1 : utf8c_columns(ptr))				\
@@ -395,7 +395,7 @@ int wrap_line_length(int width)
 //-----------------------------------------------------------------------------
 #define FORWARD_COL_IDX()										\
 	if (*ptr == '\t') {											\
-		col_idx += (priv_tab_size - col_idx % priv_tab_size);	\
+		col_idx += (priv_tab_size - (col_idx % priv_tab_size));	\
 		ptr++;													\
 	} else if (*ptr == '\n') {									\
 		col_idx++;												\
@@ -412,8 +412,8 @@ int wrap_line_length(int width)
 	}
 #define FORWARD_VIS_IDX()										\
 	if (*ptr == '\t') {											\
-		vis_idx += (priv_tab_size - col_idx % priv_tab_size);	\
-		col_idx += (priv_tab_size - col_idx % priv_tab_size);	\
+		vis_idx += (priv_tab_size - (col_idx % priv_tab_size));	\
+		col_idx += (priv_tab_size - (col_idx % priv_tab_size));	\
 		ptr++;													\
 	} else if (*ptr == '\n') {									\
 		vis_idx++;												\

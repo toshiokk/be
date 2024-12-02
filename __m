@@ -1,4 +1,12 @@
 LANG=C; export LANG
+
+if [ "$1" = "0" ] || [ "$1" = "1" ] || [ "$1" = "2" ]; then
+  ./__set_app_rel_lvl.sh "$1"
+  shift
+fi
+
+#cp -av appdefs.h0 appdefs.h  # backup
+
 mk_backup_file2 __error
 if [ ! -f Makefile ]; then
   echo "!!!! No Makefile found !!!!"

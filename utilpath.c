@@ -862,13 +862,13 @@ PRIVATE void test_get_full_path_(const char *path)
 }
 
 #if defined(HAVE_REALPATH)
-PRIVATE void test_realpath_(const char *path);
+PRIVATE const char *test_realpath_(const char *path);
 void test_realpath(void)
 {
 	flf_d_printf("-----------------------\n");
-	test_realpath_("~");
-	test_realpath_("~user");
-	test_realpath_("~root");
+	MY_UT_STR(test_realpath_("~"), "~");
+	MY_UT_STR(test_realpath_("~user"), "~user");
+	MY_UT_STR(test_realpath_("~root"), "~root");
 
 	test_realpath_("/home/user/tools/be/be");
 	test_realpath_("/home/user/tools/./be/be");
@@ -877,15 +877,16 @@ void test_realpath(void)
 	test_realpath_("/home/user/tools/be/be/testfiles/symlinkd");
 	test_realpath_("/home/user/tools/be/be/testfiles/symlinkf");
 
-	test_realpath_("/dev/stdin");
-	test_realpath_("/dev/fd");
+	///MY_UT_STR(test_realpath_("/dev/stdin"), "/proc/self/fd/0");
+	///MY_UT_STR(test_realpath_("/dev/fd"), "/proc/self/fd");
 }
-PRIVATE void test_realpath_(const char *path)
+PRIVATE const char *test_realpath_(const char *path)
 {
-	char buf[MAX_PATH_LEN+1];
+	static char buf[MAX_PATH_LEN+1];
 
 	realpath__(path, buf, MAX_PATH_LEN);
 	///flf_d_printf("path:[%s] ==> buf:[%s]\n", path, buf);
+	return buf;
 }
 #endif // HAVE_REALPATH
 
@@ -918,8 +919,7 @@ void test_separate_path_to_dir_and_file()
 	test_separate_path_to_dir_and_file__(buf_dir, buf_dir, buf_file,
 	 "/dir/to", "file");
 	strcpy__(buf_dir, "dir/to/file");
-	test_separate_path_to_dir_and_file__(buf_dir, buf_dir, buf_file,
-	 "dir/to", "file");
+	test_separate_path_to_dir_and_file__(buf_dir, buf_dir, buf_file, "dir/to", "file");
 	test_separate_path_to_dir_and_file__("", buf_dir, buf_file, ".", "");
 	test_separate_path_to_dir_and_file__(".", buf_dir, buf_file, ".", "");
 	test_separate_path_to_dir_and_file__("..", buf_dir, buf_file, "..", "");

@@ -134,10 +134,12 @@ struct /*_rc_cmd_idx_*/ {
  { "tab_eol_notation",	EDMD_TAB_EOL_NOTATION,	},
 #endif // ENABLE_SYNTAX
 
+#ifdef ENABLE_FILER
  { "show_dot_file",		FLMD_SHOW_DOT_FILE,		},
  { "show_file_info",	FLMD_SHOW_FILE_INFO,	},
  { "sort_by",			FLMD_FILE_SORT_BY,		},
  { "filer_panes",		FLMD_FILER_PANES,		},
+#endif // ENABLE_FILER
 };
 
 // commands which take various type of parameter

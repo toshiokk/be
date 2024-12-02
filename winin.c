@@ -59,7 +59,7 @@ PRIVATE int input_string_pos_(const char *default__, char *input_buf, int cursor
 	byte_idx = byte_idx_from_col_idx(msg_buf, main_win_get_columns(), CHAR_LEFT, NULL);
 	msg_buf[byte_idx] = '\0';		// limit message length
 
-	update_screen_app(1, 1, 1);
+	update_screen_app(1, 1);
 
 	get_full_path_of_cur_dir(dir_save);
 	tio_set_cursor_on(1);
@@ -72,7 +72,7 @@ flf_d_printf("ret: %d\n", ret);
 	tio_set_cursor_on(0);
 	change_cur_dir(dir_save);
 
-	update_screen_app(1, 1, 1);
+	update_screen_app(1, 1);
 
 	if (ret <= EF_QUIT) {
 		disp_status_bar_done(_("Cancelled"));
@@ -88,7 +88,7 @@ flf_d_printf("ret: %d\n", ret);
 
 // Input string. This should only be called from input_string_xxx().
 PRIVATE int input_string_pos__(const char *default__, char *input_buf, int cursor_byte_idx,
- int hist_type_idx, const char *msg)
+ int hist_type_idx, const char *message)
 {
 	int key_input;
 	const char *func_id;
@@ -106,13 +106,13 @@ PRIVATE int input_string_pos__(const char *default__, char *input_buf, int curso
 	// Main input loop
 	for ( ; ; ) {
 		ret = EF_NONE;
-		disp_input_box(msg, input_buf, cursor_byte_idx);
-		tio_refresh();
+		update_screen_app(1, 0);
+		disp_input_box(message, input_buf, cursor_byte_idx);
 		//---------------------------
 		key_input = input_key_wait_return();
 		//---------------------------
-mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
- '_', key_input, short_key_name_from_key_code(key_input, NULL));
+		mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
+		 '_', key_input, short_key_name_from_key_code(key_input, NULL));
 
 		if (IS_CHAR_KEY(key_input)) {
 			// character key
@@ -262,18 +262,24 @@ flf_d_printf("call_filer ret: EF__%d, buffer: [%s]\n", ret, buffer);
 				cursor_byte_idx = strlen_path(input_buf);
 				int start_byte_idx = byte_idx_from_byte_idx(line, EPCBVC_CLBI + cursor_byte_idx);
 				int byte_idx = start_byte_idx;
-				if (cursor_byte_idx == 0) {
-					// copy one token
-					for ( ; (byte_idx - start_byte_idx) < (MAX_PATH_LEN - MAX_UTF8C_BYTES); ) {
-						if (is_char_id(line[byte_idx]) == 0) {
-							break;
+				if ((cmp_func_id(func_id, "doe_search_backward_first") && (SEARCH_DIR() > 0))
+				 || (cmp_func_id(func_id, "doe_search_forward_first") && (SEARCH_DIR() < 0))) {
+					// copy whole line
+					byte_idx = byte_idx_from_byte_idx(line, MAX_PATH_LEN);
+				} else {
+					if (cursor_byte_idx == 0) {
+						// copy one token
+						for ( ; (byte_idx - start_byte_idx) < (MAX_PATH_LEN - MAX_UTF8C_BYTES); ) {
+							if (is_char_id(line[byte_idx]) == 0) {
+								break;
+							}
+							byte_idx++;
 						}
-						byte_idx++;
 					}
-				}
-				if ((byte_idx - start_byte_idx) == 0) {
-					// copy one character
-					byte_idx += utf8c_bytes(&line[byte_idx]);
+					if ((byte_idx - start_byte_idx) == 0) {
+						// copy one character
+						byte_idx += utf8c_bytes(&line[byte_idx]);
+					}
 				}
 				strlncat__(input_buf, MAX_PATH_LEN, &line[start_byte_idx],
 				 byte_idx - start_byte_idx);
@@ -310,8 +316,7 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 	set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
 	main_win_output_string(get_input_line_y(), 1, msg, -1);
 	main_win_output_string(get_input_line_y()+2, 1,
-	 _("UP:history, DOWN:filer, PgUp:insert from history, PgDn:insert from filer"),
-	 -1);
+	 _("UP:history, DOWN:filer, PgUp:insert from history, PgDn:insert from filer"), -1);
 	set_color_by_idx(ITEM_COLOR_IDX_INPUT, 0);
 
 	input_area_width = main_win_get_columns()-2;
@@ -319,6 +324,7 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 		bytes = byte_idx_from_col_idx(input_buf, input_area_width, CHAR_LEFT, NULL);
 		main_win_output_string(get_input_line_y()+1, 1, input_buf, bytes);
 		main_win_set_cursor_pos(get_input_line_y()+1, 1 + cursor_col_idx);
+/////_FLF_
 	} else {
 #define TRUNCATION_MARK	"."
 		//"abcdefghijklmnopqrstuvwxyz"
@@ -343,6 +349,7 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 		 + col_idx_from_byte_idx(&input_buf[start_byte_idx],
 		 0, cursor_byte_idx - start_byte_idx));
 	}
+	tio_refresh();
 }
 
 PRIVATE void blank_input_box(void)
@@ -381,7 +388,6 @@ int ask_yes_no(int flags, const char *msg, ...)
 	const char *chars_undo = "Uu";				// Undo
 	const char *chars_redo = "Oo";				// redO
 	int answer;
-	int byte_idx;
 
 	key_lines_save = GET_APPMD(app_KEY_LINES);		// save KEY_LINES
 	SET_APPMD_VAL(app_KEY_LINES, LIM_MIN(1, key_lines_save));	// set lines more than 1
@@ -423,7 +429,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 		vsnprintf(msg_buf, MAX_SCRN_LINE_BUF_LEN+1, msg, ap);
 		va_end(ap);
 		strlcat__(msg_buf, MAX_SCRN_LINE_BUF_LEN, " ");
-		byte_idx = byte_idx_from_col_idx(msg_buf, MAX_SCRN_LINE_BUF_LEN, CHAR_LEFT, NULL);
+		int byte_idx = byte_idx_from_col_idx(msg_buf, MAX_SCRN_LINE_BUF_LEN, CHAR_LEFT, NULL);
 		msg_buf[byte_idx] = '\0';
 		set_color_by_idx(ITEM_COLOR_IDX_WARNING, 0);
 		blank_status_bar();
@@ -469,9 +475,9 @@ int ask_yes_no(int flags, const char *msg, ...)
 	disp_key_list_editor();
 
 	SET_APPMD_VAL(app_KEY_LINES, key_lines_save);	// recover KEY_LINES
-	update_screen_app(1, 1, 1);
+	update_screen_app(1, 1);
 
-	return answer;
+	return answer;	// x > 0: yes, x = 0: no, x < 0: cancel
 }
 
 PRIVATE void list_one_key(char key, const char *desc)

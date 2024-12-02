@@ -24,7 +24,6 @@
 
 #ifdef ENABLE_UNDO
 
-void init_undo_redo_bufs(void);
 be_buf_t *push_undo_buf(be_buf_t *buf);
 be_buf_t *pop_undo_buf(void);
 be_buf_t *push_redo_buf(be_buf_t *buf);
@@ -46,8 +45,6 @@ void check_undo_state_after_change(void);
 
 void undo_set_region__save_before_change(be_line_t *min_line, be_line_t *max_line,
  int cut_buf_lines);
-void undo_adjust_max_line(void);
-void undo_save_before_change(void);
 void undo_save_after_change(void);
 int doe_undo(void);
 int doe_redo(void);

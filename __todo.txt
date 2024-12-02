@@ -1,25 +1,112 @@
 #### BE-editor to do list
  (H: high priority, L: Low priority, e: easy, d: difficult, x/v: done, -: impossible/pending)
 
-- [ ] search in editor list mode
+- Unevitable batting key bindings with short-cuts in WSL(Linux on Windows)
+  - Alt-TAB (but Ctrl-Alt-I does not batting, use this instead)
+  - Alt-ESC
+  - Alt-`
+  - Ctrl--, Ctrl-+
+
+- [x] in editor-list-mode, M-e inserts text to input_str
+- [x] make editor and filer to work more seamless as possible.
+  - [x-] cut-copy 1 line ==> execution history
+  - [x] to be able to paste texts cut from editor into filer (add cut text to search history)
+- [x] move pane_idx(editor/filer) into app_mode_t
+- [x] locate cursor to the position at which some modification done after doing undo
+  - [-] add line-number in be_buf_t for undo to locate cursor to right line on doing
+- [x] BUG: parent window cleared in input_str...() when no input more than 10 secs.
+- [x] make list mode be able to quit from on ESC
+- [x] "Open and close file" reset the two pane mode
+- [x] ISSUE: too easily quit from application ==> add confirmation of Yes/No
+  - [x] ask only when unused cut/undo buffer exist
+- [?] BUG: funny tr messages when open editor menu
+  - Ubuntu 24.04: reproduce
+  - WSL Ubuntu 22.04: does not reproduce
+- [x] BUG: tog/inc_tab_size
+- [-] can not quit from filer by ESC key
+- [x] CRASH: on modifying in the empty buffer of list mode
+- [x] adequitely place cursor in the buffer "No lines in this buffer"
+- [x] exit editor on the mode at the editor started, not on the buffer mode
+- [x] BUG: tag-jump from file-list
+- [x] 241120 get whole line from edit buffer '^\' '^]' or '^]' '^\'
+- [x] 241120 cut-to-head and cut-to-tail w/wo copy into cut-buffer
+- [x] 241120 BUG: doe_open_new_file says "100 files loaded" though just 1 file
+- [x] 241120 BUG: doe_open_new_file says "1 files loaded" at a new file ==> "New file"
+- [x] fix no buffer and no line problems.
+  - Is it not good at the anchor method ?
+     ==> There are good points at the anchor method
+         - It is good to point the anchor for cur_line
+    - top-bottom-anchor method:
+      - when empty:
+	be_line_t top_anchor:	be_line_t *prev       , be_line_t *next = NULL;
+	be_line_t bot_anchor:	be_line_t *prev = NULL, be_line_t *next;
+      - when not empty:
+	be_line_t top_anchor:	be_line_t *prev = NULL, be_line_t *next;
+	be_line_t line_1:	be_line_t *prev       , be_line_t *next;
+	be_line_t line_2:	be_line_t *prev       , be_line_t *next;
+	be_line_t line_3:	be_line_t *prev       , be_line_t *next;
+	be_line_t bot_anchor:	be_line_t *prev       , be_line_t *next = NULL;
+      - is_empty() (IS_NODES_EMPTY())
+        if top_anchor->next->next or bot_anchor->prev->prev is NULL
+    - top-bottom-link method:
+      - when empty:
+	be_line_t *top_link = NULL;
+	be_line_t *bot_link = NULL;
+      - when not empty:
+	be_line_t *top_link;
+	be_line_t line_1:	be_line_t *prev = NULL, be_line_t *next;
+	be_line_t line_2:	be_line_t *prev       , be_line_t *next;
+	be_line_t line_3:	be_line_t *prev       , be_line_t *next = NULL;
+	be_line_t *bot_link;
+      - is_empty() (IS_NODES_EMPTY())
+        if top_link or bottom_link is NULL
+- [x] 241118 auto checking font width
+- [x] 241119 my own UTF8 guessing on 'nkf -g' guessing EUC-JP
+- [x] 241119 FIX: draw cursor myself
+- [x] 241118 CRASH: on switching buffers
+- [x] 241120 CRASH: on F12 in history view
+- [x] 241118 browse all buffers.
+  - [x] 241118 show bufs index in the title bar as "1:1:1:/home/user/..."
+- [x] 241119 BUG: fix key macro play back
+- [x] 241118 syntax highlighting not selected after swiching bufs
+- [x] 241114 fix status bar color
+# status bar display management
+- Editor main loop
+  - first loop		"PREV" | "NEXT" (e.g.: N files loaded | LINE: ...)
+  - no key input	nothing
+  - cursor move		display new cursor information
+  - error		show error message (e.g.: Key word not found)
+  - done		show completion message (e.g.: File closed)
+- Filer main loop
+  - first loop		"PREV" | "NEXT" (e.g.: Files closed | README.md ...)
+  - no key input	nothing
+  - cursor move		display new file information
+  - error		show error message (e.g.: No function assigned to the key)
+  - done		show completion message (e.g.: N files copied)
+- [d] 241118 show current buffer after switching buffers
+- [x] 241115 define a structure which contains all buffers 'be_bufss_t'
+- [x] 241114 change title bar design on HOME dir.
+- [x] 241114 do not delete old entry of exec history
+- [x] 241115 Run key-marcro inputting key sequence as a text (M-3)
+- [x] 241114 show all key bindings
+- [x] redraw whole windows after screen resizing
+  - [x] redraw input box after screen resizing
+  - [x] redraw parent window after screen resizing
+- [d] Do logging without using "| tee -a file"
+  - [d] app --> pty-master, pty-slave --> log file
+- [x] log all execution command lines
+- [x] search in editor list mode
 - [x] repaint on laptop rid opened (10 secs)
-- [ ] redraw whole windows after screen resizing
-  - [-] redraw input box after screen resizing
-  - [ ] redraw parent window after screen resizing
 - [x] place cursor on the head of file name in filer
 - [x] The position indicator is shown on not currect position after file opening.
 
-- [ ] Use pty for logging not using "| tee -a file"
-  app --> pty-master, pty-slave --> log file
-- [ ] 241022 record start time of execution to log file
+- [-] 241022 record start time of execution to log file
 - [x] 241021 be able to output log in all execution command
   |Entering key|logging in execution|comments|
   |------------|--------------------|--------|
   |Enter       |None                |-- |
   |@Enter      |Logging             |-- |
 
-- [] works editor and filer seamless as possible.
-  - [x] cut-copy 1 line ==> execution history
 - [x] 241020 fix editor key/func list
 - [x] 241020 Not update common history files soon
 - [x] 241018 add filer funckey list
@@ -42,8 +129,8 @@
   /home/user/tools/be/be/editormove.h|100:1
 - [x] 241002 increase open file history size from 1000 to 10000
 - [x] 241001 fill spaces to columns (e.g. 80 columns)
-  1. memorize columns number                   (MC-] : 1b1d)
-  2. fill to the memorized columns with spaces (M-_  : 1b5f)
+  1. memorize columns number                   (M-{ : 1b7b)
+  2. fill to the memorized columns with spaces (M-} : 1b7d)
 
 [x] 240830 show from the top of the file if file contains less lines than the screen lines.
 
@@ -57,17 +144,20 @@
   [x] 240909 convert camel case "camel" -> "Camel" -> "CAMEL" -> "cAMEL" ->
   [x] 240910 convert camel case "camel" -> "CAMEL" -> "Camel" -> "cAMEL" ->
   [x] 240926 "F_A..." can not be converted
+  [x] 241111 convert camel case "camel" -> "Camel" -> "CAMEL" -> "cAMEL" ->
+  [x] 241111 convert camel case "CAMEL" -> "cAMEL" -> "camel" -> "Camel" ->
 [x] goto colmuns "Alt-Ctrl-F columns"
-[x] Handle WSL drop event like: '/mnt/c/Users/t_koike/Downloads/20240731.zip'
-  | state                        | event                              | event                           |
-  |------------------------------| drop files "'file-1' 'file-2' ..." | drop dirs "'dir-1' 'dir-2' ..." |
-  |[x]in filer                   | [x]open these files                | [x]open dir                     |
-  |[x]in filer  - "Open new file"| [x]open these files                | [x]open dir                     |
-  |[-]in editor                  | can not handle it because "'" is ordinary charactor                  |
-  |[x]in editor - "Open new file"| open these files                   | [x]open dir                     |
+[x] Handle drop event from window managers like: '/mnt/c/Users/t_koike/Downloads/20240731.zip'
+  | state                            | event                              | event                           |
+  |----------------------------------| drop files "'file-1' 'file-2' ..." | drop dirs "'dir-1' 'dir-2' ..." |
+  |[x]in filer                       | [x]open these files                | [x]open dir                     |
+  |[x]in filer  - "dof_open_new_file"| [x]open these files                | [x]open dir                     |
+  |[-]in editor                      | can not handle it because "'" is ordinary character                  |
+  |[x]in editor - "doe_open_new_file"| open these files                   | [x]open dir                     |
   - [x] open file
+    - [ ] select action from open/copy/move/process after drop
   - [x ] copy(K_M_C), move(K_M_M)
-  - [ ] process by command
+  - [ ] process dropped files by command
 [x] capture stdout/err into be-editor buffer
   back-scroll vs log-file
   - [-] back-scroll method - Bad: hard to handle(get, edit, copy).
@@ -150,12 +240,6 @@ switching filer and editor
                    +- call_filer
 
 [x] editor: stay in editor while `get_edit_bufs() > 0` and exit when `get_edit_bufs() == 0`
-
-|editor mode |load|edit|save|select by tap|search/cut/copy|possible actions|in code        |buf-RO|
-|------------|----|----|----|-------------|---------------|----------------|---------------|------|
-|edit mode   |yes |yes |yes |no           |yes            |all editing     |APP_MODE_NORMAL| R/W  |
-|history mode|auto|no  |auto|yes          |no             |view/select     |APP_MODE_LIST  | R/O  |
-|help mode   |no  |no  |no  |no           |yes            |view/search     |APP_MODE_HELP  | R/O  |
 
 //Transitions between filer and editor:
 // filer(NORMAL)									return code-------------
@@ -241,7 +325,7 @@ editor/filer	input_string()
 	- on WSL: run clipboard-update.sh every time cut/copy performed
 		[v] do not switch terminal on execution of clip.exe
 [v] 0 bytes file can not be loaded
-[l ] differenciate "buffer saved" and "buffer checked"
+[l-] differenciate "buffer saved" and "buffer checked"
 
 [v] Show screen size on status-bar when resized
 [v] fix: path displayed on filer title-bar 
@@ -267,7 +351,7 @@ editor/filer	input_string()
 [v] show file path on the title bar as long as possible
 
 [v] tag jump with just file_name.ext switches already open file
-[v] tag jump with just file_name.ext opens file listed in openfile_history
+[v] tag jump with just file_name.ext opens file listed in file_history
 [v] return to file positon where KW replace has begun
 [v] return to file positon where KW search has begun
 
@@ -449,7 +533,7 @@ v F: Input keyword to search
 
 [-]Improbe page-up, page-down cursow movement.
 
-[-]Self investigate which Charactor width in Zenkaku or Hankaku charactors.
+[-]Self investigate which character width in Zenkaku or Hankaku characters.
   ==> Impossible. OS library does not treat Zenkaku char correctly.
   ==> Workaround: Treat all unbiguous char as a Zenkaku char. and
                   increment display position by 2 selfly not depending on
@@ -626,7 +710,7 @@ Editor 2 pane mode
 //[pe]make "previous word/next word" efficient
 //speed up file browser
 //[pe]TAB color, EOL color, normal color, cursor color
-//[pe]Charactor base cut / Line base cut
+//[pe]Character base cut / Line base cut
 //[pe]TAB character/end of line/double byte space indication
 //[pe]Cursor Inversion and Blinking
 //[bug]replace string history Not memoried

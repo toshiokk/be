@@ -22,14 +22,14 @@
 #ifndef tio_h
 #define tio_h
 
+#include "keys.h"
+
 // MAX_SCRN_COLS			384		// = 1920[pixels] / 5[pixels/char] (full HD)
 // MAX_SCRN_COLS			512		// = 2560[pixels] / 5[pixels/char] (WQXGA)
 #define MAX_SCRN_COLS			768		// = 3840[pixels] / 5[pixels/char] (4K landscape)
 // MAX_SCRN_COLS			1536	// = 7680[pixels] / 5[pixels/char] (8K landscape)
 #define MAX_SCRN_LINES		384		// = 3840[pixels] / 10[pixels/char] (4K portrait)
 #define MAX_SCRN_LINE_BUF_LEN	(MAX_SCRN_COLS * MAX_UTF8C_BYTES)	// = 4608
-
-typedef short key_code_t;
 
 #ifdef ENABLE_NCURSES
 #include "cursesif.h"

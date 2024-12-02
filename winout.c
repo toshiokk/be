@@ -21,7 +21,6 @@
 
 #include "headers.h"
 
-PRIVATE int win_depth = 0;			// 0:root window, 1,2,...:child window
 win_rect_t sub_win_rects[SUB_WINS];
 win_rect_t *main_win, *cur_win;
 int cur_win_idx;
@@ -34,30 +33,37 @@ PRIVATE void win_clear_lines(win_rect_t *win, int line_1, int line_2);
 PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *string, int bytes);
 
 //-----------------------------------------------------------------------------
-int win_lines = -1;
-int win_columns = -1;
+PRIVATE int win_depth = 0;			// 0:root window, 1,2,...:child window
 
 void win_init_win_size(void)
 {
 	win_depth = 0;
 	win_reinit_win_size();
 }
-
-//-----------------------------------------------------------------------------
-
+void set_win_depth(int app_stack_depth)
+{
+	win_depth = app_stack_depth * 2;
+	win_reinit_win_size();
+}
 void inc_win_depth(void)
 {
 	win_depth++;
+	win_reinit_win_size();
 }
 void dec_win_depth(void)
 {
 	if (win_depth > 0) {
 		win_depth--;
+		win_reinit_win_size();
 	}
 }
 const int get_win_depth(void)
 {
 	return win_depth;
+}
+void win_reinit_win_size()
+{
+	win_setup_win_size(win_depth);
 }
 
 // editor window sectioning
@@ -91,16 +97,11 @@ const int get_win_depth(void)
 //	|-----------------------------------|	|-------------------+-------------------|
 //	|                                   |	|                                       |
 //	+-----------------------------------+	+---------------------------------------+
-void win_reinit_win_size(void)
+void win_setup_win_size(int win_depth)
 {
-	int sub_win_idx;
-
-	win_lines = tio_get_lines();
-	win_columns = tio_get_columns();
-
 	win_select_win(WIN_IDX_MAIN);
 	main_win = cur_win;		// &sub_win_rects[WIN_IDX_MAIN];
-	for (sub_win_idx = 0; sub_win_idx < SUB_WINS; sub_win_idx++) {
+	for (int sub_win_idx = 0; sub_win_idx < SUB_WINS; sub_win_idx++) {
 		win_select_win(sub_win_idx);
 		switch (sub_win_idx) {
 		default:

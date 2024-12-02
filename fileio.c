@@ -34,6 +34,7 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_bin_file, i
 #ifdef USE_NKF
 PRIVATE int guess_encoding_by_nkf(const char *full_path);
 PRIVATE int my_guess_bin_file(const char *full_path);
+PRIVATE int my_guess_utf8_file(const char *full_path);
 PRIVATE int load_file_into_cur_buf_nkf(const char *full_path, const char *nkf_options);
 #endif // USE_NKF
 PRIVATE int load_file_into_cur_buf_ascii(const char *file_name);
@@ -54,8 +55,8 @@ int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_er
 		return lines;
 	}
 	append_magic_line();
-	buf_set_view_x_cur_line(get_epc_buf(), 0, CUR_EDIT_BUF_TOP_LINE);
-	buf_set_view_x_cur_line(get_epc_buf(), 1, CUR_EDIT_BUF_TOP_LINE);
+	buf_set_view_x_cur_line(get_epc_buf(), 0, CUR_EDIT_BUFS_TOP_NODE);
+	buf_set_view_x_cur_line(get_epc_buf(), 1, CUR_EDIT_BUFS_TOP_NODE);
 	BUFVX_CLBI(get_epc_buf(), 0) = 0;
 	BUFVX_CLBI(get_epc_buf(), 1) = 0;
 	renumber_cur_buf_from_top();
@@ -65,11 +66,15 @@ int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_er
 	if ((tab_size = buf_guess_tab_size(get_epc_buf())) != 0) {
 		CUR_EBUF_STATE(buf_TAB_SIZE) = tab_size;
 	}
-	disp_status_bar_ing(P_(_("%d line read %s"),
+	if (lines > MAX_LINES_LOADABLE) {
+		disp_status_bar_done(_("New file"));		// new file (0 line)
+	} else {
+		disp_status_bar_ing(P_(_("%d line read %s"),
 						   _("%d lines read %s"),
 						   _("%d liness read %s"),
 						   _("%d linesss read %s"),
-	 lines), lines, buf_eol_str(get_epc_buf()));
+		 lines), lines, buf_eol_str(get_epc_buf()));
+	}
 	return lines;	// >= 0: success
 }
 PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int msg_on_err)
@@ -91,7 +96,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 		}
 		create_edit_buf(full_path);
 		disp_status_bar_ing(_("New File"));
-		return 0;		// new file (0 line)
+		return MAX_LINES_LOADABLE+1;		// new file (0 line)
 	}
 	if (S_ISREG(st.st_mode) == 0) {
 		// special file
@@ -161,9 +166,10 @@ int backup_and_save_cur_buf_ask(void)
 int input_new_file_name__ask(char *file_path)
 {
 	for ( ; ; ) {
-		if (input_string_pos(file_path, file_path,
-		 MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
-		 "%s:", _("File Name to Write:")) <= EF_EXECUTED) {
+		if (input_string_pos(file_path, file_path, MAX_PATH_LEN,
+		 HISTORY_TYPE_IDX_DIR,
+		 _("File Name to Write:"))
+		 <= EF_EXECUTED) {
 			return 0;
 		}
 		if (is_path_exist(file_path)) {
@@ -175,8 +181,9 @@ int input_new_file_name__ask(char *file_path)
 				if (ret < 0) {
 					return 0;		// cancelled
 				}
-				if (ret == 0)
+				if (ret == 0) {
 					continue;
+				}
 			} else {
 				// ask non regular file
 				ret = ask_yes_no(ASK_YES_NO,
@@ -196,9 +203,6 @@ int input_new_file_name__ask(char *file_path)
 
 int backup_and_save_cur_buf(const char *file_path_to)
 {
-	int mask = 0;
-	int lines_written;
-
 	// TODO: do minimum check
 	//  file_path is regular file and not dir and special file
 	if (is_path_regular_file(file_path_to) == 0) {
@@ -214,10 +218,10 @@ int backup_and_save_cur_buf(const char *file_path_to)
 		}
 	}
 
-	lines_written = save_cur_buf_to_file(file_path_to);
+	int lines_written = save_cur_buf_to_file(file_path_to);
 
 	if (S_ISREG(get_epc_buf()->orig_file_stat.st_mode)) {
-		mask = get_epc_buf()->orig_file_stat.st_mode & 07777;
+		int mask = get_epc_buf()->orig_file_stat.st_mode & 07777;
 		if (chmod(file_path_to, mask) < 0) {
 			disp_status_bar_err(_("Can not set permissions %1$o on [%2$s]: %3$s"),
 			 mask, shrink_str_to_scr_static(file_path_to), strerror(errno));
@@ -234,20 +238,19 @@ int backup_and_save_cur_buf(const char *file_path_to)
 						   _("%d linesss written"),
 	 lines_written), lines_written);
 	CUR_EBUF_STATE(buf_MODIFIED) = 0;
-	editor_disp_title_bar();
+	disp_title_bar_editor();
 
 	return lines_written;		// -1: error
 }
 PRIVATE int backup_files(const char *file_path, int depth)
 {
-	char orig_path[MAX_PATH_LEN+1];
-	char backup_path[MAX_PATH_LEN+1];
-	struct stat st;
-
 	depth = LIM_MIN(0, depth);
 	for ( ; depth > 0; depth--) {
+		char orig_path[MAX_PATH_LEN+1];
+		char backup_path[MAX_PATH_LEN+1];
 		make_backup_file_path(file_path, backup_path, depth);
 		make_backup_file_path(file_path, orig_path, depth-1);
+		struct stat st;
 		if (!stat(orig_path, &st)) {
 			remove(backup_path);
 			if (rename(orig_path, backup_path) < 0) {
@@ -426,7 +429,7 @@ PRIVATE int guess_encoding_by_nkf(const char *full_path)
 	FILE *fp;
 
 	CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
-	// No encoding specified in command line
+	// No encoding specified in the command line
 	snprintf_(buffer, MAX_PATH_LEN+1, "nkf -g \"%s\"", full_path);
 	if ((fp = popen(buffer, "r")) <= 0) {
 		disp_status_bar_err(_("Can not read-open file [%s]: %s"),
@@ -448,7 +451,12 @@ PRIVATE int guess_encoding_by_nkf(const char *full_path)
 	} else if (strlcmp__(buffer, "UTF-8") == 0) {
 		CUR_EBUF_STATE(buf_ENCODE) = ENCODE_UTF8;
 	} else if (strlcmp__(buffer, "EUC-JP") == 0) {
-		CUR_EBUF_STATE(buf_ENCODE) = ENCODE_EUCJP;
+		int guess_utf8 = my_guess_utf8_file(full_path);
+		if (guess_utf8 < 0) {
+			CUR_EBUF_STATE(buf_ENCODE) = ENCODE_EUCJP;
+		} else {
+			CUR_EBUF_STATE(buf_ENCODE) = ENCODE_UTF8;
+		}
 	} else if (strlcmp__(buffer, "Shift_JIS") == 0) {
 		CUR_EBUF_STATE(buf_ENCODE) = ENCODE_SJIS;
 	} else if (strlcmp__(buffer, "ISO-2022-JP") == 0) {
@@ -466,19 +474,17 @@ PRIVATE int guess_encoding_by_nkf(const char *full_path)
 // use my own guessing of binary file.
 PRIVATE int my_guess_bin_file(const char *full_path)
 {
-#define BYTES_READ_ONCE			MAX_PATH_LEN
-#define BYTES_TO_BE_CHKED		MAX_PATH_LEN
-#define BYTES_TO_BE_GUESSED_BIN	((BYTES_TO_BE_CHKED) / 20)
+#define BYTES_TO_BE_CHKED_BIN		MAX_PATH_LEN
+#define BYTES_TO_BE_GUESSED_BIN		((BYTES_TO_BE_CHKED_BIN) / 20)
 	FILE *fp;
-
 	if ((fp = fopen(full_path, "rb")) == NULL) {
 		return -1;
 	}
 	int may_be_bin = 0;
 	int bin_bytes_found = 0;
-	for (int bytes_chked = 0; bytes_chked < BYTES_TO_BE_CHKED; ) {
-		unsigned char bin_buf[BYTES_READ_ONCE];
-		int bytes = fread(bin_buf, 1, BYTES_READ_ONCE, fp);
+	for (int bytes_chked = 0; bytes_chked < BYTES_TO_BE_CHKED_BIN; ) {
+		unsigned char bin_buf[BYTES_TO_BE_CHKED_BIN];
+		int bytes = fread(bin_buf, 1, BYTES_TO_BE_CHKED_BIN, fp);
 		if (bytes <= 0) {
 			break;
 		}
@@ -501,9 +507,49 @@ PRIVATE int my_guess_bin_file(const char *full_path)
 		bytes_chked += bytes;
 	}
 	if (fclose(fp) != 0) {	// 0: OK, EOF: error
-		may_be_bin = -3;
+		// nothing to do
 	}
 	return may_be_bin;
+}
+PRIVATE int my_guess_utf8_file(const char *full_path)
+{
+#define BYTES_TO_BE_CHKED_UTF8			65536
+	FILE *fp;
+	if ((fp = fopen(full_path, "rb")) == NULL) {
+		return -1;
+	}
+	char utf8c_state = 0;
+	int utf8_bytes_found = 0;
+	int illegal_utf8_seq_found = 0;
+	for (int bytes_chked = 0; bytes_chked < BYTES_TO_BE_CHKED_UTF8; ) {
+		unsigned char bin_buf[BYTES_TO_BE_CHKED_UTF8];
+		int bytes = fread(bin_buf, 1, BYTES_TO_BE_CHKED_UTF8, fp);
+		if (bytes <= 0) {
+			break;
+		}
+		for (int off = 0; off < bytes; off++) {
+			utf8c_state = utf8c_len(utf8c_state, bin_buf[off]);
+			if (utf8c_state < 0) {
+				// illegal sequence found
+				illegal_utf8_seq_found++;
+				break;
+			} else
+			if (utf8c_state > 0) {
+				utf8_bytes_found++;
+			}
+		}
+		if (illegal_utf8_seq_found) {
+			break;
+		}
+		bytes_chked += bytes;
+	}
+	if (fclose(fp) != 0) {	// 0: OK, EOF: error
+		// nothing to do
+	}
+	if (illegal_utf8_seq_found) {
+		return -1;				// illegal utf8 sequence (maybe EUC-JP or Shift_JIS)
+	}
+	return utf8_bytes_found;	// 0: ASCII, >0: UTF8
 }
 PRIVATE int load_file_into_cur_buf_nkf(const char *full_path, const char *nkf_options)
 {
@@ -528,14 +574,12 @@ PRIVATE int load_file_into_cur_buf_nkf(const char *full_path, const char *nkf_op
 PRIVATE int load_file_into_cur_buf_ascii(const char *full_path)
 {
 	FILE *fp;
-	int lines;
-
 	if ((fp = fopen(full_path, "rb")) == NULL) {
 		disp_status_bar_err(_("Can not read-open file [%s]: %s"),
 		 shrink_str_to_scr_static(full_path), strerror(errno));
 		return -1;
 	}
-	lines = load_into_cur_buf_fp(fp);
+	int lines = load_into_cur_buf_fp(fp);
 	if (fclose(fp) != 0) {	// 0: OK, EOF: error
 		lines = -1;
 	}
@@ -586,12 +630,12 @@ PRIVATE int load_file_into_cur_buf_binary(const char *full_path)
 PRIVATE void fgetc_bufed_clear(void);
 PRIVATE int fgetc_buffered(FILE *fp);
 
-PRIVATE inline void load_into_cur_buf_append_line(be_line_t* line, char *line_buf, int* len,
+PRIVATE inline void load_into_cur_buf_append_line(be_line_t* line, char* line_buf, int* len,
  int* lines_read)
 {
 	line_insert_with_string_len_before(line, line_buf, *len);
 	*len = 0;
-	line_buf[*len] = '\0';
+	line_buf[0] = '\0';
 	(*lines_read)++;
 }
 PRIVATE int load_into_cur_buf_fp(FILE *fp)
@@ -604,7 +648,7 @@ PRIVATE int load_into_cur_buf_fp(FILE *fp)
 	int lines_read = 0;
 	be_line_t *line;
 
-	line = CUR_EDIT_BUF_BOT_ANCH;
+	line = CUR_EDIT_BUFS_BOT_ANCH;
 	len = 0;
 	line_buf[len] = '\0';
 	fgetc_bufed_clear();
@@ -644,13 +688,13 @@ PRIVATE int load_into_cur_buf_fp(FILE *fp)
 	switch (file_format_idx) {
 	default:
 	case 0:
-		set_eol(EOL_NIX);
+		set_buf_eol(EOL_NIX);
 		break;
 	case 1:
-		set_eol(EOL_MAC);
+		set_buf_eol(EOL_MAC);
 		break;
 	case 2:
-		set_eol(EOL_DOS);
+		set_buf_eol(EOL_DOS);
 		break;
 	}
 	if (check_break_key()) {
@@ -672,8 +716,6 @@ PRIVATE void fgetc_bufed_clear(void)
 }
 PRIVATE int fgetc_buffered(FILE *fp)
 {
-	int chr;
-
 	if (fgetc_bufed_byte_idx >= fgetc_bufed_read_len) {
 		if (check_break_key()) {
 			return EOF;
@@ -684,7 +726,7 @@ PRIVATE int fgetc_buffered(FILE *fp)
 		}
 		fgetc_bufed_byte_idx = 0;
 	}
-	chr = (unsigned char)fgetc_bufed_buf[fgetc_bufed_byte_idx++];
+	int chr = (unsigned char)fgetc_bufed_buf[fgetc_bufed_byte_idx++];
 #define NUL_REPLACE_CHR		' '		// replace '\0' to ' '
 	if (chr == '\0') {
 		chr = NUL_REPLACE_CHR;		// replace '\0'
@@ -699,7 +741,6 @@ PRIVATE int save_cur_buf_to_file_nkf(const char *file_path, const char *nkf_opti
 {
 	char buffer[MAX_PATH_LEN+1] = "";
 	FILE *fp = 0;
-	int lines;
 
 	snprintf_(buffer, MAX_PATH_LEN+1, "nkf %s >\"%s\"", nkf_options, file_path);
 	if ((fp = popen(buffer, "w")) <= 0) {
@@ -707,6 +748,7 @@ PRIVATE int save_cur_buf_to_file_nkf(const char *file_path, const char *nkf_opti
 		 shrink_str_to_scr_static(file_path), strerror(errno));
 		return -1;
 	}
+	int lines;
 	if ((lines = save_cur_buf_to_fp(file_path, fp)) < 0) {
 		lines = -2;
 	}
@@ -721,14 +763,13 @@ PRIVATE int save_cur_buf_to_file_nkf(const char *file_path, const char *nkf_opti
 
 PRIVATE int save_cur_buf_to_file_ascii(const char *file_path)
 {
-	FILE *fp = 0;
-	int lines;
-
+	FILE *fp;
 	if ((fp = fopen(file_path, "wb")) == NULL) {
 		disp_status_bar_err(_("Can not write-open file [%s]: %s"),
 		 shrink_str_to_scr_static(file_path), strerror(errno));
 		return -1;
 	}
+	int lines;
 	if ((lines = save_cur_buf_to_fp(file_path, fp)) < 0) {
 		lines = -2;
 	}
@@ -742,16 +783,16 @@ PRIVATE int save_cur_buf_to_file_ascii(const char *file_path)
 
 PRIVATE int save_cur_buf_to_file_binary(const char *file_path)
 {
-	FILE *fp = 0;
+	FILE *fp;
 	if ((fp = fopen(file_path, "wb")) == NULL) {
 		disp_status_bar_err(_("Can not write-open file [%s]: %s"),
 		 shrink_str_to_scr_static(file_path), strerror(errno));
 		return -1;
 	}
 	int lines = 0;
-	for (const be_line_t *line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_INT(line);
+	for (const be_line_t *line = CUR_EDIT_BUFS_TOP_NODE; IS_NODE_INT(line);
 	 line = NODE_NEXT(line)) {
-		if (IS_NODE_BOT(line) && (line_data_strlen(line) == 0)) {
+		if (IS_NODE_BOT_MOST(line) && (line_data_strlen(line) == 0)) {
 			break;			// do not output the magic line
 		}
 		unsigned char bin_buf[BIN_LINE_LEN];
@@ -783,17 +824,13 @@ PRIVATE int save_cur_buf_to_file_binary(const char *file_path)
 
 PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 {
-	int lines_written;
-	const be_line_t *line;
-	int line_len;
-	long size;
-
-	lines_written = 0;
-	for (line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_INT(line); line = NODE_NEXT(line)) {
-		if (IS_NODE_BOT(line) && line_data_strlen(line) == 0)
+	int lines_written = 0;
+	for (const be_line_t *line = CUR_EDIT_BUFS_TOP_NODE; IS_NODE_INT(line);
+	 line = NODE_NEXT(line)) {
+		if (IS_NODE_BOT_MOST(line) && (line_data_strlen(line) == 0))
 			break;			// do not output the magic line
-		line_len = line_data_strlen(line);
-		size = fwrite(line->data, 1, line_len, fp);
+		size_t line_len = line_data_strlen(line);
+		size_t size = fwrite(line->data, 1, line_len, fp);
 		if (size < line_len) {
 			disp_status_bar_err(_("Can not write file [%s]: %s"),
 			 shrink_str_to_scr_static(file_path), strerror(errno));
@@ -842,7 +879,6 @@ void disp_files_loaded_if_ge_0(void)
 }
 void disp_files_loaded(void)
 {
-_D_(buf_dump_state(get_epc_buf()))
 	disp_status_bar_done(P_(_("%d file loaded"),
 							_("%d files loaded"),
 							_("%d filess loaded"),

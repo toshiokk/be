@@ -34,7 +34,7 @@ int mark_max_col_idx;			// col_idx right most in the marked area
 //-----------------------------------------------------------------------------
 void clear_mark_pos(void)
 {
-	EPCB_ML = BUF_TOP_ANCH(get_epc_buf());
+	EPCB_ML = NODES_TOP_ANCH(get_epc_buf());
 	EPCB_MLBI = 0;
 }
 void set_mark_pos(void)
@@ -289,7 +289,7 @@ void setup_cut_region(void)
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
-		if (IS_NODE_BOT(EPCBVC_CL)) {
+		if (IS_NODE_BOT_MOST(EPCBVC_CL)) {
 			// No next line
 			// {aaaaaaaaaaaaaaaaaa}
 			mark_min_line = EPCBVC_CL;

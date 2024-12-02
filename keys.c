@@ -22,10 +22,6 @@
 
 #include "headers.h"
 
-//-----------------------------------------------------------------------------
-
-PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_);
-
 func_key_table_t *get_app_func_key_table(void)
 {
 #ifdef ENABLE_FILER
@@ -39,233 +35,6 @@ func_key_table_t *get_app_func_key_table(void)
 #endif // ENABLE_FILER
 }
 
-int editor_menu_n(int grp_idx)
-{
-	static int prev_group_idx;
-	static int prev_entry_idx;
-
-	if (grp_idx >= 0) {
-		prev_group_idx = grp_idx;
-		prev_entry_idx = 1;
-	}
-	app_menu_n(&prev_group_idx, &prev_entry_idx);
-	return 0;
-}
-
-#ifdef ENABLE_FILER
-int filer_menu_n(int grp_idx)
-{
-	static int prev_group_idx;
-	static int prev_entry_idx;
-
-	if (grp_idx >= 0) {
-		prev_group_idx = grp_idx;
-		prev_entry_idx = 1;
-	}
-	app_menu_n(&prev_group_idx, &prev_entry_idx);
-	return 0;
-}
-#endif // ENABLE_FILER
-
-PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_)
-{
-	key_code_t key_input;
-	int again_ret;
-	int group_idx = *group_idx_;
-	int entry_idx = *entry_idx_;
-
-app_menu_n_again:;
-	for ( ; ; ) {
-		again_ret = 0;
-		update_screen_app(1, 1, 1);
-		disp_drop_down_menu(group_idx, entry_idx, main_win_get_top_win_y(), group_idx * 2);
-		tio_refresh();
-
-		tio_set_cursor_on(0);
-		//---------------------------
-		key_input = input_key_loop();
-		//---------------------------
-mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
- '_', key_input, short_key_name_from_key_code(key_input, NULL));
-
-		switch (key_input) {
-		case K_LEFT:
-			group_idx = group_idx - 1;
-			goto app_menu_n_left_right;
-		case K_RIGHT:
-			group_idx = group_idx + 1;
-			goto app_menu_n_left_right;
-app_menu_n_left_right:;
-			if (group_idx < 0)
-				group_idx = get_func_key_table_from_key_groups() - 1;
-			if (group_idx > get_func_key_table_from_key_groups() - 1)
-				group_idx = 0;
-			entry_idx = MIN_MAX_(1, entry_idx, get_func_key_table_from_key_entries(group_idx));
-			again_ret = 1;
-			break;
-		case K_UP:
-			entry_idx = entry_idx - 1;
-			goto app_menu_n_up_down;
-		case K_DOWN:
-			entry_idx = entry_idx + 1;
-			goto app_menu_n_up_down;
-		case K_PPAGE:
-			entry_idx = entry_idx - 5;
-			goto app_menu_n_up_down;
-		case K_NPAGE:	
-			entry_idx = entry_idx + 5;
-			goto app_menu_n_up_down;
-app_menu_n_up_down:;
-			if (entry_idx < 1)
-				entry_idx = get_func_key_table_from_key_entries(group_idx);
-			if (entry_idx > get_func_key_table_from_key_entries(group_idx))
-				entry_idx = 1;
-			entry_idx = MIN_MAX_(1, entry_idx, get_func_key_table_from_key_entries(group_idx));
-			break;
-		case K_ENTER:
-			exec_func(group_idx, entry_idx);
-#ifndef ENABLE_FILER
-			if (edit_bufs_count_bufs())
-#else // ENABLE_FILER
-			if (edit_bufs_count_bufs() || GET_APPMD(app_EDITOR_FILER))
-#endif // ENABLE_FILER
-				set_menu_key_for_do_app_menu_0();
-			again_ret = 2;
-			break;
-		case K_ESC:
-		case K_M_ESC:
-			key_input = KEY_NONE;
-			again_ret = 2;
-			break;
-		default:
-			if (get_app_function_for_key(key_input) != NULL)
-				set_menu_key(key_input);
-			again_ret = 2;
-			break;
-		}
-		if (again_ret)
-			break;
-	}
-	if (again_ret == 1)
-		goto app_menu_n_again;
-
-#ifndef ENABLE_FILER
-	if (edit_bufs_count_bufs()) {
-		update_screen_app(1, 1, 1);
-	}
-#else // ENABLE_FILER
-	if (edit_bufs_count_bufs() || GET_APPMD(app_EDITOR_FILER)) {
-		update_screen_app(1, 1, 1);
-	}
-#endif // ENABLE_FILER
-
-	tio_set_cursor_on(1);
-	*group_idx_ = group_idx;
-	*entry_idx_ = entry_idx;
-}
-
-int disp_drop_down_menu(int group_idx, int entry_idx, int yy, int xx)
-{
-	func_key_table_t *fkey_table;
-	int idx;
-	char buf1[MAX_KEY_NAME_LEN+1];
-	char buf2[MAX_KEY_NAME_LEN+1];
-	char template[] = "%-32s  %-5s %-5s  %-12s";
-	char buffer[MAX_PATH_LEN+1];
-
-	if ((fkey_table = get_func_key_table_from_key_group(group_idx)) == NULL)
-		return 0;
-	for (idx = 0; ; idx++) {
-		set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
-		main_win_output_string(yy + idx, xx, " ", -1);
-		if (fkey_table[idx].desc[0]) {
-			set_color_by_idx(ITEM_COLOR_IDX_MENU_ITEM, 0);
-		}
-		main_win_output_string(-1, -1, " ", -1);
-		if (fkey_table[idx].desc[0]) {
-			if (idx == entry_idx) {
-				set_color_by_idx(ITEM_COLOR_IDX_MENU_SELECTED, 0);
-			} else {
-				set_color_by_idx(ITEM_COLOR_IDX_MENU_ITEM, 0);
-			}
-		}
-		if (idx != 0 && fkey_table[idx].desc[0] == 0)
-			snprintf(buffer, MAX_PATH_LEN+1, template, "", "", "", "");
-		else
-			snprintf(buffer, MAX_PATH_LEN+1, template,
-			 fkey_table[idx].help,
-			 short_key_name_from_key_code(fkey_table[idx].key1, buf1),
-			 short_key_name_from_key_code(fkey_table[idx].key2, buf2),
-			 fkey_table[idx].func_get ? (*fkey_table[idx].func_get)() : "" );
-		main_win_output_string(-1, -1, buffer, -1);
-		if (fkey_table[idx].desc[0]) {
-			set_color_by_idx(ITEM_COLOR_IDX_MENU_ITEM, 0);
-		}
-		main_win_output_string(-1, -1, " ", -1);
-		set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
-		main_win_output_string(-1, -1, " ", -1);
-		if (idx != 0 && fkey_table[idx].desc[0] == 0)
-			break;
-	}
-	return 0;
-}
-
-int get_func_key_table_from_key_groups(void)
-{
-	func_key_table_t *app_func_key_table = get_app_func_key_table();
-	int group_idx = 0;
-	for (int idx = 0; app_func_key_table[idx].help[0]; idx++) {
-		if (app_func_key_table[idx].desc[0] == 0) {
-			group_idx++;
-		}
-	}
-	return group_idx;
-}
-
-int get_func_key_table_from_key_entries(int group_idx)
-{
-	func_key_table_t *fkey_table;
-
-	if ((fkey_table = get_func_key_table_from_key_group(group_idx)) == NULL)
-		return 0;
-	int idx;
-	for (idx = 1; fkey_table[idx].desc[0]; idx++) {
-		// loop
-	}
-	return idx - 1;
-}
-
-key_code_t get_func_key_code(int group_idx, int entry_idx)
-{
-	func_key_table_t *fkey_table;
-
-	if ((fkey_table = get_func_key_table_from_key_group(group_idx)) == NULL)
-		return -1;
-	return fkey_table[entry_idx].key1;
-}
-
-void exec_func(int group_idx, int entry_idx)
-{
-	func_key_table_t *fkey_table;
-
-	if ((fkey_table = get_func_key_table_from_key_group(group_idx)) == NULL)
-		return;
-	fkey_table[entry_idx].func();
-}
-
-func_key_table_t *get_func_key_table_from_key_group(int group_idx)
-{
-	func_key_table_t *app_func_key_table = get_app_func_key_table();
-	for (int idx = 0; app_func_key_table[idx].help[0]; idx++) {
-		if (app_func_key_table[idx].desc[0] == 0) {
-			if (group_idx == 0)
-				return &app_func_key_table[idx];
-			group_idx--;
-		}
-	}
-	return NULL;
-}
-
 //-----------------------------------------------------------------------------
 int cmp_func_id(const char *func_id_1, const char *func_id_2)
 {
@@ -274,26 +43,29 @@ int cmp_func_id(const char *func_id_1, const char *func_id_2)
 void *get_app_function_for_key(key_code_t key)
 {
 	func_key_table_t *fkey_table = get_func_key_table_from_key(get_app_func_key_table(), key);
-	if (fkey_table)
+	if (fkey_table) {
 		return (void *)fkey_table->func;
+	}
 	return NULL;
 }
 const char *get_func_id_from_key(key_code_t key)
 {
 	func_key_table_t *fkey_table = get_func_key_table_from_key(editor_func_key_table, key);
-	if (fkey_table)
+	if (fkey_table) {
 		return fkey_table->func_id;
+	}
 #ifdef ENABLE_FILER
 	fkey_table = get_func_key_table_from_key(filer_func_key_table, key);
-	if (fkey_table)
+	if (fkey_table) {
 		return fkey_table->func_id;
+	}
 #endif // ENABLE_FILER
 	return "";
 }
 func_key_table_t *get_func_key_table_from_key(func_key_table_t *fkey_table, key_code_t key)
 {
 	for (int idx = 0; fkey_table[idx].help[0]; idx++) {
-		if (is_key_bound_to_func(key, &fkey_table[idx])) {
+		if (is_key_assigned_to_func(key, &fkey_table[idx])) {
 			return &fkey_table[idx];
 		}
 	}
@@ -302,8 +74,9 @@ func_key_table_t *get_func_key_table_from_key(func_key_table_t *fkey_table, key_
 key_code_t get_key_for_func_id(char *func_id)
 {
 	func_key_table_t *fkey_table = get_func_table_from_func_id(func_id);
-	if (fkey_table == NULL)
-		return 0;
+	if (fkey_table == NULL) {
+		return K_NONE;
+	}
 	return fkey_table->key1;
 }
 PRIVATE func_key_table_t *get_func_table_from_func_id__(func_key_table_t *fkey_table,
@@ -311,12 +84,14 @@ PRIVATE func_key_table_t *get_func_table_from_func_id__(func_key_table_t *fkey_t
 func_key_table_t *get_func_table_from_func_id(const char *func_id)
 {
 	func_key_table_t *fkey_table = get_func_table_from_func_id__(editor_func_key_table, func_id);
-	if (fkey_table)
+	if (fkey_table) {
 		return fkey_table;
+	}
 #ifdef ENABLE_FILER
 	fkey_table = get_func_table_from_func_id__(filer_func_key_table, func_id);
-	if (fkey_table)
+	if (fkey_table) {
 		return fkey_table;
+	}
 #endif // ENABLE_FILER
 	return NULL;
 }
@@ -331,7 +106,7 @@ PRIVATE func_key_table_t *get_func_table_from_func_id__(func_key_table_t *fkey_t
 	return NULL;
 }
 
-int is_key_bound_to_func(key_code_t key, func_key_table_t *fkey_table)
+int is_key_assigned_to_func(key_code_t key, func_key_table_t *fkey_table)
 {
 	return key != KNA
 	 && (key == fkey_table->key1
@@ -366,12 +141,15 @@ void clear_keys_bound_to_func(func_key_table_t *fkey_table)
 
 void bind_key_to_func(func_key_table_t *fkey_table, key_code_t *keys)
 {
-	if (keys[0] >= 0)
+	if (keys[0] >= 0) {
 		fkey_table->key1 = keys[0];
-	if (keys[1] >= 0)
+	}
+	if (keys[1] >= 0) {
 		fkey_table->key2 = keys[1];
-	if (keys[2] >= 0)
+	}
+	if (keys[2] >= 0) {
 		fkey_table->key3 = keys[2];
+	}
 }
 
 // 0x01 ==> "^A"
@@ -389,11 +167,11 @@ flf_d_printf("set_menu_key(%04x)\n", key);
 }
 key_code_t get_menu_key(void)
 {
-	key_code_t key = -1;
+	key_code_t key = K_NONE;
 
 	if (menu_key >= 0) {
 		key = menu_key;
-		menu_key = -1;
+		menu_key = K_NONE;
 flf_d_printf("get_menu_key(%04x)\n", key);
 	}
 	return key;
@@ -404,10 +182,11 @@ void set_menu_key_for_do_app_menu_0(void)
 #ifndef ENABLE_FILER
 	set_menu_key(get_key_for_func_id("doe_editor_menu_0"));
 #else // ENABLE_FILER
-	if (GET_APPMD(app_EDITOR_FILER) == 0)
+	if (GET_APPMD(app_EDITOR_FILER) == 0) {
 		set_menu_key(get_key_for_func_id("doe_editor_menu_0"));
-	else
+	} else {
 		set_menu_key(get_key_for_func_id("dof_filer_menu_0"));
+	}
 #endif // ENABLE_FILER
 }
 
@@ -439,7 +218,8 @@ key_code_t input_key_loop(void)
 // |-----------------------|-----------------|
 // | repaint all of screen | 10000           |
 //
-#define WHOLE_UPDATE_INTERVAL_MSEC		10000	// 10[Sec]
+///PPP#define WHOLE_UPDATE_INTERVAL_MSEC		10000	// 10[Sec]
+#define WHOLE_UPDATE_INTERVAL_MSEC		5000	// 10[Sec]
 key_code_t input_key_wait_return(void)
 {
 	static key_code_t prev_key = KEY_NONE;
@@ -450,7 +230,7 @@ key_code_t input_key_wait_return(void)
 	prev_key = key;
 	if (key >= 0) {
 		if (msec_past_input_key() >= WHOLE_UPDATE_INTERVAL_MSEC) {
-			tio_flash_screen(0);
+			tio_flash_screen(10);
 		}
 		update_msec_when_input_key();
 	}
@@ -466,7 +246,7 @@ key_code_t input_key_wait_return(void)
 // | splash screen by key              | infinite        |
 //
 #define DEFAULT_KEY_WAIT_MSEC		1000	// return every 1[Sec]
-#define KEY_MACRO_KEY_WAIT_MSEC		200
+#define KEY_MACRO_KEY_WAIT_MSEC		200		// fast title bar blinking
 PRIVATE key_code_t input_key_timeout(void)
 {
 	long key_wait_time_msec = DEFAULT_KEY_WAIT_MSEC;
@@ -478,10 +258,9 @@ PRIVATE key_code_t input_key_timeout(void)
 	while ((key = input_key_macro()) < 0) {
 		if (tio_check_update_terminal_size()) {
 			win_reinit_win_size();
-			update_screen_app(1, 0, 1);
 			disp_status_bar_done(_("Screen resized to (%d, %d)"),
 			 tio_get_columns(), tio_get_lines());
-			tio_refresh();
+			update_screen_app(1, 1);
 			break;		// return after "Screen resizing"
 		}
 		if ((long)(get_msec() - msec_enter) >= key_wait_time_msec) {
@@ -494,9 +273,9 @@ PRIVATE key_code_t input_key_timeout(void)
 
 key_code_t input_key_macro(void)
 {
-	key_code_t key = -1;
+	key_code_t key = K_NONE;
 
-	if ((key = get_menu_key()) >= 0) {
+	if (IS_KEY_VALID(key = get_menu_key())) {
 		return key;
 	}
 #ifndef ENABLE_HISTORY
@@ -628,7 +407,7 @@ flf_d_printf("KEY_DC ==> DEL\n");
 
 //-----------------------------------------------------------------------------
 key_name_table_t key_name_table[] = {
-//					   12345
+//					   12345678
 	{ ' '			, "SP", },
 	{ K_BS			, "BS", },
 	{ K_TAB			, "TAB", },
@@ -660,12 +439,43 @@ key_name_table_t key_name_table[] = {
 	{ K_C_X			, "C-X", },
 	{ K_C_Y			, "C-Y", },
 	{ K_C_Z			, "C-Z", },
-	{ K_C_LBRACKET	, "C-[", },
-	{ K_C_BACKSLASH	, "C-\\", },
-	{ K_C_RBRACKET	, "C-]", },
+	{ K_C_LBRAK		, "C-[", },
+	{ K_C_BAKSL		, "C-\\", },
+	{ K_C_RBRAK		, "C-]", },
 	{ K_C_CARET		, "C-^", },
-	{ K_C_UNDERLINE	, "C-_", },
+	{ K_C_UNDLN		, "C-_", },
+
+	{ K_INS			, "INS", },
+	{ K_DEL			, "DEL", },
+	{ K_HOME		, "HOME", },
+	{ K_END			, "END", },
+	{ K_PPAGE		, "PGUP", },
+	{ K_NPAGE		, "PGDN", },
+	{ K_UP			, "UP", },
+	{ K_DOWN		, "DOWN", },
+	{ K_RIGHT		, "RIGHT", },
+	{ K_LEFT		, "LEFT", },
+
+	{ K_M_BS		, "M-BS", },
+	{ K_M_TAB		, "M-TAB", },
+	{ K_M_CR		, "M-CR", },
 	{ K_M_ESC		, "M-ESC", },
+	{ K_M_SP		, "M-SP", },
+	{ K_M_EXCLA		, "M-EXCLA", },
+	{ K_M_QUOTA		, "M-QUOTA", },
+	{ K_M_SHARP		, "M-SHARP", },
+	{ K_M_DOLLA		, "M-DOLLA", },
+	{ K_M_PERCE		, "M-PERCE", },
+	{ K_M_AMPSD		, "M-AMPSD", },
+	{ K_M_APOST		, "M-APOST", },
+	{ K_M_LPARE		, "M-LPARE", },
+	{ K_M_RPARE		, "M-RPARE", },
+	{ K_M_ASTER		, "M-ASTER", },
+	{ K_M_PLUS		, "M-PLUS", },
+	{ K_M_COMMA		, "M-COMMA", },
+	{ K_M_HYPHE		, "M-HYPHE", },
+	{ K_M_PERIO		, "M-PERIO", },
+	{ K_M_SLASH		, "M-SLASH", },
 	{ K_M_0			, "M-0", },
 	{ K_M_1			, "M-1", },
 	{ K_M_2			, "M-2", },
@@ -676,6 +486,47 @@ key_name_table_t key_name_table[] = {
 	{ K_M_7			, "M-7", },
 	{ K_M_8			, "M-8", },
 	{ K_M_9			, "M-9", },
+	{ K_M_COLON		, "M-COLON", },
+	{ K_M_SEMCO		, "M-SEMCO", },
+	{ K_M_LESST		, "M-LESST", },
+	{ K_M_EQUAL		, "M-EQUAL", },
+	{ K_M_GREAT		, "M-GREAT", },
+	{ K_M_QUEST		, "M-QUEST", },
+	{ K_M_AT		, "M-AT", },
+	{ K_M_A			, "M-A", },
+	{ K_M_B			, "M-B", },
+	{ K_M_C			, "M-C", },
+	{ K_M_D			, "M-D", },
+	{ K_M_E			, "M-E", },
+	{ K_M_F			, "M-F", },
+	{ K_M_G			, "M-G", },
+	{ K_M_H			, "M-H", },
+	{ K_M_I			, "M-I", },
+	{ K_M_J			, "M-J", },
+	{ K_M_K			, "M-K", },
+	{ K_M_L			, "M-L", },
+	{ K_M_M			, "M-M", },
+	{ K_M_N			, "M-N", },
+	{ K_M_O			, "M-O", },
+	{ K_M_P			, "M-P", },
+	{ K_M_Q			, "M-Q", },
+	{ K_M_R			, "M-R", },
+	{ K_M_S			, "M-S", },
+	{ K_M_T			, "M-T", },
+	{ K_M_U			, "M-U", },
+	{ K_M_V			, "M-V", },
+	{ K_M_W			, "M-W", },
+	{ K_M_X			, "M-X", },
+	{ K_M_Y			, "M-Y", },
+	{ K_M_Z			, "M-Z", },
+
+	{ K_M_LBRAK		, "M-LBRAK", },
+	{ K_M_BAKSL		, "M-BAKSL", },
+	{ K_M_RBRAK		, "M-RBRAK", },
+	{ K_M_CARET		, "M-CARET", },
+	{ K_M_UNDLN		, "M-UNDLN", },
+
+	{ K_M_BAKQT		, "M-BACKQ", },
 	{ K_M_a			, "M-a", },
 	{ K_M_b			, "M-b", },
 	{ K_M_c			, "M-c", },
@@ -702,33 +553,13 @@ key_name_table_t key_name_table[] = {
 	{ K_M_x			, "M-x", },
 	{ K_M_y			, "M-y", },
 	{ K_M_z			, "M-z", },
-	{ K_M_A			, "M-A", },
-	{ K_M_B			, "M-B", },
-	{ K_M_C			, "M-C", },
-	{ K_M_D			, "M-D", },
-	{ K_M_E			, "M-E", },
-	{ K_M_F			, "M-F", },
-	{ K_M_G			, "M-G", },
-	{ K_M_H			, "M-H", },
-	{ K_M_I			, "M-I", },
-	{ K_M_J			, "M-J", },
-	{ K_M_K			, "M-K", },
-	{ K_M_L			, "M-L", },
-	{ K_M_M			, "M-M", },
-	{ K_M_N			, "M-N", },
-	{ K_M_O			, "M-O", },
-	{ K_M_P			, "M-P", },
 
-	{ K_M_Q			, "M-Q", },
-	{ K_M_R			, "M-R", },
-	{ K_M_S			, "M-S", },
-	{ K_M_T			, "M-T", },
-	{ K_M_U			, "M-U", },
-	{ K_M_V			, "M-V", },
-	{ K_M_W			, "M-W", },
-	{ K_M_X			, "M-X", },
-	{ K_M_Y			, "M-Y", },
-	{ K_M_Z			, "M-Z", },
+	{ K_M_LBRAC		, "M-LBRAC", },
+	{ K_M_VERTB		, "M-VERTB", },
+	{ K_M_RBRAC		, "M-RBRAC", },
+	{ K_M_TILDE		, "M-TILDE", },
+	{ K_M_DEL		, "M-DEL", },
+
 	{ K_MC_A		, "MC-A", },
 	{ K_MC_B		, "MC-B", },
 	{ K_MC_C		, "MC-C", },
@@ -755,6 +586,12 @@ key_name_table_t key_name_table[] = {
 	{ K_MC_X		, "MC-X", },
 	{ K_MC_Y		, "MC-Y", },
 	{ K_MC_Z		, "MC-Z", },
+	{ K_MC_LBRAK	, "MC-LBRAK", },
+	{ K_MC_BAKSL	, "MC-BAKSL", },
+	{ K_MC_RBRAK	, "MC-RBRAK", },
+	{ K_MC_CARET	, "MC-CARET", },
+	{ K_MC_UNDLN	, "MC-UNDLN", },
+
 	{ K_F01			, "F01", },
 	{ K_F02			, "F02", },
 	{ K_F03			, "F03", },
@@ -779,16 +616,6 @@ key_name_table_t key_name_table[] = {
 	{ K_S_F10		, "S-F10", },
 	{ K_S_F11		, "S-F11", },
 	{ K_S_F12		, "S-F12", },
-	{ K_INS			, "INS", },
-	{ K_DEL			, "DEL", },
-	{ K_HOME		, "HOME", },
-	{ K_END			, "END", },
-	{ K_PPAGE		, "PGUP", },
-	{ K_NPAGE		, "PGDN", },
-	{ K_UP			, "UP", },
-	{ K_DOWN		, "DOWN", },
-	{ K_RIGHT		, "RIGHT", },
-	{ K_LEFT		, "LEFT", },
 };
 
 const char *short_key_name_from_key_code(key_code_t key_code, char *buf)
@@ -797,7 +624,7 @@ const char *short_key_name_from_key_code(key_code_t key_code, char *buf)
 	if (buf == NULL) {
 		buf = buf_s_;
 	}
-	char buf_key_name[MAX_KEY_NAME_LEN+1];		// "RIGHT"
+	char buf_key_name[MAX_KEY_NAME_LEN+1];		// "MC-RIGHT"
 	return short_key_name_from_key_name(key_name_from_key_code(key_code, buf_key_name), buf);
 }
 const char *key_name_from_key_code(key_code_t key_code, char *buf)
@@ -821,7 +648,7 @@ const char *key_name_from_key_code(key_code_t key_code, char *buf)
 			snprintf(buf, MAX_KEY_NAME_LEN+1, "%04x", key_code);
 		}
 	} else if (key_code == KEY_NONE) {
-		snprintf(buf, MAX_KEY_NAME_LEN+1, "---");
+		snprintf(buf, MAX_KEY_NAME_LEN+1, "--------");
 	} else {
 		snprintf(buf, MAX_KEY_NAME_LEN+1, "%04x", key_code);
 	}
@@ -859,7 +686,7 @@ key_code_t key_code_from_key_name(char *key_name)
 key_code_t key_code_from_short_key_name(char *short_key_name)
 {
 	int idx;
-	char buf_key_name[MAX_KEY_NAME_LEN+1];		// "RIGHT"
+	char buf_key_name[MAX_KEY_NAME_LEN+1];		// "MC-RIGHT"
 
 	for (idx = 0; idx < ARRAY_SIZE_OF(key_name_table); idx++) {
 		if (strcmp(short_key_name_from_key_name(key_name_table[idx].key_name, buf_key_name),
@@ -878,45 +705,6 @@ int get_key_name_table_entries(void)
 #ifdef ENABLE_DEBUG
 
 #ifdef START_UP_TEST
-PRIVATE int check_all_functions_accessible_without_function_key_(func_key_table_t *fkey_table);
-int check_all_functions_accessible_without_function_key()
-{
-flf_d_printf("-------------------------\n");
-	int err = check_all_functions_accessible_without_function_key_(editor_func_key_table);
-#ifdef ENABLE_FILER
-	err += check_all_functions_accessible_without_function_key_(filer_func_key_table);
-#endif // ENABLE_FILER
-	return err;
-}
-PRIVATE int check_all_functions_accessible_without_function_key_(func_key_table_t *fkey_table)
-{
-	for (int func_idx = 0; fkey_table[func_idx].help[0]; func_idx++) {
-		int accessible = 0;
-		int accessible_without_fkey = 0;
-		for (int key_idx = 0; key_idx < MAX_KEYS_BOUND; key_idx++) {
-			key_code_t key;
-			switch (key_idx) {
-			case 0:
-				key = fkey_table[func_idx].key1;	break;
-			case 1:
-				key = fkey_table[func_idx].key2;	break;
-			case 2:
-				key = fkey_table[func_idx].key3;	break;
-			}
-			if (IS_KEY_VALID(key)) {
-				accessible++;
-				if (IS_BYTE_KEY(key) || IS_META_KEY(key)) {
-					accessible_without_fkey++;
-				}
-			}
-		}
-		if (accessible && (accessible_without_fkey == 0)) {
-			warning_printf("func:[%s] is not accessible without Func-key\n",
-			 fkey_table[func_idx].desc);
-		}
-	}
-	return 0;
-}
 
 PRIVATE int check_multiple_assignment_of_key_(func_key_table_t *fkey_table);
 int check_multiple_assignment_of_key()
@@ -935,6 +723,7 @@ PRIVATE int check_multiple_assignment_of_key_(func_key_table_t *fkey_table)
 		for (int key_idx = 0; key_idx < MAX_KEYS_BOUND; key_idx++) {
 			key_code_t key;
 			switch (key_idx) {
+			default:
 			case 0:		key = fkey_table[func_idx].key1;	break;
 			case 1:		key = fkey_table[func_idx].key2;	break;
 			case 2:		key = fkey_table[func_idx].key3;	break;
@@ -946,6 +735,7 @@ PRIVATE int check_multiple_assignment_of_key_(func_key_table_t *fkey_table)
 				for (int key_idx2 = 0; key_idx2 < MAX_KEYS_BOUND; key_idx2++) {
 					key_code_t key2;
 					switch (key_idx2) {
+					default:
 					case 0:		key2 = fkey_table[func_idx2].key1;	break;
 					case 1:		key2 = fkey_table[func_idx2].key2;	break;
 					case 2:		key2 = fkey_table[func_idx2].key3;	break;
@@ -956,6 +746,46 @@ PRIVATE int check_multiple_assignment_of_key_(func_key_table_t *fkey_table)
 					}
 				}
 			}
+		}
+	}
+	return 0;
+}
+PRIVATE int check_all_functions_accessible_without_function_key_(func_key_table_t *fkey_table);
+int check_all_functions_accessible_without_function_key()
+{
+flf_d_printf("-------------------------\n");
+	int err = check_all_functions_accessible_without_function_key_(editor_func_key_table);
+#ifdef ENABLE_FILER
+	err += check_all_functions_accessible_without_function_key_(filer_func_key_table);
+#endif // ENABLE_FILER
+	return err;
+}
+PRIVATE int check_all_functions_accessible_without_function_key_(func_key_table_t *fkey_table)
+{
+	for (int func_idx = 0; fkey_table[func_idx].help[0]; func_idx++) {
+		int accessible = 0;
+		int accessible_without_fkey = 0;
+		for (int key_idx = 0; key_idx < MAX_KEYS_BOUND; key_idx++) {
+			key_code_t key;
+			switch (key_idx) {
+			default:
+			case 0:
+				key = fkey_table[func_idx].key1;	break;
+			case 1:
+				key = fkey_table[func_idx].key2;	break;
+			case 2:
+				key = fkey_table[func_idx].key3;	break;
+			}
+			if (IS_KEY_VALID(key)) {
+				accessible++;
+				if (IS_BYTE_KEY(key) || IS_META_KEY(key)) {
+					accessible_without_fkey++;
+				}
+			}
+		}
+		if (accessible && (accessible_without_fkey == 0)) {
+			warning_printf("func:[%s] is not accessible without Func-key\n",
+			 fkey_table[func_idx].desc);
 		}
 	}
 	return 0;

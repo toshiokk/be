@@ -49,8 +49,8 @@ int dof_exec_command_with_file(void)
 	int exit_status = 0;
 	int logging = LOGGING0;
 
-	if (chk_inp_str_ret_val_filer(input_string_pos("", command_str,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_EXEC,
+	if (chk_inp_str_ret_val_filer(input_string_pos("", command_str, MAX_PATH_LEN,
+	 HISTORY_TYPE_IDX_EXEC,
 	 _("Execute({} will be replaced with file-name):")))) {
 		return 0;
 	}
@@ -98,8 +98,8 @@ int dof_exec_command_with_files(void)
 		 get_cur_fv_file_ptr(file_idx)->file_name);
 	}
 
-	if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str,
-	 0, HISTORY_TYPE_IDX_EXEC,
+	if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str, 0,
+	 HISTORY_TYPE_IDX_EXEC,
 	 _("Execute with files%s:"), (logging == 0) ? "" : _("(WITH LOG)")))) {
 		return 0;
 	}
@@ -219,7 +219,8 @@ PRIVATE int dof_run_command_(int mode)
 		if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str,
 		 (S_ISREG(st_ptr->st_mode) && (st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
 		  ? MAX_PATH_LEN : 0,
-		 HISTORY_TYPE_IDX_EXEC, explanation))) {
+		 HISTORY_TYPE_IDX_EXEC,
+		 explanation))) {
 			return 0;
 		}
 		if (filer_do_next == EF_INPUT_W_ALT) {
@@ -314,10 +315,8 @@ PRIVATE int fork_exec_args(int set_term, int separate_bef_exec, int pause_aft_ex
 	}
 	const char *command = exec_args_to_str(args);
 #ifdef ENABLE_HISTORY
-	if (get_fork_exec_counter() == 0) {
+	update_history(HISTORY_TYPE_IDX_EXEC, command);
 mflf_d_printf("exec: [%s]\n", command);
-		update_history(HISTORY_TYPE_IDX_EXEC, command);
-	}
 #endif // ENABLE_HISTORY
 	return fork_exec_before_after(set_term, separate_bef_exec, LOGGING0, pause_aft_exec,
 	 command, args);
@@ -382,9 +381,8 @@ mflf_d_printf("logging: %d, exec: {{%s} {%s} {%s}}\n", logging, args[0], args[1]
 	// It does not output "sh -c [command arg1 arg2]"
 	//           but output only "command arg1 arg2"
 #ifdef ENABLE_HISTORY
-	if (get_fork_exec_counter() == 0) {
-		update_history(HISTORY_TYPE_IDX_EXEC, command);
-	}
+	update_history(HISTORY_TYPE_IDX_EXEC, command);
+mflf_d_printf("exec: [%s]\n", command);
 #endif // ENABLE_HISTORY
 	return fork_exec_before_after(set_term, separate_bef_exec, logging, pause_aft_exec,
 	 command, args);

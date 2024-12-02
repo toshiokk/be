@@ -28,29 +28,26 @@ const char *root_notation(void);
 //! priority to display on the status bar
 typedef enum /*s_b_d*/ {	// Status Bar Displayed
 	S_B_D_NONE,				//! 0 none
-	S_B_D_PERC_FL,			//! 1 cursor movement in filer
-	S_B_D_PERC_ED,			//! 2 cursor movement in editor
-	S_B_D_ING,				//! 3 doing (overwritable by DONE or ERR)
-	S_B_D_ERR,				//! 4 error (overwritable by DONE and after one second)
-	S_B_D_DONE,				//! 5 done  (this message shall be output on completion of a command)
+	S_B_D_CURS,				//! 1 cursor movement in editor/filer
+	S_B_D_ING,				//! 2 processing (overwritable by DONE or ERR)
+	S_B_D_ERR,				//! 3 error (overwritable by DONE and after one second)
+	S_B_D_DONE,				//! 4 done  (this message shall be output on completion of a command)
 } s_b_d_t;
 
-//| --          | previous request                                                      |
-//|next request |S_B_D_NONE|S_B_D_PERC_FL|S_B_D_PERC_ED|S_B_D_ING |S_B_D_ERR |S_B_D_DONE|
-//|-------------|----------|-------------|-------------|----------|----------|----------|
-//|S_B_D_NONE   | --       | --          | --          | --       | --       | --       |
-//|S_B_D_PERC_FL| overlap  | overlap     | overlap     | overlap  |prev:next |prev:next |
-//|S_B_D_PERC_ED| overlap  | overlap     | overlap     | overlap  |prev:next |prev:next |
-//|S_B_D_ING    | overlap  | overlap     | overlap     | overlap  | reject   | reject   |
-//|S_B_D_ERR    | overlap  | overlap     | overlap     | overlap  | overlap  | overlap  |
-//|S_B_D_DONE   | overlap  | overlap     | overlap     | overlap  | overlap  | overlap  |
+//| --          | previous request                                     |
+//|next request |S_B_D_NONE|S_B_D_CURS|S_B_D_ING |S_B_D_ERR |S_B_D_DONE|
+//|-------------|----------|----------|----------|----------|----------|
+//|S_B_D_NONE   | --       | --       | --       | --       | --       |
+//|S_B_D_CURS   | overlap  | overlap  | overlap  |prev:next |prev:next |
+//|S_B_D_ING    | overlap  | overlap  | overlap  | reject   | reject   |
+//|S_B_D_ERR    | overlap  | overlap  | overlap  | overlap  | overlap  |
+//|S_B_D_DONE   | overlap  | overlap  | overlap  | overlap  | overlap  |
 
-void clear_status_bar_displayed(void);
+void disp_status_bar_cursor(const char *msg, ...);
 void disp_status_bar_ing(const char *msg, ...);
 void disp_status_bar_err(const char *msg, ...);
 void disp_status_bar_done(const char *msg, ...);
-void disp_status_bar_percent_editor(const char *msg, ...);
-void disp_status_bar_percent_filer(const char *msg, ...);
+void redisp_status_bar();
 
 void blank_status_bar(void);
 void blank_key_list_lines(void);

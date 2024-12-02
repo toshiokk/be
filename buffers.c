@@ -24,8 +24,7 @@
 editor_panes_t *cur_editor_panes = NULL;	// Current Editor Panes
 
 // collection of collections of buffers
-be_bufs_t bufss_top_anchor;		//< top buffers
-be_bufs_t bufss_bot_anchor;		//< bottom buffers
+be_bufss_t all_bufferss;
 
 // collection of edit buffers--------------------------------------------------
 be_bufs_t edit_buffers;
@@ -33,8 +32,10 @@ be_bufs_t edit_buffers;
 // collection of cut-buffers---------------------------------------------------
 be_bufs_t cut_buffers;
 
+#ifdef ENABLE_HISTORY
 // history buffers ------------------------------------------------------------
 be_bufs_t history_buffers;
+#endif // ENABLE_HISTORY
 
 // help buffers ---------------------------------------------------------------
 be_bufs_t help_buffers;
@@ -48,36 +49,30 @@ be_bufs_t redo_buffers;
 
 //=============================================================================
 
-void init_head_of_bufs(void)
+// Initialize collection of buffers.
+void init_bufferss(void)
 {
-	bufs_init(&bufss_top_anchor, "##ALL_BUFS-top-anchor");
-	bufs_init(&bufss_bot_anchor, "##ALL_BUFS-bot-anchor");
-	bufs_link(&bufss_top_anchor, &bufss_bot_anchor);
+	bufss_init(&all_bufferss, "###ALL_BUFSS", "##ALL_BUFSS_top_anch", "##ALL_BUFSS_bot_anch");
 
-	bufs_insert_before(&bufss_bot_anchor, bufs_init(&edit_buffers, "##edit-buffers"));
-	bufs_insert_before(&bufss_bot_anchor, bufs_init(&cut_buffers, "##cut-buffers"));
-	bufs_insert_before(&bufss_bot_anchor, bufs_init(&history_buffers, "##history-buffers"));
-	bufs_insert_before(&bufss_bot_anchor, bufs_init(&help_buffers, "##help-buffers"));
-#ifdef ENABLE_UNDO
-	bufs_insert_before(&bufss_bot_anchor, bufs_init(&undo_buffers, "##undo-buffers"));
-	bufs_insert_before(&bufss_bot_anchor, bufs_init(&redo_buffers, "##redo-buffers"));
-#endif // ENABLE_UNDO
-}
-
-// Initialize global variables.
-void init_buffers(void)
-{
-	init_head_of_bufs();
-
-	init_edit_bufs();
-	init_cut_bufs();
-
+	bufss_insert_bufs_to_bottom(&all_bufferss, bufs_init(&edit_buffers,
+	 "##edit_bufs", "#edit_bufs_top_anch", "#edit_bufs_bot_anch"));
+	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&cut_buffers,
+	 "##cut_bufs", "#cut_bufs_top_anch", "#cut_bufs_bot_anch"));
 #ifdef ENABLE_HISTORY
-	init_hist_bufs();
+	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&history_buffers,
+	 "##hist_bufs", "#hist_bufs_top_anch", "#hist_bufs_bot_anch"));
 #endif // ENABLE_HISTORY
+#ifdef ENABLE_HELP
+	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&help_buffers,
+	 "##help_bufs", "#help_bufs_top_anch", "#help_bufs_bot_anch"));
+#endif // ENABLE_HELP
 #ifdef ENABLE_UNDO
-	init_undo_redo_bufs();
+	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&undo_buffers,
+	 "##undo_bufs", "#undo_bufs_top_anch", "#undo_bufs_bot_anch"));
+	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&redo_buffers,
+	 "##redo_bufs", "#redo_bufs_top_anch", "#redo_bufs_bot_anch"));
 #endif // ENABLE_UNDO
+
 #ifdef ENABLE_HELP
 	init_help_bufs();
 #endif // ENABLE_HELP
@@ -85,35 +80,27 @@ void init_buffers(void)
 
 void free_all_buffers(void)
 {
-	bufs_free_all_bufs(&bufss_top_anchor);
+	bufs_free_all_bufs(NODES_TOP_ANCH(&all_bufferss));
 }
 
 // Edit-buffer manipulation routines
-
-void init_edit_bufs(void)
-{
-	init_bufs_top_bot_anchor(
-	 EDIT_BUFS_TOP_ANCH, "#Edit-bufs-top-anchor",
-	 EDIT_BUFS_BOT_ANCH, "#Edit-bufs-bot-anchor");
-}
 
 // free current be_buf_t
 // the next or previous buffer will be set to current
 int free_cur_edit_buf(void)
 {
-	disp_status_bar_ing(_("Freeing edit buffer %s ..."), get_epc_buf()->file_path_);
 	return free_edit_buf(get_epc_buf());
 }
 int free_edit_buf(be_buf_t *edit_buf)
 {
-	int ret = 1;
-
 	if (IS_NODE_INT(edit_buf) == 0) {
 		return 0;
 	}
+	disp_status_bar_ing(_("Freeing edit buffer %s ..."), get_epc_buf()->file_path_);
 #ifdef ENABLE_HISTORY
 	update_history(HISTORY_TYPE_IDX_FILE, mk_cur_file_pos_str_static());
 #endif // ENABLE_HISTORY
+	int ret = 1;
 	if (edit_buf == get_epc_buf()) {
 		// select other buffer
 		ret = switch_epc_buf_to_another_buf();
@@ -161,9 +148,10 @@ void line_avoid_wild_ptr_cur(be_line_t *line)
 void line_avoid_wild_ptr(be_line_t **line_ptr, be_line_t *line)
 {
 	if (*line_ptr == line) {
-		if (IS_NODE_TOP(*line_ptr) == 0) {
+		if (IS_NODE_TOP_MOST(*line_ptr) == 0) {
 			*line_ptr = NODE_PREV(*line_ptr);
-		} else {
+		} else
+		if (IS_NODE_BOT_MOST(*line_ptr) == 0) {
 			*line_ptr = NODE_NEXT(*line_ptr);
 		}
 	}
@@ -171,54 +159,47 @@ void line_avoid_wild_ptr(be_line_t **line_ptr, be_line_t *line)
 //-----------------------------------------------------------------------------
 // Editor view management
 
-void init_cur_editor_panes(editor_panes_t *eps)
+void set_cur_editor_panes(editor_panes_t *editor_panes)
 {
-	if (eps) {
-		cur_editor_panes = eps;
+	cur_editor_panes = editor_panes;
+}
+void init_cur_editor_panes(editor_panes_t *eps, be_buf_t *buf)
+{
+	editor_panes_t *prev_eps = cur_editor_panes;	// save pointer
+	set_cur_editor_panes(eps);
+	if (prev_eps == NULL) {
+		// No prev_eps, this means 'eps' is the root view. set default initial values.
+		for (int pane_idx = 0; pane_idx < EDITOR_PANES; pane_idx++) {
+			set_epx_buf(pane_idx, EDIT_BUFS_TOP_NODE);
+		}
+		set_editor_cur_pane_idx(0);
+	} else {
+		// There is prev_eps, copy it.
+		copy_editor_panes(cur_editor_panes, prev_eps);
 	}
-	set_editor_cur_pane_idx(0);
-	for (int pane_idx = 0; pane_idx < EDITOR_PANES; pane_idx++) {
-		set_epx_buf(pane_idx, EDIT_BUFS_TOP_BUF);
+	if (buf) {
+///		for (int pane_idx = 0; pane_idx < EDITOR_PANES; pane_idx++) {
+			set_epx_buf(-1, buf);	// set only to the current pane
+///		}
 	}
+}
+void destroy_editor_panes()
+{
+	// nothing to do
 }
 void copy_editor_panes(editor_panes_t *dest, editor_panes_t *src)
 {
-	memcpy(dest, src, sizeof(*src));
-}
-editor_panes_t *push_editor_panes(editor_panes_t *next_eps)
-{
-	editor_panes_t *prev_eps = cur_editor_panes;	// save pointer
-	init_cur_editor_panes(next_eps);
-	copy_editor_panes(cur_editor_panes, prev_eps);
-	return prev_eps;
-}
-void pop_editor_panes(editor_panes_t *prev_eps, editor_panes_t *eps, BOOL copy_back)
-{
-	if (copy_back) {
-		copy_editor_panes(prev_eps, eps);
-	}
-	cur_editor_panes = prev_eps;	// recover pointer
-}
-
-void set_editor_cur_pane_idx(int pane_idx)
-{
-	cur_editor_panes->cur_pane_idx = pane_idx;
-}
-int get_editor_cur_pane_idx(void)
-{
-	return cur_editor_panes->cur_pane_idx;
+	memcpy__(dest, src, sizeof(*src));
 }
 
 void set_epc_buf(be_buf_t *buf)	// set edit buffer to current pane
 {
 	set_epx_buf(-1, buf);
 }
-// be_buf_t *get_cur_editor_pane_buf(void)
 be_buf_t *get_epc_buf(void)
 {
 	return get_epx_buf(-1);
 }
-// be_buf_view_t *get_cur_editor_pane_view(void)
 be_buf_view_t *get_epc_buf_view(void)
 {
 	return &(get_epc_buf()->buf_views[get_editor_cur_pane_idx()]);
@@ -227,44 +208,83 @@ be_buf_view_t *get_epc_buf_view(void)
 void set_epx_buf(int pane_idx, be_buf_t *buf)
 {
 	if (pane_idx < 0) {
-		pane_idx = cur_editor_panes->cur_pane_idx;
+		pane_idx = get_editor_cur_pane_idx();
 	}
 	if (buf) {
+_D_(buf_dump_name(buf))
 		cur_editor_panes->bufs[pane_idx] = buf;
 	}
-
-#ifdef ENABLE_SYNTAX
-	set_file_type_by_cur_file_path();
-#endif // ENABLE_SYNTAX
-	update_tab_size();
 }
+
 be_buf_t *get_epx_buf(int pane_idx)
 {
 	if (pane_idx < 0) {
-		pane_idx = cur_editor_panes->cur_pane_idx;
+		pane_idx = get_editor_cur_pane_idx();
 	}
 	return cur_editor_panes->bufs[pane_idx];
 }
 
-#ifdef ENABLE_DEBUG
-void dump_editor_panes(void)
+be_bufs_t *set_cur_buf_to_bufs(be_buf_t *buf)
 {
-	flf_d_printf("{{ cur_editor_panes->cur_pane_idx: %d\n", cur_editor_panes->cur_pane_idx);
-	dump_buf_views(get_epc_buf());
+	buf = buf_make_buf_intermediate(buf);
+	be_bufs_t *bufs = bufs_get_bufs_contains_buf(NODES_TOP_ANCH(&all_bufferss), buf);
+	if (IS_NODE_INT(bufs)) {
+		bufs->cur_buf = buf;	// set as a current
+	}
+	return bufs;
+}
+
+void set_editor_app_mode_on_cur_buf_mode()
+{
+	// select editor-app-mode depending on the mode of current buffer
+	switch (CUR_EBUF_STATE(buf_MODE)) {
+	default:
+	case buf_MODE_EDIT:
+		SET_APPMD_VAL(app_LIST_MODE, APP_MODE_NORMAL);		break;
+	case buf_MODE_VIEW:
+		SET_APPMD_VAL(app_LIST_MODE, APP_MODE_VIEWER);		break;
+	case buf_MODE_ANCH:
+	case buf_MODE_LIST:
+		SET_APPMD_VAL(app_LIST_MODE, APP_MODE_LIST);		break;
+	}
+}
+int is_epc_buf_view_mode(void)
+{
+	// avoid crash on the modification
+	if (IS_NODES_EMPTY(get_epc_buf())) {
+		return 1;
+	}
+
+	switch (CUR_EBUF_STATE(buf_MODE)) {
+	default:
+	case buf_MODE_EDIT:
+		return 0;		// modifiable
+	case buf_MODE_VIEW:
+	case buf_MODE_LIST:
+	case buf_MODE_ANCH:
+		return 1;		// view only
+	}
+}
+
+//-----------------------------------------------------------------------------
+#ifdef ENABLE_DEBUG
+void dump_editor_panes(editor_panes_t *eps)
+{
+flf_d_printf("{{ %p\n", eps);
+	if (eps == NULL) {
+		eps = cur_editor_panes;
+	}
+flf_d_printf("cur_pane_idx: %d\n", get_editor_cur_pane_idx());
+	dump_buf_views(eps->bufs[get_editor_cur_pane_idx()]);
 ///	flf_d_printf("pane_idx:0 ---------------------------------------------\n");
-///	dump_editor_pane_x(0);
+///	dump_editor_pane_x(eps, 0);
 ///	flf_d_printf("pane_idx:1 ---------------------------------------------\n");
-///	dump_editor_pane_x(1);
+///	dump_editor_pane_x(eps, 1);
 	flf_d_printf("}}\n");
 }
-void dump_editor_pane_x(int pane_idx)
+void dump_editor_pane_x(editor_panes_t *eps, int pane_idx)
 {
-///	flf_d_printf("get_epc_buf(): %p\n", get_epc_buf());
-	if (get_epc_buf()) {
-///		flf_d_printf("&(get_epc_buf()->buf_views[pane_idx]): %p\n",
-///		 &(get_epc_buf()->buf_views[pane_idx]));
-		dump_buf_view_x(cur_editor_panes->bufs[pane_idx], pane_idx);
-	}
+	dump_buf_view_x(eps->bufs[pane_idx], pane_idx);
 }
 void dump_buf_views(be_buf_t *buf)
 {
@@ -278,7 +298,7 @@ void dump_buf_view_x(be_buf_t *buf, int pane_idx)
 	 && (buf_check_line_in_buf_anchs(buf, BUFVX_CL(buf, pane_idx)) == NULL)) {
 		warning_printf("pane[%d].cur_line is not in cur_buf!!!!\n", pane_idx);
 	}
-	buf_dump_state(buf);
+	buf_dump_name(buf);
 	line_dump_byte_idx(BUFVX_CL(buf, pane_idx), BUFVX_CLBI(buf, pane_idx));
 	flf_d_printf(
 	 "BUFVX_CURS_Y(buf, pane_idx): %d, BUFVX_CURS_X_TO_KEEP(buf, pane_idx): %d,"
@@ -292,11 +312,11 @@ void dump_buf_view_x(be_buf_t *buf, int pane_idx)
 
 be_buf_t *get_edit_buf_by_file_path(const char *abs_path)
 {
-	return get_buf_from_bufs_by_file_path(EDIT_BUFS_TOP_BUF, abs_path);
+	return buf_get_buf_by_file_path(EDIT_BUFS_TOP_NODE, abs_path);
 }
 be_buf_t *get_edit_buf_by_file_name(const char *file_name)
 {
-	return get_buf_from_bufs_by_file_name(EDIT_BUFS_TOP_BUF, file_name);
+	return buf_get_buf_by_file_name(EDIT_BUFS_TOP_NODE, file_name);
 }
 
 //-----------------------------------------------------------------------------
@@ -308,7 +328,7 @@ void create_edit_buf(const char *full_path)
 #ifdef USE_NKF
 	SET_BUF_STATE(buf, buf_ENCODE, BUF_STATE(EDIT_BUFS_BOT_ANCH, buf_ENCODE));
 #endif // USE_NKF
-	buf_insert_before(EDIT_BUFS_BOT_ANCH, buf);
+	bufs_insert_buf_to_bottom(&edit_buffers, buf);
 	set_epc_buf(buf);
 	if (IS_NODE_INT(cur_editor_panes->bufs[0]) == 0) {
 		// make view-0 buffer valid
@@ -324,7 +344,7 @@ void create_edit_buf(const char *full_path)
 // Append a new line to the bottom of the current buffer
 be_line_t *append_string_to_cur_edit_buf(const char *string)
 {
-	EPCBVX_CL(0) = EPCBVX_CL(1) = line_insert_with_string(CUR_EDIT_BUF_BOT_ANCH, INSERT_BEFORE,
+	EPCBVX_CL(0) = EPCBVX_CL(1) = line_insert_with_string(CUR_EDIT_BUFS_BOT_ANCH, INSERT_BEFORE,
 	 string);
 	EPCBVX_CLBI(0) = EPCBVX_CLBI(1) = 0;
 	return EPCBVC_CL;
@@ -334,7 +354,7 @@ be_line_t *append_string_to_cur_edit_buf(const char *string)
 void append_magic_line(void)
 {
 	if (buf_is_empty(get_epc_buf())
-	 || ((buf_is_empty(get_epc_buf()) == 0) && line_data_strlen(CUR_EDIT_BUF_BOT_LINE))) {
+	 || ((buf_is_empty(get_epc_buf()) == 0) && line_data_strlen(CUR_EDIT_BUFS_BOT_NODE))) {
 		append_string_to_cur_edit_buf("");
 	}
 }
@@ -355,12 +375,6 @@ int is_epc_buf_valid(void)
 
 // Cut-buffers manipulation routines -----------------------------------------
 
-void init_cut_bufs(void)
-{
-	init_bufs_top_bot_anchor(
-	 CUT_BUFS_TOP_ANCH, "#Cut-bufs-top-anchor",
-	 CUT_BUFS_BOT_ANCH, "#Cut-bufs-bot-anchor");
-}
 void free_all_cut_bufs(void)
 {
 	while (IS_NODE_INT(TOP_BUF_OF_CUT_BUFS)) {
@@ -388,7 +402,7 @@ int pop__free_from_cut_buf(void)
 }
 be_line_t *append_string_to_cur_cut_buf(const char *string)
 {
-	return line_insert_with_string(CUR_CUT_BUF_BOT_ANCH, INSERT_BEFORE, string);
+	return line_insert_with_string(CUR_CUT_BUFS_BOT_ANCH, INSERT_BEFORE, string);
 }
 int count_cut_bufs(void)
 {
@@ -406,7 +420,7 @@ void renumber_cur_buf_from_top(void)
 	buf_renumber_from_top(get_epc_buf());
 }
 
-be_line_t *get_line_ptr_from_cur_buf_line_num(int line_num)
+be_line_t *get_line_ptr_in_cur_buf_by_line_num(int line_num)
 {
 	return buf_get_line_ptr_from_line_num(get_epc_buf(), line_num);
 }
@@ -428,48 +442,66 @@ int check_cur_buf_modified(void)
 		if (modified == 0) {
 			// clear "modified" flag if it's actually not modified
 			SET_CUR_EBUF_STATE(buf_MODIFIED, 0);
-			editor_disp_title_bar();
+///			disp_title_bar_editor();
 		}
 	}
 	return modified;
 }
+// If "modified" is not set, set it and update titlebar.
+void set_cur_buf_modified(void)
+{
+	if (CUR_EBUF_STATE(buf_MODIFIED) == 0) {
+		SET_CUR_EBUF_STATE(buf_MODIFIED, 1);
+///		disp_title_bar_editor();
+	}
+}
+int is_any_edit_buf_modified(void)
+{
+	for (be_buf_t *edit_buf = EDIT_BUFS_TOP_NODE; IS_NODE_INT(edit_buf);
+	 edit_buf = NODE_NEXT(edit_buf)) {
+		if (BUF_STATE(edit_buf, buf_MODIFIED)) {
+			return 1;
+		}
+	}
+	return 0;
+}
 
 //-----------------------------------------------------------------------------
 
-int tog_view_mode(void)
+int tog_buf_view_mode(void)
 {
-	TOGGLE_CUR_EBUF_STATE(buf_VIEW_MODE);
+	INC_CUR_EBUF_STATE(buf_MODE, buf_MODE_EDIT, buf_MODE_LIST);
 	return 0;
 }
-const char *get_str_view_mode(void)
+const char *get_str_buf_view_mode(void)
 {
-	return BOOL_TO_ON_OFF(CUR_EBUF_STATE(buf_VIEW_MODE));
+	return buf_mode_str(get_epc_buf());
 }
 
-int tog_line_wrap_mode(void)
+int tog_buf_line_wrap_mode(void)
 {
 	TOGGLE_CUR_EBUF_STATE(buf_LINE_WRAP_MODE);
 	return 0;
 }
-const char *get_str_line_wrap_mode(void)
+const char *get_str_buf_line_wrap_mode(void)
 {
 	return BOOL_TO_ON_OFF(CUR_EBUF_STATE(buf_LINE_WRAP_MODE));
 }
 
-int tog_tab_size(void)
+int tog_buf_tab_size(void)
 {
 	CUR_EBUF_STATE(buf_TAB_SIZE)
-	 = CUR_EBUF_STATE(buf_TAB_SIZE) == 8 ? 4 : 8;
-	update_tab_size();
+	 = (CUR_EBUF_STATE(buf_TAB_SIZE) == 8) ? 4 : 8;
+	set_wrap_line_tab_size_from_cur_buf();
 	return 0;
 }
-int inc_tab_size(void)
+int inc_buf_tab_size(void)
 {
 	INC_CUR_EBUF_STATE(buf_TAB_SIZE, TAB_SIZE_MIN, TAB_SIZE_MAX);
-	update_tab_size();
+	set_wrap_line_tab_size_from_cur_buf();
 	return 0;
 }
-const char *get_str_tab_size(void)
+const char *get_str_buf_tab_size(void)
 {
 	static char buf[2+1];
 
@@ -482,223 +514,202 @@ int get_cur_buf_tab_size(void)
 	return CUR_EBUF_STATE(buf_TAB_SIZE) == 0
 	 ? DEFAULT_TAB_SIZE : CUR_EBUF_STATE(buf_TAB_SIZE);
 }
-void update_tab_size(void)
+// update tab-size in wrap-line from the current buffer
+void set_wrap_line_tab_size_from_cur_buf(void)
 {
 	set_wrap_line_tab_size(get_cur_buf_tab_size());
 }
 
-int set_nix_file(void)
+int set_buf_nix_file(void)
 {
-	set_eol(EOL_NIX);
+	set_buf_eol(EOL_NIX);
 	return 0;
 }
-const char *get_str_nix_file(void)
+const char *get_str_buf_nix_file(void)
 {
 	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_EOL, EOL_NIX));
 }
-int set_mac_file(void)
+int set_buf_mac_file(void)
 {
-	set_eol(EOL_MAC);
+	set_buf_eol(EOL_MAC);
 	return 0;
 }
-const char *get_str_mac_file(void)
+const char *get_str_buf_mac_file(void)
 {
 	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_EOL, EOL_MAC));
 }
-int set_dos_file(void)
+int set_buf_dos_file(void)
 {
-	set_eol(EOL_DOS);
+	set_buf_eol(EOL_DOS);
 	return 0;
 }
-const char *get_str_dos_file(void)
+const char *get_str_buf_dos_file(void)
 {
 	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_EOL, EOL_DOS));
 }
-int set_eol(int eol)
+int set_buf_eol(int eol)
 {
 	CUR_EBUF_STATE(buf_EOL) = eol;
 	return 0;
 }
-const char *get_str_eol(void)
+const char *get_str_buf_eol(void)
 {
 	return buf_eol_str(get_epc_buf());
 }
 
-int set_encode_ascii(void)
+int set_buf_enc_ascii(void)
 {
-	set_encode(ENCODE_ASCII);
+	set_buf_encode(ENCODE_ASCII);
 	return 0;
 }
-const char *get_str_encode_ascii(void)
+const char *get_str_buf_enc_ascii(void)
 {
 	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_ASCII));
 }
-int set_encode_utf8(void)
+int set_buf_enc_utf8(void)
 {
-	set_encode(ENCODE_UTF8);
+	set_buf_encode(ENCODE_UTF8);
 	return 0;
 }
-const char *get_str_encode_utf8(void)
+const char *get_str_buf_enc_utf8(void)
 {
 	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_UTF8));
 }
 #ifdef USE_NKF
-int set_encode_eucjp(void)
+int set_buf_enc_eucjp(void)
 {
-	set_encode(ENCODE_EUCJP);
+	set_buf_encode(ENCODE_EUCJP);
 	return 0;
 }
-const char *get_str_encode_eucjp(void)
+const char *get_str_buf_enc_eucjp(void)
 {
 	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_EUCJP));
 }
-int set_encode_sjis(void)
+int set_buf_enc_sjis(void)
 {
-	set_encode(ENCODE_SJIS);
+	set_buf_encode(ENCODE_SJIS);
 	return 0;
 }
-const char *get_str_encode_sjis(void)
+const char *get_str_buf_enc_sjis(void)
 {
 	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_SJIS));
 }
-int set_encode_jis(void)
+int set_buf_enc_jis(void)
 {
-	set_encode(ENCODE_JIS);
+	set_buf_encode(ENCODE_JIS);
 	return 0;
 }
-const char *get_str_encode_jis(void)
+const char *get_str_buf_enc_jis(void)
 {
 	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_JIS));
 }
 #endif // USE_NKF
-int set_encode_binary(void)
+int set_buf_enc_binary(void)
 {
-	set_encode(ENCODE_BINARY);
+	set_buf_encode(ENCODE_BINARY);
 	return 0;
 }
-const char *get_str_encode_binary(void)
+const char *get_str_buf_enc_binary(void)
 {
 	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_BINARY));
 }
 
-int set_encode(int encode)
+int set_buf_encode(int encode)
 {
 	CUR_EBUF_STATE(buf_ENCODE) = encode;
 	return 0;
 }
-const char *get_str_encode(void)
+const char *get_str_buf_encode(void)
 {
-	return buf_encode_str(get_epc_buf());
+	return buf_enc_str(get_epc_buf());
 }
 
 //-----------------------------------------------------------------------------
 
-// If "modified" is not set, set it and update titlebar.
-void set_cur_buf_modified(void)
+int doe_tog_buf_view_mode(void)
 {
-	if (CUR_EBUF_STATE(buf_MODIFIED) == 0) {
-		SET_CUR_EBUF_STATE(buf_MODIFIED, 1);
-		editor_disp_title_bar();
-	}
-}
-
-int is_any_edit_buf_modified(void)
-{
-	for (be_buf_t *edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
-	 edit_buf = NODE_NEXT(edit_buf)) {
-		if (BUF_STATE(edit_buf, buf_MODIFIED)) {
-			return 1;
-		}
-	}
+	tog_buf_view_mode();
+	SHOW_MODE("View mode", get_str_buf_view_mode());
 	return 0;
 }
-
-//-----------------------------------------------------------------------------
-
-int doe_tog_view_mode(void)
+int doe_tog_buf_line_wrap_mode(void)
 {
-	tog_view_mode();
-	SHOW_MODE("View mode", get_str_view_mode());
-	return 0;
-}
-int doe_tog_line_wrap_mode(void)
-{
-	tog_line_wrap_mode();
-	SHOW_MODE("Line-wrap mode", get_str_line_wrap_mode());
+	tog_buf_line_wrap_mode();
+	SHOW_MODE("Line-wrap mode", get_str_buf_line_wrap_mode());
 
 	EPCBVC_MIN_TEXT_X_TO_KEEP = 0;
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
-int doe_tog_tab_size(void)
+int doe_tog_buf_tab_size(void)
 {
-	tog_tab_size();
-	SHOW_MODE(_("Tab size"), get_str_tab_size());
+	tog_buf_tab_size();
+	SHOW_MODE(_("Tab size"), get_str_buf_tab_size());
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
-int doe_inc_tab_size(void)
+int doe_inc_buf_tab_size(void)
 {
-	inc_tab_size();
-	SHOW_MODE(_("Tab size"), get_str_tab_size());
+	inc_buf_tab_size();
+	SHOW_MODE(_("Tab size"), get_str_buf_tab_size());
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
-int doe_set_nix_file(void)
+int doe_set_buf_nix_file(void)
 {
-	set_nix_file();
-	SHOW_MODE("File format", get_str_eol());
+	set_buf_nix_file();
+	SHOW_MODE("File format", get_str_buf_eol());
 	return 0;
 }
-int doe_set_mac_file(void)
+int doe_set_buf_mac_file(void)
 {
-	set_mac_file();
-	SHOW_MODE("File format", get_str_eol());
+	set_buf_mac_file();
+	SHOW_MODE("File format", get_str_buf_eol());
 	return 0;
 }
-int doe_set_dos_file(void)
+int doe_set_buf_dos_file(void)
 {
-	set_dos_file();
-	SHOW_MODE("File format", get_str_eol());
+	set_buf_dos_file();
+	SHOW_MODE("File format", get_str_buf_eol());
 	return 0;
 }
 //-----------------------------------------------------------------------------
-int doe_set_encode_ascii(void)
+int doe_set_buf_enc_ascii(void)
 {
-	set_encode_ascii();
-	SHOW_MODE("ASCII format", get_str_encode_ascii());
+	set_buf_enc_ascii();
+	SHOW_MODE("ASCII format", get_str_buf_enc_ascii());
 	return 0;
 }
-int doe_set_encode_utf8(void)
+int doe_set_buf_enc_utf8(void)
 {
-	set_encode_utf8();
-	SHOW_MODE("UTF-8 format", get_str_encode_utf8());
+	set_buf_enc_utf8();
+	SHOW_MODE("UTF-8 format", get_str_buf_enc_utf8());
 	return 0;
 }
 #ifdef USE_NKF
-int doe_set_encode_eucjp(void)
+int doe_set_buf_enc_eucjp(void)
 {
-	set_encode_eucjp();
-	SHOW_MODE("EUC-JP format", get_str_encode_eucjp());
+	set_buf_enc_eucjp();
+	SHOW_MODE("EUC-JP format", get_str_buf_enc_eucjp());
 	return 0;
 }
-int doe_set_encode_sjis(void)
+int doe_set_buf_enc_sjis(void)
 {
-	set_encode_sjis();
-	SHOW_MODE("SJIS format", get_str_encode_sjis());
+	set_buf_enc_sjis();
+	SHOW_MODE("SJIS format", get_str_buf_enc_sjis());
 	return 0;
 }
-int doe_set_encode_jis(void)
+int doe_set_buf_enc_jis(void)
 {
-	set_encode_jis();
-	SHOW_MODE("JIS format", get_str_encode_jis());
+	set_buf_enc_jis();
+	SHOW_MODE("JIS format", get_str_buf_enc_jis());
 	return 0;
 }
 #endif // USE_NKF
-int doe_set_encode_binary(void)
+int doe_set_buf_enc_binary(void)
 {
-	set_encode_binary();
-	SHOW_MODE("BINARY format", get_str_encode_binary());
+	set_buf_enc_binary();
+	SHOW_MODE("BINARY format", get_str_buf_enc_binary());
 	return 0;
 }
 
@@ -711,52 +722,48 @@ void dump_cur_edit_buf_lines(void)
 }
 void dump_edit_bufs(void)
 {
-	buf_dump_bufs(EDIT_BUFS_TOP_BUF);
+	buf_dump_bufs(EDIT_BUFS_TOP_NODE);
 }
 void dump_edit_bufs_lines(void)
 {
-	buf_dump_bufs_lines(EDIT_BUFS_TOP_BUF, "edit-bufs");
+	buf_dump_bufs_lines(EDIT_BUFS_TOP_NODE, "edit-bufs");
 }
 void dump_cut_bufs(void)
 {
-	buf_dump_bufs(CUT_BUFS_TOP_BUF);
+	buf_dump_bufs(CUT_BUFS_TOP_NODE);
 }
 void dump_cut_bufs_lines(void)
 {
-	buf_dump_bufs_lines(CUT_BUFS_TOP_BUF, "cut-bufs");
+	buf_dump_bufs_lines(CUT_BUFS_TOP_NODE, "cut-bufs");
 }
 
 // dump current buffer
 void dump_cur_edit_buf(void)
 {
-flf_d_printf("<<<\n");
-flf_d_printf("CUR_EDIT_BUF_TOP_LINE:%08lx\n", CUR_EDIT_BUF_TOP_LINE);
-	if (CUR_EDIT_BUF_TOP_LINE) {
-		flf_d_printf("CUR_EDIT_BUF_TOP_LINE->data:%08lx\n", CUR_EDIT_BUF_TOP_LINE->data);
+	flf_d_printf("<<<\n");
+	flf_d_printf("CUR_EDIT_BUFS_TOP_NODE:%08lx\n", CUR_EDIT_BUFS_TOP_NODE);
+	if (CUR_EDIT_BUFS_TOP_NODE) {
+		flf_d_printf("CUR_EDIT_BUFS_TOP_NODE->data:%08lx\n", CUR_EDIT_BUFS_TOP_NODE->data);
 	}
-flf_d_printf("CUR_EDIT_BUF_BOT_LINE:%08lx\n", CUR_EDIT_BUF_BOT_LINE);
-	if (CUR_EDIT_BUF_BOT_LINE) {
-		flf_d_printf("CUR_EDIT_BUF_BOT_LINE->data:%08lx\n", CUR_EDIT_BUF_BOT_LINE->data);
+	flf_d_printf("CUR_EDIT_BUFS_BOT_NODE:%08lx\n", CUR_EDIT_BUFS_BOT_NODE);
+	if (CUR_EDIT_BUFS_BOT_NODE) {
+		flf_d_printf("CUR_EDIT_BUFS_BOT_NODE->data:%08lx\n", CUR_EDIT_BUFS_BOT_NODE->data);
 	}
-flf_d_printf("cur_line:%08lx\n", EPCBVC_CL);
+	flf_d_printf("cur_line:%08lx\n", EPCBVC_CL);
 	if (EPCBVC_CL) {
 		flf_d_printf("cur_line->data:%08lx\n", EPCBVC_CL->data);
 	}
-	line_dump_lines(CUR_EDIT_BUF_TOP_ANCH, INT_MAX, EPCBVC_CL);
-flf_d_printf(">>>\n");
+	line_dump_lines(CUR_EDIT_BUFS_TOP_ANCH, INT_MAX, EPCBVC_CL);
+	flf_d_printf(">>>\n");
 }
 #endif // ENABLE_DEBUG
 
-/////_D_(line_dump(line))
 /////_D_(dump_editor_panes())
 /////_D_(dump_editor_panes())
 /////_D_(dump_editor_panes())
-/////_D_(buf_dump_state(buf))
+/////_D_(buf_dump_name(buf))
 /////_D_(dump_file_type(cur_file_type, 0))
-/////_D_(line_dump(line))
 /////_D_(dump_editor_panes())
-/////_D_(line_dump(line))
-/////_D_(line_dump(line))
 /////_D_(dump_editor_panes())
 /////_D_(dump_editor_panes())
 /////_D_(dump_editor_panes())
@@ -767,12 +774,10 @@ flf_d_printf(">>>\n");
 /////_D_(dump_buf_views(edit_buf_save))
 /////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
 /////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
-/////_D_(buf_dump_state(cur_edit_buf))
-/////_D_(buf_dump_state(edit_buf))
+/////_D_(buf_dump_name(cur_edit_buf))
+/////_D_(buf_dump_name(edit_buf))
 /////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
 /////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
 /////_D_(line_dump_byte_idx(EPCBVC_CL, 0))
-/////_D_(line_dump(EPCBVC_CL))
-/////_D_(line_dump(line))
 
 // End of buffers.c

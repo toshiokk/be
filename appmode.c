@@ -89,6 +89,7 @@ void set_mode_idx_val(mode_idx_t mode_idx, int val)
 		break;
 #endif // ENABLE_REGEX
 
+#ifdef ENABLE_FILER
 	case FLMD_SHOW_DOT_FILE:
 		SET_APPMD_VAL(fl_SHOW_DOT_FILE, val);
 		break;
@@ -101,6 +102,7 @@ void set_mode_idx_val(mode_idx_t mode_idx, int val)
 	case FLMD_FILER_PANES:
 		SET_APPMD_VAL(fl_FILER_PANES, val);
 		break;
+#endif // ENABLE_FILER
 
 	case BUFST_VIEW_MODE:
 	case BUFST_TAB_SIZE:
@@ -145,6 +147,7 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 		return get_str_tab_eol_notation();
 #endif // ENABLE_SYNTAX
 
+#ifdef ENABLE_FILER
 	case FLMD_SHOW_DOT_FILE:
 		return get_str_show_dot_file();
 	case FLMD_SHOW_FILE_INFO:
@@ -153,6 +156,7 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 		return get_str_sort_by();
 	case FLMD_FILER_PANES:
 		return get_str_filer_panes();
+#endif // ENABLE_FILER
 
 	case BUFST_VIEW_MODE:
 	case BUFST_TAB_SIZE:
@@ -163,10 +167,24 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 
 //-----------------------------------------------------------------------------
 
+int inc_app_mode(void)
+{
+	INC_APPMD(app_LIST_MODE, APP_MODE_LIST);
+	return 0;
+}
+const char *get_str_app_mode()
+{
+	switch (GET_APPMD(app_LIST_MODE)) {
+	default:
+	case APP_MODE_NORMAL:	return "NORMAL";
+	case APP_MODE_VIEWER:	return "VIEWER";
+	case APP_MODE_LIST:		return "LIST";
+	}
+}
+
 int tog_draw_cursor(void)
 {
-	TOGGLE_APPMD(app_DRAW_CURSOR);
-	return 0;
+	return TOGGLE_APPMD(app_DRAW_CURSOR);
 }
 const char *get_str_draw_cursor(void)
 {
@@ -175,8 +193,7 @@ const char *get_str_draw_cursor(void)
 
 int tog_auto_indent(void)
 {
-	TOGGLE_APPMD(ed_AUTO_INDENT);
-	return 0;
+	return TOGGLE_APPMD(ed_AUTO_INDENT);
 }
 const char *get_str_auto_indent(void)
 {
@@ -185,8 +202,7 @@ const char *get_str_auto_indent(void)
 
 int tog_dual_scroll(void)
 {
-	TOGGLE_APPMD(ed_DUAL_SCROLL);
-	return 0;
+	return TOGGLE_APPMD(ed_DUAL_SCROLL);
 }
 const char *get_str_dual_scroll(void)
 {
@@ -195,8 +211,7 @@ const char *get_str_dual_scroll(void)
 
 int tog_ignore_case(void)
 {
-	TOGGLE_APPMD(ed_IGNORE_CASE);
-	return 0;
+	return TOGGLE_APPMD(ed_IGNORE_CASE);
 }
 const char *get_str_ignore_case(void)
 {
@@ -206,8 +221,7 @@ const char *get_str_ignore_case(void)
 #ifdef ENABLE_REGEX
 int tog_regexp(void)
 {
-	TOGGLE_APPMD(ed_USE_REGEXP);
-	return 0;
+	return TOGGLE_APPMD(ed_USE_REGEXP);
 }
 const char *get_str_regexp(void)
 {
@@ -235,8 +249,7 @@ int get_cursor_positioning(void)
 #ifdef ENABLE_SYNTAX
 int tog_syntax_hl(void)
 {
-	TOGGLE_APPMD(ed_SYNTAX_HIGHLIGHT);
-	return 0;
+	return TOGGLE_APPMD(ed_SYNTAX_HIGHLIGHT);
 }
 const char *get_str_syntax_hl(void)
 {
@@ -245,8 +258,7 @@ const char *get_str_syntax_hl(void)
 
 int tog_tab_eol_notation(void)
 {
-	TOGGLE_APPMD(ed_TAB_EOL_NOTATION);
-	return 0;
+	return TOGGLE_APPMD(ed_TAB_EOL_NOTATION);
 }
 const char *get_str_tab_eol_notation(void)
 {
@@ -256,8 +268,7 @@ const char *get_str_tab_eol_notation(void)
 
 int tog_show_ruler(void)
 {
-	TOGGLE_APPMD(ed_SHOW_RULER);
-	return 0;
+	return TOGGLE_APPMD(ed_SHOW_RULER);
 }
 const char *get_str_show_ruler(void)
 {
@@ -270,8 +281,7 @@ int get_ruler_lines(void)
 
 int tog_show_line_num(void)
 {
-	TOGGLE_APPMD(ed_SHOW_LINE_NUMBER);
-	return 0;
+	return TOGGLE_APPMD(ed_SHOW_LINE_NUMBER);
 }
 const char *get_str_show_line_num(void)
 {
@@ -280,8 +290,7 @@ const char *get_str_show_line_num(void)
 
 int tog_map_key_7f_bs(void)
 {
-	TOGGLE_APPMD(app_MAP_KEY_7F_BS);
-	return 0;
+	return TOGGLE_APPMD(app_MAP_KEY_7F_BS);
 }
 const char *get_str_map_key_7f_bs(void)
 {
@@ -306,18 +315,24 @@ int get_backup_files(void)
 }
 int tog_editor_panes()
 {
-	TOGGLE_APPMD(ed_EDITOR_PANES);
-	return 0;
+	return TOGGLE_APPMD(ed_EDITOR_PANES);
 }
-const char *get_editor_panes(void)
+const char *get_str_editor_panes(void)
 {
-	return BOOL_TO_ON_OFF(GET_APPMD(ed_EDITOR_PANES));
+	return BOOL_TO_1_2(GET_APPMD(ed_EDITOR_PANES));
+}
+int tog_editor_panex()
+{
+	return set_editor_cur_pane_idx(get_editor_counter_pane_idx());
+}
+const char *get_str_editor_panex()
+{
+	return BOOL_TO_0_1(get_editor_cur_pane_idx());
 }
 
 int tog_show_dot_file(void)
 {
-	TOGGLE_APPMD(fl_SHOW_DOT_FILE);
-	return 0;
+	return TOGGLE_APPMD(fl_SHOW_DOT_FILE);
 }
 const char *get_str_show_dot_file(void)
 {
@@ -374,18 +389,24 @@ const char *get_str_sort_by(void)
 	}
 }
 
+#ifdef ENABLE_FILER
 int tog_filer_panes(void)
 {
-	TOGGLE_APPMD(fl_FILER_PANES);
-	return 0;
+	return TOGGLE_APPMD(fl_FILER_PANES);
 }
 const char *get_str_filer_panes(void)
 {
-	static char buf[1+1];
-
-	snprintf(buf, 1+1, "%d", GET_APPMD(fl_FILER_PANES) + 1);
-	return buf;
+	return BOOL_TO_1_2(GET_APPMD(fl_FILER_PANES));
 }
+int tog_filer_panex()
+{
+	return set_filer_cur_pane_idx(get_filer_counter_pane_idx());
+}
+const char *get_str_filer_panex()
+{
+	return BOOL_TO_0_1(get_filer_cur_pane_idx());
+}
+#endif // ENABLE_FILER
 
 int inc_key_list_lines(void)
 {
@@ -408,27 +429,44 @@ BOOL is_app_normal_mode(void)	// in editor: text editor mode, in filer: file man
 {
 	return GET_APPMD(app_LIST_MODE) == APP_MODE_NORMAL;
 }
+BOOL is_app_view_mode(void)		// in editor: test viewer, in filer: directory viewer
+{
+	return GET_APPMD(app_LIST_MODE) == APP_MODE_VIEWER;
+}
 BOOL is_app_list_mode(void)		// in editor: text list mode, in filer: file list mode
 {
 	return GET_APPMD(app_LIST_MODE) == APP_MODE_LIST;
 }
-BOOL is_app_help_mode(void)		// in editor: read only mode, in filer: N/A
+BOOL is_app_view_list_mode(void)
 {
-	return GET_APPMD(app_LIST_MODE) == APP_MODE_HELP;
-}
-BOOL is_app_list_help_mode(void)
-{
-	return is_app_list_mode() || is_app_help_mode();
+	return is_app_view_mode() || is_app_list_mode();
 }
 
 //=============================================================================
 
+int doe_inc_app_mode(void)
+{
+	inc_app_mode();
+	SHOW_MODE("App mode", get_str_app_mode());
+	return 0;
+}
+
 int doe_tog_panes(void)
 {
 	tog_editor_panes();
+	SHOW_MODE("Editor panes", get_str_editor_panes());
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
+int doe_tog_panex(void)
+{
+	tog_editor_panex();
+	SHOW_MODE("Editor pane index", get_str_editor_panex());
+	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+	return 1;
+}
+
+//-----------------------------------------------------------------------------
 
 int doe_tog_draw_cursor(void)
 {
@@ -527,13 +565,31 @@ int do_inc_key_list_lines_(void)
 	win_reinit_win_size();
 	return 0;
 }
-
-int examine_key_code(void)
+//-----------------------------------------------------------------------------
+int set_editor_cur_pane_idx(int pane_idx)
 {
-	disp_status_bar_ing(_("Input key to show key code"));
-	key_code_t key = input_key_loop();
-	disp_status_bar_done(_("Key code input: %04x: [%s]"), key, key_name_from_key_code(key, NULL));
-	return key == K_ESC;
+	return SET_APPMD_VAL(ed_EDITOR_PANEX, pane_idx);
+}
+int get_editor_cur_pane_idx(void)
+{
+	return GET_APPMD(ed_EDITOR_PANEX);
+}
+int get_editor_counter_pane_idx(void)
+{
+	return BOOL_INV(GET_APPMD(ed_EDITOR_PANEX));
+}
+
+int set_filer_cur_pane_idx(int pane_idx)
+{
+	return SET_APPMD_VAL(fl_FILER_PANEX, pane_idx);
+}
+int get_filer_cur_pane_idx()
+{
+	return GET_APPMD(fl_FILER_PANEX);
+}
+int get_filer_counter_pane_idx()
+{
+	return BOOL_INV(GET_APPMD(fl_FILER_PANEX));
 }
 
 // End of appmode.c

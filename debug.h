@@ -22,6 +22,11 @@
 #ifndef debug_h
 #define debug_h
 
+///#define FORCE_ENABLE_DEBUG		// define this to force output debug log
+#ifdef FORCE_ENABLE_DEBUG
+#define ENABLE_DEBUG 1
+#endif // FORCE_ENABLE_DEBUG
+
 #ifdef ENABLE_DEBUG
 ///
 #define START_UP_TEST
@@ -71,9 +76,9 @@
 
 #endif // ENABLE_DEBUG
 
-#define progerr_printf(args...)		flfl_d_printf("PROGERR !!", args);
-#define warning_printf(args...)		flfl_d_printf("WARNING !!", args);
-#define fatalerr_printf(args...)	flfl_d_printf("FATALERR !!!!", args);
+#define progerr_printf(args...)		flfl_d_printf("PROGERR !!", args)
+#define warning_printf(args...)		flfl_d_printf("WARNING !!", args)
+#define fatalerr_printf(args...)	flfl_d_printf("FATALERR !!!!", args)
 #define _TFLF_						tflf_d_printf("\n");
 #define _MFLF_						mflf_d_printf("\n");
 #define _UFLF_						uflf_d_printf("\n");
@@ -94,6 +99,21 @@ void set_debug_printf_output(int on1_off0);
 void debug_printf(const char *format, ...);
 void debug_vprintf(const char *format, va_list ap);
 #endif // ENABLE_DEBUG
+
+// Usage of "FALLTHROUGH":
+//	switch (value) {
+//	case VAL1:
+//		c = a + b;
+//		// FALLTHROUGH (necessary to clearify that this fall-through is intended)
+//	case VAL2:
+//		f = d + e;
+//		break;
+//	case VAL3:
+//		// FALLTHROUGH (<== not necessary because nothing done in section of "case VAL3:")
+//	case VAL4:
+//		f = d + e;
+//		break;
+//	}
 
 #endif // debug_h
 

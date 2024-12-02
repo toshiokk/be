@@ -32,8 +32,8 @@ PRIVATE int doe_open_file_recursive(int recursive)
 
 	clear_files_loaded();
 #ifndef ENABLE_FILER
-	if (chk_inp_str_ret_val_editor(input_string_pos("", file_path,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_FILE,
+	if (chk_inp_str_ret_val_editor(input_string_pos("", file_path, MAX_PATH_LEN,
+	 HISTORY_TYPE_IDX_FILE,
 	 _("Open existing file:")))) {
 		return 0;
 	}
@@ -52,8 +52,8 @@ PRIVATE int doe_open_file_recursive(int recursive)
 int doe_open_new_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
-	if (chk_inp_str_ret_val_editor(input_string_pos("", file_path,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
+	if (chk_inp_str_ret_val_editor(input_string_pos("", file_path, MAX_PATH_LEN,
+	 HISTORY_TYPE_IDX_DIR,
 	 _("Open new file:")))) {
 		return 0;
 	}
@@ -228,6 +228,9 @@ int doe_write_file_to(void)
 #endif // ENABLE_FILER
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	disp_status_bar_done(_("Written to the file: %s"), file_name);
+#ifdef ENABLE_SYNTAX
+	set_file_type_and_tab_size_by_cur_file_path();
+#endif // ENABLE_SYNTAX
 	return 1;
 }
 int doe_write_file_ask(void)
@@ -329,7 +332,7 @@ int write_all_ask(int yes_no, close_after_save_t close)
 		if (switch_epc_buf_to_next(0, 0) == 0)
 			break;
 	}
-	disp_status_bar_done(_("All buffers are checked and saved if modified"));
+	disp_status_bar_done(_("All modified buffers are saved"));
 	return 1;
 }
 int close_all_not_modified(void)
@@ -337,8 +340,9 @@ int close_all_not_modified(void)
 	switch_epc_buf_to_top();
 	while (is_epc_buf_valid()) {
 		if (check_cur_buf_modified()) {
-			if (switch_epc_buf_to_next(0, 0) == 0)
+			if (switch_epc_buf_to_next(0, 0) == 0) {
 				break;
+			}
 		} else {
 			free_cur_edit_buf();
 		}
@@ -371,7 +375,7 @@ int write_file_ask(int yes_no, close_after_save_t close)
 		return ANSWER_NO;
 	}
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
-	update_screen_editor(1, 1, 1);
+	update_screen_editor(1, 1);
 flf_d_printf("ret: %d\n", ret);
 	if (ret < ANSWER_ALL) {
 		ret = ask_yes_no(ASK_YES_NO | ASK_ALL,

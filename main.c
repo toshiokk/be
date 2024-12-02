@@ -44,6 +44,9 @@ PRIVATE void die_save_file(const char *die_file_path);
 
 char *main_rc_file_name = RC_FILE_NAME;	// standard rc file
 
+// If screen columns is wider than this value, set two panes mode at start up
+////#define SCRN_COLS_TWO_PANES		120
+
 int main(int argc, char *argv[])
 {
 	editor_panes_t root_editor_panes;
@@ -61,8 +64,8 @@ flf_d_printf("Start %s ==============================\n", APP_NAME " " __DATE__ 
 	init_locale();
 
 	_mlc_memorize_count
-	init_buffers();		// parse_options() needs epc_buf. So create here.
-	init_cur_editor_panes(&root_editor_panes);
+	init_bufferss();		// parse_options() needs epc_buf. So create here.
+	init_cur_editor_panes(&root_editor_panes, NULL);
 #ifdef ENABLE_FILER
 	init_cur_filer_panes(&root_filer_panes, get_starting_dir());
 #endif // ENABLE_FILER
@@ -107,6 +110,7 @@ flf_d_printf("init_histories()\n");
 	init_histories();
 flf_d_printf("load_histories()\n");
 	load_histories();
+	bufs_renumber_all_bufs_from_top(&history_buffers);
 	load_last_searched_needle();
 flf_d_printf("load_key_macro()\n");
 	load_key_macro(1);
@@ -151,7 +155,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	if (edit_bufs_count_bufs()) {
 #ifdef ENABLE_HISTORY
 		if (goto_last_file_line_col_in_history() == 0) {
-			doe_switch_to_top_file();
+			doe_switch_to_top_buffer();
 		}
 #endif // ENABLE_HISTORY
 		if (start_line_num > 0) {
@@ -164,7 +168,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 
 #ifdef ENABLE_HELP
 	disp_splash(-1);
-	MSLEEP(100);
+	MSLEEP(200);
 #endif // ENABLE_HELP
 
 	set_die_on_callback(NULL);
@@ -178,9 +182,9 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	_mlc_check_count
 	free_all_allocated_memory();
 #ifdef ENABLE_FILER
-	pop_filer_panes(&root_filer_panes, NULL);
+	destroy_filer_panes();
 #endif // ENABLE_FILER
-	pop_editor_panes(&root_editor_panes, NULL, FALSE);
+	destroy_editor_panes();
 	signal_clear();
 
 	_mlc_check_count
@@ -191,21 +195,24 @@ flf_d_printf("Exit %s ===============================\n", APP_NAME " " __DATE__ 
 	return 0;
 }
 
+// call_editor() : pass a edit-buffer and edit or browse it.
+// call_filer()  : pass a directory and manage or browse it.
 void app_main_loop(void)
 {
+	clear_app_win_stack_depth();
 	update_msec_when_input_key();	// avoid screen flashing on the first key input
 #ifndef ENABLE_FILER
 	if (edit_bufs_count_bufs() == 0) {
 		doe_open_file();
 	}
 	while (edit_bufs_count_bufs()) {
-		call_editor(0, APP_MODE_NORMAL, NULL, 0);
+		call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
 	}
 #else // ENABLE_FILER
 	if (edit_bufs_count_bufs()) {
 		// application was started as a EDITOR
 		while (edit_bufs_count_bufs()) {
-			call_editor(0, APP_MODE_NORMAL, NULL, 0);
+			call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
 		}
 	} else {
 		// application was started as a FILER
@@ -213,10 +220,12 @@ void app_main_loop(void)
 			char file_path[MAX_PATH_LEN+1];
 			call_filer(0, APP_MODE_NORMAL, "", "", file_path, MAX_PATH_LEN);
 			if (edit_bufs_count_bufs() == 0) {
+flf_d_printf("no edit buffers: %d\n", edit_bufs_count_bufs());
 				// no file loaded in filer
 				break;
 			}
-			call_editor(0, APP_MODE_NORMAL, NULL, 0);
+flf_d_printf("call_editor\n");
+			call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
 		}
 	}
 #endif // ENABLE_FILER
@@ -255,8 +264,9 @@ PRIVATE int init_app_mode(void)
 	SET_APPMD_VAL(app_KEY_LINES, 3);
 	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
 #ifdef ENABLE_DEBUG
+#ifdef FORCE_ENABLE_DEBUG
 	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);
-	SET_APPMD_VAL(app_DEBUG_PRINTF, 0);
+#endif // FORCE_ENABLE_DEBUG
 	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
 #endif // ENABLE_DEBUG
 	// editor mode
@@ -266,6 +276,7 @@ PRIVATE int init_app_mode(void)
 	SET_APPMD(app_MAP_KEY_7F_BS);
 
 	CLR_APPMD(ed_EDITOR_PANES);
+	CLR_APPMD(ed_EDITOR_PANEX);
 	CLR_APPMD(ed_DUAL_SCROLL);
 	SET_APPMD(ed_SHOW_RULER);
 	SET_APPMD(ed_SHOW_LINE_NUMBER);
@@ -284,9 +295,10 @@ PRIVATE int init_app_mode(void)
 #endif // ENABLE_REGEX
 
 	// filer mode
+	CLR_APPMD(fl_FILER_PANES);
+	CLR_APPMD(fl_FILER_PANEX);
 	SET_APPMD_VAL(fl_SHOW_FILE_INFO, SHOW_FILE_INFO_4);
 	SET_APPMD_VAL(fl_FILE_SORT_BY, 0);
-	CLR_APPMD(fl_FILER_PANES);
 
 	return 0;
 }
@@ -373,7 +385,7 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 			}
 			break;
 		case 'r':
-			SET_CUR_EBUF_STATE(buf_VIEW_MODE, 1);
+			SET_CUR_EBUF_STATE(buf_MODE, buf_MODE_VIEW);	// Set a edit-buffer not saveable
 			break;
 #ifdef USE_NKF
 		case 'n':
@@ -534,8 +546,8 @@ PRIVATE void start_up_test(void)
 PRIVATE void start_up_test2(void)
 {
 	flf_d_printf("{{{{---------------------------------------------------------\n");
-	check_all_functions_accessible_without_function_key();
 	check_multiple_assignment_of_key();
+	check_all_functions_accessible_without_function_key();
 	test_modulo();
 	flf_d_printf("}}}}---------------------------------------------------------\n");
 }
@@ -576,14 +588,12 @@ int write_text_to_file(const char *file_path, char append, const char *text)
 // Die (gracefully?)
 void app_die_on(const char *msg)
 {
-	be_buf_t *buf;
-
 	tio_destroy();
 
 	e_printf("%s", msg);
 
 	// then save all of the modified buffers, if any
-	for (buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+	for (be_buf_t *buf = EDIT_BUFS_TOP_NODE; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
 		set_epc_buf(buf);
 		if (check_cur_buf_modified()) {
 			// save the file if it's been modified
@@ -685,8 +695,8 @@ PRIVATE void show_one_option(const char *shortflag, const char *longflag, const 
 
 void show_version(void)
 {
-	printf(_("%s editor version %s (compiled at %s, %s)\n"),
-	 APP_NAME, VERSION, __TIME__, __DATE__);
+	printf(_("%s version %s (compiled at %s, %s)\n"),
+	 APP_LONG_NAME, VERSION, __TIME__, __DATE__);
 	printf(_(" Build Options:\n"));
 #ifdef ENABLE_FILER
 	printf("   --enable-filer\n");

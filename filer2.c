@@ -30,7 +30,6 @@ PRIVATE const char *get_1k_to_999k_str(long size, char *buf);
 #ifdef START_UP_TEST
 void test_get_file_size_str(void)
 {
-_FLF_
 	loff_t size;
 	loff_t zeros;
 	int bits;
@@ -182,8 +181,6 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 		if (show_link) {
 			strlcat__(buf_name, MAX_PATH_LEN, file_info->file_name);
 #define LINK_ARROW		" -> "
-///#define LINK_ARROW		" >>"
-///#define LINK_ARROW		" > "
 			strlcat__(buf_name, MAX_PATH_LEN, LINK_ARROW);
 			if (file_info->symlink)
 				strlcat__(buf_name, MAX_PATH_LEN, file_info->symlink);
@@ -332,7 +329,7 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 		strlcpy__(buffer, _(" <<broken-link>>"), FILE_NAME_INFO_BUF_LEN);
 	} else {
 		snprintf_(buffer, FILE_NAME_INFO_BUF_LEN+1, "%c%s%s",
-		 selected ? '*' : ' ', buf_name, info_str_ptr);
+		 (selected & _FILE_SEL_MAN_) ? '*' : ' ', buf_name, info_str_ptr);
 	}
 	return buffer;
 }

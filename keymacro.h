@@ -35,6 +35,9 @@ int doe_cancel_recording(void);
 int doe_end_recording(void);
 int doe_playback_last_1(void);
 int doe_playback_last_2(void);
+#ifdef ENABLE_HISTORY
+int doe_playback_string(void);
+#endif // ENABLE_HISTORY
 
 void key_macro_start_recording(void);
 void key_macro_put_key(key_code_t key);

@@ -635,4 +635,175 @@ const char *get_host_name()
 	return hostname;
 }
 
+//-----------------------------------------------------------------------------------
+
+char *select_plural_form(char *singular, char *plural, char *type3, char *type4, int number)
+{
+	switch (get_plural_form_index(number)) {
+	default:
+	case 0:
+		return singular;
+	case 1:
+		return plural;
+	case 2:
+		return type3;
+	case 3:
+		return type4;
+	}
+}
+
+int get_plural_form_index(int number)
+{
+#ifdef ENABLE_NLS
+#define LANG_STR_LEN	2
+	enum lang {
+		LANG_AR,	// = 0
+		LANG_BG,
+		LANG_CS,
+		LANG_DA,
+		LANG_DE,
+		LANG_EN,
+		LANG_ES,
+		LANG_FR,
+		LANG_FI,
+		LANG_GA,
+		LANG_EL,
+		LANG_HR,
+		LANG_HU,
+		LANG_IS,
+		LANG_IT,
+		LANG_IW,
+		LANG_JA,
+		LANG_KO,
+		LANG_LT,
+		LANG_LV,
+		LANG_NL,
+		LANG_NO,
+		LANG_PL,
+		LANG_PT,
+		LANG_RO,
+		LANG_RU,
+		LANG_SK,
+		LANG_SL,
+		LANG_SV,
+		LANG_TH,
+		LANG_TR,
+		LANG_ZH,
+		LANG_ZZ,
+	};
+	char lang_names[LANG_ZZ+1][LANG_STR_LEN+1] = {
+		"ar",	// LANG_AR
+		"bg",	// LANG_BG
+		"cs",	// LANG_CS
+		"da",	// LANG_DA
+		"de",	// LANG_DE
+		"en",	// LANG_EN
+		"es",	// LANG_ES
+		"fr",	// LANG_FR
+		"fi",	// LANG_FI
+		"ga",	// LANG_GA
+		"el",	// LANG_EL
+		"hr",	// LANG_HR
+		"hu",	// LANG_HU
+		"is",	// LANG_IS
+		"it",	// LANG_IT
+		"iw",	// LANG_IW
+		"ja",	// LANG_JA
+		"ko",	// LANG_KO
+		"lt",	// LANG_LT
+		"lv",	// LANG_LV
+		"nl",	// LANG_NL
+		"no",	// LANG_NO
+		"pl",	// LANG_PL
+		"pt",	// LANG_PT
+		"ro",	// LANG_RO
+		"ru",	// LANG_RU
+		"sk",	// LANG_SK
+		"sl",	// LANG_SL
+		"sv",	// LANG_SV
+		"th",	// LANG_TH
+		"tr",	// LANG_TR
+		"zh",	// LANG_ZH
+		"--",	// LANG_ZZ
+	};
+	static char cur_lang[LANG_STR_LEN+1] = "";
+	static enum lang cur_lang_idx = LANG_EN;
+
+	if (cur_lang[0] == '\0') {
+		// current language is not set, set cur_lang_idx by env "LANG"
+		strlcpy__(cur_lang, getenv__("LANG"), LANG_STR_LEN);	// "ja_JP.UTF-8"
+		for (cur_lang_idx = 0; cur_lang_idx < LANG_ZZ; cur_lang_idx++) {
+			if (strncmp(cur_lang, lang_names[cur_lang_idx], LANG_STR_LEN) == 0)
+				break;
+		}
+		if (cur_lang_idx == LANG_ZZ) {
+			cur_lang_idx = LANG_EN;
+		}
+	}
+
+	switch (cur_lang_idx) {
+	default:
+	case LANG_EN:
+	case LANG_DE:
+		if (number == 1)
+			return 0;
+		return 1;
+	case LANG_JA:
+	case LANG_KO:
+	case LANG_ZH:
+		return 0;
+	case LANG_FR:
+		if (number <= 1)		// 0,1
+			return 0;
+		return 1;
+	case LANG_LV:
+		if (number % 10 == 1 && number % 100 != 11)
+			return 0;			// 1,21,31,...91,101,121,131,...191,...
+		if (number != 0)		// 2,3,4,...20,22,23,24,...
+			return 1;
+		return 2;				// 0
+	case LANG_GA:
+		if (number == 1)		// 1
+			return 0;
+		if (number == 2)		// 2
+			return 1;
+		return 2;				// 0,3,4,5,...
+	case LANG_LT:
+		if (number % 10 == 1 && number % 100 != 11)
+			return 0;			// 1,21,31,...91,101,121,131,...191,...
+		if (number % 10 >= 2 && ((number % 100 < 10) || (number % 100 >= 20)))
+			return 1;			// 2,3,4,...9,22,23,24,...29,32,33,34,...39,...
+		return 2;				// 0,10,11,12,13,...19,20,30,...
+	case LANG_CS:
+	case LANG_HR:
+	case LANG_RU:
+		if (number % 10 == 1 && number % 100 != 11)
+			return 0;			// 1,21,31,...91,101,121,131,...191,...
+		if ((number % 10 >= 2) && (number % 10 <= 4)
+		 && ((number % 100 < 10) || (number % 100 >= 20)))
+			return 1;			// 2,3,4,22,23,24,32,33,34,...
+		return 2;				// 0,5,6,7,8,9,10,11,12,13,...19,20,30,...
+	case LANG_PL:
+		if (number == 1)		// 1
+			return 0;
+		if ((number % 10 >= 2) && (number % 10 <= 4)
+		 && ((number % 100 < 10) || (number % 100 >= 20)))
+			return 1;			// 2,3,4,22,23,24,32,33,34,...
+		return 2;				// 0,5,6,7,8,9,10,11,12,13,...19,20,30,...
+	case LANG_SL:
+		if (number % 100 == 1)	// 1,101,201,...
+			return 0;
+		if (number % 100 == 2)	// 2,102,202,...
+			return 1;
+		if (number % 100 == 3)	// 3,103,203,...
+			return 2;
+		return 3;				// 0,4,5,6,7,8,9,10,12,13,...100,104,105,106,...
+	}
+#else
+	if (number == 1)
+		return 0;
+	return 1;
+#endif
+}
+
 // End of utils.c

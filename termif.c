@@ -31,6 +31,9 @@
 //   ESC [ {row} ; {col} H		// set cursor pos.
 //   ESC [ {n} m				// set attributes (n : 0, 1, 7, 30--37, 40--47)
 
+//   ESC [ 21m					// DNU: Linux console does NOT support this.
+//   ESC [ 27m					// DNU: Linux console does NOT support this.
+
 ///#define TERMIF_MAX_SCRN_COLS		384		// = 1920[pixels] / 5[pixels/char] (Full HD)
 ///#define TERMIF_MAX_SCRN_COLS		512		// = 2560[pixels] / 5[pixels/char] (WQXGA)
 #define TERMIF_MAX_SCRN_COLS		768		// = 3840[pixels] / 5[pixels/char] (4K landscape)
@@ -78,9 +81,10 @@ PRIVATE vscreen_char_t vscreen_to_paint[TERMIF_MAX_SCRN_LINES][TERMIF_MAX_SCRN_C
 PRIVATE vscreen_char_t vscreen_painted[TERMIF_MAX_SCRN_LINES][TERMIF_MAX_SCRN_COLS];
 
 PRIVATE vscreen_char_t termif_attrs;
-PRIVATE int termif_cursor_on = 0;
-PRIVATE int termif_cursor_yy = 0;
-PRIVATE int termif_cursor_xx = 0;
+PRIVATE char termif_cursor_on = 0;
+PRIVATE short termif_cursor_yy = 0;
+PRIVATE short termif_cursor_xx = 0;
+PRIVATE char termif_cursor_on_sent = -1;
 
 PRIVATE int termif_lines = 25;
 PRIVATE int termif_columns = 80;
@@ -102,8 +106,8 @@ PRIVATE void dump_vscreen(int yy, int len);
 #endif // ENABLE_DEBUG
 
 PRIVATE void send_cursor_pos_string_to_term(int yy, int xx, const char *string, int bytes);
-PRIVATE void send_cursor_on_to_term(int on_off);
-PRIVATE void send_cursor_pos_to_term(int yy, int xx);
+PRIVATE void send_cursor_on_to_term(char on_off);
+PRIVATE void send_cursor_pos_to_term(short yy, short xx);
 PRIVATE int receive_cursor_pos_from_term(int *yy, int *xx);
 PRIVATE vscreen_char_t attrs_sent = VSCR_CHAR_ATTRS_DEFAULT;	// attributes sent to terminal
 PRIVATE void send_attrs_to_term(vscreen_char_t attrs);
@@ -206,9 +210,9 @@ int termif_get_columns(void)
 //-----------------------------------------------------------------------------
 void termif_clear_screen(void)
 {
-///	send_string_to_term("\x1b" "c", -1);
 	termif_clear_vscreen_to_paint();
 	termif_clear_vscreen_painted();
+	// screen state is cached and not transfered to the console until 'termif_refresh()' called
 }
 void termif_clear_vscreen_to_paint(void)
 {
@@ -226,18 +230,25 @@ void termif_clear_vscreen_painted(void)
 		}
 	}
 }
-void termif_send_cursor_pos(int yy, int xx)
+void termif_set_cursor_pos(short yy, short xx)
 {
+/////mflf_d_printf("(%d, %d)\n", yy, xx);
 	if (yy >= 0 && xx >= 0) {
 		termif_cursor_yy = yy;
 		termif_cursor_xx = xx;
-		send_cursor_pos_to_term(yy, xx);
 	}
+	// cursor position is cached and not transfered to the console until 'termif_refresh()' called
 }
 void termif_get_cursor_pos(int *yy, int *xx)
 {
 	*yy = termif_cursor_yy;
 	*xx = termif_cursor_xx;
+}
+void termif_set_cursor_on(char on_off)
+{
+/////mflf_d_printf("%d\n", on_off);
+	termif_cursor_on = on_off;
+	// cursor state is cached and not transfered to the console until 'termif_refresh()' called
 }
 
 void termif_set_attrs(int bgc, int fgc, int rev)
@@ -256,17 +267,7 @@ void termif_set_attrs(int bgc, int fgc, int rev)
 		SET_ATTRS_FROM_FGC(termif_attrs, fgc);
 	}
 }
-
-void termif_send_cursor_on(int on_off)
-{
-	termif_cursor_on = on_off;
-	send_cursor_on_to_term(on_off);
-}
-void termif_beep(void)
-{
-	send_string_to_term("\x07", -1);	// "\a"(^G)
-}
-void termif_output_string(int yy, int xx, const char *string, int bytes)
+void termif_output_string(short yy, short xx, const char *string, int bytes)
 {
 	if (yy >= 0 && xx >= 0) {
 		termif_cursor_yy = yy;
@@ -276,7 +277,12 @@ void termif_output_string(int yy, int xx, const char *string, int bytes)
 		bytes = strlen(string);
 	}
 	set_string_to_vscreen(string, bytes);
+	// output is cached in buffer
+	// and not transfered to the console until 'termif_refresh()' called
 }
+
+//-----------------------------------------------------------------------------
+
 PRIVATE void set_string_to_vscreen(const char *string, int bytes)
 {
 	const char *str;
@@ -375,6 +381,13 @@ PRIVATE void dump_vscreen(int yy, int len)
 #endif // ENABLE_DEBUG
 
 //-----------------------------------------------------------------------------
+// transfer display data to the console
+
+void termif_beep(void)
+{
+	send_string_to_term("\x07", -1);	// "\a"(^G)
+}
+
 // If narrow char, compare 1st place.
 // If wide   char, compare 1st and 2nd places.
 #define CMP_NARR_OR_WIDE_CHR()										\
@@ -386,7 +399,7 @@ PRIVATE void dump_vscreen(int yy, int len)
 // refresh screen by sending pending data in vscreen_to_paint to the screen.
 void termif_refresh(void)
 {
-	int cursor_on = 1;
+/////_FLF_
 	int start_xx;
 	vscreen_char_t start_attrs;
 	char utf8c[MAX_UTF8C_BYTES + 1];
@@ -416,10 +429,9 @@ void termif_refresh(void)
 					vscreen_painted[yy][xx] = vscreen_to_paint[yy][xx];
 					xx++;
 				}
-				if (cursor_on) {
+				if (termif_cursor_on_sent) {
 					// erase cursor before painting
 					send_cursor_on_to_term(0);
-					cursor_on = 0;
 				}
 				send_attrs_to_term(start_attrs);
 				send_cursor_pos_string_to_term(yy, start_xx, line_buf, -1);
@@ -428,11 +440,10 @@ void termif_refresh(void)
 			}
 		}
 	}
-	if (cursor_on == 0) {
-		// If cursor erased in this func, restore cursor.
-		send_cursor_pos_to_term(termif_cursor_yy, termif_cursor_xx);
-		send_cursor_on_to_term(termif_cursor_on);
-	}
+/////_MFLF_
+	// restore cursor if erased
+	send_cursor_pos_to_term(termif_cursor_yy, termif_cursor_xx);
+	send_cursor_on_to_term(termif_cursor_on);
 }
 
 PRIVATE void send_cursor_pos_string_to_term(int yy, int xx, const char *string, int bytes)
@@ -441,16 +452,21 @@ PRIVATE void send_cursor_pos_string_to_term(int yy, int xx, const char *string, 
 	send_string_to_term(string, bytes);
 }
 
-PRIVATE void send_cursor_on_to_term(int on_off)
+PRIVATE void send_cursor_on_to_term(char on_off)
 {
-	if (on_off) {
-		send_string_to_term("\x1b[?25h", -1);
-	} else {
-		send_string_to_term("\x1b[?25l", -1);
+	if (on_off != termif_cursor_on_sent) {
+/////mflf_d_printf("%d\n", on_off);
+		if (on_off) {
+			send_string_to_term("\x1b[?25h", -1);
+		} else {
+			send_string_to_term("\x1b[?25l", -1);
+		}
+		termif_cursor_on_sent = on_off;
 	}
 }
-PRIVATE void send_cursor_pos_to_term(int yy, int xx)
+PRIVATE void send_cursor_pos_to_term(short yy, short xx)
 {
+	// always send cursor position, because cursor position in the console may be forwarded
 	if ((0 <= yy && yy < termif_lines)
 	 && (0 <= xx && xx < termif_columns)) {
 #if 1
@@ -460,7 +476,6 @@ PRIVATE void send_cursor_pos_to_term(int yy, int xx)
 #endif
 	} else {
 ///		warning_printf("(%d, %d)\n", xx, yy);	// not warn this
-///mflf_d_printf("(%d, %d)\n", termif_columns, termif_lines);
 	}
 }
 PRIVATE int receive_cursor_pos_from_term(int *yy, int *xx)
@@ -550,18 +565,8 @@ PRIVATE void send_bold_to_term(int bold)
 {
 	if (bold) {
 		send_string_to_term("\x1b[1m", -1);
-///	} else {
-///		send_string_to_term("\x1b[21m", -1);	// DNU: Linux console does NOT support this.
 	}
 }
-///PRIVATE void send_reverse_to_term(int reverse)
-///{
-///	if (reverse) {
-///		send_string_to_term("\x1b[7m", -1);
-////	} else {
-////		send_string_to_term("\x1b[27m", -1);	// DNU: Linux console does NOT support this.
-///	}
-///}
 PRIVATE void send_bgc_to_term(int bgc)
 {
 #ifndef ENABLE_16_BCG

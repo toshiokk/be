@@ -37,7 +37,6 @@ int dof_page_down(void);
 int dof_top_of_list(void);
 int dof_bottom_of_list(void);
 
-int dof_switch_filer_pane(void);
 int dof_refresh_filer(void);
 
 // current : subject currently selected file to command
@@ -53,7 +52,7 @@ int dof_refresh_filer(void);
 //|dof_open_proj_file         | -       | -      | -- |
 //|dof_open_exec_log_file     | -       | -      | -- |
 //|dof_open_new_file          | v       | -      | -- |
-//|dof_open_new_file_dropped  | -       | -      | -- |
+//|dof_drop_files_to_open     | -       | -      | -- |
 //|dof_copy_file              | -       | v      | -- |
 //|dof_copy_file_update       | -       | v      | -- |
 //|dof_move_file              | -       | v      | -- |
@@ -82,14 +81,20 @@ int dof_open_file_from_history(void);
 int dof_open_proj_file(void);
 int dof_open_exec_log_file(void);
 int dof_open_new_file(void);
-int dof_open_new_file_dropped(void);
+int dof_drop_files_to_open(void);
 
 int dof_copy_file(void);
 int dof_copy_file_update(void);
-int dof_drop_to_copy_file(void);
+int dof_drop_files_to_copy(void);
 
 int dof_move_file(void);
-int dof_drop_to_move_file();
+int dof_drop_files_to_move();
+
+#define ACTION_SEL		0
+#define ACTION_OPEN		1
+#define ACTION_COPY		2
+#define ACTION_MOVE		3
+int dof_drop_files_to_act__(int action);
 
 int dof_rename_file(void);
 int dof_trash_file(void);
@@ -119,21 +124,19 @@ int dof_inc_show_file_info(void);
 int dof_clear_sort_by(void);
 int dof_inc_sort_by(void);
 int dof_tog_panes(void);
+int dof_tog_panex(void);
 int dof_inc_key_list_lines(void);
 int dof_display_color_settings(void);
 #ifdef ENABLE_HELP
 int dof_splash(void);
-int dof_view_key_list(void);
+int dof_view_func_list(void);
 #endif // ENABLE_HELP
 
 int dof_filer_menu_0(void);
-int dof_filer_menu_1(void);
-int dof_filer_menu_2(void);
-int dof_filer_menu_3(void);
-int dof_filer_menu_4(void);
-int dof_filer_menu_5(void);
 
+int goto_dir_in_cur_line_byte_idx(int line_byte_idx);
 int goto_dir_in_str__call_filer(const char *str);
+
 int goto_dir_in_string(const char *str);
 
 int filer_change_dir_parent(char *path);

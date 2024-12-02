@@ -42,11 +42,13 @@ extern int cur_win_idx;
 
 void win_init_win_size(void);
 
+void set_win_depth(int app_stack_depth);
 void inc_win_depth(void);
 void dec_win_depth(void);
 const int get_win_depth(void);
+void win_reinit_win_size();
 
-void win_reinit_win_size(void);
+void win_setup_win_size(int win_depth);
 void win_select_win(int sub_win_idx);
 void dump_cur_win(void);
 

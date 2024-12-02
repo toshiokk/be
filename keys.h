@@ -22,10 +22,13 @@
 #ifndef keys_h
 #define keys_h
 
+typedef short key_code_t;	// signed short
+
 #define KEY_NONE			((key_code_t)(-1))
 #define K_NONE				KEY_NONE
 #define KEY_NOT_ASSIGNED	KEY_NONE
 #define KNA					KEY_NOT_ASSIGNED
+#define K_VALID				K_C_AT
 #define IS_KEY_VALID(key)	((key) != KEY_NONE)
 
 // HP-UX 10 & 11 do not seem to support KEY_HOME and KEY_END
@@ -112,12 +115,12 @@
 #define K_C_X			K_C('X')
 #define K_C_Y			K_C('Y')
 #define K_C_Z			K_C('Z')
-#define K_C_LBRACKET	K_C('[')	// 1b
+#define K_C_LBRAK		K_C('[')	// 1b
 #define K_ESC			CHAR_ESC	// 1b
-#define K_C_BACKSLASH	K_C('\\')	// 1c
-#define K_C_RBRACKET	K_C(']')	// 1d
+#define K_C_BAKSL		K_C('\\')	// 1c
+#define K_C_RBRAK		K_C(']')	// 1d
 #define K_C_CARET		K_C('^')	// 1e
-#define K_C_UNDERLINE	K_C('_')	// 1f
+#define K_C_UNDLN		K_C('_')	// 1f
 
 #define K_M_0			K_M('0')
 #define K_M_1			K_M('1')
@@ -182,6 +185,7 @@
 #define K_M_Y			K_M('Y')
 #define K_M_Z			K_M('Z')
 
+#define K_MC_AT			K_M(K_C('@'))	// 1b00
 #define K_MC_A			K_M(K_C('A'))	// 1b01
 #define K_MC_B			K_M(K_C('B'))
 #define K_MC_C			K_M(K_C('C'))
@@ -209,49 +213,49 @@
 #define K_MC_X			K_M(K_C('X'))
 #define K_MC_Y			K_M(K_C('Y'))
 #define K_MC_Z			K_M(K_C('Z'))	// 1b1a
-#define K_MC_LBRACKET	K_M(K_C('['))	// 1b1b
-#define K_MC_BACKSLASH	K_M(K_C('\\'))	// 1b1c
-#define K_MC_RBRACKET	K_M(K_C(']'))	// 1b1d
+#define K_MC_LBRAK		K_M(K_C('['))	// 1b1b
+#define K_MC_BAKSL		K_M(K_C('\\'))	// 1b1c
+#define K_MC_RBRAK		K_M(K_C(']'))	// 1b1d
 #define K_MC_CARET		K_M(K_C('^'))	// 1b1e
-#define K_MC_UNDERLINE	K_M(K_C('_'))	// 1b1f
+#define K_MC_UNDLN		K_M(K_C('_'))	// 1b1f
 #define K_M_BS			K_M(K_C_H)		// 1b08
 #define K_M_TAB			K_M(K_TAB)		// 1b09
 #define K_M_CR			K_M(K_C_M)		// 1b0d
 #define K_M_ESC			K_M(CHAR_ESC)	// 1b1b
 #define K_M_SP			K_M(' ')		// 1b20
-#define K_M_EXCLAMATION		K_M('!')	// 1b21
-#define K_M_QUOTATION		K_M('"')	// 1b22
-#define K_M_SHARP			K_M('#')	// 1b23
-#define K_M_DOLLAR			K_M('$')	// 1b24
-#define K_M_PERCENT			K_M('%')	// 1b25
-#define K_M_AMPERSAND		K_M('&')	// 1b26
-#define K_M_APOSTROPHE		K_M('\'')	// 1b27
-#define K_M_LPARENTHESIS	K_M('(')	// 1b28
-#define K_M_RPARENTHESIS	K_M(')')	// 1b29
-#define K_M_ASTERISK		K_M('*')	// 1b2a
-#define K_M_PLUS			K_M('+')	// 1b2b
-#define K_M_COMMA			K_M(',')	// 1b2c
-#define K_M_HYPHEN			K_M('-')	// 1b2d
-#define K_M_PERIOD			K_M('.')	// 1b2e
-#define K_M_SLASH			K_M('/')	// 1b2f
-#define K_M_COLON			K_M(':')	// 1b3a
-#define K_M_SEMICOLON		K_M(';')	// 1b3b
-#define K_M_LESSTHAN		K_M('<')	// 1b3c
-#define K_M_EQUAL			K_M('=')	// 1b3d
-#define K_M_GREATERTHAN		K_M('>')	// 1b3e
-#define K_M_QUESTION		K_M('?')	// 1b3f
-#define K_M_AT				K_M('@')	// 1b40
-#define K_M_LBRACKET		K_M('[')	// 1b5b
-#define K_M_BACKSLASH		K_M('\\')	// 1b5c
-#define K_M_RBRACKET		K_M(']')	// 1b5d
-#define K_M_CARET			K_M('^')	// 1b5e
-#define K_M_UNDERLINE		K_M('_')	// 1b5f
-#define K_M_BACKQUOTE		K_M('`')	// 1b60
-#define K_M_LBRACE			K_M('{')	// 1b7b
-#define K_M_VERTBAR			K_M('|')	// 1b7c
-#define K_M_RBRACE			K_M('}')	// 1b7d
-#define K_M_TILDE			K_M('~')	// 1b7e
-#define K_M_DEL				K_M(CHAR_DEL)	// 1b7f
+#define K_M_EXCLA		K_M('!')		// 1b21
+#define K_M_QUOTA		K_M('"')		// 1b22
+#define K_M_SHARP		K_M('#')		// 1b23
+#define K_M_DOLLA		K_M('$')		// 1b24
+#define K_M_PERCE		K_M('%')		// 1b25
+#define K_M_AMPSD		K_M('&')		// 1b26
+#define K_M_APOST		K_M('\'')		// 1b27
+#define K_M_LPARE		K_M('(')		// 1b28
+#define K_M_RPARE		K_M(')')		// 1b29
+#define K_M_ASTER		K_M('*')		// 1b2a
+#define K_M_PLUS		K_M('+')		// 1b2b
+#define K_M_COMMA		K_M(',')		// 1b2c
+#define K_M_HYPHE		K_M('-')		// 1b2d
+#define K_M_PERIO		K_M('.')		// 1b2e
+#define K_M_SLASH		K_M('/')		// 1b2f
+#define K_M_COLON		K_M(':')		// 1b3a
+#define K_M_SEMCO		K_M(';')		// 1b3b
+#define K_M_LESST		K_M('<')		// 1b3c
+#define K_M_EQUAL		K_M('=')		// 1b3d
+#define K_M_GREAT		K_M('>')		// 1b3e
+#define K_M_QUEST		K_M('?')		// 1b3f
+#define K_M_AT			K_M('@')		// 1b40
+#define K_M_LBRAK		K_M('[')		// 1b5b
+#define K_M_BAKSL		K_M('\\')		// 1b5c
+#define K_M_RBRAK		K_M(']')		// 1b5d
+#define K_M_CARET		K_M('^')		// 1b5e
+#define K_M_UNDLN		K_M('_')		// 1b5f
+#define K_M_BAKQT		K_M('`')		// 1b60
+#define K_M_LBRAC		K_M('{')		// 1b7b
+#define K_M_VERTB		K_M('|')		// 1b7c
+#define K_M_RBRAC		K_M('}')		// 1b7d
+#define K_M_TILDE		K_M('~')		// 1b7e
+#define K_M_DEL			K_M(CHAR_DEL)	// 1b7f
 
 #define K_F01			KEY_F(1)
 #define K_F02			KEY_F(2)
@@ -413,20 +417,20 @@
 #define S_C_Z		"\x1a"
 #define S_ESC		"\x1b"
 
-#define IS_CHAR_KEY(key)	(' ' <= (key) && (key) < 0x0100)
+#define IS_CHAR_KEY(key)	((' ' <= (key)) && ((key) < 0x0100))
 
 #define FUNC_ID(func)	func, #func
 #define F_I(func)		FUNC_ID(func)
 
 typedef enum {
-	XA,		// executable in all editor/filer (Normal/List) mode
-	XL,		// not executable in editor/filer List mode and quit editor/filer
-	XI,		// not executable in editor List mode, get a text in current line
-			//  and return FL_INPUT
-	XF,		// not executable in filer List mode, input file name/path
-			//  and return FL_ENTER_FILE_NAME_OR_PATH
-	XC,		// not executable in filer List mode, input current directory
-			//  and return FL_ENTER_CUR_DIR_PATH
+	EFAM_EXECUTE,	// executable in all editor/filer All mode
+	EFLM_NO_EXEC,	// not executable in editor/filer List mode and quit editor/filer
+	E_LM_CUR_LIN,	// not executable in editor List mode, get a text in current line
+					//  and return FL_INPUT
+	F_LM_FIL_NAM,	// not executable in filer List mode, input file name/path
+					//  and return FL_ENTER_FILE_NAME_OR_PATH
+	F_LM_CUR_DIR,	// not executable in filer List mode, input current directory
+					//  and return FL_ENTER_CUR_DIR_PATH
 } list_mode_t;
 
 typedef struct {
@@ -443,7 +447,7 @@ typedef struct {
 	const char *(*func_get)(void);	// function to get assigned value
 } func_key_table_t;
 
-#define MAX_KEY_NAME_LEN	5
+#define MAX_KEY_NAME_LEN	8		// "MC-UNDLN"
 typedef struct /*key_name_table_t*/ {
 	key_code_t key_code;
 	char *key_name;
@@ -452,16 +456,6 @@ extern key_name_table_t key_name_table[];
 
 func_key_table_t *get_app_func_key_table(void);
 
-int editor_menu_n(int group_idx);
-int filer_menu_n(int group_idx);
-
-int disp_drop_down_menu(int group_idx, int sel_idx, int yy, int xx);
-int get_func_key_table_from_key_groups(void);
-int get_func_key_table_from_key_entries(int group_idx);
-short get_func_key_code(int group_idx, int entry_idx);
-void exec_func(int group_idx, int entry_idx);
-func_key_table_t *get_func_key_table_from_key_group(int group_idx);
-
 int cmp_func_id(const char *func_id_1, const char *func_id_2);
 void *get_app_function_for_key(key_code_t key);
 const char *get_func_id_from_key(key_code_t key);
@@ -469,7 +463,7 @@ func_key_table_t *get_func_key_table_from_key(func_key_table_t *fkey_table, key_
 key_code_t get_key_for_func_id(char *func_id);
 func_key_table_t *get_func_table_from_func_id(const char *func_id);
 
-int is_key_bound_to_func(key_code_t key, func_key_table_t *fkey_table);
+int is_key_assigned_to_func(key_code_t key, func_key_table_t *fkey_table);
 void clear_keys_if_bound(key_code_t *keys);
 void clear_key_if_bound_to_func(key_code_t key, func_key_table_t *fkey_table);
 void clear_keys_bound_to_func(func_key_table_t *fkey_table);
@@ -501,8 +495,8 @@ int get_key_name_table_entries(void);
 
 #ifdef ENABLE_DEBUG
 #ifdef START_UP_TEST
-int check_all_functions_accessible_without_function_key();
 int check_multiple_assignment_of_key();
+int check_all_functions_accessible_without_function_key();
 #endif // START_UP_TEST
 #endif // ENABLE_DEBUG
 

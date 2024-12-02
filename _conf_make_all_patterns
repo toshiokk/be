@@ -66,7 +66,7 @@ conf_make()
   echo_run $cmd_line
 } 2>&1
 
-if [ -n "$1" ]; then
+if [ "$1" = "-" ]; then
   while : ; do
     grep Summary _conf_make_all_patterns.log
     grep complete _conf_make_all_patterns.log
@@ -103,10 +103,10 @@ rm -f _conf_make_all_patterns.log
   conf_make 16
   conf_make 17
   conf_make 18
-##  ./_c_debug
+  ./_c_debug
   fi
   echo "----conf_make_all_patterns-complete----"
 } | tee _conf_make_all_patterns.log
 
 grep "Summary" _conf_make_all_patterns.log >__error
-cat __error | tee _conf_make_all_patterns.log
+cat __error | tee -a _conf_make_all_patterns.log

@@ -27,18 +27,15 @@
 #define FILER_PANES		MAX_APP_PANES_2
 typedef struct {
 	char org_cur_dir[MAX_PATH_LEN+1];	// original current directory
-	int cur_pane_idx;					// 0: Left, 1: Right
 	filer_view_t filer_views[FILER_PANES];
 } filer_panes_t;
 extern filer_panes_t *cur_filer_panes;	// Current Filer Panes (instance is allocated locally)
 
 extern ef_do_next_t filer_do_next;
 
-filer_panes_t *push_filer_panes(filer_panes_t *next_fps);
+void set_cur_filer_panes(filer_panes_t *fps);
 void init_cur_filer_panes(filer_panes_t *fps, const char *cur_dir);	// TODO: rename
-void pop_filer_panes(filer_panes_t *fps, filer_panes_t *prev_fps);
-void set_filer_cur_pane_idx(int cur_pane_idx);
-int get_filer_cur_pane_idx();
+void destroy_filer_panes();
 
 filer_view_t *get_cur_filer_view(void);
 filer_view_t *get_other_filer_view(void);
@@ -51,7 +48,7 @@ void set_cur_fv_file_idx(int file_idx);
 int call_filer(int push_win, int list_mode,
  const char *dir, const char *filter, char *path_buf, int buf_len);
 
-int update_screen_filer(int title_bar, int status_bar, int refresh);
+int update_screen_filer(int status_bar, int refresh);
 
 int filer_win_get_file_path_lines(void);
 int filer_win_get_file_list_lines(void);

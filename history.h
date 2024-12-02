@@ -32,6 +32,8 @@
 #define HISTORY_TYPES_APP			5	// types of app histories (5)
 #define HISTORY_TYPES_APP_AND_SHELL	6	// types of app and shell histories (5+1)
 
+///#define NOT_DELETE_OLD_IDENTICAL_ENTRY	// in HISTORY_TYPE_IDX_EXEC
+
 #ifdef ENABLE_HISTORY
 
 #define _SEARCH_HISTORY_FILE_NAME		"search_history"
@@ -57,8 +59,6 @@
 // Maximum number of search/execution/directory history strings saved
 #define MAX_HISTORY_LINES		1000
 #define MAX_HISTORY_LINES_10K	10000
-
-void init_hist_bufs(void);
 
 void init_histories(void);
 

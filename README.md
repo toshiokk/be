@@ -246,7 +246,7 @@ PCR
 | $HOME/.be/search_history   | history of keyword searched |
 | $HOME/.be/exec_history     | history of command executed |
 | $HOME/.be/dir_history      | history of directory selected |
-| $HOME/.be/openfile_history | history of file position |
+| $HOME/.be/file_history     | history of file position |
 | $HOME/.be/keymacro_history | history of keymacro executed |
 | $HOME/.be/clipboard        | clipboard file, common to all be-editor instances in one user |
 

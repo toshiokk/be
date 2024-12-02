@@ -39,10 +39,10 @@
 #else // ENABLE_FILER
 
 #define HELP_BUF_IDX_EDITOR_FILE_LIST		0
-#define HELP_BUF_IDX_EDITOR_KEY_LIST		1
-#define HELP_BUF_IDX_EDITOR_FUNC_LIST		2
-#define HELP_BUF_IDX_FILER_KEY_LIST			3
-#define HELP_BUF_IDX_FILER_FUNC_LIST		4
+#define HELP_BUF_IDX_EDITOR_FUNC_LIST		1
+#define HELP_BUF_IDX_EDITOR_KEY_LIST		2
+#define HELP_BUF_IDX_FILER_FUNC_LIST		3
+#define HELP_BUF_IDX_FILER_KEY_LIST			4
 #define HELP_BUFS							5
 
 #endif // ENABLE_FILER
@@ -54,7 +54,7 @@ int doe_view_file_list(void);
 void init_help_bufs(void);
 be_buf_t *get_help_buf(int help_buf_idx);
 
-int view_help(int help_idx);
+int view_list(int help_idx);
 
 #endif // editorlist_h
 

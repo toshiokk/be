@@ -200,16 +200,13 @@ int get_disp_y_after_cursor_move(void)
 	return -1;	// current line is out of previous screen
 }
 
-int get_cur_screen_top(be_line_t **line, int *byte_idx)
-{
-	return get_screen_top(EPCBVC_CL, EPCBVC_CLBI, EPCBVC_CURS_Y, line, byte_idx);
-}
 // go backward to screen top and return line and byte_idx
-int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *byte_idx)
+int get_edit_win_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *byte_idx)
 {
 	int line_cnt = 0;
 	int wl_idx;
 
+/////_D_(line_dump_lines(_cl_, 2, NULL))
 /////mflf_d_printf("yy: %d\n", EPCBVC_CURS_Y);
 	if (_cl_->data == NULL) {
 		*line = _cl_;
@@ -217,15 +214,17 @@ int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *b
 		return 0;
 	}
 	te_concat_linefeed(_cl_->data);
-	wl_idx = start_wl_idx_of_wrap_line(te_lf_concat_buf, _clbi_, -1);
+	wl_idx = start_wl_idx_of_wrap_line(te_concat_lf_buf, _clbi_, -1);
 	for ( ; ; ) {
-		if (yy <= 0)
+		if (yy <= 0) {
 			break;
+		}
 		if (wl_idx <= 0) {
-			if (IS_NODE_TOP(_cl_) == 0)
+			if (IS_NODE_TOP_MOST(_cl_) == 0) {
 				_cl_ = NODE_PREV(_cl_);
+			}
 			te_concat_linefeed(_cl_->data);
-			wl_idx = max_wrap_line_idx(te_lf_concat_buf, -1);
+			wl_idx = max_wrap_line_idx(te_concat_lf_buf, -1);
 		} else {
 			wl_idx--;
 		}
@@ -233,7 +232,7 @@ int get_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *b
 		line_cnt++;
 	}
 	*line = _cl_;
-	*byte_idx = start_byte_idx_of_wrap_line(te_lf_concat_buf, wl_idx, 0, -1);
+	*byte_idx = start_byte_idx_of_wrap_line(te_concat_lf_buf, wl_idx, 0, -1);
 	return line_cnt;
 }
 
@@ -290,7 +289,7 @@ PRIVATE int calc_min_text_x_to_keep()
 {
 	te_concat_linefeed(EPCBVC_CL->data);
 	return recalc_min_text_x_to_keep(get_edit_win_columns_for_text(),
-	 end_col_idx_of_wrap_line(te_lf_concat_buf, 0, INT_MAX, -1),
+	 end_col_idx_of_wrap_line(te_concat_lf_buf, 0, INT_MAX, -1),
 	 HORIZ_SCROLL_MARGIN,
 	 start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1),
 	 EPCBVC_MIN_TEXT_X_TO_KEEP);

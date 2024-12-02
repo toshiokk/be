@@ -85,12 +85,6 @@ int dof_bottom_of_list(void)
 	return 1;
 }
 
-int dof_switch_filer_pane(void)
-{
-	set_filer_cur_pane_idx((get_filer_cur_pane_idx() + 1) % FILER_PANES);
-	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
-	return 1;
-}
 int dof_refresh_filer(void)
 {
 	disp_status_bar_done(_("File view refreshed"));
@@ -112,12 +106,10 @@ int dof_tap_file(void)
 }
 int dof_view_file(void)
 {
-_FLF_
 	if (filer_change_dir_to_cur_sel()) {
 		return 0;
 	}
 	if (S_ISREG(get_cur_fv_cur_file_ptr()->st.st_mode)) {
-_FLF_
 		const char *file_name = get_cur_fv_cur_file_ptr()->file_name;
 		if (fork_exec_args_once(PAUSE0, BEPAGER, file_name, 0)) {
 			if (fork_exec_args_once(PAUSE0, "less", file_name, 0)) {
@@ -125,7 +117,6 @@ _FLF_
 			}
 		}
 	}
-_FLF_
 	return 0;
 }
 int dof_tail_file(void)	// view file with "tail" command
@@ -233,16 +224,11 @@ int dof_open_new_file(void)
 	 get_cur_fv_cur_file_ptr()->file_name);
 	return dof_open_new_file_(file_path);
 }
-// open files dropped by Window manager 'file-1' 'file-2' ...
-int dof_open_new_file_dropped(void)
-{
-	return dof_open_new_file_("'");
-}
 PRIVATE int dof_open_new_file_(const char *str)
 {
 	char file_path[MAX_PATH_LEN+1];
-	if (chk_inp_str_ret_val_filer(input_string_pos(str, file_path,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_FILE,
+	if (chk_inp_str_ret_val_filer(input_string_pos(str, file_path, MAX_PATH_LEN,
+	 HISTORY_TYPE_IDX_FILE,
 	 _("Open new file:")))) {
 		return 0;
 	}
@@ -258,11 +244,16 @@ PRIVATE int dof_open_new_file_(const char *str)
 	tio_beep();
 	return 0;
 }
+int dof_drop_files_to_open(void)
+{
+	return dof_drop_files_to_act__(ACTION_OPEN);
+}
+
 int dof_copy_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
-	if (chk_inp_str_ret_val_filer(input_string_pos(get_other_filer_view()->cur_dir, file_path,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
+	if (chk_inp_str_ret_val_filer(input_string_pos(get_other_filer_view()->cur_dir,
+	 file_path, MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
 	 _("Copy to:")))) {
 		return 0;
 	}
@@ -288,8 +279,8 @@ int dof_copy_file(void)
 int dof_copy_file_update(void)
 {
 	char file_path[MAX_PATH_LEN+1];
-	if (chk_inp_str_ret_val_filer(input_string_pos(get_other_filer_view()->cur_dir, file_path,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
+	if (chk_inp_str_ret_val_filer(input_string_pos(get_other_filer_view()->cur_dir,
+	 file_path, MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
 	 _("Copy to (Update):")))) {
 		return 0;
 	}
@@ -312,38 +303,16 @@ int dof_copy_file_update(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_drop_to_copy_file(void)
+int dof_drop_files_to_copy(void)
 {
-	char file_path[MAX_PATH_LEN+1];
-	if (chk_inp_str_ret_val_filer(input_string_pos("", file_path,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
-	 _("Drop files to Copy here")))) {
-		return 0;
-	}
-	begin_fork_exec_repeat();
-	char path[MAX_PATH_LEN+1];
-	int exit_status = 0;
-	for (const char *ptr = file_path; *(ptr = get_one_file_path(ptr, path)); ) {
-		if (is_sigint_signaled())
-			break;
-#ifndef	USE_BUSYBOX
-		// "cp -afv <file/path/be/copied> ."
-		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-afv", path, ".", 0);
-#else
-		// "cp -a <file/path/be/copied> ."
-		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-a", path, ".", 0);
-#endif
-	}
-	end_fork_exec_repeat(exit_status);
-	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
-	return 0;
+	return dof_drop_files_to_act__(ACTION_COPY);
 }
 
 int dof_move_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
-	if (chk_inp_str_ret_val_filer(input_string_pos(get_other_filer_view()->cur_dir, file_path,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
+	if (chk_inp_str_ret_val_filer(input_string_pos(get_other_filer_view()->cur_dir,
+	 file_path, MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
 	 _("Move to:")))) {
 		return 0;
 	}
@@ -355,7 +324,7 @@ int dof_move_file(void)
 		if (is_sigint_signaled())
 			break;
 #ifndef	USE_BUSYBOX
-		exit_status = fork_exec_args_repeat(SEPARATE1, "mv", "-ufv",
+		exit_status = fork_exec_args_repeat(SEPARATE1, "mv", "-fv",		//PPP "-ufv"
 		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
 #else
 		exit_status = fork_exec_args_repeat(SEPARATE1, "mv",
@@ -366,30 +335,101 @@ int dof_move_file(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_drop_to_move_file()
+int dof_drop_files_to_move()
 {
+	return dof_drop_files_to_act__(ACTION_MOVE);
+}
+
+// files dropped by Window manager "'file-1' 'file-2' ..."
+int dof_drop_files_to_act__(int action)
+{
+	const char *request = "";
+	const char *initial_str = "";
+	switch(action) {
+	default:
+	case ACTION_SEL:
+		request = _("Drop files to Open/Copy/Move:");
+		break;
+	case ACTION_OPEN:
+		request = _("Drop files to Open:");
+		initial_str = "'";
+		break;
+	case ACTION_COPY:
+		request = _("Drop files to Copy here (to current directory):");
+		break;
+	case ACTION_MOVE:
+		request = _("Drop files to Move here (to current directory):");
+		break;
+	}
+
 	char file_path[MAX_PATH_LEN+1];
-	if (chk_inp_str_ret_val_filer(input_string_pos("", file_path,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
-	 _("Drop files to Move here")))) {
+	if (chk_inp_str_ret_val_filer(input_string_pos(initial_str, file_path, MAX_PATH_LEN,
+	 HISTORY_TYPE_IDX_DIR,
+	 request))) {
 		return 0;
 	}
-	begin_fork_exec_repeat();
-	char path[MAX_PATH_LEN+1];
+
+	switch(action) {
+	default:
+	case ACTION_SEL:
+		break;
+	case ACTION_OPEN:
+		clear_files_loaded();
+		break;
+	case ACTION_COPY:
+	case ACTION_MOVE:
+		begin_fork_exec_repeat();
+		break;
+	}
 	int exit_status = 0;
-	for (const char *ptr = file_path; *(ptr = get_one_file_path(ptr, path)); ) {
+	for (const char *ptr = file_path; ; ) {
+		char path[MAX_PATH_LEN+1];
+		ptr = get_one_file_path(ptr, path);
 		if (is_sigint_signaled())
 			break;
+		if (is_strlen_0(path)) {
+			break;
+		}
+		switch(action) {
+		case ACTION_OPEN:
+			if (load_files_in_string(path, TUL0, OOE1, MOE0, LFH1, RECURSIVE0) >= 0) {
+				disp_files_loaded_if_ge_0();
+				filer_do_next = EF_LOADED;
+			} else {
+				filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
+			}
+			break;
+		case ACTION_COPY:
 #ifndef	USE_BUSYBOX
-		// "cp -afv <file/path/be/copied> ."
-		exit_status = fork_exec_args_repeat(SEPARATE1, "mv", "-ufv", path, ".", 0);
+			// "cp -afv <file/path/be/copied> ."
+			exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-afv", path, ".", 0);
 #else
-		// "cp -a <file/path/be/copied> ."
-		exit_status = fork_exec_args_repeat(SEPARATE1, "mv", "-a", path, ".", 0);
+			// "cp -a <file/path/be/copied> ."
+			exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-a", path, ".", 0);
 #endif
+			break;
+		case ACTION_MOVE:
+#ifndef	USE_BUSYBOX
+			// "cp -afv <file/path/be/copied> ."
+			exit_status = fork_exec_args_repeat(SEPARATE1, "mv", "-fv", path, ".", 0);	// "-ufv"
+#else
+			// "cp -a <file/path/be/copied> ."
+			exit_status = fork_exec_args_repeat(SEPARATE1, "mv", "-a", path, ".", 0);
+#endif
+			break;
+		}
 	}
-	end_fork_exec_repeat(exit_status);
-	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
+	switch(action) {
+	default:
+	case ACTION_SEL:
+	case ACTION_OPEN:
+		break;
+	case ACTION_COPY:
+	case ACTION_MOVE:
+		end_fork_exec_repeat(exit_status);
+		filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
+		break;
+	}
 	return 0;
 }
 
@@ -398,14 +438,13 @@ int dof_rename_file(void)
 	char file_name[MAX_PATH_LEN+1];
 
 	strlcpy__(file_name, get_cur_fv_cur_file_ptr()->file_name, MAX_PATH_LEN);
-	if (chk_inp_str_ret_val_filer(input_string_pos(file_name, file_name,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_EXEC,
+	if (chk_inp_str_ret_val_filer(input_string_pos(file_name, file_name, MAX_PATH_LEN,
+	 HISTORY_TYPE_IDX_EXEC,
 	 _("Rename to:")))) {
 		return 0;
 	}
 	if (fork_exec_args_once(PAUSE1, "mv", "-i",
-	 get_cur_fv_cur_file_ptr()->file_name,
-	 file_name, 0) == 0) {
+	 get_cur_fv_cur_file_ptr()->file_name, file_name, 0) == 0) {
 		strlcpy__(get_cur_filer_view()->next_file, file_name, MAX_PATH_LEN);
 		filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	}
@@ -519,12 +558,13 @@ int dof_size_zero_file(void)
 	int files_selected;
 	int ret;
 
-	if ((files_selected = get_files_selected_cfv()) == 0)
+	if ((files_selected = get_files_selected_cfv()) == 0) {
 		ret = ask_yes_no(ASK_YES_NO, _("Make size of file %s 0 ?"),
 		 get_cur_fv_cur_file_ptr()->file_name);
-	else
+	} else {
 		ret = ask_yes_no(ASK_YES_NO, _("Make size of %d files 0 ?"),
 		 files_selected);
+	}
 	if (ret <= 0) {
 		return 0;
 	}
@@ -553,8 +593,8 @@ int dof_size_zero_file(void)
 int dof_find_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
-	if (chk_inp_str_ret_val_filer(input_string_pos("", file_path,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
+	if (chk_inp_str_ret_val_filer(input_string_pos("", file_path, MAX_PATH_LEN,
+	 HISTORY_TYPE_IDX_DIR,
 	 _("Find file:")))) {
 		return 0;
 	}
@@ -566,8 +606,8 @@ int dof_find_file(void)
 int dof_make_directory(void)
 {
 	char file_path[MAX_PATH_LEN+1];
-	if (chk_inp_str_ret_val_filer(input_string_pos("", file_path,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
+	if (chk_inp_str_ret_val_filer(input_string_pos("", file_path, MAX_PATH_LEN,
+	 HISTORY_TYPE_IDX_DIR,
 	 _("Mkdir:")))) {
 		return 0;
 	}
@@ -578,8 +618,8 @@ int dof_make_directory(void)
 int dof_change_directory(void)
 {
 	char string[MAX_PATH_LEN+1];
-	if (chk_inp_str_ret_val_filer(input_string_pos("", string,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
+	if (chk_inp_str_ret_val_filer(input_string_pos("", string, MAX_PATH_LEN,
+	 HISTORY_TYPE_IDX_DIR,
 	 _("Chdir to:")))) {
 		return 0;
 	}
@@ -640,8 +680,7 @@ int dof_real_path(void)
 //-----------------------------------------------------------------------------
 int dof_select_file(void)
 {
-	get_cur_fv_cur_file_ptr()->selected
-	 = get_cur_fv_cur_file_ptr()->selected ^ _FILE_SEL_MAN_;
+	get_cur_fv_cur_file_ptr()->selected = get_cur_fv_cur_file_ptr()->selected ^ _FILE_SEL_MAN_;
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() + 1, get_cur_filer_view()->file_list_entries-1));
 	disp_files_selected();
@@ -679,6 +718,14 @@ void disp_files_selected()
 }
 int dof_quit_filer(void)
 {
+	if ((get_app_win_stack_depth() == 0) && count_cut_bufs()) {
+		if (ask_yes_no(ASK_YES_NO,
+		 _("Are you OK to quit %s ?"), APP_LONG_NAME) != ANSWER_YES) {
+			disp_status_bar_done(_("Cancelled"));
+			return 0;
+		}
+	}
+	disp_status_bar_done(_("Continue"));
 	filer_do_next = EF_QUIT;
 	return 0;
 }
@@ -721,6 +768,13 @@ int dof_tog_panes(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_AUTO;
 	return 0;
 }
+int dof_tog_panex(void)
+{
+	tog_filer_panex();
+	SHOW_MODE("Filer pane index", get_str_filer_panex());
+	filer_do_next = FL_UPDATE_FILE_LIST_AUTO;
+	return 0;
+}
 int dof_inc_key_list_lines(void)
 {
 	do_inc_key_list_lines_();
@@ -743,40 +797,28 @@ int dof_splash(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_view_key_list(void)
+int dof_view_func_list(void)
 {
-	view_help(HELP_BUF_IDX_FILER_KEY_LIST);
+	view_list(HELP_BUF_IDX_FILER_FUNC_LIST);
 	return 1;
 }
 #endif // ENABLE_HELP
 
 int dof_filer_menu_0(void)
 {
+	if (is_app_view_list_mode()) {
+		filer_do_next = EF_QUIT;
+		return 0;
+	}
 	return filer_menu_n(-1);
-}
-int dof_filer_menu_1(void)
-{
-	return filer_menu_n(0);
-}
-int dof_filer_menu_2(void)
-{
-	return filer_menu_n(1);
-}
-int dof_filer_menu_3(void)
-{
-	return filer_menu_n(2);
-}
-int dof_filer_menu_4(void)
-{
-	return filer_menu_n(2);
-}
-int dof_filer_menu_5(void)
-{
-	return filer_menu_n(2);
 }
 
 //-----------------------------------------------------------------------------
 
+int goto_dir_in_cur_line_byte_idx(int line_byte_idx)
+{
+	return goto_dir_in_str__call_filer(&(EPCBVC_CL->data[line_byte_idx]));
+}
 int goto_dir_in_str__call_filer(const char *str)
 {
 	if (goto_dir_in_string(str) == 0) {

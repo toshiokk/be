@@ -31,21 +31,21 @@ PRIVATE int direction_of_prev_search = 0;
 PRIVATE be_line_t *line_of_prev_search = NULL;
 PRIVATE int byte_idx_of_prev_search = 0;
 
-PRIVATE int doe_search_forward_first_(void);
+PRIVATE int doe_search_first_(void);
 PRIVATE int input_search_str(int search0_replace1, char *input_buf);
 PRIVATE int input_replace_str(char *input_buf);
 
 int doe_search_backward_first(void)
 {
 	SET_APPMD(ed_REVERSE_SEARCH);
-	return doe_search_forward_first_();
+	return doe_search_first_();
 }
 int doe_search_forward_first(void)
 {
 	CLR_APPMD(ed_REVERSE_SEARCH);
-	return doe_search_forward_first_();
+	return doe_search_first_();
 }
-PRIVATE int doe_search_forward_first_(void)
+PRIVATE int doe_search_first_(void)
 {
 	char needle[MAX_PATH_LEN+1];
 
@@ -56,19 +56,19 @@ PRIVATE int doe_search_forward_first_(void)
 	found_in_prev_search = 1;
 	if (search_string_once(needle, 0))
 		return 1;
-	// not found in the first direction, search to the reverse direction
+	// not found in the first direction, search in the reverse direction
 	TOGGLE_APPMD(ed_REVERSE_SEARCH);
-	return search_string_once(needle, 0);
+	return search_string_once(needle, 1);
 }
 int doe_search_backward_next(void)
 {
 	SET_APPMD(ed_REVERSE_SEARCH);
-	return search_string_once(last_searched_needle, 1);
+	return search_string_once(last_searched_needle, 0);
 }
 int doe_search_forward_next(void)
 {
 	CLR_APPMD(ed_REVERSE_SEARCH);
-	return search_string_once(last_searched_needle, 1);
+	return search_string_once(last_searched_needle, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ int doe_replace(void)
 								_("Replaced %d occurrencesss"),
 		 num_replaced), num_replaced);
 	else
-		disp_status_bar_not_found_msg(replace_from);
+		disp_status_bar_not_found_msg(replace_from, 0);
 
 	return 0;
 }
@@ -139,16 +139,18 @@ int input_search_str(int search0_replace1, char *input_buf)
 		strcpy__(default_needle, "");
 	}
 
-	if (input_string_pos("", input_buf,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_SEARCH, "%s%s%s%s%s:",
+	if (input_string_pos("", input_buf, MAX_PATH_LEN,
+	 HISTORY_TYPE_IDX_SEARCH,
+	 "%s%s%s%s%s:",
 	 search0_replace1 == 0 ? _("Search") : _("Replace"),
-	 GET_APPMD(ed_IGNORE_CASE) ? _("[Ignore-case]") : _("[Differenciate-case]"),
+	 GET_APPMD(ed_IGNORE_CASE) ? _("[Ignore-case]") : _("[Case-sensitive]"),
 #ifdef ENABLE_REGEX
 	 GET_APPMD(ed_USE_REGEXP) ? _("[Regexp]") : "",
 #else // ENABLE_REGEX
 	 "",
 #endif // ENABLE_REGEX
-	 GET_APPMD(ed_REVERSE_SEARCH) ? _("[Backward]") : _("[Forward]"), default_needle)
+	 GET_APPMD(ed_REVERSE_SEARCH) ? _("[Backward]") : _("[Forward]"),
+	 default_needle)
 	 <= EF_EXECUTED) {
 		// cancelled
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
@@ -174,9 +176,10 @@ int input_search_str(int search0_replace1, char *input_buf)
 
 int input_replace_str(char *input_buf)
 {
-	if (input_string_pos("", input_buf,
-	 MAX_PATH_LEN, HISTORY_TYPE_IDX_SEARCH,
-	 "%s:", _("Replace with:")) <= EF_EXECUTED) {
+	if (input_string_pos("", input_buf, MAX_PATH_LEN,
+	 HISTORY_TYPE_IDX_SEARCH,
+	 "%s:", _("Replace with:"))
+	 <= EF_EXECUTED) {
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
 		return 0;
 	}
@@ -193,11 +196,9 @@ matches_t matches__;
 #define INNER_BUFFER_SEARCH		0
 #define INTER_BUFFER_SEARCH		1
 PRIVATE int search_needle_in_buffers(
- const char *needle, int search_dir, int ignore_case, int skip_here);
+ const char *needle, int search_dir, int ignore_case, int skip_here, int search_count);
 PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
  const char *needle, int search_dir, int ignore_case, int skip_here, int global_search);
-
-#define SEARCH_DIR()	(GET_APPMD(ed_REVERSE_SEARCH) ? (BACKWARD_SEARCH) : (FORWARD_SEARCH))
 
 // Search for a string
 int search_string_once(const char *needle, int search_count)
@@ -207,7 +208,7 @@ int search_string_once(const char *needle, int search_count)
 	if (found_in_prev_search == 0 && direction_of_prev_search == SEARCH_DIR()
 	 && line_of_prev_search == EPCBVC_CL && byte_idx_of_prev_search == EPCBVC_CLBI
 	 && strcmp(last_searched_needle, needle) == 0) {
-		disp_status_bar_not_found_msg(needle);
+		disp_status_bar_not_found_msg(needle, search_count);
 		return 0;
 	}
 	if (strlen(needle)) {
@@ -215,7 +216,7 @@ int search_string_once(const char *needle, int search_count)
 	}
 
 	match_len = search_needle_in_buffers(needle,
-	 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), SKIP_HERE);
+	 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), SKIP_HERE, search_count);
 
 	if (match_len > 0) {
 		if (search_count == 0) {
@@ -233,7 +234,7 @@ int search_string_once(const char *needle, int search_count)
 			 UPDATE_SCRN_ALL);
 		}
 		disp_status_bar_done(_("[%s] found in %s search"), needle,
-		 GET_APPMD(ed_REVERSE_SEARCH) ? _("backward") : _("forward"));
+		 GET_APPMD(ed_REVERSE_SEARCH) ? _("Backward") : _("Forward"));
 	}
 
 	found_in_prev_search = match_len;
@@ -270,13 +271,13 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 		}
 
 		match_len = search_needle_in_buffers(needle,
-		 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), skip_here);
+		 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), skip_here, 0);
 
 		if (match_len) {
 			// found
 			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_CENTER,
 			 UPDATE_SCRN_ALL);
-			update_screen_editor(1, 1, 1);
+			update_screen_editor(1, 1);
 			if (ret < ANSWER_ALL) {
 #ifdef ENABLE_UNDO
 				ret = ask_yes_no(ASK_YES_NO | ASK_ALL | ASK_BACKWARD | ASK_FORWARD | ASK_END
@@ -298,7 +299,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 		} else {
 			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_CENTER,
 			 UPDATE_SCRN_ALL);
-			update_screen_editor(1, 1, 1);
+			update_screen_editor(1, 1);
 			// not found message has been displayed
 #ifdef ENABLE_UNDO
 			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_FORWARD | ASK_END
@@ -453,7 +454,7 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair)
 	char_under_cursor = *EPCBVC_CL_EPCBVC_CLBI;
 	search_dir = setup_bracket_search(char_under_cursor, reverse_pair, needle);
 	if (search_dir == 0) {
-		disp_status_bar_done(_("Not a bracket"));
+		disp_status_bar_err(_("Not a bracket"));
 		return 1;
 	}
 	search__.direction = reverse_pair;
@@ -635,7 +636,7 @@ int get_colors_for_bracket_hl()
 
 void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurance, int depth)
 {
-flf_d_printf("depth_increase: %d, depth: %d\n", depth_increase, depth);
+/////flf_d_printf("depth_increase: %d, depth: %d\n", depth_increase, depth);
 	char fgc, bgc;
 	int num_colors_m1 = get_colors_for_bracket_hl() - 1;
 
@@ -652,7 +653,7 @@ flf_d_printf("depth_increase: %d, depth: %d\n", depth_increase, depth);
 	if (depth == 0) {
 		(*zero_occurance)++;
 	}
-flf_d_printf("bgc: %d, fgc: %d\n", bgc, fgc);
+/////flf_d_printf("bgc: %d, fgc: %d\n", bgc, fgc);
 }
 void get_color_for_bracket_hl(int color_idx, char *fgc, char *bgc)
 {
@@ -670,7 +671,7 @@ void get_color_for_bracket_hl(int color_idx, char *fgc, char *bgc)
 //------------------------------------------------------------------------------
 
 PRIVATE int search_needle_in_buffers(
- const char *needle, int search_dir, int ignore_case, int skip_here)
+ const char *needle, int search_dir, int ignore_case, int skip_here, int search_count)
 {
 	int match_len;
 
@@ -684,7 +685,7 @@ PRIVATE int search_needle_in_buffers(
 		return match_len;
 	}
 	tio_beep();
-	disp_status_bar_not_found_msg(needle);
+	disp_status_bar_not_found_msg(needle, search_count);
 	return 0;
 }
 
@@ -713,7 +714,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 				// if cur-pos is left most, move cur-pos up at least one line
 				if (byte_idx > 0) {
 					byte_idx--;
-				} else if (IS_NODE_TOP(line) == 0) {
+				} else if (IS_NODE_TOP_MOST(line) == 0) {
 					line = NODE_PREV(line);
 					byte_idx = line_data_strlen(line);
 				} else if (global_search && switch_epc_buf_to_prev(0, 0)) {
@@ -721,7 +722,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 					// but not update pointers in buffer
 					ptr_line = &(EPCBVC_CL);
 					ptr_byte_idx = &(EPCBVC_CLBI);
-					line = CUR_EDIT_BUF_BOT_LINE;
+					line = CUR_EDIT_BUFS_BOT_NODE;
 					byte_idx = line_data_strlen(line);
 				} else {
 					break;
@@ -744,7 +745,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 				// if cur-pos is right most, move cur-pos down at least one line
 				if (byte_idx < line_data_strlen(line)) {
 					byte_idx++;
-				} else if (IS_NODE_BOT(line) == 0) {
+				} else if (IS_NODE_BOT_MOST(line) == 0) {
 					line = NODE_NEXT(line);
 					byte_idx = 0;
 				} else if (global_search && switch_epc_buf_to_next(0, 0)) {
@@ -752,7 +753,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 					// but not update pointers in buffer
 					ptr_line = &(EPCBVC_CL);
 					ptr_byte_idx = &(EPCBVC_CLBI);
-					line = CUR_EDIT_BUF_TOP_LINE;
+					line = CUR_EDIT_BUFS_TOP_NODE;
 					byte_idx = 0;
 				} else {
 					break;
@@ -780,9 +781,13 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 	return match_len;
 }
 
-void disp_status_bar_not_found_msg(const char *str)
+// search_count = 0: first uni-directional search
+// search_count = 1: second uni-directional search (bi-directional search done)
+void disp_status_bar_not_found_msg(const char *str, int search_count)
 {
-	disp_status_bar_err(_("Keyword [%s] not found"), shrink_str_to_scr_static(str));
+	disp_status_bar_err(_("Keyword [%s] not found in %s search"),
+	 shrink_str_to_scr_static(str), (search_count == 0)
+	  ? ((SEARCH_DIR() < 0) ? _("Backward") : _("Forward")) : _("Bi-directional"));
 	set_edit_win_update_needed(UPDATE_SCRN_ALL);
 }
 

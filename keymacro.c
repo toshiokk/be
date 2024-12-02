@@ -22,9 +22,12 @@
 #include "headers.h"
 
 #ifdef ENABLE_HISTORY
+char key_macro_loaded[MAX_PATH_LEN+1] = "";
 void load_key_macro(int last_n)
 {
-	get_key_macro_from_string(get_history_newest(HISTORY_TYPE_IDX_KEYMACRO, last_n));
+	strlcpy__(key_macro_loaded, get_history_newest(HISTORY_TYPE_IDX_KEYMACRO, last_n),
+	 MAX_PATH_LEN);
+	get_key_macro_from_string(key_macro_loaded);
 }
 void save_key_macro(void)
 {
@@ -59,7 +62,7 @@ int doe_start_recording(void)
 	disp_status_bar_done(_("Start key macro recording"));
 	key_macro_start_recording();
 
-	editor_disp_title_bar();
+	disp_title_bar_editor();
 	tio_refresh();
 	return 0;
 }
@@ -68,7 +71,7 @@ int doe_cancel_recording(void)
 	disp_status_bar_done(_("Cancel key macro recording"));
 	key_macro_cancel_recording();
 
-	editor_disp_title_bar();
+	disp_title_bar_editor();
 	tio_refresh();
 	return 0;
 }
@@ -81,7 +84,7 @@ int doe_end_recording(void)
 	save_key_macro();
 #endif // ENABLE_HISTORY
 
-	editor_disp_title_bar();
+	disp_title_bar_editor();
 	tio_refresh();
 	return 0;
 }
@@ -104,6 +107,20 @@ PRIVATE int start_playback_last_n(int last_n)
 	key_macro_start_playback();
 	return 0;
 }
+#ifdef ENABLE_HISTORY
+int doe_playback_string(void)
+{
+	if (input_string_pos(key_macro_loaded, key_macro_loaded, MAX_PATH_LEN,
+	 HISTORY_TYPE_IDX_KEYMACRO, _("Input key macro to run:"))
+	 <= EF_EXECUTED) {
+		// cancelled
+		return 0;						// cancelled
+	}
+	get_key_macro_from_string(key_macro_loaded);
+	key_macro_start_playback();
+	return 0;
+}
+#endif // ENABLE_HISTORY
 //-----------------------------------------------------------------------------
 // Keyboard macro
 #define KEY_CODE_STR_LEN	(2+MAX_KEY_NAME_LEN+1)	// "\(RIGHT)"
@@ -172,7 +189,7 @@ int key_macro_start_playback(void)
 }
 key_code_t key_macro_get_key(void)
 {
-	key_code_t key = -1;
+	key_code_t key = K_NONE;
 
 	if (key_macro_is_playing_back()) {
 		if (key_macro_playing_back < key_macro_recorded) {
@@ -199,7 +216,7 @@ char *get_string_from_key_macro(void)
 {
 	static char line_buf[MAX_KEY_MACRO_STR_LEN + 1];
 	int stroke_idx;
-	char buf_key_name[MAX_KEY_NAME_LEN+1];		// "RIGHT"
+	char buf_key_name[MAX_KEY_NAME_LEN+1];		// "MC-RIGHT"
 	const char *key_name;
 	char buf_key_code[KEY_CODE_STR_LEN+1];		// "a", "\\", "\(RIGHT)", "\1234"
 
@@ -237,7 +254,7 @@ void get_key_macro_from_string(const char *string)
 	key_code_t key_code;
 	int int_key_code;
 
-flf_d_printf("[%s]\n", string);
+///flf_d_printf("[%s]\n", string);
 	if (string == NULL)
 		return;
 	str = string;
@@ -257,7 +274,7 @@ flf_d_printf("[%s]\n", string);
 					}
 				}
 				if (str[len] == ')') {
-					strlcpy__(key_name, &str[2], len-2);	// "RIGHT"
+					strlcpy__(key_name, &str[2], len-2);	// "MC-RIGHT"
 					key_code = key_code_from_key_name(key_name);
 					if (key_code >= 0) {
 						key_codes_recorded[stroke_idx] = key_code;
@@ -279,7 +296,8 @@ flf_d_printf("[%s]\n", string);
 		}
 	}
 	key_macro_recorded = stroke_idx;
-flf_d_printf("%d key strokes\n", key_macro_recorded);
+///flf_d_printf("%d key strokes\n", key_macro_recorded * 2);
+///dump_memory("", key_codes_recorded, key_macro_recorded * 2);
 }
 
 // End of keymacro.c
