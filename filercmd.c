@@ -63,14 +63,14 @@ int dof_down(void)
 int dof_page_up(void)
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
-	 get_cur_fv_file_idx() - FILER_VERT_SCROLL_LINES,
+	 get_cur_fv_file_idx() - get_filer_vert_scroll_lines(),
 	 get_cur_filer_view()->file_list_entries-1));
 	return 1;
 }
 int dof_page_down(void)
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
-	 get_cur_fv_file_idx() + FILER_VERT_SCROLL_LINES,
+	 get_cur_fv_file_idx() + get_filer_vert_scroll_lines(),
 	 get_cur_filer_view()->file_list_entries-1));
 	return 1;
 }
@@ -719,8 +719,9 @@ void disp_files_selected()
 int dof_quit_filer(void)
 {
 	if ((get_app_win_stack_depth() == 0) && count_cut_bufs()) {
-		if (ask_yes_no(ASK_YES_NO,
-		 _("Are you OK to quit %s ?"), APP_LONG_NAME) != ANSWER_YES) {
+		int ret = ask_yes_no(ASK_YES_NO | ASK_END,
+		 _("Are you OK to quit %s ?"), APP_LONG_NAME);
+		if ((ret != ANSWER_YES) && (ret != ANSWER_END)) {
 			disp_status_bar_done(_("Cancelled"));
 			return 0;
 		}

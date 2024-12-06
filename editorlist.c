@@ -203,9 +203,9 @@ PRIVATE void make_help_func_list(void)
 		}
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
 		 fkey_table[idx].help,
-		 key_name_from_key_code(fkey_table[idx].key1, NULL),
-		 key_name_from_key_code(fkey_table[idx].key2, buf2),
-		 key_name_from_key_code(fkey_table[idx].key3, buf3),
+		 short_key_name_from_key_code(fkey_table[idx].key1, NULL),
+		 short_key_name_from_key_code(fkey_table[idx].key2, buf2),
+		 short_key_name_from_key_code(fkey_table[idx].key3, buf3),
 		 fkey_table[idx].func_id);
 		append_string_to_cur_edit_buf(buffer);
 	}
@@ -260,10 +260,10 @@ PRIVATE void make_help_key_list(void)
 			}
 		}
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
-		 key_name_from_key_code(key1, NULL),
+		 short_key_name_from_key_code(key1, NULL),
 		 fkey_table ? fkey_table->help : "-- No function assigned --",
-		 key_name_from_key_code(key2, buf2),
-		 key_name_from_key_code(key3, buf3),
+		 short_key_name_from_key_code(key2, buf2),
+		 short_key_name_from_key_code(key3, buf3),
 		 fkey_table ? fkey_table->func_id : "-- None --");
 		append_string_to_cur_edit_buf(buffer);
 	}

@@ -100,6 +100,14 @@ char *conv_esc_str(char *string)
 
 //-----------------------------------------------------------------------------
 #ifdef START_UP_TEST
+void test_utilstr(void)
+{
+_FLF_
+	MY_UT_INT(contain_chr("(){}", ' '), 0);
+	MY_UT_INT(contain_chr("(){}", '('), 1);
+	MY_UT_INT(contain_chrs("(){}", "<>"), 0);
+	MY_UT_INT(contain_chrs("(){}", "({"), 1);
+}
 void test_replace_str(void)
 {
 	char buffer[100+1];
@@ -215,13 +223,13 @@ const char *quote_file_path_buf(char *buf, const char *string)
 }
 const char *quote_file_path_if_necessary(char *buf, const char *string)
 {
-	if (contain_chr(string, ' ')
-	 || contain_chr(string, '\'') || contain_chr(string, '"')) {
+	if (contain_chrs(string, " \"'")) {
 		if (contain_chr(string, '\'')) {
-			// abc'def.txt ==> "abc'def.txt"
+			// [abc'def.txt] ==> ["abc'def.txt"]
 			return quote_string(buf, string, '"');
 		} else {
-			// abc"def.txt ==> 'abc"def.txt'
+			// [abc"def.txt] ==> ['abc"def.txt']
+			// [abc def.txt] ==> ['abc def.txt']
 			return quote_string(buf, string, '\'');
 		}
 	} else {
@@ -387,9 +395,17 @@ char *strchr__(const char *str, char chr)
 {
 	return chr ? strchr(str, chr) : NULL;
 }
-int contain_chr(const char *string, char chr)
+int contain_chr(const char *str, char chr)
 {
-	return strchr__(string, chr) != NULL;
+	return strchr__(str, chr) != NULL;
+}
+int contain_chrs(const char *str, const char* chrs)
+{
+	while (*chrs) {
+		if (strchr__(str, *chrs++))
+			return 1;
+	}
+	return 0;
 }
 
 char *strnset__(char *buf, char chr, size_t len)

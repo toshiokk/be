@@ -238,7 +238,7 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 				}
 				if (filer_do_next == EF_NONE) {
 					flf_d_printf("<<<< CALL_FUNC_FILER [%s]\n", fkey_table->func_id);
-///					disp_status_bar_ing(_(fkey_table->desc));	// show what about to do
+/////					disp_status_bar_ing(_(fkey_table->desc));	// show what about to do
 					//=========================
 					(*fkey_table->func)();	// call function "dof__...()"
 					//=========================
@@ -399,26 +399,14 @@ int update_screen_filer(int status_bar, int refresh)
 		win_select_win(WIN_IDX_SUB_WHOLE);
 		disp_file_list(get_cur_filer_view(), 1);
 	} else {									// 2 panes
-		int pane_sel_idx;		// 0: not current pane, 1: current pane
-		for (pane_sel_idx = 0; pane_sel_idx < FILER_PANES; pane_sel_idx++) {
-			int pane_idx;			// pane index
-			// 1st, update not current pane.
-			// 2nd, update current pane.
-			if (pane_sel_idx == 0) {
-				// not current pane
-				pane_idx = 1 - get_filer_cur_pane_idx();	// 0 ==> 1, 1 ==> 0
-			} else {
-				// current pane
-				pane_idx = get_filer_cur_pane_idx();
-			}
+		for (int pane_sel_idx = 0; pane_sel_idx < FILER_PANES; pane_sel_idx++) {
+			// pane_sel_idx=0: update not current pane
+			// pane_sel_idx=1: update current pane
+			int pane_idx = (pane_sel_idx == 0)
+			 ? get_filer_counter_pane_idx()		// not current pane
+			 : get_filer_cur_pane_idx();		// current pane
 			win_select_win(WIN_IDX_SUB_LEFT + pane_idx);
-			if (pane_sel_idx == 0) {
-				set_work_space_color_dark();
-			}
 			disp_file_list(&cur_filer_panes->filer_views[pane_idx], pane_sel_idx);
-			if (pane_sel_idx == 0) {
-				clear_work_space_color_dark();
-			}
 		}
 	}
 
@@ -482,21 +470,25 @@ PRIVATE void disp_status_bar_filer()
 PRIVATE void adjust_top_file_idx(filer_view_t *fv)
 {
 	// keep row position of current file as same as possible
-	int disp_line_idx_to_keep = MIN_MAX_(FILER_VERT_SCROLL_MARGIN_LINES,
+	int disp_line_idx_to_keep = MIN_MAX_(get_filer_vert_scroll_margin_lines(),
 	 fv->prev_file_idx - fv->top_file_idx,
-	 filer_win_get_file_list_lines() - FILER_VERT_SCROLL_MARGIN_LINES);
+	 filer_win_get_file_list_lines() - get_filer_vert_scroll_margin_lines() - 1);
 	fv->top_file_idx = MIN_MAX_(0, fv->cur_file_idx - disp_line_idx_to_keep,
 	 fv->file_list_entries-1);
 }
 PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 {
-	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
-
+	if (cur_pane == 0) {
+		set_work_space_color_dark();
+	} else {
+		clear_work_space_color_dark();
+	}
 	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 	sub_win_clear_screen();
 
 	if (filer_win_get_file_path_lines()) {
-		// on two pane mode, show each path
+		char buffer[MAX_SCRN_LINE_BUF_LEN+1];
+		// on two pane mode, show each directory path
 		strlcpy__(buffer, fv->cur_dir, MAX_SCRN_LINE_BUF_LEN);
 		shrink_str(buffer, main_win_get_columns(), 2);
 		set_color_by_idx(ITEM_COLOR_IDX_TITLE, ! cur_pane);
@@ -537,13 +529,18 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 	return 0;
 }
 //-------------------------------------
+int get_filer_vert_scroll_lines()
+{
+	return MIN_MAX_(1, filer_win_get_file_list_lines() / 2, 20);
+}
+int get_filer_vert_scroll_margin_lines()
+{
+	return LIM_MAX(3, filer_win_get_file_list_lines() / 3);
+}
+//-------------------------------------
 int filer_win_get_file_path_lines(void)
 {
-	if (GET_APPMD(fl_FILER_PANES) == 0) {
-		return 0;
-	} else {
-		return 1;
-	}
+	return GET_APPMD(fl_FILER_PANES);
 }
 int filer_win_get_file_list_lines(void)
 {
@@ -561,7 +558,7 @@ int filer_win_get_file_list_y(void)
 //-------------------------------------
 PRIVATE void disp_key_list_filer(void)
 {
-	char *filer_key_lists[] = {
+	const char *filer_key_lists[] = {
  "{Menu}"
  "  {Home } {Copy } {CpyUd} {Renam}"
  "  {Move } {Delet} {MkDel} {MkDir}"

@@ -113,7 +113,6 @@ PRIVATE vscreen_char_t attrs_sent = VSCR_CHAR_ATTRS_DEFAULT;	// attributes sent 
 PRIVATE void send_attrs_to_term(vscreen_char_t attrs);
 PRIVATE void send_all_off_to_term(void);
 PRIVATE void send_bold_to_term(int bold);
-///PRIVATE void send_reverse_to_term(int reverse);
 PRIVATE void send_bgc_to_term(int bgc);
 PRIVATE void send_fgc_to_term(int fgc);
 

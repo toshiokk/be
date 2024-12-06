@@ -82,8 +82,13 @@ PRIVATE int doe_cut_to_head_(int delete0_cut1)
 	if (EPCBVC_CLBI == 0) {
 		return 0;
 	}
-	do_set_mark();
+
+	int prev_byte_idx = EPCBVC_CLBI;
 	doe_start_of_line();
+	do_set_mark();
+	EPCBVC_CLBI = prev_byte_idx;
+	setup_cut_region_after_cursor_move(CURS_MOVE_HORIZ);
+
 	if (delete0_cut1 == 0) {
 		doe_delete_text();
 		disp_status_bar_done(_("Deleted to line head"));
@@ -109,8 +114,14 @@ PRIVATE int doe_cut_to_tail_(int delete0_cut1)
 		return 0;
 	}
 	set_disabled_update_min_text_x_to_keep();	// avoid contents jump around
-	do_set_mark();
+
+	int prev_byte_idx = EPCBVC_CLBI;
+	EPCBVC_CLBI = line_data_strlen(EPCBVC_CL);
 	doe_end_of_line();
+	do_set_mark();
+	EPCBVC_CLBI = prev_byte_idx;
+	setup_cut_region_after_cursor_move(CURS_MOVE_HORIZ);
+
 	if (delete0_cut1 == 0) {
 		doe_delete_text();
 		disp_status_bar_done(_("Deleted to line tail"));

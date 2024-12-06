@@ -22,7 +22,7 @@
 #ifndef linewrap_h
 #define linewrap_h
 
-extern int priv_tab_size;
+extern int linewrap_tab_size;
 
 void set_wrap_line_tab_size(int tab_size);
 

@@ -271,7 +271,7 @@ void adjust_curs_pos_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 
 PRIVATE int calc_min_text_x_to_keep();
 PRIVATE int recalc_min_text_x_to_keep(int disp_width, int text_width, int margin,
- int cursor_text_x, int cur_min_text_x);
+ int cursor_text_x, int min_text_x);
 
 // sample long line:
 // 00000000001111111111222222222233333333334444444444
@@ -285,6 +285,8 @@ void update_min_text_x_to_keep(int text_x)
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
 	}
 }
+// This function does not need to consider line wrapping,
+// because in the line wrapping mode, the contents width never beyond the display width.
 PRIVATE int calc_min_text_x_to_keep()
 {
 	te_concat_linefeed(EPCBVC_CL->data);
@@ -296,49 +298,85 @@ PRIVATE int calc_min_text_x_to_keep()
 }
 
 // Calculate the column number of the first character displayed left most
-// in window when the cursor is at the given column.
-// c: cursor-pos, <: left-most, >: right-most
+// in window when the cursor is at the given column 'cursor_text_x' in the text.
 PRIVATE int recalc_min_text_x_to_keep(int disp_width, int text_width, int margin,
- int cursor_text_x, int cur_min_text_x)
+ int cursor_text_x, int min_text_x)
 {
-	return MIN_MAX_(
-	 LIM_MAX(text_width - disp_width, cursor_text_x - (disp_width - margin)),
-	 cur_min_text_x,
-	 LIM_MIN(0, cursor_text_x - margin));
-//
-//      cccccccccccccccccccccccccccccccccccccccc                     cursor position
-//      000000000011111111112222222222333333333344444444445555555555 contents
-//      <--disp_width-------------------------->
-//      <--->                              <---> horizontal-margin
+flf_d_printf("disp_width: %d, text_width: %d, margin: %d, cursor_text_x: %d, min_text_x: %d\n",
+ disp_width, text_width, margin, cursor_text_x, min_text_x);
+	min_text_x = MIN_MAX_(
+	 // this value push 'min_text_x' to right.     ...==>|
+	 cursor_text_x - (disp_width - margin) + 1,
+	 min_text_x,
+	 // this value push 'min_text_x' to left.  |<==...
+	 cursor_text_x - margin);
+	return MIN_MAX_(0, min_text_x, LIM_MIN(0, text_width - disp_width));
+///	min_text_x = MIN_MAX_(
+///	 LIM_MAX(text_width - disp_width, cursor_text_x - (disp_width - margin)),
+///	 min_text_x,
+///	 LIM_MIN(0, cursor_text_x - margin));
+///	return MIN_MAX_(0, min_text_x, LIM_MIN(0, (text_width + 1) - disp_width - 1));
 
-//      ccccc
-//      000000000011111111112222222222333333333344444444445555555555
-//      <--disp_width-------------------------->
-//      <--->                              <---> margin
+// Condition of the below example: disp_width=40, margin=5, text_width=50
+//  cursor_text_x: [0--50], min_text_x: [0--10]
 
-//           cccccccccccccccccccccccccccccc
-//      000000000011111111112222222222333333333344444444445555555555
-//      <--disp_width-------------------------->
-//      <--->                              <---> margin
+// |cursor_text_x|push_right |push_left  |
+// |             |/ min_bound|/ max_bound|
+// |-------------|-----------|-----------|
+// |  0--5       |-35~-30 / 0|-5~0  /   0|
+// |  6--10      |-31~-25 / 0| 1~5  / 1~5|
+// | 11--15      |-24~-20 / 0|6~10  /0~10|
+// | 16--34      |-19~0   / 0|11~39 /  10|
+// | 35--44      |1~9   / 1~9|40~49 /  10|
+// | 45--50      |10~15 /  10|50    /  10|
 
-//                     cccccccccccccccccccccccccccccccccccccccc
-//      000000000011111111112222222222333333333344444444445555555555
-//                          <--disp_width-------------------------->
-//                                                             <---> margin
+// C: cursor_text_x, <: left-most, >: right-most, <--->: horizontal-margin
 
-//                                                             ccccc
-//      000000000011111111112222222222333333333344444444445555555555
-//                          <--disp_width-------------------------->
-//                          <--->                              <---> margin
+// 012345678901234-text-to-be-shown-34567890123456789
+// <--->----------disp_width----------<--->
+// C
+
+// 01234567890123456789012345678901234567890123456789
+// <--->----------disp_width----------<--->
+//                                 ->C
+
+// 01234567890123456789012345678901234567890123456789
+//  <--->----------disp_width----------<--->
+//                                  ->C
+
+// 01234567890123456789012345678901234567890123456789
+//           <--->----------disp_width----------<--->
+//                                           ->C
+
+// 01234567890123456789012345678901234567890123456789
+//            <--->----------disp_width----------<--->
+//                                            ->C....C
+
+// 01234567890123456789012345678901234567890123456789
+//           <--->----------disp_width----------<--->
+//                C<-
+
+// 01234567890123456789012345678901234567890123456789
+//          <--->----------disp_width----------<--->
+//               C<-
+
+// 01234567890123456789012345678901234567890123456789
+// <--->----------disp_width----------<--->
+//      C<-
+
+// 01234567890123456789012345678901234567890123456789
+// <--->----------disp_width----------<--->
+// C...C<-
+
 }
 
-// min_text_x_to_keep = 0
-// |<-- display width ------------------->|
-// 000000000011111111112222222222333333333344444444445555555555
-//
-//           min_text_x_to_keep = 10
-//           |<-- display width ------------------->|
-// 000000000011111111112222222222333333333344444444445555555555
+//          min_text_x_to_keep = 0
+//          |<-- display width ------------------->|
+//          01234567890123456789012345678901234567890123456789
+
+//          min_text_x_to_keep = 10
+//          |<-- display width ------------------->|
+//01234567890123456789012345678901234567890123456789
 
 //-----------------------------------------------------------------------------
 

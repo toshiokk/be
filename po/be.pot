@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-02 23:29+0900\n"
+"POT-Creation-Date: 2024-12-07 00:41+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "Calculating CRC..."
 msgstr ""
 
-#: ../buffers.c:647 ../buffers.c:654
+#: ../buffers.c:645 ../buffers.c:652
 msgid "Tab size"
 msgstr ""
 
@@ -46,35 +46,35 @@ msgstr ""
 
 #: ../editor.c:339
 #, c-format
-msgid "Key code input: %04x: [%s]"
+msgid "Key code input: %04x: [%s|%s]"
 msgstr ""
 
-#: ../editor.c:633 ../fileio.c:98
+#: ../editor.c:624 ../fileio.c:98
 msgid "New File"
 msgstr ""
 
-#: ../editor.c:635
+#: ../editor.c:626
 msgid "[Mod] "
 msgstr ""
 
-#: ../editor.c:641
+#: ../editor.c:632
 msgid "[RO] "
 msgstr ""
 
-#: ../editor.c:733
+#: ../editor.c:724
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:785
+#: ../editor.c:776
 msgid "Modification not allowed in VIEW/LIST mode"
 msgstr ""
 
-#: ../editor.c:789
+#: ../editor.c:780
 msgid "Modification not allowed in this buffer mode"
 msgstr ""
 
-#: ../editor2.c:122
+#: ../editor2.c:130
 msgid "---- No lines in this buffer ----"
 msgstr ""
 
@@ -82,59 +82,59 @@ msgstr ""
 msgid "Delete/Cut to line head"
 msgstr ""
 
-#: ../editorcut.c:89
+#: ../editorcut.c:94
 msgid "Deleted to line head"
 msgstr ""
 
-#: ../editorcut.c:92
+#: ../editorcut.c:97
 msgid "Cut to line head"
 msgstr ""
 
-#: ../editorcut.c:107
+#: ../editorcut.c:112
 msgid "Delete/Cut to line tail"
 msgstr ""
 
-#: ../editorcut.c:116
+#: ../editorcut.c:127
 msgid "Deleted to line tail"
 msgstr ""
 
-#: ../editorcut.c:119
+#: ../editorcut.c:130
 msgid "Cut to line tail"
 msgstr ""
 
-#: ../editorcut.c:140
+#: ../editorcut.c:151
 msgid "Mark Set"
 msgstr ""
 
-#: ../editorcut.c:154
+#: ../editorcut.c:165
 msgid "Mark UNset"
 msgstr ""
 
-#: ../editorcut.c:170
+#: ../editorcut.c:181
 msgid "Text Copied to Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:186
+#: ../editorcut.c:197
 msgid "Text Deleted"
 msgstr ""
 
-#: ../editorcut.c:195
+#: ../editorcut.c:206
 msgid "Text Cut to Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:204
+#: ../editorcut.c:215
 msgid "Text Duplicated"
 msgstr ""
 
-#: ../editorcut.c:215
+#: ../editorcut.c:226
 msgid "Text Pasted with popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:225
+#: ../editorcut.c:236
 msgid "Text Pasted without popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:246 ../editorcut.c:276
+#: ../editorcut.c:257 ../editorcut.c:287
 msgid "Cut-buffer empty !!"
 msgstr ""
 
@@ -168,7 +168,7 @@ msgid "One buffer closed"
 msgstr ""
 
 #: ../editorfile.c:329 ../editorfile.c:386 ../editorgoto.c:56 ../fileio.c:151
-#: ../fileio.c:156 ../filercmd.c:724 ../winin.c:78
+#: ../fileio.c:156 ../filercmd.c:725 ../winin.c:78
 msgid "Cancelled"
 msgstr ""
 
@@ -328,11 +328,11 @@ msgstr ""
 msgid "!!!! No UNDO info pushed !!!!"
 msgstr ""
 
-#: ../editorundo.c:216
+#: ../editorundo.c:217
 msgid "Undo-buffer empty !!"
 msgstr ""
 
-#: ../editorundo.c:225
+#: ../editorundo.c:226
 msgid "Redo-buffer empty !!"
 msgstr ""
 
@@ -614,22 +614,22 @@ msgstr ""
 msgid "Are you OK to quit %s ?"
 msgstr ""
 
-#: ../filercmd.c:728
+#: ../filercmd.c:729
 msgid "Continue"
 msgstr ""
 
-#: ../filercmd.c:858
+#: ../filercmd.c:859
 #, c-format
 msgid "Can not change directory to [%s]"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:936
+#: ../filercmd.c:937
 #, c-format
 msgid "Can not change current to [%s]: %s"
 msgstr ""
 
-#: ../filercmd.c:945
+#: ../filercmd.c:946
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr ""
@@ -696,7 +696,7 @@ msgstr ""
 msgid "Screen resized to (%d, %d)"
 msgstr ""
 
-#: ../main.c:652
+#: ../main.c:654
 #, c-format
 msgid ""
 "\n"
@@ -704,110 +704,110 @@ msgid ""
 msgstr ""
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:654
+#: ../main.c:656
 msgid "Option"
 msgstr ""
 
-#: ../main.c:654
+#: ../main.c:656
 msgid "Long option"
 msgstr ""
 
-#: ../main.c:654
+#: ../main.c:656
 msgid "Meaning"
 msgstr ""
 
-#: ../main.c:656
+#: ../main.c:658
 msgid "Read RCFILE"
 msgstr ""
 
-#: ../main.c:657
+#: ../main.c:659
 msgid "Don't look at berc files"
 msgstr ""
 
-#: ../main.c:660
+#: ../main.c:662
 msgid "Don't use history file"
 msgstr ""
 
-#: ../main.c:662
+#: ../main.c:664
 msgid "Set tab-size to NUM[1-15]"
 msgstr ""
 
-#: ../main.c:663
+#: ../main.c:665
 msgid "View mode(Read only mode)"
 msgstr ""
 
-#: ../main.c:665
+#: ../main.c:667
 msgid "Don't use nkf"
 msgstr ""
 
-#: ../main.c:666
+#: ../main.c:668
 msgid "ASCII character encoding"
 msgstr ""
 
-#: ../main.c:667
+#: ../main.c:669
 msgid "JIS character encoding"
 msgstr ""
 
-#: ../main.c:668
+#: ../main.c:670
 msgid "EUCJP character encoding"
 msgstr ""
 
-#: ../main.c:669
+#: ../main.c:671
 msgid "SJIS character encoding"
 msgstr ""
 
-#: ../main.c:670
+#: ../main.c:672
 msgid "UTF8 character encoding"
 msgstr ""
 
-#: ../main.c:671
+#: ../main.c:673
 msgid "BINARY file"
 msgstr ""
 
-#: ../main.c:672
+#: ../main.c:674
 msgid "BINARY file (same as '-e b')"
 msgstr ""
 
-#: ../main.c:673
+#: ../main.c:675
 msgid "TEXT file (same as '-e u')"
 msgstr ""
 
-#: ../main.c:676
+#: ../main.c:678
 msgid "Output debug log to stderr"
 msgstr ""
 
-#: ../main.c:678
+#: ../main.c:680
 msgid "Show version information"
 msgstr ""
 
-#: ../main.c:679
+#: ../main.c:681
 msgid "Show this message"
 msgstr ""
 
-#: ../main.c:680
+#: ../main.c:682
 msgid "Start at line number NUM"
 msgstr ""
 
-#: ../main.c:682
+#: ../main.c:684
 msgid "Investigate key sequence"
-msgstr ""
-
-#: ../main.c:698
-#, c-format
-msgid "%s version %s (compiled at %s, %s)\n"
 msgstr ""
 
 #: ../main.c:700
 #, c-format
+msgid "%s version %s (compiled at %s, %s)\n"
+msgstr ""
+
+#: ../main.c:702
+#, c-format
 msgid " Build Options:\n"
 msgstr ""
 
-#: ../main.c:953
+#: ../main.c:955
 #, c-format
 msgid "Screen size: %dx%d"
 msgstr ""
 
-#: ../main.c:959
+#: ../main.c:961
 msgid "We're invincible with this !!"
 msgstr ""
 

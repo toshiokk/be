@@ -61,27 +61,27 @@ typedef struct /*app_mode*/ {
 
 	// editor settings
 	unsigned char ed_EDITOR_PANES:1;		// bit 10 (0: 1 pane / 1: 2 panes)
-	unsigned char ed_EDITOR_PANEX:1;		// bit 10 (0: pane-0 / 1: pane-1)
-	unsigned char ed_DUAL_SCROLL:1;			// bit 11
-	unsigned char ed_SHOW_RULER:1;			// bit 12
-	unsigned char ed_SHOW_LINE_NUMBER:1;	// bit 13
+	unsigned char ed_EDITOR_PANEX:1;		// bit 11 (0: pane-0 / 1: pane-1)
+	unsigned char ed_DUAL_SCROLL:1;			// bit 12
+	unsigned char ed_SHOW_RULER:1;			// bit 13
+	unsigned char ed_SHOW_LINE_NUMBER:1;	// bit 14
 #define CURS_POSITIONING_NONE		0
 #define CURS_POSITIONING_TOP		1
 #define CURS_POSITIONING_CENTER		2
 #define CURS_POSITIONING_BOTTOM		3
-	unsigned char ed_CURS_POSITIONING:2;	// bit 14,15
+	unsigned char ed_CURS_POSITIONING:2;	// bit 15,16
 #ifdef ENABLE_SYNTAX
-	unsigned char ed_SYNTAX_HIGHLIGHT:1;	// bit 16
-	unsigned char ed_TAB_EOL_NOTATION:1;	// bit 17
+	unsigned char ed_SYNTAX_HIGHLIGHT:1;	// bit 17
+	unsigned char ed_TAB_EOL_NOTATION:1;	// bit 18
 #endif // ENABLE_SYNTAX
-	unsigned char ed_AUTO_INDENT:1;			// bit 18
-	unsigned char ed_REVERSE_SEARCH:1;		// bit 19
-	unsigned char ed_IGNORE_CASE:1;			// bit 20
+	unsigned char ed_AUTO_INDENT:1;			// bit 19
+	unsigned char ed_REVERSE_SEARCH:1;		// bit 20
+	unsigned char ed_IGNORE_CASE:1;			// bit 21
 #ifdef ENABLE_REGEX
-	unsigned char ed_USE_REGEXP:1;			// bit 21
+	unsigned char ed_USE_REGEXP:1;			// bit 22
 #endif // ENABLE_REGEX
 #ifdef USE_NKF
-	unsigned char ed_USE_NKF:1;				// bit 22
+	unsigned char ed_USE_NKF:1;				// bit 23
 #endif // USE_NKF
 #define BACKUP_FILES_0			0
 #define BACKUP_FILES_1			1
@@ -90,12 +90,12 @@ typedef struct /*app_mode*/ {
 #define BACKUP_FILES_10			10
 #define BACKUP_FILES_15			15
 #define BACKUP_FILES_MAX		BACKUP_FILES_15
-	unsigned char ed_BACKUP_FILES:4;		// bit 23-26
+	unsigned char ed_BACKUP_FILES:4;		// bit 24-27
 
 	// filer settings
-	unsigned char fl_FILER_PANES:1;			// bit 27 (0: 1 pane / 1: 2 panes)
-	unsigned char fl_FILER_PANEX:1;			// bit 27 (0: pane-0 / 1: panes-1)
-	unsigned char fl_SHOW_DOT_FILE:1;		// bit 28
+	unsigned char fl_FILER_PANES:1;			// bit 28 (0: 1 pane / 1: 2 panes)
+	unsigned char fl_FILER_PANEX:1;			// bit 29 (0: pane-0 / 1: panes-1)
+	unsigned char fl_SHOW_DOT_FILE:1;		// bit 30
 #define FILE_SORT_BY_NAME		0
 #define FILE_SORT_BY_EXT		1
 #define FILE_SORT_BY_TIME		2
@@ -105,14 +105,14 @@ typedef struct /*app_mode*/ {
 #define FILE_SORT_BY_TIME_REV	6
 #define FILE_SORT_BY_SIZE_REV	7
 #define FILE_SORT_BY_MAX		FILE_SORT_BY_SIZE_REV
-	unsigned char fl_FILE_SORT_BY:3;		// bit 29-31
+	unsigned char fl_FILE_SORT_BY:3;		// bit 31-33
 #define SHOW_FILE_INFO_0				0	// None
 #define SHOW_FILE_INFO_1				1	// Size
 #define SHOW_FILE_INFO_2				2	// Size Time
 #define SHOW_FILE_INFO_3				3	// Size Time 1777 User
 #define SHOW_FILE_INFO_4				4	// Size Time lrwxrwxrwx User:group
 #define SHOW_FILE_INFO_MAX				SHOW_FILE_INFO_4
-	unsigned char fl_SHOW_FILE_INFO:3;		// bit 32-34
+	unsigned char fl_SHOW_FILE_INFO:3;		// bit 34-36
 } app_mode_t;
 
 //-----------------------------------------------------------------------------
@@ -298,8 +298,8 @@ int get_key_list_lines(void);
 // |editor mode    |load|edit|save|          | /copy|      |        |              |
 // |---------------|----|----|----|----------|------|------|--------|--------------|
 // |APP_MODE_NORMAL|yes |yes |yes |everywhere|yes   |yes   |all     |text editor   |
-// |APP_MODE_VIEWER|no  |no  |no  |everywhere|yes   |yes   |all     |file list/help|`buf_VIEW_MODE=1`
-// |APP_MODE_LIST  |auto|no  |auto|vertical  |no    |yes?? |none    |history viewer|`buf_LIST_MODE=1`
+// |APP_MODE_VIEWER|no  |no  |no  |everywhere|yes   |yes   |all     |file list/help|
+// |APP_MODE_LIST  |auto|no  |auto|vertical  |no    |yes?? |none    |history viewer|
 
 // View mode of filer:
 // |filer mode     |open/copy/move/ren|chdir|search|select|modificatons|purpose          |

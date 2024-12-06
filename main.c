@@ -520,6 +520,8 @@ PRIVATE void start_up_test(void)
 	test_get_file_name_extension();
 	test_cat_dir_and_file();
 	test_separate_path_to_dir_and_file();
+
+	test_utilstr();
 	test_get_one_file_path();
 
 ///	test_get_intersection();

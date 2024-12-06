@@ -121,6 +121,7 @@ typedef short key_code_t;	// signed short
 #define K_C_RBRAK		K_C(']')	// 1d
 #define K_C_CARET		K_C('^')	// 1e
 #define K_C_UNDLN		K_C('_')	// 1f
+#define K_SPACE			' '			// ' '
 
 #define K_M_0			K_M('0')
 #define K_M_1			K_M('1')
@@ -448,8 +449,10 @@ typedef struct {
 } func_key_table_t;
 
 #define MAX_KEY_NAME_LEN	8		// "MC-UNDLN"
+#define NUM_STR(key)	key, #key
 typedef struct /*key_name_table_t*/ {
 	key_code_t key_code;
+	char *long_key_name;
 	char *key_name;
 } key_name_table_t;
 extern key_name_table_t key_name_table[];

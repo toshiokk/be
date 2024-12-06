@@ -37,6 +37,7 @@ char *conv_esc_str(char *string);
 
 typedef int len_t;	// len_t can be -1 indicating that length is NOT_SPECIFIED
 
+void test_utilstr(void);
 void test_replace_str(void);
 char *replace_str(char *buffer, size_t buf_len, size_t start, int delete_len,
  const char *str, len_t insert_len);
@@ -73,7 +74,8 @@ int strlcmp__(const char *dest, const char *src);
 int strlcasecmp(const char *str1, const char *str2);
 int strcmp_from_tail(const char *dest, const char *src);
 char *strchr__(const char *str, char chr);
-int contain_chr(const char *string, char chr);
+int contain_chr(const char *str, char chr);
+int contain_chrs(const char *str, const char* chrs);
 char *strnset__(char *buf, char chr, size_t len);
 char *strncpy__(char *dest, const char *src, size_t buf_len);
 void *memcpy__(void *dest, const void *src, size_t len);

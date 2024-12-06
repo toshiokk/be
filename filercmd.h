@@ -24,9 +24,6 @@
 
 #ifdef ENABLE_FILER
 
-#define FILER_VERT_SCROLL_MARGIN_LINES	LIM_MAX(5, filer_win_get_file_list_lines() / 3)
-#define FILER_VERT_SCROLL_LINES			MIN_MAX_(1, filer_win_get_file_list_lines() / 2, 20)
-
 int chk_inp_str_ret_val_filer(int ret);
 
 // "dof_..."  DO Editor function

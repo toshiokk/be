@@ -336,7 +336,8 @@ int examine_key_code(void)
 {
 	disp_status_bar_ing(_("Input key to show key code"));
 	key_code_t key = input_key_loop();
-	disp_status_bar_done(_("Key code input: %04x: [%s]"), key, key_name_from_key_code(key, NULL));
+	disp_status_bar_done(_("Key code input: %04x: [%s|%s]"), key,
+	 short_key_name_from_key_code(key, NULL), key_name_from_key_code(key, NULL));
 	return key == K_ESC;
 }
 
@@ -536,23 +537,13 @@ void update_screen_editor(int status_bar, int refresh)
 			win_select_win(WIN_IDX_SUB_WHOLE);
 			disp_edit_win(1);
 		} else {									// 2 panes
-			int pane_sel_idx;		// 0: not current pane, 1: current pane
-			for (pane_sel_idx = 0; pane_sel_idx < EDITOR_PANES; pane_sel_idx++) {
-				int pane_idx;			// pane index
-				// 1st, update not current pane.
-				// 2nd, update current pane.
-				pane_idx = 1 - get_editor_cur_pane_idx();	// 0 ==> 1, 1 ==> 0
-				win_select_win(WIN_IDX_SUB_LEFT + pane_idx);
-				if (pane_sel_idx == 0) {
-					set_work_space_color_dark();
-				}
-///flf_d_printf("pane_sel_idx: %d, pane_idx: %d\n", pane_sel_idx, pane_idx);
+			for (int pane_sel_idx = 0; pane_sel_idx < EDITOR_PANES; pane_sel_idx++) {
+				// pane_sel_idx=0: update not current pane
+				// pane_sel_idx=1: update current pane
+				int pane_idx = get_editor_counter_pane_idx();
 				set_editor_cur_pane_idx(pane_idx);
-
+				win_select_win(WIN_IDX_SUB_LEFT + pane_idx);
 				disp_edit_win(pane_sel_idx);
-				if (pane_sel_idx == 0) {
-					clear_work_space_color_dark();
-				}
 			}
 		}
 	}
@@ -739,7 +730,7 @@ PRIVATE void disp_status_bar_editor(void)
 
 void disp_key_list_editor(void)
 {
-	char *editor_key_lists[] = {
+	const char *editor_key_lists[] = {
  "{Menu} "
  " {Rec  } {Play } {SchBW} {SchFW} "
  " {Mark } {Cut  } {Copy } {Pop  } "

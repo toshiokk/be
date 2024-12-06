@@ -1,33 +1,44 @@
 #### BE-editor to do list
  (H: high priority, L: Low priority, e: easy, d: difficult, x/v: done, -: impossible/pending)
+- BUG:  bug
+- IMPR: to be improved issues
+- ISSUE: to be improved or fixed problems
+- CRASH: crash
 
 - Unevitable batting key bindings with short-cuts in WSL(Linux on Windows)
   - Alt-TAB (but Ctrl-Alt-I does not batting, use this instead)
   - Alt-ESC
   - Alt-`
   - Ctrl--, Ctrl-+
-
-- [x] in editor-list-mode, M-e inserts text to input_str
+- [] make quitable by 'q' then 'Alt-q'
+- [] define EDITOR_VERT_SCROLL_MERGIN as 3 and FILER_VERT_SCROLL_MERGIN as 3
+- [x] BUG: line after LF is not cleared on the editor screen in line-lap mode
+  VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- 
+- [-] search not moving cursor pos. as possible ==> Cursor center mode
+- [x] "M_LBRAC" ==> "M-{", "\(M-))" ==> "\{M-)}"
+- [x] 241203 IMPR: does not go to previous cursor x position after undoing "cut-to-head"/"cut-to_tail"
+- [-] keep cut buffers after exiting app.
+- [x] 241202 in editor-list-mode, M-e inserts text to input_str
 - [x] make editor and filer to work more seamless as possible.
   - [x-] cut-copy 1 line ==> execution history
-  - [x] to be able to paste texts cut from editor into filer (add cut text to search history)
-- [x] move pane_idx(editor/filer) into app_mode_t
-- [x] locate cursor to the position at which some modification done after doing undo
+  - [x] 241201 to be able to paste texts cut from editor into filer (add cut text to search history)
+- [x] 241201 move pane_idx(editor/filer) into app_mode_t
+- [x] 241202 locate cursor to the position at which some modification done after doing undo
   - [-] add line-number in be_buf_t for undo to locate cursor to right line on doing
-- [x] BUG: parent window cleared in input_str...() when no input more than 10 secs.
-- [x] make list mode be able to quit from on ESC
-- [x] "Open and close file" reset the two pane mode
-- [x] ISSUE: too easily quit from application ==> add confirmation of Yes/No
-  - [x] ask only when unused cut/undo buffer exist
+- [x] 241201 BUG: parent window cleared in input_str...() when no input more than 10 secs.
+- [x] 241201 make list mode be able to quit on ESC
+- [x] 241201 make not quitable from filer by ESC key
+- [x] 241201 "Open and close file" reset the two pane mode
+- [x] 241201 ISSUE: too easily quit from application ==> add confirmation of Yes/No
+  - [x] 241201 ask only when unused cut/undo buffer exist
 - [?] BUG: funny tr messages when open editor menu
   - Ubuntu 24.04: reproduce
   - WSL Ubuntu 22.04: does not reproduce
-- [x] BUG: tog/inc_tab_size
-- [-] can not quit from filer by ESC key
+- [x] 241201 BUG: tog/inc_tab_size
 - [x] CRASH: on modifying in the empty buffer of list mode
-- [x] adequitely place cursor in the buffer "No lines in this buffer"
-- [x] exit editor on the mode at the editor started, not on the buffer mode
-- [x] BUG: tag-jump from file-list
+- [x] 241130 adequitely place cursor in the buffer "No lines in this buffer"
+- [x] 241130 exit editor on the mode at the editor started, not on the buffer mode
+- [x] 2411?? BUG: tag-jump from file-list
 - [x] 241120 get whole line from edit buffer '^\' '^]' or '^]' '^\'
 - [x] 241120 cut-to-head and cut-to-tail w/wo copy into cut-buffer
 - [x] 241120 BUG: doe_open_new_file says "100 files loaded" though just 1 file

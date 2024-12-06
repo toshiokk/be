@@ -230,13 +230,19 @@ char *get_string_from_key_macro(void)
 			 "%c", (unsigned short)key_codes_recorded[stroke_idx]);
 		} else {
 			key_name = key_name_from_key_code(key_codes_recorded[stroke_idx], buf_key_name);
-			if (key_name[0])
-				// "\(UP)"
-				snprintf(buf_key_code, KEY_CODE_STR_LEN+1, "\\(%s)", key_name);
-			else
+			if (key_name[0]) {
+				if (contain_chrs(key_name, "()") == 0) {
+					// "\(UP)", "\(M-{)", "\(M-})"
+					snprintf(buf_key_code, KEY_CODE_STR_LEN+1, "\\(%s)", key_name);
+				} else {
+					// "\{M-(}", "\{M-)}"
+					snprintf(buf_key_code, KEY_CODE_STR_LEN+1, "\\{%s}", key_name);
+				}
+			} else {
 				// "\0102"
 				snprintf(buf_key_code, KEY_CODE_STR_LEN+1, "\\%04x",
 				 key_codes_recorded[stroke_idx]);
+			}
 		}
 		if (strlen(line_buf) + strlen(buf_key_code) < MAX_KEY_MACRO_STR_LEN) {
 			strlcat__(line_buf, MAX_KEY_MACRO_STR_LEN, buf_key_code);
@@ -266,14 +272,15 @@ void get_key_macro_from_string(const char *string)
 					str++;
 				}
 			} else
-			if (str[1] == '(') {
-				// "\(UP)"
+			if ((str[1] == '(' /*)*/) || (str[1] == '{' /*}*/ )) {
+				char end_chr = ( str[1] == '(' ) ? ')' : /*{*/ '}';
+				// "\(UP)" "\{M-)}"
 				for (len = 2; len < 2+MAX_KEY_NAME_LEN+1 && str[len]; len++) {
-					if (str[len] == ')') {
+					if (str[len] == end_chr) {
 						break;
 					}
 				}
-				if (str[len] == ')') {
+				if (str[len] == end_chr) {
 					strlcpy__(key_name, &str[2], len-2);	// "MC-RIGHT"
 					key_code = key_code_from_key_name(key_name);
 					if (key_code >= 0) {

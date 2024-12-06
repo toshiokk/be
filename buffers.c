@@ -442,7 +442,6 @@ int check_cur_buf_modified(void)
 		if (modified == 0) {
 			// clear "modified" flag if it's actually not modified
 			SET_CUR_EBUF_STATE(buf_MODIFIED, 0);
-///			disp_title_bar_editor();
 		}
 	}
 	return modified;
@@ -452,7 +451,6 @@ void set_cur_buf_modified(void)
 {
 	if (CUR_EBUF_STATE(buf_MODIFIED) == 0) {
 		SET_CUR_EBUF_STATE(buf_MODIFIED, 1);
-///		disp_title_bar_editor();
 	}
 }
 int is_any_edit_buf_modified(void)

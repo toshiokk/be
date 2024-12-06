@@ -21,11 +21,11 @@
 
 #include "headers.h"
 
-int priv_tab_size = DEFAULT_TAB_SIZE;	// Tab size gotten from buf_state
+int linewrap_tab_size = DEFAULT_TAB_SIZE;	// Tab size gotten from buf_state
 
 void set_wrap_line_tab_size(int tab_size)
 {
-	priv_tab_size = tab_size;
+	linewrap_tab_size = tab_size;
 }
 
 //-----------------------------------------------------------------------------
@@ -34,7 +34,7 @@ void set_wrap_line_tab_size(int tab_size)
 void test_wrap_line(void)
 {
 flf_d_printf("----------------------------------------------------------------------\n");
-flf_d_printf("priv_tab_size: %d\n", priv_tab_size);
+flf_d_printf("linewrap_tab_size: %d\n", linewrap_tab_size);
 #define CMP_RET(func_call, ret)		_FLF_; if (func_call != ret) _WARNING_
 #define C_R(func_call, ret)			CMP_RET(func_call, ret)
 	C_R(max_wrap_line_idx("1234567890", 10), 0)
@@ -189,7 +189,7 @@ flf_d_printf("priv_tab_size: %d\n", priv_tab_size);
 	int chr_cols;
 #define CHAR_COLUMNS(ptr)													\
 	((*ptr == '\0') ? 0 :													\
-	 ((*ptr == '\t') ? (priv_tab_size - (total_col_idx % priv_tab_size)) :	\
+	 ((*ptr == '\t') ? (linewrap_tab_size - (total_col_idx % linewrap_tab_size)) :	\
 	  ((*ptr == '\n') ? 1 :													\
 	   ((is_ctrl_char((unsigned char)*ptr)) ? 2 :							\
 	    (((unsigned char)*ptr < 0x80) ? 1 : utf8c_columns(ptr))				\
@@ -388,14 +388,14 @@ int wrap_line_length(int width)
 	return width > 0
 	 ? width
 	 : (CUR_EBUF_STATE(buf_LINE_WRAP_MODE) == 0
-	  ? (MAX_EDIT_LINE_LEN * priv_tab_size + 1)		// will never wrap
-	  : get_edit_win_columns_for_text());			// wrap line by editor window width
+	  ? (MAX_EDIT_LINE_LEN * linewrap_tab_size + 1)		// Text never wrap.
+	  : get_edit_win_columns_for_text());				// Text wraps line by editor window width
 }
 
 //-----------------------------------------------------------------------------
 #define FORWARD_COL_IDX()										\
 	if (*ptr == '\t') {											\
-		col_idx += (priv_tab_size - (col_idx % priv_tab_size));	\
+		col_idx += (linewrap_tab_size - (col_idx % linewrap_tab_size));	\
 		ptr++;													\
 	} else if (*ptr == '\n') {									\
 		col_idx++;												\
@@ -412,8 +412,8 @@ int wrap_line_length(int width)
 	}
 #define FORWARD_VIS_IDX()										\
 	if (*ptr == '\t') {											\
-		vis_idx += (priv_tab_size - (col_idx % priv_tab_size));	\
-		col_idx += (priv_tab_size - (col_idx % priv_tab_size));	\
+		vis_idx += (linewrap_tab_size - (col_idx % linewrap_tab_size));	\
+		col_idx += (linewrap_tab_size - (col_idx % linewrap_tab_size));	\
 		ptr++;													\
 	} else if (*ptr == '\n') {									\
 		vis_idx++;												\

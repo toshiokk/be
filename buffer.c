@@ -168,7 +168,6 @@ be_buf_t *buf_copy(be_buf_t *dest, be_buf_t *src)
 		// clear link and anchors to avoid double linking of the contents
 		buf_clear_link(dest);
 		buf_init_anchors(dest, "#copied");
-///		buf_views_init(dest);
 		SET_BUF_STATE(dest, buf_MODE, buf_MODE_VIEW);	// A copy must be not changeable
 	}
 	BUFV0_CL(dest) = BUFV1_CL(dest) = NODES_TOP_ANCH(dest);

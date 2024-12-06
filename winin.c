@@ -496,17 +496,17 @@ PRIVATE void list_one_key(char key, const char *desc)
 
 //-----------------------------------------------------------------------------
 
-void disp_key_list(char *key_lists[])
+void disp_key_list(const char *key_lists[])
 {
 	for (int idx = 0; idx < get_key_list_lines(); idx++) {
 		display_reverse_text(get_key_list_line_y() + idx, key_lists[idx]);
 	}
 }
 // text parenthesized by {} are displayed in reversed
-void display_reverse_text(int yy, char *text)
+void display_reverse_text(int yy, const char *text)
 {
-	char *ptr;
-	char *begin;
+	const char *ptr;
+	const char *begin;
 	char buf[MAX_SCRN_LINE_BUF_LEN+1];
 	int columns = 1;
 	int xx;

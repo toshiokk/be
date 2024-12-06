@@ -91,6 +91,11 @@ void disp_edit_win(int cur_pane)
 	int wl_idx;
 	int cursor_line_right_text_x = -1;
 
+	if (cur_pane == 0) {
+		set_work_space_color_dark();
+	} else {
+		clear_work_space_color_dark();
+	}
 #ifdef ENABLE_SYNTAX
 	set_file_type_by_cur_file_path();
 #endif // ENABLE_SYNTAX
@@ -99,9 +104,12 @@ void disp_edit_win(int cur_pane)
 
 	// Don't make the cursor jump around the screen while updating
 	tio_set_cursor_on(0);
+	// clear whole of edit-win
+	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
+	sub_win_clear_lines(edit_win_get_text_y(), edit_win_get_text_y() + edit_win_get_text_lines());
 
 	if (edit_win_get_path_lines()) {
-		// file path per pane
+		// on two pane mode, show each file path
 		set_color_by_idx(ITEM_COLOR_IDX_TITLE, ! cur_pane);
 		sub_win_clear_lines(edit_win_get_path_y(), -1);
 		buf_idx = buf_get_buf_idx(get_epc_buf());
@@ -142,10 +150,6 @@ flf_d_printf("cursor_y:%d\n", EPCBVC_CURS_Y);
 		line = NODE_NEXT(line);
 		byte_idx = 0;
 	}
-	// clear remaining edit-win lines
-	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
-	sub_win_clear_lines(edit_win_get_text_y() + yy,
-	 edit_win_get_text_y() + edit_win_get_text_lines());
 
 #ifdef ENABLE_REGEX
 #define HL_SEARCH_CURSOR

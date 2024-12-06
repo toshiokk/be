@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-02 23:29+0900\n"
+"POT-Creation-Date: 2024-12-07 00:41+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -25,7 +25,7 @@ msgstr "バッファ %s を開放中..."
 msgid "Calculating CRC..."
 msgstr "CRC を計算中..."
 
-#: ../buffers.c:647 ../buffers.c:654
+#: ../buffers.c:645 ../buffers.c:652
 msgid "Tab size"
 msgstr "タブサイズ"
 
@@ -44,39 +44,39 @@ msgid "Input key to show key code"
 msgstr "キーコードを表示するキーを入力してください"
 
 #: ../editor.c:339
-#, c-format
-msgid "Key code input: %04x: [%s]"
+#, fuzzy, c-format
+msgid "Key code input: %04x: [%s|%s]"
 msgstr "キーコード: %04x [%s]"
 
-#: ../editor.c:633 ../fileio.c:98
+#: ../editor.c:624 ../fileio.c:98
 msgid "New File"
 msgstr "新規ファイル"
 
-#: ../editor.c:635
+#: ../editor.c:626
 msgid "[Mod] "
 msgstr "[変更済]"
 
-#: ../editor.c:641
+#: ../editor.c:632
 msgid "[RO] "
 msgstr "読出専用"
 
-#: ../editor.c:733
+#: ../editor.c:724
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 "行:%4lu/%-4lu 桁:%3lu/%-3lu サイズ:%6lu%s 文字コード:%s エンコード:%s 行末:%s"
 
-#: ../editor.c:785
+#: ../editor.c:776
 #, fuzzy
 msgid "Modification not allowed in VIEW/LIST mode"
 msgstr "LISTモードでは編集できません"
 
-#: ../editor.c:789
+#: ../editor.c:780
 #, fuzzy
 msgid "Modification not allowed in this buffer mode"
 msgstr "Anchor buffer は編集できません"
 
-#: ../editor2.c:122
+#: ../editor2.c:130
 msgid "---- No lines in this buffer ----"
 msgstr ""
 
@@ -85,62 +85,62 @@ msgstr ""
 msgid "Delete/Cut to line head"
 msgstr "行頭までカットしました"
 
-#: ../editorcut.c:89
+#: ../editorcut.c:94
 #, fuzzy
 msgid "Deleted to line head"
 msgstr "行頭までカットしました"
 
-#: ../editorcut.c:92
+#: ../editorcut.c:97
 msgid "Cut to line head"
 msgstr "行頭までカットしました"
 
-#: ../editorcut.c:107
+#: ../editorcut.c:112
 #, fuzzy
 msgid "Delete/Cut to line tail"
 msgstr "行末までカットしました"
 
-#: ../editorcut.c:116
+#: ../editorcut.c:127
 #, fuzzy
 msgid "Deleted to line tail"
 msgstr "行末までカットしました"
 
-#: ../editorcut.c:119
+#: ../editorcut.c:130
 msgid "Cut to line tail"
 msgstr "行末までカットしました"
 
-#: ../editorcut.c:140
+#: ../editorcut.c:151
 msgid "Mark Set"
 msgstr "マーク開始"
 
-#: ../editorcut.c:154
+#: ../editorcut.c:165
 msgid "Mark UNset"
 msgstr "マーク中止"
 
-#: ../editorcut.c:170
+#: ../editorcut.c:181
 msgid "Text Copied to Cut-buffer"
 msgstr "テキストをカットバッファにコピーしました"
 
-#: ../editorcut.c:186
+#: ../editorcut.c:197
 msgid "Text Deleted"
 msgstr "テキストを削除しました"
 
-#: ../editorcut.c:195
+#: ../editorcut.c:206
 msgid "Text Cut to Cut-buffer"
 msgstr "テキストをカットバッファにカットしました"
 
-#: ../editorcut.c:204
+#: ../editorcut.c:215
 msgid "Text Duplicated"
 msgstr "テキストを複製しました"
 
-#: ../editorcut.c:215
+#: ../editorcut.c:226
 msgid "Text Pasted with popping Cut-buffer"
 msgstr "テキストを張り付けました(カットバッファをポップ)"
 
-#: ../editorcut.c:225
+#: ../editorcut.c:236
 msgid "Text Pasted without popping Cut-buffer"
 msgstr "テキストを張り付けました(カットバッファは変化なし)"
 
-#: ../editorcut.c:246 ../editorcut.c:276
+#: ../editorcut.c:257 ../editorcut.c:287
 msgid "Cut-buffer empty !!"
 msgstr "カットバッファが空です !!"
 
@@ -174,7 +174,7 @@ msgid "One buffer closed"
 msgstr "1 バッファを閉じました"
 
 #: ../editorfile.c:329 ../editorfile.c:386 ../editorgoto.c:56 ../fileio.c:151
-#: ../fileio.c:156 ../filercmd.c:724 ../winin.c:78
+#: ../fileio.c:156 ../filercmd.c:725 ../winin.c:78
 msgid "Cancelled"
 msgstr "キャンセルされました"
 
@@ -344,11 +344,11 @@ msgstr "スペース文字をカラム %d から %d まで満たしました"
 msgid "!!!! No UNDO info pushed !!!!"
 msgstr "!!!! UNDO 情報がありません !!!!"
 
-#: ../editorundo.c:216
+#: ../editorundo.c:217
 msgid "Undo-buffer empty !!"
 msgstr "Undoバッファが空です !!"
 
-#: ../editorundo.c:225
+#: ../editorundo.c:226
 msgid "Redo-buffer empty !!"
 msgstr "Redoバッファが空です !!"
 
@@ -631,22 +631,22 @@ msgstr "%d ファイルを選択しました"
 msgid "Are you OK to quit %s ?"
 msgstr ""
 
-#: ../filercmd.c:728
+#: ../filercmd.c:729
 msgid "Continue"
 msgstr ""
 
-#: ../filercmd.c:858
+#: ../filercmd.c:859
 #, c-format
 msgid "Can not change directory to [%s]"
 msgstr "カレントディレクトリを [%s] に変更できません"
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:936
+#: ../filercmd.c:937
 #, c-format
 msgid "Can not change current to [%s]: %s"
 msgstr "カレントディレクトリを変更できません [%s]: %s"
 
-#: ../filercmd.c:945
+#: ../filercmd.c:946
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr "カレントディレクトリを変更しました [%s]"
@@ -713,7 +713,7 @@ msgstr "キーマクロ文字列入力"
 msgid "Screen resized to (%d, %d)"
 msgstr "画面サイズ変更 (%d, %d)"
 
-#: ../main.c:652
+#: ../main.c:654
 #, c-format
 msgid ""
 "\n"
@@ -723,110 +723,110 @@ msgstr ""
 "使用法"
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:654
+#: ../main.c:656
 msgid "Option"
 msgstr "オプション"
 
-#: ../main.c:654
+#: ../main.c:656
 msgid "Long option"
 msgstr "長いオプション"
 
-#: ../main.c:654
+#: ../main.c:656
 msgid "Meaning"
 msgstr "意味"
 
-#: ../main.c:656
+#: ../main.c:658
 msgid "Read RCFILE"
 msgstr "RCFILE 読み込み"
 
-#: ../main.c:657
+#: ../main.c:659
 msgid "Don't look at berc files"
 msgstr "bercファイルを無視"
 
-#: ../main.c:660
+#: ../main.c:662
 msgid "Don't use history file"
 msgstr "ヒストリファイルを使用しない"
 
-#: ../main.c:662
+#: ../main.c:664
 msgid "Set tab-size to NUM[1-15]"
 msgstr "タブサイズをNUM[1-15]に設定"
 
-#: ../main.c:663
+#: ../main.c:665
 msgid "View mode(Read only mode)"
 msgstr "閲覧(読込専用)モード"
 
-#: ../main.c:665
+#: ../main.c:667
 msgid "Don't use nkf"
 msgstr "nkf を使用しない"
 
-#: ../main.c:666
+#: ../main.c:668
 msgid "ASCII character encoding"
 msgstr "ASCII エンコーディング"
 
-#: ../main.c:667
+#: ../main.c:669
 msgid "JIS character encoding"
 msgstr "JIS エンコーディング"
 
-#: ../main.c:668
+#: ../main.c:670
 msgid "EUCJP character encoding"
 msgstr "EUCJP エンコーディング"
 
-#: ../main.c:669
+#: ../main.c:671
 msgid "SJIS character encoding"
 msgstr "SJIS エンコーディング"
 
-#: ../main.c:670
+#: ../main.c:672
 msgid "UTF8 character encoding"
 msgstr "UTF8 エンコーディング"
 
-#: ../main.c:671
+#: ../main.c:673
 msgid "BINARY file"
 msgstr "BINARY ファイル"
 
-#: ../main.c:672
+#: ../main.c:674
 msgid "BINARY file (same as '-e b')"
 msgstr "BINARY ファイル ('-e b')"
 
-#: ../main.c:673
+#: ../main.c:675
 msgid "TEXT file (same as '-e u')"
 msgstr "TEXT ファイル ('-e u')"
 
-#: ../main.c:676
+#: ../main.c:678
 msgid "Output debug log to stderr"
 msgstr "stderrにデバッグログを出力"
 
-#: ../main.c:678
+#: ../main.c:680
 msgid "Show version information"
 msgstr "バージョン情報を表示"
 
-#: ../main.c:679
+#: ../main.c:681
 msgid "Show this message"
 msgstr "このメッセージを表示"
 
-#: ../main.c:680
+#: ../main.c:682
 msgid "Start at line number NUM"
 msgstr "NUM 行から開始"
 
-#: ../main.c:682
+#: ../main.c:684
 msgid "Investigate key sequence"
 msgstr "キーシーケンス調査"
 
-#: ../main.c:698
+#: ../main.c:700
 #, c-format
 msgid "%s version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:700
+#: ../main.c:702
 #, c-format
 msgid " Build Options:\n"
 msgstr " ビルドオプション:\n"
 
-#: ../main.c:953
+#: ../main.c:955
 #, c-format
 msgid "Screen size: %dx%d"
 msgstr "画面サイズ: %dx%d"
 
-#: ../main.c:959
+#: ../main.c:961
 msgid "We're invincible with this !!"
 msgstr "これさえあれば俺達は無敵だ!!"
 

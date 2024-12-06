@@ -71,8 +71,8 @@ int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx
 #define ANSWER_NONE		-9
 int ask_yes_no(int flags, const char *msg, ...);
 
-void disp_key_list(char *key_lists[]);
-void display_reverse_text(int yy, char *text);
+void disp_key_list(const char *key_lists[]);
+void display_reverse_text(int yy, const char *text);
 
 #endif // winin_h
 

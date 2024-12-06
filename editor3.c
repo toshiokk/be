@@ -155,11 +155,7 @@ PRIVATE int get_line_num_digits(int max_line_num)
 //-----------------------------------------------------------------------------
 int edit_win_get_path_lines(void)
 {
-	if (GET_APPMD(ed_EDITOR_PANES) == 0) {
-		return 0;
-	} else {
-		return 1;
-	}
+	return GET_APPMD(ed_EDITOR_PANES);	// 0/1
 }
 int edit_win_get_text_lines(void)
 {
@@ -205,18 +201,14 @@ char te_vis_code_buf[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];		// tab-expanded-visi
 const char *te_tab_expand(const char *original)
 {
 	int col_idx;
-	int bytes;
-	const char *orig_ptr;
-	char *vis_ptr;
 #ifdef ENABLE_SYNTAX
-	int notation = 0;		// is visible Tab/EOL/Zenkaku-space notation
-
-	notation = (GET_APPMD(ed_SYNTAX_HIGHLIGHT) && GET_APPMD(ed_TAB_EOL_NOTATION));
+	// is visible Tab/EOL/Zenkaku-space notation
+	int notation = (GET_APPMD(ed_SYNTAX_HIGHLIGHT) && GET_APPMD(ed_TAB_EOL_NOTATION));
 #endif // ENABLE_SYNTAX
 
 	te_concat_linefeed(original);
-	orig_ptr = original;
-	vis_ptr = te_vis_code_buf;
+	const char *orig_ptr = original;
+	char *vis_ptr = te_vis_code_buf;
 	for (col_idx = 0; *orig_ptr; ) {
 		if (*orig_ptr == '\t') {
 #ifdef ENABLE_SYNTAX
@@ -224,7 +216,7 @@ const char *te_tab_expand(const char *original)
 #else // ENABLE_SYNTAX
 			*vis_ptr++ = ' ';
 #endif // ENABLE_SYNTAX
-			while (++col_idx % priv_tab_size) {
+			while (++col_idx % linewrap_tab_size) {
 				*vis_ptr++ = ' ';
 			}
 			orig_ptr++;
@@ -246,7 +238,7 @@ const char *te_tab_expand(const char *original)
 			strlcpy__(vis_ptr, orig_ptr, utf8c_bytes(orig_ptr));
 #endif // ENABLE_SYNTAX
 			col_idx += utf8c_columns(orig_ptr);
-			bytes = utf8c_bytes(orig_ptr);
+			int bytes = utf8c_bytes(orig_ptr);
 			vis_ptr += bytes;
 			orig_ptr += bytes;
 		}
