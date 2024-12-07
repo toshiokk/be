@@ -470,9 +470,9 @@ PRIVATE void disp_status_bar_filer()
 PRIVATE void adjust_top_file_idx(filer_view_t *fv)
 {
 	// keep row position of current file as same as possible
-	int disp_line_idx_to_keep = MIN_MAX_(get_filer_vert_scroll_margin_lines(),
+	int disp_line_idx_to_keep = MIN_MAX_(filer_vert_scroll_margin_lines(),
 	 fv->prev_file_idx - fv->top_file_idx,
-	 filer_win_get_file_list_lines() - get_filer_vert_scroll_margin_lines() - 1);
+	 filer_win_get_file_list_lines() - filer_vert_scroll_margin_lines() - 1);
 	fv->top_file_idx = MIN_MAX_(0, fv->cur_file_idx - disp_line_idx_to_keep,
 	 fv->file_list_entries-1);
 }
@@ -529,13 +529,14 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 	return 0;
 }
 //-------------------------------------
-int get_filer_vert_scroll_lines()
+#define FILER_VERT_SCROLL_MERGIN	3
+int filer_vert_scroll_lines()
 {
 	return MIN_MAX_(1, filer_win_get_file_list_lines() / 2, 20);
 }
-int get_filer_vert_scroll_margin_lines()
+int filer_vert_scroll_margin_lines()
 {
-	return LIM_MAX(3, filer_win_get_file_list_lines() / 3);
+	return LIM_MAX(FILER_VERT_SCROLL_MERGIN, filer_win_get_file_list_lines() / 3);
 }
 //-------------------------------------
 int filer_win_get_file_path_lines(void)

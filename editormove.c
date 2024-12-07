@@ -248,7 +248,12 @@ PRIVATE void doe_page_up_(void)
 	int cnt;
 
 	if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI)) {
-		lines = (EPCBVC_CURS_Y - TOP_SCROLL_MARGIN_Y) + EDITOR_VERT_SCROLL_LINES - 1;
+#define GO_CONST_LINES
+#ifdef GO_CONST_LINES
+		lines = editor_vert_scroll_lines() - 1;
+#else
+		lines = (EPCBVC_CURS_Y - top_scroll_margin_y()) + editor_vert_scroll_lines() - 1;
+#endif
 		for (cnt = 0; cnt < lines; cnt++) {
 			EPCBVC_CURS_Y--;
 			if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
@@ -285,7 +290,11 @@ PRIVATE int doe_page_down_(void)
 	int cnt;
 
 	if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI)) {
-		lines = (BOTTOM_SCROLL_MARGIN_Y - EPCBVC_CURS_Y) + EDITOR_VERT_SCROLL_LINES - 1;
+#ifdef GO_CONST_LINES
+		lines = editor_vert_scroll_lines() - 1;
+#else
+		lines = (bottom_scroll_margin_y() - EPCBVC_CURS_Y) + editor_vert_scroll_lines() - 1;
+#endif
 		for (cnt = 0; cnt < lines; cnt++) {
 			EPCBVC_CURS_Y++;
 			if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
@@ -489,7 +498,7 @@ int doe_carriage_return(void)
 		EPCBVC_CLBI = len_s;
 	}
 
-	if (EPCBVC_CURS_Y < BOTTOM_SCROLL_MARGIN_Y) {
+	if (EPCBVC_CURS_Y < bottom_scroll_margin_y()) {
 		EPCBVC_CURS_Y++;
 		post_cmd_processing(NODE_PREV(EPCBVC_CL), CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
 		 UPDATE_SCRN_FORWARD);
@@ -782,7 +791,7 @@ int move_cursor_left(int move_disp_y)
 		EPCBVC_CL = NODE_PREV(EPCBVC_CL);
 		EPCBVC_CLBI = line_data_strlen(EPCBVC_CL);
 		if (move_disp_y) {
-			if (EPCBVC_CURS_Y > EDITOR_VERT_SCROLL_MARGIN_LINES) {
+			if (EPCBVC_CURS_Y > editor_vert_scroll_margin_lines()) {
 				EPCBVC_CURS_Y--;
 				set_edit_win_update_needed(UPDATE_SCRN_CUR_NEXT);
 			}
@@ -815,7 +824,7 @@ int move_cursor_right(void)
 		}
 		EPCBVC_CL = NODE_NEXT(EPCBVC_CL);
 		EPCBVC_CLBI = 0;
-		if (EPCBVC_CURS_Y < BOTTOM_SCROLL_MARGIN_Y) {
+		if (EPCBVC_CURS_Y < bottom_scroll_margin_y()) {
 			EPCBVC_CURS_Y++;
 			set_edit_win_update_needed(UPDATE_SCRN_CUR_PREV);
 		}

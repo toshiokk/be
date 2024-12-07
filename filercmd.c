@@ -63,14 +63,14 @@ int dof_down(void)
 int dof_page_up(void)
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
-	 get_cur_fv_file_idx() - get_filer_vert_scroll_lines(),
+	 get_cur_fv_file_idx() - filer_vert_scroll_lines(),
 	 get_cur_filer_view()->file_list_entries-1));
 	return 1;
 }
 int dof_page_down(void)
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
-	 get_cur_fv_file_idx() + get_filer_vert_scroll_lines(),
+	 get_cur_fv_file_idx() + filer_vert_scroll_lines(),
 	 get_cur_filer_view()->file_list_entries-1));
 	return 1;
 }
@@ -716,6 +716,12 @@ void disp_files_selected()
 							_("%d filesss selected"),
 	 files_selected), files_selected);
 }
+PRIVATE int dof_quit_filer_(void)
+{
+	disp_status_bar_done(_("Quit from filer"));
+	filer_do_next = EF_QUIT;
+	return 0;
+}
 int dof_quit_filer(void)
 {
 	if ((get_app_win_stack_depth() == 0) && count_cut_bufs()) {
@@ -726,15 +732,12 @@ int dof_quit_filer(void)
 			return 0;
 		}
 	}
-	disp_status_bar_done(_("Continue"));
-	filer_do_next = EF_QUIT;
-	return 0;
+	return dof_quit_filer_();
 }
 int dof_quit_home_dir(void)
 {
 	dof_home_directory();
-	dof_quit_filer();
-	return 0;
+	return dof_quit_filer_();
 }
 int dof_tog_show_dot_file(void)
 {

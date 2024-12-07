@@ -21,6 +21,23 @@
 
 #include "headers.h"
 
+int editor_vert_scroll_margin_lines()
+{
+	return LIM_MAX(EDITOR_VERT_SCROLL_MERGIN, edit_win_get_text_lines() / 3);		// [0, 3]
+}
+int top_scroll_margin_y()
+{
+	return editor_vert_scroll_margin_lines();
+}
+int bottom_scroll_margin_y()
+{
+	return edit_win_get_text_lines()-1 - editor_vert_scroll_margin_lines();
+}
+int editor_vert_scroll_lines()
+{
+	return MIN_MAX_(1, edit_win_get_text_lines()-1 - editor_vert_scroll_margin_lines(), 20);
+}
+
 // name								to does
 // -------------------------------- ------------------------------------------
 // update buffer size				after deletion and insertion of lines
@@ -136,9 +153,9 @@ void fix_cursor_y_keeping_vert_scroll_margin(void)
 
 	// keep top/bottom scroll margin
 	disp_y_preferred = MIN_MAX_(
-	 TOP_SCROLL_MARGIN_Y,
+	 top_scroll_margin_y(),
 	 EPCBVC_CURS_Y,
-	 BOTTOM_SCROLL_MARGIN_Y);
+	 bottom_scroll_margin_y());
 
 	line = EPCBVC_CL;
 	byte_idx = EPCBVC_CLBI;
@@ -302,7 +319,7 @@ PRIVATE int calc_min_text_x_to_keep()
 PRIVATE int recalc_min_text_x_to_keep(int disp_width, int text_width, int margin,
  int cursor_text_x, int min_text_x)
 {
-flf_d_printf("disp_width: %d, text_width: %d, margin: %d, cursor_text_x: %d, min_text_x: %d\n",
+fl_d_printf("disp_width: %d, text_width: %d, margin: %d, cursor_text_x: %d, min_text_x: %d\n",
  disp_width, text_width, margin, cursor_text_x, min_text_x);
 	min_text_x = MIN_MAX_(
 	 // this value push 'min_text_x' to right.     ...==>|

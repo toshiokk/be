@@ -50,8 +50,8 @@ int call_filer(int push_win, int list_mode,
 
 int update_screen_filer(int status_bar, int refresh);
 
-int get_filer_vert_scroll_lines();
-int get_filer_vert_scroll_margin_lines();
+int filer_vert_scroll_lines();
+int filer_vert_scroll_margin_lines();
 int filer_win_get_file_path_lines(void);
 int filer_win_get_file_list_lines(void);
 int filer_win_get_file_path_y(void);

@@ -3,7 +3,7 @@ appmode.h                             366    1322   13002    96
 buffer.h                              218     888    8841    94
 buffers.h                             319     938   12277    89
 color.h                               119     457    4692    87
-config.h                              291    1376    7956    78
+config.h                              291    1382    7974    78
 cursesif.h                             65     258    2570    98
 debug.h                               120     498    4640    90
 disp.h                                 65     344    3147    97
@@ -17,7 +17,7 @@ editorgoto.h                          113     523    5186    93
 editorkeys.h                           30     172    1738    76
 editorlist.h                           61     225    2324    76
 editormove.h                           83     292    3130    76
-editormove2.h                          88     412    4315    98
+editormove2.h                          86     401    4115    98
 editorundo.h                           63     229    2675    82
 fileio.h                               54     246    2415    83
 filer.h                                64     260    2784    94
@@ -49,8 +49,8 @@ utilstr.h                             141     669    6202    87
 winin.h                                79     463    3774    94
 winout.h                               84     328    3291    76
 appmode.c                             595    1200   13922    97
-buffer.c                              764    2287   21645    98
-buffers.c                             783    1779   21432    96
+buffer.c                              763    2285   21618    98
+buffers.c                             781    1775   21371    96
 color.c                               283     968    9097    88
 cursesif.c                            208     621    5286    91
 debug.c                               148     493    4307    76
@@ -64,20 +64,20 @@ editorfile.c                          399    1129   11528    94
 editorgoto.c                          864    2745   27424    98
 editorkeys.c                          309    1883   20880    99
 editorlist.c                          273     857    9329    97
-editormove.c                          888    2394   23419    95
-editormove2.c                         390    1295   14263    97
-editorundo.c                          325    1025   10469    101
+editormove.c                          888    2394   23433    95
+editormove2.c                         414    1425   14593    97
+editorundo.c                          326    1025   10471    96
 fileio.c                              889    2910   25327    95
-filer.c                               602    1799   20161    98
+filer.c                               603    1802   20221    98
 filer2.c                              793    2796   24210    94
-filercmd.c                            961    2326   25382    97
+filercmd.c                            965    2344   25503    97
 filerkeys.c                           190    1138   12379    99
 filerrun.c                            503    1476   14836    91
 history.c                             581    1807   18370    98
 keymacro.c                            310     912    9477    92
 keys.c                                797    2787   23522    97
 line.c                                390    1203   11033    96
-linewrap.c                            597    2149   24705    98
+linewrap.c                            597    2150   24713    98
 main.c                                967    2891   29973    97
 menu.c                                267     786    7823    95
 myutf8.c                              150     510    3446    96
@@ -85,7 +85,7 @@ rcfile.c                              811    2261   22531    97
 regexp.c                              652    2143   20839    98
 search.c                              794    2692   24879    96
 sig.c                                 159     446    4428    76
-termif.c                              959    3605   30076    98
+termif.c                              958    3601   30025    98
 tio.c                                 474    1253   11123    87
 utf8.c                                182     678    5196    98
 utilpath.c                            948    3074   30838    92
@@ -98,4 +98,4 @@ emacs.berc                             13      26     459    36
 wordstar.berc                          13      26     459    36
 po/ja.po                             1020    2504   24081    79
 README.md                             284    1366    8383    94
-Total lines, words, bytes, max-len:   30301   99502 1067213    101
+Total lines, words, bytes, max-len:   30325   99639 1067429    99

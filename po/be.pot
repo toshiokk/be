@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-07 00:41+0900\n"
+"POT-Creation-Date: 2024-12-07 09:15+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -168,7 +168,7 @@ msgid "One buffer closed"
 msgstr ""
 
 #: ../editorfile.c:329 ../editorfile.c:386 ../editorgoto.c:56 ../fileio.c:151
-#: ../fileio.c:156 ../filercmd.c:725 ../winin.c:78
+#: ../fileio.c:156 ../filercmd.c:731 ../winin.c:78
 msgid "Cancelled"
 msgstr ""
 
@@ -289,37 +289,37 @@ msgstr ""
 msgid "#List of Files currently loaded"
 msgstr ""
 
-#: ../editormove.c:196 ../editormove.c:261
+#: ../editormove.c:196 ../editormove.c:266
 msgid "No previous lines"
 msgstr ""
 
-#: ../editormove.c:223 ../editormove.c:298
+#: ../editormove.c:223 ../editormove.c:307
 msgid "No next lines"
 msgstr ""
 
-#: ../editormove.c:329
+#: ../editormove.c:338
 msgid "Input control character [^A-^Z,^[,^\\,^],^^,^_,]"
 msgstr ""
 
-#: ../editormove.c:331
+#: ../editormove.c:340
 #, c-format
 msgid "Key code: %04x"
 msgstr ""
 
-#: ../editormove.c:346
+#: ../editormove.c:355
 msgid "Enter Unicode number in hex:"
 msgstr ""
 
-#: ../editormove.c:368
+#: ../editormove.c:377
 msgid "Select history string to paste:"
 msgstr ""
 
-#: ../editormove.c:746
+#: ../editormove.c:755
 #, c-format
 msgid "Column position %d was memorized"
 msgstr ""
 
-#: ../editormove.c:753
+#: ../editormove.c:762
 #, c-format
 msgid "Space characters are filled from column %d to %d"
 msgstr ""
@@ -609,27 +609,27 @@ msgstr ""
 msgid "%d filesss selected"
 msgstr ""
 
-#: ../filercmd.c:723
+#: ../filercmd.c:721
+msgid "Quit from filer"
+msgstr ""
+
+#: ../filercmd.c:729
 #, c-format
 msgid "Are you OK to quit %s ?"
 msgstr ""
 
-#: ../filercmd.c:729
-msgid "Continue"
-msgstr ""
-
-#: ../filercmd.c:859
+#: ../filercmd.c:862
 #, c-format
 msgid "Can not change directory to [%s]"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:937
+#: ../filercmd.c:940
 #, c-format
 msgid "Can not change current to [%s]: %s"
 msgstr ""
 
-#: ../filercmd.c:946
+#: ../filercmd.c:949
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr ""

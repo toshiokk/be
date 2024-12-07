@@ -52,6 +52,7 @@
 
 #define _D_(debug)						_FLF_;	debug;
 #define _D(debug)						_FLF;	debug;
+#define fl_d_printf(args...)			tflfl_d_printf_(0, _FL_, _LN_, "", "", args)
 #define flf_d_printf(args...)			tflfl_d_printf_(0, _FL_, _LN_, _FN_, "", args)
 #define tflf_d_printf(args...)			tflfl_d_printf_(1, _FL_, _LN_, _FN_, "", args)
 #define mflf_d_printf(args...)			tflfl_d_printf_(3, _FL_, _LN_, _FN_, "", args)
@@ -65,6 +66,7 @@
 
 #define _D_(debug)
 #define _D(debug)
+#define fl_d_printf(args...)
 #define flf_d_printf(args...)
 #define tflf_d_printf(args...)
 #define mflf_d_printf(args...)

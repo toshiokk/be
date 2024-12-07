@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-07 00:41+0900\n"
+"POT-Creation-Date: 2024-12-07 09:15+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -174,7 +174,7 @@ msgid "One buffer closed"
 msgstr "1 バッファを閉じました"
 
 #: ../editorfile.c:329 ../editorfile.c:386 ../editorgoto.c:56 ../fileio.c:151
-#: ../fileio.c:156 ../filercmd.c:725 ../winin.c:78
+#: ../fileio.c:156 ../filercmd.c:731 ../winin.c:78
 msgid "Cancelled"
 msgstr "キャンセルされました"
 
@@ -303,39 +303,39 @@ msgstr "Filer key リスト"
 msgid "#List of Files currently loaded"
 msgstr "#編集中ファイル一覧"
 
-#: ../editormove.c:196 ../editormove.c:261
+#: ../editormove.c:196 ../editormove.c:266
 #, fuzzy
 msgid "No previous lines"
 msgstr "これ以上前にバッファがありません"
 
-#: ../editormove.c:223 ../editormove.c:298
+#: ../editormove.c:223 ../editormove.c:307
 #, fuzzy
 msgid "No next lines"
 msgstr "これ以上後にバッファがありません"
 
-#: ../editormove.c:329
+#: ../editormove.c:338
 msgid "Input control character [^A-^Z,^[,^\\,^],^^,^_,]"
 msgstr "制御コードを入力してください [^A-^Z,^[,^\\,^],^^,^_,]"
 
-#: ../editormove.c:331
+#: ../editormove.c:340
 #, c-format
 msgid "Key code: %04x"
 msgstr "キーコード: %04x"
 
-#: ../editormove.c:346
+#: ../editormove.c:355
 msgid "Enter Unicode number in hex:"
 msgstr "Unicode を16進数で入力してください:"
 
-#: ../editormove.c:368
+#: ../editormove.c:377
 msgid "Select history string to paste:"
 msgstr "ヒストリー文字列を張り付けます:"
 
-#: ../editormove.c:746
+#: ../editormove.c:755
 #, c-format
 msgid "Column position %d was memorized"
 msgstr "カラム位置 %d を記憶しました"
 
-#: ../editormove.c:753
+#: ../editormove.c:762
 #, c-format
 msgid "Space characters are filled from column %d to %d"
 msgstr "スペース文字をカラム %d から %d まで満たしました"
@@ -626,27 +626,27 @@ msgstr "%d ファイルを選択しました"
 msgid "%d filesss selected"
 msgstr "%d ファイルを選択しました"
 
-#: ../filercmd.c:723
+#: ../filercmd.c:721
+msgid "Quit from filer"
+msgstr ""
+
+#: ../filercmd.c:729
 #, c-format
 msgid "Are you OK to quit %s ?"
 msgstr ""
 
-#: ../filercmd.c:729
-msgid "Continue"
-msgstr ""
-
-#: ../filercmd.c:859
+#: ../filercmd.c:862
 #, c-format
 msgid "Can not change directory to [%s]"
 msgstr "カレントディレクトリを [%s] に変更できません"
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:937
+#: ../filercmd.c:940
 #, c-format
 msgid "Can not change current to [%s]: %s"
 msgstr "カレントディレクトリを変更できません [%s]: %s"
 
-#: ../filercmd.c:946
+#: ../filercmd.c:949
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr "カレントディレクトリを変更しました [%s]"

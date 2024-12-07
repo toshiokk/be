@@ -10,8 +10,8 @@
   - Alt-ESC
   - Alt-`
   - Ctrl--, Ctrl-+
-- [] make quitable by 'q' then 'Alt-q'
-- [] define EDITOR_VERT_SCROLL_MERGIN as 3 and FILER_VERT_SCROLL_MERGIN as 3
+- [x] soon quitable by 'Q' then 'Alt-Q'
+- [x] define EDITOR_VERT_SCROLL_MERGIN as 3 and FILER_VERT_SCROLL_MERGIN as 3
 - [x] BUG: line after LF is not cleared on the editor screen in line-lap mode
   VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- 
 - [-] search not moving cursor pos. as possible ==> Cursor center mode

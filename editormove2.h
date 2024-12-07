@@ -36,14 +36,12 @@
 // LINES-1-1 |                                   |
 // LINES-1-0 |                                   |
 // LINES     +-----------------------------------+
-#define EDITOR_VERT_SCROLL_MARGIN_LINES		LIM_MAX(3, edit_win_get_text_lines()/3)		// [0, 3]
-#define TOP_SCROLL_MARGIN_Y		EDITOR_VERT_SCROLL_MARGIN_LINES
-#define BOTTOM_SCROLL_MARGIN_Y	(edit_win_get_text_lines()-1 - EDITOR_VERT_SCROLL_MARGIN_LINES)
-
-#define EDITOR_VERT_SCROLL_LINES						\
-	LIM_MIN(1, edit_win_get_text_lines()-1 - EDITOR_VERT_SCROLL_MARGIN_LINES)
-
-#define HORIZ_SCROLL_MARGIN		5
+#define EDITOR_VERT_SCROLL_MERGIN	3
+#define HORIZ_SCROLL_MARGIN			5
+int editor_vert_scroll_margin_lines();
+int top_scroll_margin_y();
+int bottom_scroll_margin_y();
+int editor_vert_scroll_lines();
 
 typedef enum {
 	LOCATE_CURS_NONE,			// not adjust cursor pos
