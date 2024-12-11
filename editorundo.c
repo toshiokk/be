@@ -285,7 +285,7 @@ PRIVATE be_line_t *delete_region_in_buf(be_buf_t *buf)
 	// switch buffer to undo
 	if (switch_epc_buf_by_file_path(buf->abs_path_) == 0) {
 		progerr_printf("No such buffer: %s\n", buf->abs_path_);
-		return CUR_EDIT_BUFS_BOT_NODE;
+		return CUR_EDIT_BUF_BOT_LINE;
 	}
 	be_line_t *edit_line = get_line_ptr_in_cur_buf_by_line_num(NODES_TOP_NODE(buf)->line_num);
 	for (be_line_t *undo_line = NODES_TOP_NODE(buf); IS_NODE_INT(undo_line);
@@ -298,7 +298,7 @@ PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 {
 	if (switch_epc_buf_by_file_path(buf->abs_path_) == 0) {
 		progerr_printf("No such buffer: %s\n", buf->abs_path_);
-		return CUR_EDIT_BUFS_BOT_NODE;
+		return CUR_EDIT_BUF_BOT_LINE;
 	}
 	for (be_line_t *undo_line = NODES_TOP_NODE(buf); IS_NODE_INT(undo_line);
 	 undo_line = NODE_NEXT(undo_line)) {
@@ -306,7 +306,7 @@ PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 	}
 	// restore pointers
 	EPCBVC_CL = get_line_ptr_in_cur_buf_by_line_num(NODES_TOP_NODE(buf)->line_num);
-	EPCBVC_CLBI = MIN_MAX_(0, buf->buf_views[0].cur_line_byte_idx, line_data_strlen(EPCBVC_CL));
+	EPCBVC_CLBI = MIN_MAX_(0, buf->buf_views[0].cur_line_byte_idx, line_strlen(EPCBVC_CL));
 	return edit_line;
 }
 

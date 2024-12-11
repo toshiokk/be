@@ -669,7 +669,7 @@ PRIVATE int strtypecasecmp(const char *s1, const char *s2)
 //-----------------------------------------------------------------------------
 int get_files_selected_cfv(void)
 {
-	return get_files_selected(get_cur_filer_view());
+	return get_files_selected(get_cur_filer_cur_pane_view());
 }
 int get_files_selected(filer_view_t *fv)
 {
@@ -704,11 +704,11 @@ int get_first_file_idx_selected(void)
 {
 	int file_idx;
 
-	for (file_idx = 0; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
+	for (file_idx = 0; file_idx < get_cur_filer_cur_pane_view()->file_list_entries; file_idx++) {
 		if (get_cur_fv_file_ptr(file_idx)->selected)
 			break;
 	}
-	if (file_idx < get_cur_filer_view()->file_list_entries)
+	if (file_idx < get_cur_filer_cur_pane_view()->file_list_entries)
 		return file_idx;
 	// no file selected, return current file
 	return get_cur_fv_file_idx();
@@ -717,17 +717,18 @@ int get_next_file_idx_selected(int file_idx)
 {
 	file_idx = file_idx < 0 ? 0 : file_idx+1;
 
-	for ( ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
+	for ( ; file_idx < get_cur_filer_cur_pane_view()->file_list_entries; file_idx++) {
 		if (get_cur_fv_file_ptr(file_idx)->selected)
 			break;
 	}
-	if (file_idx < get_cur_filer_view()->file_list_entries)
+	if (file_idx < get_cur_filer_cur_pane_view()->file_list_entries)
 		return file_idx;
 	return -1;	// no selected file found
 }
 void unselect_all_files_auto(char selection_bit)
 {
-	for (int file_idx = 0 ; file_idx < get_cur_filer_view()->file_list_entries; file_idx++) {
+	for (int file_idx = 0 ; file_idx < get_cur_filer_cur_pane_view()->file_list_entries;
+	 file_idx++) {
 		get_cur_fv_file_ptr(file_idx)->selected
 		 = get_cur_fv_file_ptr(file_idx)->selected & ~selection_bit;
 	}

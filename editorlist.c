@@ -66,6 +66,7 @@ int view_list(int help_idx)
 	make_help_buf(HELP_BUF_IDX_FILER_KEY_LIST);
 #endif // ENABLE_FILER
 #endif // ENABLE_HELP
+	bufs_renumber_all_bufs_from_top(&help_buffers);
 
 	switch (help_idx) {
 	default:
@@ -154,8 +155,8 @@ PRIVATE void make_help_buf(int help_idx)
 	}
 
 	SET_CUR_EBUF_STATE(buf_MODE, buf_MODE_LIST);	// A list must be not saveable
-	post_cmd_processing(CUR_EDIT_BUFS_TOP_NODE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
-	 UPDATE_SCRN_ALL_SOON);
+///	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
+///	 UPDATE_SCRN_ALL_SOON);
 	set_epc_buf(cur_edit_buf);
 }
 

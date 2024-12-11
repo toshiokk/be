@@ -55,8 +55,8 @@ int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_er
 		return lines;
 	}
 	append_magic_line();
-	buf_set_view_x_cur_line(get_epc_buf(), 0, CUR_EDIT_BUFS_TOP_NODE);
-	buf_set_view_x_cur_line(get_epc_buf(), 1, CUR_EDIT_BUFS_TOP_NODE);
+	buf_set_view_x_cur_line(get_epc_buf(), 0, CUR_EDIT_BUF_TOP_LINE);
+	buf_set_view_x_cur_line(get_epc_buf(), 1, CUR_EDIT_BUF_TOP_LINE);
 	BUFVX_CLBI(get_epc_buf(), 0) = 0;
 	BUFVX_CLBI(get_epc_buf(), 1) = 0;
 	renumber_cur_buf_from_top();
@@ -648,7 +648,7 @@ PRIVATE int load_into_cur_buf_fp(FILE *fp)
 	int lines_read = 0;
 	be_line_t *line;
 
-	line = CUR_EDIT_BUFS_BOT_ANCH;
+	line = CUR_EDIT_BUF_BOT_ANCH;
 	len = 0;
 	line_buf[len] = '\0';
 	fgetc_bufed_clear();
@@ -790,9 +790,9 @@ PRIVATE int save_cur_buf_to_file_binary(const char *file_path)
 		return -1;
 	}
 	int lines = 0;
-	for (const be_line_t *line = CUR_EDIT_BUFS_TOP_NODE; IS_NODE_INT(line);
+	for (const be_line_t *line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_INT(line);
 	 line = NODE_NEXT(line)) {
-		if (IS_NODE_BOT_MOST(line) && (line_data_strlen(line) == 0)) {
+		if (IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
 			break;			// do not output the magic line
 		}
 		unsigned char bin_buf[BIN_LINE_LEN];
@@ -825,11 +825,11 @@ PRIVATE int save_cur_buf_to_file_binary(const char *file_path)
 PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 {
 	int lines_written = 0;
-	for (const be_line_t *line = CUR_EDIT_BUFS_TOP_NODE; IS_NODE_INT(line);
+	for (const be_line_t *line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_INT(line);
 	 line = NODE_NEXT(line)) {
-		if (IS_NODE_BOT_MOST(line) && (line_data_strlen(line) == 0))
+		if (IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0))
 			break;			// do not output the magic line
-		size_t line_len = line_data_strlen(line);
+		size_t line_len = line_strlen(line);
 		size_t size = fwrite(line->data, 1, line_len, fp);
 		if (size < line_len) {
 			disp_status_bar_err(_("Can not write file [%s]: %s"),

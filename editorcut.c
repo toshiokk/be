@@ -110,13 +110,13 @@ int doe_cut_to_tail(void)
 PRIVATE int doe_cut_to_tail_(int delete0_cut1)
 {
 	disp_status_bar_done(_("Delete/Cut to line tail"));
-	if (EPCBVC_CLBI == line_data_strlen(EPCBVC_CL)) {
+	if (EPCBVC_CLBI == line_strlen(EPCBVC_CL)) {
 		return 0;
 	}
 	set_disabled_update_min_text_x_to_keep();	// avoid contents jump around
 
 	int prev_byte_idx = EPCBVC_CLBI;
-	EPCBVC_CLBI = line_data_strlen(EPCBVC_CL);
+	EPCBVC_CLBI = line_strlen(EPCBVC_CL);
 	doe_end_of_line();
 	do_set_mark();
 	EPCBVC_CLBI = prev_byte_idx;
@@ -443,7 +443,7 @@ PRIVATE void copy_region_to_cut_buf(
 		if (line != max_line) {
 			// first and intermediate line
 			append_string_to_cur_cut_buf(
-			 strcut__(buf, MAX_EDIT_LINE_LEN, line->data, min_byte_idx, line_data_strlen(line)));
+			 strcut__(buf, MAX_EDIT_LINE_LEN, line->data, min_byte_idx, line_strlen(line)));
 		} else {
 			// last line
 			if (char_cut ? (min_byte_idx <= max_byte_idx) : (min_byte_idx < max_byte_idx)) {
@@ -512,7 +512,7 @@ PRIVATE void delete_region(
 				// >aaaaDDDD
 				//  DDDDDDDD
 				//  DDDDbbbb
-				line_string_delete(line, min_byte_idx, line_data_strlen(line) - min_byte_idx);
+				line_string_delete(line, min_byte_idx, line_strlen(line) - min_byte_idx);
 				// >aaaa
 				//  DDDDDDDD
 				//  DDDDbbbb
@@ -633,7 +633,7 @@ PRIVATE int paste_cut_buf_char(void)
 	//  BBBB
 	//  CCCC
 	// >bbbb
-	EPCBVC_CLBI = line_data_strlen(inserted_line);
+	EPCBVC_CLBI = line_strlen(inserted_line);
 	line_concat_with_prev(EPCBVC_CL);
 	//  aaaaAAAA
 	//  BBBB
@@ -668,7 +668,7 @@ PRIVATE int paste_cut_buf_line(void)
 	if (IS_MARK_SET(CUR_CBUF_STATE(buf_CUT_MODE)) == 0) {
 		// unmarked cut/copy
 		EPCBVC_CL = NODE_PREV(EPCBVC_CL);
-		EPCBVC_CLBI = LIM_MAX(EPCBVC_CLBI, line_data_strlen(EPCBVC_CL));	// limit cursor pos
+		EPCBVC_CLBI = LIM_MAX(EPCBVC_CLBI, line_strlen(EPCBVC_CL));	// limit cursor pos
 	}
 	return 1;		// pasted
 }
@@ -708,7 +708,7 @@ PRIVATE int paste_cut_buf_rect(void)
 		EPCBVC_CLBI = byte_idx_from_col_idx(EPCBVC_CL->data, cur_line_col_idx,
 		 CHAR_LEFT, NULL);
 		line_string_replace(EPCBVC_CL, EPCBVC_CLBI, 0, cut_line->data, -1);
-		EPCBVC_CLBI += line_data_strlen(cut_line);
+		EPCBVC_CLBI += line_strlen(cut_line);
 		cut_line = NODE_NEXT(cut_line);
 		if (IS_NODE_BOT_ANCH(cut_line))
 			break;

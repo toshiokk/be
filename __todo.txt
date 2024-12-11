@@ -5,12 +5,14 @@
 - ISSUE: to be improved or fixed problems
 - CRASH: crash
 
+- [x] open the directory of the current line with filer (M-F)
 - Unevitable batting key bindings with short-cuts in WSL(Linux on Windows)
   - Alt-TAB (but Ctrl-Alt-I does not batting, use this instead)
   - Alt-ESC
   - Alt-`
   - Ctrl--, Ctrl-+
-- [x] soon quitable by 'Q' then 'Alt-Q'
+- [] save cut-buffers to file
+- [x] make quitable by 'q' then 'Alt-q'
 - [x] define EDITOR_VERT_SCROLL_MERGIN as 3 and FILER_VERT_SCROLL_MERGIN as 3
 - [x] BUG: line after LF is not cleared on the editor screen in line-lap mode
   VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- 

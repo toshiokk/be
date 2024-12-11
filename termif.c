@@ -212,6 +212,7 @@ void termif_clear_screen(void)
 	termif_clear_vscreen_to_paint();
 	termif_clear_vscreen_painted();
 	// screen state is cached and not transfered to the console until 'termif_refresh()' called
+	send_string_to_term("\x1b" "c", -1);
 }
 void termif_clear_vscreen_to_paint(void)
 {

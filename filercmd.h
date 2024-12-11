@@ -131,10 +131,8 @@ int dof_view_func_list(void);
 
 int dof_filer_menu_0(void);
 
-int goto_dir_in_cur_line_byte_idx(int line_byte_idx);
-int goto_dir_in_str__call_filer(const char *str);
-
 int goto_dir_in_string(const char *str);
+int check_to_change_dir_in_string(const char *str, char* buf_dir);
 
 int filer_change_dir_parent(char *path);
 int filer_change_dir(char *dir);

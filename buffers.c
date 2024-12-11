@@ -229,7 +229,7 @@ be_bufs_t *set_cur_buf_to_bufs(be_buf_t *buf)
 	buf = buf_make_buf_intermediate(buf);
 	be_bufs_t *bufs = bufs_get_bufs_contains_buf(NODES_TOP_ANCH(&all_bufferss), buf);
 	if (IS_NODE_INT(bufs)) {
-		bufs->cur_buf = buf;	// set as a current
+		bufs->cur_buf = buf;	// set as a current buffer of buffers
 	}
 	return bufs;
 }
@@ -344,7 +344,7 @@ void create_edit_buf(const char *full_path)
 // Append a new line to the bottom of the current buffer
 be_line_t *append_string_to_cur_edit_buf(const char *string)
 {
-	EPCBVX_CL(0) = EPCBVX_CL(1) = line_insert_with_string(CUR_EDIT_BUFS_BOT_ANCH, INSERT_BEFORE,
+	EPCBVX_CL(0) = EPCBVX_CL(1) = line_insert_with_string(CUR_EDIT_BUF_BOT_ANCH, INSERT_BEFORE,
 	 string);
 	EPCBVX_CLBI(0) = EPCBVX_CLBI(1) = 0;
 	return EPCBVC_CL;
@@ -354,7 +354,7 @@ be_line_t *append_string_to_cur_edit_buf(const char *string)
 void append_magic_line(void)
 {
 	if (buf_is_empty(get_epc_buf())
-	 || ((buf_is_empty(get_epc_buf()) == 0) && line_data_strlen(CUR_EDIT_BUFS_BOT_NODE))) {
+	 || ((buf_is_empty(get_epc_buf()) == 0) && line_strlen(CUR_EDIT_BUF_BOT_LINE))) {
 		append_string_to_cur_edit_buf("");
 	}
 }
@@ -739,19 +739,19 @@ void dump_cut_bufs_lines(void)
 void dump_cur_edit_buf(void)
 {
 	flf_d_printf("<<<\n");
-	flf_d_printf("CUR_EDIT_BUFS_TOP_NODE:%08lx\n", CUR_EDIT_BUFS_TOP_NODE);
-	if (CUR_EDIT_BUFS_TOP_NODE) {
-		flf_d_printf("CUR_EDIT_BUFS_TOP_NODE->data:%08lx\n", CUR_EDIT_BUFS_TOP_NODE->data);
+	flf_d_printf("CUR_EDIT_BUF_TOP_LINE:%08lx\n", CUR_EDIT_BUF_TOP_LINE);
+	if (CUR_EDIT_BUF_TOP_LINE) {
+		flf_d_printf("CUR_EDIT_BUF_TOP_LINE->data:%08lx\n", CUR_EDIT_BUF_TOP_LINE->data);
 	}
-	flf_d_printf("CUR_EDIT_BUFS_BOT_NODE:%08lx\n", CUR_EDIT_BUFS_BOT_NODE);
-	if (CUR_EDIT_BUFS_BOT_NODE) {
-		flf_d_printf("CUR_EDIT_BUFS_BOT_NODE->data:%08lx\n", CUR_EDIT_BUFS_BOT_NODE->data);
+	flf_d_printf("CUR_EDIT_BUF_BOT_LINE:%08lx\n", CUR_EDIT_BUF_BOT_LINE);
+	if (CUR_EDIT_BUF_BOT_LINE) {
+		flf_d_printf("CUR_EDIT_BUF_BOT_LINE->data:%08lx\n", CUR_EDIT_BUF_BOT_LINE->data);
 	}
 	flf_d_printf("cur_line:%08lx\n", EPCBVC_CL);
 	if (EPCBVC_CL) {
 		flf_d_printf("cur_line->data:%08lx\n", EPCBVC_CL->data);
 	}
-	line_dump_lines(CUR_EDIT_BUFS_TOP_ANCH, INT_MAX, EPCBVC_CL);
+	line_dump_lines(CUR_EDIT_BUF_TOP_ANCH, INT_MAX, EPCBVC_CL);
 	flf_d_printf(">>>\n");
 }
 #endif // ENABLE_DEBUG

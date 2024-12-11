@@ -114,7 +114,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 #ifdef ENABLE_FILER
 	} else {
 		dividend = get_cur_fv_file_idx();
-		divisor = get_cur_filer_view()->file_list_entries;
+		divisor = get_cur_filer_cur_pane_view()->file_list_entries;
 	}
 #endif // ENABLE_FILER
 

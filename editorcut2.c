@@ -295,7 +295,7 @@ void setup_cut_region(void)
 			mark_min_line = EPCBVC_CL;
 			mark_max_line = EPCBVC_CL;
 			mark_min_byte_idx = 0;
-			mark_max_byte_idx = line_data_strlen(EPCBVC_CL);
+			mark_max_byte_idx = line_strlen(EPCBVC_CL);
 		} else {
 			// There is next line
 			// {aaaaaaaaaaaaaaaaaaa
@@ -431,6 +431,67 @@ int lines_selected(void)
 		break;
 	}
 	return lines;
+}
+
+//------------------------------------------------------------------------------
+#define CUT_BUFFER_SEPARATOR	(const char*)(S_C_L "\n")
+
+int save_cut_buffer()
+{
+	int ret = 0;
+	int line_cnt = 0;
+	FILE *fp = fopen(CUT_BUFFER_FILE_NAME, "w");
+	if (fp == NULL) {
+		return EOF;
+	}
+	for (be_buf_t* buf = NODES_TOP_NODE(&cut_buffers); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+		if (line_cnt) {
+			if (fwrite(CUT_BUFFER_SEPARATOR, 1, line_data_strlen(CUT_BUFFER_SEPARATOR), fp) < 0) {
+				ret = EOF;
+				break;
+			}
+		}
+		for (be_line_t* line = NODES_TOP_NODE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
+			char buffer[MAX_EDIT_LINE_LEN+1+1];
+			snprintf(buffer, MAX_EDIT_LINE_LEN+1+1, "%s\n", line->data);
+			if (fwrite(buffer, 1, strnlen(buffer, MAX_EDIT_LINE_LEN+1), fp) < 0) {
+				ret = EOF;
+				break;
+			}
+			line_cnt++;
+		}
+	}
+	if (fclose(fp)) {
+		ret = EOF;
+	}
+	return ret;
+}
+int load_cut_buffer()
+{
+	int ret = 0;
+	int line_cnt = 0;
+	FILE *fp = fopen(CUT_BUFFER_FILE_NAME, "r");
+	if (fp == NULL) {
+		return EOF;
+	}
+	for ( ; ; ) {
+		if (line_cnt == 0) {
+			push_cut_buf();
+		}
+		char buffer[MAX_EDIT_LINE_LEN+1];
+		if (fgets(buffer, MAX_EDIT_LINE_LEN+1, fp) == NULL) {
+			break;
+		}
+		if (strcmp(buffer, CUT_BUFFER_SEPARATOR) == 0) {
+			line_cnt = 0;
+		}
+		remove_line_tail_lf(buffer);
+		append_string_to_cur_cut_buf(buffer);
+	}
+	if (fclose(fp)) {
+		ret = EOF;
+	}
+	return ret;
 }
 
 // End of editorcut2.c

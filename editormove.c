@@ -167,7 +167,7 @@ int doe_start_of_line(void)
 }
 int doe_end_of_line(void)
 {
-	EPCBVC_CLBI = line_data_strlen(EPCBVC_CL);
+	EPCBVC_CLBI = line_strlen(EPCBVC_CL);
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	return 1;
@@ -454,7 +454,7 @@ PRIVATE int do_enter_utf8c(const char *utf8c)
 {
 flf_d_printf("[%s]\n", utf8c);
 	int bytes_insert = strnlen(utf8c, MAX_UTF8C_BYTES);
-	if (line_data_strlen(EPCBVC_CL) + bytes_insert > MAX_EDIT_LINE_LEN) {
+	if (line_strlen(EPCBVC_CL) + bytes_insert > MAX_EDIT_LINE_LEN) {
 		// exceeds MAX_EDIT_LINE_LEN, do not enter
 		return 0;
 	}
@@ -544,7 +544,7 @@ int doe_backspace(void)
 #ifdef ENABLE_UNDO
 		undo_set_region__save_before_change(NODE_PREV(EPCBVC_CL), EPCBVC_CL, 1);
 #endif // ENABLE_UNDO
-		EPCBVC_CLBI = line_data_strlen(NODE_PREV(EPCBVC_CL));
+		EPCBVC_CLBI = line_strlen(NODE_PREV(EPCBVC_CL));
 		EPCBVC_CL = line_concat_with_prev(EPCBVC_CL);
 		if (EPCBVC_CURS_Y > 0) {
 			EPCBVC_CURS_Y--;
@@ -573,7 +573,7 @@ int doe_delete_char(void)
 
 	do_clear_mark_();
 
-	if (EPCBVC_CLBI < line_data_strlen(EPCBVC_CL)) {
+	if (EPCBVC_CLBI < line_strlen(EPCBVC_CL)) {
 		// not line end
 #ifdef ENABLE_UNDO
 		undo_set_region__save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
@@ -600,7 +600,7 @@ int doe_delete_char(void)
 		if (EPCB_ML == NODE_NEXT(EPCBVC_CL)) {
 			// next line will be freed, adjust mark position
 			EPCB_ML = EPCBVC_CL;
-			EPCB_MLBI += line_data_strlen(EPCB_ML);
+			EPCB_MLBI += line_strlen(EPCB_ML);
 		}
 		line_concat_with_next(EPCBVC_CL);
 
@@ -789,7 +789,7 @@ int move_cursor_left(int move_disp_y)
 			return 0;
 		}
 		EPCBVC_CL = NODE_PREV(EPCBVC_CL);
-		EPCBVC_CLBI = line_data_strlen(EPCBVC_CL);
+		EPCBVC_CLBI = line_strlen(EPCBVC_CL);
 		if (move_disp_y) {
 			if (EPCBVC_CURS_Y > editor_vert_scroll_margin_lines()) {
 				EPCBVC_CURS_Y--;
@@ -811,7 +811,7 @@ int move_cursor_left(int move_disp_y)
 
 int move_cursor_right(void)
 {
-	if (EPCBVC_CLBI < line_data_strlen(EPCBVC_CL)) {
+	if (EPCBVC_CLBI < line_strlen(EPCBVC_CL)) {
 		int wl_idx = start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
 		EPCBVC_CLBI += utf8c_bytes(&EPCBVC_CL->data[EPCBVC_CLBI]);
 		if (start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1) > wl_idx) {
@@ -887,11 +887,11 @@ int next_line(void)
 //-----------------------------------------------------------------------------
 void first_line(void)
 {
-	EPCBVC_CL = CUR_EDIT_BUFS_TOP_NODE;
+	EPCBVC_CL = CUR_EDIT_BUF_TOP_LINE;
 }
 void last_line(void)
 {
-	EPCBVC_CL = CUR_EDIT_BUFS_BOT_NODE;
+	EPCBVC_CL = CUR_EDIT_BUF_BOT_LINE;
 }
 
 // End of editormove.c

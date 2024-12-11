@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-07 09:15+0900\n"
+"POT-Creation-Date: 2024-12-08 16:52+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -279,27 +279,27 @@ msgstr "#Filer ファンクション一覧"
 msgid "#List of Filer Key Bindings"
 msgstr "#Filer キー割り当て一覧"
 
-#: ../editorlist.c:73
+#: ../editorlist.c:74
 msgid "File List"
 msgstr "Editor ファイルリスト"
 
-#: ../editorlist.c:77
+#: ../editorlist.c:78
 msgid "Editor Function List"
 msgstr "Editor ファンクションリスト"
 
-#: ../editorlist.c:80
+#: ../editorlist.c:81
 msgid "Editor Key List"
 msgstr "Editor キーリスト"
 
-#: ../editorlist.c:84
+#: ../editorlist.c:85
 msgid "Filer Function List"
 msgstr "Filer ファンクションリスト"
 
-#: ../editorlist.c:87
+#: ../editorlist.c:88
 msgid "Filer Key List"
 msgstr "Filer key リスト"
 
-#: ../editorlist.c:167
+#: ../editorlist.c:168
 msgid "#List of Files currently loaded"
 msgstr "#編集中ファイル一覧"
 
@@ -708,12 +708,12 @@ msgstr "キーマクロ再生開始"
 msgid "Input key macro to run:"
 msgstr "キーマクロ文字列入力"
 
-#: ../keys.c:261
+#: ../keys.c:260
 #, c-format
 msgid "Screen resized to (%d, %d)"
 msgstr "画面サイズ変更 (%d, %d)"
 
-#: ../main.c:654
+#: ../main.c:653
 #, c-format
 msgid ""
 "\n"
@@ -723,110 +723,110 @@ msgstr ""
 "使用法"
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:656
+#: ../main.c:655
 msgid "Option"
 msgstr "オプション"
 
-#: ../main.c:656
+#: ../main.c:655
 msgid "Long option"
 msgstr "長いオプション"
 
-#: ../main.c:656
+#: ../main.c:655
 msgid "Meaning"
 msgstr "意味"
 
-#: ../main.c:658
+#: ../main.c:657
 msgid "Read RCFILE"
 msgstr "RCFILE 読み込み"
 
-#: ../main.c:659
+#: ../main.c:658
 msgid "Don't look at berc files"
 msgstr "bercファイルを無視"
 
-#: ../main.c:662
+#: ../main.c:661
 msgid "Don't use history file"
 msgstr "ヒストリファイルを使用しない"
 
-#: ../main.c:664
+#: ../main.c:663
 msgid "Set tab-size to NUM[1-15]"
 msgstr "タブサイズをNUM[1-15]に設定"
 
-#: ../main.c:665
+#: ../main.c:664
 msgid "View mode(Read only mode)"
 msgstr "閲覧(読込専用)モード"
 
-#: ../main.c:667
+#: ../main.c:666
 msgid "Don't use nkf"
 msgstr "nkf を使用しない"
 
-#: ../main.c:668
+#: ../main.c:667
 msgid "ASCII character encoding"
 msgstr "ASCII エンコーディング"
 
-#: ../main.c:669
+#: ../main.c:668
 msgid "JIS character encoding"
 msgstr "JIS エンコーディング"
 
-#: ../main.c:670
+#: ../main.c:669
 msgid "EUCJP character encoding"
 msgstr "EUCJP エンコーディング"
 
-#: ../main.c:671
+#: ../main.c:670
 msgid "SJIS character encoding"
 msgstr "SJIS エンコーディング"
 
-#: ../main.c:672
+#: ../main.c:671
 msgid "UTF8 character encoding"
 msgstr "UTF8 エンコーディング"
 
-#: ../main.c:673
+#: ../main.c:672
 msgid "BINARY file"
 msgstr "BINARY ファイル"
 
-#: ../main.c:674
+#: ../main.c:673
 msgid "BINARY file (same as '-e b')"
 msgstr "BINARY ファイル ('-e b')"
 
-#: ../main.c:675
+#: ../main.c:674
 msgid "TEXT file (same as '-e u')"
 msgstr "TEXT ファイル ('-e u')"
 
-#: ../main.c:678
+#: ../main.c:677
 msgid "Output debug log to stderr"
 msgstr "stderrにデバッグログを出力"
 
-#: ../main.c:680
+#: ../main.c:679
 msgid "Show version information"
 msgstr "バージョン情報を表示"
 
-#: ../main.c:681
+#: ../main.c:680
 msgid "Show this message"
 msgstr "このメッセージを表示"
 
-#: ../main.c:682
+#: ../main.c:681
 msgid "Start at line number NUM"
 msgstr "NUM 行から開始"
 
-#: ../main.c:684
+#: ../main.c:683
 msgid "Investigate key sequence"
 msgstr "キーシーケンス調査"
 
-#: ../main.c:700
+#: ../main.c:699
 #, c-format
 msgid "%s version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:702
+#: ../main.c:701
 #, c-format
 msgid " Build Options:\n"
 msgstr " ビルドオプション:\n"
 
-#: ../main.c:955
+#: ../main.c:954
 #, c-format
 msgid "Screen size: %dx%d"
 msgstr "画面サイズ: %dx%d"
 
-#: ../main.c:961
+#: ../main.c:960
 msgid "We're invincible with this !!"
 msgstr "これさえあれば俺達は無敵だ!!"
 

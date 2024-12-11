@@ -218,8 +218,7 @@ key_code_t input_key_loop(void)
 // |-----------------------|-----------------|
 // | repaint all of screen | 10000           |
 //
-///PPP#define WHOLE_UPDATE_INTERVAL_MSEC		10000	// 10[Sec]
-#define WHOLE_UPDATE_INTERVAL_MSEC		5000	// 10[Sec]
+#define WHOLE_UPDATE_INTERVAL_MSEC		10000	// 10[Sec]
 key_code_t input_key_wait_return(void)
 {
 	static key_code_t prev_key = KEY_NONE;
@@ -230,7 +229,7 @@ key_code_t input_key_wait_return(void)
 	prev_key = key;
 	if (key >= 0) {
 		if (msec_past_input_key() >= WHOLE_UPDATE_INTERVAL_MSEC) {
-			tio_flash_screen(10);
+			tio_flash_screen(0);
 		}
 		update_msec_when_input_key();
 	}

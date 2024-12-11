@@ -60,10 +60,10 @@ extern be_bufs_t edit_buffers;
 #define EDIT_BUFS_BOT_NODE		NODES_BOT_NODE(&edit_buffers)
 #define EDIT_BUFS_BOT_ANCH		NODES_BOT_ANCH(&edit_buffers)
 // current edit buffer --------------------------------------------------------
-#define CUR_EDIT_BUFS_TOP_ANCH	NODES_TOP_ANCH(get_epc_buf())
-#define CUR_EDIT_BUFS_TOP_NODE	NODES_TOP_NODE(get_epc_buf())
-#define CUR_EDIT_BUFS_BOT_NODE	NODES_BOT_NODE(get_epc_buf())
-#define CUR_EDIT_BUFS_BOT_ANCH	NODES_BOT_ANCH(get_epc_buf())
+#define CUR_EDIT_BUF_TOP_ANCH	NODES_TOP_ANCH(get_epc_buf())
+#define CUR_EDIT_BUF_TOP_LINE	NODES_TOP_NODE(get_epc_buf())
+#define CUR_EDIT_BUF_BOT_LINE	NODES_BOT_NODE(get_epc_buf())
+#define CUR_EDIT_BUF_BOT_ANCH	NODES_BOT_ANCH(get_epc_buf())
 
 // EPC/epc : Editor Pane Current
 // EPX/epx : Editor Pane indeXed

@@ -335,11 +335,12 @@ void tio_clear_screen(void)
 }
 void tio_flash_screen(int delay)
 {
-	tio_set_attrs(CL_WH, CL_BK, 1);
-	tio_fill_screen(1);
-	MSLEEP(delay);
-	tio_set_attrs(CL_WH, CL_BK, 0);
-	tio_fill_screen(0);
+	tio_clear_screen();
+///	tio_set_attrs(CL_WH, CL_BK, 1);
+///	tio_fill_screen(1);
+///	MSLEEP(delay);
+///	tio_set_attrs(CL_WH, CL_BK, 0);
+///	tio_fill_screen(0);
 }
 void tio_fill_screen(int type)
 {

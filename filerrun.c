@@ -171,7 +171,7 @@ PRIVATE int dof_run_command_(int mode)
 	case 2:
 		expl = _("Run (with real-path)");
 		snprintf_(buf_s, MAX_PATH_LEN+1, "%s/%s",
-		 get_cur_filer_view()->cur_dir,
+		 get_cur_filer_cur_pane_view()->cur_dir,
 		 get_cur_fv_cur_file_ptr()->file_name);
 		quote_file_path_buf(command_str, buf_s);
 		break;
@@ -492,7 +492,7 @@ const char *get_exec_log_file_path()
 	static char file_path[MAX_PATH_LEN+1] = "";
 	char dir[MAX_PATH_LEN+1];
 	char file[MAX_PATH_LEN+1];
-	if (strlen_path(file_path) == 0) {
+	if (is_strlen_0(file_path)) {
 		separate_path_to_dir_and_file(get_tty_name(), dir, file);
 		snprintf_(file_path, MAX_PATH_LEN, "%s/%s.log", get_app_dir(), file);
 flf_d_printf("file_path: [%s]\n", file_path);

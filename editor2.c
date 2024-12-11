@@ -168,7 +168,7 @@ flf_d_printf("cursor_y:%d\n", EPCBVC_CURS_Y);
 			// display buffer total lines ("999 ")
 			set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 			sub_win_output_string(edit_win_get_ruler_y(), 0,
-			 get_line_num_string(get_epc_buf(), CUR_EDIT_BUFS_BOT_NODE, buf_line_num),
+			 get_line_num_string(get_epc_buf(), CUR_EDIT_BUF_BOT_LINE, buf_line_num),
 			 get_cur_buf_line_num_columns());
 		}
 		// display ruler("1---5----10---15---20---25---30---35---40---45---50---55---60---65")
@@ -603,7 +603,7 @@ flf_d_printf("display_dir: %d, char_under_cursor: [%c], depth_increase: %d\n",
 				line = NODE_PREV(line);
 				if (IS_NODE_INT(line) == 0)
 					break;
-				byte_idx = line_strlen(line->data);	// goto the previous line's tail
+				byte_idx = line_strlen(line);	// goto the previous line's tail
 			}
 		}
 #endif // HL_BRACKET_BW

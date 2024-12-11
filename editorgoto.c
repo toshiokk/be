@@ -97,7 +97,7 @@ int doe_goto_file_or_dir_in_cur_line(void)
 	}
 #ifdef ENABLE_FILER
 	// going to change directory
-	return goto_dir_in_cur_line_byte_idx(0);
+	return try_to_open_cur_line_dir_in_filer(0);
 #else // ENABLE_FILER
 	return 0;
 #endif // ENABLE_FILER
@@ -111,7 +111,7 @@ int doe_goto_file_or_dir_in_cur_cursor_pos(void)
 	}
 #ifdef ENABLE_FILER
 	// going to change directory
-	return goto_dir_in_cur_line_byte_idx(EPCBVC_CLBI);
+	return try_to_open_cur_line_dir_in_filer(EPCBVC_CLBI);
 #else // ENABLE_FILER
 	return 0;
 #endif // ENABLE_FILER
@@ -372,7 +372,7 @@ PRIVATE int load_files_in_cur_buf_(int load_from_history)
 	int files = 0;
 	int ret = -1;
 	for (int lines = 0; lines < MAX_LINES_TO_TRY_TO_LOAD; lines++) {
-		if (line_data_strlen(EPCBVC_CL) && (EPCBVC_CL->data[0] != '#')) {
+		if (line_strlen(EPCBVC_CL) && (EPCBVC_CL->data[0] != '#')) {
 			char file_pos_str2[MAX_PATH_LEN+1];
 			char dir_save[MAX_PATH_LEN+1];
 
@@ -860,5 +860,26 @@ int switch_epc_buf_to_another_buf(void)
 //  | 2 | "filename.txt"    | "\"filename.txt\"",100,10 | 100,10,"\"filename.txt\""|
 //  | 2 | "file|name.txt"   | "file|name.txt",100,10    | 100,10,"file|name.txt"   |
 //  | 2 | "file'name.txt"   | "file'name.txt",100,10    | 100,10,"file|name.txt"   |
+
+#ifdef ENABLE_FILER
+int doe_filer(void)
+{
+	return try_to_open_cur_line_dir_in_filer(0);
+}
+int try_to_open_cur_line_dir_in_filer(int line_byte_idx)
+{
+	return try_to_open_dir_in_filer(&(EPCBVC_CL->data[line_byte_idx]));
+}
+int try_to_open_dir_in_filer(const char *str)
+{
+	char buf_dir[MAX_PATH_LEN+1];
+	if (check_to_change_dir_in_string(str, buf_dir) == 0) {
+		return 0;
+	}
+	char file_path[MAX_PATH_LEN+1];
+	call_filer(1, APP_MODE_NORMAL, buf_dir, "", file_path, MAX_PATH_LEN);
+	return 1;
+}
+#endif // ENABLE_FILER
 
 // End of editorgoto.c

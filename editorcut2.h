@@ -21,6 +21,12 @@
 
 #ifndef editorcut2_h
 #define editorcut2_h
+#define _CUT_BUFFER_FILE_NAME		"cut_buffer"
+#if defined(APP_DIR)
+#define CUT_BUFFER_FILE_NAME		_CUT_BUFFER_FILE_NAME
+#else // APP_DIR
+#define CUT_BUFFER_FILE_NAME		"." _CUT_BUFFER_FILE_NAME
+#endif // APP_DIR
 
 extern be_line_t *mark_min_line;
 extern int mark_min_byte_idx;

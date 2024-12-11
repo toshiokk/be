@@ -417,7 +417,7 @@ int change_cur_dir(const char *dir)
 		strlcpy__(full_path_of_cur_dir, dir, MAX_PATH_LEN);
 		getcwd__(real_path_of_cur_dir);
 	}
-	return ret;
+	return ret;		// 0: changed
 }
 const char *full_path_of_cur_dir_static()
 {
@@ -425,6 +425,10 @@ const char *full_path_of_cur_dir_static()
 }
 char *get_full_path_of_cur_dir(char *dir)
 {
+	static char dir_s_[MAX_PATH_LEN+1];
+	if (dir == NULL) {
+		dir = dir_s_;
+	}
 	strlcpy__(dir, full_path_of_cur_dir, MAX_PATH_LEN);
 	return dir;
 }

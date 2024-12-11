@@ -257,7 +257,7 @@ int buf_guess_tab_size(be_buf_t *buf)
 	int lines_space4 = 0;
 
 	for (be_line_t *line = NODES_TOP_NODE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
-		if (line_data_strlen(line) > 4) {
+		if (line_strlen(line) > 4) {
 			if (strlcmp__(line->data, "    ") == 0 && line->data[4] != ' ')
 				lines_space4++;
 		}
@@ -403,7 +403,7 @@ unsigned short buf_calc_crc(be_buf_t *buf)
 	file_size = 0;
 	clear_crc16ccitt();
 	for (be_line_t *line = NODES_TOP_NODE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
-		file_size += line_data_strlen(line) + 1;
+		file_size += line_strlen(line) + 1;
 		for (char *ptr = line->data; ; ptr++) {
 			file_crc = calc_crc16ccitt(*ptr);
 			if (*ptr == 0)	// count including last NUL code

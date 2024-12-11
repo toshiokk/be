@@ -86,7 +86,7 @@ void push_app_win(editor_panes_t *next_eps, be_buf_t *buf, filer_panes_t *next_f
 #else // ENABLE_FILER
 void push_app_win(editor_panes_t *next_eps, be_buf_t *buf);
 #endif // ENABLE_FILER
-void pop_app_win(BOOL return_buf);
+void pop_app_win(BOOL change_caller);
 void save_cur_app_state(int depth);
 void load_cur_app_state(int depth);
 

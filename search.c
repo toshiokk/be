@@ -103,11 +103,12 @@ int doe_replace(void)
 
 	int ret = replace_string_loop(replace_from, replace_to, &num_replaced);
 
+	if (ret == ANSWER_CANCEL) {
+		// not return to original file pos
+	} else
 	if (ret == ANSWER_END) {
 		// return to original file pos
 		recall_file_pos_null(prev_file_pos);
-	} else {
-		// not return to original file pos
 	}
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 
@@ -289,10 +290,11 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			} else {
 				// break ALL-replacing loop
 				if ((key = tio_input_key()) >= 0) {
+					if (key == K_C_C) {
+						ret = ANSWER_CANCEL;
+					} else
 					if (key == K_ESC) {
 						ret = ANSWER_END;
-					} else if (key == K_C_C) {
-						ret = ANSWER_CANCEL;
 					}
 				}
 			}
@@ -716,14 +718,14 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 					byte_idx--;
 				} else if (IS_NODE_TOP_MOST(line) == 0) {
 					line = NODE_PREV(line);
-					byte_idx = line_data_strlen(line);
+					byte_idx = line_strlen(line);
 				} else if (global_search && switch_epc_buf_to_prev(0, 0)) {
 					// update local pointers after switching buffer
 					// but not update pointers in buffer
 					ptr_line = &(EPCBVC_CL);
 					ptr_byte_idx = &(EPCBVC_CLBI);
-					line = CUR_EDIT_BUFS_BOT_NODE;
-					byte_idx = line_data_strlen(line);
+					line = CUR_EDIT_BUF_BOT_LINE;
+					byte_idx = line_strlen(line);
 				} else {
 					break;
 				}
@@ -743,7 +745,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 			if (skip_here) {
 				// move cur-pos right at least one char
 				// if cur-pos is right most, move cur-pos down at least one line
-				if (byte_idx < line_data_strlen(line)) {
+				if (byte_idx < line_strlen(line)) {
 					byte_idx++;
 				} else if (IS_NODE_BOT_MOST(line) == 0) {
 					line = NODE_NEXT(line);
@@ -753,7 +755,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 					// but not update pointers in buffer
 					ptr_line = &(EPCBVC_CL);
 					ptr_byte_idx = &(EPCBVC_CLBI);
-					line = CUR_EDIT_BUFS_TOP_NODE;
+					line = CUR_EDIT_BUF_TOP_LINE;
 					byte_idx = 0;
 				} else {
 					break;
@@ -765,7 +767,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 				// found
 				break;
 			}
-			byte_idx = line_data_strlen(line);
+			byte_idx = line_strlen(line);
 			skip_here = 1;
 		}
 	}

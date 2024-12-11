@@ -383,8 +383,8 @@ int ask_yes_no(int flags, const char *msg, ...)
 	const char *chars_all = "Aa";				// All
 	const char *chars_backward = "Bb";			// Backward search
 	const char *chars_forward = "Ff ";			// Forward search
-	const char *chars_cancel = "SsEeXx";		// Stop/End/eXit
-	const char *chars_end = "QqRr" S_ESC S_C_Q;	// Quit/Return/ESC/Ctrl-Q
+	const char *chars_cancel = "CcSs" S_ESC;	// Cancel/Stop/ESC
+	const char *chars_end = "EeQqRr" S_C_Q;		// End/Quit/Return/Ctrl-Q
 	const char *chars_undo = "Uu";				// Undo
 	const char *chars_redo = "Oo";				// redO
 	int answer;
@@ -411,7 +411,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 		if (flags & ASK_FORWARD) {
 			list_one_key(chars_forward[0], _("Forward"));
 		}
-		list_one_key(chars_cancel[0], _("Stop"));
+		list_one_key(chars_cancel[0], _("Cancel"));
 		if (flags & ASK_END || flags & ASK_NO) {
 			list_one_key(chars_end[0], _("End"));
 		}

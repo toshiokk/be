@@ -60,6 +60,10 @@ func_key_table_t editor_func_key_table[] = {
    EFLM_NO_EXEC, F_I(doe_open_files_in_buf), NULL },
  { "Read into buffer",    "Read file into current pos",              K_M_i,        KNA, KNA,
    EFLM_NO_EXEC, F_I(doe_read_file_into_cur_buf), NULL },
+#ifdef ENABLE_FILER
+ { "Open filer",          "Open filer",                              K_M_F,        KNA, KNA,
+   EFAM_EXECUTE, F_I(doe_filer), NULL },
+#endif // ENABLE_FILER
 #ifdef ENABLE_HELP
  { "Splash",              "Splash screen",                           K_M_v,        KNA, KNA,
    EFLM_NO_EXEC, F_I(doe_splash), NULL },

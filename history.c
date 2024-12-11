@@ -95,6 +95,7 @@ void load_histories(void)
 	for (int hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
 		load_history_if_reloadable(hist_type_idx);
 	}
+	bufs_renumber_all_bufs_from_top(&history_buffers);
 }
 
 // save histories to file
@@ -526,7 +527,7 @@ const char *search_history_file_path(int hist_type_idx, const char *path)
 		if ((ptr = strstr(line->data, FILE_PATH_SEPARATOR)) != NULL) {
 			len = ptr - line->data;
 		} else {
-			len = line_data_strlen(line);
+			len = line_strlen(line);
 		}
 		if (strncmp(line->data, path, len) == 0) {
 			return line->data;
@@ -543,7 +544,7 @@ PRIVATE int compare_file_path_str(const char *str, const char *file_path)
 	if ((ptr = strstr(str, FILE_PATH_SEPARATOR)) != NULL) {
 		len = ptr - str;
 	} else {
-		len = line_strlen(str);
+		len = strlen_path(str);
 	}
 	return strncmp(str, file_path, len);
 }
@@ -552,7 +553,6 @@ PRIVATE int compare_file_path_str(const char *str, const char *file_path)
 int select_from_history_list(int hist_type_idx, char *buffer)
 {
 	load_histories();
-	bufs_renumber_all_bufs_from_top(&history_buffers);
 
 	int ret = call_editor(1, APP_MODE_LIST, get_history_buf(hist_type_idx), buffer, MAX_PATH_LEN);
 

@@ -206,9 +206,9 @@ char *get_app_dir(void)
 
 #if defined(APP_DIR)
 	snprintf_(dir, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), APP_DIR);
-#else
+#else // APP_DIR
 	snprintf_(dir, MAX_PATH_LEN+1, "%s", get_home_dir());
-#endif
+#endif // APP_DIR
 	return dir;
 }
 
@@ -426,15 +426,16 @@ void push_app_win(editor_panes_t *next_eps, be_buf_t *buf)
 	// clear previous message displayed on the status bar
 	clear_app_win_stack_entry(-1);
 }
-void pop_app_win(BOOL return_buf)
+void pop_app_win(BOOL change_caller)
 {
-mflf_d_printf("return_buf: %d\n", return_buf);
+mflf_d_printf("change_caller: %d\n", change_caller);
 	set_win_depth(dec_app_win_stack_depth());
 
 	app_win_stack_entry *app_win = get_app_win_stack_entry(-1);
 	app_mode__ = app_win->appmode_save;
 	if (app_win->editor_panes_save) {
-		if (return_buf) {
+		if (change_caller) {
+			// change caller's current file
 			copy_editor_panes(app_win->editor_panes_save, cur_editor_panes);
 		}
 		destroy_editor_panes();
@@ -442,6 +443,13 @@ mflf_d_printf("return_buf: %d\n", return_buf);
 	}
 #ifdef ENABLE_FILER
 	if (app_win->filer_panes_save) {
+		if (change_caller) {
+			copy_filer_panes_cur_dir(app_win->filer_panes_save, cur_filer_panes);
+			// not recover (change) caller's current directory
+		} else {
+			// recover (not change) caller's current directory
+			////change_cur_dir(get_cur_filer_cur_pane_view()->cur_dir);
+		}
 		destroy_filer_panes();
 		set_cur_filer_panes(app_win->filer_panes_save);
 	}

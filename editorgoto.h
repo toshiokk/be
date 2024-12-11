@@ -108,6 +108,12 @@ int switch_epc_buf_to_next(int beep_at_end, int goto_top);
 int switch_epc_buf_to_prev(int beep_at_end, int goto_bottom);
 int switch_epc_buf_to_another_buf(void);
 
+#ifdef ENABLE_FILER
+int doe_filer(void);
+int try_to_open_cur_line_dir_in_filer(int line_byte_idx);
+int try_to_open_dir_in_filer(const char *str);
+#endif // ENABLE_FILER
+
 #endif // editorgoto_h
 
 // End of editorgoto.h

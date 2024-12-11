@@ -110,7 +110,6 @@ flf_d_printf("init_histories()\n");
 	init_histories();
 flf_d_printf("load_histories()\n");
 	load_histories();
-	bufs_renumber_all_bufs_from_top(&history_buffers);
 	load_last_searched_needle();
 flf_d_printf("load_key_macro()\n");
 	load_key_macro(1);
