@@ -64,9 +64,9 @@ PRIVATE int input_string_pos_(const char *default__, char *input_buf, int cursor
 	get_full_path_of_cur_dir(dir_save);
 	tio_set_cursor_on(1);
 	recursively_called++;
-	//---------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	int ret = input_string_pos__(default__, input_buf, cursor_byte_idx, hist_type_idx, msg_buf);
-	//---------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	recursively_called--;
 flf_d_printf("ret: %d\n", ret);
 	tio_set_cursor_on(0);
@@ -114,7 +114,7 @@ PRIVATE int input_string_pos__(const char *default__, char *input_buf, int curso
 		mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		 '_', key_input, short_key_name_from_key_code(key_input, NULL));
 
-		if (IS_CHAR_KEY(key_input)) {
+		if (is_key_char(key_input)) {
 			// character key
 			if (strlen_path(input_buf) < MAX_PATH_LEN) {
 				insert_str_chr(input_buf, MAX_PATH_LEN, cursor_byte_idx, key_input);
@@ -218,7 +218,7 @@ PRIVATE int input_string_pos__(const char *default__, char *input_buf, int curso
 			//----------------------------------------------------
 			ret = select_from_history_list(hist_type_idx, buffer);
 			//----------------------------------------------------
-flf_d_printf("call_editor ret: EF__%d, buffer: [%s]\n", ret, buffer);
+flf_d_printf("do_call_editor ret: EF__%d, buffer: [%s]\n", ret, buffer);
 			if ((ret == EF_INPUT_TO_REPLACE) || (ret == EF_INPUT_TO_APPEND)) {
 				if ((ret == EF_INPUT_TO_REPLACE) || cmp_func_id(func_id, "doe_page_up")) {
 					// clear input buffer
@@ -237,9 +237,9 @@ flf_d_printf("call_editor ret: EF__%d, buffer: [%s]\n", ret, buffer);
 		 || cmp_func_id(func_id, "doe_page_down")
 		 || cmp_func_id(func_id, "doe_last_line")) {
 			//---------------------------------------------------
-			ret = call_filer(1, APP_MODE_LIST, "", "", buffer, MAX_PATH_LEN);
+			ret = do_call_filer(1, APP_MODE_CHOOSER, "", "", buffer, MAX_PATH_LEN);
 			//---------------------------------------------------
-flf_d_printf("call_filer ret: EF__%d, buffer: [%s]\n", ret, buffer);
+flf_d_printf("do_call_filer ret: EF__%d, buffer: [%s]\n", ret, buffer);
 			if ((ret == EF_INPUT_TO_REPLACE) || (ret == EF_INPUT_TO_APPEND)) {
 				if ((ret == EF_INPUT_TO_REPLACE) || cmp_func_id(func_id, "doe_page_down")) {
 					// clear input buffer
@@ -324,7 +324,6 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 		bytes = byte_idx_from_col_idx(input_buf, input_area_width, CHAR_LEFT, NULL);
 		main_win_output_string(get_input_line_y()+1, 1, input_buf, bytes);
 		main_win_set_cursor_pos(get_input_line_y()+1, 1 + cursor_col_idx);
-/////_FLF_
 	} else {
 #define TRUNCATION_MARK	"."
 		//"abcdefghijklmnopqrstuvwxyz"
@@ -368,7 +367,7 @@ PRIVATE void blank_input_box(void)
 	main_win_output_string(get_input_line_y()+1, 1, tio_blank_line(0), main_win_get_columns()-2);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE void list_one_key(char key, const char *desc);
 
@@ -387,7 +386,6 @@ int ask_yes_no(int flags, const char *msg, ...)
 	const char *chars_end = "EeQqRr" S_C_Q;		// End/Quit/Return/Ctrl-Q
 	const char *chars_undo = "Uu";				// Undo
 	const char *chars_redo = "Oo";				// redO
-	int answer;
 
 	key_lines_save = GET_APPMD(app_KEY_LINES);		// save KEY_LINES
 	SET_APPMD_VAL(app_KEY_LINES, LIM_MIN(1, key_lines_save));	// set lines more than 1
@@ -431,14 +429,17 @@ int ask_yes_no(int flags, const char *msg, ...)
 		strlcat__(msg_buf, MAX_SCRN_LINE_BUF_LEN, " ");
 		int byte_idx = byte_idx_from_col_idx(msg_buf, MAX_SCRN_LINE_BUF_LEN, CHAR_LEFT, NULL);
 		msg_buf[byte_idx] = '\0';
-		set_color_by_idx(ITEM_COLOR_IDX_WARNING, 0);
+		set_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);
+		set_color_by_idx(ITEM_COLOR_IDX_WARNING1, 0);
 		blank_status_bar();
 		main_win_output_string(get_status_line_y(), 0, msg_buf, -1);
 	}
 
 	tio_refresh();
 
+	int answer;
 	for (answer = ANSWER_NONE; answer == ANSWER_NONE; ) {
+		// "Save modified buffer ?"[] <== cursor
 		tio_set_cursor_on(1);
 		//---------------------------
 		key_code_t key_input = input_key_loop();
@@ -494,12 +495,33 @@ PRIVATE void list_one_key(char key, const char *desc)
 	main_win_output_string(-1, -1, buf, strnlen(buf, MAX_SCRN_LINE_BUF_LEN));
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void disp_key_list(const char *key_lists[])
 {
-	for (int idx = 0; idx < get_key_list_lines(); idx++) {
-		display_reverse_text(get_key_list_line_y() + idx, key_lists[idx]);
+	key_code_t func_keys[] = { K_ESC,
+	 K_SP, K_F01, K_F02, K_F03, K_F04,
+	 K_SP, K_F05, K_F06, K_F07, K_F08,
+	 K_SP, K_F09, K_F10, K_F11, K_F12, K_NONE };
+	if (get_key_list_lines() >= 1) {
+		char buf[MAX_SCRN_LINE_BUF_LEN+1] = "";
+		for (int key_idx = 0; func_keys[key_idx] != K_NONE; key_idx++) {
+			if (func_keys[key_idx] == K_SP) {
+				strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, " ");
+			} else {
+				func_key_table_t *fkey_table = get_func_key_table_from_key(
+				 get_app_func_key_table(), func_keys[key_idx]);
+				if (fkey_table == NULL) {
+					strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, "{----} ");
+				} else {
+					strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, "{%s} ", fkey_table->desc);
+				}
+			}
+		}
+		display_reverse_text(get_key_list_line_y() + 0, buf);
+	}
+	for (int line_idx = 1; line_idx < get_key_list_lines(); line_idx++) {
+		display_reverse_text(get_key_list_line_y() + line_idx, key_lists[line_idx - 1]);
 	}
 }
 // text parenthesized by {} are displayed in reversed

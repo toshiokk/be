@@ -128,9 +128,9 @@ void tio_test(void)
 }
 #endif // START_UP_TEST
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 PRIVATE int tio_initialized = FALSE;
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int tio_is_initialized(void)
 {
 	return tio_initialized;
@@ -196,7 +196,7 @@ int tio_resume(void)
 	return 0;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 // How to know win size changed:
 //  1. signal sigwinch()
@@ -214,7 +214,7 @@ mflf_d_printf("sigwinch_signaled\n");
 	return 0;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void tio_set_screen_size(int lines, int columns)
 {
@@ -244,7 +244,7 @@ int tio_get_columns(void)
 #endif // ENABLE_NCURSES
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int tio_differ_fgc_from_bgc(int bgc, int fgc)
 {
@@ -338,7 +338,7 @@ void tio_flash_screen(int delay)
 	tio_clear_screen();
 ///	tio_set_attrs(CL_WH, CL_BK, 1);
 ///	tio_fill_screen(1);
-///	MSLEEP(delay);
+	MSLEEP(delay);
 ///	tio_set_attrs(CL_WH, CL_BK, 0);
 ///	tio_fill_screen(0);
 }
@@ -405,7 +405,7 @@ key_code_t tio_input_key(void)
 #endif // ENABLE_NCURSES
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
 void dump_term_settings(char *msg, struct termios *term)

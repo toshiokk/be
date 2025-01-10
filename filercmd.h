@@ -40,39 +40,43 @@ int dof_refresh_filer(void);
 // marked  : subject marked files to command
 //|function                   | current | marked | logging |
 //|---------------------------|---------|--------|---------|
-//|dof_tap_file               | v       | -      | -- |
-//|dof_view_file              | v       | -      | -- |
-//|dof_tail_file              | v       | -      | -- |
-//|dof_open_file              | -       | v      | -- |
-//|dof_open_file_non_recursive| -       | v      | -- |
-//|dof_open_file_from_history | -       | v      | -- |
-//|dof_open_proj_file         | -       | -      | -- |
-//|dof_open_exec_log_file     | -       | -      | -- |
-//|dof_open_new_file          | v       | -      | -- |
-//|dof_drop_files_to_open     | -       | -      | -- |
-//|dof_copy_file              | -       | v      | -- |
-//|dof_copy_file_update       | -       | v      | -- |
-//|dof_move_file              | -       | v      | -- |
-//|dof_rename_file            | v       | -      | -- |
-//|dof_trash_file             | -       | v      | -- |
-//|dof_delete_file            | -       | v      | -- |
-//|dof_mark_to_delete_file    | -       | v      | -- |
-//|dof_size_zero_file         | -       | v      | -- |
+//|dof_tap_file               | v       | -      | --  |
+//|dof_view_file              | v       | -      | --  |
+//|dof_tail_file              | v       | -      | --  |
+//|dof_open_file              | -       | v      | --  |
+//|dof_open_file_ro           | -       | v      | --  |
+//|dof_open_file_non_recursive| -       | v      | --  |
+//|dof_open_file_from_history | -       | v      | --  |
+//|dof_open_proj_file         | -       | -      | --  |
+//|dof_open_exec_log_file     | -       | -      | --  |
+//|dof_open_new_file          | v       | -      | --  |
+//|dof_drop_files_to_open     | -       | -      | --  |
+//|dof_copy_file              | -       | v      | --  |
+//|dof_copy_file_update       | -       | v      | --  |
+//|dof_move_file              | -       | v      | --  |
+//|dof_rename_file            | v       | -      | --  |
+//|dof_trash_file             | -       | v      | --  |
+//|dof_delete_file            | -       | v      | --  |
+//|dof_mark_to_delete_file    | -       | v      | --  |
+//|dof_size_zero_file         | -       | v      | --  |
 //|dof_exec_command_with_file | -       | v      | no  |
 //|dof_exec_command_with_files| -       | v      | no  |
-//|dof_run_command_rel        | v       | -      |
-//|dof_run_command_abs        | v       | -      |
-//|dof_run_command_src_dst    | v       | -      |
-//|dof_run_command_sh         | v       | -      |
-//|dof_run_command_soon       | --      | --     |
-//|dof_run_command_soon_w_log | --      | --     |
-//|doe_run_line_soon          | --      | --     |
-//|doe_run_line_soon_w_log    | --      | --     |
+//|dof_run_command_rel        | v       | -      | --  |
+//|dof_run_command_abs        | v       | -      | --  |
+//|dof_run_command_src_dst    | v       | -      | --  |
+//|dof_run_command_symlink    | v       | -      | --  |
+//|dof_run_command_soon       | --      | --     | --  |
+//|dof_run_command_soon_w_log | --      | --     | yes |
+//|doe_run_line_soon          | --      | --     | --  |
+//|doe_run_line_soon_w_log    | --      | --     | yes |
 
 int dof_tap_file(void);
 int dof_view_file(void);
 int dof_tail_file(void);
+
 int dof_open_file(void);
+int dof_open_file_ro(void);
+int dof_open_locked_file(void);
 int dof_open_file_non_recursive(void);
 int dof_open_file_from_history(void);
 int dof_open_proj_file(void);
@@ -117,9 +121,9 @@ int dof_quit_filer(void);
 int dof_quit_home_dir(void);
 
 int dof_tog_show_dot_file(void);
-int dof_inc_show_file_info(void);
-int dof_clear_sort_by(void);
-int dof_inc_sort_by(void);
+int dof_inc_file_view_mode(void);
+int dof_clear_file_sort_mode(void);
+int dof_inc_file_sort_mode(void);
 int dof_tog_panes(void);
 int dof_tog_panex(void);
 int dof_inc_key_list_lines(void);

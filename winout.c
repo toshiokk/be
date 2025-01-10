@@ -32,7 +32,7 @@ PRIVATE void win_clear_screen(win_rect_t *win);
 PRIVATE void win_clear_lines(win_rect_t *win, int line_1, int line_2);
 PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *string, int bytes);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 PRIVATE int win_depth = 0;			// 0:root window, 1,2,...:child window
 
 void win_init_win_size(void)
@@ -42,7 +42,8 @@ void win_init_win_size(void)
 }
 void set_win_depth(int app_stack_depth)
 {
-	win_depth = app_stack_depth * 2;
+///	win_depth = app_stack_depth * 2;
+	win_depth = app_stack_depth;
 	win_reinit_win_size();
 }
 void inc_win_depth(void)
@@ -147,7 +148,7 @@ void dump_cur_win(void)
 	 cur_win_idx, cur_win->top, cur_win->left, cur_win->lines, cur_win->columns);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int main_win_get_lines(void)
 {
 	return main_win->lines;
@@ -182,7 +183,7 @@ int main_win_get_bottom_win_y(void)
 {
 	return main_win_get_top_win_y() + main_win_get_top_win_lines() + main_win_get_mid_win_lines();
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void main_win_set_cursor_pos(int yy, int xx)
 {
 	win_set_cursor_pos(main_win, yy, xx);
@@ -199,7 +200,7 @@ void main_win_output_string(int yy, int xx, const char *string, int bytes)
 {
 	win_output_string(main_win, yy, xx, string, bytes);
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int sub_win_get_lines(void)
 {
 	return win_get_lines(cur_win);
@@ -224,7 +225,7 @@ void sub_win_output_string(int yy, int xx, const char *string, int bytes)
 {
 	win_output_string(cur_win, yy, xx, string, bytes);
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 PRIVATE int win_get_lines(win_rect_t *win)
 {
 	return win->lines;
@@ -287,7 +288,7 @@ PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *stri
 	tio_output_string(yy, xx, string, bytes);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 const char *shrink_str_to_scr_static(const char *str)
 {

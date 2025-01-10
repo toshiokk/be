@@ -165,7 +165,7 @@ int search_str_in_line_regexp(regexp_t *regexp, regexp_matches_t *regexp_matches
 }
 #endif // ENABLE_REGEX
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 PRIVATE const char *revstrstr(const char *haystack, const char *tail_of_haystack,
  const char *needle);
 PRIVATE const char *revstristr(const char *haystack, const char *tail_of_haystack,
@@ -375,7 +375,7 @@ int regexp_search(regexp_t *regexp, regexp_matches_t *regexp_matches, const char
 	}
 	ret = regexp_search_compiled(regexp, haystack, byte_idx,
 	 eflags, regexp_matches, max_matches);
-	return ret;		// 0: match, -1:no match
+	return ret;				// 0: match, -1:no match
 }
 int regexp_compile(regexp_t *regexp, const char *needle, int cflags)
 {

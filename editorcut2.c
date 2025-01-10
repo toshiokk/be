@@ -31,7 +31,7 @@ be_line_t *mark_max_line;		// the line bottom of the marked area
 int mark_max_byte_idx;			// byte_idx in the line bottom of the marked area
 int mark_max_col_idx;			// col_idx right most in the marked area
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void clear_mark_pos(void)
 {
 	EPCB_ML = NODES_TOP_ANCH(get_epc_buf());
@@ -436,15 +436,18 @@ int lines_selected(void)
 //------------------------------------------------------------------------------
 #define CUT_BUFFER_SEPARATOR	(const char*)(S_C_L "\n")
 
-int save_cut_buffer()
+PRIVATE char *get_cut_buffer_file_path();
+
+int save_cut_buffers()
 {
+_FLF_
 	int ret = 0;
-	int line_cnt = 0;
-	FILE *fp = fopen(CUT_BUFFER_FILE_NAME, "w");
+	FILE *fp = fopen(get_cut_buffer_file_path(), "w");
 	if (fp == NULL) {
 		return EOF;
 	}
-	for (be_buf_t* buf = NODES_TOP_NODE(&cut_buffers); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+	int line_cnt = 0;
+	for (be_buf_t* buf = NODES_BOT_NODE(&cut_buffers); IS_NODE_INT(buf); buf = NODE_PREV(buf)) {
 		if (line_cnt) {
 			if (fwrite(CUT_BUFFER_SEPARATOR, 1, line_data_strlen(CUT_BUFFER_SEPARATOR), fp) < 0) {
 				ret = EOF;
@@ -466,32 +469,46 @@ int save_cut_buffer()
 	}
 	return ret;
 }
-int load_cut_buffer()
+int load_cut_buffers()
 {
+_FLF_
 	int ret = 0;
-	int line_cnt = 0;
-	FILE *fp = fopen(CUT_BUFFER_FILE_NAME, "r");
+	FILE *fp = fopen(get_cut_buffer_file_path(), "r");
 	if (fp == NULL) {
 		return EOF;
 	}
+	int line_cnt = 0;
 	for ( ; ; ) {
-		if (line_cnt == 0) {
-			push_cut_buf();
-		}
 		char buffer[MAX_EDIT_LINE_LEN+1];
 		if (fgets(buffer, MAX_EDIT_LINE_LEN+1, fp) == NULL) {
 			break;
 		}
 		if (strcmp(buffer, CUT_BUFFER_SEPARATOR) == 0) {
 			line_cnt = 0;
+		} else {
+			if (line_cnt == 0) {
+				push_cut_buf();
+			}
+			remove_line_tail_lf(buffer);
+			append_string_to_cur_cut_buf(buffer);
+			line_cnt++;
 		}
-		remove_line_tail_lf(buffer);
-		append_string_to_cur_cut_buf(buffer);
 	}
 	if (fclose(fp)) {
 		ret = EOF;
 	}
+
+	bufs_renumber_all_bufs_from_top(&cut_buffers);
+
 	return ret;
+}
+PRIVATE char *get_cut_buffer_file_path()
+{
+	static char file_path[MAX_PATH_LEN+1] = "";
+	if (is_strlen_0(file_path)) {
+		snprintf_(file_path, MAX_PATH_LEN+1, "%s/%s", get_app_dir(), CUT_BUFFER_FILE_NAME);
+	}
+	return file_path;
 }
 
 // End of editorcut2.c

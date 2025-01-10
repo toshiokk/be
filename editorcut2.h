@@ -42,6 +42,9 @@ void setup_cut_region(void);
 int is_there_cut_region(void);
 int lines_selected(void);
 
+int save_cut_buffers();
+int load_cut_buffers();
+
 #endif // editorcut2_h
 
 // End of editorcut2.h

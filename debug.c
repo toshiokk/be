@@ -26,6 +26,8 @@
 #warning "**** ENABLE_DEBUG defined (debug output is ENABLED) ****"
 #endif // ENABLE_DEBUG
 
+#define DEBUG_BUF_LEN	4096
+
 void dump_memory(char *message, void *memory, int bytes)
 {
 	unsigned char *ptr;
@@ -33,10 +35,10 @@ void dump_memory(char *message, void *memory, int bytes)
 	int left;
 
 	ptr = (unsigned char *)memory;
-	e_printf("%s", message);
+	e_printf("%s(%d)\n", message, bytes);
 	for (cnt = 0; cnt < bytes; ) {
 		e_printf("%08x ", ptr);
-		for (left = cnt; cnt < left + 16 && cnt < bytes; cnt++) {
+		for (left = cnt; cnt < left + 32 && cnt < bytes; cnt++) {
 			if (cnt % 4 != 3)
 				e_printf("%02x-", *ptr++);
 			else
@@ -45,8 +47,18 @@ void dump_memory(char *message, void *memory, int bytes)
 		e_printf("\n");
 	}
 }
-
-#define DEBUG_BUF_LEN	4096
+void dump_string(char *message, const char* string)
+{
+	char buffer[DEBUG_BUF_LEN+1] = "";
+	for (const char *ptr = string; *ptr; ptr++) {
+		if (*ptr == ' ' || isgraph((UINT8)*ptr)) {
+			strcat_printf(buffer, DEBUG_BUF_LEN, "%c", *ptr);
+		} else {
+			strcat_printf(buffer, DEBUG_BUF_LEN, "%%%02x", (UINT8)*ptr);
+		}
+	}
+	e_printf("%s [%s]\n", message, buffer);
+}
 
 #define RING_BUF_LINES		10
 #ifdef RING_BUF_LINES

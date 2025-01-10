@@ -46,7 +46,7 @@ file_info_t *get_cur_fv_file_ptr(int file_idx);
 int get_cur_fv_file_idx();
 void set_cur_fv_file_idx(int file_idx);
 
-int call_filer(int push_win, int list_mode,
+int do_call_filer(int push_win, int list_mode,
  const char *dir, const char *filter, char *path_buf, int buf_len);
 
 int update_screen_filer(int status_bar, int refresh);

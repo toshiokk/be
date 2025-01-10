@@ -21,39 +21,27 @@
 
 #include "headers.h"
 
-void set_title_bar_color_by_state(int mode1, int mode2, char invert)
+void set_title_bar_color_by_state(int color_idx, char invert)
 {
-	if (key_macro_is_recording()) {
-		// Recording key macro, you see strange color on title bar.
-		set_color_by_idx(ITEM_COLOR_IDX_WARNING2, invert);
-	} else
-	if (mode1) {
-		// Marking text, you see strange color on title bar.
-		set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, invert);
-	} else
-	if (mode2 >= 2) {
-		// Current file is modified, you see strange color on title bar.
-		set_color_by_idx(ITEM_COLOR_IDX_WARNING3, invert);
-	} else
-	if (mode2 >= 1) {
-		// More than one file are modified, you see strange color on title bar.
-		set_color_by_idx(ITEM_COLOR_IDX_WARNING4, invert);
-	} else
 	if (geteuid() == 0) {
 		// If you are super user, you see strange color on title bar.
-		set_color_by_idx(ITEM_COLOR_IDX_WARNING, invert);
+		set_color_by_idx(ITEM_COLOR_IDX_ERROR, invert);
 	} else {
 		// Normal color
-		set_color_by_idx(ITEM_COLOR_IDX_TITLE, invert);
+		set_color_by_idx(color_idx, invert);
 	}
 }
 
 const char *root_notation(void)
 {
-	return (geteuid() == 0) ? "[ROOT] " : "";
+	static char notation[MAX_PATH_LEN+1];
+	snprintf_(notation, MAX_PATH_LEN, "%s%s",
+	 (geteuid() == 0) ? "[ROOT] " : "",
+	 is_app_view_mode() ? "[VW]" : (is_app_chooser_mode() ? "[LIST]" : ""));
+	return notation;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
  const char *msg, va_list ap);
@@ -61,7 +49,6 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 void disp_status_bar_cursor(const char *msg, ...)
 {
 	va_list ap;
-
 	va_start(ap, msg);
 	disp_status_bar_percent_va(S_B_D_CURS, msg, ap);
 	va_end(ap);
@@ -69,16 +56,22 @@ void disp_status_bar_cursor(const char *msg, ...)
 void disp_status_bar_ing(const char *msg, ...)
 {
 	va_list ap;
-
 	va_start(ap, msg);
 	disp_status_bar_percent_va(S_B_D_ING, msg, ap);
 	va_end(ap);
 	tio_refresh();	// update screen soon
 }
+void disp_status_bar_warn(const char *msg, ...)
+{
+	va_list ap;
+	va_start(ap, msg);
+	disp_status_bar_percent_va(S_B_D_WARN, msg, ap);
+	va_end(ap);
+	tio_beep();
+}
 void disp_status_bar_err(const char *msg, ...)
 {
 	va_list ap;
-
 	va_start(ap, msg);
 	disp_status_bar_percent_va(S_B_D_ERR, msg, ap);
 	va_end(ap);
@@ -87,7 +80,6 @@ void disp_status_bar_err(const char *msg, ...)
 void disp_status_bar_done(const char *msg, ...)
 {
 	va_list ap;
-
 	va_start(ap, msg);
 	disp_status_bar_percent_va(S_B_D_DONE, msg, ap);
 	va_end(ap);
@@ -102,7 +94,8 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
  const char *msg, va_list ap)
 {
 	app_win_stack_entry *app_win = get_app_win_stack_entry(-1);
-	int dividend = 1; int divisor = 1;
+	int dividend = 1;
+	int divisor = 1;
 	char buf[MAX_SCRN_LINE_BUF_LEN+1];
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1] = "";
 
@@ -127,18 +120,9 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 	case S_B_D_NONE:
 	case S_B_D_CURS:
 	case S_B_D_ING:
-		switch (status_bar_to_display) {
-		default:
-		case S_B_D_CURS:
-		case S_B_D_ING:
-		case S_B_D_DONE:
-			break;
-		case S_B_D_ERR:
-			color_idx = ITEM_COLOR_IDX_WARNING;
-			break;
-		}
 		update = 1;			// overlap
 		break;
+	case S_B_D_WARN:
 	case S_B_D_ERR:
 	case S_B_D_DONE:
 		switch (status_bar_to_display) {
@@ -147,18 +131,31 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 			// reject update display
 			break;
 		case S_B_D_CURS:
-			color_idx = app_win->status_bar_color_idx;
 			// preserve the previous color
 			update = 2;		// "PREV : NEXT"
 			break;
+		case S_B_D_WARN:
 		case S_B_D_ERR:
-			color_idx = ITEM_COLOR_IDX_WARNING;
-			update = 1;		// "NEXT" (overlap)
-			break;
 		case S_B_D_DONE:
 			update = 1;		// "NEXT" (overlap)
 			break;
 		}
+		break;
+	}
+	switch (status_bar_to_display) {
+	default:
+	case S_B_D_ING:
+		break;
+	case S_B_D_CURS:
+		color_idx = app_win->status_bar_color_idx;
+		break;
+	case S_B_D_WARN:
+		color_idx = ITEM_COLOR_IDX_WARNING3;
+		break;
+	case S_B_D_ERR:
+		color_idx = ITEM_COLOR_IDX_ERROR;
+		break;
+	case S_B_D_DONE:
 		break;
 	}
 /////mflf_d_printf("sb_displayed: %d, sb_to_display: %d, update: %d, color_idx: %d\n",

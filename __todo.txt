@@ -5,13 +5,78 @@
 - ISSUE: to be improved or fixed problems
 - CRASH: crash
 
+- [] regression test list
+// Editing functions:
+// | key    | filer function              | editor function           |filer|editor|
+// |--------|-----------------------------|---------------------------|-----|------|
+// | K_e_   | dof_open_file               | --                        |  v  |      |
+// | K_E_   | dof_open_file_ro            | --                        |  v  |      |
+// | K_M_e  | dof_open_file_non_recursive | doe_open_file             |  v  |      |
+// | K_M_E  | dof_open_file_from_history  | doe_open_file_ro          |  v  |      |
+// | K_MC_E | dof_open_locked_file        | doe_open_locked_file      |     |      |
+// | K_M_n  | dof_open_new_file           | doe_open_new_file         |     |      |
+// | K_M_N  | dof_open_new_file           | doe_open_new_file         |     |      |
+// | K_MC_N | --                          | doe_tog_show_line_num     |     |      |
+
+// Execution functions:
+// | key    | filer function              | editor function           |filer|editor|
+// |--------|-----------------------------|---------------------------|-----|------|
+// | K_x_   | dof_exec_command_with_file  | --                        |     |      |
+// | K_X_   | dof_exec_command_with_files | --                        |     |      |
+// | K_M_x  | dof_run_command_soon        | doe_run_line_soon         |     |      |
+// | K_M_X  | dof_run_command_soon_w_log  | doe_run_line_soon_w_log   |     |      |
+// | K_MC_X | --                          | doe_tog_regex             |     |      |
+// | K_r_   | dof_run_command_rel         | --                        |     |      |
+// | K_R_   | dof_run_command_abs         | --                        |     |      |
+// | K_M_r  | --                          | doe_start_rec__cancel_rec |     |      |
+// | K_M_R  | --                          | --                        |     |      |
+// | K_MC_R | --                          | doe_tog_show_ruler        |     |      |
+// | K_M_p  | doe_open_proj_file          | doe_end_rec__playback     |     |      |
+// | K_M_P  | doe_open_proj_file          | doe_open_proj_file        |     |      |
+// | K_t_   | dof_run_command_src_dst     | --                        |     |      |
+// | K_T_   | dof_run_command_symlink     | --                        |     |      |
+
+The seamless text copying:
+| from                          | to               |action to be able to do                           |
+|-------------------------------|------------------|--------------------------------------------------|
+|editor line                    |editor line       |Edit: cut/copy and paste editor line to editor line    |
+|editor line                    |filer command line|Execute: paste editor line to filer command line       |
+|(file/dir) (name/path) in filer|editor line       |Edit:    paste file name in filer to editor line       |
+|(file/dir) (name/path) in filer|filer command line|Execute: paste file name in filer to filer command line|
+|filer command line             |history line      |Available from editor and filer |
+|editor search keyword          |history line      |Available from editor and filer |
+|history line                   |editor line       |Edit:    paste history line to editor line             |
+|history line                   |filer command line|Execute: paste history line to filer command line      |
+|Key-word searched/replaced     |search-history    |Available from editor and filer |
+|Command executed               |execution-history |Available from editor and filer |
+|File opened                    |file-history      |Available from editor and filer |
+|Directory browsed              |dir-history       |Available from editor and filer |
+|Keymacro recorded              |keymacro-history  |Available from editor and filer |
+
+- [x] How to manage discarded file lock (on BE-editor crash)
+- [x] BUG: dof_open_file_ro() opens rw mode in recursive open
+- [x] buffer "VIEW" ==> "RO"
+- [x] corrupted message at 3rd key in menu
+- [x] BUG: changed from WP to WRITABLE when re-loading file
+- [x] force opening a locked file as a unlocked file (dof_open_locked_file)
+- [x] enter not symlink but destination of the symlink
+- [ ] logging without using "| tee -a file" but using pty
+
+- [?] 241226 CRASH: on tag-jump in dir-history
+- [x] 241224 change [Mod] title bar color not red background
+- [x] 241224 M-E open in RO mode
+- [x] 241224 integrate VIEWER, RO and WP mode
+- [x] 241222 unlock file name before rename it and lock file name after rename to
+- [x] 241223 properly show a file name which include control characters and rename it safely
+- [x] 241222 check a file being opened from other process
+- [x] 241222 disable saving to file in list-mode buffer
+- [x] naturally show cut-buffers
+  - [x] set `bufs->cur_buf` on appending buf
+  - [x] set `bufs->cur_buf` on appending line
+  - [x] set `cur_buf` on switching cur_bufs (from cur_bufs->cur_buf)
+  - [x] set `cur_line` on switching cur_buf
 - [x] open the directory of the current line with filer (M-F)
-- Unevitable batting key bindings with short-cuts in WSL(Linux on Windows)
-  - Alt-TAB (but Ctrl-Alt-I does not batting, use this instead)
-  - Alt-ESC
-  - Alt-`
-  - Ctrl--, Ctrl-+
-- [] save cut-buffers to file
+- [x] save cut-buffers to file on exit and load on startup
 - [x] make quitable by 'q' then 'Alt-q'
 - [x] define EDITOR_VERT_SCROLL_MERGIN as 3 and FILER_VERT_SCROLL_MERGIN as 3
 - [x] BUG: line after LF is not cleared on the editor screen in line-lap mode
@@ -22,7 +87,7 @@
 - [-] keep cut buffers after exiting app.
 - [x] 241202 in editor-list-mode, M-e inserts text to input_str
 - [x] make editor and filer to work more seamless as possible.
-  - [x-] cut-copy 1 line ==> execution history
+  - [x] cut-copy 1 line ==> view cut-buffer
   - [x] 241201 to be able to paste texts cut from editor into filer (add cut text to search history)
 - [x] 241201 move pane_idx(editor/filer) into app_mode_t
 - [x] 241202 locate cursor to the position at which some modification done after doing undo
@@ -105,8 +170,6 @@
 - [x] redraw whole windows after screen resizing
   - [x] redraw input box after screen resizing
   - [x] redraw parent window after screen resizing
-- [d] Do logging without using "| tee -a file"
-  - [d] app --> pty-master, pty-slave --> log file
 - [x] log all execution command lines
 - [x] search in editor list mode
 - [x] repaint on laptop rid opened (10 secs)
@@ -120,6 +183,11 @@
   |Enter       |None                |-- |
   |@Enter      |Logging             |-- |
 
+- Unevitable batting key bindings with short-cuts in WSL(Linux on Windows)
+  - Alt-TAB (but Ctrl-Alt-I does not batting, use this instead)
+  - Alt-ESC
+  - Alt-`
+  - Ctrl--, Ctrl-+
 - [x] 241020 fix editor key/func list
 - [x] 241020 Not update common history files soon
 - [x] 241018 add filer funckey list
@@ -425,7 +493,7 @@ Filer <==> Editor switching and collaboration
   | in editor | GOTO FILER  | open file in editor / open in filer |
 v F: Load file and open editor
    E: Edit
-v F: Input command line to execute
+v F: Inputxq command line to execute
    E: Select from exec-history
   F: Execute selected command line
 v F: Input keyword to search

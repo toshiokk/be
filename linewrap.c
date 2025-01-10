@@ -28,7 +28,7 @@ void set_wrap_line_tab_size(int tab_size)
 	linewrap_tab_size = tab_size;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef START_UP_TEST
 void test_wrap_line(void)
@@ -392,7 +392,7 @@ int wrap_line_length(int width)
 	  : get_edit_win_columns_for_text());				// Text wraps line by editor window width
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #define FORWARD_COL_IDX()										\
 	if (*ptr == '\t') {											\
 		col_idx += (linewrap_tab_size - (col_idx % linewrap_tab_size));	\

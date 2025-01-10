@@ -23,8 +23,9 @@
 
 #ifdef ENABLE_FILER
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
+PRIVATE char *safe_file_name(const char *file_name);
 PRIVATE char *get_file_size_str(char *buf_size, loff_t size);
 PRIVATE const char *get_1k_to_999k_str(long size, char *buf);
 #ifdef START_UP_TEST
@@ -179,19 +180,19 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	}
 	if (is_link) {
 		if (show_link) {
-			strlcat__(buf_name, MAX_PATH_LEN, file_info->file_name);
+			strlcat__(buf_name, MAX_PATH_LEN, safe_file_name(file_info->file_name));
 #define LINK_ARROW		" -> "
 			strlcat__(buf_name, MAX_PATH_LEN, LINK_ARROW);
 			if (file_info->symlink)
-				strlcat__(buf_name, MAX_PATH_LEN, file_info->symlink);
+				strlcat__(buf_name, MAX_PATH_LEN, safe_file_name(file_info->symlink));
 			if (is_link_broken)
 				strlcat__(buf_name, MAX_PATH_LEN, "!");
 		} else {
 			if (file_info->symlink)
-				strlcat__(buf_name, MAX_PATH_LEN, file_info->symlink);
+				strlcat__(buf_name, MAX_PATH_LEN, safe_file_name(file_info->symlink));
 		}
 	} else {
-			strlcat__(buf_name, MAX_PATH_LEN, file_info->file_name);
+		strlcat__(buf_name, MAX_PATH_LEN, safe_file_name(file_info->file_name));
 	}
 	if (S_ISDIR(st_ptr->st_mode)) {
 		strlcat__(buf_name, MAX_PATH_LEN, "/");
@@ -333,6 +334,29 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	}
 	return buffer;
 }
+
+// 0x01-0x1f, 0x7f ==> "%01"-"%1f", "%7f"
+// '%'             ==> "%%"
+// "abc\t\r\n^?def" ==> "abc%09%0D%0A%7Fdef"
+PRIVATE char *safe_file_name(const char *file_name)
+{
+	static char file_name_safe[MAX_PATH_LEN+1];
+	size_t len = strlen_path(file_name);
+	file_name_safe[0] = '\0';
+	for (const char* ptr = file_name; ((ptr - file_name) < len) && *ptr; ) {
+		if (is_graph_char(*ptr) == 0) {		// ((UINT8)*ptr) < 0x80
+			strcat_printf(file_name_safe, MAX_PATH_LEN, "%%%02X", *ptr);	// "%xx"
+		} else
+		if (*ptr == '%') {
+			strcat_printf(file_name_safe, MAX_PATH_LEN, "%%");				// "%"
+		} else {
+			strlncat__(file_name_safe, MAX_PATH_LEN, ptr, utf8c_bytes(ptr));
+		}
+		ptr += utf8c_bytes(ptr);
+	}
+	return file_name_safe;
+}
+
 PRIVATE char *get_file_size_str(char *buf_size, loff_t size)
 {
 	char buf[5+1];		// 1.000 - 999.9 - 10000 - 99999
@@ -376,7 +400,7 @@ PRIVATE const char *get_1k_to_999k_str(long size, char *buf)
 // 10.0G - 99.9G
 //  100G -  999G
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int make_file_list(filer_view_t *fv, const char *filter)
 {
 	char dir_save[MAX_PATH_LEN+1];
@@ -473,7 +497,7 @@ void free_file_list(filer_view_t *fv)
 	fv->file_list_entries = 0;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // sort file list
 PRIVATE int comp_file_type(file_info_t *aa, file_info_t *bb);
 PRIVATE int comp_file_info(const void *aa, const void *bb);
@@ -666,7 +690,7 @@ PRIVATE int strtypecasecmp(const char *s1, const char *s2)
 	return (tolower(*s1) - tolower(*s2));
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int get_files_selected_cfv(void)
 {
 	return get_files_selected(get_cur_filer_cur_pane_view());
@@ -734,7 +758,7 @@ void unselect_all_files_auto(char selection_bit)
 	}
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int research_file_name_in_file_list(filer_view_t *fv, const char *file_name)
 {
 	int file_idx = search_file_name_in_file_list(fv, file_name);

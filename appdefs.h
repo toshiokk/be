@@ -68,7 +68,7 @@
 ///TTT : temporary test code
 ///DDD : code to be deleted
 
-// NOTE: length of string buffer must be categorized into three types
+// NOTE: length of string are categorized into three types
 //	MAX_SCRN_LINE_BUF_LEN	768*6 = 4608
 //	MAX_PATH_LEN			4096
 //	MAX_EDIT_LINE_LEN		4096

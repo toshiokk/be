@@ -28,14 +28,10 @@
 // push ==> insert one buffer to top of buffers
 be_buf_t *push_undo_buf(be_buf_t *buf)
 {
-	flf_d_printf("CLBI(0): %d\n", BUFVX_CLBI(buf, 0));
-	flf_d_printf("CLBI(1): %d\n", BUFVX_CLBI(buf, 1));
 	buf = buf_create_copy(buf);
 	buf_view_copy(&(buf->buf_views[get_editor_counter_pane_idx()]),
 				 &(buf->buf_views[get_editor_cur_pane_idx()]));
 	snprintf(buf->file_path_, MAX_PATH_LEN, "#undo_buf-%02d", count_undo_bufs());
-	flf_d_printf("CLBI(0): %d\n", BUFVX_CLBI(buf, 0));
-	flf_d_printf("CLBI(1): %d\n", BUFVX_CLBI(buf, 1));
 	return buf_insert_after(UNDO_BUFS_TOP_ANCH, buf);
 }
 // pop ==> remove buffer from top of buffers
@@ -116,7 +112,7 @@ void check_undo_state_after_change(void)
 }
 #endif // ENABLE_DEBUG
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // aaaa				<== undo_min_line (line not-modified)
 // BBBB				first line which will be modified
 // CCCC				last line which will be modified
@@ -196,8 +192,8 @@ PRIVATE void save_region_to_undo_buf(void)
 		buf_append_line_to_bottom(UNDO_BUFS_TOP_NODE, line_create_copy(line));
 		buf_set_cur_line(UNDO_BUFS_TOP_NODE, line);
 	}
-	flf_d_printf("CLBI(0): %d\n", BUFVX_CLBI(UNDO_BUFS_TOP_NODE, 0));
-	flf_d_printf("CLBI(1): %d\n", BUFVX_CLBI(UNDO_BUFS_TOP_NODE, 1));
+	flf_d_printf("CLBI(0): %d\n", BUFV0_CLBI(UNDO_BUFS_TOP_NODE));
+	flf_d_printf("CLBI(1): %d\n", BUFV1_CLBI(UNDO_BUFS_TOP_NODE));
 }
 
 typedef enum /*undo0_redo1*/ {
@@ -214,7 +210,7 @@ int doe_undo(void)
 {
 	do_clear_mark_();
 	if (count_undo_bufs() < 2) {
-		disp_status_bar_err(_("Undo-buffer empty !!"));
+		disp_status_bar_warn(_("Undo-buffer empty !!"));
 		return 0;
 	}
 	return do_undo_redo_(UNDO0);
@@ -223,7 +219,7 @@ int doe_redo(void)
 {
 	do_clear_mark_();
 	if (count_redo_bufs() < 2) {
-		disp_status_bar_err(_("Redo-buffer empty !!"));
+		disp_status_bar_warn(_("Redo-buffer empty !!"));
 		return 0;
 	}
 	return do_undo_redo_(REDO1);

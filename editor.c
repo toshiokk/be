@@ -25,7 +25,7 @@ ef_do_next_t editor_do_next = EF_NONE;
 
 PRIVATE int editor_main_loop(char *str_buf, int buf_len);
 
-int call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf, int buf_len)
+int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf, int buf_len)
 {
 #ifdef ENABLE_HISTORY
 	save_histories();
@@ -41,8 +41,8 @@ int call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf, int b
 #endif // ENABLE_FILER
 	}
 
-	set_editor_app_mode_on_cur_buf_mode();
 	SET_APPMD_VAL(app_EDITOR_FILER, EF_EDITOR);
+	SET_APPMD_VAL(app_LIST_MODE, list_mode);
 
 flf_d_printf("GET_APPMD(app_EDITOR_FILER): %d\n", GET_APPMD(app_EDITOR_FILER));
 flf_d_printf("push_win:%d\n", push_win);
@@ -63,7 +63,7 @@ flf_d_printf("push_win:%d --> ret: %d\n", push_win, ret);
 	return ret;		// EF_...
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifdef ENABLE_HISTORY
 char last_touched_file_pos_str[MAX_PATH_LEN+1];
 #endif // ENABLE_HISTORY
@@ -98,13 +98,14 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 		//----------------------------------
 		if (IS_KEY_VALID(key_input)) {
 			mflf_d_printf("input%ckey:0x%04x(%s|%s)=======================\n",
-			 '_', key_input, short_key_name_from_key_code(key_input, NULL),
-			 key_name_from_key_code(key_input, NULL));
-			if (IS_CHAR_KEY(key_input)) {
+			 '_', key_input,
+			 long_key_name_from_key_code(key_input, NULL),
+			 short_key_name_from_key_code(key_input, NULL));
+			if (is_key_char(key_input)) {
 				doe_buffer_utf8c_bytes(key_input);	// put the first char
 				for ( ; ; ) {
 					key_input = input_key_macro();
-					if (IS_CHAR_KEY(key_input) == 0)
+					if (is_key_char(key_input) == 0)
 						break;
 					doe_buffer_utf8c_bytes(key_input);	// put trailing chars
 				}
@@ -119,20 +120,20 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 			func_key_table_t *fkey_table;
 			if ((fkey_table = get_func_key_table_from_key(editor_func_key_table, key_input))
 			 == NULL) {
-				disp_status_bar_err(_("No command assigned for the key: %04xh"), key_input);
+				disp_status_bar_warn(_("No command assigned for the key: %04xh"), key_input);
 			} else {
-				if (is_app_view_list_mode()) {
+				if (is_app_chooser_mode()) {
 					switch (fkey_table->list_mode) {
-					case EFLM_NO_EXEC:	// not executable in editor List mode
+					case EFLM_NOEX:	// not executable in editor List mode
 						disp_status_bar_done(
 						 _("Can not execute this function in editor List mode: [%s]"),
 						 fkey_table->func_id);
 						editor_do_next = EF_QUIT;
 						break;
-					case E_LM_CUR_LIN:	// not executable in editor List mode, get a text
+					case E_LM_CULN:	// not executable in editor List mode, get a text
 						editor_do_next = EF_INPUT;
 						break;
-					case EFAM_EXECUTE:
+					case EFAM_EXEC:
 					default:
 						break;
 					}
@@ -171,7 +172,7 @@ flf_d_printf("all buffers closed\n");
 				// If all files closed on editor, exit editor.
 				break;
 			}
-		} else /* if (is_app_view_list_mode()) */ {
+		} else /* if (is_app_chooser_view_mode()) */ {
 			if (editor_do_next) {
 flf_d_printf("all buffers closed\n");
 				break;
@@ -193,13 +194,13 @@ flf_d_printf("all buffers closed\n");
 	return editor_do_next;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int chk_inp_str_ret_val_editor(int ret)
 {
 	return ret <= EF_EXECUTED;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 char *get_app_dir(void)
 {
 	static char dir[MAX_PATH_LEN+1];
@@ -263,7 +264,7 @@ int doe_read_clipboard_into_cur_pos_(int char0_line1)
 	return 0;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int doe_run_line_soon(void)
 {
 	return doe_run_line_soon_(LOGGING0);
@@ -288,7 +289,7 @@ int doe_run_line_soon_(int logging)
 	return 0;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifdef ENABLE_HELP
 int doe_splash(void)
 {
@@ -335,13 +336,21 @@ void display_color_settings(void)
 int examine_key_code(void)
 {
 	disp_status_bar_ing(_("Input key to show key code"));
-	key_code_t key = input_key_loop();
-	disp_status_bar_done(_("Key code input: %04x: [%s|%s]"), key,
-	 short_key_name_from_key_code(key, NULL), key_name_from_key_code(key, NULL));
+	key_code_t key = input_unmapped_key_loop();
+	key_code_t key_mapped = map_key_code(key);
+	char buf1[MAX_KEY_NAME_LEN+1];
+	char buf2[MAX_KEY_NAME_LEN+1];
+	disp_status_bar_done(_("Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"),
+	 key,
+	 long_key_name_from_key_code(key, NULL),
+	 short_key_name_from_key_code(key, NULL),
+	 key_mapped,
+	 long_key_name_from_key_code(key_mapped, buf1),
+	 short_key_name_from_key_code(key_mapped, buf2));
 	return key == K_ESC;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int doe_editor_menu_0(void)
 {
 	return editor_menu_n(-1);
@@ -353,7 +362,7 @@ int doe_inc_key_list_lines(void)
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #define MAX_APP_STACK_DEPTH		(1+3)						// 1 root + 3 sub
 app_win_stack_entry app_win_stack[MAX_APP_STACK_DEPTH+1];	// 1 root + 3 sub + 1 current-state
 
@@ -394,6 +403,7 @@ void clear_app_win_stack_entry(int depth)
 {
 	app_win_stack_entry *app_win = get_app_win_stack_entry(depth);
 	memset(app_win, 0x00, sizeof(*app_win));
+	app_win->status_bar_color_idx = ITEM_COLOR_IDX_STATUS;
 }
 
 #ifdef ENABLE_FILER
@@ -402,7 +412,6 @@ void push_app_win(editor_panes_t *next_eps, be_buf_t *buf, filer_panes_t *next_f
 void push_app_win(editor_panes_t *next_eps, be_buf_t *buf)
 #endif // ENABLE_FILER
 {
-/////_D_(dump_editor_panes(NULL))
 	app_win_stack_entry *app_win = get_app_win_stack_entry(-1);
 	app_win->appmode_save = app_mode__;
 	app_win->editor_panes_save = NULL;
@@ -498,8 +507,9 @@ void update_screen_app(int status_bar, int refresh)
 		if (depth >= cur_app_win_stack_depth) {
 			break;
 		}
-		inc_win_depth();
-		set_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
+///		inc_win_depth();
+///		set_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
+		set_color_by_idx(ITEM_COLOR_IDX_MENU_ITEM, 0);
 		main_win_clear_screen();		// draw dark frame
 		inc_win_depth();
 	}
@@ -518,7 +528,7 @@ PRIVATE void update_screen_app__(int status_bar, int refresh)
 #endif // ENABLE_FILER
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE void disp_status_bar_editor(void);
 
@@ -564,7 +574,7 @@ void update_screen_editor(int status_bar, int refresh)
 ////mflf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}\n");
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE char blink_counter = 0;
 void start_title_bar_blinking()
@@ -617,10 +627,8 @@ void disp_title_bar_editor(void)
 	char buf_time[HHCMMCSS_BUF_LEN+1];
 
 	int bufs_idx = bufs_get_bufs_idx_in_bufss(NODES_TOP_ANCH(&all_bufferss), get_epc_buf());
-/////flf_d_printf("bufs_idx: %d\n", bufs_idx);
 	int buf_idx = buf_get_buf_idx(get_epc_buf());
-/////flf_d_printf("buf_idx: %d\n", buf_idx);
-	char *path = get_epc_buf()->file_path_;
+	const char *path = get_epc_buf()->file_path_;
 
 	tio_set_cursor_on(0);
 
@@ -631,13 +639,16 @@ void disp_title_bar_editor(void)
 	 get_editor_cur_pane_idx()+1, separator_char, bufs_idx, separator_char, buf_idx,
 	 (path[0] == '\0') ? _("New File") : path);
 	if (CUR_EBUF_STATE(buf_MODIFIED)) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[Mod] "));
+		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[Mod]"));
 	}
-	if (CUR_EBUF_STATE(buf_MODE)) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, get_str_buf_view_mode());
+	if (is_epc_buf_ro_file()) {
+		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[RO]"));
 	}
-	if (is_st_writable(&get_epc_buf()->orig_file_stat) == 0) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[RO] "));
+	if (is_epc_buf_view_mode()) {
+		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, get_epc_buf_view_mode());
+	}
+	if (is_epc_buf_locked()) {
+		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[LOCKED]"));
 	}
 
 	//-------------------------------------------------------------------------
@@ -661,8 +672,7 @@ void disp_title_bar_editor(void)
 #endif // SHOW_UNDO_BUFS
 
 	// current date / time
-	snprintf_(buf_time, HHCMMCSS_BUF_LEN+1, " %s",
-	 cur_ctime_cdate(msec_past_input_key() < 1000));
+	snprintf_(buf_time, HHCMMCSS_BUF_LEN+1, " %s", cur_ctime_cdate(msec_past_input_key() < 1000));
 
 	//-------------------------------------------------------------------------
 #ifdef SHOW_MEM_FREE_ON_EBUFS_CHG
@@ -690,13 +700,18 @@ void disp_title_bar_editor(void)
 }
 PRIVATE void blink_editor_title_bar()
 {
-	set_title_bar_color_by_state(BUF_STATE(get_epc_buf(), buf_CUT_MODE),
-	 CUR_EBUF_STATE(buf_MODIFIED) ? 2 : (is_any_edit_buf_modified() ? 1 : 0),
+	set_color_by_idx(ITEM_COLOR_IDX_TITLE, 0);
+	set_title_bar_color_by_state(
+	 CUR_EBUF_STATE(buf_CUT_MODE) ? ITEM_COLOR_IDX_TEXT_SELECTED1
+	  : ((is_epc_buf_saveable() == 0) ? ITEM_COLOR_IDX_WARNING1
+	   : (CUR_EBUF_STATE(buf_MODIFIED) ? ITEM_COLOR_IDX_WARNING2
+	    : (is_any_edit_buf_modified() ? ITEM_COLOR_IDX_WARNING3
+	     : ITEM_COLOR_IDX_TITLE))),
 	 get_title_bar_inversion());
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0, editor_title_bar_buf, -1);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE void disp_status_bar_editor(void)
 {
@@ -739,10 +754,6 @@ PRIVATE void disp_status_bar_editor(void)
 void disp_key_list_editor(void)
 {
 	const char *editor_key_lists[] = {
- "{Menu} "
- " {Rec  } {Play } {SchBW} {SchFW} "
- " {Mark } {Cut  } {Copy } {Pop  } "
- " {Paste} {Dupli} {Files} {TagJp}",
  "<doe_close_file_ask>Quit "
  "<doe_cut_to_head>CutToHead "
  "<doe_cut_text>CutLine "
@@ -766,36 +777,38 @@ void disp_key_list_editor(void)
 #ifdef ENABLE_HELP
  "<doe_view_func_list>KeyList "
 #endif // ENABLE_HELP
- "<doe_switch_to_prev_buffer>PrevFile "
- "<doe_switch_to_next_buffer>NextFile "
-#if APP_REL_LVL <= APP_REL_LVL_TEST
+ "<doe_switch_to_prev_buffer>PrevBuf "
+ "<doe_switch_to_next_buffer>NextBuf "
  "<doe_switch_to_prev_buffers>PrevBufs "
  "<doe_switch_to_next_buffers>NextBufs "
-#endif // APP_REL_LVL
 	};
 	disp_key_list(editor_key_lists);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int is_editor_view_mode_then_warn_it(void)
 {
-	if (is_app_view_list_mode()) {
-		disp_status_bar_err(_("Modification not allowed in VIEW/LIST mode"));
+	if (is_app_chooser_view_mode()) {
+		disp_status_bar_err(_("Modification not allowed in VIEW mode application"));
+		return 1;
+	}
+	if (is_epc_buf_ro_file()) {
+		disp_status_bar_err(_("Modification not allowed to READ-ONLY file"));
 		return 1;
 	}
 	if (is_epc_buf_view_mode()) {
-		disp_status_bar_err(_("Modification not allowed in this buffer mode"));
+		disp_status_bar_err(_("Modification not allowed in %s buffer"), get_epc_buf_view_mode());
+		return 1;
+	}
+	if (is_epc_buf_locked()) {
+		disp_status_bar_err(_("Modification not allowed to LOCKED file"));
 		return 1;
 	}
 	return 0;
 }
-int is_editor_view_mode(void)
-{
-	return is_app_list_mode() || is_epc_buf_view_mode();
-}
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 void dump_cur_pointers(void)
 {

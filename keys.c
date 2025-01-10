@@ -35,7 +35,7 @@ func_key_table_t *get_app_func_key_table(void)
 #endif // ENABLE_FILER
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cmp_func_id(const char *func_id_1, const char *func_id_2)
 {
 	return strcmp(func_id_1, func_id_2) == 0;
@@ -77,7 +77,9 @@ key_code_t get_key_for_func_id(char *func_id)
 	if (fkey_table == NULL) {
 		return K_NONE;
 	}
-	return fkey_table->key1;
+	// return a key which is not Fxx
+	return (IS_BETWEEN(K_F01, fkey_table->keys[0], K_F12) == 0)
+	 ? fkey_table->keys[0] : fkey_table->keys[1];
 }
 PRIVATE func_key_table_t *get_func_table_from_func_id__(func_key_table_t *fkey_table,
  const char *func_id);
@@ -108,12 +110,12 @@ PRIVATE func_key_table_t *get_func_table_from_func_id__(func_key_table_t *fkey_t
 
 int is_key_assigned_to_func(key_code_t key, func_key_table_t *fkey_table)
 {
-	return key != KNA
-	 && (key == fkey_table->key1
-	  || key == fkey_table->key2
-	  || key == fkey_table->key3);
+	return (key != KNA)
+	 && ((key == fkey_table->keys[0])
+	  || (key == fkey_table->keys[1])
+	  || (key == fkey_table->keys[2]));
 }
-void clear_keys_if_bound(key_code_t *keys)
+void clear_fkey_tbl_using_these_keys(key_code_t *keys)
 {
 	func_key_table_t *fkey_table = editor_func_key_table;
 	for (int idx = 0; fkey_table[idx].func != NULL; idx++) {
@@ -123,32 +125,25 @@ void clear_keys_if_bound(key_code_t *keys)
 }
 void clear_key_if_bound_to_func(key_code_t key, func_key_table_t *fkey_table)
 {
-	if (fkey_table->key1 == key) {
-		fkey_table->key1 = KNA;
-	}
-	if (fkey_table->key2 == key) {
-		fkey_table->key2 = KNA;
-	}
-	if (fkey_table->key3 == key) {
-		fkey_table->key3 = KNA;
+	for (int key_idx = 0; key_idx < MAX_KEYS_BIND; key_idx++) {
+		if (fkey_table->keys[key_idx] == key) {
+			fkey_table->keys[0] = KNA;
+		}
 	}
 }
-void clear_keys_bound_to_func(func_key_table_t *fkey_table)
+void clear_fkey_tbl_keys(func_key_table_t *fkey_table)
 {
-	fkey_table->key1 = KNA;
-	fkey_table->key2 = KNA;
+	fkey_table->keys[0] = KNA;
+	fkey_table->keys[1] = KNA;
 }
 
 void bind_key_to_func(func_key_table_t *fkey_table, key_code_t *keys)
 {
-	if (keys[0] >= 0) {
-		fkey_table->key1 = keys[0];
-	}
-	if (keys[1] >= 0) {
-		fkey_table->key2 = keys[1];
-	}
-	if (keys[2] >= 0) {
-		fkey_table->key3 = keys[2];
+	clear_fkey_tbl_keys(fkey_table);	// clear keys before assigning keys
+	for (int key_idx = 0; key_idx < MAX_KEYS_BIND; key_idx++) {
+		if (IS_KEY_VALID(keys[key_idx])) {
+			fkey_table->keys[key_idx] = keys[key_idx];
+		}
 	}
 }
 
@@ -158,7 +153,7 @@ const char *short_key_name_from_func_id(char *buf)
 	return short_key_name_from_key_code(get_key_for_func_id(buf), buf);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 PRIVATE key_code_t menu_key = -1;
 void set_menu_key(key_code_t key)
 {
@@ -190,7 +185,7 @@ void set_menu_key_for_do_app_menu_0(void)
 #endif // ENABLE_FILER
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 PRIVATE unsigned long msec_when_input_key = 0;
 void update_msec_when_input_key()
 {
@@ -203,7 +198,6 @@ unsigned long msec_past_input_key()
 
 PRIVATE key_code_t input_key_timeout(void);
 PRIVATE key_code_t input_key_check_break_key(void);
-PRIVATE key_code_t map_key_code(key_code_t key);
 
 key_code_t input_key_loop(void)
 {
@@ -213,12 +207,20 @@ key_code_t input_key_loop(void)
 	}
 	return key;
 }
+key_code_t input_unmapped_key_loop(void)
+{
+	key_code_t key;
+
+	while ((key = tio_input_key()) < 0) {
+	}
+	return key;
+}
 // Key input interval:
 // | type                  | duration [mSec] |
 // |-----------------------|-----------------|
 // | repaint all of screen | 10000           |
 //
-#define WHOLE_UPDATE_INTERVAL_MSEC		10000	// 10[Sec]
+#define WHOLE_UPDATE_INTERVAL_MSEC		60000	// 60[Sec]
 key_code_t input_key_wait_return(void)
 {
 	static key_code_t prev_key = KEY_NONE;
@@ -360,35 +362,35 @@ flf_d_printf(">[%04x]\n", key);
 	return key;
 }
 
-PRIVATE key_code_t map_key_code(key_code_t key)
+//							Key-Backspace	Key-Delete
+// console(TL11Fuji)		0x08			0x7f
+// console(Slackware12.2)	0x7f			0x0113
+// console(Ubuntu11.04)		0x0107			0x014a
+// konsole(TL11Fuji)		0x08			0x0113
+// xterm(Ubuntu11.04)		0x0107			0x014a
+// console(Ubuntu16.04)		0x08			0x014a
+// console(Ubuntu24.04)		0x08			0x014a
+// MX Linux(21)				0x7f			1b,5b,33,7e
+key_code_t map_key_code(key_code_t key)
 {
 	switch (key) {
-	case CHAR_DEL:
-#define MAP_KEY_7F_BS
-#ifdef MAP_KEY_7F_BS
+	case CHAR_DEL:			// 0x007f
 		if (GET_APPMD(app_MAP_KEY_7F_BS)) {
-flf_d_printf("KEY_7F ==> BS\n");
+			flf_d_printf("KEY_7F ==> BS\n");
 			key = K_BS;		// CHAR_DEL ==> BS
 		} else {
-#endif // MAP_KEY_7F_BS
-flf_d_printf("KEY_7F ==> DEL\n");
+			flf_d_printf("KEY_7F ==> DEL\n");
 			key = K_DEL;	// CHAR_DEL ==> Delete
-#ifdef MAP_KEY_7F_BS
 		}
-#endif // MAP_KEY_7F_BS
 		break;
 	case KEY_BACKSPACE:		// 0x0107
-#ifdef MAP_KEY_7F_BS
-		if (GET_APPMD(app_MAP_KEY_7F_BS) == 0) {
-flf_d_printf("KEY_BACKSPACE ==> BS\n");
-			key = K_BS;		// KEY_BACKSPACE ==> BS
-		} else {
-#endif // MAP_KEY_7F_BS
-flf_d_printf("KEY_BACKSPACE ==> DEL\n");
+		if (GET_APPMD(app_MAP_KEY_7F_BS)) {
+			flf_d_printf("KEY_BACKSPACE ==> DEL\n");
 			key = K_DEL;	// KEY_BACKSPACE ==> DEL
-#ifdef MAP_KEY_7F_BS
+		} else {
+			flf_d_printf("KEY_BACKSPACE ==> BS\n");
+			key = K_BS;		// KEY_BACKSPACE ==> BS
 		}
-#endif // MAP_KEY_7F_BS
 		break;
 	case KEY_DC:
 flf_d_printf("KEY_DC ==> DEL\n");
@@ -396,7 +398,7 @@ flf_d_printf("KEY_DC ==> DEL\n");
 		SET_APPMD(app_MAP_KEY_7F_BS);	// set conversion of CHAR_DEL ==> BS
 		key = K_DEL;
 		break;
-	case KEY_ENTER:		// 0x0157
+	case KEY_ENTER:			// 0x0157
 		key = K_ENTER;
 	default:
 		break;
@@ -404,14 +406,10 @@ flf_d_printf("KEY_DC ==> DEL\n");
 	return key;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 key_name_table_t key_name_table[] = {
 //							   12345678
-	{ NUM_STR(K_SPACE)		, "SP", },
-	{ NUM_STR(K_BS)			, "BS", },
-	{ NUM_STR(K_TAB)		, "TAB", },
-	{ NUM_STR(K_ENTER)		, "ENTER", },
-	{ NUM_STR(K_ESC)		, "ESC", },
+///	{ NUM_STR(K_NONE)		, "NONE", },
 	{ NUM_STR(K_C_AT)		, "C-@", },
 	{ NUM_STR(K_C_A)		, "C-A", },
 	{ NUM_STR(K_C_B)		, "C-B", },
@@ -421,10 +419,11 @@ key_name_table_t key_name_table[] = {
 	{ NUM_STR(K_C_F)		, "C-F", },
 	{ NUM_STR(K_C_G)		, "C-G", },
 	{ NUM_STR(K_C_H)		, "C-H", },
+	{ NUM_STR(K_TAB)		, "TAB", },
 	{ NUM_STR(K_C_J)		, "C-J", },
 	{ NUM_STR(K_C_K)		, "C-K", },
 	{ NUM_STR(K_C_L)		, "C-L", },
-	{ NUM_STR(K_C_M)		, "C-M", },
+	{ NUM_STR(K_ENTER)		, "ENTER", },
 	{ NUM_STR(K_C_N)		, "C-N", },
 	{ NUM_STR(K_C_O)		, "C-O", },
 	{ NUM_STR(K_C_P)		, "C-P", },
@@ -438,14 +437,18 @@ key_name_table_t key_name_table[] = {
 	{ NUM_STR(K_C_X)		, "C-X", },
 	{ NUM_STR(K_C_Y)		, "C-Y", },
 	{ NUM_STR(K_C_Z)		, "C-Z", },
-	{ NUM_STR(K_C_LBRAK)	, "C-[", },
+	{ NUM_STR(K_ESC)		, "ESC", },
 	{ NUM_STR(K_C_BAKSL)	, "C-\\", },
 	{ NUM_STR(K_C_RBRAK)	, "C-]", },
 	{ NUM_STR(K_C_CARET)	, "C-^", },
 	{ NUM_STR(K_C_UNDLN)	, "C-_", },
 
+	{ NUM_STR(K_SP)			, "SP", },
+
+	{ NUM_STR(CHAR_DEL)		, "DEL", },
+	{ NUM_STR(K_BS)			, "K_BS", },
+	{ NUM_STR(K_DEL)		, "K_DEL", },
 	{ NUM_STR(K_INS)		, "INS", },
-	{ NUM_STR(K_DEL)		, "DEL", },
 	{ NUM_STR(K_HOME)		, "HOME", },
 	{ NUM_STR(K_END)		, "END", },
 	{ NUM_STR(K_PPAGE)		, "PGUP", },
@@ -457,7 +460,7 @@ key_name_table_t key_name_table[] = {
 
 	{ NUM_STR(K_M_BS)		, "M-BS", },
 	{ NUM_STR(K_M_TAB)		, "M-TAB", },
-	{ NUM_STR(K_M_CR)		, "M-CR", },
+	{ NUM_STR(K_M_ENTER)	, "M-ENTER", },
 	{ NUM_STR(K_M_ESC)		, "M-ESC", },
 	{ NUM_STR(K_M_SP)		, "M-SP", },
 	{ NUM_STR(K_M_EXCLA)	, "M-!", },
@@ -559,6 +562,7 @@ key_name_table_t key_name_table[] = {
 	{ NUM_STR(K_M_TILDE)	, "M-~", },
 	{ NUM_STR(K_M_DEL)		, "M-DEL", },
 
+	{ NUM_STR(K_MC_AT)		, "MC-@", },
 	{ NUM_STR(K_MC_A)		, "MC-A", },
 	{ NUM_STR(K_MC_B)		, "MC-B", },
 	{ NUM_STR(K_MC_C)		, "MC-C", },
@@ -617,41 +621,141 @@ key_name_table_t key_name_table[] = {
 	{ NUM_STR(K_S_F12)		, "S-F12", },
 };
 
+// 0x0020 <==> " "
+// 0x0080 <==> "\x80"
+// 0x0028 <==> "(("
+// 0x0029 <==> "))"
+// 0x007b <==> "{{"
+// 0x007d <==> "}}"
+// 0x1b20 <==> "{M-SP}"
+// 0x1b28 <==> "{M-(}"
+// 0x1b29 <==> "{M-)}"
+// 0x1b7b <==> "(M-{)"
+// 0x1b7d <==> "(M-})"
+const char* key_str_from_key_code(key_code_t key_code)
+{
+	static char buf_s_[KEY_CODE_STR_LEN+1];
+
+	if (key_code == '(') {
+		snprintf(buf_s_, KEY_CODE_STR_LEN+1, "((");
+	} else
+	if (key_code == ')') {
+		snprintf(buf_s_, KEY_CODE_STR_LEN+1, "))");
+	} else
+	if (key_code == '{') {
+		snprintf(buf_s_, KEY_CODE_STR_LEN+1, "{{");
+	} else
+	if (key_code == '}') {
+		snprintf(buf_s_, KEY_CODE_STR_LEN+1, "}}");
+	} else
+	if ((key_code == ' ') || is_key_graph(key_code) || is_key_utf8_byte(key_code)) {
+		snprintf(buf_s_, KEY_CODE_STR_LEN+1, "%c", (UINT16)key_code);
+	} else {
+		const char* str = long_key_name_from_key_code(key_code, NULL);
+		if (contain_chrs(str, "()") == 0) {
+			// "(UP)", "(M-{)", "(M-})", "(ffff)"
+			snprintf(buf_s_, KEY_CODE_STR_LEN+1, "(%s)", str);
+		} else {
+			// "{M-(}", "\{M-)}"
+			snprintf(buf_s_, KEY_CODE_STR_LEN+1, "{%s}", str);
+		}
+/////flf_d_printf("%04x ==> [%s]\n", (UINT16)key_code, buf_s_);
+	}
+	return buf_s_;
+}
+
+int key_code_from_key_str(const char* str, key_code_t* key_code)
+{
+	if (strlcmp__(str, "((") == 0) {
+		*key_code = '(';
+		return 2;
+	} else
+	if (strlcmp__(str, "))") == 0) {
+		*key_code = ')';
+		return 2;
+	} else
+	if (strlcmp__(str, "{{") == 0) {
+		*key_code = '{';
+		return 2;
+	} else
+	if (strlcmp__(str, "}}") == 0) {
+		*key_code = '}';
+		return 2;
+	} else
+	if ((str[0] == '(') || (str[0] == '{')) /*}*/ {
+		char end_chr = (str[0] == '(') ? ')' : /*{*/ '}';
+		for (int len = 1; (len < (1+MAX_KEY_NAME_LEN)) && str[len]; len++) {
+			if (str[len] == end_chr) {
+				char key_name[MAX_KEY_NAME_LEN+1];
+				strlcpy__(key_name, &str[1], len-1);	// "(MC-RIGHT)"
+				*key_code = key_code_from_key_name(key_name);
+				if (*key_code >= 0) {
+					return len + 1;
+				}
+				// "(abcd)"
+				int int_key_code;
+				if (sscanf(key_name, "%04x", &int_key_code) > 0) {
+					*key_code = (key_code_t)int_key_code;
+					return len + 1;
+				}
+			}
+		}
+		return 1;		// No end mark found
+	} else
+	if ((str[0] == ' ')
+	 || is_key_graph((UINT8)str[0]) || is_key_utf8_byte((UINT8)str[0])) {
+		*key_code = (UINT8)str[0];		// "A", "\x80" ~ "\xff"
+		return 1;
+	}
+	*key_code = (UINT8)str[0];
+	return 1;
+}
+
+// "C-@", "SP", "%", ... "0", "A", "漢", "MC-UNDLN", "ffff"
+const char *long_key_none_str()
+{
+	return long_key_name_from_key_code(K_NONE, NULL);
+}
+const char *long_key_name_from_key_code(key_code_t key_code, char *buf)
+{
+	static char buf_s_[MAX_KEY_NAME_LEN+1];
+	if (buf == NULL) {
+		buf = buf_s_;
+	}
+	if (IS_KEY_INVALID(key_code)) {
+		return strnset__(buf, '-', MAX_KEY_NAME_LEN);
+	}
+/////flf_d_printf("%04x ==>\n", (UINT16)key_code);
+	for (int idx = 0; idx < ARRAY_SIZE_OF(key_name_table); idx++) {
+		if (key_name_table[idx].key_code == key_code) {
+/////flf_d_printf(" ==> [%s]\n", key_name_table[idx].key_name);
+			return key_name_table[idx].key_name;
+		}
+	}
+	if (is_key_graph(key_code) || is_key_utf8_byte(key_code)) {
+		snprintf(buf_s_, MAX_KEY_NAME_LEN+1, "%c", key_code);
+	} else
+	if ((key_code & 0xff00) == K_M(0)) {	// 0x1bxx
+		unsigned char chr = key_code & 0x00ff;
+		if (isgraph(chr)) {
+			snprintf(buf_s_, MAX_KEY_NAME_LEN+1, "M-%c", chr);
+		} else if (0 <= chr && chr < 0x20) {
+			snprintf(buf_s_, MAX_KEY_NAME_LEN+1, "MC-%c", '@' + chr);
+		} else {
+			snprintf(buf_s_, MAX_KEY_NAME_LEN+1, "%04x", (UINT16)key_code);
+		}
+	} else {
+		snprintf(buf_s_, MAX_KEY_NAME_LEN+1, "%04x", (UINT16)key_code);
+	}
+	return buf_s_;
+}
 const char *short_key_name_from_key_code(key_code_t key_code, char *buf)
 {
 	static char buf_s_[MAX_KEY_NAME_LEN+1];
 	if (buf == NULL) {
 		buf = buf_s_;
 	}
-	char buf_key_name[MAX_KEY_NAME_LEN+1];		// "MC-RIGHT"
-	return short_key_name_from_key_name(key_name_from_key_code(key_code, buf_key_name), buf);
-}
-const char *key_name_from_key_code(key_code_t key_code, char *buf)
-{
-	static char buf_s_[MAX_KEY_NAME_LEN+1];
-	if (buf == NULL) {
-		buf = buf_s_;
-	}
-	for (int idx = 0; idx < ARRAY_SIZE_OF(key_name_table); idx++) {
-		if (key_name_table[idx].key_code == key_code)
-			return key_name_table[idx].key_name;
-	}
-	if (isgraph(key_code)) {
-		snprintf(buf, MAX_KEY_NAME_LEN+1, "%c", key_code);
-	} else if ((key_code & 0xff00) == K_M(0)) {	// 0x1bxx
-		if (isgraph(key_code & 0x00ff)) {
-			snprintf(buf, MAX_KEY_NAME_LEN+1, "M-%c", key_code & 0x00ff);
-		} else if (0 <= (key_code & 0x00ff) && (key_code & 0x00ff) < 0x20) {
-			snprintf(buf, MAX_KEY_NAME_LEN+1, "MC-%c", '@' + (key_code & 0xff));
-		} else {
-			snprintf(buf, MAX_KEY_NAME_LEN+1, "%04x", key_code);
-		}
-	} else if (key_code == KEY_NONE) {
-		snprintf(buf, MAX_KEY_NAME_LEN+1, "--------");
-	} else {
-		snprintf(buf, MAX_KEY_NAME_LEN+1, "%04x", key_code);
-	}
-	return buf;
+	return short_key_name_from_key_name(long_key_name_from_key_code(key_code, NULL), buf);
 }
 const char *short_key_name_from_key_name(const char *key_name, char *buf)
 {
@@ -674,20 +778,20 @@ const char *short_key_name_from_key_name(const char *key_name, char *buf)
 
 key_code_t key_code_from_key_name(char *key_name)
 {
-	int idx;
-
-	for (idx = 0; idx < ARRAY_SIZE_OF(key_name_table); idx++) {
-		if (strcmp(key_name_table[idx].key_name, key_name) == 0)
+/////flf_d_printf("[%s]\n", key_name);
+	for (int idx = 0; idx < ARRAY_SIZE_OF(key_name_table); idx++) {
+		if (strcmp(key_name_table[idx].key_name, key_name) == 0) {
+/////flf_d_printf(" ==> <%04x>\n", (UINT16)(key_name_table[idx].key_code));
 			return key_name_table[idx].key_code;
+		}
 	}
-	return -1;
+	return K_NONE;
 }
 key_code_t key_code_from_short_key_name(char *short_key_name)
 {
-	int idx;
 	char buf_key_name[MAX_KEY_NAME_LEN+1];		// "MC-RIGHT"
 
-	for (idx = 0; idx < ARRAY_SIZE_OF(key_name_table); idx++) {
+	for (int idx = 0; idx < ARRAY_SIZE_OF(key_name_table); idx++) {
 		if (strcmp(short_key_name_from_key_name(key_name_table[idx].key_name, buf_key_name),
 		 short_key_name) == 0)
 			return key_name_table[idx].key_code;
@@ -700,7 +804,29 @@ int get_key_name_table_entries(void)
 	return ARRAY_SIZE_OF(key_name_table);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// [0x00, 0x1f], 0x7f
+int is_key_ctrl(key_code_t key)
+{
+	return (key < 0x0020) || (key == 0x007f);
+}
+// [0x20, 0x7e]
+int is_key_graph(key_code_t key)
+{
+	return (0x0020 <= key) && (key < 0x007f);
+}
+// [0x80, 0xff]
+int is_key_utf8_byte(key_code_t key)
+{
+	return ((0x0080 <= key) && (key < 0x0100));
+}
+
+int is_key_char(key_code_t key)
+{
+///#define IS_CHAR_KEY(key)	((' ' <= (key)) && ((key) < 0x0100))
+	return (key == ' ') || is_key_graph(key) || is_key_utf8_byte(key);
+}
+//------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 
 #ifdef START_UP_TEST
@@ -719,26 +845,14 @@ flf_d_printf("-------------------------\n");
 PRIVATE int check_multiple_assignment_of_key_(func_key_table_t *fkey_table)
 {
 	for (int func_idx = 0; fkey_table[func_idx].help[0]; func_idx++) {
-		for (int key_idx = 0; key_idx < MAX_KEYS_BOUND; key_idx++) {
-			key_code_t key;
-			switch (key_idx) {
-			default:
-			case 0:		key = fkey_table[func_idx].key1;	break;
-			case 1:		key = fkey_table[func_idx].key2;	break;
-			case 2:		key = fkey_table[func_idx].key3;	break;
-			}
+		for (int key_idx = 0; key_idx < MAX_KEYS_BIND; key_idx++) {
+			key_code_t key = fkey_table[func_idx].keys[key_idx];
 			if (key == KEY_NONE) {
 				continue;
 			}
 			for (int func_idx2 = func_idx + 1; fkey_table[func_idx2].help[0] ; func_idx2++) {
-				for (int key_idx2 = 0; key_idx2 < MAX_KEYS_BOUND; key_idx2++) {
-					key_code_t key2;
-					switch (key_idx2) {
-					default:
-					case 0:		key2 = fkey_table[func_idx2].key1;	break;
-					case 1:		key2 = fkey_table[func_idx2].key2;	break;
-					case 2:		key2 = fkey_table[func_idx2].key3;	break;
-					}
+				for (int key_idx2 = 0; key_idx2 < MAX_KEYS_BIND; key_idx2++) {
+					key_code_t key2 = fkey_table[func_idx2].keys[key_idx2];
 					if (key2 == key) {
 						warning_printf("key: %04x assigned multiple to func:[%s] and [%s]\n",
 						 key, fkey_table[func_idx].desc, fkey_table[func_idx2].desc);
@@ -764,17 +878,8 @@ PRIVATE int check_all_functions_accessible_without_function_key_(func_key_table_
 	for (int func_idx = 0; fkey_table[func_idx].help[0]; func_idx++) {
 		int accessible = 0;
 		int accessible_without_fkey = 0;
-		for (int key_idx = 0; key_idx < MAX_KEYS_BOUND; key_idx++) {
-			key_code_t key;
-			switch (key_idx) {
-			default:
-			case 0:
-				key = fkey_table[func_idx].key1;	break;
-			case 1:
-				key = fkey_table[func_idx].key2;	break;
-			case 2:
-				key = fkey_table[func_idx].key3;	break;
-			}
+		for (int key_idx = 0; key_idx < MAX_KEYS_BIND; key_idx++) {
+			key_code_t key = fkey_table[func_idx].keys[key_idx];
 			if (IS_KEY_VALID(key)) {
 				accessible++;
 				if (IS_BYTE_KEY(key) || IS_META_KEY(key)) {

@@ -50,8 +50,12 @@ key_code_t key_macro_get_key(void);
 void key_macro_end_playback(void);
 int key_macro_is_playing_back(void);
 
-char *get_string_from_key_macro(void);
-void get_key_macro_from_string(const char *string);
+char *get_string_from_key_macro(key_code_t *key_codes, int keys);
+int get_key_macro_from_string(const char *string, key_code_t *key_codes);
+
+#ifdef START_UP_TEST
+void test_key_code_from_to_key_name();
+#endif // START_UP_TEST
 
 #endif // keymacro_h
 

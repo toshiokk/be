@@ -24,7 +24,7 @@
 
 extern ef_do_next_t editor_do_next;
 
-int call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf, int buf_len);
+int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf, int buf_len);
 
 int chk_inp_str_ret_val_editor(int ret);
 
@@ -38,13 +38,13 @@ int doe_read_clipboard_into_cur_char();
 int doe_read_clipboard_into_cur_line();
 int doe_read_clipboard_into_cur_pos_(int char0_line1);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int doe_run_line_soon(void);
 int doe_run_line_soon_w_log(void);
 int doe_run_line_soon_(int logging);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef ENABLE_HELP
 int doe_splash(void);
@@ -101,7 +101,6 @@ void disp_title_bar_editor(void);
 void disp_key_list_editor(void);
 
 int is_editor_view_mode_then_warn_it(void);
-int is_editor_view_mode(void);
 
 #ifdef ENABLE_DEBUG
 void dump_cur_pointers(void);

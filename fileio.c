@@ -28,8 +28,8 @@ PRIVATE int nkf_avalability = -1;	// -1: Unkown, 0: unavailable, 1: available
 PRIVATE int backup_files(const char *file_path, int depth);
 PRIVATE char *make_backup_file_path(const char *orig_path, char *backup_path, int depth);
 
-PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int msg_on_err);
-PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_bin_file, int msg_on_err);
+PRIVATE int load_file_into_new_buf__(const char *full_path, int flags);
+PRIVATE int load_file_into_cur_buf__(const char *full_path, int flags);
 
 #ifdef USE_NKF
 PRIVATE int guess_encoding_by_nkf(const char *full_path);
@@ -48,17 +48,20 @@ PRIVATE int save_cur_buf_to_file_ascii(const char *file_path);
 PRIVATE int save_cur_buf_to_file_binary(const char *file_path);
 PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp);
 
-int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_err)
+int load_file_into_new_buf(const char *full_path, int flags)
 {
-	int lines = load_file_into_new_buf__(full_path, open_on_err, msg_on_err);
+	int lines = load_file_into_new_buf__(full_path, flags);
 	if (lines < 0) {
 		return lines;
 	}
+	// successfully loaded into new buffer
+
+	lock_epc_buf_if_already_locked((flags & FOL1) == 0);
 	append_magic_line();
 	buf_set_view_x_cur_line(get_epc_buf(), 0, CUR_EDIT_BUF_TOP_LINE);
 	buf_set_view_x_cur_line(get_epc_buf(), 1, CUR_EDIT_BUF_TOP_LINE);
-	BUFVX_CLBI(get_epc_buf(), 0) = 0;
-	BUFVX_CLBI(get_epc_buf(), 1) = 0;
+	BUFV0_CLBI(get_epc_buf()) = 0;
+	BUFV1_CLBI(get_epc_buf()) = 0;
 	renumber_cur_buf_from_top();
 	update_cur_buf_crc();
 
@@ -77,7 +80,7 @@ int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_er
 	}
 	return lines;	// >= 0: success
 }
-PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int msg_on_err)
+PRIVATE int load_file_into_new_buf__(const char *full_path, int flags)
 {
 	struct stat st;
 	int ret = -1;
@@ -87,8 +90,8 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 	}
 	if (ret < 0) {
 		// New file
-		if (open_on_err == 0) {
-			if (msg_on_err) {
+		if ((flags & OOE1) == 0) {
+			if (flags & MOE1) {
 				disp_status_bar_err(_("File [%s] not found"),
 				 shrink_str_to_scr_static(full_path));
 			}
@@ -100,7 +103,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 	}
 	if (S_ISREG(st.st_mode) == 0) {
 		// special file
-		if (msg_on_err) {
+		if (flags & MOE1) {
 			disp_status_bar_err(S_ISDIR(st.st_mode)
 			 ? _("[%s] is a directory") : _("[%s] is a special file"),
 			 shrink_str_to_scr_static(full_path));
@@ -110,18 +113,20 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 	// Max. file size loadable is half of free memory.
 	if ((st.st_size / 1000) >= get_mem_free_in_kb(1) / 2) {
 		// file size too large
-		if (msg_on_err) {
+///		if (flags & MOE1) {
 			disp_status_bar_err(_("[%s] is too large to read into buffer"),
 			 shrink_str_to_scr_static(full_path));
-		}
+///		}
 		return -3;		// open error
 	}
 	// regular file
 	disp_status_bar_ing(_("Reading File %s ..."), shrink_str_to_scr_static(full_path));
 	create_edit_buf(full_path);
+	// Set a edit-buffer not saveable
+	SET_CUR_EBUF_STATE(buf_MODE, (flags & WRP1) ? buf_MODE_RO : 0);
 	memcpy__(&(get_epc_buf()->orig_file_stat), &st, sizeof(st));
 
-	ret = load_file_into_cur_buf__(full_path, 1, msg_on_err);
+	ret = load_file_into_cur_buf__(full_path, flags & MOE1);
 
 	if (ret < 0) {
 		free_cur_edit_buf();
@@ -130,7 +135,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int open_on_err, int
 	return ret;		// >= 0: loaded(lines)
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int backup_and_save_cur_buf_ask(void)
 {
 	char file_path[MAX_PATH_LEN+1];
@@ -148,12 +153,10 @@ int backup_and_save_cur_buf_ask(void)
 		ret = ask_yes_no(ASK_YES_NO,
 		 _("File has modified by another program, OVERWRITE ?"));
 		if (ret < 0) {
-			disp_status_bar_done(_("Cancelled"));
 			return -1;
 		}
 	}
 	if (is_strlen_0(file_path) || file_path[0] == '#') {
-		disp_status_bar_done(_("Cancelled"));
 		return -1;
 	}
 	if ((ret = backup_and_save_cur_buf(file_path)) < 0) {
@@ -166,17 +169,25 @@ int backup_and_save_cur_buf_ask(void)
 int input_new_file_name__ask(char *file_path)
 {
 	for ( ; ; ) {
-		if (input_string_pos(file_path, file_path, MAX_PATH_LEN,
+		if (chk_inp_str_ret_val_editor(input_string_pos(file_path, file_path, MAX_PATH_LEN,
 		 HISTORY_TYPE_IDX_DIR,
-		 _("File Name to Write:"))
-		 <= EF_EXECUTED) {
+		 _("File Name to Write:")))) {
 			return 0;
 		}
 		if (is_path_exist(file_path)) {
-			int ret;
 			if (is_path_regular_file(file_path) > 0) {
+				char full_path[MAX_PATH_LEN+1];
+				get_abs_path(file_path, full_path);
+				if (flock_is_locked(full_path)) {
+					int ret = ask_yes_no(ASK_YES_NO,
+					 _("File is locked, can not WRITE it"));
+					if (ret < 0) {
+						return 0;		// cancelled
+					}
+					continue;
+				}
 				// ask overwrite
-				ret = ask_yes_no(ASK_YES_NO,
+				int ret = ask_yes_no(ASK_YES_NO,
 				 _("File exists, OVERWRITE it ?"));
 				if (ret < 0) {
 					return 0;		// cancelled
@@ -186,7 +197,7 @@ int input_new_file_name__ask(char *file_path)
 				}
 			} else {
 				// ask non regular file
-				ret = ask_yes_no(ASK_YES_NO,
+				int ret = ask_yes_no(ASK_YES_NO,
 				 _("Path is not file, can not WRITE it"));
 				if (ret < 0) {
 					return 0;		// cancelled
@@ -199,7 +210,7 @@ int input_new_file_name__ask(char *file_path)
 	return 1;		// input
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int backup_and_save_cur_buf(const char *file_path_to)
 {
@@ -268,20 +279,20 @@ PRIVATE char *make_backup_file_path(const char *orig_path, char *backup_path, in
 	return backup_path;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int load_file_into_buf(be_buf_t *buf, const char *full_path)
 {
 	be_buf_t *buf_save = get_epc_buf();
 	set_epc_buf(buf);
 
-	int ret = load_file_into_cur_buf__(full_path, 1, 0);
+	int ret = load_file_into_cur_buf__(full_path, 0);
 
 	set_epc_buf(buf_save);
 	return ret;		// >= 0: success
 }
 
-PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_bin_file, int msg_on_err)
+PRIVATE int load_file_into_cur_buf__(const char *full_path, int flags)
 {
 #ifdef USE_NKF
 	const char *nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
@@ -292,12 +303,9 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_bin_file, i
 		if (CUR_EBUF_STATE(buf_ENCODE) == ENCODE_ASCII) {
 			// encoding is not specified on command line
 			guess_encoding_by_nkf(full_path);
-			if ((CUR_EBUF_STATE(buf_ENCODE) == ENCODE_BINARY) && (load_bin_file == 0)) {
-				if (msg_on_err) {
-					disp_status_bar_err(_("BINARY file !! [%s]"),
-					 shrink_str_to_scr_static(full_path));
-				}
-				return -1;		// do not load binary file
+			if (CUR_EBUF_STATE(buf_ENCODE) == ENCODE_BINARY) {
+				disp_status_bar_warn(_("BINARY file !! [%s]"),
+				 shrink_str_to_scr_static(full_path));
 			}
 		}
 		switch (CUR_EBUF_STATE(buf_ENCODE)) {
@@ -348,7 +356,7 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int load_bin_file, i
 	}
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int save_buf_to_file(be_buf_t *buf, const char *file_path)
 {
@@ -420,7 +428,7 @@ int save_cur_buf_to_file(const char *file_path)
 	}
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef USE_NKF
 PRIVATE int guess_encoding_by_nkf(const char *full_path)
@@ -734,7 +742,7 @@ PRIVATE int fgetc_buffered(FILE *fp)
 	return chr;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef USE_NKF
 PRIVATE int save_cur_buf_to_file_nkf(const char *file_path, const char *nkf_options)
@@ -854,7 +862,7 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 	return lines_written;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 PRIVATE int cnt_files_loaded = -1;	// -1: no file switched/loaded, 0: switched, 1--: loaded
 void clear_files_loaded(void)
 {

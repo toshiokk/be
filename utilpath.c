@@ -62,7 +62,7 @@ flf_d_printf("dir: [%s]\n", dir);
 	normalize_full_path(dir);
 flf_d_printf("dir: [%s]\n", dir);
 	if (is_dir_readable(dir) == 0) {
-		// We can't open this dir for some reason. Complain.
+		// We can't open this dir for some reason.
 		return 0;	// Error
 	}
 	strlcpy__(prev_path, cur_path, MAX_PATH_LEN);
@@ -496,7 +496,7 @@ char *cat_dir_and_file(char *buf, const char *dir, const char *file)
 	return buf;
 }
 
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // NOTE: Meaning of file_name, file_path, full_path, normalized_path and abs_path(real_path)
 //  file_name          : e.g. "filename.ext"
 //						 not contain directory
@@ -517,7 +517,7 @@ char *cat_dir_and_file(char *buf, const char *dir, const char *file)
 //       recall_file_pos() shall open file path as it is
 //       goto_file_pos() shall open file path as it is
 
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 // /dir1/.  ==> /dir1/
 // /dir1/.. ==> /
@@ -591,7 +591,7 @@ PRIVATE char *normalize_full_path__(char *full_path, char *parent, char *child)
 	return child;
 }
 
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 // get absolute path (not include symlinks)
 char *get_abs_path(const char *path, char *buf)
@@ -687,6 +687,25 @@ int readlink__(const char *path, char *buffer, int len)
 BOOL is_abs_path(const char *path)
 {
 	return path[0] == '/';
+}
+
+//------------------------------------------------------------------------------
+int write_text_to_file(const char *file_path, char append, const char *text)
+{
+	FILE *fp;
+	if ((fp = fopen(file_path, append ? "a" : "w")) != NULL) {
+		fputs(text, fp);
+		if (fclose(fp) != 0) {
+			return -1;
+		}
+		return 0;
+	}
+	return -1;
+}
+
+int remove_file(const char* file_path)
+{
+	return remove(file_path);
 }
 
 // tests ==============================

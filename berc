@@ -124,7 +124,7 @@ color_syntax ="\b(null|true|false|and|or|not)\b"                                
 color_syntax ="\".*\""                    +blue
 color_syntax ="'.*\'"                     +blue
 color_syntax ="//.*"                      +brown
-color_syntax <"/\*" >"\*/"                                     +brown
+color_syntax <"/\*" >"\*/"                +brown
 
 #Kotlin
 file_type "rb" "\.(kt|KT)$"
@@ -141,7 +141,7 @@ color_syntax ="\b(null|true|false|and|or|not)\b"                         +red
 color_syntax ="//.*"                      +brown
 color_syntax ="\".*\""                    +blue
 color_syntax ="'.*\'"                     +blue
-color_syntax <"/\*" >"\*/"                                     +brown
+color_syntax <"/\*" >"\*/"                +brown
 
 # asm files
 file_type "ASM" "\.(asm|ASM|s|S)$"

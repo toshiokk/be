@@ -37,7 +37,7 @@ extern editor_panes_t *cur_editor_panes;	// Current Editor Panes
 // `filer_views`
 // - two directory views referenced from each pane.
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 enum BUFS_IDX {
 	BUFS_IDX_EDIT,		// 0
@@ -89,6 +89,8 @@ extern be_bufs_t edit_buffers;
 #define BUFVX_MIN_TEXT_X_TO_KEEP(buf, idx)	BUFV_MIN_TEXT_X_TO_KEEP(BUF_VX((buf), (idx)))
 #define BUFV0_CL(buf)						BUFVX_CL((buf), 0)
 #define BUFV1_CL(buf)						BUFVX_CL((buf), 1)
+#define BUFV0_CLBI(buf)						BUFVX_CLBI((buf), 0)
+#define BUFV1_CLBI(buf)						BUFVX_CLBI((buf), 1)
 
 #define EPCBVC_CL							BUFV_CL(get_epc_buf_view())
 #define EPCBVC_CLBI							BUFV_CLBI(get_epc_buf_view())
@@ -111,8 +113,8 @@ extern be_bufs_t cut_buffers;
 #define CUT_BUFS_BOT_ANCH		NODES_BOT_ANCH(&cut_buffers)
 // current cut buffer ---------------------------------------------------------
 #define TOP_BUF_OF_CUT_BUFS		CUT_BUFS_TOP_NODE
-#define CUR_CUT_BUFS_TOP_NODE	NODES_TOP_NODE(CUT_BUFS_TOP_NODE)
-#define CUR_CUT_BUFS_BOT_ANCH	NODES_BOT_ANCH(CUT_BUFS_TOP_NODE)
+#define CUR_CUT_BUF_TOP_LINE	NODES_TOP_NODE(CUT_BUFS_TOP_NODE)	// (be_line_t*)
+#define CUR_CUT_BUF_BOT_ANCH	NODES_BOT_ANCH(CUT_BUFS_TOP_NODE)	// (be_line_t*)
 
 #ifdef ENABLE_HISTORY
 // History buffers ------------------------------------------------------------
@@ -154,13 +156,16 @@ void free_all_buffers(void);
 int free_cur_edit_buf(void);
 int free_edit_buf(be_buf_t *edit_buf);
 
+void lock_epc_buf_if_already_locked(BOOL lock_buffer_if_already_locked);
+void unlock_epc_buf_if_locked_by_myself();
+
 void buf_avoid_wild_ptr_cur(be_buf_t *buf);
 void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr);
 
 void line_avoid_wild_ptr_cur(be_line_t *line);
 void line_avoid_wild_ptr(be_line_t **line_ptr, be_line_t *line);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void set_cur_editor_panes(editor_panes_t *editor_panes);
 void init_cur_editor_panes(editor_panes_t *eps, be_buf_t *buf);
@@ -176,10 +181,16 @@ be_buf_t *get_epx_buf(int pane_idx);
 
 be_bufs_t *set_cur_buf_to_bufs(be_buf_t *buf);
 
-void set_editor_app_mode_on_cur_buf_mode();
-int is_epc_buf_view_mode(void);
+int is_epc_buf_modifiable();
+int is_epc_buf_saveable();
 
-//-----------------------------------------------------------------------------
+int is_epc_buf_ro_file();
+int is_epc_buf_view_mode();
+int is_epc_buf_locked();
+
+const char* get_epc_buf_view_mode();
+
+//------------------------------------------------------------------------------
 // Some compiler needs "inline static" for inline functions
 
 #ifdef ENABLE_DEBUG
@@ -189,7 +200,7 @@ void dump_buf_views(be_buf_t *buf);
 void dump_buf_view_x(be_buf_t *buf, int pane_idx);
 #endif // ENABLE_DEBUG
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 be_buf_t *get_edit_buf_by_file_path(const char *abs_path);
 be_buf_t *get_edit_buf_by_file_name(const char *file_name);
@@ -202,14 +213,16 @@ int edit_bufs_count_bufs(void);
 int epc_buf_count_bufs(void);
 int is_epc_buf_valid(void);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-void free_all_cut_bufs(void);
 be_buf_t *push_cut_buf(void);
 int pop__free_from_cut_buf(void);
 be_line_t *append_string_to_cur_cut_buf(const char *string);
 int count_cut_bufs(void);
 int count_cur_cut_buf_lines(void);
+void free_all_cut_bufs(void);
+
+//------------------------------------------------------------------------------
 
 void renumber_cur_buf_from_top(void);
 be_line_t *get_line_ptr_in_cur_buf_by_line_num(int line_num);
@@ -220,7 +233,7 @@ int check_cur_buf_modified(void);
 void set_cur_buf_modified(void);
 int is_any_edit_buf_modified(void);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #define BUF_STATE(buf, var)					(&(buf)->buf_state)->var
 #define SET_BUF_STATE(buf, var, val)		(BUF_STATE(buf, var) = val)
@@ -240,7 +253,7 @@ int is_any_edit_buf_modified(void);
 #define CUR_CBUF_STATE(var)					BUF_STATE(TOP_BUF_OF_CUT_BUFS, var)
 #define SET_CUR_CBUF_STATE(var, val)		SET_BUF_STATE(TOP_BUF_OF_CUT_BUFS, var, val)
 
-int tog_buf_view_mode(void);
+int inc_buf_view_mode(void);
 const char *get_str_buf_view_mode(void);
 
 int tog_line_wrap_mode(void);
@@ -285,7 +298,7 @@ const char *get_str_buf_enc_binary(void);
 int set_buf_encode(int encode);
 const char *get_str_buf_encode(void);
 
-int doe_tog_buf_view_mode(void);
+int doe_inc_buf_view_mode(void);
 int doe_tog_buf_line_wrap_mode(void);
 int doe_tog_buf_tab_size(void);
 int doe_inc_buf_tab_size(void);
@@ -302,7 +315,7 @@ int doe_set_buf_enc_jis(void);
 #endif // USE_NKF
 int doe_set_buf_enc_binary(void);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
 void dump_cur_edit_buf_lines(void);

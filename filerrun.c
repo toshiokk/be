@@ -30,7 +30,7 @@ PRIVATE int fork_exec_before_after(int set_term, int separate_bef_exec, int logg
 
 PRIVATE int dof_run_command_(int mode);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #define STR_TO_BE_REPLACED_WITH_FILE_NAME		"{}"
 #define STR_TO_BE_REPLACED_WITH_FILE_NAME_LEN	strlen(STR_TO_BE_REPLACED_WITH_FILE_NAME)
@@ -132,7 +132,7 @@ int dof_run_command_src_dst(void)
 {
 	return dof_run_command_(5);
 }
-int dof_run_command_sh(void)
+int dof_run_command_symlink(void)
 {
 	return dof_run_command_(4);
 }
@@ -181,9 +181,11 @@ PRIVATE int dof_run_command_(int mode)
 		 quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
 		break;
 	case 4:
-		expl = _("Run (script by shell)");
-		snprintf_(command_str, MAX_PATH_LEN+1, "sh %s",
-		 quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
+		expl = _("Run (symlink)");
+		snprintf_(command_str, MAX_PATH_LEN+1, "%s",
+		 (get_cur_fv_cur_file_ptr()->symlink != NULL)
+		  ? quote_file_path_static(get_cur_fv_cur_file_ptr()->symlink)
+		  : quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
 		break;
 	case 5:
 		expl = _("Run (with SRC-path and DEST-path)");
@@ -235,7 +237,7 @@ PRIVATE int dof_run_command_(int mode)
 flf_d_printf("command_str [%s]\n", command_str);
 	fork_exec_sh_c_once(logging, PAUSE1, command_str);
 
-	if (is_app_list_mode()) {
+	if (is_app_chooser_mode()) {
 		filer_do_next = EF_EXECUTED;
 	} else {
 		filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
@@ -243,7 +245,7 @@ flf_d_printf("command_str [%s]\n", command_str);
 	return 0;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void begin_fork_exec_repeat(void)
 {
 	restore_term_for_shell();
@@ -256,7 +258,7 @@ void end_fork_exec_repeat(int exit_status)
 	reinit_term_for_filer();
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE int args_from_va_list(char **args, va_list ap);
 PRIVATE int fork_exec_args(int set_term, int separate_bef_exec, int pause_aft_exec,
@@ -337,7 +339,7 @@ PRIVATE const char *exec_args_to_str(char * const *args)
 
 #endif // ENABLE_FILER
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #define UP_SYS_CLIPBOARD_CMD	"update-system-clipboard.sh"
 int send_to_system_clipboard()
@@ -349,7 +351,7 @@ int send_to_system_clipboard()
 	return 0;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int fork_exec_sh_c(int set_term, int separate_bef_exec, int logging, int pause_aft_exec,
  const char *command)
@@ -362,7 +364,6 @@ int fork_exec_sh_c(int set_term, int separate_bef_exec, int logging, int pause_a
 	}
 	// sh -c "command ..."
 #define SH_PROG			"sh"
-/////#define TEE_PROG		"tee"
 #define TEE_PROG_APPEND	"tee -a"
 	args[0] = SH_PROG;
 	args[1] = "-c";
@@ -469,7 +470,7 @@ void pause_after_exec(int exit_status)
 	printf("\n");
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int restore_term_for_shell(void)
 {
 	tio_fill_screen(0);
@@ -485,7 +486,7 @@ int reinit_term_for_filer(void)
 	tio_fill_screen(0);
 	return 0;
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const char *get_exec_log_file_path()
 {
 	// /dev/tty1 => "tty1.log", /dev/pts/1 => "1.log"

@@ -37,6 +37,62 @@ typedef struct be_buf_view_t {
 	int min_text_x_to_keep;		// text X to be displayed on the left edge of the screen
 } be_buf_view_t;
 
+//------------------------------------------------------------------------------
+
+typedef struct /*buf_state*/ {
+	unsigned char buf_MODE:2;				// bit 0,1
+#define buf_MODE_EDIT		0		// Normal buffer (modifiable)
+#define buf_MODE_LIST		1		// List
+#define buf_MODE_RO			2		// Read Only
+#define buf_MODE_ANCH		3		// this is not a node but an anchor
+	unsigned char buf_IS_LOCKED:1;			// bit 2
+	unsigned char buf_MODIFIED:1;			// bit 3
+	unsigned char buf_LINE_WRAP_MODE:1;		// bit 4
+#if 0 // 0
+#define HV_IS_BOX_VH_IS_CHAR
+#else
+#define HV_IS_LINE_VH_IS_BOX
+#endif
+
+#define CUT_MODE_0_LINE			0	// no mark                                    (one line cut)
+#define CUT_MODE_N_LINE			1	// marking started but cursor not moved           (line cut)
+#define CUT_MODE_H_CHAR			2	//  and cursor moved horizontally                 (char cut)
+#define CUT_MODE_HV_LINE		3	//  and cursor moved horizontally then vertically (line cut)
+#define CUT_MODE_HV_BOX			4	//  and cursor moved horizontally then vertically (box cut)
+#define CUT_MODE_V_LINE			5	//  and cursor moved vertically                   (line cut)
+#define CUT_MODE_VH_CHAR		6	//  and cursor moved vertically then horizontally (char cut)
+#define CUT_MODE_VH_BOX			7	//  and cursor moved vertically then horizontally (box cut)
+#define IS_MARK_SET(cut_mode)	((cut_mode) != CUT_MODE_0_LINE)
+	unsigned char buf_CUT_MODE:3;			// bit 5-7
+#define TAB_SIZE_MIN			1
+#define TAB_SIZE_0				0	// DEFAULT_TAB_SIZE
+#define TAB_SIZE_1				1
+#define TAB_SIZE_2				2
+#define TAB_SIZE_3				3
+#define TAB_SIZE_4				4
+#define TAB_SIZE_5				5
+#define TAB_SIZE_6				6
+#define TAB_SIZE_7				7
+#define TAB_SIZE_8				8
+#define TAB_SIZE_MAX			TAB_SIZE_8
+	unsigned char buf_TAB_SIZE:4;			// bit 8-11
+#define EOL_NIX					0
+#define EOL_MAC					1
+#define EOL_DOS					2
+#define EOL_MAX					EOL_DOS
+	unsigned char buf_EOL:2;				// bit 12-13
+#define ENCODE_ASCII			0
+#define ENCODE_UTF8				1
+#ifdef USE_NKF
+#define ENCODE_EUCJP			2
+#define ENCODE_SJIS				3
+#define ENCODE_JIS				4
+#endif // USE_NKF
+#define ENCODE_BINARY			5
+#define ENCODE_MAX				ENCODE_BINARY
+	unsigned char buf_ENCODE:3;				// bit 14--16
+} buf_state_t;
+
 #define EDITOR_PANES		MAX_APP_PANES_2
 
 //! buffer, collection of lines
@@ -72,8 +128,6 @@ typedef struct be_bufs_t {
 
 //! bufferss, collection of bufferss
 typedef struct be_bufss_t {
-///	struct be_bufss_t *prev;		//!< Previous be_bufss_t
-///	struct be_bufss_t *next;		//!< Next     be_bufss_t
 	char name[MAX_NAME_LEN+1];	//! name
 	be_bufs_t top_anchor;		//!< top    buffer
 	be_bufs_t bot_anchor;		//!< bottom buffer
@@ -145,7 +199,7 @@ int buf_renumber_from_top(be_buf_t *buf);
 int buf_renumber_from_line(be_buf_t *buf, be_line_t *line);
 int buf_guess_tab_size(be_buf_t *buf);
 
-int buf_count_lines(be_buf_t *buf);
+int buf_count_lines(be_buf_t *buf, int max_lines);
 int buf_is_orig_file_updated(be_buf_t *buf);
 
 const char *buf_mode_str(be_buf_t *buf);
@@ -153,9 +207,9 @@ const char *buf_eol_str(be_buf_t *buf);
 const char *buf_enc_str(be_buf_t *buf);
 const char *buf_cut_mode_str(be_buf_t *buf);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+void buf_fix_cur_line(be_buf_t *buf);
 be_line_t *buf_set_cur_line(be_buf_t *buf, be_line_t *line);
-be_line_t *buf_cur_line(be_buf_t *buf);
 be_line_t *buf_move_cur_line_to_prev(be_buf_t *buf);
 be_line_t *buf_move_cur_line_to_next(be_buf_t *buf);
 
@@ -169,11 +223,13 @@ int buf_count_bufs(be_buf_t *buf);
 be_buf_t *buf_make_buf_intermediate(be_buf_t *buf);
 be_buf_t *buf_get_another_buf(be_buf_t *buf);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 be_bufs_t *bufs_init(be_bufs_t *bufs, const char* name,
  const char* name_top, const char* name_bottom);
 void bufs_init_anchors(be_bufs_t *bufs, const char *full_path_top, const char *full_path_bot);
 void bufs_link(be_bufs_t *top_anchor, be_bufs_t *bot_anchor);
+void bufs_set_cur_buf(be_bufs_t* bufs, be_buf_t* buf);
+void bufs_insert_buf_to_top(be_bufs_t *bufs, be_buf_t *buf);
 void bufs_insert_buf_to_bottom(be_bufs_t *bufs, be_buf_t *buf);
 void bufs_insert_before(be_bufs_t *bufs, be_bufs_t *other);
 void bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next);
@@ -182,7 +238,7 @@ be_bufs_t *bufs_get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf);
 void bufs_fix_cur_buf(be_bufs_t *bufs);
 int bufs_count_bufs(be_bufs_t *bufs);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 be_buf_t *buf_get_buf_by_idx(be_buf_t *buf, int buf_idx);
 int buf_get_buf_idx(be_buf_t *buf);
 int buf_get_buf_idx_in_bufs(be_bufs_t *bufs, be_buf_t *buf);
@@ -192,14 +248,14 @@ be_buf_t *buf_get_buf_by_file_name(be_buf_t *buf, const char *file_name);
 
 void bufs_renumber_all_bufs_from_top(be_bufs_t *bufs);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void bufss_init(be_bufss_t *bufss, const char *name,
  const char *name_top, const char *name_bottom);
 void bufss_insert_bufs_to_bottom(be_bufss_t *bufss, be_bufs_t *bufs);
 
 int bufs_get_bufs_idx_in_bufss(be_bufs_t *bufs, be_buf_t *buf);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 be_line_t *buf_check_line_in_buf(be_buf_t *buf, be_line_t *line_);
 be_line_t *buf_check_line_in_buf_anchs(be_buf_t *buf, be_line_t *line_);

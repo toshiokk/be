@@ -89,6 +89,7 @@ void free_all_buffers(void)
 // the next or previous buffer will be set to current
 int free_cur_edit_buf(void)
 {
+	unlock_epc_buf_if_locked_by_myself();
 	return free_edit_buf(get_epc_buf());
 }
 int free_edit_buf(be_buf_t *edit_buf)
@@ -112,7 +113,38 @@ int free_edit_buf(be_buf_t *edit_buf)
 	buf_unlink_free(edit_buf);
 	return ret;		// 0: no buffer remains
 }
-//-----------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void lock_epc_buf_if_already_locked(BOOL lock_buffer_if_already_locked)
+{
+	if (flock_lock(get_epc_buf()->abs_path_) == 0) {
+		// file has successfully locked: this is the 1st load
+	} else {
+		// already file has been locked: lock this buffer
+		if (lock_buffer_if_already_locked) {
+			SET_CUR_EBUF_STATE(buf_IS_LOCKED, 1);
+		}
+	}
+}
+void unlock_epc_buf_if_locked_by_myself()
+{
+	if (is_epc_buf_locked() == 0) {
+		// this buffer has NOT been locked:
+		// - this file has been locked by myself
+		// - unlock by myself
+		if (flock_unlock(get_epc_buf()->abs_path_) == 0) {
+			// successfully unlocked
+		} else {
+			// already unlocked by another instance: ERROR
+			_WARNING_
+		}
+	} else {
+		// this file has been locked by another instance:
+		// - nothing to do
+	}
+}
+
+//------------------------------------------------------------------------------
 
 // 4 line pointers are referenced from one editor_panes
 //	cur_editor_panes->bufs[0]->buf_views[0]
@@ -137,7 +169,7 @@ void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr)
 		}
 	}
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void line_avoid_wild_ptr_cur(be_line_t *line)
 {
 	// avoid EPCBVX_CL(0) becoming wild-pointer
@@ -156,7 +188,7 @@ void line_avoid_wild_ptr(be_line_t **line_ptr, be_line_t *line)
 		}
 	}
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Editor view management
 
 void set_cur_editor_panes(editor_panes_t *editor_panes)
@@ -178,9 +210,7 @@ void init_cur_editor_panes(editor_panes_t *eps, be_buf_t *buf)
 		copy_editor_panes(cur_editor_panes, prev_eps);
 	}
 	if (buf) {
-///		for (int pane_idx = 0; pane_idx < EDITOR_PANES; pane_idx++) {
-			set_epx_buf(-1, buf);	// set only to the current pane
-///		}
+		set_epx_buf(-1, buf);	// set only to the current pane
 	}
 }
 void destroy_editor_panes()
@@ -214,6 +244,7 @@ void set_epx_buf(int pane_idx, be_buf_t *buf)
 _D_(buf_dump_name(buf))
 		cur_editor_panes->bufs[pane_idx] = buf;
 	}
+	buf_fix_cur_line(buf);
 }
 
 be_buf_t *get_epx_buf(int pane_idx)
@@ -234,39 +265,63 @@ be_bufs_t *set_cur_buf_to_bufs(be_buf_t *buf)
 	return bufs;
 }
 
-void set_editor_app_mode_on_cur_buf_mode()
+// read-only : file itself has no write permission
+// view-mode : buffer is not writable to file even modifiable
+// locked    : buffer is not writable because other program open it
+
+// |read-only|view-mode|locked||modifiable|saveable|
+// |---------|---------|------||----------|--------|
+// |    0    |    0    |   0  ||    1     |    1   |
+// |    1    |    0    |   0  ||    0     |    0   |
+// |    0    |    1    |   0  ||    0     |    0   |
+// |    0    |    0    |   1  ||    0     |    0   |
+
+int is_epc_buf_modifiable()
 {
-	// select editor-app-mode depending on the mode of current buffer
-	switch (CUR_EBUF_STATE(buf_MODE)) {
-	default:
-	case buf_MODE_EDIT:
-		SET_APPMD_VAL(app_LIST_MODE, APP_MODE_NORMAL);		break;
-	case buf_MODE_VIEW:
-		SET_APPMD_VAL(app_LIST_MODE, APP_MODE_VIEWER);		break;
-	case buf_MODE_ANCH:
-	case buf_MODE_LIST:
-		SET_APPMD_VAL(app_LIST_MODE, APP_MODE_LIST);		break;
-	}
+	return is_epc_buf_saveable();	// not saveable buffer shall be not modifiable
 }
-int is_epc_buf_view_mode(void)
+int is_epc_buf_saveable()
+{
+	return (is_epc_buf_ro_file() == 0)
+	 && (is_epc_buf_view_mode() == 0)
+	 && (is_epc_buf_locked() == 0)
+	;
+}
+
+int is_epc_buf_ro_file()
+{
+	return is_st_writable(&get_epc_buf()->orig_file_stat) == 0;
+}
+int is_epc_buf_view_mode()
 {
 	// avoid crash on the modification
 	if (IS_NODES_EMPTY(get_epc_buf())) {
 		return 1;
 	}
-
 	switch (CUR_EBUF_STATE(buf_MODE)) {
 	default:
 	case buf_MODE_EDIT:
 		return 0;		// modifiable
-	case buf_MODE_VIEW:
 	case buf_MODE_LIST:
+	case buf_MODE_RO:
 	case buf_MODE_ANCH:
 		return 1;		// view only
 	}
 }
+int is_epc_buf_locked()
+{
+	return CUR_EBUF_STATE(buf_IS_LOCKED);
+}
 
-//-----------------------------------------------------------------------------
+const char* get_epc_buf_view_mode()
+{
+	if (IS_NODES_EMPTY(get_epc_buf())) {
+		return "[EMPTY]";
+	}
+	return buf_mode_str(get_epc_buf());
+}
+
+//------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 void dump_editor_panes(editor_panes_t *eps)
 {
@@ -308,7 +363,7 @@ void dump_buf_view_x(be_buf_t *buf, int pane_idx)
 }
 #endif // ENABLE_DEBUG
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 be_buf_t *get_edit_buf_by_file_path(const char *abs_path)
 {
@@ -319,7 +374,7 @@ be_buf_t *get_edit_buf_by_file_name(const char *file_name)
 	return buf_get_buf_by_file_name(EDIT_BUFS_TOP_NODE, file_name);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // create new be_buf_t
 void create_edit_buf(const char *full_path)
 {
@@ -340,7 +395,7 @@ void create_edit_buf(const char *full_path)
 	}
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Append a new line to the bottom of the current buffer
 be_line_t *append_string_to_cur_edit_buf(const char *string)
 {
@@ -375,12 +430,6 @@ int is_epc_buf_valid(void)
 
 // Cut-buffers manipulation routines -----------------------------------------
 
-void free_all_cut_bufs(void)
-{
-	while (IS_NODE_INT(TOP_BUF_OF_CUT_BUFS)) {
-		pop__free_from_cut_buf();
-	}
-}
 be_buf_t *push_cut_buf(void)
 {
 	be_buf_t *buf;
@@ -388,9 +437,10 @@ be_buf_t *push_cut_buf(void)
 
 	snprintf(buf_name, MAX_PATH_LEN, "#cut-buffer-%02d", count_cut_bufs());
 	buf = buf_create_node(buf_name);
-	buf_insert_after(CUT_BUFS_TOP_ANCH, buf);
+	bufs_insert_buf_to_top(&cut_buffers, buf);
 	// copy cut-mode to cut-buffer
 	SET_CUR_CBUF_STATE(buf_CUT_MODE, CUR_EBUF_STATE(buf_CUT_MODE));
+	SET_CUR_CBUF_STATE(buf_MODE, buf_MODE_LIST);
 	return buf;
 }
 int pop__free_from_cut_buf(void)
@@ -402,7 +452,7 @@ int pop__free_from_cut_buf(void)
 }
 be_line_t *append_string_to_cur_cut_buf(const char *string)
 {
-	return line_insert_with_string(CUR_CUT_BUFS_BOT_ANCH, INSERT_BEFORE, string);
+	return line_insert_with_string(CUR_CUT_BUF_BOT_ANCH, INSERT_BEFORE, string);
 }
 int count_cut_bufs(void)
 {
@@ -410,10 +460,16 @@ int count_cut_bufs(void)
 }
 int count_cur_cut_buf_lines(void)
 {
-	return buf_count_lines(TOP_BUF_OF_CUT_BUFS);
+	return buf_count_lines(TOP_BUF_OF_CUT_BUFS, MAX_LINES_LOADABLE);
+}
+void free_all_cut_bufs(void)
+{
+	while (IS_NODE_INT(TOP_BUF_OF_CUT_BUFS)) {
+		pop__free_from_cut_buf();
+	}
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void renumber_cur_buf_from_top(void)
 {
@@ -425,7 +481,7 @@ be_line_t *get_line_ptr_in_cur_buf_by_line_num(int line_num)
 	return buf_get_line_ptr_from_line_num(get_epc_buf(), line_num);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void update_cur_buf_crc(void)
 {
@@ -464,11 +520,11 @@ int is_any_edit_buf_modified(void)
 	return 0;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-int tog_buf_view_mode(void)
+int inc_buf_view_mode(void)
 {
-	INC_CUR_EBUF_STATE(buf_MODE, buf_MODE_EDIT, buf_MODE_LIST);
+	INC_CUR_EBUF_STATE(buf_MODE, buf_MODE_EDIT, buf_MODE_ANCH);
 	return 0;
 }
 const char *get_str_buf_view_mode(void)
@@ -525,7 +581,7 @@ int set_buf_nix_file(void)
 }
 const char *get_str_buf_nix_file(void)
 {
-	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_EOL, EOL_NIX));
+	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_EOL, EOL_NIX));
 }
 int set_buf_mac_file(void)
 {
@@ -534,7 +590,7 @@ int set_buf_mac_file(void)
 }
 const char *get_str_buf_mac_file(void)
 {
-	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_EOL, EOL_MAC));
+	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_EOL, EOL_MAC));
 }
 int set_buf_dos_file(void)
 {
@@ -543,7 +599,7 @@ int set_buf_dos_file(void)
 }
 const char *get_str_buf_dos_file(void)
 {
-	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_EOL, EOL_DOS));
+	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_EOL, EOL_DOS));
 }
 int set_buf_eol(int eol)
 {
@@ -562,7 +618,7 @@ int set_buf_enc_ascii(void)
 }
 const char *get_str_buf_enc_ascii(void)
 {
-	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_ASCII));
+	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_ASCII));
 }
 int set_buf_enc_utf8(void)
 {
@@ -571,7 +627,7 @@ int set_buf_enc_utf8(void)
 }
 const char *get_str_buf_enc_utf8(void)
 {
-	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_UTF8));
+	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_UTF8));
 }
 #ifdef USE_NKF
 int set_buf_enc_eucjp(void)
@@ -581,7 +637,7 @@ int set_buf_enc_eucjp(void)
 }
 const char *get_str_buf_enc_eucjp(void)
 {
-	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_EUCJP));
+	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_EUCJP));
 }
 int set_buf_enc_sjis(void)
 {
@@ -590,7 +646,7 @@ int set_buf_enc_sjis(void)
 }
 const char *get_str_buf_enc_sjis(void)
 {
-	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_SJIS));
+	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_SJIS));
 }
 int set_buf_enc_jis(void)
 {
@@ -599,7 +655,7 @@ int set_buf_enc_jis(void)
 }
 const char *get_str_buf_enc_jis(void)
 {
-	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_JIS));
+	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_JIS));
 }
 #endif // USE_NKF
 int set_buf_enc_binary(void)
@@ -609,7 +665,7 @@ int set_buf_enc_binary(void)
 }
 const char *get_str_buf_enc_binary(void)
 {
-	return BOOL_TO_ON_OFF(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_BINARY));
+	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_BINARY));
 }
 
 int set_buf_encode(int encode)
@@ -622,11 +678,11 @@ const char *get_str_buf_encode(void)
 	return buf_enc_str(get_epc_buf());
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-int doe_tog_buf_view_mode(void)
+int doe_inc_buf_view_mode(void)
 {
-	tog_buf_view_mode();
+	inc_buf_view_mode();
 	SHOW_MODE("View mode", get_str_buf_view_mode());
 	return 0;
 }
@@ -671,7 +727,7 @@ int doe_set_buf_dos_file(void)
 	SHOW_MODE("File format", get_str_buf_eol());
 	return 0;
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int doe_set_buf_enc_ascii(void)
 {
 	set_buf_enc_ascii();
@@ -711,7 +767,7 @@ int doe_set_buf_enc_binary(void)
 	return 0;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
 void dump_cur_edit_buf_lines(void)

@@ -33,7 +33,7 @@ int delete_do_buf(be_buf_t *edit_buf, be_buf_t *do_buf);
 int count_undo_bufs(void);
 int count_redo_bufs(void);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
 extern char prev_func_id[MAX_PATH_LEN+1];
@@ -41,7 +41,7 @@ void memorize_undo_state_before_change(const char *func_id);
 void check_undo_state_after_change(void);
 #endif // ENABLE_DEBUG
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void undo_set_region__save_before_change(be_line_t *min_line, be_line_t *max_line,
  int cut_buf_lines);
@@ -49,7 +49,7 @@ void undo_save_after_change(void);
 int doe_undo(void);
 int doe_redo(void);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
 void dump_undo_bufs_lines(void);

@@ -115,6 +115,8 @@ flf_d_printf("load_key_macro()\n");
 	load_key_macro(1);
 #endif // ENABLE_HISTORY
 
+	load_cut_buffers();
+
 #ifdef START_UP_TEST
 	start_up_test2();
 #endif // START_UP_TEST
@@ -141,7 +143,8 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 		for ( ; optind < argc; optind++) {
 flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 			// CURDIR: changed in editor
-			if (load_file_name_upp_low_(argv[optind], TUL0, OOE1, MOE0, LFH0, RECURSIVE1) <= 0) {
+			if (load_file_name_upp_low_(argv[optind],
+			 TUL0 | OOE1 | MOE0 | LFH0 | WRP0 | FOL0 | RECURS1) <= 0) {
 				tio_beep();
 			}
 			tio_refresh();
@@ -163,7 +166,9 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 		disp_files_loaded_if_ge_0();
 	}
 
+	//--------------
 	app_main_loop();
+	//--------------
 
 #ifdef ENABLE_HELP
 	disp_splash(-1);
@@ -175,6 +180,8 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	set_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
 	tio_fill_screen(0);
 	tio_destroy();
+
+	save_cut_buffers();
 
 	write_cur_dir_to_exit_file();
 
@@ -194,8 +201,8 @@ flf_d_printf("Exit %s ===============================\n", APP_NAME " " __DATE__ 
 	return 0;
 }
 
-// call_editor() : pass a edit-buffer and edit or browse it.
-// call_filer()  : pass a directory and manage or browse it.
+// do_call_editor() : pass a edit-buffer and edit or browse it.
+// do_call_filer()  : pass a directory and manage or browse it.
 void app_main_loop(void)
 {
 	clear_app_win_stack_depth();
@@ -205,32 +212,32 @@ void app_main_loop(void)
 		doe_open_file();
 	}
 	while (edit_bufs_count_bufs()) {
-		call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
+		do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
 	}
 #else // ENABLE_FILER
 	if (edit_bufs_count_bufs()) {
 		// application was started as a EDITOR
 		while (edit_bufs_count_bufs()) {
-			call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
+			do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
 		}
 	} else {
 		// application was started as a FILER
 		for ( ; ; ) {
 			char file_path[MAX_PATH_LEN+1];
-			call_filer(0, APP_MODE_NORMAL, "", "", file_path, MAX_PATH_LEN);
+			do_call_filer(0, APP_MODE_NORMAL, "", "", file_path, MAX_PATH_LEN);
 			if (edit_bufs_count_bufs() == 0) {
 flf_d_printf("no edit buffers: %d\n", edit_bufs_count_bufs());
 				// no file loaded in filer
 				break;
 			}
-flf_d_printf("call_editor\n");
-			call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
+flf_d_printf("do_call_editor\n");
+			do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
 		}
 	}
 #endif // ENABLE_FILER
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE int init_locale(void)
 {
@@ -384,7 +391,7 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 			}
 			break;
 		case 'r':
-			SET_CUR_EBUF_STATE(buf_MODE, buf_MODE_VIEW);	// Set a edit-buffer not saveable
+			SET_CUR_EBUF_STATE(buf_MODE, buf_MODE_RO);	// Set a edit-buffer not saveable
 			break;
 #ifdef USE_NKF
 		case 'n':
@@ -458,7 +465,7 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 	return 0;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifdef START_UP_TEST
 PRIVATE void start_up_test(void)
 {
@@ -466,6 +473,7 @@ PRIVATE void start_up_test(void)
 	void *allocated;
 
 	flf_d_printf("{{{{---------------------------------------------------------\n");
+	test_flock();
 ///	tio_test();
 	flf_d_printf("getenv(USER): [%s]\n", getenv__("USER"));
 	flf_d_printf("getenv(HOSTNAME): [%s]\n", getenv__("HOSTNAME"));
@@ -540,6 +548,7 @@ PRIVATE void start_up_test(void)
 #endif // ENABLE_FILER
 	test_replace_str();
 
+///	test_key_code_from_to_key_name();
 	flf_d_printf("}}}}---------------------------------------------------------\n");
 }
 #endif // START_UP_TEST
@@ -562,7 +571,7 @@ PRIVATE void test_modulo()
 }
 #endif // START_UP_TEST
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE int write_cur_dir_to_exit_file(void)
 {
@@ -571,20 +580,8 @@ PRIVATE int write_cur_dir_to_exit_file(void)
 	snprintf(file_path, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), EXIT_FILE_NAME);
 	return write_text_to_file(file_path, 0, full_path_of_cur_dir_static());
 }
-int write_text_to_file(const char *file_path, char append, const char *text)
-{
-	FILE *fp;
-	if ((fp = fopen(file_path, append ? "a" : "w")) != NULL) {
-		fputs(text, fp);
-		if (fclose(fp) != 0) {
-			return -1;
-		}
-		return 0;
-	}
-	return -1;
-}
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 // Die (gracefully?)
 void app_die_on(const char *msg)
@@ -629,7 +626,7 @@ PRIVATE void die_save_file(const char *die_file_path)
 	}
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void free_all_allocated_memory(void)
 {
@@ -645,7 +642,7 @@ void free_all_allocated_memory(void)
 #endif // ENABLE_SYNTAX
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE void show_one_option(const char *shortflag, const char *longflag, const char *desc);
 void show_usage(void)
@@ -768,7 +765,7 @@ void show_version(void)
 	printf("\n");
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifdef ENABLE_HELP
 const char *splash_text_b[] = {
 //012345678901234567890123456789

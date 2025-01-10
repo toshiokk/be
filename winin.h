@@ -66,9 +66,9 @@ int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx
 #define ANSWER_BACKWARD	2	// search Backward
 #define ANSWER_YES		1	// Yes (save or replace)
 #define ANSWER_NO		0	// No (save or replace)
-#define ANSWER_CANCEL	-1	// cancel replace and not-return to beginning pos
-#define ANSWER_END		-2	// cancel replace and return to beginning pos
-#define ANSWER_NONE		-9
+#define ANSWER_NONE		-1	// Not yet answered
+#define ANSWER_CANCEL	-2	// cancel string-replacing and not-return to beginning pos
+#define ANSWER_END		-3	// cancel string-replacing and return to beginning pos
 int ask_yes_no(int flags, const char *msg, ...);
 
 void disp_key_list(const char *key_lists[]);

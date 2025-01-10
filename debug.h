@@ -42,6 +42,13 @@
 #define MY_UT_STR(actual, expected)		if (strcmp((actual), (expected))) {	\
   warning_printf("[%s] != [%s]\n", actual, expected); assert(1);			\
 }
+#define MY_UT_BIN(actual, actual_len, expected, expected_len)				\
+ if ((memcmp((actual), (expected), MIN_(actual_len, expected_len)) == 0)	\
+  && (actual_len != expected_len)) {										\
+  warning_printf("binary data different\n");								\
+    dump_memory("actual:", actual, actual_len);							\
+    dump_memory("expected:", expected, expected_len);						\
+}
 #endif // START_UP_TEST
 
 #ifdef ENABLE_DEBUG
@@ -86,12 +93,14 @@
 #define _UFLF_						uflf_d_printf("\n");
 #define _FLF_						flf_d_printf("\n");
 #define _FLF						flf_d_printf("");
-#define _PROGERR_		flf_d_printf("PROGERR\n");
-#define _FATALERR_		flf_d_printf("FATALERR\n");
-#define _WARNING_		flf_d_printf("WARNING\n");
+#define _PROGERR_					flf_d_printf("PROGERR\n");
+#define _FATALERR_					flf_d_printf("FATALERR\n");
+#define _WARNING_					flf_d_printf("WARNING\n");
 
 #ifdef ENABLE_DEBUG
 void dump_memory(char *message, void *memory, int bytes);
+void dump_string(char *message, const char* string);
+
 void tflfl_d_printf_(int time, const char *file, int line,
  const char *func, const char *label,
  const char *format, ...);
@@ -111,7 +120,7 @@ void debug_vprintf(const char *format, va_list ap);
 //		f = d + e;
 //		break;
 //	case VAL3:
-//		// FALLTHROUGH (<== not necessary because nothing done in section of "case VAL3:")
+//		// FALLTHROUGH (<== not necessary because nothing done in the section "case VAL3:")
 //	case VAL4:
 //		f = d + e;
 //		break;

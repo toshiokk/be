@@ -151,9 +151,9 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 	case FLMD_SHOW_DOT_FILE:
 		return get_str_show_dot_file();
 	case FLMD_SHOW_FILE_INFO:
-		return get_str_show_file_info();
+		return get_str_file_view_mode();
 	case FLMD_FILE_SORT_BY:
-		return get_str_sort_by();
+		return get_str_file_sort_mode();
 	case FLMD_FILER_PANES:
 		return get_str_filer_panes();
 #endif // ENABLE_FILER
@@ -165,11 +165,11 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 	return "!!";
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int inc_app_mode(void)
 {
-	INC_APPMD(app_LIST_MODE, APP_MODE_LIST);
+	INC_APPMD(app_LIST_MODE, APP_MODE_CHOOSER);
 	return 0;
 }
 const char *get_str_app_mode()
@@ -177,8 +177,8 @@ const char *get_str_app_mode()
 	switch (GET_APPMD(app_LIST_MODE)) {
 	default:
 	case APP_MODE_NORMAL:	return "NORMAL";
+	case APP_MODE_CHOOSER:	return "CHOOSER";
 	case APP_MODE_VIEWER:	return "VIEWER";
-	case APP_MODE_LIST:		return "LIST";
 	}
 }
 
@@ -339,12 +339,12 @@ const char *get_str_show_dot_file(void)
 	return BOOL_TO_ON_OFF(GET_APPMD(fl_SHOW_DOT_FILE));
 }
 
-int inc_show_file_info(void)
+int inc_file_view_mode(void)
 {
 	INC_APPMD(fl_SHOW_FILE_INFO, SHOW_FILE_INFO_MAX);
 	return 0;
 }
-const char *get_str_show_file_info(void)
+const char *get_str_file_view_mode(void)
 {
 	switch (GET_APPMD(fl_SHOW_FILE_INFO)) {
 	case SHOW_FILE_INFO_0:	return "None";			// ""
@@ -356,17 +356,17 @@ const char *get_str_show_file_info(void)
 	}
 }
 
-int clear_sort_by(void)
+int clear_file_sort_mode(void)
 {
 	CLR_APPMD(fl_FILE_SORT_BY);
 	return 0;
 }
-int inc_sort_by(void)
+int inc_file_sort_mode(void)
 {
 	INC_APPMD(fl_FILE_SORT_BY, FILE_SORT_BY_MAX);
 	return 0;
 }
-const char *get_str_sort_by(void)
+const char *get_str_file_sort_mode(void)
 {
 	switch (GET_APPMD(fl_FILE_SORT_BY)) {
 	default:
@@ -425,21 +425,28 @@ int get_key_list_lines(void)
 	return GET_APPMD(app_KEY_LINES);
 }
 
+const char* get_str_setting_none(void)
+{
+	return "--";
+}
+
+//------------------------------------------------------------------------------
+
 BOOL is_app_normal_mode(void)	// in editor: text editor mode, in filer: file manager mode
 {
 	return GET_APPMD(app_LIST_MODE) == APP_MODE_NORMAL;
+}
+BOOL is_app_chooser_mode(void)		// in editor: text list mode, in filer: file list mode
+{
+	return GET_APPMD(app_LIST_MODE) == APP_MODE_CHOOSER;
 }
 BOOL is_app_view_mode(void)		// in editor: test viewer, in filer: directory viewer
 {
 	return GET_APPMD(app_LIST_MODE) == APP_MODE_VIEWER;
 }
-BOOL is_app_list_mode(void)		// in editor: text list mode, in filer: file list mode
+BOOL is_app_chooser_view_mode(void)
 {
-	return GET_APPMD(app_LIST_MODE) == APP_MODE_LIST;
-}
-BOOL is_app_view_list_mode(void)
-{
-	return is_app_view_mode() || is_app_list_mode();
+	return is_app_chooser_mode() || is_app_view_mode();
 }
 
 //=============================================================================
@@ -466,7 +473,7 @@ int doe_tog_panex(void)
 	return 1;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int doe_tog_draw_cursor(void)
 {
@@ -565,7 +572,7 @@ int do_inc_key_list_lines_(void)
 	win_reinit_win_size();
 	return 0;
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int set_editor_cur_pane_idx(int pane_idx)
 {
 	return SET_APPMD_VAL(ed_EDITOR_PANEX, pane_idx);

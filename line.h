@@ -93,7 +93,7 @@
 
 #define IS_NODE_ANCH(node)		(IS_NODE_TOP_ANCH(node) || IS_NODE_BOT_ANCH(node))
 
-#define IS_NODES_EMPTY(nodes)	IS_NODE_BOT_OOL(NODES_TOP_NODE(nodes))
+#define IS_NODES_EMPTY(nodes)	(IS_NODE_INT(NODES_TOP_NODE(nodes)) == 0)
 
 // ## Node structure ----------------------------------------------------------
 //   top-anch
@@ -203,7 +203,7 @@ const be_line_t *line_get_top_anch(const be_line_t *line);
 size_t line_strlen(const be_line_t *line);
 size_t line_data_strlen(const char *str);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
 void line_dump_lines_from_top(const be_line_t *line, int lines, const be_line_t *cur_line);

@@ -140,7 +140,7 @@ int input_search_str(int search0_replace1, char *input_buf)
 		strcpy__(default_needle, "");
 	}
 
-	if (input_string_pos("", input_buf, MAX_PATH_LEN,
+	if (chk_inp_str_ret_val_editor(input_string_pos("", input_buf, MAX_PATH_LEN,
 	 HISTORY_TYPE_IDX_SEARCH,
 	 "%s%s%s%s%s:",
 	 search0_replace1 == 0 ? _("Search") : _("Replace"),
@@ -151,8 +151,7 @@ int input_search_str(int search0_replace1, char *input_buf)
 	 "",
 #endif // ENABLE_REGEX
 	 GET_APPMD(ed_REVERSE_SEARCH) ? _("[Backward]") : _("[Forward]"),
-	 default_needle)
-	 <= EF_EXECUTED) {
+	 default_needle))) {
 		// cancelled
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
 		return 0;						// cancelled
@@ -177,10 +176,9 @@ int input_search_str(int search0_replace1, char *input_buf)
 
 int input_replace_str(char *input_buf)
 {
-	if (input_string_pos("", input_buf, MAX_PATH_LEN,
+	if (chk_inp_str_ret_val_editor(input_string_pos("", input_buf, MAX_PATH_LEN,
 	 HISTORY_TYPE_IDX_SEARCH,
-	 "%s:", _("Replace with:"))
-	 <= EF_EXECUTED) {
+	 "%s:", _("Replace with:")))) {
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
 		return 0;
 	}
@@ -192,7 +190,7 @@ int input_replace_str(char *input_buf)
 search_t search__;
 matches_t matches__;
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #define INNER_BUFFER_SEARCH		0
 #define INTER_BUFFER_SEARCH		1
@@ -487,13 +485,13 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair)
 	} else if (depth < MAX_BRACKET_NESTINGS) {
 		// didn't find peer bracket
 		if (safe_cnt < MAX_BRACKETS_SEARCH) {
-			disp_status_bar_err(_("No peer bracket found"));
+			disp_status_bar_warn(_("No peer bracket found"));
 		} else {
-			disp_status_bar_err(_("Too many bracket pairs (%d)"), MAX_BRACKETS_SEARCH);
+			disp_status_bar_warn(_("Too many bracket pairs (%d)"), MAX_BRACKETS_SEARCH);
 		}
 	} else {
 		// didn't find peer bracket
-		disp_status_bar_err(_("Bracket nesting too deep (%d)"), MAX_BRACKET_NESTINGS);
+		disp_status_bar_warn(_("Bracket nesting too deep (%d)"), MAX_BRACKET_NESTINGS);
 	}
 	if (depth == 0) {
 		// found peer bracket
@@ -603,7 +601,7 @@ int prepare_colors_for_bracket_hl()
 	char bgc_sel2;
 	char fgc_sel;
 	char bgc_sel;
-	get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, &fgc_sel, &bgc_sel);
+	get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED1, &fgc_sel, &bgc_sel);
 	get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, &fgc_sel2, &bgc_sel2);
 	int color_idx = 0;
 	colors_for_bracket_hl[color_idx].fgc = fgc_sel;
@@ -638,7 +636,6 @@ int get_colors_for_bracket_hl()
 
 void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurance, int depth)
 {
-/////flf_d_printf("depth_increase: %d, depth: %d\n", depth_increase, depth);
 	char fgc, bgc;
 	int num_colors_m1 = get_colors_for_bracket_hl() - 1;
 
@@ -655,12 +652,11 @@ void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurance, int de
 	if (depth == 0) {
 		(*zero_occurance)++;
 	}
-/////flf_d_printf("bgc: %d, fgc: %d\n", bgc, fgc);
 }
 void get_color_for_bracket_hl(int color_idx, char *fgc, char *bgc)
 {
 	if (get_colors_for_bracket_hl() == 0) {
-		get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, fgc, bgc);
+		get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED1, fgc, bgc);
 	} else {
 		color_idx = MK_IN_RANGE(0, color_idx, COLORS_FOR_BRACKET_HL);
 		*bgc = colors_for_bracket_hl[color_idx].bgc;
@@ -787,7 +783,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 // search_count = 1: second uni-directional search (bi-directional search done)
 void disp_status_bar_not_found_msg(const char *str, int search_count)
 {
-	disp_status_bar_err(_("Keyword [%s] not found in %s search"),
+	disp_status_bar_warn(_("Keyword [%s] not found in %s search"),
 	 shrink_str_to_scr_static(str), (search_count == 0)
 	  ? ((SEARCH_DIR() < 0) ? _("Backward") : _("Forward")) : _("Bi-directional"));
 	set_edit_win_update_needed(UPDATE_SCRN_ALL);

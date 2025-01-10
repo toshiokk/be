@@ -74,10 +74,10 @@ int easy_buffer_switching_check(easy_buffer_switching_t top_bottom)
 	return 0;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int doe_left(void)
 {
-	if (is_app_list_mode()) {
+	if (is_app_chooser_mode()) {
 		return doe_switch_to_prev_buffer();
 	}
 	move_cursor_left(1);
@@ -88,7 +88,7 @@ int doe_left(void)
 
 int doe_right(void)
 {
-	if (is_app_list_mode()) {
+	if (is_app_chooser_mode()) {
 		return doe_switch_to_next_buffer();
 	}
 	move_cursor_right();
@@ -173,7 +173,7 @@ int doe_end_of_line(void)
 	return 1;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 PRIVATE void doe_up_(void);
 int doe_up(void)
 {
@@ -338,7 +338,7 @@ int doe_control_code(void)
 	disp_status_bar_ing(_("Input control character [^A-^Z,^[,^\\,^],^^,^_,\x7f]"));
 	key_code_t key = input_key_loop();
 	disp_status_bar_ing(_("Key code: %04x"), key);
-	if ((0x01 <= key && key < 0x20) || key == CHAR_DEL) {
+	if ((K_C_A <= key && key < ' ') || key == CHAR_DEL) {
 		do_enter_char(key);
 	}
 	return 1;
@@ -746,7 +746,7 @@ PRIVATE void change_str_letters(char *str, size_t len, char mode)
 	}
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 PRIVATE int memorized_columns = 0;
 PRIVATE int doe_fill_spaces_to_columns__(int column_idx);
 int doe_memorize_columns()
@@ -773,14 +773,14 @@ PRIVATE int doe_fill_spaces_to_columns__(int column_idx)
 	return 0;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int doe_refresh_editor(void)
 {
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int move_cursor_left(int move_disp_y)
 {
 	if (EPCBVC_CLBI <= 0) {
@@ -884,7 +884,7 @@ int next_line(void)
 	return IS_NODE_BOT_MOST(EPCBVC_CL) ? 1 : 2;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void first_line(void)
 {
 	EPCBVC_CL = CUR_EDIT_BUF_TOP_LINE;

@@ -73,7 +73,7 @@
 #define MAKE_HIGH_COLOR(color)	((color) | (CL_HI))
 #define GET_BASE_COLOR(color)	((color) & ((CL_HI)-1))
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef START_UP_TEST
 void tio_test(void);

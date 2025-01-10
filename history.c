@@ -83,12 +83,12 @@ void init_histories(void)
 		 get_history_file_path(hist_type_idx));
 		bufs_insert_buf_to_bottom(&history_buffers, buf_create_node(buf_name));
 		init_history(hist_type_idx);
-		// Set a buffer only listable
+		// Set a buffer chooser mode
 		SET_BUF_STATE(get_history_buf(hist_type_idx), buf_MODE, buf_MODE_LIST);
 	}
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // load history files into buffers
 void load_histories(void)
 {
@@ -112,7 +112,7 @@ void load_last_searched_needle(void)
 	strlcpy__(last_searched_needle, get_history_newest(HISTORY_TYPE_IDX_SEARCH, 1), MAX_PATH_LEN);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 {
 	if ((0 <= hist_type_idx && hist_type_idx < HISTORY_TYPES_APP_AND_SHELL) == 0) {
@@ -185,7 +185,7 @@ const char *get_history_completion(int hist_type_idx, const char *str)
 	return str;		// return original string
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //|        | write  | reload |       |              |                |
 //|modified| timer  | timer  |save   |load          |comment         |
 //|        | expired| expired|       |              |                |
@@ -379,7 +379,7 @@ PRIVATE int get_history_max_lines(int hist_type_idx)
 	return lines;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // initialize search and replace history lists
 PRIVATE void init_history(int hist_type_idx)
 {
@@ -549,18 +549,19 @@ PRIVATE int compare_file_path_str(const char *str, const char *file_path)
 	return strncmp(str, file_path, len);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int select_from_history_list(int hist_type_idx, char *buffer)
 {
 	load_histories();
 
-	int ret = call_editor(1, APP_MODE_LIST, get_history_buf(hist_type_idx), buffer, MAX_PATH_LEN);
+	int ret = do_call_editor(1, APP_MODE_CHOOSER, get_history_buf(hist_type_idx),
+	 buffer, MAX_PATH_LEN);
 
 flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
 	return ret;
 }
 
-//------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 void dump_history_ix(int hist_type_idx)
 {

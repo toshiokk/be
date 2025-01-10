@@ -323,7 +323,7 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 	return 1;		// done
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 PRIVATE int copy_text_to_cut_buf(void)
 {
 	int char_cut;
@@ -365,12 +365,6 @@ PRIVATE int copy_text_to_cut_buf(void)
 		 mark_max_line, mark_max_col_idx);
 		break;
 	}
-#ifdef ENABLE_HISTORY
-	// add cut text to search history
-	if (count_cut_bufs() && buf_count_lines(TOP_BUF_OF_CUT_BUFS)) {
-		update_history(HISTORY_TYPE_IDX_SEARCH, NODES_TOP_NODE(CUT_BUFS_TOP_NODE)->data);
-	}
-#endif // ENABLE_HISTORY
 	// copy cut text to clip board file
 	save_cut_buf_to_clipboard_file();
 	return 1;
@@ -421,7 +415,7 @@ PRIVATE int paste_text_from_cut_buf(void)
 	return 1;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // e.g.1
 //  aaaaAAAAAAAAAAAAAaaaa
 // e.g.2
@@ -588,7 +582,7 @@ PRIVATE void delete_rect_region(
 	}
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // paste data into edit buffer streamlike
 // e.g.
 //  [CUT-BUFFER]
@@ -606,7 +600,7 @@ PRIVATE int paste_cut_buf_char(void)
 	set_cur_buf_modified();
 
 	int cur_byte_idx = EPCBVC_CLBI;
-	be_line_t *cut_line = CUR_CUT_BUFS_TOP_NODE;
+	be_line_t *cut_line = CUR_CUT_BUF_TOP_LINE;
 	// Paste the first line of the cut-buffer
 	// >aaaa^bbbb
 	be_line_t *inserted_line = line_separate(EPCBVC_CL, cur_byte_idx, INSERT_BEFORE);
@@ -653,11 +647,9 @@ PRIVATE int paste_cut_buf_char(void)
 //   aaaa^bbbb
 PRIVATE int paste_cut_buf_line(void)
 {
-	be_line_t *cut_line;
-
 	set_cur_buf_modified();
 
-	for (cut_line = CUR_CUT_BUFS_TOP_NODE; IS_NODE_INT(cut_line); ) {
+	for (be_line_t *cut_line = CUR_CUT_BUF_TOP_LINE; IS_NODE_INT(cut_line); ) {
 		line_insert_with_string(EPCBVC_CL, INSERT_BEFORE, cut_line->data);
 		cut_line = NODE_NEXT(cut_line);
 		if (IS_MARK_SET(CUR_CBUF_STATE(buf_CUT_MODE))) {
@@ -694,13 +686,10 @@ PRIVATE int paste_cut_buf_line(void)
 //   BBBB^
 PRIVATE int paste_cut_buf_rect(void)
 {
-	int cur_line_col_idx;
-	be_line_t *cut_line;
-
 	set_cur_buf_modified();
 
-	cur_line_col_idx = col_idx_from_byte_idx(EPCBVC_CL->data, 0, EPCBVC_CLBI);
-	for (cut_line = CUR_CUT_BUFS_TOP_NODE; IS_NODE_INT(cut_line); ) {
+	int cur_line_col_idx = col_idx_from_byte_idx(EPCBVC_CL->data, 0, EPCBVC_CLBI);
+	for (be_line_t *cut_line = CUR_CUT_BUF_TOP_LINE; IS_NODE_INT(cut_line); ) {
 		if (IS_NODE_BOT_ANCH(EPCBVC_CL)) {
 			// if no more lines in edit buffer, append line automatically
 			EPCBVC_CL = line_insert_with_string(EPCBVC_CL, INSERT_BEFORE, "");

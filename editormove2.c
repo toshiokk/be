@@ -69,7 +69,7 @@ void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_
 	return;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //	+---------------------------------+
 //	|        LOCATE_CURS_TOP          |
 //	|                                 |
@@ -223,8 +223,6 @@ int get_edit_win_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **lin
 	int line_cnt = 0;
 	int wl_idx;
 
-/////_D_(line_dump_lines(_cl_, 2, NULL))
-/////mflf_d_printf("yy: %d\n", EPCBVC_CURS_Y);
 	if (_cl_->data == NULL) {
 		*line = _cl_;
 		*byte_idx = _clbi_;
@@ -253,7 +251,7 @@ int get_edit_win_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **lin
 	return line_cnt;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // adjust pointers after moving horizontally or vertically
 void adjust_curs_pos_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 {
@@ -395,7 +393,7 @@ fl_d_printf("disp_width: %d, text_width: %d, margin: %d, cursor_text_x: %d, min_
 //          |<-- display width ------------------->|
 //01234567890123456789012345678901234567890123456789
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE char disabled_update_min_text_x_to_keep = 0;
 void set_disabled_update_min_text_x_to_keep()

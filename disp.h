@@ -22,16 +22,17 @@
 #ifndef disp_h
 #define disp_h
 
-void set_title_bar_color_by_state(int mode1, int mode2, char invert);
+void set_title_bar_color_by_state(int color_idx, char invert);
 const char *root_notation(void);
 
 //! priority to display on the status bar
 typedef enum /*s_b_d*/ {	// Status Bar Displayed
 	S_B_D_NONE,				//! 0 none
 	S_B_D_CURS,				//! 1 cursor movement in editor/filer
-	S_B_D_ING,				//! 2 processing (overwritable by DONE or ERR)
-	S_B_D_ERR,				//! 3 error (overwritable by DONE and after one second)
-	S_B_D_DONE,				//! 4 done  (this message shall be output on completion of a command)
+	S_B_D_ING,				//! 2 processing (overwritable by WARN, ERR and DONE)
+	S_B_D_WARN,				//! 3 warn (overwritable by DONE)
+	S_B_D_ERR,				//! 4 error (overwritable by DONE)
+	S_B_D_DONE,				//! 5 done  (this message shall be output on completion of a command)
 } s_b_d_t;
 
 //| --          | previous request                                     |
@@ -40,11 +41,13 @@ typedef enum /*s_b_d*/ {	// Status Bar Displayed
 //|S_B_D_NONE   | --       | --       | --       | --       | --       |
 //|S_B_D_CURS   | overlap  | overlap  | overlap  |prev:next |prev:next |
 //|S_B_D_ING    | overlap  | overlap  | overlap  | reject   | reject   |
+//|S_B_D_WARN   | overlap  | overlap  | overlap  | overlap  | overlap  |
 //|S_B_D_ERR    | overlap  | overlap  | overlap  | overlap  | overlap  |
 //|S_B_D_DONE   | overlap  | overlap  | overlap  | overlap  | overlap  |
 
 void disp_status_bar_cursor(const char *msg, ...);
 void disp_status_bar_ing(const char *msg, ...);
+void disp_status_bar_warn(const char *msg, ...);
 void disp_status_bar_err(const char *msg, ...);
 void disp_status_bar_done(const char *msg, ...);
 void redisp_status_bar();

@@ -53,10 +53,10 @@ typedef struct /*app_mode*/ {
 #define EF_EDITOR				0
 #define EF_FILER				1
 	unsigned char app_EDITOR_FILER:1;		// bit 7
-											// editor------	filer-------
-#define APP_MODE_NORMAL			0			// editable		file manager
-#define APP_MODE_VIEWER			1			// viewer		----
-#define APP_MODE_LIST			2			// list			select file/dir
+											// editor------		filer-------
+#define APP_MODE_NORMAL			0			// editable			file manager
+#define APP_MODE_CHOOSER		1			// text chooser		file/dir chooser
+#define APP_MODE_VIEWER			2			// text viewer		----
 	unsigned char app_LIST_MODE:2;			// bit 8,9
 
 	// editor settings
@@ -114,61 +114,6 @@ typedef struct /*app_mode*/ {
 #define SHOW_FILE_INFO_MAX				SHOW_FILE_INFO_4
 	unsigned char fl_SHOW_FILE_INFO:3;		// bit 34-36
 } app_mode_t;
-
-//-----------------------------------------------------------------------------
-
-typedef struct /*buf_state*/ {
-	unsigned char buf_MODE:2;				// bit 0,1
-#define buf_MODE_EDIT	0
-#define buf_MODE_VIEW	1
-#define buf_MODE_LIST	2
-#define buf_MODE_ANCH	3
-	unsigned char buf_MODIFIED:1;			// bit 2
-	unsigned char buf_LINE_WRAP_MODE:1;		// bit 3
-#if 0 // 0
-#define HV_IS_BOX_VH_IS_CHAR
-#else
-#define HV_IS_LINE_VH_IS_BOX
-#endif
-
-#define CUT_MODE_0_LINE			0	// no mark                                    (one line cut)
-#define CUT_MODE_N_LINE			1	// marking started but cursor not moved           (line cut)
-#define CUT_MODE_H_CHAR			2	//  and cursor moved horizontally                 (char cut)
-#define CUT_MODE_HV_LINE		3	//  and cursor moved horizontally then vertically (line cut)
-#define CUT_MODE_HV_BOX			4	//  and cursor moved horizontally then vertically (box cut)
-#define CUT_MODE_V_LINE			5	//  and cursor moved vertically                   (line cut)
-#define CUT_MODE_VH_CHAR		6	//  and cursor moved vertically then horizontally (char cut)
-#define CUT_MODE_VH_BOX			7	//  and cursor moved vertically then horizontally (box cut)
-#define IS_MARK_SET(cut_mode)	((cut_mode) != CUT_MODE_0_LINE)
-	unsigned char buf_CUT_MODE:3;			// bit 4-6
-#define TAB_SIZE_MIN			1
-#define TAB_SIZE_0				0	// DEFAULT_TAB_SIZE
-#define TAB_SIZE_1				1
-#define TAB_SIZE_2				2
-#define TAB_SIZE_3				3
-#define TAB_SIZE_4				4
-#define TAB_SIZE_5				5
-#define TAB_SIZE_6				6
-#define TAB_SIZE_7				7
-#define TAB_SIZE_8				8
-#define TAB_SIZE_MAX			TAB_SIZE_8
-	unsigned char buf_TAB_SIZE:4;			// bit 7-10
-#define EOL_NIX					0
-#define EOL_MAC					1
-#define EOL_DOS					2
-#define EOL_MAX					EOL_DOS
-	unsigned char buf_EOL:2;				// bit 11-12
-#define ENCODE_ASCII			0
-#define ENCODE_UTF8				1
-#ifdef USE_NKF
-#define ENCODE_EUCJP			2
-#define ENCODE_SJIS				3
-#define ENCODE_JIS				4
-#endif // USE_NKF
-#define ENCODE_BINARY			5
-#define ENCODE_MAX				ENCODE_BINARY
-	unsigned char buf_ENCODE:3;				// bit 13--15
-} buf_state_t;
 
 typedef enum /*mode_idx*/ {
 	APMD_DRAW_CURSOR,
@@ -275,11 +220,11 @@ const char *get_str_editor_panex(void);
 
 int tog_show_dot_file(void);
 const char *get_str_show_dot_file(void);
-int inc_show_file_info(void);
-const char *get_str_show_file_info(void);
-int clear_sort_by(void);
-int inc_sort_by(void);
-const char *get_str_sort_by(void);
+int inc_file_view_mode(void);
+const char *get_str_file_view_mode(void);
+int clear_file_sort_mode(void);
+int inc_file_sort_mode(void);
+const char *get_str_file_sort_mode(void);
 
 #ifdef ENABLE_FILER
 int tog_filer_panes(void);
@@ -292,27 +237,29 @@ int inc_key_list_lines(void);
 const char *get_str_key_list_lines(void);
 int get_key_list_lines(void);
 
+const char *get_str_setting_none(void);
+
 // View mode and List mode of editor:
-// |editor mode    |load|edit|save|cursor    |select|search|editing |purpose       |
-// |editor mode    |load|edit|save| move     | /cut |      |possible|              |
-// |editor mode    |load|edit|save|          | /copy|      |        |              |
-// |---------------|----|----|----|----------|------|------|--------|--------------|
-// |APP_MODE_NORMAL|yes |yes |yes |everywhere|yes   |yes   |all     |text editor   |
-// |APP_MODE_VIEWER|no  |no  |no  |everywhere|yes   |yes   |all     |file list/help|
-// |APP_MODE_LIST  |auto|no  |auto|vertical  |no    |yes?? |none    |history viewer|
+// |editor mode     |load|save|cursor    |modify|mark  |choose|purpose     |
+// |editor mode     |load|save| move     |      | /cut |by tap|            |
+// |editor mode     |load|save|          |      | /copy|      |            |
+// |----------------|----|----|----------|------|------|------|------------|
+// |APP_MODE_NORMAL |yes |yes |everywhere|all   |yes   |no    |text editor |
+// |APP_MODE_CHOOSER|auto|auto|vertical  |none  |no    |yes   |text chooser|
+// |APP_MODE_VIEWER |yes |no  |everywhere|none  |yes   |no    |text viewer |
 
 // View mode of filer:
-// |filer mode     |open/copy/move/ren|chdir|search|select|modificatons|purpose          |
-// |filer mode     |mkdir/exec        |     |      |by tap|of directory|                 |
-// |---------------|------------------|-----|------|------|------------|-----------------|
-// |APP_MODE_NORMAL|yes               |yes  |yes   |no    |yes         |file manager     |
-// |APP_MODE_VIEWER|--                |--   |--    |--    |--          |--               |
-// |APP_MODE_LIST  |no                |yes  |yes   |yes   |no          |file/dir selector|
+// |filer mode      |open/copy/move/ren|chdir|search|choose|purpose         |
+// |filer mode      |/remove/mkdir/exec|     |      |by tap|                |
+// |----------------|------------------|-----|------|------|----------------|
+// |APP_MODE_NORMAL |yes               |yes  |yes   |no    |file manager    |
+// |APP_MODE_CHOOSER|no                |yes  |yes   |yes   |file/dir chooser|
+// |APP_MODE_VIEWER |--                |--   |--    |--    |--              |
 
 BOOL is_app_normal_mode(void);
+BOOL is_app_chooser_mode(void);
 BOOL is_app_view_mode(void);
-BOOL is_app_list_mode(void);
-BOOL is_app_view_list_mode(void);
+BOOL is_app_chooser_view_mode(void);
 
 int doe_inc_app_mode(void);
 int doe_tog_panes(void);
@@ -335,7 +282,7 @@ int do_inc_key_list_lines_(void);
 inline char indication_of_app_mode()
 {
 	char separator_char = ':';
-	if (is_app_list_mode()) {
+	if (is_app_chooser_mode()) {
 		separator_char = '.';
 	} else if (is_app_view_mode()) {
 		separator_char = '!';
@@ -343,7 +290,7 @@ inline char indication_of_app_mode()
 #ifdef ENABLE_DEBUG
 	if (GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF) {
 		separator_char = ';';
-		if (is_app_list_mode()) {
+		if (is_app_chooser_mode()) {
 			separator_char = ',';
 		} else if (is_app_view_mode()) {
 			separator_char = '?';

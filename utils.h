@@ -33,6 +33,7 @@
 #define IDIV(xx, yy)	((xx) / ((yy) != 0 ? (yy) : 1))
 
 #define BOOL_TO_ON_OFF(is_on)		((is_on) ? "ON" : "off")
+#define SELECTED_OR_NOT(selected)	((selected) ? "<*>" : "< >")
 #define BOOL_TO_0_1(is_on)			((is_on) ? "1" : "0")
 #define BOOL_TO_1_2(is_on)			((is_on) ? "2" : "1")
 #define BOOL_INV(is_on)				((is_on) ? 0 : 1)
@@ -40,7 +41,7 @@
 #define FROM_IDX(idx)	((idx) + 1)		// get number from index
 #define FROM_NUM(num)	((num) - 1)		// get index from number
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void set_die_on_callback(void (*die_on_cb)(const char *msg));
 void die_on(const char *msg);
@@ -101,12 +102,12 @@ void free__(void *ptr);
 void remalloc_and_null_terminate_string(char **ptr);
 void remalloc_and_null_terminate_length(char **ptr, size_t len);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 unsigned short clear_crc16ccitt(void);
 unsigned short calc_crc16ccitt(unsigned char byte);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #define YYSMMSDD_LEN			8	// "24/12/31"
 #define HHCMMCSS_LEN			8	// "23:59:59"
 #define HHCMMCSS_YYSMMSDD_LEN	8	// "23:59:59" / "24/10/09"
@@ -128,7 +129,7 @@ const char *cur_hhcmmcss_uuuuuu(void);
 
 #define MSLEEP(msec)		usleep((msec) * 1000);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #define MIN_(aa, bb)		int_min((aa), (bb))
 #define MAX_(aa, bb)		int_max((aa), (bb))

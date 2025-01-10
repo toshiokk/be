@@ -24,6 +24,8 @@
 
 // "doe_..."  DO Editor function
 int doe_open_file(void);
+int doe_open_file_ro(void);
+int doe_open_locked_file(void);
 int doe_open_new_file(void);
 int doe_open_proj_file(void);
 int doe_open_exec_log_file(void);
@@ -46,7 +48,7 @@ int doe_close_all_modified(void);
 
 int doe_read_file_into_cur_buf(void);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 typedef enum {
 	NO_CLOSE_AFTER_SAVE_0,	// 0: File will be kept open
@@ -58,6 +60,15 @@ int write_all_ask(int yes_no, close_after_save_t close);
 int close_all_not_modified(void);
 int close_all();
 int write_file_ask(int yes_no, close_after_save_t close);
+
+//------------------------------------------------------------------------------
+
+#ifdef START_UP_TEST
+void test_flock();
+#endif // START_UP_TEST
+int flock_lock(const char *full_path);
+int flock_unlock(const char *full_path);
+int flock_is_locked(const char *full_path);
 
 #endif // editorfile_h
 

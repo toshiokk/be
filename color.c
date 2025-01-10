@@ -45,22 +45,23 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 #endif
 #if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
 	// experimental release
-	{ CL_CY, CL_YL, S(ITEM_COLOR_IDX_TITLE)				},
-	{ CL_CY, CL_YL, S(ITEM_COLOR_IDX_STATUS)			},
+	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
+	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
 #endif
 	{ CL_BG, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
 	{ CL_BK, CL_BR, S(ITEM_COLOR_IDX_KEY_LIST2)			},
 	{ CL_BG, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL)		},
-	{ CL_RD, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED)		},
+	{ CL_RD, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED1)	},
 	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED2)	},
 	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED3)	},
-	{ CL_RD, CL_BL, S(ITEM_COLOR_IDX_WARNING)			},
-	{ CL_RD, CL_GR, S(ITEM_COLOR_IDX_WARNING2)			},
-	{ CL_RD, CL_YL, S(ITEM_COLOR_IDX_WARNING3)			},
-	{ CL_GR, CL_RD, S(ITEM_COLOR_IDX_WARNING4)			},
+	{ CL_DF, CL_RD, S(ITEM_COLOR_IDX_WARNING1)			},	// high
+	{ CL_DF, CL_MG, S(ITEM_COLOR_IDX_WARNING2)			},	// medium
+	{ CL_DF, CL_YL, S(ITEM_COLOR_IDX_WARNING3)			},	// low
+	{ CL_RD, CL_YL, S(ITEM_COLOR_IDX_ERROR)				},
 	{ CL_BK, CL_WH, S(ITEM_COLOR_IDX_CURSOR_CHAR)		},
 	{ CL_CY, CL_DF, S(ITEM_COLOR_IDX_CURSOR_LINE)		},
-	{ CL_BR, CL_GY, S(ITEM_COLOR_IDX_LINE_NUMBER)		},
+///	{ CL_BR, CL_GY, S(ITEM_COLOR_IDX_LINE_NUMBER)		},
+	{ CL_BR, CL_BK, S(ITEM_COLOR_IDX_LINE_NUMBER)		},
 	{ CL_CY, CL_BL, S(ITEM_COLOR_IDX_MENU_FRAME)		},
 	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_MENU_ITEM)			},
 	{ CL_BG, CL_BK, S(ITEM_COLOR_IDX_MENU_SELECTED)		},
@@ -106,7 +107,7 @@ int is_work_space_color_warn(void)
 	return work_space_color_warn;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 // register item color
 void register_item_color(item_color_idx_t color_idx, int bgc, int fgc)
@@ -146,7 +147,7 @@ void set_item_color(const item_color_t *item_color)
 	tio_set_attrs(item_color->bgc, item_color->fgc, 0);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef ENABLE_SYNTAX
 
@@ -208,7 +209,7 @@ const color_syntax_t *get_default_color_syntax_head(void)
 
 #endif // ENABLE_SYNTAX
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE void display_color_pattern(int yy, int xx, int reverse);
 int display_color_pairs(int yy, int xx)

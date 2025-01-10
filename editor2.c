@@ -46,7 +46,7 @@ PRIVATE int get_edit_win_x_of_view_x(int view_x);
 PRIVATE void clear_cur_buf_line_num_columns(void);
 PRIVATE int get_cur_buf_line_num_columns(void);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 PRIVATE int edit_win_update_needed = UPDATE_SCRN_NONE;
 void set_edit_win_update_needed(int update_needed)
 {
@@ -124,8 +124,10 @@ flf_d_printf("cursor_y:%d\n", EPCBVC_CURS_Y);
 	for (yy = 0; yy < edit_win_get_text_lines(); ) {
 		disp_edit_line_blank(yy, line);
 		if (IS_NODE_INT(line) == 0) {
+			EPCBVC_CURS_Y = MIN_MAX_(0, EPCBVC_CURS_Y, LIM_MIN(0, yy-1));
 			if (yy == 0) {
-				EPCBVC_CURS_Y = 0;
+				output_edit_line_num(yy, NULL);	// "     "
+				set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 				sub_win_output_string(edit_win_get_text_y(), get_cur_buf_line_num_columns(),
 				 _("---- No lines in this buffer ----"), -1);
 				yy++;
@@ -192,7 +194,7 @@ flf_d_printf("cursor_y:%d\n", EPCBVC_CURS_Y);
 	tio_set_cursor_on(1);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE void disp_edit_line_blank(int yy, const be_line_t *line)
 {
@@ -218,8 +220,6 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 #ifdef ENABLE_REGEX
 	matches_t matches;
 #endif // ENABLE_REGEX
-
-	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 
 	// output line number -----------------------------------------------------
 	if (byte_idx_1 == 0) {
@@ -348,7 +348,7 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 					if (get_intersection(byte_idx_1, byte_idx_2,
 					 EPCBVC_CLBI, EPCBVC_CLBI + matches_match_len(&matches),
 					 &left_byte_idx, &right_byte_idx) > 0) {
-						set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED, 0);
+						set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED1, 0);
 						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 					}
 				}

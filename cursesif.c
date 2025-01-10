@@ -29,7 +29,7 @@ PRIVATE int get_color_pair(int bgc, int fgc);
 PRIVATE int init_color_pairs(void);
 PRIVATE key_code_t getch_(void);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 PRIVATE struct termios term_settings_save;	/* The user's original term settings */
 PRIVATE char curses_bgc = 0;
 PRIVATE char curses_fgc = 7;
@@ -71,7 +71,7 @@ int curses_end(void)
 	restore_term_settings(&term_settings_save);
 	return 0;
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void curses_set_screen_size(int lines, int columns)
 {
 	LINES = lines;
@@ -86,7 +86,7 @@ int curses_get_columns(void)
 	return LIM_MAX(MAX_SCRN_COLS, COLS);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE int get_color_pair(int bgc, int fgc)
 {
@@ -178,7 +178,7 @@ void curses_refresh(void)
 {
 	refresh();
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 key_code_t curses_input_key(void)
 {
 	key_code_t key1;

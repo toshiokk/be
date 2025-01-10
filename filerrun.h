@@ -39,11 +39,11 @@ int dof_exec_command_with_files(void);
 int dof_run_command_rel(void);
 int dof_run_command_abs(void);
 int dof_run_command_src_dst(void);
-int dof_run_command_sh(void);
+int dof_run_command_symlink(void);
 int dof_run_command_soon(void);
 int dof_run_command_soon_w_log(void);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void begin_fork_exec_repeat(void);
 void end_fork_exec_repeat(int exit_status);

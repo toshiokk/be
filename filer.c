@@ -127,9 +127,9 @@ void set_cur_fv_file_idx(int file_idx)
 	get_cur_filer_cur_pane_view()->cur_file_idx = file_idx;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-int call_filer(int push_win, int list_mode,
+int do_call_filer(int push_win, int list_mode,
  const char *dir, const char *filter, char *path_buf, int buf_len)
 {
 flf_d_printf("push: %d, list: %d, dir: %s, filter: [%s]\n", push_win, list_mode, dir, filter);
@@ -155,7 +155,7 @@ flf_d_printf("<<<<<<<<<<<<<<<<<<<<<<<<<\n");
 
 flf_d_printf(">>>>>>>>>>>>>>>>>>>>>>>>>\n");
 flf_d_printf("push_win:%d, list_mode:%d --> ret: %d\n", push_win, list_mode, ret);
-	filer_do_next = EF_NONE;	// for caller of call_filer(), clear "filer_do_next"
+	filer_do_next = EF_NONE;	// for caller of do_call_filer(), clear "filer_do_next"
 
 	if (push_win) {
 		pop_app_win(0);
@@ -168,7 +168,7 @@ flf_d_printf("[1].cur_dir: [%s]\n", get_cur_filer_view(1)->cur_dir);
 	return ret;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE int filer_main_loop(const char *dir, const char *filter, char *path_buf, int buf_len)
 {
@@ -184,7 +184,7 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 	get_full_path_of_cur_dir(prev_cur_dir);		// memorize prev. current dir
 #endif // ENABLE_HISTORY
 	if (is_strlen_not_0(dir)) {
-		strlcpy__(get_cur_filer_cur_pane_view()->cur_dir, dir, MAX_PATH_LEN);
+		change_cur_dir_saving_prev_next(dir);
 	}
 
 	key_code_t key_input = K_VALID;		// show status bar at the first loop
@@ -210,9 +210,10 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 		filer_do_next = FL_UPDATE_FILE_LIST_AUTO;
 		if (IS_KEY_VALID(key_input)) {
 			// some key input
-			mflf_d_printf("input%ckey:0x%04x(%s)=======================\n",
-			 '_', key_input, short_key_name_from_key_code(key_input, NULL),
-			 key_name_from_key_code(key_input, NULL));
+			mflf_d_printf("input%ckey:0x%04x(%s|%s)=======================\n",
+			 '_', key_input,
+			 long_key_name_from_key_code(key_input, NULL),
+			 short_key_name_from_key_code(key_input, NULL));
 			filer_do_next = EF_NONE;
 			func_key_table_t *fkey_table;
 			if ((fkey_table = get_func_key_table_from_key(filer_func_key_table,
@@ -221,26 +222,26 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 				 tolower_if_alpha(key_input));
 			}
 			if (fkey_table == NULL) {
-				disp_status_bar_err(_("No command assigned for the key: %04xh"), key_input);
+				disp_status_bar_warn(_("No command assigned for the key: %04xh"), key_input);
 			} else {
 				strlcpy__(get_cur_filer_cur_pane_view()->next_file,
 				 get_cur_fv_cur_file_ptr()->file_name,
 				  MAX_PATH_LEN);
-				if (is_app_view_list_mode()) {
+				if (is_app_chooser_view_mode()) {
 					switch (fkey_table->list_mode) {
-					case EFLM_NO_EXEC:		// not executable in List mode
+					case EFLM_NOEX:		// not executable in List mode
 						disp_status_bar_done(
 						 _("Can not execute this function in filer List mode: [%s]"),
 						 fkey_table->func_id);
 						filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 						break;
-					case F_LM_FIL_NAM:		// no exec in filer List mode and return FILE_NAME
+					case F_LM_FLNM:		// no exec in filer List mode and return FILE_NAME
 						filer_do_next = FL_ENTER_FILE_NAME_OR_PATH;
 						break;
-					case F_LM_CUR_DIR:		// no exec in filer List mode and return CUR_DIR_PATH
+					case F_LM_CUDI:		// no exec in filer List mode and return CUR_DIR_PATH
 						filer_do_next = FL_ENTER_CUR_DIR_PATH;
 						break;
-					case EFAM_EXECUTE:
+					case EFAM_EXEC:
 					default:
 						break;
 					}
@@ -257,7 +258,7 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 flf_d_printf("filer_do_next: %d\n", filer_do_next);
 			}
 		}
-		if (is_app_list_mode() == 0) {
+		if (is_app_normal_mode()) {
 			// normal mode
 			switch(filer_do_next) {
 			default:
@@ -272,7 +273,7 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 				break;
 			}
 		} else {
-			// list mode
+			// chooser mode
 			switch(filer_do_next) {
 			default:
 				break;
@@ -436,7 +437,7 @@ PRIVATE void disp_title_bar_filer(const char *path,
 	char buf_files[MAX_SCRN_LINE_BUF_LEN+1];
 	char buf_time[HHCMMCSS_BUF_LEN+1];
 
-	set_title_bar_color_by_state(0, 0, 0);
+	set_title_bar_color_by_state(ITEM_COLOR_IDX_TITLE, 0);
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0,
 	 tio_blank_line(0), main_win_get_columns());
 
@@ -458,10 +459,10 @@ PRIVATE void disp_title_bar_filer(const char *path,
 	 cur_ctime_cdate(msec_past_input_key() < 1000));
 	if (files_selected == 0) {
 		snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, " %d/%d %c%s",
-		 cur_idx, files_total, *get_str_sort_by(), buf_time);
+		 cur_idx, files_total, *get_str_file_sort_mode(), buf_time);
 	} else {
 		snprintf_(buf_files, MAX_SCRN_LINE_BUF_LEN+1, " %d/%d %c%s",
-		 files_selected, files_total, *get_str_sort_by(), buf_time);
+		 files_selected, files_total, *get_str_file_sort_mode(), buf_time);
 	}
 
 	int path_cols = LIM_MIN(0, main_win_get_columns() - strlen_path(buf_files));
@@ -569,11 +570,6 @@ int filer_win_get_file_list_y(void)
 PRIVATE void disp_key_list_filer(void)
 {
 	const char *filer_key_lists[] = {
- "{Menu}"
- "  {Home } {Copy } {CpyUd} {Renam}"
- "  {Move } {Delet} {MkDel} {MkDir}"
- "  {ChDir} {Exec } {Edit } {Edit }",
-
  "<dof_quit_filer>Quit "
  "<dof_open_file>Edit "
  "<dof_open_new_file>EditNewFile "
@@ -598,8 +594,8 @@ PRIVATE void disp_key_list_filer(void)
  "<dof_make_directory>MkDir "
  "<dof_tog_panes>TwoPane "
  "<dof_tog_panex>SwPane "
- "<dof_inc_sort_by>Sort "
- "<dof_inc_show_file_info>Info "
+ "<dof_inc_file_sort_mode>Sort "
+ "<dof_inc_file_view_mode>Info "
  "<dof_refresh_filer>Refresh "
  "<dof_tog_show_dot_file>ShowDotFile "
  "<dof_find_file>FindFile ",

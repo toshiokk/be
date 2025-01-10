@@ -12,10 +12,10 @@ rt
 #echo "be exited"
 #rm be
 
-path=$HOME/.be/search_history
-echo "tail -n 10 <$path ---------------"
-tail -n 10 <$path
+#path=$HOME/.be/search_history
+#echo "tail -n 10 <$path ---------------"
+#tail -n 10 <$path
 
-path=$HOME/.be/file_history
-echo "tail -n 10 <$path ---------------"
-tail -n 10 <$path
+#path=$HOME/.be/file_history
+#echo "tail -n 10 <$path ---------------"
+#tail -n 10 <$path

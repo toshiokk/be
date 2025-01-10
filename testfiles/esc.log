@@ -1,0 +1,178 @@
+**********************************************************************
+***** log file output to 250106-162343-2-2.log Started ****
+**********************************************************************
+sshing OBCDEV2 ...
+$ ssh t_koike@obcdev2.stars.axelspace.com
+Linux obcdev2 6.1.0-28-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.119-1 (2024-11-22) x86_64
+Welcome to ...
+[1;90m--------------------------------------------------------------------------------[0;32m
+            ██████  ██████   ██████ ██████  ███████ ██    ██ ██████  
+           ██    ██ ██   ██ ██      ██   ██ ██      ██    ██      ██ 
+           ██    ██ ██████  ██      ██   ██ █████   ██    ██  █████  
+           ██    ██ ██   ██ ██      ██   ██ ██       ██  ██  ██      
+            ██████  ██████   ██████ ██████  ███████   ████   ███████ 
+[1;90m--------------------------------------------------------------------------------[0;32m
+
+[1;33mWhen using the hardware attached to this computer:[0m
+
+Run `checkout' before accessing the hardware to make sure you have
+exclusive access. Run `release' when you are done so that others may
+use it after you.
+
+Thank you.   -- [1;34mSysadmin[0m
+
+Last login: Mon Jan  6 16:22:45 2025 from 192.168.10.226
+.bash_aliases {
+.bash_aliases }
+[?2004h[t_koike@obcdev2 ~]$ ls
+[?2004l[0m[01;32m00device-name-by-id.sh[0m           [01;32maxelmgm_trigger.sh[0m        _gm.sh
+[01;32m00device-name-by-id.sh~[0m          __be_crash.log            [01;32mgm.sh[0m
+[01;32m00device-name-by-id.sh~~[0m         __be.log                  [01;34mobc-admin[0m
+[01;32m00device-name-by-id.sh~~~[0m        [00;90m__be.log~[0m                 obc-scripts.md
+[01;32m00device-name-by-id.sh.ORG[0m       [00;90m__be.log~~[0m                [01;32mrun_axelmgm_eit.sh[0m
+[01;32m10checkout_servers_release.sh[0m    [01;34mbin[0m                       runtime-env.sh
+[01;32m10checkout_servers_release.sh~[0m   [01;32mcalc-gm-angle-diff.sh[0m     [01;32mscp-down-obcdevX-home-to-here.sh[0m
+[01;32m20start-servers.sh[0m               [01;32mcat_mgm_console.sh[0m        [01;32mscp_obc-admin_to_obcdevX-home.sh[0m
+[01;32m21hwsrvr.sh[0m                      [01;32mcat.sh[0m                    [01;32mscp-up-here-to-obcdevX-home.sh[0m
+[01;32m22obc-gateway-1st.sh[0m             daemon.json               [01;34msos-operation-agent[0m
+[01;32m23obc-gateway-2nd.sh[0m             [01;32m_docker-compose-errol.sh[0m  [01;34msos-operation-agent.errol[0m
+[01;32m40power-on_picocom_power-off.sh[0m  [01;32m_docker-compose-main.sh[0m   [01;34msos-operation-agent.main[0m
+[01;32m45set-voltage_power-on.sh[0m        [01;32m_docker-compose.sh[0m        [01;32m_switch_oa_target_obc.sh[0m
+[01;32m50picocom-ttyUSB.sh[0m              [01;34mdown[0m                      [01;32m_test-calc-gm-angle-diff.sh[0m
+[01;32m55power-off.sh[0m                   [01;32m__earthly_build.sh[0m        [01;34mt_koike[0m
+[01;32m60killall-servers.sh[0m             get-BE-into-bin.sh        [01;32mupload_binary_by_xilinx-HWSRVR-2023.2.sh[0m
+_axelmgm_eit.sh                  [01;32mgmangle.py[0m                [01;32m_xsdb-mrd.sh[0m
+[01;32maxelmgm_eit.sh[0m                   [01;34mgmlogger[0m                  [01;32m_xsdb.sh[0m
+[?2004h[t_koike@obcdev2 ~]$ lsps aureleasesh 10checkout_servers_release.sh [K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Krelease[2Pps aush 10checkout_servers_release.sh [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[13Pps aux | grep kokubo[K[K[K[K[K[K[K[K[K[K[K[K[K[K
+[?2004lUSER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.1  0.0 167964 12384 ?        Ss    2024  36:26 /sbin/init
+root           2  0.0  0.0      0     0 ?        S     2024   0:00 [kthreadd]
+root           3  0.0  0.0      0     0 ?        I<    2024   0:00 [rcu_gp]
+root           4  0.0  0.0      0     0 ?        I<    2024   0:00 [rcu_par_gp]
+root           5  0.0  0.0      0     0 ?        I<    2024   0:00 [slub_flushwq]
+root           6  0.0  0.0      0     0 ?        I<    2024   0:00 [netns]
+root           8  0.0  0.0      0     0 ?        I<    2024   0:00 [kworker/0:0H-events_highpri]
+root          10  0.0  0.0      0     0 ?        I<    2024   0:00 [mm_percpu_wq]
+root          11  0.0  0.0      0     0 ?        I     2024   0:00 [rcu_tasks_kthread]
+root          12  0.0  0.0      0     0 ?        I     2024   0:00 [rcu_tasks_rude_kthread]
+root          13  0.0  0.0      0     0 ?        I     2024   0:00 [rcu_tasks_trace_kthread]
+root          14  0.0  0.0      0     0 ?        S     2024   0:19 [ksoftirqd/0]
+root          15  0.0  0.0      0     0 ?        I     2024   3:31 [rcu_preempt]
+root          16  0.0  0.0      0     0 ?        S     2024   0:06 [migration/0]
+root          18  0.0  0.0      0     0 ?        S     2024   0:00 [cpuhp/0]
+root          19  0.0  0.0      0     0 ?        S     2024   0:00 [cpuhp/1]
+root          20  0.0  0.0      0     0 ?        S     2024   0:06 [migration/1]
+root          21  0.0  0.0      0     0 ?        S     2024   0:27 [ksoftirqd/1]
+root          23  0.0  0.0      0     0 ?        I<    2024   0:00 [kworker/1:0H-events_highpri]
+root          24  0.0  0.0      0     0 ?        S     2024   0:00 [cpuhp/2]
+root          25  0.0  0.0      0     0 ?        S     2024   0:06 [migration/2]
+root          26  0.0  0.0      0     0 ?        S     2024   0:18 [ksoftirqd/2]
+root          28  0.0  0.0      0     0 ?        I<    2024   0:00 [kworker/2:0H-events_highpri]
+root          29  0.0  0.0      0     0 ?        S     2024   0:00 [cpuhp/3]
+root          30  0.0  0.0      0     0 ?        S     2024   0:06 [migration/3]
+root          31  0.0  0.0      0     0 ?        S     2024   0:23 [ksoftirqd/3]
+root          33  0.0  0.0      0     0 ?        I<    2024   0:00 [kworker/3:0H-events_highpri]
+root          38  0.0  0.0      0     0 ?        S     2024   0:00 [kdevtmpfs]
+root          39  0.0  0.0      0     0 ?        I<    2024   0:00 [inet_frag_wq]
+root          40  0.0  0.0      0     0 ?        S     2024   0:00 [kauditd]
+root          41  0.0  0.0      0     0 ?        S     2024   0:00 [khungtaskd]
+root          42  0.0  0.0      0     0 ?        S     2024   0:00 [oom_reaper]
+root          43  0.0  0.0      0     0 ?        I<    2024   0:00 [writeback]
+root          44  0.0  0.0      0     0 ?        S     2024   0:59 [kcompactd0]
+root          45  0.0  0.0      0     0 ?        SN    2024   0:00 [ksmd]
+root          46  0.0  0.0      0     0 ?        SN    2024   0:38 [khugepaged]
+root          47  0.0  0.0      0     0 ?        I<    2024   0:00 [kintegrityd]
+root          48  0.0  0.0      0     0 ?        I<    2024   0:00 [kblockd]
+root          49  0.0  0.0      0     0 ?        I<    2024   0:00 [blkcg_punt_bio]
+root          50  0.0  0.0      0     0 ?        I<    2024   0:00 [tpm_dev_wq]
+root          51  0.0  0.0      0     0 ?        I<    2024   0:00 [edac-poller]
+root          52  0.0  0.0      0     0 ?        I<    2024   0:00 [devfreq_wq]
+root          53  0.0  0.0      0     0 ?        I<    2024   0:06 [kworker/0:1H-kblockd]
+root          54  0.0  0.0      0     0 ?        S     2024   0:00 [kswapd0]
+root          61  0.0  0.0      0     0 ?        I<    2024   0:00 [kthrotld]
+root          63  0.0  0.0      0     0 ?        I<    2024   0:00 [acpi_thermal_pm]
+root          64  0.0  0.0      0     0 ?        S     2024   0:18 [hwrng]
+root          65  0.0  0.0      0     0 ?        I<    2024   0:00 [mld]
+root          66  0.0  0.0      0     0 ?        I<    2024   0:04 [kworker/1:1H-kblockd]
+root          67  0.0  0.0      0     0 ?        I<    2024   0:00 [ipv6_addrconf]
+root          73  0.0  0.0      0     0 ?        I<    2024   0:00 [kstrp]
+root          78  0.0  0.0      0     0 ?        I<    2024   0:00 [zswap-shrink]
+root          79  0.0  0.0      0     0 ?        I<    2024   0:00 [kworker/u9:0]
+root         123  0.0  0.0      0     0 ?        I<    2024   0:04 [kworker/2:1H-kblockd]
+root         133  0.0  0.0      0     0 ?        I<    2024   0:03 [kworker/3:1H-kblockd]
+root         159  0.0  0.0      0     0 ?        I<    2024   0:00 [ata_sff]
+root         160  0.0  0.0      0     0 ?        I<    2024   0:00 [nvme-wq]
+root         161  0.0  0.0      0     0 ?        I<    2024   0:00 [nvme-reset-wq]
+root         162  0.0  0.0      0     0 ?        I<    2024   0:00 [nvme-delete-wq]
+root         165  0.0  0.0      0     0 ?        S     2024   0:00 [scsi_eh_0]
+root         166  0.0  0.0      0     0 ?        I<    2024   0:00 [scsi_tmf_0]
+root         167  0.0  0.0      0     0 ?        S     2024   0:00 [scsi_eh_1]
+root         168  0.0  0.0      0     0 ?        I<    2024   0:00 [scsi_tmf_1]
+root         169  0.0  0.0      0     0 ?        S     2024   0:00 [scsi_eh_2]
+root         170  0.0  0.0      0     0 ?        I<    2024   0:00 [scsi_tmf_2]
+root         171  0.0  0.0      0     0 ?        S     2024   0:00 [scsi_eh_3]
+root         172  0.0  0.0      0     0 ?        I<    2024   0:00 [scsi_tmf_3]
+root         206  0.0  0.0      0     0 ?        S     2024   0:12 [jbd2/nvme0n1p3-8]
+root         207  0.0  0.0      0     0 ?        I<    2024   0:00 [ext4-rsv-conver]
+root         249  0.0  0.4 180756 78688 ?        Ss    2024  13:25 /lib/systemd/systemd-journald
+root         264  0.0  0.0      0     0 ?        I<    2024   0:00 [usbip_event]
+root         272  0.0  0.0  26596  6484 ?        Ss    2024   0:03 /lib/systemd/systemd-udevd
+root         331  0.0  0.0      0     0 ?        S     2024   0:00 [watchdogd]
+root         340  0.0  0.0      0     0 ?        S     2024   0:00 [irq/132-mei_me]
+root         367  0.0  0.0      0     0 ?        I<    2024   0:00 [cryptd]
+root         444  0.0  0.0      0     0 ?        S     2024   0:00 [card0-crtc0]
+root         445  0.0  0.0      0     0 ?        S     2024   0:00 [card0-crtc1]
+root         461  0.0  0.0   2712   136 ?        Ss    2024   0:00 /opt/CrowdStrike/falcond
+root         467  1.5  2.2 2734288 365740 ?      Sl    2024 437:41 falcon-sensor-bpf
+systemd+     591  0.0  0.0  90084  6608 ?        Ssl   2024   0:09 /lib/systemd/systemd-timesyncd
+root         599  0.0  0.0   6608  2784 ?        Ss    2024   0:03 /usr/sbin/cron -f
+message+     600  0.1  0.0   8184  4348 ?        Ss    2024  45:06 /usr/bin/dbus-daemon --system --address=systemd: --nof
+root         604  0.0  0.0 221788  5004 ?        Ssl   2024   4:23 /usr/sbin/rsyslogd -n -iNONE
+root         606  0.0  0.0  49840  8304 ?        Ss    2024  28:25 /lib/systemd/systemd-logind
+root         609  0.0  0.2 1875144 48176 ?       Ssl   2024  14:10 /usr/bin/containerd
+root         612  0.0  0.0   5872   984 tty1     Ss+   2024   0:00 /sbin/agetty -o -p -- \u --noclear - linux
+root         623  0.0  0.0  15432  9336 ?        Ss    2024   4:32 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startup
+root         624  0.0  0.0   4608   384 ?        Ss    2024   0:06 /usr/sbin/usbipd -D
+root         636  0.0  0.1 110728 24648 ?        Ssl   2024   0:00 /usr/bin/python3 /usr/share/unattended-upgrades/unatte
+root         646  0.0  0.5 2578540 85264 ?       Ssl   2024   2:42 /usr/bin/dockerd -H fd:// --containerd=/run/containerd
+root        1272  0.0  0.0      0     0 ?        I<    2024   0:00 [tls-strp]
+kokubo   2246506  0.0  0.0  19024 10632 ?        Ss    2024   0:00 /lib/systemd/systemd --user
+kokubo   2246507  0.0  0.0 168704  3324 ?        S     2024   0:00 (sd-pam)
+root     2246749  0.0  0.0  17412 10724 ?        Ss    2024   0:00 sshd: kokubo [priv]
+kokubo   2246756  0.0  0.0  17672  6704 ?        S     2024   0:00 sshd: kokubo@pts/5
+kokubo   2246757  0.0  0.0   8212  4568 pts/5    Ss+   2024   0:00 -bash
+lmao     2688300  0.0  0.0  19024 10632 ?        Ss   13:16   0:00 /lib/systemd/systemd --user
+lmao     2688301  0.0  0.0 168704  3336 ?        S    13:16   0:00 (sd-pam)
+lmao     2688809 12.7  0.0 324340 14344 ?        Sl   13:17  23:48 python3 ./gateway/obc-gateway.py -f
+lmao     2691067  0.0  0.0  10320  3072 ?        S    13:21   0:00 socat tcp-listen:60000,bind=0,reuseaddr,fork,max-child
+root     2738739  0.0  0.0      0     0 ?        I    14:41   0:00 [kworker/3:3-events]
+root     2756985  0.0  0.0      0     0 ?        I    15:50   0:00 [kworker/u8:0-flush-259:0]
+root     2760261  0.0  0.0      0     0 ?        I    16:02   0:00 [kworker/2:1-cgroup_destroy]
+root     2761009  0.0  0.0      0     0 ?        I    16:04   0:00 [kworker/u8:1-flush-259:0]
+root     2763448  0.0  0.0      0     0 ?        I    16:08   0:00 [kworker/1:0-cgroup_destroy]
+root     2766344  0.0  0.0      0     0 ?        I    16:13   0:00 [kworker/0:0-events]
+root     2766489  0.0  0.0      0     0 ?        I    16:13   0:00 [kworker/3:0-cgroup_destroy]
+root     2766562  0.0  0.0      0     0 ?        I    16:13   0:00 [kworker/2:0-cgroup_destroy]
+root     2767115  0.0  0.0      0     0 ?        I    16:14   0:00 [kworker/1:1-cgroup_destroy]
+root     2769484  0.0  0.0      0     0 ?        I    16:18   0:00 [kworker/0:2-cgroup_destroy]
+root     2769773  0.0  0.0      0     0 ?        I    16:18   0:00 [kworker/2:2-cgroup_destroy]
+root     2769918  0.0  0.0      0     0 ?        I    16:18   0:00 [kworker/3:1-cgroup_destroy]
+root     2770244  0.0  0.0      0     0 ?        I    16:19   0:00 [kworker/1:2-cgroup_bpf_destroy]
+root     2771093  0.0  0.0      0     0 ?        I    16:20   0:00 [kworker/u8:2-events_unbound]
+root     2772270  0.0  0.0      0     0 ?        I    16:22   0:00 [kworker/u8:3-flush-259:0]
+root     2772282  0.0  0.0      0     0 ?        I    16:22   0:00 [kworker/2:3-events]
+root     2772388  0.0  0.0      0     0 ?        I    16:23   0:00 [kworker/1:3-cgroup_destroy]
+root     2772633  0.0  0.0      0     0 ?        I    16:23   0:00 [kworker/0:1-cgroup_destroy]
+root     2772823  0.2  0.0  17412 10724 ?        Ss   16:23   0:00 sshd: t_koike [priv]
+t_koike  2772829  0.4  0.0  18992 10668 ?        Ss   16:23   0:00 /lib/systemd/systemd --user
+t_koike  2772830  0.0  0.0 168704  3336 ?        S    16:23   0:00 (sd-pam)
+t_koike  2772850  0.1  0.0  17672  6676 ?        S    16:23   0:00 sshd: t_koike@pts/0
+t_koike  2772851  0.2  0.0   8364  5076 pts/0    Ss   16:23   0:00 -bash
+t_koike  2773047  200  0.0  11084  4444 pts/0    R+   16:24   0:00 ps aux
+[?2004h[t_koike@obcdev2 ~]$ [?2004l
+logout
+Connection to obcdev2.stars.axelspace.com closed.
+**********************************
+***** log file output Stopped ****
+**********************************
+Mon Jan  6 16:24:13 JST 2025

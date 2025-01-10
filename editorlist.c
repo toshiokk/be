@@ -52,7 +52,7 @@ int doe_view_file_list(void)
 	return 1;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 // make help text in help-buffer and view by editor
 int view_list(int help_idx)
@@ -91,7 +91,7 @@ int view_list(int help_idx)
 #endif // ENABLE_HELP
 	}
 
-	int ret = call_editor(1, APP_MODE_LIST, get_help_buf(help_idx), NULL, 0);
+	int ret = do_call_editor(1, APP_MODE_CHOOSER, get_help_buf(help_idx), NULL, 0);
 
 flf_d_printf("ret: %d\n", ret);
 	return ret;
@@ -154,9 +154,7 @@ PRIVATE void make_help_buf(int help_idx)
 #endif // ENABLE_HELP
 	}
 
-	SET_CUR_EBUF_STATE(buf_MODE, buf_MODE_LIST);	// A list must be not saveable
-///	post_cmd_processing(CUR_EDIT_BUF_TOP_LINE, CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
-///	 UPDATE_SCRN_ALL_SOON);
+	SET_CUR_EBUF_STATE(buf_MODE, buf_MODE_RO);	// A list must be not saveable
 	set_epc_buf(cur_edit_buf);
 }
 
@@ -184,87 +182,108 @@ PRIVATE void make_help_file_list(be_buf_t *cur_edit_buf)
 #ifdef ENABLE_HELP
 PRIVATE void make_help_func_list(void)
 {
+	char buf1[MAX_KEY_NAME_LEN+1];
 	char buf2[MAX_KEY_NAME_LEN+1];
 	char buf3[MAX_KEY_NAME_LEN+1];
-	char *template_ = "%-32s  %-8s %-8s %-8s  %-32s";
+	char *template_ = "%-32s  %-*s %-*s %-*s  %-32s";
 	//			   12345678901234567890123456789012
-	char *key_  = "--------";
 	char *func_ = "--------------------------------";
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
 	func_key_table_t *fkey_table = get_func_key_table_from_key_group(0);
-	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
-	 "Function", "Key1", "Key2", "Key3", "func_id");
+	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, "Function",
+	 MAX_KEY_NAME_LEN, "Key1",
+	 MAX_KEY_NAME_LEN, "Key2",
+	 MAX_KEY_NAME_LEN, "Key3",
+	 "func_id");
 	append_string_to_cur_edit_buf(buffer);
-	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, func_, key_, key_, key_, func_);
+	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, func_,
+	 MAX_KEY_NAME_LEN, long_key_none_str(),
+	 MAX_KEY_NAME_LEN, long_key_none_str(),
+	 MAX_KEY_NAME_LEN, long_key_none_str(),
+	 func_);
 	append_string_to_cur_edit_buf(buffer);
 	for (int idx = 0; fkey_table[idx].help[0]; idx++) {
 		if (idx != 0 && fkey_table[idx].desc[0] == 0) {
 			append_string_to_cur_edit_buf("");
 		}
-		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
-		 fkey_table[idx].help,
-		 short_key_name_from_key_code(fkey_table[idx].key1, NULL),
-		 short_key_name_from_key_code(fkey_table[idx].key2, buf2),
-		 short_key_name_from_key_code(fkey_table[idx].key3, buf3),
+		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, fkey_table[idx].help,
+		 MAX_KEY_NAME_LEN, short_key_name_from_key_code(fkey_table[idx].keys[0], buf1),
+		 MAX_KEY_NAME_LEN, short_key_name_from_key_code(fkey_table[idx].keys[1], buf2),
+		 MAX_KEY_NAME_LEN, short_key_name_from_key_code(fkey_table[idx].keys[2], buf3),
 		 fkey_table[idx].func_id);
 		append_string_to_cur_edit_buf(buffer);
 	}
 }
 PRIVATE void make_help_key_list(void)
 {
-	char *template_ = "%-8s  %-32s  %-8s %-8s  %-32s";
+	char *template_ = "%-*s  %-32s  %-*s %-*s  %-32s";
 	//			   12345678901234567890123456789012
-	char *key_  = "--------";
 	char *func_ = "--------------------------------";
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
-	 "Key", "Function", "Key2", "Key3", "func_id");
+	 MAX_KEY_NAME_LEN, "Key",
+	 "Function",
+	 MAX_KEY_NAME_LEN, "Key2",
+	 MAX_KEY_NAME_LEN, "Key3",
+	 "func_id");
 	append_string_to_cur_edit_buf(buffer);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
-	 key_, func_, key_, key_, func_);
+	 MAX_KEY_NAME_LEN, long_key_none_str(),
+	 func_,
+	 MAX_KEY_NAME_LEN, long_key_none_str(),
+	 MAX_KEY_NAME_LEN, long_key_none_str(),
+     func_);
 	append_string_to_cur_edit_buf(buffer);
-	for (int key_idx = -0x7f; key_idx < get_key_name_table_entries(); key_idx++) {
+	int key_idx;
+	for (key_idx = -0x60; key_idx < 0; key_idx++) {
+		key_code_t key = key_idx + 0x60 + ' ';
+		// key = [' ', 0x7f]
+		func_key_table_t *fkey_table = get_func_key_table_from_key(get_app_func_key_table(), key);
+		if (fkey_table) {
+			break;
+		}
+	}
+	for ( ; key_idx < get_key_name_table_entries(); key_idx++) {
 		key_code_t key;
-		key_code_t key1 = K_NONE;
-		key_code_t key2 = K_NONE;
-		key_code_t key3 = K_NONE;
+		char buf1[MAX_KEY_NAME_LEN+1];
 		char buf2[MAX_KEY_NAME_LEN+1];
 		char buf3[MAX_KEY_NAME_LEN+1];
-		if (key_idx <  0) {
-			key = key_idx + 0x7f;	// key: 0x00 - 0x7e
+		if (key_idx < 0) {
+			key = key_idx + 0x60 + ' ';
+			// key = [' ', 0x7f]
 		} else {
 			key = key_name_table[key_idx].key_code;
 		}
-		func_key_table_t *fkey_table = get_func_key_table_from_key(
-		 get_app_func_key_table(), key);
-		key1 = key;
+		func_key_table_t *fkey_table = get_func_key_table_from_key(get_app_func_key_table(), key);
+		key_code_t keys[MAX_KEYS_BIND];
+		for (int key_idx = 0; key_idx < MAX_KEYS_BIND; key_idx++) {
+			keys[key_idx] = K_NONE;
+		}
+		int keys_set = 0;
+		keys[keys_set++] = key;
 		if (fkey_table) {
-			key = fkey_table->key1;
-			if ((key != key1) && (key != key2) && (key != key3)) {
-				if (IS_KEY_VALID(key1) == 0) { key1 = key; }
-				 else if (IS_KEY_VALID(key2) == 0) { key2 = key; }
-				  else if (IS_KEY_VALID(key3) == 0) { key3 = key; }
-			}
-			key = fkey_table->key2;
-			if ((key != key1) && (key != key2) && (key != key3)) {
-				if (IS_KEY_VALID(key1) == 0) { key1 = key; }
-				 else if (IS_KEY_VALID(key2) == 0) { key2 = key; }
-				  else if (IS_KEY_VALID(key3) == 0) { key3 = key; }
-			}
-			key = fkey_table->key3;
-			if ((key != key1) && (key != key2) && (key != key3)) {
-				if (IS_KEY_VALID(key1) == 0) { key1 = key; }
-				 else if (IS_KEY_VALID(key2) == 0) { key2 = key; }
-				  else if (IS_KEY_VALID(key3) == 0) { key3 = key; }
+			for (int key_idx_from = 0; key_idx_from < MAX_KEYS_BIND; key_idx_from++) {
+				if (IS_KEY_VALID(fkey_table->keys[key_idx_from])) {
+					for (int key_idx = 0; key_idx < MAX_KEYS_BIND; key_idx++) {
+						if (keys[key_idx] == fkey_table->keys[key_idx_from]) {
+							// already set
+							break;
+						}
+					}
+					if (key_idx >= MAX_KEYS_BIND) {
+						// not yet set
+						keys[keys_set++] = fkey_table->keys[key_idx_from];
+					}
+				}
 			}
 		}
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
-		 short_key_name_from_key_code(key1, NULL),
+		 MAX_KEY_NAME_LEN, short_key_name_from_key_code(keys[0], buf1),
 		 fkey_table ? fkey_table->help : "-- No function assigned --",
-		 short_key_name_from_key_code(key2, buf2),
-		 short_key_name_from_key_code(key3, buf3),
+		 MAX_KEY_NAME_LEN, short_key_name_from_key_code(keys[1], buf2),
+		 MAX_KEY_NAME_LEN, short_key_name_from_key_code(keys[2], buf3),
 		 fkey_table ? fkey_table->func_id : "-- None --");
 		append_string_to_cur_edit_buf(buffer);
 	}

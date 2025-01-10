@@ -22,14 +22,16 @@
 #include "utilincs.h"
 
 #define STR_BUF_LEN		4096
-
-// [0x00, 0x1f], 0x7f
 int is_ctrl_char(unsigned char uchar)
 {
 	return (uchar < 0x20) || (uchar == 0x7f);
 }
+int is_graph_char(unsigned char uchar)
+{
+	return is_ctrl_char(uchar) == 0;
+}
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifndef HAVE_STRCASECMP
 /* This function is equivalent to strcasecmp(). */
@@ -56,7 +58,18 @@ int my_strnicmp(const char *s1, const char *s2, size_t n)
 }
 #endif
 
-//-----------------------------------------------------------------------------
+// translate a character to a character
+char* str_tr(char* string, char chr_from, char chr_to)
+{
+	for (char* ptr = string; *ptr; ptr++) {
+		if (*ptr == chr_from) {
+			*ptr = chr_to;
+		}
+	}
+	return string;
+}
+
+//------------------------------------------------------------------------------
 
 char *conv_esc_str(char *string)
 {
@@ -98,7 +111,7 @@ char *conv_esc_str(char *string)
 	return string;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifdef START_UP_TEST
 void test_utilstr(void)
 {
@@ -312,6 +325,7 @@ char *strcat_printf(char *buffer, size_t buf_len, const char *format, ...)
 	strlcat__(buffer, buf_len, buf);
 	return buffer;
 }
+// TOBEDELETED
 int snprintf_(char *buffer, size_t buf_len, const char *format, ...)
 {
 	va_list ap;
@@ -410,6 +424,11 @@ int contain_chrs(const char *str, const char* chrs)
 
 char *strnset__(char *buf, char chr, size_t len)
 {
+	static char strnset_buf[MAX_PATH_LEN+1];
+	if (buf == NULL) {
+		buf = strnset_buf;
+		len = LIM_MAX(MAX_PATH_LEN, len);
+	}
 	memset(buf, chr, len);
 	buf[len] = '\0';	// always NUL terminate string
 	return buf;
@@ -457,7 +476,7 @@ char *strlower(char *buffer)
 	return buffer;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 char *shrink_str__adjust_col(char *str, int space, int n_over_10)
 {
@@ -571,7 +590,7 @@ char *utf8s_strnset__(char *buf, const char *utf8c, size_t len)
 	return buf;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int skip_space(const char **ptr)
 {
@@ -781,7 +800,7 @@ char tail_char(const char *str)
 	return str[len];
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
 void dump_str_w_caret(const char *string, int byte_idx)

@@ -89,11 +89,11 @@ PRIVATE char termif_cursor_on_sent = -1;
 PRIVATE int termif_lines = 25;
 PRIVATE int termif_columns = 80;
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE struct termios term_settings_save;	/* The user's original term settings */
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE void set_string_to_vscreen(const char *string, int bytes);
 PRIVATE void put_narrow_char_to_vscreen(vscreen_char_t ucs21);
@@ -123,7 +123,7 @@ PRIVATE void send_string_to_term__(const char *string, int bytes);
 PRIVATE key_code_t input_and_decode_key_sequences(void);
 PRIVATE key_code_t input_key(void);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int termif_init(void)
 {
@@ -148,7 +148,7 @@ int termif_end(void)
 	restore_term_settings(&term_settings_save);
 	return 0;
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 char investigate_wcwidth(wchar_t wc)
 {
@@ -167,7 +167,7 @@ char investigate_utf8c_width(const char *utf8c)
 	}
 	return -1;	// not gotten
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // get screen size from terminal
 int termif_get_screen_size_from_term(void)
 {
@@ -206,7 +206,7 @@ int termif_get_columns(void)
 {
 	return termif_columns;
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void termif_clear_screen(void)
 {
 	termif_clear_vscreen_to_paint();
@@ -281,7 +281,7 @@ void termif_output_string(short yy, short xx, const char *string, int bytes)
 	// and not transfered to the console until 'termif_refresh()' called
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 PRIVATE void set_string_to_vscreen(const char *string, int bytes)
 {
@@ -289,7 +289,7 @@ PRIVATE void set_string_to_vscreen(const char *string, int bytes)
 	vscreen_char_t ucs21;
 	int width;
 
-	for (str = string; str - string < bytes; str += utf8c_bytes(str)) {
+	for (str = string; (str - string) < bytes; str += utf8c_bytes(str)) {
 		ucs21 = utf8c_decode(str);
 		width = utf8c_columns(str);
 		if (width == 1) {			// narrow char.
@@ -380,7 +380,7 @@ PRIVATE void dump_vscreen(int yy, int len)
 #endif
 #endif // ENABLE_DEBUG
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // transfer display data to the console
 
 void termif_beep(void)
@@ -399,7 +399,6 @@ void termif_beep(void)
 // refresh screen by sending pending data in vscreen_to_paint to the screen.
 void termif_refresh(void)
 {
-/////_FLF_
 	int start_xx;
 	vscreen_char_t start_attrs;
 	char utf8c[MAX_UTF8C_BYTES + 1];
@@ -440,7 +439,6 @@ void termif_refresh(void)
 			}
 		}
 	}
-/////_MFLF_
 	// restore cursor if erased
 	send_cursor_pos_to_term(termif_cursor_yy, termif_cursor_xx);
 	send_cursor_on_to_term(termif_cursor_on);
@@ -626,7 +624,7 @@ PRIVATE void send_string_to_term__(const char *string, int bytes)
 	fsync(STDOUT_FILENO);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 key_code_t termif_input_key(void)
 {
@@ -661,8 +659,8 @@ struct _key_seq_ {
 	{ K_S_F06,		"\x1b[32~" },
 	{ K_S_F07,		"\x1b[33~" },
 	{ K_S_F08,		"\x1b[34~" },
+	{ KEY_DC,		"\x1b[3~" },
 	{ K_INS,		"\x1b[2~" },
-	{ K_DC,			"\x1b[3~" },
 	{ K_HOME,		"\x1b[1~" },
 	{ K_END,		"\x1b[4~" },
 	{ K_PPAGE,		"\x1b[5~" },
@@ -720,62 +718,64 @@ struct _key_seq_ {
 	{ K_M_F10,		"\x1b[21;3~" },
 	{ K_M_F11,		"\x1b[23;3~" },
 	{ K_M_F12,		"\x1b[24;3~" },
-	{ K_SM_F01,		"\x1b[1;4P" },
-	{ K_SM_F02,		"\x1b[1;4Q" },
-	{ K_SM_F03,		"\x1b[1;4R" },
-	{ K_SM_F04,		"\x1b[1;4S" },
-	{ K_SM_F05,		"\x1b[15;4~" },
-	{ K_SM_F06,		"\x1b[17;4~" },
-	{ K_SM_F07,		"\x1b[18;4~" },
-	{ K_SM_F08,		"\x1b[19;4~" },
-	{ K_SM_F09,		"\x1b[20;4~" },
-	{ K_SM_F10,		"\x1b[21;4~" },
-	{ K_SM_F11,		"\x1b[23;4~" },
-	{ K_SM_F12,		"\x1b[24;4~" },
+	{ K_S_M_F01,	"\x1b[1;4P" },
+	{ K_S_M_F02,	"\x1b[1;4Q" },
+	{ K_S_M_F03,	"\x1b[1;4R" },
+	{ K_S_M_F04,	"\x1b[1;4S" },
+	{ K_S_M_F05,	"\x1b[15;4~" },
+	{ K_S_M_F06,	"\x1b[17;4~" },
+	{ K_S_M_F07,	"\x1b[18;4~" },
+	{ K_S_M_F08,	"\x1b[19;4~" },
+	{ K_S_M_F09,	"\x1b[20;4~" },
+	{ K_S_M_F10,	"\x1b[21;4~" },
+	{ K_S_M_F11,	"\x1b[23;4~" },
+	{ K_S_M_F12,	"\x1b[24;4~" },
+
 	{ K_HOME,		"\x1b[H" },
 	{ K_END,		"\x1b[F" },
-	{ K_S_UP,		"\x1b[1;2A" },
-	{ K_S_DOWN,		"\x1b[1;2B" },
-	{ K_S_RIGHT,	"\x1b[1;2C" },
-	{ K_S_LEFT,		"\x1b[1;2D" },
-	{ K_C_UP,		"\x1b[1;5A" },
-	{ K_C_DOWN,		"\x1b[1;5B" },
-	{ K_C_RIGHT,	"\x1b[1;5C" },
-	{ K_C_LEFT,		"\x1b[1;5D" },
-	{ K_M_UP,		"\x1b[1;3A" },
-	{ K_M_DOWN,		"\x1b[1;3B" },
-	{ K_M_RIGHT,	"\x1b[1;3C" },
-	{ K_M_LEFT,		"\x1b[1;3D" },
-	{ K_SC_UP,		"\x1b[1;6A" },
-	{ K_SC_DOWN,	"\x1b[1;6B" },
-	{ K_SC_RIGHT,	"\x1b[1;6C" },
-	{ K_SC_LEFT,	"\x1b[1;6D" },
-	{ K_SM_UP,		"\x1b[1;4A" },
-	{ K_SM_DOWN,	"\x1b[1;4B" },
-	{ K_SM_RIGHT,	"\x1b[1;4C" },
-	{ K_SM_LEFT,	"\x1b[1;4D" },
-	{ K_CM_UP,		"\x1b[1;7A" },
-	{ K_CM_DOWN,	"\x1b[1;7B" },
-	{ K_CM_RIGHT,	"\x1b[1;7C" },
-	{ K_CM_LEFT,	"\x1b[1;7D" },
+
+	{ K_S___UP,		"\x1b[1;2A" },
+	{ K_S___DOWN,	"\x1b[1;2B" },
+	{ K_S___RIGHT,	"\x1b[1;2C" },
+	{ K_S___LEFT,	"\x1b[1;2D" },
+	{ K__C__UP,		"\x1b[1;5A" },
+	{ K__C__DOWN,	"\x1b[1;5B" },
+	{ K__C__RIGHT,	"\x1b[1;5C" },
+	{ K__C__LEFT,	"\x1b[1;5D" },
+	{ K___M_UP,		"\x1b[1;3A" },
+	{ K___M_DOWN,	"\x1b[1;3B" },
+	{ K___M_RIGHT,	"\x1b[1;3C" },
+	{ K___M_LEFT,	"\x1b[1;3D" },
+	{ K_SC__UP,		"\x1b[1;6A" },
+	{ K_SC__DOWN,	"\x1b[1;6B" },
+	{ K_SC__RIGHT,	"\x1b[1;6C" },
+	{ K_SC__LEFT,	"\x1b[1;6D" },
+	{ K_S_M_UP,		"\x1b[1;4A" },
+	{ K_S_M_DOWN,	"\x1b[1;4B" },
+	{ K_S_M_RIGHT,	"\x1b[1;4C" },
+	{ K_S_M_LEFT,	"\x1b[1;4D" },
+	{ K__CM_UP,		"\x1b[1;7A" },
+	{ K__CM_DOWN,	"\x1b[1;7B" },
+	{ K__CM_RIGHT,	"\x1b[1;7C" },
+	{ K__CM_LEFT,	"\x1b[1;7D" },
 	{ K_SCM_UP,		"\x1b[1;8A" },
 	{ K_SCM_DOWN,	"\x1b[1;8B" },
 	{ K_SCM_RIGHT,	"\x1b[1;8C" },
 	{ K_SCM_LEFT,	"\x1b[1;8D" },
-	{ K_S_INS,		"\x1b[2;2~" },
-	{ K_M_INS,		"\x1b[2;3~" },
-	{ K_SM_INS,		"\x1b[2;4~" },
-	{ K_C_INS,		"\x1b[2;5~" },
-	{ K_SC_INS,		"\x1b[2;6~" },
-	{ K_CM_INS,		"\x1b[2;7~" },
+	{ K_S___INS,	"\x1b[2;2~" },
+	{ K__C__INS,	"\x1b[2;5~" },
+	{ K___M_INS,	"\x1b[2;3~" },
+	{ K_S_M_INS,	"\x1b[2;4~" },
+	{ K_SC__INS,	"\x1b[2;6~" },
+	{ K__CM_INS,	"\x1b[2;7~" },
 	{ K_SCM_INS,	"\x1b[2;8~" },
-	{ K_S_DC,		"\x1b[3;2~" },
-	{ K_M_DC,		"\x1b[3;3~" },
-	{ K_SM_DC,		"\x1b[3;4~" },
-	{ K_C_DC,		"\x1b[3;5~" },
-	{ K_SC_DC,		"\x1b[3;6~" },
-	{ K_CM_DC,		"\x1b[3;7~" },
-	{ K_SCM_DC,		"\x1b[3;8~" },
+	{ K_S___DEL,	"\x1b[3;2~" },
+	{ K__C__DEL,	"\x1b[3;5~" },
+	{ K___M_DEL,	"\x1b[3;3~" },
+	{ K_S_M_DEL,	"\x1b[3;4~" },
+	{ K_SC__DEL,	"\x1b[3;6~" },
+	{ K__CM_DEL,	"\x1b[3;7~" },
+	{ K_SCM_DEL,	"\x1b[3;8~" },
 };
 #define SIZEOF_KEY_SEQ_TABLE	(sizeof(key_seq_table) / sizeof(key_seq_table[0]))
 

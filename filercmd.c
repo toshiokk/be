@@ -96,7 +96,7 @@ int dof_tap_file(void)
 	if (filer_change_dir_to_cur_sel()) {
 		return 0;
 	}
-	if (is_app_list_mode()) {
+	if (is_app_chooser_mode()) {
 		if (get_file_type_num(get_cur_fv_cur_file_ptr()) >= 80) {
 			filer_do_next = FL_ENTER_FILE_NAME_OR_PATH;
 			return 1;
@@ -131,25 +131,35 @@ int dof_tail_file(void)	// view file with "tail" command
 	return 0;
 }
 
-PRIVATE int dof_open_file_(int load_from_history, int recursive);
+PRIVATE int dof_open_file_(int flags);
 
 int dof_open_file(void)
 {
-	dof_open_file_(LFH0, RECURSIVE1);
+	dof_open_file_(LFH0 | WRP0 | FOL0 | RECURS1);
+	return 1;
+}
+int dof_open_file_ro(void)
+{
+	dof_open_file_(LFH0 | WRP1 | FOL0 | RECURS1);
+	return 1;
+}
+int dof_open_locked_file(void)
+{
+	dof_open_file_(LFH0 | WRP0 | FOL1 | RECURS1);
 	return 1;
 }
 int dof_open_file_non_recursive(void)
 {
-	dof_open_file_(LFH0, RECURSIVE0);
+	dof_open_file_(LFH0 | WRP0 | FOL0 | RECURS0);
 	return 1;
 }
 int dof_open_file_from_history(void)
 {
-	dof_open_file_(LFH1, RECURSIVE1);
+	dof_open_file_(LFH1 | WRP0 | FOL0 | RECURS1);
 	return 1;
 }
 
-PRIVATE int dof_open_file_(int load_from_history, int recursive)
+PRIVATE int dof_open_file_(int flags)
 {
 	if (filer_change_dir_to_cur_sel()) {
 		return 0;
@@ -166,7 +176,7 @@ PRIVATE int dof_open_file_(int load_from_history, int recursive)
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if (S_ISREG(get_cur_fv_file_ptr(file_idx)->st.st_mode)) {
 			if (load_file_name_upp_low_(get_cur_fv_file_ptr(file_idx)->file_name,
-			 TUL0, OOE0, MOE1, load_from_history, recursive) <= 0) {
+			 TUL0 | OOE0 | MOE1 | (flags & (LFH1 | WRP1 | FOL1 | RECURS1))) <= 0) {
 				tio_beep();
 			}
 		}
@@ -193,7 +203,7 @@ PRIVATE int dof_open_file_(int load_from_history, int recursive)
 	return 0;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int dof_open_proj_file(void)
 {
@@ -233,7 +243,8 @@ PRIVATE int dof_open_new_file_(const char *str)
 		return 0;
 	}
 
-	if (load_files_in_string(file_path, TUL0, OOE1, MOE0, LFH1, RECURSIVE0) >= 0) {
+	if (load_files_in_string(file_path,
+	 TUL0 | OOE1 | MOE0 | LFH1 | WRP0 | FOL0 | RECURS0) >= 0) {
 		disp_files_loaded_if_ge_0();
 		filer_do_next = EF_LOADED;
 		return 1;
@@ -392,7 +403,8 @@ int dof_drop_files_to_act__(int action)
 		}
 		switch(action) {
 		case ACTION_OPEN:
-			if (load_files_in_string(path, TUL0, OOE1, MOE0, LFH1, RECURSIVE0) >= 0) {
+			if (load_files_in_string(path,
+			 TUL0 | OOE1 | MOE0 | LFH1 | WRP0 | FOL0 | RECURS0) >= 0) {
 				disp_files_loaded_if_ge_0();
 				filer_do_next = EF_LOADED;
 			} else {
@@ -677,7 +689,7 @@ int dof_real_path(void)
 	}
 	return filer_change_dir_if_not_yet(dir);
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int dof_select_file(void)
 {
 	get_cur_fv_cur_file_ptr()->selected = get_cur_fv_cur_file_ptr()->selected ^ _FILE_SEL_MAN_;
@@ -726,14 +738,14 @@ PRIVATE int dof_quit_filer_(void)
 }
 int dof_quit_filer(void)
 {
-	if ((get_app_win_stack_depth() == 0) && count_cut_bufs()) {
-		int ret = ask_yes_no(ASK_YES_NO | ASK_END,
-		 _("Are you OK to quit %s ?"), APP_LONG_NAME);
-		if ((ret != ANSWER_YES) && (ret != ANSWER_END)) {
-			disp_status_bar_done(_("Cancelled"));
-			return 0;
-		}
-	}
+///	if ((get_app_win_stack_depth() == 0) && count_cut_bufs()) {
+///		int ret = ask_yes_no(ASK_YES_NO | ASK_END,
+///		 _("Are you OK to quit %s ?"), APP_LONG_NAME);
+///		if ((ret != ANSWER_YES) && (ret != ANSWER_END)) {
+///			disp_status_bar_done(_("Cancelled"));
+///			return 0;
+///		}
+///	}
 	return dof_quit_filer_();
 }
 int dof_quit_home_dir(void)
@@ -747,23 +759,23 @@ int dof_tog_show_dot_file(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_inc_show_file_info(void)
+int dof_inc_file_view_mode(void)
 {
-	inc_show_file_info();
-	SHOW_MODE("File information", get_str_show_file_info());
+	inc_file_view_mode();
+	SHOW_MODE("File information", get_str_file_view_mode());
 	return 0;
 }
-int dof_clear_sort_by(void)
+int dof_clear_file_sort_mode(void)
 {
-	clear_sort_by();
-	SHOW_MODE("Clear File sort mode", get_str_sort_by());
+	clear_file_sort_mode();
+	SHOW_MODE("Clear File sort mode", get_str_file_sort_mode());
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_inc_sort_by(void)
+int dof_inc_file_sort_mode(void)
 {
-	inc_sort_by();
-	SHOW_MODE("File sort mode", get_str_sort_by());
+	inc_file_sort_mode();
+	SHOW_MODE("File sort mode", get_str_file_sort_mode());
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -812,14 +824,14 @@ int dof_view_func_list(void)
 
 int dof_filer_menu_0(void)
 {
-	if (is_app_view_list_mode()) {
+	if (is_app_chooser_view_mode()) {
 		filer_do_next = EF_QUIT;
 		return 0;
 	}
 	return filer_menu_n(-1);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef ENABLE_HISTORY
 PRIVATE int change_cur_dir_from_history(const char *dir);

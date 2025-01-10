@@ -23,6 +23,7 @@
 #define utilstr_h
 
 int is_ctrl_char(unsigned char uchar);
+int is_graph_char(unsigned char uchar);
 
 #ifndef HAVE_STRCASECMP
 #define strcasecmp my_stricmp
@@ -32,6 +33,8 @@ int my_stricmp(const char *s1, const char *s2);
 #define strncasecmp my_strnicmp
 int my_strnicmp(const char *s1, const char *s2, size_t n);
 #endif // HAVE_STRNCASECMP
+
+char* str_tr(char* string, char chr_from, char chr_to);
 
 char *conv_esc_str(char *string);
 
@@ -97,7 +100,7 @@ int expand_utf8s_columns(char *utf8s, int columns);
 
 char *utf8s_strnset__(char *buf, const char *utf8c, size_t len);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int skip_space(const char **ptr);
 const char *skip_chars(const char *ptr, const char *chars);
 const char *skip_to_file_path(const char *ptr);
@@ -128,7 +131,7 @@ char *unquote_string(char *buffer);
 char is_quoted(const char *str, char quote_chr);
 char tail_char(const char *str);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
 void dump_str_w_caret(const char *string, int byte_idx);

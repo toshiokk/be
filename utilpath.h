@@ -98,6 +98,9 @@ int readlink__(const char *path, char *buffer, int len);
 
 BOOL is_abs_path(const char *path);
 
+int write_text_to_file(const char *file_path, char append, const char *text);
+int remove_file(const char* file_path);
+
 // tests ======================================================================
 
 #ifdef START_UP_TEST

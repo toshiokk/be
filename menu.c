@@ -22,6 +22,36 @@
 
 #include "headers.h"
 
+// Editing functions:
+// | key    | filer function              | editor function           |
+// |--------|-----------------------------|---------------------------|
+// | K_e_   | dof_open_file               | --                        |
+// | K_E_   | dof_open_file_ro            | --                        |
+// | K_M_e  | dof_open_file_non_recursive | doe_open_file             |
+// | K_M_E  | dof_open_file_from_history  | doe_open_file_ro          |
+// | K_MC_E | dof_open_locked_file        | doe_open_locked_file      |
+// | K_M_n  | dof_open_new_file           | doe_open_new_file         |
+// | K_M_N  | dof_open_new_file           | doe_open_new_file         |
+// | K_MC_N | --                          | doe_tog_show_line_num     |
+
+// Execution functions:
+// | key    | filer function              | editor function           |
+// |--------|-----------------------------|---------------------------|
+// | K_x_   | dof_exec_command_with_file  | --                        |
+// | K_X_   | dof_exec_command_with_files | --                        |
+// | K_M_x  | dof_run_command_soon        | doe_run_line_soon         |
+// | K_M_X  | dof_run_command_soon_w_log  | doe_run_line_soon_w_log   |
+// | K_MC_X | --                          | doe_tog_regex             |
+// | K_r_   | dof_run_command_rel         | --                        |
+// | K_R_   | dof_run_command_abs         | --                        |
+// | K_M_r  | --                          | doe_start_rec__cancel_rec |
+// | K_M_R  | --                          | --                        |
+// | K_MC_R | --                          | doe_tog_show_ruler        |
+// | K_M_p  | doe_open_proj_file          | doe_end_rec__playback     |
+// | K_M_P  | doe_open_proj_file          | doe_open_proj_file        |
+// | K_t_   | dof_run_command_src_dst     | --                        |
+// | K_T_   | dof_run_command_symlink     | --                        |
+
 PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_);
 PRIVATE void exec_menu_func(int group_idx, int entry_idx);
 
@@ -57,7 +87,6 @@ int filer_menu_n(int grp_idx)
 
 PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_)
 {
-	key_code_t key_input;
 	int group_idx = *group_idx_;
 	int entry_idx = *entry_idx_;
 
@@ -69,7 +98,7 @@ PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_)
 		tio_refresh();
 
 		//---------------------------
-		key_input = input_key_loop();
+		key_code_t key_input = input_key_loop();
 		//---------------------------
 		mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
 		 '_', key_input, short_key_name_from_key_code(key_input, NULL));
@@ -161,7 +190,7 @@ int disp_drop_down_menu(int group_idx, int entry_idx, int yy, int xx)
 	int idx;
 	char buf1[MAX_KEY_NAME_LEN+1];
 	char buf2[MAX_KEY_NAME_LEN+1];
-	char menu_templ[] = "%-32s  %-8s %-8s  %-12s";
+	char template_[] = "%-32s  %-*s %-*s  %-12s";
 	char buffer[MAX_PATH_LEN+1];
 
 	if ((fkey_table = get_func_key_table_from_key_group(group_idx)) == NULL) {
@@ -181,14 +210,22 @@ int disp_drop_down_menu(int group_idx, int entry_idx, int yy, int xx)
 				set_color_by_idx(ITEM_COLOR_IDX_MENU_ITEM, 0);
 			}
 		}
-		if (idx != 0 && fkey_table[idx].desc[0] == 0) {
-			snprintf(buffer, MAX_PATH_LEN+1, menu_templ, "", "", "", "");
-		} else {
-			snprintf(buffer, MAX_PATH_LEN+1, menu_templ,
+		if (! (idx > 0 && fkey_table[idx].desc[0] == 0)) {
+			snprintf(buffer, MAX_PATH_LEN+1, template_,
 			 fkey_table[idx].help,
-			 short_key_name_from_key_code(fkey_table[idx].key1, buf1),
-			 short_key_name_from_key_code(fkey_table[idx].key2, buf2),
-			 fkey_table[idx].func_get ? (*fkey_table[idx].func_get)() : "");
+			 MAX_KEY_NAME_LEN, (fkey_table[idx].desc[0] == 0) ? "Key1"
+			  : short_key_name_from_key_code(fkey_table[idx].keys[0], buf1),
+			 MAX_KEY_NAME_LEN, (fkey_table[idx].desc[0] == 0) ? "Key2"
+			  : short_key_name_from_key_code(fkey_table[idx].keys[1], buf2),
+			 (fkey_table[idx].desc[0] == 0) ? "state"
+			  : fkey_table[idx].func_get());
+flf_d_printf("[%s]\n", buffer);
+		} else {
+			snprintf(buffer, MAX_PATH_LEN+1, template_,
+			 "",
+			 MAX_KEY_NAME_LEN, "",
+			 MAX_KEY_NAME_LEN, "",
+			 "");
 		}
 		main_win_output_string(-1, -1, buffer, -1);
 		if (fkey_table[idx].desc[0]) {
@@ -197,7 +234,7 @@ int disp_drop_down_menu(int group_idx, int entry_idx, int yy, int xx)
 		main_win_output_string(-1, -1, " ", -1);
 		set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
 		main_win_output_string(-1, -1, " ", -1);
-		if (idx != 0 && fkey_table[idx].desc[0] == 0) {
+		if (idx > 0 && fkey_table[idx].desc[0] == 0) {
 			break;
 		}
 	}
@@ -232,11 +269,10 @@ int get_func_key_table_from_key_entries(int group_idx)
 key_code_t get_func_key_code(int group_idx, int entry_idx)
 {
 	func_key_table_t *fkey_table;
-
 	if ((fkey_table = get_func_key_table_from_key_group(group_idx)) == NULL) {
 		return -1;
 	}
-	return fkey_table[entry_idx].key1;
+	return fkey_table[entry_idx].keys[0];
 }
 
 PRIVATE void exec_menu_func(int group_idx, int entry_idx)

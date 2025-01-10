@@ -1,0 +1,3 @@
+漢字
+'nkf -g' miss recognize 2 bytes UTF8 characters like "±" as a EUC-JP encoding.
+- convert data to graphs and 3000±20%(2400~3600[nT]) magnetic moment produced

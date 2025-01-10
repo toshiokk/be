@@ -22,12 +22,21 @@
 #ifndef editorgoto_h
 #define editorgoto_h
 
-#define TUL0		0	// Not try to upper lower cases of file name
-#define TUL1		1	// Try to open upper lower cases of file name
-#define LFH0		0	// Not load a file memorized in history
-#define LFH1		1	// Load a file memorized in history
-#define RECURSIVE0	0	// Not recursively open files
-#define RECURSIVE1	1	// Recursively open files
+// file open flags
+#define TUL1		0x01	// Try to open upper lower cases of file name
+#define TUL0		0x00	//  Not try to upper lower cases of file name
+#define OOE1		0x02	// Open On Error
+#define OOE0		0x00	//  Not open on error
+#define MOE1		0x04	// Message On Error
+#define MOE0		0x00	//  No message on error
+#define LFH1		0x08	// Load a file memorized in history
+#define LFH0		0x00	//  Not load a file memorized in history
+#define WRP1		0x10	// Load a file with write protected
+#define WRP0		0x00	//  Not load a file with write protected
+#define FOL1		0x20	// Load a locked file forcibly
+#define FOL0		0x00	//  Not load a locked file forcibly
+#define RECURS1		0x80	// Recursively open files
+#define RECURS0		0x00	//  Not recursively open files
 
 #define FILE_PATH_SEPARATOR		"|"		// candidates are "|", "//", ""\\"
 
@@ -41,15 +50,13 @@ int doe_switch_to_top_buffer(void);
 int doe_switch_to_bot_buffer(void);
 int doe_switch_to_prev_buffer(void);
 int doe_switch_to_next_buffer(void);
-#if APP_REL_LVL <= APP_REL_LVL_TEST
 int doe_switch_to_prev_buffers(void);
 int doe_switch_to_next_buffers(void);
-#endif // APP_REL_LVL
 
 void memorize_cur_file_pos_before_jump();
 int doe_return_to_prev_file_pos(void);
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Top level functions - never called recursively
 // | function name            | actions                                                     |
 // |--------------------------|-------------------------------------------------------------|
@@ -63,14 +70,11 @@ int doe_return_to_prev_file_pos(void);
 //  3. call equivalent sub-function		# sub-function can be called recursively
 //  4. call end_check_break_key()		# end   checking break-key
 
-int load_file_name_upp_low(const char *file_name,
- int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive);
+int load_file_name_upp_low(const char *file_name, int flags);
 int load_files_in_cur_buf(void);
-int load_files_in_string(const char *string,
- int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive);
+int load_files_in_string(const char *string, int flags);
 
-int load_file_name_upp_low_(const char *file_name,
- int try_upp_low, int open_on_err, int msg_on_err, int load_from_history, int recursive);
+int load_file_name_upp_low_(const char *file_name, int flags);
 
 int is_file_name_proj_file(const char *file_name, int type);
 
@@ -111,7 +115,7 @@ int switch_epc_buf_to_another_buf(void);
 #ifdef ENABLE_FILER
 int doe_filer(void);
 int try_to_open_cur_line_dir_in_filer(int line_byte_idx);
-int try_to_open_dir_in_filer(const char *str);
+int try_to_open_line_dir_in_filer(const char *str);
 #endif // ENABLE_FILER
 
 #endif // editorgoto_h

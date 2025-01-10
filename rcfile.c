@@ -76,10 +76,11 @@ PRIVATE int parse_color_status(void);
 PRIVATE int parse_color_key_list(void);
 PRIVATE int parse_color_key_list2(void);
 PRIVATE int parse_color_text_normal(void);
-PRIVATE int parse_color_text_selected(void);
+PRIVATE int parse_color_text_selected1(void);
 PRIVATE int parse_color_text_selected2(void);
 PRIVATE int parse_color_text_selected3(void);
-PRIVATE int parse_color_warning(void);
+PRIVATE int parse_color_error(void);
+PRIVATE int parse_color_warning1(void);
 PRIVATE int parse_color_warning2(void);
 PRIVATE int parse_color_warning3(void);
 PRIVATE int parse_color_cursor(void);
@@ -98,7 +99,7 @@ PRIVATE int parse_include(void);
 
 PRIVATE int parse_bgc_fgc_register(int color_idx);
 PRIVATE int parse_bgc_fgc(int *bgc, int *fgc);
-PRIVATE int parse_key_names(key_code_t *keys, int max_keys_bind);
+PRIVATE int parse_key_names(key_code_t *keys);
 PRIVATE int parse_word(char *buffer, int buf_len);
 #ifdef ENABLE_SYNTAX
 PRIVATE int parse_string(char *buffer, int buf_len);
@@ -154,10 +155,11 @@ struct /*_rc_cmd_func_*/ {
 	{ "color_key_list",			parse_color_key_list,		},
 	{ "color_key_list2",		parse_color_key_list2,		},
 	{ "color_text_normal",		parse_color_text_normal,	},
-	{ "color_text_selected",	parse_color_text_selected,	},
+	{ "color_text_selected",	parse_color_text_selected1,	},
 	{ "color_text_selected2",	parse_color_text_selected2,	},
 	{ "color_text_selected3",	parse_color_text_selected3,	},
-	{ "color_warning",			parse_color_warning,		},
+	{ "color_error",			parse_color_error,			},
+	{ "color_warning1",			parse_color_warning1,		},
 	{ "color_warning2",			parse_color_warning2,		},
 	{ "color_warning3",			parse_color_warning3,		},
 	{ "color_cursor",			parse_color_cursor,			},
@@ -195,7 +197,7 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 	char cmd[MAX_SCRN_LINE_BUF_LEN+1];
 	int idx;
 	int val;
-	key_code_t keys[MAX_KEYS_BOUND];
+	key_code_t keys[MAX_KEYS_BIND];
 
 ///#ifdef ENABLE_SYNTAX
 ///	free_file_types();
@@ -248,10 +250,9 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 			}
 			func_key_table_t *fkey_table;
 			if ((fkey_table = get_func_table_from_func_id(cmd)) != NULL) {
-				parse_key_names(keys, MAX_KEYS_BOUND);
-				if (keys[0] >= 0) {
-					clear_keys_if_bound(keys);
-					clear_keys_bound_to_func(fkey_table);
+				parse_key_names(keys);
+				if (IS_KEY_VALID(keys[0])) {
+					clear_fkey_tbl_using_these_keys(keys);
 					bind_key_to_func(fkey_table, keys);
 					goto read_rc_path_match;
 				}
@@ -313,9 +314,9 @@ PRIVATE int parse_color_text_normal(void)
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_TEXT_NORMAL);
 }
-PRIVATE int parse_color_text_selected(void)
+PRIVATE int parse_color_text_selected1(void)
 {
-	return parse_bgc_fgc_register(ITEM_COLOR_IDX_TEXT_SELECTED);
+	return parse_bgc_fgc_register(ITEM_COLOR_IDX_TEXT_SELECTED1);
 }
 PRIVATE int parse_color_text_selected2(void)
 {
@@ -325,9 +326,9 @@ PRIVATE int parse_color_text_selected3(void)
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_TEXT_SELECTED3);
 }
-PRIVATE int parse_color_warning(void)
+PRIVATE int parse_color_warning1(void)
 {
-	return parse_bgc_fgc_register(ITEM_COLOR_IDX_WARNING);
+	return parse_bgc_fgc_register(ITEM_COLOR_IDX_WARNING1);
 }
 PRIVATE int parse_color_warning2(void)
 {
@@ -336,6 +337,10 @@ PRIVATE int parse_color_warning2(void)
 PRIVATE int parse_color_warning3(void)
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_WARNING3);
+}
+PRIVATE int parse_color_error(void)
+{
+	return parse_bgc_fgc_register(ITEM_COLOR_IDX_ERROR);
 }
 PRIVATE int parse_color_cursor(void)
 {
@@ -487,17 +492,17 @@ PRIVATE int parse_bgc_fgc(int *bgc, int *fgc)
 }
 
 // "^Q UP @q"
-PRIVATE int parse_key_names(key_code_t *keys, int max_keys_bind)
+PRIVATE int parse_key_names(key_code_t *keys)
 {
 	int key_idx;
 	char key_name[MAX_KEY_NAME_LEN+1];
 	short key;
 
 	// clear all keys
-	for (key_idx = 0; key_idx < max_keys_bind; key_idx++) {
+	for (key_idx = 0; key_idx < MAX_KEYS_BIND; key_idx++) {
 		keys[key_idx] = -1;
 	}
-	for (key_idx = 0; key_idx < max_keys_bind; ) {
+	for (key_idx = 0; key_idx < MAX_KEYS_BIND; ) {
 		if (SKIP_SPACE(rc_line_ptr))
 			break;
 		if (parse_word(key_name, MAX_KEY_NAME_LEN)) {
@@ -506,7 +511,7 @@ PRIVATE int parse_key_names(key_code_t *keys, int max_keys_bind)
 		if ((key = key_code_from_short_key_name(key_name)) < 0) {
 			// unknown key name
 		} else {
-			if (key_idx >= max_keys_bind) {
+			if (key_idx >= MAX_KEYS_BIND) {
 				return 1;
 			}
 			keys[key_idx] = key;
@@ -621,7 +626,8 @@ PRIVATE int parse_keyword(const char **rc_line_ptr, const char *keyword)
 
 int register_default_color_syntax(void)
 {
-#define CL_TAB_EOL	CL_GR	// color for TAB/EOL/"　" notation
+/////#define CL_TAB_EOL	CL_GR	// color for TAB/EOL/"　" notation
+#define CL_TAB_EOL	CL_DG	// color for TAB/EOL/"　" notation
 
 	add_file_type("*", ".*");
 	cur_file_type->tab_size = DEFAULT_TAB_SIZE;	// set default tab size
@@ -746,7 +752,7 @@ void free_file_types(void)
 	_mlc_differ_count
 }
 
-//------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
 void dump_file_types(void)

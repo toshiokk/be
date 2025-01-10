@@ -46,7 +46,7 @@ char *malloc_strcpy(const char *string)
 	return buf;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifdef MEMORY_LEAK_CHECKER
 
 static struct malloc_caller malloc_callers[MAX_MALLOCS_TO_MONITOR];
@@ -210,7 +210,7 @@ void free__(void *ptr)
 	free(ptr);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 // remalloc memory just enough for a string
 // NOTE: DONOT use for be_line_t::data
@@ -257,7 +257,7 @@ unsigned short calc_crc16ccitt(unsigned char byte)
 	}
 	return crc16ccitt;
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // NOTE: to avoid snprintf trancation warning of C compiler, add 20 bytes
 #define YYYYSMMSDD_HHCMMCSS_LEN		(4+1+2+1+2+1+2+1+2+1+2)	// "2037/12/31 23:59:59"
 #define YYYYMMDD_HHMMSS_LEN			(8+1+6)					// "20241009-235959"
@@ -302,7 +302,7 @@ const char *cur_hhmmss(void)
 	strlcpy__(buf_time, &(get_yyyymmdd_hhmmss(cur_time, buf_time)[8+1]), HHMMSS_LEN);
 	return buf_time;
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 char *get_ssspuuuuuu(char *buf)
 {
 	long usec;
@@ -410,7 +410,7 @@ PRIVATE char *get_yyyymmdd_hhmmss(time_t abs_time, char *buf)
 	return buf;
 }
 
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int int_min(int aa, int bb)
 {
@@ -421,7 +421,7 @@ int int_max(int aa, int bb)
 	return aa >= bb ? aa : bb;
 }
 
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 // /proc/meminfo
 // MemTotal:        3917308 kB
@@ -457,7 +457,7 @@ int get_mem_free_in_kb(int update)
 	return kb;
 }
 
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #ifdef START_UP_TEST
 void test_zz_from_num(void)
@@ -524,7 +524,7 @@ char *zz_from_num(int num, char *buf)
 	return buf;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 #define USR_NAME_LEN	8
 #define GRP_NAME_LEN	8
@@ -635,7 +635,7 @@ const char *get_host_name()
 	return hostname;
 }
 
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 char *select_plural_form(char *singular, char *plural, char *type3, char *type4, int number)
 {

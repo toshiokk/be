@@ -239,7 +239,7 @@ be_line_t *line_concat_with_next(be_line_t *line)
 	// >aaaabbbb
 	return line;
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 be_line_t *line_string_delete(be_line_t *line, int byte_idx, int delete_len)
 {
 	return line_string_replace(line, byte_idx, delete_len, "", 0);
@@ -258,7 +258,7 @@ be_line_t *line_string_replace(be_line_t *line, int byte_idx, int delete_len,
 	_mlc_set_caller
 	return line_set_string(line, buffer);
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 be_line_t *line_separate(be_line_t *line, int byte_idx, insert_before_after_t before_after)
 {
 	be_line_t *new_line;
@@ -285,7 +285,7 @@ be_line_t *line_separate(be_line_t *line, int byte_idx, insert_before_after_t be
 	}
 	return new_line;			// return newly created(inserted) line
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 be_line_t *line_insert_with_string(be_line_t *line, insert_before_after_t before_after,
  const char *string)
 {
@@ -303,7 +303,7 @@ void line_insert_with_string_len_before(be_line_t *line, const char *string, len
 	line_insert_before(line, line_create_with_string_len(string, len));
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 {
 	int line_num = 0;

@@ -25,14 +25,9 @@
 #define PROJ_FILE_EXTENSION1	".bep"		// BE Project file
 #define PROJ_FILE_EXTENSION2	".pro"		// Qt PROject file
 
-#define OOE1	1	// Open On Error
-#define OOE0	0
-#define MOE1	1	// Message On Error
-#define MOE0	0
-
 #define MAX_LINES_LOADABLE		9999999	// 9,999,999
 
-int load_file_into_new_buf(const char *full_path, int open_on_err, int msg_on_err);
+int load_file_into_new_buf(const char *full_path, int flags);
 
 int load_file_into_buf(be_buf_t *buf, const char *full_path);
 
