@@ -71,6 +71,7 @@ int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx
 #define ANSWER_END		-3	// cancel string-replacing and return to beginning pos
 int ask_yes_no(int flags, const char *msg, ...);
 
+void disp_fkey_list();
 void disp_key_list(const char *key_lists[]);
 void display_reverse_text(int yy, const char *text);
 

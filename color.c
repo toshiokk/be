@@ -21,6 +21,8 @@
 
 #include "headers.h"
 
+#include "applvl.h"
+
 // Color table for the various items
 item_color_t item_colors[MAX_ITEM_COLORS];
 

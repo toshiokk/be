@@ -43,8 +43,6 @@ The seamless text copying:
 |editor line                    |filer command line|Execute: paste editor line to filer command line       |
 |(file/dir) (name/path) in filer|editor line       |Edit:    paste file name in filer to editor line       |
 |(file/dir) (name/path) in filer|filer command line|Execute: paste file name in filer to filer command line|
-|filer command line             |history line      |Available from editor and filer |
-|editor search keyword          |history line      |Available from editor and filer |
 |history line                   |editor line       |Edit:    paste history line to editor line             |
 |history line                   |filer command line|Execute: paste history line to filer command line      |
 |Key-word searched/replaced     |search-history    |Available from editor and filer |
@@ -53,7 +51,15 @@ The seamless text copying:
 |Directory browsed              |dir-history       |Available from editor and filer |
 |Keymacro recorded              |keymacro-history  |Available from editor and filer |
 
-- [x] How to manage discarded file lock (on BE-editor crash)
+|file-history                   |file Tag-jump     |open file and jump to the line |
+|file-history                   |dir Tag-jump      |change dir and open with filer |
+|dir-history                    |dir Tag-jump      |change dir and open with filer |
+
+- [] Too long time would be taken when you open missing files with project file
+- [] open directory selecting from file open histotry "/file/opened.txt|1:2" in F09 and F10
+- [x] 250120 Does not show the function keys not available on the current state
+- [x] 250116 No new window size shown when beeing open input_str()
+- [x] How to manage discarded file lock (on BE-editor crash) ==> eof_open_locked_file()
 - [x] BUG: dof_open_file_ro() opens rw mode in recursive open
 - [x] buffer "VIEW" ==> "RO"
 - [x] corrupted message at 3rd key in menu

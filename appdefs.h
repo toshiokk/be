@@ -29,11 +29,6 @@
 #ifndef appdefs_h
 #define appdefs_h
 
-#define APP_REL_LVL 0	// Application Release Level (0: experimental, 1: test, 2: stable)
-#define APP_REL_LVL_EXPERIMENTAL	0	// experimental release
-#define APP_REL_LVL_TEST			1	// test         release
-#define APP_REL_LVL_STABLE			2	// stable       release
-
 #define APP_NAME		"BE"
 #define APP_LONG_NAME	APP_NAME " editor"
 #define BIN_NAME		"be"

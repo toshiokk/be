@@ -5,7 +5,7 @@ if [ -z "$1" ]; then
 fi
 
 cd ..
-rm_tildes
+rm_tildes -
 
 tar -czvf be`yymmdd-hhmm`.tgz be/*
 

@@ -75,7 +75,7 @@ int doe_open_new_file(void)
 		return 1;
 	}
 #ifdef ENABLE_FILER
-	if (try_to_open_line_dir_in_filer(file_path)) {
+	if (try_to_open_dir_in_str_with_filer(file_path)) {
 		return 1;
 	}
 #endif // ENABLE_FILER
@@ -179,7 +179,7 @@ int doe_reopen_file(void)
 	memorize_cur_file_pos_null(file_pos_str);
 	free_cur_edit_buf();
 	// CURDIR: abs-path is specified
-	get_file_line_col_from_str_null(file_pos_str, file_path, NULL, NULL);
+	get_file_line_col_from_str(file_pos_str, file_path, NULL, NULL);
 	if (load_file_name_upp_low(file_path,
 	 TUL0 | OOE0 | MOE1 | LFH0 | (view ? WRP1 : WRP0) | FOL0 | RECURS1) < 0) {
 		tio_beep();
@@ -289,7 +289,7 @@ int doe_close_file_always(void)
 }
 PRIVATE int close_file_ask(int yes_no)
 {
-	if (write_file_ask(yes_no, CLOSE_AFTER_SAVE_1) < ANSWER_NONE) {
+	if (write_file_ask(yes_no, CLOSE_AFTER_SAVE_1) <= ANSWER_NONE) {
 		// CANCEL/END
 		return -1;
 	}

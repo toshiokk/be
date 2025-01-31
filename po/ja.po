@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-10 08:28+0900\n"
+"POT-Creation-Date: 2025-01-31 14:18+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -31,63 +31,63 @@ msgstr "タブサイズ"
 
 #: ../editor.c:123 ../filer.c:225
 #, c-format
-msgid "No command assigned for the key: %04xh"
-msgstr "このキーにはコマンドが割り当てられていません: %04xh"
+msgid "No command assigned for the key: 0x%04x"
+msgstr "このキーにはコマンドが割り当てられていません: 0x%04x"
 
-#: ../editor.c:129
+#: ../editor.c:133
 #, c-format
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr "このコマンドは List mode では実行できません: [%s]"
 
-#: ../editor.c:338
+#: ../editor.c:343
 msgid "Input key to show key code"
 msgstr "キーコードを表示するキーを入力してください"
 
-#: ../editor.c:342
+#: ../editor.c:348
 #, fuzzy, c-format
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr "キーコード: %04x [%s]"
 
-#: ../editor.c:638 ../fileio.c:101
+#: ../editor.c:651 ../fileio.c:101
 msgid "New File"
 msgstr "新規ファイル"
 
-#: ../editor.c:640
+#: ../editor.c:653
 #, fuzzy
 msgid "[Mod]"
 msgstr "[変更済]"
 
-#: ../editor.c:643
+#: ../editor.c:656
 #, fuzzy
 msgid "[RO]"
 msgstr "読出専用"
 
-#: ../editor.c:649
+#: ../editor.c:662
 msgid "[LOCKED]"
 msgstr ""
 
-#: ../editor.c:745
+#: ../editor.c:758
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 "行:%4lu/%-4lu 桁:%3lu/%-3lu サイズ:%6lu%s 文字コード:%s エンコード:%s 行末:%s"
 
-#: ../editor.c:791
+#: ../editor.c:807
 #, fuzzy
 msgid "Modification not allowed in VIEW mode application"
 msgstr "LISTモードでは編集できません"
 
-#: ../editor.c:795
+#: ../editor.c:811
 #, fuzzy
 msgid "Modification not allowed to READ-ONLY file"
 msgstr "Anchor buffer は編集できません"
 
-#: ../editor.c:799
+#: ../editor.c:815
 #, fuzzy, c-format
 msgid "Modification not allowed in %s buffer"
 msgstr "Anchor buffer は編集できません"
 
-#: ../editor.c:803
+#: ../editor.c:819
 #, fuzzy
 msgid "Modification not allowed to LOCKED file"
 msgstr "LISTモードでは編集できません"
@@ -230,61 +230,61 @@ msgstr "カラム番号入力:"
 msgid "Enter line number:"
 msgstr "行番号入力:"
 
-#: ../editorgoto.c:151
+#: ../editorgoto.c:164
 #, fuzzy
 msgid "Switched to the first buffer"
 msgstr "ファイルに書き込みました: %s"
 
-#: ../editorgoto.c:160
+#: ../editorgoto.c:173
 #, fuzzy
 msgid "Switched to the last buffer"
 msgstr "ファイルに書き込みました: %s"
 
-#: ../editorgoto.c:166
+#: ../editorgoto.c:179
 msgid "No previous buffer"
 msgstr "これ以上前にバッファがありません"
 
-#: ../editorgoto.c:170
+#: ../editorgoto.c:183
 #, fuzzy
 msgid "Switched to the previous buffer"
 msgstr "以前の位置に戻りました"
 
-#: ../editorgoto.c:176
+#: ../editorgoto.c:189
 msgid "No next buffer"
 msgstr "これ以上後にバッファがありません"
 
-#: ../editorgoto.c:180
+#: ../editorgoto.c:193
 #, fuzzy
 msgid "Switched to the next buffer"
 msgstr "ファイルに書き込みました: %s"
 
-#: ../editorgoto.c:188
+#: ../editorgoto.c:201
 msgid "No previous buffers"
 msgstr "これ以上前にバッファリストがありません"
 
-#: ../editorgoto.c:194
+#: ../editorgoto.c:207
 #, fuzzy
 msgid "Switched to the previous buffers"
 msgstr "以前の位置に戻りました"
 
-#: ../editorgoto.c:201
+#: ../editorgoto.c:214
 msgid "No next buffers"
 msgstr "これ以上後にバッファリストがありません"
 
-#: ../editorgoto.c:207
+#: ../editorgoto.c:220
 #, fuzzy
 msgid "Switched to the next buffers"
 msgstr "ファイルに書き込みました: %s"
 
-#: ../editorgoto.c:221
+#: ../editorgoto.c:234
 msgid "Returned to previous pos"
 msgstr "以前の位置に戻りました"
 
-#: ../editorgoto.c:851
+#: ../editorgoto.c:864
 msgid "No valid directory in the current line"
 msgstr ""
 
-#: ../editorgoto.c:856
+#: ../editorgoto.c:870
 #, fuzzy
 msgid "Filer quited"
 msgstr "Editor ファイルリスト"
@@ -543,7 +543,7 @@ msgstr "%d ファイルを読み込みました"
 msgid "%d filesss loaded"
 msgstr "%d ファイルを読み込みました"
 
-#: ../filer.c:234
+#: ../filer.c:238
 #, c-format
 msgid "Can not execute this function in filer List mode: [%s]"
 msgstr "このコマンドは List mode では実行できません: [%s]"
@@ -669,12 +669,12 @@ msgid "Quit from filer"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:954
+#: ../filercmd.c:967
 #, c-format
 msgid "Can not change current to [%s]: %s"
 msgstr "カレントディレクトリを変更できません [%s]: %s"
 
-#: ../filercmd.c:964
+#: ../filercmd.c:977
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr "カレントディレクトリを変更しました [%s]"
@@ -737,7 +737,7 @@ msgstr "キーマクロ再生開始"
 msgid "Input key macro to run:"
 msgstr "キーマクロ文字列入力"
 
-#: ../keys.c:262
+#: ../keys.c:308
 #, c-format
 msgid "Screen resized to (%d, %d)"
 msgstr "画面サイズ変更 (%d, %d)"

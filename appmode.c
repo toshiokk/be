@@ -440,13 +440,13 @@ BOOL is_app_chooser_mode(void)		// in editor: text list mode, in filer: file lis
 {
 	return GET_APPMD(app_LIST_MODE) == APP_MODE_CHOOSER;
 }
-BOOL is_app_view_mode(void)		// in editor: test viewer, in filer: directory viewer
+BOOL is_app_viewer_mode(void)		// in editor: test viewer, in filer: directory viewer
 {
 	return GET_APPMD(app_LIST_MODE) == APP_MODE_VIEWER;
 }
-BOOL is_app_chooser_view_mode(void)
+BOOL is_app_chooser_viewer_mode(void)
 {
-	return is_app_chooser_mode() || is_app_view_mode();
+	return is_app_chooser_mode() || is_app_viewer_mode();
 }
 
 //=============================================================================

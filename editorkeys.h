@@ -23,7 +23,7 @@
 #ifndef editorkeys_h
 #define editorkeys_h
 
-extern func_key_table_t editor_func_key_table[];
+extern func_key_list_t editor_func_key_table[];
 
 #endif // editorkeys_h
 

@@ -489,7 +489,7 @@ PRIVATE void remove_all_file_path_match(int hist_type_idx, const char *str)
 {
 	char file_path[MAX_PATH_LEN+1];
 	// "/dir/file.txt|100,40" ==> "/dir/file.txt"
-	get_file_line_col_from_str_null(str, file_path, NULL, NULL);
+	get_file_line_col_from_str(str, file_path, NULL, NULL);
 	const char *path = quote_file_path_static(file_path);
 	be_line_t *line;
 	be_line_t *prev;

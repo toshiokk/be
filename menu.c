@@ -112,12 +112,12 @@ PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_)
 			goto app_menu_n_left_right;
 app_menu_n_left_right:;
 			if (group_idx < 0) {
-				group_idx = get_func_key_table_from_key_groups() - 1;
+				group_idx = get_groups_in_func_key_table() - 1;
 			}
-			if (group_idx > get_func_key_table_from_key_groups() - 1) {
+			if (group_idx > get_groups_in_func_key_table() - 1) {
 				group_idx = 0;
 			}
-			entry_idx = MIN_MAX_(1, entry_idx, get_func_key_table_from_key_entries(group_idx));
+			entry_idx = MIN_MAX_(1, entry_idx, get_func_key_group_entries(group_idx));
 			break;
 		case K_UP:
 			entry_idx = entry_idx - 1;
@@ -133,12 +133,12 @@ app_menu_n_left_right:;
 			goto app_menu_n_up_down;
 app_menu_n_up_down:;
 			if (entry_idx < 1) {
-				entry_idx = get_func_key_table_from_key_entries(group_idx);
+				entry_idx = get_func_key_group_entries(group_idx);
 			}
-			if (entry_idx > get_func_key_table_from_key_entries(group_idx)) {
+			if (entry_idx > get_func_key_group_entries(group_idx)) {
 				entry_idx = 1;
 			}
-			entry_idx = MIN_MAX_(1, entry_idx, get_func_key_table_from_key_entries(group_idx));
+			entry_idx = MIN_MAX_(1, entry_idx, get_func_key_group_entries(group_idx));
 			break;
 		case K_ENTER:
 			exec_menu_func(group_idx, entry_idx);
@@ -186,39 +186,38 @@ app_menu_n_up_down:;
 
 int disp_drop_down_menu(int group_idx, int entry_idx, int yy, int xx)
 {
-	func_key_table_t *fkey_table;
-	int idx;
+	func_key_list_t *fkey_list;
 	char buf1[MAX_KEY_NAME_LEN+1];
 	char buf2[MAX_KEY_NAME_LEN+1];
 	char template_[] = "%-32s  %-*s %-*s  %-12s";
 	char buffer[MAX_PATH_LEN+1];
 
-	if ((fkey_table = get_func_key_table_from_key_group(group_idx)) == NULL) {
+	if ((fkey_list = get_func_key_group_from_group_idx(group_idx)) == NULL) {
 		return 0;
 	}
-	for (idx = 0; ; idx++) {
+	for (int f_idx = 0; ; f_idx++) {
 		set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
-		main_win_output_string(yy + idx, xx, " ", -1);
-		if (fkey_table[idx].desc[0]) {
+		main_win_output_string(yy + f_idx, xx, " ", -1);
+		if (fkey_list[f_idx].desc[0]) {
 			set_color_by_idx(ITEM_COLOR_IDX_MENU_ITEM, 0);
 		}
 		main_win_output_string(-1, -1, " ", -1);
-		if (fkey_table[idx].desc[0]) {
-			if (idx == entry_idx) {
+		if (fkey_list[f_idx].desc[0]) {
+			if (f_idx == entry_idx) {
 				set_color_by_idx(ITEM_COLOR_IDX_MENU_SELECTED, 0);
 			} else {
 				set_color_by_idx(ITEM_COLOR_IDX_MENU_ITEM, 0);
 			}
 		}
-		if (! (idx > 0 && fkey_table[idx].desc[0] == 0)) {
+		if (! (f_idx > 0 && fkey_list[f_idx].desc[0] == 0)) {
 			snprintf(buffer, MAX_PATH_LEN+1, template_,
-			 fkey_table[idx].help,
-			 MAX_KEY_NAME_LEN, (fkey_table[idx].desc[0] == 0) ? "Key1"
-			  : short_key_name_from_key_code(fkey_table[idx].keys[0], buf1),
-			 MAX_KEY_NAME_LEN, (fkey_table[idx].desc[0] == 0) ? "Key2"
-			  : short_key_name_from_key_code(fkey_table[idx].keys[1], buf2),
-			 (fkey_table[idx].desc[0] == 0) ? "state"
-			  : fkey_table[idx].func_get());
+			 fkey_list[f_idx].explanation,
+			 MAX_KEY_NAME_LEN, (fkey_list[f_idx].desc[0] == 0) ? "Key1"
+			  : short_key_name_from_key_code(fkey_list[f_idx].keys[0], buf1),
+			 MAX_KEY_NAME_LEN, (fkey_list[f_idx].desc[0] == 0) ? "Key2"
+			  : short_key_name_from_key_code(fkey_list[f_idx].keys[1], buf2),
+			 (fkey_list[f_idx].desc[0] == 0) ? "state"
+			  : fkey_list[f_idx].func_get());
 flf_d_printf("[%s]\n", buffer);
 		} else {
 			snprintf(buffer, MAX_PATH_LEN+1, template_,
@@ -228,71 +227,71 @@ flf_d_printf("[%s]\n", buffer);
 			 "");
 		}
 		main_win_output_string(-1, -1, buffer, -1);
-		if (fkey_table[idx].desc[0]) {
+		if (fkey_list[f_idx].desc[0]) {
 			set_color_by_idx(ITEM_COLOR_IDX_MENU_ITEM, 0);
 		}
 		main_win_output_string(-1, -1, " ", -1);
 		set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
 		main_win_output_string(-1, -1, " ", -1);
-		if (idx > 0 && fkey_table[idx].desc[0] == 0) {
+		if (f_idx > 0 && fkey_list[f_idx].desc[0] == 0) {
 			break;
 		}
 	}
 	return 0;
 }
 
-int get_func_key_table_from_key_groups(void)
+int get_groups_in_func_key_table(void)
 {
-	func_key_table_t *app_func_key_table = get_app_func_key_table();
+	func_key_list_t *app_func_key_table = get_app_func_key_table();
 	int group_idx = 0;
-	for (int idx = 0; app_func_key_table[idx].help[0]; idx++) {
-		if (app_func_key_table[idx].desc[0] == 0) {
+	for (int f_idx = 0; app_func_key_table[f_idx].explanation[0]; f_idx++) {
+		if (app_func_key_table[f_idx].desc[0] == 0) {
 			group_idx++;
 		}
 	}
 	return group_idx;
 }
 
-int get_func_key_table_from_key_entries(int group_idx)
+int get_func_key_group_entries(int group_idx)
 {
-	func_key_table_t *fkey_table;
-	if ((fkey_table = get_func_key_table_from_key_group(group_idx)) == NULL) {
+	func_key_list_t *fkey_list;
+	if ((fkey_list = get_func_key_group_from_group_idx(group_idx)) == NULL) {
 		return 0;
 	}
-	int idx;
-	for (idx = 1; fkey_table[idx].desc[0]; idx++) {
+	int f_idx;
+	for (f_idx = 1; fkey_list[f_idx].desc[0]; f_idx++) {
 		// loop
 	}
-	return idx - 1;
+	return f_idx - 1;
 }
 
 key_code_t get_func_key_code(int group_idx, int entry_idx)
 {
-	func_key_table_t *fkey_table;
-	if ((fkey_table = get_func_key_table_from_key_group(group_idx)) == NULL) {
+	func_key_list_t *fkey_list;
+	if ((fkey_list = get_func_key_group_from_group_idx(group_idx)) == NULL) {
 		return -1;
 	}
-	return fkey_table[entry_idx].keys[0];
+	return fkey_list[entry_idx].keys[0];
 }
 
 PRIVATE void exec_menu_func(int group_idx, int entry_idx)
 {
-	func_key_table_t *fkey_table;
-	if ((fkey_table = get_func_key_table_from_key_group(group_idx)) == NULL) {
+	func_key_list_t *fkey_list;
+	if ((fkey_list = get_func_key_group_from_group_idx(group_idx)) == NULL) {
 		return;
 	}
-	flf_d_printf("[[[[ CALL_FUNC_MENU [%s]\n", fkey_table[entry_idx].func_id);
-	fkey_table[entry_idx].func();
+	flf_d_printf("[[[[ CALL_FUNC_MENU [%s]\n", fkey_list[entry_idx].func_id);
+	fkey_list[entry_idx].func();
 	flf_d_printf("]]]]\n");
 }
 
-func_key_table_t *get_func_key_table_from_key_group(int group_idx)
+func_key_list_t *get_func_key_group_from_group_idx(int group_idx)
 {
-	func_key_table_t *app_func_key_table = get_app_func_key_table();
-	for (int idx = 0; app_func_key_table[idx].help[0]; idx++) {
-		if (app_func_key_table[idx].desc[0] == 0) {
+	func_key_list_t *app_func_key_table = get_app_func_key_table();
+	for (int f_idx = 0; app_func_key_table[f_idx].explanation[0]; f_idx++) {
+		if (app_func_key_table[f_idx].desc[0] == 0) {
 			if (group_idx == 0) {
-				return &app_func_key_table[idx];
+				return &app_func_key_table[f_idx];
 			}
 			group_idx--;
 		}

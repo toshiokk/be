@@ -31,17 +31,17 @@
 // | edit/rename/copy/delete file() | return file name/path | return dir name/path |
 // | move_file()                    | return cur path       | return cur path      |
 
-func_key_table_t filer_func_key_table[] = {
+func_key_list_t filer_func_key_table[] = {
 //             12345678901234567890   123456789012345678901234567890
 // 12345678901234567890
  { EFAM_EXEC, "Menu",                "Previous Menu",
-   {K_ESC,        KNA, KNA}, F_I(dof_filer_menu_0), get_str_setting_none },
+   {K_ESC,        KNA, KNA}, F_I(dof_menu_0), get_str_setting_none },
 
- { EFLM_NOEX, "",                    "Filer Menu-1",
-   {KNA,          KNA, KNA}, F_I(dof_filer_menu_0), get_str_setting_none },
+ { EFNM_EXEC, "",                    "Filer Menu-1",
+   {KNA,          KNA, KNA}, F_I(dof_menu_0), get_str_setting_none },
  { EFAM_EXEC, "Quit",                "Quit filer",
    {K_q_, K_C_Q, K_M_q},     F_I(dof_quit_filer),   get_str_setting_none },
- { EFAM_EXEC, "Quit to Home dir",    "Quit to Home directory",
+ { EFNM_EXEC, "Quit to Home dir",    "Quit to Home directory",
    {K_Q_, K_M_Q, K_MC_Q},    F_I(dof_quit_home_dir), get_str_setting_none },
  { F_LM_FLNM, "Edit ",               "Edit file (project file)",
    {K_e_, K_F11,       KNA}, F_I(dof_open_file),    get_str_setting_none },
@@ -68,14 +68,14 @@ func_key_table_t filer_func_key_table[] = {
  { EFAM_EXEC, "Parent directory",    "Parent directory",
    {K_C_H, K_BS,       KNA}, F_I(dof_parent_directory), get_str_setting_none },
 #ifdef ENABLE_HELP
- { EFLM_NOEX, "Splash",              "Splash screen",
+ { EFNM_EXEC, "Splash",              "Splash screen",
    {K_M_v,        KNA, KNA}, F_I(dof_splash), get_str_setting_none },
- { EFLM_NOEX, "Color pairs",         "Display color pairs",
+ { EFNM_EXEC, "Color pairs",         "Display color pairs",
    {K_M_c,        KNA, KNA}, F_I(dof_display_color_settings), get_str_setting_none },
 #endif // ENABLE_HELP
 
- { EFLM_NOEX, "",                    "Filer Menu-2",
-   {KNA,          KNA, KNA}, F_I(dof_filer_menu_0), get_str_setting_none },
+ { EFNM_EXEC, "",                    "Filer Menu-2",
+   {KNA,          KNA, KNA}, F_I(dof_menu_0), get_str_setting_none },
  { F_LM_FLNM, "Copy ",           "Copy file",
    {K_c_, K_F01,       KNA}, F_I(dof_copy_file),    get_str_setting_none },
  { F_LM_FLNM, "CpUpd",         "Copy file update",
@@ -103,8 +103,8 @@ func_key_table_t filer_func_key_table[] = {
  { EFAM_EXEC, "Find file",           "Find file",
    {K_j_,         KNA, KNA}, F_I(dof_find_file),    get_str_setting_none },
 
- { EFLM_NOEX, "",                    "Filer Menu-3",
-   {KNA,          KNA, KNA}, F_I(dof_filer_menu_0), get_str_setting_none },
+ { EFNM_EXEC, "",                    "Filer Menu-3",
+   {KNA,          KNA, KNA}, F_I(dof_menu_0), get_str_setting_none },
  { EFAM_EXEC, "Up",                  "Move cursor UP",
    {K_C_E, K_UP,       KNA}, F_I(dof_up), get_str_setting_none },
  { EFAM_EXEC, "Down",                "Move cursor DOWN",
@@ -137,8 +137,8 @@ func_key_table_t filer_func_key_table[] = {
  { EFAM_EXEC, "Previous dir.",       "Previous directory",
    {K_b_, K_M_SLASH,   KNA}, F_I(dof_prev_directory), get_str_setting_none },
 
- { EFLM_NOEX, "",                    "Filer Menu-4",
-   {KNA,          KNA, KNA}, F_I(dof_filer_menu_0), get_str_setting_none },
+ { EFNM_EXEC, "",                    "Filer Menu-4",
+   {KNA,          KNA, KNA}, F_I(dof_menu_0), get_str_setting_none },
  { F_LM_FLNM, "Exec ",               "Execute command with file",
    {K_x_, K_F09,       KNA}, F_I(dof_exec_command_with_file), get_str_setting_none },
  { F_LM_FLNM, "Execute command w/ files","Execute command with files",
@@ -155,17 +155,17 @@ func_key_table_t filer_func_key_table[] = {
    {K_t_,         KNA, KNA}, F_I(dof_run_command_src_dst), get_str_setting_none },
  { F_LM_FLNM, "Run command (sh)",    "Run command (sh path)",
    {K_T_,         KNA, KNA}, F_I(dof_run_command_symlink), get_str_setting_none },
- { EFLM_NOEX, "Real path",           "Convert Symlink to Real path",
+ { EFNM_EXEC, "Real path",           "Convert Symlink to Real path",
    {K_M_L,        KNA, KNA}, F_I(dof_real_path),    get_str_setting_none },
 #ifdef ENABLE_HELP
- { EFLM_NOEX, "File List",           "Display File List",
+ { EFNM_EXEC, "File List",           "Display File List",
    {K_M_SEMCO,    KNA, KNA}, F_I(doe_view_file_list), get_str_setting_none },
- { EFLM_NOEX, "Key List",            "Display Key List",
+ { EFNM_EXEC, "Key List",            "Display Key List",
    {K_M_QUEST,    KNA, KNA}, F_I(dof_view_func_list), get_str_setting_none },
 #endif // ENABLE_HELP
 
- { EFLM_NOEX, "",                    "Filer Menu-5",
-   {KNA,          KNA, KNA}, F_I(dof_filer_menu_0), get_str_setting_none },
+ { EFNM_EXEC, "",                    "Filer Menu-5",
+   {KNA,          KNA, KNA}, F_I(dof_menu_0), get_str_setting_none },
  { EFAM_EXEC, "Split pane",          "Split screen into panes",
    {K_VERTB, K_BAKSL,  KNA}, F_I(dof_tog_panes), get_str_filer_panes },
  { EFAM_EXEC, "Switch pane",         "Switch filer pane",
@@ -185,7 +185,7 @@ func_key_table_t filer_func_key_table[] = {
  { EFAM_EXEC, "Code-7F Key-BS",      "Toggle Code-7F Key-BS",
    {K_M_D,        KNA, KNA}, F_I(doe_tog_map_key_7f_bs), get_str_map_key_7f_bs },
 
- { EFAM_EXEC, "",                    "",
+ { EFNM_EXEC, "",                    "",
    {KNA,          KNA, KNA}, F_I(NULL),            NULL },
 };
 

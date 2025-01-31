@@ -211,28 +211,32 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 		if (IS_KEY_VALID(key_input)) {
 			// some key input
 			mflf_d_printf("input%ckey:0x%04x(%s|%s)=======================\n",
-			 '_', key_input,
+			 '_', (UINT16)key_input,
 			 long_key_name_from_key_code(key_input, NULL),
 			 short_key_name_from_key_code(key_input, NULL));
 			filer_do_next = EF_NONE;
-			func_key_table_t *fkey_table;
-			if ((fkey_table = get_func_key_table_from_key(filer_func_key_table,
-			 key_input)) == NULL) {
-				fkey_table = get_func_key_table_from_key(filer_func_key_table,
-				 tolower_if_alpha(key_input));
+			func_key_list_t *fkey_list;
+			if ((fkey_list = get_fkey_entry_table_from_key(filer_func_key_table, key_input, -1))
+			 == NULL) {
+				fkey_list = get_fkey_entry_table_from_key(filer_func_key_table,
+				 tolower_if_alpha(key_input), -1);
 			}
-			if (fkey_table == NULL) {
-				disp_status_bar_warn(_("No command assigned for the key: %04xh"), key_input);
+			if (fkey_list == NULL) {
+				disp_status_bar_warn(_("No command assigned for the key: 0x%04x"),
+				 (UINT16)key_input);
 			} else {
 				strlcpy__(get_cur_filer_cur_pane_view()->next_file,
 				 get_cur_fv_cur_file_ptr()->file_name,
 				  MAX_PATH_LEN);
-				if (is_app_chooser_view_mode()) {
-					switch (fkey_table->list_mode) {
-					case EFLM_NOEX:		// not executable in List mode
+				if (is_app_chooser_viewer_mode()) {
+					switch (fkey_list->list_mode) {
+					case EFLM_QUIT:		// not executable in List mode
+						filer_do_next = EF_QUIT;
+						break;
+					case EFNM_EXEC:		// not executable in List mode
 						disp_status_bar_done(
 						 _("Can not execute this function in filer List mode: [%s]"),
-						 fkey_table->func_id);
+						 fkey_list->func_id);
 						filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 						break;
 					case F_LM_FLNM:		// no exec in filer List mode and return FILE_NAME
@@ -241,16 +245,17 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 					case F_LM_CUDI:		// no exec in filer List mode and return CUR_DIR_PATH
 						filer_do_next = FL_ENTER_CUR_DIR_PATH;
 						break;
+					case EFLM_EXEC:	// executable in editor List mode
 					case EFAM_EXEC:
 					default:
 						break;
 					}
 				}
 				if (filer_do_next == EF_NONE) {
-					flf_d_printf("<<<< CALL_FUNC_FILER [%s]\n", fkey_table->func_id);
-/////					disp_status_bar_ing(_(fkey_table->desc));	// show what about to do
+					flf_d_printf("<<<< CALL_FUNC_FILER [%s]\n", fkey_list->func_id);
+/////					disp_status_bar_ing(_(fkey_list->desc));	// show what about to do
 					//=========================
-					(*fkey_table->func)();	// call function "dof__...()"
+					(*fkey_list->func)();	// call function "dof__...()"
 					//=========================
 					flf_d_printf(">>>> filer_do_next: EF__%d\n", filer_do_next);
 					unselect_all_files_auto(_FILE_SEL_AUTO_);
@@ -569,6 +574,8 @@ int filer_win_get_file_list_y(void)
 //-------------------------------------
 PRIVATE void disp_key_list_filer(void)
 {
+	disp_fkey_list();
+
 	const char *filer_key_lists[] = {
  "<dof_quit_filer>Quit "
  "<dof_open_file>Edit "

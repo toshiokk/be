@@ -44,6 +44,10 @@ int doe_goto_column(void);
 int doe_goto_line(void);
 int doe_goto_file_or_dir_in_cur_line(void);
 int doe_goto_file_or_dir_in_cur_cursor_pos(void);
+#ifdef ENABLE_FILER
+int doe_goto_directory_in_cur_line();
+int doe_goto_directory_in_cur_cursor_pos();
+#endif // ENABLE_FILER
 
 int doe_open_files_in_buf(void);
 int doe_switch_to_top_buffer(void);
@@ -70,6 +74,7 @@ int doe_return_to_prev_file_pos(void);
 //  3. call equivalent sub-function		# sub-function can be called recursively
 //  4. call end_check_break_key()		# end   checking break-key
 
+// Top level functions:
 int load_file_name_upp_low(const char *file_name, int flags);
 int load_files_in_cur_buf(void);
 int load_files_in_string(const char *string, int flags);
@@ -82,7 +87,8 @@ int is_file_name_proj_file(const char *file_name, int type);
 #ifdef START_UP_TEST
 void test_get_n_th_file(void);
 #endif // START_UP_TEST
-int get_n_th_file_line_col_from_str_null(const char *str, int field_idx,
+#define MAX_FILES_TO_TRY_TO_LOAD_IN_A_LINE	10
+int get_n_th_file_line_col_from_str(const char *str, int field_idx,
  char *file_path, int *line_num, int *col_num);
 #endif // ENABLE_FILER
 
@@ -100,7 +106,7 @@ int goto_line_col_in_cur_buf(int line_num, int col_no);
 char *mk_cur_file_pos_str_static(void);
 char *mk_cur_file_pos_str_buf(char *buffer);
 char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col_no);
-int get_file_line_col_from_str_null(const char *str, char *file_path,
+int get_file_line_col_from_str(const char *str, char *file_path,
  int *line_num, int *col_num);
 
 int switch_epc_buf_by_file_path(const char *abs_path);
@@ -114,8 +120,8 @@ int switch_epc_buf_to_another_buf(void);
 
 #ifdef ENABLE_FILER
 int doe_filer(void);
-int try_to_open_cur_line_dir_in_filer(int line_byte_idx);
-int try_to_open_line_dir_in_filer(const char *str);
+int try_to_open_dir_in_cur_line_with_filer(int line_byte_idx);
+int try_to_open_dir_in_str_with_filer(const char *str);
 #endif // ENABLE_FILER
 
 #endif // editorgoto_h

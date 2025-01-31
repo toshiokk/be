@@ -37,7 +37,7 @@ const char *root_notation(void)
 	static char notation[MAX_PATH_LEN+1];
 	snprintf_(notation, MAX_PATH_LEN, "%s%s",
 	 (geteuid() == 0) ? "[ROOT] " : "",
-	 is_app_view_mode() ? "[VW]" : (is_app_chooser_mode() ? "[LIST]" : ""));
+	 is_app_viewer_mode() ? "[VW]" : (is_app_chooser_mode() ? "[LIST]" : ""));
 	return notation;
 }
 
@@ -84,6 +84,13 @@ void disp_status_bar_done(const char *msg, ...)
 	disp_status_bar_percent_va(S_B_D_DONE, msg, ap);
 	va_end(ap);
 }
+void disp_status_bar_async(const char *msg, ...)
+{
+	va_list ap;
+	va_start(ap, msg);
+	disp_status_bar_percent_va(S_B_D_ASYN, msg, ap);
+	va_end(ap);
+}
 
 // Examples:
 //  Reading File filename.ext ...
@@ -127,16 +134,32 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 	case S_B_D_DONE:
 		switch (status_bar_to_display) {
 		default:
-		case S_B_D_ING:
-			// reject update display
-			break;
 		case S_B_D_CURS:
 			// preserve the previous color
 			update = 2;		// "PREV : NEXT"
 			break;
+		case S_B_D_ING:
+			// reject update display
+			break;
 		case S_B_D_WARN:
 		case S_B_D_ERR:
 		case S_B_D_DONE:
+		case S_B_D_ASYN:
+			update = 1;		// "NEXT" (overlap)
+			break;
+		}
+		break;
+	case S_B_D_ASYN:
+		switch (status_bar_to_display) {
+		default:
+		case S_B_D_CURS:
+			update = 0;		// no update
+			break;
+		case S_B_D_ING:
+		case S_B_D_WARN:
+		case S_B_D_ERR:
+		case S_B_D_DONE:
+		case S_B_D_ASYN:
 			update = 1;		// "NEXT" (overlap)
 			break;
 		}
@@ -144,10 +167,10 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 	}
 	switch (status_bar_to_display) {
 	default:
-	case S_B_D_ING:
-		break;
 	case S_B_D_CURS:
 		color_idx = app_win->status_bar_color_idx;
+		break;
+	case S_B_D_ING:
 		break;
 	case S_B_D_WARN:
 		color_idx = ITEM_COLOR_IDX_WARNING3;
@@ -156,6 +179,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		color_idx = ITEM_COLOR_IDX_ERROR;
 		break;
 	case S_B_D_DONE:
+	case S_B_D_ASYN:
 		break;
 	}
 /////mflf_d_printf("sb_displayed: %d, sb_to_display: %d, update: %d, color_idx: %d\n",

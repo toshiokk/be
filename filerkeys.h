@@ -23,7 +23,7 @@
 #ifndef filerkeys_h
 #define filerkeys_h
 
-extern func_key_table_t filer_func_key_table[];
+extern func_key_list_t filer_func_key_table[];
 
 #endif // filerkeys_h
 

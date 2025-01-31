@@ -258,8 +258,8 @@ const char *get_str_setting_none(void);
 
 BOOL is_app_normal_mode(void);
 BOOL is_app_chooser_mode(void);
-BOOL is_app_view_mode(void);
-BOOL is_app_chooser_view_mode(void);
+BOOL is_app_viewer_mode(void);
+BOOL is_app_chooser_viewer_mode(void);
 
 int doe_inc_app_mode(void);
 int doe_tog_panes(void);
@@ -284,7 +284,7 @@ inline char indication_of_app_mode()
 	char separator_char = ':';
 	if (is_app_chooser_mode()) {
 		separator_char = '.';
-	} else if (is_app_view_mode()) {
+	} else if (is_app_viewer_mode()) {
 		separator_char = '!';
 	}
 #ifdef ENABLE_DEBUG
@@ -292,7 +292,7 @@ inline char indication_of_app_mode()
 		separator_char = ';';
 		if (is_app_chooser_mode()) {
 			separator_char = ',';
-		} else if (is_app_view_mode()) {
+		} else if (is_app_viewer_mode()) {
 			separator_char = '?';
 		}
 	}

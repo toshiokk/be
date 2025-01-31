@@ -133,10 +133,11 @@ int dof_splash(void);
 int dof_view_func_list(void);
 #endif // ENABLE_HELP
 
-int dof_filer_menu_0(void);
+int dof_menu_0(void);
 
 int goto_dir_in_string(const char *str);
 int check_to_change_dir_in_string(const char *str, char* buf_dir);
+int try_to_chdir_parent(char* buf_dir);
 
 int filer_change_dir_parent(char *path);
 int filer_change_dir(char *dir);

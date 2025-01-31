@@ -91,7 +91,6 @@ PRIVATE int input_string_pos__(const char *default__, char *input_buf, int curso
  int hist_type_idx, const char *message)
 {
 	int key_input;
-	const char *func_id;
 	int bytes;
 #if defined(ENABLE_HISTORY) || defined(ENABLE_FILER)
 	char buffer[MAX_PATH_LEN+1];
@@ -112,8 +111,9 @@ PRIVATE int input_string_pos__(const char *default__, char *input_buf, int curso
 		key_input = input_key_wait_return();
 		//---------------------------
 		mflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
-		 '_', key_input, short_key_name_from_key_code(key_input, NULL));
+		 '_', (UINT16)key_input, short_key_name_from_key_code(key_input, NULL));
 
+		const char *func_id;
 		if (is_key_char(key_input)) {
 			// character key
 			if (strlen_path(input_buf) < MAX_PATH_LEN) {
@@ -497,34 +497,40 @@ PRIVATE void list_one_key(char key, const char *desc)
 
 //------------------------------------------------------------------------------
 
-void disp_key_list(const char *key_lists[])
+void disp_fkey_list()
 {
 	key_code_t func_keys[] = { K_ESC,
 	 K_SP, K_F01, K_F02, K_F03, K_F04,
 	 K_SP, K_F05, K_F06, K_F07, K_F08,
 	 K_SP, K_F09, K_F10, K_F11, K_F12, K_NONE };
-	if (get_key_list_lines() >= 1) {
+	if (get_key_list_lines() > 0) {
 		char buf[MAX_SCRN_LINE_BUF_LEN+1] = "";
 		for (int key_idx = 0; func_keys[key_idx] != K_NONE; key_idx++) {
 			if (func_keys[key_idx] == K_SP) {
-				strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, " ");
+				strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, " ");	// separator
 			} else {
-				func_key_table_t *fkey_table = get_func_key_table_from_key(
-				 get_app_func_key_table(), func_keys[key_idx]);
-				if (fkey_table == NULL) {
-					strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, "{----} ");
+				func_key_list_t *fkey_list = get_fkey_entry_table_from_key(
+				 NULL, func_keys[key_idx], -1);
+				if (fkey_list) {
+					strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, "{%s} ", fkey_list->desc);
 				} else {
-					strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, "{%s} ", fkey_table->desc);
+					strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, "{-----} ");
 				}
 			}
 		}
+/////flf_d_printf("buf: [%s]\n", buf);
 		display_reverse_text(get_key_list_line_y() + 0, buf);
 	}
+}
+void disp_key_list(const char *key_lists[])
+{
 	for (int line_idx = 1; line_idx < get_key_list_lines(); line_idx++) {
 		display_reverse_text(get_key_list_line_y() + line_idx, key_lists[line_idx - 1]);
 	}
 }
-// text parenthesized by {} are displayed in reversed
+// text parenthesized by {} or <> are displayed in reversed
+// 1. type-1: "{Menu}  {RecKM} ..."
+// 2. type-2: "<doe_first_line>TopOfFile ..."
 void display_reverse_text(int yy, const char *text)
 {
 	const char *ptr;
@@ -537,7 +543,9 @@ void display_reverse_text(int yy, const char *text)
 	set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
 	main_win_clear_lines(yy, -1);
 	xx = 0;
-	for (ptr = text; *ptr && xx < main_win_get_columns(); xx += columns) {
+	// get default fkey_list
+	func_key_list_t *fkey_list = get_fkey_entry_table_from_key(NULL, K_ESC, 0);
+	for (ptr = text; *ptr && xx < main_win_get_columns(); ) {
 		if (*ptr == '{' || *ptr == '<' || *ptr == '}' || *ptr == '>')
 			delimiter = *ptr++;
 		for (begin = ptr; *ptr; ptr++) {
@@ -547,15 +555,19 @@ void display_reverse_text(int yy, const char *text)
 		if (ptr > begin) {
 			strlcpy__(buf, begin, ptr - begin);
 			if (delimiter == '<') {
+				fkey_list = get_fkey_entry_from_func_id(buf);
 				strlcpy__(buf, short_key_name_from_func_id(buf), MAX_SCRN_LINE_BUF_LEN);
 			}
-			columns = LIM_MAX(main_win_get_columns() - xx, utf8s_columns(buf, MAX_SCRN_COLS));
-			truncate_tail_utf8s_columns(buf, columns);
-			expand_utf8s_columns(buf, columns);
 			if (delimiter == '{' || delimiter == '<') {
 				set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST, 0);
 			}
-			main_win_output_string(yy, xx, buf, -1);
+			if (fkey_list && (is_fkey_entry_executable(fkey_list, -1) >= 2)) {
+				columns = LIM_MAX(main_win_get_columns() - xx, utf8s_columns(buf, MAX_SCRN_COLS));
+				truncate_tail_utf8s_columns(buf, columns);
+				expand_utf8s_columns(buf, columns);
+				main_win_output_string(yy, xx, buf, -1);
+				xx += columns;
+			}
 			if (delimiter == '{' || delimiter == '<') {
 				set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
 			}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-10 08:28+0900\n"
+"POT-Creation-Date: 2025-01-31 14:18+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,58 +32,58 @@ msgstr ""
 
 #: ../editor.c:123 ../filer.c:225
 #, c-format
-msgid "No command assigned for the key: %04xh"
+msgid "No command assigned for the key: 0x%04x"
 msgstr ""
 
-#: ../editor.c:129
+#: ../editor.c:133
 #, c-format
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr ""
 
-#: ../editor.c:338
+#: ../editor.c:343
 msgid "Input key to show key code"
 msgstr ""
 
-#: ../editor.c:342
+#: ../editor.c:348
 #, c-format
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr ""
 
-#: ../editor.c:638 ../fileio.c:101
+#: ../editor.c:651 ../fileio.c:101
 msgid "New File"
 msgstr ""
 
-#: ../editor.c:640
+#: ../editor.c:653
 msgid "[Mod]"
 msgstr ""
 
-#: ../editor.c:643
+#: ../editor.c:656
 msgid "[RO]"
 msgstr ""
 
-#: ../editor.c:649
+#: ../editor.c:662
 msgid "[LOCKED]"
 msgstr ""
 
-#: ../editor.c:745
+#: ../editor.c:758
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:791
+#: ../editor.c:807
 msgid "Modification not allowed in VIEW mode application"
 msgstr ""
 
-#: ../editor.c:795
+#: ../editor.c:811
 msgid "Modification not allowed to READ-ONLY file"
 msgstr ""
 
-#: ../editor.c:799
+#: ../editor.c:815
 #, c-format
 msgid "Modification not allowed in %s buffer"
 msgstr ""
 
-#: ../editor.c:803
+#: ../editor.c:819
 msgid "Modification not allowed to LOCKED file"
 msgstr ""
 
@@ -218,55 +218,55 @@ msgstr ""
 msgid "Enter line number:"
 msgstr ""
 
-#: ../editorgoto.c:151
+#: ../editorgoto.c:164
 msgid "Switched to the first buffer"
 msgstr ""
 
-#: ../editorgoto.c:160
+#: ../editorgoto.c:173
 msgid "Switched to the last buffer"
 msgstr ""
 
-#: ../editorgoto.c:166
+#: ../editorgoto.c:179
 msgid "No previous buffer"
 msgstr ""
 
-#: ../editorgoto.c:170
+#: ../editorgoto.c:183
 msgid "Switched to the previous buffer"
 msgstr ""
 
-#: ../editorgoto.c:176
+#: ../editorgoto.c:189
 msgid "No next buffer"
 msgstr ""
 
-#: ../editorgoto.c:180
+#: ../editorgoto.c:193
 msgid "Switched to the next buffer"
 msgstr ""
 
-#: ../editorgoto.c:188
+#: ../editorgoto.c:201
 msgid "No previous buffers"
 msgstr ""
 
-#: ../editorgoto.c:194
+#: ../editorgoto.c:207
 msgid "Switched to the previous buffers"
 msgstr ""
 
-#: ../editorgoto.c:201
+#: ../editorgoto.c:214
 msgid "No next buffers"
 msgstr ""
 
-#: ../editorgoto.c:207
+#: ../editorgoto.c:220
 msgid "Switched to the next buffers"
 msgstr ""
 
-#: ../editorgoto.c:221
+#: ../editorgoto.c:234
 msgid "Returned to previous pos"
 msgstr ""
 
-#: ../editorgoto.c:851
+#: ../editorgoto.c:864
 msgid "No valid directory in the current line"
 msgstr ""
 
-#: ../editorgoto.c:856
+#: ../editorgoto.c:870
 msgid "Filer quited"
 msgstr ""
 
@@ -519,7 +519,7 @@ msgstr ""
 msgid "%d filesss loaded"
 msgstr ""
 
-#: ../filer.c:234
+#: ../filer.c:238
 #, c-format
 msgid "Can not execute this function in filer List mode: [%s]"
 msgstr ""
@@ -645,12 +645,12 @@ msgid "Quit from filer"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filercmd.c:954
+#: ../filercmd.c:967
 #, c-format
 msgid "Can not change current to [%s]: %s"
 msgstr ""
 
-#: ../filercmd.c:964
+#: ../filercmd.c:977
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr ""
@@ -712,7 +712,7 @@ msgstr ""
 msgid "Input key macro to run:"
 msgstr ""
 
-#: ../keys.c:262
+#: ../keys.c:308
 #, c-format
 msgid "Screen resized to (%d, %d)"
 msgstr ""

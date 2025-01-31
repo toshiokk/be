@@ -98,7 +98,7 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 		//----------------------------------
 		if (IS_KEY_VALID(key_input)) {
 			mflf_d_printf("input%ckey:0x%04x(%s|%s)=======================\n",
-			 '_', key_input,
+			 '_', (UINT16)key_input,
 			 long_key_name_from_key_code(key_input, NULL),
 			 short_key_name_from_key_code(key_input, NULL));
 			if (is_key_char(key_input)) {
@@ -117,22 +117,27 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 #ifdef ENABLE_REGEX
 			matches_clear(&matches__);
 #endif // ENABLE_REGEX
-			func_key_table_t *fkey_table;
-			if ((fkey_table = get_func_key_table_from_key(editor_func_key_table, key_input))
+			func_key_list_t *fkey_list;
+			if ((fkey_list = get_fkey_entry_table_from_key(editor_func_key_table, key_input, -1))
 			 == NULL) {
-				disp_status_bar_warn(_("No command assigned for the key: %04xh"), key_input);
+				disp_status_bar_warn(_("No command assigned for the key: 0x%04x"),
+				 (UINT16)key_input);
 			} else {
 				if (is_app_chooser_mode()) {
-					switch (fkey_table->list_mode) {
-					case EFLM_NOEX:	// not executable in editor List mode
+					switch (fkey_list->list_mode) {
+					case EFLM_QUIT:	// not executable in editor List mode
+						editor_do_next = EF_QUIT;
+						break;
+					case EFNM_EXEC:	// not executable in editor List mode
 						disp_status_bar_done(
 						 _("Can not execute this function in editor List mode: [%s]"),
-						 fkey_table->func_id);
+						 fkey_list->func_id);
 						editor_do_next = EF_QUIT;
 						break;
 					case E_LM_CULN:	// not executable in editor List mode, get a text
 						editor_do_next = EF_INPUT;
 						break;
+					case EFLM_EXEC:	// executable in editor List mode
 					case EFAM_EXEC:
 					default:
 						break;
@@ -143,13 +148,13 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 					memorize_cur_file_pos_null(last_touched_file_pos_str);
 #endif // ENABLE_HISTORY
 #if defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
-					memorize_undo_state_before_change(fkey_table->func_id);
+					memorize_undo_state_before_change(fkey_list->func_id);
 #endif // defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
 					search_clear(&search__);
-					mflf_d_printf("{{{{ CALL_FUNC_EDITOR [%s]\n", fkey_table->func_id);
-					disp_status_bar_ing(_(fkey_table->desc));	// show what about to do
+					mflf_d_printf("{{{{ CALL_FUNC_EDITOR [%s]\n", fkey_list->func_id);
+					disp_status_bar_ing(_(fkey_list->desc));	// show what about to do
 					//=========================
-					(*fkey_table->func)();	// call function "doe__...()"
+					(*fkey_list->func)();	// call function "doe__...()"
 					//=========================
 					mflf_d_printf("}}}} editor_do_next: EF__%d\n", editor_do_next);
 					easy_buffer_switching_count();
@@ -172,7 +177,7 @@ flf_d_printf("all buffers closed\n");
 				// If all files closed on editor, exit editor.
 				break;
 			}
-		} else /* if (is_app_chooser_view_mode()) */ {
+		} else /* if (is_app_chooser_viewer_mode()) */ {
 			if (editor_do_next) {
 flf_d_printf("all buffers closed\n");
 				break;
@@ -341,17 +346,23 @@ int examine_key_code(void)
 	char buf1[MAX_KEY_NAME_LEN+1];
 	char buf2[MAX_KEY_NAME_LEN+1];
 	disp_status_bar_done(_("Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"),
-	 key,
+	 (UINT16)key,
 	 long_key_name_from_key_code(key, NULL),
 	 short_key_name_from_key_code(key, NULL),
-	 key_mapped,
+	 (UINT16)key_mapped,
 	 long_key_name_from_key_code(key_mapped, buf1),
 	 short_key_name_from_key_code(key_mapped, buf2));
 	return key == K_ESC;
 }
 
 //------------------------------------------------------------------------------
-int doe_editor_menu_0(void)
+int doe_quit_editor(void)
+{
+	editor_do_next = EF_QUIT;
+	return 0;
+}
+
+int doe_menu_0(void)
 {
 	return editor_menu_n(-1);
 }
@@ -753,8 +764,15 @@ PRIVATE void disp_status_bar_editor(void)
 
 void disp_key_list_editor(void)
 {
+	disp_fkey_list();
+
 	const char *editor_key_lists[] = {
+ "<doe_quit_editor>Quit "
  "<doe_close_file_ask>Quit "
+ "<doe_first_line>TopOfFile "
+ "<doe_last_line>BotOfFile "
+ "<doe_prev_word>PrevWord "
+ "<doe_next_word>NextWord ",
  "<doe_cut_to_head>CutToHead "
  "<doe_cut_text>CutLine "
  "<doe_cut_to_tail>CutToTail "
@@ -762,10 +780,6 @@ void disp_key_list_editor(void)
  "<doe_paste_text_with_pop>PasteWPop "
  "<doe_paste_text_without_pop>PasteWoPop "
  "<doe_duplicate_text>DupLine "
- "<doe_first_line>TopOfFile "
- "<doe_last_line>BotOfFile "
- "<doe_prev_word>PrevWord "
- "<doe_next_word>NextWord ",
 
  "<doe_close_all_ask>CloseAll "
  "<doe_open_file>OpenFile "
@@ -789,7 +803,7 @@ void disp_key_list_editor(void)
 
 int is_editor_view_mode_then_warn_it(void)
 {
-	if (is_app_chooser_view_mode()) {
+	if (is_app_chooser_viewer_mode()) {
 		disp_status_bar_err(_("Modification not allowed in VIEW mode application"));
 		return 1;
 	}

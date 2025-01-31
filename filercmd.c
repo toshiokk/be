@@ -636,7 +636,7 @@ int dof_change_directory(void)
 		return 0;
 	}
 	char file_path[MAX_PATH_LEN+1];
-	get_file_line_col_from_str_null(string, file_path, NULL, NULL);
+	get_file_line_col_from_str(string, file_path, NULL, NULL);
 	return filer_change_dir_parent(file_path);
 }
 
@@ -822,12 +822,12 @@ int dof_view_func_list(void)
 }
 #endif // ENABLE_HELP
 
-int dof_filer_menu_0(void)
+int dof_menu_0(void)
 {
-	if (is_app_chooser_view_mode()) {
-		filer_do_next = EF_QUIT;
-		return 0;
-	}
+///	if (is_app_chooser_viewer_mode()) {
+///		filer_do_next = EF_QUIT;
+///		return 0;
+///	}
 	return filer_menu_n(-1);
 }
 
@@ -856,31 +856,44 @@ int check_to_change_dir_in_string(const char *str, char* buf_dir)
 	char dir_save[MAX_PATH_LEN+1];
 	get_full_path_of_cur_dir(dir_save);
 
-	for (int field_idx = 0; field_idx < 10; field_idx++) {
-		if (get_n_th_file_line_col_from_str_null(str, field_idx, buf_dir, NULL, NULL) > 0) {
+	for (int field_idx = 0; field_idx < MAX_FILES_TO_TRY_TO_LOAD_IN_A_LINE; field_idx++) {
+		if (get_n_th_file_line_col_from_str(str, field_idx, buf_dir, NULL, NULL) > 0) {
 			// directory gotten
-			if (change_cur_dir(buf_dir) == 0) {
+			if (try_to_chdir_parent(buf_dir)) {
 				// directory changeable
 				changeable = 1;
 				goto changeable;
 			}
 		}
 	}
-	for (int field_idx = 0; field_idx < 10; field_idx++) {
-		if (get_n_th_file_line_col_from_str_null(str, field_idx, buf_dir, NULL, NULL) > 0) {
-			// directory gotten
 #ifdef ENABLE_HISTORY
+	for (int field_idx = 0; field_idx < MAX_FILES_TO_TRY_TO_LOAD_IN_A_LINE; field_idx++) {
+		if (get_n_th_file_line_col_from_str(str, field_idx, buf_dir, NULL, NULL) > 0) {
+			// directory gotten
 			if (change_cur_dir_from_history(buf_dir)) {
 				// directory changeable
 				changeable = 1;
 				goto changeable;
 			}
-#endif // ENABLE_HISTORY
 		}
 	}
+#endif // ENABLE_HISTORY
+
 changeable:;
 	change_cur_dir(dir_save);
 	return changeable;	// changeable
+}
+
+int try_to_chdir_parent(char* buf_dir)
+{
+	if (change_cur_dir(buf_dir) == 0) {
+		return 1;
+	}
+	strip_file_from_path(buf_dir, NULL);
+	if (change_cur_dir(buf_dir) == 0) {
+		return 1;
+	}
+	return 0;
 }
 
 #ifdef ENABLE_HISTORY
@@ -934,7 +947,7 @@ int filer_change_dir_parent(char *path)
 
 	strlcpy__(dir, path, MAX_PATH_LEN);
 	for ( ; ; ) {
-flf_d_printf("try dir[%s]\n", dir);
+flf_d_printf("try to change dir to [%s]\n", dir);
 		if (strcmp(dir, "/") == 0) {
 			return 0;	// error
 		}

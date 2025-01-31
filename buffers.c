@@ -241,7 +241,7 @@ void set_epx_buf(int pane_idx, be_buf_t *buf)
 		pane_idx = get_editor_cur_pane_idx();
 	}
 	if (buf) {
-_D_(buf_dump_name(buf))
+/////_D_(buf_dump_name(buf))
 		cur_editor_panes->bufs[pane_idx] = buf;
 	}
 	buf_fix_cur_line(buf);

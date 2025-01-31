@@ -56,7 +56,9 @@ void display_color_settings(void);
 
 int examine_key_code(void);
 
-int doe_editor_menu_0(void);
+int doe_quit_editor(void);
+
+int doe_menu_0(void);
 
 int doe_inc_key_list_lines(void);
 

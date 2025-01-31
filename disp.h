@@ -32,24 +32,27 @@ typedef enum /*s_b_d*/ {	// Status Bar Displayed
 	S_B_D_ING,				//! 2 processing (overwritable by WARN, ERR and DONE)
 	S_B_D_WARN,				//! 3 warn (overwritable by DONE)
 	S_B_D_ERR,				//! 4 error (overwritable by DONE)
-	S_B_D_DONE,				//! 5 done  (this message shall be output on completion of a command)
+	S_B_D_DONE,				//! 5 done  (this message outputs on completion of a command)
+	S_B_D_ASYN,				//! 6 done  (this message outputs the asyncronous event)
 } s_b_d_t;
 
-//| --          | previous request                                     |
-//|next request |S_B_D_NONE|S_B_D_CURS|S_B_D_ING |S_B_D_ERR |S_B_D_DONE|
-//|-------------|----------|----------|----------|----------|----------|
-//|S_B_D_NONE   | --       | --       | --       | --       | --       |
-//|S_B_D_CURS   | overlap  | overlap  | overlap  |prev:next |prev:next |
-//|S_B_D_ING    | overlap  | overlap  | overlap  | reject   | reject   |
-//|S_B_D_WARN   | overlap  | overlap  | overlap  | overlap  | overlap  |
-//|S_B_D_ERR    | overlap  | overlap  | overlap  | overlap  | overlap  |
-//|S_B_D_DONE   | overlap  | overlap  | overlap  | overlap  | overlap  |
+//| --          | previous request                                                           |
+//|next request |S_B_D_NONE|S_B_D_CURS|S_B_D_ING |S_B_D_WARN|S_B_D_ERR |S_B_D_DONE|S_B_D_ASYN|
+//|-------------|----------|----------|----------|----------|----------|----------|----------|
+//|S_B_D_NONE   | --       | --       | --       | --       | --       | --       | --       |
+//|S_B_D_CURS   | overlap  | overlap  | overlap  |prev:next |prev:next |prev:next |no update |
+//|S_B_D_ING    | overlap  | overlap  | overlap  | reject   | reject   | reject   | overlap  |
+//|S_B_D_WARN   | overlap  | overlap  | overlap  | overlap  | overlap  | overlap  | overlap  |
+//|S_B_D_ERR    | overlap  | overlap  | overlap  | overlap  | overlap  | overlap  | overlap  |
+//|S_B_D_DONE   | overlap  | overlap  | overlap  | overlap  | overlap  | overlap  | overlap  |
+//|S_B_D_ASYN   | overlap  | overlap  | overlap  | overlap  | overlap  | overlap  | overlap  |
 
 void disp_status_bar_cursor(const char *msg, ...);
 void disp_status_bar_ing(const char *msg, ...);
 void disp_status_bar_warn(const char *msg, ...);
 void disp_status_bar_err(const char *msg, ...);
 void disp_status_bar_done(const char *msg, ...);
+void disp_status_bar_async(const char *msg, ...);
 void redisp_status_bar();
 
 void blank_status_bar(void);

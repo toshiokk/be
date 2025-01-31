@@ -28,8 +28,7 @@
 #endif // FORCE_ENABLE_DEBUG
 
 #ifdef ENABLE_DEBUG
-///
-#define START_UP_TEST
+///#define START_UP_TEST
 #endif // ENABLE_DEBUG
 
 #ifdef START_UP_TEST

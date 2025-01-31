@@ -352,7 +352,7 @@ void buf_fix_cur_line(be_buf_t *buf)
 		BUFV1_CL(buf) = NODES_TOP_NODE(buf);
 		BUFV1_CLBI(buf) = MIN_MAX_(0, BUFV1_CLBI(buf), line_strlen(BUFV1_CL(buf)));
 	}
-_D_(dump_buf_view_x(buf, 0))
+/////_D_(dump_buf_view_x(buf, 0))
 }
 be_line_t *buf_set_cur_line(be_buf_t *buf, be_line_t *line)
 {
@@ -744,7 +744,7 @@ void buf_dump_name(be_buf_t *buf)
 		flf_d_printf("buf: NULL\n");
 		return;
 	}
-///	flf_d_printf("file_path: [%s]\n", buf->file_path_);
+/////	flf_d_printf("file_path: [%s]\n", buf->file_path_);
 	flf_d_printf("abs_path_: [%s]\n", buf->abs_path_);
 }
 

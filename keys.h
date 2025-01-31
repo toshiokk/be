@@ -506,27 +506,27 @@ typedef short key_code_t;		// signed short
 #define FUNC_ID(func)	func, #func
 #define F_I(func)		FUNC_ID(func)
 
-typedef enum {
-	EFAM_EXEC,	// executable in editor/filer All mode
-	EFLM_NOEX,	// not executable in editor/filer List mode and quit editor/filer
-	E_LM_CULN,	// not executable in editor List mode, get a text in current line
-				//  and return FL_INPUT
-	F_LM_FLNM,	// not executable in filer List mode, input file name/path
-				//  and return FL_ENTER_FILE_NAME_OR_PATH
-	F_LM_CUDI,	// not executable in filer List mode, input current directory
-				//  and return FL_ENTER_CUR_DIR_PATH
+typedef enum {	// | Normal-mode  | List-mode    |
+				// |--------------|--------------|
+	EFAM_EXEC,	// | executable   | executable   | executable in All mode
+	EFNM_EXEC,	// | executable   |not executable| executable only in Normal mode
+	EFLM_EXEC,	// |not executable| executable   | executable only in List mode
+	EFLM_QUIT,	// | executable   | quit app     |
+	E_LM_CULN,	// | executable   | get a text in current line and return FL_INPUT |
+	F_LM_FLNM,	// | executable   | input file name/path and return FL_ENTER_FILE_NAME_OR_PATH |
+	F_LM_CUDI,	// | executable   | input current directory and return FL_ENTER_CUR_DIR_PATH   |
 } list_mode_t;
 
 typedef struct {
 	list_mode_t list_mode;		// executable in list mode
 	char *desc;					// short description
-	char *help;					// explanation
+	char *explanation;			// explanation
 #define MAX_KEYS_BIND	3
 	key_code_t keys[MAX_KEYS_BIND];
 	int (*func)(void);
 	char *func_id;
 	const char *(*func_get)(void);	// function to get assigned value
-} func_key_table_t;
+} func_key_list_t;
 
 #define MAX_KEY_NAME_LEN	8		// "MC-UNDLN"
 #define NUM_STR(key)	key, #key
@@ -539,20 +539,22 @@ extern key_name_table_t key_name_table[];
 
 #define KEY_CODE_STR_LEN	(1+MAX_KEY_NAME_LEN+1+1)	// "(MC-UNDLN)"
 
-func_key_table_t *get_app_func_key_table(void);
+func_key_list_t *get_app_func_key_table(void);
 
 int cmp_func_id(const char *func_id_1, const char *func_id_2);
 void *get_app_function_for_key(key_code_t key);
 const char *get_func_id_from_key(key_code_t key);
-func_key_table_t *get_func_key_table_from_key(func_key_table_t *fkey_table, key_code_t key);
+func_key_list_t *get_fkey_entry_table_from_key(func_key_list_t *fkey_list, key_code_t key,
+ int is_list_mode);
+int is_fkey_entry_executable(func_key_list_t *fkey_list, int is_list_mode);
 key_code_t get_key_for_func_id(char *func_id);
-func_key_table_t *get_func_table_from_func_id(const char *func_id);
+func_key_list_t *get_fkey_entry_from_func_id(const char *func_id);
 
-int is_key_assigned_to_func(key_code_t key, func_key_table_t *fkey_table);
+int is_key_assigned_to_func(key_code_t key, func_key_list_t *fkey_list);
 void clear_fkey_tbl_using_these_keys(key_code_t *keys);
-void clear_key_if_bound_to_func(key_code_t key, func_key_table_t *fkey_table);
-void clear_fkey_tbl_keys(func_key_table_t *fkey_table);
-void bind_key_to_func(func_key_table_t *fkey_table, key_code_t *keys);
+void clear_key_if_bound_to_func(key_code_t key, func_key_list_t *fkey_list);
+void clear_fkey_tbl_keys(func_key_list_t *fkey_list);
+void bind_key_to_func(func_key_list_t *fkey_list, key_code_t *keys);
 
 const char *short_key_name_from_func_id(char *buf);
 
