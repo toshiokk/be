@@ -774,7 +774,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 		*ptr_byte_idx = matches_start_idx(&matches__);
 		return match_len;
 	}
-	// not found then return to begining position
+	// not found then return to beginning position
 	recall_file_pos_null(NULL);
 	return match_len;
 }

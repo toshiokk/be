@@ -128,9 +128,9 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 			} else {
 				if (is_app_chooser_mode()) {
 					switch (fkey_list->list_mode) {
-					case EFLM_QUIT:	// not executable in editor List mode
-						editor_do_next = EF_QUIT;
-						break;
+///					case EFLM_QUIT:	// not executable in editor List mode
+///						editor_do_next = EF_QUIT;
+///						break;
 					case EFNM_EXEC:	// not executable in editor List mode
 						disp_status_bar_done(
 						 _("Can not execute this function in editor List mode: [%s]"),
@@ -155,7 +155,7 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 #endif // defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
 					search_clear(&search__);
 					mflf_d_printf("{{{{ CALL_FUNC_EDITOR [%s]\n", fkey_list->func_id);
-					disp_status_bar_ing(_(fkey_list->desc));	// show what about to do
+///					disp_status_bar_ing(_(fkey_list->desc));	// show what about to do
 					//=========================
 					(*fkey_list->func)();	// call function "doe__...()"
 					//=========================
@@ -367,6 +367,10 @@ int doe_quit_editor(void)
 
 int doe_menu_0(void)
 {
+/////	if (is_app_chooser_viewer_mode()) {
+/////		editor_do_next = EF_QUIT;
+/////		return 0;
+/////	}
 	return editor_menu_n(-1);
 }
 

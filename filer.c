@@ -244,9 +244,9 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 				  MAX_PATH_LEN);
 				if (is_app_chooser_viewer_mode()) {
 					switch (fkey_list->list_mode) {
-					case EFLM_QUIT:		// not executable in List mode
-						filer_do_next = EF_QUIT;
-						break;
+///					case EFLM_QUIT:		// not executable in List mode
+///						filer_do_next = EF_QUIT;
+///						break;
 					case EFNM_EXEC:		// not executable in List mode
 						disp_status_bar_done(
 						 _("Can not execute this function in filer List mode: [%s]"),
@@ -309,16 +309,16 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 				 file_idx >= 0;
 				 file_idx = get_next_file_idx_selected(file_idx)) {
 					if (IS_UPPER_KEY(key_input) == 0) {
-						// enter file names: file-1 "file 2" "file 3"
-						concat_file_path_separating_by_space(path_buf, buf_len,
-						 get_cur_fv_file_ptr(file_idx)->file_name);
-					} else /* if (IS_UPPER_KEY(key_input)) */ {
 						// enter file paths: /path/to/file-1 "/path/to/file 2" "/path/to/file 3"
 						char path[MAX_PATH_LEN];
 						cat_dir_and_file(path,
 						 get_cur_filer_pane_view()->cur_dir,
 						 get_cur_fv_file_ptr(file_idx)->file_name);
 						concat_file_path_separating_by_space(path_buf, buf_len, path);
+					} else /* if (IS_UPPER_KEY(key_input)) */ {
+						// enter file names: file-1 "file 2" "file 3"
+						concat_file_path_separating_by_space(path_buf, buf_len,
+						 get_cur_fv_file_ptr(file_idx)->file_name);
 					}
 				}
 				filer_do_next = EF_INPUT;

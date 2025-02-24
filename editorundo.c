@@ -53,22 +53,22 @@ be_buf_t *pop_redo_buf(void)
 		return NULL;
 	return buf_unlink(REDO_BUFS_TOP_BUF);
 }
+// delete undo, redo buffers related to 'edit_buf'
 int delete_undo_redo_buf(be_buf_t *edit_buf)
 {
-	// delete undo, redo buffers related to edit_buf
-	return delete_do_buf(edit_buf, UNDO_BUFS_TOP_BUF)
-	 + delete_do_buf(edit_buf, REDO_BUFS_TOP_BUF);
+	return delete_unredo_buf(UNDO_BUFS_TOP_BUF, edit_buf)
+	 + delete_unredo_buf(REDO_BUFS_TOP_BUF, edit_buf);
 }
-int delete_do_buf(be_buf_t *edit_buf, be_buf_t *buf)
+// delete undo/redo buffers related to 'edit_buf'
+int delete_unredo_buf(be_buf_t *do_buf, be_buf_t *edit_buf)
 {
 	int deleted = 0;
-
-	for ( ; IS_NODE_INT(buf); ) {
-		if (strcmp(buf->abs_path_, edit_buf->abs_path_) == 0) {
-			buf = buf_unlink_free(buf);
+	for ( ; IS_NODE_INT(do_buf); ) {
+		if (strcmp(do_buf->abs_path_, edit_buf->abs_path_) == 0) {
+			do_buf = buf_unlink_free(do_buf);
 			deleted++;
 		} else {
-			buf = NODE_NEXT(buf);
+			do_buf = NODE_NEXT(do_buf);
 		}
 	}
 	return deleted;

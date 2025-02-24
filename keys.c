@@ -91,12 +91,12 @@ int is_fkey_entry_executable(func_key_list_t *fkey_list, int is_list_mode)
 		default:
 		case EFAM_EXEC:
 		case EFNM_EXEC:
+///		case EFLM_QUIT:
 		case E_LM_CULN:
 		case F_LM_FLNM:
 		case F_LM_CUDI:
 			return 2;		// fully executable
 		case EFLM_EXEC:
-		case EFLM_QUIT:
 			return 0;		// not executable
 		}
 	} else {
@@ -105,7 +105,7 @@ int is_fkey_entry_executable(func_key_list_t *fkey_list, int is_list_mode)
 		default:
 		case EFAM_EXEC:
 		case EFLM_EXEC:
-		case EFLM_QUIT:
+///		case EFLM_QUIT:
 			return 2;		// fully executable
 		case E_LM_CULN:
 		case F_LM_FLNM:
@@ -232,6 +232,16 @@ void set_menu_key_for_do_app_menu_0(void)
 }
 
 //------------------------------------------------------------------------------
+#define WHOLE_UPDATE_INTERVAL_MSEC		60000	// 60[Sec]
+void clear_whole_screen_update_timer()
+{
+	update_msec_when_input_key();
+}
+int check_whole_screen_update_timer()
+{
+	return msec_past_input_key() >= WHOLE_UPDATE_INTERVAL_MSEC;
+}
+//------------------------------------------------------------------------------
 PRIVATE unsigned long msec_when_input_key = 0;
 void update_msec_when_input_key()
 {
@@ -266,7 +276,6 @@ key_code_t input_unmapped_key_loop(void)
 // |-----------------------|-----------------|
 // | repaint all of screen | 10000           |
 //
-#define WHOLE_UPDATE_INTERVAL_MSEC		60000	// 60[Sec]
 key_code_t input_key_wait_return(void)
 {
 	static key_code_t prev_key = KEY_NONE;
@@ -276,10 +285,10 @@ key_code_t input_key_wait_return(void)
 	}
 	prev_key = key;
 	if (key >= 0) {
-		if (msec_past_input_key() >= WHOLE_UPDATE_INTERVAL_MSEC) {
+		if (check_whole_screen_update_timer()) {
 			tio_flash_screen(0);
 		}
-		update_msec_when_input_key();
+		clear_whole_screen_update_timer();
 	}
 	return key;
 }

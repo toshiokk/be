@@ -30,6 +30,7 @@ int get_groups_in_func_key_table(void);
 int get_func_key_group_entries(int group_idx);
 short get_func_key_code(int group_idx, int entry_idx);
 func_key_list_t *get_func_key_group_from_group_idx(int group_idx);
+int get_menu_items_from_group_idx(int group_idx);
 
 #endif // menu_h
 

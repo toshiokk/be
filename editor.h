@@ -71,7 +71,7 @@ typedef struct /*app_win_stack_entry*/ {
 	char status_bar_displayed;
 	char status_bar_prev_msg[MAX_SCRN_LINE_BUF_LEN+1];
 	char status_bar_color_idx;
-	short status_bar_col_idx;
+	short status_bar_col_idx;	// column position of position indicator
 	char status_bar_msg[MAX_SCRN_LINE_BUF_LEN+1];
 } app_win_stack_entry;
 

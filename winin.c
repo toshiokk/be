@@ -369,57 +369,28 @@ PRIVATE void blank_input_box(void)
 
 //------------------------------------------------------------------------------
 
+PRIVATE void disp_ask_yes_no_msg(int flags);
 PRIVATE void list_one_key(char key, const char *desc);
+
+PRIVATE const char *chars_yes = "Yy";				// Yes(replace)
+PRIVATE const char *chars_no = "Nn";				// No
+PRIVATE const char *chars_all = "Aa";				// All
+PRIVATE const char *chars_backward = "Bb";			// Backward search
+PRIVATE const char *chars_forward = "Ff ";			// Forward search
+PRIVATE const char *chars_cancel = "CcSs" S_ESC;	// Cancel/Stop/ESC
+PRIVATE const char *chars_end = "EeQqRr" S_C_Q;		// End/Quit/Return/Ctrl-Q
+PRIVATE const char *chars_undo = "Uu";				// Undo
+PRIVATE const char *chars_redo = "Oo";				// redO
 
 // Ask a simple yes/no question on the status_bar.
 int ask_yes_no(int flags, const char *msg, ...)
 {
 	int key_lines_save;
 	va_list ap;
-	char msg_buf[MAX_SCRN_LINE_BUF_LEN+1];
-	const char *chars_yes = "Yy";				// Yes(replace)
-	const char *chars_no = "Nn";				// No
-	const char *chars_all = "Aa";				// All
-	const char *chars_backward = "Bb";			// Backward search
-	const char *chars_forward = "Ff ";			// Forward search
-	const char *chars_cancel = "CcSs" S_ESC;	// Cancel/Stop/ESC
-	const char *chars_end = "EeQqRr" S_C_Q;		// End/Quit/Return/Ctrl-Q
-	const char *chars_undo = "Uu";				// Undo
-	const char *chars_redo = "Oo";				// redO
+	char msg_buf[MAX_SCRN_LINE_BUF_LEN+1] = "";
 
 	key_lines_save = GET_APPMD(app_KEY_LINES);		// save KEY_LINES
 	SET_APPMD_VAL(app_KEY_LINES, LIM_MIN(1, key_lines_save));	// set lines more than 1
-
-	blank_key_list_lines();
-	// First, display key list
-	if (get_key_list_lines()) {
-		main_win_set_cursor_pos(get_yes_no_line_y(), 0);
-		if (flags & ASK_YES) {
-			list_one_key(chars_yes[0], _("Yes"));
-		}
-		if (flags & ASK_NO) {
-			list_one_key(chars_no[0], _("No"));
-		}
-		if (flags & ASK_ALL) {
-			list_one_key(chars_all[0], _("All"));
-		}
-		if (flags & ASK_BACKWARD) {
-			list_one_key(chars_backward[0], _("Backward"));
-		}
-		if (flags & ASK_FORWARD) {
-			list_one_key(chars_forward[0], _("Forward"));
-		}
-		list_one_key(chars_cancel[0], _("Cancel"));
-		if (flags & ASK_END || flags & ASK_NO) {
-			list_one_key(chars_end[0], _("End"));
-		}
-		if (flags & ASK_UNDO) {
-			list_one_key(chars_undo[0], _("Undo"));
-		}
-		if (flags & ASK_REDO) {
-			list_one_key(chars_redo[0], _("Redo"));
-		}
-	}
 
 	// Second, display prompt message
 	if (*msg) {
@@ -429,22 +400,24 @@ int ask_yes_no(int flags, const char *msg, ...)
 		strlcat__(msg_buf, MAX_SCRN_LINE_BUF_LEN, " ");
 		int byte_idx = byte_idx_from_col_idx(msg_buf, MAX_SCRN_LINE_BUF_LEN, CHAR_LEFT, NULL);
 		msg_buf[byte_idx] = '\0';
+	}
+
+	int answer;
+	for (answer = ANSWER_NONE; answer == ANSWER_NONE; ) {
+		disp_ask_yes_no_msg(flags);
+
 		set_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);
 		set_color_by_idx(ITEM_COLOR_IDX_WARNING1, 0);
 		blank_status_bar();
 		main_win_output_string(get_status_line_y(), 0, msg_buf, -1);
-	}
+		tio_refresh();
 
-	tio_refresh();
-
-	int answer;
-	for (answer = ANSWER_NONE; answer == ANSWER_NONE; ) {
 		// "Save modified buffer ?"[] <== cursor
 		tio_set_cursor_on(1);
 		//---------------------------
-		key_code_t key_input = input_key_loop();
-		const char *func_id = get_func_id_from_key(key_input);
+		key_code_t key_input = input_key_wait_return();
 		//---------------------------
+		const char *func_id = get_func_id_from_key(key_input);
 		// Look for the key_input in yes/no/all
 		if (strchr__(chars_yes, key_input) != NULL)
 			answer = ANSWER_YES;
@@ -480,7 +453,39 @@ int ask_yes_no(int flags, const char *msg, ...)
 
 	return answer;	// x > 0: yes, x = 0: no, x < 0: cancel
 }
-
+PRIVATE void disp_ask_yes_no_msg(int flags)
+{
+	blank_key_list_lines();
+	// First, display key list
+	if (get_key_list_lines()) {
+		main_win_set_cursor_pos(get_yes_no_line_y(), 0);
+		if (flags & ASK_YES) {
+			list_one_key(chars_yes[0], _("Yes"));
+		}
+		if (flags & ASK_NO) {
+			list_one_key(chars_no[0], _("No"));
+		}
+		if (flags & ASK_ALL) {
+			list_one_key(chars_all[0], _("All"));
+		}
+		if (flags & ASK_BACKWARD) {
+			list_one_key(chars_backward[0], _("Backward"));
+		}
+		if (flags & ASK_FORWARD) {
+			list_one_key(chars_forward[0], _("Forward"));
+		}
+		list_one_key(chars_cancel[0], _("Cancel"));
+		if (flags & ASK_END || flags & ASK_NO) {
+			list_one_key(chars_end[0], _("End"));
+		}
+		if (flags & ASK_UNDO) {
+			list_one_key(chars_undo[0], _("Undo"));
+		}
+		if (flags & ASK_REDO) {
+			list_one_key(chars_redo[0], _("Redo"));
+		}
+	}
+}
 PRIVATE void list_one_key(char key, const char *desc)
 {
 	char buf[MAX_SCRN_LINE_BUF_LEN+1];

@@ -95,7 +95,7 @@ int dof_drop_files_to_move();
 #define ACTION_OPEN		1
 #define ACTION_COPY		2
 #define ACTION_MOVE		3
-int dof_drop_files_to_act__(int action);
+int dof_drop_files_to_do_action_(int action);
 
 int dof_rename_file(void);
 int dof_trash_file(void);

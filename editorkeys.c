@@ -25,13 +25,13 @@
 func_key_list_t editor_func_key_table[] = {
 //             12345678901234567890   123456789012345678901234567890
 // 12345678901234567890
- { EFAM_EXEC, "Menu",                "Previous Menu",
+ { EFNM_EXEC, "Menu",                "Previous Menu",
    {K_ESC,        KNA, KNA}, F_I(doe_menu_0), get_str_setting_none },
+ { EFLM_EXEC, "Menu",                "Previous Menu",
+   {K_ESC,        KNA, KNA}, F_I(doe_quit_editor), get_str_setting_none },
 
  { EFNM_EXEC, "",                    "File Menu",
    {KNA,          KNA, KNA}, F_I(doe_menu_0), get_str_setting_none },
- { EFLM_QUIT, "Quit",                "Quit editor",
-   {K_C_Q, K_M_q,      KNA}, F_I(doe_quit_editor), get_str_setting_none },
  { E_LM_CULN, "Open file",           "Open file",
    {K_M_e,        KNA, KNA}, F_I(doe_open_file), get_str_setting_none },
  { E_LM_CULN, "Open file",           "View file (Read-Only)",
@@ -56,6 +56,8 @@ func_key_list_t editor_func_key_table[] = {
    {K_MC_A,       KNA, KNA}, F_I(doe_write_all_modified), get_str_setting_none },
  { EFNM_EXEC, "Close",               "Close file",
    {K_C_Q,        KNA, KNA}, F_I(doe_close_file_ask), get_str_setting_none },
+ { EFLM_EXEC, "Quit",                "Quit editor",
+   {K_C_Q, K_M_q,      KNA}, F_I(doe_quit_editor), get_str_setting_none },
  { EFNM_EXEC, "Close always",        "Close file always",
    {K_MC_Q,       KNA, KNA}, F_I(doe_close_file_always), get_str_setting_none },
  { EFNM_EXEC, "Close All files",     "Close all files",

@@ -31,12 +31,12 @@
 #define MOE0		0x00	//  No message on error
 #define LFH1		0x08	// Load a file memorized in history
 #define LFH0		0x00	//  Not load a file memorized in history
-#define WRP1		0x10	// Load a file with write protected
-#define WRP0		0x00	//  Not load a file with write protected
-#define FOL1		0x20	// Load a locked file forcibly
+#define WRP1		0x10	// Load a file with WRite Protected
+#define WRP0		0x00	//  Not load a file with WRite Protected
+#define FOL1		0x20	// Load a locked file forcibly (Force Open Locked file)
 #define FOL0		0x00	//  Not load a locked file forcibly
-#define RECURS1		0x80	// Recursively open files
-#define RECURS0		0x00	//  Not recursively open files
+#define RECURS1		0x80	// RECURSively open files
+#define RECURS0		0x00	//  Not RECURSively open files
 
 #define FILE_PATH_SEPARATOR		"|"		// candidates are "|", "//", ""\\"
 

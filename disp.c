@@ -95,13 +95,15 @@ void disp_status_bar_async(const char *msg, ...)
 //| --          |                           next request                                     |
 //|prev. request|S_B_D_NONE|S_B_D_CURS|S_B_D_ING |S_B_D_WARN|S_B_D_ERR |S_B_D_DONE|S_B_D_ASYN|
 //|-------------|----------|----------|----------|----------|----------|----------|----------|
-//|S_B_D_NONE   | --       | overlap  | overlap  | overlap  | overlap  | overlap  | overlap  |
-//|S_B_D_CURS   | --       | overlap  | overlap  | overlap  | overlap  | overlap  | overlap  |
-//|S_B_D_ING    | --       | overlap  | overlap  | overlap  | overlap  | overlap  | overlap  |
-//|S_B_D_WARN   | --       |prev:next | reject   | overlap  | overlap  | overlap  | overlap  |
-//|S_B_D_ERR    | --       |prev:next | reject   | overlap  | overlap  | overlap  | overlap  |
-//|S_B_D_DONE   | --       |prev:next | reject   | overlap  | overlap  | overlap  | overlap  |
-//|S_B_D_ASYN   | --       | reject   | overlap  | overlap  | overlap  | overlap  | overlap  |
+//|S_B_D_NONE   | --       | over-wr  | over-wr  | over-wr  | over-wr  | over-wr  | over-wr  |
+//|S_B_D_CURS   | --       | over-wr  | over-wr  | over-wr  | over-wr  | over-wr  | over-wr  |
+//|S_B_D_ING    | --       | over-wr  | over-wr  | over-wr  | over-wr  | over-wr  | over-wr  |
+//|S_B_D_WARN   | --       |prev:next | reject   | over-wr  | over-wr  | over-wr  | over-wr  |
+//|S_B_D_ERR    | --       |prev:next | reject   | over-wr  | over-wr  | over-wr  | over-wr  |
+//|S_B_D_DONE   | --       |prev:next | reject   | over-wr  | over-wr  | over-wr  | over-wr  |
+//|S_B_D_ASYN   | --       | reject   | over-wr  | over-wr  | over-wr  | over-wr  | over-wr  |
+
+// Note: 'prev:next' over writes next color
 
 // Examples:
 //  Reading File filename.ext ...
@@ -138,7 +140,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 	case S_B_D_NONE:
 	case S_B_D_CURS:
 	case S_B_D_ING:
-		update = 1;			// overlap
+		update = 1;			// over-wr
 		break;
 	case S_B_D_WARN:
 	case S_B_D_ERR:
@@ -156,7 +158,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		case S_B_D_ERR:
 		case S_B_D_DONE:
 		case S_B_D_ASYN:
-			update = 1;		// "NEXT" (overlap)
+			update = 1;		// "NEXT" (over-wr)
 			break;
 		}
 		break;
@@ -172,7 +174,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		case S_B_D_ERR:
 		case S_B_D_DONE:
 		case S_B_D_ASYN:
-			update = 1;		// "NEXT" (overlap)
+			update = 1;		// "NEXT" (over-wr)
 			break;
 		}
 		break;

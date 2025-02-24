@@ -206,7 +206,7 @@ flf_d_printf("Exit %s ===============================\n", APP_NAME " " __DATE__ 
 void app_main_loop(void)
 {
 	clear_app_win_stack_depth();
-	update_msec_when_input_key();	// avoid screen flashing on the first key input
+	clear_whole_screen_update_timer();	// avoid screen flashing on the first key input
 #ifndef ENABLE_FILER
 	if (edit_bufs_count_bufs() == 0) {
 		doe_open_file();
@@ -607,7 +607,6 @@ void app_die_on(const char *msg)
 PRIVATE void die_save_file(const char *die_file_path)
 {
 	char file_path[MAX_PATH_LEN+5+1];
-	int ret = 0;
 
 	// If we can't save, we have REAL bad problems, but we might as well TRY.
 	if (die_file_path[0] == '\0') {
@@ -615,11 +614,10 @@ PRIVATE void die_save_file(const char *die_file_path)
 		return;
 	} else {
 		strlcpy__(file_path, die_file_path, MAX_PATH_LEN);
-		strlcat__(file_path, MAX_PATH_LEN, "#");
+		strlcat__(file_path, MAX_PATH_LEN, "#");	// add '#'
 	}
 	if (is_strlen_not_0(file_path)) {
-		ret = backup_and_save_cur_buf(file_path);
-		if (ret == 0) {
+		if (backup_and_save_cur_buf(file_path) >= 0) {
 			e_printf("\nBuffer written to %s\n", file_path);
 			return;
 		}

@@ -501,7 +501,7 @@ char *cat_dir_and_file(char *buf, const char *dir, const char *file)
 //  file_name          : e.g. "filename.ext"
 //						 not contain directory
 //  file_path          : e.g. "../src/filename.ext"
-//						 may contain symlinks and ".."
+//						 may be relative_path and contain symlinks and ".."
 //  full_path          : e.g. "/home/user/symlink/../src/filename.ext"
 //						 start by '/' and may contain symlinks and ".."
 //  normalized_path    : e.g. "/home/user/symlink/src/filename.ext"
@@ -594,13 +594,26 @@ PRIVATE char *normalize_full_path__(char *full_path, char *parent, char *child)
 
 //------------------------------------------------------------------------------
 
+int compare_file_path_in_abs_path(const char *file_path_a, const char *file_path_b)
+{
+	char abs_path_a[MAX_PATH_LEN+1];
+	char abs_path_b[MAX_PATH_LEN+1];
+	get_abs_path(file_path_a, abs_path_a);
+	get_abs_path(file_path_b, abs_path_b);
+flf_d_printf("file_path_a: [%s]\n", file_path_a);
+flf_d_printf("file_path_b: [%s]\n", file_path_b);
+flf_d_printf("abs_path_a:  [%s]\n", abs_path_a);
+flf_d_printf("abs_path_b:  [%s]\n", abs_path_b);
+	return strcmp(abs_path_a, abs_path_b);
+}
+
 // get absolute path (not include symlinks)
 char *get_abs_path(const char *path, char *buf)
 {
 	char full_path[MAX_PATH_LEN+1];
 
-	get_full_path(path, full_path);					// --> full_path
-	get_real_path(full_path, buf, MAX_PATH_LEN);	// --> abs path (real path)
+	get_full_path(path, full_path);			// --> full_path
+	get_real_path(full_path, buf);			// --> abs path (real path)
 	return buf;
 }
 
@@ -652,10 +665,10 @@ char *get_full_path(const char *path, char *buf)
 	return buf;
 }
 
-char *get_real_path(const char *path, char *buf, int buf_len)
+char *get_real_path(const char *path, char *buf)
 {
 #if defined(HAVE_REALPATH)
-	return realpath__(path, buf, buf_len);
+	return realpath__(path, buf, MAX_PATH_LEN);
 #else // HAVE_REALPATH
 #error "HAVE_REALPATH not defined"
 #endif // HAVE_REALPATH

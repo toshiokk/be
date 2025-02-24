@@ -547,7 +547,7 @@ typedef enum {	// | Normal-mode  | List-mode    |
 	EFAM_EXEC,	// | executable   | executable   | executable in All mode
 	EFNM_EXEC,	// | executable   |not executable| executable only in Normal mode
 	EFLM_EXEC,	// |not executable| executable   | executable only in List mode
-	EFLM_QUIT,	// | executable   | quit app     |
+///	EFLM_QUIT,	// | executable   | quit app     |
 	E_LM_CULN,	// | executable   | get a text in current line and return FL_INPUT |
 	F_LM_FLNM,	// | executable   | input file name/path and return FL_ENTER_FILE_NAME_OR_PATH |
 	F_LM_CUDI,	// | executable   | input current directory and return FL_ENTER_CUR_DIR_PATH   |
@@ -597,6 +597,9 @@ const char *short_key_name_from_func_id(char *buf);
 void set_menu_key(key_code_t key);
 key_code_t get_menu_key(void);
 void set_menu_key_for_do_app_menu_0(void);
+
+void clear_whole_screen_update_timer();
+int check_whole_screen_update_timer();
 
 void update_msec_when_input_key();
 unsigned long msec_past_input_key();

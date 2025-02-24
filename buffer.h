@@ -177,6 +177,7 @@ void buf_set_file_abs_path(be_buf_t *buf, const char *file_path);
 void buf_set_file_path(be_buf_t *buf, const char *file_path);
 void buf_set_abs_path(be_buf_t *buf, const char *file_path);
 void buf_get_file_path(be_buf_t *buf, char *file_path);
+const char* buf_get_abs_path(be_buf_t *buf, char *abs_path);
 BOOL buf_is_empty(be_buf_t *buf);
 be_buf_t *buf_insert_before(be_buf_t *buf, be_buf_t *new_buf);
 be_buf_t *buf_insert_after(be_buf_t *buf, be_buf_t *new_buf);
@@ -200,7 +201,9 @@ int buf_renumber_from_line(be_buf_t *buf, be_line_t *line);
 int buf_guess_tab_size(be_buf_t *buf);
 
 int buf_count_lines(be_buf_t *buf, int max_lines);
-int buf_is_orig_file_updated(be_buf_t *buf);
+
+void buf_clear_orig_file_mtime(be_buf_t *buf);
+int buf_has_orig_file_updated(be_buf_t *buf);
 
 const char *buf_mode_str(be_buf_t *buf);
 const char *buf_eol_str(be_buf_t *buf);

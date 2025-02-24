@@ -55,7 +55,7 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path)
 	buf->orig_file_stat.st_uid = geteuid();
 	buf->orig_file_stat.st_gid = getegid();
 	buf->orig_file_stat.st_mode = RW0RW0R00;		// regular file rw-rw-r--(664)
-	buf->orig_file_stat.st_mtime = time(NULL);		// time file was created
+	buf_clear_orig_file_mtime(buf);					// time file was modified
 	buf->orig_file_crc = 0;
 
 	buf_init_anchors(buf, buf->file_path_);
@@ -108,8 +108,8 @@ be_buf_t *buf_init_anchors(be_buf_t *buf, char *initial_data)
 }
 void buf_set_file_abs_path(be_buf_t *buf, const char *file_path)
 {
-	buf_set_file_path(buf, file_path);
-	buf_set_abs_path(buf, file_path);
+	buf_set_file_path(buf, file_path);	// set to 'file_path'
+	buf_set_abs_path(buf, file_path);	//    and 'abs_path'
 }
 void buf_set_file_path(be_buf_t *buf, const char *file_path)
 {
@@ -122,6 +122,20 @@ void buf_set_abs_path(be_buf_t *buf, const char *file_path)
 void buf_get_file_path(be_buf_t *buf, char *file_path)
 {
 	strlcpy__(file_path, buf->file_path_, MAX_PATH_LEN);
+}
+const char* buf_get_abs_path(be_buf_t *buf, char *abs_path)
+{
+#if 0
+	strlcpy__(abs_path, buf->abs_path_, MAX_PATH_LEN);
+	return abs_path;
+#else
+	static char abs_path_[MAX_PATH_LEN+1];
+	if (abs_path) {
+		abs_path = abs_path_;
+	}
+	get_abs_path(buf->file_path_, abs_path);
+	return abs_path;
+#endif
 }
 BOOL buf_is_empty(be_buf_t *buf)
 {
@@ -281,7 +295,11 @@ int buf_count_lines(be_buf_t *buf, int max_lines)
 	return count;
 }
 
-int buf_is_orig_file_updated(be_buf_t *buf)
+void buf_clear_orig_file_mtime(be_buf_t *buf)
+{
+	buf->orig_file_stat.st_mtime = time(NULL);
+}
+int buf_has_orig_file_updated(be_buf_t *buf)
 {
 	struct stat st;
 

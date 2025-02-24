@@ -29,7 +29,7 @@ be_buf_t *pop_undo_buf(void);
 be_buf_t *push_redo_buf(be_buf_t *buf);
 be_buf_t *pop_redo_buf(void);
 int delete_undo_redo_buf(be_buf_t *edit_buf);
-int delete_do_buf(be_buf_t *edit_buf, be_buf_t *do_buf);
+int delete_unredo_buf(be_buf_t *do_buf, be_buf_t *edit_buf);
 int count_undo_bufs(void);
 int count_redo_bufs(void);
 

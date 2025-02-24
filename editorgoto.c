@@ -417,11 +417,11 @@ PRIVATE int load_file_name__(const char *file_name, int flags)
 {
 flf_d_printf("[%s]\n", file_name);
 	char full_path[MAX_PATH_LEN+1];
-	char abs_path[MAX_PATH_LEN+1];
+/////	char abs_path[MAX_PATH_LEN+1];
 	int files_loaded = -1;
 
 	get_full_path(file_name, full_path);
-	get_abs_path(file_name, abs_path);
+/////	get_abs_path(file_name, abs_path);
 	// switch to the file of "full_path" if it already loaded
 	if (switch_epc_buf_by_file_path(full_path)) {
 		add_files_loaded(0);		// switched

@@ -47,8 +47,10 @@ char *normalize_full_path(char *full_path);
 
 char *cat_dir_and_file(char *buf, const char *dir, const char *file);
 
+int compare_file_path_in_abs_path(const char *file_path_a, const char *file_path_b);
+
 char *get_abs_path(const char *path, char *buf);
-char *get_real_path(const char *path, char *buf, int buf_len);
+char *get_real_path(const char *path, char *buf);
 char *get_full_path(const char *path, char *buf);
 
 char *get_file_name_extension(char *file_name);

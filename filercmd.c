@@ -253,7 +253,7 @@ PRIVATE int dof_open_new_file_(const char *str)
 }
 int dof_drop_files_to_open(void)
 {
-	return dof_drop_files_to_act__(ACTION_OPEN);
+	return dof_drop_files_to_do_action_(ACTION_OPEN);
 }
 
 int dof_copy_file(void)
@@ -312,7 +312,7 @@ int dof_copy_file_update(void)
 }
 int dof_drop_files_to_copy(void)
 {
-	return dof_drop_files_to_act__(ACTION_COPY);
+	return dof_drop_files_to_do_action_(ACTION_COPY);
 }
 
 int dof_move_file(void)
@@ -344,11 +344,11 @@ int dof_move_file(void)
 }
 int dof_drop_files_to_move()
 {
-	return dof_drop_files_to_act__(ACTION_MOVE);
+	return dof_drop_files_to_do_action_(ACTION_MOVE);
 }
 
 // files dropped by Window manager "'file-1' 'file-2' ..."
-int dof_drop_files_to_act__(int action)
+int dof_drop_files_to_do_action_(int action)
 {
 	const char *request = "";
 	const char *initial_str = "";
@@ -833,10 +833,10 @@ int dof_view_func_list(void)
 
 int dof_menu_0(void)
 {
-///	if (is_app_chooser_viewer_mode()) {
-///		filer_do_next = EF_QUIT;
-///		return 0;
-///	}
+/////	if (is_app_chooser_viewer_mode()) {
+/////		filer_do_next = EF_QUIT;
+/////		return 0;
+/////	}
 	return filer_menu_n(-1);
 }
 

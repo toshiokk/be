@@ -89,7 +89,7 @@ void free_all_buffers(void)
 // the next or previous buffer will be set to current
 int free_cur_edit_buf(void)
 {
-	unlock_epc_buf_if_locked_by_myself();
+	unlock_epc_buf_if_file_had_locked_by_myself();
 	return free_edit_buf(get_epc_buf());
 }
 int free_edit_buf(be_buf_t *edit_buf)
@@ -115,8 +115,14 @@ int free_edit_buf(be_buf_t *edit_buf)
 }
 
 //------------------------------------------------------------------------------
-void lock_epc_buf_if_already_locked(BOOL lock_buffer_if_already_locked)
+// 'lock' has two meaning:
+// - file lock:   file has been locked by someone
+// - buffer lock: buffer contents was loaded from a locked file
+//                and the buffer was locked from modification
+void lock_epc_buf_if_file_already_locked(BOOL lock_buffer_if_already_locked)
 {
+flf_d_printf("abs_path: %s\n", get_epc_buf()->abs_path_);
+	SET_CUR_EBUF_STATE(buf_IS_LOCKED, 0);
 	if (flock_lock(get_epc_buf()->abs_path_) == 0) {
 		// file has successfully locked: this is the 1st load
 	} else {
@@ -126,11 +132,11 @@ void lock_epc_buf_if_already_locked(BOOL lock_buffer_if_already_locked)
 		}
 	}
 }
-void unlock_epc_buf_if_locked_by_myself()
+void unlock_epc_buf_if_file_had_locked_by_myself()
 {
 	if (is_epc_buf_locked() == 0) {
 		// this buffer has NOT been locked:
-		// - this file has been locked by myself
+		// - this file must had been locked by myself
 		// - unlock by myself
 		if (flock_unlock(get_epc_buf()->abs_path_) == 0) {
 			// successfully unlocked

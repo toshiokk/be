@@ -34,8 +34,10 @@
 func_key_list_t filer_func_key_table[] = {
 //             12345678901234567890   123456789012345678901234567890
 // 12345678901234567890
- { EFAM_EXEC, "Menu",                "Previous Menu",
+ { EFNM_EXEC, "Menu",                "Previous Menu",
    {K_ESC,        KNA, KNA}, F_I(dof_menu_0), get_str_setting_none },
+ { EFLM_EXEC, "Menu",                "Previous Menu",
+   {K_ESC,        KNA, KNA}, F_I(dof_quit_filer), get_str_setting_none },
 
  { EFNM_EXEC, "",                    "Filer Menu-1",
    {KNA,          KNA, KNA}, F_I(dof_menu_0), get_str_setting_none },
@@ -113,7 +115,6 @@ func_key_list_t filer_func_key_table[] = {
    {K_C_R, K_PPAGE, K_LEFT}, F_I(dof_page_up), get_str_setting_none },
  { EFAM_EXEC, "Page down",           "Page DOWN",
    {K_C_C, K_NPAGE, K_RIGHT}, F_I(dof_page_down), get_str_setting_none },
-
  { EFAM_EXEC, "Top",                 "Top of list",
    {K_C_T, K_M_t, K_HOME},   F_I(dof_top_of_list),  get_str_setting_none },
  { EFAM_EXEC, "Bottom",              "Bottom of list",

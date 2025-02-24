@@ -156,8 +156,8 @@ void free_all_buffers(void);
 int free_cur_edit_buf(void);
 int free_edit_buf(be_buf_t *edit_buf);
 
-void lock_epc_buf_if_already_locked(BOOL lock_buffer_if_already_locked);
-void unlock_epc_buf_if_locked_by_myself();
+void lock_epc_buf_if_file_already_locked(BOOL lock_buffer_if_already_locked);
+void unlock_epc_buf_if_file_had_locked_by_myself();
 
 void buf_avoid_wild_ptr_cur(be_buf_t *buf);
 void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr);
