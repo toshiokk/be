@@ -128,9 +128,6 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 			} else {
 				if (is_app_chooser_mode()) {
 					switch (fkey_list->list_mode) {
-///					case EFLM_QUIT:	// not executable in editor List mode
-///						editor_do_next = EF_QUIT;
-///						break;
 					case EFNM_EXEC:	// not executable in editor List mode
 						disp_status_bar_done(
 						 _("Can not execute this function in editor List mode: [%s]"),

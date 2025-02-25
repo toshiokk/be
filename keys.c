@@ -91,7 +91,6 @@ int is_fkey_entry_executable(func_key_list_t *fkey_list, int is_list_mode)
 		default:
 		case EFAM_EXEC:
 		case EFNM_EXEC:
-///		case EFLM_QUIT:
 		case E_LM_CULN:
 		case F_LM_FLNM:
 		case F_LM_CUDI:
@@ -105,7 +104,6 @@ int is_fkey_entry_executable(func_key_list_t *fkey_list, int is_list_mode)
 		default:
 		case EFAM_EXEC:
 		case EFLM_EXEC:
-///		case EFLM_QUIT:
 			return 2;		// fully executable
 		case E_LM_CULN:
 		case F_LM_FLNM:

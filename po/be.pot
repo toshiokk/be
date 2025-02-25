@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-24 11:07+0900\n"
+"POT-Creation-Date: 2025-02-25 09:32+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,55 +35,55 @@ msgstr ""
 msgid "No command assigned for the key: 0x%04x"
 msgstr ""
 
-#: ../editor.c:136
+#: ../editor.c:133
 #, c-format
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr ""
 
-#: ../editor.c:346
+#: ../editor.c:343
 msgid "Input key to show key code"
 msgstr ""
 
-#: ../editor.c:351
+#: ../editor.c:348
 #, c-format
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr ""
 
-#: ../editor.c:656 ../fileio.c:101
+#: ../editor.c:653 ../fileio.c:101
 msgid "New File"
 msgstr ""
 
-#: ../editor.c:658
+#: ../editor.c:655
 msgid "[Mod]"
 msgstr ""
 
-#: ../editor.c:661
+#: ../editor.c:658
 msgid "[RO]"
 msgstr ""
 
-#: ../editor.c:667
+#: ../editor.c:664
 msgid "[LOCKED]"
 msgstr ""
 
-#: ../editor.c:763
+#: ../editor.c:760
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:812
+#: ../editor.c:809
 msgid "Modification not allowed in VIEW mode application"
 msgstr ""
 
-#: ../editor.c:816
+#: ../editor.c:813
 msgid "Modification not allowed to READ-ONLY file"
 msgstr ""
 
-#: ../editor.c:820
+#: ../editor.c:817
 #, c-format
 msgid "Modification not allowed in %s buffer"
 msgstr ""
 
-#: ../editor.c:824
+#: ../editor.c:821
 msgid "Modification not allowed to LOCKED file"
 msgstr ""
 
@@ -529,7 +529,7 @@ msgstr ""
 msgid "Cur dir changed: %s"
 msgstr ""
 
-#: ../filer.c:252
+#: ../filer.c:249
 #, c-format
 msgid "Can not execute this function in filer List mode: [%s]"
 msgstr ""
@@ -726,7 +726,7 @@ msgstr ""
 msgid "Input key macro to run:"
 msgstr ""
 
-#: ../keys.c:317
+#: ../keys.c:315
 #, c-format
 msgid "Screen resized to (%d, %d)"
 msgstr ""

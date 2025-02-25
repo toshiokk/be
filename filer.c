@@ -244,9 +244,6 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 				  MAX_PATH_LEN);
 				if (is_app_chooser_viewer_mode()) {
 					switch (fkey_list->list_mode) {
-///					case EFLM_QUIT:		// not executable in List mode
-///						filer_do_next = EF_QUIT;
-///						break;
 					case EFNM_EXEC:		// not executable in List mode
 						disp_status_bar_done(
 						 _("Can not execute this function in filer List mode: [%s]"),

@@ -5,6 +5,12 @@
 - ISSUE: to be improved or fixed problems
 - CRASH: crash
 
+- [d ] change directory by selecting from directory tree
+  - get directory list by 'find -type d' (output to file or pty)
+    - limit lines to 1000
+    - avoid searching too deep by '-maxdepth 3'
+  - open in list mode
+
 - [x] fix file locking problem on write_file_to()
 //  |writing to the|current buffer state |another file state   | what to do |
 //  |--------------|---------------------|---------------------|------------|
@@ -20,12 +26,7 @@
 - [-] add directory path only when something truly done in the dir to dir-history
 - [x] BUG: switch_to_bot_buffer() at the bottom of buffer switches to edit-buffer
 - [x] cover all Fxx keys modified any conbination of modifier keys of S, C, M in the key key_seq_table
-  so that any key seq does not output a funny text such as "19;7~"
-- [d ] change directory by selecting from directory tree
-  - get directory list by 'find -type d' (output to file or pty)
-    - limit lines to 1000
-    - avoid searching too deep by '-maxdepth 3'
-  - open in list mode
+  no any key seq does outputs a funny text such as "19;7~"
 - [x] 250207 do switch_to_prev_buffer on the top of buffers ==> switch_to_prev_buffers
 - [x] 250207 do switch_to_next_buffer on the top of buffers ==> switch_to_next_buffers
 - [x] 250206 root directory is shown as "//"
