@@ -214,7 +214,8 @@ int disp_drop_down_menu(int group_idx, int entry_idx, int yy, int xx)
 	int items = get_func_key_group_entries(group_idx);
 	int menu_lines = MIN_(items + 1, main_win_get_lines());
 	int shift = MAX_(0, entry_idx - (menu_lines-2));
-flf_d_printf("items:%d menu_lines:%d entry_idx:%d shift:%d\n", items, menu_lines, entry_idx, shift);
+flf_d_printf("items:%d menu_lines:%d entry_idx:%d shift:%d\n",
+ items, menu_lines, entry_idx, shift);
 	for (int menu_y = 0; menu_y < menu_lines; menu_y++) {
 		int f_idx = 0;
 		if (menu_y == 0) {
@@ -226,7 +227,8 @@ flf_d_printf("items:%d menu_lines:%d entry_idx:%d shift:%d\n", items, menu_lines
 		}
 flf_d_printf("menu_y:%d menu_lines:%d\n", menu_y, menu_lines);
 		disp_drop_down_menu_line(fkey_list, menu_y, f_idx,
-		 (menu_y < menu_lines-1) ? entry_idx : (((shift + menu_lines) <= items) ? -1 : 0), yy, xx);
+		 (menu_y < menu_lines-1) ? entry_idx : (((shift + menu_lines) <= items) ? -1 : 0),
+		 yy, xx);
 	}
 	return 0;
 }
@@ -234,7 +236,8 @@ flf_d_printf("menu_y:%d menu_lines:%d\n", menu_y, menu_lines);
 PRIVATE void disp_drop_down_menu_line(func_key_list_t *fkey_list,
  int menu_y, int f_idx, int entry_idx, int yy, int xx)
 {
-flf_d_printf("menu_y:%d f_idx:%d entry_idx:%d, desc:[%s]\n", menu_y, f_idx, entry_idx, fkey_list[f_idx].desc);
+flf_d_printf("menu_y:%d f_idx:%d entry_idx:%d, desc:[%s]\n",
+ menu_y, f_idx, entry_idx, fkey_list[f_idx].desc);
 	char buf1[MAX_KEY_NAME_LEN+1];
 	char buf2[MAX_KEY_NAME_LEN+1];
 	char template_[] = " %-32s  %-*s %-*s  %-12s ";

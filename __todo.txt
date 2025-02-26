@@ -5,6 +5,7 @@
 - ISSUE: to be improved or fixed problems
 - CRASH: crash
 
+- [x] can not Undo
 - [d ] change directory by selecting from directory tree
   - get directory list by 'find -type d' (output to file or pty)
     - limit lines to 1000

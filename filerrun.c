@@ -253,7 +253,8 @@ void end_fork_exec_repeat(int exit_status)
 {
 	pause_after_exec(exit_status);
 	reinit_term_for_filer();
-	clear_whole_screen_update_timer();	// avoid screen flashing at the first key input after execution
+	// avoid screen flashing at the first key input after execution
+	clear_whole_screen_update_timer();
 }
 
 //------------------------------------------------------------------------------

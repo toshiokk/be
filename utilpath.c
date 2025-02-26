@@ -80,7 +80,7 @@ flf_d_printf("dir: [%s]\n", dir);
 // | change_cur_dir_after_save              | Yes              | No       |
 // | change_cur_dir                         | No               | No       |
 
-int change_cur_dir_by_file_path_after_save(char *dir_save, char *file_path)
+int change_cur_dir_by_file_path_after_save(char *dir_save, const char *file_path)
 {
 	char dir[MAX_PATH_LEN+1];
 	strip_file_if_path_is_file(file_path, dir);
@@ -98,7 +98,7 @@ int change_cur_dir_after_save(char *dir_save, const char *dir)
 	return change_cur_dir(dir);
 }
 
-char *strip_file_if_path_is_file(char *path, char *dir)
+char *strip_file_if_path_is_file(const char *path, char *dir)
 {
 	if (is_path_regular_file(path) > 0) {
 		strip_file_from_path(path, dir);
@@ -113,16 +113,16 @@ char *strip_file_if_path_is_file(char *path, char *dir)
 // /dir1/dir2/     ==> /dir1/dir2
 // /dir1           ==> /
 // ""              ==> /
-char *strip_file_from_path(char *path, char *dir)
+// path and dir can be the same address
+char *strip_file_from_path(const char *path, char *dir)
 {
+	static char dir_[MAX_PATH_LEN+1];
 	char file[MAX_PATH_LEN+1];
 	if (dir == NULL) {
-		separate_path_to_dir_and_file(path, path, file);
-		return path;
-	} else {
-		separate_path_to_dir_and_file(path, dir, file);
-		return dir;
+		dir = dir_;
 	}
+	separate_path_to_dir_and_file(path, dir, file);
+	return dir;
 }
 
 // "filename.ext" ==> "ext"
@@ -598,20 +598,17 @@ int compare_file_path_in_abs_path(const char *file_path_a, const char *file_path
 {
 	char abs_path_a[MAX_PATH_LEN+1];
 	char abs_path_b[MAX_PATH_LEN+1];
-	get_abs_path(file_path_a, abs_path_a);
-	get_abs_path(file_path_b, abs_path_b);
-flf_d_printf("file_path_a: [%s]\n", file_path_a);
-flf_d_printf("file_path_b: [%s]\n", file_path_b);
-flf_d_printf("abs_path_a:  [%s]\n", abs_path_a);
-flf_d_printf("abs_path_b:  [%s]\n", abs_path_b);
-	return strcmp(abs_path_a, abs_path_b);
+////flf_d_printf("file_path_a: [%s]\n", file_path_a);
+////flf_d_printf("file_path_b: [%s]\n", file_path_b);
+////flf_d_printf("abs_path_a:  [%s]\n", abs_path_a);
+////flf_d_printf("abs_path_b:  [%s]\n", abs_path_b);
+	return strcmp(get_abs_path(file_path_a, abs_path_a), get_abs_path(file_path_b, abs_path_b));
 }
 
 // get absolute path (not include symlinks)
 char *get_abs_path(const char *path, char *buf)
 {
 	char full_path[MAX_PATH_LEN+1];
-
 	get_full_path(path, full_path);			// --> full_path
 	get_real_path(full_path, buf);			// --> abs path (real path)
 	return buf;

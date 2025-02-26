@@ -641,7 +641,7 @@ void disp_title_bar_editor(void)
 
 	int bufs_idx = bufs_get_bufs_idx_in_bufss(NODES_TOP_ANCH(&all_bufferss), get_epc_buf());
 	int buf_idx = buf_get_buf_idx(get_epc_buf());
-	const char *path = get_epc_buf()->file_path_;
+	const char *path = buf_get_file_path(get_epc_buf(), NULL);
 
 	tio_set_cursor_on(0);
 
@@ -828,7 +828,7 @@ int is_editor_view_mode_then_warn_it(void)
 #ifdef ENABLE_DEBUG
 void dump_cur_pointers(void)
 {
-	flf_d_printf("epc_buf:[%s]\n", get_epc_buf()->file_path_);
+	flf_d_printf("epc_buf:[%s]\n", buf_get_file_path(get_epc_buf(), NULL));
 	flf_d_printf("%d:[%s]\n", EPCBVC_CL->line_num, EPCBVC_CL->data);
 	flf_d_printf("EPCBVC_CLBI:%d\n", EPCBVC_CLBI);
 	flf_d_printf("cursor_y:%d\n", EPCBVC_CURS_Y);

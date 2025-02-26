@@ -31,7 +31,7 @@ int goto_dir_in_string(const char *str)
 {
 	char buf_dir[MAX_PATH_LEN+1];
 	if (check_to_change_dir_in_string(str, buf_dir)) {
-		change_cur_dir_by_file_path_after_save(buf_dir, get_epc_buf()->file_path_);
+		change_cur_dir_by_file_path_after_save(buf_dir, buf_get_file_path(get_epc_buf(), NULL));
 #ifdef ENABLE_HISTORY
 		update_dir_history(get_cur_filer_pane_view()->prev_dir,
 		 get_cur_filer_pane_view()->cur_dir);
@@ -79,7 +79,7 @@ int try_to_chdir_parent(char* buf_dir)
 	if (change_cur_dir(buf_dir) == 0) {
 		return 1;
 	}
-	strip_file_from_path(buf_dir, NULL);
+	strip_file_from_path(buf_dir, buf_dir);
 	if (change_cur_dir(buf_dir) == 0) {
 		return 1;
 	}

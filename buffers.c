@@ -97,7 +97,7 @@ int free_edit_buf(be_buf_t *edit_buf)
 	if (IS_NODE_INT(edit_buf) == 0) {
 		return 0;
 	}
-	disp_status_bar_ing(_("Freeing edit buffer %s ..."), get_epc_buf()->file_path_);
+	disp_status_bar_ing(_("Freeing edit buffer %s ..."), buf_get_file_path(get_epc_buf(), NULL));
 #ifdef ENABLE_HISTORY
 	update_history(HISTORY_TYPE_IDX_FILE, mk_cur_file_pos_str_static());
 #endif // ENABLE_HISTORY
@@ -121,9 +121,9 @@ int free_edit_buf(be_buf_t *edit_buf)
 //                and the buffer was locked from modification
 void lock_epc_buf_if_file_already_locked(BOOL lock_buffer_if_already_locked)
 {
-flf_d_printf("abs_path: %s\n", get_epc_buf()->abs_path_);
+flf_d_printf("abs_path: %s\n", buf_get_abs_path(get_epc_buf(), NULL));
 	SET_CUR_EBUF_STATE(buf_IS_LOCKED, 0);
-	if (flock_lock(get_epc_buf()->abs_path_) == 0) {
+	if (flock_lock(buf_get_abs_path(get_epc_buf(), NULL)) == 0) {
 		// file has successfully locked: this is the 1st load
 	} else {
 		// already file has been locked: lock this buffer
@@ -138,7 +138,7 @@ void unlock_epc_buf_if_file_had_locked_by_myself()
 		// this buffer has NOT been locked:
 		// - this file must had been locked by myself
 		// - unlock by myself
-		if (flock_unlock(get_epc_buf()->abs_path_) == 0) {
+		if (flock_unlock(buf_get_abs_path(get_epc_buf(), NULL)) == 0) {
 			// successfully unlocked
 		} else {
 			// already unlocked by another instance: ERROR

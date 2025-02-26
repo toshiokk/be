@@ -129,7 +129,7 @@ PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx)
 
 	memorize_cur_file_pos_before_jump();
 	// CURDIR: changed to cur-file's abs-dir
-	change_cur_dir_by_file_path_after_save(dir_save, get_epc_buf()->file_path_);
+	change_cur_dir_by_file_path_after_save(dir_save, buf_get_file_path(get_epc_buf(), NULL));
 	// file_path is taken from the line_byte_idx of current line
 	int files = load_files_in_string(&(EPCBVC_CL->data[line_byte_idx]),
 	 TUL0 | OOE0 | MOE1 | LFH1 | WRP0 | FOL0 | RECURS1);
@@ -384,7 +384,8 @@ PRIVATE int load_files_in_cur_buf_(int flags)
 
 			memorize_cur_file_pos_null(file_pos_str2);
 			// CURDIR: changed to cur-file's abs-dir
-			change_cur_dir_by_file_path_after_save(dir_save, get_epc_buf()->file_path_);
+			change_cur_dir_by_file_path_after_save(dir_save,
+			 buf_get_file_path(get_epc_buf(), NULL));
 			ret = load_files_in_string_(EPCBVC_CL->data, flags);
 			change_cur_dir(dir_save);
 
@@ -417,11 +418,9 @@ PRIVATE int load_file_name__(const char *file_name, int flags)
 {
 flf_d_printf("[%s]\n", file_name);
 	char full_path[MAX_PATH_LEN+1];
-/////	char abs_path[MAX_PATH_LEN+1];
 	int files_loaded = -1;
 
 	get_full_path(file_name, full_path);
-/////	get_abs_path(file_name, abs_path);
 	// switch to the file of "full_path" if it already loaded
 	if (switch_epc_buf_by_file_path(full_path)) {
 		add_files_loaded(0);		// switched
@@ -679,7 +678,7 @@ char *mk_cur_file_pos_str_static(void)
 char *mk_cur_file_pos_str_buf(char *buffer)
 {
 	// memorize byte number
-	return mk_file_pos_str(buffer, get_epc_buf()->file_path_, EPCBVC_CL->line_num,
+	return mk_file_pos_str(buffer, buf_get_file_path(get_epc_buf(), NULL), EPCBVC_CL->line_num,
 	 EPCBVC_CL->data ? byte_idx_from_byte_idx(EPCBVC_CL->data, EPCBVC_CLBI)+1 : 0);
 }
 char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col_num)

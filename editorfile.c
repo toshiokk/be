@@ -212,7 +212,7 @@ int doe_write_file_to(void)
 
 	buf_get_file_path(get_epc_buf(), cur_file_path);
 	buf_get_file_path(get_epc_buf(), next_file_path);
-///	strlcpy__(next_file_path, get_epc_buf()->file_path_, MAX_PATH_LEN);
+///	strlcpy__(next_file_path, buf_get_file_path(get_epc_buf(), NULL), MAX_PATH_LEN);
 	for ( ; ; ) {
 		if (input_new_file_name__ask(next_file_path) <= 0) {
 			disp_status_bar_done(_("Cancelled"));

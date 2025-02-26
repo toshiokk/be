@@ -486,10 +486,10 @@ char *shrink_str__adjust_col(char *str, int space, int n_over_10)
 }
 char *shrink_str(char *str, int space, int n_over_10)
 {
-	char buf_[MAX_PATH_LEN+1];
+	char buf[MAX_PATH_LEN+1];
 
-	shrink_str_buf(buf_, str, space, n_over_10);
-	strlcpy__(str, buf_, MAX_PATH_LEN);		// copy back to original buffer
+	shrink_str_buf(buf, str, space, n_over_10);
+	strlcpy__(str, buf, MAX_PATH_LEN);		// copy back to original buffer
 	return str;
 }
 char *shrink_str_static(const char *str, int space, int n_over_10)
@@ -501,6 +501,7 @@ char *shrink_str_static(const char *str, int space, int n_over_10)
 }
 // "/very/long/long/path/to/file" ==> "/very/lo...th/to/file"
 //                                       n/10         (10-n)/10
+// Note: 'buf' and 'str' are not overlappable
 char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10)
 {
 	int str_cols;

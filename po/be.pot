@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-25 09:32+0900\n"
+"POT-Creation-Date: 2025-02-26 23:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -272,7 +272,7 @@ msgstr ""
 msgid "Returned to previous pos"
 msgstr ""
 
-#: ../editorgoto.c:881
+#: ../editorgoto.c:880
 msgid "No valid directory in the current line"
 msgstr ""
 
@@ -355,15 +355,15 @@ msgstr ""
 msgid "Space characters are filled from column %d to %d"
 msgstr ""
 
-#: ../editorundo.c:108
+#: ../editorundo.c:113
 msgid "!!!! No UNDO info pushed !!!!"
 msgstr ""
 
-#: ../editorundo.c:213
+#: ../editorundo.c:218
 msgid "Undo-buffer empty !!"
 msgstr ""
 
-#: ../editorundo.c:222
+#: ../editorundo.c:227
 msgid "Redo-buffer empty !!"
 msgstr ""
 

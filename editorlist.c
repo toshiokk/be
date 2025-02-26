@@ -168,7 +168,7 @@ PRIVATE void make_help_file_list(be_buf_t *cur_edit_buf)
 	for (be_buf_t *edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
 	 edit_buf = NODE_NEXT(edit_buf)) {
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-60s %-5s %s %s %04x",
-		 quote_file_path_static(edit_buf->abs_path_),
+		 quote_file_path_static(buf_get_abs_path(edit_buf, NULL)),
 		 buf_enc_str(edit_buf), buf_eol_str(edit_buf),
 		 BUF_STATE(edit_buf, buf_MODIFIED) ? "Mo" : "--",
 		 edit_buf->orig_file_crc);

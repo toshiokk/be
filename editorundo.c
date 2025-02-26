@@ -31,7 +31,9 @@ be_buf_t *push_undo_buf(be_buf_t *buf)
 	buf = buf_create_copy(buf);
 	buf_view_copy(&(buf->buf_views[get_editor_another_pane_idx()]),
 				 &(buf->buf_views[get_editor_cur_pane_idx()]));
-	snprintf(buf->file_path_, MAX_PATH_LEN, "#undo_buf-%02d", count_undo_bufs());
+///	char file_path[MAX_PATH_LEN+1];
+///	snprintf(file_path, MAX_PATH_LEN, "#undo_buf-%02d", count_undo_bufs());
+///	buf_set_file_path(buf, file_path);
 	return buf_insert_after(UNDO_BUFS_TOP_ANCH, buf);
 }
 // pop ==> remove buffer from top of buffers
@@ -44,7 +46,9 @@ be_buf_t *pop_undo_buf(void)
 be_buf_t *push_redo_buf(be_buf_t *buf)
 {
 	buf = buf_create_copy(buf);
-	snprintf(buf->file_path_, MAX_PATH_LEN, "#redo_buf-%02d", count_redo_bufs());
+///	char file_path[MAX_PATH_LEN+1];
+///	snprintf(file_path, MAX_PATH_LEN, "#redo_buf-%02d", count_redo_bufs());
+///	buf_set_file_path(buf, file_path);
 	return buf_insert_after(REDO_BUFS_TOP_ANCH, buf);
 }
 be_buf_t *pop_redo_buf(void)
@@ -64,7 +68,8 @@ int delete_unredo_buf(be_buf_t *do_buf, be_buf_t *edit_buf)
 {
 	int deleted = 0;
 	for ( ; IS_NODE_INT(do_buf); ) {
-		if (strcmp(do_buf->abs_path_, edit_buf->abs_path_) == 0) {
+		if (compare_file_path_in_abs_path(
+		 buf_get_file_path(do_buf, NULL), buf_get_file_path(edit_buf, NULL)) == 0) {
 			do_buf = buf_unlink_free(do_buf);
 			deleted++;
 		} else {
@@ -279,8 +284,8 @@ PRIVATE be_line_t *restore_region_from_buffer(undo0_redo1_t undo0_redo1)
 PRIVATE be_line_t *delete_region_in_buf(be_buf_t *buf)
 {
 	// switch buffer to undo
-	if (switch_epc_buf_by_file_path(buf->abs_path_) == 0) {
-		progerr_printf("No such buffer: %s\n", buf->abs_path_);
+	if (switch_epc_buf_by_file_path(buf_get_abs_path(buf, NULL)) == 0) {
+		progerr_printf("No such buffer: %s\n", buf_get_abs_path(buf, NULL));
 		return CUR_EDIT_BUF_BOT_LINE;
 	}
 	be_line_t *edit_line = get_line_ptr_in_cur_buf_by_line_num(NODES_TOP_NODE(buf)->line_num);
@@ -292,8 +297,8 @@ PRIVATE be_line_t *delete_region_in_buf(be_buf_t *buf)
 }
 PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 {
-	if (switch_epc_buf_by_file_path(buf->abs_path_) == 0) {
-		progerr_printf("No such buffer: %s\n", buf->abs_path_);
+	if (switch_epc_buf_by_file_path(buf_get_abs_path(buf, NULL)) == 0) {
+		progerr_printf("No such buffer: %s\n", buf_get_abs_path(buf, NULL));
 		return CUR_EDIT_BUF_BOT_LINE;
 	}
 	for (be_line_t *undo_line = NODES_TOP_NODE(buf); IS_NODE_INT(undo_line);

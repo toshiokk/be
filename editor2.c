@@ -114,7 +114,7 @@ void disp_edit_win(int cur_pane)
 		sub_win_clear_lines(edit_win_get_path_y(), -1);
 		buf_idx = buf_get_buf_idx(get_epc_buf());
 		snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%d%c%s",
-		 buf_idx, ':', get_epc_buf()->file_path_);
+		 buf_idx, ':', buf_get_file_path(get_epc_buf(), NULL));
 		shrink_str(buf_path, sub_win_get_columns(), 2);
 		sub_win_output_string(edit_win_get_path_y(), 0, buf_path, -1);
 	}

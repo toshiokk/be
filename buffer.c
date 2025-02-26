@@ -109,33 +109,26 @@ be_buf_t *buf_init_anchors(be_buf_t *buf, char *initial_data)
 void buf_set_file_abs_path(be_buf_t *buf, const char *file_path)
 {
 	buf_set_file_path(buf, file_path);	// set to 'file_path'
-	buf_set_abs_path(buf, file_path);	//    and 'abs_path'
 }
 void buf_set_file_path(be_buf_t *buf, const char *file_path)
 {
 	strlcpy__(buf->file_path_, file_path, MAX_PATH_LEN);
 }
-void buf_set_abs_path(be_buf_t *buf, const char *file_path)
+const char* buf_get_file_path(be_buf_t *buf, char *file_path)
 {
-	get_abs_path(file_path, buf->abs_path_);
-}
-void buf_get_file_path(be_buf_t *buf, char *file_path)
-{
-	strlcpy__(file_path, buf->file_path_, MAX_PATH_LEN);
+	if (file_path) {
+		strlcpy__(file_path, buf->file_path_, MAX_PATH_LEN);
+		return file_path;
+	}
+	return buf->file_path_;
 }
 const char* buf_get_abs_path(be_buf_t *buf, char *abs_path)
 {
-#if 0
-	strlcpy__(abs_path, buf->abs_path_, MAX_PATH_LEN);
-	return abs_path;
-#else
 	static char abs_path_[MAX_PATH_LEN+1];
-	if (abs_path) {
+	if (abs_path == NULL) {
 		abs_path = abs_path_;
 	}
-	get_abs_path(buf->file_path_, abs_path);
-	return abs_path;
-#endif
+	return get_abs_path(buf_get_file_path(buf, NULL), abs_path);
 }
 BOOL buf_is_empty(be_buf_t *buf)
 {
@@ -303,7 +296,7 @@ int buf_has_orig_file_updated(be_buf_t *buf)
 {
 	struct stat st;
 
-	if (stat(buf->file_path_, &st)) {
+	if (stat(buf_get_file_path(buf, NULL), &st)) {
 		return -1;
 	}
 	return st.st_mtime > buf->orig_file_stat.st_mtime;
@@ -603,12 +596,10 @@ be_buf_t *buf_get_buf_by_file_path(be_buf_t *buf, const char *file_path)
 {
 	buf = buf_make_top_buf(buf);
 	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
-		if (strcmp(buf->file_path_, file_path) == 0) {
+		if (strcmp(buf_get_file_path(buf, NULL), file_path) == 0) {
 			return buf;	// found
 		}
-		char abs_path[MAX_PATH_LEN+1];
-		get_abs_path(file_path, abs_path);
-		if (strcmp(buf->abs_path_, abs_path) == 0) {
+		if (compare_file_path_in_abs_path(buf_get_file_path(buf, NULL), file_path) == 0) {
 			return buf;	// found
 		}
 	}
@@ -618,10 +609,10 @@ be_buf_t *buf_get_buf_by_file_name(be_buf_t *buf, const char *file_name)
 {
 	buf = buf_make_top_buf(buf);
 	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
-		if (compare_file_path_from_tail(buf->file_path_, file_name) == 0) {
+		if (compare_file_path_from_tail(buf_get_file_path(buf, NULL), file_name) == 0) {
 			return buf;	// found by file_path
 		}
-		if (compare_file_path_from_tail(buf->abs_path_, file_name) == 0) {
+		if (compare_file_path_from_tail(buf_get_abs_path(buf, NULL), file_name) == 0) {
 			return buf;	// found by abs_path
 		}
 	}
@@ -767,8 +758,8 @@ void buf_dump_name(be_buf_t *buf)
 		flf_d_printf("buf: NULL\n");
 		return;
 	}
-/////	flf_d_printf("file_path: [%s]\n", buf->file_path_);
-	flf_d_printf("abs_path_: [%s]\n", buf->abs_path_);
+/////	flf_d_printf("file_path: [%s]\n", buf_get_file_path(buf, NULL));
+	flf_d_printf("abs_path_: [%s]\n", buf_get_abs_path(buf, NULL));
 }
 
 void bufs_dump_all_bufs(be_bufs_t *bufs)
@@ -777,7 +768,8 @@ void bufs_dump_all_bufs(be_bufs_t *bufs)
 	for ( ; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs)) {
 		flf_d_printf("bufs: [%s]\n", bufs->name);
 		for (be_buf_t *buf = NODES_TOP_ANCH(bufs); IS_PTR_VALID(buf); buf = NODE_NEXT(buf)) {
-			flf_d_printf(" %cbuf: [%s]\n", (bufs->cur_buf == buf) ? '>' : ' ', buf->file_path_);
+			flf_d_printf(" %cbuf: [%s]\n",
+			 (bufs->cur_buf == buf) ? '>' : ' ', buf_get_file_path(buf, NULL));
 			flf_d_printf("    buf->v0_str: [%s]\n", buf->buf_views[0].cur_line->data);
 		///	flf_d_printf("    buf->v1_str: [%s]\n", buf->buf_views[1].cur_line->data);
 		}

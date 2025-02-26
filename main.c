@@ -595,7 +595,7 @@ void app_die_on(const char *msg)
 		set_epc_buf(buf);
 		if (check_cur_buf_modified()) {
 			// save the file if it's been modified
-			die_save_file(get_epc_buf()->file_path_);
+			die_save_file(buf_get_file_path(get_epc_buf(), NULL));
 		}
 	}
 

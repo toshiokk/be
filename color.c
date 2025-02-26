@@ -172,7 +172,7 @@ int set_file_type_and_tab_size_by_cur_file_path(void)
 }
 int set_file_type_by_cur_file_path(void)
 {
-	return set_file_type_by_file_name(get_epc_buf()->file_path_);
+	return set_file_type_by_file_name(buf_get_file_path(get_epc_buf(), NULL));
 }
 int set_file_type_by_file_name(const char *file_path)
 {

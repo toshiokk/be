@@ -163,12 +163,12 @@ int backup_and_save_cur_buf_ask(void)
 }
 
 // all cases on write_file_to():
-//  |writing to the|current buffer state |another file state   | what to do |
-//  |--------------|---------------------|---------------------|------------|
-//  |current file  |not locked           |--                   |write to it         |
-//  |current file  |locked               |--                   |can NOT write to it |
-//  |another file  |--                   |has not locked       |unlock prev file, write to it and lock it |
-//  |another file  |--                   |has locked by someone|can NOT write to it |
+//  |writing to the|current buffer state|another file state   | what to do |
+//  |--------------|--------------------|---------------------|------------|
+//  |current file  |not locked          |--                   |write to it         |
+//  |current file  |locked              |--                   |can NOT write to it |
+//  |another file  |--                  |has not locked       |unlock prev., write and lock it|
+//  |another file  |--                  |has locked by someone|can NOT write to it |
 int input_new_file_name__ask(char *file_path)
 {
 	for ( ; ; ) {
@@ -237,7 +237,7 @@ int backup_and_save_cur_buf(const char *file_path_to)
 	}
 
 	// file was overwritten, get current file stat into orig_file_stat
-	stat(get_epc_buf()->file_path_, &(get_epc_buf()->orig_file_stat));
+	stat(buf_get_file_path(get_epc_buf(), NULL), &(get_epc_buf()->orig_file_stat));
 	update_cur_buf_crc();
 
 	disp_status_bar_ing(P_(_("%d line written"),
