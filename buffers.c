@@ -121,7 +121,7 @@ int free_edit_buf(be_buf_t *edit_buf)
 //                and the buffer was locked from modification
 void lock_epc_buf_if_file_already_locked(BOOL lock_buffer_if_already_locked)
 {
-flf_d_printf("abs_path: %s\n", buf_get_abs_path(get_epc_buf(), NULL));
+/////flf_d_printf("abs_path: %s\n", buf_get_abs_path(get_epc_buf(), NULL));
 	SET_CUR_EBUF_STATE(buf_IS_LOCKED, 0);
 	if (flock_lock(buf_get_abs_path(get_epc_buf(), NULL)) == 0) {
 		// file has successfully locked: this is the 1st load

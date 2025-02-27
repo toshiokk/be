@@ -128,6 +128,7 @@ const char* buf_get_abs_path(be_buf_t *buf, char *abs_path)
 	if (abs_path == NULL) {
 		abs_path = abs_path_;
 	}
+	// convert 'file_path' to 'abs_path' and return it
 	return get_abs_path(buf_get_file_path(buf, NULL), abs_path);
 }
 BOOL buf_is_empty(be_buf_t *buf)
@@ -758,7 +759,7 @@ void buf_dump_name(be_buf_t *buf)
 		flf_d_printf("buf: NULL\n");
 		return;
 	}
-/////	flf_d_printf("file_path: [%s]\n", buf_get_file_path(buf, NULL));
+	flf_d_printf("file_path: [%s]\n", buf_get_file_path(buf, NULL));
 	flf_d_printf("abs_path_: [%s]\n", buf_get_abs_path(buf, NULL));
 }
 

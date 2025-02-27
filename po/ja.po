@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-26 23:16+0900\n"
+"POT-Creation-Date: 2025-02-27 22:22+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -48,46 +48,46 @@ msgstr "キーコードを表示するキーを入力してください"
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr "キーコード: %04x [%s]"
 
-#: ../editor.c:653 ../fileio.c:101
+#: ../editor.c:649 ../fileio.c:101
 msgid "New File"
 msgstr "新規ファイル"
 
-#: ../editor.c:655
+#: ../editor.c:651
 #, fuzzy
 msgid "[Mod]"
 msgstr "[変更済]"
 
-#: ../editor.c:658
+#: ../editor.c:654
 #, fuzzy
 msgid "[RO]"
 msgstr "読出専用"
 
-#: ../editor.c:664
+#: ../editor.c:660
 msgid "[LOCKED]"
 msgstr ""
 
-#: ../editor.c:760
+#: ../editor.c:756
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 "行:%4lu/%-4lu 桁:%3lu/%-3lu サイズ:%6lu%s 文字コード:%s エンコード:%s 行末:%s"
 
-#: ../editor.c:809
+#: ../editor.c:805
 #, fuzzy
 msgid "Modification not allowed in VIEW mode application"
 msgstr "LISTモードでは編集できません"
 
-#: ../editor.c:813
+#: ../editor.c:809
 #, fuzzy
 msgid "Modification not allowed to READ-ONLY file"
 msgstr "Anchor buffer は編集できません"
 
-#: ../editor.c:817
+#: ../editor.c:813
 #, fuzzy, c-format
 msgid "Modification not allowed in %s buffer"
 msgstr "Anchor buffer は編集できません"
 
-#: ../editor.c:821
+#: ../editor.c:817
 #, fuzzy
 msgid "Modification not allowed to LOCKED file"
 msgstr "LISTモードでは編集できません"
@@ -290,7 +290,7 @@ msgstr "ファイルに書き込みました: %s"
 msgid "Returned to previous pos"
 msgstr "以前の位置に戻りました"
 
-#: ../editorgoto.c:880
+#: ../editorgoto.c:878
 msgid "No valid directory in the current line"
 msgstr ""
 
@@ -376,15 +376,15 @@ msgstr "カラム位置 %d を記憶しました"
 msgid "Space characters are filled from column %d to %d"
 msgstr "スペース文字をカラム %d から %d まで満たしました"
 
-#: ../editorundo.c:113
+#: ../editorundo.c:106
 msgid "!!!! No UNDO info pushed !!!!"
 msgstr "!!!! UNDO 情報がありません !!!!"
 
-#: ../editorundo.c:218
+#: ../editorundo.c:210
 msgid "Undo-buffer empty !!"
 msgstr "Undoバッファが空です !!"
 
-#: ../editorundo.c:227
+#: ../editorundo.c:219
 msgid "Redo-buffer empty !!"
 msgstr "Redoバッファが空です !!"
 

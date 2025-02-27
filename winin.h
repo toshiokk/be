@@ -33,7 +33,6 @@ typedef enum {
 	EF_QUIT						= 4,	//   quit editor/filer
 	EF_LOADED					= 5,	//   file was loaded and return from editor/filer
 	EF_EXECUTED					= 6,	//   command was executed and return from editor/filer
-/////	EF_CUR_DIR_CHANGED			= 7,	//   propagate change of current directory to parent
 										// enter file/dir path in filer:
 	FL_ENTER_FILE_NAME_OR_PATH	= 8,	//   return file name(file, dir)
 										//       or file path(/path/to/file, /path/to/dir)

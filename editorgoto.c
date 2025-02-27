@@ -868,8 +868,6 @@ int doe_filer(void)
 int try_to_open_dir_in_cur_line_with_filer(int line_byte_idx)
 {
 	if (try_to_open_dir_in_str_with_filer(&(EPCBVC_CL->data[line_byte_idx]))) {
-/////		filer_do_next = EF_CUR_DIR_CHANGED;
-/////flf_d_printf("set EF_CUR_DIR_CHANGED\n");
 	}
 	return 0;
 }

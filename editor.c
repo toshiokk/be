@@ -364,10 +364,6 @@ int doe_quit_editor(void)
 
 int doe_menu_0(void)
 {
-/////	if (is_app_chooser_viewer_mode()) {
-/////		editor_do_next = EF_QUIT;
-/////		return 0;
-/////	}
 	return editor_menu_n(-1);
 }
 

@@ -383,7 +383,7 @@ PRIVATE void disp_edit_line_single_line_regexp(int yy, const be_line_t *line,
 		 regexp_matches_start_idx(&regexp_matches, 0),
 		 regexp_matches_end_idx(&regexp_matches, 0),
 		 &min_byte_idx, &max_byte_idx) > 0) {
-			set_item_color(&clr_syntax->color);
+			set_item_color(&clr_syntax->color, 0);
 			output_edit_line_text(yy, te_concat_lf_buf, min_byte_idx, max_byte_idx);
 		}
 		byte_idx = regexp_matches_end_idx(&regexp_matches, 0);
@@ -429,7 +429,7 @@ PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
 	int line_cnt;
 	int min_byte_idx, max_byte_idx;
 
-	set_item_color(&clr_syntax->color);
+	set_item_color(&clr_syntax->color, 0);
 	// First, search start or end syntax on earlier lines.
 	for (line_cnt = 0, start_line = NODE_PREV(line); ;
 	 line_cnt++, start_line = NODE_PREV(start_line)) {

@@ -598,10 +598,6 @@ int compare_file_path_in_abs_path(const char *file_path_a, const char *file_path
 {
 	char abs_path_a[MAX_PATH_LEN+1];
 	char abs_path_b[MAX_PATH_LEN+1];
-////flf_d_printf("file_path_a: [%s]\n", file_path_a);
-////flf_d_printf("file_path_b: [%s]\n", file_path_b);
-////flf_d_printf("abs_path_a:  [%s]\n", abs_path_a);
-////flf_d_printf("abs_path_b:  [%s]\n", abs_path_b);
 	return strcmp(get_abs_path(file_path_a, abs_path_a), get_abs_path(file_path_b, abs_path_b));
 }
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-26 23:16+0900\n"
+"POT-Creation-Date: 2025-02-27 22:22+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,41 +49,41 @@ msgstr ""
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr ""
 
-#: ../editor.c:653 ../fileio.c:101
+#: ../editor.c:649 ../fileio.c:101
 msgid "New File"
 msgstr ""
 
-#: ../editor.c:655
+#: ../editor.c:651
 msgid "[Mod]"
 msgstr ""
 
-#: ../editor.c:658
+#: ../editor.c:654
 msgid "[RO]"
 msgstr ""
 
-#: ../editor.c:664
+#: ../editor.c:660
 msgid "[LOCKED]"
 msgstr ""
 
-#: ../editor.c:760
+#: ../editor.c:756
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:809
+#: ../editor.c:805
 msgid "Modification not allowed in VIEW mode application"
 msgstr ""
 
-#: ../editor.c:813
+#: ../editor.c:809
 msgid "Modification not allowed to READ-ONLY file"
 msgstr ""
 
-#: ../editor.c:817
+#: ../editor.c:813
 #, c-format
 msgid "Modification not allowed in %s buffer"
 msgstr ""
 
-#: ../editor.c:821
+#: ../editor.c:817
 msgid "Modification not allowed to LOCKED file"
 msgstr ""
 
@@ -272,7 +272,7 @@ msgstr ""
 msgid "Returned to previous pos"
 msgstr ""
 
-#: ../editorgoto.c:880
+#: ../editorgoto.c:878
 msgid "No valid directory in the current line"
 msgstr ""
 
@@ -355,15 +355,15 @@ msgstr ""
 msgid "Space characters are filled from column %d to %d"
 msgstr ""
 
-#: ../editorundo.c:113
+#: ../editorundo.c:106
 msgid "!!!! No UNDO info pushed !!!!"
 msgstr ""
 
-#: ../editorundo.c:218
+#: ../editorundo.c:210
 msgid "Undo-buffer empty !!"
 msgstr ""
 
-#: ../editorundo.c:227
+#: ../editorundo.c:219
 msgid "Redo-buffer empty !!"
 msgstr ""
 

@@ -143,13 +143,17 @@ void set_color_by_idx(item_color_idx_t color_idx, int reverse)
 				color_idx = ITEM_COLOR_IDX_DEFAULT;
 			}
 		}
-		tio_set_attrs(item_colors[color_idx].bgc, item_colors[color_idx].fgc, reverse);
+		if (item_colors[color_idx].bgc == CL_DF) {
+			set_item_color(&item_colors[ITEM_COLOR_IDX_STATUS], reverse);
+		} else if (item_colors[color_idx].fgc == CL_DF) {
+			set_item_color(&item_colors[ITEM_COLOR_IDX_TEXT_NORMAL], reverse);
+		}
+		set_item_color(&item_colors[color_idx], reverse);
 	}
 }
-
-void set_item_color(const item_color_t *item_color)
+void set_item_color(const item_color_t *item_color, int reverse)
 {
-	tio_set_attrs(item_color->bgc, item_color->fgc, 0);
+	tio_set_attrs(item_color->bgc, item_color->fgc, reverse);
 }
 
 //------------------------------------------------------------------------------

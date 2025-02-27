@@ -285,7 +285,6 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 				break;
 			case EF_QUIT:
 			case EF_LOADED:
-/////			case EF_CUR_DIR_CHANGED:
 				// quit from filer
 				break;
 			}
@@ -298,7 +297,6 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 			case EF_QUIT:
 			case EF_LOADED:
 			case EF_EXECUTED:
-/////			case EF_CUR_DIR_CHANGED:
 				break;
 			case FL_ENTER_FILE_NAME_OR_PATH:
 				strcpy__(path_buf, "");

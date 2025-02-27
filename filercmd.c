@@ -833,10 +833,6 @@ int dof_view_func_list(void)
 
 int dof_menu_0(void)
 {
-/////	if (is_app_chooser_viewer_mode()) {
-/////		filer_do_next = EF_QUIT;
-/////		return 0;
-/////	}
 	return filer_menu_n(-1);
 }
 

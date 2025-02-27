@@ -31,9 +31,6 @@ be_buf_t *push_undo_buf(be_buf_t *buf)
 	buf = buf_create_copy(buf);
 	buf_view_copy(&(buf->buf_views[get_editor_another_pane_idx()]),
 				 &(buf->buf_views[get_editor_cur_pane_idx()]));
-///	char file_path[MAX_PATH_LEN+1];
-///	snprintf(file_path, MAX_PATH_LEN, "#undo_buf-%02d", count_undo_bufs());
-///	buf_set_file_path(buf, file_path);
 	return buf_insert_after(UNDO_BUFS_TOP_ANCH, buf);
 }
 // pop ==> remove buffer from top of buffers
@@ -45,11 +42,7 @@ be_buf_t *pop_undo_buf(void)
 }
 be_buf_t *push_redo_buf(be_buf_t *buf)
 {
-	buf = buf_create_copy(buf);
-///	char file_path[MAX_PATH_LEN+1];
-///	snprintf(file_path, MAX_PATH_LEN, "#redo_buf-%02d", count_redo_bufs());
-///	buf_set_file_path(buf, file_path);
-	return buf_insert_after(REDO_BUFS_TOP_ANCH, buf);
+	return buf_insert_after(REDO_BUFS_TOP_ANCH, buf_create_copy(buf));
 }
 be_buf_t *pop_redo_buf(void)
 {
@@ -155,8 +148,7 @@ PRIVATE void undo_adjust_max_line(void)
 			has_past_max_line = 1;
 		}
 		if (lines >= undo_lines && has_past_max_line) {
-			// more than undo_lines
-			// or has_past_max_line
+			// more than undo_lines or has_past_max_line
 			break;
 		}
 		line = NODE_NEXT(line);

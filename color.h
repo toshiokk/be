@@ -96,7 +96,7 @@ int is_work_space_color_warn(void);
 void register_item_color(item_color_idx_t color_idx, int bgc, int fgc);
 void get_color_by_idx(item_color_idx_t color_idx, char *fgc, char *bgc);
 void set_color_by_idx(item_color_idx_t color_idx, int reverse);
-void set_item_color(const item_color_t *item_color);
+void set_item_color(const item_color_t *item_color, int reverse);
 
 #ifdef ENABLE_SYNTAX
 int set_file_type_and_tab_size_by_cur_file_path(void);
