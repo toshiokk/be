@@ -8,7 +8,7 @@
 - [-] "File not found" message on loading .bep file
       ==> error message should be shown when no file loadable within one line
 
-- [x ] 250301 change_cur_dir() returns "0: on success" ==> "1: on success"
+- [x] 250301 change_cur_dir() returns "0: on success" ==> "1: on success"
 
 - [x] BUG: 250301 infinite loop at changing to non existent dir
 
