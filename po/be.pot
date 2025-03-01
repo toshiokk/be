@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-01 13:53+0900\n"
+"POT-Creation-Date: 2025-03-01 22:43+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr ""
 msgid "Tab size"
 msgstr ""
 
-#: ../editor.c:126 ../filer.c:239
+#: ../editor.c:126 ../filer.c:240
 #, c-format
 msgid "No command assigned for the key: 0x%04x"
 msgstr ""
@@ -40,50 +40,50 @@ msgstr ""
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr ""
 
-#: ../editor.c:346
+#: ../editor.c:341
 msgid "Input key to show key code"
 msgstr ""
 
-#: ../editor.c:351
+#: ../editor.c:346
 #, c-format
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr ""
 
-#: ../editor.c:652 ../fileio.c:101
+#: ../editor.c:647 ../fileio.c:101
 msgid "New File"
 msgstr ""
 
-#: ../editor.c:654
+#: ../editor.c:649
 msgid "[Mod]"
 msgstr ""
 
-#: ../editor.c:657
+#: ../editor.c:652
 msgid "[RO]"
 msgstr ""
 
-#: ../editor.c:663
+#: ../editor.c:658
 msgid "[LOCKED]"
 msgstr ""
 
-#: ../editor.c:759
+#: ../editor.c:754
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:806
+#: ../editor.c:801
 msgid "Modification not allowed in VIEW mode application"
 msgstr ""
 
-#: ../editor.c:810
+#: ../editor.c:805
 msgid "Modification not allowed to READ-ONLY file"
 msgstr ""
 
-#: ../editor.c:814
+#: ../editor.c:809
 #, c-format
 msgid "Modification not allowed in %s buffer"
 msgstr ""
 
-#: ../editor.c:818
+#: ../editor.c:813
 msgid "Modification not allowed to LOCKED file"
 msgstr ""
 
@@ -151,72 +151,72 @@ msgstr ""
 msgid "Cut-buffer empty !!"
 msgstr ""
 
-#: ../editorfile.c:46
+#: ../editorfile.c:43
 msgid "Open existing file:"
 msgstr ""
 
-#: ../editorfile.c:64 ../filercmd.c:241
+#: ../editorfile.c:60 ../filercmd.c:241
 msgid "Open new file:"
 msgstr ""
 
-#: ../editorfile.c:127
+#: ../editorfile.c:123
 msgid "No project file found"
 msgstr ""
 
-#: ../editorfile.c:168
+#: ../editorfile.c:164
 msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr ""
 
-#: ../editorfile.c:190
+#: ../editorfile.c:186
 msgid "File re-loaded"
 msgstr ""
 
-#: ../editorfile.c:218 ../editorfile.c:367 ../editorfile.c:430
-#: ../editorfile.c:436 ../editorgoto.c:50 ../winin.c:78
+#: ../editorfile.c:214 ../editorfile.c:363 ../editorfile.c:426
+#: ../editorfile.c:432 ../editorgoto.c:50 ../winin.c:78
 msgid "Cancelled"
 msgstr ""
 
-#: ../editorfile.c:227
+#: ../editorfile.c:223
 #, c-format
 msgid "Buffer [%s] is locked"
 msgstr ""
 
-#: ../editorfile.c:234
+#: ../editorfile.c:230
 #, c-format
 msgid "File [%s] is locked"
 msgstr ""
 
-#: ../editorfile.c:264
+#: ../editorfile.c:260
 #, c-format
 msgid "Written to the file: %s"
 msgstr ""
 
-#: ../editorfile.c:316
+#: ../editorfile.c:312
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editorfile.c:373
+#: ../editorfile.c:369
 msgid "All modified buffers are saved"
 msgstr ""
 
-#: ../editorfile.c:412
+#: ../editorfile.c:408
 msgid "This buffer is NOT saveable"
 msgstr ""
 
 #. saveable but not modified
-#: ../editorfile.c:417
+#: ../editorfile.c:413
 msgid "This buffer is NOT modified"
 msgstr ""
 
-#: ../editorfile.c:427
+#: ../editorfile.c:423
 msgid "Save modified buffer ?"
 msgstr ""
 
-#: ../editorfile.c:428
+#: ../editorfile.c:424
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr ""
 
-#: ../editorfile.c:439
+#: ../editorfile.c:435
 msgid "Buffer saved to file"
 msgstr ""
 
@@ -407,116 +407,115 @@ msgid "[%s] is a special file"
 msgstr ""
 
 #. file size too large
-#. /		if (flags & MOE1) {
-#: ../fileio.c:117
+#: ../fileio.c:116
 #, c-format
 msgid "[%s] is too large to read into buffer"
 msgstr ""
 
 #. regular file
-#: ../fileio.c:123
+#: ../fileio.c:121
 #, c-format
 msgid "Reading File %s ..."
 msgstr ""
 
-#: ../fileio.c:153
+#: ../fileio.c:151
 msgid "File has modified by another program, OVERWRITE ?"
 msgstr ""
 
-#: ../fileio.c:159
+#: ../fileio.c:157
 #, c-format
 msgid "File [%s] can NOT be written !!"
 msgstr ""
 
-#: ../fileio.c:177
+#: ../fileio.c:175
 msgid "File Name to Write:"
 msgstr ""
 
-#: ../fileio.c:192
+#: ../fileio.c:190
 msgid "Path is not file, can not WRITE it"
 msgstr ""
 
-#: ../fileio.c:200
+#: ../fileio.c:198
 msgid "File exists, OVERWRITE it ?"
 msgstr ""
 
-#: ../fileio.c:217
+#: ../fileio.c:215
 #, c-format
 msgid "File [%s] is NOT regular file !!"
 msgstr ""
 
-#: ../fileio.c:221
+#: ../fileio.c:219
 #, c-format
 msgid "Writing File %s ..."
 msgstr ""
 
-#: ../fileio.c:234
+#: ../fileio.c:232
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr ""
 
-#: ../fileio.c:243
+#: ../fileio.c:241
 #, c-format
 msgid "%d line written"
 msgstr ""
 
-#: ../fileio.c:244
+#: ../fileio.c:242
 #, c-format
 msgid "%d lines written"
 msgstr ""
 
-#: ../fileio.c:245
+#: ../fileio.c:243
 #, c-format
 msgid "%d liness written"
 msgstr ""
 
-#: ../fileio.c:246
+#: ../fileio.c:244
 #, c-format
 msgid "%d linesss written"
 msgstr ""
 
-#: ../fileio.c:304
+#: ../fileio.c:302
 #, c-format
 msgid "BINARY file !! [%s]"
 msgstr ""
 
-#: ../fileio.c:440 ../fileio.c:567 ../fileio.c:583 ../fileio.c:600
+#: ../fileio.c:438 ../fileio.c:565 ../fileio.c:581 ../fileio.c:598
 #, c-format
 msgid "Can not read-open file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:752 ../fileio.c:773 ../fileio.c:793
+#: ../fileio.c:750 ../fileio.c:771 ../fileio.c:791
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr ""
 
 #. -1: error
-#: ../fileio.c:761 ../fileio.c:782 ../fileio.c:823
+#: ../fileio.c:759 ../fileio.c:780 ../fileio.c:821
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:812 ../fileio.c:840
+#: ../fileio.c:810 ../fileio.c:838
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:890
+#: ../fileio.c:888
 #, c-format
 msgid "%d file loaded"
 msgstr ""
 
-#: ../fileio.c:891
+#: ../fileio.c:889
 #, c-format
 msgid "%d files loaded"
 msgstr ""
 
-#: ../fileio.c:892
+#: ../fileio.c:890
 #, c-format
 msgid "%d filess loaded"
 msgstr ""
 
-#: ../fileio.c:893
+#: ../fileio.c:891
 #, c-format
 msgid "%d filesss loaded"
 msgstr ""
@@ -529,7 +528,13 @@ msgstr ""
 msgid "Cur dir changed: %s"
 msgstr ""
 
-#: ../filer.c:249
+#. for caller of do_call_filer(), clear "filer_do_next"
+#: ../filer.c:178 ../winin.c:110
+#, c-format
+msgid "CWD: %s"
+msgstr ""
+
+#: ../filer.c:250
 #, c-format
 msgid "Can not execute this function in filer List mode: [%s]"
 msgstr ""
@@ -659,12 +664,12 @@ msgid "Quit filer"
 msgstr ""
 
 #. We can't open this dir for some reason. Complain.
-#: ../filerdir.c:157
+#: ../filerdir.c:158
 #, c-format
 msgid "Can not change current to [%s]: %s"
 msgstr ""
 
-#: ../filerdir.c:166
+#: ../filerdir.c:168
 #, c-format
 msgid "Changed current directory to [%s]"
 msgstr ""
@@ -936,11 +941,11 @@ msgstr ""
 msgid "[%s] found in %s search"
 msgstr ""
 
-#: ../search.c:236 ../search.c:788 ../winin.c:483
+#: ../search.c:236 ../search.c:788 ../winin.c:484
 msgid "Backward"
 msgstr ""
 
-#: ../search.c:236 ../search.c:788 ../winin.c:486
+#: ../search.c:236 ../search.c:788 ../winin.c:487
 msgid "Forward"
 msgstr ""
 
@@ -996,34 +1001,34 @@ msgstr ""
 msgid "Out of memory!"
 msgstr ""
 
-#: ../winin.c:330
+#: ../winin.c:331
 msgid "UP/PGUP:history, DOWN/PGDN:filer"
 msgstr ""
 
-#: ../winin.c:474
+#: ../winin.c:475
 msgid "Yes"
 msgstr ""
 
-#: ../winin.c:477
+#: ../winin.c:478
 msgid "No"
 msgstr ""
 
-#: ../winin.c:480
+#: ../winin.c:481
 msgid "All"
 msgstr ""
 
-#: ../winin.c:488
+#: ../winin.c:489
 msgid "Cancel"
 msgstr ""
 
-#: ../winin.c:490
+#: ../winin.c:491
 msgid "End"
 msgstr ""
 
-#: ../winin.c:493
+#: ../winin.c:494
 msgid "Undo"
 msgstr ""
 
-#: ../winin.c:496
+#: ../winin.c:497
 msgid "Redo"
 msgstr ""

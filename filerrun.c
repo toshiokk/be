@@ -391,9 +391,11 @@ mflf_d_printf("exec: [%s]\n", command);
 PRIVATE int fork_exec_before_after(int set_term, int separate_bef_exec, int logging,
  int pause_aft_exec, const char *command, char * const args[])
 {
+#ifdef ENABLE_HISTORY
 	if (update_history_dir_operate()) {
 		_WARNING_
 	}
+#endif // ENABLE_HISTORY
 	if (set_term && get_fork_exec_counter() == 0) {
 		restore_term_for_shell();
 	}

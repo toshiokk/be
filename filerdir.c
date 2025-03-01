@@ -76,11 +76,11 @@ changeable:;
 
 int try_to_chdir_parent(char* buf_dir)
 {
-	if (change_cur_dir(buf_dir) == 0) {
+	if (is_dir_readable(buf_dir)) {
 		return 1;
 	}
 	strip_file_from_path(buf_dir, buf_dir);
-	if (change_cur_dir(buf_dir) == 0) {
+	if (is_dir_readable(buf_dir)) {
 		return 1;
 	}
 	return 0;
@@ -97,7 +97,7 @@ PRIVATE int change_cur_dir_from_history(const char *dir)
 		}
 		if (compare_file_path_from_tail(history, dir) == 0) {
 			if (change_cur_dir_saving_prev_next(history)) {
-				return 1;
+				return 1;	// changeable
 			}
 		}
 	}
@@ -161,7 +161,8 @@ int filer_change_dir(char *dir)
 	}
 #ifdef ENABLE_HISTORY
 	// previous dir, next dir
-	update_history_dir_change(get_cur_filer_pane_view()->prev_dir, get_cur_filer_pane_view()->cur_dir);
+	update_history_dir_change(get_cur_filer_pane_view()->prev_dir,
+	 get_cur_filer_pane_view()->cur_dir);
 #endif // ENABLE_HISTORY
 	get_cur_filer_pane_view()->top_file_idx = 0;
 	disp_status_bar_done(_("Changed current directory to [%s]"),

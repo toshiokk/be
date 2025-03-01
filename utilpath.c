@@ -27,7 +27,7 @@
 // change direcotry independently from filer view
 //   cur_path:      current directory before changing directory and after changing directory
 //   prev_path:     current directory before changing directory
-//   next_dir_sel:  directory to be pointed in filer after changing directory
+//   next_dir_sel:  directory to be selected in filer after changing directory
 int change_cur_dir_saving_prev_next_dir(const char *path,
  char *cur_path, char *prev_path, char *next_dir_sel)
 {
@@ -268,13 +268,11 @@ char *get_last_slash(char *path)
 int is_path_exist(const char *path)
 {
 	struct stat st;
-
-	return stat(path, &st) == 0;
+	return stat(path, &st) == 0;	// 1: exists, 0: does not exist
 }
 int is_path_regular_file(const char *path)
 {
 	struct stat st;
-
 	if (stat(path, &st) < 0)
 		return -1;				// no such file nor directory
 	return S_ISREG(st.st_mode);	// 1:file, 0:non-file
@@ -282,7 +280,6 @@ int is_path_regular_file(const char *path)
 int is_path_dir(const char *path)
 {
 	struct stat st;
-
 	if (stat(path, &st) < 0)
 		return -1;				// no such file nor directory
 	return S_ISDIR(st.st_mode);	// 1:directory, 0:non-directory
@@ -290,7 +287,6 @@ int is_path_dir(const char *path)
 int is_file_writable(const char *path)
 {
 	struct stat st;
-
 	if (stat(path, &st) < 0)
 		return -1;
 	return is_st_writable(&st);
@@ -298,7 +294,7 @@ int is_file_writable(const char *path)
 int is_st_writable(struct stat *st)
 {
 	if (st->st_uid == geteuid()) {
-		return (st->st_mode & S_IWUSR) != 0;
+		return (st->st_mode & S_IWUSR) != 0;	// 1: writable, 0: non-writable
 	} else if (st->st_gid == getegid()) {
 		return (st->st_mode & S_IWGRP) != 0;
 	}
@@ -307,13 +303,11 @@ int is_st_writable(struct stat *st)
 
 int is_dir_readable(const char *path)
 {
-	DIR *dir;
-
-	dir = opendir(path);
+	DIR *dir = opendir(path);
 	// If dir is NULL, don't call closedir()
 	if (dir)
 		closedir(dir);
-	return dir != NULL;
+	return dir != NULL;		// 1: readable, 0: non-readable
 }
 
 // dest: "/home/user/tools/be/file_name.ext"
@@ -406,18 +400,20 @@ int check_wsl()
 	return checked > 0;
 }
 
+//------------------------------------------------------------------------------
+// change process's current directory
 PRIVATE char full_path_of_cur_dir[MAX_PATH_LEN+1] = "";
 PRIVATE char real_path_of_cur_dir[MAX_PATH_LEN+1] = "";
 int change_cur_dir(const char *dir)
 {
-	int ret;
-
-	if ((ret = chdir(dir)) == 0) {
-		// update "full_path" and "real_path"
-		strlcpy__(full_path_of_cur_dir, dir, MAX_PATH_LEN);
-		getcwd__(real_path_of_cur_dir);
+	if (chdir(dir) < 0) {
+		return 0;		// 0: error
 	}
-	return ret;		// 0: changed
+	// update "full_path" and "real_path"
+	strlcpy__(full_path_of_cur_dir, dir, MAX_PATH_LEN);
+	getcwd__(real_path_of_cur_dir);
+flf_d_printf("full_path_of_cur_dir: [%s]\n", full_path_of_cur_dir);
+	return 1;			// 1: changed
 }
 const char *full_path_of_cur_dir_static()
 {
@@ -425,9 +421,9 @@ const char *full_path_of_cur_dir_static()
 }
 char *get_full_path_of_cur_dir(char *dir)
 {
-	static char dir_s_[MAX_PATH_LEN+1];
+	static char dir_[MAX_PATH_LEN+1];
 	if (dir == NULL) {
-		dir = dir_s_;
+		dir = dir_;
 	}
 	strlcpy__(dir, full_path_of_cur_dir, MAX_PATH_LEN);
 	return dir;
@@ -439,7 +435,6 @@ char *get_real_path_of_cur_dir(char *dir)
 }
 
 //------------------------------------------------------------------------------
-
 // get real current directory(symbolic link is expanded to absolute path)
 // NOTE: getcwd() returns real_path of the current directory
 char *getcwd__(char *cwd)
@@ -450,7 +445,7 @@ char *getcwd__(char *cwd)
 	return cwd;
 }
 
-// NOTE: "PWD" environment not automatically updated after changing current directory
+// NOTE: "PWD" environment is not automatically updated after changing current directory
 //       so you can use this only for getting application startup directory
 char *getenv_pwd(char *cwd)
 {
@@ -461,7 +456,6 @@ char *getenv_pwd(char *cwd)
 char *getenv__(char *env)
 {
 	char *ptr;
-
 	if ((ptr = getenv(env)) == NULL) {
 		ptr = "";
 	}

@@ -38,9 +38,6 @@ PRIVATE int open_file_recursive(int flags)
 {
 	clear_files_loaded();
 	char file_path[MAX_PATH_LEN+1];
-///#ifdef ENABLE_FILER
-///	do_call_filer(1, APP_MODE_NORMAL, "", file_path, file_path, MAX_PATH_LEN);
-///#else // ENABLE_FILER
 	if (chk_inp_str_ret_val_editor(input_string_pos("", file_path, MAX_PATH_LEN,
 	 HISTORY_TYPE_IDX_FILE,
 	 _("Open existing file:")))) {
@@ -51,7 +48,6 @@ PRIVATE int open_file_recursive(int flags)
 	 TUL0 | OOE0 | MOE1 | LFH0 | (flags & (WRP1 | FOL1 | RECURS1))) < 0) {
 		return 0;
 	}
-///#endif // ENABLE_FILER
 	disp_files_loaded_if_ge_0();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;

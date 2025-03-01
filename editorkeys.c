@@ -75,8 +75,6 @@ func_key_list_t editor_func_key_table[] = {
 #ifdef ENABLE_HELP
  { EFNM_EXEC, "Splash",              "Splash screen",
    {K_M_v,        KNA, KNA}, F_I(doe_splash), get_str_setting_none },
-/// { EFNM_EXEC, "Color pairs",         "Display color pairs",
-///   {K_M_c,        KNA, KNA}, F_I(doe_display_color_settings), get_str_setting_none },
 #endif // ENABLE_HELP
 
  { EFNM_EXEC, "",                    "Cursor Menu",

@@ -113,10 +113,8 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int flags)
 	// Max. file size loadable is half of free memory.
 	if ((st.st_size / 1000) >= get_mem_free_in_kb(1) / 2) {
 		// file size too large
-///		if (flags & MOE1) {
-			disp_status_bar_err(_("[%s] is too large to read into buffer"),
-			 shrink_str_to_scr_static(full_path));
-///		}
+		disp_status_bar_err(_("[%s] is too large to read into buffer"),
+		 shrink_str_to_scr_static(full_path));
 		return -3;		// open error
 	}
 	// regular file
@@ -863,9 +861,11 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 PRIVATE int cnt_files_loaded = -1;	// -1: no file switched/loaded, 0: switched, 1--: loaded
 void clear_files_loaded(void)
 {
+#ifdef ENABLE_HISTORY
 	if (update_history_dir_operate()) {
 		_WARNING_
 	}
+#endif // ENABLE_HISTORY
 	cnt_files_loaded = -1;
 }
 int add_files_loaded(int files)	// files = 0: not loaded but switched

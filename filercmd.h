@@ -130,7 +130,6 @@ int dof_inc_file_sort_mode(void);
 int dof_tog_panes(void);
 int dof_tog_panex(void);
 int dof_inc_key_list_lines(void);
-/////int dof_display_color_settings(void);
 #ifdef ENABLE_HELP
 int dof_splash(void);
 int dof_view_func_list(void);

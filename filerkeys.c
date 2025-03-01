@@ -74,8 +74,6 @@ func_key_list_t filer_func_key_table[] = {
 #ifdef ENABLE_HELP
  { EFNM_EXEC, "Splash",              "Splash screen",
    {K_M_v,        KNA, KNA}, F_I(dof_splash), get_str_setting_none },
-///// { EFNM_EXEC, "Color pairs",         "Display color pairs",
-/////   {K_M_c,        KNA, KNA}, F_I(dof_display_color_settings), get_str_setting_none },
 #endif // ENABLE_HELP
 
  { EFNM_EXEC, "",                    "Filer Menu-2",

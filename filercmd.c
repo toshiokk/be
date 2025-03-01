@@ -83,9 +83,11 @@ int dof_bottom_of_list(void)
 
 int dof_refresh_filer(void)
 {
+#ifdef ENABLE_HISTORY
 	if (update_history_dir_operate()) {
 		_WARNING_
 	}
+#endif // ENABLE_HISTORY
 	disp_status_bar_done(_("File view refreshed"));
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 1;
@@ -754,9 +756,11 @@ int dof_select_all_files(void)
 }
 void disp_files_selected()
 {
+#ifdef ENABLE_HISTORY
 	if (update_history_dir_operate()) {
 		_WARNING_
 	}
+#endif // ENABLE_HISTORY
 	int files_selected = get_files_selected_cfv();
 	disp_status_bar_done(P_(_("%d file selected"),
 							_("%d files selected"),
@@ -832,12 +836,6 @@ int dof_inc_key_list_lines(void)
 	do_inc_key_list_lines_();
 	return 0;
 }
-
-/////int dof_display_color_settings(void)
-/////{
-/////	display_color_settings();
-/////	return 0;
-/////}
 
 #ifdef ENABLE_HELP
 int dof_splash(void)

@@ -32,7 +32,9 @@ int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf, in
 #endif // ENABLE_HISTORY
 
 	editor_panes_t next_eps;
+#ifdef ENABLE_FILER
 	filer_panes_t next_fps;
+#endif // ENABLE_FILER
 	if (push_win) {
 #ifdef ENABLE_FILER
 		push_app_win_stk(&next_eps, buf, &next_fps);
@@ -315,11 +317,6 @@ int doe_view_func_list(void)
 }
 #endif // ENABLE_HELP
 
-////int doe_display_color_settings(void)
-////{
-////	display_color_settings();
-////	return 0;
-////}
 void display_color_settings(void)
 {
 	tio_fill_screen(0);
@@ -378,13 +375,13 @@ int doe_inc_key_list_lines(void)
 }
 //------------------------------------------------------------------------------
 #define MAX_APP_STACK_DEPTH		(1+3)						// 1 root + 3 sub
-app_win_stack_entry app_win_stack[MAX_APP_STACK_DEPTH+1];	// 1 root + 3 sub + 1 current-state
+app_stack_entry app_win_stack[MAX_APP_STACK_DEPTH+1];	// 1 root + 3 sub + 1 current-state
 
 int cur_app_win_stack_depth = 0;
 void clear_app_win_stack_depth()
 {
 	cur_app_win_stack_depth = 0;
-	clear_app_win_stack_entry(cur_app_win_stack_depth);
+	clear_app_stack_entry(cur_app_win_stack_depth);
 }
 void set_app_win_stack_depth(int depth)
 {
@@ -406,18 +403,18 @@ int dec_app_win_stack_depth()
 	}
 	return cur_app_win_stack_depth;
 }
-app_win_stack_entry *get_app_win_stack_ptr(int depth)
+app_stack_entry *get_app_win_stack_ptr(int depth)
 {
 	if (depth < 0) {
 		depth = cur_app_win_stack_depth;
 	}
 	return &(app_win_stack[depth]);
 }
-void clear_app_win_stack_entry(int depth)
+void clear_app_stack_entry(int depth)
 {
-	app_win_stack_entry *app_win_stk_ptr = get_app_win_stack_ptr(depth);
-	memset(app_win_stk_ptr, 0x00, sizeof(*app_win_stk_ptr));
-	app_win_stk_ptr->status_bar_color_idx = ITEM_COLOR_IDX_STATUS;
+	app_stack_entry *app_stk_ptr = get_app_win_stack_ptr(depth);
+	memset(app_stk_ptr, 0x00, sizeof(*app_stk_ptr));
+	app_stk_ptr->status_bar_color_idx = ITEM_COLOR_IDX_STATUS;
 }
 
 #ifdef ENABLE_FILER
@@ -426,84 +423,84 @@ void push_app_win_stk(editor_panes_t *next_eps, be_buf_t *buf, filer_panes_t *ne
 void push_app_win_stk(editor_panes_t *next_eps, be_buf_t *buf)
 #endif // ENABLE_FILER
 {
-	app_win_stack_entry *app_win_stk_ptr = get_app_win_stack_ptr(-1);
-	app_win_stk_ptr->appmode_save = app_mode__;
-	app_win_stk_ptr->editor_panes_save = NULL;
+	app_stack_entry *app_stk_ptr = get_app_win_stack_ptr(-1);
+	app_stk_ptr->appmode_save = app_mode__;
+	app_stk_ptr->editor_panes_save = NULL;
 #ifdef ENABLE_FILER
-	app_win_stk_ptr->filer_panes_save = NULL;
+	app_stk_ptr->filer_panes_save = NULL;
 #endif // ENABLE_FILER
 	if (next_eps) {
-		app_win_stk_ptr->editor_panes_save = get_cur_editor_panes();
+		app_stk_ptr->editor_panes_save = get_cur_editor_panes();
 		init_cur_editor_panes(next_eps, buf);
 	}
 #ifdef ENABLE_FILER
 	if (next_fps) {
 		int cur_pane_idx = get_filer_cur_pane_idx();
 		filer_panes_t *prev_fps = get_cur_filer_panes();	// previous filer panes
-		app_win_stk_ptr->filer_panes_save = get_cur_filer_panes();
+		app_stk_ptr->filer_panes_save = get_cur_filer_panes();
 		init_cur_filer_panes(next_fps, prev_fps->filer_views[cur_pane_idx].cur_dir);
 	}
 #endif // ENABLE_FILER
 
 	set_win_depth(inc_app_win_stack_depth());
 	// clear previous message displayed on the status bar
-	clear_app_win_stack_entry(-1);
+	clear_app_stack_entry(-1);
 }
 void pop_app_win_stk(BOOL change_parent_editor, BOOL change_parent_filer)
 {
 	set_win_depth(dec_app_win_stack_depth());
 
-	app_win_stack_entry *app_win_stk_ptr = get_app_win_stack_ptr(-1);
-	app_mode__ = app_win_stk_ptr->appmode_save;
-	if (app_win_stk_ptr->editor_panes_save) {
+	app_stack_entry *app_stk_ptr = get_app_win_stack_ptr(-1);
+	app_mode__ = app_stk_ptr->appmode_save;
+	if (app_stk_ptr->editor_panes_save) {
 		if (change_parent_editor) {
 			// change caller's current file
-			copy_editor_panes(app_win_stk_ptr->editor_panes_save, get_cur_editor_panes());
+			copy_editor_panes(app_stk_ptr->editor_panes_save, get_cur_editor_panes());
 		}
 		destroy_editor_panes();
-		set_cur_editor_panes(app_win_stk_ptr->editor_panes_save);
+		set_cur_editor_panes(app_stk_ptr->editor_panes_save);
 	}
 #ifdef ENABLE_FILER
-	if (app_win_stk_ptr->filer_panes_save) {
+	if (app_stk_ptr->filer_panes_save) {
 		if (change_parent_filer) {
 /////flf_d_printf("\n [%s] < [%s]\n [%s] < [%s]\n",
-///// app_win_stk_ptr->filer_panes_save->filer_views[0].cur_dir,
+///// app_stk_ptr->filer_panes_save->filer_views[0].cur_dir,
 ///// get_cur_filer_panes()->filer_views[0].cur_dir,
-///// app_win_stk_ptr->filer_panes_save->filer_views[1].cur_dir,
+///// app_stk_ptr->filer_panes_save->filer_views[1].cur_dir,
 ///// get_cur_filer_panes()->filer_views[1].cur_dir);
-			copy_filer_panes_cur_dir(app_win_stk_ptr->filer_panes_save, get_cur_filer_panes());
+			copy_filer_panes_cur_dir(app_stk_ptr->filer_panes_save, get_cur_filer_panes());
 			// not recover (change) caller's current directory
 		}
 		destroy_filer_panes();
-		set_cur_filer_panes(app_win_stk_ptr->filer_panes_save);
+		set_cur_filer_panes(app_stk_ptr->filer_panes_save);
 	}
 #endif // ENABLE_FILER
 }
 void save_cur_app_state(int depth)
 {
 	depth = MIN_MAX_(0, depth, MAX_APP_STACK_DEPTH);
-	app_win_stack_entry *app_win_stk_ptr = get_app_win_stack_ptr(depth);
-	app_win_stk_ptr->appmode_save = app_mode__;
+	app_stack_entry *app_stk_ptr = get_app_win_stack_ptr(depth);
+	app_stk_ptr->appmode_save = app_mode__;
 	if (get_cur_editor_panes()) {
-		app_win_stk_ptr->editor_panes_save = get_cur_editor_panes();
+		app_stk_ptr->editor_panes_save = get_cur_editor_panes();
 	}
 #ifdef ENABLE_FILER
 	if (get_cur_filer_panes()) {
-		app_win_stk_ptr->filer_panes_save = get_cur_filer_panes();
+		app_stk_ptr->filer_panes_save = get_cur_filer_panes();
 	}
 #endif // ENABLE_FILER
 }
 void load_cur_app_state(int depth)
 {
 	depth = MIN_MAX_(0, depth, MAX_APP_STACK_DEPTH);
-	app_win_stack_entry *app_win_stk_ptr = get_app_win_stack_ptr(depth);
-	app_mode__ = app_win_stk_ptr->appmode_save;
-	if (app_win_stk_ptr->editor_panes_save) {
-		set_cur_editor_panes(app_win_stk_ptr->editor_panes_save);
+	app_stack_entry *app_stk_ptr = get_app_win_stack_ptr(depth);
+	app_mode__ = app_stk_ptr->appmode_save;
+	if (app_stk_ptr->editor_panes_save) {
+		set_cur_editor_panes(app_stk_ptr->editor_panes_save);
 	}
 #ifdef ENABLE_FILER
-	if (app_win_stk_ptr->filer_panes_save) {
-		set_cur_filer_panes(app_win_stk_ptr->filer_panes_save);
+	if (app_stk_ptr->filer_panes_save) {
+		set_cur_filer_panes(app_stk_ptr->filer_panes_save);
 	}
 #endif // ENABLE_FILER
 }

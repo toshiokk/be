@@ -113,7 +113,7 @@ void disp_status_bar_async(const char *msg, ...)
 PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
  const char *msg, va_list ap)
 {
-	app_win_stack_entry *app_win_stk_ptr = get_app_win_stack_ptr(-1);
+	app_stack_entry *app_stk_ptr = get_app_win_stack_ptr(-1);
 	int dividend = 1;
 	int divisor = 1;
 	char buf[MAX_SCRN_LINE_BUF_LEN+1];
@@ -132,10 +132,10 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 #endif // ENABLE_FILER
 
 /////mflf_d_printf("status_bar_displayed: %d, status_bar_to_display: %d\n",
-///// app_win_stk_ptr->status_bar_displayed, status_bar_to_display);
+///// app_stk_ptr->status_bar_displayed, status_bar_to_display);
 	char color_idx = ITEM_COLOR_IDX_STATUS;
 	char update = 0;		// reject
-	switch (app_win_stk_ptr->status_bar_displayed) {
+	switch (app_stk_ptr->status_bar_displayed) {
 	default:
 	case S_B_D_NONE:
 	case S_B_D_CURS:
@@ -167,7 +167,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		default:
 		case S_B_D_CURS:
 			update = 0;		// no update
-			app_win_stk_ptr->status_bar_displayed = status_bar_to_display;
+			app_stk_ptr->status_bar_displayed = status_bar_to_display;
 			break;
 		case S_B_D_ING:
 		case S_B_D_WARN:
@@ -182,7 +182,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 	switch (status_bar_to_display) {
 	default:
 	case S_B_D_CURS:
-		color_idx = app_win_stk_ptr->status_bar_color_idx;
+		color_idx = app_stk_ptr->status_bar_color_idx;
 		break;
 	case S_B_D_ING:
 		break;
@@ -197,7 +197,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		break;
 	}
 /////mflf_d_printf("sb_displayed: %d, sb_to_display: %d, update: %d, color_idx: %d\n",
-///// app_win_stk_ptr->status_bar_displayed, status_bar_to_display, update, color_idx);
+///// app_stk_ptr->status_bar_displayed, status_bar_to_display, update, color_idx);
 
 	if (update) {
 		vsnprintf(buf, MAX_SCRN_LINE_BUF_LEN+1, msg, ap);
@@ -208,17 +208,17 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		case 1:
 			// this time: "NEXT"
 			strlcpy__(buffer, buf, MAX_SCRN_LINE_BUF_LEN);
-			strlcpy__(app_win_stk_ptr->status_bar_prev_msg, buffer, MAX_SCRN_LINE_BUF_LEN);
+			strlcpy__(app_stk_ptr->status_bar_prev_msg, buffer, MAX_SCRN_LINE_BUF_LEN);
 			// next time: "NEXT"
 			break;
 		case 2:
 			// this time: "PREV | NEXT"
-			if (is_strlen_not_0(app_win_stk_ptr->status_bar_prev_msg)) {
-				strlcpy__(buffer, app_win_stk_ptr->status_bar_prev_msg, MAX_SCRN_LINE_BUF_LEN);
+			if (is_strlen_not_0(app_stk_ptr->status_bar_prev_msg)) {
+				strlcpy__(buffer, app_stk_ptr->status_bar_prev_msg, MAX_SCRN_LINE_BUF_LEN);
 				strlcat__(buffer, MAX_SCRN_LINE_BUF_LEN, "  |  ");
 			}
 			strlcat__(buffer, MAX_SCRN_LINE_BUF_LEN, buf);
-			strcpy__(app_win_stk_ptr->status_bar_prev_msg, "");
+			strcpy__(app_stk_ptr->status_bar_prev_msg, "");
 			// next time: "NEXT"
 			break;
 		}
@@ -229,20 +229,20 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 			col_idx = MIN_MAX_(0, (main_win_get_columns() - 1) * dividend / divisor,
 			 main_win_get_columns() - 1);
 		}
-		app_win_stk_ptr->status_bar_color_idx = color_idx;
-		app_win_stk_ptr->status_bar_col_idx = col_idx;
-		strlcpy__(app_win_stk_ptr->status_bar_msg, buffer, MAX_SCRN_LINE_BUF_LEN);
+		app_stk_ptr->status_bar_color_idx = color_idx;
+		app_stk_ptr->status_bar_col_idx = col_idx;
+		strlcpy__(app_stk_ptr->status_bar_msg, buffer, MAX_SCRN_LINE_BUF_LEN);
 		redisp_status_bar();
-		app_win_stk_ptr->status_bar_displayed = status_bar_to_display;
+		app_stk_ptr->status_bar_displayed = status_bar_to_display;
 mflf_d_printf("SB(%d):\n[%s]\n", status_bar_to_display, buffer);
 	}
 }
 void redisp_status_bar()
 {
-	app_win_stack_entry *app_win_stk_ptr = get_app_win_stack_ptr(-1);
-	char color_idx = app_win_stk_ptr->status_bar_color_idx;
-	int col_idx = app_win_stk_ptr->status_bar_col_idx;
-	const char *buffer = app_win_stk_ptr->status_bar_msg;
+	app_stack_entry *app_stk_ptr = get_app_win_stack_ptr(-1);
+	char color_idx = app_stk_ptr->status_bar_color_idx;
+	int col_idx = app_stk_ptr->status_bar_col_idx;
+	const char *buffer = app_stk_ptr->status_bar_msg;
 
 	set_color_by_idx(color_idx, 0);
 	blank_status_bar();

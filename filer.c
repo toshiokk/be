@@ -175,6 +175,7 @@ flf_d_printf("[1].cur_dir: [%s]\n", get_cur_filer_view(1)->cur_dir);
 	}
 
 	filer_do_next = EF_NONE;	// for caller of do_call_filer(), clear "filer_do_next"
+	disp_status_bar_done(_("CWD: %s"), full_path_of_cur_dir_static());
 
 	return ret;
 }

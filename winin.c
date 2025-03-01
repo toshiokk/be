@@ -130,7 +130,8 @@ PRIVATE int input_string_pos__(const char *default__, char *input_buf, int curso
 flf_d_printf("func_id: [%s]\n", func_id);
 		if ((key_input == K_ESC) || (key_input == K_M_ESC)
 		 || cmp_func_id(func_id, "doe_close_file_ask")
-		 || cmp_func_id(func_id, "doe_close_all_ask")) {
+		 || cmp_func_id(func_id, "doe_close_all_ask")
+		 || cmp_func_id(func_id, "doe_close_all_modified")) {
 			strcpy__(input_buf, "");
 			ret = EF_CANCELLED;				// cancelled, return
 		} else

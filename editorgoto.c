@@ -874,12 +874,10 @@ int try_to_open_dir_in_str_with_filer(const char *str)
 	char buf_dir[MAX_PATH_LEN+1];
 	if (check_to_change_dir_in_string(str, buf_dir) == 0) {
 		disp_status_bar_err(_("No valid directory in the current line"));
-		strlcpy__(buf_dir, ".", MAX_PATH_LEN);
-///		return 0;
+		strlcpy__(buf_dir, full_path_of_cur_dir_static(), MAX_PATH_LEN);
 	}
 	char file_path[MAX_PATH_LEN+1];
 	do_call_filer(1, APP_MODE_NORMAL, buf_dir, "", file_path, MAX_PATH_LEN);
-/////	disp_status_bar_done(_("Filer quited"));
 	return 1;
 }
 #endif // ENABLE_FILER
