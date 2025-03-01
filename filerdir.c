@@ -33,7 +33,7 @@ int goto_dir_in_string(const char *str)
 	if (check_to_change_dir_in_string(str, buf_dir)) {
 		change_cur_dir_by_file_path_after_save(buf_dir, buf_get_file_path(get_epc_buf(), NULL));
 #ifdef ENABLE_HISTORY
-		update_dir_history(get_cur_filer_pane_view()->prev_dir,
+		update_history_dir_change(get_cur_filer_pane_view()->prev_dir,
 		 get_cur_filer_pane_view()->cur_dir);
 #endif // ENABLE_HISTORY
 		return 1;
@@ -146,7 +146,8 @@ flf_d_printf("try to change dir to [%s]\n", dir);
 		}
 		// If can not change dir, try parent dir
 		// /try/to/change/dir/file ==> /try/to/change/dir
-		strip_file_from_path(dir, NULL);
+		// /try/to/change/dir      ==> /try/to/change
+		strip_file_from_path(dir, dir);
 	}
 	return 1;	// changed
 }
@@ -160,8 +161,7 @@ int filer_change_dir(char *dir)
 	}
 #ifdef ENABLE_HISTORY
 	// previous dir, next dir
-	update_dir_history(get_cur_filer_pane_view()->prev_dir,
-	 get_cur_filer_pane_view()->cur_dir);
+	update_history_dir_change(get_cur_filer_pane_view()->prev_dir, get_cur_filer_pane_view()->cur_dir);
 #endif // ENABLE_HISTORY
 	get_cur_filer_pane_view()->top_file_idx = 0;
 	disp_status_bar_done(_("Changed current directory to [%s]"),

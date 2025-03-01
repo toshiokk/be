@@ -135,7 +135,7 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 						editor_do_next = EF_QUIT;
 						break;
 					case E_LM_CULN:	// not executable in editor List mode, get a text
-						editor_do_next = EF_INPUT;
+						editor_do_next = EF_INPUT_W_ENTER;
 						break;
 					case EFLM_EXEC:	// executable in editor List mode
 					case EFAM_EXEC:
@@ -187,7 +187,7 @@ flf_d_printf("all buffers closed\n");
 #ifdef ENABLE_HISTORY
 	key_macro_cancel_recording();
 #endif // ENABLE_HISTORY
-	if (editor_do_next == EF_INPUT) {
+	if (editor_do_next == EF_INPUT_W_ENTER) {
 		if (str_buf && epc_buf_count_bufs()) {
 			// get a text from editor current line
 			strlcpy__(str_buf, EPCBVC_CL->data, buf_len);
@@ -299,8 +299,11 @@ int doe_run_line_soon_(int logging)
 int doe_splash(void)
 {
 	disp_splash(100);
+	if (examine_key_code()) {
+		return 0;
+	}
 
-	examine_key_code();
+	display_color_settings();
 
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	return 0;
@@ -312,11 +315,11 @@ int doe_view_func_list(void)
 }
 #endif // ENABLE_HELP
 
-int doe_display_color_settings(void)
-{
-	display_color_settings();
-	return 0;
-}
+////int doe_display_color_settings(void)
+////{
+////	display_color_settings();
+////	return 0;
+////}
 void display_color_settings(void)
 {
 	tio_fill_screen(0);
@@ -712,9 +715,9 @@ PRIVATE void blink_editor_title_bar()
 	set_color_by_idx(ITEM_COLOR_IDX_TITLE, 0);
 	set_title_bar_color_by_state(
 	 CUR_EBUF_STATE(buf_CUT_MODE) ? ITEM_COLOR_IDX_TEXT_SELECTED1
-	  : ((is_epc_buf_saveable() == 0) ? ITEM_COLOR_IDX_WARNING1
-	   : (CUR_EBUF_STATE(buf_MODIFIED) ? ITEM_COLOR_IDX_WARNING2
-	    : (is_any_edit_buf_modified() ? ITEM_COLOR_IDX_WARNING3
+	  : ((is_epc_buf_saveable() == 0) ? ITEM_COLOR_IDX_WARNING3
+	   : (CUR_EBUF_STATE(buf_MODIFIED) ? ITEM_COLOR_IDX_WARNING1
+	    : (is_any_edit_buf_modified() ? ITEM_COLOR_IDX_WARNING2
 	     : ITEM_COLOR_IDX_TITLE))),
 	 get_title_bar_inversion());
 	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0, editor_title_bar_buf, -1);
@@ -791,8 +794,6 @@ void disp_key_list_editor(void)
 #endif // ENABLE_HELP
  "<doe_switch_to_prev_buffer>PrevBuf "
  "<doe_switch_to_next_buffer>NextBuf "
- "<doe_switch_to_prev_buffers>PrevBufs "
- "<doe_switch_to_next_buffers>NextBufs "
 	};
 	disp_key_list(editor_key_lists);
 }

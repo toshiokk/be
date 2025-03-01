@@ -54,7 +54,7 @@ int dof_exec_command_with_file(void)
 	 _("Execute({} will be replaced with file-name):")))) {
 		return 0;
 	}
-	if (filer_do_next == EF_INPUT_W_ALT) {
+	if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
 		logging = LOGGING2;	// set logging ON
 	}
 	if (is_path_dir(command_str) > 0) {
@@ -103,7 +103,7 @@ int dof_exec_command_with_files(void)
 	 _("Execute with files%s:"), (logging == 0) ? "" : _("(WITH LOG)")))) {
 		return 0;
 	}
-	if (filer_do_next == EF_INPUT_W_ALT) {
+	if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
 		logging = LOGGING2;	// set logging ON
 	}
 	fork_exec_sh_c_once(logging, PAUSE1, command_str);
@@ -222,7 +222,7 @@ PRIVATE int dof_run_command_(int mode)
 		 explanation))) {
 			return 0;
 		}
-		if (filer_do_next == EF_INPUT_W_ALT) {
+		if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
 			logging = LOGGING2;	// set logging ON
 		}
 	}
@@ -391,6 +391,9 @@ mflf_d_printf("exec: [%s]\n", command);
 PRIVATE int fork_exec_before_after(int set_term, int separate_bef_exec, int logging,
  int pause_aft_exec, const char *command, char * const args[])
 {
+	if (update_history_dir_operate()) {
+		_WARNING_
+	}
 	if (set_term && get_fork_exec_counter() == 0) {
 		restore_term_for_shell();
 	}

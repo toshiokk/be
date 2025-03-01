@@ -211,7 +211,7 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 		check_filer_cur_dir();
 #ifdef ENABLE_HISTORY
 		if (strcmp(prev_cur_dir, get_cur_filer_pane_view()->cur_dir) != 0) {
-			update_history(HISTORY_TYPE_IDX_DIR, get_cur_filer_pane_view()->cur_dir);
+			update_history_dir_change(get_cur_filer_pane_view()->cur_dir, "");
 			strlcpy__(prev_cur_dir, get_cur_filer_pane_view()->cur_dir, MAX_PATH_LEN);
 		}
 #endif // ENABLE_HISTORY
@@ -316,11 +316,11 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 						 get_cur_fv_file_ptr(file_idx)->file_name);
 					}
 				}
-				filer_do_next = EF_INPUT;
+				filer_do_next = EF_INPUT_W_ENTER;
 				break;
 			case FL_ENTER_CUR_DIR_PATH:
 				strlcpy__(path_buf, get_cur_filer_pane_view()->cur_dir, buf_len);
-				filer_do_next = EF_INPUT;
+				filer_do_next = EF_INPUT_W_ENTER;
 				break;
 			}
 		}
@@ -332,7 +332,7 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 		// |----------------------|-------------------------------|---------------------|
 		// | none                 | replacing input file/dir name | EF_INPUT_TO_REPLACE |
 		// | ALT                  | appending input file/dir name | EF_INPUT_TO_APPEND  |
-		if (filer_do_next == EF_INPUT) {
+		if (filer_do_next == EF_INPUT_W_ENTER) {
 			filer_do_next = (IS_META_KEY(key_input) == 0)
 			 ? EF_INPUT_TO_REPLACE		// Replace input file/dir name
 			 : EF_INPUT_TO_APPEND;		// Append input file/dir name

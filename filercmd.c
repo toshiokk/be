@@ -39,7 +39,7 @@ int chk_inp_str_ret_val_filer(int ret)
 		filer_do_next = EF_NONE;
 	}
 flf_d_printf("filer_do_next: EF__%d\n", filer_do_next);
-	return (ret != EF_INPUT) && (ret != EF_INPUT_W_ALT);
+	return !IS_EF_INPUT_XX(ret);
 }
 
 int dof_up(void)
@@ -83,6 +83,9 @@ int dof_bottom_of_list(void)
 
 int dof_refresh_filer(void)
 {
+	if (update_history_dir_operate()) {
+		_WARNING_
+	}
 	disp_status_bar_done(_("File view refreshed"));
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 1;
@@ -251,9 +254,13 @@ PRIVATE int dof_open_new_file_(const char *str)
 	tio_beep();
 	return 0;
 }
+int dof_input_files_to_open(void)
+{
+	return dof_drop_files_to_do_action_(ACTION_INPUT);
+}
 int dof_drop_files_to_open(void)
 {
-	return dof_drop_files_to_do_action_(ACTION_OPEN);
+	return dof_drop_files_to_do_action_(ACTION_SEL);
 }
 
 int dof_copy_file(void)
@@ -355,17 +362,24 @@ int dof_drop_files_to_do_action_(int action)
 	switch(action) {
 	default:
 	case ACTION_SEL:
-		request = _("Drop files to Open/Copy/Move:");
+		request = _("Drop files to Open(Enter)/Copy(M-c)/Move(M-m):");
+		initial_str = "'";
+		action = ACTION_OPEN;	// default action of ACTION_SEL is ACTION_OPEN
+		break;
+	case ACTION_INPUT:
+		request = _("Input files to Open(Enter)/Copy(M-c)/Move(M-m):");
+		initial_str = "";
+		action = ACTION_OPEN;	// default action of ACTION_SEL is ACTION_OPEN
 		break;
 	case ACTION_OPEN:
 		request = _("Drop files to Open:");
 		initial_str = "'";
 		break;
 	case ACTION_COPY:
-		request = _("Drop files to Copy here (to current directory):");
+		request = _("Drop files to Copy here (current directory):");
 		break;
 	case ACTION_MOVE:
-		request = _("Drop files to Move here (to current directory):");
+		request = _("Drop files to Move here (current directory):");
 		break;
 	}
 
@@ -375,11 +389,18 @@ int dof_drop_files_to_do_action_(int action)
 	 request))) {
 		return 0;
 	}
+	if (filer_do_next == EF_INPUT_W_ALT_C) {
+		action = ACTION_COPY;
+	} else
+	if (filer_do_next == EF_INPUT_W_ALT_M) {
+		action = ACTION_MOVE;
+	}
 
 	switch(action) {
 	default:
 	case ACTION_SEL:
 		break;
+	case ACTION_INPUT:
 	case ACTION_OPEN:
 		clear_files_loaded();
 		break;
@@ -430,6 +451,7 @@ int dof_drop_files_to_do_action_(int action)
 	switch(action) {
 	default:
 	case ACTION_SEL:
+	case ACTION_INPUT:
 	case ACTION_OPEN:
 		break;
 	case ACTION_COPY:
@@ -732,6 +754,9 @@ int dof_select_all_files(void)
 }
 void disp_files_selected()
 {
+	if (update_history_dir_operate()) {
+		_WARNING_
+	}
 	int files_selected = get_files_selected_cfv();
 	disp_status_bar_done(P_(_("%d file selected"),
 							_("%d files selected"),
@@ -808,18 +833,21 @@ int dof_inc_key_list_lines(void)
 	return 0;
 }
 
-int dof_display_color_settings(void)
-{
-	display_color_settings();
-	return 0;
-}
+/////int dof_display_color_settings(void)
+/////{
+/////	display_color_settings();
+/////	return 0;
+/////}
 
 #ifdef ENABLE_HELP
 int dof_splash(void)
 {
 	disp_splash(100);
+	if (examine_key_code()) {
+		return 0;
+	}
 
-	examine_key_code();
+	display_color_settings();
 
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;

@@ -105,17 +105,18 @@ int doe_end_recording(void)
 }
 int doe_playback_last_1(void)
 {
+	disp_status_bar_ing(_("Start playing back 1st latest key macro"));
 	start_playback_last_n(1);
 	return 0;
 }
 int doe_playback_last_2(void)
 {
+	disp_status_bar_ing(_("Start playing back 2nd latest key macro"));
 	start_playback_last_n(2);
 	return 0;
 }
 PRIVATE int start_playback_last_n(int last_n)
 {
-	disp_status_bar_done(_("Start key macro playback"));
 #ifdef ENABLE_HISTORY
 	load_key_macro(last_n);
 #endif // ENABLE_HISTORY

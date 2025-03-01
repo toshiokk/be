@@ -82,6 +82,7 @@ int dof_open_file_from_history(void);
 int dof_open_proj_file(void);
 int dof_open_exec_log_file(void);
 int dof_open_new_file(void);
+int dof_input_files_to_open(void);
 int dof_drop_files_to_open(void);
 
 int dof_copy_file(void);
@@ -91,10 +92,11 @@ int dof_drop_files_to_copy(void);
 int dof_move_file(void);
 int dof_drop_files_to_move();
 
-#define ACTION_SEL		0
-#define ACTION_OPEN		1
-#define ACTION_COPY		2
-#define ACTION_MOVE		3
+#define ACTION_SEL		0	// choose from 'open', 'copy' or 'move'
+#define ACTION_INPUT	1	// input file path to open
+#define ACTION_OPEN		2
+#define ACTION_COPY		3
+#define ACTION_MOVE		4
 int dof_drop_files_to_do_action_(int action);
 
 int dof_rename_file(void);
@@ -128,7 +130,7 @@ int dof_inc_file_sort_mode(void);
 int dof_tog_panes(void);
 int dof_tog_panex(void);
 int dof_inc_key_list_lines(void);
-int dof_display_color_settings(void);
+/////int dof_display_color_settings(void);
 #ifdef ENABLE_HELP
 int dof_splash(void);
 int dof_view_func_list(void);

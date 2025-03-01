@@ -481,7 +481,7 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair)
 	}
 	if ((match_len > 0) && (depth == 0)) {
 		// found peer bracket
-		disp_status_bar_done(_("Peer bracket found"));
+		disp_status_bar_done(_("Counterpart bracket found"));
 	} else if (depth < MAX_BRACKET_NESTINGS) {
 		// didn't find peer bracket
 		if (safe_cnt < MAX_BRACKETS_SEARCH) {

@@ -122,17 +122,37 @@ PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 	return buf_get_buf_by_idx(HIST_BUFS_TOP_BUF, hist_type_idx);
 }
 
-void update_dir_history(const char *prev_dir, const char *cur_dir)
+char update_history_prev_dir[MAX_PATH_LEN+1] = "";
+char update_history_next_dir[MAX_PATH_LEN+1] = "";
+void update_history_dir_change(const char *prev_dir, const char *next_dir)
+{
+	strlcpy__(update_history_prev_dir, prev_dir, MAX_PATH_LEN);
+	strlcpy__(update_history_next_dir, next_dir, MAX_PATH_LEN);
+}
+int update_history_dir_operate(void)
+{
+	if (update_history_prev_dir[0] || update_history_next_dir[0]) {
+		update_history_dir_sync(update_history_prev_dir, update_history_next_dir);
+		update_history_prev_dir[0] = '\0';
+		update_history_next_dir[0] = '\0';
+		return 1;
+	}
+	return 0;
+}
+void update_history_dir_sync(const char *prev_dir, const char *next_dir)
 {
 	// previous dir
 	update_history(HISTORY_TYPE_IDX_DIR, prev_dir);
 	// next dir
-	update_history(HISTORY_TYPE_IDX_DIR, cur_dir);
+	update_history(HISTORY_TYPE_IDX_DIR, next_dir);
 }
 
 // update history list (load, modify, save)
 void update_history(int hist_type_idx, const char *str)
 {
+	if (is_strlen_0(str)) {
+		return;
+	}
 /////mflf_d_printf("hist_type_idx:%d[%s]\n", hist_type_idx, str);
 #ifdef NOT_DELETE_OLD_IDENTICAL_ENTRY
 	if ((hist_type_idx != HISTORY_TYPE_IDX_EXEC)

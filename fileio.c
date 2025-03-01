@@ -863,6 +863,9 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 PRIVATE int cnt_files_loaded = -1;	// -1: no file switched/loaded, 0: switched, 1--: loaded
 void clear_files_loaded(void)
 {
+	if (update_history_dir_operate()) {
+		_WARNING_
+	}
 	cnt_files_loaded = -1;
 }
 int add_files_loaded(int files)	// files = 0: not loaded but switched

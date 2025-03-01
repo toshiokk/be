@@ -51,7 +51,7 @@ int doe_splash(void);
 int doe_view_func_list(void);
 #endif // ENABLE_HELP
 
-int doe_display_color_settings(void);
+////int doe_display_color_settings(void);
 void display_color_settings(void);
 
 int examine_key_code(void);

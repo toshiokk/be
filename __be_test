@@ -2,8 +2,8 @@ echo debugging be ...
 rm -f $HOME/.beexit
 mk_backup_file __be_test.log
 if [ -f ./be ]; then
-  LANG=C ./be -d "$@" 2>__be_test.log
-  ##./be -c -d "$@" 2>__be_test.log
+  ##LANG=C ./be -d "$@" 2>__be_test.log
+  ./be -c -d "$@" 2>__be_test.log
   if [ ! -f $HOME/.beexit ]; then
     mv -f __be_test.log __be_crash.log
   fi

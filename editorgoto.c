@@ -867,9 +867,7 @@ int doe_filer(void)
 }
 int try_to_open_dir_in_cur_line_with_filer(int line_byte_idx)
 {
-	if (try_to_open_dir_in_str_with_filer(&(EPCBVC_CL->data[line_byte_idx]))) {
-	}
-	return 0;
+	return try_to_open_dir_in_str_with_filer(&(EPCBVC_CL->data[line_byte_idx]));
 }
 int try_to_open_dir_in_str_with_filer(const char *str)
 {
@@ -877,7 +875,7 @@ int try_to_open_dir_in_str_with_filer(const char *str)
 	if (check_to_change_dir_in_string(str, buf_dir) == 0) {
 		disp_status_bar_err(_("No valid directory in the current line"));
 		strlcpy__(buf_dir, ".", MAX_PATH_LEN);
-		return 0;
+///		return 0;
 	}
 	char file_path[MAX_PATH_LEN+1];
 	do_call_filer(1, APP_MODE_NORMAL, buf_dir, "", file_path, MAX_PATH_LEN);

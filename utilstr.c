@@ -302,13 +302,12 @@ if (is_strlen_not_0(buf)) {
 
 int is_strlen_0(const char *str)
 {
-	return is_strlen_not_0(str) == '\0';
+	return *str == '\0';
 }
 int is_strlen_not_0(const char *str)
 {
 	return *str;
 }
-
 size_t strlen_path(const char *str)
 {
 	return strnlen(str, MAX_PATH_LEN);

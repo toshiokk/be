@@ -413,7 +413,7 @@ int make_file_list(filer_view_t *fv)
 	int len;
 
 	const char *filter = fv->filter;
-	if (strcmp(filter, "") == 0) {
+	if (is_strlen_0(filter)) {
 		filter = "*";
 	}
 	change_cur_dir_after_save(dir_save, fv->cur_dir);

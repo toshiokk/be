@@ -5,6 +5,23 @@
 - ISSUE: to be improved or fixed problems
 - CRASH: crash
 
+- [x] BUG: 250301 infinite loop at changing to non existent dir
+
+- [x] make it able to do easily:
+  - [-] open shell script, change current dir, run one line of the shell script
+    - [-] change editor current directory in the sub-filer
+      - [] manage editor current directory
+    - [x] how to show current directory in editor ==> show on the status-bar while input_str_pos()
+  - [x] change current dir, open shell script, run one line of the shell script
+
+- [v] add directory path to dir-history only when some operation truely done in the dir
+  operations:
+  - refresh file list
+  - select file
+  - open file
+  - file operations such as copy/move/remove/mkdir/exec
+  - others ...
+
 - [x] can not Undo
 - [d ] change directory by selecting from directory tree
   - get directory list by 'find -type d' (output to file or pty)
@@ -24,7 +41,6 @@
   - [x] does not re-displayed menu on screen resizing
 - [x] delete EFLM_QUIT
 - [x] 250219 in viewer mode, ESC quits the viewer
-- [-] add directory path only when something truly done in the dir to dir-history
 - [x] BUG: switch_to_bot_buffer() at the bottom of buffer switches to edit-buffer
 - [x] cover all Fxx keys modified any conbination of modifier keys of S, C, M in the key key_seq_table
   no any key seq does outputs a funny text such as "19;7~"
@@ -275,17 +291,17 @@ The seamless text copying:
   [x] 241111 convert camel case "camel" -> "Camel" -> "CAMEL" -> "cAMEL" ->
   [x] 241111 convert camel case "CAMEL" -> "cAMEL" -> "camel" -> "Camel" ->
 [x] goto colmuns "Alt-Ctrl-F columns"
-[x] Handle drop event from window managers like: '/mnt/c/Users/t_koike/Downloads/20240731.zip'
-  | state                            | event                              | event                           |
-  |----------------------------------| drop files "'file-1' 'file-2' ..." | drop dirs "'dir-1' 'dir-2' ..." |
-  |[x]in filer                       | [x]open these files                | [x]open dir                     |
-  |[x]in filer  - "dof_open_new_file"| [x]open these files                | [x]open dir                     |
-  |[-]in editor                      | can not handle it because "'" is ordinary character                  |
-  |[x]in editor - "doe_open_new_file"| open these files                   | [x]open dir                     |
+[x] Handle drop event from window managers such as: '/mnt/c/Users/t_koike/Downloads/20240731.zip'
+  | state                            | event "'file-1' 'file-2' ..." | event "'dir-1' 'dir-2' ..." |
+  |----------------------------------|-------------------------------|-----------------------------|
+  |[x]in filer                       | [x]open these files           | [x]open dir                 |
+  |[x]in filer  - "dof_open_new_file"| [x]open these files           | [x]open dir                 |
+  |[-]in editor                      | can not handle it because ->  | "'" is ordinary character   |
+  |[x]in editor - "doe_open_new_file"| open these files              | [x]open dir                 |
   - [x] open file
-    - [ ] select action from open/copy/move/process after drop
-  - [x ] copy(K_M_C), move(K_M_M)
-  - [ ] process dropped files by command
+    - [x] 250228 select action from open/copy/move after drop
+  - [x] 250228 copy(K_M_c), move(K_M_m)
+  - [-] 250228 process dropped files by command
 [x] capture stdout/err into be-editor buffer
   back-scroll vs log-file
   - [-] back-scroll method - Bad: hard to handle(get, edit, copy).

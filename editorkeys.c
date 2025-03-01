@@ -75,9 +75,9 @@ func_key_list_t editor_func_key_table[] = {
 #ifdef ENABLE_HELP
  { EFNM_EXEC, "Splash",              "Splash screen",
    {K_M_v,        KNA, KNA}, F_I(doe_splash), get_str_setting_none },
+/// { EFNM_EXEC, "Color pairs",         "Display color pairs",
+///   {K_M_c,        KNA, KNA}, F_I(doe_display_color_settings), get_str_setting_none },
 #endif // ENABLE_HELP
- { EFNM_EXEC, "Color pairs",         "Display color pairs",
-   {K_M_c,        KNA, KNA}, F_I(doe_display_color_settings), get_str_setting_none },
 
  { EFNM_EXEC, "",                    "Cursor Menu",
    {KNA,          KNA, KNA}, F_I(doe_menu_0), get_str_setting_none },
@@ -177,9 +177,9 @@ func_key_list_t editor_func_key_table[] = {
    {K_F01, K_M_r,      KNA}, F_I(doe_start_rec__cancel_rec), get_str_setting_none },
  { EFNM_EXEC, "PlyBk",               "End-rec/Playback key-macro",
    {K_F02, K_M_p,      KNA}, F_I(doe_end_rec__playback), get_str_setting_none },
- { EFNM_EXEC, "Playback-1",          "Playback 1st newest key-macro",
+ { EFNM_EXEC, "Playback-1",          "Playback 1st latest key-macro",
    {K_M_1,        KNA, KNA}, F_I(doe_playback_last_1), get_str_setting_none },
- { EFNM_EXEC, "Playback-2",          "Playback 2nd newest key-macro",
+ { EFNM_EXEC, "Playback-2",          "Playback 2nd latest key-macro",
    {K_M_2,        KNA, KNA}, F_I(doe_playback_last_2), get_str_setting_none },
 #ifdef ENABLE_HISTORY
  { EFNM_EXEC, "Playback-string",     "Playback input string",
@@ -257,7 +257,7 @@ func_key_list_t editor_func_key_table[] = {
  { EFNM_EXEC, "Split pane",          "Split screen into panes",
    {K_M_VERTB,    KNA, KNA}, F_I(doe_tog_panes), get_str_editor_panes },
  { EFNM_EXEC, "Switch pane",         "Switch editor pane",
-   {K_M_TAB,      KNA, KNA}, F_I(doe_tog_panex), get_str_editor_panex },
+   {K_M_TAB, K_M_BAKSL, KNA}, F_I(doe_tog_panex), get_str_editor_panex },
  { EFNM_EXEC, "Draw cursor",         "Toggle Drawing cursor",
    {K_MC_C,       KNA, KNA}, F_I(doe_tog_draw_cursor),    get_str_draw_cursor },
  { EFNM_EXEC, "Ignore case",         "Toggle Ignore case",

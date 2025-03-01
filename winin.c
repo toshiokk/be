@@ -78,7 +78,7 @@ flf_d_printf("ret: %d\n", ret);
 		disp_status_bar_done(_("Cancelled"));
 	}
 #ifdef ENABLE_HISTORY
-	if ((ret == EF_INPUT) || (ret == EF_INPUT_W_ALT)) {
+	if (IS_EF_INPUT_XX(ret)) {
 		// input normally
 		update_history(hist_type_idx, input_buf);
 	}
@@ -106,6 +106,8 @@ PRIVATE int input_string_pos__(const char *default__, char *input_buf, int curso
 	for ( ; ; ) {
 		ret = EF_NONE;
 		update_screen_app(1, 0);
+
+		disp_status_bar_done(_("CWD: %s"), full_path_of_cur_dir_static());
 		disp_input_box(message, input_buf, cursor_byte_idx);
 		//---------------------------
 		key_input = input_key_wait_return();
@@ -125,17 +127,26 @@ PRIVATE int input_string_pos__(const char *default__, char *input_buf, int curso
 			// function key
 			func_id = get_func_id_from_key(key_input);
 		}
+flf_d_printf("func_id: [%s]\n", func_id);
 		if ((key_input == K_ESC) || (key_input == K_M_ESC)
 		 || cmp_func_id(func_id, "doe_close_file_ask")
 		 || cmp_func_id(func_id, "doe_close_all_ask")) {
 			strcpy__(input_buf, "");
-			ret = EF_CANCELLED;		// cancelled, return
+			ret = EF_CANCELLED;				// cancelled, return
 		} else
 		if (key_input == K_ENTER) {
-			ret = EF_INPUT;			// confirm a string input
+			ret = EF_INPUT_W_ENTER;			// confirm a string input
 		} else
 		if (key_input == K_M_ENTER) {
-			ret = EF_INPUT_W_ALT;			// confirm a string input
+			ret = EF_INPUT_W_ALT_ENTER;		// confirm a string input
+		} else
+		if (cmp_func_id(func_id, "dof_copy_file")
+		 || cmp_func_id(func_id, "dof_drop_files_to_copy")) {
+			ret = EF_INPUT_W_ALT_C;			// Alt-c
+		} else
+		if (cmp_func_id(func_id, "dof_move_file")
+		 || cmp_func_id(func_id, "dof_drop_files_to_move")) {
+			ret = EF_INPUT_W_ALT_M;			// Alt-m
 		} else
 		if (cmp_func_id(func_id, "doe_left")) {
 			// cursor left
@@ -287,7 +298,7 @@ flf_d_printf("do_call_filer ret: EF__%d, buffer: [%s]\n", ret, buffer);
 			}
 		}
 		// EF_QUIT: stay in this loop
-		if ((ret == EF_CANCELLED) || (ret == EF_INPUT) || (ret == EF_INPUT_W_ALT)
+		if ((ret == EF_CANCELLED) || IS_EF_INPUT_XX(ret)
 		 || (ret == EF_LOADED) || (ret == EF_EXECUTED)) {
 			break;
 		}
@@ -316,7 +327,7 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 	set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
 	main_win_output_string(get_input_line_y(), 1, msg, -1);
 	main_win_output_string(get_input_line_y()+2, 1,
-	 _("UP:history, DOWN:filer, PgUp:insert from history, PgDn:insert from filer"), -1);
+	 _("UP/PGUP:history, DOWN/PGDN:filer"), -1);
 	set_color_by_idx(ITEM_COLOR_IDX_INPUT, 0);
 
 	input_area_width = main_win_get_columns()-2;
