@@ -435,6 +435,7 @@ int lines_selected(void)
 
 //------------------------------------------------------------------------------
 #define CUT_BUFFER_SEPARATOR	(const char*)(S_C_L "\n")
+#define MAX_CUT_BUFFERS			1000
 
 PRIVATE char *get_cut_buffer_file_path();
 
@@ -502,6 +503,19 @@ _MFLF_
 
 _MFLF_
 	return ret;
+}
+int limit_cut_buffers()
+{
+	int buf_cnt = 0;
+	for (be_buf_t* buf = NODES_TOP_NODE(&cut_buffers); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+		if (buf_cnt < MAX_CUT_BUFFERS) {
+		} else {
+			buf = buf_unlink_free(buf);
+		}
+		buf_cnt++;
+	}
+flf_d_printf("buf_cnt: %d\n", buf_cnt);
+	return buf_cnt;
 }
 PRIVATE char *get_cut_buffer_file_path()
 {

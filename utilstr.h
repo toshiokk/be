@@ -67,6 +67,7 @@ size_t strlen_path(const char *str);
 
 char *strcat_printf(char *buffer, size_t buf_len, const char *format, ...);
 int snprintf_(char *buffer, size_t buf_len, const char *format, ...);
+char* sprintf_static(const char *format, ...);
 char *strcpy__(char *dest, const char *src);
 char *strlcpy__(char *dest, const char *src, size_t len);
 char *strcat__(char *dest, const char *src);

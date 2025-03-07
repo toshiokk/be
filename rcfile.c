@@ -139,6 +139,7 @@ struct /*_rc_cmd_idx_*/ {
  { "show_dot_file",		FLMD_SHOW_DOT_FILE,		},
  { "show_file_info",	FLMD_SHOW_FILE_INFO,	},
  { "sort_by",			FLMD_FILE_SORT_BY,		},
+ { "show_zebra_striping",	FLMD_SHOW_ZEBRA_STRIPING,	},
  { "filer_panes",		FLMD_FILER_PANES,		},
 #endif // ENABLE_FILER
 };
@@ -626,8 +627,8 @@ PRIVATE int parse_keyword(const char **rc_line_ptr, const char *keyword)
 
 int register_default_color_syntax(void)
 {
-/////#define CL_TAB_EOL	CL_GR	// color for TAB/EOL/"　" notation
-#define CL_TAB_EOL	CL_DG	// color for TAB/EOL/"　" notation
+#define CL_TAB_EOL	CL_GR	// color for TAB/EOL/"　" notation
+/////#define CL_TAB_EOL	CL_DG	// color for TAB/EOL/"　" notation
 
 	add_file_type("*", ".*");
 	cur_file_type->tab_size = DEFAULT_TAB_SIZE;	// set default tab size

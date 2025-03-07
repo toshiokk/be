@@ -99,6 +99,9 @@ void set_mode_idx_val(mode_idx_t mode_idx, int val)
 	case FLMD_FILE_SORT_BY:
 		SET_APPMD_VAL(fl_FILE_SORT_BY, val);
 		break;
+	case FLMD_SHOW_ZEBRA_STRIPING:
+		SET_APPMD_VAL(fl_SHOW_ZEBRA_STRIPING, val);
+		break;
 	case FLMD_FILER_PANES:
 		SET_APPMD_VAL(fl_FILER_PANES, val);
 		break;
@@ -154,6 +157,8 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 		return get_str_file_view_mode();
 	case FLMD_FILE_SORT_BY:
 		return get_str_file_sort_mode();
+	case FLMD_SHOW_ZEBRA_STRIPING:
+		return get_str_show_zebra_striping();
 	case FLMD_FILER_PANES:
 		return get_str_filer_panes();
 #endif // ENABLE_FILER
@@ -176,9 +181,9 @@ const char *get_str_app_mode()
 {
 	switch (GET_APPMD(app_LIST_MODE)) {
 	default:
-	case APP_MODE_NORMAL:	return "NORMAL";
-	case APP_MODE_CHOOSER:	return "CHOOSER";
-	case APP_MODE_VIEWER:	return "VIEWER";
+	case APP_MODE_NORMAL:	return "[NORMAL]";
+	case APP_MODE_CHOOSER:	return "[CHOOSER]";
+	case APP_MODE_VIEWER:	return "[VIEWER]";
 	}
 }
 
@@ -389,6 +394,15 @@ const char *get_str_file_sort_mode(void)
 	}
 }
 
+int tog_show_zebra_striping(void)
+{
+	return TOGGLE_APPMD(fl_SHOW_ZEBRA_STRIPING);
+}
+const char *get_str_show_zebra_striping(void)
+{
+	return BOOL_TO_ON_OFF(GET_APPMD(fl_SHOW_ZEBRA_STRIPING));
+}
+
 #ifdef ENABLE_FILER
 int tog_filer_panes(void)
 {
@@ -563,6 +577,12 @@ int do_tog_show_dot_file(void)
 {
 	tog_show_dot_file();
 	SHOW_MODE("Show dot file", get_str_show_dot_file());
+	return 0;
+}
+int do_tog_show_zebra_striping(void)
+{
+	tog_show_zebra_striping();
+	SHOW_MODE("Show zebra striping", get_str_show_zebra_striping());
 	return 0;
 }
 int do_inc_key_list_lines_(void)

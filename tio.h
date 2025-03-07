@@ -105,9 +105,9 @@ void tio_get_cursor_pos(int *yy, int *xx);
 
 void tio_clear_screen(void);
 void tio_flash_screen(int delay);
-void tio_fill_screen(int type);
-void tio_fill_lines(int line_1, int line_2, int type);
-const char *tio_blank_line(int type);
+void tio_fill_screen();
+void tio_fill_lines(int line_1, int line_2);
+const char *tio_blank_line();
 
 void tio_output_string(int yy, int xx, const char *string, int bytes);
 void tio_beep(void);

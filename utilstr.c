@@ -335,6 +335,16 @@ int snprintf_(char *buffer, size_t buf_len, const char *format, ...)
 	va_end(ap);
 	return ret;
 }
+char* sprintf_static(const char *format, ...)
+{
+	static char bufffer_s[MAX_PATH_LEN+1];
+	va_list ap;
+
+	va_start(ap, format);
+	vsnprintf(bufffer_s, MAX_PATH_LEN, format, ap);
+	va_end(ap);
+	return bufffer_s;
+}
 
 // dest and src are overlappable
 char *strcpy__(char *dest, const char *src)

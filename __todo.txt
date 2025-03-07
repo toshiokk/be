@@ -4,35 +4,77 @@
 - IMPR: to be improved issues
 - ISSUE: to be improved or fixed problems
 - CRASH: crash
+- POLICY: things to be kept
 
-- [-] "File not found" message on loading .bep file
-      ==> error message should be shown when no file loadable within one line
+- [d ] change directory by selecting from directory tree
+  - get directory list by 'find -type d' (output to file or pty)
+    - limit lines to 1000
+    - avoid searching too deep by '-maxdepth 3'
+  - open in list mode and let it be choosen
+
+- [x] run line from cursor position
+- [] built in logger that output to the separate log files based on the pty number
+- [] BUG: opening new file creates a lock file such as "$shared-documents.md" that have no dir-part
+  - get_full_path() should add the dir-part to the file path only contains file-part
+
+- [x] It is confising that cur dir has changed after file move with a call to filer
+  ==> does not change cur dir after calling filer in LIST mode
+- [x] stripes filer file list lines ==> only FGC (black/dark-gray)
+  - [x] toggle 'zebra striping' ON/off by key '_'
+- [x] reconsider options for dof_copy_...() and dof_move...()
+  - [x] dof_copy_file()         "cp -afv ..."  ==> "cp -afv ..."
+  - [x] dof_copy_file_update()  "cp -aufv ..." ==> "cp -auv ..."
+  - [x] dof_move_file()                            "mv -fv ..."
+  - [x] add dof_move_file_update()                 "mv -uv ..."
+- [-] list functions from small letter to capital letter
+- [-] make it able to cut/copy text in the list mode buffer
+- [] Make easy to use for other people
+- [?] Speed down of the cursor movement in input_str_pos() with GNU-screen on WSL
+- [] clean up code
+- [x] 250305 Clear or Limit size of cut_buffers(1000 buffers)
+
+- [-] "LANG=C be" does not show UTF8 characters in editing text ==> natural
+- [x] "LANG=C.UTF-8 be" does not show UTF8 characters in editing text
+- [x] enable debug-logging from just after app startup
+  |No.|ENABLE_DEBUG|FORCE_ENABLE_DEBUG|`-d` option|start main()|after parse_options()|
+  |---|------------|------------------|-----------|------------|---------------------|
+  | 0 | --         | --               | none      | None       | None   |
+  | 1 | --         | --               | -d        | None       | None   |
+  | 2 | --         |FORCE_ENABLE_DEBUG| none      | Output     | None   |
+  | 3 | --         |FORCE_ENABLE_DEBUG| -d        | Output     | Output |
+  | 4 |ENABLE_DEBUG| --               | none      | None       | None   |
+  | 5 |ENABLE_DEBUG| --               | -d        | None       | Output |
+  | 6 |ENABLE_DEBUG|FORCE_ENABLE_DEBUG| none      | Output     | None   |
+  | 7 |ENABLE_DEBUG|FORCE_ENABLE_DEBUG| -d        | Output     | Output |
+
+- [x] BUG: quit from filer which is called from editor by K_M_Q changes cur_dir to "/home/user"
+
+- [-] 250301 "File not found" message on loading `.bep` file
+      ==> error message should be shown when no file could be loaded within one line
 
 - [x] 250301 change_cur_dir() returns "0: on success" ==> "1: on success"
 
-- [x] BUG: 250301 infinite loop at changing to non existent dir
+- [x] 250301 BUG: infinite loop at changing to non existent dir
 
-- [x] make it able to do easily:
-  - [-] open shell script, change current dir, run one line of the shell script
-    - [-] change editor current directory in the sub-filer
-      - [] manage editor current directory
+- [x] make it easy to do:
+  - [x] open shell script, change current dir, run one line of the shell script
+    - [x] change editor current directory in the sub-filer
     - [x] how to show current directory in editor ==> show on the status-bar while input_str_pos()
-  - [x] change current dir, open shell script, run one line of the shell script
+  - [XX] change current dir, open shell script, run one line of the shell script
 
-- [v] add directory path to dir-history only when some operation truely done in the dir
+- [] ISSUE: manage process's current directory
+  - POLICY: do not change current directory without consideration.
+
+- [vG] 250304 update dir-history only when some operation actually done in the dir
   operations:
   - refresh file list
   - select file
   - open file
   - file operations such as copy/move/remove/mkdir/exec
-  - others ...
+  - other special operation ...
+    - quit filer
 
 - [x] can not Undo
-- [d ] change directory by selecting from directory tree
-  - get directory list by 'find -type d' (output to file or pty)
-    - limit lines to 1000
-    - avoid searching too deep by '-maxdepth 3'
-  - open in list mode
 
 - [x] fix file locking problem on write_file_to()
 //  |writing to the|current buffer state |another file state   | what to do |
@@ -56,24 +98,47 @@
 - [x] current buffer is not be switched to the newly loaded file
 - [x] open directory selecting from file open histotry "/file/opened.txt|1:2" in F09 and F10
   - [-] update the current directory in caller
-[x] switching policy of filer and editor
-switching filer and editor
-  -+- call_filer -+- input_string() -+- call_editor (view-mode)--call_filer
-   |              |                  +- call_filer (view-mode)
-   |              +- view_list()--call_editor (view-mode)
-   |
-   +- call_editor -+- input_string() -+- call_editor (view-mode)
-                   |                  +- call_filer (view-mode)
-                   +- view_list()--call_editor (view-mode)
-                   +- call_filer
+
+## various operations and call tree ============================================
+start as a filer
+- [x] edit a file in the current directory
+  - filer(select file to edit)                              => open it
+- [x] execute a file in the current directory
+  - filer(select file to execute)                           => execute it
+- [x] input command and execute it
+  - filer -> input_string(input command)
+          <-                                                => input command and execute it
+- [x] select a dir from history and change current dir to it
+  - filer -> input_string() -> editor(select from history)
+          <- input_string() <-                              => change current dir
+- [x] select a command from history and execute it
+  - filer -> input_string() -> editor(select from history)
+          <- input_string() <-                              => execute command
+- [XX] switch to the execution dir, open command file from the another dir
+  and execute a line as a command line [XX]in the switched dir
+  - filer(change current dir) -> input_string() -> editor(select from history)
+                              <- input_string() <-          => execute command
+
+start as a editor
+- [x] select a string from history and input into the editing text
+  - editor -> input_string() -> editor(select from history)
+              input_string() <-                             => input string to the editing text
+- [x] select a string from history and search it in the editing text
+  - editor -> input_string() -> editor(select from history)
+              input_string() <-                             => search a keyword in the editing text
+- [x] select a line from the editing text and execute it as a command line in the current dir
+  - editor(select a line)                                   => execute it as a command line
+- [x]open commend file and call filer, switch to the execution dir, select a line from the editing text
+  and execute it as a commend line in the switched dir
+  - editor -> filer(change dir) -> editor(select a line)    => execute it as a command line
 
 - [] regression test list
 // Editing functions:
 // | key    | filer function              | editor function           |filer|editor|
 // |--------|-----------------------------|---------------------------|-----|------|
-// | K_e_   | dof_open_file               | --                        |  v  |      |
+// | K_e_   | dof_open_file_recursive     | --                        |  v  |      |
+// | K_M_e  | dof_open_file_non_recursive | doe_open_file_recursive   |  v  |      |
 // | K_E_   | dof_open_file_ro            | --                        |  v  |      |
-// | K_M_e  | dof_open_file_non_recursive | doe_open_file             |  v  |      |
 // | K_M_E  | dof_open_file_from_history  | doe_open_file_ro          |  v  |      |
 // | K_MC_E | dof_open_locked_file        | doe_open_locked_file      |     |      |
 // | K_M_n  | dof_open_new_file           | doe_open_new_file         |     |      |
@@ -97,6 +162,42 @@ switching filer and editor
 // | K_M_P  | doe_open_proj_file          | doe_open_proj_file        |     |      |
 // | K_t_   | dof_run_command_src_dst     | --                        |     |      |
 // | K_T_   | dof_run_command_symlink     | --                        |     |      |
+
+// Editor file open functions:
+// | key    | filer function              |recursive |read only|Use history|Unlocking|input FN|Allow non-existent|
+// |--------|-----------------------------|----------|---------|-----------|---------|--------|------------------|
+// | K_e_   | dof_open_file_recursive     |Yes       |         |No         |         |        |                  |
+// | K_E_   | dof_open_file_ro            |Yes       |Yes      |No         |         |        |                  |
+// | K_M_e  | dof_open_file_non_recursive |No        |         |No         |         |        |                  |
+// | K_M_E  | dof_open_file_from_history  |Yes       |         |Yes        |         |        |                  |
+// | K_MC_E | dof_open_locked_file        |Yes       |         |No         |Yes      |        |                  |
+// | K_M_n  | dof_open_new_file           |YEs       |         |           |         |Yes     |Yes               |
+// |--------|-----------------------------|----------|---------|-----------|---------|--------|------------------|
+// | K_e_   | N/A                         |          |         |           |         |Yes     |                  |
+// | K_E_   | N/A                         |          |         |           |         |Yes     |                  |
+// | K_M_e  | doe_open_file_recursive     |          |         |           |         |Yes     |                  |
+// | K_M_E  | doe_open_file_non_recursive |Yes       |         |           |         |Yes     |                  |
+// | K_M_n  | doe_open_new_file           |          |         |           |         |Yes     |Yes               |
+// | XX K_M_E  | XX doe_open_file_ro            |          |Yes      |           |         |Yes     |                  |
+// | XX K_MC_E | XX doe_open_locked_file        |          |         |           |Yes      |Yes     |                  |
+
+// Execution functions:
+// | key    | filer function              | editor function           |
+// |--------|-----------------------------|---------------------------|
+// | K_x_   | dof_exec_command_with_file  | --                        |
+// | K_X_   | dof_exec_command_with_files | --                        |
+// | K_M_x  | dof_run_command_soon        | doe_run_line_soon         |
+// | K_M_X  | dof_run_command_soon_w_log  | doe_run_line_soon_w_log   |
+// | K_MC_X | --                          | doe_tog_regex             |
+// | K_r_   | dof_run_command_rel         | --                        |
+// | K_R_   | dof_run_command_abs         | --                        |
+// | K_M_r  | --                          | doe_start_rec__cancel_rec |
+// | K_M_R  | --                          | --                        |
+// | K_MC_R | --                          | doe_tog_show_ruler        |
+// | K_M_p  | doe_open_proj_file          | doe_end_rec__playback     |
+// | K_M_P  | doe_open_proj_file          | doe_open_proj_file        |
+// | K_t_   | dof_run_command_src_dst     | --                        |
+// | K_T_   | dof_run_command_symlink     | --                        |
 
 The seamless text copying:
 | from                          | to               |action to be able to do                           |

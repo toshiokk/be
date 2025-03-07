@@ -84,7 +84,10 @@
 
 #endif // ENABLE_DEBUG
 
-#define progerr_printf(args...)		flfl_d_printf("PROGERR !!", args)
+#define progerr_printf(args...)		{	\
+ flfl_d_printf("PROGERR !!", args);		\
+ write_to_warning_file(sprintf_static(args));			\
+}
 #define warning_printf(args...)		flfl_d_printf("WARNING !!", args)
 #define fatalerr_printf(args...)	flfl_d_printf("FATALERR !!!!", args)
 #define _TFLF_						tflf_d_printf("\n");

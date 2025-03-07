@@ -144,7 +144,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 			// CURDIR: changed in editor
 			if (load_file_name_upp_low_(argv[optind],
-			 TUL0 | OOE1 | MOE0 | LFH0 | WRP0 | FOL0 | RECURS1) <= 0) {
+			 TUL0 | OOE1 | MOE0 | RECURS1 | WRP0 | FOL0 | LFH0) <= 0) {
 				tio_beep();
 			}
 			tio_refresh();
@@ -178,9 +178,10 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	set_die_on_callback(NULL);
 
 	set_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
-	tio_fill_screen(0);
+	tio_fill_screen();
 	tio_destroy();
 
+	limit_cut_buffers();
 	save_cut_buffers();
 
 	write_cur_dir_to_exit_file();
@@ -205,11 +206,11 @@ flf_d_printf("Exit %s ===============================\n", APP_NAME " " __DATE__ 
 // do_call_filer()  : pass a directory and manage or browse it.
 void app_main_loop(void)
 {
-	clear_app_win_stack_depth();
+	clear_app_stack_depth();
 	clear_whole_screen_update_timer();	// avoid screen flashing on the first key input
 #ifndef ENABLE_FILER
 	if (edit_bufs_count_bufs() == 0) {
-		doe_open_file();
+		doe_open_file_recursive();
 	}
 	while (edit_bufs_count_bufs()) {
 		do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
@@ -244,10 +245,9 @@ PRIVATE int init_locale(void)
 	// setup system environment
 	setlocale(LC_ALL, "");	// set locale so that wchar related functions work
 #if defined(ENABLE_NLS)
-e_printf("LANG: [%s]\n", getenv__("LANG"));
-	setlocale(LC_ALL, getenv__("LANG"));
-e_printf("cur locale: %s\n", setlocale(LC_ALL, NULL));
-e_printf("PACKAGE: %s, LOCALEDIR: %s\n", PACKAGE, LOCALEDIR);
+flf_d_printf("LANG: [%s]\n", getenv__("LANG"));
+flf_d_printf("cur locale: [%s]\n", setlocale(LC_ALL, NULL));
+flf_d_printf("PACKAGE: [%s], LOCALEDIR: [%s]\n", PACKAGE, LOCALEDIR);
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 #endif // defined(ENABLE_NLS)
@@ -269,12 +269,10 @@ PRIVATE int init_app_mode(void)
 	CLR_APPMD(app_DRAW_CURSOR);
 	SET_APPMD_VAL(app_KEY_LINES, 3);
 	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
-#ifdef ENABLE_DEBUG
 #ifdef FORCE_ENABLE_DEBUG
 	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);
-#endif // FORCE_ENABLE_DEBUG
 	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
-#endif // ENABLE_DEBUG
+#endif // FORCE_ENABLE_DEBUG
 	// editor mode
 	CLR_APPMD(app_EDITOR_FILER);
 	SET_APPMD_VAL(app_LIST_MODE, APP_MODE_NORMAL);
@@ -304,6 +302,7 @@ PRIVATE int init_app_mode(void)
 	CLR_APPMD(fl_FILER_PANES);
 	CLR_APPMD(fl_FILER_PANEX);
 	SET_APPMD_VAL(fl_SHOW_FILE_INFO, SHOW_FILE_INFO_2);
+	SET_APPMD_VAL(fl_SHOW_ZEBRA_STRIPING, SHOW_ZEBRA_STRIPING_OFF);
 	SET_APPMD_VAL(fl_FILE_SORT_BY, 0);
 
 	return 0;
@@ -349,6 +348,7 @@ PRIVATE int parse_options(int argc, char *argv[])
 
 	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
 #ifdef ENABLE_DEBUG
+	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
 	for (optchr = 0; optchr < argc; optchr++) {
 		flf_d_printf("optind:%d: %s\n", optchr, argv[optchr]);
 	}
@@ -360,15 +360,15 @@ PRIVATE int parse_options(int argc, char *argv[])
 	while ((optchr = getopt(argc, argv,
 	 short_options)) != -1) {
 #endif
-flf_d_printf("optchr: %c\n", optchr);
-if (optarg) {
-  flf_d_printf("*optarg: %c\n", *optarg);
-}
+		flf_d_printf("optchr: %c\n", optchr);
+		if (optarg) {
+		    flf_d_printf("*optarg: %c\n", *optarg);
+		}
 		switch (optchr) {
 #ifdef ENABLE_RC
 		case 'C':
 			main_rc_file_name = optarg;
-flf_d_printf("main_rc_file_name: [%s]\n", main_rc_file_name);
+			flf_d_printf("main_rc_file_name: [%s]\n", main_rc_file_name);
 			break;
 		case 'c':
 			CLR_APPMD(app_RCFILE);
@@ -384,7 +384,7 @@ flf_d_printf("main_rc_file_name: [%s]\n", main_rc_file_name);
 				int tab_size = 0;
 				sscanf(optarg, "%d", &tab_size);
 				if ((tab_size < 1) || (MAX_TAB_SIZE < tab_size)) {
-flf_d_printf("Illegal tab size: [%d]\n", tab_size);
+					flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 					show_usage();
 				}
 				SET_CUR_EBUF_STATE(buf_TAB_SIZE, tab_size);
@@ -407,7 +407,6 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 				case 'u':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_UTF8);
 					break;
-#ifdef USE_NKF
 				case 'e':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_EUCJP);
 					break;
@@ -417,7 +416,6 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 				case 'j':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_JIS);
 					break;
-#endif // USE_NKF
 				case 'b':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_BINARY);
 					break;
@@ -444,8 +442,8 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 		case 'd':
 			SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);
 			set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
-#endif // ENABLE_DEBUG
 			break;
+#endif // ENABLE_DEBUG
 		case 'v':
 			show_version();
 			exit(0);
@@ -579,6 +577,14 @@ PRIVATE int write_cur_dir_to_exit_file(void)
 	// write current directory to the $HOME/EXIT_FILE_NAME
 	snprintf(file_path, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), EXIT_FILE_NAME);
 	return write_text_to_file(file_path, 0, full_path_of_cur_dir_static());
+}
+
+int write_to_warning_file(const char* warning)
+{
+	char file_path[MAX_PATH_LEN+1];
+	// record a warning message even when no debug logging enabled
+	snprintf(file_path, MAX_PATH_LEN+1, "%s/%s", get_app_dir(), WARNING_FILE_NAME);
+	return write_text_to_file(file_path, 1, warning);
 }
 
 //------------------------------------------------------------------------------

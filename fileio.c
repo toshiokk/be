@@ -161,8 +161,8 @@ int backup_and_save_cur_buf_ask(void)
 }
 
 // all cases on write_file_to():
-//  |writing to the|current buffer state|another file state   | what to do |
-//  |--------------|--------------------|---------------------|------------|
+//  |writing to the|current buffer state|another file state   |what to do|
+//  |--------------|--------------------|---------------------|----------|
 //  |current file  |not locked          |--                   |write to it         |
 //  |current file  |locked              |--                   |can NOT write to it |
 //  |another file  |--                  |has not locked       |unlock prev., write and lock it|
@@ -862,9 +862,7 @@ PRIVATE int cnt_files_loaded = -1;	// -1: no file switched/loaded, 0: switched, 
 void clear_files_loaded(void)
 {
 #ifdef ENABLE_HISTORY
-	if (update_history_dir_operate()) {
-		_WARNING_
-	}
+	if (update_history_dir_operate()) {		_WARNING_	}
 #endif // ENABLE_HISTORY
 	cnt_files_loaded = -1;
 }

@@ -54,7 +54,6 @@ typedef struct {
 
 #define FILER_PANES		MAX_APP_PANES_2
 typedef struct {
-/////	char org_cur_dir[MAX_PATH_LEN+1];	// original current directory
 	filer_view_t filer_views[FILER_PANES];
 } filer_panes_t;
 

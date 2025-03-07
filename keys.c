@@ -42,7 +42,7 @@ int cmp_func_id(const char *func_id_1, const char *func_id_2)
 }
 void *get_app_function_for_key(key_code_t key)
 {
-	func_key_list_t *fkey_list = get_fkey_entry_table_from_key(NULL, key, 0);
+	func_key_list_t *fkey_list = get_fkey_entry_table_from_key(NULL, key, 0, 1);
 	if (fkey_list) {
 		return (void *)fkey_list->func;
 	}
@@ -50,42 +50,48 @@ void *get_app_function_for_key(key_code_t key)
 }
 const char *get_func_id_from_key(key_code_t key)
 {
-	func_key_list_t *fkey_list = get_fkey_entry_table_from_key(editor_func_key_table, key, 0);
+	func_key_list_t *fkey_list = get_fkey_entry_table_from_key(editor_func_key_table, key, 0, 1);
 	if (fkey_list) {
 		return fkey_list->func_id;
 	}
 #ifdef ENABLE_FILER
-	fkey_list = get_fkey_entry_table_from_key(filer_func_key_table, key, 0);
+	fkey_list = get_fkey_entry_table_from_key(filer_func_key_table, key, 0, 1);
 	if (fkey_list) {
 		return fkey_list->func_id;
 	}
 #endif // ENABLE_FILER
 	return "";
 }
+// exec_lvl:
+//   `1`: get EXEC_LVL_1 and EXEC_LVL_2
+//   `2`: get EXEC_LVL_2
 func_key_list_t *get_fkey_entry_table_from_key(func_key_list_t *fkey_list, key_code_t key,
- int is_list_mode)
+ int list_mode, int exec_lvl)
 {
 	if (fkey_list == NULL) {
 		fkey_list = get_app_func_key_table();
 	}
 	for (int f_idx = 0; fkey_list[f_idx].explanation[0]; f_idx++) {
 		if (is_key_assigned_to_func(key, &fkey_list[f_idx])
-		 && (is_fkey_entry_executable(&fkey_list[f_idx], is_list_mode) >= 1)) {
+		 && (is_fkey_entry_executable(&fkey_list[f_idx], list_mode) >= exec_lvl)) {
 			return &fkey_list[f_idx];
 		}
 	}
 	return NULL;
 }
-int is_fkey_entry_executable(func_key_list_t *fkey_list, int is_list_mode)
+int is_fkey_entry_executable(func_key_list_t *fkey_list, int list_mode)
 {
-	// is_list_mode:
+	// list_mode:
 	//   0: normal_mode
 	//   1: list mode
 	//   -1: depend on is_app_chooser_viewer_mode()
-	if (is_list_mode < 0) {
-		is_list_mode = is_app_chooser_viewer_mode();
+	if (list_mode < 0) {
+		list_mode = is_app_chooser_viewer_mode();
 	}
-	if (is_list_mode == 0) {
+#define EXEC_LVL_0	0	// not executable
+#define EXEC_LVL_1	1	// partially executable
+#define EXEC_LVL_2	2	// fully executable
+	if (list_mode == 0) {
 		// normal mode
 		switch (fkey_list->list_mode) {
 		default:
@@ -94,9 +100,9 @@ int is_fkey_entry_executable(func_key_list_t *fkey_list, int is_list_mode)
 		case E_LM_CULN:
 		case F_LM_FLNM:
 		case F_LM_CUDI:
-			return 2;		// fully executable
+			return EXEC_LVL_2;		// fully executable
 		case EFLM_EXEC:
-			return 0;		// not executable
+			return EXEC_LVL_0;		// not executable
 		}
 	} else {
 		// list mode
@@ -104,13 +110,13 @@ int is_fkey_entry_executable(func_key_list_t *fkey_list, int is_list_mode)
 		default:
 		case EFAM_EXEC:
 		case EFLM_EXEC:
-			return 2;		// fully executable
+			return EXEC_LVL_2;		// fully executable
 		case E_LM_CULN:
 		case F_LM_FLNM:
 		case F_LM_CUDI:
-			return 1;		// partially executable
+			return EXEC_LVL_1;		// partially executable
 		case EFNM_EXEC:
-			return 0;		// not executable
+			return EXEC_LVL_0;		// not executable
 		}
 	}
 }
@@ -776,7 +782,7 @@ const char *long_key_name_from_key_code(key_code_t key_code, char *buf)
 		buf = buf_s_;
 	}
 	if (IS_KEY_INVALID(key_code)) {
-		return strnset__(buf, '-', MAX_KEY_NAME_LEN);
+		return strnset__(buf, '-', MAX_KEY_NAME_LEN);	// "--------"
 	}
 /////flf_d_printf("%04x ==>\n", (UINT16)key_code);
 	for (int f_idx = 0; f_idx < ARRAY_SIZE_OF(key_name_table); f_idx++) {
@@ -876,7 +882,6 @@ int is_key_utf8_byte(key_code_t key)
 
 int is_key_char(key_code_t key)
 {
-///#define IS_CHAR_KEY(key)	((' ' <= (key)) && ((key) < 0x0100))
 	return (key == ' ') || is_key_graph(key) || is_key_utf8_byte(key);
 }
 //------------------------------------------------------------------------------

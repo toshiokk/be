@@ -113,6 +113,9 @@ typedef struct /*app_mode*/ {
 #define SHOW_FILE_INFO_4				4	// Size Time lrwxrwxrwx User:group
 #define SHOW_FILE_INFO_MAX				SHOW_FILE_INFO_4
 	unsigned char fl_SHOW_FILE_INFO:3;		// bit 34-36
+#define SHOW_ZEBRA_STRIPING_OFF			0	// off
+#define SHOW_ZEBRA_STRIPING_ON			1	// ON
+	unsigned char fl_SHOW_ZEBRA_STRIPING:1;		// bit 35
 } app_mode_t;
 
 typedef enum /*mode_idx*/ {
@@ -141,6 +144,7 @@ typedef enum /*mode_idx*/ {
 	FLMD_SHOW_DOT_FILE,
 	FLMD_SHOW_FILE_INFO,
 	FLMD_FILE_SORT_BY,
+	FLMD_SHOW_ZEBRA_STRIPING,
 	FLMD_FILER_PANES,
 #endif // ENABLE_FILER
 
@@ -225,6 +229,8 @@ const char *get_str_file_view_mode(void);
 int clear_file_sort_mode(void);
 int inc_file_sort_mode(void);
 const char *get_str_file_sort_mode(void);
+int tog_show_zebra_striping(void);
+const char *get_str_show_zebra_striping(void);
 
 #ifdef ENABLE_FILER
 int tog_filer_panes(void);
@@ -277,6 +283,7 @@ int doe_tog_show_line_num(void);
 int doe_tog_map_key_7f_bs(void);
 int doe_inc_backup_files(void);
 int do_tog_show_dot_file(void);
+int do_tog_show_zebra_striping(void);
 int do_inc_key_list_lines_(void);
 
 inline char indication_of_app_mode()

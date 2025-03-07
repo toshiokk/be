@@ -412,7 +412,7 @@ int change_cur_dir(const char *dir)
 	// update "full_path" and "real_path"
 	strlcpy__(full_path_of_cur_dir, dir, MAX_PATH_LEN);
 	getcwd__(real_path_of_cur_dir);
-flf_d_printf("full_path_of_cur_dir: [%s]\n", full_path_of_cur_dir);
+/////flf_d_printf("full_path_of_cur_dir: [%s]\n", full_path_of_cur_dir);
 	return 1;			// 1: changed
 }
 const char *full_path_of_cur_dir_static()

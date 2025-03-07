@@ -23,7 +23,7 @@
 #define editorfile_h
 
 // "doe_..."  DO Editor function
-int doe_open_file(void);
+int doe_open_file_recursive(void);
 int doe_open_file_ro(void);
 int doe_open_locked_file(void);
 int doe_open_new_file(void);

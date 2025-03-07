@@ -22,36 +22,6 @@
 
 #include "headers.h"
 
-// Editing functions:
-// | key    | filer function              | editor function           |
-// |--------|-----------------------------|---------------------------|
-// | K_e_   | dof_open_file               | --                        |
-// | K_E_   | dof_open_file_ro            | --                        |
-// | K_M_e  | dof_open_file_non_recursive | doe_open_file             |
-// | K_M_E  | dof_open_file_from_history  | doe_open_file_ro          |
-// | K_MC_E | dof_open_locked_file        | doe_open_locked_file      |
-// | K_M_n  | dof_open_new_file           | doe_open_new_file         |
-// | K_M_N  | dof_open_new_file           | doe_open_new_file         |
-// | K_MC_N | --                          | doe_tog_show_line_num     |
-
-// Execution functions:
-// | key    | filer function              | editor function           |
-// |--------|-----------------------------|---------------------------|
-// | K_x_   | dof_exec_command_with_file  | --                        |
-// | K_X_   | dof_exec_command_with_files | --                        |
-// | K_M_x  | dof_run_command_soon        | doe_run_line_soon         |
-// | K_M_X  | dof_run_command_soon_w_log  | doe_run_line_soon_w_log   |
-// | K_MC_X | --                          | doe_tog_regex             |
-// | K_r_   | dof_run_command_rel         | --                        |
-// | K_R_   | dof_run_command_abs         | --                        |
-// | K_M_r  | --                          | doe_start_rec__cancel_rec |
-// | K_M_R  | --                          | --                        |
-// | K_MC_R | --                          | doe_tog_show_ruler        |
-// | K_M_p  | doe_open_proj_file          | doe_end_rec__playback     |
-// | K_M_P  | doe_open_proj_file          | doe_open_proj_file        |
-// | K_t_   | dof_run_command_src_dst     | --                        |
-// | K_T_   | dof_run_command_symlink     | --                        |
-
 PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_);
 PRIVATE void exec_menu_func(int group_idx, int entry_idx);
 
@@ -94,7 +64,7 @@ PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_)
 		int quit_menu = 0;
 		update_screen_app(1, 0);
 		tio_set_cursor_on(0);
-		disp_drop_down_menu(group_idx, entry_idx, main_win_get_top_win_y(), group_idx * 1);
+		disp_drop_down_menu(group_idx, entry_idx, central_win_get_top_win_y(), group_idx * 1);
 		tio_refresh();
 
 		//---------------------------
@@ -212,7 +182,7 @@ int disp_drop_down_menu(int group_idx, int entry_idx, int yy, int xx)
 	// # Close fil     ^Q   @Q         #  |
 	// #################################  v menu_lines : bottom bar
 	int items = get_func_key_group_entries(group_idx);
-	int menu_lines = MIN_(items + 1, main_win_get_lines());
+	int menu_lines = MIN_(items + 1, central_win_get_lines());
 	int shift = MAX_(0, entry_idx - (menu_lines-2));
 flf_d_printf("items:%d menu_lines:%d entry_idx:%d shift:%d\n",
  items, menu_lines, entry_idx, shift);
@@ -244,7 +214,7 @@ flf_d_printf("menu_y:%d f_idx:%d entry_idx:%d, desc:[%s]\n",
 	char buffer[MAX_PATH_LEN+1];
 
 	set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
-	main_win_output_string(yy + menu_y, xx, " ", -1);
+	central_win_output_string(yy + menu_y, xx, " ", -1);
 	if ((menu_y == 0) || fkey_list[f_idx].desc[0]) {
 		if (fkey_list[f_idx].desc[0]) {
 			set_color_by_idx(ITEM_COLOR_IDX_MENU_ITEM, 0);
@@ -268,9 +238,9 @@ flf_d_printf("menu_y:%d f_idx:%d entry_idx:%d, desc:[%s]\n",
 		 "");
 	}
 flf_d_printf("[%s]\n", buffer);
-	main_win_output_string(-1, -1, buffer, -1);
+	central_win_output_string(-1, -1, buffer, -1);
 	set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
-	main_win_output_string(-1, -1, " ", -1);
+	central_win_output_string(-1, -1, " ", -1);
 }
 
 int get_groups_in_func_key_table(void)

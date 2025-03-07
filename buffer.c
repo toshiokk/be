@@ -308,7 +308,7 @@ const char *buf_mode_str(be_buf_t *buf)
 	switch (BUF_STATE(buf, buf_MODE)) {
 	case buf_MODE_EDIT:		return "[EDIT]";
 	default:
-	case buf_MODE_LIST:		return "[LIST]";
+	case buf_MODE_LIST:		return "[ro]";
 	case buf_MODE_RO:		return "[RO]";
 	case buf_MODE_ANCH:		return "[ANCH]";
 	}

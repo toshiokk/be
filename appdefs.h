@@ -36,6 +36,7 @@
 #define APP_DIR				".be"
 #define RC_FILE_NAME		"berc"	// default RC file name (changeable by command line option)
 #define EXIT_FILE_NAME		".beexit"
+#define WARNING_FILE_NAME	".bewarning"
 
 #define MAX_APP_PANES_2		2
 

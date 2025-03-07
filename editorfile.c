@@ -22,17 +22,17 @@
 #include "headers.h"
 
 PRIVATE int open_file_recursive(int flags);
-int doe_open_file(void)
+int doe_open_file_recursive(void)
 {
-	return open_file_recursive(WRP0 | FOL0 | RECURS1);
+	return open_file_recursive(RECURS1 | WRP0 | FOL0 | LFH0);
 }
 int doe_open_file_ro(void)
 {
-	return open_file_recursive(WRP1 | FOL0 | RECURS1);
+	return open_file_recursive(RECURS1 | WRP1 | FOL0 | LFH0);
 }
 int doe_open_locked_file(void)
 {
-	return open_file_recursive(WRP0 | FOL1 | RECURS1);
+	return open_file_recursive(RECURS1 | WRP0 | FOL1 | LFH0);
 }
 PRIVATE int open_file_recursive(int flags)
 {
@@ -45,7 +45,7 @@ PRIVATE int open_file_recursive(int flags)
 	}
 	// CURDIR: changed in editor
 	if (load_files_in_string(file_path,
-	 TUL0 | OOE0 | MOE1 | LFH0 | (flags & (WRP1 | FOL1 | RECURS1))) < 0) {
+	 TUL0 | OOE0 | MOE1 | RECURS1 | (flags & (WRP1 | FOL1 | LFH0))) < 0) {
 		return 0;
 	}
 	disp_files_loaded_if_ge_0();
@@ -63,7 +63,7 @@ int doe_open_new_file(void)
 
 	// CURDIR: changed in editor
 	if (load_files_in_string(file_path,
-	 TUL0 | OOE1 | MOE0 | LFH1 | WRP0 | FOL0 | RECURS0) >= 0) {
+	 TUL0 | OOE1 | MOE0 | RECURS0 | WRP0 | FOL0 | LFH1) >= 0) {
 		disp_files_loaded_if_ge_0();
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 		return 1;
@@ -126,7 +126,7 @@ int do_open_proj_file(void)
 
 	// CURDIR: changed in editor
 	if (load_file_name_upp_low(file_name,
-	 TUL0 | OOE0 | MOE1 | LFH0 | WRP0 | FOL0 | RECURS1) < 0) {
+	 TUL0 | OOE0 | MOE1 | RECURS1 | WRP0 | FOL0 | LFH0) < 0) {
 		return 0;
 	}
 	disp_files_loaded_if_ge_0();
@@ -137,7 +137,7 @@ int do_open_exec_log_file(void)
 {
 	// CURDIR: changed in editor
 	if (load_file_name_upp_low(get_exec_log_file_path(),
-	 TUL0 | OOE0 | MOE1 | LFH0 | WRP0 | FOL0 | RECURS1) < 0) {
+	 TUL0 | OOE0 | MOE1 | RECURS1 | WRP0 | FOL0 | LFH0) < 0) {
 		return 0;
 	}
 	disp_files_loaded_if_ge_0();
@@ -172,7 +172,7 @@ int doe_reopen_file(void)
 	// CURDIR: abs-path is specified
 	get_file_line_col_from_str(file_pos_str, file_path, NULL, NULL);
 	if (load_file_name_upp_low(file_path,
-	 TUL0 | OOE0 | MOE1 | LFH0 | (view ? WRP1 : WRP0) | FOL0 | RECURS1) < 0) {
+	 TUL0 | OOE0 | MOE1 | RECURS1 | (view ? WRP1 : WRP0) | FOL0 | LFH0) < 0) {
 		return 0;
 	}
 	goto_str_line_col_in_cur_buf(file_pos_str);
@@ -208,7 +208,6 @@ int doe_write_file_to(void)
 
 	buf_get_file_path(get_epc_buf(), cur_file_path);
 	buf_get_file_path(get_epc_buf(), next_file_path);
-///	strlcpy__(next_file_path, buf_get_file_path(get_epc_buf(), NULL), MAX_PATH_LEN);
 	for ( ; ; ) {
 		if (input_new_file_name__ask(next_file_path) <= 0) {
 			disp_status_bar_done(_("Cancelled"));
@@ -496,9 +495,6 @@ PRIVATE int flock_delete_lock_file(const char *full_path)
 	return remove_file(flock_file_path(full_path));
 }
 
-// -     "path/to/a/file/being/locked.txt"
-//  ==> "$path$to$a$file$being$locked.txt"
-//  ==> "$APP_DIR/$path$to$a$file$being$locked.txt"
 // -    "/path/to/a/file/being/locked.txt"
 //  ==> "$$path$to$a$file$being$locked.txt"
 //  ==> "$APP_DIR/$$path$to$a$file$being$locked.txt"

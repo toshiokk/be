@@ -321,14 +321,6 @@ char *get_sssssspmmm(char *buf)
 	 (int)(msec / 1000), (int)(msec % 1000));
 	return buf;
 }
-/////time_t get_sec(void)
-/////{
-/////	struct timeval tv;
-/////	struct timezone tz;
-/////
-/////	gettimeofday(&tv, &tz);
-/////	return tv.tv_sec;
-/////}
 unsigned long get_msec(void)
 {
 	struct timeval tv;
@@ -731,7 +723,7 @@ int get_plural_form_index(int number)
 
 	if (cur_lang[0] == '\0') {
 		// current language is not set, set cur_lang_idx by env "LANG"
-		strlcpy__(cur_lang, getenv__("LANG"), LANG_STR_LEN);	// "ja_JP.UTF-8"
+		strlcpy__(cur_lang, getenv__("LANG"), LANG_STR_LEN);	// "ja_JP.UTF-8" ==> "ja"
 		for (cur_lang_idx = 0; cur_lang_idx < LANG_ZZ; cur_lang_idx++) {
 			if (strncmp(cur_lang, lang_names[cur_lang_idx], LANG_STR_LEN) == 0)
 				break;

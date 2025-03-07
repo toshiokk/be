@@ -30,6 +30,7 @@ typedef enum {
 	ITEM_COLOR_IDX_KEY_LIST,			// key list(key)
 	ITEM_COLOR_IDX_KEY_LIST2,			// key list(Description)
 	ITEM_COLOR_IDX_TEXT_NORMAL,			// contents
+	ITEM_COLOR_IDX_TEXT_NORMAL2,		// contents-2
 	ITEM_COLOR_IDX_TEXT_SELECTED1,		// contents selected-1 (primary match text)
 	ITEM_COLOR_IDX_TEXT_SELECTED2,		// contents selected-2 (2nd match text)
 	ITEM_COLOR_IDX_TEXT_SELECTED3,		// contents selected-3 (selected text)

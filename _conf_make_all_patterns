@@ -16,7 +16,7 @@ echo_run()
   echo -n "Summary - SizeOfExecutableFile: "
   ls -l be
   if [ ! -f be ]; then
-    echo "Build_Error !!!!"
+    echo "BuildError !!!!"
   fi
   echo "Summary -----------------------------------------------------"
 } 2>&1

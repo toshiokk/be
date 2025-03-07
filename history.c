@@ -122,6 +122,8 @@ PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 	return buf_get_buf_by_idx(HIST_BUFS_TOP_BUF, hist_type_idx);
 }
 
+// record "dir-history" on the only occasion when some operation actually done in the directory
+// does not record to history on the occasion that it just visit the directory
 char update_history_prev_dir[MAX_PATH_LEN+1] = "";
 char update_history_next_dir[MAX_PATH_LEN+1] = "";
 void update_history_dir_change(const char *prev_dir, const char *next_dir)
@@ -146,6 +148,7 @@ void update_history_dir_sync(const char *prev_dir, const char *next_dir)
 	// next dir
 	update_history(HISTORY_TYPE_IDX_DIR, next_dir);
 }
+//--------------------------------------
 
 // update history list (load, modify, save)
 void update_history(int hist_type_idx, const char *str)

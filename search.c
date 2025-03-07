@@ -132,10 +132,10 @@ int input_search_str(int search0_replace1, char *input_buf)
 	char default_needle[MAX_PATH_LEN+1];
 
 	if (strlen(last_searched_needle)) {
-		// We use main_win_get_columns() / 3 here because we need to see more on the line
+		// We use central_win_get_columns() / 3 here because we need to see more on the line
 		snprintf(default_needle, MAX_PATH_LEN+1, "(%.*s%s)",
-		 main_win_get_columns() / 3, last_searched_needle,
-		 strlen(last_searched_needle) > main_win_get_columns() / 3 ? "..." : "");
+		 central_win_get_columns() / 3, last_searched_needle,
+		 strlen(last_searched_needle) > central_win_get_columns() / 3 ? "..." : "");
 	} else {
 		strcpy__(default_needle, "");
 	}
@@ -337,7 +337,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 #ifdef ENABLE_UNDO
 				undo_save_after_change();
 #ifdef ENABLE_DEBUG
-				check_undo_state_after_change();
+				if (check_undo_state_after_change()) {	_WARNING_	}
 #endif // ENABLE_DEBUG
 #endif // ENABLE_UNDO
 				// Set the cursor at the last character of the replacement

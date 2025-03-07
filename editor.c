@@ -37,9 +37,9 @@ int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf, in
 #endif // ENABLE_FILER
 	if (push_win) {
 #ifdef ENABLE_FILER
-		push_app_win_stk(&next_eps, buf, &next_fps);
+		push_app_stack(&next_eps, buf, &next_fps);
 #else // ENABLE_FILER
-		push_app_win_stk(&next_eps, buf);
+		push_app_stack(&next_eps, buf);
 #endif // ENABLE_FILER
 	}
 
@@ -58,8 +58,8 @@ flf_d_printf("push_win:%d --> ret: %d\n", push_win, ret);
 
 	if (push_win) {
 		// editor: refrect the callee's cur-buf to the caller's cur-buf if file loaded additionaly
-		// filer : does not propagate the current directory to the parent filer
-		pop_app_win_stk(ret == EF_LOADED, 0);
+		// filer : propagate the current directory only when called as a normal-mode
+		pop_app_stack(ret == EF_LOADED, list_mode == 0);
 		update_screen_app(1, 1);
 	}
 
@@ -123,8 +123,8 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 			matches_clear(&matches__);
 #endif // ENABLE_REGEX
 			func_key_list_t *fkey_list;
-			if ((fkey_list = get_fkey_entry_table_from_key(editor_func_key_table, key_input, -1))
-			 == NULL) {
+			if ((fkey_list = get_fkey_entry_table_from_key(
+			 editor_func_key_table, key_input, -1, 1)) == NULL) {
 				disp_status_bar_warn(_("No command assigned for the key: 0x%04x"),
 				 (UINT16)key_input);
 			} else {
@@ -154,14 +154,13 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 #endif // defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
 					search_clear(&search__);
 					mflf_d_printf("{{{{ CALL_FUNC_EDITOR [%s]\n", fkey_list->func_id);
-///					disp_status_bar_ing(_(fkey_list->desc));	// show what about to do
 					//=========================
 					(*fkey_list->func)();	// call function "doe__...()"
 					//=========================
 					mflf_d_printf("}}}} editor_do_next: EF__%d\n", editor_do_next);
 					easy_buffer_switching_count();
 #if defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
-					check_undo_state_after_change();
+					if (check_undo_state_after_change()) {	_WARNING_	}
 #endif // defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
 				}
 			}
@@ -272,24 +271,31 @@ int doe_read_clipboard_into_cur_pos_(int char0_line1)
 }
 
 //------------------------------------------------------------------------------
+PRIVATE int doe_run_line__(int flags, int clbi, int input);
 int doe_run_line_soon(void)
 {
-	return doe_run_line_soon_(LOGGING0);
+	return doe_run_line__(LOGGING0, 0, 0);
 }
-int doe_run_line_soon_w_log(void)
+int doe_run_line_input(void)
 {
-	return doe_run_line_soon_(LOGGING2);
+	return doe_run_line__(LOGGING0, EPCBVC_CLBI, 1);
 }
-int doe_run_line_soon_(int logging)
+PRIVATE int doe_run_line__(int flags, int clbi, int input)
 {
 	char buffer[MAX_PATH_LEN+1];
-
 	// NOTE: EPCBVC_CL->data may be in history buffer and freed in calling update_history().
 	// So copy to local buffer.
-	strlcpy__(buffer, EPCBVC_CL->data, MAX_PATH_LEN);
+	strlcpy__(buffer, &(EPCBVC_CL->data[clbi]), MAX_PATH_LEN);
+	if (input) {
+		if (chk_inp_str_ret_val_editor(input_string_pos(buffer, buffer, MAX_PATH_LEN,
+		 HISTORY_TYPE_IDX_EXEC,
+		 _("Edit command line:")))) {
+			return 0;
+		}
+	}
 
 	clear_fork_exec_counter();
-	fork_exec_sh_c(SETTERM1, SEPARATE1, logging, PAUSE1, buffer);
+	fork_exec_sh_c(SETTERM1 | SEPARATE1 | PAUSE1 | flags, buffer);
 
 	editor_do_next = EF_EXECUTED;
 	doe_refresh_editor();
@@ -319,20 +325,20 @@ int doe_view_func_list(void)
 
 void display_color_settings(void)
 {
-	tio_fill_screen(0);
+	tio_fill_screen();
 	display_color_pairs(0, 0);
 	if (examine_key_code()) {
 		return;
 	}
 
 #ifdef ENABLE_DEBUG
-	tio_fill_screen(0);
+	tio_fill_screen();
 	display_item_colors(0, 0);
 	if (examine_key_code()) {
 		return;
 	}
 #ifdef ENABLE_REGEX
-	tio_fill_screen(0);
+	tio_fill_screen();
 	display_bracket_hl_colors(0, 0);
 #endif // ENABLE_REGEX
 #endif // ENABLE_DEBUG
@@ -375,55 +381,55 @@ int doe_inc_key_list_lines(void)
 }
 //------------------------------------------------------------------------------
 #define MAX_APP_STACK_DEPTH		(1+3)						// 1 root + 3 sub
-app_stack_entry app_win_stack[MAX_APP_STACK_DEPTH+1];	// 1 root + 3 sub + 1 current-state
+app_stack_entry app_stack[MAX_APP_STACK_DEPTH+1];	// 1 root + 3 sub + 1 current-state
 
-int cur_app_win_stack_depth = 0;
-void clear_app_win_stack_depth()
+int cur_app_stack_depth = 0;
+void clear_app_stack_depth()
 {
-	cur_app_win_stack_depth = 0;
-	clear_app_stack_entry(cur_app_win_stack_depth);
+	cur_app_stack_depth = 0;
+	clear_app_stack_entry(cur_app_stack_depth);
 }
-void set_app_win_stack_depth(int depth)
+void set_app_stack_depth(int depth)
 {
-	cur_app_win_stack_depth = depth;
+	cur_app_stack_depth = depth;
 }
-int get_app_win_stack_depth()
+int get_app_stack_depth()
 {
-	return cur_app_win_stack_depth;
+	return cur_app_stack_depth;
 }
-int inc_app_win_stack_depth()
+int inc_app_stack_depth()
 {
-	cur_app_win_stack_depth++;
-	return cur_app_win_stack_depth;
+	cur_app_stack_depth++;
+	return cur_app_stack_depth;
 }
-int dec_app_win_stack_depth()
+int dec_app_stack_depth()
 {
-	if (cur_app_win_stack_depth > 0) {
-		cur_app_win_stack_depth--;
+	if (cur_app_stack_depth > 0) {
+		cur_app_stack_depth--;
 	}
-	return cur_app_win_stack_depth;
+	return cur_app_stack_depth;
 }
-app_stack_entry *get_app_win_stack_ptr(int depth)
+app_stack_entry *get_app_stack_ptr(int depth)
 {
 	if (depth < 0) {
-		depth = cur_app_win_stack_depth;
+		depth = cur_app_stack_depth;
 	}
-	return &(app_win_stack[depth]);
+	return &(app_stack[depth]);
 }
 void clear_app_stack_entry(int depth)
 {
-	app_stack_entry *app_stk_ptr = get_app_win_stack_ptr(depth);
+	app_stack_entry *app_stk_ptr = get_app_stack_ptr(depth);
 	memset(app_stk_ptr, 0x00, sizeof(*app_stk_ptr));
 	app_stk_ptr->status_bar_color_idx = ITEM_COLOR_IDX_STATUS;
 }
 
 #ifdef ENABLE_FILER
-void push_app_win_stk(editor_panes_t *next_eps, be_buf_t *buf, filer_panes_t *next_fps)
+void push_app_stack(editor_panes_t *next_eps, be_buf_t *buf, filer_panes_t *next_fps)
 #else // ENABLE_FILER
-void push_app_win_stk(editor_panes_t *next_eps, be_buf_t *buf)
+void push_app_stack(editor_panes_t *next_eps, be_buf_t *buf)
 #endif // ENABLE_FILER
 {
-	app_stack_entry *app_stk_ptr = get_app_win_stack_ptr(-1);
+	app_stack_entry *app_stk_ptr = get_app_stack_ptr(-1);
 	app_stk_ptr->appmode_save = app_mode__;
 	app_stk_ptr->editor_panes_save = NULL;
 #ifdef ENABLE_FILER
@@ -442,15 +448,15 @@ void push_app_win_stk(editor_panes_t *next_eps, be_buf_t *buf)
 	}
 #endif // ENABLE_FILER
 
-	set_win_depth(inc_app_win_stack_depth());
+	set_win_depth(inc_app_stack_depth());
 	// clear previous message displayed on the status bar
 	clear_app_stack_entry(-1);
 }
-void pop_app_win_stk(BOOL change_parent_editor, BOOL change_parent_filer)
+void pop_app_stack(BOOL change_parent_editor, BOOL change_parent_filer)
 {
-	set_win_depth(dec_app_win_stack_depth());
+	set_win_depth(dec_app_stack_depth());
 
-	app_stack_entry *app_stk_ptr = get_app_win_stack_ptr(-1);
+	app_stack_entry *app_stk_ptr = get_app_stack_ptr(-1);
 	app_mode__ = app_stk_ptr->appmode_save;
 	if (app_stk_ptr->editor_panes_save) {
 		if (change_parent_editor) {
@@ -463,13 +469,13 @@ void pop_app_win_stk(BOOL change_parent_editor, BOOL change_parent_filer)
 #ifdef ENABLE_FILER
 	if (app_stk_ptr->filer_panes_save) {
 		if (change_parent_filer) {
+			copy_filer_panes_cur_dir(app_stk_ptr->filer_panes_save, get_cur_filer_panes());
+			// not restore (change) caller's current directory
 /////flf_d_printf("\n [%s] < [%s]\n [%s] < [%s]\n",
 ///// app_stk_ptr->filer_panes_save->filer_views[0].cur_dir,
 ///// get_cur_filer_panes()->filer_views[0].cur_dir,
 ///// app_stk_ptr->filer_panes_save->filer_views[1].cur_dir,
 ///// get_cur_filer_panes()->filer_views[1].cur_dir);
-			copy_filer_panes_cur_dir(app_stk_ptr->filer_panes_save, get_cur_filer_panes());
-			// not recover (change) caller's current directory
 		}
 		destroy_filer_panes();
 		set_cur_filer_panes(app_stk_ptr->filer_panes_save);
@@ -479,7 +485,7 @@ void pop_app_win_stk(BOOL change_parent_editor, BOOL change_parent_filer)
 void save_cur_app_state(int depth)
 {
 	depth = MIN_MAX_(0, depth, MAX_APP_STACK_DEPTH);
-	app_stack_entry *app_stk_ptr = get_app_win_stack_ptr(depth);
+	app_stack_entry *app_stk_ptr = get_app_stack_ptr(depth);
 	app_stk_ptr->appmode_save = app_mode__;
 	if (get_cur_editor_panes()) {
 		app_stk_ptr->editor_panes_save = get_cur_editor_panes();
@@ -493,7 +499,7 @@ void save_cur_app_state(int depth)
 void load_cur_app_state(int depth)
 {
 	depth = MIN_MAX_(0, depth, MAX_APP_STACK_DEPTH);
-	app_stack_entry *app_stk_ptr = get_app_win_stack_ptr(depth);
+	app_stack_entry *app_stk_ptr = get_app_stack_ptr(depth);
 	app_mode__ = app_stk_ptr->appmode_save;
 	if (app_stk_ptr->editor_panes_save) {
 		set_cur_editor_panes(app_stk_ptr->editor_panes_save);
@@ -508,18 +514,18 @@ void load_cur_app_state(int depth)
 PRIVATE void update_screen_app__(int status_bar, int refresh);
 void update_screen_app(int status_bar, int refresh)
 {
-	int cur_app_win_stack_depth = get_app_win_stack_depth();
-	save_cur_app_state(get_app_win_stack_depth());
+	int cur_app_stack_depth = get_app_stack_depth();
+	save_cur_app_state(get_app_stack_depth());
 	for (int depth = 0; ; depth++) {
 		set_win_depth(depth);
-		set_app_win_stack_depth(depth);
+		set_app_stack_depth(depth);
 		load_cur_app_state(depth);
-		if (depth >= cur_app_win_stack_depth) {
-			update_screen_app__(status_bar, refresh && (depth >= cur_app_win_stack_depth));
+		if (depth >= cur_app_stack_depth) {
+			update_screen_app__(status_bar, refresh && (depth >= cur_app_stack_depth));
 			break;
 		}
 		set_color_by_idx(ITEM_COLOR_IDX_PARENT, 0);
-		main_win_clear_screen();		// draw dark frame
+		central_win_clear_screen();		// draw dark frame
 		inc_win_depth();
 	}
 }
@@ -540,10 +546,11 @@ PRIVATE void update_screen_app__(int status_bar, int refresh)
 //------------------------------------------------------------------------------
 
 PRIVATE void disp_status_bar_editor(void);
+PRIVATE void disp_key_list_editor(void);
 
 void update_screen_editor(int status_bar, int refresh)
 {
-	win_select_win(WIN_IDX_MAIN);
+	win_select_cur_sub_win(WIN_IDX_WHOLE);
 
 	EPCBVC_CURS_Y = MIN(edit_win_get_text_lines()-1, EPCBVC_CURS_Y);
 ////mflf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
@@ -561,7 +568,7 @@ void update_screen_editor(int status_bar, int refresh)
 
 	if (get_edit_win_update_needed()) {
 		if (GET_APPMD(ed_EDITOR_PANES) == 0) {		// 1 pane
-			win_select_win(WIN_IDX_SUB_WHOLE);
+			win_select_cur_sub_win(WIN_IDX_SUB_WHOLE);
 			disp_edit_win(1);
 		} else {									// 2 panes
 			for (int pane_sel_idx = 0; pane_sel_idx < EDITOR_PANES; pane_sel_idx++) {
@@ -569,7 +576,7 @@ void update_screen_editor(int status_bar, int refresh)
 				// pane_sel_idx=1: update current pane
 				int pane_idx = get_editor_another_pane_idx();
 				set_editor_cur_pane_idx(pane_idx);
-				win_select_win(WIN_IDX_SUB_LEFT + pane_idx);
+				win_select_cur_sub_win(WIN_IDX_SUB_LEFT + pane_idx);
 				disp_edit_win(pane_sel_idx);
 			}
 		}
@@ -697,7 +704,7 @@ void disp_title_bar_editor(void)
 	snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_bufs, buf_time);
 #endif // SHOW_MEM_FREE_ON_EBUFS_CHG
 
-	int path_cols = LIM_MIN(0, main_win_get_columns() - strlen_path(buf_status));
+	int path_cols = LIM_MIN(0, central_win_get_columns() - strlen_path(buf_status));
 	shrink_str(buf_path, path_cols, 2);
 	adjust_utf8s_columns(buf_path, path_cols);
 
@@ -717,7 +724,8 @@ PRIVATE void blink_editor_title_bar()
 	    : (is_any_edit_buf_modified() ? ITEM_COLOR_IDX_WARNING2
 	     : ITEM_COLOR_IDX_TITLE))),
 	 get_title_bar_inversion());
-	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0, editor_title_bar_buf, -1);
+	central_win_output_string(central_win_get_top_win_y() + TITLE_LINE, 0,
+	 editor_title_bar_buf, -1);
 }
 
 //------------------------------------------------------------------------------
@@ -760,7 +768,7 @@ PRIVATE void disp_status_bar_editor(void)
 	 buf_enc_str(get_epc_buf()), buf_eol_str(get_epc_buf()));
 }
 
-void disp_key_list_editor(void)
+PRIVATE void disp_key_list_editor(void)
 {
 	disp_fkey_list();
 
@@ -780,7 +788,7 @@ void disp_key_list_editor(void)
  "<doe_duplicate_text>DupLine "
 
  "<doe_close_all_ask>CloseAll "
- "<doe_open_file>OpenFile "
+ "<doe_open_file_recursive>OpenFile "
  "<doe_write_file_ask>WriteFile "
  "<doe_search_backward_first>Search BW "
  "<doe_search_forward_first>Search FW "

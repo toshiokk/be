@@ -580,8 +580,8 @@ int cmp_func_id(const char *func_id_1, const char *func_id_2);
 void *get_app_function_for_key(key_code_t key);
 const char *get_func_id_from_key(key_code_t key);
 func_key_list_t *get_fkey_entry_table_from_key(func_key_list_t *fkey_list, key_code_t key,
- int is_list_mode);
-int is_fkey_entry_executable(func_key_list_t *fkey_list, int is_list_mode);
+ int list_mode, int exec_lvl);
+int is_fkey_entry_executable(func_key_list_t *fkey_list, int list_mode);
 key_code_t get_key_for_func_id(char *func_id);
 func_key_list_t *get_fkey_entry_from_func_id(const char *func_id);
 

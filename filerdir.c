@@ -137,7 +137,7 @@ int filer_change_dir_parent(char *path)
 
 	strlcpy__(dir, path, MAX_PATH_LEN);
 	for ( ; ; ) {
-flf_d_printf("try to change dir to [%s]\n", dir);
+/////flf_d_printf("try to change dir to [%s]\n", dir);
 		if (strcmp(dir, "/") == 0) {
 			return 0;	// error
 		}

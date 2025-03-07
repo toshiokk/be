@@ -84,9 +84,7 @@ int dof_bottom_of_list(void)
 int dof_refresh_filer(void)
 {
 #ifdef ENABLE_HISTORY
-	if (update_history_dir_operate()) {
-		_WARNING_
-	}
+	if (update_history_dir_operate()) {		_WARNING_	}
 #endif // ENABLE_HISTORY
 	disp_status_bar_done(_("File view refreshed"));
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
@@ -134,29 +132,29 @@ int dof_tail_file(void)	// view file with "tail" command
 
 PRIVATE int dof_open_file_(int flags);
 
-int dof_open_file(void)
+int dof_open_file_recursive(void)
 {
-	dof_open_file_(LFH0 | WRP0 | FOL0 | RECURS1);
+	dof_open_file_(RECURS1 | WRP0 | FOL0 | LFH0);
 	return 1;
 }
 int dof_open_file_ro(void)
 {
-	dof_open_file_(LFH0 | WRP1 | FOL0 | RECURS1);
+	dof_open_file_(RECURS1 | WRP1 | FOL0 | LFH0);
 	return 1;
 }
 int dof_open_locked_file(void)
 {
-	dof_open_file_(LFH0 | WRP0 | FOL1 | RECURS1);
+	dof_open_file_(RECURS1 | WRP0 | FOL1 | LFH0);
 	return 1;
 }
 int dof_open_file_non_recursive(void)
 {
-	dof_open_file_(LFH0 | WRP0 | FOL0 | RECURS0);
+	dof_open_file_(RECURS0 | WRP0 | FOL0 | LFH0);
 	return 1;
 }
 int dof_open_file_from_history(void)
 {
-	dof_open_file_(LFH1 | WRP0 | FOL0 | RECURS1);
+	dof_open_file_(RECURS1 | WRP0 | FOL0 | LFH1);
 	return 1;
 }
 
@@ -177,7 +175,7 @@ PRIVATE int dof_open_file_(int flags)
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if (S_ISREG(get_cur_fv_file_ptr(file_idx)->st.st_mode)) {
 			if (load_file_name_upp_low_(get_cur_fv_file_ptr(file_idx)->file_name,
-			 TUL0 | OOE0 | MOE1 | (flags & (LFH1 | WRP1 | FOL1 | RECURS1))) <= 0) {
+			 TUL0 | OOE0 | MOE1 | (flags & (RECURS1 | WRP1 | FOL1 | LFH1))) <= 0) {
 				tio_beep();
 			}
 		}
@@ -245,7 +243,7 @@ PRIVATE int dof_open_new_file_(const char *str)
 	}
 
 	if (load_files_in_string(file_path,
-	 TUL0 | OOE1 | MOE0 | LFH1 | WRP0 | FOL0 | RECURS0) >= 0) {
+	 TUL0 | OOE1 | MOE0 | RECURS0 | WRP0 | FOL0 | LFH1) >= 0) {
 		disp_files_loaded_if_ge_0();
 		filer_do_next = EF_LOADED;
 		return 1;
@@ -265,39 +263,21 @@ int dof_drop_files_to_open(void)
 	return dof_drop_files_to_do_action_(ACTION_SEL);
 }
 
+PRIVATE int dof_copy_file_(int update1);
 int dof_copy_file(void)
 {
-	char file_path[MAX_PATH_LEN+1];
-	if (chk_inp_str_ret_val_filer(input_string_pos(get_another_filer_pane_view()->cur_dir,
-	 file_path, MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
-	 _("Copy to:")))) {
-		return 0;
-	}
-	int exit_status = 0;
-	begin_fork_exec_repeat();
-	for (int file_idx = select_and_get_first_file_idx_selected();
-	 file_idx >= 0;
-	 file_idx = get_next_file_idx_selected(file_idx)) {
-		if (is_sigint_signaled())
-			break;
-#ifndef	USE_BUSYBOX
-		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-afv",
-		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
-#else
-		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-a",
-		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
-#endif
-	}
-	end_fork_exec_repeat(exit_status);
-	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
-	return 0;
+	return dof_copy_file_(0);
 }
 int dof_copy_file_update(void)
 {
+	return dof_copy_file_(1);
+}
+PRIVATE int dof_copy_file_(int update1)
+{
 	char file_path[MAX_PATH_LEN+1];
 	if (chk_inp_str_ret_val_filer(input_string_pos(get_another_filer_pane_view()->cur_dir,
 	 file_path, MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
-	 _("Copy to (Update):")))) {
+	 (update1 == 0) ? _("Copy to:") : _("Copy to (Update):")))) {
 		return 0;
 	}
 	int exit_status = 0;
@@ -308,7 +288,7 @@ int dof_copy_file_update(void)
 		if (is_sigint_signaled())
 			break;
 #ifndef	USE_BUSYBOX
-		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-aufv",
+		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", (update1 == 0) ? "-afv" : "-auv",
 		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
 #else
 		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-a",
@@ -324,12 +304,21 @@ int dof_drop_files_to_copy(void)
 	return dof_drop_files_to_do_action_(ACTION_COPY);
 }
 
+PRIVATE int dof_move_file_(int update1);
 int dof_move_file(void)
+{
+	return dof_move_file_(0);
+}
+int dof_move_file_update(void)
+{
+	return dof_move_file_(1);
+}
+PRIVATE int dof_move_file_(int update1)
 {
 	char file_path[MAX_PATH_LEN+1];
 	if (chk_inp_str_ret_val_filer(input_string_pos(get_another_filer_pane_view()->cur_dir,
 	 file_path, MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
-	 _("Move to:")))) {
+	 (update1 == 0) ? _("Move to:") : _("Move to (Update):")))) {
 		return 0;
 	}
 	int exit_status = 0;
@@ -340,7 +329,7 @@ int dof_move_file(void)
 		if (is_sigint_signaled())
 			break;
 #ifndef	USE_BUSYBOX
-		exit_status = fork_exec_args_repeat(SEPARATE1, "mv", "-fv",		//PPP "-ufv"
+		exit_status = fork_exec_args_repeat(SEPARATE1, "mv", (update1 == 0) ? "-fv" : "-uv",
 		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
 #else
 		exit_status = fork_exec_args_repeat(SEPARATE1, "mv",
@@ -423,7 +412,7 @@ int dof_drop_files_to_do_action_(int action)
 		switch(action) {
 		case ACTION_OPEN:
 			if (load_files_in_string(path,
-			 TUL0 | OOE1 | MOE0 | LFH1 | WRP0 | FOL0 | RECURS0) >= 0) {
+			 TUL0 | OOE1 | MOE0 | RECURS0 | WRP0 | FOL0 | LFH1) >= 0) {
 				disp_files_loaded_if_ge_0();
 				filer_do_next = EF_LOADED;
 			} else {
@@ -674,7 +663,6 @@ int dof_parent_directory(void)
 }
 int dof_beginning_directory(void)
 {
-/////	return filer_change_dir_if_not_yet(get_cur_filer_panes()->org_cur_dir);
 	return filer_change_dir_if_not_yet(get_cur_filer_pane_view()->org_cur_dir);
 }
 int dof_home_directory(void)
@@ -757,9 +745,7 @@ int dof_select_all_files(void)
 void disp_files_selected()
 {
 #ifdef ENABLE_HISTORY
-	if (update_history_dir_operate()) {
-		_WARNING_
-	}
+	if (update_history_dir_operate()) {		_WARNING_	}
 #endif // ENABLE_HISTORY
 	int files_selected = get_files_selected_cfv();
 	disp_status_bar_done(P_(_("%d file selected"),
@@ -768,15 +754,11 @@ void disp_files_selected()
 							_("%d filesss selected"),
 	 files_selected), files_selected);
 }
-PRIVATE int dof_quit_filer_(void)
-{
-	disp_status_bar_done(_("Quit filer"));
-	filer_do_next = EF_QUIT;
-	return 0;
-}
+
+PRIVATE int dof_quit_filer_(void);
 int dof_quit_filer(void)
 {
-///	if ((get_app_win_stack_depth() == 0) && count_cut_bufs()) {
+///	if ((get_app_stack_depth() == 0) && count_cut_bufs()) {
 ///		int ret = ask_yes_no(ASK_YES_NO | ASK_END,
 ///		 _("Are you OK to quit %s ?"), APP_LONG_NAME);
 ///		if ((ret != ANSWER_YES) && (ret != ANSWER_END)) {
@@ -788,8 +770,19 @@ int dof_quit_filer(void)
 }
 int dof_quit_home_dir(void)
 {
-	dof_home_directory();
+	if (get_app_stack_depth() == 0) {
+		dof_home_directory();
+	}
 	return dof_quit_filer_();
+}
+PRIVATE int dof_quit_filer_(void)
+{
+#ifdef ENABLE_HISTORY
+	if (update_history_dir_operate()) {		_WARNING_	}
+#endif // ENABLE_HISTORY
+	disp_status_bar_done(_("Quit filer"));
+	filer_do_next = EF_QUIT;
+	return 0;
 }
 int dof_tog_show_dot_file(void)
 {
@@ -814,6 +807,12 @@ int dof_inc_file_sort_mode(void)
 {
 	inc_file_sort_mode();
 	SHOW_MODE("File sort mode", get_str_file_sort_mode());
+	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
+	return 0;
+}
+int dof_tog_show_zebra_striping(void)
+{
+	do_tog_show_zebra_striping();
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }

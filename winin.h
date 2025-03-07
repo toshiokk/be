@@ -77,7 +77,6 @@ int ask_yes_no(int flags, const char *msg, ...);
 
 void disp_fkey_list();
 void disp_key_list(const char *key_lists[]);
-void display_reverse_text(int yy, const char *text);
 
 #endif // winin_h
 

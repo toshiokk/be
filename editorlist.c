@@ -241,7 +241,7 @@ PRIVATE void make_help_key_list(void)
 	for (key_idx = -0x60; key_idx < 0; key_idx++) {
 		key_code_t key = key_idx + 0x60 + ' ';
 		// key = [' ', 0x7f]
-		func_key_list_t *fkey_list = get_fkey_entry_table_from_key(NULL, key, 0);
+		func_key_list_t *fkey_list = get_fkey_entry_table_from_key(NULL, key, 0, 2);
 		if (fkey_list) {
 			break;
 		}
@@ -257,7 +257,7 @@ PRIVATE void make_help_key_list(void)
 		} else {
 			key = key_name_table[key_idx].key_code;
 		}
-		func_key_list_t *fkey_list = get_fkey_entry_table_from_key(NULL, key, 0);
+		func_key_list_t *fkey_list = get_fkey_entry_table_from_key(NULL, key, 0, 2);
 		key_code_t keys[MAX_KEYS_BIND];
 		for (int key_idx = 0; key_idx < MAX_KEYS_BIND; key_idx++) {
 			keys[key_idx] = K_NONE;

@@ -498,8 +498,7 @@ void regexp_matches_clear(regexp_matches_t *regexp_matches)
 	memset(regexp_matches, 0x00, sizeof(*regexp_matches));
 #endif
 }
-void regexp_matches_set_start_idx(regexp_matches_t *regexp_matches, int match_idx,
- int byte_idx)
+void regexp_matches_set_start_idx(regexp_matches_t *regexp_matches, int match_idx, int byte_idx)
 {
 	if (IS_IN_RANGE(0, match_idx, MAX_REGEX_MATCHES) == 0) {
 		_WARNING_
@@ -507,8 +506,7 @@ void regexp_matches_set_start_idx(regexp_matches_t *regexp_matches, int match_id
 	}
 	regexp_matches->matches[match_idx].rm_so = byte_idx;
 }
-void regexp_matches_set_end_idx(regexp_matches_t *regexp_matches, int match_idx,
- int byte_idx)
+void regexp_matches_set_end_idx(regexp_matches_t *regexp_matches, int match_idx, int byte_idx)
 {
 	if (IS_IN_RANGE(0, match_idx, MAX_REGEX_MATCHES) == 0) {
 		_WARNING_
@@ -516,8 +514,7 @@ void regexp_matches_set_end_idx(regexp_matches_t *regexp_matches, int match_idx,
 	}
 	regexp_matches->matches[match_idx].rm_eo = byte_idx;
 }
-void regexp_matches_set_match_len(regexp_matches_t *regexp_matches, int match_idx,
- int match_len)
+void regexp_matches_set_match_len(regexp_matches_t *regexp_matches, int match_idx, int match_len)
 {
 	if (IS_IN_RANGE(0, match_idx, MAX_REGEX_MATCHES) == 0) {
 		_WARNING_

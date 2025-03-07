@@ -24,6 +24,7 @@
 
 void app_main_loop(void);
 
+int write_to_warning_file(const char* warning);
 void app_die_on(const char *msg);
 void free_all_allocated_memory(void);
 

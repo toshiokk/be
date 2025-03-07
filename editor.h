@@ -41,8 +41,7 @@ int doe_read_clipboard_into_cur_pos_(int char0_line1);
 //------------------------------------------------------------------------------
 
 int doe_run_line_soon(void);
-int doe_run_line_soon_w_log(void);
-int doe_run_line_soon_(int logging);
+int doe_run_line_input(void);
 
 //------------------------------------------------------------------------------
 
@@ -74,20 +73,20 @@ typedef struct /*app_stack_entry*/ {
 	char status_bar_msg[MAX_SCRN_LINE_BUF_LEN+1];
 } app_stack_entry;
 
-void clear_app_win_stack_depth();
-void set_app_win_stack_depth(int depth);
-int inc_app_win_stack_depth();
-int dec_app_win_stack_depth();
-int get_app_win_stack_depth();
-app_stack_entry *get_app_win_stack_ptr(int depth);
+void clear_app_stack_depth();
+void set_app_stack_depth(int depth);
+int inc_app_stack_depth();
+int dec_app_stack_depth();
+int get_app_stack_depth();
+app_stack_entry *get_app_stack_ptr(int depth);
 void clear_app_stack_entry(int depth);
 
 #ifdef ENABLE_FILER
-void push_app_win_stk(editor_panes_t *next_eps, be_buf_t *buf, filer_panes_t *next_fps);
+void push_app_stack(editor_panes_t *next_eps, be_buf_t *buf, filer_panes_t *next_fps);
 #else // ENABLE_FILER
-void push_app_win_stk(editor_panes_t *next_eps, be_buf_t *buf);
+void push_app_stack(editor_panes_t *next_eps, be_buf_t *buf);
 #endif // ENABLE_FILER
-void pop_app_win_stk(BOOL change_parent_editor, BOOL change_parent_filer);
+void pop_app_stack(BOOL change_parent_editor, BOOL change_parent_filer);
 void save_cur_app_state(int depth);
 void load_cur_app_state(int depth);
 
@@ -98,8 +97,6 @@ void update_screen_editor(int status_bar, int refresh);
 void start_title_bar_blinking();
 void stop_title_bar_blinking();
 void disp_title_bar_editor(void);
-
-void disp_key_list_editor(void);
 
 int is_editor_view_mode_then_warn_it(void);
 

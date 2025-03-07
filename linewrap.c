@@ -35,7 +35,7 @@ void test_wrap_line(void)
 {
 flf_d_printf("----------------------------------------------------------------------\n");
 flf_d_printf("linewrap_tab_size: %d\n", linewrap_tab_size);
-#define CMP_RET(func_call, ret)		_FLF_; if (func_call != ret) _WARNING_
+#define CMP_RET(func_call, ret)		_FLF_; if (func_call != ret) { _WARNING_ }
 #define C_R(func_call, ret)			CMP_RET(func_call, ret)
 	C_R(max_wrap_line_idx("1234567890", 10), 0)
 	C_R(max_wrap_line_idx("123456789012", 10), 1)

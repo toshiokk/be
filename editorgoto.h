@@ -37,6 +37,7 @@
 #define FOL0		0x00	//  Not load a locked file forcibly
 #define RECURS1		0x80	// RECURSively open files
 #define RECURS0		0x00	//  Not RECURSively open files
+// NOTE: LFH1 is very slow. Do not use unless special necessity.
 
 #define FILE_PATH_SEPARATOR		"|"		// candidates are "|", "//", ""\\"
 

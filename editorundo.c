@@ -81,32 +81,36 @@ int count_redo_bufs(void)
 }
 
 #ifdef ENABLE_DEBUG
-PRIVATE be_buf_t *prev_epc_buf;
-PRIVATE size_t prev_epc_buf_size;
-PRIVATE int prev_count_undo_bufs;
-PRIVATE char func_id_done[MAX_PATH_LEN+1];
+PRIVATE be_buf_t *undo_state_prev_epc_buf;
+PRIVATE size_t undo_state_prev_epc_buf_size;
+PRIVATE int undo_state_prev_count_undo_bufs;
+PRIVATE char undo_state_func_id_done[MAX_PATH_LEN+1];
 void memorize_undo_state_before_change(const char *func_id)
 {
-	prev_epc_buf = get_epc_buf();
-	prev_epc_buf_size = get_epc_buf()->buf_size;
-	prev_count_undo_bufs = count_undo_bufs();
+	undo_state_prev_epc_buf = get_epc_buf();
+	undo_state_prev_epc_buf_size = get_epc_buf()->buf_size;
+	undo_state_prev_count_undo_bufs = count_undo_bufs();
 	if (func_id) {
-		strlcpy__(func_id_done, func_id, MAX_PATH_LEN);
+		strlcpy__(undo_state_func_id_done, func_id, MAX_PATH_LEN);
 	}
 }
-void check_undo_state_after_change(void)
+int check_undo_state_after_change(void)
 {
+	int error = 0;
 	if (get_epc_buf() != EDIT_BUFS_TOP_ANCH
-	 && get_epc_buf() == prev_epc_buf && get_epc_buf()->buf_size != prev_epc_buf_size
+	 && get_epc_buf() == undo_state_prev_epc_buf
+	 && get_epc_buf()->buf_size != undo_state_prev_epc_buf_size
 		// edit buffer has been modified
-	 && count_undo_bufs() == prev_count_undo_bufs) {
+	 && count_undo_bufs() == undo_state_prev_count_undo_bufs) {
 		// but no undo info pushed
 		// warn it by setting unusual application color
 		set_work_space_color_warn();
 		disp_status_bar_err(_("!!!! No UNDO info pushed !!!!"));
-		progerr_printf("No UNDO info pushed for %s\n", func_id_done);
+		progerr_printf("No UNDO info pushed for %s\n", undo_state_func_id_done);
+		error = 1;
 	}
-	strcpy__(func_id_done, "");
+	strcpy__(undo_state_func_id_done, "");
+	return error;
 }
 #endif // ENABLE_DEBUG
 
