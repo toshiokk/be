@@ -85,7 +85,7 @@ int doe_replace(void)
 	char prev_file_pos[MAX_PATH_LEN+1];
 	int num_replaced;
 
-	if (is_editor_view_mode_then_warn_it()) {
+	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
 	}
 

@@ -166,7 +166,7 @@ be_line_t *line_unlink_free(be_line_t *line)
 		line_unlink(line);
 		line_free(line);
 	} else {
-		progerr_printf("This buffer is NULL\n");
+		WARN_PTR(line);
 	}
 	return next;	// return the next line
 }
@@ -371,7 +371,7 @@ void line_dump_lines(const be_line_t *line, int lines, const be_line_t *cur_line
 void line_dump_cur(const be_line_t *line, const be_line_t *cur_line)
 {
 	if (line == NULL) {
-		progerr_printf("line == NULL\n");
+		WARN_PTR(line);
 		return;
 	}
 	flf_d_printf("%s%03d,%08lx,<%08lx,>%08lx,%04d,%06d,%08lx[%s]\n",

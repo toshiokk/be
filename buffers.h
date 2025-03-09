@@ -185,12 +185,20 @@ be_bufs_t* get_bufs_contains_buf(be_buf_t* buf);
 
 int is_epc_buf_modifiable();
 int is_epc_buf_saveable();
+int is_epc_buf_closeable();
 
-int is_epc_buf_ro_file();
-int is_epc_buf_view_mode();
-int is_epc_buf_locked();
+int is_epc_buf_mode_edit();
+int is_epc_buf_mode_list();
+int is_epc_buf_mode_ro();
+int is_epc_buf_valid();
+int is_epc_buf_empty();
+int is_epc_buf_file_wp();
+int is_epc_buf_file_locked();
+int is_epc_buf_modified();
 
-const char* get_epc_buf_view_mode();
+const char* get_all_buf_state_str();
+const char* get_all_buf_unmodifiable_str();
+const char* get_epc_buf_mode_str();
 
 //------------------------------------------------------------------------------
 // Some compiler needs "inline static" for inline functions
@@ -211,9 +219,8 @@ void create_edit_buf(const char *file_path);
 
 be_line_t *append_string_to_cur_edit_buf(const char *string);
 void append_magic_line(void);
-int edit_bufs_count_bufs(void);
-int epc_buf_count_bufs(void);
-int is_epc_buf_valid(void);
+int edit_bufs_count_buf(void);
+int epc_buf_count_buf(void);
 
 //------------------------------------------------------------------------------
 
@@ -255,8 +262,8 @@ int is_any_edit_buf_modified(void);
 #define CUR_CBUF_STATE(var)					BUF_STATE(TOP_BUF_OF_CUT_BUFS, var)
 #define SET_CUR_CBUF_STATE(var, val)		SET_BUF_STATE(TOP_BUF_OF_CUT_BUFS, var, val)
 
-int inc_buf_view_mode(void);
-const char *get_str_buf_view_mode(void);
+int inc_buf_mode(void);
+const char *get_str_buf_mode(void);
 
 int tog_line_wrap_mode(void);
 const char *get_str_buf_line_wrap_mode(void);
@@ -300,7 +307,7 @@ const char *get_str_buf_enc_binary(void);
 int set_buf_encode(int encode);
 const char *get_str_buf_encode(void);
 
-int doe_inc_buf_view_mode(void);
+int doe_inc_buf_mode(void);
 int doe_tog_buf_line_wrap_mode(void);
 int doe_tog_buf_tab_size(void);
 int doe_inc_buf_tab_size(void);

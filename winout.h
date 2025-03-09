@@ -51,7 +51,9 @@ void win_reinit_win_size();
 
 void win_setup_win_size(int win_depth);
 void win_select_cur_sub_win(int sub_win_idx);
+#ifdef ENABLE_DEBUG
 void dump_cur_sub_win(void);
+#endif // ENABLE_DEBUG
 
 int central_win_get_lines(void);
 int central_win_get_columns(void);

@@ -261,6 +261,7 @@ unsigned short calc_crc16ccitt(unsigned char byte)
 // NOTE: to avoid snprintf trancation warning of C compiler, add 20 bytes
 #define YYYYSMMSDD_HHCMMCSS_LEN		(4+1+2+1+2+1+2+1+2+1+2)	// "2037/12/31 23:59:59"
 #define YYYYMMDD_HHMMSS_LEN			(8+1+6)					// "20241009-235959"
+#define YYMMDD_HHMMSS_LEN			(6+1+6)					// "241009-235959"
 PRIVATE char *get_yyyysmmsdd_hhcmmcss(time_t abs_time, char *buf);
 PRIVATE char *get_yyyymmdd_hhmmss(time_t abs_time, char *buf);
 
@@ -300,6 +301,16 @@ const char *cur_hhmmss(void)
 
 	cur_time = time(NULL);
 	strlcpy__(buf_time, &(get_yyyymmdd_hhmmss(cur_time, buf_time)[8+1]), HHMMSS_LEN);
+	return buf_time;
+}
+const char *cur_yymmdd_hhmmss(void)
+{
+#define HHMMSS_LEN		6	// "235959"
+	static char buf_time[YYYYMMDD_HHMMSS_LEN+1];
+	time_t cur_time;
+
+	cur_time = time(NULL);
+	strlcpy__(buf_time, &(get_yyyymmdd_hhmmss(cur_time, buf_time)[2]), YYMMDD_HHMMSS_LEN);
 	return buf_time;
 }
 //------------------------------------------------------------------------------
@@ -553,9 +564,7 @@ const char *get_user_name(uid_t uid)
 }
 const char *get_user_home_dir(const char *user_name)
 {
-	int idx;
-
-	for (idx = 0; idx < num_users; idx++) {
+	for (int idx = 0; idx < num_users; idx++) {
 		if (strlcmp__(user_name, uid_name_cache[idx].user_name) == 0) {
 			return uid_name_cache[idx].homedir;
 		}
@@ -565,12 +574,11 @@ const char *get_user_home_dir(const char *user_name)
 const char *get_group_name(gid_t gid)
 {
 	static char group_id[USER_ID_LEN+1];
-	int idx;
 
 	if (num_groups < 0) {
 		cache_groups();
 	}
-	for (idx = 0; idx < num_groups; idx++) {
+	for (int idx = 0; idx < num_groups; idx++) {
 		if (gid == gid_name_cache[idx].gid)
 			return gid_name_cache[idx].grpname;
 	}

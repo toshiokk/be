@@ -30,11 +30,11 @@ PRIVATE be_bufs_t *bufs_make_top_anchor(be_bufs_t *bufs);
 // (common to edit-buffer, cut-buffer, undo-redo-buffer and history)
 
 // Create a new buffer be_buf_t
-be_buf_t *buf_create_node(const char *full_path)
+be_buf_t *buf_create_node(const char *full_path, unsigned char buf_mode_)
 {
 	_mlc_set_caller
 	be_buf_t *buf = (be_buf_t *)malloc__(sizeof(be_buf_t));
-	return buf_init(buf, full_path);
+	return buf_init(buf, full_path, buf_mode_);
 }
 // Free a buffer be_buf_t
 be_buf_t *buf_free_node(be_buf_t *buf)
@@ -46,12 +46,12 @@ be_buf_t *buf_free_node(be_buf_t *buf)
 }
 
 // initialize be_buf_t members
-be_buf_t *buf_init(be_buf_t *buf, const char *full_path)
+be_buf_t *buf_init(be_buf_t *buf, const char *full_path, unsigned char buf_mode_)
 {
 	memset(buf, 0x00, sizeof(*buf));
 
 	buf_clear_link(buf);
-	buf_set_file_abs_path(buf, full_path);
+	buf_set_file_path(buf, full_path);
 	buf->orig_file_stat.st_uid = geteuid();
 	buf->orig_file_stat.st_gid = getegid();
 	buf->orig_file_stat.st_mode = RW0RW0R00;		// regular file rw-rw-r--(664)
@@ -66,7 +66,7 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path)
 	buf->mark_line_byte_idx = 0;
 	buf->buf_lines = 0;
 	buf->buf_size = 0;
-	SET_BUF_STATE(buf, buf_MODE, buf_MODE_EDIT);
+	SET_BUF_STATE(buf, buf_MODE, buf_mode_);	// set default buffer mode
 	return buf;
 }
 void buf_views_init(be_buf_t *buf)
@@ -106,10 +106,6 @@ be_buf_t *buf_init_anchors(be_buf_t *buf, char *initial_data)
 	line_link(NODES_TOP_ANCH(buf), NODES_BOT_ANCH(buf));
 	return buf;
 }
-void buf_set_file_abs_path(be_buf_t *buf, const char *file_path)
-{
-	buf_set_file_path(buf, file_path);	// set to 'file_path'
-}
 void buf_set_file_path(be_buf_t *buf, const char *file_path)
 {
 	strlcpy__(buf->file_path_, file_path, MAX_PATH_LEN);
@@ -131,6 +127,30 @@ const char* buf_get_abs_path(be_buf_t *buf, char *abs_path)
 	// convert 'file_path' to 'abs_path' and return it
 	return get_abs_path(buf_get_file_path(buf, NULL), abs_path);
 }
+
+#define STR_INVALIDATE_PATH		"#"
+void buf_invalidate_file_path(be_buf_t *buf)
+{
+	char file_path[MAX_PATH_LEN+1];
+	buf_get_file_path(buf, file_path);
+	// "/path/to/file" ==> "#/path/to/file"
+	str_prepend(file_path, MAX_PATH_LEN, STR_INVALIDATE_PATH);
+	buf_set_file_path(buf, file_path);
+}
+const char* buf_get_abs_path_valid(be_buf_t *buf, char *abs_path)
+{
+	static char abs_path_[MAX_PATH_LEN+1];
+	if (abs_path == NULL) {
+		abs_path = abs_path_;
+	}
+	const char* file_path = buf_get_file_path(buf, NULL);
+	if (strlcmp__(file_path, STR_INVALIDATE_PATH) == 0) {
+		// "#/path/to/file" ==> "/path/to/file"
+		file_path = &(file_path[strlen_path(STR_INVALIDATE_PATH)]);
+	}
+	return get_abs_path(file_path, abs_path);
+}
+
 BOOL buf_is_empty(be_buf_t *buf)
 {
 	return NODES_TOP_NODE(buf) == NODES_BOT_ANCH(buf);
@@ -166,7 +186,9 @@ be_buf_t *buf_link(be_buf_t *prev, be_buf_t *next)
 
 be_buf_t *buf_create_copy(be_buf_t *buf)
 {
-	return buf_copy(buf_create_node(""), buf);
+	buf = buf_copy(buf_create_node("", buf_MODE_LIST), buf);	// A copy must not be changeable
+	BUF_STATE(buf, buf_MODIFIED) = 0;		// clear 'modified' flag
+	return buf;
 }
 // This is NOT deep-copy but shallow-copy.
 be_buf_t *buf_copy(be_buf_t *dest, be_buf_t *src)
@@ -177,7 +199,6 @@ be_buf_t *buf_copy(be_buf_t *dest, be_buf_t *src)
 		// clear link and anchors to avoid double linking of the contents
 		buf_clear_link(dest);
 		buf_init_anchors(dest, "#copied");
-		SET_BUF_STATE(dest, buf_MODE, buf_MODE_RO);	// A copy must be not changeable
 	}
 	BUFV0_CL(dest) = BUFV1_CL(dest) = NODES_TOP_ANCH(dest);
 	dest->mark_line = NODES_TOP_ANCH(dest);
@@ -195,7 +216,7 @@ be_buf_t *buf_unlink_free(be_buf_t *buf)
 		// not unlink and not free frame
 		buf_free_lines(buf);
 	} else {
-		progerr_printf("This buffer is NULL\n");
+		WARN_PTR(buf);
 		next = buf;
 	}
 	return next;	// return next buf
@@ -306,11 +327,10 @@ int buf_has_orig_file_updated(be_buf_t *buf)
 const char *buf_mode_str(be_buf_t *buf)
 {
 	switch (BUF_STATE(buf, buf_MODE)) {
-	case buf_MODE_EDIT:		return "[EDIT]";
 	default:
-	case buf_MODE_LIST:		return "[ro]";
-	case buf_MODE_RO:		return "[RO]";
-	case buf_MODE_ANCH:		return "[ANCH]";
+	case buf_MODE_EDIT:		return _("[EDIT]");
+	case buf_MODE_RO:		return _("[RO]");
+	case buf_MODE_LIST:		return _("[LIST]");
 	}
 }
 const char *buf_eol_str(be_buf_t *buf)
@@ -434,7 +454,7 @@ unsigned short buf_calc_crc(be_buf_t *buf)
 	return file_crc;
 }
 
-int buf_count_bufs(be_buf_t *buf)
+int buf_count_buf(be_buf_t *buf)
 {
 	buf = buf_make_top_buf(buf);
 	int cnt;
@@ -482,10 +502,8 @@ be_bufs_t *bufs_init(be_bufs_t *bufs, const char* name,
 }
 void bufs_init_anchors(be_bufs_t *bufs, const char *full_path_top, const char *full_path_bot)
 {
-	buf_init(NODES_TOP_ANCH(bufs), full_path_top);
-	SET_BUF_STATE(NODES_TOP_ANCH(bufs), buf_MODE, buf_MODE_ANCH);
-	buf_init(NODES_BOT_ANCH(bufs), full_path_bot);
-	SET_BUF_STATE(NODES_BOT_ANCH(bufs), buf_MODE, buf_MODE_ANCH);
+	buf_init(NODES_TOP_ANCH(bufs), full_path_top, buf_MODE_LIST);
+	buf_init(NODES_BOT_ANCH(bufs), full_path_bot, buf_MODE_LIST);
 	buf_link(NODES_TOP_ANCH(bufs), NODES_BOT_ANCH(bufs));
 }
 void bufs_link(be_bufs_t *top_anchor, be_bufs_t *bot_anchor)
@@ -548,18 +566,20 @@ be_bufs_t *bufs_get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf)
 }
 void bufs_fix_cur_buf(be_bufs_t *bufs)
 {
-	be_bufs_t *buffs = bufs_get_bufs_contains_buf(bufs, bufs->cur_buf);
-	if (buffs != bufs) {
-		// `bufs->cur_buf` is not contained in `bufs`
-		// ==> This means `bufs->cur_buf` is not valid
+	int count_buf = bufs_count_buf(bufs);
+	int buf_idx = buf_get_buf_idx_in_bufs(bufs, bufs->cur_buf);
+	if (1 <= buf_idx && buf_idx <= count_buf) {
+		// `bufs->cur_buf` is valid
+	} else {
+		// `bufs->cur_buf` is not valid
 		bufs->cur_buf = NODES_TOP_NODE(bufs);	// fix `cur_buf`
 	}
 	buf_fix_cur_line(bufs->cur_buf);		// fix `cur_line` too
 }
 
-int bufs_count_bufs(be_bufs_t *bufs)
+int bufs_count_buf(be_bufs_t *bufs)
 {
-	return buf_count_bufs(NODES_TOP_NODE(bufs));
+	return buf_count_buf(NODES_TOP_NODE(bufs));
 }
 
 //------------------------------------------------------------------------------
@@ -574,14 +594,19 @@ be_buf_t *buf_get_buf_by_idx(be_buf_t *buf, int buf_idx)
 	return buf;	// buf may(possibly) be top/bottom anchor
 }
 
-PRIVATE int buf_get_buf_idx_from_top_anch(be_buf_t *buff, be_buf_t *buf);
-// top-anchor: 0, buf-1: 1, buf-2: 2, ..., buf-n: n, bottom-anchor: (n+1)
+// top-anchor:0, buf1:1, buf2:2, ..., bufN:n, bottom-anchor:(n+1)
 int buf_get_buf_idx(be_buf_t *buf)
 {
-	return buf_get_buf_idx_from_top_anch(buf_make_top_anchor(buf), buf);
+	int buf_idx = 0;
+	for ( ; IS_NODE_TOP_OOL(buf) == 0; buf = NODE_PREV(buf), buf_idx++) {
+		// NOTHING_TO_DO
+	}
+	return buf_idx;		// 0: anchor, 1~: intermediate buffer
 }
+PRIVATE int buf_get_buf_idx_from_top_anch(be_buf_t *buff, be_buf_t *buf);
 int buf_get_buf_idx_in_bufs(be_bufs_t *bufs, be_buf_t *buf)
 {
+	// -1:not found in the `bufs`
 	return buf_get_buf_idx_from_top_anch(NODES_TOP_ANCH(bufs), buf);
 }
 PRIVATE int buf_get_buf_idx_from_top_anch(be_buf_t *buff, be_buf_t *buf)
@@ -644,7 +669,7 @@ void bufss_insert_bufs_to_bottom(be_bufss_t *bufss, be_bufs_t *bufs)
 	bufss->cur_bufs = bufs;
 }
 
-// top-anchor: 0, bufs-1: 1, bufs-2: 2, ..., bufs-n: n, bottom-anchor: (n+1)
+// top-anchor:0, bufs1:1, bufs2:2, ..., bufsN:n, bottom-anchor:(n+1)
 int bufs_get_bufs_idx_in_bufss(be_bufs_t *bufs, be_buf_t *buf)
 {
 	bufs = bufs_make_top_anchor(bufs);
@@ -666,11 +691,9 @@ PRIVATE be_buf_t *buf_make_top_anchor(be_buf_t *buf)
 }
 PRIVATE be_buf_t *buf_make_top_buf(be_buf_t *buf)
 {
+	buf = buf_make_top_anchor(buf);
 	if (IS_NODE_TOP_ANCH(buf)) {
 		buf = NODE_NEXT(buf);
-	}
-	for ( ; IS_PTR_VALID(buf) && (IS_NODE_TOP_MOST(buf) == 0); buf = NODE_PREV(buf)) {
-		// NOTHING_TO_DO
 	}
 	return buf;
 }

@@ -212,6 +212,16 @@ char *insert_str(char *buffer, size_t buf_len, size_t offset,
 	}
 	return buffer;
 }
+
+// "aaaaaaaaaa", "bb" ==> "bbaaaaaaaaaa"
+char* str_prepend(char* buffer, size_t buf_len, const char* str)
+{
+	size_t len = strnlen(str, buf_len);
+	strlcpy__(&(buffer[len]), buffer, buf_len);
+	memcpy__(buffer, str, len);
+	return buffer;
+}
+
 char *concat_file_path_separating_by_space(char *buffer, size_t buf_len, const char *string)
 {
 	if (is_strlen_not_0(buffer) && buffer[strlen(buffer)-1] != ' ') {
@@ -324,26 +334,23 @@ char *strcat_printf(char *buffer, size_t buf_len, const char *format, ...)
 	strlcat__(buffer, buf_len, buf);
 	return buffer;
 }
-// TOBEDELETED
+// To avoid "warning: '__builtin___snprintf_chk' output may be truncated ...", wrap snprintf()
 int snprintf_(char *buffer, size_t buf_len, const char *format, ...)
 {
 	va_list ap;
-	int ret;
-
 	va_start(ap, format);
-	ret = vsnprintf(buffer, buf_len, format, ap);
+	int ret = vsnprintf(buffer, buf_len, format, ap);
 	va_end(ap);
 	return ret;
 }
-char* sprintf_static(const char *format, ...)
+char* sprintf_s(const char *format, ...)
 {
-	static char bufffer_s[MAX_PATH_LEN+1];
+	static char buffer_s[MAX_PATH_LEN+1];
 	va_list ap;
-
 	va_start(ap, format);
-	vsnprintf(bufffer_s, MAX_PATH_LEN, format, ap);
+	vsnprintf(buffer_s, MAX_PATH_LEN, format, ap);
 	va_end(ap);
-	return bufffer_s;
+	return buffer_s;
 }
 
 // dest and src are overlappable
@@ -370,9 +377,7 @@ char *strlcat__(char *dest, size_t buf_len, const char *src)
 }
 char *strlncat__(char *dest, size_t buf_len, const char *src, size_t cat_len)
 {
-	int len;
-
-	len = strlen(dest);
+	size_t len = strlen(dest);
 	strlcpy__(&dest[len], src, LIM_MAX(buf_len - len, cat_len));
 	return dest;
 }

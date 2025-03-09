@@ -122,19 +122,19 @@ int free_edit_buf(be_buf_t *edit_buf)
 void lock_epc_buf_if_file_already_locked(BOOL lock_buffer_if_already_locked)
 {
 /////flf_d_printf("abs_path: %s\n", buf_get_abs_path(get_epc_buf(), NULL));
-	SET_CUR_EBUF_STATE(buf_IS_LOCKED, 0);
+	SET_CUR_EBUF_STATE(buf_LOCKED, 0);
 	if (flock_lock(buf_get_abs_path(get_epc_buf(), NULL)) == 0) {
 		// file has successfully locked: this is the 1st load
 	} else {
 		// already file has been locked: lock this buffer
 		if (lock_buffer_if_already_locked) {
-			SET_CUR_EBUF_STATE(buf_IS_LOCKED, 1);
+			SET_CUR_EBUF_STATE(buf_LOCKED, 1);
 		}
 	}
 }
 void unlock_epc_buf_if_file_had_locked_by_myself()
 {
-	if (is_epc_buf_locked() == 0) {
+	if (is_epc_buf_file_locked() == 0) {
 		// this buffer has NOT been locked:
 		// - this file must had been locked by myself
 		// - unlock by myself
@@ -142,7 +142,7 @@ void unlock_epc_buf_if_file_had_locked_by_myself()
 			// successfully unlocked
 		} else {
 			// already unlocked by another instance: ERROR
-			_WARNING_
+			progerr_printf("already unlocked [%s]\n", buf_get_abs_path(get_epc_buf(), NULL));
 		}
 	} else {
 		// this file has been locked by another instance:
@@ -280,60 +280,102 @@ be_bufs_t* get_bufs_contains_buf(be_buf_t* buf)
 	return bufs_get_bufs_contains_buf(NODES_TOP_ANCH(&all_bufferss), buf);
 }
 
-// read-only : file itself has no write permission
-// view-mode : buffer is not writable to file even modifiable
-// locked    : buffer is not writable because other program open it
-
-// |read-only|view-mode|locked||modifiable|saveable|
-// |---------|---------|------||----------|--------|
-// |    0    |    0    |   0  ||    1     |    1   |
-// |    1    |    0    |   0  ||    0     |    0   |
-// |    0    |    1    |   0  ||    0     |    0   |
-// |    0    |    0    |   1  ||    0     |    0   |
-
 int is_epc_buf_modifiable()
 {
-	return is_epc_buf_saveable();	// not saveable buffer shall be not modifiable
+	return 1
+	 && (is_epc_buf_mode_edit())
+
+	 && (is_epc_buf_file_wp() == 0)
+	 && (is_epc_buf_file_locked() == 0)
+
+	 && is_epc_buf_valid()
+	;
 }
 int is_epc_buf_saveable()
 {
-	return (is_epc_buf_ro_file() == 0)
-	 && (is_epc_buf_view_mode() == 0)
-	 && (is_epc_buf_locked() == 0)
+	return is_epc_buf_modifiable();
+}
+int is_epc_buf_closeable()	// closeable by user's intention
+{
+	return 1
+	 && (is_epc_buf_mode_edit())
+	 && is_epc_buf_valid()
 	;
 }
-
-int is_epc_buf_ro_file()
+//--------------------------------------
+int is_epc_buf_mode_edit()
+{
+	return CUR_EBUF_STATE(buf_MODE) == buf_MODE_EDIT;
+}
+int is_epc_buf_mode_list()
+{
+	return CUR_EBUF_STATE(buf_MODE) == buf_MODE_LIST;
+}
+int is_epc_buf_mode_ro()
+{
+	return CUR_EBUF_STATE(buf_MODE) == buf_MODE_RO;
+}
+//--------------------------------------
+int is_epc_buf_valid()
+{
+	// avoid crash on the modification
+	return IS_NODE_INT(get_epc_buf());	// not NULL, not anchor but intermediate
+}
+int is_epc_buf_empty()
+{
+	// avoid crash on the modification
+	return IS_NODES_EMPTY(get_epc_buf());
+}
+//--------------------------------------
+int is_epc_buf_file_wp()	// write protected in the file system
 {
 	return is_st_writable(&get_epc_buf()->orig_file_stat) == 0;
 }
-int is_epc_buf_view_mode()
+int is_epc_buf_file_locked()
 {
-	// avoid crash on the modification
-	if (IS_NODES_EMPTY(get_epc_buf())) {
-		return 1;
-	}
-	switch (CUR_EBUF_STATE(buf_MODE)) {
-	default:
-	case buf_MODE_EDIT:
-		return 0;		// modifiable
-	case buf_MODE_LIST:
-	case buf_MODE_RO:
-	case buf_MODE_ANCH:
-		return 1;		// view only
-	}
+	return CUR_EBUF_STATE(buf_LOCKED);
 }
-int is_epc_buf_locked()
+//--------------------------------------
+int is_epc_buf_modified()
 {
-	return CUR_EBUF_STATE(buf_IS_LOCKED);
+	return CUR_EBUF_STATE(buf_MODIFIED);
 }
-
-const char* get_epc_buf_view_mode()
+//--------------------------------------
+const char* get_all_buf_state_str()
 {
-	if (IS_NODES_EMPTY(get_epc_buf())) {
-		return "[EMPTY]";
+	static char all_buf_state_str[MAX_PATH_LEN+1] = "";
+	all_buf_state_str[0] = '\0';
+	if (is_epc_buf_modified()) {
+		strlcat__(all_buf_state_str, MAX_SCRN_LINE_BUF_LEN, _("[Mod]"));
 	}
-	return buf_mode_str(get_epc_buf());
+	strlcat__(all_buf_state_str, MAX_PATH_LEN, get_all_buf_unmodifiable_str());
+	if (is_epc_buf_empty()) {
+		strlcat__(all_buf_state_str, MAX_PATH_LEN, _("[EMPTY]"));
+	}
+	return all_buf_state_str;
+}
+const char* get_all_buf_unmodifiable_str()
+{
+	static char all_buf_state_str[MAX_PATH_LEN+1] = "";
+	all_buf_state_str[0] = '\0';
+	if (is_epc_buf_valid() == 0) {
+		strlcat__(all_buf_state_str, MAX_PATH_LEN, _("[ANCH]"));
+	}
+	if (is_epc_buf_file_wp()) {
+		strlcat__(all_buf_state_str, MAX_PATH_LEN, _("[WP]"));
+	}
+	if (is_epc_buf_file_locked()) {
+		strlcat__(all_buf_state_str, MAX_PATH_LEN, _("[LOCKED]"));
+	}
+	strlcat__(all_buf_state_str, MAX_PATH_LEN, get_epc_buf_mode_str());
+	return all_buf_state_str;
+}
+const char* get_epc_buf_mode_str()
+{
+	if (is_epc_buf_mode_edit() == 0) {
+		return get_str_buf_mode();
+	}
+	return "";
 }
 
 //------------------------------------------------------------------------------
@@ -393,7 +435,7 @@ be_buf_t *get_edit_buf_by_file_name(const char *file_name)
 // create new be_buf_t
 void create_edit_buf(const char *full_path)
 {
-	be_buf_t *buf = buf_create_node(full_path);
+	be_buf_t *buf = buf_create_node(full_path, buf_MODE_EDIT);
 	// copy default encoding from EDIT_BUFS_BOT_ANCH
 #ifdef USE_NKF
 	SET_BUF_STATE(buf, buf_ENCODE, BUF_STATE(EDIT_BUFS_BOT_ANCH, buf_ENCODE));
@@ -429,29 +471,21 @@ void append_magic_line(void)
 	}
 }
 
-int edit_bufs_count_bufs(void)
+int edit_bufs_count_buf(void)
 {
-	return bufs_count_bufs(&edit_buffers);
+	return bufs_count_buf(&edit_buffers);
 }
-int epc_buf_count_bufs(void)
+int epc_buf_count_buf(void)
 {
-	return buf_count_bufs(get_epc_buf());
-}
-
-int is_epc_buf_valid(void)
-{
-	return IS_NODE_INT(get_epc_buf());
+	return buf_count_buf(get_epc_buf());
 }
 
 // Cut-buffers manipulation routines -----------------------------------------
 
 be_buf_t *push_cut_buf(void)
 {
-	be_buf_t *buf;
-	char buf_name[MAX_PATH_LEN+1];
-
-	snprintf(buf_name, MAX_PATH_LEN, "#cut-buffer-%02d", count_cut_bufs());
-	buf = buf_create_node(buf_name);
+	be_buf_t *buf = buf_create_node(sprintf_s("#cut-buffer-%02d", count_cut_bufs()),
+	 buf_MODE_LIST);
 	bufs_insert_buf_to_top(&cut_buffers, buf);
 	// copy cut-mode to cut-buffer
 	SET_CUR_CBUF_STATE(buf_CUT_MODE, CUR_EBUF_STATE(buf_CUT_MODE));
@@ -471,7 +505,7 @@ be_line_t *append_string_to_cur_cut_buf(const char *string)
 }
 int count_cut_bufs(void)
 {
-	return bufs_count_bufs(&cut_buffers);
+	return bufs_count_buf(&cut_buffers);
 }
 int count_cur_cut_buf_lines(void)
 {
@@ -507,7 +541,7 @@ int check_cur_buf_modified(void)
 {
 	int modified = 0;
 
-	if (CUR_EBUF_STATE(buf_MODIFIED)) {
+	if (is_epc_buf_modified()) {
 		disp_status_bar_ing(_("Calculating CRC..."));
 		modified = buf_check_crc(get_epc_buf());
 		if (modified == 0) {
@@ -517,12 +551,12 @@ int check_cur_buf_modified(void)
 	}
 	return modified;
 }
-// If "modified" is not set, set it and update titlebar.
+////// If "modified" is not set, set it and update titlebar.
 void set_cur_buf_modified(void)
 {
-	if (CUR_EBUF_STATE(buf_MODIFIED) == 0) {
+///	if (CUR_EBUF_STATE(buf_MODIFIED) == 0) {
 		SET_CUR_EBUF_STATE(buf_MODIFIED, 1);
-	}
+///	}
 }
 int is_any_edit_buf_modified(void)
 {
@@ -537,12 +571,12 @@ int is_any_edit_buf_modified(void)
 
 //------------------------------------------------------------------------------
 
-int inc_buf_view_mode(void)
+int inc_buf_mode(void)
 {
-	INC_CUR_EBUF_STATE(buf_MODE, buf_MODE_EDIT, buf_MODE_ANCH);
+	INC_CUR_EBUF_STATE(buf_MODE, buf_MODE_EDIT, buf_MODE_LIST);
 	return 0;
 }
-const char *get_str_buf_view_mode(void)
+const char *get_str_buf_mode(void)
 {
 	return buf_mode_str(get_epc_buf());
 }
@@ -695,10 +729,10 @@ const char *get_str_buf_encode(void)
 
 //------------------------------------------------------------------------------
 
-int doe_inc_buf_view_mode(void)
+int doe_inc_buf_mode(void)
 {
-	inc_buf_view_mode();
-	SHOW_MODE("View mode", get_str_buf_view_mode());
+	inc_buf_mode();
+	SHOW_MODE("View mode", get_str_buf_mode());
 	return 0;
 }
 int doe_tog_buf_line_wrap_mode(void)

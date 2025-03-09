@@ -134,27 +134,27 @@ PRIVATE int dof_open_file_(int flags);
 
 int dof_open_file_recursive(void)
 {
-	dof_open_file_(RECURS1 | WRP0 | FOL0 | LFH0);
+	dof_open_file_(RECURS1 | RDOL0 | FOL0 | LFH0);
 	return 1;
 }
 int dof_open_file_ro(void)
 {
-	dof_open_file_(RECURS1 | WRP1 | FOL0 | LFH0);
+	dof_open_file_(RECURS1 | RDOL1 | FOL0 | LFH0);
 	return 1;
 }
 int dof_open_locked_file(void)
 {
-	dof_open_file_(RECURS1 | WRP0 | FOL1 | LFH0);
+	dof_open_file_(RECURS1 | RDOL0 | FOL1 | LFH0);
 	return 1;
 }
 int dof_open_file_non_recursive(void)
 {
-	dof_open_file_(RECURS0 | WRP0 | FOL0 | LFH0);
+	dof_open_file_(RECURS0 | RDOL0 | FOL0 | LFH0);
 	return 1;
 }
 int dof_open_file_from_history(void)
 {
-	dof_open_file_(RECURS1 | WRP0 | FOL0 | LFH1);
+	dof_open_file_(RECURS1 | RDOL0 | FOL0 | LFH1);
 	return 1;
 }
 
@@ -165,7 +165,7 @@ PRIVATE int dof_open_file_(int flags)
 	}
 
 #ifdef ENABLE_HISTORY
-	int prev_edit_bufs_count_bufs = edit_bufs_count_bufs();
+	int prev_edit_bufs_count_buf = edit_bufs_count_buf();
 #endif // ENABLE_HISTORY
 
 	clear_files_loaded();
@@ -175,7 +175,7 @@ PRIVATE int dof_open_file_(int flags)
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if (S_ISREG(get_cur_fv_file_ptr(file_idx)->st.st_mode)) {
 			if (load_file_name_upp_low_(get_cur_fv_file_ptr(file_idx)->file_name,
-			 TUL0 | OOE0 | MOE1 | (flags & (RECURS1 | WRP1 | FOL1 | LFH1))) <= 0) {
+			 TUL0 | OOE0 | MOE1 | (flags & (RECURS1 | RDOL1 | FOL1 | LFH1))) <= 0) {
 				tio_beep();
 			}
 		}
@@ -187,7 +187,7 @@ PRIVATE int dof_open_file_(int flags)
 
 	if (get_files_loaded() >= 0) {
 #ifdef ENABLE_HISTORY
-		if (prev_edit_bufs_count_bufs == 0) {
+		if (prev_edit_bufs_count_buf == 0) {
 			goto_last_file_line_col_in_history();
 		}
 #endif // ENABLE_HISTORY
@@ -243,7 +243,7 @@ PRIVATE int dof_open_new_file_(const char *str)
 	}
 
 	if (load_files_in_string(file_path,
-	 TUL0 | OOE1 | MOE0 | RECURS0 | WRP0 | FOL0 | LFH1) >= 0) {
+	 TUL0 | OOE1 | MOE0 | RECURS0 | RDOL0 | FOL0 | LFH1) >= 0) {
 		disp_files_loaded_if_ge_0();
 		filer_do_next = EF_LOADED;
 		return 1;
@@ -412,7 +412,7 @@ int dof_drop_files_to_do_action_(int action)
 		switch(action) {
 		case ACTION_OPEN:
 			if (load_files_in_string(path,
-			 TUL0 | OOE1 | MOE0 | RECURS0 | WRP0 | FOL0 | LFH1) >= 0) {
+			 TUL0 | OOE1 | MOE0 | RECURS0 | RDOL0 | FOL0 | LFH1) >= 0) {
 				disp_files_loaded_if_ge_0();
 				filer_do_next = EF_LOADED;
 			} else {

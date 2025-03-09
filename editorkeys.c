@@ -289,8 +289,8 @@ func_key_list_t editor_func_key_table[] = {
 
  { EFNM_EXEC, "",                    "File type Menu",
    {KNA,          KNA, KNA}, F_I(doe_menu_0), get_str_setting_none },
- { EFNM_EXEC, "View mode",           "Increment View mode",
-   {K_MC_V,       KNA, KNA}, F_I(doe_inc_buf_view_mode),      get_str_buf_view_mode },
+/// { EFNM_EXEC, "View mode",           "Increment View mode",
+///   {K_MC_V,       KNA, KNA}, F_I(doe_inc_buf_mode),      get_str_buf_mode },
  { EFNM_EXEC, "nix format",          "Set nix format (LF)",
    {KNA,          KNA, KNA}, F_I(doe_set_buf_nix_file),       get_str_buf_nix_file },
  { EFNM_EXEC, "Mac format",          "Set Mac format (CR)",

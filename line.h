@@ -39,12 +39,14 @@
 #define NODE_PREV(node)			((node)->prev)
 #endif // SAFE_NODE_TRACING
 
-#define WARN_PTR(node)			(progerr_printf("[%s] is NULL\n", #node), sleep(1))
+#define WARN_PTR(node)			progerr_printf("[%s] is NULL\n", #node)
 
 // "NODES" are "BUFFERs" or "LINEs"
 // get BUFFER from BUFFERs or get LINE from BUFFER
 #define NODES_TOP_ANCH(nodes)		(&((nodes)->top_anchor))
+									// this may be bot-anchar if the nodes empty
 #define NODES_TOP_NODE(nodes)		(NODE_NEXT(NODES_TOP_ANCH(nodes)))
+									// this may be top-anchar if the nodes empty
 #define NODES_BOT_NODE(nodes)		(NODE_PREV(NODES_BOT_ANCH(nodes)))
 #define NODES_BOT_ANCH(nodes)		(&((nodes)->bot_anchor))
 

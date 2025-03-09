@@ -31,13 +31,13 @@ PRIVATE void make_help_key_list(void);
 
 void init_help_bufs(void)
 {
-	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Files loaded")));
+	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Files loaded"), buf_MODE_LIST));
 #ifdef ENABLE_HELP
-	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Editor Functions")));
-	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Editor Key Bindings")));
+	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Editor Functions"), buf_MODE_LIST));
+	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Editor Key Bindings"), buf_MODE_LIST));
 #ifdef ENABLE_FILER
-	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Filer Functions")));
-	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Filer Key Bindings")));
+	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Filer Functions"), buf_MODE_LIST));
+	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Filer Key Bindings"), buf_MODE_LIST));
 #endif // ENABLE_FILER
 #endif // ENABLE_HELP
 }
@@ -154,7 +154,7 @@ PRIVATE void make_help_buf(int help_idx)
 #endif // ENABLE_HELP
 	}
 
-	SET_CUR_EBUF_STATE(buf_MODE, buf_MODE_RO);	// A list must be not saveable
+	SET_CUR_EBUF_STATE(buf_MODE, buf_MODE_LIST);	// A list
 	set_epc_buf(cur_edit_buf);
 }
 
@@ -163,7 +163,7 @@ PRIVATE void make_help_file_list(be_buf_t *cur_edit_buf)
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 	be_line_t *line_to_go = NULL;
 
-	buf_set_file_abs_path(get_epc_buf(), _("#List of Files currently loaded"));
+	buf_set_file_path(get_epc_buf(), _("#List of Files currently loaded"));
 
 	for (be_buf_t *edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
 	 edit_buf = NODE_NEXT(edit_buf)) {

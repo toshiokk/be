@@ -24,15 +24,15 @@
 PRIVATE int open_file_recursive(int flags);
 int doe_open_file_recursive(void)
 {
-	return open_file_recursive(RECURS1 | WRP0 | FOL0 | LFH0);
+	return open_file_recursive(RECURS1 | RDOL0 | FOL0 | LFH0);
 }
 int doe_open_file_ro(void)
 {
-	return open_file_recursive(RECURS1 | WRP1 | FOL0 | LFH0);
+	return open_file_recursive(RECURS1 | RDOL1 | FOL0 | LFH0);
 }
 int doe_open_locked_file(void)
 {
-	return open_file_recursive(RECURS1 | WRP0 | FOL1 | LFH0);
+	return open_file_recursive(RECURS1 | RDOL0 | FOL1 | LFH0);
 }
 PRIVATE int open_file_recursive(int flags)
 {
@@ -45,7 +45,7 @@ PRIVATE int open_file_recursive(int flags)
 	}
 	// CURDIR: changed in editor
 	if (load_files_in_string(file_path,
-	 TUL0 | OOE0 | MOE1 | RECURS1 | (flags & (WRP1 | FOL1 | LFH0))) < 0) {
+	 TUL0 | OOE0 | MOE1 | RECURS1 | (flags & (RDOL1 | FOL1 | LFH0))) < 0) {
 		return 0;
 	}
 	disp_files_loaded_if_ge_0();
@@ -63,7 +63,7 @@ int doe_open_new_file(void)
 
 	// CURDIR: changed in editor
 	if (load_files_in_string(file_path,
-	 TUL0 | OOE1 | MOE0 | RECURS0 | WRP0 | FOL0 | LFH1) >= 0) {
+	 TUL0 | OOE1 | MOE0 | RECURS0 | RDOL0 | FOL0 | LFH1) >= 0) {
 		disp_files_loaded_if_ge_0();
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 		return 1;
@@ -126,7 +126,7 @@ int do_open_proj_file(void)
 
 	// CURDIR: changed in editor
 	if (load_file_name_upp_low(file_name,
-	 TUL0 | OOE0 | MOE1 | RECURS1 | WRP0 | FOL0 | LFH0) < 0) {
+	 TUL0 | OOE0 | MOE1 | RECURS1 | RDOL0 | FOL0 | LFH0) < 0) {
 		return 0;
 	}
 	disp_files_loaded_if_ge_0();
@@ -137,7 +137,7 @@ int do_open_exec_log_file(void)
 {
 	// CURDIR: changed in editor
 	if (load_file_name_upp_low(get_exec_log_file_path(),
-	 TUL0 | OOE0 | MOE1 | RECURS1 | WRP0 | FOL0 | LFH0) < 0) {
+	 TUL0 | OOE0 | MOE1 | RECURS1 | RDOL0 | FOL0 | LFH0) < 0) {
 		return 0;
 	}
 	disp_files_loaded_if_ge_0();
@@ -165,14 +165,14 @@ int doe_reopen_file(void)
 		if (ret <= 0)
 			return 0;
 	}
-	int view = is_epc_buf_view_mode();
+	int view = is_epc_buf_mode_ro();
 	// memorize current file path before closing
 	memorize_cur_file_pos_null(file_pos_str);
 	free_cur_edit_buf();
 	// CURDIR: abs-path is specified
 	get_file_line_col_from_str(file_pos_str, file_path, NULL, NULL);
 	if (load_file_name_upp_low(file_path,
-	 TUL0 | OOE0 | MOE1 | RECURS1 | (view ? WRP1 : WRP0) | FOL0 | LFH0) < 0) {
+	 TUL0 | OOE0 | MOE1 | RECURS1 | (view ? RDOL1 : RDOL0) | FOL0 | LFH0) < 0) {
 		return 0;
 	}
 	goto_str_line_col_in_cur_buf(file_pos_str);
@@ -218,7 +218,7 @@ int doe_write_file_to(void)
 
 	if (compare_file_path_in_abs_path(cur_file_path, next_file_path) == 0) {
 		// writing to the same file
-		if (is_epc_buf_locked()) {
+		if (is_epc_buf_file_locked()) {
 			disp_status_bar_err(_("Buffer [%s] is locked"), cur_file_path);
 			return -1;
 		}
@@ -230,22 +230,22 @@ flf_d_printf("next_file_path: %s\n", next_file_path);
 			return -1;
 		}
 flf_d_printf("next_file_path: %s\n", next_file_path);
-		buf_set_file_abs_path(get_epc_buf(), next_file_path);	// set new file name
+		buf_set_file_path(get_epc_buf(), next_file_path);	// set new file name
 		buf_clear_orig_file_mtime(get_epc_buf());
 	}
 
 	if (backup_and_save_cur_buf_ask() < 0) {
 		// error then restore old file path
-		buf_set_file_abs_path(get_epc_buf(), cur_file_path);
+		buf_set_file_path(get_epc_buf(), cur_file_path);
 		return -1;
 	}
 
 	if (compare_file_path_in_abs_path(cur_file_path, next_file_path) == 0) {
 		// same file name
 	} else {
-		buf_set_file_abs_path(get_epc_buf(), cur_file_path);
+		buf_set_file_path(get_epc_buf(), cur_file_path);
 		unlock_epc_buf_if_file_had_locked_by_myself();	// unlock old file name
-		buf_set_file_abs_path(get_epc_buf(), next_file_path);
+		buf_set_file_path(get_epc_buf(), next_file_path);
 		lock_epc_buf_if_file_already_locked(1);			// lock new file name
 	}
 
@@ -299,17 +299,21 @@ int doe_close_file_always(void)
 }
 PRIVATE int close_file_ask(int yes_no)
 {
-	if (write_file_ask(yes_no, CLOSE_AFTER_SAVE_1) < ANSWER_NONE) {
+	if (write_file_ask(yes_no, CLOSE_AFTER_SAVE_1) <= ANSWER_CANCEL) {
 		// CANCEL/END
-		return -1;
+		return ANSWER_CANCEL;
 	}
 	// YES/NO
 
+	if (is_epc_buf_closeable() == 0) {
+		disp_status_bar_err(_("This buffer is NOT closeable"));
+		return ANSWER_NO;		// not saveable, not closeable
+	}
 	free_cur_edit_buf();
 
 	doe_refresh_editor();
 	disp_status_bar_done(_("One buffer closed"));
-	return 2;
+	return ANSWER_YES;
 }
 PRIVATE int write_close_all(int yes_no);
 int doe_close_all_ask(void)
@@ -327,7 +331,7 @@ PRIVATE int write_close_all(int yes_no)
 	close_all_not_modified();
 	if (write_all_ask(yes_no, CLOSE_AFTER_SAVE_1) < 0)
 		return -1;
-	close_all();
+	close_all_saved();
 	return 0;
 }
 
@@ -356,12 +360,14 @@ int doe_read_file_into_cur_buf(void)
 //------------------------------------------------------------------------------
 int write_all_ask(int yes_no, close_after_save_t close)
 {
-	switch_epc_buf_to_top_buf();
-	while (is_epc_buf_valid()) {
-		if (write_file_ask(yes_no, close) < ANSWER_NONE) {
+	switch_epc_buf_to_top_of_edit_buf();
+	while (IS_NODE_INT(get_epc_buf())) {
+		if (write_file_ask(yes_no, close) <= ANSWER_CANCEL) {
+			// CANCEL/END
 			disp_status_bar_done(_("Cancelled"));
 			return -1;
 		}
+		// YES/NO
 		if (switch_epc_buf_to_next_buf(0, 0) == 0)
 			break;
 	}
@@ -370,8 +376,8 @@ int write_all_ask(int yes_no, close_after_save_t close)
 }
 int close_all_not_modified(void)
 {
-	switch_epc_buf_to_top_buf();
-	while (is_epc_buf_valid()) {
+	switch_epc_buf_to_top_of_edit_buf();
+	while (IS_NODE_INT(get_epc_buf())) {
 		if (check_cur_buf_modified()) {
 			if (switch_epc_buf_to_next_buf(0, 0) == 0) {
 				break;
@@ -383,11 +389,18 @@ int close_all_not_modified(void)
 	}
 	return 0;
 }
-int close_all(void)
+int close_all_saved(void)
 {
-	switch_epc_buf_to_top_buf();
-	while (free_cur_edit_buf()) {
-		// loop
+	switch_epc_buf_to_top_of_edit_buf();
+	while (IS_NODE_INT(get_epc_buf())) {
+		if (is_epc_buf_closeable() == 0) {
+			disp_status_bar_err(_("This buffer is NOT closeable"));
+			if (switch_epc_buf_to_next_buf(0, 0) == 0) {
+				break;
+			}
+		} else {
+			free_cur_edit_buf();
+		}
 		tio_refresh();
 	}
 	return 0;
@@ -402,15 +415,13 @@ int close_all(void)
 int write_file_ask(int yes_no, close_after_save_t close)
 {
 	int ret = yes_no;
-
+	if (check_cur_buf_modified() == 0) {
+		disp_status_bar_done(_("This buffer is NOT modified"));
+		return ANSWER_NONE;		// saveable but not modified, closeable
+	}
 	if (is_epc_buf_saveable() == 0) {
 		disp_status_bar_err(_("This buffer is NOT saveable"));
-		return ANSWER_NONE;		// doe_write* skip, doe_close* does NOT close
-	}
-	if (check_cur_buf_modified() == 0) {
-		// saveable but not modified
-		disp_status_bar_done(_("This buffer is NOT modified"));
-		return ANSWER_NO;		// doe_write* skip, doe_close* does close
+		return ANSWER_NONE;		// not saveable, closeable
 	}
 
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
@@ -505,6 +516,9 @@ PRIVATE const char* flock_file_path(const char* full_path)
 	char abs_path[MAX_PATH_LEN+1];
 	get_abs_path(full_path, abs_path);
 	str_tr(abs_path, '/', '$');
+	if (strlcmp__(abs_path, "$") != 0) {
+		progerr_printf("not full path [%s]\n", abs_path);
+	}
 	snprintf_(flock_file_path, MAX_PATH_LEN, "%s/$%s", get_app_dir(), abs_path);
 	return flock_file_path;
 }

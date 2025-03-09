@@ -31,8 +31,8 @@
 #define MOE0		0x00	//  No message on error
 #define LFH1		0x08	// Load a file memorized in history
 #define LFH0		0x00	//  Not load a file memorized in history
-#define WRP1		0x10	// Load a file with WRite Protected
-#define WRP0		0x00	//  Not load a file with WRite Protected
+#define RDOL1		0x10	// Load a file as Read Only
+#define RDOL0		0x00	//  Not load a file as Read Only
 #define FOL1		0x20	// Load a locked file forcibly (Force Open Locked file)
 #define FOL0		0x00	//  Not load a locked file forcibly
 #define RECURS1		0x80	// RECURSively open files
@@ -113,6 +113,7 @@ int get_file_line_col_from_str(const char *str, char *file_path,
 int switch_epc_buf_by_file_path(const char *abs_path);
 int switch_epc_buf_by_file_name(const char *file_name);
 
+int switch_epc_buf_to_top_of_edit_buf();
 int switch_epc_buf_to_top_buf(void);
 int switch_epc_buf_to_bot_buf(void);
 int switch_epc_buf_to_next_buf(int beep_at_end, int goto_top);

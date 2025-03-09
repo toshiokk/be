@@ -6,6 +6,35 @@
 - CRASH: crash
 - POLICY: things to be kept
 
+- [] built in logger that output to the separate log files based on the pty number
+- [] BUG: opening new file creates a lock file such as "$shared-documents.md" that have no dir-part
+  - get_full_path() should add the dir-part to the file path only contains file-part
+
+- buffer state:
+  |state |operations possible    |explanation                                                     |
+  |------|-----------------------|----------------------------------------------------------------|
+  |normal|R/W, saveable/closeable| normal edit buffer                                             |
+  |RO    |RO, closeable          | read-only: file is loaded as read-only by a user's intention   |
+  |locked|RO, closeable          | locked   : file is not writable because other program open it  |
+  |WP    |RO, closeable          | write-protected: file is write protected by the file system    |
+  |LIST  |RO, not-closeable by user's intention | list  : help/file-list/history/cut-buf/undo-buf |
+  |anchor|RO, not-closeable by user's intention | anchor: buffer is an anchor                     |
+  |empty |RO, not-closeable by user's intention | empty : buffer is empty                         |
+
+// |anchor|empty|list| RO |locked| WP ||modifiable|saveable|closeable|
+// |------|-----|----|----|------|----||----------|--------|---------|
+// |   0  |  0  |  0 |  0 |   0  |  0 ||    1     |    1   |    1    | edit-buf
+// |   0  |  0  |  0 |  1 |   0  |  0 ||    0     |    0   |    1    | edit-buf(read-only open)
+// |   0  |  0  |  0 |  0 |   1  |  0 ||    0     |    0   |    1    | edit-buf(locked file)
+// |   0  |  0  |  0 |  0 |   0  |  1 ||    0     |    0   |    1    | edit-buf(write-protected file)
+// |   0  |  0  |  1 |  0 |   0  |  0 ||    0     |    0   |    0    | help-buf, history-buf, cut-buf, undo/redo-buf
+// |   1  |  0  |  0 |  0 |   0  |  0 ||    0     |    0   |    0    | an anchor (not a valid buffer)
+// |   0  |  1  |  0 |  0 |   0  |  0 ||    0     |    0   |    0    | empty  (not a valid buffer)
+
+- [x] an anchor of undo/redo buffer being open when swithed
+- [x] It is not proper that undo/redo buffer have the same `abs_path` to the original edit-buffer
+  ==> "/path/to/the/file" --> "#/path/to/the/file" (prepend '#')
+
 - [d ] change directory by selecting from directory tree
   - get directory list by 'find -type d' (output to file or pty)
     - limit lines to 1000
@@ -13,9 +42,6 @@
   - open in list mode and let it be choosen
 
 - [x] run line from cursor position
-- [] built in logger that output to the separate log files based on the pty number
-- [] BUG: opening new file creates a lock file such as "$shared-documents.md" that have no dir-part
-  - get_full_path() should add the dir-part to the file path only contains file-part
 
 - [x] It is confising that cur dir has changed after file move with a call to filer
   ==> does not change cur dir after calling filer in LIST mode
@@ -30,7 +56,7 @@
 - [-] make it able to cut/copy text in the list mode buffer
 - [] Make easy to use for other people
 - [?] Speed down of the cursor movement in input_str_pos() with GNU-screen on WSL
-- [] clean up code
+- [x ] clean up code
 - [x] 250305 Clear or Limit size of cut_buffers(1000 buffers)
 
 - [-] "LANG=C be" does not show UTF8 characters in editing text ==> natural
@@ -253,7 +279,7 @@ The seamless text copying:
 - [-] search not moving cursor pos. as possible ==> Cursor center mode
 - [x] "M_LBRAC" ==> "M-{", "\(M-))" ==> "\{M-)}"
 - [x] 241203 IMPR: does not go to previous cursor x position after undoing "cut-to-head"/"cut-to_tail"
-- [-] keep cut buffers after exiting app.
+- [x] keep cut buffers after exiting app.
 - [x] 241202 in editor-list-mode, M-e inserts text to input_str
 - [x] make editor and filer to work more seamless as possible.
   - [x] cut-copy 1 line ==> view cut-buffer
@@ -831,7 +857,7 @@ Editor 2 pane mode
 //[e]Prevent from reading too large file(>128MB).
 
 []Wide char mode '#' ==> '＃'
-[]replace mode
+[-]replace mode
 [pd]embedded/minimal environment(wo/curses ,termcap and termlib. only dumb terminal)
 [pe]display line number
 [pe]memorize line and return

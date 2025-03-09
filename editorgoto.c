@@ -70,7 +70,7 @@ int doe_goto_line(void)
 	// go to file
 	// CURDIR: changed in editor
 	// file.ext:123:45
-	load_files_in_string(buf, TUL0 | OOE0 | MOE1 | RECURS0 | WRP0 | FOL0 | LFH0);
+	load_files_in_string(buf, TUL0 | OOE0 | MOE1 | RECURS0 | RDOL0 | FOL0 | LFH0);
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
 }
@@ -132,7 +132,7 @@ PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx)
 	change_cur_dir_by_file_path_after_save(dir_save, buf_get_file_path(get_epc_buf(), NULL));
 	// file_path is taken from the line_byte_idx of current line
 	int files = load_files_in_string(&(EPCBVC_CL->data[line_byte_idx]),
-	 TUL0 | OOE0 | MOE1 | RECURS1 | WRP0 | FOL0 | LFH1);
+	 TUL0 | OOE0 | MOE1 | RECURS1 | RDOL0 | FOL0 | LFH1);
 	change_cur_dir(dir_save);
 
 	disp_files_loaded_if_ge_0();
@@ -190,7 +190,7 @@ int doe_switch_to_top_buffer(void)
 }
 int doe_switch_to_bot_buffer(void)
 {
-_D_(dump_editor_panes(get_cur_editor_panes()))
+/////_D_(dump_editor_panes(get_cur_editor_panes()))
 	if (IS_NODE_BOT_MOST(get_epc_buf()) || IS_NODE_TOP_OOL(get_epc_buf())) {
 		// already bottom of buffers
 		// ==> switch to the next buffers
@@ -199,7 +199,7 @@ _D_(dump_editor_panes(get_cur_editor_panes()))
 	if (switch_epc_buf_to_bot_buf() == 0) {
 		return 0;
 	}
-_D_(dump_editor_panes(get_cur_editor_panes()))
+/////_D_(dump_editor_panes(get_cur_editor_panes()))
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	disp_status_bar_done(_("Switched to the last buffer"));
 	return 1;
@@ -220,7 +220,7 @@ int doe_switch_to_prev_buffers(void)
 }
 int doe_switch_to_next_buffers(void)
 {
-_D_(dump_editor_panes(get_cur_editor_panes()))
+/////_D_(dump_editor_panes(get_cur_editor_panes()))
 	be_bufs_t *bufs = get_bufs_contains_buf(get_epc_buf());
 	if (IS_NEXT_NODE_INT(bufs) == 0) {
 		disp_status_bar_warn(_("No next buffers"));
@@ -229,9 +229,9 @@ _D_(dump_editor_panes(get_cur_editor_panes()))
 	bufs = NODE_NEXT(bufs);
 	bufs_fix_cur_buf(bufs);
 	set_epc_buf(bufs->cur_buf);
-_D_(dump_editor_panes(get_cur_editor_panes()))
+/////_D_(dump_editor_panes(get_cur_editor_panes()))
 	disp_status_bar_done(_("Switched to the next buffers"));
-_D_(dump_editor_panes(get_cur_editor_panes()))
+/////_D_(dump_editor_panes(get_cur_editor_panes()))
 	return 1;
 }
 //------------------------------------------------------------------------------
@@ -483,7 +483,7 @@ PRIVATE int load_file_from_history(const char *file_name)
 		if (get_file_line_col_from_str(history, file_path, NULL, NULL)) {
 			if (compare_file_path_from_tail(file_path, file_name) == 0) {
 				return load_file_in_string_(history,
-				 TUL0 | OOE0 | MOE0 | RECURS0 | WRP0 | FOL0 | LFH0);
+				 TUL0 | OOE0 | MOE0 | RECURS0 | RDOL0 | FOL0 | LFH0);
 			}
 		}
 	}
@@ -794,6 +794,11 @@ int switch_epc_buf_by_file_name(const char *file_name)
 	return 0;		// not found
 }
 
+int switch_epc_buf_to_top_of_edit_buf(void)
+{
+	set_epc_buf(EDIT_BUFS_TOP_BUF);
+	return 1;
+}
 int switch_epc_buf_to_top_buf(void)
 {
 	set_epc_buf(NODES_TOP_NODE(get_bufs_contains_buf(get_epc_buf())));

@@ -62,26 +62,42 @@ void dump_string(char *message, const char* string)
 
 #define RING_BUF_LINES		10
 #ifdef RING_BUF_LINES
-PRIVATE int ring_buf_idx = 0;
-PRIVATE char ring_buffer[RING_BUF_LINES][DEBUG_BUF_LEN+1] =
- { "", "", "", "", "", "", "", "", "", "", };
+void put_to_ring_buffer(const char* str);
 #endif
 
 void tflfl_d_printf_(int time, const char *file, int line,
- const char *func, const char *label,
- const char *format, ...)
+ const char *func, const char *label, 
+const char *format, ...)
+{
+	char buffer[DEBUG_BUF_LEN+1];
+	va_list list;
+	va_start(list, format);
+	tflfl_vsprintf(buffer, time, file, line, func, label, format, list);
+	va_end(list);
+
+	put_to_ring_buffer(buffer);
+	debug_printf("%s", buffer);
+}
+const char* tflfl_sprintf_s_(int time, const char *file, int line,
+ const char *func, const char *label, const char *format, ...)
+{
+	static char buffer[DEBUG_BUF_LEN+1];
+	va_list list;
+	va_start(list, format);
+	const char* str = tflfl_vsprintf(buffer, time, file, line, func, label, format, list);
+	va_end(list);
+	return str;
+}
+const char* tflfl_vsprintf(char *buffer, int time, const char *file, int line,
+ const char *func, const char *label, const char *format, va_list list)
 {
 	char buf[DEBUG_BUF_LEN+1];
 	char buf_time[MAX_PATH_LEN+1] = "";
 	char buf_file_line[MAX_PATH_LEN+1] = "";
 	char buf_func[MAX_PATH_LEN+1] = "";
 	char buf_label[MAX_PATH_LEN+1] = "";
-	char buffer[DEBUG_BUF_LEN+1];
-	va_list list;
 
-	va_start(list, format);
 	vsnprintf(buf, DEBUG_BUF_LEN, format, list);
-	va_end(list);
 
 	switch (time) {
 	case 1:
@@ -93,6 +109,9 @@ void tflfl_d_printf_(int time, const char *file, int line,
 		break;
 	case 6:
 		snprintf_(buf_time, MAX_PATH_LEN, "%s ", cur_hhcmmcss_uuuuuu());
+		break;
+	case 9:
+		snprintf_(buf_time, MAX_PATH_LEN, "%s ", cur_yymmdd_hhmmss());
 		break;
 	default:
 		break;
@@ -108,13 +127,20 @@ void tflfl_d_printf_(int time, const char *file, int line,
 	}
 	snprintf_(buffer, DEBUG_BUF_LEN, "%s%s%s%s%s", buf_time, buf_file_line,
 	 buf_func, buf_label, buf);
+	return buffer;
+}
+
 #ifdef RING_BUF_LINES
-	strlcpy__(ring_buffer[ring_buf_idx], buffer, DEBUG_BUF_LEN);
+PRIVATE int ring_buf_idx = 0;
+PRIVATE char ring_buffer[RING_BUF_LINES][DEBUG_BUF_LEN+1] =
+ { "", "", "", "", "", "", "", "", "", "", };
+void put_to_ring_buffer(const char* str)
+{
+	strlcpy__(ring_buffer[ring_buf_idx], str, DEBUG_BUF_LEN);
 	if (++ring_buf_idx >= RING_BUF_LINES)
 		ring_buf_idx = 0;
-#endif
-	e_printf("%s", buffer);
 }
+#endif
 
 void output_last_d_printf(void)
 {
@@ -143,7 +169,6 @@ void set_debug_printf_output(int on1_off0)
 void debug_printf(const char *format, ...)
 {
 	va_list list;
-
 	va_start(list, format);
 	debug_vprintf(format, list);
 	va_end(list);

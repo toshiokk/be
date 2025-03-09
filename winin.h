@@ -62,6 +62,7 @@ int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx
 #define ASK_NO			0x01
 #define ASK_YES_NO		(ASK_YES | ASK_NO)
 
+						// positive answers ----------------------
 #define ANSWER_FORCE	9	// force save even if not-modified
 #define ANSWER_ALL		8	// save all if modified or replace all
 #define ANSWER_REDO		5	// Redo replace
@@ -69,7 +70,9 @@ int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx
 #define ANSWER_FORWARD	3	// search Forward
 #define ANSWER_BACKWARD	2	// search Backward
 #define ANSWER_YES		1	// Yes (save or replace)
+						// negative answers ----------------------
 #define ANSWER_NO		0	// No (save or replace)
+						// not valid answers ---------------------
 #define ANSWER_NONE		-1	// Not yet answered
 #define ANSWER_CANCEL	-2	// cancel string-replacing and not-return to beginning pos
 #define ANSWER_END		-3	// cancel string-replacing and return to beginning pos

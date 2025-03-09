@@ -121,7 +121,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int flags)
 	disp_status_bar_ing(_("Reading File %s ..."), shrink_str_to_scr_static(full_path));
 	create_edit_buf(full_path);
 	// set a edit-buffer not saveable if requested
-	SET_CUR_EBUF_STATE(buf_MODE, (flags & WRP1) ? buf_MODE_RO : 0);
+	SET_CUR_EBUF_STATE(buf_MODE, (flags & RDOL1) ? buf_MODE_RO : 0);
 	// memorize orginal file stat
 	memcpy__(&(get_epc_buf()->orig_file_stat), &st, sizeof(st));
 

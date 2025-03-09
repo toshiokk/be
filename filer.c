@@ -237,8 +237,6 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 			if (fkey_list == NULL) {
 				disp_status_bar_warn(_("No command assigned for the key: 0x%04x"),
 				 (UINT16)key_input);
-				progerr_printf(_("No command assigned for the key: 0x%04x\n"),
-				 (UINT16)key_input);
 			} else {
 				strlcpy__(get_cur_filer_pane_view()->next_file,
 				 get_cur_fv_cur_file_ptr()->file_name,

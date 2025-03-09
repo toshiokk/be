@@ -31,6 +31,7 @@ be_buf_t *push_undo_buf(be_buf_t *buf)
 	buf = buf_create_copy(buf);
 	buf_view_copy(&(buf->buf_views[get_editor_another_pane_idx()]),
 				 &(buf->buf_views[get_editor_cur_pane_idx()]));
+	buf_invalidate_file_path(buf);		// "/path/to/file" ==> "#/path/to/file"
 	return buf_insert_after(UNDO_BUFS_TOP_ANCH, buf);
 }
 // pop ==> remove buffer from top of buffers
@@ -42,7 +43,11 @@ be_buf_t *pop_undo_buf(void)
 }
 be_buf_t *push_redo_buf(be_buf_t *buf)
 {
-	return buf_insert_after(REDO_BUFS_TOP_ANCH, buf_create_copy(buf));
+	buf = buf_create_copy(buf);
+	buf_view_copy(&(buf->buf_views[get_editor_another_pane_idx()]),
+				 &(buf->buf_views[get_editor_cur_pane_idx()]));
+	buf_invalidate_file_path(buf);		// "/path/to/file" ==> "#/path/to/file"
+	return buf_insert_after(REDO_BUFS_TOP_ANCH, buf);
 }
 be_buf_t *pop_redo_buf(void)
 {
@@ -73,11 +78,11 @@ int delete_unredo_buf(be_buf_t *do_buf, be_buf_t *edit_buf)
 }
 int count_undo_bufs(void)
 {
-	return bufs_count_bufs(&undo_buffers);
+	return bufs_count_buf(&undo_buffers);
 }
 int count_redo_bufs(void)
 {
-	return bufs_count_bufs(&redo_buffers);
+	return bufs_count_buf(&redo_buffers);
 }
 
 #ifdef ENABLE_DEBUG
@@ -104,7 +109,6 @@ int check_undo_state_after_change(void)
 	 && count_undo_bufs() == undo_state_prev_count_undo_bufs) {
 		// but no undo info pushed
 		// warn it by setting unusual application color
-		set_work_space_color_warn();
 		disp_status_bar_err(_("!!!! No UNDO info pushed !!!!"));
 		progerr_printf("No UNDO info pushed for %s\n", undo_state_func_id_done);
 		error = 1;
@@ -280,8 +284,9 @@ PRIVATE be_line_t *restore_region_from_buffer(undo0_redo1_t undo0_redo1)
 PRIVATE be_line_t *delete_region_in_buf(be_buf_t *buf)
 {
 	// switch buffer to undo
-	if (switch_epc_buf_by_file_path(buf_get_abs_path(buf, NULL)) == 0) {
-		progerr_printf("No such buffer: %s\n", buf_get_abs_path(buf, NULL));
+	if (switch_epc_buf_by_file_path(buf_get_abs_path_valid(buf, NULL)) == 0) {
+		progerr_printf("No such buffer: [%s]\n", buf_get_file_path(buf, NULL));
+		progerr_printf("No such buffer: [%s]\n", buf_get_abs_path_valid(buf, NULL));
 		return CUR_EDIT_BUF_BOT_LINE;
 	}
 	be_line_t *edit_line = get_line_ptr_in_cur_buf_by_line_num(NODES_TOP_NODE(buf)->line_num);
@@ -293,8 +298,9 @@ PRIVATE be_line_t *delete_region_in_buf(be_buf_t *buf)
 }
 PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 {
-	if (switch_epc_buf_by_file_path(buf_get_abs_path(buf, NULL)) == 0) {
-		progerr_printf("No such buffer: %s\n", buf_get_abs_path(buf, NULL));
+	if (switch_epc_buf_by_file_path(buf_get_abs_path_valid(buf, NULL)) == 0) {
+		progerr_printf("No such buffer: [%s]\n", buf_get_file_path(buf, NULL));
+		progerr_printf("No such buffer: [%s]\n", buf_get_abs_path_valid(buf, NULL));
 		return CUR_EDIT_BUF_BOT_LINE;
 	}
 	for (be_line_t *undo_line = NODES_TOP_NODE(buf); IS_NODE_INT(undo_line);

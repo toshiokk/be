@@ -98,7 +98,7 @@ void start_title_bar_blinking();
 void stop_title_bar_blinking();
 void disp_title_bar_editor(void);
 
-int is_editor_view_mode_then_warn_it(void);
+int is_editor_unmodifiable_then_warn_it(void);
 
 #ifdef ENABLE_DEBUG
 void dump_cur_pointers(void);

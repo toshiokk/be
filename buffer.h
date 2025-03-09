@@ -41,11 +41,10 @@ typedef struct be_buf_view_t {
 
 typedef struct /*buf_state*/ {
 	unsigned char buf_MODE:2;				// bit 0,1
-#define buf_MODE_EDIT		0		// Normal buffer (modifiable)
-#define buf_MODE_LIST		1		// List
-#define buf_MODE_RO			2		// Read Only
-#define buf_MODE_ANCH		3		// this is not a node but an anchor
-	unsigned char buf_IS_LOCKED:1;			// bit 2
+#define buf_MODE_EDIT		0				// Normal buffer (modifiable)
+#define buf_MODE_RO			1				// Read Only open file (unmodifiable)
+#define buf_MODE_LIST		2				// List (unmodifiable)
+	unsigned char buf_LOCKED:1;				// bit 2
 	unsigned char buf_MODIFIED:1;			// bit 3
 	unsigned char buf_LINE_WRAP_MODE:1;		// bit 4
 #if 0 // 0
@@ -125,7 +124,7 @@ typedef struct be_bufs_t {
 	be_buf_t *cur_buf;			//!< current buffer
 } be_bufs_t;
 
-//! bufferss, collection of bufferss
+//! bufferss, collection of buffers
 typedef struct be_bufss_t {
 	char name[MAX_NAME_LEN+1];	//! name
 	be_bufs_t top_anchor;		//!< top    buffer
@@ -163,19 +162,20 @@ typedef struct be_bufss_t {
 //     be_buf_t redo-n
 //   be_bufs_t all_bufferss.bot_anchor
 
-be_buf_t *buf_create_node(const char *file_path);
+be_buf_t *buf_create_node(const char *full_path, unsigned char buf_mode_);
 be_buf_t *buf_free_node(be_buf_t *buf);
 
-be_buf_t *buf_init(be_buf_t *buf, const char *file_path);
+be_buf_t *buf_init(be_buf_t *buf, const char *full_path, unsigned char buf_mode_);
 void buf_views_init(be_buf_t *buf);
 void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf);
 void buf_view_copy(be_buf_view_t *dest, be_buf_view_t *src);
 void buf_set_view_x_cur_line(be_buf_t *buf, int pane_idx, be_line_t *line);
 be_buf_t *buf_init_anchors(be_buf_t *buf, char *initial_data);
-void buf_set_file_abs_path(be_buf_t *buf, const char *file_path);
 void buf_set_file_path(be_buf_t *buf, const char *file_path);
 const char* buf_get_file_path(be_buf_t *buf, char *file_path);
 const char* buf_get_abs_path(be_buf_t *buf, char *abs_path);
+void buf_invalidate_file_path(be_buf_t *buf);
+const char* buf_get_abs_path_valid(be_buf_t *buf, char *abs_path);
 BOOL buf_is_empty(be_buf_t *buf);
 be_buf_t *buf_insert_before(be_buf_t *buf, be_buf_t *new_buf);
 be_buf_t *buf_insert_after(be_buf_t *buf, be_buf_t *new_buf);
@@ -220,7 +220,7 @@ void buf_update_crc(be_buf_t *buf);
 int buf_check_crc(be_buf_t *buf);
 unsigned short buf_calc_crc(be_buf_t *buf);
 
-int buf_count_bufs(be_buf_t *buf);
+int buf_count_buf(be_buf_t *buf);
 be_buf_t *buf_make_buf_intermediate(be_buf_t *buf);
 be_buf_t *buf_get_another_buf(be_buf_t *buf);
 
@@ -237,7 +237,7 @@ void bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next);
 be_bufs_t *bufs_free_all_bufs(be_bufs_t *bufs);
 be_bufs_t *bufs_get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf);
 void bufs_fix_cur_buf(be_bufs_t *bufs);
-int bufs_count_bufs(be_bufs_t *bufs);
+int bufs_count_buf(be_bufs_t *bufs);
 
 //------------------------------------------------------------------------------
 be_buf_t *buf_get_buf_by_idx(be_buf_t *buf, int buf_idx);

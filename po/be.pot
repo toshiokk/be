@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-07 22:39+0900\n"
+"POT-Creation-Date: 2025-03-09 22:59+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,16 +17,48 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: ../buffer.c:331
+msgid "[EDIT]"
+msgstr ""
+
+#: ../buffer.c:332
+msgid "[RO]"
+msgstr ""
+
+#: ../buffer.c:333
+msgid "[LIST]"
+msgstr ""
+
 #: ../buffers.c:100
 #, c-format
 msgid "Freeing edit buffer %s ..."
 msgstr ""
 
-#: ../buffers.c:503 ../buffers.c:511
+#: ../buffers.c:349
+msgid "[Mod]"
+msgstr ""
+
+#: ../buffers.c:353
+msgid "[EMPTY]"
+msgstr ""
+
+#: ../buffers.c:362
+msgid "[ANCH]"
+msgstr ""
+
+#: ../buffers.c:365
+msgid "[WP]"
+msgstr ""
+
+#: ../buffers.c:368
+msgid "[LOCKED]"
+msgstr ""
+
+#: ../buffers.c:537 ../buffers.c:545
 msgid "Calculating CRC..."
 msgstr ""
 
-#: ../buffers.c:716 ../buffers.c:723
+#: ../buffers.c:750 ../buffers.c:757
 msgid "Tab size"
 msgstr ""
 
@@ -58,42 +90,22 @@ msgstr ""
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr ""
 
-#: ../editor.c:656 ../fileio.c:101
+#: ../editor.c:657 ../fileio.c:101
 msgid "New File"
 msgstr ""
 
-#: ../editor.c:658
-msgid "[Mod]"
-msgstr ""
-
-#: ../editor.c:661
-msgid "[RO]"
-msgstr ""
-
-#: ../editor.c:667
-msgid "[LOCKED]"
-msgstr ""
-
-#: ../editor.c:764
+#: ../editor.c:754
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:811
+#: ../editor.c:802
 msgid "Modification not allowed in VIEW mode application"
 msgstr ""
 
-#: ../editor.c:815
-msgid "Modification not allowed to READ-ONLY file"
-msgstr ""
-
-#: ../editor.c:819
+#: ../editor.c:808
 #, c-format
-msgid "Modification not allowed in %s buffer"
-msgstr ""
-
-#: ../editor.c:823
-msgid "Modification not allowed to LOCKED file"
+msgid "Modification not allowed to %s file"
 msgstr ""
 
 #: ../editor2.c:132
@@ -180,8 +192,9 @@ msgstr ""
 msgid "File re-loaded"
 msgstr ""
 
-#: ../editorfile.c:213 ../editorfile.c:362 ../editorfile.c:425
-#: ../editorfile.c:431 ../editorgoto.c:50 ../winin.c:80
+#. CANCEL/END
+#: ../editorfile.c:213 ../editorfile.c:367 ../editorfile.c:436
+#: ../editorfile.c:442 ../editorgoto.c:50 ../winin.c:80
 msgid "Cancelled"
 msgstr ""
 
@@ -200,32 +213,35 @@ msgstr ""
 msgid "Written to the file: %s"
 msgstr ""
 
-#: ../editorfile.c:311
+#: ../editorfile.c:309 ../editorfile.c:397
+msgid "This buffer is NOT closeable"
+msgstr ""
+
+#: ../editorfile.c:315
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editorfile.c:368
+#: ../editorfile.c:374
 msgid "All modified buffers are saved"
 msgstr ""
 
-#: ../editorfile.c:407
-msgid "This buffer is NOT saveable"
-msgstr ""
-
-#. saveable but not modified
-#: ../editorfile.c:412
+#: ../editorfile.c:419
 msgid "This buffer is NOT modified"
 msgstr ""
 
-#: ../editorfile.c:422
+#: ../editorfile.c:423
+msgid "This buffer is NOT saveable"
+msgstr ""
+
+#: ../editorfile.c:433
 msgid "Save modified buffer ?"
 msgstr ""
 
-#: ../editorfile.c:423
+#: ../editorfile.c:434
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr ""
 
-#: ../editorfile.c:434
+#: ../editorfile.c:445
 msgid "Buffer saved to file"
 msgstr ""
 
@@ -273,6 +289,7 @@ msgstr ""
 msgid "No next buffers"
 msgstr ""
 
+#. ///_D_(dump_editor_panes(get_cur_editor_panes()))
 #: ../editorgoto.c:233
 msgid "Switched to the next buffers"
 msgstr ""
@@ -281,7 +298,7 @@ msgstr ""
 msgid "Returned to previous pos"
 msgstr ""
 
-#: ../editorgoto.c:872
+#: ../editorgoto.c:877
 msgid "No valid directory in the current line"
 msgstr ""
 
@@ -364,15 +381,17 @@ msgstr ""
 msgid "Space characters are filled from column %d to %d"
 msgstr ""
 
-#: ../editorundo.c:108
+#. but no undo info pushed
+#. warn it by setting unusual application color
+#: ../editorundo.c:112
 msgid "!!!! No UNDO info pushed !!!!"
 msgstr ""
 
-#: ../editorundo.c:214
+#: ../editorundo.c:218
 msgid "Undo-buffer empty !!"
 msgstr ""
 
-#: ../editorundo.c:223
+#: ../editorundo.c:227
 msgid "Redo-buffer empty !!"
 msgstr ""
 
@@ -534,12 +553,7 @@ msgstr ""
 msgid "Cur dir changed: %s"
 msgstr ""
 
-#: ../filer.c:240
-#, c-format
-msgid "No command assigned for the key: 0x%04x\n"
-msgstr ""
-
-#: ../filer.c:250
+#: ../filer.c:248
 #, c-format
 msgid "Can not execute this function in filer List mode: [%s]"
 msgstr ""
@@ -950,11 +964,11 @@ msgstr ""
 msgid "[%s] found in %s search"
 msgstr ""
 
-#: ../search.c:236 ../search.c:788 ../winin.c:483
+#: ../search.c:236 ../search.c:788 ../winin.c:484
 msgid "Backward"
 msgstr ""
 
-#: ../search.c:236 ../search.c:788 ../winin.c:486
+#: ../search.c:236 ../search.c:788 ../winin.c:487
 msgid "Forward"
 msgstr ""
 
@@ -1014,30 +1028,30 @@ msgstr ""
 msgid "UP/PGUP:history, DOWN/PGDN:filer"
 msgstr ""
 
-#: ../winin.c:474
+#: ../winin.c:475
 msgid "Yes"
 msgstr ""
 
-#: ../winin.c:477
+#: ../winin.c:478
 msgid "No"
 msgstr ""
 
-#: ../winin.c:480
+#: ../winin.c:481
 msgid "All"
 msgstr ""
 
-#: ../winin.c:488
+#: ../winin.c:489
 msgid "Cancel"
 msgstr ""
 
-#: ../winin.c:490
+#: ../winin.c:491
 msgid "End"
 msgstr ""
 
-#: ../winin.c:493
+#: ../winin.c:494
 msgid "Undo"
 msgstr ""
 
-#: ../winin.c:496
+#: ../winin.c:497
 msgid "Redo"
 msgstr ""

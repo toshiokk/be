@@ -63,9 +63,6 @@ PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *s
 
 void init_histories(void)
 {
-	int hist_type_idx;
-	char buf_name[MAX_PATH_LEN+1];
-
 	// prepare ~/.be directory
 	if (is_path_exist(get_app_dir()) == 0) {
 		if (mkdir(get_app_dir(), S_IRUSR | S_IWUSR | S_IXUSR) < 0) {
@@ -78,13 +75,11 @@ void init_histories(void)
 			 get_app_dir());
 		}
 	}
-	for (hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
-		snprintf_(buf_name, MAX_PATH_LEN, "%s",
-		 get_history_file_path(hist_type_idx));
-		bufs_insert_buf_to_bottom(&history_buffers, buf_create_node(buf_name));
+	for (int hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
+		// Create a buffer of LIST mode
+		bufs_insert_buf_to_bottom(&history_buffers,
+		 buf_create_node(get_history_file_path(hist_type_idx), buf_MODE_LIST));
 		init_history(hist_type_idx);
-		// Set a buffer chooser mode
-		SET_BUF_STATE(get_history_buf(hist_type_idx), buf_MODE, buf_MODE_LIST);
 	}
 }
 

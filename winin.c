@@ -221,7 +221,7 @@ flf_d_printf("func_id: [%s]\n", func_id);
 		 || cmp_func_id(func_id, "doe_search_forward_first")
 		 || cmp_func_id(func_id, "doe_replace")) {
 			// get string from edit buffer's current cursor position
-			if (edit_bufs_count_bufs()) {
+			if (edit_bufs_count_buf()) {
 				char *line = EPCBVC_CL->data;
 				cursor_byte_idx = strlen_path(input_buf);
 				int start_byte_idx = byte_idx_from_byte_idx(line, EPCBVC_CLBI + cursor_byte_idx);
@@ -376,7 +376,8 @@ PRIVATE void blank_input_box(void)
 	//+--------------------------------------------------------------------+
 	//|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|
 	//+--------------------------------------------------------------------+
-	central_win_output_string(get_input_line_y()+1, 1, tio_blank_line(), central_win_get_columns()-2);
+	central_win_output_string(get_input_line_y()+1, 1, tio_blank_line(),
+	 central_win_get_columns()-2);
 }
 
 //------------------------------------------------------------------------------
@@ -398,7 +399,6 @@ PRIVATE const char *chars_redo = "Oo";				// redO
 int ask_yes_no(int flags, const char *msg, ...)
 {
 	int key_lines_save;
-	va_list ap;
 	char msg_buf[MAX_SCRN_LINE_BUF_LEN+1] = "";
 
 	key_lines_save = GET_APPMD(app_KEY_LINES);		// save KEY_LINES
@@ -406,6 +406,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 
 	// display prompt message
 	if (*msg) {
+		va_list ap;
 		va_start(ap, msg);
 		vsnprintf(msg_buf, MAX_SCRN_LINE_BUF_LEN+1, msg, ap);
 		va_end(ap);
@@ -570,7 +571,8 @@ PRIVATE void display_reverse_text(int yy, const char *text)
 			if (delimiter == '{') {
 				set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST, 0);
 			}
-			int columns = LIM_MAX(central_win_get_columns() - xx, utf8s_columns(buf, MAX_SCRN_COLS));
+			int columns = LIM_MAX(central_win_get_columns() - xx,
+			 utf8s_columns(buf, MAX_SCRN_COLS));
 			truncate_tail_utf8s_columns(buf, columns);
 			expand_utf8s_columns(buf, columns);
 			central_win_output_string(yy, xx, buf, -1);

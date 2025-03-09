@@ -144,7 +144,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 			// CURDIR: changed in editor
 			if (load_file_name_upp_low_(argv[optind],
-			 TUL0 | OOE1 | MOE0 | RECURS1 | WRP0 | FOL0 | LFH0) <= 0) {
+			 TUL0 | OOE1 | MOE0 | RECURS1 | RDOL0 | FOL0 | LFH0) <= 0) {
 				tio_beep();
 			}
 			tio_refresh();
@@ -154,7 +154,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 		}
 		end_check_break_key();
 	}
-	if (edit_bufs_count_bufs()) {
+	if (edit_bufs_count_buf()) {
 #ifdef ENABLE_HISTORY
 		if (goto_last_file_line_col_in_history() == 0) {
 			doe_switch_to_top_buffer();
@@ -209,16 +209,16 @@ void app_main_loop(void)
 	clear_app_stack_depth();
 	clear_whole_screen_update_timer();	// avoid screen flashing on the first key input
 #ifndef ENABLE_FILER
-	if (edit_bufs_count_bufs() == 0) {
+	if (edit_bufs_count_buf() == 0) {
 		doe_open_file_recursive();
 	}
-	while (edit_bufs_count_bufs()) {
+	while (edit_bufs_count_buf()) {
 		do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
 	}
 #else // ENABLE_FILER
-	if (edit_bufs_count_bufs()) {
+	if (edit_bufs_count_buf()) {
 		// application was started as a EDITOR
-		while (edit_bufs_count_bufs()) {
+		while (edit_bufs_count_buf()) {
 			do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
 		}
 	} else {
@@ -226,8 +226,8 @@ void app_main_loop(void)
 		for ( ; ; ) {
 			char file_path[MAX_PATH_LEN+1];
 			do_call_filer(0, APP_MODE_NORMAL, "", "", file_path, MAX_PATH_LEN);
-			if (edit_bufs_count_bufs() == 0) {
-flf_d_printf("no edit buffers: %d\n", edit_bufs_count_bufs());
+			if (edit_bufs_count_buf() == 0) {
+flf_d_printf("no edit buffers: %d\n", edit_bufs_count_buf());
 				// no file loaded in filer
 				break;
 			}

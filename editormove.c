@@ -331,7 +331,7 @@ PRIVATE int do_enter_utf8s(const char *utf8s);
 PRIVATE int do_enter_utf8c(const char *utf8c);
 int doe_control_code(void)
 {
-	if (is_editor_view_mode_then_warn_it()) {
+	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
 	}
 
@@ -345,7 +345,7 @@ int doe_control_code(void)
 }
 int doe_charcode(void)
 {
-	if (is_editor_view_mode_then_warn_it()) {
+	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
 	}
 
@@ -367,7 +367,7 @@ int doe_charcode(void)
 
 int doe_paste_from_history(void)
 {
-	if (is_editor_view_mode_then_warn_it()) {
+	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
 	}
 
@@ -429,7 +429,7 @@ PRIVATE int do_enter_utf8s(const char *utf8s)
 	char utf8c[MAX_UTF8C_BYTES+1];
 
 flf_d_printf("[%s]\n", utf8s);
-	if (is_editor_view_mode_then_warn_it()) {
+	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
 	}
 
@@ -469,7 +469,7 @@ int doe_carriage_return(void)
 	const char *ptr_s, *ptr_d;
 	int len_s, len_d;
 
-	if (is_editor_view_mode_then_warn_it()) {
+	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
 	}
 
@@ -529,7 +529,7 @@ int doe_backspace_limited(void)
 }
 int doe_backspace(void)
 {
-	if (is_editor_view_mode_then_warn_it()) {
+	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
 	}
 
@@ -567,7 +567,7 @@ int doe_backspace(void)
 
 int doe_delete_char(void)
 {
-	if (is_editor_view_mode_then_warn_it()) {
+	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
 	}
 
@@ -638,7 +638,7 @@ int doe_conv_low_letter(void)
 // "_camel" --> "_CAMEL"
 PRIVATE int doe_conv_upp_low_letter_(char mode)
 {
-	if (is_editor_view_mode_then_warn_it()) {
+	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
 	}
 

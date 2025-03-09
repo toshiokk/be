@@ -142,11 +142,14 @@ void win_select_cur_sub_win(int sub_win_idx)
 	cur_sub_win = &sub_win_rects[cur_sub_win_idx];
 }
 
+#ifdef ENABLE_DEBUG
 void dump_cur_sub_win(void)
 {
 	flf_d_printf("sub_win-%d: top-left(%d, %d), lines-columns(%d, %d)\n",
-	 cur_sub_win_idx, cur_sub_win->top, cur_sub_win->left, cur_sub_win->lines, cur_sub_win->columns);
+	 cur_sub_win_idx, cur_sub_win->top, cur_sub_win->left,
+	 cur_sub_win->lines, cur_sub_win->columns);
 }
+#endif // ENABLE_DEBUG
 
 //------------------------------------------------------------------------------
 int central_win_get_lines(void)

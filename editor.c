@@ -168,9 +168,9 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 			save_histories();
 #endif // ENABLE_HISTORY
 		}
-flf_d_printf("app_mode: %d, edit-buffers: %d\n", GET_APPMD(app_LIST_MODE), edit_bufs_count_bufs());
+flf_d_printf("app_mode: %d, edit-buffers: %d\n", GET_APPMD(app_LIST_MODE), edit_bufs_count_buf());
 		if (is_app_normal_mode()) {
-			if (edit_bufs_count_bufs() == 0) {
+			if (edit_bufs_count_buf() == 0) {
 flf_d_printf("all buffers closed\n");
 #ifdef ENABLE_HISTORY
 				update_history(HISTORY_TYPE_IDX_FILE, last_touched_file_pos_str);
@@ -189,7 +189,7 @@ flf_d_printf("all buffers closed\n");
 	key_macro_cancel_recording();
 #endif // ENABLE_HISTORY
 	if (editor_do_next == EF_INPUT_W_ENTER) {
-		if (str_buf && epc_buf_count_bufs()) {
+		if (str_buf && epc_buf_count_buf()) {
 			// get a text from editor current line
 			strlcpy__(str_buf, EPCBVC_CL->data, buf_len);
 		}
@@ -644,28 +644,18 @@ void disp_title_bar_editor(void)
 
 	int bufs_idx = bufs_get_bufs_idx_in_bufss(NODES_TOP_ANCH(&all_bufferss), get_epc_buf());
 	int buf_idx = buf_get_buf_idx(get_epc_buf());
+	int count_buf = epc_buf_count_buf();
 	const char *path = buf_get_file_path(get_epc_buf(), NULL);
 
 	tio_set_cursor_on(0);
 
 	//-------------------------------------------------------------------------
 	char separator_char = indication_of_app_mode();
-	snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%s%d%c%d%c%d:%s",
+	snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%s%d%c%d%c%d/%d:%s",
 	 root_notation(),
-	 get_editor_cur_pane_idx()+1, separator_char, bufs_idx, separator_char, buf_idx,
+	 get_editor_cur_pane_idx()+1, separator_char, bufs_idx, separator_char, buf_idx, count_buf,
 	 (path[0] == '\0') ? _("New File") : path);
-	if (CUR_EBUF_STATE(buf_MODIFIED)) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[Mod]"));
-	}
-	if (is_epc_buf_ro_file()) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[RO]"));
-	}
-	if (is_epc_buf_view_mode()) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, get_epc_buf_view_mode());
-	}
-	if (is_epc_buf_locked()) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[LOCKED]"));
-	}
+	strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, get_all_buf_state_str());
 
 	//-------------------------------------------------------------------------
 	// edit buffer cut mode
@@ -673,7 +663,7 @@ void disp_title_bar_editor(void)
 		strcat_printf(buf_bufs, MAX_SCRN_LINE_BUF_LEN, " %s", buf_cut_mode_str(get_epc_buf()));
 	}
 	// edit buffers
-	edit_bufs = edit_bufs_count_bufs();
+	edit_bufs = edit_bufs_count_buf();
 	strcat_printf(buf_bufs, MAX_SCRN_LINE_BUF_LEN, " e%s", zz_from_num(edit_bufs, buf_num));
 	// cut buffers
 	cut_bufs = count_cut_bufs();
@@ -719,8 +709,8 @@ PRIVATE void blink_editor_title_bar()
 	set_color_by_idx(ITEM_COLOR_IDX_TITLE, 0);
 	set_title_bar_color_by_state(
 	 CUR_EBUF_STATE(buf_CUT_MODE) ? ITEM_COLOR_IDX_TEXT_SELECTED1
-	  : ((is_epc_buf_saveable() == 0) ? ITEM_COLOR_IDX_WARNING3
-	   : (CUR_EBUF_STATE(buf_MODIFIED) ? ITEM_COLOR_IDX_WARNING1
+	  : ((is_epc_buf_modifiable() == 0) ? ITEM_COLOR_IDX_WARNING3
+	   : (is_epc_buf_modified() ? ITEM_COLOR_IDX_WARNING1
 	    : (is_any_edit_buf_modified() ? ITEM_COLOR_IDX_WARNING2
 	     : ITEM_COLOR_IDX_TITLE))),
 	 get_title_bar_inversion());
@@ -805,22 +795,18 @@ PRIVATE void disp_key_list_editor(void)
 
 //------------------------------------------------------------------------------
 
-int is_editor_view_mode_then_warn_it(void)
+int is_editor_unmodifiable_then_warn_it(void)
 {
+	// in Application mode
 	if (is_app_chooser_viewer_mode()) {
 		disp_status_bar_err(_("Modification not allowed in VIEW mode application"));
 		return 1;
 	}
-	if (is_epc_buf_ro_file()) {
-		disp_status_bar_err(_("Modification not allowed to READ-ONLY file"));
-		return 1;
-	}
-	if (is_epc_buf_view_mode()) {
-		disp_status_bar_err(_("Modification not allowed in %s buffer"), get_epc_buf_view_mode());
-		return 1;
-	}
-	if (is_epc_buf_locked()) {
-		disp_status_bar_err(_("Modification not allowed to LOCKED file"));
+
+	// in Buffer state
+	if (is_epc_buf_modifiable() == 0) {
+		disp_status_bar_err(_("Modification not allowed to %s file"),
+		 get_all_buf_unmodifiable_str());
 		return 1;
 	}
 	return 0;

@@ -50,6 +50,8 @@ char *delete_str(char *buffer, size_t start, len_t delete_len);
 char *insert_str_chr(char *buffer, size_t buf_len, size_t offset, char chr);
 char *insert_str(char *buffer, size_t buf_len, size_t offset,
  const char *string, len_t insert_len);
+char* str_prepend(char* buffer, size_t buf_len, const char* str);
+
 char *concat_file_path_separating_by_space(char *buffer, size_t buf_len,
  const char *string);
 const char *quote_file_path_static(const char *string);
@@ -67,7 +69,7 @@ size_t strlen_path(const char *str);
 
 char *strcat_printf(char *buffer, size_t buf_len, const char *format, ...);
 int snprintf_(char *buffer, size_t buf_len, const char *format, ...);
-char* sprintf_static(const char *format, ...);
+char* sprintf_s(const char *format, ...);
 char *strcpy__(char *dest, const char *src);
 char *strlcpy__(char *dest, const char *src, size_t len);
 char *strcat__(char *dest, const char *src);
