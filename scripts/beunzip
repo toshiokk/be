@@ -1,0 +1,3 @@
+echo tar -xvf "$1"
+tar -xvf "$1"
+exit $?

@@ -1,0 +1,5 @@
+arg1="$1"
+shift
+echo tar -czvf "$arg1" "$@"
+tar -czvf "$arg1" "$@"
+exit $?
