@@ -29,7 +29,7 @@
 #define IS_PTR_NULL(ptr)		((ptr) == NULL)
 #define IS_PTR_INVALID(ptr)		IS_PTR_NULL(ptr)
 
-///#define SAFE_NODE_TRACING
+////#define SAFE_NODE_TRACING
 
 #ifdef SAFE_NODE_TRACING
 #define NODE_NEXT(node)			(IS_PTR_NULL(node) ? (WARN_PTR(node), (node)) : (node)->next)
@@ -39,12 +39,14 @@
 #define NODE_PREV(node)			((node)->prev)
 #endif // SAFE_NODE_TRACING
 
-#define WARN_PTR(node)			(progerr_printf("[%s] is NULL\n", #node), sleep(1))
+#define WARN_PTR(node)			progerr_printf("[%s] is NULL\n", #node)
 
 // "NODES" are "BUFFERs" or "LINEs"
 // get BUFFER from BUFFERs or get LINE from BUFFER
 #define NODES_TOP_ANCH(nodes)		(&((nodes)->top_anchor))
+									// this may be bot-anchar if the nodes empty
 #define NODES_TOP_NODE(nodes)		(NODE_NEXT(NODES_TOP_ANCH(nodes)))
+									// this may be top-anchar if the nodes empty
 #define NODES_BOT_NODE(nodes)		(NODE_PREV(NODES_BOT_ANCH(nodes)))
 #define NODES_BOT_ANCH(nodes)		(&((nodes)->bot_anchor))
 
@@ -149,10 +151,10 @@ typedef struct be_line_t {
 	size_t buf_size;			//!< buffer size accumulated from line 1 to this line
 } be_line_t;
 
-typedef enum {
-	WITH_PREV,		// concatenate with previous
-	WITH_NEXT		// concatenate with next
-} concat_prev_next_t;
+//DDDDtypedef enum {
+//DDDD	WITH_PREV,		// concatenate with previous
+//DDDD	WITH_NEXT		// concatenate with next
+//DDDD} concat_prev_next_t;
 
 typedef enum {
 	INSERT_BEFORE,	// insert before

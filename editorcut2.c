@@ -435,12 +435,13 @@ int lines_selected(void)
 
 //------------------------------------------------------------------------------
 #define CUT_BUFFER_SEPARATOR	(const char*)(S_C_L "\n")
+#define MAX_CUT_BUFFERS			1000
 
 PRIVATE char *get_cut_buffer_file_path();
 
 int save_cut_buffers()
 {
-_FLF_
+_MFLF_
 	int ret = 0;
 	FILE *fp = fopen(get_cut_buffer_file_path(), "w");
 	if (fp == NULL) {
@@ -467,11 +468,12 @@ _FLF_
 	if (fclose(fp)) {
 		ret = EOF;
 	}
+_MFLF_
 	return ret;
 }
 int load_cut_buffers()
 {
-_FLF_
+_MFLF_
 	int ret = 0;
 	FILE *fp = fopen(get_cut_buffer_file_path(), "r");
 	if (fp == NULL) {
@@ -489,8 +491,7 @@ _FLF_
 			if (line_cnt == 0) {
 				push_cut_buf();
 			}
-			remove_line_tail_lf(buffer);
-			append_string_to_cur_cut_buf(buffer);
+			append_string_to_cur_cut_buf(remove_line_tail_lf(buffer));
 			line_cnt++;
 		}
 	}
@@ -500,7 +501,21 @@ _FLF_
 
 	bufs_renumber_all_bufs_from_top(&cut_buffers);
 
+_MFLF_
 	return ret;
+}
+int limit_cut_buffers()
+{
+	int buf_cnt = 0;
+	for (be_buf_t* buf = NODES_TOP_NODE(&cut_buffers); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+		if (buf_cnt < MAX_CUT_BUFFERS) {
+		} else {
+			buf = buf_unlink_free(buf);
+		}
+		buf_cnt++;
+	}
+flf_d_printf("buf_cnt: %d\n", buf_cnt);
+	return buf_cnt;
 }
 PRIVATE char *get_cut_buffer_file_path()
 {

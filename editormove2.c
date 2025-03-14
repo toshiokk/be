@@ -317,7 +317,7 @@ PRIVATE int calc_min_text_x_to_keep()
 PRIVATE int recalc_min_text_x_to_keep(int disp_width, int text_width, int margin,
  int cursor_text_x, int min_text_x)
 {
-fl_d_printf("disp_width: %d, text_width: %d, margin: %d, cursor_text_x: %d, min_text_x: %d\n",
+flf_d_printf("disp_width: %d, text_width: %d, margin: %d, cursor_text_x: %d, min_text_x: %d\n",
  disp_width, text_width, margin, cursor_text_x, min_text_x);
 	min_text_x = MIN_MAX_(
 	 // this value push 'min_text_x' to right.     ...==>|
@@ -326,11 +326,6 @@ fl_d_printf("disp_width: %d, text_width: %d, margin: %d, cursor_text_x: %d, min_
 	 // this value push 'min_text_x' to left.  |<==...
 	 cursor_text_x - margin);
 	return MIN_MAX_(0, min_text_x, LIM_MIN(0, text_width - disp_width));
-///	min_text_x = MIN_MAX_(
-///	 LIM_MAX(text_width - disp_width, cursor_text_x - (disp_width - margin)),
-///	 min_text_x,
-///	 LIM_MIN(0, cursor_text_x - margin));
-///	return MIN_MAX_(0, min_text_x, LIM_MIN(0, (text_width + 1) - disp_width - 1));
 
 // Condition of the below example: disp_width=40, margin=5, text_width=50
 //  cursor_text_x: [0--50], min_text_x: [0--10]

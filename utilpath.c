@@ -24,10 +24,68 @@
 #define IS_EQ_STR(gotten, expected)		(strcmp(gotten, expected) == 0)
 #define EQU_STR(gotten, expected)		(IS_EQ_STR(gotten, expected) ? '=' : '!')
 
+const char *get_starting_dir(void)
+{
+	static char starting_dir[MAX_PATH_LEN+1] = "";
+
+	if (strlen_path(starting_dir) == 0) {
+		if (strlen_path(getenv_pwd(starting_dir)) == 0) {
+			getcwd__(starting_dir);
+		}
+flf_d_printf("starting_dir: [%s]\n", starting_dir);
+	}
+	return starting_dir;
+}
+const char *get_home_dir(void)
+{
+	static char home_dir[MAX_PATH_LEN+1] = "";
+	char *env_home;
+	const struct passwd *userdata = 0;
+
+	if (strlen_path(home_dir) == 0) {
+		if (strlen(env_home = getenv__("HOME"))) {
+			strlcpy__(home_dir, env_home, MAX_PATH_LEN);
+		} else if ((userdata = getpwuid(geteuid())) != NULL) {
+			strlcpy__(home_dir, userdata->pw_dir, MAX_PATH_LEN);
+		} else {
+			strcpy__(home_dir, "/");
+		}
+flf_d_printf("home_dir: [%s]\n", home_dir);
+	}
+	return home_dir;
+}
+const char *get_tty_name(void)
+{
+	static char tty_name[MAX_PATH_LEN+1] = "";
+
+	if (strlen_path(tty_name) == 0) {
+		strlcpy__(tty_name, ttyname(0), MAX_PATH_LEN);	// /dev/pts/99
+		if (strlen_path(tty_name) == 0) {
+			strlcpy__(tty_name, cur_hhmmss(), MAX_PATH_LEN);
+		}
+flf_d_printf("tty_name: [%s]\n", tty_name);
+	}
+	return tty_name;
+}
+
+int check_wsl()
+{
+	static int checked = 0;
+	if (! checked) {
+		checked = (is_path_exist("/mnt/c") ? 1 : -1);
+	}
+	if (checked > 0) {
+		flf_d_printf("WSL(Linux running on Windows)\n");
+	} else {
+		flf_d_printf("Native Linux\n");
+	}
+	return checked > 0;
+}
+
 // change direcotry independently from filer view
 //   cur_path:      current directory before changing directory and after changing directory
 //   prev_path:     current directory before changing directory
-//   next_dir_sel:  directory to be pointed in filer after changing directory
+//   next_dir_sel:  directory to be selected in filer after changing directory
 int change_cur_dir_saving_prev_next_dir(const char *path,
  char *cur_path, char *prev_path, char *next_dir_sel)
 {
@@ -73,14 +131,14 @@ flf_d_printf("dir: [%s]\n", dir);
 
 //------------------------------------------------------------------------------
 // comparison of change current dir functions
-// | func                                     |save before change|may change to parent|
-// |------------------------------------------|------------------|--------------------|
-// | change_cur_dir_by_file_path_after_save   | Yes              | Yes                |
-// | change_cur_dir_by_file_path              | No               | Yes                |
-// | change_cur_dir_after_save                | Yes              | No                 |
-// | change_cur_dir                           | No               | No                 |
+// | func                                   |save before change|try parent|
+// |----------------------------------------|------------------|----------|
+// | change_cur_dir_by_file_path_after_save | Yes              | Yes      |
+// | change_cur_dir_by_file_path            | No               | Yes      |
+// | change_cur_dir_after_save              | Yes              | No       |
+// | change_cur_dir                         | No               | No       |
 
-int change_cur_dir_by_file_path_after_save(char *dir_save, char *file_path)
+int change_cur_dir_by_file_path_after_save(char *dir_save, const char *file_path)
 {
 	char dir[MAX_PATH_LEN+1];
 	strip_file_if_path_is_file(file_path, dir);
@@ -98,7 +156,7 @@ int change_cur_dir_after_save(char *dir_save, const char *dir)
 	return change_cur_dir(dir);
 }
 
-char *strip_file_if_path_is_file(char *path, char *dir)
+char *strip_file_if_path_is_file(const char *path, char *dir)
 {
 	if (is_path_regular_file(path) > 0) {
 		strip_file_from_path(path, dir);
@@ -113,16 +171,16 @@ char *strip_file_if_path_is_file(char *path, char *dir)
 // /dir1/dir2/     ==> /dir1/dir2
 // /dir1           ==> /
 // ""              ==> /
-char *strip_file_from_path(char *path, char *dir)
+// path and dir can be the same address
+char *strip_file_from_path(const char *path, char *dir)
 {
+	static char dir_[MAX_PATH_LEN+1];
 	char file[MAX_PATH_LEN+1];
 	if (dir == NULL) {
-		separate_path_to_dir_and_file(path, path, file);
-		return path;
-	} else {
-		separate_path_to_dir_and_file(path, dir, file);
-		return dir;
+		dir = dir_;
 	}
+	separate_path_to_dir_and_file(path, dir, file);
+	return dir;
 }
 
 // "filename.ext" ==> "ext"
@@ -240,6 +298,8 @@ int contain_redundant_slash(char *path)
 	return strstr(path, "//") != NULL;
 }
 
+// "//" ==> "/"
+// "///" ==> "/"
 // "////" ==> "/"
 // "//dir//file" ==> "/dir/file"
 char *remove_redundant_slash(char *path)
@@ -268,13 +328,11 @@ char *get_last_slash(char *path)
 int is_path_exist(const char *path)
 {
 	struct stat st;
-
-	return stat(path, &st) == 0;
+	return stat(path, &st) == 0;	// 1: exists, 0: does not exist
 }
 int is_path_regular_file(const char *path)
 {
 	struct stat st;
-
 	if (stat(path, &st) < 0)
 		return -1;				// no such file nor directory
 	return S_ISREG(st.st_mode);	// 1:file, 0:non-file
@@ -282,7 +340,6 @@ int is_path_regular_file(const char *path)
 int is_path_dir(const char *path)
 {
 	struct stat st;
-
 	if (stat(path, &st) < 0)
 		return -1;				// no such file nor directory
 	return S_ISDIR(st.st_mode);	// 1:directory, 0:non-directory
@@ -290,7 +347,6 @@ int is_path_dir(const char *path)
 int is_file_writable(const char *path)
 {
 	struct stat st;
-
 	if (stat(path, &st) < 0)
 		return -1;
 	return is_st_writable(&st);
@@ -298,7 +354,7 @@ int is_file_writable(const char *path)
 int is_st_writable(struct stat *st)
 {
 	if (st->st_uid == geteuid()) {
-		return (st->st_mode & S_IWUSR) != 0;
+		return (st->st_mode & S_IWUSR) != 0;	// 1: writable, 0: non-writable
 	} else if (st->st_gid == getegid()) {
 		return (st->st_mode & S_IWGRP) != 0;
 	}
@@ -307,13 +363,11 @@ int is_st_writable(struct stat *st)
 
 int is_dir_readable(const char *path)
 {
-	DIR *dir;
-
-	dir = opendir(path);
+	DIR *dir = opendir(path);
 	// If dir is NULL, don't call closedir()
 	if (dir)
 		closedir(dir);
-	return dir != NULL;
+	return dir != NULL;		// 1: readable, 0: non-readable
 }
 
 // dest: "/home/user/tools/be/file_name.ext"
@@ -348,89 +402,32 @@ int is_path_wildcard(char *path)
 }
 #endif // ENABLE_FILER
 
-char *get_home_dir(void)
-{
-	static char home_dir[MAX_PATH_LEN+1] = "";
-	char *env_home;
-	const struct passwd *userdata = 0;
-
-	if (strlen_path(home_dir) == 0) {
-		if (strlen(env_home = getenv__("HOME"))) {
-			strlcpy__(home_dir, env_home, MAX_PATH_LEN);
-		} else if ((userdata = getpwuid(geteuid())) != NULL) {
-			strlcpy__(home_dir, userdata->pw_dir, MAX_PATH_LEN);
-		} else {
-			strcpy__(home_dir, "/");
-		}
-flf_d_printf("home_dir: [%s]\n", home_dir);
-	}
-	return home_dir;
-}
-const char *get_starting_dir(void)
-{
-	static char starting_dir[MAX_PATH_LEN+1] = "";
-
-	if (strlen_path(starting_dir) == 0) {
-		if (strlen_path(getenv_pwd(starting_dir)) == 0) {
-			getcwd__(starting_dir);
-		}
-flf_d_printf("starting_dir: [%s]\n", starting_dir);
-	}
-	return starting_dir;
-}
-const char *get_tty_name(void)
-{
-	static char tty_name[MAX_PATH_LEN+1] = "";
-
-	if (strlen_path(tty_name) == 0) {
-		strlcpy__(tty_name, ttyname(0), MAX_PATH_LEN);	// /dev/pts/99
-		if (strlen_path(tty_name) == 0) {
-			strlcpy__(tty_name, cur_hhmmss(), MAX_PATH_LEN);
-		}
-flf_d_printf("tty_name: [%s]\n", tty_name);
-	}
-	return tty_name;
-}
-
-int check_wsl()
-{
-	static int checked = 0;
-	if (! checked) {
-		checked = (is_path_exist("/mnt/c") ? 1 : -1);
-	}
-	if (checked > 0) {
-		flf_d_printf("WSL(Linux running on Windows)\n");
-	} else {
-		flf_d_printf("Native Linux\n");
-	}
-	return checked > 0;
-}
-
+//------------------------------------------------------------------------------
+// change process's current directory
 PRIVATE char full_path_of_cur_dir[MAX_PATH_LEN+1] = "";
 PRIVATE char real_path_of_cur_dir[MAX_PATH_LEN+1] = "";
 int change_cur_dir(const char *dir)
 {
-	int ret;
-
-	if ((ret = chdir(dir)) == 0) {
-		// update "full_path" and "real_path"
-		strlcpy__(full_path_of_cur_dir, dir, MAX_PATH_LEN);
-		getcwd__(real_path_of_cur_dir);
+	if (chdir(dir) < 0) {
+		return 0;		// 0: error
 	}
-	return ret;		// 0: changed
-}
-const char *full_path_of_cur_dir_static()
-{
-	return full_path_of_cur_dir;
+	// update "full_path" and "real_path"
+	strlcpy__(full_path_of_cur_dir, dir, MAX_PATH_LEN);
+	getcwd__(real_path_of_cur_dir);
+	return 1;			// 1: changed
 }
 char *get_full_path_of_cur_dir(char *dir)
 {
-	static char dir_s_[MAX_PATH_LEN+1];
+	static char dir_[MAX_PATH_LEN+1];
 	if (dir == NULL) {
-		dir = dir_s_;
+		dir = dir_;
 	}
 	strlcpy__(dir, full_path_of_cur_dir, MAX_PATH_LEN);
 	return dir;
+}
+const char *full_path_of_cur_dir_s()
+{
+	return full_path_of_cur_dir;
 }
 char *get_real_path_of_cur_dir(char *dir)
 {
@@ -439,7 +436,6 @@ char *get_real_path_of_cur_dir(char *dir)
 }
 
 //------------------------------------------------------------------------------
-
 // get real current directory(symbolic link is expanded to absolute path)
 // NOTE: getcwd() returns real_path of the current directory
 char *getcwd__(char *cwd)
@@ -450,7 +446,7 @@ char *getcwd__(char *cwd)
 	return cwd;
 }
 
-// NOTE: "PWD" environment not automatically updated after changing current directory
+// NOTE: "PWD" environment is not automatically updated after changing current directory
 //       so you can use this only for getting application startup directory
 char *getenv_pwd(char *cwd)
 {
@@ -461,7 +457,6 @@ char *getenv_pwd(char *cwd)
 char *getenv__(char *env)
 {
 	char *ptr;
-
 	if ((ptr = getenv(env)) == NULL) {
 		ptr = "";
 	}
@@ -501,7 +496,7 @@ char *cat_dir_and_file(char *buf, const char *dir, const char *file)
 //  file_name          : e.g. "filename.ext"
 //						 not contain directory
 //  file_path          : e.g. "../src/filename.ext"
-//						 may contain symlinks and ".."
+//						 may be relative_path and contain symlinks and ".."
 //  full_path          : e.g. "/home/user/symlink/../src/filename.ext"
 //						 start by '/' and may contain symlinks and ".."
 //  normalized_path    : e.g. "/home/user/symlink/src/filename.ext"
@@ -593,13 +588,21 @@ PRIVATE char *normalize_full_path__(char *full_path, char *parent, char *child)
 
 //------------------------------------------------------------------------------
 
+int compare_file_path_in_abs_path(const char *file_path_a, const char *file_path_b)
+{
+	char abs_path_a[MAX_PATH_LEN+1];
+	char abs_path_b[MAX_PATH_LEN+1];
+	return strcmp(get_abs_path(file_path_a, abs_path_a), get_abs_path(file_path_b, abs_path_b));
+}
+
 // get absolute path (not include symlinks)
 char *get_abs_path(const char *path, char *buf)
 {
 	char full_path[MAX_PATH_LEN+1];
-
-	get_full_path(path, full_path);					// --> full_path
-	get_real_path(full_path, buf, MAX_PATH_LEN);	// --> abs path (real path)
+	get_full_path(path, full_path);			// --> full_path
+flf_d_printf("full_path: [%s]\n", full_path);
+	get_real_path(full_path, buf);			// --> abs path (real path)
+flf_d_printf("buf: [%s]\n", buf);
 	return buf;
 }
 
@@ -612,27 +615,25 @@ char *get_abs_path(const char *path, char *buf)
 // ./filename.ext               ==> /home/user/tools/src/filename.ext
 char *get_full_path(const char *path, char *buf)
 {
-	char user_name[MAX_PATH_LEN+1];
-	const char *user_dir;
-	char cur_dir[MAX_PATH_LEN+1];
-	size_t len;
-	const struct passwd *user_data = 0;
-
-	strlcpy__(buf, path, MAX_PATH_LEN);
 	if (is_abs_path(path)) {
 		// "/..." already full path
+		strlcpy__(buf, path, MAX_PATH_LEN);
 	} else if (path[0] == '~') {
 		// "~", "~user", "~/..." or "~user/..."
+		size_t len;
 		for (len = 0; path[len]; len++) {
 			if (path[len] == '/') {
 				break;
 			}
 		}
 		// Determine home directory using getpwuid() or getpwent(), don't rely on $HOME
+		const char *user_dir;
 		if (len == 1) {		// "~"
+			const struct passwd *user_data = 0;
 			user_data = getpwuid(geteuid());
 			user_dir = user_data->pw_dir;
 		} else {			// "~user"
+			char user_name[MAX_PATH_LEN+1];
 			strlcpy__(user_name, &path[1], len);
 			user_dir = get_user_home_dir(user_name);
 		}
@@ -643,18 +644,20 @@ char *get_full_path(const char *path, char *buf)
 		}
 		cat_dir_and_file(buf, user_dir, &path[len]);
 	} else {
-		// "./..." ==> "/home/user/tools/..."
-		get_full_path_of_cur_dir(cur_dir);
-		cat_dir_and_file(buf, cur_dir, path);
+		// "filename..."   ==> "/home/user/tools/..."
+		// "./filename..." ==> "/home/user/tools/..."
+		cat_dir_and_file(buf, full_path_of_cur_dir_s(), path);
+flf_d_printf("buf: [%s]\n", buf);
 	}
+flf_d_printf("buf: [%s]\n", buf);
 	normalize_full_path(buf);
 	return buf;
 }
 
-char *get_real_path(const char *path, char *buf, int buf_len)
+char *get_real_path(const char *path, char *buf)
 {
 #if defined(HAVE_REALPATH)
-	return realpath__(path, buf, buf_len);
+	return realpath__(path, buf, MAX_PATH_LEN);
 #else // HAVE_REALPATH
 #error "HAVE_REALPATH not defined"
 #endif // HAVE_REALPATH
@@ -844,7 +847,6 @@ PRIVATE const char *test_normalize_path_(const char *templ, const char *path)
 	static char buffer[MAX_PATH_LEN+1];
 	snprintf(buffer, MAX_PATH_LEN, templ, path);
 	normalize_full_path(buffer);
-	///flf_d_printf("[%s] ==> [%s]\n", path, buffer);
 	return buffer;
 }
 
@@ -881,7 +883,6 @@ PRIVATE void test_get_full_path_(const char *path)
 	char full_path[MAX_PATH_LEN+1];
 
 	get_full_path(path, full_path);
-	///flf_d_printf("path:[%s] ==> full_path:[%s]\n", path, full_path);
 }
 
 #if defined(HAVE_REALPATH)
@@ -900,15 +901,14 @@ void test_realpath(void)
 	test_realpath_("/home/user/tools/be/be/testfiles/symlinkd");
 	test_realpath_("/home/user/tools/be/be/testfiles/symlinkf");
 
-	///MY_UT_STR(test_realpath_("/dev/stdin"), "/proc/self/fd/0");
-	///MY_UT_STR(test_realpath_("/dev/fd"), "/proc/self/fd");
+	////MY_UT_STR(test_realpath_("/dev/stdin"), "/proc/self/fd/0");
+	////MY_UT_STR(test_realpath_("/dev/fd"), "/proc/self/fd");
 }
 PRIVATE const char *test_realpath_(const char *path)
 {
 	static char buf[MAX_PATH_LEN+1];
 
 	realpath__(path, buf, MAX_PATH_LEN);
-	///flf_d_printf("path:[%s] ==> buf:[%s]\n", path, buf);
 	return buf;
 }
 #endif // HAVE_REALPATH

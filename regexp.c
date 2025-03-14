@@ -122,16 +122,15 @@ int search_str_in_line_regexp(regexp_t *regexp, regexp_matches_t *regexp_matches
  const char *needle, int search_dir, int ignore_case, const char *haystack, int byte_idx)
 {
 	int cflags = ignore_case ? REG_ICASE : 0;
-	int ret;
-	int prev_match_byte_idx;
 
 	if (search_dir < 0) {
 		// backward search. The last match is what we need.
 		// First, search from the line head
-		ret = regexp_search(regexp, regexp_matches, needle,
+		int ret = regexp_search(regexp, regexp_matches, needle,
 		 haystack, 0, cflags, REG_NONE, 1);
 		if (ret == 0 && regexp_matches_start_idx(regexp_matches, 0) <= byte_idx) {
 			// Search forward until there is no more match.
+			int prev_match_byte_idx;
 			for ( ; ; ) {
 				prev_match_byte_idx = regexp_matches_start_idx(regexp_matches, 0);
 				// Second, search from the next byte of previous match pos
@@ -176,7 +175,6 @@ int search_str_in_line_strstr(const char *needle, matches_t *matches,
  int search_dir, int ignore_case, const char *haystack, int byte_idx)
 {
 	const char *match_start;
-
 	matches_clear(matches);
 	if (search_dir < 0) {
 		if (ignore_case == 0)
@@ -498,8 +496,7 @@ void regexp_matches_clear(regexp_matches_t *regexp_matches)
 	memset(regexp_matches, 0x00, sizeof(*regexp_matches));
 #endif
 }
-void regexp_matches_set_start_idx(regexp_matches_t *regexp_matches, int match_idx,
- int byte_idx)
+void regexp_matches_set_start_idx(regexp_matches_t *regexp_matches, int match_idx, int byte_idx)
 {
 	if (IS_IN_RANGE(0, match_idx, MAX_REGEX_MATCHES) == 0) {
 		_WARNING_
@@ -507,8 +504,7 @@ void regexp_matches_set_start_idx(regexp_matches_t *regexp_matches, int match_id
 	}
 	regexp_matches->matches[match_idx].rm_so = byte_idx;
 }
-void regexp_matches_set_end_idx(regexp_matches_t *regexp_matches, int match_idx,
- int byte_idx)
+void regexp_matches_set_end_idx(regexp_matches_t *regexp_matches, int match_idx, int byte_idx)
 {
 	if (IS_IN_RANGE(0, match_idx, MAX_REGEX_MATCHES) == 0) {
 		_WARNING_
@@ -516,8 +512,7 @@ void regexp_matches_set_end_idx(regexp_matches_t *regexp_matches, int match_idx,
 	}
 	regexp_matches->matches[match_idx].rm_eo = byte_idx;
 }
-void regexp_matches_set_match_len(regexp_matches_t *regexp_matches, int match_idx,
- int match_len)
+void regexp_matches_set_match_len(regexp_matches_t *regexp_matches, int match_idx, int match_len)
 {
 	if (IS_IN_RANGE(0, match_idx, MAX_REGEX_MATCHES) == 0) {
 		_WARNING_
@@ -562,12 +557,10 @@ PRIVATE char *conv_regex_pcre_to_posix(const char *regexp, char *regex_buf);
 int regcomp__(regex_t *preg, const char *regexp, int cflags)
 {
 	char buf[MAX_PATH_LEN+1];
-	int ret;
-
 #ifndef USE_PCRE
 	regexp = conv_regex_pcre_to_posix(regexp, buf);
 #endif // USE_PCRE
-	ret = regcomp(preg, regexp, REG_EXTENDED | cflags);	
+	int ret = regcomp(preg, regexp, REG_EXTENDED | cflags);	
 	if (ret) {
 		regerror(ret, preg, buf, MAX_PATH_LEN);
 		warning_printf("regerror: [%s]\n", buf);
@@ -578,19 +571,15 @@ int regcomp__(regex_t *preg, const char *regexp, int cflags)
 int regexec_1(const regex_t *preg, const char *haystack,
  regmatch_t pmatch[], int eflags)
 {
-	int ret;
-
-	ret = regexec_n(preg, haystack, 1, pmatch, eflags);
+	int ret = regexec_n(preg, haystack, 1, pmatch, eflags);
 	return ret;
 }
 
 int regexec_n(const regex_t *preg, const char *haystack,
  size_t nmatch, regmatch_t pmatch[], int eflags)
 {
-	int ret;
-
 	if (haystack != NULL && *haystack != '\0') {
-		ret = regexec(preg, haystack, nmatch, pmatch, eflags);
+		int ret = regexec(preg, haystack, nmatch, pmatch, eflags);
 		if (ret == 0 && pmatch) {
 			// check match-length != 0
 			if (pmatch[0].rm_so == pmatch[0].rm_eo) {
@@ -615,11 +604,8 @@ void regfree__(regex_t *preg)
 // So convert two bytes string "\t" to one byte character '\t'.
 PRIVATE char *conv_regex_pcre_to_posix(const char *regexp, char *regex_buf)
 {
-	const char *src;
-	char *dest;
-
-	dest = regex_buf;
-	for (src = regexp; *src && (dest - regex_buf < MAX_PATH_LEN-1); src++) {
+	char *dest = regex_buf;
+	for (const char *src = regexp; *src && (dest - regex_buf < MAX_PATH_LEN-1); src++) {
 		switch (*src) {
 		case '\\':
 			switch (*(src+1)) {

@@ -44,6 +44,7 @@ int lines_selected(void);
 
 int save_cut_buffers();
 int load_cut_buffers();
+int limit_cut_buffers();
 
 #endif // editorcut2_h
 

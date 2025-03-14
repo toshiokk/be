@@ -72,8 +72,6 @@ int get_disp_y_after_cursor_move(void);
 int get_edit_win_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *byte_idx);
 
 void adjust_curs_pos_after_cursor_move(cursor_horiz_vert_move_t cursor_move);
-void fix_buf_state_after_cursor_horiz_move(void);
-void fix_buf_state_after_cursor_vert_move(void);
 
 void update_min_text_x_to_keep(int text_x);
 

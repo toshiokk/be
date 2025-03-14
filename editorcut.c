@@ -132,6 +132,12 @@ PRIVATE int doe_cut_to_tail_(int delete0_cut1)
 	return 1;
 }
 
+int doe_clear_all_cut_bufs(void)
+{
+	clear_all_cut_bufs();
+	return 1;
+}
+
 int doe_tog_mark(void)
 {
 	if (IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
@@ -247,7 +253,7 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 {
 	if (cp_del_paste_pop & CDPP_REPLACE) {
 		// in view mode, DELETE and PASTE may not be performed
-		if (is_editor_view_mode_then_warn_it()) {
+		if (is_editor_unmodifiable_then_warn_it()) {
 			return -1;		// error
 		}
 	}
@@ -287,9 +293,6 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 			disp_status_bar_err(_("Cut-buffer empty !!"));
 		} else {
 			paste_text_from_cut_buf();
-#ifdef ENABLE_UNDO
-///PPP			undo_adjust_max_line();
-#endif // ENABLE_UNDO
 		}
 	}
 

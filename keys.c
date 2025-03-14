@@ -42,7 +42,7 @@ int cmp_func_id(const char *func_id_1, const char *func_id_2)
 }
 void *get_app_function_for_key(key_code_t key)
 {
-	func_key_list_t *fkey_list = get_fkey_entry_table_from_key(NULL, key, 0);
+	func_key_list_t *fkey_list = get_fkey_entry_table_from_key(NULL, key, 0, 1);
 	if (fkey_list) {
 		return (void *)fkey_list->func;
 	}
@@ -50,42 +50,48 @@ void *get_app_function_for_key(key_code_t key)
 }
 const char *get_func_id_from_key(key_code_t key)
 {
-	func_key_list_t *fkey_list = get_fkey_entry_table_from_key(editor_func_key_table, key, 0);
+	func_key_list_t *fkey_list = get_fkey_entry_table_from_key(editor_func_key_table, key, 0, 1);
 	if (fkey_list) {
 		return fkey_list->func_id;
 	}
 #ifdef ENABLE_FILER
-	fkey_list = get_fkey_entry_table_from_key(filer_func_key_table, key, 0);
+	fkey_list = get_fkey_entry_table_from_key(filer_func_key_table, key, 0, 1);
 	if (fkey_list) {
 		return fkey_list->func_id;
 	}
 #endif // ENABLE_FILER
 	return "";
 }
+// exec_lvl:
+//   `1`: get EXEC_LVL_1 and EXEC_LVL_2
+//   `2`: get EXEC_LVL_2
 func_key_list_t *get_fkey_entry_table_from_key(func_key_list_t *fkey_list, key_code_t key,
- int is_list_mode)
+ int list_mode, int exec_lvl)
 {
 	if (fkey_list == NULL) {
 		fkey_list = get_app_func_key_table();
 	}
 	for (int f_idx = 0; fkey_list[f_idx].explanation[0]; f_idx++) {
 		if (is_key_assigned_to_func(key, &fkey_list[f_idx])
-		 && (is_fkey_entry_executable(&fkey_list[f_idx], is_list_mode) >= 1)) {
+		 && (is_fkey_entry_executable(&fkey_list[f_idx], list_mode) >= exec_lvl)) {
 			return &fkey_list[f_idx];
 		}
 	}
 	return NULL;
 }
-int is_fkey_entry_executable(func_key_list_t *fkey_list, int is_list_mode)
+int is_fkey_entry_executable(func_key_list_t *fkey_list, int list_mode)
 {
-	// is_list_mode:
+	// list_mode:
 	//   0: normal_mode
 	//   1: list mode
 	//   -1: depend on is_app_chooser_viewer_mode()
-	if (is_list_mode < 0) {
-		is_list_mode = is_app_chooser_viewer_mode();
+	if (list_mode < 0) {
+		list_mode = is_app_chooser_viewer_mode();
 	}
-	if (is_list_mode == 0) {
+#define EXEC_LVL_0	0	// not executable
+#define EXEC_LVL_1	1	// partially executable
+#define EXEC_LVL_2	2	// fully executable
+	if (list_mode == 0) {
 		// normal mode
 		switch (fkey_list->list_mode) {
 		default:
@@ -94,10 +100,9 @@ int is_fkey_entry_executable(func_key_list_t *fkey_list, int is_list_mode)
 		case E_LM_CULN:
 		case F_LM_FLNM:
 		case F_LM_CUDI:
-			return 2;		// fully executable
+			return EXEC_LVL_2;		// fully executable
 		case EFLM_EXEC:
-		case EFLM_QUIT:
-			return 0;		// not executable
+			return EXEC_LVL_0;		// not executable
 		}
 	} else {
 		// list mode
@@ -105,14 +110,13 @@ int is_fkey_entry_executable(func_key_list_t *fkey_list, int is_list_mode)
 		default:
 		case EFAM_EXEC:
 		case EFLM_EXEC:
-		case EFLM_QUIT:
-			return 2;		// fully executable
+			return EXEC_LVL_2;		// fully executable
 		case E_LM_CULN:
 		case F_LM_FLNM:
 		case F_LM_CUDI:
-			return 1;		// partially executable
+			return EXEC_LVL_1;		// partially executable
 		case EFNM_EXEC:
-			return 0;		// not executable
+			return EXEC_LVL_0;		// not executable
 		}
 	}
 }
@@ -209,7 +213,6 @@ flf_d_printf("set_menu_key(%04x)\n", (UINT16)key);
 key_code_t get_menu_key(void)
 {
 	key_code_t key = K_NONE;
-
 	if (menu_key >= 0) {
 		key = menu_key;
 		menu_key = K_NONE;
@@ -232,6 +235,16 @@ void set_menu_key_for_do_app_menu_0(void)
 }
 
 //------------------------------------------------------------------------------
+#define WHOLE_UPDATE_INTERVAL_MSEC		60000	// 60[Sec]
+void clear_whole_screen_update_timer()
+{
+	update_msec_when_input_key();
+}
+int check_whole_screen_update_timer()
+{
+	return msec_past_input_key() >= WHOLE_UPDATE_INTERVAL_MSEC;
+}
+//------------------------------------------------------------------------------
 PRIVATE unsigned long msec_when_input_key = 0;
 void update_msec_when_input_key()
 {
@@ -248,7 +261,6 @@ PRIVATE key_code_t input_key_check_break_key(void);
 key_code_t input_key_loop(void)
 {
 	key_code_t key;
-
 	while ((key = input_key_wait_return()) < 0) {
 	}
 	return key;
@@ -256,7 +268,6 @@ key_code_t input_key_loop(void)
 key_code_t input_unmapped_key_loop(void)
 {
 	key_code_t key;
-
 	while ((key = tio_input_key()) < 0) {
 	}
 	return key;
@@ -266,7 +277,6 @@ key_code_t input_unmapped_key_loop(void)
 // |-----------------------|-----------------|
 // | repaint all of screen | 10000           |
 //
-#define WHOLE_UPDATE_INTERVAL_MSEC		60000	// 60[Sec]
 key_code_t input_key_wait_return(void)
 {
 	static key_code_t prev_key = KEY_NONE;
@@ -276,10 +286,10 @@ key_code_t input_key_wait_return(void)
 	}
 	prev_key = key;
 	if (key >= 0) {
-		if (msec_past_input_key() >= WHOLE_UPDATE_INTERVAL_MSEC) {
+		if (check_whole_screen_update_timer()) {
 			tio_flash_screen(0);
 		}
-		update_msec_when_input_key();
+		clear_whole_screen_update_timer();
 	}
 	return key;
 }
@@ -321,7 +331,6 @@ PRIVATE key_code_t input_key_timeout(void)
 key_code_t input_key_macro(void)
 {
 	key_code_t key = K_NONE;
-
 	if (IS_KEY_VALID(key = get_menu_key())) {
 		return key;
 	}
@@ -383,7 +392,6 @@ flf_d_printf("sigint_signaled\n");
 PRIVATE key_code_t input_key_check_break_key(void)
 {
 	key_code_t key;
-
 	if (is_restoring_check_break_key()) {
 		// restoring key strokes
 		key = key_codes_check_break_key[key_codes_restored];
@@ -455,7 +463,6 @@ flf_d_printf("KEY_DC ==> DEL\n");
 //------------------------------------------------------------------------------
 key_name_table_t key_name_table[] = {
 //							   12345678
-///	{ NUM_STR(K_NONE)		, "NONE", },
 	{ NUM_STR(K_C_AT)		, "C-@", },
 	{ NUM_STR(K_C_A)		, "C-A", },
 	{ NUM_STR(K_C_B)		, "C-B", },
@@ -705,7 +712,6 @@ const char* key_str_from_key_code(key_code_t key_code)
 			// "{M-(}", "\{M-)}"
 			snprintf(buf_s_, KEY_CODE_STR_LEN+1, "{%s}", str);
 		}
-/////flf_d_printf("%04x ==> [%s]\n", (UINT16)key_code, buf_s_);
 	}
 	return buf_s_;
 }
@@ -769,12 +775,10 @@ const char *long_key_name_from_key_code(key_code_t key_code, char *buf)
 		buf = buf_s_;
 	}
 	if (IS_KEY_INVALID(key_code)) {
-		return strnset__(buf, '-', MAX_KEY_NAME_LEN);
+		return strnset__(buf, '-', MAX_KEY_NAME_LEN);	// "--------"
 	}
-/////flf_d_printf("%04x ==>\n", (UINT16)key_code);
 	for (int f_idx = 0; f_idx < ARRAY_SIZE_OF(key_name_table); f_idx++) {
 		if (key_name_table[f_idx].key_code == key_code) {
-/////flf_d_printf(" ==> [%s]\n", key_name_table[f_idx].key_name);
 			return key_name_table[f_idx].key_name;
 		}
 	}
@@ -824,10 +828,8 @@ const char *short_key_name_from_key_name(const char *key_name, char *buf)
 
 key_code_t key_code_from_key_name(char *key_name)
 {
-/////flf_d_printf("[%s]\n", key_name);
 	for (int f_idx = 0; f_idx < ARRAY_SIZE_OF(key_name_table); f_idx++) {
 		if (strcmp(key_name_table[f_idx].key_name, key_name) == 0) {
-/////flf_d_printf(" ==> <%04x>\n", (UINT16)(key_name_table[f_idx].key_code));
 			return key_name_table[f_idx].key_code;
 		}
 	}
@@ -869,7 +871,6 @@ int is_key_utf8_byte(key_code_t key)
 
 int is_key_char(key_code_t key)
 {
-///#define IS_CHAR_KEY(key)	((' ' <= (key)) && ((key) < 0x0100))
 	return (key == ' ') || is_key_graph(key) || is_key_utf8_byte(key);
 }
 //------------------------------------------------------------------------------

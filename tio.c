@@ -22,7 +22,6 @@
 #include "headers.h"
 
 PRIVATE char tio_blank_line_buf[MAX_SCRN_LINE_BUF_LEN+1] = "";		// A blank line ' '
-PRIVATE char tio_blank_line_2_buf[MAX_SCRN_LINE_BUF_LEN+1] = "";	// A blank line " "
 
 #ifdef START_UP_TEST
 void tio_test(void)
@@ -37,7 +36,7 @@ void tio_test(void)
 
 	tio_init();
 
-	tio_fill_screen(0);
+	tio_fill_screen();
 	tio_set_cursor_on(1);
 	tio_set_attrs(-1, -1, 0);
 #ifdef ENABLE_NCURSES
@@ -56,7 +55,7 @@ void tio_test(void)
 		}
 		switch (key) {
 		case 'c':
-			tio_fill_screen(0);
+			tio_fill_screen();
 			break;
 		case 'o':
 			tio_set_cursor_on(1);
@@ -138,8 +137,6 @@ int tio_is_initialized(void)
 int tio_init(void)
 {
 	strnset__(tio_blank_line_buf, ' ', MAX_SCRN_LINE_BUF_LEN);
-	///strnset__(tio_blank_line_2_buf, '_', MAX_SCRN_LINE_BUF_LEN);
-	utf8s_strnset__(tio_blank_line_2_buf, " ", MAX_SCRN_LINE_BUF_LEN);
 #ifdef ENABLE_NCURSES
 	flf_d_printf("Using curses (cursesif)\n");
 	curses_init();
@@ -202,7 +199,7 @@ int tio_resume(void)
 //  1. signal sigwinch()
 // How to get win size:
 //  1. ioctl TIOCGWINSZ
-//  2. terminal set ("0x1b[999;999R") and get("\x1b[6n") cursor pos.
+//  2. set cursor pos ("0x1b[999;999R") and get cursor pos ("\x1b[6n")
 int tio_check_update_terminal_size(void)
 {
 	if (is_sigwinch_signaled()) {
@@ -336,26 +333,22 @@ void tio_clear_screen(void)
 void tio_flash_screen(int delay)
 {
 	tio_clear_screen();
-///	tio_set_attrs(CL_WH, CL_BK, 1);
-///	tio_fill_screen(1);
 	MSLEEP(delay);
-///	tio_set_attrs(CL_WH, CL_BK, 0);
-///	tio_fill_screen(0);
 }
-void tio_fill_screen(int type)
+void tio_fill_screen()
 {
-	tio_fill_lines(0, tio_get_lines(), type);
+	tio_fill_lines(0, tio_get_lines());
 	tio_refresh();
 }
-void tio_fill_lines(int line_1, int line_2, int type)
+void tio_fill_lines(int line_1, int line_2)
 {
 	for (int yy = line_1; yy < line_2; yy++) {
-		tio_output_string(yy, 0, tio_blank_line(type), tio_get_columns());
+		tio_output_string(yy, 0, tio_blank_line(), tio_get_columns());
 	}
 }
 const char *tio_blank_line(int type)
 {
-	return (type == 0) ? tio_blank_line_buf : tio_blank_line_2_buf;
+	return tio_blank_line_buf;
 }
 
 void tio_output_string(int yy, int xx, const char *string, int bytes)
@@ -461,7 +454,8 @@ void set_term_raw(void)
 	tcgetattr(STDIN_FILENO, &term);
 	cfmakeraw(&term_raw);
 	term.c_iflag = term_raw.c_iflag;
-///	term.c_oflag = term_raw.c_oflag;
+//TTT
+	term.c_oflag = term_raw.c_oflag;
 	term.c_cflag = term_raw.c_cflag;
 	term.c_lflag = term_raw.c_lflag;
 	tcsetattr(STDIN_FILENO, TCSANOW, &term);

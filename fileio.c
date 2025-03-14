@@ -56,7 +56,7 @@ int load_file_into_new_buf(const char *full_path, int flags)
 	}
 	// successfully loaded into new buffer
 
-	lock_epc_buf_if_already_locked((flags & FOL1) == 0);
+	lock_epc_buf_if_file_already_locked((flags & FOL1) == 0);
 	append_magic_line();
 	buf_set_view_x_cur_line(get_epc_buf(), 0, CUR_EDIT_BUF_TOP_LINE);
 	buf_set_view_x_cur_line(get_epc_buf(), 1, CUR_EDIT_BUF_TOP_LINE);
@@ -113,17 +113,16 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int flags)
 	// Max. file size loadable is half of free memory.
 	if ((st.st_size / 1000) >= get_mem_free_in_kb(1) / 2) {
 		// file size too large
-///		if (flags & MOE1) {
-			disp_status_bar_err(_("[%s] is too large to read into buffer"),
-			 shrink_str_to_scr_static(full_path));
-///		}
+		disp_status_bar_err(_("[%s] is too large to read into buffer"),
+		 shrink_str_to_scr_static(full_path));
 		return -3;		// open error
 	}
 	// regular file
 	disp_status_bar_ing(_("Reading File %s ..."), shrink_str_to_scr_static(full_path));
 	create_edit_buf(full_path);
-	// Set a edit-buffer not saveable
-	SET_CUR_EBUF_STATE(buf_MODE, (flags & WRP1) ? buf_MODE_RO : 0);
+	// set a edit-buffer not saveable if requested
+	SET_CUR_EBUF_STATE(buf_MODE, (flags & RDOL1) ? buf_MODE_RO : 0);
+	// memorize orginal file stat
 	memcpy__(&(get_epc_buf()->orig_file_stat), &st, sizeof(st));
 
 	ret = load_file_into_cur_buf__(full_path, flags & MOE1);
@@ -141,23 +140,18 @@ int backup_and_save_cur_buf_ask(void)
 	char file_path[MAX_PATH_LEN+1];
 	int ret = 0;
 
-	// write to "abs_path" so that not change symlink but change file pointed by symlink
-	strlcpy__(file_path, get_epc_buf()->abs_path_, MAX_PATH_LEN);
-	if (is_strlen_0(file_path)) {
-		if (input_new_file_name__ask(file_path) <= 0) {
-			return -1;
-		}
+	// write to "abs_path" to avoid changing symlink but change a file pointed by symlink
+	buf_get_file_path(get_epc_buf(), file_path);
+	if (is_strlen_0(file_path) || file_path[0] == '#') {
+		return -1;
 	}
-	if (buf_is_orig_file_updated(get_epc_buf()) > 0) {
+	if (buf_has_orig_file_updated(get_epc_buf()) > 0) {
 		// file is modified by another program
 		ret = ask_yes_no(ASK_YES_NO,
 		 _("File has modified by another program, OVERWRITE ?"));
 		if (ret < 0) {
 			return -1;
 		}
-	}
-	if (is_strlen_0(file_path) || file_path[0] == '#') {
-		return -1;
 	}
 	if ((ret = backup_and_save_cur_buf(file_path)) < 0) {
 		disp_status_bar_err(_("File [%s] can NOT be written !!"),
@@ -166,6 +160,13 @@ int backup_and_save_cur_buf_ask(void)
 	return ret;
 }
 
+// all cases on write_file_to():
+//  |writing to the|current buffer state|another file state   |what to do|
+//  |--------------|--------------------|---------------------|----------|
+//  |current file  |not locked          |--                   |write to it         |
+//  |current file  |locked              |--                   |can NOT write to it |
+//  |another file  |--                  |has not locked       |unlock prev., write and lock it|
+//  |another file  |--                  |has locked by someone|can NOT write to it |
 int input_new_file_name__ask(char *file_path)
 {
 	for ( ; ; ) {
@@ -174,43 +175,37 @@ int input_new_file_name__ask(char *file_path)
 		 _("File Name to Write:")))) {
 			return 0;
 		}
-		if (is_path_exist(file_path)) {
-			if (is_path_regular_file(file_path) > 0) {
-				char full_path[MAX_PATH_LEN+1];
-				get_abs_path(file_path, full_path);
-				if (flock_is_locked(full_path)) {
-					int ret = ask_yes_no(ASK_YES_NO,
-					 _("File is locked, can not WRITE it"));
-					if (ret < 0) {
-						return 0;		// cancelled
-					}
-					continue;
-				}
-				// ask overwrite
-				int ret = ask_yes_no(ASK_YES_NO,
-				 _("File exists, OVERWRITE it ?"));
-				if (ret < 0) {
-					return 0;		// cancelled
-				}
-				if (ret == 0) {
-					continue;
-				}
-			} else {
-				// ask non regular file
-				int ret = ask_yes_no(ASK_YES_NO,
-				 _("Path is not file, can not WRITE it"));
-				if (ret < 0) {
-					return 0;		// cancelled
-				}
-				continue;
+#ifdef ENABLE_FILER
+		if (is_path_wildcard(file_path)) {
+			continue;
+		}
+#endif // ENABLE_FILER
+		if (is_path_exist(file_path) == 0) {
+			// file of the path is not exist
+ 			break;
+		}
+		if (is_path_regular_file(file_path) <= 0) {
+			// ask non regular file
+			int ret = ask_yes_no(ASK_YES_NO,
+			 _("Path is not file, can not WRITE it"));
+			if (ret < 0) {
+				return 0;		// cancelled
 			}
+			continue;
+		}
+		// ask overwrite
+		int ret = ask_yes_no(ASK_YES_NO,
+		 _("File exists, OVERWRITE it ?"));
+		if (ret < 0) {
+			return 0;		// cancelled
+		}
+		if (ret == 0) {
+			continue;
 		}
 		break;
 	}
 	return 1;		// input
 }
-
-//------------------------------------------------------------------------------
 
 int backup_and_save_cur_buf(const char *file_path_to)
 {
@@ -239,8 +234,8 @@ int backup_and_save_cur_buf(const char *file_path_to)
 		}
 	}
 
-	// file may be overwritten, get current file stat into orig_file_stat
-	stat(get_epc_buf()->file_path_, &(get_epc_buf()->orig_file_stat));
+	// file was overwritten, get current file stat into orig_file_stat
+	stat(buf_get_file_path(get_epc_buf(), NULL), &(get_epc_buf()->orig_file_stat));
 	update_cur_buf_crc();
 
 	disp_status_bar_ing(P_(_("%d line written"),
@@ -866,6 +861,9 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 PRIVATE int cnt_files_loaded = -1;	// -1: no file switched/loaded, 0: switched, 1--: loaded
 void clear_files_loaded(void)
 {
+#ifdef ENABLE_HISTORY
+	if (update_history_dir_operate()) {		_WARNING_	}
+#endif // ENABLE_HISTORY
 	cnt_files_loaded = -1;
 }
 int add_files_loaded(int files)	// files = 0: not loaded but switched

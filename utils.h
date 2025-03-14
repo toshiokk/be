@@ -115,13 +115,13 @@ const char *cur_ctime_cdate(int time0_date1);
 const char *cur_cdate(void);
 const char *cur_ctime(void);
 const char *cur_hhmmss(void);
+const char *cur_yymmdd_hhmmss(void);
 
 #define USEC_VAR	long usec = get_usec();
 #define USEC_BEGIN	usec = get_usec();
 #define USEC_END	flf_d_printf("%d[usec]\n", get_usec() - usec); USEC_BEGIN
 char *get_ssspuuuuuu(char *buf);
 char *get_sssssspmmm(char *buf);
-/////time_t get_sec(void);
 unsigned long get_msec(void);
 unsigned long get_usec(void);
 const char *cur_hhcmmcss_mmm(void);

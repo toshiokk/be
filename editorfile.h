@@ -23,7 +23,7 @@
 #define editorfile_h
 
 // "doe_..."  DO Editor function
-int doe_open_file(void);
+int doe_open_file_recursive(void);
 int doe_open_file_ro(void);
 int doe_open_locked_file(void);
 int doe_open_new_file(void);
@@ -58,7 +58,7 @@ typedef enum {
 
 int write_all_ask(int yes_no, close_after_save_t close);
 int close_all_not_modified(void);
-int close_all();
+int close_all_saved();
 int write_file_ask(int yes_no, close_after_save_t close);
 
 //------------------------------------------------------------------------------

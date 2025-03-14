@@ -32,12 +32,14 @@ int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf, in
 #endif // ENABLE_HISTORY
 
 	editor_panes_t next_eps;
-
+#ifdef ENABLE_FILER
+	filer_panes_t next_fps;
+#endif // ENABLE_FILER
 	if (push_win) {
 #ifdef ENABLE_FILER
-		push_app_win(&next_eps, buf, NULL);
+		push_app_stack(&next_eps, buf, &next_fps);
 #else // ENABLE_FILER
-		push_app_win(&next_eps, buf);
+		push_app_stack(&next_eps, buf);
 #endif // ENABLE_FILER
 	}
 
@@ -55,10 +57,13 @@ flf_d_printf("push_win:%d --> ret: %d\n", push_win, ret);
 	_mlc_check_count
 
 	if (push_win) {
-		// return setting newly loaded buffer as a current buffer
-		pop_app_win(ret == EF_LOADED);
+		// editor: refrect the callee's cur-buf to the caller's cur-buf if file loaded additionaly
+		// filer : propagate the current directory only when called as a normal-mode
+		pop_app_stack(ret == EF_LOADED, list_mode == 0);
 		update_screen_app(1, 1);
 	}
+
+	editor_do_next = EF_NONE;
 
 	return ret;		// EF_...
 }
@@ -84,8 +89,6 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 
 	// Main input loop
 	for ( ; ; ) {
-///		mflf_d_printf("key_input: (%s):%d\n",
-///		 short_key_name_from_key_code(key_input, NULL), IS_KEY_VALID(key_input));
 		editor_do_next = EF_NONE;
 		if (key_macro_is_playing_back()) {
 			// During playing back key-macro, do not update screen for speed up.
@@ -118,16 +121,13 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 			matches_clear(&matches__);
 #endif // ENABLE_REGEX
 			func_key_list_t *fkey_list;
-			if ((fkey_list = get_fkey_entry_table_from_key(editor_func_key_table, key_input, -1))
-			 == NULL) {
+			if ((fkey_list = get_fkey_entry_table_from_key(
+			 editor_func_key_table, key_input, -1, 1)) == NULL) {
 				disp_status_bar_warn(_("No command assigned for the key: 0x%04x"),
 				 (UINT16)key_input);
 			} else {
 				if (is_app_chooser_mode()) {
 					switch (fkey_list->list_mode) {
-					case EFLM_QUIT:	// not executable in editor List mode
-						editor_do_next = EF_QUIT;
-						break;
 					case EFNM_EXEC:	// not executable in editor List mode
 						disp_status_bar_done(
 						 _("Can not execute this function in editor List mode: [%s]"),
@@ -135,7 +135,7 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 						editor_do_next = EF_QUIT;
 						break;
 					case E_LM_CULN:	// not executable in editor List mode, get a text
-						editor_do_next = EF_INPUT;
+						editor_do_next = EF_INPUT_W_ENTER;
 						break;
 					case EFLM_EXEC:	// executable in editor List mode
 					case EFAM_EXEC:
@@ -152,14 +152,13 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 #endif // defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
 					search_clear(&search__);
 					mflf_d_printf("{{{{ CALL_FUNC_EDITOR [%s]\n", fkey_list->func_id);
-					disp_status_bar_ing(_(fkey_list->desc));	// show what about to do
 					//=========================
 					(*fkey_list->func)();	// call function "doe__...()"
 					//=========================
 					mflf_d_printf("}}}} editor_do_next: EF__%d\n", editor_do_next);
 					easy_buffer_switching_count();
 #if defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
-					check_undo_state_after_change();
+					if (check_undo_state_after_change()) {	_WARNING_	}
 #endif // defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
 				}
 			}
@@ -167,9 +166,9 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 			save_histories();
 #endif // ENABLE_HISTORY
 		}
-flf_d_printf("app_mode: %d, edit-buffers: %d\n", GET_APPMD(app_LIST_MODE), edit_bufs_count_bufs());
+flf_d_printf("app_mode: %d, edit-buffers: %d\n", GET_APPMD(app_LIST_MODE), edit_bufs_count_buf());
 		if (is_app_normal_mode()) {
-			if (edit_bufs_count_bufs() == 0) {
+			if (edit_bufs_count_buf() == 0) {
 flf_d_printf("all buffers closed\n");
 #ifdef ENABLE_HISTORY
 				update_history(HISTORY_TYPE_IDX_FILE, last_touched_file_pos_str);
@@ -187,8 +186,8 @@ flf_d_printf("all buffers closed\n");
 #ifdef ENABLE_HISTORY
 	key_macro_cancel_recording();
 #endif // ENABLE_HISTORY
-	if (editor_do_next == EF_INPUT) {
-		if (str_buf && epc_buf_count_bufs()) {
+	if (editor_do_next == EF_INPUT_W_ENTER) {
+		if (str_buf && epc_buf_count_buf()) {
 			// get a text from editor current line
 			strlcpy__(str_buf, EPCBVC_CL->data, buf_len);
 		}
@@ -235,12 +234,12 @@ const char *get_clipboard_file_path()
 }
 int save_cut_buf_to_clipboard_file()
 {
-	return save_buf_to_file(CUT_BUFS_TOP_NODE, get_clipboard_file_path());
+	return save_buf_to_file(CUT_BUFS_TOP_BUF, get_clipboard_file_path());
 }
 
 int load_clipboard_into_cut_buf()
 {
-	return load_file_into_buf(CUT_BUFS_TOP_NODE, get_clipboard_file_path());
+	return load_file_into_buf(CUT_BUFS_TOP_BUF, get_clipboard_file_path());
 }
 
 int doe_read_clipboard_into_cur_char()
@@ -270,24 +269,31 @@ int doe_read_clipboard_into_cur_pos_(int char0_line1)
 }
 
 //------------------------------------------------------------------------------
+PRIVATE int doe_run_line__(int flags, int clbi, int input);
 int doe_run_line_soon(void)
 {
-	return doe_run_line_soon_(LOGGING0);
+	return doe_run_line__(LOGGING0, 0, 0);
 }
-int doe_run_line_soon_w_log(void)
+int doe_run_line_input(void)
 {
-	return doe_run_line_soon_(LOGGING2);
+	return doe_run_line__(LOGGING0, EPCBVC_CLBI, 1);
 }
-int doe_run_line_soon_(int logging)
+PRIVATE int doe_run_line__(int flags, int clbi, int input)
 {
 	char buffer[MAX_PATH_LEN+1];
-
 	// NOTE: EPCBVC_CL->data may be in history buffer and freed in calling update_history().
 	// So copy to local buffer.
-	strlcpy__(buffer, EPCBVC_CL->data, MAX_PATH_LEN);
+	strlcpy__(buffer, &(EPCBVC_CL->data[clbi]), MAX_PATH_LEN);
+	if (input) {
+		if (chk_inp_str_ret_val_editor(input_string_pos(buffer, buffer, MAX_PATH_LEN,
+		 HISTORY_TYPE_IDX_EXEC,
+		 _("Edit command line:")))) {
+			return 0;
+		}
+	}
 
 	clear_fork_exec_counter();
-	fork_exec_sh_c(SETTERM1, SEPARATE1, logging, PAUSE1, buffer);
+	fork_exec_sh_c(SETTERM1 | SEPARATE1 | PAUSE1 | flags, buffer);
 
 	editor_do_next = EF_EXECUTED;
 	doe_refresh_editor();
@@ -299,8 +305,11 @@ int doe_run_line_soon_(int logging)
 int doe_splash(void)
 {
 	disp_splash(100);
+	if (examine_key_code()) {
+		return 0;
+	}
 
-	examine_key_code();
+	display_color_settings();
 
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	return 0;
@@ -312,27 +321,22 @@ int doe_view_func_list(void)
 }
 #endif // ENABLE_HELP
 
-int doe_display_color_settings(void)
-{
-	display_color_settings();
-	return 0;
-}
 void display_color_settings(void)
 {
-	tio_fill_screen(0);
+	tio_fill_screen();
 	display_color_pairs(0, 0);
 	if (examine_key_code()) {
 		return;
 	}
 
 #ifdef ENABLE_DEBUG
-	tio_fill_screen(0);
+	tio_fill_screen();
 	display_item_colors(0, 0);
 	if (examine_key_code()) {
 		return;
 	}
 #ifdef ENABLE_REGEX
-	tio_fill_screen(0);
+	tio_fill_screen();
 	display_bracket_hl_colors(0, 0);
 #endif // ENABLE_REGEX
 #endif // ENABLE_DEBUG
@@ -340,7 +344,8 @@ void display_color_settings(void)
 
 int examine_key_code(void)
 {
-	disp_status_bar_ing(_("Input key to show key code"));
+	disp_status_bar_warn(_("Input key to show key code"));
+	tio_refresh();
 	key_code_t key = input_unmapped_key_loop();
 	key_code_t key_mapped = map_key_code(key);
 	char buf1[MAX_KEY_NAME_LEN+1];
@@ -352,6 +357,11 @@ int examine_key_code(void)
 	 (UINT16)key_mapped,
 	 long_key_name_from_key_code(key_mapped, buf1),
 	 short_key_name_from_key_code(key_mapped, buf2));
+	tio_refresh();
+	if (key == K_ESC) {
+		return 1;
+	}
+	key = input_unmapped_key_loop();
 	return key == K_ESC;
 }
 
@@ -375,131 +385,127 @@ int doe_inc_key_list_lines(void)
 }
 //------------------------------------------------------------------------------
 #define MAX_APP_STACK_DEPTH		(1+3)						// 1 root + 3 sub
-app_win_stack_entry app_win_stack[MAX_APP_STACK_DEPTH+1];	// 1 root + 3 sub + 1 current-state
+app_stack_entry app_stack[MAX_APP_STACK_DEPTH+1];	// 1 root + 3 sub + 1 current-state
 
-int cur_app_win_stack_depth = 0;
-void clear_app_win_stack_depth()
+int cur_app_stack_depth = 0;
+void clear_app_stack_depth()
 {
-	cur_app_win_stack_depth = 0;
-	clear_app_win_stack_entry(cur_app_win_stack_depth);
+	cur_app_stack_depth = 0;
+	clear_app_stack_entry(cur_app_stack_depth);
 }
-void set_app_win_stack_depth(int depth)
+void set_app_stack_depth(int depth)
 {
-	cur_app_win_stack_depth = depth;
+	cur_app_stack_depth = depth;
 }
-int get_app_win_stack_depth()
+int get_app_stack_depth()
 {
-	return cur_app_win_stack_depth;
+	return cur_app_stack_depth;
 }
-int inc_app_win_stack_depth()
+int inc_app_stack_depth()
 {
-	cur_app_win_stack_depth++;
-	return cur_app_win_stack_depth;
+	cur_app_stack_depth++;
+	return cur_app_stack_depth;
 }
-int dec_app_win_stack_depth()
+int dec_app_stack_depth()
 {
-	if (cur_app_win_stack_depth > 0) {
-		cur_app_win_stack_depth--;
+	if (cur_app_stack_depth > 0) {
+		cur_app_stack_depth--;
 	}
-	return cur_app_win_stack_depth;
+	return cur_app_stack_depth;
 }
-app_win_stack_entry *get_app_win_stack_entry(int depth)
+app_stack_entry *get_app_stack_ptr(int depth)
 {
 	if (depth < 0) {
-		depth = cur_app_win_stack_depth;
+		depth = cur_app_stack_depth;
 	}
-	return &(app_win_stack[depth]);
+	return &(app_stack[depth]);
 }
-void clear_app_win_stack_entry(int depth)
+void clear_app_stack_entry(int depth)
 {
-	app_win_stack_entry *app_win = get_app_win_stack_entry(depth);
-	memset(app_win, 0x00, sizeof(*app_win));
-	app_win->status_bar_color_idx = ITEM_COLOR_IDX_STATUS;
+	app_stack_entry *app_stk_ptr = get_app_stack_ptr(depth);
+	memset(app_stk_ptr, 0x00, sizeof(*app_stk_ptr));
+	app_stk_ptr->status_bar_color_idx = ITEM_COLOR_IDX_STATUS;
 }
 
 #ifdef ENABLE_FILER
-void push_app_win(editor_panes_t *next_eps, be_buf_t *buf, filer_panes_t *next_fps)
+void push_app_stack(editor_panes_t *next_eps, be_buf_t *buf, filer_panes_t *next_fps)
 #else // ENABLE_FILER
-void push_app_win(editor_panes_t *next_eps, be_buf_t *buf)
+void push_app_stack(editor_panes_t *next_eps, be_buf_t *buf)
 #endif // ENABLE_FILER
 {
-	app_win_stack_entry *app_win = get_app_win_stack_entry(-1);
-	app_win->appmode_save = app_mode__;
-	app_win->editor_panes_save = NULL;
+	app_stack_entry *app_stk_ptr = get_app_stack_ptr(-1);
+	app_stk_ptr->appmode_save = app_mode__;
+	app_stk_ptr->editor_panes_save = NULL;
 #ifdef ENABLE_FILER
-	app_win->filer_panes_save = NULL;
+	app_stk_ptr->filer_panes_save = NULL;
 #endif // ENABLE_FILER
 	if (next_eps) {
-		app_win->editor_panes_save = cur_editor_panes;
+		app_stk_ptr->editor_panes_save = get_cur_editor_panes();
 		init_cur_editor_panes(next_eps, buf);
 	}
 #ifdef ENABLE_FILER
 	if (next_fps) {
 		int cur_pane_idx = get_filer_cur_pane_idx();
-		filer_panes_t *prev_fps = cur_filer_panes;	// previous filer panes
-		app_win->filer_panes_save = cur_filer_panes;
+		filer_panes_t *prev_fps = get_cur_filer_panes();	// previous filer panes
+		app_stk_ptr->filer_panes_save = get_cur_filer_panes();
 		init_cur_filer_panes(next_fps, prev_fps->filer_views[cur_pane_idx].cur_dir);
 	}
 #endif // ENABLE_FILER
 
-	set_win_depth(inc_app_win_stack_depth());
+	set_win_depth(inc_app_stack_depth());
 	// clear previous message displayed on the status bar
-	clear_app_win_stack_entry(-1);
+	clear_app_stack_entry(-1);
 }
-void pop_app_win(BOOL change_caller)
+void pop_app_stack(BOOL change_parent_editor, BOOL change_parent_filer)
 {
-mflf_d_printf("change_caller: %d\n", change_caller);
-	set_win_depth(dec_app_win_stack_depth());
+	set_win_depth(dec_app_stack_depth());
 
-	app_win_stack_entry *app_win = get_app_win_stack_entry(-1);
-	app_mode__ = app_win->appmode_save;
-	if (app_win->editor_panes_save) {
-		if (change_caller) {
+	app_stack_entry *app_stk_ptr = get_app_stack_ptr(-1);
+	app_mode__ = app_stk_ptr->appmode_save;
+	if (app_stk_ptr->editor_panes_save) {
+		if (change_parent_editor) {
 			// change caller's current file
-			copy_editor_panes(app_win->editor_panes_save, cur_editor_panes);
+			copy_editor_panes(app_stk_ptr->editor_panes_save, get_cur_editor_panes());
 		}
 		destroy_editor_panes();
-		set_cur_editor_panes(app_win->editor_panes_save);
+		set_cur_editor_panes(app_stk_ptr->editor_panes_save);
 	}
 #ifdef ENABLE_FILER
-	if (app_win->filer_panes_save) {
-		if (change_caller) {
-			copy_filer_panes_cur_dir(app_win->filer_panes_save, cur_filer_panes);
-			// not recover (change) caller's current directory
-		} else {
-			// recover (not change) caller's current directory
-			////change_cur_dir(get_cur_filer_cur_pane_view()->cur_dir);
+	if (app_stk_ptr->filer_panes_save) {
+		if (change_parent_filer) {
+			copy_filer_panes_cur_dir(app_stk_ptr->filer_panes_save, get_cur_filer_panes());
+			// not restore (change) caller's current directory
 		}
 		destroy_filer_panes();
-		set_cur_filer_panes(app_win->filer_panes_save);
+		set_cur_filer_panes(app_stk_ptr->filer_panes_save);
 	}
 #endif // ENABLE_FILER
 }
 void save_cur_app_state(int depth)
 {
 	depth = MIN_MAX_(0, depth, MAX_APP_STACK_DEPTH);
-	app_win_stack_entry *app_win = get_app_win_stack_entry(depth);
-	app_win->appmode_save = app_mode__;
-	if (cur_editor_panes) {
-		app_win->editor_panes_save = cur_editor_panes;
+	app_stack_entry *app_stk_ptr = get_app_stack_ptr(depth);
+	app_stk_ptr->appmode_save = app_mode__;
+	if (get_cur_editor_panes()) {
+		app_stk_ptr->editor_panes_save = get_cur_editor_panes();
 	}
 #ifdef ENABLE_FILER
-	if (cur_filer_panes) {
-		app_win->filer_panes_save = cur_filer_panes;
+	if (get_cur_filer_panes()) {
+		app_stk_ptr->filer_panes_save = get_cur_filer_panes();
 	}
 #endif // ENABLE_FILER
 }
 void load_cur_app_state(int depth)
 {
 	depth = MIN_MAX_(0, depth, MAX_APP_STACK_DEPTH);
-	app_win_stack_entry *app_win = get_app_win_stack_entry(depth);
-	app_mode__ = app_win->appmode_save;
-	if (app_win->editor_panes_save) {
-		set_cur_editor_panes(app_win->editor_panes_save);
+	app_stack_entry *app_stk_ptr = get_app_stack_ptr(depth);
+	app_mode__ = app_stk_ptr->appmode_save;
+	if (app_stk_ptr->editor_panes_save) {
+		set_cur_editor_panes(app_stk_ptr->editor_panes_save);
 	}
 #ifdef ENABLE_FILER
-	if (app_win->filer_panes_save) {
-		set_cur_filer_panes(app_win->filer_panes_save);
+	if (app_stk_ptr->filer_panes_save) {
+		set_cur_filer_panes(app_stk_ptr->filer_panes_save);
 	}
 #endif // ENABLE_FILER
 }
@@ -507,21 +513,18 @@ void load_cur_app_state(int depth)
 PRIVATE void update_screen_app__(int status_bar, int refresh);
 void update_screen_app(int status_bar, int refresh)
 {
-	int cur_app_win_stack_depth = get_app_win_stack_depth();
-	save_cur_app_state(get_app_win_stack_depth());
+	int cur_app_stack_depth = get_app_stack_depth();
+	save_cur_app_state(get_app_stack_depth());
 	for (int depth = 0; ; depth++) {
 		set_win_depth(depth);
-		set_app_win_stack_depth(depth);
+		set_app_stack_depth(depth);
 		load_cur_app_state(depth);
-
-		update_screen_app__(status_bar, refresh && (depth >= cur_app_win_stack_depth));
-		if (depth >= cur_app_win_stack_depth) {
+		if (depth >= cur_app_stack_depth) {
+			update_screen_app__(status_bar, refresh && (depth >= cur_app_stack_depth));
 			break;
 		}
-///		inc_win_depth();
-///		set_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
-		set_color_by_idx(ITEM_COLOR_IDX_MENU_ITEM, 0);
-		main_win_clear_screen();		// draw dark frame
+		set_color_by_idx(ITEM_COLOR_IDX_PARENT, 0);
+		central_win_clear_screen();		// draw dark frame
 		inc_win_depth();
 	}
 }
@@ -542,13 +545,14 @@ PRIVATE void update_screen_app__(int status_bar, int refresh)
 //------------------------------------------------------------------------------
 
 PRIVATE void disp_status_bar_editor(void);
+PRIVATE void disp_key_list_editor(void);
 
 void update_screen_editor(int status_bar, int refresh)
 {
-	win_select_win(WIN_IDX_MAIN);
+	win_select_cur_sub_win(WIN_IDX_CENTRAL);
 
 	EPCBVC_CURS_Y = MIN(edit_win_get_text_lines()-1, EPCBVC_CURS_Y);
-////mflf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
+	////mflf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 	// title bar
 	disp_title_bar_editor();
 
@@ -563,15 +567,15 @@ void update_screen_editor(int status_bar, int refresh)
 
 	if (get_edit_win_update_needed()) {
 		if (GET_APPMD(ed_EDITOR_PANES) == 0) {		// 1 pane
-			win_select_win(WIN_IDX_SUB_WHOLE);
+			win_select_cur_sub_win(WIN_IDX_SUB_WHOLE);
 			disp_edit_win(1);
 		} else {									// 2 panes
 			for (int pane_sel_idx = 0; pane_sel_idx < EDITOR_PANES; pane_sel_idx++) {
 				// pane_sel_idx=0: update not current pane
 				// pane_sel_idx=1: update current pane
-				int pane_idx = get_editor_counter_pane_idx();
+				int pane_idx = get_editor_another_pane_idx();
 				set_editor_cur_pane_idx(pane_idx);
-				win_select_win(WIN_IDX_SUB_LEFT + pane_idx);
+				win_select_cur_sub_win(WIN_IDX_SUB_LEFT + pane_idx);
 				disp_edit_win(pane_sel_idx);
 			}
 		}
@@ -582,7 +586,7 @@ void update_screen_editor(int status_bar, int refresh)
 		tio_refresh();
 	}
 	clear_edit_win_update_needed();
-////mflf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}\n");
+	////mflf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}\n");
 }
 
 //------------------------------------------------------------------------------
@@ -617,7 +621,7 @@ PRIVATE void blink_editor_title_bar();
 #define MEM_BUF_LEN			(1+8)	// " 9999000M" (9999G)
 #define HHCMMCSS_BUF_LEN	(1+8)	// " 23:59:59"/" 24/10/09"
 PRIVATE char editor_title_bar_buf[MAX_SCRN_LINE_BUF_LEN+1] = "";
-//1:/home/...editor2.c[Mod]    Mc e99c0u0r0 1234M 11:55:04
+//1:/home/...editor2.c[MOD]    Mc e99c0u0r0 1234M 11:55:04
 void disp_title_bar_editor(void)
 {
 	static int prev_edit_bufs = 0;
@@ -638,29 +642,21 @@ void disp_title_bar_editor(void)
 	char buf_time[HHCMMCSS_BUF_LEN+1];
 
 	int bufs_idx = bufs_get_bufs_idx_in_bufss(NODES_TOP_ANCH(&all_bufferss), get_epc_buf());
+	const char* bufs_name = get_bufs_name_contains_buf(get_epc_buf());
 	int buf_idx = buf_get_buf_idx(get_epc_buf());
-	const char *path = get_epc_buf()->file_path_;
+	int count_buf = epc_buf_count_buf();
+	const char *path = buf_get_file_path(get_epc_buf(), NULL);
 
 	tio_set_cursor_on(0);
 
 	//-------------------------------------------------------------------------
 	char separator_char = indication_of_app_mode();
-	snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%s%d%c%d%c%d:%s",
+	snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%s%d%c%d%s%c%d/%d:%s",
 	 root_notation(),
-	 get_editor_cur_pane_idx()+1, separator_char, bufs_idx, separator_char, buf_idx,
+	 get_editor_cur_pane_idx()+1, separator_char, bufs_idx, bufs_name,
+	 separator_char, buf_idx, count_buf,
 	 (path[0] == '\0') ? _("New File") : path);
-	if (CUR_EBUF_STATE(buf_MODIFIED)) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[Mod]"));
-	}
-	if (is_epc_buf_ro_file()) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[RO]"));
-	}
-	if (is_epc_buf_view_mode()) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, get_epc_buf_view_mode());
-	}
-	if (is_epc_buf_locked()) {
-		strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, _("[LOCKED]"));
-	}
+	strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, get_all_buf_state_str());
 
 	//-------------------------------------------------------------------------
 	// edit buffer cut mode
@@ -668,7 +664,7 @@ void disp_title_bar_editor(void)
 		strcat_printf(buf_bufs, MAX_SCRN_LINE_BUF_LEN, " %s", buf_cut_mode_str(get_epc_buf()));
 	}
 	// edit buffers
-	edit_bufs = edit_bufs_count_bufs();
+	edit_bufs = edit_bufs_count_buf();
 	strcat_printf(buf_bufs, MAX_SCRN_LINE_BUF_LEN, " e%s", zz_from_num(edit_bufs, buf_num));
 	// cut buffers
 	cut_bufs = count_cut_bufs();
@@ -699,10 +695,8 @@ void disp_title_bar_editor(void)
 	snprintf_(buf_status, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_bufs, buf_time);
 #endif // SHOW_MEM_FREE_ON_EBUFS_CHG
 
-	int path_cols = LIM_MIN(0, main_win_get_columns() - strlen_path(buf_status));
-	shrink_str(buf_path, path_cols, 2);
-	adjust_utf8s_columns(buf_path, path_cols);
-
+	int path_cols = LIM_MIN(0, central_win_get_columns() - strlen_path(buf_status));
+	shrink_str__adjust_col(buf_path, path_cols, 2);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN, "%s%s", buf_path, buf_status);
 	strcpy__(editor_title_bar_buf, buffer);
 	blink_editor_title_bar();
@@ -714,12 +708,13 @@ PRIVATE void blink_editor_title_bar()
 	set_color_by_idx(ITEM_COLOR_IDX_TITLE, 0);
 	set_title_bar_color_by_state(
 	 CUR_EBUF_STATE(buf_CUT_MODE) ? ITEM_COLOR_IDX_TEXT_SELECTED1
-	  : ((is_epc_buf_saveable() == 0) ? ITEM_COLOR_IDX_WARNING1
-	   : (CUR_EBUF_STATE(buf_MODIFIED) ? ITEM_COLOR_IDX_WARNING2
-	    : (is_any_edit_buf_modified() ? ITEM_COLOR_IDX_WARNING3
+	  : ((is_epc_buf_modifiable() == 0) ? ITEM_COLOR_IDX_WARNING3
+	   : (is_epc_buf_modified() ? ITEM_COLOR_IDX_WARNING1
+	    : (is_any_edit_buf_modified() ? ITEM_COLOR_IDX_WARNING2
 	     : ITEM_COLOR_IDX_TITLE))),
 	 get_title_bar_inversion());
-	main_win_output_string(main_win_get_top_win_y() + TITLE_LINE, 0, editor_title_bar_buf, -1);
+	central_win_output_string(central_win_get_top_win_y() + TITLE_LINE, 0,
+	 editor_title_bar_buf, -1);
 }
 
 //------------------------------------------------------------------------------
@@ -762,7 +757,7 @@ PRIVATE void disp_status_bar_editor(void)
 	 buf_enc_str(get_epc_buf()), buf_eol_str(get_epc_buf()));
 }
 
-void disp_key_list_editor(void)
+PRIVATE void disp_key_list_editor(void)
 {
 	disp_fkey_list();
 
@@ -782,7 +777,7 @@ void disp_key_list_editor(void)
  "<doe_duplicate_text>DupLine "
 
  "<doe_close_all_ask>CloseAll "
- "<doe_open_file>OpenFile "
+ "<doe_open_file_recursive>OpenFile "
  "<doe_write_file_ask>WriteFile "
  "<doe_search_backward_first>Search BW "
  "<doe_search_forward_first>Search FW "
@@ -793,30 +788,24 @@ void disp_key_list_editor(void)
 #endif // ENABLE_HELP
  "<doe_switch_to_prev_buffer>PrevBuf "
  "<doe_switch_to_next_buffer>NextBuf "
- "<doe_switch_to_prev_buffers>PrevBufs "
- "<doe_switch_to_next_buffers>NextBufs "
 	};
 	disp_key_list(editor_key_lists);
 }
 
 //------------------------------------------------------------------------------
 
-int is_editor_view_mode_then_warn_it(void)
+int is_editor_unmodifiable_then_warn_it(void)
 {
+	// in Application mode
 	if (is_app_chooser_viewer_mode()) {
 		disp_status_bar_err(_("Modification not allowed in VIEW mode application"));
 		return 1;
 	}
-	if (is_epc_buf_ro_file()) {
-		disp_status_bar_err(_("Modification not allowed to READ-ONLY file"));
-		return 1;
-	}
-	if (is_epc_buf_view_mode()) {
-		disp_status_bar_err(_("Modification not allowed in %s buffer"), get_epc_buf_view_mode());
-		return 1;
-	}
-	if (is_epc_buf_locked()) {
-		disp_status_bar_err(_("Modification not allowed to LOCKED file"));
+
+	// in Buffer state
+	if (is_epc_buf_modifiable() == 0) {
+		disp_status_bar_err(_("Modification not allowed to %s file"),
+		 get_all_buf_unmodifiable_str());
 		return 1;
 	}
 	return 0;
@@ -826,7 +815,7 @@ int is_editor_view_mode_then_warn_it(void)
 #ifdef ENABLE_DEBUG
 void dump_cur_pointers(void)
 {
-	flf_d_printf("epc_buf:[%s]\n", get_epc_buf()->file_path_);
+	flf_d_printf("epc_buf:[%s]\n", buf_get_file_path(get_epc_buf(), NULL));
 	flf_d_printf("%d:[%s]\n", EPCBVC_CL->line_num, EPCBVC_CL->data);
 	flf_d_printf("EPCBVC_CLBI:%d\n", EPCBVC_CLBI);
 	flf_d_printf("cursor_y:%d\n", EPCBVC_CURS_Y);

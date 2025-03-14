@@ -23,17 +23,15 @@
 
 #ifdef ENABLE_FILER
 
-PRIVATE int filer_change_dir_to_cur_sel(void);
-PRIVATE int filer_change_dir_if_not_yet(char *dir);
-PRIVATE int filer_change_dir_to_prev_dir(void);
-
 #define BEPAGER		"bepager"
 #define BETAIL		"betail"
 #define BETRASH		"betrash"
 #define BEMARKDEL	"bemarkdel"
 #define BESIZE0		"besize0"
+#define BEUNZIP		"beunzip"
+#define BEZIP		"bezip"
 
-#define BECMD		"becmd"		// becmd?
+//DDDD#define BECMD		"becmd"		// becmd?
 
 int chk_inp_str_ret_val_filer(int ret)
 {
@@ -43,35 +41,35 @@ int chk_inp_str_ret_val_filer(int ret)
 		filer_do_next = EF_NONE;
 	}
 flf_d_printf("filer_do_next: EF__%d\n", filer_do_next);
-	return (ret != EF_INPUT) && (ret != EF_INPUT_W_ALT);
+	return !IS_EF_INPUT_XX(ret);
 }
 
 int dof_up(void)
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() - 1,
-	 get_cur_filer_cur_pane_view()->file_list_entries-1));
+	 get_cur_filer_pane_view()->file_list_entries-1));
 	return 1;
 }
 int dof_down(void)
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() + 1,
-	 get_cur_filer_cur_pane_view()->file_list_entries-1));
+	 get_cur_filer_pane_view()->file_list_entries-1));
 	return 1;
 }
 int dof_page_up(void)
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() - filer_vert_scroll_lines(),
-	 get_cur_filer_cur_pane_view()->file_list_entries-1));
+	 get_cur_filer_pane_view()->file_list_entries-1));
 	return 1;
 }
 int dof_page_down(void)
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() + filer_vert_scroll_lines(),
-	 get_cur_filer_cur_pane_view()->file_list_entries-1));
+	 get_cur_filer_pane_view()->file_list_entries-1));
 	return 1;
 }
 int dof_top_of_list(void)
@@ -81,12 +79,15 @@ int dof_top_of_list(void)
 }
 int dof_bottom_of_list(void)
 {
-	set_cur_fv_file_idx(get_cur_filer_cur_pane_view()->file_list_entries-1);
+	set_cur_fv_file_idx(get_cur_filer_pane_view()->file_list_entries-1);
 	return 1;
 }
 
 int dof_refresh_filer(void)
 {
+#ifdef ENABLE_HISTORY
+	if (update_history_dir_operate()) {		_WARNING_	}
+#endif // ENABLE_HISTORY
 	disp_status_bar_done(_("File view refreshed"));
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 1;
@@ -133,29 +134,29 @@ int dof_tail_file(void)	// view file with "tail" command
 
 PRIVATE int dof_open_file_(int flags);
 
-int dof_open_file(void)
+int dof_open_file_recursive(void)
 {
-	dof_open_file_(LFH0 | WRP0 | FOL0 | RECURS1);
+	dof_open_file_(RECURS1 | RDOL0 | FOL0 | LFH0);
 	return 1;
 }
 int dof_open_file_ro(void)
 {
-	dof_open_file_(LFH0 | WRP1 | FOL0 | RECURS1);
+	dof_open_file_(RECURS1 | RDOL1 | FOL0 | LFH0);
 	return 1;
 }
 int dof_open_locked_file(void)
 {
-	dof_open_file_(LFH0 | WRP0 | FOL1 | RECURS1);
+	dof_open_file_(RECURS1 | RDOL0 | FOL1 | LFH0);
 	return 1;
 }
 int dof_open_file_non_recursive(void)
 {
-	dof_open_file_(LFH0 | WRP0 | FOL0 | RECURS0);
+	dof_open_file_(RECURS0 | RDOL0 | FOL0 | LFH0);
 	return 1;
 }
 int dof_open_file_from_history(void)
 {
-	dof_open_file_(LFH1 | WRP0 | FOL0 | RECURS1);
+	dof_open_file_(RECURS1 | RDOL0 | FOL0 | LFH1);
 	return 1;
 }
 
@@ -166,7 +167,7 @@ PRIVATE int dof_open_file_(int flags)
 	}
 
 #ifdef ENABLE_HISTORY
-	int prev_edit_bufs_count_bufs = edit_bufs_count_bufs();
+	int prev_edit_bufs_count_buf = edit_bufs_count_buf();
 #endif // ENABLE_HISTORY
 
 	clear_files_loaded();
@@ -176,7 +177,7 @@ PRIVATE int dof_open_file_(int flags)
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if (S_ISREG(get_cur_fv_file_ptr(file_idx)->st.st_mode)) {
 			if (load_file_name_upp_low_(get_cur_fv_file_ptr(file_idx)->file_name,
-			 TUL0 | OOE0 | MOE1 | (flags & (LFH1 | WRP1 | FOL1 | RECURS1))) <= 0) {
+			 TUL0 | OOE0 | MOE1 | (flags & (RECURS1 | RDOL1 | FOL1 | LFH1))) <= 0) {
 				tio_beep();
 			}
 		}
@@ -188,7 +189,7 @@ PRIVATE int dof_open_file_(int flags)
 
 	if (get_files_loaded() >= 0) {
 #ifdef ENABLE_HISTORY
-		if (prev_edit_bufs_count_bufs == 0) {
+		if (prev_edit_bufs_count_buf == 0) {
 			goto_last_file_line_col_in_history();
 		}
 #endif // ENABLE_HISTORY
@@ -244,7 +245,7 @@ PRIVATE int dof_open_new_file_(const char *str)
 	}
 
 	if (load_files_in_string(file_path,
-	 TUL0 | OOE1 | MOE0 | LFH1 | WRP0 | FOL0 | RECURS0) >= 0) {
+	 TUL0 | OOE1 | MOE0 | RECURS0 | RDOL0 | FOL0 | LFH1) >= 0) {
 		disp_files_loaded_if_ge_0();
 		filer_do_next = EF_LOADED;
 		return 1;
@@ -255,44 +256,30 @@ PRIVATE int dof_open_new_file_(const char *str)
 	tio_beep();
 	return 0;
 }
+int dof_input_files_to_open(void)
+{
+	return dof_drop_files_to_do_action_(ACTION_INPUT);
+}
 int dof_drop_files_to_open(void)
 {
-	return dof_drop_files_to_act__(ACTION_OPEN);
+	return dof_drop_files_to_do_action_(ACTION_SEL);
 }
 
+PRIVATE int dof_copy_file_(int update1);
 int dof_copy_file(void)
 {
-	char file_path[MAX_PATH_LEN+1];
-	if (chk_inp_str_ret_val_filer(input_string_pos(get_other_filer_view()->cur_dir,
-	 file_path, MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
-	 _("Copy to:")))) {
-		return 0;
-	}
-	int exit_status = 0;
-	begin_fork_exec_repeat();
-	for (int file_idx = select_and_get_first_file_idx_selected();
-	 file_idx >= 0;
-	 file_idx = get_next_file_idx_selected(file_idx)) {
-		if (is_sigint_signaled())
-			break;
-#ifndef	USE_BUSYBOX
-		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-afv",
-		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
-#else
-		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-a",
-		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
-#endif
-	}
-	end_fork_exec_repeat(exit_status);
-	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
-	return 0;
+	return dof_copy_file_(0);
 }
 int dof_copy_file_update(void)
 {
+	return dof_copy_file_(1);
+}
+PRIVATE int dof_copy_file_(int update1)
+{
 	char file_path[MAX_PATH_LEN+1];
-	if (chk_inp_str_ret_val_filer(input_string_pos(get_other_filer_view()->cur_dir,
+	if (chk_inp_str_ret_val_filer(input_string_pos(get_another_filer_pane_view()->cur_dir,
 	 file_path, MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
-	 _("Copy to (Update):")))) {
+	 (update1 == 0) ? _("Copy to:") : _("Copy to (Update):")))) {
 		return 0;
 	}
 	int exit_status = 0;
@@ -303,7 +290,7 @@ int dof_copy_file_update(void)
 		if (is_sigint_signaled())
 			break;
 #ifndef	USE_BUSYBOX
-		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-aufv",
+		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", (update1 == 0) ? "-afv" : "-auv",
 		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
 #else
 		exit_status = fork_exec_args_repeat(SEPARATE1, "cp", "-a",
@@ -316,15 +303,24 @@ int dof_copy_file_update(void)
 }
 int dof_drop_files_to_copy(void)
 {
-	return dof_drop_files_to_act__(ACTION_COPY);
+	return dof_drop_files_to_do_action_(ACTION_COPY);
 }
 
+PRIVATE int dof_move_file_(int update1);
 int dof_move_file(void)
 {
+	return dof_move_file_(0);
+}
+int dof_move_file_update(void)
+{
+	return dof_move_file_(1);
+}
+PRIVATE int dof_move_file_(int update1)
+{
 	char file_path[MAX_PATH_LEN+1];
-	if (chk_inp_str_ret_val_filer(input_string_pos(get_other_filer_view()->cur_dir,
+	if (chk_inp_str_ret_val_filer(input_string_pos(get_another_filer_pane_view()->cur_dir,
 	 file_path, MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
-	 _("Move to:")))) {
+	 (update1 == 0) ? _("Move to:") : _("Move to (Update):")))) {
 		return 0;
 	}
 	int exit_status = 0;
@@ -335,7 +331,7 @@ int dof_move_file(void)
 		if (is_sigint_signaled())
 			break;
 #ifndef	USE_BUSYBOX
-		exit_status = fork_exec_args_repeat(SEPARATE1, "mv", "-fv",		//PPP "-ufv"
+		exit_status = fork_exec_args_repeat(SEPARATE1, "mv", (update1 == 0) ? "-fv" : "-uv",
 		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
 #else
 		exit_status = fork_exec_args_repeat(SEPARATE1, "mv",
@@ -348,28 +344,35 @@ int dof_move_file(void)
 }
 int dof_drop_files_to_move()
 {
-	return dof_drop_files_to_act__(ACTION_MOVE);
+	return dof_drop_files_to_do_action_(ACTION_MOVE);
 }
 
 // files dropped by Window manager "'file-1' 'file-2' ..."
-int dof_drop_files_to_act__(int action)
+int dof_drop_files_to_do_action_(int action)
 {
 	const char *request = "";
 	const char *initial_str = "";
 	switch(action) {
 	default:
 	case ACTION_SEL:
-		request = _("Drop files to Open/Copy/Move:");
+		request = _("Drop files to Open(Enter)/Copy(M-c)/Move(M-m):");
+		initial_str = "'";
+		action = ACTION_OPEN;	// default action of ACTION_SEL is ACTION_OPEN
+		break;
+	case ACTION_INPUT:
+		request = _("Input files to Open(Enter)/Copy(M-c)/Move(M-m):");
+		initial_str = "";
+		action = ACTION_OPEN;	// default action of ACTION_SEL is ACTION_OPEN
 		break;
 	case ACTION_OPEN:
 		request = _("Drop files to Open:");
 		initial_str = "'";
 		break;
 	case ACTION_COPY:
-		request = _("Drop files to Copy here (to current directory):");
+		request = _("Drop files to Copy here (current directory):");
 		break;
 	case ACTION_MOVE:
-		request = _("Drop files to Move here (to current directory):");
+		request = _("Drop files to Move here (current directory):");
 		break;
 	}
 
@@ -379,11 +382,18 @@ int dof_drop_files_to_act__(int action)
 	 request))) {
 		return 0;
 	}
+	if (filer_do_next == EF_INPUT_W_ALT_C) {
+		action = ACTION_COPY;
+	} else
+	if (filer_do_next == EF_INPUT_W_ALT_M) {
+		action = ACTION_MOVE;
+	}
 
 	switch(action) {
 	default:
 	case ACTION_SEL:
 		break;
+	case ACTION_INPUT:
 	case ACTION_OPEN:
 		clear_files_loaded();
 		break;
@@ -404,7 +414,7 @@ int dof_drop_files_to_act__(int action)
 		switch(action) {
 		case ACTION_OPEN:
 			if (load_files_in_string(path,
-			 TUL0 | OOE1 | MOE0 | LFH1 | WRP0 | FOL0 | RECURS0) >= 0) {
+			 TUL0 | OOE1 | MOE0 | RECURS0 | RDOL0 | FOL0 | LFH1) >= 0) {
 				disp_files_loaded_if_ge_0();
 				filer_do_next = EF_LOADED;
 			} else {
@@ -434,6 +444,7 @@ int dof_drop_files_to_act__(int action)
 	switch(action) {
 	default:
 	case ACTION_SEL:
+	case ACTION_INPUT:
 	case ACTION_OPEN:
 		break;
 	case ACTION_COPY:
@@ -457,7 +468,7 @@ int dof_rename_file(void)
 	}
 	if (fork_exec_args_once(PAUSE1, "mv", "-i",
 	 get_cur_fv_cur_file_ptr()->file_name, file_name, 0) == 0) {
-		strlcpy__(get_cur_filer_cur_pane_view()->next_file, file_name, MAX_PATH_LEN);
+		strlcpy__(get_cur_filer_pane_view()->next_file, file_name, MAX_PATH_LEN);
 		filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	}
 	return 0;
@@ -602,6 +613,61 @@ int dof_size_zero_file(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
+
+// BEUNZIP file1.tgz
+// BEUNZIP file2.tgz
+//        :
+int dof_unzip_file(void)
+{
+	int files_selected;
+	int ret;
+	if ((files_selected = get_files_selected_cfv()) == 0) {
+		ret = ask_yes_no(ASK_YES_NO, _("Unzip file %s ?"),
+		 get_cur_fv_cur_file_ptr()->file_name);
+	} else {
+		ret = ask_yes_no(ASK_YES_NO, _("Unzip %d files 0 ?"),
+		 files_selected);
+	}
+	if (ret <= 0) {
+		return 0;
+	}
+	int exit_status = 0;
+	begin_fork_exec_repeat();
+	for (int file_idx = select_and_get_first_file_idx_selected();
+	 file_idx >= 0;
+	 file_idx = get_next_file_idx_selected(file_idx)) {
+		if (is_sigint_signaled())
+			break;
+		exit_status = fork_exec_args_repeat(SEPARATE0, BEUNZIP,
+		 get_cur_fv_file_ptr(file_idx)->file_name, 0);
+	}
+	end_fork_exec_repeat(exit_status);
+	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
+	return 0;
+}
+// BEZIP file.tgz file1 file2 file3 ...
+int dof_zip_file(void)
+{
+	char command_str[MAX_PATH_LEN+1] = "";
+	strlcpy__(command_str, BEZIP, MAX_PATH_LEN);
+	// "BEZIP file1 file2 ..."
+	for (int file_idx = select_and_get_first_file_idx_selected();
+	 file_idx >= 0;
+	 file_idx = get_next_file_idx_selected(file_idx)) {
+		concat_file_path_separating_by_space(command_str, MAX_PATH_LEN,
+		 get_cur_fv_file_ptr(file_idx)->file_name);
+	}
+
+	if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str, 0,
+	 HISTORY_TYPE_IDX_EXEC,
+	 _("Zip files:")))) {
+		return 0;
+	}
+	fork_exec_sh_c_once(PAUSE1, command_str);
+	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
+	return 0;
+}
+
 int dof_find_file(void)
 {
 	char file_path[MAX_PATH_LEN+1];
@@ -610,8 +676,8 @@ int dof_find_file(void)
 	 _("Find file:")))) {
 		return 0;
 	}
-	strlcpy__(get_cur_filer_cur_pane_view()->next_file, file_path, MAX_PATH_LEN);
-	get_cur_filer_cur_pane_view()->top_file_idx = 0;
+	strlcpy__(get_cur_filer_pane_view()->next_file, file_path, MAX_PATH_LEN);
+	get_cur_filer_pane_view()->top_file_idx = 0;
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -619,7 +685,7 @@ int dof_make_directory(void)
 {
 	char file_path[MAX_PATH_LEN+1];
 	if (chk_inp_str_ret_val_filer(input_string_pos("", file_path, MAX_PATH_LEN,
-	 HISTORY_TYPE_IDX_DIR,
+	 HISTORY_TYPE_IDX_EXEC,
 	 _("Mkdir:")))) {
 		return 0;
 	}
@@ -646,15 +712,15 @@ int dof_parent_directory(void)
 		return 1;   // OK
 	}
 	separate_path_to_dir_and_file(
-	 get_cur_filer_cur_pane_view()->cur_dir,
-	 get_cur_filer_cur_pane_view()->cur_dir,
-	 get_cur_filer_cur_pane_view()->next_file);
+	 get_cur_filer_pane_view()->cur_dir,
+	 get_cur_filer_pane_view()->cur_dir,
+	 get_cur_filer_pane_view()->next_file);
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
 int dof_beginning_directory(void)
 {
-	return filer_change_dir_if_not_yet(cur_filer_panes->org_cur_dir);
+	return filer_change_dir_if_not_yet(get_cur_filer_pane_view()->org_cur_dir);
 }
 int dof_home_directory(void)
 {
@@ -677,7 +743,7 @@ int dof_real_path(void)
 		if (is_abs_path(f_info->symlink)) {
 			strlcpy__(dir, f_info->symlink, MAX_PATH_LEN);
 		} else {
-			cat_dir_and_file(dir, get_cur_filer_cur_pane_view()->cur_dir, f_info->symlink);
+			cat_dir_and_file(dir, get_cur_filer_pane_view()->cur_dir, f_info->symlink);
 		}
 		if (S_ISREG(f_info->st.st_mode)) {
 			char file[MAX_PATH_LEN+1];
@@ -690,17 +756,29 @@ int dof_real_path(void)
 	return filer_change_dir_if_not_yet(dir);
 }
 //------------------------------------------------------------------------------
+int dof_set_filter(void)
+{
+	char filter[MAX_PATH_LEN+1];
+	if (chk_inp_str_ret_val_editor(input_string_pos("", filter, MAX_PATH_LEN,
+	 HISTORY_TYPE_IDX_SEARCH,
+	 _("Set file name filter:")))) {
+		return 0;
+	}
+	strlcpy__(get_cur_filer_pane_view()->filter, filter, MAX_PATH_LEN);
+	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
+	return 0;
+}
 int dof_select_file(void)
 {
 	get_cur_fv_cur_file_ptr()->selected = get_cur_fv_cur_file_ptr()->selected ^ _FILE_SEL_MAN_;
 	set_cur_fv_file_idx(MIN_MAX_(0,
-	 get_cur_fv_file_idx() + 1, get_cur_filer_cur_pane_view()->file_list_entries-1));
+	 get_cur_fv_file_idx() + 1, get_cur_filer_pane_view()->file_list_entries-1));
 	disp_files_selected();
 	return 0;
 }
 int dof_select_no_file(void)
 {
-	for (int file_idx = 0 ; file_idx < get_cur_filer_cur_pane_view()->file_list_entries;
+	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_list_entries;
 	 file_idx++) {
 		get_cur_fv_file_ptr(file_idx)->selected = _FILE_SEL_NONE_;
 	}
@@ -709,7 +787,7 @@ int dof_select_no_file(void)
 }
 int dof_select_all_files(void)
 {
-	for (int file_idx = 0 ; file_idx < get_cur_filer_cur_pane_view()->file_list_entries;
+	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_list_entries;
 	 file_idx++) {
 		if (strcmp(get_cur_fv_file_ptr(file_idx)->file_name, ".") == 0
 		 || strcmp(get_cur_fv_file_ptr(file_idx)->file_name, "..") == 0)
@@ -723,6 +801,9 @@ int dof_select_all_files(void)
 }
 void disp_files_selected()
 {
+#ifdef ENABLE_HISTORY
+	if (update_history_dir_operate()) {		_WARNING_	}
+#endif // ENABLE_HISTORY
 	int files_selected = get_files_selected_cfv();
 	disp_status_bar_done(P_(_("%d file selected"),
 							_("%d files selected"),
@@ -730,28 +811,35 @@ void disp_files_selected()
 							_("%d filesss selected"),
 	 files_selected), files_selected);
 }
-PRIVATE int dof_quit_filer_(void)
-{
-	disp_status_bar_done(_("Quit from filer"));
-	filer_do_next = EF_QUIT;
-	return 0;
-}
+
+PRIVATE int dof_quit_filer_(void);
 int dof_quit_filer(void)
 {
-///	if ((get_app_win_stack_depth() == 0) && count_cut_bufs()) {
-///		int ret = ask_yes_no(ASK_YES_NO | ASK_END,
-///		 _("Are you OK to quit %s ?"), APP_LONG_NAME);
-///		if ((ret != ANSWER_YES) && (ret != ANSWER_END)) {
-///			disp_status_bar_done(_("Cancelled"));
-///			return 0;
-///		}
-///	}
+	////if ((get_app_stack_depth() == 0) && count_cut_bufs()) {
+	////	int ret = ask_yes_no(ASK_YES_NO | ASK_END,
+	////	 _("Are you OK to quit %s ?"), APP_LONG_NAME);
+	////	if ((ret != ANSWER_YES) && (ret != ANSWER_END)) {
+	////		disp_status_bar_done(_("Cancelled"));
+	////		return 0;
+	////	}
+	////}
 	return dof_quit_filer_();
 }
 int dof_quit_home_dir(void)
 {
-	dof_home_directory();
+	if (get_app_stack_depth() == 0) {
+		dof_home_directory();
+	}
 	return dof_quit_filer_();
+}
+PRIVATE int dof_quit_filer_(void)
+{
+#ifdef ENABLE_HISTORY
+	if (update_history_dir_operate()) {		_WARNING_	}
+#endif // ENABLE_HISTORY
+	disp_status_bar_done(_("Quit filer"));
+	filer_do_next = EF_QUIT;
+	return 0;
 }
 int dof_tog_show_dot_file(void)
 {
@@ -779,6 +867,12 @@ int dof_inc_file_sort_mode(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
+int dof_tog_show_zebra_striping(void)
+{
+	do_tog_show_zebra_striping();
+	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
+	return 0;
+}
 int dof_tog_panes(void)
 {
 	tog_filer_panes();
@@ -799,18 +893,15 @@ int dof_inc_key_list_lines(void)
 	return 0;
 }
 
-int dof_display_color_settings(void)
-{
-	display_color_settings();
-	return 0;
-}
-
 #ifdef ENABLE_HELP
 int dof_splash(void)
 {
 	disp_splash(100);
+	if (examine_key_code()) {
+		return 0;
+	}
 
-	examine_key_code();
+	display_color_settings();
 
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
@@ -824,168 +915,7 @@ int dof_view_func_list(void)
 
 int dof_menu_0(void)
 {
-///	if (is_app_chooser_viewer_mode()) {
-///		filer_do_next = EF_QUIT;
-///		return 0;
-///	}
 	return filer_menu_n(-1);
-}
-
-//------------------------------------------------------------------------------
-
-#ifdef ENABLE_HISTORY
-PRIVATE int change_cur_dir_from_history(const char *dir);
-#endif // ENABLE_HISTORY
-
-int goto_dir_in_string(const char *str)
-{
-	char buf_dir[MAX_PATH_LEN+1];
-	if (check_to_change_dir_in_string(str, buf_dir)) {
-		change_cur_dir_by_file_path_after_save(buf_dir, get_epc_buf()->file_path_);
-#ifdef ENABLE_HISTORY
-		update_dir_history(get_cur_filer_cur_pane_view()->prev_dir,
-		 get_cur_filer_cur_pane_view()->cur_dir);
-#endif // ENABLE_HISTORY
-		return 1;
-	}
-	return 0;
-}
-int check_to_change_dir_in_string(const char *str, char* buf_dir)
-{
-	int changeable = 0;	// directory changeable
-	char dir_save[MAX_PATH_LEN+1];
-	get_full_path_of_cur_dir(dir_save);
-
-	for (int field_idx = 0; field_idx < MAX_FILES_TO_TRY_TO_LOAD_IN_A_LINE; field_idx++) {
-		if (get_n_th_file_line_col_from_str(str, field_idx, buf_dir, NULL, NULL) > 0) {
-			// directory gotten
-			if (try_to_chdir_parent(buf_dir)) {
-				// directory changeable
-				changeable = 1;
-				goto changeable;
-			}
-		}
-	}
-#ifdef ENABLE_HISTORY
-	for (int field_idx = 0; field_idx < MAX_FILES_TO_TRY_TO_LOAD_IN_A_LINE; field_idx++) {
-		if (get_n_th_file_line_col_from_str(str, field_idx, buf_dir, NULL, NULL) > 0) {
-			// directory gotten
-			if (change_cur_dir_from_history(buf_dir)) {
-				// directory changeable
-				changeable = 1;
-				goto changeable;
-			}
-		}
-	}
-#endif // ENABLE_HISTORY
-
-changeable:;
-	change_cur_dir(dir_save);
-	return changeable;	// changeable
-}
-
-int try_to_chdir_parent(char* buf_dir)
-{
-	if (change_cur_dir(buf_dir) == 0) {
-		return 1;
-	}
-	strip_file_from_path(buf_dir, NULL);
-	if (change_cur_dir(buf_dir) == 0) {
-		return 1;
-	}
-	return 0;
-}
-
-#ifdef ENABLE_HISTORY
-PRIVATE int change_cur_dir_from_history(const char *dir)
-{
-	set_history_newest(HISTORY_TYPE_IDX_DIR);
-	for ( ; ; ) {
-		const char *history = get_history_older(HISTORY_TYPE_IDX_DIR);
-		if (strlen_path(history) == 0) {
-			break;
-		}
-		if (compare_file_path_from_tail(history, dir) == 0) {
-			if (change_cur_dir_saving_prev_next(history)) {
-				return 1;
-			}
-		}
-	}
-	return 0;	// not changeable
-}
-#endif // ENABLE_HISTORY
-
-PRIVATE int filer_change_dir_to_cur_sel(void)
-{
-	if (S_ISDIR(get_cur_fv_cur_file_ptr()->st.st_mode)) {
-		if (filer_change_dir(get_cur_fv_cur_file_ptr()->file_name)) {
-			return 1;		// OK
-		}
-	}
-	return 0;			// error
-}
-PRIVATE int filer_change_dir_if_not_yet(char *dir)
-{
-	if (strcmp(get_cur_filer_cur_pane_view()->cur_dir, dir) == 0) {
-		return filer_change_dir_to_prev_dir();
-	} else {
-		return filer_change_dir(dir);
-	}
-}
-PRIVATE int filer_change_dir_to_prev_dir(void)
-{
-	if (is_strlen_not_0(get_cur_filer_cur_pane_view()->prev_dir)) {
-		return filer_change_dir(get_cur_filer_cur_pane_view()->prev_dir);
-	}
-	return 0;		// error
-}
-
-// If can not change dir, try parent dir
-int filer_change_dir_parent(char *path)
-{
-	char dir[MAX_PATH_LEN+1];
-
-	strlcpy__(dir, path, MAX_PATH_LEN);
-	for ( ; ; ) {
-flf_d_printf("try to change dir to [%s]\n", dir);
-		if (strcmp(dir, "/") == 0) {
-			return 0;	// error
-		}
-		if (filer_change_dir(dir)) {
-			break;
-		}
-		// If can not change dir, try parent dir
-		// /try/to/change/dir/file ==> /try/to/change/dir
-		strip_file_from_path(dir, NULL);
-	}
-	return 1;	// changed
-}
-int filer_change_dir(char *dir)
-{
-	if (change_cur_dir_saving_prev_next(dir) == 0) {
-		// We can't open this dir for some reason. Complain.
-		disp_status_bar_err(_("Can not change current to [%s]: %s"),
-		 shrink_str_to_scr_static(dir), strerror(errno));
-		return 0;	// error
-	}
-#ifdef ENABLE_HISTORY
-	// previous dir, next dir
-	update_dir_history(get_cur_filer_cur_pane_view()->prev_dir,
-	 get_cur_filer_cur_pane_view()->cur_dir);
-#endif // ENABLE_HISTORY
-	get_cur_filer_cur_pane_view()->top_file_idx = 0;
-	disp_status_bar_done(_("Changed current directory to [%s]"),
-	 shrink_str_to_scr_static(get_cur_filer_cur_pane_view()->cur_dir));
-	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
-	return 1;		// OK
-}
-
-int change_cur_dir_saving_prev_next(const char *dir)
-{
-	return change_cur_dir_saving_prev_next_dir(dir,
-	 get_cur_filer_cur_pane_view()->cur_dir,
-	 get_cur_filer_cur_pane_view()->prev_dir,
-	 get_cur_filer_cur_pane_view()->next_file);
 }
 
 #endif // ENABLE_FILER

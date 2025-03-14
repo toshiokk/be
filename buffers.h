@@ -56,8 +56,8 @@ extern be_bufss_t all_bufferss;
 // Edit buffers ---------------------------------------------------------------
 extern be_bufs_t edit_buffers;
 #define EDIT_BUFS_TOP_ANCH		NODES_TOP_ANCH(&edit_buffers)
-#define EDIT_BUFS_TOP_NODE		NODES_TOP_NODE(&edit_buffers)
-#define EDIT_BUFS_BOT_NODE		NODES_BOT_NODE(&edit_buffers)
+#define EDIT_BUFS_TOP_BUF		NODES_TOP_NODE(&edit_buffers)
+#define EDIT_BUFS_BOT_BUF		NODES_BOT_NODE(&edit_buffers)
 #define EDIT_BUFS_BOT_ANCH		NODES_BOT_ANCH(&edit_buffers)
 // current edit buffer --------------------------------------------------------
 #define CUR_EDIT_BUF_TOP_ANCH	NODES_TOP_ANCH(get_epc_buf())
@@ -108,43 +108,43 @@ extern be_bufs_t edit_buffers;
 // Cut buffers ----------------------------------------------------------------
 extern be_bufs_t cut_buffers;
 #define CUT_BUFS_TOP_ANCH		NODES_TOP_ANCH(&cut_buffers)
-#define CUT_BUFS_TOP_NODE		NODES_TOP_NODE(&cut_buffers)
-#define CUT_BUFS_BOT_NODE		NODES_BOT_NODE(&cut_buffers)
+#define CUT_BUFS_TOP_BUF		NODES_TOP_NODE(&cut_buffers)
+#define CUT_BUFS_BOT_BUF		NODES_BOT_NODE(&cut_buffers)
 #define CUT_BUFS_BOT_ANCH		NODES_BOT_ANCH(&cut_buffers)
 // current cut buffer ---------------------------------------------------------
-#define TOP_BUF_OF_CUT_BUFS		CUT_BUFS_TOP_NODE
-#define CUR_CUT_BUF_TOP_LINE	NODES_TOP_NODE(CUT_BUFS_TOP_NODE)	// (be_line_t*)
-#define CUR_CUT_BUF_BOT_ANCH	NODES_BOT_ANCH(CUT_BUFS_TOP_NODE)	// (be_line_t*)
+#define TOP_BUF_OF_CUT_BUFS		CUT_BUFS_TOP_BUF
+#define CUR_CUT_BUF_TOP_LINE	NODES_TOP_NODE(CUT_BUFS_TOP_BUF)	// (be_line_t*)
+#define CUR_CUT_BUF_BOT_ANCH	NODES_BOT_ANCH(CUT_BUFS_TOP_BUF)	// (be_line_t*)
 
 #ifdef ENABLE_HISTORY
 // History buffers ------------------------------------------------------------
 extern be_bufs_t history_buffers;
 #define HIST_BUFS_TOP_ANCH		NODES_TOP_ANCH(&history_buffers)
-#define HIST_BUFS_TOP_NODE		NODES_TOP_NODE(&history_buffers)
-#define HIST_BUFS_BOT_NODE		NODES_BOT_NODE(&history_buffers)
+#define HIST_BUFS_TOP_BUF		NODES_TOP_NODE(&history_buffers)
+#define HIST_BUFS_BOT_BUF		NODES_BOT_NODE(&history_buffers)
 #define HIST_BUFS_BOT_ANCH		NODES_BOT_ANCH(&history_buffers)
 #endif // ENABLE_HISTORY
 
 // Help buffers ---------------------------------------------------------------
 extern be_bufs_t help_buffers;
 #define HELP_BUFS_TOP_ANCH		NODES_TOP_ANCH(&help_buffers)
-#define HELP_BUFS_TOP_NODE		NODES_TOP_NODE(&help_buffers)
-#define HELP_BUFS_BOT_NODE		NODES_BOT_NODE(&help_buffers)
+#define HELP_BUFS_TOP_BUF		NODES_TOP_NODE(&help_buffers)
+#define HELP_BUFS_BOT_BUF		NODES_BOT_NODE(&help_buffers)
 #define HELP_BUFS_BOT_ANCH		NODES_BOT_ANCH(&help_buffers)
 
 #ifdef ENABLE_UNDO
 // Undo buffers ---------------------------------------------------------------
 extern be_bufs_t undo_buffers;
 #define UNDO_BUFS_TOP_ANCH		NODES_TOP_ANCH(&undo_buffers)
-#define UNDO_BUFS_TOP_NODE		NODES_TOP_NODE(&undo_buffers)
-#define UNDO_BUFS_BOT_NODE		NODES_BOT_NODE(&undo_buffers)
+#define UNDO_BUFS_TOP_BUF		NODES_TOP_NODE(&undo_buffers)
+#define UNDO_BUFS_BOT_BUF		NODES_BOT_NODE(&undo_buffers)
 #define UNDO_BUFS_BOT_ANCH		NODES_BOT_ANCH(&undo_buffers)
-#define CUR_UNDO_BUF_BOT_ANCH	NODES_BOT_ANCH(UNDO_BUFS_TOP_NODE)	// (be_line_t*)
+#define CUR_UNDO_BUF_BOT_ANCH	NODES_BOT_ANCH(UNDO_BUFS_TOP_BUF)	// (be_line_t*)
 // Redo buffers ---------------------------------------------------------------
 extern be_bufs_t redo_buffers;
 #define REDO_BUFS_TOP_ANCH		NODES_TOP_ANCH(&redo_buffers)
-#define REDO_BUFS_TOP_NODE		NODES_TOP_NODE(&redo_buffers)
-#define REDO_BUFS_BOT_NODE		NODES_BOT_NODE(&redo_buffers)
+#define REDO_BUFS_TOP_BUF		NODES_TOP_NODE(&redo_buffers)
+#define REDO_BUFS_BOT_BUF		NODES_BOT_NODE(&redo_buffers)
 #define REDO_BUFS_BOT_ANCH		NODES_BOT_ANCH(&redo_buffers)
 #endif // ENABLE_UNDO
 
@@ -156,8 +156,8 @@ void free_all_buffers(void);
 int free_cur_edit_buf(void);
 int free_edit_buf(be_buf_t *edit_buf);
 
-void lock_epc_buf_if_already_locked(BOOL lock_buffer_if_already_locked);
-void unlock_epc_buf_if_locked_by_myself();
+void lock_epc_buf_if_file_already_locked(BOOL lock_buffer_if_already_locked);
+void unlock_epc_buf_if_file_had_locked_by_myself();
 
 void buf_avoid_wild_ptr_cur(be_buf_t *buf);
 void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr);
@@ -168,6 +168,7 @@ void line_avoid_wild_ptr(be_line_t **line_ptr, be_line_t *line);
 //------------------------------------------------------------------------------
 
 void set_cur_editor_panes(editor_panes_t *editor_panes);
+editor_panes_t* get_cur_editor_panes();
 void init_cur_editor_panes(editor_panes_t *eps, be_buf_t *buf);
 void destroy_editor_panes();
 void copy_editor_panes(editor_panes_t *dest, editor_panes_t *src);
@@ -179,16 +180,26 @@ be_buf_view_t *get_epc_buf_view(void);
 void set_epx_buf(int pane_idx, be_buf_t *buf);
 be_buf_t *get_epx_buf(int pane_idx);
 
-be_bufs_t *set_cur_buf_to_bufs(be_buf_t *buf);
+//DDDbe_bufs_t *set_cur_buf_of_bufs(be_buf_t *buf);
+be_bufs_t* get_bufs_contains_buf(be_buf_t* buf);
+const char* get_bufs_name_contains_buf(be_buf_t* buf);
 
 int is_epc_buf_modifiable();
 int is_epc_buf_saveable();
+int is_epc_buf_closeable();
 
-int is_epc_buf_ro_file();
-int is_epc_buf_view_mode();
-int is_epc_buf_locked();
+int is_epc_buf_mode_edit();
+int is_epc_buf_mode_list();
+int is_epc_buf_mode_ro();
+int is_epc_buf_valid();
+int is_epc_buf_empty();
+int is_epc_buf_file_wp();
+int is_epc_buf_file_locked();
+int is_epc_buf_modified();
 
-const char* get_epc_buf_view_mode();
+const char* get_all_buf_state_str();
+const char* get_all_buf_unmodifiable_str();
+const char* get_epc_buf_mode_str();
 
 //------------------------------------------------------------------------------
 // Some compiler needs "inline static" for inline functions
@@ -209,9 +220,8 @@ void create_edit_buf(const char *file_path);
 
 be_line_t *append_string_to_cur_edit_buf(const char *string);
 void append_magic_line(void);
-int edit_bufs_count_bufs(void);
-int epc_buf_count_bufs(void);
-int is_epc_buf_valid(void);
+int edit_bufs_count_buf(void);
+int epc_buf_count_buf(void);
 
 //------------------------------------------------------------------------------
 
@@ -220,7 +230,7 @@ int pop__free_from_cut_buf(void);
 be_line_t *append_string_to_cur_cut_buf(const char *string);
 int count_cut_bufs(void);
 int count_cur_cut_buf_lines(void);
-void free_all_cut_bufs(void);
+void clear_all_cut_bufs(void);
 
 //------------------------------------------------------------------------------
 
@@ -253,8 +263,8 @@ int is_any_edit_buf_modified(void);
 #define CUR_CBUF_STATE(var)					BUF_STATE(TOP_BUF_OF_CUT_BUFS, var)
 #define SET_CUR_CBUF_STATE(var, val)		SET_BUF_STATE(TOP_BUF_OF_CUT_BUFS, var, val)
 
-int inc_buf_view_mode(void);
-const char *get_str_buf_view_mode(void);
+int inc_buf_mode(void);
+const char *get_str_buf_mode(void);
 
 int tog_line_wrap_mode(void);
 const char *get_str_buf_line_wrap_mode(void);
@@ -298,7 +308,7 @@ const char *get_str_buf_enc_binary(void);
 int set_buf_encode(int encode);
 const char *get_str_buf_encode(void);
 
-int doe_inc_buf_view_mode(void);
+int doe_inc_buf_mode(void);
 int doe_tog_buf_line_wrap_mode(void);
 int doe_tog_buf_tab_size(void);
 int doe_inc_buf_tab_size(void);

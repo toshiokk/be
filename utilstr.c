@@ -212,6 +212,16 @@ char *insert_str(char *buffer, size_t buf_len, size_t offset,
 	}
 	return buffer;
 }
+
+// "aaaaaaaaaa", "bb" ==> "bbaaaaaaaaaa"
+char* str_prepend(char* buffer, size_t buf_len, const char* str)
+{
+	size_t len = strnlen(str, buf_len);
+	strlcpy__(&(buffer[len]), buffer, buf_len);
+	memcpy__(buffer, str, len);
+	return buffer;
+}
+
 char *concat_file_path_separating_by_space(char *buffer, size_t buf_len, const char *string)
 {
 	if (is_strlen_not_0(buffer) && buffer[strlen(buffer)-1] != ' ') {
@@ -302,13 +312,12 @@ if (is_strlen_not_0(buf)) {
 
 int is_strlen_0(const char *str)
 {
-	return is_strlen_not_0(str) == '\0';
+	return *str == '\0';
 }
 int is_strlen_not_0(const char *str)
 {
 	return *str;
 }
-
 size_t strlen_path(const char *str)
 {
 	return strnlen(str, MAX_PATH_LEN);
@@ -325,16 +334,23 @@ char *strcat_printf(char *buffer, size_t buf_len, const char *format, ...)
 	strlcat__(buffer, buf_len, buf);
 	return buffer;
 }
-// TOBEDELETED
+// To avoid "warning: '__builtin___snprintf_chk' output may be truncated ...", wrap snprintf()
 int snprintf_(char *buffer, size_t buf_len, const char *format, ...)
 {
 	va_list ap;
-	int ret;
-
 	va_start(ap, format);
-	ret = vsnprintf(buffer, buf_len, format, ap);
+	int ret = vsnprintf(buffer, buf_len, format, ap);
 	va_end(ap);
 	return ret;
+}
+char* sprintf_s(const char *format, ...)
+{
+	static char buffer_s[MAX_PATH_LEN+1];
+	va_list ap;
+	va_start(ap, format);
+	vsnprintf(buffer_s, MAX_PATH_LEN, format, ap);
+	va_end(ap);
+	return buffer_s;
 }
 
 // dest and src are overlappable
@@ -361,9 +377,7 @@ char *strlcat__(char *dest, size_t buf_len, const char *src)
 }
 char *strlncat__(char *dest, size_t buf_len, const char *src, size_t cat_len)
 {
-	int len;
-
-	len = strlen(dest);
+	size_t len = strlen(dest);
 	strlcpy__(&dest[len], src, LIM_MAX(buf_len - len, cat_len));
 	return dest;
 }
@@ -481,15 +495,15 @@ char *strlower(char *buffer)
 char *shrink_str__adjust_col(char *str, int space, int n_over_10)
 {
 	shrink_str(str, space, n_over_10);
-	expand_utf8s_columns(str, space);
+	expand_str_columns(str, space);
 	return str;
 }
 char *shrink_str(char *str, int space, int n_over_10)
 {
-	char buf_[MAX_PATH_LEN+1];
+	char buf[MAX_PATH_LEN+1];
 
-	shrink_str_buf(buf_, str, space, n_over_10);
-	strlcpy__(str, buf_, MAX_PATH_LEN);		// copy back to original buffer
+	shrink_str_buf(buf, str, space, n_over_10);
+	strlcpy__(str, buf, MAX_PATH_LEN);		// copy back to original buffer
 	return str;
 }
 char *shrink_str_static(const char *str, int space, int n_over_10)
@@ -501,6 +515,7 @@ char *shrink_str_static(const char *str, int space, int n_over_10)
 }
 // "/very/long/long/path/to/file" ==> "/very/lo...th/to/file"
 //                                       n/10         (10-n)/10
+// Note: 'buf' and 'str' are not overlappable
 char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10)
 {
 	int str_cols;
@@ -531,12 +546,12 @@ char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10)
 	return buf;
 }
 
-int adjust_utf8s_columns(char *utf8s, int columns)
+int adjust_str_columns(char *utf8s, int columns)
 {
-	truncate_tail_utf8s_columns(utf8s, columns);
-	return expand_utf8s_columns(utf8s, columns);
+	truncate_str_tail_columns(utf8s, columns);
+	return expand_str_columns(utf8s, columns);
 }
-int truncate_tail_utf8s_columns(char *utf8s, int columns)
+int truncate_str_tail_columns(char *utf8s, int columns)
 {
 	int bytes;
 
@@ -544,8 +559,20 @@ int truncate_tail_utf8s_columns(char *utf8s, int columns)
 	utf8s[bytes] = '\0';
 	return bytes;
 }
-int get_byte_idx_from_col_idx(const char *utf8s, int columns, int left_right,
- int *col_idx__)
+int expand_str_columns(char *utf8s, int columns)
+{
+	int cols;
+	int bytes;
+
+	cols = utf8s_columns(utf8s, MAX_PATH_LEN);
+	if (columns - cols > 0) {
+		bytes = strlen(utf8s);
+		strnset__(&utf8s[bytes], ' ', columns - cols);
+	}
+	return LIM_MIN(columns, cols);
+}
+
+int get_byte_idx_from_col_idx(const char *utf8s, int columns, int left_right, int *col_idx__)
 {
 	int col_idx;
 	int prev_col_idx;
@@ -566,19 +593,6 @@ int get_byte_idx_from_col_idx(const char *utf8s, int columns, int left_right,
 	if (col_idx__)
 		*col_idx__ = col_idx;
 	return ptr - utf8s;
-}
-
-int expand_utf8s_columns(char *utf8s, int columns)
-{
-	int cols;
-	int bytes;
-
-	cols = utf8s_columns(utf8s, MAX_PATH_LEN);
-	if (columns - cols > 0) {
-		bytes = strlen(utf8s);
-		strnset__(&utf8s[bytes], ' ', columns - cols);
-	}
-	return LIM_MIN(columns, cols);
 }
 
 char *utf8s_strnset__(char *buf, const char *utf8c, size_t len)
@@ -700,9 +714,7 @@ char *skip_string_mutable(char *ptr)
 
 char *remove_line_tail_lf(char *line)
 {
-	int len;
-
-	len = LIM_MIN(0, (int)strlen(line) - 1);
+	int len = LIM_MIN(0, (int)strlen(line) - 1);
 	if (line[len] == '\n')
 		line[len] = '\0';
 	return line;

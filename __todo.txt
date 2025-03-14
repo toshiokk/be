@@ -4,14 +4,176 @@
 - IMPR: to be improved issues
 - ISSUE: to be improved or fixed problems
 - CRASH: crash
+- POLICY: things to be kept
+
+- [] built in logger that output to the separate log files based on the pty number
+- [x] no screen size displayed within input_string_pos() on screen resizing
+- [] Make easy to use for other people
+- [xx ] clean up code
+- [vG] 250304 update dir-history only when some operation actually done in the dir
+  - [ ] this is sometimes inconvenient. how to improve it ==> ??
+  operations:
+  - refresh file list
+  - select file
+  - open file
+  - file operations such as copy/move/remove/mkdir/exec
+  - other special operation ...
+    - quit filer
+- [x] 250314 filer: 'u' uncompress files from .tar.gz/.tar.bz2/.zip calling `beunzip`
+- [x] 250314 filer: 'U' compress files to .tar.gz/.tar.bz2/.zip calling `bezip`
+- [x ] CRASH: on the switch to undo-buffer
+  - [-]there may be illegal links from undo-buffer to edit-buffer
+  - [x] ==> undo_buf->cur_buf is not fixed
+  - [x] [MOD]/[LIST] states gonna be cleared in undo/redo-buf
+- [x] BUG: opening file at command line creates a lock file such as "$shared-documents.md" that have no dir-part
+  - get_full_path() should add the dir-part to the file path only contains file-part
+
+- [x] 250313 ask_yes_no(): change to more highlighted display ==> red background by inverting color
+
+- buffer state:
+  |state |operations possible    |explanation                                                     |
+  |------|-----------------------|----------------------------------------------------------------|
+  |normal|R/W, saveable/closeable| normal edit buffer                                             |
+  |RO    |RO, closeable          | read-only: file is loaded as read-only by a user's intention   |
+  |locked|RO, closeable          | locked   : file is not writable because other program open it  |
+  |WP    |RO, closeable          | write-protected: file is write protected by the file system    |
+  |LIST  |RO, not-closeable by user's intention | list  : help/file-list/history/cut-buf/undo-buf |
+  |anchor|RO, not-closeable by user's intention | anchor: buffer is an anchor                     |
+  |empty |RO, not-closeable by user's intention | empty : buffer is empty                         |
+
+  |anchor|empty|list| RO |locked| WP ||modifiable|saveable|closeable|
+  |------|-----|----|----|------|----||----------|--------|---------|
+  |  0   |  0  | 0  | 0  |  0   | 0  ||    1     |    1   |    1    | edit-buf
+  |  0   |  0  | 0  | 1  |  0   | 0  ||    0     |    0   |    1    | edit-buf(read-only open)
+  |  0   |  0  | 0  | 0  |  1   | 0  ||    0     |    0   |    1    | edit-buf(locked file)
+  |  0   |  0  | 0  | 0  |  0   | 1  ||    0     |    0   |    1    | edit-buf(write-protected file)
+  |  0   |  0  | 1  | 0  |  0   | 0  ||    0     |    0   |    0    | help/history/cut/undo/redo-buf
+  |  1   |  0  | 0  | 0  |  0   | 0  ||    0     |    0   |    0    | an anchor (not a valid buffer)
+  |  0   |  1  | 0  | 0  |  0   | 0  ||    0     |    0   |    0    | empty  (not a valid buffer)
+
+- [x] an anchor of undo/redo buffer being open when swithed
+- [x] It is not proper that undo/redo buffer have the same `abs_path` to the original edit-buffer
+  ==> "/path/to/the/file" --> "#/path/to/the/file" (prepend '#')
+
+- [d ] change directory by selecting from directory tree
+  - get directory list by 'find -type d' (output to file or pty)
+    - limit lines to 1000
+    - avoid searching too deep by '-maxdepth 3'
+  - open in list mode and let it be choosen
+
+- [x] run line from cursor position
+
+- [x] It is confising that cur dir has changed after file move with a call to filer
+  ==> does not change cur dir after calling filer in LIST mode
+- [x] stripes filer file list lines ==> only FGC (black/dark-gray)
+  - [x] toggle 'zebra striping' ON/off by key '_'
+- [x] reconsider options for dof_copy_...() and dof_move...()
+  - [x] dof_copy_file()         "cp -afv ..."  ==> "cp -afv ..."
+  - [x] dof_copy_file_update()  "cp -aufv ..." ==> "cp -auv ..."
+  - [x] dof_move_file()                            "mv -fv ..."
+  - [x] add dof_move_file_update()                 "mv -uv ..."
+- [-] list functions from small letter to capital letter
+- [-] make it able to cut/copy text in the list mode buffer
+- [?] Speed down of the cursor movement in input_str_pos() with GNU-screen on WSL
+- [x] 250305 Clear or Limit size of cut_buffers(1000 buffers)
+
+- [-] "LANG=C be" does not show UTF8 characters in editing text ==> natural
+- [x] "LANG=C.UTF-8 be" does not show UTF8 characters in editing text
+- [x] enable debug-logging from just after app startup
+  |No.|ENABLE_DEBUG|FORCE_ENABLE_DEBUG|`-d` option|start main()|after parse_options()|
+  |---|------------|------------------|-----------|------------|---------------------|
+  | 0 | --         | --               | none      | None       | None   |
+  | 1 | --         | --               | -d        | None       | None   |
+  | 2 | --         |FORCE_ENABLE_DEBUG| none      | Output     | None   |
+  | 3 | --         |FORCE_ENABLE_DEBUG| -d        | Output     | Output |
+  | 4 |ENABLE_DEBUG| --               | none      | None       | None   |
+  | 5 |ENABLE_DEBUG| --               | -d        | None       | Output |
+  | 6 |ENABLE_DEBUG|FORCE_ENABLE_DEBUG| none      | Output     | None   |
+  | 7 |ENABLE_DEBUG|FORCE_ENABLE_DEBUG| -d        | Output     | Output |
+
+- [x] BUG: quit from filer which is called from editor by K_M_Q changes cur_dir to "/home/user"
+
+- [-] 250301 "File not found" message on loading `.bep` file
+      ==> error message should be shown when no file could be loaded within one line
+
+- [x] 250301 change_cur_dir() returns "0: on success" ==> "1: on success"
+
+- [x] 250301 BUG: infinite loop at changing to non existent dir
+
+- [x] make it easy to do:
+  - [x] open shell script, change current dir, run one line of the shell script
+    - [x] change editor current directory in the sub-filer
+    - [x] how to show current directory in editor ==> show on the status-bar while input_str_pos()
+  - [XX] change current dir, open shell script, run one line of the shell script
+
+- [] ISSUE: manage process's current directory
+  - POLICY: do not change current directory without consideration.
+
+- [x] can not Undo
+
+- [x] fix file locking problem on write_file_to()
+//  |writing to the|current buffer state |another file state   | what to do |
+//  |--------------|---------------------|---------------------|------------|
+//[x]|current file  |not locked           |--                   |write to it         |
+//[x]|current file  |locked               |--                   |can NOT write to it |
+//[x]|another file  |--                   |has not locked       |unlock prev file, write to it and lock it|
+//[x]|another file  |--                   |has locked by someone|can NOT write to it |
+
+- [x] scroll pull down menu in small screen
+  - [x] does not re-displayed menu on screen resizing
+- [x] delete EFLM_QUIT
+- [x] 250219 in viewer mode, ESC quits the viewer
+- [x] BUG: switch_to_bot_buffer() at the bottom of buffer switches to edit-buffer
+- [x] cover all Fxx keys modified any conbination of modifier keys of S, C, M in the key key_seq_table
+  no any key seq does outputs a funny text such as "19;7~"
+- [x] 250207 do switch_to_prev_buffer on the top of buffers ==> switch_to_prev_buffers
+- [x] 250207 do switch_to_next_buffer on the top of buffers ==> switch_to_next_buffers
+- [x] 250206 root directory is shown as "//"
+- [x] 250202 read file into current cursor position
+- [x] current buffer is not be switched to the newly loaded file
+- [x] open directory selecting from file open histotry "/file/opened.txt|1:2" in F09 and F10
+  - [-] update the current directory in caller
+
+## various operations and call tree ============================================
+start as a filer
+- [x] edit a file in the current directory
+  - filer(select file to edit)                              => open it
+- [x] execute a file in the current directory
+  - filer(select file to execute)                           => execute it
+- [x] input command and execute it
+  - filer -> input_string(input command)
+          <-                                                => input command and execute it
+- [x] select a dir from history and change current dir to it
+  - filer -> input_string() -> editor(select from history)
+          <- input_string() <-                              => change current dir
+- [x] select a command from history and execute it
+  - filer -> input_string() -> editor(select from history)
+          <- input_string() <-                              => execute command
+- [XX] switch to the execution dir, open command file from the another dir
+  and execute a line as a command line [XX]in the switched dir
+  - filer(change current dir) -> input_string() -> editor(select from history)
+                              <- input_string() <-          => execute command
+
+start as a editor
+- [x] select a string from history and input into the editing text
+  - editor -> input_string() -> editor(select from history)
+              input_string() <-                             => input string to the editing text
+- [x] select a string from history and search it in the editing text
+  - editor -> input_string() -> editor(select from history)
+              input_string() <-                             => search a keyword in the editing text
+- [x] select a line from the editing text and execute it as a command line in the current dir
+  - editor(select a line)                                   => execute it as a command line
+- [x]open commend file and call filer, switch to the execution dir, select a line from the editing text
+  and execute it as a commend line in the switched dir
+  - editor -> filer(change dir) -> editor(select a line)    => execute it as a command line
 
 - [] regression test list
 // Editing functions:
 // | key    | filer function              | editor function           |filer|editor|
 // |--------|-----------------------------|---------------------------|-----|------|
-// | K_e_   | dof_open_file               | --                        |  v  |      |
+// | K_e_   | dof_open_file_recursive     | --                        |  v  |      |
+// | K_M_e  | dof_open_file_non_recursive | doe_open_file_recursive   |  v  |      |
 // | K_E_   | dof_open_file_ro            | --                        |  v  |      |
-// | K_M_e  | dof_open_file_non_recursive | doe_open_file             |  v  |      |
 // | K_M_E  | dof_open_file_from_history  | doe_open_file_ro          |  v  |      |
 // | K_MC_E | dof_open_locked_file        | doe_open_locked_file      |     |      |
 // | K_M_n  | dof_open_new_file           | doe_open_new_file         |     |      |
@@ -36,6 +198,42 @@
 // | K_t_   | dof_run_command_src_dst     | --                        |     |      |
 // | K_T_   | dof_run_command_symlink     | --                        |     |      |
 
+// Editor file open functions:
+// | key    | filer function              |recursive |read only|Use history|Unlocking|input FN|Allow non-existent|
+// |--------|-----------------------------|----------|---------|-----------|---------|--------|------------------|
+// | K_e_   | dof_open_file_recursive     |Yes       |         |No         |         |        |                  |
+// | K_E_   | dof_open_file_ro            |Yes       |Yes      |No         |         |        |                  |
+// | K_M_e  | dof_open_file_non_recursive |No        |         |No         |         |        |                  |
+// | K_M_E  | dof_open_file_from_history  |Yes       |         |Yes        |         |        |                  |
+// | K_MC_E | dof_open_locked_file        |Yes       |         |No         |Yes      |        |                  |
+// | K_M_n  | dof_open_new_file           |YEs       |         |           |         |Yes     |Yes               |
+// |--------|-----------------------------|----------|---------|-----------|---------|--------|------------------|
+// | K_e_   | N/A                         |          |         |           |         |Yes     |                  |
+// | K_E_   | N/A                         |          |         |           |         |Yes     |                  |
+// | K_M_e  | doe_open_file_recursive     |          |         |           |         |Yes     |                  |
+// | K_M_E  | doe_open_file_non_recursive |Yes       |         |           |         |Yes     |                  |
+// | K_M_n  | doe_open_new_file           |          |         |           |         |Yes     |Yes               |
+// | XX K_M_E  | XX doe_open_file_ro            |          |Yes      |           |         |Yes     |                  |
+// | XX K_MC_E | XX doe_open_locked_file        |          |         |           |Yes      |Yes     |                  |
+
+// Execution functions:
+// | key    | filer function              | editor function           |
+// |--------|-----------------------------|---------------------------|
+// | K_x_   | dof_exec_command_with_file  | --                        |
+// | K_X_   | dof_exec_command_with_files | --                        |
+// | K_M_x  | dof_run_command_soon        | doe_run_line_soon         |
+// | K_M_X  | dof_run_command_soon_w_log  | doe_run_line_soon_w_log   |
+// | K_MC_X | --                          | doe_tog_regex             |
+// | K_r_   | dof_run_command_rel         | --                        |
+// | K_R_   | dof_run_command_abs         | --                        |
+// | K_M_r  | --                          | doe_start_rec__cancel_rec |
+// | K_M_R  | --                          | --                        |
+// | K_MC_R | --                          | doe_tog_show_ruler        |
+// | K_M_p  | doe_open_proj_file          | doe_end_rec__playback     |
+// | K_M_P  | doe_open_proj_file          | doe_open_proj_file        |
+// | K_t_   | dof_run_command_src_dst     | --                        |
+// | K_T_   | dof_run_command_symlink     | --                        |
+
 The seamless text copying:
 | from                          | to               |action to be able to do                           |
 |-------------------------------|------------------|--------------------------------------------------|
@@ -55,8 +253,8 @@ The seamless text copying:
 |file-history                   |dir Tag-jump      |change dir and open with filer |
 |dir-history                    |dir Tag-jump      |change dir and open with filer |
 
-- [] Too long time would be taken when you open missing files with project file
-- [] open directory selecting from file open histotry "/file/opened.txt|1:2" in F09 and F10
+- [x] file name filter
+- [x] Too long time would be taken when you open missing files with project file
 - [x] 250120 Does not show the function keys not available on the current state
 - [x] 250116 No new window size shown when beeing open input_str()
 - [x] How to manage discarded file lock (on BE-editor crash) ==> eof_open_locked_file()
@@ -69,7 +267,7 @@ The seamless text copying:
 - [ ] logging without using "| tee -a file" but using pty
 
 - [?] 241226 CRASH: on tag-jump in dir-history
-- [x] 241224 change [Mod] title bar color not red background
+- [x] 241224 change [MOD] title bar color not red background
 - [x] 241224 M-E open in RO mode
 - [x] 241224 integrate VIEWER, RO and WP mode
 - [x] 241222 unlock file name before rename it and lock file name after rename to
@@ -90,7 +288,7 @@ The seamless text copying:
 - [-] search not moving cursor pos. as possible ==> Cursor center mode
 - [x] "M_LBRAC" ==> "M-{", "\(M-))" ==> "\{M-)}"
 - [x] 241203 IMPR: does not go to previous cursor x position after undoing "cut-to-head"/"cut-to_tail"
-- [-] keep cut buffers after exiting app.
+- [x] keep cut buffers after exiting app.
 - [x] 241202 in editor-list-mode, M-e inserts text to input_str
 - [x] make editor and filer to work more seamless as possible.
   - [x] cut-copy 1 line ==> view cut-buffer
@@ -234,17 +432,17 @@ The seamless text copying:
   [x] 241111 convert camel case "camel" -> "Camel" -> "CAMEL" -> "cAMEL" ->
   [x] 241111 convert camel case "CAMEL" -> "cAMEL" -> "camel" -> "Camel" ->
 [x] goto colmuns "Alt-Ctrl-F columns"
-[x] Handle drop event from window managers like: '/mnt/c/Users/t_koike/Downloads/20240731.zip'
-  | state                            | event                              | event                           |
-  |----------------------------------| drop files "'file-1' 'file-2' ..." | drop dirs "'dir-1' 'dir-2' ..." |
-  |[x]in filer                       | [x]open these files                | [x]open dir                     |
-  |[x]in filer  - "dof_open_new_file"| [x]open these files                | [x]open dir                     |
-  |[-]in editor                      | can not handle it because "'" is ordinary character                  |
-  |[x]in editor - "doe_open_new_file"| open these files                   | [x]open dir                     |
+[x] Handle drop event from window managers such as: '/mnt/c/Users/t_koike/Downloads/20240731.zip'
+  | state                            | event "'file-1' 'file-2' ..." | event "'dir-1' 'dir-2' ..." |
+  |----------------------------------|-------------------------------|-----------------------------|
+  |[x]in filer                       | [x]open these files           | [x]open dir                 |
+  |[x]in filer  - "dof_open_new_file"| [x]open these files           | [x]open dir                 |
+  |[-]in editor                      | can not handle it because ->  | "'" is ordinary character   |
+  |[x]in editor - "doe_open_new_file"| open these files              | [x]open dir                 |
   - [x] open file
-    - [ ] select action from open/copy/move/process after drop
-  - [x ] copy(K_M_C), move(K_M_M)
-  - [ ] process dropped files by command
+    - [x] 250228 select action from open/copy/move after drop
+  - [x] 250228 copy(K_M_c), move(K_M_m)
+  - [-] 250228 process dropped files by command
 [x] capture stdout/err into be-editor buffer
   back-scroll vs log-file
   - [-] back-scroll method - Bad: hard to handle(get, edit, copy).
@@ -268,7 +466,6 @@ The seamless text copying:
 [x] arrange ENABLE_FILER and ENABLE_HISTORY sections
 [x] can not open recursively from __be_test.pro and __be_test2.pro --> K_M_E (load-from-history)
 [x] tag-jump goes to line-1
-    editorgoto.c:322:13: error: invalid storage class for function ‘load_files_in_string_’
 [x] 0 length file --> 1 file loaded
 [x] testfiles --> change cur-dir to be/testfiles
    [x] (based on the directory of current file)
@@ -314,17 +511,6 @@ The seamless text copying:
   |@E,@D,@C       |file path    |Insert        | input file path appending to previous string |
   |m              |cur dir path |Replace       | input dir path replacing previous string     |
   |@m             |cur dir path |Insert        | input dir path appending to previous string  |
-
-[x] switching policy of filer and editor
-switching filer and editor
-  -+- call_filer -+- input_string() +-- call_editor
-   |              |                 +-- call_filer
-   |              +- view_help() -- call_editor
-   |
-   +- call_editor -+- input_string() +-- call_editor
-                   |                 +-- call_filer
-                   +- view_help() -- call_editor
-                   +- call_filer
 
 [x] editor: stay in editor while `get_edit_bufs() > 0` and exit when `get_edit_bufs() == 0`
 
@@ -653,8 +839,8 @@ Editor 2 pane mode
 [ex]change current dir on start up
 [?x]Flash IMJ input line
 [dx]display ruler
-  12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567
-  1---5----10---15---20---25---30---35---40---45---50---55---60---65---70---75---80---85---90---95---100--105
+12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567
+1---5----10---15---20---25---30---35---40---45---50---55---60---65---70---75---80---85---90---95---100--105
 [dx]non-bit-map-based setting variables
 [ex]history ==> buffer
 [dx]display line number
@@ -680,7 +866,7 @@ Editor 2 pane mode
 //[e]Prevent from reading too large file(>128MB).
 
 []Wide char mode '#' ==> '＃'
-[]replace mode
+[-]replace mode
 [pd]embedded/minimal environment(wo/curses ,termcap and termlib. only dumb terminal)
 [pe]display line number
 [pe]memorize line and return
@@ -852,10 +1038,10 @@ Change log -- n:neccesary,p:preferable,e:easy,d:difficult,a:always
 [x]Delete Monocrome mode
 [x] 8 colors ==> 16 colors
 
-[BUGS]------------------------------------------------------------------------------
+[BUGS]--------------------------------------------------------------------------
 //UTF8 directory/file name support
 
-[Crash/Fixes]-----------------------------------------------------------------------
+[Crash/Fixes]-------------------------------------------------------------------
 CFCFCFCFCFCFFF
 
 [Build and Running environments tested]
@@ -904,7 +1090,7 @@ buffer.c     12345  rwxrwxrwx|buffer.c     12345  rwxrwxrwx
 	history buffer
 		history list
 
---------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 Function	command-line	   config-file	    command
 --------------	------------	   -----------	    -------
 rcfile			O		-		-
@@ -946,7 +1132,7 @@ int main(void)
 }
 //--------------------------------
 
-[BUGS]------------------------------------------------------------------------------
+[BUGS]--------------------------------------------------------------------------
 //not return beginning position after replacing
 //ChDir to ..
 
@@ -959,7 +1145,7 @@ int main(void)
 [pe]input from stdin
 //[pe]cursor positioning after reopening file
 
--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 open/close(device)
 begin/end
@@ -971,7 +1157,7 @@ clear/set(value)
 show/hide(window)
 start/terminate(process)
 
---------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 USB bootable Linux can be a killer application to Windose.
 USB からブート可能なOS(Linux)は、きっとWindoseに対するキラーアプリになる。
 

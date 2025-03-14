@@ -40,8 +40,9 @@ be_SOURCES = \
 	disp.c \
 	fileio.c \
 	filer.c \
-	filer2.c \
+	filerlist.c \
 	filercmd.c \
+	filerdir.c \
 	filerrun.c \
 	filerkeys.c \
 	history.c \
@@ -82,8 +83,9 @@ be_SOURCES = \
 	editorundo.h \
 	fileio.h \
 	filer.h \
-	filer2.h \
+	filerlist.h \
 	filercmd.h \
+	filerdir.h \
 	filerrun.h \
 	filerkeys.h \
 	headers.h \

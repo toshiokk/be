@@ -31,19 +31,24 @@ PRIVATE void make_help_key_list(void);
 
 void init_help_bufs(void)
 {
-	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Files loaded")));
+	bufs_insert_buf_to_bottom(&help_buffers,
+	 buf_create_node(_("#List of Files loaded"), buf_MODE_LIST));
 #ifdef ENABLE_HELP
-	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Editor Functions")));
-	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Editor Key Bindings")));
+	bufs_insert_buf_to_bottom(&help_buffers,
+	 buf_create_node(_("#List of Editor Functions"), buf_MODE_LIST));
+	bufs_insert_buf_to_bottom(&help_buffers,
+	 buf_create_node(_("#List of Editor Key Bindings"), buf_MODE_LIST));
 #ifdef ENABLE_FILER
-	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Filer Functions")));
-	bufs_insert_buf_to_bottom(&help_buffers, buf_create_node(_("#List of Filer Key Bindings")));
+	bufs_insert_buf_to_bottom(&help_buffers,
+	 buf_create_node(_("#List of Filer Functions"), buf_MODE_LIST));
+	bufs_insert_buf_to_bottom(&help_buffers,
+	 buf_create_node(_("#List of Filer Key Bindings"), buf_MODE_LIST));
 #endif // ENABLE_FILER
 #endif // ENABLE_HELP
 }
 be_buf_t *get_help_buf(int help_buf_idx)
 {
-	return buf_get_buf_by_idx(HELP_BUFS_TOP_NODE, help_buf_idx);
+	return buf_get_buf_by_idx(HELP_BUFS_TOP_BUF, help_buf_idx);
 }
 
 int doe_view_file_list(void)
@@ -154,7 +159,7 @@ PRIVATE void make_help_buf(int help_idx)
 #endif // ENABLE_HELP
 	}
 
-	SET_CUR_EBUF_STATE(buf_MODE, buf_MODE_RO);	// A list must be not saveable
+	SET_CUR_EBUF_STATE(buf_MODE, buf_MODE_LIST);	// A list
 	set_epc_buf(cur_edit_buf);
 }
 
@@ -163,12 +168,12 @@ PRIVATE void make_help_file_list(be_buf_t *cur_edit_buf)
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 	be_line_t *line_to_go = NULL;
 
-	buf_set_file_abs_path(get_epc_buf(), _("#List of Files currently loaded"));
+	buf_set_file_path(get_epc_buf(), _("#List of Files currently loaded"));
 
-	for (be_buf_t *edit_buf = EDIT_BUFS_TOP_NODE; IS_NODE_INT(edit_buf);
+	for (be_buf_t *edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
 	 edit_buf = NODE_NEXT(edit_buf)) {
 		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-60s %-5s %s %s %04x",
-		 quote_file_path_static(edit_buf->abs_path_),
+		 quote_file_path_static(buf_get_abs_path(edit_buf, NULL)),
 		 buf_enc_str(edit_buf), buf_eol_str(edit_buf),
 		 BUF_STATE(edit_buf, buf_MODIFIED) ? "Mo" : "--",
 		 edit_buf->orig_file_crc);
@@ -241,7 +246,7 @@ PRIVATE void make_help_key_list(void)
 	for (key_idx = -0x60; key_idx < 0; key_idx++) {
 		key_code_t key = key_idx + 0x60 + ' ';
 		// key = [' ', 0x7f]
-		func_key_list_t *fkey_list = get_fkey_entry_table_from_key(NULL, key, 0);
+		func_key_list_t *fkey_list = get_fkey_entry_table_from_key(NULL, key, 0, 2);
 		if (fkey_list) {
 			break;
 		}
@@ -257,7 +262,7 @@ PRIVATE void make_help_key_list(void)
 		} else {
 			key = key_name_table[key_idx].key_code;
 		}
-		func_key_list_t *fkey_list = get_fkey_entry_table_from_key(NULL, key, 0);
+		func_key_list_t *fkey_list = get_fkey_entry_table_from_key(NULL, key, 0, 2);
 		key_code_t keys[MAX_KEYS_BIND];
 		for (int key_idx = 0; key_idx < MAX_KEYS_BIND; key_idx++) {
 			keys[key_idx] = K_NONE;

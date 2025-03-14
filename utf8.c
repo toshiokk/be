@@ -156,8 +156,6 @@ int utf8c_prev_bytes(const char *utf8s_min, const char *utf8s)
 			break;
 	}
 	bytes = utf8s - ptr;
-///	if (bytes < 1)
-///		bytes = 1;
 	return bytes;
 }
 

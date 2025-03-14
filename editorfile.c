@@ -21,27 +21,23 @@
 
 #include "headers.h"
 
-PRIVATE int doe_open_file_recursive(int flags);
-int doe_open_file(void)
+PRIVATE int open_file_recursive(int flags);
+int doe_open_file_recursive(void)
 {
-	return doe_open_file_recursive(WRP0 | FOL0 | RECURS1);
+	return open_file_recursive(RECURS1 | RDOL0 | FOL0 | LFH0);
 }
 int doe_open_file_ro(void)
 {
-	return doe_open_file_recursive(WRP1 | FOL0 | RECURS1);
+	return open_file_recursive(RECURS1 | RDOL1 | FOL0 | LFH0);
 }
 int doe_open_locked_file(void)
 {
-	return doe_open_file_recursive(WRP0 | FOL1 | RECURS1);
+	return open_file_recursive(RECURS1 | RDOL0 | FOL1 | LFH0);
 }
-PRIVATE int doe_open_file_recursive(int flags)
+PRIVATE int open_file_recursive(int flags)
 {
-	char file_path[MAX_PATH_LEN+1];
-
 	clear_files_loaded();
-#ifdef ENABLE_FILER
-	do_call_filer(1, APP_MODE_NORMAL, "", file_path, file_path, MAX_PATH_LEN);
-#else // ENABLE_FILER
+	char file_path[MAX_PATH_LEN+1];
 	if (chk_inp_str_ret_val_editor(input_string_pos("", file_path, MAX_PATH_LEN,
 	 HISTORY_TYPE_IDX_FILE,
 	 _("Open existing file:")))) {
@@ -49,11 +45,9 @@ PRIVATE int doe_open_file_recursive(int flags)
 	}
 	// CURDIR: changed in editor
 	if (load_files_in_string(file_path,
-	 TUL0 | OOE0 | MOE1 | LFH0 | (flags & (WRP1 | FOL1 | RECURS1))) >= 0) {
-		tio_beep();
+	 TUL0 | OOE0 | MOE1 | RECURS1 | (flags & (RDOL1 | FOL1 | LFH0))) < 0) {
 		return 0;
 	}
-#endif // ENABLE_FILER
 	disp_files_loaded_if_ge_0();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
@@ -69,7 +63,7 @@ int doe_open_new_file(void)
 
 	// CURDIR: changed in editor
 	if (load_files_in_string(file_path,
-	 TUL0 | OOE1 | MOE0 | LFH1 | WRP0 | FOL0 | RECURS0) >= 0) {
+	 TUL0 | OOE1 | MOE0 | RECURS0 | RDOL0 | FOL0 | LFH1) >= 0) {
 		disp_files_loaded_if_ge_0();
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 		return 1;
@@ -79,7 +73,6 @@ int doe_open_new_file(void)
 		return 1;
 	}
 #endif // ENABLE_FILER
-	tio_beep();
 	return 0;
 }
 
@@ -133,8 +126,7 @@ int do_open_proj_file(void)
 
 	// CURDIR: changed in editor
 	if (load_file_name_upp_low(file_name,
-	 TUL0 | OOE0 | MOE1 | LFH0 | WRP0 | FOL0 | RECURS1) < 0) {
-		tio_beep();
+	 TUL0 | OOE0 | MOE1 | RECURS1 | RDOL0 | FOL0 | LFH0) < 0) {
 		return 0;
 	}
 	disp_files_loaded_if_ge_0();
@@ -145,8 +137,7 @@ int do_open_exec_log_file(void)
 {
 	// CURDIR: changed in editor
 	if (load_file_name_upp_low(get_exec_log_file_path(),
-	 TUL0 | OOE0 | MOE1 | LFH0 | WRP0 | FOL0 | RECURS1) < 0) {
-		tio_beep();
+	 TUL0 | OOE0 | MOE1 | RECURS1 | RDOL0 | FOL0 | LFH0) < 0) {
 		return 0;
 	}
 	disp_files_loaded_if_ge_0();
@@ -174,15 +165,14 @@ int doe_reopen_file(void)
 		if (ret <= 0)
 			return 0;
 	}
-	int view = is_epc_buf_view_mode();
+	int view = is_epc_buf_mode_ro();
 	// memorize current file path before closing
 	memorize_cur_file_pos_null(file_pos_str);
 	free_cur_edit_buf();
 	// CURDIR: abs-path is specified
 	get_file_line_col_from_str(file_pos_str, file_path, NULL, NULL);
 	if (load_file_name_upp_low(file_path,
-	 TUL0 | OOE0 | MOE1 | LFH0 | (view ? WRP1 : WRP0) | FOL0 | RECURS1) < 0) {
-		tio_beep();
+	 TUL0 | OOE0 | MOE1 | RECURS1 | (view ? RDOL1 : RDOL0) | FOL0 | LFH0) < 0) {
 		return 0;
 	}
 	goto_str_line_col_in_cur_buf(file_pos_str);
@@ -213,38 +203,57 @@ int doe_reopen_file(void)
 
 int doe_write_file_to(void)
 {
-	char new_file_path[MAX_PATH_LEN+1];
-	char old_file_path[MAX_PATH_LEN+1];
+	char cur_file_path[MAX_PATH_LEN+1];
+	char next_file_path[MAX_PATH_LEN+1];
 
-	strlcpy__(new_file_path, get_epc_buf()->file_path_, MAX_PATH_LEN);
+	buf_get_file_path(get_epc_buf(), cur_file_path);
+	buf_get_file_path(get_epc_buf(), next_file_path);
 	for ( ; ; ) {
-		if (input_new_file_name__ask(new_file_path) <= 0) {
+		if (input_new_file_name__ask(next_file_path) <= 0) {
 			disp_status_bar_done(_("Cancelled"));
-			return -1;
-		}
-#ifdef ENABLE_FILER
-		if (is_path_wildcard(new_file_path))
-			continue;
-#endif // ENABLE_FILER
-		buf_get_file_path(get_epc_buf(), old_file_path);
-		buf_set_file_abs_path(get_epc_buf(), new_file_path);	// set new file name
-		if (backup_and_save_cur_buf(new_file_path) < 0) {
-			buf_set_file_abs_path(get_epc_buf(), old_file_path);
 			return -1;
 		}
 		break;
 	}
 
-	buf_set_file_abs_path(get_epc_buf(), old_file_path);
-	unlock_epc_buf_if_locked_by_myself();	// unlock old file name
-	buf_set_file_abs_path(get_epc_buf(), new_file_path);
-	lock_epc_buf_if_already_locked(1);		// lock new file name
+	if (compare_file_path_in_abs_path(cur_file_path, next_file_path) == 0) {
+		// writing to the same file
+		if (is_epc_buf_file_locked()) {
+			disp_status_bar_err(_("Buffer [%s] is locked"), cur_file_path);
+			return -1;
+		}
+	} else {
+		// writing to another file
+flf_d_printf("next_file_path: %s\n", next_file_path);
+		if (flock_is_locked(next_file_path)) {
+			disp_status_bar_err(_("File [%s] is locked"), next_file_path);
+			return -1;
+		}
+flf_d_printf("next_file_path: %s\n", next_file_path);
+		buf_set_file_path(get_epc_buf(), next_file_path);	// set new file name
+		buf_clear_orig_file_mtime(get_epc_buf());
+	}
+
+	if (backup_and_save_cur_buf_ask() < 0) {
+		// error then restore old file path
+		buf_set_file_path(get_epc_buf(), cur_file_path);
+		return -1;
+	}
+
+	if (compare_file_path_in_abs_path(cur_file_path, next_file_path) == 0) {
+		// same file name
+	} else {
+		buf_set_file_path(get_epc_buf(), cur_file_path);
+		unlock_epc_buf_if_file_had_locked_by_myself();	// unlock old file name
+		buf_set_file_path(get_epc_buf(), next_file_path);
+		lock_epc_buf_if_file_already_locked(1);			// lock new file name
+	}
 
 	char file_name[MAX_PATH_LEN+1];
-	separate_path_to_dir_and_file(new_file_path, new_file_path, file_name);
+	separate_path_to_dir_and_file(next_file_path, next_file_path, file_name);
 #ifdef ENABLE_FILER
 	// copy new file name to filer next_file
-	strlcpy__(get_cur_filer_cur_pane_view()->next_file, file_name, MAX_PATH_LEN);
+	strlcpy__(get_cur_filer_pane_view()->next_file, file_name, MAX_PATH_LEN);
 #endif // ENABLE_FILER
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	disp_status_bar_done(_("Written to the file: %s"), file_name);
@@ -253,6 +262,7 @@ int doe_write_file_to(void)
 #endif // ENABLE_SYNTAX
 	return 1;
 }
+
 int doe_write_file_ask(void)
 {
 	return write_file_ask(ANSWER_NO, NO_CLOSE_AFTER_SAVE_0);
@@ -289,17 +299,21 @@ int doe_close_file_always(void)
 }
 PRIVATE int close_file_ask(int yes_no)
 {
-	if (write_file_ask(yes_no, CLOSE_AFTER_SAVE_1) <= ANSWER_NONE) {
+	if (write_file_ask(yes_no, CLOSE_AFTER_SAVE_1) <= ANSWER_CANCEL) {
 		// CANCEL/END
-		return -1;
+		return ANSWER_CANCEL;
 	}
 	// YES/NO
 
+	if (is_epc_buf_closeable() == 0) {
+		disp_status_bar_err(_("This buffer is NOT closeable"));
+		return ANSWER_NO;		// not saveable, not closeable
+	}
 	free_cur_edit_buf();
 
 	doe_refresh_editor();
 	disp_status_bar_done(_("One buffer closed"));
-	return 2;
+	return ANSWER_YES;
 }
 PRIVATE int write_close_all(int yes_no);
 int doe_close_all_ask(void)
@@ -317,7 +331,7 @@ PRIVATE int write_close_all(int yes_no)
 	close_all_not_modified();
 	if (write_all_ask(yes_no, CLOSE_AFTER_SAVE_1) < 0)
 		return -1;
-	close_all();
+	close_all_saved();
 	return 0;
 }
 
@@ -326,13 +340,18 @@ int doe_read_file_into_cur_buf(void)
 {
 	char file_pos_str[MAX_PATH_LEN+1];
 	memorize_cur_file_pos_null(file_pos_str);
-	doe_open_file_recursive(RECURS0);
+
+	open_file_recursive(RECURS0);
 	if (get_files_loaded() < 0) {
 		return 0;
 	}
 	doe_select_all_lines();
 	doe_copy_text();
-	doe_close_file_ask();
+	if (check_cur_buf_modified() == 0) {
+		// close a buffer only when the buffer is not modified
+		doe_close_file_ask();
+	}
+
 	recall_file_pos_null(file_pos_str);
 	doe_paste_text_with_pop();
 	return 0;
@@ -341,13 +360,15 @@ int doe_read_file_into_cur_buf(void)
 //------------------------------------------------------------------------------
 int write_all_ask(int yes_no, close_after_save_t close)
 {
-	switch_epc_buf_to_top();
-	while (is_epc_buf_valid()) {
-		if (write_file_ask(yes_no, close) < ANSWER_NONE) {
+	switch_epc_buf_to_top_of_edit_buf();
+	while (IS_NODE_INT(get_epc_buf())) {
+		if (write_file_ask(yes_no, close) <= ANSWER_CANCEL) {
+			// CANCEL/END
 			disp_status_bar_done(_("Cancelled"));
 			return -1;
 		}
-		if (switch_epc_buf_to_next(0, 0) == 0)
+		// YES/NO
+		if (switch_epc_buf_to_next_buf(0, 0) == 0)
 			break;
 	}
 	disp_status_bar_done(_("All modified buffers are saved"));
@@ -355,10 +376,10 @@ int write_all_ask(int yes_no, close_after_save_t close)
 }
 int close_all_not_modified(void)
 {
-	switch_epc_buf_to_top();
-	while (is_epc_buf_valid()) {
+	switch_epc_buf_to_top_of_edit_buf();
+	while (IS_NODE_INT(get_epc_buf())) {
 		if (check_cur_buf_modified()) {
-			if (switch_epc_buf_to_next(0, 0) == 0) {
+			if (switch_epc_buf_to_next_buf(0, 0) == 0) {
 				break;
 			}
 		} else {
@@ -368,11 +389,18 @@ int close_all_not_modified(void)
 	}
 	return 0;
 }
-int close_all(void)
+int close_all_saved(void)
 {
-	switch_epc_buf_to_top();
-	while (free_cur_edit_buf()) {
-		// loop
+	switch_epc_buf_to_top_of_edit_buf();
+	while (IS_NODE_INT(get_epc_buf())) {
+		if (is_epc_buf_closeable() == 0) {
+			disp_status_bar_err(_("This buffer is NOT closeable"));
+			if (switch_epc_buf_to_next_buf(0, 0) == 0) {
+				break;
+			}
+		} else {
+			free_cur_edit_buf();
+		}
 		tio_refresh();
 	}
 	return 0;
@@ -387,15 +415,13 @@ int close_all(void)
 int write_file_ask(int yes_no, close_after_save_t close)
 {
 	int ret = yes_no;
-
+	if (check_cur_buf_modified() == 0) {
+		disp_status_bar_done(_("This buffer is NOT modified"));
+		return ANSWER_NONE;		// saveable but not modified, closeable
+	}
 	if (is_epc_buf_saveable() == 0) {
 		disp_status_bar_err(_("This buffer is NOT saveable"));
-		return ANSWER_NONE;		// doe_write* skip, doe_close* does NOT close
-	}
-	if (check_cur_buf_modified() == 0) {
-		// saveable but not modified
-		disp_status_bar_done(_("This buffer is NOT modified"));
-		return ANSWER_NO;		// doe_write* skip, doe_close* does close
+		return ANSWER_NONE;		// not saveable, closeable
 	}
 
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
@@ -434,7 +460,7 @@ _FLF_
 	MY_UT_INT(flock_unlock("relative/path/to/file.txt"), 0);
 	MY_UT_INT(flock_unlock("relative/path/to/file.txt"), 1);
 
-///	MY_UT_INT(flock_lock("relative/path/to/file.txt"), 0);
+	////MY_UT_INT(flock_lock("relative/path/to/file.txt"), 0);
 
 	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
 	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 0);
@@ -443,12 +469,12 @@ _FLF_
 	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 0);
 	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 1);
 
-///	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
+	////MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
 }
 #endif // START_UP_TEST
 
-PRIVATE int flock_create(const char *full_path);
-PRIVATE int flock_delete(const char *full_path);
+PRIVATE int flock_create_lock_file(const char *full_path);
+PRIVATE int flock_delete_lock_file(const char *full_path);
 PRIVATE const char* flock_file_path(const char* full_path);
 
 int flock_lock(const char *full_path)
@@ -456,7 +482,7 @@ int flock_lock(const char *full_path)
 	if (flock_is_locked(full_path)) {
 		return 1;	// lock already exist
 	}
-	flock_create(full_path);
+	flock_create_lock_file(full_path);
 	return 0;		// successfully locked
 }
 int flock_unlock(const char *full_path)
@@ -464,36 +490,36 @@ int flock_unlock(const char *full_path)
 	if (flock_is_locked(full_path) == 0) {
 		return 1;	// lock not exist
 	}
-	flock_delete(full_path);
+	flock_delete_lock_file(full_path);
 	return 0;		// successfully unlocked
 }
 int flock_is_locked(const char *full_path)
 {
 	return is_path_exist(flock_file_path(full_path));
 }
-PRIVATE int flock_create(const char *full_path)
+PRIVATE int flock_create_lock_file(const char *full_path)
 {
 	return write_text_to_file(flock_file_path(full_path), 0, "");
 }
-PRIVATE int flock_delete(const char *full_path)
+PRIVATE int flock_delete_lock_file(const char *full_path)
 {
 	return remove_file(flock_file_path(full_path));
 }
 
-//     "file/path/to/be/locked.txt"
-// ==> "$file$path$to$be$locked.txt"
-// ==> "$APP_DIR/$file$path$to$be$locked.txt"
-
-//     "/file/path/to/be/locked.txt"
-// ==> "$$file$path$to$be$locked.txt"
-// ==> "$APP_DIR/$$file$path$to$be$locked.txt"
+// -    "/path/to/a/file/being/locked.txt"
+//  ==> "$$path$to$a$file$being$locked.txt"
+//  ==> "$APP_DIR/$$path$to$a$file$being$locked.txt"
+// e.g. "/home/user/.be/$$home$user$tools$be$be$app_defs.txt"
 PRIVATE const char* flock_file_path(const char* full_path)
 {
 	static char flock_file_path[MAX_PATH_LEN+1];
-	char file_name[MAX_PATH_LEN+1];
-	strlcpy__(file_name, full_path, MAX_PATH_LEN);
-	str_tr(file_name, '/', '$');
-	snprintf_(flock_file_path, MAX_PATH_LEN, "%s/$%s", get_app_dir(), file_name);
+	char abs_path[MAX_PATH_LEN+1];
+	get_abs_path(full_path, abs_path);
+	str_tr(abs_path, '/', '$');
+	if (strlcmp__(abs_path, "$") != 0) {
+		progerr_printf("not full path [%s]\n", abs_path);
+	}
+	snprintf_(flock_file_path, MAX_PATH_LEN, "%s/$%s", get_app_dir(), abs_path);
 	return flock_file_path;
 }
 

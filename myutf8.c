@@ -19,7 +19,6 @@ int my_mbwidth(const char *utf8c, int max_len)
 int my_wcwidth(wchar_t wc)
 {
 	int columns;
-
 	if (is_wide_chr(wc)) {
 		return 2;
 	}

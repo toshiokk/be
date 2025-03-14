@@ -21,9 +21,10 @@
 
 #include "headers.h"
 
+win_rect_t *central_win;
 win_rect_t sub_win_rects[SUB_WINS];
-win_rect_t *main_win, *cur_win;
-int cur_win_idx;
+int cur_sub_win_idx;
+win_rect_t *cur_sub_win;
 
 PRIVATE int win_get_lines(win_rect_t *win);
 PRIVATE int win_get_columns(win_rect_t *win);
@@ -40,10 +41,9 @@ void win_init_win_size(void)
 	win_depth = 0;
 	win_reinit_win_size();
 }
-void set_win_depth(int app_stack_depth)
+void set_win_depth(int nesting_depth)
 {
-///	win_depth = app_stack_depth * 2;
-	win_depth = app_stack_depth;
+	win_depth = nesting_depth;
 	win_reinit_win_size();
 }
 void inc_win_depth(void)
@@ -69,9 +69,9 @@ void win_reinit_win_size()
 
 // editor window sectioning
 //	[single pane]							[two panes]
-//	+path-----------(MAIN)--------------+	+----------------(MAIN)-----------------+
-//	|---+--ruler--(SUB_WHOLE)-----------|	|path--(SUB_LEFT)---+path--(SUB_RIGHT)--|
-//	|  1+------------text---------------|	|---+----ruler------+---+----ruler------|
+//	+path---------(CENTRAL)-------------+	+---------------(CENTRAL)---------------+
+//	|-----ruler--(SUB_WHOLE)------------|	|path--(SUB_LEFT)---+path--(SUB_RIGHT)--|
+//	|  1-------------text---------------|	|---+----ruler------+---+----ruler------|
 //	|  2|                               |	|  1+----text-------|  1+----text-------|
 //	|  3|                               |	|  2|               |  2|               |
 //	|  4|                               |	|  3|               |  3|               |
@@ -85,8 +85,8 @@ void win_reinit_win_size()
 
 // filer window sectioning
 //	[single pane]							[two panes]
-//	+---------------(MAIN)--------------+	+----------------(MAIN)-----------------+
-//	|------------(SUB_WHOLE)------------|	|----(SUB_LEFT)-----+----(SUB_RIGHT)----|
+//	+path---------(CENTRAL)-------------+	+---------------(CENTRAL)---------------+
+//	|------------(SUB_WHOLE)------------|	|path-(SUB_LEFT)----+path-(SUB_RIGHT)---|
 //	|                                   |	|                   |                   |
 //	|                                   |	|                   |                   |
 //	|                                   |	|                   |                   |
@@ -100,130 +100,154 @@ void win_reinit_win_size()
 //	+-----------------------------------+	+---------------------------------------+
 void win_setup_win_size(int win_depth)
 {
-	win_select_win(WIN_IDX_MAIN);
-	main_win = cur_win;		// &sub_win_rects[WIN_IDX_MAIN];
-	for (int sub_win_idx = 0; sub_win_idx < SUB_WINS; sub_win_idx++) {
-		win_select_win(sub_win_idx);
+	for (int sub_win_idx = WIN_IDX_CENTRAL; sub_win_idx < SUB_WINS; sub_win_idx++) {
+		win_select_cur_sub_win(sub_win_idx);
 		switch (sub_win_idx) {
 		default:
-		case WIN_IDX_MAIN:
-			cur_win->top = 0 + win_depth * 1;
-			cur_win->left = 0 + win_depth * 2;
-			cur_win->lines = LIM_MIN(0, tio_get_lines() - (win_depth * 1 * 2));
-			cur_win->columns = LIM_MIN(0, tio_get_columns() - (win_depth * 2 * 2));
+		case WIN_IDX_CENTRAL:
+			central_win->top = 0 + win_depth * 1;
+			central_win->lines = LIM_MIN(0, tio_get_lines() - (win_depth * 1 * 2));
+			central_win->left = 0 + win_depth * 2;
+			central_win->columns = LIM_MIN(0, tio_get_columns() - (win_depth * 2 * 2));
 			break;
 		case WIN_IDX_SUB_WHOLE:
-			cur_win->top = main_win->top + main_win_get_top_win_lines();
-			cur_win->left = main_win->left + 0;
-			cur_win->lines = LIM_MIN(0, main_win_get_lines()
-			 - main_win_get_top_win_lines() - main_win_get_bottom_win_lines());
-			cur_win->columns = main_win->columns;
+		case WIN_IDX_SUB_LEFT:
+		case WIN_IDX_SUB_RIGHT:
+			cur_sub_win->top = central_win->top + central_win_get_top_win_lines();
+			cur_sub_win->lines = LIM_MIN(0, central_win_get_lines()
+			 - central_win_get_top_win_lines() - central_win_get_bottom_win_lines());
+			break;
+		}
+		switch (sub_win_idx) {
+		default:
+		case WIN_IDX_CENTRAL:
+			break;
+		case WIN_IDX_SUB_WHOLE:
+			cur_sub_win->left = central_win->left;
+			cur_sub_win->columns = central_win->columns;
 			break;
 		case WIN_IDX_SUB_LEFT:
-			cur_win->top = main_win->top + main_win_get_top_win_lines();
-			cur_win->left = main_win->left;
-			cur_win->lines = LIM_MIN(0, main_win_get_lines()
-			 - main_win_get_top_win_lines() - main_win_get_bottom_win_lines());
-			cur_win->columns = main_win->columns / 2;
+			cur_sub_win->left = central_win->left;
+			cur_sub_win->columns = central_win->columns / 2;
 			break;
 		case WIN_IDX_SUB_RIGHT:
-			cur_win->top = main_win->top + main_win_get_top_win_lines();
-			cur_win->left = main_win->left + main_win->columns / 2;
-			cur_win->lines = LIM_MIN(0, main_win_get_lines()
-			 - main_win_get_top_win_lines() - main_win_get_bottom_win_lines());
-			cur_win->columns = main_win->columns - main_win->columns / 2;
+			cur_sub_win->left = central_win->left + central_win->columns / 2;
+			cur_sub_win->columns = central_win->columns - central_win->columns / 2;
 			break;
 		}
 	}
 }
-void win_select_win(int sub_win_idx)
+void win_select_cur_sub_win(int sub_win_idx)
 {
-	cur_win_idx = MIN_MAX_(0, sub_win_idx, SUB_WINS-1);
-	cur_win = &sub_win_rects[cur_win_idx];
+	cur_sub_win_idx = MIN_MAX_(0, sub_win_idx, SUB_WINS-1);
+	cur_sub_win = &sub_win_rects[cur_sub_win_idx];
+	if (sub_win_idx == WIN_IDX_CENTRAL) {
+		central_win = cur_sub_win;
+	}
 }
 
-void dump_cur_win(void)
+#ifdef ENABLE_DEBUG
+void dump_cur_sub_win(void)
 {
 	flf_d_printf("sub_win-%d: top-left(%d, %d), lines-columns(%d, %d)\n",
-	 cur_win_idx, cur_win->top, cur_win->left, cur_win->lines, cur_win->columns);
+	 cur_sub_win_idx, cur_sub_win->top, cur_sub_win->left,
+	 cur_sub_win->lines, cur_sub_win->columns);
 }
+#endif // ENABLE_DEBUG
 
 //------------------------------------------------------------------------------
-int main_win_get_lines(void)
+int central_win_get_lines(void)
 {
-	return main_win->lines;
+	return central_win->lines;
 }
-int main_win_get_columns(void)
+int central_win_get_columns(void)
 {
-	return main_win->columns;
+	return central_win->columns;
 }
-int main_win_get_top_win_lines(void)
+int central_win_get_top_win_lines(void)
 {
 	return TITLE_LINES;
 }
-int main_win_get_mid_win_lines(void)
+int central_win_get_mid_win_lines(void)
 {
-	return LIM_MIN(0, main_win_get_lines()
-	 - main_win_get_top_win_lines() - main_win_get_bottom_win_lines());
+	return LIM_MIN(0, central_win_get_lines()
+	 - central_win_get_top_win_lines() - central_win_get_bottom_win_lines());
 }
-int main_win_get_bottom_win_lines(void)
+int central_win_get_bottom_win_lines(void)
 {
 	return STATUS_LINES + get_key_list_lines();
 }
 
-int main_win_get_top_win_y(void)
+int central_win_get_top_win_y(void)
 {
 	return 0;
 }
-int main_win_get_mid_win_y(void)
+int central_win_get_mid_win_y(void)
 {
-	return main_win_get_top_win_y() + main_win_get_top_win_lines();
+	return central_win_get_top_win_y() + central_win_get_top_win_lines();
 }
-int main_win_get_bottom_win_y(void)
+int central_win_get_bottom_win_y(void)
 {
-	return main_win_get_top_win_y() + main_win_get_top_win_lines() + main_win_get_mid_win_lines();
+	return central_win_get_top_win_y() + central_win_get_top_win_lines()
+	 + central_win_get_mid_win_lines();
+}
+
+int central_win_get_yes_no_line_y(void)
+{
+	// if there is key-list-line, input on KEY_LIST_LINE otherwise STATUS_LINE
+	return (get_key_list_lines() == 0)
+	 ? central_win_get_status_line_y()
+	 : central_win_get_key_list_line_y();
+}
+int central_win_get_status_line_y(void)
+{
+	return central_win_get_bottom_win_y() + STATUS_LINE;
+}
+int central_win_get_key_list_line_y(void)
+{
+	return central_win_get_bottom_win_y() + KEY_LIST_LINE;
 }
 //------------------------------------------------------------------------------
-void main_win_set_cursor_pos(int yy, int xx)
+void central_win_set_cursor_pos(int yy, int xx)
 {
-	win_set_cursor_pos(main_win, yy, xx);
+	win_set_cursor_pos(central_win, yy, xx);
 }
-void main_win_clear_screen(void)
+void central_win_clear_screen(void)
 {
-	win_clear_screen(main_win);
+	win_clear_screen(central_win);
 }
-void main_win_clear_lines(int line_1, int line_2)
+void central_win_clear_lines(int line_1, int line_2)
 {
-	win_clear_lines(main_win, line_1, line_2);
+	win_clear_lines(central_win, line_1, line_2);
 }
-void main_win_output_string(int yy, int xx, const char *string, int bytes)
+void central_win_output_string(int yy, int xx, const char *string, int bytes)
 {
-	win_output_string(main_win, yy, xx, string, bytes);
+	win_output_string(central_win, yy, xx, string, bytes);
 }
 //------------------------------------------------------------------------------
 int sub_win_get_lines(void)
 {
-	return win_get_lines(cur_win);
+	return win_get_lines(cur_sub_win);
 }
 int sub_win_get_columns(void)
 {
-	return win_get_columns(cur_win);
+	return win_get_columns(cur_sub_win);
 }
 void sub_win_set_cursor_pos(int yy, int xx)
 {
-	win_set_cursor_pos(cur_win, yy, xx);
+	win_set_cursor_pos(cur_sub_win, yy, xx);
 }
 void sub_win_clear_screen(void)
 {
-	win_clear_screen(cur_win);
+	win_clear_screen(cur_sub_win);
 }
 void sub_win_clear_lines(int line_1, int line_2)
 {
-	win_clear_lines(cur_win, line_1, line_2);
+	win_clear_lines(cur_sub_win, line_1, line_2);
 }
 void sub_win_output_string(int yy, int xx, const char *string, int bytes)
 {
-	win_output_string(cur_win, yy, xx, string, bytes);
+	win_output_string(cur_sub_win, yy, xx, string, bytes);
 }
 //------------------------------------------------------------------------------
 PRIVATE int win_get_lines(win_rect_t *win)
@@ -260,13 +284,11 @@ PRIVATE void win_clear_screen(win_rect_t *win)
 }
 PRIVATE void win_clear_lines(win_rect_t *win, int line_1, int line_2)
 {
-	int yy;
-
 	if (line_2 < 0) {
-		line_2 = line_1 + 1;
+		line_2 = line_1 + (-line_2);
 	}
-	for (yy = line_1; yy < line_2; yy++) {
-		win_output_string(win, yy, 0, tio_blank_line(0), win_get_columns(win));
+	for (int yy = line_1; yy < line_2; yy++) {
+		win_output_string(win, yy, 0, tio_blank_line(), win_get_columns(win));
 	}
 }
 PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *string, int bytes)
@@ -292,7 +314,7 @@ PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *stri
 
 const char *shrink_str_to_scr_static(const char *str)
 {
-	return shrink_str_static(str, main_win_get_columns() / 2, 5);
+	return shrink_str_static(str, central_win_get_columns() / 2, 5);
 }
 
 // End of winout.c

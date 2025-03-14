@@ -31,29 +31,31 @@
 #define MOE0		0x00	//  No message on error
 #define LFH1		0x08	// Load a file memorized in history
 #define LFH0		0x00	//  Not load a file memorized in history
-#define WRP1		0x10	// Load a file with write protected
-#define WRP0		0x00	//  Not load a file with write protected
-#define FOL1		0x20	// Load a locked file forcibly
+#define RDOL1		0x10	// Load a file as Read Only
+#define RDOL0		0x00	//  Not load a file as Read Only
+#define FOL1		0x20	// Load a locked file forcibly (Force Open Locked file)
 #define FOL0		0x00	//  Not load a locked file forcibly
-#define RECURS1		0x80	// Recursively open files
-#define RECURS0		0x00	//  Not recursively open files
+#define RECURS1		0x80	// RECURSively open files
+#define RECURS0		0x00	//  Not RECURSively open files
+// NOTE: LFH1 is very slow. Do not use unless special necessity.
 
 #define FILE_PATH_SEPARATOR		"|"		// candidates are "|", "//", ""\\"
 
 int doe_goto_column(void);
 int doe_goto_line(void);
-int doe_goto_file_or_dir_in_cur_line(void);
-int doe_goto_file_or_dir_in_cur_cursor_pos(void);
+int doe_tag_jump_in_cur_line(void);
+int doe_tag_jump_in_cur_cursor_pos(void);
 #ifdef ENABLE_FILER
 int doe_goto_directory_in_cur_line();
 int doe_goto_directory_in_cur_cursor_pos();
 #endif // ENABLE_FILER
 
 int doe_open_files_in_buf(void);
-int doe_switch_to_top_buffer(void);
-int doe_switch_to_bot_buffer(void);
 int doe_switch_to_prev_buffer(void);
 int doe_switch_to_next_buffer(void);
+int doe_switch_to_top_buffer(void);
+int doe_switch_to_bot_buffer(void);
+
 int doe_switch_to_prev_buffers(void);
 int doe_switch_to_next_buffers(void);
 
@@ -83,14 +85,13 @@ int load_file_name_upp_low_(const char *file_name, int flags);
 
 int is_file_name_proj_file(const char *file_name, int type);
 
-#ifdef ENABLE_FILER
 #ifdef START_UP_TEST
 void test_get_n_th_file(void);
 #endif // START_UP_TEST
 #define MAX_FILES_TO_TRY_TO_LOAD_IN_A_LINE	10
 int get_n_th_file_line_col_from_str(const char *str, int field_idx,
  char *file_path, int *line_num, int *col_num);
-#endif // ENABLE_FILER
+const char *skip_n_file_names(const char *line, int field_idx);
 
 #ifdef ENABLE_HISTORY
 int goto_last_file_line_col_in_history();
@@ -112,10 +113,11 @@ int get_file_line_col_from_str(const char *str, char *file_path,
 int switch_epc_buf_by_file_path(const char *abs_path);
 int switch_epc_buf_by_file_name(const char *file_name);
 
-int switch_epc_buf_to_top(void);
-int switch_epc_buf_to_bot(void);
-int switch_epc_buf_to_next(int beep_at_end, int goto_top);
-int switch_epc_buf_to_prev(int beep_at_end, int goto_bottom);
+int switch_epc_buf_to_top_of_edit_buf();
+int switch_epc_buf_to_top_buf(void);
+int switch_epc_buf_to_bot_buf(void);
+int switch_epc_buf_to_next_buf(int beep_at_end, int goto_top);
+int switch_epc_buf_to_prev_buf(int beep_at_end, int goto_bottom);
 int switch_epc_buf_to_another_buf(void);
 
 #ifdef ENABLE_FILER

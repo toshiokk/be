@@ -36,6 +36,7 @@
 #define APP_DIR				".be"
 #define RC_FILE_NAME		"berc"	// default RC file name (changeable by command line option)
 #define EXIT_FILE_NAME		".beexit"
+#define WARNING_FILE_NAME	".bewarning"
 
 #define MAX_APP_PANES_2		2
 
@@ -57,11 +58,13 @@
 //! "doxygen comment"
 /// "doxygen comment"
 ////  code commented out
-///// code obsolete and to be removed
+	////code temporarily commented out
+//PPP : pending(temporarily commented-out) code
+//TTT : temporary added or commented out code for test
+//DDD : code to be deleted
+//DDDD : code be able to be deleted soon
 
-///PPP : pending(temporarily commented-out) code
-///TTT : temporary test code
-///DDD : code to be deleted
+// DNU : Do Not Use
 
 // NOTE: length of string are categorized into three types
 //	MAX_SCRN_LINE_BUF_LEN	768*6 = 4608

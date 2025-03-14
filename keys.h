@@ -415,6 +415,18 @@ typedef short key_code_t;		// signed short
 #define K_M_F10			K_MOD_M__(K_F10)
 #define K_M_F11			K_MOD_M__(K_F11)
 #define K_M_F12			K_MOD_M__(K_F12)
+#define K_SC__F01		K_MOD_SC_(K_F01)
+#define K_SC__F02		K_MOD_SC_(K_F02)
+#define K_SC__F03		K_MOD_SC_(K_F03)
+#define K_SC__F04		K_MOD_SC_(K_F04)
+#define K_SC__F05		K_MOD_SC_(K_F05)
+#define K_SC__F06		K_MOD_SC_(K_F06)
+#define K_SC__F07		K_MOD_SC_(K_F07)
+#define K_SC__F08		K_MOD_SC_(K_F08)
+#define K_SC__F09		K_MOD_SC_(K_F09)
+#define K_SC__F10		K_MOD_SC_(K_F10)
+#define K_SC__F11		K_MOD_SC_(K_F11)
+#define K_SC__F12		K_MOD_SC_(K_F12)
 #define K_S_M_F01		K_MOD_S_M(K_F01)
 #define K_S_M_F02		K_MOD_S_M(K_F02)
 #define K_S_M_F03		K_MOD_S_M(K_F03)
@@ -427,6 +439,30 @@ typedef short key_code_t;		// signed short
 #define K_S_M_F10		K_MOD_S_M(K_F10)
 #define K_S_M_F11		K_MOD_S_M(K_F11)
 #define K_S_M_F12		K_MOD_S_M(K_F12)
+#define K__CM_F01		K_MOD__CM(K_F01)
+#define K__CM_F02		K_MOD__CM(K_F02)
+#define K__CM_F03		K_MOD__CM(K_F03)
+#define K__CM_F04		K_MOD__CM(K_F04)
+#define K__CM_F05		K_MOD__CM(K_F05)
+#define K__CM_F06		K_MOD__CM(K_F06)
+#define K__CM_F07		K_MOD__CM(K_F07)
+#define K__CM_F08		K_MOD__CM(K_F08)
+#define K__CM_F09		K_MOD__CM(K_F09)
+#define K__CM_F10		K_MOD__CM(K_F10)
+#define K__CM_F11		K_MOD__CM(K_F11)
+#define K__CM_F12		K_MOD__CM(K_F12)
+#define K_SCM_F01		K_MOD_SCM(K_F01)
+#define K_SCM_F02		K_MOD_SCM(K_F02)
+#define K_SCM_F03		K_MOD_SCM(K_F03)
+#define K_SCM_F04		K_MOD_SCM(K_F04)
+#define K_SCM_F05		K_MOD_SCM(K_F05)
+#define K_SCM_F06		K_MOD_SCM(K_F06)
+#define K_SCM_F07		K_MOD_SCM(K_F07)
+#define K_SCM_F08		K_MOD_SCM(K_F08)
+#define K_SCM_F09		K_MOD_SCM(K_F09)
+#define K_SCM_F10		K_MOD_SCM(K_F10)
+#define K_SCM_F11		K_MOD_SCM(K_F11)
+#define K_SCM_F12		K_MOD_SCM(K_F12)
 
 #define K_S___DEL		K_MOD_S__(K_DEL)
 #define K__C__DEL		K_MOD_C__(K_DEL)
@@ -511,7 +547,6 @@ typedef enum {	// | Normal-mode  | List-mode    |
 	EFAM_EXEC,	// | executable   | executable   | executable in All mode
 	EFNM_EXEC,	// | executable   |not executable| executable only in Normal mode
 	EFLM_EXEC,	// |not executable| executable   | executable only in List mode
-	EFLM_QUIT,	// | executable   | quit app     |
 	E_LM_CULN,	// | executable   | get a text in current line and return FL_INPUT |
 	F_LM_FLNM,	// | executable   | input file name/path and return FL_ENTER_FILE_NAME_OR_PATH |
 	F_LM_CUDI,	// | executable   | input current directory and return FL_ENTER_CUR_DIR_PATH   |
@@ -545,8 +580,8 @@ int cmp_func_id(const char *func_id_1, const char *func_id_2);
 void *get_app_function_for_key(key_code_t key);
 const char *get_func_id_from_key(key_code_t key);
 func_key_list_t *get_fkey_entry_table_from_key(func_key_list_t *fkey_list, key_code_t key,
- int is_list_mode);
-int is_fkey_entry_executable(func_key_list_t *fkey_list, int is_list_mode);
+ int list_mode, int exec_lvl);
+int is_fkey_entry_executable(func_key_list_t *fkey_list, int list_mode);
 key_code_t get_key_for_func_id(char *func_id);
 func_key_list_t *get_fkey_entry_from_func_id(const char *func_id);
 
@@ -561,6 +596,9 @@ const char *short_key_name_from_func_id(char *buf);
 void set_menu_key(key_code_t key);
 key_code_t get_menu_key(void);
 void set_menu_key_for_do_app_menu_0(void);
+
+void clear_whole_screen_update_timer();
+int check_whole_screen_update_timer();
 
 void update_msec_when_input_key();
 unsigned long msec_past_input_key();

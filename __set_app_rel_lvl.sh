@@ -1,13 +1,13 @@
-## change release level in 'appdefs.h'
+## change release level in 'applvl.h'
 
 show_help()
 {
-  echo "change Application Release Level -- APP_REL_LVL definition in appdef.h"
+  echo "change Application Release Level -- APP_REL_LVL definition in applvl.h"
   echo "Usage: $0 [0|1|2|-]"
-  echo " e.g.: $0 0        # set to experimental-release"
-  echo " e.g.: $0 1        # set to test-release"
-  echo " e.g.: $0 2        # set to official-release"
-  echo " e.g.: $0 -        # recover release level"
+  echo " e.g.: $0 0        # set to experimental release"
+  echo " e.g.: $0 1        # set to test release"
+  echo " e.g.: $0 2        # set to stable release"
+  echo " e.g.: $0 -        # restore previous release level"
 }
 
 if [ "$1" = 0 ] || [ "$1" = 1 ] || [ "$1" = 2 ]; then

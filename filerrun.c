@@ -23,8 +23,7 @@
 
 #define MAX_EXECV_ARGS		10
 
-PRIVATE int fork_exec_before_after(int set_term, int separate_bef_exec, int logging,
- int pause_aft_exec, const char *command, char * const args[]);
+PRIVATE int fork_exec_before_after(int flags, const char *command, char * const args[]);
 
 #ifdef ENABLE_FILER
 
@@ -54,7 +53,7 @@ int dof_exec_command_with_file(void)
 	 _("Execute({} will be replaced with file-name):")))) {
 		return 0;
 	}
-	if (filer_do_next == EF_INPUT_W_ALT) {
+	if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
 		logging = LOGGING2;	// set logging ON
 	}
 	if (is_path_dir(command_str) > 0) {
@@ -77,7 +76,7 @@ int dof_exec_command_with_file(void)
 			 ptr_replace - buffer, STR_TO_BE_REPLACED_WITH_FILE_NAME_LEN,
 			 quote_file_path_static(get_cur_fv_file_ptr(file_idx)->file_name), -1);
 		}
-		exit_status = fork_exec_sh_c_repeat(SEPARATE1, logging, buffer);
+		exit_status = fork_exec_sh_c_repeat(SEPARATE1 | logging, buffer);
 	}
 	end_fork_exec_repeat(exit_status);
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
@@ -103,10 +102,10 @@ int dof_exec_command_with_files(void)
 	 _("Execute with files%s:"), (logging == 0) ? "" : _("(WITH LOG)")))) {
 		return 0;
 	}
-	if (filer_do_next == EF_INPUT_W_ALT) {
+	if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
 		logging = LOGGING2;	// set logging ON
 	}
-	fork_exec_sh_c_once(logging, PAUSE1, command_str);
+	fork_exec_sh_c_once(logging | PAUSE1, command_str);
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -171,8 +170,7 @@ PRIVATE int dof_run_command_(int mode)
 	case 2:
 		expl = _("Run (with real-path)");
 		snprintf_(buf_s, MAX_PATH_LEN+1, "%s/%s",
-		 get_cur_filer_cur_pane_view()->cur_dir,
-		 get_cur_fv_cur_file_ptr()->file_name);
+		 get_cur_filer_pane_view()->cur_dir, get_cur_fv_cur_file_ptr()->file_name);
 		quote_file_path_buf(command_str, buf_s);
 		break;
 	case 3:
@@ -197,11 +195,9 @@ PRIVATE int dof_run_command_(int mode)
 			dst_fv_idx = 0;
 		}
 		snprintf_(buf_s, MAX_PATH_LEN+1, "%s/%s",
-		 cur_filer_panes->filer_views[src_fv_idx].cur_dir,
-		 get_cur_fv_cur_file_ptr()->file_name);
+		 get_cur_filer_view(src_fv_idx)->cur_dir, get_cur_fv_cur_file_ptr()->file_name);
 		snprintf_(buf_d, MAX_PATH_LEN+1, "%s/%s",
-		 cur_filer_panes->filer_views[dst_fv_idx].cur_dir,
-		 get_cur_fv_cur_file_ptr()->file_name);
+		 get_cur_filer_view(dst_fv_idx)->cur_dir, get_cur_fv_cur_file_ptr()->file_name);
 		snprintf_(command_str, MAX_PATH_LEN+1, " %s %s",
 		 quote_file_path_buf(buf1, buf_s),
 		 quote_file_path_buf(buf2, buf_d));
@@ -225,7 +221,7 @@ PRIVATE int dof_run_command_(int mode)
 		 explanation))) {
 			return 0;
 		}
-		if (filer_do_next == EF_INPUT_W_ALT) {
+		if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
 			logging = LOGGING2;	// set logging ON
 		}
 	}
@@ -235,7 +231,7 @@ PRIVATE int dof_run_command_(int mode)
 	}
 
 flf_d_printf("command_str [%s]\n", command_str);
-	fork_exec_sh_c_once(logging, PAUSE1, command_str);
+	fork_exec_sh_c_once(logging | PAUSE1, command_str);
 
 	if (is_app_chooser_mode()) {
 		filer_do_next = EF_EXECUTED;
@@ -256,22 +252,23 @@ void end_fork_exec_repeat(int exit_status)
 {
 	pause_after_exec(exit_status);
 	reinit_term_for_filer();
+	// avoid screen flashing at the first key input after execution
+	clear_whole_screen_update_timer();
 }
 
 //------------------------------------------------------------------------------
 
 PRIVATE int args_from_va_list(char **args, va_list ap);
-PRIVATE int fork_exec_args(int set_term, int separate_bef_exec, int pause_aft_exec,
- char * const args[]);
+PRIVATE int fork_exec_args(int flags, char * const args[]);
 PRIVATE const char *exec_args_to_str(char * const *args);
 
-int fork_exec_sh_c_once(int logging, int pause_aft_exec, const char *command)
+int fork_exec_sh_c_once(int flags, const char *command)
 {
-	return fork_exec_sh_c(SETTERM1, SEPARATE1, logging, pause_aft_exec, command);
+	return fork_exec_sh_c(SETTERM1 | SEPARATE1 | flags, command);
 }
-int fork_exec_sh_c_repeat(int separate_bef_exec, int logging, const char *command)
+int fork_exec_sh_c_repeat(int flags, const char *command)
 {
-	return fork_exec_sh_c(SETTERM0, separate_bef_exec, logging, PAUSE0, command);
+	return fork_exec_sh_c(SETTERM0 | flags | PAUSE0, command);
 }
 
 int fork_exec_args_once(int pause_aft_exec, ...)
@@ -282,17 +279,17 @@ int fork_exec_args_once(int pause_aft_exec, ...)
 	args_from_va_list(args, ap);
 	va_end(ap);
 
-	return fork_exec_args(SETTERM1, SEPARATE1, pause_aft_exec, args);
+	return fork_exec_args(SETTERM1 | SEPARATE1 | pause_aft_exec, args);
 }
-int fork_exec_args_repeat(int separate_bef_exec, ...)
+int fork_exec_args_repeat(int flags, ...)
 {
 	va_list ap;
 	char *args[MAX_EXECV_ARGS+1];
-	va_start(ap, separate_bef_exec);
+	va_start(ap, flags);
 	args_from_va_list(args, ap);
 	va_end(ap);
 
-	return fork_exec_args(SETTERM0, separate_bef_exec, PAUSE0, args);
+	return fork_exec_args(SETTERM0 | flags | PAUSE0, args);
 }
 
 // convert va_list to "char *argv[]"
@@ -309,10 +306,9 @@ PRIVATE int args_from_va_list(char **args, va_list ap)
 	return arg_idx;
 }
 
-PRIVATE int fork_exec_args(int set_term, int separate_bef_exec, int pause_aft_exec,
- char * const args[])
+PRIVATE int fork_exec_args(int flags, char * const args[])
 {
-	if (set_term) {
+	if (flags & SETTERM1) {
 		clear_fork_exec_counter();
 	}
 	const char *command = exec_args_to_str(args);
@@ -320,14 +316,12 @@ PRIVATE int fork_exec_args(int set_term, int separate_bef_exec, int pause_aft_ex
 	update_history(HISTORY_TYPE_IDX_EXEC, command);
 mflf_d_printf("exec: [%s]\n", command);
 #endif // ENABLE_HISTORY
-	return fork_exec_before_after(set_term, separate_bef_exec, LOGGING0, pause_aft_exec,
-	 command, args);
+	return fork_exec_before_after(flags | LOGGING0, command, args);
 }
 
 PRIVATE const char *exec_args_to_str(char * const *args)
 {
 	static char buffer[MAX_PATH_LEN+1];
-
 	strcpy(buffer, "");
 	for (int arg_idx = 0; arg_idx < MAX_EXECV_ARGS; arg_idx++) {
 		if (args[arg_idx] == NULL)
@@ -345,21 +339,20 @@ PRIVATE const char *exec_args_to_str(char * const *args)
 int send_to_system_clipboard()
 {
 	if (check_wsl()) {
-		tio_set_cursor_pos(get_status_line_y(), 0);
-		return fork_exec_sh_c(SETTERM0, SEPARATE0, PAUSE0, LOGGING0, UP_SYS_CLIPBOARD_CMD);
+		tio_set_cursor_pos(central_win_get_status_line_y(), 0);
+		return fork_exec_sh_c(SETTERM0 | SEPARATE0 | PAUSE0 | LOGGING0, UP_SYS_CLIPBOARD_CMD);
 	}
 	return 0;
 }
 
 //------------------------------------------------------------------------------
 
-int fork_exec_sh_c(int set_term, int separate_bef_exec, int logging, int pause_aft_exec,
- const char *command)
+int fork_exec_sh_c(int flags, const char *command)
 {
 	char *args[MAX_EXECV_ARGS+1];
 	char buffer[MAX_PATH_LEN+1] = "";
 
-	if (set_term) {
+	if (flags & SETTERM1) {
 		clear_fork_exec_counter();
 	}
 	// sh -c "command ..."
@@ -367,7 +360,7 @@ int fork_exec_sh_c(int set_term, int separate_bef_exec, int logging, int pause_a
 #define TEE_PROG_APPEND	"tee -a"
 	args[0] = SH_PROG;
 	args[1] = "-c";
-	if (logging == LOGGING0) {
+	if ((flags & LOGGING3) == 0) {
 		args[2] = (char *)command;
 	} else {
 		// sh -c "command ... 2>&1 | tee    /home/user/.be/1.long"
@@ -378,31 +371,35 @@ int fork_exec_sh_c(int set_term, int separate_bef_exec, int logging, int pause_a
 	}
 	args[3] = NULL;
 
-mflf_d_printf("logging: %d, exec: {{%s} {%s} {%s}}\n", logging, args[0], args[1], args[2]);
+	mflf_d_printf("logging: %d, exec: {{%s} {%s} {%s}}\n",
+	 (flags & LOGGING3), args[0], args[1], args[2]);
 	// It does not output "sh -c [command arg1 arg2]"
 	//           but output only "command arg1 arg2"
 #ifdef ENABLE_HISTORY
 	update_history(HISTORY_TYPE_IDX_EXEC, command);
-mflf_d_printf("exec: [%s]\n", command);
+	mflf_d_printf("exec: [%s]\n", command);
 #endif // ENABLE_HISTORY
-	return fork_exec_before_after(set_term, separate_bef_exec, logging, pause_aft_exec,
-	 command, args);
+	return fork_exec_before_after(flags, command, args);
 }
 
-PRIVATE int fork_exec_before_after(int set_term, int separate_bef_exec, int logging,
- int pause_aft_exec, const char *command, char * const args[])
+PRIVATE int fork_exec_before_after(int flags, const char *command, char * const args[])
 {
-	if (set_term && get_fork_exec_counter() == 0) {
+#ifdef ENABLE_HISTORY
+	if (update_history_dir_operate()) {		_WARNING_	}
+#endif // ENABLE_HISTORY
+	if ((flags & SETTERM1) && get_fork_exec_counter() == 0) {
 		restore_term_for_shell();
 	}
-	if (separate_bef_exec && (get_fork_exec_counter() == 0)) {
+	if ((flags & SEPARATE1) && (get_fork_exec_counter() == 0)) {
 		char header[MAX_PATH_LEN+1];
 		snprintf(header, MAX_PATH_LEN, "== %c%s%c%c %s ==\n",
-		 logging ? '<' : '[', full_path_of_cur_dir_static(), logging ? '>' : ']',
+		 (flags & LOGGING3) ? '<' : '[',
+		 full_path_of_cur_dir_s(),
+		 (flags & LOGGING3) ? '>' : ']',
 		 (geteuid() == 0) ? '#' : '$', command);
 		// output separator line to log file
-		if (logging) {
-			write_text_to_file(get_exec_log_file_path(), logging == LOGGING2, header);
+		if (flags & LOGGING3) {
+			write_text_to_file(get_exec_log_file_path(), (flags & LOGGING3) == LOGGING2, header);
 		}
 		// output separator line to console
 		printf("\n%s", header);
@@ -421,17 +418,17 @@ PRIVATE int fork_exec_before_after(int set_term, int separate_bef_exec, int logg
 	} else {
 		for ( ; ; ) {
 			pid = waitpid(pid, &exit_status, 0);
-mflf_d_printf("pid: %d, exit_status: %d\n", pid, exit_status);
+			mflf_d_printf("pid: %d, exit_status: %d\n", pid, exit_status);
 			if (pid != -1) {
 				break;
 			}
 		}
 	}
 
-	if (pause_aft_exec) {
+	if (flags & PAUSE1) {
 		pause_after_exec(exit_status);
 	}
-	if (set_term && (get_fork_exec_counter() == 0)) {
+	if ((flags & SETTERM1) && (get_fork_exec_counter() == 0)) {
 		reinit_term_for_filer();
 	}
 	inc_fork_exec_counter();
@@ -473,7 +470,6 @@ void pause_after_exec(int exit_status)
 //------------------------------------------------------------------------------
 int restore_term_for_shell(void)
 {
-	tio_fill_screen(0);
 	tio_set_cursor_on(1);
 	tio_suspend();
 	signal_fork();
@@ -483,7 +479,7 @@ int reinit_term_for_filer(void)
 {
 	signal_init();
 	tio_resume();
-	tio_fill_screen(0);
+	tio_fill_screen();
 	return 0;
 }
 //------------------------------------------------------------------------------

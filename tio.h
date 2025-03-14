@@ -1,5 +1,5 @@
 /**************************************************************************
- *   tio.h - terminal I/O                                                 *
+ *   tio.h - abstract terminal I/O                                        *
  *                                                                        *
  *   Copyright (C) 2005-2008 PCR                                          *
  *                                                                        *
@@ -26,11 +26,15 @@
 
 // MAX_SCRN_COLS			384		// = 1920[pixels] / 5[pixels/char] (full HD)
 // MAX_SCRN_COLS			512		// = 2560[pixels] / 5[pixels/char] (WQXGA)
-#define MAX_SCRN_COLS			768		// = 3840[pixels] / 5[pixels/char] (4K landscape)
+#define MAX_SCRN_COLS		768		// = 3840[pixels] / 5[pixels/char] (4K landscape)
 // MAX_SCRN_COLS			1536	// = 7680[pixels] / 5[pixels/char] (8K landscape)
+
 #define MAX_SCRN_LINES		384		// = 3840[pixels] / 10[pixels/char] (4K portrait)
+// MAX_SCRN_LINES		768			// = 7680[pixels] / 10[pixels/char] (8K portrait)
+
 #define MAX_SCRN_LINE_BUF_LEN	(MAX_SCRN_COLS * MAX_UTF8C_BYTES)	// = 4608
 
+// This is an abstraction layer of below two terminal control libraries
 #ifdef ENABLE_NCURSES
 #include "cursesif.h"
 // COLORS and COLOR_PAIRS are variables
@@ -105,9 +109,9 @@ void tio_get_cursor_pos(int *yy, int *xx);
 
 void tio_clear_screen(void);
 void tio_flash_screen(int delay);
-void tio_fill_screen(int type);
-void tio_fill_lines(int line_1, int line_2, int type);
-const char *tio_blank_line(int type);
+void tio_fill_screen();
+void tio_fill_lines(int line_1, int line_2);
+const char *tio_blank_line();
 
 void tio_output_string(int yy, int xx, const char *string, int bytes);
 void tio_beep(void);

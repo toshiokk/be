@@ -105,17 +105,18 @@ int doe_end_recording(void)
 }
 int doe_playback_last_1(void)
 {
+	disp_status_bar_ing(_("Start playing back 1st latest key macro"));
 	start_playback_last_n(1);
 	return 0;
 }
 int doe_playback_last_2(void)
 {
+	disp_status_bar_ing(_("Start playing back 2nd latest key macro"));
 	start_playback_last_n(2);
 	return 0;
 }
 PRIVATE int start_playback_last_n(int last_n)
 {
-	disp_status_bar_done(_("Start key macro playback"));
 #ifdef ENABLE_HISTORY
 	load_key_macro(last_n);
 #endif // ENABLE_HISTORY
@@ -192,7 +193,6 @@ int key_macro_start_playback(void)
 key_code_t key_macro_get_key(void)
 {
 	key_code_t key = K_NONE;
-
 	if (key_macro_is_playing_back()) {
 		if (key_strokes_playing_back < key_strokes_recorded) {
 			// playback one key stroke
@@ -227,7 +227,6 @@ char *get_string_from_key_macro(key_code_t *key_codes, int keys)
 			strlcat__(str_buf, MAX_KEY_MACRO_STR_LEN, str);
 		}
 	}
-/////_D_(dump_string("string", str_buf))
 	return str_buf;
 }
 
@@ -235,13 +234,11 @@ char *get_string_from_key_macro(key_code_t *key_codes, int keys)
 // "((", "))", "{{", "}}"
 // "{M-(}", "{M-)}", "(M-{)", "(M-})"
 // "{1b00}"
-int get_key_macro_from_string(const char *string, key_code_t *key_codes)
+int get_key_macro_from_string(const char *str, key_code_t *key_codes)
 {
-/////_D_(dump_string("string", string))
 	int key_idx = 0;
-	if (string == NULL)
+	if (str == NULL)
 		return key_idx;
-	const char *str = string;
 	for (key_idx = 0; key_idx < MAX_KEY_STROKES && *str; ) {
 		key_code_t key_code;
 		int len = key_code_from_key_str(str, &key_code);
@@ -250,7 +247,6 @@ int get_key_macro_from_string(const char *string, key_code_t *key_codes)
 		}
 		str += len;
 	}
-/////_D_(dump_memory("from_string", key_codes, key_idx * 2))
 	return key_idx;
 }
 

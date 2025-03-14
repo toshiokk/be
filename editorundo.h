@@ -24,12 +24,12 @@
 
 #ifdef ENABLE_UNDO
 
-be_buf_t *push_undo_buf(be_buf_t *buf);
+be_buf_t *push_undo_buf_node(be_buf_t *buf);
 be_buf_t *pop_undo_buf(void);
-be_buf_t *push_redo_buf(be_buf_t *buf);
+be_buf_t *push_redo_buf_node(be_buf_t *buf);
 be_buf_t *pop_redo_buf(void);
 int delete_undo_redo_buf(be_buf_t *edit_buf);
-int delete_do_buf(be_buf_t *edit_buf, be_buf_t *do_buf);
+int delete_unredo_buf(be_buf_t *do_buf, be_buf_t *edit_buf);
 int count_undo_bufs(void);
 int count_redo_bufs(void);
 
@@ -38,7 +38,7 @@ int count_redo_bufs(void);
 #ifdef ENABLE_DEBUG
 extern char prev_func_id[MAX_PATH_LEN+1];
 void memorize_undo_state_before_change(const char *func_id);
-void check_undo_state_after_change(void);
+int check_undo_state_after_change(void);
 #endif // ENABLE_DEBUG
 
 //------------------------------------------------------------------------------

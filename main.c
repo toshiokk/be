@@ -28,11 +28,10 @@
 #ifdef ENABLE_NCURSES
 #warning "Terminal control via ncurses (curses_...)"
 #else // ENABLE_NCURSES
-///#warning "Terminal control via own terminal interface library (termif_...)"
+////#warning "Terminal control via own terminal interface library (termif_...)"
 #endif // ENABLE_NCURSES
 
 PRIVATE int init_locale(void);
-PRIVATE int init_app_mode(void);
 PRIVATE int parse_options(int argc, char *argv[]);
 #ifdef START_UP_TEST
 PRIVATE void start_up_test(void);
@@ -57,8 +56,8 @@ int main(int argc, char *argv[])
 	init_app_mode();
 flf_d_printf("Start %s ==============================\n", APP_NAME " " __DATE__ " " __TIME__);
 	_mlc_init
+	change_cur_dir(get_starting_dir());
 	get_home_dir();
-	get_starting_dir();
 	get_tty_name();
 	signal_init();
 	init_locale();
@@ -124,8 +123,11 @@ flf_d_printf("load_key_macro()\n");
 	set_die_on_callback(app_die_on);
 
 #ifdef ENABLE_HELP
+////#define SPLASH_ON_START__EXIT
+#ifdef SPLASH_ON_START__EXIT
 	disp_splash(0);
 	MSLEEP(300);
+#endif // SPLASH_ON_START__EXIT
 #endif // ENABLE_HELP
 flf_d_printf("opening files --------------------------------------------\n");
 	// If there's a +LINE flag, it is the first non-option argument
@@ -144,7 +146,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 			// CURDIR: changed in editor
 			if (load_file_name_upp_low_(argv[optind],
-			 TUL0 | OOE1 | MOE0 | LFH0 | WRP0 | FOL0 | RECURS1) <= 0) {
+			 TUL0 | OOE1 | MOE0 | RECURS1 | RDOL0 | FOL0 | LFH0) <= 0) {
 				tio_beep();
 			}
 			tio_refresh();
@@ -154,7 +156,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 		}
 		end_check_break_key();
 	}
-	if (edit_bufs_count_bufs()) {
+	if (edit_bufs_count_buf()) {
 #ifdef ENABLE_HISTORY
 		if (goto_last_file_line_col_in_history() == 0) {
 			doe_switch_to_top_buffer();
@@ -171,16 +173,18 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	//--------------
 
 #ifdef ENABLE_HELP
+#ifdef SPLASH_ON_START__EXIT
 	disp_splash(-1);
 	MSLEEP(200);
+#endif // SPLASH_ON_START__EXIT
 #endif // ENABLE_HELP
 
 	set_die_on_callback(NULL);
 
 	set_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
-	tio_fill_screen(0);
 	tio_destroy();
 
+	limit_cut_buffers();
 	save_cut_buffers();
 
 	write_cur_dir_to_exit_file();
@@ -205,19 +209,19 @@ flf_d_printf("Exit %s ===============================\n", APP_NAME " " __DATE__ 
 // do_call_filer()  : pass a directory and manage or browse it.
 void app_main_loop(void)
 {
-	clear_app_win_stack_depth();
-	update_msec_when_input_key();	// avoid screen flashing on the first key input
+	clear_app_stack_depth();
+	clear_whole_screen_update_timer();	// avoid screen flashing on the first key input
 #ifndef ENABLE_FILER
-	if (edit_bufs_count_bufs() == 0) {
-		doe_open_file();
+	if (edit_bufs_count_buf() == 0) {
+		doe_open_file_recursive();
 	}
-	while (edit_bufs_count_bufs()) {
+	while (edit_bufs_count_buf()) {
 		do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
 	}
 #else // ENABLE_FILER
-	if (edit_bufs_count_bufs()) {
+	if (edit_bufs_count_buf()) {
 		// application was started as a EDITOR
-		while (edit_bufs_count_bufs()) {
+		while (edit_bufs_count_buf()) {
 			do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
 		}
 	} else {
@@ -225,8 +229,8 @@ void app_main_loop(void)
 		for ( ; ; ) {
 			char file_path[MAX_PATH_LEN+1];
 			do_call_filer(0, APP_MODE_NORMAL, "", "", file_path, MAX_PATH_LEN);
-			if (edit_bufs_count_bufs() == 0) {
-flf_d_printf("no edit buffers: %d\n", edit_bufs_count_bufs());
+			if (edit_bufs_count_buf() == 0) {
+flf_d_printf("no edit buffers: %d\n", edit_bufs_count_buf());
 				// no file loaded in filer
 				break;
 			}
@@ -244,68 +248,12 @@ PRIVATE int init_locale(void)
 	// setup system environment
 	setlocale(LC_ALL, "");	// set locale so that wchar related functions work
 #if defined(ENABLE_NLS)
-e_printf("LANG: [%s]\n", getenv__("LANG"));
-	setlocale(LC_ALL, getenv__("LANG"));
-e_printf("cur locale: %s\n", setlocale(LC_ALL, NULL));
-e_printf("PACKAGE: %s, LOCALEDIR: %s\n", PACKAGE, LOCALEDIR);
+flf_d_printf("LANG: [%s]\n", getenv__("LANG"));
+flf_d_printf("cur locale: [%s]\n", setlocale(LC_ALL, NULL));
+flf_d_printf("PACKAGE: [%s], LOCALEDIR: [%s]\n", PACKAGE, LOCALEDIR);
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 #endif // defined(ENABLE_NLS)
-	return 0;
-}
-
-PRIVATE int init_app_mode(void)
-{
-	// setup application settings
-	memset(&app_mode__, 0x00, sizeof(app_mode__));
-
-	// editor and filer
-#ifdef ENABLE_RC
-	SET_APPMD(app_RCFILE);
-#endif // ENABLE_RC
-#ifdef ENABLE_HISTORY
-	SET_APPMD(app_HISTORY);
-#endif // ENABLE_HISTORY
-	CLR_APPMD(app_DRAW_CURSOR);
-	SET_APPMD_VAL(app_KEY_LINES, 3);
-	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
-#ifdef ENABLE_DEBUG
-#ifdef FORCE_ENABLE_DEBUG
-	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);
-#endif // FORCE_ENABLE_DEBUG
-	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
-#endif // ENABLE_DEBUG
-	// editor mode
-	CLR_APPMD(app_EDITOR_FILER);
-	SET_APPMD_VAL(app_LIST_MODE, APP_MODE_NORMAL);
-///	CLR_APPMD(app_MAP_KEY_7F_BS);
-	SET_APPMD(app_MAP_KEY_7F_BS);
-
-	CLR_APPMD(ed_EDITOR_PANES);
-	CLR_APPMD(ed_EDITOR_PANEX);
-	CLR_APPMD(ed_DUAL_SCROLL);
-	SET_APPMD(ed_SHOW_RULER);
-	SET_APPMD(ed_SHOW_LINE_NUMBER);
-	CLR_APPMD(ed_CURS_POSITIONING);
-#ifdef USE_NKF
-	SET_APPMD(ed_USE_NKF);
-#endif // USE_NKF
-	CLR_APPMD(ed_AUTO_INDENT);
-	SET_APPMD_VAL(ed_BACKUP_FILES, BACKUP_FILES_MAX);
-#ifdef ENABLE_REGEX
-	SET_APPMD(ed_USE_REGEXP);
-#ifdef ENABLE_SYNTAX
-	SET_APPMD(ed_SYNTAX_HIGHLIGHT);
-	SET_APPMD(ed_TAB_EOL_NOTATION);
-#endif // ENABLE_SYNTAX
-#endif // ENABLE_REGEX
-
-	// filer mode
-	CLR_APPMD(fl_FILER_PANES);
-	CLR_APPMD(fl_FILER_PANEX);
-	SET_APPMD_VAL(fl_SHOW_FILE_INFO, SHOW_FILE_INFO_4);
-	SET_APPMD_VAL(fl_FILE_SORT_BY, 0);
-
 	return 0;
 }
 
@@ -349,6 +297,7 @@ PRIVATE int parse_options(int argc, char *argv[])
 
 	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
 #ifdef ENABLE_DEBUG
+	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
 	for (optchr = 0; optchr < argc; optchr++) {
 		flf_d_printf("optind:%d: %s\n", optchr, argv[optchr]);
 	}
@@ -360,15 +309,15 @@ PRIVATE int parse_options(int argc, char *argv[])
 	while ((optchr = getopt(argc, argv,
 	 short_options)) != -1) {
 #endif
-flf_d_printf("optchr: %c\n", optchr);
-if (optarg) {
-  flf_d_printf("*optarg: %c\n", *optarg);
-}
+		flf_d_printf("optchr: %c\n", optchr);
+		if (optarg) {
+		    flf_d_printf("*optarg: %c\n", *optarg);
+		}
 		switch (optchr) {
 #ifdef ENABLE_RC
 		case 'C':
 			main_rc_file_name = optarg;
-flf_d_printf("main_rc_file_name: [%s]\n", main_rc_file_name);
+			flf_d_printf("main_rc_file_name: [%s]\n", main_rc_file_name);
 			break;
 		case 'c':
 			CLR_APPMD(app_RCFILE);
@@ -384,7 +333,7 @@ flf_d_printf("main_rc_file_name: [%s]\n", main_rc_file_name);
 				int tab_size = 0;
 				sscanf(optarg, "%d", &tab_size);
 				if ((tab_size < 1) || (MAX_TAB_SIZE < tab_size)) {
-flf_d_printf("Illegal tab size: [%d]\n", tab_size);
+					flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 					show_usage();
 				}
 				SET_CUR_EBUF_STATE(buf_TAB_SIZE, tab_size);
@@ -407,7 +356,6 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 				case 'u':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_UTF8);
 					break;
-#ifdef USE_NKF
 				case 'e':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_EUCJP);
 					break;
@@ -417,13 +365,11 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 				case 'j':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_JIS);
 					break;
-#endif // USE_NKF
 				case 'b':
 					SET_CUR_EBUF_STATE(buf_ENCODE, ENCODE_BINARY);
 					break;
 				}
 			}
-////flf_d_printf("CUR_EBUF_STATE(buf_ENCODE): %d\n", CUR_EBUF_STATE(buf_ENCODE));
 			break;
 		case 'b':
 			// same as "-encoding b"
@@ -444,8 +390,8 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 		case 'd':
 			SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);
 			set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
-#endif // ENABLE_DEBUG
 			break;
+#endif // ENABLE_DEBUG
 		case 'v':
 			show_version();
 			exit(0);
@@ -469,12 +415,9 @@ flf_d_printf("Illegal tab size: [%d]\n", tab_size);
 #ifdef START_UP_TEST
 PRIVATE void start_up_test(void)
 {
-	char buf[MAX_PATH_LEN+1];
-	void *allocated;
-
 	flf_d_printf("{{{{---------------------------------------------------------\n");
 	test_flock();
-///	tio_test();
+	////tio_test();
 	flf_d_printf("getenv(USER): [%s]\n", getenv__("USER"));
 	flf_d_printf("getenv(HOSTNAME): [%s]\n", getenv__("HOSTNAME"));
 	flf_d_printf("getenv(LANG): [%s]\n", getenv__("LANG"));
@@ -495,9 +438,10 @@ PRIVATE void start_up_test(void)
 
 	// memory address of various object
 	flf_d_printf("mem adrs: 0x1234567890123456\n");
+	char buf[MAX_PATH_LEN+1];
 	flf_d_printf("auto buf: %p\n", buf);
 	flf_d_printf("\"string\": %p\n", "string");
-	allocated = malloc__(100);
+	void *allocated = malloc__(100);
 	flf_d_printf("malloc  : %p\n", allocated);
 	free__(allocated);
 
@@ -516,7 +460,7 @@ PRIVATE void start_up_test(void)
 	flf_d_printf("#define KEY_ENTER		0x%04x\n", KEY_ENTER);
 	flf_d_printf("#define KEY_F(0)		0x%04x\n", KEY_F(0));
 
-///	test_wrap_line();
+	////test_wrap_line();
 	test_cwd_PWD();
 	test_normalize_path();
 	test_get_full_path();
@@ -531,24 +475,23 @@ PRIVATE void start_up_test(void)
 	test_utilstr();
 	test_get_one_file_path();
 
-///	test_get_intersection();
+	////test_get_intersection();
 	get_mem_free_in_kb(1);
-///	test_zz_from_num();
-///	test_utf8c_encode();
+	////test_zz_from_num();
+	////test_utf8c_encode();
 	test_utf8c_bytes();
-///	test_wcwidth();
+	////test_wcwidth();
 #ifdef ENABLE_REGEX
 	test_regexp();
 #endif // ENABLE_REGEX
-///
-	test_make_ruler_text();
+	////test_make_ruler_text();
 #ifdef ENABLE_FILER
 	test_get_file_size_str();
 	test_get_n_th_file();
 #endif // ENABLE_FILER
 	test_replace_str();
 
-///	test_key_code_from_to_key_name();
+	////test_key_code_from_to_key_name();
 	flf_d_printf("}}}}---------------------------------------------------------\n");
 }
 #endif // START_UP_TEST
@@ -578,7 +521,15 @@ PRIVATE int write_cur_dir_to_exit_file(void)
 	char file_path[MAX_PATH_LEN+1];
 	// write current directory to the $HOME/EXIT_FILE_NAME
 	snprintf(file_path, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), EXIT_FILE_NAME);
-	return write_text_to_file(file_path, 0, full_path_of_cur_dir_static());
+	return write_text_to_file(file_path, 0, full_path_of_cur_dir_s());
+}
+
+int write_to_warning_file(const char* warning)
+{
+	char file_path[MAX_PATH_LEN+1];
+	// record a warning message even when no debug logging enabled
+	snprintf(file_path, MAX_PATH_LEN+1, "%s/%s", get_app_dir(), WARNING_FILE_NAME);
+	return write_text_to_file(file_path, 1, warning);
 }
 
 //------------------------------------------------------------------------------
@@ -591,11 +542,11 @@ void app_die_on(const char *msg)
 	e_printf("%s", msg);
 
 	// then save all of the modified buffers, if any
-	for (be_buf_t *buf = EDIT_BUFS_TOP_NODE; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+	for (be_buf_t *buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
 		set_epc_buf(buf);
 		if (check_cur_buf_modified()) {
 			// save the file if it's been modified
-			die_save_file(get_epc_buf()->file_path_);
+			die_save_file(buf_get_file_path(get_epc_buf(), NULL));
 		}
 	}
 
@@ -607,19 +558,16 @@ void app_die_on(const char *msg)
 PRIVATE void die_save_file(const char *die_file_path)
 {
 	char file_path[MAX_PATH_LEN+5+1];
-	int ret = 0;
-
 	// If we can't save, we have REAL bad problems, but we might as well TRY.
 	if (die_file_path[0] == '\0') {
 		e_printf("\nNo file written\n");
 		return;
 	} else {
 		strlcpy__(file_path, die_file_path, MAX_PATH_LEN);
-		strlcat__(file_path, MAX_PATH_LEN, "#");
+		strlcat__(file_path, MAX_PATH_LEN, "#");	// add '#'
 	}
 	if (is_strlen_not_0(file_path)) {
-		ret = backup_and_save_cur_buf(file_path);
-		if (ret == 0) {
+		if (backup_and_save_cur_buf(file_path) >= 0) {
 			e_printf("\nBuffer written to %s\n", file_path);
 			return;
 		}

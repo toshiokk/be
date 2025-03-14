@@ -117,12 +117,9 @@ int regexp_replace(regexp_t *regexp, regexp_matches_t *regexp_matches,
 
 //------------------------------------------------------------------------------
 void regexp_matches_clear(regexp_matches_t *regexp_matches);
-void regexp_matches_set_start_idx(regexp_matches_t *regexp_matches, int match_idx,
- int byte_idx);
-void regexp_matches_set_end_idx(regexp_matches_t *regexp_matches, int match_idx,
- int byte_idx);
-void regexp_matches_set_match_len(regexp_matches_t *regexp_matches, int match_idx,
- int match_len);
+void regexp_matches_set_start_idx(regexp_matches_t *regexp_matches, int match_idx, int byte_idx);
+void regexp_matches_set_end_idx(regexp_matches_t *regexp_matches, int match_idx, int byte_idx);
+void regexp_matches_set_match_len(regexp_matches_t *regexp_matches, int match_idx, int match_len);
 int regexp_matches_start_idx(regexp_matches_t *regexp_matches, int match_idx);
 int regexp_matches_end_idx(regexp_matches_t *regexp_matches, int match_idx);
 int regexp_matches_match_len(regexp_matches_t *regexp_matches, int match_idx);

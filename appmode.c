@@ -30,6 +30,58 @@
 
 app_mode_t app_mode__;
 
+void init_app_mode(void)
+{
+	// setup application settings
+	memset(&app_mode__, 0x00, sizeof(app_mode__));
+
+	// editor and filer
+#ifdef ENABLE_RC
+	SET_APPMD(app_RCFILE);
+#endif // ENABLE_RC
+#ifdef ENABLE_HISTORY
+	SET_APPMD(app_HISTORY);
+#endif // ENABLE_HISTORY
+	CLR_APPMD(app_DRAW_CURSOR);
+	SET_APPMD_VAL(app_KEY_LINES, 3);
+	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
+#ifdef FORCE_ENABLE_DEBUG
+	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);
+	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
+#endif // FORCE_ENABLE_DEBUG
+	// editor mode
+	CLR_APPMD(app_EDITOR_FILER);
+	SET_APPMD_VAL(app_LIST_MODE, APP_MODE_NORMAL);
+////	CLR_APPMD(app_MAP_KEY_7F_BS);
+	SET_APPMD(app_MAP_KEY_7F_BS);
+
+	CLR_APPMD(ed_EDITOR_PANES);
+	CLR_APPMD(ed_EDITOR_PANEX);
+	CLR_APPMD(ed_DUAL_SCROLL);
+	SET_APPMD(ed_SHOW_RULER);
+	SET_APPMD(ed_SHOW_LINE_NUMBER);
+	CLR_APPMD(ed_CURS_POSITIONING);
+#ifdef USE_NKF
+	SET_APPMD(ed_USE_NKF);
+#endif // USE_NKF
+	CLR_APPMD(ed_AUTO_INDENT);
+	SET_APPMD_VAL(ed_BACKUP_FILES, BACKUP_FILES_MAX);
+#ifdef ENABLE_REGEX
+	SET_APPMD(ed_USE_REGEXP);
+#ifdef ENABLE_SYNTAX
+	SET_APPMD(ed_SYNTAX_HIGHLIGHT);
+	SET_APPMD(ed_TAB_EOL_NOTATION);
+#endif // ENABLE_SYNTAX
+#endif // ENABLE_REGEX
+
+	// filer mode
+	CLR_APPMD(fl_FILER_PANES);
+	CLR_APPMD(fl_FILER_PANEX);
+	SET_APPMD_VAL(fl_SHOW_FILE_INFO, SHOW_FILE_INFO_2);
+	SET_APPMD_VAL(fl_SHOW_ZEBRA_STRIPING, SHOW_ZEBRA_STRIPING_OFF);
+	SET_APPMD_VAL(fl_FILE_SORT_BY, 0);
+}
+
 /**
 * @fn void set_mode_idx_val(int mode_idx, int val)
 * @brief 各属性に値を設定する
@@ -99,6 +151,9 @@ void set_mode_idx_val(mode_idx_t mode_idx, int val)
 	case FLMD_FILE_SORT_BY:
 		SET_APPMD_VAL(fl_FILE_SORT_BY, val);
 		break;
+	case FLMD_SHOW_ZEBRA_STRIPING:
+		SET_APPMD_VAL(fl_SHOW_ZEBRA_STRIPING, val);
+		break;
 	case FLMD_FILER_PANES:
 		SET_APPMD_VAL(fl_FILER_PANES, val);
 		break;
@@ -154,6 +209,8 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 		return get_str_file_view_mode();
 	case FLMD_FILE_SORT_BY:
 		return get_str_file_sort_mode();
+	case FLMD_SHOW_ZEBRA_STRIPING:
+		return get_str_show_zebra_striping();
 	case FLMD_FILER_PANES:
 		return get_str_filer_panes();
 #endif // ENABLE_FILER
@@ -176,9 +233,9 @@ const char *get_str_app_mode()
 {
 	switch (GET_APPMD(app_LIST_MODE)) {
 	default:
-	case APP_MODE_NORMAL:	return "NORMAL";
-	case APP_MODE_CHOOSER:	return "CHOOSER";
-	case APP_MODE_VIEWER:	return "VIEWER";
+	case APP_MODE_NORMAL:	return "[NORMAL]";
+	case APP_MODE_CHOOSER:	return "[CHOOSER]";
+	case APP_MODE_VIEWER:	return "[VIEWER]";
 	}
 }
 
@@ -323,7 +380,7 @@ const char *get_str_editor_panes(void)
 }
 int tog_editor_panex()
 {
-	return set_editor_cur_pane_idx(get_editor_counter_pane_idx());
+	return set_editor_cur_pane_idx(get_editor_another_pane_idx());
 }
 const char *get_str_editor_panex()
 {
@@ -389,6 +446,15 @@ const char *get_str_file_sort_mode(void)
 	}
 }
 
+int tog_show_zebra_striping(void)
+{
+	return TOGGLE_APPMD(fl_SHOW_ZEBRA_STRIPING);
+}
+const char *get_str_show_zebra_striping(void)
+{
+	return BOOL_TO_ON_OFF(GET_APPMD(fl_SHOW_ZEBRA_STRIPING));
+}
+
 #ifdef ENABLE_FILER
 int tog_filer_panes(void)
 {
@@ -400,7 +466,7 @@ const char *get_str_filer_panes(void)
 }
 int tog_filer_panex()
 {
-	return set_filer_cur_pane_idx(get_filer_counter_pane_idx());
+	return set_filer_cur_pane_idx(get_filer_another_pane_idx());
 }
 const char *get_str_filer_panex()
 {
@@ -565,6 +631,12 @@ int do_tog_show_dot_file(void)
 	SHOW_MODE("Show dot file", get_str_show_dot_file());
 	return 0;
 }
+int do_tog_show_zebra_striping(void)
+{
+	tog_show_zebra_striping();
+	SHOW_MODE("Show zebra striping", get_str_show_zebra_striping());
+	return 0;
+}
 int do_inc_key_list_lines_(void)
 {
 	inc_key_list_lines();
@@ -581,7 +653,7 @@ int get_editor_cur_pane_idx(void)
 {
 	return GET_APPMD(ed_EDITOR_PANEX);
 }
-int get_editor_counter_pane_idx(void)
+int get_editor_another_pane_idx(void)
 {
 	return BOOL_INV(GET_APPMD(ed_EDITOR_PANEX));
 }
@@ -594,7 +666,7 @@ int get_filer_cur_pane_idx()
 {
 	return GET_APPMD(fl_FILER_PANEX);
 }
-int get_filer_counter_pane_idx()
+int get_filer_another_pane_idx()
 {
 	return BOOL_INV(GET_APPMD(fl_FILER_PANEX));
 }

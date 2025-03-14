@@ -22,13 +22,13 @@
 #ifndef debug_h
 #define debug_h
 
-///#define FORCE_ENABLE_DEBUG		// define this to force output debug log
+////#define FORCE_ENABLE_DEBUG		// define this to force output debug log
 #ifdef FORCE_ENABLE_DEBUG
 #define ENABLE_DEBUG 1
 #endif // FORCE_ENABLE_DEBUG
 
 #ifdef ENABLE_DEBUG
-///#define START_UP_TEST
+////#define START_UP_TEST
 #endif // ENABLE_DEBUG
 
 #ifdef START_UP_TEST
@@ -63,10 +63,18 @@
 #define tflf_d_printf(args...)			tflfl_d_printf_(1, _FL_, _LN_, _FN_, "", args)
 #define mflf_d_printf(args...)			tflfl_d_printf_(3, _FL_, _LN_, _FN_, "", args)
 #define uflf_d_printf(args...)			tflfl_d_printf_(6, _FL_, _LN_, _FN_, "", args)
+#define dtflf_d_printf(args...)			tflfl_d_printf_(9, _FL_, _LN_, _FN_, "", args)
 #define flfl_d_printf(label, args...)	tflfl_d_printf_(0, _FL_, _LN_, _FN_, label, args)
+#define dtflfl_sprintf_s(label, args...)	tflfl_sprintf_s_(9, _FL_, _LN_, _FN_, label, args)
 #define d_printf(args...)				tflfl_d_printf_(0, "", 0, "", "", args)
 #define e_printf(args...)				debug_printf(args)
 #define e_vprintf(args...)				debug_vprintf(args)
+
+#define progerr_printf(args...)		{							\
+  set_work_space_color_warn();									\
+  flfl_d_printf("PROGERR !!", args);							\
+  write_to_warning_file(dtflfl_sprintf_s("PROGERR !!", args));	\
+}
 
 #else // ENABLE_DEBUG
 
@@ -77,14 +85,17 @@
 #define tflf_d_printf(args...)
 #define mflf_d_printf(args...)
 #define uflf_d_printf(args...)
+#define dtflf_d_printf(args...)
 #define flfl_d_printf(label, args...)
+#define dtflfl_sprintf_s(label, args...)
 #define d_printf(args...)
 #define e_printf(args...)
 #define e_vprintf(args...)
 
+#define progerr_printf(args...)
+
 #endif // ENABLE_DEBUG
 
-#define progerr_printf(args...)		flfl_d_printf("PROGERR !!", args)
 #define warning_printf(args...)		flfl_d_printf("WARNING !!", args)
 #define fatalerr_printf(args...)	flfl_d_printf("FATALERR !!!!", args)
 #define _TFLF_						tflf_d_printf("\n");
@@ -101,8 +112,11 @@ void dump_memory(char *message, void *memory, int bytes);
 void dump_string(char *message, const char* string);
 
 void tflfl_d_printf_(int time, const char *file, int line,
- const char *func, const char *label,
- const char *format, ...);
+ const char *func, const char *label, const char *format, ...);
+const char* tflfl_sprintf_s_(int time, const char *file, int line,
+ const char *func, const char *label, const char *format, ...);
+const char* tflfl_vsprintf(char *buffer, int time, const char *file, int line,
+ const char *func, const char *label, const char *format, va_list list);
 void output_last_d_printf(void);
 
 void set_debug_printf_output(int on1_off0);

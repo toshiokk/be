@@ -26,12 +26,14 @@ typedef enum {
 	ITEM_COLOR_IDX_DEFAULT,				// default
 	ITEM_COLOR_IDX_TITLE,				// title bar
 	ITEM_COLOR_IDX_STATUS,				// status bar
+	ITEM_COLOR_IDX_PARENT,				// parent window
 	ITEM_COLOR_IDX_KEY_LIST,			// key list(key)
 	ITEM_COLOR_IDX_KEY_LIST2,			// key list(Description)
 	ITEM_COLOR_IDX_TEXT_NORMAL,			// contents
-	ITEM_COLOR_IDX_TEXT_SELECTED1,		// contents selected-1
-	ITEM_COLOR_IDX_TEXT_SELECTED2,		// contents selected-2
-	ITEM_COLOR_IDX_TEXT_SELECTED3,		// contents selected-3
+	ITEM_COLOR_IDX_TEXT_NORMAL2,		// contents-2
+	ITEM_COLOR_IDX_TEXT_SELECTED1,		// contents selected-1 (primary match text)
+	ITEM_COLOR_IDX_TEXT_SELECTED2,		// contents selected-2 (2nd match text)
+	ITEM_COLOR_IDX_TEXT_SELECTED3,		// contents selected-3 (selected text)
 	ITEM_COLOR_IDX_WARNING1,			// warning-1
 	ITEM_COLOR_IDX_WARNING2,			// warning-2
 	ITEM_COLOR_IDX_WARNING3,			// warning-3
@@ -95,7 +97,7 @@ int is_work_space_color_warn(void);
 void register_item_color(item_color_idx_t color_idx, int bgc, int fgc);
 void get_color_by_idx(item_color_idx_t color_idx, char *fgc, char *bgc);
 void set_color_by_idx(item_color_idx_t color_idx, int reverse);
-void set_item_color(const item_color_t *item_color);
+void set_item_color(const item_color_t *item_color, int reverse);
 
 #ifdef ENABLE_SYNTAX
 int set_file_type_and_tab_size_by_cur_file_path(void);

@@ -24,22 +24,18 @@
 
 #ifdef ENABLE_FILER
 
-#define FILER_PANES		MAX_APP_PANES_2
-typedef struct {
-	char org_cur_dir[MAX_PATH_LEN+1];	// original current directory
-	filer_view_t filer_views[FILER_PANES];
-} filer_panes_t;
-extern filer_panes_t *cur_filer_panes;	// Current Filer Panes (instance is allocated locally)
-
 extern ef_do_next_t filer_do_next;
 
 void set_cur_filer_panes(filer_panes_t *fps);
+filer_panes_t* get_cur_filer_panes();
 void init_cur_filer_panes(filer_panes_t *fps, const char *cur_dir);	// TODO: rename
 void destroy_filer_panes();
 void copy_filer_panes_cur_dir(filer_panes_t *dest, filer_panes_t *src);
 
-filer_view_t *get_cur_filer_cur_pane_view(void);
-filer_view_t *get_other_filer_view(void);
+filer_view_t *get_cur_filer_view(int pane_idx);
+filer_view_t *get_cur_filer_pane_view(void);
+filer_view_t *get_another_filer_pane_view(void);
+
 file_info_t *get_cur_fv_file_list_ptr();
 file_info_t *get_cur_fv_cur_file_ptr();
 file_info_t *get_cur_fv_file_ptr(int file_idx);

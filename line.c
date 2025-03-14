@@ -26,7 +26,6 @@
 be_line_t *line_create(void)
 {
 	be_line_t *line;
-
 	_mlc_set_caller
 	line = (be_line_t *)malloc__(sizeof(be_line_t));
 	_mlc_set_caller
@@ -76,7 +75,7 @@ be_line_t *line_set_string_len(be_line_t *line, const char *string, len_t len)
 		len = byte_idx_from_byte_idx(string, LIM_MAX(len, MAX_EDIT_LINE_LEN));
 	}
 	line->size = len + 1;
-///	_mlc_set_caller
+	////_mlc_set_caller
 	line->data = char_remalloc(line->data, len + 1);
 	strlcpy__(line->data, string, len);	// copy string
 	return line;			// return line
@@ -166,7 +165,7 @@ be_line_t *line_unlink_free(be_line_t *line)
 		line_unlink(line);
 		line_free(line);
 	} else {
-		progerr_printf("This buffer is NULL\n");
+		WARN_PTR(line);
 	}
 	return next;	// return the next line
 }
@@ -371,7 +370,7 @@ void line_dump_lines(const be_line_t *line, int lines, const be_line_t *cur_line
 void line_dump_cur(const be_line_t *line, const be_line_t *cur_line)
 {
 	if (line == NULL) {
-		progerr_printf("line == NULL\n");
+		WARN_PTR(line);
 		return;
 	}
 	flf_d_printf("%s%03d,%08lx,<%08lx,>%08lx,%04d,%06d,%08lx[%s]\n",

@@ -54,6 +54,7 @@ int dof_refresh_filer(void);
 //|dof_copy_file              | -       | v      | --  |
 //|dof_copy_file_update       | -       | v      | --  |
 //|dof_move_file              | -       | v      | --  |
+//|dof_move_file_update       | -       | v      | --  |
 //|dof_rename_file            | v       | -      | --  |
 //|dof_trash_file             | -       | v      | --  |
 //|dof_delete_file            | -       | v      | --  |
@@ -74,14 +75,15 @@ int dof_tap_file(void);
 int dof_view_file(void);
 int dof_tail_file(void);
 
-int dof_open_file(void);
+int dof_open_file_recursive(void);
+int dof_open_file_non_recursive(void);
 int dof_open_file_ro(void);
 int dof_open_locked_file(void);
-int dof_open_file_non_recursive(void);
 int dof_open_file_from_history(void);
 int dof_open_proj_file(void);
 int dof_open_exec_log_file(void);
 int dof_open_new_file(void);
+int dof_input_files_to_open(void);
 int dof_drop_files_to_open(void);
 
 int dof_copy_file(void);
@@ -89,19 +91,25 @@ int dof_copy_file_update(void);
 int dof_drop_files_to_copy(void);
 
 int dof_move_file(void);
+int dof_move_file_update(void);
 int dof_drop_files_to_move();
 
-#define ACTION_SEL		0
-#define ACTION_OPEN		1
-#define ACTION_COPY		2
-#define ACTION_MOVE		3
-int dof_drop_files_to_act__(int action);
+#define ACTION_SEL		0	// choose from 'open', 'copy' or 'move'
+#define ACTION_INPUT	1	// input file path to open
+#define ACTION_OPEN		2
+#define ACTION_COPY		3
+#define ACTION_MOVE		4
+int dof_drop_files_to_do_action_(int action);
 
 int dof_rename_file(void);
 int dof_trash_file(void);
 int dof_delete_file(void);
 int dof_mark_to_delete_file(void);
 int dof_size_zero_file(void);
+
+int dof_unzip_file(void);
+int dof_zip_file(void);
+
 int dof_find_file(void);
 int dof_make_directory(void);
 int dof_change_directory(void);
@@ -111,6 +119,7 @@ int dof_home_directory(void);
 int dof_root_directory(void);
 int dof_prev_directory(void);
 
+int dof_set_filter(void);
 int dof_select_file(void);
 int dof_select_no_file(void);
 int dof_select_all_files(void);
@@ -124,10 +133,10 @@ int dof_tog_show_dot_file(void);
 int dof_inc_file_view_mode(void);
 int dof_clear_file_sort_mode(void);
 int dof_inc_file_sort_mode(void);
+int dof_tog_show_zebra_striping(void);
 int dof_tog_panes(void);
 int dof_tog_panex(void);
 int dof_inc_key_list_lines(void);
-int dof_display_color_settings(void);
 #ifdef ENABLE_HELP
 int dof_splash(void);
 int dof_view_func_list(void);

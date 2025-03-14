@@ -85,7 +85,7 @@ int doe_replace(void)
 	char prev_file_pos[MAX_PATH_LEN+1];
 	int num_replaced;
 
-	if (is_editor_view_mode_then_warn_it()) {
+	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
 	}
 
@@ -132,10 +132,10 @@ int input_search_str(int search0_replace1, char *input_buf)
 	char default_needle[MAX_PATH_LEN+1];
 
 	if (strlen(last_searched_needle)) {
-		// We use main_win_get_columns() / 3 here because we need to see more on the line
+		// We use central_win_get_columns() / 3 here because we need to see more on the line
 		snprintf(default_needle, MAX_PATH_LEN+1, "(%.*s%s)",
-		 main_win_get_columns() / 3, last_searched_needle,
-		 strlen(last_searched_needle) > main_win_get_columns() / 3 ? "..." : "");
+		 central_win_get_columns() / 3, last_searched_needle,
+		 strlen(last_searched_needle) > central_win_get_columns() / 3 ? "..." : "");
 	} else {
 		strcpy__(default_needle, "");
 	}
@@ -337,7 +337,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 #ifdef ENABLE_UNDO
 				undo_save_after_change();
 #ifdef ENABLE_DEBUG
-				check_undo_state_after_change();
+				if (check_undo_state_after_change()) {	_WARNING_	}
 #endif // ENABLE_DEBUG
 #endif // ENABLE_UNDO
 				// Set the cursor at the last character of the replacement
@@ -481,7 +481,7 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair)
 	}
 	if ((match_len > 0) && (depth == 0)) {
 		// found peer bracket
-		disp_status_bar_done(_("Peer bracket found"));
+		disp_status_bar_done(_("Counterpart bracket found"));
 	} else if (depth < MAX_BRACKET_NESTINGS) {
 		// didn't find peer bracket
 		if (safe_cnt < MAX_BRACKETS_SEARCH) {
@@ -715,7 +715,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 				} else if (IS_NODE_TOP_MOST(line) == 0) {
 					line = NODE_PREV(line);
 					byte_idx = line_strlen(line);
-				} else if (global_search && switch_epc_buf_to_prev(0, 0)) {
+				} else if (global_search && switch_epc_buf_to_prev_buf(0, 0)) {
 					// update local pointers after switching buffer
 					// but not update pointers in buffer
 					ptr_line = &(EPCBVC_CL);
@@ -746,7 +746,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 				} else if (IS_NODE_BOT_MOST(line) == 0) {
 					line = NODE_NEXT(line);
 					byte_idx = 0;
-				} else if (global_search && switch_epc_buf_to_next(0, 0)) {
+				} else if (global_search && switch_epc_buf_to_next_buf(0, 0)) {
 					// update local pointers after switching buffer
 					// but not update pointers in buffer
 					ptr_line = &(EPCBVC_CL);
@@ -774,7 +774,7 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 		*ptr_byte_idx = matches_start_idx(&matches__);
 		return match_len;
 	}
-	// not found then return to begining position
+	// not found then return to beginning position
 	recall_file_pos_null(NULL);
 	return match_len;
 }

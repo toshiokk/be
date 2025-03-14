@@ -30,6 +30,7 @@ int doe_delete_to_head(void);
 int doe_cut_to_head(void);
 int doe_delete_to_tail(void);
 int doe_cut_to_tail(void);
+int doe_clear_all_cut_bufs(void);
 
 int doe_tog_mark(void);
 int do_set_mark(void);

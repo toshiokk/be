@@ -37,7 +37,7 @@ const char *root_notation(void)
 	static char notation[MAX_PATH_LEN+1];
 	snprintf_(notation, MAX_PATH_LEN, "%s%s",
 	 (geteuid() == 0) ? "[ROOT] " : "",
-	 is_app_viewer_mode() ? "[VW]" : (is_app_chooser_mode() ? "[LIST]" : ""));
+	 is_app_chooser_viewer_mode() ? get_str_app_mode() : "");
 	return notation;
 }
 
@@ -45,6 +45,7 @@ const char *root_notation(void)
 
 PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
  const char *msg, va_list ap);
+PRIVATE int get_status_bar_color_idx(char status_bar_display);
 
 void disp_status_bar_cursor(const char *msg, ...)
 {
@@ -92,6 +93,19 @@ void disp_status_bar_async(const char *msg, ...)
 	va_end(ap);
 }
 
+//| --         |                           next request                                     |
+//|prev request|S_B_D_NONE|S_B_D_CURS|S_B_D_ING |S_B_D_WARN|S_B_D_ERR |S_B_D_DONE|S_B_D_ASYN|
+//|------------|----------|----------|----------|----------|----------|----------|----------|
+//|S_B_D_NONE  | --       | over-wr  | over-wr  | over-wr  | over-wr  | over-wr  | over-wr  |
+//|S_B_D_CURS  | --       | over-wr  | over-wr  | over-wr  | over-wr  | over-wr  | over-wr  |
+//|S_B_D_ING   | --       | over-wr  | over-wr  | over-wr  | over-wr  | over-wr  | over-wr  |
+//|S_B_D_WARN  | --       |prev:next | reject   | over-wr  | over-wr  | over-wr  | over-wr  |
+//|S_B_D_ERR   | --       |prev:next | reject   | over-wr  | over-wr  | over-wr  | over-wr  |
+//|S_B_D_DONE  | --       |prev:next | reject   | over-wr  | over-wr  | over-wr  | over-wr  |
+//|S_B_D_ASYN  | --       | reject   | over-wr  | over-wr  | over-wr  | over-wr  | over-wr  |
+
+// Note: 'prev:next' uses previous color
+
 // Examples:
 //  Reading File filename.ext ...
 //  Writing File filename.ext ...
@@ -100,7 +114,7 @@ void disp_status_bar_async(const char *msg, ...)
 PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
  const char *msg, va_list ap)
 {
-	app_win_stack_entry *app_win = get_app_win_stack_entry(-1);
+	app_stack_entry *app_stk_ptr = get_app_stack_ptr(-1);
 	int dividend = 1;
 	int divisor = 1;
 	char buf[MAX_SCRN_LINE_BUF_LEN+1];
@@ -114,20 +128,17 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 #ifdef ENABLE_FILER
 	} else {
 		dividend = get_cur_fv_file_idx();
-		divisor = get_cur_filer_cur_pane_view()->file_list_entries;
+		divisor = get_cur_filer_pane_view()->file_list_entries;
 	}
 #endif // ENABLE_FILER
 
-/////mflf_d_printf("status_bar_displayed: %d, status_bar_to_display: %d\n",
-///// app_win->status_bar_displayed, status_bar_to_display);
-	char color_idx = ITEM_COLOR_IDX_STATUS;
 	char update = 0;		// reject
-	switch (app_win->status_bar_displayed) {
+	switch (app_stk_ptr->status_bar_displayed) {
 	default:
 	case S_B_D_NONE:
 	case S_B_D_CURS:
 	case S_B_D_ING:
-		update = 1;			// overlap
+		update = 1;			// over-wr
 		break;
 	case S_B_D_WARN:
 	case S_B_D_ERR:
@@ -145,7 +156,7 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		case S_B_D_ERR:
 		case S_B_D_DONE:
 		case S_B_D_ASYN:
-			update = 1;		// "NEXT" (overlap)
+			update = 1;		// "NEXT" (over-wr)
 			break;
 		}
 		break;
@@ -160,15 +171,70 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 		case S_B_D_ERR:
 		case S_B_D_DONE:
 		case S_B_D_ASYN:
-			update = 1;		// "NEXT" (overlap)
+			update = 1;		// "NEXT" (over-wr)
 			break;
 		}
 		break;
 	}
+	int color_idx = ITEM_COLOR_IDX_STATUS;
 	switch (status_bar_to_display) {
 	default:
 	case S_B_D_CURS:
-		color_idx = app_win->status_bar_color_idx;
+		color_idx = get_status_bar_color_idx(app_stk_ptr->status_bar_displayed);
+		break;
+	case S_B_D_ING:
+	case S_B_D_WARN:
+	case S_B_D_ERR:
+	case S_B_D_DONE:
+	case S_B_D_ASYN:
+		color_idx = get_status_bar_color_idx(status_bar_to_display);
+		break;
+	}
+
+	if (update) {
+		vsnprintf(buf, MAX_SCRN_LINE_BUF_LEN+1, msg, ap);
+		strcpy__(buffer, "");
+		switch (update) {
+		default:
+			break;
+		case 1:
+			// this time: "NEXT"
+			strlcpy__(buffer, buf, MAX_SCRN_LINE_BUF_LEN);
+			strlcpy__(app_stk_ptr->status_bar_prev_msg, buffer, MAX_SCRN_LINE_BUF_LEN);
+			// next time: "NEXT"
+			break;
+		case 2:
+			// this time: "PREV | NEXT"
+			if (is_strlen_not_0(app_stk_ptr->status_bar_prev_msg)) {
+				strlcpy__(buffer, app_stk_ptr->status_bar_prev_msg, MAX_SCRN_LINE_BUF_LEN);
+				strlcat__(buffer, MAX_SCRN_LINE_BUF_LEN, "  |  ");
+			}
+			strlcat__(buffer, MAX_SCRN_LINE_BUF_LEN, buf);
+			strcpy__(app_stk_ptr->status_bar_prev_msg, "");
+			// next time: "NEXT"
+			break;
+		}
+		adjust_str_columns(buffer, central_win_get_columns());
+		int col_idx = -1;
+		if (divisor > 0) {
+			// display percent indicator
+			col_idx = MIN_MAX_(0, (central_win_get_columns() - 1) * dividend / divisor,
+			 central_win_get_columns() - 1);
+		}
+		app_stk_ptr->status_bar_color_idx = color_idx;
+		app_stk_ptr->status_bar_col_idx = col_idx;
+		strlcpy__(app_stk_ptr->status_bar_msg, buffer, MAX_SCRN_LINE_BUF_LEN);
+		redisp_status_bar();
+mflf_d_printf("SB(%d):\n[%s]\n", status_bar_to_display, buffer);
+	}
+	app_stk_ptr->status_bar_displayed = status_bar_to_display;
+}
+PRIVATE int get_status_bar_color_idx(char status_bar_display)
+{
+	int color_idx = ITEM_COLOR_IDX_STATUS;
+	switch (status_bar_display) {
+	default:
+	case S_B_D_CURS:
 		break;
 	case S_B_D_ING:
 		break;
@@ -182,82 +248,50 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
 	case S_B_D_ASYN:
 		break;
 	}
-/////mflf_d_printf("sb_displayed: %d, sb_to_display: %d, update: %d, color_idx: %d\n",
-///// app_win->status_bar_displayed, status_bar_to_display, update, color_idx);
-
-	if (update) {
-		vsnprintf(buf, MAX_SCRN_LINE_BUF_LEN+1, msg, ap);
-		strcpy__(buffer, "");
-		switch (update) {
-		default:
-			break;
-		case 1:
-			// this time: "NEXT"
-			strlcpy__(buffer, buf, MAX_SCRN_LINE_BUF_LEN);
-			strlcpy__(app_win->status_bar_prev_msg, buffer, MAX_SCRN_LINE_BUF_LEN);
-			// next time: "NEXT"
-			break;
-		case 2:
-			// this time: "PREV | NEXT"
-			if (is_strlen_not_0(app_win->status_bar_prev_msg)) {
-				strlcpy__(buffer, app_win->status_bar_prev_msg, MAX_SCRN_LINE_BUF_LEN);
-				strlcat__(buffer, MAX_SCRN_LINE_BUF_LEN, "  |  ");
-			}
-			strlcat__(buffer, MAX_SCRN_LINE_BUF_LEN, buf);
-			strcpy__(app_win->status_bar_prev_msg, "");
-			// next time: "NEXT"
-			break;
-		}
-		adjust_utf8s_columns(buffer, main_win_get_columns());
-		int col_idx = -1;
-		if (divisor > 0) {
-			// display percent indicator
-			col_idx = MIN_MAX_(0, (main_win_get_columns() - 1) * dividend / divisor,
-			 main_win_get_columns() - 1);
-		}
-		app_win->status_bar_color_idx = color_idx;
-		app_win->status_bar_col_idx = col_idx;
-		strlcpy__(app_win->status_bar_msg, buffer, MAX_SCRN_LINE_BUF_LEN);
-		redisp_status_bar();
-		app_win->status_bar_displayed = status_bar_to_display;
-mflf_d_printf("SB(%d):\n[%s]\n", status_bar_to_display, buffer);
-	}
+	return color_idx;
 }
 void redisp_status_bar()
 {
-	app_win_stack_entry *app_win = get_app_win_stack_entry(-1);
-	char color_idx = app_win->status_bar_color_idx;
-	int col_idx = app_win->status_bar_col_idx;
-	const char *buffer = app_win->status_bar_msg;
+	app_stack_entry *app_stk_ptr = get_app_stack_ptr(-1);
+	int color_idx = app_stk_ptr->status_bar_color_idx;
+	int col_idx = app_stk_ptr->status_bar_col_idx;
+	const char *buffer = app_stk_ptr->status_bar_msg;
 
 	set_color_by_idx(color_idx, 0);
 	blank_status_bar();
 	// display status bar
-	main_win_output_string(get_status_line_y(), 0, buffer, -1);
+	central_win_output_string(central_win_get_status_line_y(), 0, buffer, -1);
 	if (col_idx >= 0) {
 		int col_idx_1, col_idx_2;
 		int byte_idx_1, byte_idx_2;
-		// col_idx: 0 -- main_win_get_columns()-1
+		// col_idx: 0 -- central_win_get_columns()-1
 		byte_idx_1 = byte_idx_from_col_idx(buffer, col_idx, CHAR_LEFT,  &col_idx_1);
 		byte_idx_2 = byte_idx_from_col_idx(buffer, col_idx+1, CHAR_RIGHT, &col_idx_2);
 		set_color_by_idx(color_idx, 1);
 		// display percent indicator
-		main_win_output_string(get_status_line_y(), col_idx_1,
+		central_win_output_string(central_win_get_status_line_y(), col_idx_1,
 		 &buffer[byte_idx_1], byte_idx_2 - byte_idx_1);
 	}
 }
 
 void blank_status_bar(void)
 {
-	main_win_clear_lines(get_status_line_y(), -1);
+	central_win_clear_lines(central_win_get_status_line_y(), -1);
 }
 
 void blank_key_list_lines(void)
 {
 	set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
-	main_win_clear_lines(get_key_list_line_y(), get_key_list_line_y() + get_key_list_lines());
+	central_win_clear_lines(central_win_get_key_list_line_y(),
+	 central_win_get_key_list_line_y() + get_key_list_lines());
 }
 
+void disp_status_bar_cwd()
+{
+	disp_status_bar_warn(_("CWD: %s"), full_path_of_cur_dir_s());
+}
+
+//------------------------------------------------------------------------------
 PRIVATE int input_line_y = 2;
 // determines Y position of input-box avoiding the current cursor line
 int determine_input_line_y()
@@ -272,7 +306,7 @@ int determine_input_line_y()
 			input_line_y = cursor_y + 1+1;
 		}
 	}
-	return input_line_y = MIN_MAX_(TITLE_LINES, input_line_y, get_status_line_y());
+	return input_line_y = MIN_MAX_(TITLE_LINES, input_line_y, central_win_get_status_line_y());
 }
 int get_input_line_y(void)
 {
@@ -280,22 +314,7 @@ int get_input_line_y(void)
 }
 int default_input_line_y(void)
 {
-	return main_win_get_mid_win_y() + main_win_get_mid_win_lines() / 2;
-}
-
-int get_yes_no_line_y(void)
-{
-	// if there is key-list-line, input on KEY_LIST_LINE otherwise STATUS_LINE
-	return get_key_list_lines() ? get_key_list_line_y() : get_status_line_y();
-}
-
-int get_status_line_y(void)
-{
-	return main_win_get_bottom_win_y() + STATUS_LINE;
-}
-int get_key_list_line_y(void)
-{
-	return main_win_get_bottom_win_y() + KEY_LIST_LINE;
+	return central_win_get_mid_win_y() + central_win_get_mid_win_lines() / 2;
 }
 
 // End of disp.c

@@ -32,7 +32,7 @@
 #define HISTORY_TYPES_APP			5	// types of app histories (5)
 #define HISTORY_TYPES_APP_AND_SHELL	6	// types of app and shell histories (5+1)
 
-///#define NOT_DELETE_OLD_IDENTICAL_ENTRY	// in HISTORY_TYPE_IDX_EXEC
+////#define NOT_DELETE_OLD_IDENTICAL_ENTRY	// in HISTORY_TYPE_IDX_EXEC
 
 #ifdef ENABLE_HISTORY
 
@@ -67,7 +67,9 @@ void save_histories(void);
 
 void load_last_searched_needle(void);
 
-void update_dir_history(const char *prev_dir, const char *cur_dir);
+void update_history_dir_change(const char *prev_dir, const char *next_dir);
+int update_history_dir_operate();
+void update_history_dir_sync(const char *prev_dir, const char *cur_dir);
 void update_history(int hist_type_idx, const char *str);
 const char *get_history_newest(int hist_type_idx, int last_n);
 const char *get_history_completion(int hist_type_idx, const char *str);

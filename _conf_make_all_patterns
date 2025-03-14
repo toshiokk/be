@@ -15,6 +15,10 @@ echo_run()
   echo "Summary - Running: $cmd_line"
   echo -n "Summary - SizeOfExecutableFile: "
   ls -l be
+  if [ ! -f be ]; then
+    echo "BuildError !!!!"
+    exit -1
+  fi
   echo "Summary -----------------------------------------------------"
 } 2>&1
 
@@ -81,8 +85,10 @@ rm -f _conf_make_all_patterns.log
 
 {
   echo "----conf_make_all_patterns-start----"
-  if [ "$1" ]; then
-    conf_make "$1"
+  if [ -n "$1" ]; then
+    for num in $( seq $1 18 ) ; do
+      conf_make "$num"
+    done
   else
   conf_make 0
   conf_make 1

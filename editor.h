@@ -41,8 +41,7 @@ int doe_read_clipboard_into_cur_pos_(int char0_line1);
 //------------------------------------------------------------------------------
 
 int doe_run_line_soon(void);
-int doe_run_line_soon_w_log(void);
-int doe_run_line_soon_(int logging);
+int doe_run_line_input(void);
 
 //------------------------------------------------------------------------------
 
@@ -51,7 +50,6 @@ int doe_splash(void);
 int doe_view_func_list(void);
 #endif // ENABLE_HELP
 
-int doe_display_color_settings(void);
 void display_color_settings(void);
 
 int examine_key_code(void);
@@ -62,7 +60,7 @@ int doe_menu_0(void);
 
 int doe_inc_key_list_lines(void);
 
-typedef struct /*app_win_stack_entry*/ {
+typedef struct /*app_stack_entry*/ {
 	app_mode_t appmode_save;
 	editor_panes_t *editor_panes_save;
 #ifdef ENABLE_FILER
@@ -71,24 +69,24 @@ typedef struct /*app_win_stack_entry*/ {
 	char status_bar_displayed;
 	char status_bar_prev_msg[MAX_SCRN_LINE_BUF_LEN+1];
 	char status_bar_color_idx;
-	short status_bar_col_idx;
+	short status_bar_col_idx;	// column position of position indicator
 	char status_bar_msg[MAX_SCRN_LINE_BUF_LEN+1];
-} app_win_stack_entry;
+} app_stack_entry;
 
-void clear_app_win_stack_depth();
-void set_app_win_stack_depth(int depth);
-int inc_app_win_stack_depth();
-int dec_app_win_stack_depth();
-int get_app_win_stack_depth();
-app_win_stack_entry *get_app_win_stack_entry(int depth);
-void clear_app_win_stack_entry(int depth);
+void clear_app_stack_depth();
+void set_app_stack_depth(int depth);
+int inc_app_stack_depth();
+int dec_app_stack_depth();
+int get_app_stack_depth();
+app_stack_entry *get_app_stack_ptr(int depth);
+void clear_app_stack_entry(int depth);
 
 #ifdef ENABLE_FILER
-void push_app_win(editor_panes_t *next_eps, be_buf_t *buf, filer_panes_t *next_fps);
+void push_app_stack(editor_panes_t *next_eps, be_buf_t *buf, filer_panes_t *next_fps);
 #else // ENABLE_FILER
-void push_app_win(editor_panes_t *next_eps, be_buf_t *buf);
+void push_app_stack(editor_panes_t *next_eps, be_buf_t *buf);
 #endif // ENABLE_FILER
-void pop_app_win(BOOL change_caller);
+void pop_app_stack(BOOL change_parent_editor, BOOL change_parent_filer);
 void save_cur_app_state(int depth);
 void load_cur_app_state(int depth);
 
@@ -100,9 +98,7 @@ void start_title_bar_blinking();
 void stop_title_bar_blinking();
 void disp_title_bar_editor(void);
 
-void disp_key_list_editor(void);
-
-int is_editor_view_mode_then_warn_it(void);
+int is_editor_unmodifiable_then_warn_it(void);
 
 #ifdef ENABLE_DEBUG
 void dump_cur_pointers(void);

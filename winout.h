@@ -31,41 +31,48 @@ typedef struct win_rect {
 
 // window				win_idx
 // --------------------	-----------
-#define WIN_IDX_MAIN		0	// sub_win_rects[0]
+#define WIN_IDX_CENTRAL		0	// sub_win_rects[0]
 #define WIN_IDX_SUB_WHOLE	1	// sub_win_rects[1]
 #define WIN_IDX_SUB_LEFT	2	// sub_win_rects[2]
 #define WIN_IDX_SUB_RIGHT	3	// sub_win_rects[3]
 #define SUB_WINS			4
+extern win_rect_t *central_win;
 extern win_rect_t sub_win_rects[SUB_WINS];
-extern win_rect_t *main_win, *cur_win;
-extern int cur_win_idx;
+extern int cur_sub_win_idx;
+extern win_rect_t *cur_sub_win;
 
 void win_init_win_size(void);
 
-void set_win_depth(int app_stack_depth);
+void set_win_depth(int nesting_depth);
 void inc_win_depth(void);
 void dec_win_depth(void);
 const int get_win_depth(void);
 void win_reinit_win_size();
 
 void win_setup_win_size(int win_depth);
-void win_select_win(int sub_win_idx);
-void dump_cur_win(void);
+void win_select_cur_sub_win(int sub_win_idx);
+#ifdef ENABLE_DEBUG
+void dump_cur_sub_win(void);
+#endif // ENABLE_DEBUG
 
-int main_win_get_lines(void);
-int main_win_get_columns(void);
+int central_win_get_lines(void);
+int central_win_get_columns(void);
 
-int main_win_get_top_win_lines(void);
-int main_win_get_mid_win_lines(void);
-int main_win_get_bottom_win_lines(void);
+int central_win_get_top_win_lines(void);
+int central_win_get_mid_win_lines(void);
+int central_win_get_bottom_win_lines(void);
 
-int main_win_get_top_win_y(void);
-int main_win_get_mid_win_y(void);
-int main_win_get_bottom_win_y(void);
-void main_win_set_cursor_pos(int yy, int xx);
-void main_win_clear_screen(void);
-void main_win_clear_lines(int line_1, int line_2);
-void main_win_output_string(int yy, int xx, const char *string, int bytes);
+int central_win_get_top_win_y(void);
+int central_win_get_mid_win_y(void);
+int central_win_get_bottom_win_y(void);
+int central_win_get_yes_no_line_y(void);
+int central_win_get_status_line_y(void);
+int central_win_get_key_list_line_y(void);
+
+void central_win_set_cursor_pos(int yy, int xx);
+void central_win_clear_screen(void);
+void central_win_clear_lines(int line_1, int line_2);
+void central_win_output_string(int yy, int xx, const char *string, int bytes);
 
 int sub_win_get_lines(void);
 int sub_win_get_columns(void);

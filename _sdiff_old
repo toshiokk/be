@@ -1,14 +1,16 @@
 proc_one()
 {
-OLD_DIR=../old/src/
+  OLD_DIR=../old/be
   diff ${OLD_DIR}/$1 $1 >/dev/null
   if [ "$?" != 0 ]; then
-    echo "(  \|  |  <  |  >  )"
     echo "kdiff3 ${OLD_DIR}/$1 $1 #========================"
-    sdiff-ln 189 ${OLD_DIR}/$1 $1
+    sdiff-ln-py 189 ${OLD_DIR}/$1 $1
   fi
 }
 
-for fn in *.h *.c *.cpp; do
-  proc_one $fn
-done | tee _diff.txt
+{
+  echo "(  \|  |  <  |  >  )"
+  for fn in *.h *.c; do
+    proc_one $fn
+  done
+} | tee _sdiff.txt

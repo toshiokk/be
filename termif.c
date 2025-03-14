@@ -34,14 +34,14 @@
 //   ESC [ 21m					// DNU: Linux console does NOT support this.
 //   ESC [ 27m					// DNU: Linux console does NOT support this.
 
-///#define TERMIF_MAX_SCRN_COLS		384		// = 1920[pixels] / 5[pixels/char] (Full HD)
-///#define TERMIF_MAX_SCRN_COLS		512		// = 2560[pixels] / 5[pixels/char] (WQXGA)
+////#define TERMIF_MAX_SCRN_COLS		384		// = 1920[pixels] / 5[pixels/char] (Full HD)
+////#define TERMIF_MAX_SCRN_COLS		512		// = 2560[pixels] / 5[pixels/char] (WQXGA)
 #define TERMIF_MAX_SCRN_COLS		768		// = 3840[pixels] / 5[pixels/char] (4K landscape)
-///#define TERMIF_MAX_SCRN_COLS		1536	// = 7680[pixels] / 5[pixels/char] (8K landscape)
+////#define TERMIF_MAX_SCRN_COLS		1536	// = 7680[pixels] / 5[pixels/char] (8K landscape)
 
-///#define TERMIF_MAX_SCRN_LINES		108		// = 1080[pixels] / 10[pixels/char] (Full HD)
+////#define TERMIF_MAX_SCRN_LINES		108		// = 1080[pixels] / 10[pixels/char] (Full HD)
 #define TERMIF_MAX_SCRN_LINES		384		// = 3840[pixels] / 10[pixels/char] (4K portrait)
-///#define TERMIF_MAX_SCRN_LINES		768		// = 7680[pixels] / 10[pixels/char] (8K portrait)
+////#define TERMIF_MAX_SCRN_LINES		768		// = 7680[pixels] / 10[pixels/char] (8K portrait)
 
 #define TERMIF_LINE_BUF_LEN			(TERMIF_MAX_SCRN_COLS * MAX_UTF8C_BYTES)
 
@@ -146,6 +146,7 @@ int termif_end(void)
 	send_cursor_on_to_term(1);
 	fcntl(STDIN_FILENO, F_SETFL, 0);				// block in getchar()
 	restore_term_settings(&term_settings_save);
+	termif_clear_screen();
 	return 0;
 }
 //------------------------------------------------------------------------------
@@ -232,7 +233,6 @@ void termif_clear_vscreen_painted(void)
 }
 void termif_set_cursor_pos(short yy, short xx)
 {
-/////mflf_d_printf("(%d, %d)\n", yy, xx);
 	if (yy >= 0 && xx >= 0) {
 		termif_cursor_yy = yy;
 		termif_cursor_xx = xx;
@@ -246,7 +246,6 @@ void termif_get_cursor_pos(int *yy, int *xx)
 }
 void termif_set_cursor_on(char on_off)
 {
-/////mflf_d_printf("%d\n", on_off);
 	termif_cursor_on = on_off;
 	// cursor state is cached and not transfered to the console until 'termif_refresh()' called
 }
@@ -453,7 +452,6 @@ PRIVATE void send_cursor_pos_string_to_term(int yy, int xx, const char *string, 
 PRIVATE void send_cursor_on_to_term(char on_off)
 {
 	if (on_off != termif_cursor_on_sent) {
-/////mflf_d_printf("%d\n", on_off);
 		if (on_off) {
 			send_string_to_term("\x1b[?25h", -1);
 		} else {
@@ -473,7 +471,7 @@ PRIVATE void send_cursor_pos_to_term(short yy, short xx)
 		send_printf_to_term("\x1b[%d;%df", yy+1, xx+1);
 #endif
 	} else {
-///		warning_printf("(%d, %d)\n", xx, yy);	// not warn this
+		////warning_printf("(%d, %d)\n", xx, yy);	// not warn this
 	}
 }
 PRIVATE int receive_cursor_pos_from_term(int *yy, int *xx)
@@ -554,8 +552,6 @@ PRIVATE void send_attrs_to_term(vscreen_char_t attrs)
 }
 PRIVATE void send_all_off_to_term(void)
 {
-///	send_fgc_to_term(7);
-///	send_bgc_to_term(0);
 	send_string_to_term("\x1b[0m", -1);
 	attrs_sent = VSCR_CHAR_ATTRS_DEFAULT;
 }
@@ -637,7 +633,6 @@ struct _key_seq_ {
 	key_code_t key;
 	char *sequences;
 } key_seq_table[] = {
-	//			 1---2---3---4---5---6---7---
 	// linux console
 	{ K_F01,		"\x1b[[A" },
 	{ K_F02,		"\x1b[[B" },
@@ -694,18 +689,6 @@ struct _key_seq_ {
 	{ K_S_F10,		"\x1b[21;2~" },
 	{ K_S_F11,		"\x1b[23;2~" },
 	{ K_S_F12,		"\x1b[24;2~" },
-	{ K_C_F01,		"\x1b[1;5P" },
-	{ K_C_F02,		"\x1b[1;5Q" },
-	{ K_C_F03,		"\x1b[1;5R" },
-	{ K_C_F04,		"\x1b[1;5S" },
-	{ K_C_F05,		"\x1b[15;5~" },
-	{ K_C_F06,		"\x1b[17;5~" },
-	{ K_C_F07,		"\x1b[18;5~" },
-	{ K_C_F08,		"\x1b[19;5~" },
-	{ K_C_F09,		"\x1b[20;5~" },
-	{ K_C_F10,		"\x1b[21;5~" },
-	{ K_C_F11,		"\x1b[23;5~" },
-	{ K_C_F12,		"\x1b[24;5~" },
 	{ K_M_F01,		"\x1b[1;3P" },
 	{ K_M_F02,		"\x1b[1;3Q" },
 	{ K_M_F03,		"\x1b[1;3R" },
@@ -730,6 +713,54 @@ struct _key_seq_ {
 	{ K_S_M_F10,	"\x1b[21;4~" },
 	{ K_S_M_F11,	"\x1b[23;4~" },
 	{ K_S_M_F12,	"\x1b[24;4~" },
+	{ K_C_F01,		"\x1b[1;5P" },
+	{ K_C_F02,		"\x1b[1;5Q" },
+	{ K_C_F03,		"\x1b[1;5R" },
+	{ K_C_F04,		"\x1b[1;5S" },
+	{ K_C_F05,		"\x1b[15;5~" },
+	{ K_C_F06,		"\x1b[17;5~" },
+	{ K_C_F07,		"\x1b[18;5~" },
+	{ K_C_F08,		"\x1b[19;5~" },
+	{ K_C_F09,		"\x1b[20;5~" },
+	{ K_C_F10,		"\x1b[21;5~" },
+	{ K_C_F11,		"\x1b[23;5~" },
+	{ K_C_F12,		"\x1b[24;5~" },
+	{ K_SC__F01,	"\x1b[1;6P" },
+	{ K_SC__F02,	"\x1b[1;6Q" },
+	{ K_SC__F03,	"\x1b[1;6R" },
+	{ K_SC__F04,	"\x1b[1;6S" },
+	{ K_SC__F05,	"\x1b[15;6~" },
+	{ K_SC__F06,	"\x1b[17;6~" },
+	{ K_SC__F07,	"\x1b[18;6~" },
+	{ K_SC__F08,	"\x1b[19;6~" },
+	{ K_SC__F09,	"\x1b[20;6~" },
+	{ K_SC__F10,	"\x1b[21;6~" },
+	{ K_SC__F11,	"\x1b[23;6~" },
+	{ K_SC__F12,	"\x1b[24;6~" },
+	{ K__CM_F01,	"\x1b[1;7P" },
+	{ K__CM_F02,	"\x1b[1;7Q" },
+	{ K__CM_F03,	"\x1b[1;7R" },
+	{ K__CM_F04,	"\x1b[1;7S" },
+	{ K__CM_F05,	"\x1b[15;7~" },
+	{ K__CM_F06,	"\x1b[17;7~" },
+	{ K__CM_F07,	"\x1b[18;7~" },
+	{ K__CM_F08,	"\x1b[19;7~" },
+	{ K__CM_F09,	"\x1b[20;7~" },
+	{ K__CM_F10,	"\x1b[21;7~" },
+	{ K__CM_F11,	"\x1b[23;7~" },
+	{ K__CM_F12,	"\x1b[24;7~" },
+	{ K_SCM_F01,	"\x1b[1;8P" },
+	{ K_SCM_F02,	"\x1b[1;8Q" },
+	{ K_SCM_F03,	"\x1b[1;8R" },
+	{ K_SCM_F04,	"\x1b[1;8S" },
+	{ K_SCM_F05,	"\x1b[15;8~" },
+	{ K_SCM_F06,	"\x1b[17;8~" },
+	{ K_SCM_F07,	"\x1b[18;8~" },
+	{ K_SCM_F08,	"\x1b[19;8~" },
+	{ K_SCM_F09,	"\x1b[20;8~" },
+	{ K_SCM_F10,	"\x1b[21;8~" },
+	{ K_SCM_F11,	"\x1b[23;8~" },
+	{ K_SCM_F12,	"\x1b[24;8~" },
 
 	{ K_HOME,		"\x1b[H" },
 	{ K_END,		"\x1b[F" },
@@ -738,22 +769,22 @@ struct _key_seq_ {
 	{ K_S___DOWN,	"\x1b[1;2B" },
 	{ K_S___RIGHT,	"\x1b[1;2C" },
 	{ K_S___LEFT,	"\x1b[1;2D" },
-	{ K__C__UP,		"\x1b[1;5A" },
-	{ K__C__DOWN,	"\x1b[1;5B" },
-	{ K__C__RIGHT,	"\x1b[1;5C" },
-	{ K__C__LEFT,	"\x1b[1;5D" },
 	{ K___M_UP,		"\x1b[1;3A" },
 	{ K___M_DOWN,	"\x1b[1;3B" },
 	{ K___M_RIGHT,	"\x1b[1;3C" },
 	{ K___M_LEFT,	"\x1b[1;3D" },
-	{ K_SC__UP,		"\x1b[1;6A" },
-	{ K_SC__DOWN,	"\x1b[1;6B" },
-	{ K_SC__RIGHT,	"\x1b[1;6C" },
-	{ K_SC__LEFT,	"\x1b[1;6D" },
 	{ K_S_M_UP,		"\x1b[1;4A" },
 	{ K_S_M_DOWN,	"\x1b[1;4B" },
 	{ K_S_M_RIGHT,	"\x1b[1;4C" },
 	{ K_S_M_LEFT,	"\x1b[1;4D" },
+	{ K__C__UP,		"\x1b[1;5A" },
+	{ K__C__DOWN,	"\x1b[1;5B" },
+	{ K__C__RIGHT,	"\x1b[1;5C" },
+	{ K__C__LEFT,	"\x1b[1;5D" },
+	{ K_SC__UP,		"\x1b[1;6A" },
+	{ K_SC__DOWN,	"\x1b[1;6B" },
+	{ K_SC__RIGHT,	"\x1b[1;6C" },
+	{ K_SC__LEFT,	"\x1b[1;6D" },
 	{ K__CM_UP,		"\x1b[1;7A" },
 	{ K__CM_DOWN,	"\x1b[1;7B" },
 	{ K__CM_RIGHT,	"\x1b[1;7C" },
@@ -762,6 +793,7 @@ struct _key_seq_ {
 	{ K_SCM_DOWN,	"\x1b[1;8B" },
 	{ K_SCM_RIGHT,	"\x1b[1;8C" },
 	{ K_SCM_LEFT,	"\x1b[1;8D" },
+
 	{ K_S___INS,	"\x1b[2;2~" },
 	{ K__C__INS,	"\x1b[2;5~" },
 	{ K___M_INS,	"\x1b[2;3~" },

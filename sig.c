@@ -28,7 +28,6 @@ void signal_init(void)
 	memset(&sigact, 0, sizeof(struct sigaction));
 
 	// Trap SIGINT and SIGQUIT cuz we want them to do useful things.
-///	sigact.sa_handler = SIG_IGN;
 	sigact.sa_handler = handler_sigint;
 	sigaction(SIGINT, &sigact, NULL);
 
@@ -127,17 +126,6 @@ RETSIGTYPE handler_sigterm(int signal)
 RETSIGTYPE handler_sigsegv(int signal)
 {
 	flf_d_printf("Received SIGSEGV\n");
-#if 0
-	tio_beep(); MSLEEP(200);
-	tio_beep(); MSLEEP(200);
-	tio_beep(); MSLEEP(200);
-	tio_beep(); MSLEEP(200);
-	tio_beep(); MSLEEP(200);
-	tio_beep(); MSLEEP(200);
-	tio_beep(); MSLEEP(200);
-	tio_beep(); MSLEEP(200);
-	tio_beep(); MSLEEP(500);
-#endif
 	_D_(output_last_d_printf())
 	exit(255);
 }

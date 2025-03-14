@@ -35,7 +35,7 @@ void test_wrap_line(void)
 {
 flf_d_printf("----------------------------------------------------------------------\n");
 flf_d_printf("linewrap_tab_size: %d\n", linewrap_tab_size);
-#define CMP_RET(func_call, ret)		_FLF_; if (func_call != ret) _WARNING_
+#define CMP_RET(func_call, ret)		_FLF_; if (func_call != ret) { _WARNING_ }
 #define C_R(func_call, ret)			CMP_RET(func_call, ret)
 	C_R(max_wrap_line_idx("1234567890", 10), 0)
 	C_R(max_wrap_line_idx("123456789012", 10), 1)
@@ -247,9 +247,7 @@ flf_d_printf("linewrap_tab_size: %d\n", linewrap_tab_size);
 
 int max_wrap_line_idx(const char *line, int width)
 {
-	int line_idx;
-
-	line_idx = end_wl_idx_of_wrap_line(line, INT_MAX, width);
+	int line_idx = end_wl_idx_of_wrap_line(line, INT_MAX, width);
 	return line_idx;
 }
 int start_wl_idx_of_wrap_line(const char *line, int byte_idx, int width)
@@ -438,7 +436,6 @@ int byte_idx_from_byte_idx(const char *utf8s, int bytes)
 {
 	const char *ptr;
 	const char *prev_ptr;
-
 	for (prev_ptr = ptr = utf8s; *ptr && ptr - utf8s < bytes; ) {
 		prev_ptr = ptr;
 		ptr += utf8c_bytes(ptr);
@@ -452,11 +449,10 @@ int byte_idx_from_col_idx(const char *utf8s, int columns, char_left_right_t left
  int *col_idx__)
 {
 	int col_idx;
-	int prev_col_idx;
 	const char *ptr;
 	const char *prev_ptr;
 
-	prev_col_idx = columns;
+	int prev_col_idx = columns;
 	for (prev_ptr = ptr = utf8s, col_idx = 0; *ptr && col_idx < columns; ) {
 		prev_col_idx = col_idx;
 		prev_ptr = ptr;
@@ -473,9 +469,7 @@ int byte_idx_from_col_idx(const char *utf8s, int columns, char_left_right_t left
 
 int col_idx_from_byte_idx(const char *utf8s, int col_idx, int bytes)
 {
-	const char *ptr;
-
-	for (ptr = utf8s; *ptr && ptr - utf8s < bytes; ) {
+	for (const char *ptr = utf8s; *ptr && ptr - utf8s < bytes; ) {
 		FORWARD_COL_IDX()
 	}
 	return col_idx;
@@ -486,7 +480,6 @@ int vis_idx_from_byte_idx(const char *utf8s, int bytes)
 	int vis_idx;
 	int col_idx;
 	const char *ptr;
-
 	for (ptr = utf8s, col_idx = 0, vis_idx = 0; *ptr && ptr - utf8s < bytes; ) {
 		FORWARD_VIS_IDX()
 	}
@@ -518,7 +511,6 @@ int vis_idx_from_col_idx(const char *utf8s, int columns)
 	for (ptr = utf8s, col_idx = 0, vis_idx = 0; *ptr && col_idx < columns; ) {
 		FORWARD_VIS_IDX()
 	}
-///flf_d_printf("vis_idx_from_col_idx([%s], %d) ==> %d\n", utf8s, columns, vis_idx);
 	return vis_idx;
 }
 #endif
@@ -569,9 +561,7 @@ PRIVATE int test_get_intersection_(int min1, int max1, int min2, int max2,
 {
 	int min;
 	int max;
-	int ret;
-
-	ret = get_intersection(min1, max1, min2, max2, &min, &max);
+	int ret = get_intersection(min1, max1, min2, max2, &min, &max);
 	if ((ret != expected_ret) || (min != expected_min) || (max != expected_max)) {
 warning_printf("get_intersection(min1:%d, max1:%d, min2:%d, max2:%d)\n"
  " ==> %d, min:%d, max:%d ?? %d, %d, %d\n", min1, max1, min2, max2,
@@ -583,10 +573,8 @@ warning_printf("get_intersection(min1:%d, max1:%d, min2:%d, max2:%d)\n"
 #endif // START_UP_TEST
 int get_intersection(int min1, int max1, int min2, int max2, int *min, int *max)
 {
-	int _min, _max;
-
-	_min = MAX_(min1, min2);
-	_max = MIN_(max1, max2);
+	int _min = MAX_(min1, min2);
+	int _max = MIN_(max1, max2);
 	if (min)
 		*min = _min;
 	if (max)

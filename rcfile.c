@@ -46,19 +46,16 @@ int rc_file_nest_count = 0;
 int read_rc_file(const char *rc_file_name)
 {
 	char rc_file_path[MAX_PATH_LEN+1];
-
 	// read ./.berc
-	if (get_starting_dir()) {
-		snprintf_(rc_file_path, MAX_PATH_LEN+1, "%s/.%s", get_starting_dir(), rc_file_name);
-		if (read_rc_path(rc_file_path, 0) == 0)
-			return 0;
-	}
+	snprintf_(rc_file_path, MAX_PATH_LEN+1, "%s/.%s", get_starting_dir(), rc_file_name);
+	if (read_rc_path(rc_file_path, 0) == 0)
+		return 0;
 	// read $HOME/.berc
 	snprintf_(rc_file_path, MAX_PATH_LEN+1, "%s/.%s", get_home_dir(), rc_file_name);
 	if (read_rc_path(rc_file_path, 0) == 0)
 		return 0;
 
-///#define SYSCONFDIR		"/usr/local/etc"
+////#define SYSCONFDIR		"/usr/local/etc"	// $SYSCONFDIR/berc
 #ifdef SYSCONFDIR
 	// read /usr/local/etc/berc
 	snprintf_(rc_file_path, MAX_PATH_LEN+1, "%s/%s", SYSCONFDIR, rc_file_name);
@@ -139,6 +136,7 @@ struct /*_rc_cmd_idx_*/ {
  { "show_dot_file",		FLMD_SHOW_DOT_FILE,		},
  { "show_file_info",	FLMD_SHOW_FILE_INFO,	},
  { "sort_by",			FLMD_FILE_SORT_BY,		},
+ { "show_zebra_striping",	FLMD_SHOW_ZEBRA_STRIPING,	},
  { "filer_panes",		FLMD_FILER_PANES,		},
 #endif // ENABLE_FILER
 };
@@ -191,22 +189,12 @@ PRIVATE int read_rc_path(const char *rc_file_path, int complain)
 }
 PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 {
-	FILE *fp;
-	char rc_line_buf[MAX_SCRN_LINE_BUF_LEN+1];
-	const char *begin;
-	char cmd[MAX_SCRN_LINE_BUF_LEN+1];
-	int idx;
-	int val;
-	key_code_t keys[MAX_KEYS_BIND];
-
-///#ifdef ENABLE_SYNTAX
-///	free_file_types();
-///#endif // ENABLE_SYNTAX
-
-///flf_d_printf("Attempting to read rc file %s ...\n", rc_file_path);
+////#ifdef ENABLE_SYNTAX
+////	free_file_types();		// delete an effect of default_color_syntax();
+////#endif // ENABLE_SYNTAX
 	rc_line_num = 0;
+	FILE *fp;
 	if ((fp = fopen(rc_file_path, "r")) == NULL) {
-///flf_d_printf("No rc file %s\n", rc_file_path);
 		/* complain about the file not existing */
 		if (complain) {
 			rcfile_error(_("Unable to open config file: %s, %s\n"),
@@ -215,10 +203,9 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 		return 1;
 	}
 	_mlc_memorize_count
-///flf_d_printf("Reading rc file %s ...\n", rc_file_path);
+	char rc_line_buf[MAX_SCRN_LINE_BUF_LEN+1];
 	while (fgets(rc_line_buf, MAX_SCRN_LINE_BUF_LEN, fp) != 0) {
 		remove_line_tail_lf(rc_line_buf);
-///flf_d_printf("parsing_line: %s\n", rc_line_buf);
 		rc_line_ptr = rc_line_buf;
 		rc_line_num++;
 		if (SKIP_SPACE(rc_line_ptr))
@@ -226,16 +213,18 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 		if (*rc_line_ptr == '#') {
 			continue;		// Skip comment line
 		}
-		begin = rc_line_ptr;
+		const char *begin = rc_line_ptr;
 		for ( ; *rc_line_ptr; rc_line_ptr++) {
 			if (is_char_id(*rc_line_ptr) == 0)
 				break;
 		}
+		char cmd[MAX_SCRN_LINE_BUF_LEN+1];
 		strlcpy__(cmd, begin, rc_line_ptr - begin);
 		if (strlen(cmd)) {
+			int idx;
 			for (idx = 0; idx < ARRAY_SIZE_OF(rc_cmd_idx); idx++) {
 				if (strcmp(rc_cmd_idx[idx].command, cmd) == 0) {
-					val = parse_number();
+					int val = parse_number();
 					if (val >= 0) {
 						set_mode_idx_val(rc_cmd_idx[idx].mode_idx, val);
 					}
@@ -250,6 +239,7 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 			}
 			func_key_list_t *fkey_list;
 			if ((fkey_list = get_fkey_entry_from_func_id(cmd)) != NULL) {
+				key_code_t keys[MAX_KEYS_BIND];
 				parse_key_names(keys);
 				if (IS_KEY_VALID(keys[0])) {
 					clear_fkey_tbl_using_these_keys(keys);
@@ -270,9 +260,7 @@ read_rc_path_match:;
 #ifdef ENABLE_DEBUG
 void dump_app_mode(void)
 {
-	int idx;
-
-	for (idx = 0; idx < ARRAY_SIZE_OF(rc_cmd_idx); idx++) {
+	for (int idx = 0; idx < ARRAY_SIZE_OF(rc_cmd_idx); idx++) {
 		flf_d_printf("%s = %s\n",
 		 rc_cmd_idx[idx].command, get_str_mode_idx_val(rc_cmd_idx[idx].mode_idx));
 	}
@@ -282,7 +270,6 @@ void dump_app_mode(void)
 PRIVATE int parse_number(void)
 {
 	int val;
-
 	if (sscanf(rc_line_ptr, "%d", &val) == 0) {
 		rcfile_error(_("Not valid number: %s\n"), rc_line_ptr);
 		return -1;
@@ -380,7 +367,6 @@ PRIVATE int parse_file_type(void)
 #define MAX_REGEXP_LEN		256
 	char file_type_name[MAX_FILE_TYPE_NAME+1] = "";
 	char file_name_regexp[MAX_REGEXP_LEN+1] = "";
-
 	parse_string(file_type_name, MAX_FILE_TYPE_NAME);
 	parse_string(file_name_regexp, MAX_REGEXP_LEN);
 	return add_file_type(file_type_name, file_name_regexp);
@@ -391,7 +377,6 @@ PRIVATE int parse_color_syntax(void)
 {
 	char regexp_start[MAX_REGEXP_LEN+1] = "";
 	char regexp_end[MAX_REGEXP_LEN+1] = "";
-
 	while (*rc_line_ptr) {
 		if (SKIP_SPACE(rc_line_ptr))
 			break;
@@ -425,10 +410,8 @@ PRIVATE int parse_color_syntax(void)
 }
 PRIVATE int parse_tab_size(void)
 {
-	int tab_size;
-
 	SKIP_SPACE(rc_line_ptr);
-	tab_size = DEFAULT_TAB_SIZE;
+	int tab_size = DEFAULT_TAB_SIZE;
 	if (sscanf(rc_line_ptr, "%d", &tab_size) == 1) {
 		tab_size = tab_size ? tab_size : DEFAULT_TAB_SIZE;
 	}
@@ -442,13 +425,12 @@ PRIVATE int parse_tab_size(void)
 // "include .emacs.berc"
 PRIVATE int parse_include(void)
 {
-	char dir_part[MAX_PATH_LEN+1];
-	char file_part[MAX_PATH_LEN+1];
-	char rc_file_path[MAX_PATH_LEN+1];
 	int ret = 0;
-
 	SKIP_SPACE(rc_line_ptr);
 	if (rc_file_nest_count < MAX_RC_NEST_COUNT) {
+		char dir_part[MAX_PATH_LEN+1];
+		char file_part[MAX_PATH_LEN+1];
+		char rc_file_path[MAX_PATH_LEN+1];
 		++rc_file_nest_count;
 		separate_path_to_dir_and_file(rc_file_path_reading, dir_part, file_part);
 		snprintf_(rc_file_path, MAX_PATH_LEN+1, "%s/%s", dir_part, rc_line_ptr);
@@ -460,16 +442,13 @@ PRIVATE int parse_include(void)
 
 PRIVATE int parse_bgc_fgc_register(int color_idx)
 {
-	int ret;
-
-	ret = parse_bgc_fgc(&bgc, &fgc);
+	int ret = parse_bgc_fgc(&bgc, &fgc);
 	register_item_color(color_idx, bgc, fgc);
 	return ret;
 }
 PRIVATE int parse_bgc_fgc(int *bgc, int *fgc)
 {
 	int bright;
-
 	*fgc = *bgc = -1;
 	while (*rc_line_ptr) {
 		if (SKIP_SPACE(rc_line_ptr))
@@ -495,14 +474,13 @@ PRIVATE int parse_bgc_fgc(int *bgc, int *fgc)
 PRIVATE int parse_key_names(key_code_t *keys)
 {
 	int key_idx;
-	char key_name[MAX_KEY_NAME_LEN+1];
-	short key;
-
 	// clear all keys
 	for (key_idx = 0; key_idx < MAX_KEYS_BIND; key_idx++) {
 		keys[key_idx] = -1;
 	}
 	for (key_idx = 0; key_idx < MAX_KEYS_BIND; ) {
+		char key_name[MAX_KEY_NAME_LEN+1];
+		key_code_t key;
 		if (SKIP_SPACE(rc_line_ptr))
 			break;
 		if (parse_word(key_name, MAX_KEY_NAME_LEN)) {
@@ -626,7 +604,7 @@ PRIVATE int parse_keyword(const char **rc_line_ptr, const char *keyword)
 
 int register_default_color_syntax(void)
 {
-/////#define CL_TAB_EOL	CL_GR	// color for TAB/EOL/"　" notation
+////#define CL_TAB_EOL	CL_GR	// color for TAB/EOL/"　" notation
 #define CL_TAB_EOL	CL_DG	// color for TAB/EOL/"　" notation
 
 	add_file_type("*", ".*");
