@@ -9,6 +9,9 @@
 /* Define this to enable help message. */
 #undef ENABLE_HELP
 
+/* Define this to use HIGH_BGC. */
+#undef ENABLE_HIGH_BGC
+
 /* Define this to have search/execution/directory history and keyboard macro.
    */
 #undef ENABLE_HISTORY

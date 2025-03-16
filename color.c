@@ -26,11 +26,11 @@
 // Color table for the various items
 item_color_t item_colors[MAX_ITEM_COLORS];
 
-#ifndef ENABLE_16_BCG
-#define CL_BG	CL_WH	// gray background color
-#else // ENABLE_16_BCG
-#define CL_BG	CL_GY	// gray background color
-#endif // ENABLE_16_BCG
+//DDDD#ifndef ENABLE_HIGH_BGC
+//DDDD#define CL_BG	CL_GY	// gray background color
+//DDDD#else // ENABLE_HIGH_BGC
+//DDDD#define CL_BG	CL_WH	// white background color
+//DDDD#endif // ENABLE_HIGH_BGC
 
 item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	//  bgc, fgc
@@ -53,9 +53,9 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
 	{ CL_BL, CL_BK, S(ITEM_COLOR_IDX_PARENT)			},
 #endif
-	{ CL_BG, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
+	{ CL_WH, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
 	{ CL_BK, CL_BR, S(ITEM_COLOR_IDX_KEY_LIST2)			},
-	{ CL_BG, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL)		},
+	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL)		},
 	{ CL_CY, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL2)		},
 	{ CL_RD, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED1)	},
 	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED2)	},
@@ -66,11 +66,11 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	{ CL_RD, CL_YL, S(ITEM_COLOR_IDX_ERROR)				},
 	{ CL_BK, CL_WH, S(ITEM_COLOR_IDX_CURSOR_CHAR)		},
 	{ CL_CY, CL_DF, S(ITEM_COLOR_IDX_CURSOR_LINE)		},
-	{ CL_BR, CL_BK, S(ITEM_COLOR_IDX_LINE_NUMBER)		},
+	{ CL_YL, CL_BK, S(ITEM_COLOR_IDX_LINE_NUMBER)		},
 	{ CL_CY, CL_BL, S(ITEM_COLOR_IDX_MENU_FRAME)		},
 	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_MENU_ITEM)			},
-	{ CL_BG, CL_BK, S(ITEM_COLOR_IDX_MENU_SELECTED)		},
-	{ CL_BG, CL_BK, S(ITEM_COLOR_IDX_INPUT)				},
+	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_MENU_SELECTED)		},
+	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_INPUT)				},
 };
 
 // Initialize with default application color set.

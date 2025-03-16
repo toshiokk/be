@@ -33,6 +33,8 @@
 
 //   ESC [ 21m					// DNU: Linux console does NOT support this.
 //   ESC [ 27m					// DNU: Linux console does NOT support this.
+//   ESC [ 90m					// DNU: Linux console does NOT support this.
+//   ESC [ 100m					// DNU: Linux console does NOT support this.
 
 ////#define TERMIF_MAX_SCRN_COLS		384		// = 1920[pixels] / 5[pixels/char] (Full HD)
 ////#define TERMIF_MAX_SCRN_COLS		512		// = 2560[pixels] / 5[pixels/char] (WQXGA)
@@ -542,9 +544,9 @@ PRIVATE void send_attrs_to_term(vscreen_char_t attrs)
 		real_bgc = fgc;
 		real_fgc = bgc;
 	}
-	real_bgc = LIMIT_BGC(real_bgc);
-	real_fgc = LIMIT_FGC(real_fgc);
-	real_fgc = tio_differ_fgc_from_bgc(real_bgc, real_fgc);
+//DDD	real_bgc = LIMIT_BGC(real_bgc);
+//DDD	real_fgc = LIMIT_FGC(real_fgc);
+//DDD	real_fgc = tio_differentiate_fgc_from_bgc(real_bgc, real_fgc);
 	send_all_off_to_term();
 	send_bgc_to_term(real_bgc);
 	send_fgc_to_term(real_fgc);
@@ -563,30 +565,38 @@ PRIVATE void send_bold_to_term(int bold)
 }
 PRIVATE void send_bgc_to_term(int bgc)
 {
-#ifndef ENABLE_16_BCG
-	send_printf_to_term("\x1b[%dm", 40 + (bgc % COLORS));
-#else // ENABLE_16_BCG
-	if (bgc < COLORS) {
+#ifdef ENABLE_HIGH_BGC
+	if (GET_APPMD(app_HIGH_BGC) == 0) {
+#endif // ENABLE_HIGH_BGC
 		send_printf_to_term("\x1b[%dm", 40 + (bgc % COLORS));
+#ifdef ENABLE_HIGH_BGC
 	} else {
-		// NOTE: highlight background color by ESC [ {100--107} m
-		send_printf_to_term("\x1b[%dm", 100 + (bgc % COLORS));
+		if (bgc < COLORS) {
+			send_printf_to_term("\x1b[%dm", 40 + (bgc % COLORS));
+		} else {
+			// NOTE: highlight background color by ESC [ {100--107} m
+			send_printf_to_term("\x1b[%dm", 100 + (bgc % COLORS));
+		}
 	}
-#endif // ENABLE_16_BCG
+#endif // ENABLE_HIGH_BGC
 }
 PRIVATE void send_fgc_to_term(int fgc)
 {
-#ifndef ENABLE_16_BCG
-	send_printf_to_term("\x1b[%dm", 30 + (fgc % COLORS));
-	send_bold_to_term(fgc >= COLORS);
-#else // ENABLE_16_BCG
-	if (fgc < COLORS) {
+#ifdef ENABLE_HIGH_BGC
+	if (GET_APPMD(app_HIGH_BGC) == 0) {
+#endif // ENABLE_HIGH_BGC
 		send_printf_to_term("\x1b[%dm", 30 + (fgc % COLORS));
+		send_bold_to_term(fgc >= COLORS);
+#ifdef ENABLE_HIGH_BGC
 	} else {
-		// NOTE: highlight foreground color by ESC [ {90--97} m
-		send_printf_to_term("\x1b[%dm", 90 + (fgc % COLORS));
+		if (fgc < COLORS) {
+			send_printf_to_term("\x1b[%dm", 30 + (fgc % COLORS));
+		} else {
+			// NOTE: highlight foreground color by ESC [ {90--97} m
+			send_printf_to_term("\x1b[%dm", 90 + (fgc % COLORS));
+		}
 	}
-#endif // ENABLE_16_BCG
+#endif // ENABLE_HIGH_BGC
 }
 
 PRIVATE void send_printf_to_term(const char *format, ...)

@@ -6,13 +6,20 @@
 - CRASH: crash
 - POLICY: things to be kept
 
-- [] built in logger that output to the separate log files based on the pty number
+- [x] BUG: cursor position does not restored after undo
+- [?] BUG: keyword seach goes to history-buffers
+- [x] IMPR: switchable use of hi-background-color at run time not build time by "--hibgc"
+  - [x] add "--enable-highbgc" option to `configure`
+- [] IMPR: built in logger that output to the separate log files based on the pty number
 - [x] no screen size displayed within input_string_pos() on screen resizing
 - [] Make easy to use for other people
 - [xx ] clean up code
 - [vG] 250304 update dir-history only when some operation actually done in the dir
   - [ ] this is sometimes inconvenient. how to improve it ==> ??
-  operations:
+    - temporarilly add dir
+      - remove later if no operation
+      - fix later if operated
+   operations:
   - refresh file list
   - select file
   - open file
@@ -1174,3 +1181,9 @@ LANチップ中のMACアドレスや、CPUやマザーボードのシリアルNo
 
 ソフトウエア・アクティベーションの回数はM$の社内でカウントされていて、
 可能なアクティベーションの回数は3回とか5回とかに制限されている。
+
+_D_(dump_file_type(cur_file_type, 0))
+_D_(dump_editor_panes())
+_D_(dump_buf_views(edit_buf_save))
+_D_(buf_dump_name(edit_buf))
+_D_(line_dump_byte_idx(EPCBVC_CL, 0))

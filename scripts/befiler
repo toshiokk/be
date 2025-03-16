@@ -1,6 +1,10 @@
 mk_backup_file ~/__be.log
 rm -f ~/.beexit
-be -d "$@" 2>~/__be.log
+if [ -z "$UCON" ]; then
+  be -d "$@" 2>~/__be.log
+else
+  be -d -l "$@" 2>~/__be.log  # enable high BGC color
+fi
 if [ -f ~/.beexit ]; then
   cd `cat ~/.beexit`
   cp ~/__be.log ~/__be.log~

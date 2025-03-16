@@ -702,11 +702,6 @@ int get_files_selected(filer_view_t *fv)
 	return files_selected;
 }
 
-//DDDDfile_info_t *select_and_get_first_file_ptr()
-//DDDD{
-//DDDD	return get_cur_fv_file_ptr(select_and_get_first_file_idx_selected());
-//DDDD}
-
 PRIVATE void select_file_if_none_selected(void);
 int select_and_get_first_file_idx_selected(void)
 {

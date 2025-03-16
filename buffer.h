@@ -167,6 +167,7 @@ be_buf_t *buf_free_node(be_buf_t *buf);
 
 be_buf_t *buf_init(be_buf_t *buf, const char *full_path, unsigned char buf_mode_);
 void buf_views_init(be_buf_t *buf);
+void buf_views_set_cur_line(be_buf_t *buf);
 void buf_view_copy(be_buf_view_t *dest, be_buf_view_t *src);
 void buf_set_view_x_cur_line(be_buf_t *buf, int pane_idx, be_line_t *line);
 be_buf_t *buf_init_anchors(be_buf_t *buf, char *initial_data);

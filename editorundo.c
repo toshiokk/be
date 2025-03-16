@@ -194,9 +194,10 @@ PRIVATE void save_region_to_undo_buf(void)
 	for (be_line_t *line = NODE_NEXT(undo_min_line); line != undo_max_line;
 	 line = NODE_NEXT(line)) {
 		buf_append_line_to_bottom(UNDO_BUFS_TOP_BUF, line_create_copy(line));
-		buf_set_cur_line(UNDO_BUFS_TOP_BUF, line);
+/////		buf_set_cur_line(UNDO_BUFS_TOP_BUF, line);
 	}
-	buf_views_init(UNDO_BUFS_TOP_BUF);		// setup buf_views[].cur_line
+	buf_views_set_cur_line(UNDO_BUFS_TOP_BUF);		// setup buf_views[].cur_line
+/////_D_(dump_buf_views(UNDO_BUFS_TOP_BUF))
 }
 
 typedef enum /*undo0_redo1*/ {
@@ -306,6 +307,7 @@ PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 	// restore pointers
 	EPCBVC_CL = get_line_ptr_in_cur_buf_by_line_num(NODES_TOP_NODE(buf)->line_num);
 	EPCBVC_CLBI = MIN_MAX_(0, buf->buf_views[0].cur_line_byte_idx, line_strlen(EPCBVC_CL));
+/////_D_(dump_buf_views(UNDO_BUFS_TOP_BUF))
 	return edit_line;
 }
 

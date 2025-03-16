@@ -52,25 +52,25 @@ be_bufs_t redo_buffers;
 // Initialize collection of buffers.
 void init_bufferss(void)
 {
-	bufss_init(&all_bufferss, "###ALL_BUFSS", "##ALL_BUFSS_top_anch", "##ALL_BUFSS_bot_anch");
+	bufss_init(&all_bufferss, "##BUFSS", "##bufss_top_anch", "##bufss_bot_anch");
 
 	bufss_insert_bufs_to_bottom(&all_bufferss, bufs_init(&edit_buffers,
-	 "##EDIT", "#edit_bufs_top_anch", "#edit_bufs_bot_anch"));
+	 "#EDIT", "#edit_bufs_top_anch", "#edit_bufs_bot_anch"));
 	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&cut_buffers,
-	 "##CUT", "#cut_bufs_top_anch", "#cut_bufs_bot_anch"));
+	 "#CUT", "#cut_bufs_top_anch", "#cut_bufs_bot_anch"));
 #ifdef ENABLE_HISTORY
 	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&history_buffers,
-	 "##HIST", "#hist_bufs_top_anch", "#hist_bufs_bot_anch"));
+	 "#HIST", "#hist_bufs_top_anch", "#hist_bufs_bot_anch"));
 #endif // ENABLE_HISTORY
 #ifdef ENABLE_HELP
 	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&help_buffers,
-	 "##HELP", "#help_bufs_top_anch", "#help_bufs_bot_anch"));
+	 "#HELP", "#help_bufs_top_anch", "#help_bufs_bot_anch"));
 #endif // ENABLE_HELP
 #ifdef ENABLE_UNDO
 	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&undo_buffers,
-	 "##UNDO", "#undo_bufs_top_anch", "#undo_bufs_bot_anch"));
+	 "#UNDO", "#undo_bufs_top_anch", "#undo_bufs_bot_anch"));
 	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&redo_buffers,
-	 "##REDO", "#redo_bufs_top_anch", "#redo_bufs_bot_anch"));
+	 "#REDO", "#redo_bufs_top_anch", "#redo_bufs_bot_anch"));
 #endif // ENABLE_UNDO
 
 #ifdef ENABLE_HELP
@@ -859,27 +859,5 @@ void dump_cur_edit_buf(void)
 	flf_d_printf(">>>\n");
 }
 #endif // ENABLE_DEBUG
-
-//DDD _D_(dump_editor_panes())
-//DDD _D_(dump_editor_panes())
-//DDD _D_(dump_editor_panes())
-//DDD _D_(buf_dump_name(buf))
-//DDD _D_(dump_file_type(cur_file_type, 0))
-//DDD _D_(dump_editor_panes())
-//DDD _D_(dump_editor_panes())
-//DDD _D_(dump_editor_panes())
-//DDD _D_(dump_editor_panes())
-//DDD _D_(line_dump_byte_idx(EPCBVC_CL, EPCBVC_CLBI))
-//DDD _D_(dump_editor_panes())
-//DDD _D_(dump_editor_panes())
-//DDD _D_(dump_buf_views(edit_buf_save))
-//DDD _D_(dump_buf_views(edit_buf_save))
-//DDD _D_(line_dump_byte_idx(EPCBVC_CL, 0))
-//DDD _D_(line_dump_byte_idx(EPCBVC_CL, 0))
-//DDD _D_(buf_dump_name(cur_edit_buf))
-//DDD _D_(buf_dump_name(edit_buf))
-//DDD _D_(line_dump_byte_idx(EPCBVC_CL, 0))
-//DDD _D_(line_dump_byte_idx(EPCBVC_CL, 0))
-//DDD _D_(line_dump_byte_idx(EPCBVC_CL, 0))
 
 // End of buffers.c

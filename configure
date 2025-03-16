@@ -770,6 +770,7 @@ enable_ncurses
 enable_pcre
 enable_nkf
 enable_busybox
+enable_highbgc
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1427,6 +1428,7 @@ Optional Features:
   --enable-pcre  Use the pcre library instead of regex
   --enable-nkf  Use NKF for automatic character encoding conversion
   --enable-busybox  Use BUSYBOX instead of GNU tools
+  --enable-highbgc  Use lighter Backgound color (8--15)
 
 Some influential environment variables:
   CC          C compiler command
@@ -5674,9 +5676,8 @@ then :
 fi
 
 
-
 # begin MANUAL_DESCRIPTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-echo "Running manually described check -------------------------------------------"
+echo "Running manually described check ========================================"
 
 #AM_GNU_GETTEXT
 #ALL_LINGUAS="ja"
@@ -5828,6 +5829,7 @@ yes)
 	enable_ncurses=yes
 	enable_pcre=yes
 	enable_busybox=no
+	enable_highbgc=yes
 	;;
 no)
 	enable_filer=no
@@ -5843,6 +5845,7 @@ no)
 	enable_ncurses=no
 	enable_pcre=no
 	enable_busybox=no
+	enable_highbgc=no
 	;;
 *)
 	;;
@@ -5991,6 +5994,18 @@ yes|no)		;;
 *)	enable_busybox=no	;;
 esac
 
+# Check whether --enable-highbgc was given.
+if test ${enable_highbgc+y}
+then :
+  enableval=$enable_highbgc;
+fi
+
+case "$enable_highbgc" in
+yes|no)		;;
+*)	enable_highbgc=yes	;;
+esac
+
+echo "temporal configurations ============================:"
 echo "enable_filer=$enable_filer"
 echo "enable_history=$enable_history"
 echo "enable_undo=$enable_undo"
@@ -6002,6 +6017,7 @@ echo "enable_ncurses=$enable_ncurses"
 echo "enable_pcre=$enable_pcre"
 echo "enable_nkf=$enable_nkf"
 echo "enable_busybox=$enable_busybox"
+echo "enable_highbgc=$enable_highbgc"
 echo "enable_help=$enable_help"
 echo "enable_debug=$enable_debug"
 
@@ -6014,6 +6030,7 @@ else $as_nop
 fi
 
 
+echo "check dependencies among configurations ============:"
 if test "$curses_h" = "1" -o "$ncurses_h" = "1" -o "$ncurses_curses_h" = "1" -o "$ncursesw_curses_h" = "1"; then
 	echo "checking availability of ncurses library with UTF8 support:"
 	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for initscr in -lncurses" >&5
@@ -6228,6 +6245,10 @@ printf "%s\n" "#define USE_NCURSESW 1" >>confdefs.h
 		echo "No ncurses library found. So I turn off --enable-ncurses."
 		enable_ncurses=no
 	fi
+	if test "$enable_highbgc" = "1" ; then
+		echo "ncurses does not support lighter background color. So turn off --enable-highbgc."
+		enable_highbgc="no"
+	fi
 fi
 
 # output #define ENABLE_... and #define USE_...
@@ -6298,7 +6319,13 @@ if test "$enable_busybox" = yes ; then
 printf "%s\n" "#define USE_BUSYBOX 1" >>confdefs.h
 
 fi
+if test "$enable_highbgc" = yes ; then
 
+printf "%s\n" "#define ENABLE_HIGH_BGC 1" >>confdefs.h
+
+fi
+
+echo "final configurations ===============================:"
 echo "enable_filer=$enable_filer"
 echo "enable_history=$enable_history"
 echo "enable_undo=$enable_undo"
@@ -6312,6 +6339,7 @@ echo "enable_ncurses=$enable_ncurses"
 echo "enable_pcre=$enable_pcre"
 echo "enable_nkf=$enable_nkf"
 echo "enable_busybox=$enable_busybox"
+echo "enable_highbgc=$enable_highbgc"
 
 echo "have_ncurses=$have_ncurses"
 echo "have_ncursesw=$have_ncursesw"
@@ -6322,7 +6350,6 @@ echo "use_ncursesw=$use_ncursesw"
 echo "library option: LIBS=$LIBS"
 
 # end MANUAL_DESCRIPTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 
 ac_config_files="$ac_config_files Makefile"
 

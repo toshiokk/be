@@ -39,6 +39,9 @@ typedef struct /*app_mode*/ {
 	unsigned char app_HISTORY:1;			// bit 1
 #endif // ENABLE_HISTORY
 	unsigned char app_DRAW_CURSOR:1;		// bit 2
+#ifdef ENABLE_HIGH_BGC
+	unsigned char app_HIGH_BGC:1;			// bit 2??
+#endif // ENABLE_HIGH_BGC
 	unsigned char app_MAP_KEY_7F_BS:1;		// bit 3
 #define MAX_KEY_LINES			3
 #define KEY_LINES_0				0

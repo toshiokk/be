@@ -129,6 +129,7 @@ void tio_test(void)
 
 //------------------------------------------------------------------------------
 PRIVATE int tio_initialized = FALSE;
+PRIVATE int high_bgc_enabled = FALSE;
 //------------------------------------------------------------------------------
 int tio_is_initialized(void)
 {
@@ -146,6 +147,10 @@ int tio_init(void)
 #endif // ENABLE_NCURSES
 	tio_begin();
 	return 0;
+}
+void tio_enable_high_bgc(int enable)
+{
+	high_bgc_enabled = enable;
 }
 int tio_destroy(void)
 {
@@ -210,9 +215,7 @@ mflf_d_printf("sigwinch_signaled\n");
 	}
 	return 0;
 }
-
 //------------------------------------------------------------------------------
-
 void tio_set_screen_size(int lines, int columns)
 {
 #ifdef ENABLE_NCURSES
@@ -242,13 +245,58 @@ int tio_get_columns(void)
 }
 
 //------------------------------------------------------------------------------
+int cur_bgc = CL_BK;
+int cur_fgc = CL_WH;
+int cur_rev = 0;
 
-int tio_differ_fgc_from_bgc(int bgc, int fgc)
+void tio_set_attrs(int bgc, int fgc, int rev)
+{
+	if (bgc < 0) {
+		bgc = cur_bgc;
+	}
+	if (fgc < 0) {
+		fgc = cur_fgc;
+	}
+	if (rev < 0) {
+		rev = cur_rev;
+	}
+	cur_bgc = bgc;
+	cur_fgc = fgc;
+	cur_rev = rev;
+	tio_differentiate_fgc_from_bgc_rev(&bgc, &fgc, rev);
+#ifdef ENABLE_NCURSES
+	curses_set_attrs(bgc, fgc, rev);
+#else // ENABLE_NCURSES
+	termif_set_attrs(bgc, fgc, rev);
+#endif // ENABLE_NCURSES
+}
+void tio_differentiate_fgc_from_bgc_rev(int *bgc, int *fgc, int rev)
+{
+	if (rev == 0) {
+#ifndef ENABLE_HIGH_BGC
+		*bgc = LIMIT_BGC8(*bgc);
+#else // ENABLE_HIGH_BGC
+		*bgc = (high_bgc_enabled == 0) ? LIMIT_BGC8(*bgc) : LIMIT_BGC16(*bgc);
+#endif // ENABLE_HIGH_BGC
+		*fgc = LIMIT_FGC(*fgc);
+		*fgc = tio_differentiate_fgc_from_bgc(*bgc, *fgc);
+	} else {
+		// apply differentiation to the swapped bgc and fgc
+#ifndef ENABLE_HIGH_BGC
+		*fgc = LIMIT_BGC8(*fgc);
+#else // ENABLE_HIGH_BGC
+		*fgc = (high_bgc_enabled == 0) ? LIMIT_BGC8(*fgc) : LIMIT_BGC16(*fgc);
+#endif // ENABLE_HIGH_BGC
+		*bgc = LIMIT_FGC(*bgc);
+		*bgc = tio_differentiate_fgc_from_bgc(*fgc, *bgc);
+	}
+}
+int tio_differentiate_fgc_from_bgc(int bgc, int fgc)
 {
 	if (fgc == bgc) {
-		// select different color as foreground color with background color
+		// select different foreground color with background color
 		// so that you can recognize character
-		switch (fgc) {
+		switch (bgc) {
 		default:
 		case CL_BK:		fgc = CL_DG;	break;
 		case CL_RD:		fgc = CL_LR;	break;
@@ -258,14 +306,14 @@ int tio_differ_fgc_from_bgc(int bgc, int fgc)
 		case CL_MG:		fgc = CL_LM;	break;
 		case CL_CY:		fgc = CL_LC;	break;
 		case CL_GY:		fgc = CL_DG;	break;
-		case CL_DG:		fgc = CL_BK;	break;
+		case CL_DG:		fgc = CL_GY;	break;
 		case CL_LR:		fgc = CL_RD;	break;
 		case CL_LG:		fgc = CL_GR;	break;
 		case CL_YL:		fgc = CL_BR;	break;
 		case CL_LB:		fgc = CL_BL;	break;
 		case CL_LM:		fgc = CL_MG;	break;
 		case CL_LC:		fgc = CL_CY;	break;
-		case CL_WH:		fgc = CL_DG;	break;
+		case CL_WH:		fgc = CL_GY;	break;
 		}
 	}
 #if 1 // Avoid similar fgc/bgc
@@ -276,19 +324,13 @@ int tio_differ_fgc_from_bgc(int bgc, int fgc)
 		fgc = CL_LC;
 	}
 	if ((bgc == CL_BR) && (fgc == CL_DG)) {
+		fgc = CL_YL;
+	}
+	if ((bgc == CL_DG) && (fgc == CL_BR)) {
 		fgc = CL_GY;
 	}
 #endif
 	return fgc;
-}
-
-void tio_set_attrs(int bgc, int fgc, int rev)
-{
-#ifdef ENABLE_NCURSES
-	curses_set_attrs(bgc, fgc, rev);
-#else // ENABLE_NCURSES
-	termif_set_attrs(bgc, fgc, rev);
-#endif // ENABLE_NCURSES
 }
 void tio_set_attr_rev(int rev)
 {

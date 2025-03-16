@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-14 23:27+0900\n"
+"POT-Creation-Date: 2025-03-16 13:34+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../buffer.c:340
+#: ../buffer.c:352
 msgid "[EDIT]"
 msgstr ""
 
-#: ../buffer.c:341
+#: ../buffer.c:353
 msgid "[RO]"
 msgstr ""
 
-#: ../buffer.c:342
+#: ../buffer.c:354
 msgid "[LIST]"
 msgstr ""
 
@@ -176,7 +176,7 @@ msgstr ""
 msgid "Open existing file:"
 msgstr ""
 
-#: ../editorfile.c:60 ../filercmd.c:243
+#: ../editorfile.c:60 ../filercmd.c:241
 msgid "Open new file:"
 msgstr ""
 
@@ -386,11 +386,11 @@ msgstr ""
 msgid "!!!! No UNDO info pushed !!!!"
 msgstr ""
 
-#: ../editorundo.c:216
+#: ../editorundo.c:217
 msgid "Undo-buffer empty !!"
 msgstr ""
 
-#: ../editorundo.c:225
+#: ../editorundo.c:226
 msgid "Redo-buffer empty !!"
 msgstr ""
 
@@ -557,145 +557,145 @@ msgstr ""
 msgid "Can not execute this function in filer List mode: [%s]"
 msgstr ""
 
-#: ../filercmd.c:91
+#: ../filercmd.c:89
 msgid "File view refreshed"
 msgstr ""
 
-#: ../filercmd.c:282
+#: ../filercmd.c:280
 msgid "Copy to:"
 msgstr ""
 
-#: ../filercmd.c:282
+#: ../filercmd.c:280
 msgid "Copy to (Update):"
 msgstr ""
 
-#: ../filercmd.c:323
+#: ../filercmd.c:321
 msgid "Move to:"
 msgstr ""
 
-#: ../filercmd.c:323
+#: ../filercmd.c:321
 msgid "Move to (Update):"
 msgstr ""
 
-#: ../filercmd.c:358
+#: ../filercmd.c:356
 msgid "Drop files to Open(Enter)/Copy(M-c)/Move(M-m):"
 msgstr ""
 
-#: ../filercmd.c:363
+#: ../filercmd.c:361
 msgid "Input files to Open(Enter)/Copy(M-c)/Move(M-m):"
 msgstr ""
 
-#: ../filercmd.c:368
+#: ../filercmd.c:366
 msgid "Drop files to Open:"
 msgstr ""
 
-#: ../filercmd.c:372
+#: ../filercmd.c:370
 msgid "Drop files to Copy here (current directory):"
 msgstr ""
 
-#: ../filercmd.c:375
+#: ../filercmd.c:373
 msgid "Drop files to Move here (current directory):"
 msgstr ""
 
-#: ../filercmd.c:466
+#: ../filercmd.c:464
 msgid "Rename to:"
 msgstr ""
 
-#: ../filercmd.c:482
+#: ../filercmd.c:480
 #, c-format
 msgid "Trash file %s ?"
 msgstr ""
 
-#: ../filercmd.c:485
+#: ../filercmd.c:483
 #, c-format
 msgid "Trash %d files ?"
 msgstr ""
 
-#: ../filercmd.c:517
+#: ../filercmd.c:515
 #, c-format
 msgid "Delete file %s ?"
 msgstr ""
 
-#: ../filercmd.c:520
+#: ../filercmd.c:518
 #, c-format
 msgid "Delete %d files ?"
 msgstr ""
 
-#: ../filercmd.c:549
+#: ../filercmd.c:547
 #, c-format
 msgid "Mark file %s to be Deleted later ?"
 msgstr ""
 
-#: ../filercmd.c:552
+#: ../filercmd.c:550
 #, c-format
 msgid "Mark %d files to be Deleted later ?"
 msgstr ""
 
-#: ../filercmd.c:585
+#: ../filercmd.c:583
 #, c-format
 msgid "Make size of file %s 0 ?"
 msgstr ""
 
-#: ../filercmd.c:588
+#: ../filercmd.c:586
 #, c-format
 msgid "Make size of %d files 0 ?"
 msgstr ""
 
-#: ../filercmd.c:625
+#: ../filercmd.c:623
 #, c-format
 msgid "Unzip file %s ?"
 msgstr ""
 
-#: ../filercmd.c:628
+#: ../filercmd.c:626
 #, c-format
 msgid "Unzip %d files 0 ?"
 msgstr ""
 
-#: ../filercmd.c:663
+#: ../filercmd.c:661
 msgid "Zip files:"
 msgstr ""
 
-#: ../filercmd.c:676
+#: ../filercmd.c:674
 msgid "Find file:"
 msgstr ""
 
-#: ../filercmd.c:689
+#: ../filercmd.c:687
 msgid "Mkdir:"
 msgstr ""
 
-#: ../filercmd.c:701
+#: ../filercmd.c:699
 msgid "Chdir to:"
 msgstr ""
 
-#: ../filercmd.c:764
+#: ../filercmd.c:762
 msgid "Set file name filter:"
 msgstr ""
 
-#: ../filercmd.c:785
+#: ../filercmd.c:783
 msgid "File selection cleared"
 msgstr ""
 
-#: ../filercmd.c:808
+#: ../filercmd.c:806
 #, c-format
 msgid "%d file selected"
 msgstr ""
 
-#: ../filercmd.c:809
+#: ../filercmd.c:807
 #, c-format
 msgid "%d files selected"
 msgstr ""
 
-#: ../filercmd.c:810
+#: ../filercmd.c:808
 #, c-format
 msgid "%d filess selected"
 msgstr ""
 
-#: ../filercmd.c:811
+#: ../filercmd.c:809
 #, c-format
 msgid "%d filesss selected"
 msgstr ""
 
-#: ../filercmd.c:840
+#: ../filercmd.c:838
 msgid "Quit filer"
 msgstr ""
 
@@ -780,7 +780,7 @@ msgstr ""
 msgid "Screen resized to (%d, %d)"
 msgstr ""
 
-#: ../main.c:598
+#: ../main.c:609
 #, c-format
 msgid ""
 "\n"
@@ -788,110 +788,118 @@ msgid ""
 msgstr ""
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:600
+#: ../main.c:611
 msgid "Option"
 msgstr ""
 
-#: ../main.c:600
+#: ../main.c:611
 msgid "Long option"
 msgstr ""
 
-#: ../main.c:600
+#: ../main.c:611
 msgid "Meaning"
 msgstr ""
 
-#: ../main.c:602
-msgid "Read RCFILE"
-msgstr ""
-
-#: ../main.c:603
-msgid "Don't look at berc files"
-msgstr ""
-
-#: ../main.c:606
-msgid "Don't use history file"
-msgstr ""
-
-#: ../main.c:608
+#: ../main.c:612
 msgid "Set tab-size to NUM[1-15]"
 msgstr ""
 
-#: ../main.c:609
+#: ../main.c:613
 msgid "View mode(Read only mode)"
 msgstr ""
 
-#: ../main.c:611
-msgid "Don't use nkf"
-msgstr ""
-
-#: ../main.c:612
-msgid "ASCII character encoding"
-msgstr ""
-
-#: ../main.c:613
-msgid "JIS character encoding"
-msgstr ""
-
-#: ../main.c:614
-msgid "EUCJP character encoding"
-msgstr ""
-
 #: ../main.c:615
-msgid "SJIS character encoding"
+msgid "Read RCFILE"
 msgstr ""
 
 #: ../main.c:616
-msgid "UTF8 character encoding"
-msgstr ""
-
-#: ../main.c:617
-msgid "BINARY file"
-msgstr ""
-
-#: ../main.c:618
-msgid "BINARY file (same as '-e b')"
+msgid "Don't look at berc files"
 msgstr ""
 
 #: ../main.c:619
-msgid "TEXT file (same as '-e u')"
+msgid "Don't use history file"
 msgstr ""
 
 #: ../main.c:622
-msgid "Output debug log to stderr"
+msgid "Don't use nkf"
+msgstr ""
+
+#: ../main.c:623
+msgid "ASCII character encoding"
 msgstr ""
 
 #: ../main.c:624
-msgid "Show version information"
+msgid "JIS character encoding"
 msgstr ""
 
 #: ../main.c:625
-msgid "Show this message"
+msgid "EUCJP character encoding"
 msgstr ""
 
 #: ../main.c:626
-msgid "Start at line number NUM"
+msgid "SJIS character encoding"
+msgstr ""
+
+#: ../main.c:627
+msgid "UTF8 character encoding"
 msgstr ""
 
 #: ../main.c:628
+msgid "BINARY file"
+msgstr ""
+
+#: ../main.c:629
+msgid "BINARY file (same as '-e b')"
+msgstr ""
+
+#: ../main.c:630
+msgid "TEXT file (same as '-e u')"
+msgstr ""
+
+#: ../main.c:633
+msgid "Two pane mode"
+msgstr ""
+
+#: ../main.c:636
+msgid "Use High Background Color"
+msgstr ""
+
+#: ../main.c:639
+msgid "Output debug log to stderr"
+msgstr ""
+
+#: ../main.c:641
+msgid "Show version information"
+msgstr ""
+
+#: ../main.c:642
+msgid "Show this message"
+msgstr ""
+
+#: ../main.c:643
+msgid "Start at line number NUM"
+msgstr ""
+
+#: ../main.c:645
 msgid "Investigate key sequence"
 msgstr ""
 
-#: ../main.c:644
+#: ../main.c:661
 #, c-format
 msgid "%s version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:646
+#: ../main.c:663
 #, c-format
 msgid " Build Options:\n"
 msgstr ""
 
-#: ../main.c:899
+#: ../main.c:916
 #, c-format
 msgid "Screen size: %dx%d"
 msgstr ""
 
-#: ../main.c:905
+#: ../main.c:922
 msgid "We're invincible with this !!"
 msgstr ""
 

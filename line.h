@@ -151,11 +151,6 @@ typedef struct be_line_t {
 	size_t buf_size;			//!< buffer size accumulated from line 1 to this line
 } be_line_t;
 
-//DDDDtypedef enum {
-//DDDD	WITH_PREV,		// concatenate with previous
-//DDDD	WITH_NEXT		// concatenate with next
-//DDDD} concat_prev_next_t;
-
 typedef enum {
 	INSERT_BEFORE,	// insert before
 	INSERT_AFTER	// insert after

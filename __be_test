@@ -2,15 +2,18 @@ echo debugging be ...
 rm -f $HOME/.beexit
 mk_backup_file __be_test.log
 if [ -f ./be ]; then
-  ##./be "$@" 2>__be_test.log
-  ./be -d "$@" 2>__be_test.log
-  ##LANG=C.UTF-8 ./be -d "$@" 2>__be_test.log
-  ##LANG=C ./be -d "$@" 2>__be_test.log
-  ##./be -c -d "$@" 2>__be_test.log
+  ##./be --version
+  ##./be "$@"
+  ./be -d "$@"
+  #./be -d -l "$@"
+  ##LANG=C.UTF-8 ./be -d "$@"
+  ##LANG=C ./be -d "$@"
+  ##./be -c -d "$@"
   if [ ! -f $HOME/.beexit ]; then
-    mv -f __be_test.log __be_crash.log
+    mv -f __be_test.log
   fi
-fi
+fi 2>__be_test.log
+
 rt
 #echo "be exited"
 #rm be

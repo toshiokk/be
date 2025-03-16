@@ -36,11 +36,14 @@
 
 // This is an abstraction layer of below two terminal control libraries
 #ifdef ENABLE_NCURSES
-#include "cursesif.h"
-// COLORS and COLOR_PAIRS are variables
+#ifdef ENABLE_HIGH_BGC
+#warning "'curses' does not support lighter background colors (color number 8 -- 15)."
+#warning " So surely disable ENABLE_HIGH_BGC here."
+#undef ENABLE_HIGH_BGC
+#endif // ENABLE_HIGH_BGC
+#include "cursesif.h"	// COLORS and COLOR_PAIRS are variables
 #else // ENABLE_NCURSES
-#include "termif.h"
-// COLORS and COLOR_PAIRS are macro definitions
+#include "termif.h"		// COLORS and COLOR_PAIRS are macro definitions
 #endif // ENABLE_NCURSES
 
 #define COLORS8			((COLOR_WHITE) + 1)
@@ -67,11 +70,10 @@
 #define CL_LC		((CL_HI) + (COLOR_CYAN))	// light cyan
 #define CL_WH		((CL_HI) + (COLOR_WHITE))	// bright white
 
-#ifndef ENABLE_16_BCG
-#define LIMIT_BGC(bgc)			((bgc) & ((COLORS8)-1))		// [0, 7]
-#else // ENABLE_16_BCG
-#define LIMIT_BGC(bgc)			((bgc) & ((COLORS16)-1))	// [0, 15]
-#endif // ENABLE_16_BCG
+#define LIMIT_BGC8(bgc)			((bgc) & ((COLORS8)-1))		// [0, 7]
+#ifdef ENABLE_HIGH_BGC
+#define LIMIT_BGC16(bgc)		((bgc) & ((COLORS16)-1))	// [0, 15]
+#endif // ENABLE_HIGH_BGC
 
 #define LIMIT_FGC(fgc)			((fgc) & ((COLORS16)-1))	// [0, 15]
 #define MAKE_HIGH_COLOR(color)	((color) | (CL_HI))
@@ -85,6 +87,7 @@ void tio_test(void);
 
 int tio_is_initialized(void);
 int tio_init(void);
+void tio_enable_high_bgc(int enable);
 int tio_destroy(void);
 int tio_begin(void);
 int tio_end(void);
@@ -99,7 +102,8 @@ void tio_set_screen_size(int lines, int columns);
 int tio_get_lines(void);
 int tio_get_columns(void);
 
-int tio_differ_fgc_from_bgc(int bgc, int fgc);
+void tio_differentiate_fgc_from_bgc_rev(int *bgc, int *fgc, int rev);
+int tio_differentiate_fgc_from_bgc(int bgc, int fgc);
 void tio_set_attrs(int bgc, int fgc, int rev);
 void tio_set_attr_rev(int rev);
 

@@ -70,7 +70,9 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path, unsigned char buf_mode_
 //////flf_d_printf("[%s]%s\n", buf_get_file_path(buf, NULL), buf_dump_buf_state(buf));
 	return buf;
 }
+
 PRIVATE void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf);
+PRIVATE void buf_view_set_cur_line(be_buf_view_t *b_v, be_buf_t *buf);
 void buf_views_init(be_buf_t *buf)
 {
 	buf_view_init(&(buf->buf_views[0]), buf);
@@ -78,12 +80,22 @@ void buf_views_init(be_buf_t *buf)
 }
 PRIVATE void buf_view_init(be_buf_view_t *b_v, be_buf_t *buf)
 {
-	BUFV_CL(b_v) = NODES_TOP_NODE(buf);
+	buf_view_set_cur_line(b_v, buf);
 	BUFV_CLBI(b_v) = 0;
 	BUFV_CURS_Y(b_v) = MAX_SCRN_LINES;
 	BUFV_CURS_X_TO_KEEP(b_v) = 0;
 	BUFV_MIN_TEXT_X_TO_KEEP(b_v) = 0;
 }
+void buf_views_set_cur_line(be_buf_t *buf)
+{
+	buf_view_set_cur_line(&(buf->buf_views[0]), buf);
+	buf_view_set_cur_line(&(buf->buf_views[1]), buf);
+}
+PRIVATE void buf_view_set_cur_line(be_buf_view_t *b_v, be_buf_t *buf)
+{
+	BUFV_CL(b_v) = NODES_TOP_NODE(buf);
+}
+
 void buf_view_copy(be_buf_view_t *dest, be_buf_view_t *src)
 {
 	memcpy__(dest, src, sizeof(be_buf_view_t));

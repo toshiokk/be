@@ -257,10 +257,12 @@ flf_d_printf("PACKAGE: [%s], LOCALEDIR: [%s]\n", PACKAGE, LOCALEDIR);
 	return 0;
 }
 
-const char short_options[] = "C:cht:rne:bxwdv?k";
+const char short_options[] = "C:cht:rne:bxwldv?k";
 #ifdef HAVE_GETOPT_LONG
 int option_index = 0;
 const struct option long_options[] = {
+	{ "tabsize",       required_argument, 0, 't' },
+	{ "view",          no_argument,       0, 'r' },
 #ifdef ENABLE_RC
 	{ "rcfile",        required_argument, 0, 'C' },
 	{ "norcfile",      no_argument,       0, 'c' },
@@ -268,8 +270,6 @@ const struct option long_options[] = {
 #ifdef ENABLE_HISTORY
 	{ "nohistory",     no_argument,       0, 'h' },
 #endif // ENABLE_HISTORY
-	{ "tabsize",       required_argument, 0, 't' },
-	{ "view",          no_argument,       0, 'r' },
 #ifdef USE_NKF
 	{ "nonkf",         no_argument,       0, 'n' },
 	{ "encoding",      required_argument, 0, 'e' },
@@ -279,6 +279,9 @@ const struct option long_options[] = {
 #ifdef ENABLE_FILER
 	{ "twopane",       no_argument,       0, 'w' },
 #endif // ENABLE_FILER
+#ifdef ENABLE_HIGH_BGC
+	{ "highbgc",       no_argument,       0, 'l' },
+#endif // ENABLE_HIGH_BGC
 #ifdef ENABLE_DEBUG
 	{ "debug",         no_argument,       0, 'd' },
 #endif // ENABLE_DEBUG
@@ -385,6 +388,14 @@ PRIVATE int parse_options(int argc, char *argv[])
 			SET_APPMD(fl_FILER_PANES);
 			SET_APPMD_VAL(fl_SHOW_FILE_INFO, SHOW_FILE_INFO_1);
 			break;
+#ifdef ENABLE_HIGH_BGC
+		case 'l':
+			// NOTE: Linux console does not support highlight for background
+			//       So Do-Not-Use on Linux console.
+			SET_APPMD(app_HIGH_BGC);
+			tio_enable_high_bgc(GET_APPMD(app_HIGH_BGC));
+			break;
+#endif // ENABLE_HIGH_BGC
 #endif // ENABLE_FILER
 #ifdef ENABLE_DEBUG
 		case 'd':
@@ -598,6 +609,8 @@ void show_usage(void)
 	printf(_("\nUsage: " BIN_NAME " [+LINE] [option] [file(s)]\n"));
 	//               12345678901234567890 12345678901234567890 12345678901234567890
 	show_one_option(_("Option"),         _("Long option"),    _("Meaning"));
+	show_one_option("-t NUM",            "--tabsize=NUM",     _("Set tab-size to NUM[1-15]"));
+	show_one_option("-r",                "--view",            _("View mode(Read only mode)"));
 #ifdef ENABLE_RC
 	show_one_option("-C RCFILE",         "--rcfile=RCFILE",   _("Read RCFILE"));
 	show_one_option("-c",                "--norcfile",        _("Don't look at berc files"));
@@ -605,8 +618,6 @@ void show_usage(void)
 #ifdef ENABLE_HISTORY
 	show_one_option("-h",                "--nohistory",       _("Don't use history file"));
 #endif // ENABLE_HISTORY
-	show_one_option("-t NUM",            "--tabsize=NUM",     _("Set tab-size to NUM[1-15]"));
-	show_one_option("-r",                "--view",            _("View mode(Read only mode)"));
 #ifdef USE_NKF
 	show_one_option("-n",                "--nonkf",           _("Don't use nkf"));
 	show_one_option("-e a",              "--encoding=a",      _("ASCII character encoding"));
@@ -618,6 +629,12 @@ void show_usage(void)
 	show_one_option("-b",                "--binary",          _("BINARY file (same as '-e b')"));
 	show_one_option("-x",                "--text",            _("TEXT file (same as '-e u')"));
 #endif // USE_NKF
+#ifdef ENABLE_FILER
+	show_one_option("-w",                "--twopane",         _("Two pane mode"));
+#endif // ENABLE_FILER
+#ifdef ENABLE_HIGH_BGC
+	show_one_option("-l",                "--highbgc",         _("Use High Background Color"));
+#endif // ENABLE_HIGH_BGC
 #ifdef ENABLE_DEBUG
 	show_one_option("-d",                "--debug",           _("Output debug log to stderr"));
 #endif // ENABLE_DEBUG

@@ -31,9 +31,8 @@ AC_FUNC_REALLOC
 #AC_FUNC_STRNLEN
 AC_CHECK_FUNCS([dup2 endgrent endpwent getcwd gettimeofday mblen memmove memset mkdir realpath regcomp setenv setlocale strnlen strcasecmp strchr strerror strncasecmp strrchr strstr strtol wcwidth])
 
-
 # begin MANUAL_DESCRIPTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-echo "Running manually described check -------------------------------------------"
+echo "Running manually described check ========================================"
 
 #AM_GNU_GETTEXT
 #ALL_LINGUAS="ja"
@@ -77,6 +76,7 @@ yes)
 	enable_ncurses=yes
 	enable_pcre=yes
 	enable_busybox=no
+	enable_highbgc=yes
 	;;
 no)
 	enable_filer=no
@@ -92,6 +92,7 @@ no)
 	enable_ncurses=no
 	enable_pcre=no
 	enable_busybox=no
+	enable_highbgc=no
 	;;
 *)
 	;;
@@ -175,6 +176,13 @@ yes|no)		;;
 *)	enable_busybox=no	;;
 esac
 
+AC_ARG_ENABLE(highbgc, [  --enable-highbgc  Use lighter Backgound color (8--15)])
+case "$enable_highbgc" in
+yes|no)		;;
+*)	enable_highbgc=yes	;;
+esac
+
+echo "temporal configurations ============================:"
 echo "enable_filer=$enable_filer"
 echo "enable_history=$enable_history"
 echo "enable_undo=$enable_undo"
@@ -186,11 +194,13 @@ echo "enable_ncurses=$enable_ncurses"
 echo "enable_pcre=$enable_pcre"
 echo "enable_nkf=$enable_nkf"
 echo "enable_busybox=$enable_busybox"
+echo "enable_highbgc=$enable_highbgc"
 echo "enable_help=$enable_help"
 echo "enable_debug=$enable_debug"
 
 AC_CHECK_FUNC(mblen, have_mblen=1, have_mblen=0)
 
+echo "check dependencies among configurations ============:"
 dnl ---------------------------------------------------------------------------
 dnl   ncurses with UTF8 support
 dnl ---------------------------------------------------------------------------
@@ -282,6 +292,10 @@ if test "$enable_ncurses" = yes ; then
 		echo "No ncurses library found. So I turn off --enable-ncurses."
 		enable_ncurses=no
 	fi
+	if test "$enable_highbgc" = "1" ; then
+		echo "ncurses does not support lighter background color. So turn off --enable-highbgc."
+		enable_highbgc="no"
+	fi
 fi
 
 # output #define ENABLE_... and #define USE_...
@@ -326,7 +340,11 @@ fi
 if test "$enable_busybox" = yes ; then
 	AC_DEFINE(USE_BUSYBOX, 1, [Define this to use BUSYBOX.])
 fi
+if test "$enable_highbgc" = yes ; then
+	AC_DEFINE(ENABLE_HIGH_BGC, 1, [Define this to use HIGH_BGC.])
+fi
 
+echo "final configurations ===============================:"
 echo "enable_filer=$enable_filer"
 echo "enable_history=$enable_history"
 echo "enable_undo=$enable_undo"
@@ -340,6 +358,7 @@ echo "enable_ncurses=$enable_ncurses"
 echo "enable_pcre=$enable_pcre"
 echo "enable_nkf=$enable_nkf"
 echo "enable_busybox=$enable_busybox"
+echo "enable_highbgc=$enable_highbgc"
 
 echo "have_ncurses=$have_ncurses"
 echo "have_ncursesw=$have_ncursesw"
@@ -350,7 +369,6 @@ echo "use_ncursesw=$use_ncursesw"
 echo "library option: LIBS=$LIBS"
 
 # end MANUAL_DESCRIPTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

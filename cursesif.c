@@ -90,7 +90,7 @@ int curses_get_columns(void)
 
 PRIVATE int get_color_pair(int bgc, int fgc)
 {
-	if (GET_BASE_COLOR(bgc) == CL_BK && GET_BASE_COLOR(fgc) == CL_BK) {
+	if ((GET_BASE_COLOR(bgc) == CL_BK) && (GET_BASE_COLOR(fgc) == CL_BK)) {
 		fgc = CL_GY;	// (0, 0) ==> (0, 7)
 	}
 	return CP_FROM_CBF(bgc, fgc);	// [1, COLOR_PAIRS-1]
@@ -128,9 +128,9 @@ void curses_set_attrs(int bgc, int fgc, int rev)
 		bgc = curses_fgc;
 		fgc = curses_bgc;
 	}
-	bgc = LIMIT_BGC(bgc);
-	fgc = LIMIT_FGC(fgc);
-	fgc = tio_differ_fgc_from_bgc(bgc, fgc);
+//DDD	bgc = LIMIT_BGC(bgc);
+//DDD	fgc = LIMIT_FGC(fgc);
+//DDD	fgc = tio_differentiate_fgc_from_bgc(bgc, fgc);
 	if (fgc >= CL_HI) {
 		wattron(curses_win, A_BOLD);	// only foreground(character) color will be lighted
 	} else {

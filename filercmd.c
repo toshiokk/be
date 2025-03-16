@@ -31,8 +31,6 @@
 #define BEUNZIP		"beunzip"
 #define BEZIP		"bezip"
 
-//DDDD#define BECMD		"becmd"		// becmd?
-
 int chk_inp_str_ret_val_filer(int ret)
 {
 	filer_do_next = ret;

@@ -40,11 +40,13 @@ conf_make()
   cmd_line_11="./configure --disable-syntax --disable-regex"
   cmd_line_12="./configure --disable-syntax --disable-rc --disable-regex"
   cmd_line_13="./configure --enable-ncurses"
-  cmd_line_14="./configure --enable-pcre"
-  cmd_line_15="./configure --disable-nkf"
-  cmd_line_16="./configure --enable-busybox"
-  cmd_line_17="./configure --disable-help"
-  cmd_line_18="./configure --enable-debug"
+  cmd_line_14="./configure --enable-ncurses --enable-highbgc"
+  cmd_line_15="./configure --enable-pcre"
+  cmd_line_16="./configure --disable-nkf"
+  cmd_line_17="./configure --enable-busybox"
+  cmd_line_18="./configure --enable-highbgc"
+  cmd_line_19="./configure --disable-help"
+  cmd_line_20="./configure --enable-debug"
 
   case $conf_num in
   "0")	cmd_line=$cmd_line_0	;;
@@ -66,6 +68,8 @@ conf_make()
   "16")	cmd_line=$cmd_line_16	;;
   "17")	cmd_line=$cmd_line_17	;;
   "18")	cmd_line=$cmd_line_18	;;
+  "19")	cmd_line=$cmd_line_19	;;
+  "20")	cmd_line=$cmd_line_20	;;
   esac
   echo_run $cmd_line
 } 2>&1
@@ -85,31 +89,15 @@ rm -f _conf_make_all_patterns.log
 
 {
   echo "----conf_make_all_patterns-start----"
+  num=0
   if [ -n "$1" ]; then
-    for num in $( seq $1 18 ) ; do
-      conf_make "$num"
-    done
-  else
-  conf_make 0
-  conf_make 1
-  conf_make 2
-  conf_make 3
-  conf_make 4
-  conf_make 5
-  conf_make 6
-  conf_make 7
-  conf_make 8
-  conf_make 9
-  conf_make 10
-  conf_make 11
-  conf_make 12
-  conf_make 13
-  conf_make 14
-  conf_make 15
-  conf_make 16
-  conf_make 17
-  conf_make 18
-  ./_c_debug
+    num="$1"
+  fi
+  for num in $( seq $num 20 ) ; do
+    conf_make "$num"
+  done
+  if [ -z "$1" ]; then
+    ./_c_debug
   fi
   echo "----conf_make_all_patterns-complete----"
 } | tee _conf_make_all_patterns.log

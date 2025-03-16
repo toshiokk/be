@@ -75,7 +75,6 @@ int get_file_type_num(file_info_t *info);
 int get_files_selected_cfv(void);
 int get_files_selected(filer_view_t *fv);
 
-//DDDDfile_info_t *select_and_get_first_file_ptr();
 int select_and_get_first_file_idx_selected(void);
 int get_first_file_idx_selected(void);
 int get_next_file_idx_selected(int file_idx);
