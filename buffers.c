@@ -384,11 +384,11 @@ const char* get_epc_buf_mode_str()
 #ifdef ENABLE_DEBUG
 void dump_editor_panes(editor_panes_t *eps)
 {
-flf_d_printf("{{ %p\n", eps);
+	flf_d_printf("{{ %p\n", eps);
 	if (eps == NULL) {
 		eps = cur_editor_panes;
 	}
-flf_d_printf("cur_pane_idx: %d\n", get_editor_cur_pane_idx());
+	flf_d_printf("cur_pane_idx: %d\n", get_editor_cur_pane_idx());
 	dump_buf_views(eps->bufs[get_editor_cur_pane_idx()]);
 	////flf_d_printf("pane_idx:0 ---------------------------------------------\n");
 	////dump_editor_pane_x(eps, 0);
@@ -542,9 +542,8 @@ void update_cur_buf_crc(void)
 int check_cur_buf_modified(void)
 {
 	int modified = 0;
-
 	if (is_epc_buf_modified()) {
-		disp_status_bar_ing(_("Calculating CRC..."));
+		disp_status_bar_ing(_("Checking CRC..."));
 		modified = buf_check_crc(get_epc_buf());
 		if (modified == 0) {
 			// clear "modified" flag if it's actually not modified

@@ -106,43 +106,43 @@ PRIVATE int parse_color_name(int *bright, int *color);
 PRIVATE int parse_keyword(const char **rc_line_ptr, const char *keyword);
 
 // commands which take number parameter
-// Ex. "backup_files 3"
+// e.g.: "backup_files 3"
 struct /*_rc_cmd_idx_*/ {
 	char *command;
 	mode_idx_t mode_idx;
 } rc_cmd_idx[] = {
- { "draw_cursor",		APMD_DRAW_CURSOR,		},
- { "key_list_lines",	APMD_KEY_LINES,			},
- { "map_key_7f_bs",		APMD_MAP_KEY_7F_BS,		},
+ { "draw_cursor",			APMD_DRAW_CURSOR,			},
+ { "key_list_lines",		APMD_KEY_LINES,				},
+ { "map_key_7f_bs",			APMD_MAP_KEY_7F_BS,			},
 
- { "editor_panes",		EDMD_EDITOR_PANES,		},
- { "dual_scroll",		EDMD_DUAL_SCROLL,		},
- { "continuous_view",	EDMD_CONT_VIEW,			},
- { "show_ruler",		EDMD_SHOW_RULER,		},
- { "show_line_num",		EDMD_SHOW_LINE_NUMBER,	},
- { "cursor_center",		EDMD_CURS_POSITIONING,	},
- { "auto_indent",		EDMD_AUTO_INDENT,		},
- { "backup_files",		EDMD_BACKUP_FILES,		},
- { "ignore_case",		EDMD_IGNORE_CASE,		},
+ { "editor_panes",			EDMD_EDITOR_PANES,			},
+ { "dual_scroll",			EDMD_DUAL_SCROLL,			},
+ { "continuous_view",		EDMD_CONT_VIEW,				},
+ { "show_ruler",			EDMD_SHOW_RULER,			},
+ { "show_line_num",			EDMD_SHOW_LINE_NUMBER,		},
+ { "cursor_center",			EDMD_CURS_POSITIONING,		},
+ { "auto_indent",			EDMD_AUTO_INDENT,			},
+ { "backup_files",			EDMD_BACKUP_FILES,			},
+ { "ignore_case",			EDMD_IGNORE_CASE,			},
 #ifdef ENABLE_REGEX
- { "regexp",			EDMD_USE_REGEXP,		},
+ { "regexp",				EDMD_USE_REGEXP,			},
 #endif // ENABLE_REGEX
 #ifdef ENABLE_SYNTAX
- { "syntax_hl",			EDMD_SYNTAX_HIGHLIGHT,	},
- { "tab_eol_notation",	EDMD_TAB_EOL_NOTATION,	},
+ { "syntax_hl",				EDMD_SYNTAX_HIGHLIGHT,		},
+ { "tab_eol_notation",		EDMD_TAB_EOL_NOTATION,		},
 #endif // ENABLE_SYNTAX
 
 #ifdef ENABLE_FILER
- { "show_dot_file",		FLMD_SHOW_DOT_FILE,		},
- { "show_file_info",	FLMD_SHOW_FILE_INFO,	},
- { "sort_by",			FLMD_FILE_SORT_BY,		},
+ { "show_dot_file",			FLMD_SHOW_DOT_FILE,			},
+ { "show_file_info",		FLMD_SHOW_FILE_INFO,		},
+ { "sort_by",				FLMD_FILE_SORT_BY,			},
  { "show_zebra_striping",	FLMD_SHOW_ZEBRA_STRIPING,	},
- { "filer_panes",		FLMD_FILER_PANES,		},
+ { "filer_panes",			FLMD_FILER_PANES,			},
 #endif // ENABLE_FILER
 };
 
 // commands which take various type of parameter
-// Ex. "color_default -white +black"
+// e.g.: "color_default -white +black"
 struct /*_rc_cmd_func_*/ {
 	char *command;
 	int (*func)();
@@ -604,8 +604,7 @@ PRIVATE int parse_keyword(const char **rc_line_ptr, const char *keyword)
 
 int register_default_color_syntax(void)
 {
-////#define CL_TAB_EOL	CL_GR	// color for TAB/EOL/"　" notation
-#define CL_TAB_EOL	CL_DG	// color for TAB/EOL/"　" notation
+#define CL_TAB_EOL	CL_GY	// color for TAB/EOL/"　" notation
 
 	add_file_type("*", ".*");
 	cur_file_type->tab_size = DEFAULT_TAB_SIZE;	// set default tab size

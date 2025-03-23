@@ -237,7 +237,6 @@ char *concat_file_path_separating_by_space(char *buffer, size_t buf_len, const c
 const char *quote_file_path_static(const char *string)
 {
 	static char buf[MAX_PATH_LEN+1];
-
 	return quote_file_path_if_necessary(buf, string);
 }
 const char *quote_file_path_buf(char *buf, const char *string)

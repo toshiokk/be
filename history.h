@@ -22,11 +22,11 @@
 #ifndef history_h
 #define history_h
 
-#define HISTORY_TYPE_IDX_KEYMACRO	0	// app
-#define HISTORY_TYPE_IDX_FILE		1	// app
-#define HISTORY_TYPE_IDX_DIR		2	// app
-#define HISTORY_TYPE_IDX_SEARCH		3	// app
-#define HISTORY_TYPE_IDX_EXEC		4	// app
+#define HISTORY_TYPE_IDX_FILE		0	// app
+#define HISTORY_TYPE_IDX_DIR		1	// app
+#define HISTORY_TYPE_IDX_SEARCH		2	// app
+#define HISTORY_TYPE_IDX_EXEC		3	// app
+#define HISTORY_TYPE_IDX_KEYMACRO	4	// app
 #define HISTORY_TYPE_IDX_SHELL		5	// shell
 
 #define HISTORY_TYPES_APP			5	// types of app histories (5)
@@ -65,12 +65,9 @@ void init_histories(void);
 void load_histories(void);
 void save_histories(void);
 
-void load_last_searched_needle(void);
-
-void update_history_dir_change(const char *prev_dir, const char *next_dir);
-int update_history_dir_operate();
-void update_history_dir_sync(const char *prev_dir, const char *cur_dir);
 void update_history(int hist_type_idx, const char *str);
+void append_history(int hist_type_idx, const char *str);
+
 const char *get_history_newest(int hist_type_idx, int last_n);
 const char *get_history_completion(int hist_type_idx, const char *str);
 const char *search_history_file_path(int hist_type_idx, const char *path);
@@ -78,8 +75,17 @@ const char *search_history_file_path(int hist_type_idx, const char *path);
 void set_history_newest(int hist_type_idx);
 const char *get_history_older(int hist_type_idx);
 
+const char* history_last_line_str(int hist_type_idx);
+
+//------------------------------------------------------------------------------
+void dir_history_append_temporarily(const char *dir);
+int dir_history_remove();
+int dir_history_fix();
+
+//------------------------------------------------------------------------------
 int select_from_history_list(int hist_type_idx, char *buffer);
 
+//------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 void dump_history_ix(int hist_type_idx);
 void dump_hist_bufs(void);

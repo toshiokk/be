@@ -37,38 +37,38 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	{ CL_BK, CL_WH, S(ITEM_COLOR_IDX_DEFAULT)			},
 #if APP_REL_LVL == APP_REL_LVL_STABLE
 	// official release
-	{ CL_BL, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
-	{ CL_BL, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
+	{ CL_LB, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
+	{ CL_LB, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
 	{ CL_GR, CL_BK, S(ITEM_COLOR_IDX_PARENT)			},
 #endif
 #if APP_REL_LVL == APP_REL_LVL_TEST
 	// test release-1
 	{ CL_CY, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
 	{ CL_CY, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
-	{ CL_BL, CL_BK, S(ITEM_COLOR_IDX_PARENT)			},
+	{ CL_LB, CL_BK, S(ITEM_COLOR_IDX_PARENT)			},
 #endif
 #if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
 	// experimental release
 	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
 	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
-	{ CL_BL, CL_BK, S(ITEM_COLOR_IDX_PARENT)			},
+	{ CL_LB, CL_BK, S(ITEM_COLOR_IDX_PARENT)			},
 #endif
 	{ CL_WH, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
 	{ CL_BK, CL_BR, S(ITEM_COLOR_IDX_KEY_LIST2)			},
 	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL)		},
-	{ CL_CY, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL2)		},
-	{ CL_RD, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED1)	},
-	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED2)	},
+	{ CL_LC, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL2)		},
+	{ CL_LR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED1)	},
+	{ CL_LG, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED2)	},
 	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED3)	},
 	{ CL_DF, CL_LR, S(ITEM_COLOR_IDX_WARNING1)			},	// high
 	{ CL_DF, CL_LM, S(ITEM_COLOR_IDX_WARNING2)			},	// medium
 	{ CL_DF, CL_YL, S(ITEM_COLOR_IDX_WARNING3)			},	// low
-	{ CL_RD, CL_YL, S(ITEM_COLOR_IDX_ERROR)				},
+	{ CL_LR, CL_YL, S(ITEM_COLOR_IDX_ERROR)				},
 	{ CL_BK, CL_WH, S(ITEM_COLOR_IDX_CURSOR_CHAR)		},
-	{ CL_CY, CL_DF, S(ITEM_COLOR_IDX_CURSOR_LINE)		},
+	{ CL_LC, CL_DF, S(ITEM_COLOR_IDX_CURSOR_LINE)		},
 	{ CL_YL, CL_BK, S(ITEM_COLOR_IDX_LINE_NUMBER)		},
-	{ CL_CY, CL_BL, S(ITEM_COLOR_IDX_MENU_FRAME)		},
-	{ CL_BL, CL_CY, S(ITEM_COLOR_IDX_MENU_ITEM)			},
+	{ CL_LC, CL_BL, S(ITEM_COLOR_IDX_MENU_FRAME)		},
+	{ CL_LB, CL_CY, S(ITEM_COLOR_IDX_MENU_ITEM)			},
 	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_MENU_SELECTED)		},
 	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_INPUT)				},
 };
@@ -272,15 +272,15 @@ int display_item_colors(int yy, int xx)
 #ifdef ENABLE_REGEX
 int display_bracket_hl_colors(int yy, int xx)
 {
-	UINT8 zero_occurance = 0;
+	UINT8 zero_occurances = 0;
 
 	prepare_colors_for_bracket_hl();
 	for (int depth = 0; depth < get_colors_for_bracket_hl(); depth++) {
 		char buffer[MAX_PATH_LEN+1];
-		set_color_for_bracket_hl(+1, &zero_occurance, depth);
+		set_color_for_bracket_hl(+1, &zero_occurances, depth);
 		snprintf(buffer, MAX_PATH_LEN, "%3d: ([{<>}]) ", depth);
 		tio_output_string(central_win_get_mid_win_y() + yy + depth, xx + 0, buffer, -1);
-		set_color_for_bracket_hl(-1, &zero_occurance, -depth);
+		set_color_for_bracket_hl(-1, &zero_occurances, -depth);
 		snprintf(buffer, MAX_PATH_LEN, "%3d: ([{<>}]) ", -depth);
 		tio_output_string(central_win_get_mid_win_y() + yy + depth, xx + 20, buffer, -1);
 	}

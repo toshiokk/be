@@ -23,11 +23,7 @@
 
 #ifdef ENABLE_HISTORY
 
-time_t abs_msec_history_modified[HISTORY_TYPES_APP_AND_SHELL];
-time_t abs_msec_history_loaded[HISTORY_TYPES_APP_AND_SHELL];
-
-PRIVATE int load_history_if_reloadable(int hist_type_idx);
-PRIVATE int load_history_if_needed_and_reloadable(int hist_type_idx);
+PRIVATE int load_history_if_needed(int hist_type_idx);
 PRIVATE int save_history_if_modified_and_expired(int hist_type_idx);
 PRIVATE int save_history_if_modified(int hist_type_idx);
 PRIVATE be_buf_t *get_history_buf(int hist_type_idx);
@@ -38,26 +34,28 @@ PRIVATE char *get_history_file_path(int hist_type_idx);
 PRIVATE int get_history_max_lines(int hist_type_idx);
 
 PRIVATE void init_history(int hist_type_idx);
-PRIVATE void append_history(int hist_type_idx, const char *str);
-PRIVATE void clear_history(int hist_type_idx);
+PRIVATE void append_history_buf(int hist_type_idx, const char *str);
+PRIVATE void clear_history_buf(int hist_type_idx);
 
-PRIVATE void clear_history_modified(int hist_type_idx);
+PRIVATE void clear_history_buf_modified(int hist_type_idx);
 PRIVATE void set_history_modified(int hist_type_idx);
 PRIVATE int is_history_modified(int hist_type_idx);
 PRIVATE int is_history_modified_and_expired(int hist_type_idx);
-PRIVATE int is_history_reload_needed_and_not_modified(int hist_type_idx);
 
 PRIVATE void set_history_oldest(int hist_type_idx);
 PRIVATE const char *get_history_newer(int hist_type_idx);
 
-PRIVATE const char *the_same_str_registered_in_the_last_line(int hist_type_idx, const char *str);
+PRIVATE int has_str_registered_in_the_last_line(int hist_type_idx, const char *str);
 
 PRIVATE void remove_all_exact_match(int hist_type_idx, const char *str);
 PRIVATE void remove_all_file_path_match(int hist_type_idx, const char *str);
 
+PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str);
+
 PRIVATE int compare_file_path_str(const char *str, const char *file_path);
 
-PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str);
+PRIVATE const char* dir_history_add_temporal_mark(const char* dir);
+PRIVATE const char* dir_history_remove_temporal_mark(const char* str);
 
 // search/replace(directory and execution) history support functions
 
@@ -88,7 +86,7 @@ void init_histories(void)
 void load_histories(void)
 {
 	for (int hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
-		load_history_if_reloadable(hist_type_idx);
+		load_history_if_needed(hist_type_idx);
 	}
 	bufs_renumber_all_bufs_from_top(&history_buffers);
 }
@@ -101,12 +99,6 @@ void save_histories(void)
 	}
 }
 
-void load_last_searched_needle(void)
-{
-	// load last_searched_needle
-	strlcpy__(last_searched_needle, get_history_newest(HISTORY_TYPE_IDX_SEARCH, 1), MAX_PATH_LEN);
-}
-
 //------------------------------------------------------------------------------
 PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 {
@@ -117,34 +109,7 @@ PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 	return buf_get_buf_by_idx(HIST_BUFS_TOP_BUF, hist_type_idx);
 }
 
-// record "dir-history" on the only occasion when some operation actually done in the directory
-// does not record to history on the occasion that it just visit the directory
-char update_history_prev_dir[MAX_PATH_LEN+1] = "";
-char update_history_next_dir[MAX_PATH_LEN+1] = "";
-void update_history_dir_change(const char *prev_dir, const char *next_dir)
-{
-	strlcpy__(update_history_prev_dir, prev_dir, MAX_PATH_LEN);
-	strlcpy__(update_history_next_dir, next_dir, MAX_PATH_LEN);
-}
-int update_history_dir_operate(void)
-{
-	if (update_history_prev_dir[0] || update_history_next_dir[0]) {
-		update_history_dir_sync(update_history_prev_dir, update_history_next_dir);
-		update_history_prev_dir[0] = '\0';
-		update_history_next_dir[0] = '\0';
-		return 1;
-	}
-	return 0;
-}
-void update_history_dir_sync(const char *prev_dir, const char *next_dir)
-{
-	// previous dir
-	update_history(HISTORY_TYPE_IDX_DIR, prev_dir);
-	// next dir
-	update_history(HISTORY_TYPE_IDX_DIR, next_dir);
-}
-//--------------------------------------
-
+//------------------------------------------------------------------------------
 // update history list (load, modify, save)
 void update_history(int hist_type_idx, const char *str)
 {
@@ -153,22 +118,24 @@ void update_history(int hist_type_idx, const char *str)
 	}
 #ifdef NOT_DELETE_OLD_IDENTICAL_ENTRY
 	if ((hist_type_idx != HISTORY_TYPE_IDX_EXEC)
-	 && the_same_str_registered_in_the_last_line(hist_type_idx, str) != NULL)
-#else // NOT_DELETE_OLD_IDENTICAL_ENTRY
-	if (the_same_str_registered_in_the_last_line(hist_type_idx, str) != NULL)
-#endif // NOT_DELETE_OLD_IDENTICAL_ENTRY
-	{
+	 && has_str_registered_in_the_last_line(hist_type_idx, str)) {
 		// 'str' is registered in the last line, no need update
 		return;
 	}
+#else // NOT_DELETE_OLD_IDENTICAL_ENTRY
+	if (has_str_registered_in_the_last_line(hist_type_idx, str)) {
+		// 'str' is registered in the last line, no need update
+		return;
+	}
+#endif // NOT_DELETE_OLD_IDENTICAL_ENTRY
 	// load-modify(free old entry and append new entry)-save
-	load_history_if_needed_and_reloadable(hist_type_idx);
+	load_history_if_needed(hist_type_idx);
 #ifdef NOT_DELETE_OLD_IDENTICAL_ENTRY
 	if (hist_type_idx == HISTORY_TYPE_IDX_EXEC) {
 		// not delete old entry
 	} else
 #endif // NOT_DELETE_OLD_IDENTICAL_ENTRY
-	if (hist_type_idx == HISTORY_TYPE_IDX_FILE) {
+	if ((hist_type_idx == HISTORY_TYPE_IDX_FILE) || (hist_type_idx == HISTORY_TYPE_IDX_DIR)) {
 		remove_all_file_path_match(hist_type_idx, str);
 	} else {
 		remove_all_exact_match(hist_type_idx, str);
@@ -176,6 +143,12 @@ void update_history(int hist_type_idx, const char *str)
 	append_history(hist_type_idx, str);
 	// update history files soon so that other BE-editor instances can get recent information
 	save_history_if_modified_and_expired(hist_type_idx);
+}
+
+void append_history(int hist_type_idx, const char *str)
+{
+	load_history_if_needed(hist_type_idx);
+	append_history_buf(hist_type_idx, str);
 }
 
 // last_n: 1, 2, 3, ....
@@ -199,38 +172,37 @@ const char *get_history_completion(int hist_type_idx, const char *str)
 	return str;		// return original string
 }
 
-//------------------------------------------------------------------------------
-//|        | write  | reload |       |              |                |
-//|modified| timer  | timer  |save   |load          |comment         |
-//|        | expired| expired|       |              |                |
-//|--------|--------|--------|-------|--------------|----------------|
-//|   0    |   0    |   0    |   -   |   -          |--              |
-//|   0    |   0    |   1    |   -   |needed        |reload needed   |
-//|   0    |   1    |   1    |   -   |   -          |N/A             |
-//|   1    |   0    |   1    |pending|not reloadable|write           |
-//|   1    |   1    |   1    |needed |needed        |write needed    |
-//|   0    |   1    |   0    |   -   |   -          |N/A             |
-//|   1    |   0    |   0    |pending|not reloadable|write is pending|
-//|   1    |   1    |   0    |needed |not reloadable|write needed    |
+//|--history state----------|--action--------------|--comment--------|
+//|updated |modified|write  |       |              |                 |
+//|by other|myself  |timer  |save   |load          |comment          |
+//|        |        |expired|       |              |                 |
+//|--------|--------|-------|-------|--------------|-----------------|
+//|   0    |   0    |   0   |--     |--            |--               |
+//|   0    |   0    |   1   |--     |--            |--               |
+//|   0    |   1    |   0   |pending|not reloadable|write is pending |
+//|   0    |   1    |   1   |needed |not reloadable|write needed     |
+//|   1    |   0    |   0   |--     |needed        |--               |
+//|   1    |   0    |   1   |--     |--            |--               |
+//|   1    |   1    |   0   |pending|not reloadable|possible conflict|
+//|   1    |   1    |   1   |needed |not reloadable|possible conflict|
+// updated : file has updated by other
+// modified: local copy(buffer) has modified by myself
+//
+// before modification of buffer:
+// - if file updated: reload
+// before referencing buffer:
+// - if file updated: reload
 
-PRIVATE int load_history_if_reloadable(int hist_type_idx)
+PRIVATE int load_history_if_needed(int hist_type_idx)
 {
-	if (is_history_modified(hist_type_idx)) {
-		return -1;
-	}
-	return load_history_idx(hist_type_idx);
-}
-PRIVATE int load_history_if_needed_and_reloadable(int hist_type_idx)
-{
-	if (is_history_reload_needed_and_not_modified(hist_type_idx) == 0) {
+	if (buf_has_orig_file_updated(get_history_buf(hist_type_idx)) <= 0) {
 		return -1;
 	}
 	return load_history_idx(hist_type_idx);
 }
 PRIVATE int save_history_if_modified_and_expired(int hist_type_idx)
 {
-	if ((hist_type_idx == HISTORY_TYPE_IDX_FILE)
-	 && (is_history_modified_and_expired(hist_type_idx) == 0)) {
+	if (is_history_modified_and_expired(hist_type_idx) == 0) {
 		return -1;
 	}
 	return save_history_idx(hist_type_idx);
@@ -246,14 +218,11 @@ PRIVATE int save_history_if_modified(int hist_type_idx)
 PRIVATE int save_history_idx(int hist_type_idx)
 {
 	int error = 0;
-
-	if (GET_APPMD(app_HISTORY) == 0)
-		return 0;
 	const char *file_path = get_history_file_path(hist_type_idx);
-	FILE *fp;
-	if ((fp = fopen(file_path, "w")) == NULL) {
-		e_printf("Unable to create history file: %s, %s",
-		 file_path, strerror(errno));
+mflf_d_printf("[%s]\n", file_path);
+	FILE *fp = fopen(file_path, "w");
+	if (fp == NULL) {
+		e_printf("Unable to create history file: %s, %s", file_path, strerror(errno));
 		error = 1;
 		goto save_history_2;
 	}
@@ -271,62 +240,61 @@ PRIVATE int save_history_idx(int hist_type_idx)
 		char buf[MAX_EDIT_LINE_LEN+1];
 		snprintf_(buf, MAX_EDIT_LINE_LEN+1, "%s\n", str);
 		if (fputs(buf, fp) == EOF) {
-			e_printf("Unable to write history file: %s, %s",
-			 file_path, strerror(errno));
+			e_printf("Unable to write history file: %s, %s", file_path, strerror(errno));
 			error = 1;
 			goto save_history_1;
 		}
 	}
 save_history_1:;
-	set_history_newest(hist_type_idx);
 	if (fclose(fp) != 0) {
 		error = 1;
 	}
-	// set rw only by owner for security
+	// set rw only to owner for security
 	chmod(file_path, S_IRUSR | S_IWUSR);
+	stat(file_path, &(get_history_buf(hist_type_idx)->orig_file_stat));
 save_history_2:;
-	clear_history_modified(hist_type_idx);
+	clear_history_buf_modified(hist_type_idx);
+	set_history_newest(hist_type_idx);
 	return error;
 }
 
 PRIVATE int load_history_idx(int hist_type_idx)
 {
 	int error = 0;
+	clear_history_buf(hist_type_idx);
 
-	if (GET_APPMD(app_HISTORY) == 0)
-		return 0;
 	const char *file_path = get_history_file_path(hist_type_idx);
-	clear_history(hist_type_idx);
-
-	FILE *fp;
-	if ((fp = fopen(file_path, "r")) == NULL) {
+	FILE *fp = fopen(file_path, "r");
+	if (fp == NULL) {
 		if (errno != ENOENT) {
 			e_printf("Unable to open history file: %s, %s",
 			 file_path, strerror(errno));
 		}
-	} else {
-		int lines;
-		char str[MAX_EDIT_LINE_LEN+1];
-		// count total lines
-		for (lines = 0; fgets(str, MAX_EDIT_LINE_LEN, fp) != NULL; ) {
-			// count lines
-			lines++;
-		}
-		lines = LIM_MIN(0, lines - get_history_max_lines(hist_type_idx));
-		fseek(fp, 0, SEEK_SET);
-		// skip lines
-		for ( ; fgets(str, MAX_EDIT_LINE_LEN, fp) != NULL; ) {
-			if (lines-- > 0)
-				continue;
-			// load the last MAX_HISTORY_LINES lines
-			str[MAX_EDIT_LINE_LEN] = '\0';
-			append_history(hist_type_idx, remove_line_tail_lf(str));
-		}
-		if (fclose(fp) != 0) {
-			error = 1;
-		}
+		goto load_history_1;
 	}
-	clear_history_modified(hist_type_idx);
+	int lines;
+	char str[MAX_EDIT_LINE_LEN+1];
+	// count total lines
+	for (lines = 0; fgets(str, MAX_EDIT_LINE_LEN, fp) != NULL; ) {
+		// count lines
+		lines++;
+	}
+	lines = LIM_MIN(0, lines - get_history_max_lines(hist_type_idx));
+	fseek(fp, 0, SEEK_SET);
+	// skip lines
+	for ( ; fgets(str, MAX_EDIT_LINE_LEN, fp) != NULL; ) {
+		if (lines-- > 0)
+			continue;
+		// load the last get_history_max_lines(hist_type_idx) lines
+		str[MAX_EDIT_LINE_LEN] = '\0';
+		append_history_buf(hist_type_idx, remove_line_tail_lf(str));
+	}
+	if (fclose(fp) != 0) {
+		error = 1;
+	}
+	stat(file_path, &(get_history_buf(hist_type_idx)->orig_file_stat));
+load_history_1:;
+	clear_history_buf_modified(hist_type_idx);
 	return error;
 }
 PRIVATE char *get_history_file_path(int hist_type_idx)
@@ -337,9 +305,6 @@ PRIVATE char *get_history_file_path(int hist_type_idx)
 
 	switch (hist_type_idx) {
 	default:
-	case HISTORY_TYPE_IDX_KEYMACRO:
-		file = KEYMACRO_HISTORY_FILE_NAME;
-		break;
 	case HISTORY_TYPE_IDX_FILE:
 		file = OPENFILE_HISTORY_FILE_NAME;
 		break;
@@ -351,6 +316,9 @@ PRIVATE char *get_history_file_path(int hist_type_idx)
 		break;
 	case HISTORY_TYPE_IDX_EXEC:
 		file = EXEC_HISTORY_FILE_NAME;
+		break;
+	case HISTORY_TYPE_IDX_KEYMACRO:
+		file = KEYMACRO_HISTORY_FILE_NAME;
 		break;
 	case HISTORY_TYPE_IDX_SHELL:
 		dir = get_home_dir();
@@ -365,9 +333,6 @@ PRIVATE int get_history_max_lines(int hist_type_idx)
 	int lines = 0;
 	switch (hist_type_idx) {
 	default:
-	case HISTORY_TYPE_IDX_KEYMACRO:
-		lines = MAX_HISTORY_LINES;
-		break;
 	case HISTORY_TYPE_IDX_FILE:
 		lines = MAX_HISTORY_LINES_10K;
 		break;
@@ -379,6 +344,9 @@ PRIVATE int get_history_max_lines(int hist_type_idx)
 		break;
 	case HISTORY_TYPE_IDX_EXEC:
 		lines = MAX_HISTORY_LINES_10K;
+		break;
+	case HISTORY_TYPE_IDX_KEYMACRO:
+		lines = MAX_HISTORY_LINES;
 		break;
 	case HISTORY_TYPE_IDX_SHELL:
 		lines = MAX_HISTORY_LINES;
@@ -392,10 +360,10 @@ PRIVATE int get_history_max_lines(int hist_type_idx)
 PRIVATE void init_history(int hist_type_idx)
 {
 	set_history_newest(hist_type_idx);
-	clear_history_modified(hist_type_idx);
+	clear_history_buf_modified(hist_type_idx);
 }
 // add string to the bottom of history list
-PRIVATE void append_history(int hist_type_idx, const char *str)
+PRIVATE void append_history_buf(int hist_type_idx, const char *str)
 {
 	if (is_strlen_0(str)) {
 		return;
@@ -404,37 +372,33 @@ PRIVATE void append_history(int hist_type_idx, const char *str)
 	buf_set_cur_line(buf, line_insert_with_string(NODES_BOT_ANCH(buf), INSERT_BEFORE, str));
 	set_history_modified(hist_type_idx);
 }
-PRIVATE void clear_history(int hist_type_idx)
+PRIVATE void clear_history_buf(int hist_type_idx)
 {
 	buf_free_lines(get_history_buf(hist_type_idx));
 }
-PRIVATE void clear_history_modified(int hist_type_idx)
+PRIVATE void clear_history_buf_modified(int hist_type_idx)
 {
 	BUF_STATE(get_history_buf(hist_type_idx), buf_MODIFIED) = 0;
-	abs_msec_history_modified[hist_type_idx] = get_msec();
-	abs_msec_history_loaded[hist_type_idx] = get_msec();
+	buf_set_save_pending_timer(get_history_buf(hist_type_idx), get_msec());
 }
 PRIVATE void set_history_modified(int hist_type_idx)
 {
 	if (BUF_STATE(get_history_buf(hist_type_idx), buf_MODIFIED) == 0) {
 		BUF_STATE(get_history_buf(hist_type_idx), buf_MODIFIED) = 1;
-		abs_msec_history_modified[hist_type_idx] = get_msec();
+		buf_set_save_pending_timer(get_history_buf(hist_type_idx), get_msec());
 	}
 }
 PRIVATE int is_history_modified(int hist_type_idx)
 {
 	return BUF_STATE(get_history_buf(hist_type_idx), buf_MODIFIED);
 }
-#define HISTORY_EXPIRATION_MSEC		100		// 1000
+
+#define HISTORY_EXPIRATION_MSEC		1000		// 1000
 PRIVATE int is_history_modified_and_expired(int hist_type_idx)
 {
 	return is_history_modified(hist_type_idx)
-	 && ((get_msec() - abs_msec_history_modified[hist_type_idx]) >= HISTORY_EXPIRATION_MSEC);
-}
-PRIVATE int is_history_reload_needed_and_not_modified(int hist_type_idx)
-{
-	return ((get_msec() - abs_msec_history_loaded[hist_type_idx]) >= HISTORY_EXPIRATION_MSEC)
-	 && (is_history_modified(hist_type_idx) == 0);
+	 && ((((UINT16)get_msec()) - buf_get_save_pending_timer(get_history_buf(hist_type_idx)))
+	  >= HISTORY_EXPIRATION_MSEC);
 }
 
 PRIVATE void set_history_oldest(int hist_type_idx)
@@ -468,20 +432,28 @@ const char *get_history_older(int hist_type_idx)
 	return "";			// end of list
 }
 
-PRIVATE const char *the_same_str_registered_in_the_last_line(int hist_type_idx, const char *str)
+//------------------------------------------------------------------------------
+PRIVATE int has_str_registered_in_the_last_line(int hist_type_idx, const char *str)
+{
+	return strcmp(history_last_line_str(hist_type_idx), str) == 0;	// exact match
+}
+const char* history_last_line_str(int hist_type_idx)
 {
 	be_line_t *line = NODES_BOT_NODE(get_history_buf(hist_type_idx));
-	if (IS_NODE_INT(line) && (strcmp(line->data, str) == 0))	// exact match
-		return line->data;
-	return NULL;
+	if (IS_NODE_INT(line) == 0) {
+		return "";
+	}
+	return line->data;
 }
 
+//------------------------------------------------------------------------------
 // remove all line the same to str
 PRIVATE void remove_all_exact_match(int hist_type_idx, const char *str)
 {
 	for (be_line_t *line = NODES_BOT_NODE(get_history_buf(hist_type_idx)); IS_NODE_INT(line); ) {
 		be_line_t *prev = NODE_PREV(line);
 		if (strcmp(line->data, str) == 0) {	// exact match
+flf_d_printf("delete line [%s]\n", line->data);
 			line_unlink_free(line);		// delete older line
 			set_history_modified(hist_type_idx);
 		}
@@ -537,8 +509,11 @@ const char *search_history_file_path(int hist_type_idx, const char *path)
 }
 PRIVATE int compare_file_path_str(const char *str, const char *file_path)
 {
-	// /home/user/filename.exp|1234
-	// '/home/user/ filename.exp '
+	//     "#/home/user/filename.exp|1234"
+	// ==> "/home/user/filename.exp"
+	//     "#'/home/user/ filename.exp '|1234"
+	// ==> "'/home/user/ filename.exp '"
+	str = dir_history_remove_temporal_mark(str);
 	const char *ptr;
 	int len;
 	if ((ptr = strstr(str, FILE_PATH_SEPARATOR)) != NULL) {
@@ -550,6 +525,78 @@ PRIVATE int compare_file_path_str(const char *str, const char *file_path)
 }
 
 //------------------------------------------------------------------------------
+#define TEMPORAL_HISTORY_MARK		"#"
+// record "dir-history" on the only occasion when some operation actually done in the directory.
+// does not record to history on the case that it just visit the directory.
+char dir_history_temporal[MAX_PATH_LEN+1] = "";
+// current directory has changed
+void dir_history_append_temporarily(const char *dir)
+{
+	// fix previously registered
+	dir_history_remove();
+	load_history_if_needed(HISTORY_TYPE_IDX_DIR);
+	if ((has_str_registered_in_the_last_line(HISTORY_TYPE_IDX_DIR, dir) == 0)
+	 && (has_str_registered_in_the_last_line(HISTORY_TYPE_IDX_DIR,
+	  dir_history_add_temporal_mark(dir)) == 0)) {
+		// temporarily register dir
+		load_history_if_needed(HISTORY_TYPE_IDX_DIR);
+		append_history(HISTORY_TYPE_IDX_DIR, dir_history_add_temporal_mark(dir));
+		save_history_if_modified(HISTORY_TYPE_IDX_DIR);
+		strlcpy__(dir_history_temporal, dir, MAX_PATH_LEN);
+	}
+}
+// no operation has done before leaving the directory which is memorized in `dir_history_temporal`
+int dir_history_remove()
+{
+	if (dir_history_temporal[0]) {
+		// nothing operated in the dir, remove temporal entry
+		load_history_if_needed(HISTORY_TYPE_IDX_DIR);
+		remove_all_exact_match(HISTORY_TYPE_IDX_DIR,
+		 dir_history_add_temporal_mark(dir_history_temporal));
+		save_history_if_modified(HISTORY_TYPE_IDX_DIR);
+
+		strlcpy__(dir_history_temporal, "", MAX_PATH_LEN);
+		return 1;
+	}
+	return 0;
+}
+// some operation is about to do or has done in the directory
+int dir_history_fix()
+{
+	if (dir_history_temporal[0]) {
+		// some operation has done in the dir, remove temporal and append dir
+		load_history_if_needed(HISTORY_TYPE_IDX_DIR);
+		remove_all_exact_match(HISTORY_TYPE_IDX_DIR,
+		 dir_history_add_temporal_mark(dir_history_temporal));
+		update_history(HISTORY_TYPE_IDX_DIR, dir_history_temporal);
+		save_history_if_modified(HISTORY_TYPE_IDX_DIR);
+
+		strlcpy__(dir_history_temporal, "", MAX_PATH_LEN);
+		return 1;	// temporal entry has resolved
+	}
+	return 0;	// nothing done
+}
+
+//     "/path/to/file"
+// ==> "#/path/to/file"
+PRIVATE const char* dir_history_add_temporal_mark(const char* dir)
+{
+	static char temporal_dir_path_s[MAX_PATH_LEN+1];
+	strlcpy__(temporal_dir_path_s, dir, MAX_PATH_LEN);
+	str_prepend(temporal_dir_path_s, MAX_PATH_LEN, TEMPORAL_HISTORY_MARK);
+	return temporal_dir_path_s;
+}
+//     "#/path/to/file"
+// ==> "/path/to/file"
+PRIVATE const char* dir_history_remove_temporal_mark(const char* str)
+{
+	if (strlcmp__(str, TEMPORAL_HISTORY_MARK) == 0) {
+		str = &str[strlen_path(TEMPORAL_HISTORY_MARK)];	// skip "#"
+	}
+	return str;
+}
+
+//------------------------------------------------------------------------------
 int select_from_history_list(int hist_type_idx, char *buffer)
 {
 	load_histories();
@@ -557,6 +604,9 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 	int ret = do_call_editor(1, APP_MODE_CHOOSER, get_history_buf(hist_type_idx),
 	 buffer, MAX_PATH_LEN);
 
+	if (hist_type_idx == HISTORY_TYPE_IDX_DIR) {
+		strlcpy__(buffer, dir_history_remove_temporal_mark(buffer), MAX_PATH_LEN);
+	}
 flf_d_printf("ret: %d, buffer: [%s]\n", ret, buffer);
 	return ret;
 }

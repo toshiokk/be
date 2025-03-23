@@ -231,7 +231,6 @@ flf_d_printf("next_file_path: %s\n", next_file_path);
 		}
 flf_d_printf("next_file_path: %s\n", next_file_path);
 		buf_set_file_path(get_epc_buf(), next_file_path);	// set new file name
-		buf_clear_orig_file_mtime(get_epc_buf());
 	}
 
 	if (backup_and_save_cur_buf_ask() < 0) {

@@ -6,26 +6,62 @@
 - CRASH: crash
 - POLICY: things to be kept
 
-- [x] BUG: cursor position does not restored after undo
-- [?] BUG: keyword seach goes to history-buffers
-- [x] IMPR: switchable use of hi-background-color at run time not build time by "--hibgc"
-  - [x] add "--enable-highbgc" option to `configure`
-- [] IMPR: built in logger that output to the separate log files based on the pty number
-- [x] no screen size displayed within input_string_pos() on screen resizing
 - [] Make easy to use for other people
 - [xx ] clean up code
-- [vG] 250304 update dir-history only when some operation actually done in the dir
-  - [ ] this is sometimes inconvenient. how to improve it ==> ??
-    - temporarilly add dir
-      - remove later if no operation
-      - fix later if operated
-   operations:
-  - refresh file list
-  - select file
-  - open file
-  - file operations such as copy/move/remove/mkdir/exec
-  - other special operation ...
-    - quit filer
+- [d ] Use `typedef` in variable definision (UINT8/UINT16/UINT32/ssize_t/size_t)
+
+- [x] IMPR: built in logger that output to the separate log files based on the pty number
+  - [x] record output from a program that is started execution by filer in sub shell
+    ```
+    == [/home/user/tools/be/be]$ whoami ==
+    user
+    == [/home/user/tools/be/be]$ pwd ==
+    /home/user/tools/be/be
+    ```
+  - [x] Use `script` for logging
+  - [x] not include the output from `be` editor itself because it include many confusing escape sequence
+
+- [x-] 250322 delete `last_searched_needle` ==> necessary when ENABLE_HISTORY disabled
+- [x] 250322 BUG: It causes `PROGERR` to break loading very large file.
+- [x] 250321 on screen resizing, cursor position become out of screen in editor
+- [x] 250321 delete "-h"(app_HISTORY) option
+- [x] 250315 BUG: cursor position does not restored after undo
+- [?] BUG: keyword seach goes to history-buffers
+- [x] 250316 IMPR: switchable use of hi-background-color at run time not build time by "--hibgc"
+  - [x] 250315 add "--enable-highbgc" option to `configure`
+- [x] 250314 no screen size displayed within input_string_pos() on screen resizing
+- [x] use file time stamp for checking update of history file by other processes
+- [x] 250304 update dir-history only when some operation actually done in the dir
+  - [x] this is sometimes inconvenient. how to improve it
+    - temporarily add dir as "#/path" form
+      - [x]on changing cur dir to other
+        - if the path still exist as "#/path...", remove it
+        - if the path does not exist as "#/path...", do nothing
+      - [x]on the operation in the dir
+        - if the path still exist as "#/path...", change from "#/path..." to "/path..."
+        - if the path does not exist as "#/path...", do nothing
+      - [x]remove prepended "#" when it gets the entry value from history
+      - [x] two temporal entries can not exist
+  # operations:
+    - refresh file list
+    - select file
+    - open file
+    - file operations such as copy/move/remove/mkdir/exec
+    - other special operation ...
+      - quit filer
+  # test cases:
+    - process-A enters dir-A
+    - process-B enters dir-B
+      - [x] dir-A and dir-B are pending
+    - process-A leaves dir-A
+    - process-B leaves dir-B
+      - [x] dir-A and dir-B should be removed
+    - process-A enters dir-A
+    - process-B enters dir-B
+    - fix dir-A
+    - fix dir-B
+      - [x] dir-A and dir-B are fixed
+
 - [x] 250314 filer: 'u' uncompress files from .tar.gz/.tar.bz2/.zip calling `beunzip`
 - [x] 250314 filer: 'U' compress files to .tar.gz/.tar.bz2/.zip calling `bezip`
 - [x ] CRASH: on the switch to undo-buffer
@@ -206,22 +242,24 @@ start as a editor
 // | K_T_   | dof_run_command_symlink     | --                        |     |      |
 
 // Editor file open functions:
-// | key    | filer function              |recursive |read only|Use history|Unlocking|input FN|Allow non-existent|
-// |--------|-----------------------------|----------|---------|-----------|---------|--------|------------------|
-// | K_e_   | dof_open_file_recursive     |Yes       |         |No         |         |        |                  |
-// | K_E_   | dof_open_file_ro            |Yes       |Yes      |No         |         |        |                  |
-// | K_M_e  | dof_open_file_non_recursive |No        |         |No         |         |        |                  |
-// | K_M_E  | dof_open_file_from_history  |Yes       |         |Yes        |         |        |                  |
-// | K_MC_E | dof_open_locked_file        |Yes       |         |No         |Yes      |        |                  |
-// | K_M_n  | dof_open_new_file           |YEs       |         |           |         |Yes     |Yes               |
-// |--------|-----------------------------|----------|---------|-----------|---------|--------|------------------|
-// | K_e_   | N/A                         |          |         |           |         |Yes     |                  |
-// | K_E_   | N/A                         |          |         |           |         |Yes     |                  |
-// | K_M_e  | doe_open_file_recursive     |          |         |           |         |Yes     |                  |
-// | K_M_E  | doe_open_file_non_recursive |Yes       |         |           |         |Yes     |                  |
-// | K_M_n  | doe_open_new_file           |          |         |           |         |Yes     |Yes               |
-// | XX K_M_E  | XX doe_open_file_ro            |          |Yes      |           |         |Yes     |                  |
-// | XX K_MC_E | XX doe_open_locked_file        |          |         |           |Yes      |Yes     |                  |
+// | key    | filer function              |recursive |read|Use    |Un     |input|Allow   |
+// |        |                             |          |only|history|locking|FN   |non     |
+// |        |                             |          |    |       |       |     |existent|
+// |--------|-----------------------------|----------|----|-------|-------|-----|--------|
+// | K_e_   | dof_open_file_recursive     |Yes       |    |No     |       |     |        |
+// | K_E_   | dof_open_file_ro            |Yes       |Yes |No     |       |     |        |
+// | K_M_e  | dof_open_file_non_recursive |No        |    |No     |       |     |        |
+// | K_M_E  | dof_open_file_from_history  |Yes       |    |Yes    |       |     |        |
+// | K_MC_E | dof_open_locked_file        |Yes       |    |No     |Yes    |     |        |
+// | K_M_n  | dof_open_new_file           |YEs       |    |       |       |Yes  |Yes     |
+// |--------|-----------------------------|----------|----|-------|-------|-----|--------|
+// | K_e_   | N/A                         |          |    |       |       |Yes  |        |
+// | K_E_   | N/A                         |          |    |       |       |Yes  |        |
+// | K_M_e  | doe_open_file_recursive     |          |    |       |       |Yes  |        |
+// | K_M_E  | doe_open_file_non_recursive |Yes       |    |       |       |Yes  |        |
+// | K_M_n  | doe_open_new_file           |          |    |       |       |Yes  |Yes     |
+// | XX K_M_E  | XX doe_open_file_ro      |          |Yes |       |       |Yes  |        |
+// | XX K_MC_E | XX doe_open_locked_file  |          |    |       |Yes    |Yes  |        |
 
 // Execution functions:
 // | key    | filer function              | editor function           |

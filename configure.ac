@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.71])
-AC_INIT([BE],[250301],[BUG-REPORT-ADDRESS])
+AC_INIT([BE],[250321],[BUG-REPORT-ADDRESS])
 AC_CONFIG_SRCDIR([buffers.h])
 AC_CONFIG_HEADERS([config.h])
 

@@ -158,7 +158,7 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 					mflf_d_printf("}}}} editor_do_next: EF__%d\n", editor_do_next);
 					easy_buffer_switching_count();
 #if defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
-					if (check_undo_state_after_change()) {	_WARNING_	}
+					if (check_undo_state_after_change()) { _WARNING_ }
 #endif // defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
 				}
 			}
@@ -274,9 +274,13 @@ int doe_run_line_soon(void)
 {
 	return doe_run_line__(LOGGING0, 0, 0);
 }
+int doe_run_line_soon_w_log(void)
+{
+	return doe_run_line__(LOGGING2, 0, 0);
+}
 int doe_run_line_input(void)
 {
-	return doe_run_line__(LOGGING0, EPCBVC_CLBI, 1);
+	return doe_run_line__(LOGGING2, EPCBVC_CLBI, 1);
 }
 PRIVATE int doe_run_line__(int flags, int clbi, int input)
 {
@@ -551,7 +555,6 @@ void update_screen_editor(int status_bar, int refresh)
 {
 	win_select_cur_sub_win(WIN_IDX_CENTRAL);
 
-	EPCBVC_CURS_Y = MIN(edit_win_get_text_lines()-1, EPCBVC_CURS_Y);
 	////mflf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 	// title bar
 	disp_title_bar_editor();

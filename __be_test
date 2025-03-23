@@ -4,8 +4,11 @@ mk_backup_file __be_test.log
 if [ -f ./be ]; then
   ##./be --version
   ##./be "$@"
-  ./be -d "$@"
-  #./be -d -l "$@"
+  if [ -n "$UCON" ]; then
+    ./be -d -l "$@"
+  else
+    ./be -d "$@"
+  fi
   ##LANG=C.UTF-8 ./be -d "$@"
   ##LANG=C ./be -d "$@"
   ##./be -c -d "$@"

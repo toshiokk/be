@@ -109,7 +109,6 @@ flf_d_printf("init_histories()\n");
 	init_histories();
 flf_d_printf("load_histories()\n");
 	load_histories();
-	load_last_searched_needle();
 flf_d_printf("load_key_macro()\n");
 	load_key_macro(1);
 #endif // ENABLE_HISTORY
@@ -123,12 +122,12 @@ flf_d_printf("load_key_macro()\n");
 	set_die_on_callback(app_die_on);
 
 #ifdef ENABLE_HELP
-////#define SPLASH_ON_START__EXIT
-#ifdef SPLASH_ON_START__EXIT
+////#define SPLASH_ON_START_UP__EXIT
+#endif // ENABLE_HELP
+#ifdef SPLASH_ON_START_UP__EXIT
 	disp_splash(0);
 	MSLEEP(300);
-#endif // SPLASH_ON_START__EXIT
-#endif // ENABLE_HELP
+#endif // SPLASH_ON_START_UP__EXIT
 flf_d_printf("opening files --------------------------------------------\n");
 	// If there's a +LINE flag, it is the first non-option argument
 	int start_line_num = 0;			// Line to start at
@@ -172,12 +171,10 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	app_main_loop();
 	//--------------
 
-#ifdef ENABLE_HELP
-#ifdef SPLASH_ON_START__EXIT
+#ifdef SPLASH_ON_START_UP__EXIT
 	disp_splash(-1);
 	MSLEEP(200);
-#endif // SPLASH_ON_START__EXIT
-#endif // ENABLE_HELP
+#endif // SPLASH_ON_START_UP__EXIT
 
 	set_die_on_callback(NULL);
 
@@ -257,7 +254,7 @@ flf_d_printf("PACKAGE: [%s], LOCALEDIR: [%s]\n", PACKAGE, LOCALEDIR);
 	return 0;
 }
 
-const char short_options[] = "C:cht:rne:bxwldv?k";
+const char short_options[] = "C:ct:rne:bxwldv?k";
 #ifdef HAVE_GETOPT_LONG
 int option_index = 0;
 const struct option long_options[] = {
@@ -267,9 +264,6 @@ const struct option long_options[] = {
 	{ "rcfile",        required_argument, 0, 'C' },
 	{ "norcfile",      no_argument,       0, 'c' },
 #endif // ENABLE_RC
-#ifdef ENABLE_HISTORY
-	{ "nohistory",     no_argument,       0, 'h' },
-#endif // ENABLE_HISTORY
 #ifdef USE_NKF
 	{ "nonkf",         no_argument,       0, 'n' },
 	{ "encoding",      required_argument, 0, 'e' },
@@ -326,11 +320,6 @@ PRIVATE int parse_options(int argc, char *argv[])
 			CLR_APPMD(app_RCFILE);
 			break;
 #endif // ENABLE_RC
-#ifdef ENABLE_HISTORY
-		case 'h':
-			CLR_APPMD(app_HISTORY);
-			break;
-#endif // ENABLE_HISTORY
 		case 't':
 			if (optarg) {
 				int tab_size = 0;
@@ -615,9 +604,6 @@ void show_usage(void)
 	show_one_option("-C RCFILE",         "--rcfile=RCFILE",   _("Read RCFILE"));
 	show_one_option("-c",                "--norcfile",        _("Don't look at berc files"));
 #endif // ENABLE_RC
-#ifdef ENABLE_HISTORY
-	show_one_option("-h",                "--nohistory",       _("Don't use history file"));
-#endif // ENABLE_HISTORY
 #ifdef USE_NKF
 	show_one_option("-n",                "--nonkf",           _("Don't use nkf"));
 	show_one_option("-e a",              "--encoding=a",      _("ASCII character encoding"));
@@ -661,73 +647,72 @@ void show_version(void)
 	printf(_("%s version %s (compiled at %s, %s)\n"),
 	 APP_LONG_NAME, VERSION, __TIME__, __DATE__);
 	printf(_(" Build Options:\n"));
-#ifdef ENABLE_FILER
+#ifdef ENABLE_FILER //-------------------
 	printf("   --enable-filer\n");
 #else
 	printf("   --disable-filer\n");
 #endif
-#ifdef ENABLE_NLS
+#ifdef ENABLE_NLS //-------------------
 	printf("   --enable-nls\n");
 #else
 	printf("   --disable-nls\n");
 #endif
-#ifdef ENABLE_RC
+#ifdef ENABLE_RC //-------------------
 	printf("   --enable-rc\n");
 #else
 	printf("   --disable-rc\n");
 #endif
-	printf("   --enable-utf8\n");
-#if defined(USE_NCURSES) || defined(USE_NCURSESW)
-	printf("   --enable-ncurses\n");
-#else
-	printf("   --disable-ncurses\n");
-#endif
-#ifdef USE_NKF
+#ifdef USE_NKF //-------------------
 	printf("   --enable-nkf\n");
 #else
 	printf("   --disable-nkf\n");
 #endif
-#ifdef ENABLE_HISTORY
+#ifdef ENABLE_HISTORY //-------------------
 	printf("   --enable-history\n");
 #else
 	printf("   --disable-history\n");
 #endif
-#ifdef ENABLE_REGEX
+#ifdef ENABLE_REGEX //-------------------
 	printf("   --enable-regex\n");
 #else
 	printf("   --disable-regex\n");
 #endif
-#ifdef ENABLE_SYNTAX
+#ifdef ENABLE_SYNTAX //-------------------
 	printf("   --enable-syntax\n");
 #else
 	printf("   --disable-syntax\n");
 #endif
-#ifdef USE_PCRE
-	printf("   --enable-pcre\n");
-#else
-	printf("   --disable-pcre\n");
-#endif
-#ifdef ENABLE_UNDO
+#ifdef ENABLE_UNDO //-------------------
 	printf("   --enable-undo\n");
 #else
 	printf("   --disable-undo\n");
 #endif
-#ifdef USE_BUSYBOX
-	printf("   --enable-busybox\n");
-#else
-	printf("   --disable-busybox\n");
-#endif
-#ifdef ENABLE_HELP
+#ifdef ENABLE_HELP //-------------------
 	printf("   --enable-help\n");
 #else // ENABLE_HELP
 	printf("   --disable-help\n");
 #endif // ENABLE_HELP
-#ifdef ENABLE_DEBUG
+#ifdef ENABLE_DEBUG //-------------------
 	printf("   --enable-debug\n");
 #else
 	printf("   --disable-debug\n");
 #endif
-	printf("\n");
+#if defined(USE_NCURSES) || defined(USE_NCURSESW) //-------------------
+	printf("   --enable-ncurses\n");
+#else
+	printf("   --disable-ncurses\n");
+#endif
+#ifdef USE_PCRE //-------------------
+	printf("   --enable-pcre\n");
+#else
+	printf("   --disable-pcre\n");
+#endif
+#ifdef USE_BUSYBOX //-------------------
+	printf("   --enable-busybox\n");
+#else
+	printf("   --disable-busybox\n");
+#endif
+///	printf("\n");
 }
 
 //------------------------------------------------------------------------------

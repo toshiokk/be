@@ -55,7 +55,7 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path, unsigned char buf_mode_
 	buf->orig_file_stat.st_uid = geteuid();
 	buf->orig_file_stat.st_gid = getegid();
 	buf->orig_file_stat.st_mode = RW0RW0R00;		// regular file rw-rw-r--(664)
-	buf_clear_orig_file_mtime(buf);					// time file was modified
+	buf->orig_file_stat.st_mtime = 0;
 	buf->orig_file_crc = 0;
 
 	buf_init_anchors(buf, buf->file_path_);
@@ -67,7 +67,6 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path, unsigned char buf_mode_
 	buf->buf_lines = 0;
 	buf->buf_size = 0;
 	SET_BUF_STATE(buf, buf_MODE, buf_mode_);	// set default buffer mode
-//////flf_d_printf("[%s]%s\n", buf_get_file_path(buf, NULL), buf_dump_buf_state(buf));
 	return buf;
 }
 
@@ -330,19 +329,18 @@ int buf_count_lines(be_buf_t *buf, int max_lines)
 	}
 	return count;
 }
-
-void buf_clear_orig_file_mtime(be_buf_t *buf)
+//------------------------------------------------------------------------------
+int buf_get_file_stat(be_buf_t *buf)
 {
-	buf->orig_file_stat.st_mtime = time(NULL);
+	return stat(buf_get_file_path(buf, NULL), &(buf->orig_file_stat));
 }
 int buf_has_orig_file_updated(be_buf_t *buf)
 {
 	struct stat st;
-
 	if (stat(buf_get_file_path(buf, NULL), &st)) {
-		return -1;
+		return -1;										// error
 	}
-	return st.st_mtime > buf->orig_file_stat.st_mtime;
+	return st.st_mtime > buf->orig_file_stat.st_mtime;	// >0: updated, 0: not updated
 }
 //------------------------------------------------------------------------------
 const char *buf_mode_str(be_buf_t *buf)
@@ -448,7 +446,6 @@ be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num)
 
 //------------------------------------------------------------------------------
 
-PRIVATE unsigned short file_crc;
 PRIVATE long file_size;
 
 void buf_update_crc(be_buf_t *buf)
@@ -459,19 +456,28 @@ int buf_check_crc(be_buf_t *buf)
 {
 	return buf->orig_file_crc != buf_calc_crc(buf);
 }
-unsigned short buf_calc_crc(be_buf_t *buf)
+UINT16 buf_calc_crc(be_buf_t *buf)
 {
 	file_size = 0;
 	clear_crc16ccitt();
 	for (be_line_t *line = NODES_TOP_NODE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		file_size += line_strlen(line) + 1;
 		for (char *ptr = line->data; ; ptr++) {
-			file_crc = calc_crc16ccitt(*ptr);
+			calc_crc16ccitt(*ptr);
 			if (*ptr == 0)	// count including last NUL code
 				break;
 		}
 	}
-	return file_crc;
+	return get_crc16ccitt();
+}
+
+void buf_set_save_pending_timer(be_buf_t *buf, UINT16 timer)
+{
+	buf->orig_file_crc = timer;
+}
+UINT16 buf_get_save_pending_timer(be_buf_t *buf)
+{
+	return buf->orig_file_crc;
 }
 
 int buf_count_buf(be_buf_t *buf)

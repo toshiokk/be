@@ -2,7 +2,8 @@
 
 echo_run()
 {
-  echo "ConfigurationNo.: $conf_num"
+  echo ""
+  echo "ConfigurationNo.: $conf_num, SizeOfExecutableFile ======================"
   echo "Running: $cmd_line"
   $cmd_line
   make clean
@@ -11,7 +12,7 @@ echo_run()
   echo "ConfigurationNo.: " $conf_num
   strip be
   ./be -v
-  echo "Summary - ConfigurationNo.: " $conf_num
+  echo "Summary - ConfigurationNo.: " $conf_num "------------------------------"
   echo "Summary - Running: $cmd_line"
   echo -n "Summary - SizeOfExecutableFile: "
   ls -l be
@@ -19,7 +20,7 @@ echo_run()
     echo "BuildError !!!!"
     exit -1
   fi
-  echo "Summary -----------------------------------------------------"
+##  echo "Summary -----------------------------------------------------"
 } 2>&1
 
 conf_make()

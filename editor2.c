@@ -119,6 +119,8 @@ void disp_edit_win(int cur_pane)
 		sub_win_output_string(edit_win_get_path_y(), 0, buf_path, -1);
 	}
 
+	// make cursor position within the screen after resizing screen
+	EPCBVC_CURS_Y = MIN(edit_win_get_text_lines()-1, EPCBVC_CURS_Y);
 	get_edit_win_screen_top(EPCBVC_CL, EPCBVC_CLBI, EPCBVC_CURS_Y, &line, &byte_idx);
 flf_d_printf("cursor_y:%d\n", EPCBVC_CURS_Y);
 	for (yy = 0; yy < edit_win_get_text_lines(); ) {
@@ -544,7 +546,6 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 	int yy;
 	int depth;
 	int prev_depth;
-	int match_len;
 	int skip_here;
 	int byte_idx_1;
 	int byte_idx_2;
@@ -554,7 +555,7 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
 	int right_byte_idx;
 #define MAX_BRACKET_HL		100	// for avoiding infinite loop
 	int safe_cnt = 0;
-	UINT8 zero_occurance = 0;
+	UINT8 zero_occurances = 0;
 
 flf_d_printf("display_dir: %d, char_under_cursor: [%c], depth_increase: %d\n",
  display_dir, char_under_cursor, depth_increase);
@@ -571,7 +572,7 @@ flf_d_printf("display_dir: %d, char_under_cursor: [%c], depth_increase: %d\n",
 		 ((-MAX_BRACKET_NESTINGS < depth) && (depth < MAX_BRACKET_NESTINGS))
 		  && (safe_cnt < MAX_BRACKET_HL);
 		 safe_cnt++) {
-			match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
+			int match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
 			 char_under_cursor, needle, BACKWARD_SEARCH, skip_here, depth_increase,
 			 &depth, &prev_depth);
 			skip_here = 1;
@@ -589,7 +590,7 @@ flf_d_printf("display_dir: %d, char_under_cursor: [%c], depth_increase: %d\n",
 					 match_byte_idx, match_byte_idx + match_len,
 					 &left_byte_idx, &right_byte_idx) > 0) {
 						// select color by depth
-						set_color_for_bracket_hl(depth_increase, &zero_occurance, prev_depth);
+						set_color_for_bracket_hl(depth_increase, &zero_occurances, prev_depth);
 						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 						match_len = 0;	// clear match_len so that go to next bracket
 						break;
@@ -620,7 +621,7 @@ flf_d_printf("display_dir: %d, char_under_cursor: [%c], depth_increase: %d\n",
 		 ((-MAX_BRACKET_NESTINGS < depth) && (depth < MAX_BRACKET_NESTINGS))
 		  && (safe_cnt < MAX_BRACKET_HL);
 		 safe_cnt++) {
-			match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
+			int match_len = search_bracket_in_buffer(&match_line, &match_byte_idx,
 			 char_under_cursor, needle, FORWARD_SEARCH, skip_here, depth_increase,
 			 &depth, &prev_depth);
 			skip_here = 1;
@@ -638,7 +639,7 @@ flf_d_printf("display_dir: %d, char_under_cursor: [%c], depth_increase: %d\n",
 					 match_byte_idx, match_byte_idx + match_len,
 					 &left_byte_idx, &right_byte_idx) > 0) {
 						// select color by depth
-						set_color_for_bracket_hl(depth_increase, &zero_occurance, prev_depth);
+						set_color_for_bracket_hl(depth_increase, &zero_occurances, prev_depth);
 						output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 						match_len = 0;	// clear match_len so that go to next bracket
 						break;

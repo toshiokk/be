@@ -56,7 +56,6 @@ int load_file_into_new_buf(const char *full_path, int flags)
 	}
 	// successfully loaded into new buffer
 
-	lock_epc_buf_if_file_already_locked((flags & FOL1) == 0);
 	append_magic_line();
 	buf_set_view_x_cur_line(get_epc_buf(), 0, CUR_EDIT_BUF_TOP_LINE);
 	buf_set_view_x_cur_line(get_epc_buf(), 1, CUR_EDIT_BUF_TOP_LINE);
@@ -98,6 +97,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int flags)
 			return -1;	// open error
 		}
 		create_edit_buf(full_path);
+		lock_epc_buf_if_file_already_locked((flags & FOL1) == 0);
 		disp_status_bar_ing(_("New File"));
 		return MAX_LINES_LOADABLE+1;		// new file (0 line)
 	}
@@ -120,6 +120,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int flags)
 	// regular file
 	disp_status_bar_ing(_("Reading File %s ..."), shrink_str_to_scr_static(full_path));
 	create_edit_buf(full_path);
+	lock_epc_buf_if_file_already_locked((flags & FOL1) == 0);
 	// set a edit-buffer not saveable if requested
 	SET_CUR_EBUF_STATE(buf_MODE, (flags & RDOL1) ? buf_MODE_RO : 0);
 	// memorize orginal file stat
@@ -129,7 +130,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int flags)
 
 	if (ret < 0) {
 		free_cur_edit_buf();
-		return -1;
+		return ret;
 	}
 	return ret;		// >= 0: loaded(lines)
 }
@@ -207,35 +208,34 @@ int input_new_file_name__ask(char *file_path)
 	return 1;		// input
 }
 
-int backup_and_save_cur_buf(const char *file_path_to)
+int backup_and_save_cur_buf(const char *file_path)
 {
 	// TODO: do minimum check
 	//  file_path is regular file and not dir and special file
-	if (is_path_regular_file(file_path_to) == 0) {
+	if (is_path_regular_file(file_path) == 0) {
 		disp_status_bar_err(_("File [%s] is NOT regular file !!"),
-		 shrink_str_to_scr_static(file_path_to));
+		 shrink_str_to_scr_static(file_path));
 		return -1;
 	}
 	disp_status_bar_ing(_("Writing File %s ..."),
-	 shrink_str_to_scr_static(file_path_to));
+	 shrink_str_to_scr_static(file_path));
 	if (GET_APPMD(ed_BACKUP_FILES)) {
-		if (backup_files(file_path_to, get_backup_files()) < 0) {
+		if (backup_files(file_path, get_backup_files()) < 0) {
 			return -1;
 		}
 	}
 
-	int lines_written = save_cur_buf_to_file(file_path_to);
+	int lines_written = save_cur_buf_to_file(file_path);
 
 	if (S_ISREG(get_epc_buf()->orig_file_stat.st_mode)) {
 		int mask = get_epc_buf()->orig_file_stat.st_mode & 07777;
-		if (chmod(file_path_to, mask) < 0) {
+		if (chmod(file_path, mask) < 0) {
 			disp_status_bar_err(_("Can not set permissions %1$o on [%2$s]: %3$s"),
-			 mask, shrink_str_to_scr_static(file_path_to), strerror(errno));
+			 mask, shrink_str_to_scr_static(file_path), strerror(errno));
 		}
 	}
-
 	// file was overwritten, get current file stat into orig_file_stat
-	stat(buf_get_file_path(get_epc_buf(), NULL), &(get_epc_buf()->orig_file_stat));
+	buf_get_file_stat(get_epc_buf());
 	update_cur_buf_crc();
 
 	disp_status_bar_ing(P_(_("%d line written"),
@@ -364,7 +364,13 @@ int save_buf_to_file(be_buf_t *buf, const char *file_path)
 	return ret;
 }
 
+PRIVATE int save_cur_buf_to_file__(const char *file_path);
 int save_cur_buf_to_file(const char *file_path)
+{
+	int ret = save_cur_buf_to_file__(file_path);
+	return ret;
+}
+PRIVATE int save_cur_buf_to_file__(const char *file_path)
 {
 #ifdef USE_NKF
 	const char *nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
@@ -428,12 +434,11 @@ int save_cur_buf_to_file(const char *file_path)
 #ifdef USE_NKF
 PRIVATE int guess_encoding_by_nkf(const char *full_path)
 {
-	char buffer[MAX_PATH_LEN+1];
-	FILE *fp;
-
 	CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
 	// No encoding specified in the command line
+	char buffer[MAX_PATH_LEN+1];
 	snprintf_(buffer, MAX_PATH_LEN+1, "nkf -g \"%s\"", full_path);
+	FILE *fp;
 	if ((fp = popen(buffer, "r")) <= 0) {
 		disp_status_bar_err(_("Can not read-open file [%s]: %s"),
 		 shrink_str_to_scr_static(full_path), strerror(errno));
@@ -556,11 +561,11 @@ PRIVATE int my_guess_utf8_file(const char *full_path)
 }
 PRIVATE int load_file_into_cur_buf_nkf(const char *full_path, const char *nkf_options)
 {
-	char buffer[MAX_PATH_LEN+1];
-	FILE *fp;
 	int lines;
 
+	char buffer[MAX_PATH_LEN+1];
 	snprintf_(buffer, MAX_PATH_LEN+1, "nkf %s \"%s\"", nkf_options, full_path);
+	FILE *fp;
 	if ((fp = popen(buffer, "r")) <= 0) {
 		disp_status_bar_err(_("Can not read-open file [%s]: %s"),
 		 shrink_str_to_scr_static(full_path), strerror(errno));
@@ -743,9 +748,8 @@ PRIVATE int fgetc_buffered(FILE *fp)
 PRIVATE int save_cur_buf_to_file_nkf(const char *file_path, const char *nkf_options)
 {
 	char buffer[MAX_PATH_LEN+1] = "";
-	FILE *fp = 0;
-
 	snprintf_(buffer, MAX_PATH_LEN+1, "nkf %s >\"%s\"", nkf_options, file_path);
+	FILE *fp = 0;
 	if ((fp = popen(buffer, "w")) <= 0) {
 		disp_status_bar_err(_("Can not write-open file [%s]: %s"),
 		 shrink_str_to_scr_static(file_path), strerror(errno));
@@ -862,7 +866,7 @@ PRIVATE int cnt_files_loaded = -1;	// -1: no file switched/loaded, 0: switched, 
 void clear_files_loaded(void)
 {
 #ifdef ENABLE_HISTORY
-	if (update_history_dir_operate()) {		_WARNING_	}
+	if (dir_history_fix()) { _WARNING_ }
 #endif // ENABLE_HISTORY
 	cnt_files_loaded = -1;
 }

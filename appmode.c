@@ -39,9 +39,6 @@ void init_app_mode(void)
 #ifdef ENABLE_RC
 	SET_APPMD(app_RCFILE);
 #endif // ENABLE_RC
-#ifdef ENABLE_HISTORY
-	SET_APPMD(app_HISTORY);
-#endif // ENABLE_HISTORY
 	CLR_APPMD(app_DRAW_CURSOR);
 #ifdef ENABLE_HIGH_BGC
 	CLR_APPMD(app_HIGH_BGC);

@@ -329,6 +329,12 @@ int tio_differentiate_fgc_from_bgc(int bgc, int fgc)
 	if ((bgc == CL_DG) && (fgc == CL_BR)) {
 		fgc = CL_GY;
 	}
+	if ((bgc == CL_WH) && (fgc == CL_YL)) {
+		fgc = CL_BR;
+	}
+	if ((bgc == CL_YL) && (fgc == CL_WH)) {
+		fgc = CL_GY;
+	}
 #endif
 	return fgc;
 }
@@ -458,12 +464,12 @@ void dump_term_settings(char *msg, struct termios *term)
 
 void save_term_settings(struct termios *term_settings)
 {
-	/* First back up the old settings so they can be restored, duh */
+	// First back up the old settings so that they can be restored later
 	tcgetattr(STDIN_FILENO, term_settings);
 }
 void restore_term_settings(struct termios *term_settings)
 {
-	/* Restore the old term settings */
+	// Restore the old term settings
 	tcsetattr(STDIN_FILENO, TCSANOW, term_settings);
 }
 

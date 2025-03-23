@@ -208,7 +208,7 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 		check_filer_cur_dir();
 #ifdef ENABLE_HISTORY
 		if (strcmp(prev_cur_dir, get_cur_filer_pane_view()->cur_dir) != 0) {
-			update_history_dir_change(get_cur_filer_pane_view()->cur_dir, "");
+			dir_history_append_temporarily(get_cur_filer_pane_view()->cur_dir);
 			strlcpy__(prev_cur_dir, get_cur_filer_pane_view()->cur_dir, MAX_PATH_LEN);
 		}
 #endif // ENABLE_HISTORY
@@ -490,7 +490,7 @@ PRIVATE void disp_status_bar_filer()
 
 PRIVATE void adjust_top_file_idx(filer_view_t *fv)
 {
-	// keep row position of current file as same as possible
+	// keep row position of the current file as same as possible
 	int disp_line_idx_to_keep = MIN_MAX_(filer_vert_scroll_margin_lines(),
 	 fv->prev_file_idx - fv->top_file_idx,
 	 filer_win_get_file_list_lines() - filer_vert_scroll_margin_lines() - 1);

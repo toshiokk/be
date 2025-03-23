@@ -101,7 +101,7 @@ typedef struct be_buf_t {
 
 	char file_path_[MAX_PATH_LEN+1];	//!< relative file path (use this as a file accessor)
 	struct stat orig_file_stat;			//!< original file status
-	unsigned short orig_file_crc;		//!< file CRC before modification
+	UINT16 orig_file_crc;		//!< file CRC before modification / expiration timer
 
 	be_line_t top_anchor;		//!< top line
 	be_line_t bot_anchor;		//!< bottom line
@@ -202,7 +202,7 @@ int buf_guess_tab_size(be_buf_t *buf);
 
 int buf_count_lines(be_buf_t *buf, int max_lines);
 
-void buf_clear_orig_file_mtime(be_buf_t *buf);
+int buf_get_file_stat(be_buf_t *buf);
 int buf_has_orig_file_updated(be_buf_t *buf);
 
 const char *buf_mode_str(be_buf_t *buf);
@@ -220,7 +220,10 @@ be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num);
 
 void buf_update_crc(be_buf_t *buf);
 int buf_check_crc(be_buf_t *buf);
-unsigned short buf_calc_crc(be_buf_t *buf);
+UINT16 buf_calc_crc(be_buf_t *buf);
+
+void buf_set_save_pending_timer(be_buf_t *buf, UINT16 timer);
+UINT16 buf_get_save_pending_timer(be_buf_t *buf);
 
 int buf_count_buf(be_buf_t *buf);
 be_buf_t *buf_make_buf_intermediate(be_buf_t *buf);

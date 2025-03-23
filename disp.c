@@ -68,7 +68,7 @@ void disp_status_bar_warn(const char *msg, ...)
 	va_start(ap, msg);
 	disp_status_bar_percent_va(S_B_D_WARN, msg, ap);
 	va_end(ap);
-	tio_beep();
+///	tio_beep();
 }
 void disp_status_bar_err(const char *msg, ...)
 {
@@ -76,7 +76,7 @@ void disp_status_bar_err(const char *msg, ...)
 	va_start(ap, msg);
 	disp_status_bar_percent_va(S_B_D_ERR, msg, ap);
 	va_end(ap);
-	tio_beep();
+///	tio_beep();
 }
 void disp_status_bar_done(const char *msg, ...)
 {

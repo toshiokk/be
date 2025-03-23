@@ -84,7 +84,7 @@ int dof_bottom_of_list(void)
 int dof_refresh_filer(void)
 {
 #ifdef ENABLE_HISTORY
-	if (update_history_dir_operate()) {		_WARNING_	}
+	if (dir_history_fix()) { _WARNING_ }
 #endif // ENABLE_HISTORY
 	disp_status_bar_done(_("File view refreshed"));
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
@@ -457,7 +457,6 @@ int dof_drop_files_to_do_action_(int action)
 int dof_rename_file(void)
 {
 	char file_name[MAX_PATH_LEN+1];
-
 	strlcpy__(file_name, get_cur_fv_cur_file_ptr()->file_name, MAX_PATH_LEN);
 	if (chk_inp_str_ret_val_filer(input_string_pos(file_name, file_name, MAX_PATH_LEN,
 	 HISTORY_TYPE_IDX_EXEC,
@@ -623,7 +622,7 @@ int dof_unzip_file(void)
 		ret = ask_yes_no(ASK_YES_NO, _("Unzip file %s ?"),
 		 get_cur_fv_cur_file_ptr()->file_name);
 	} else {
-		ret = ask_yes_no(ASK_YES_NO, _("Unzip %d files 0 ?"),
+		ret = ask_yes_no(ASK_YES_NO, _("Unzip %d files ?"),
 		 files_selected);
 	}
 	if (ret <= 0) {
@@ -800,7 +799,7 @@ int dof_select_all_files(void)
 void disp_files_selected()
 {
 #ifdef ENABLE_HISTORY
-	if (update_history_dir_operate()) {		_WARNING_	}
+	if (dir_history_fix()) { _WARNING_ }
 #endif // ENABLE_HISTORY
 	int files_selected = get_files_selected_cfv();
 	disp_status_bar_done(P_(_("%d file selected"),
@@ -813,14 +812,17 @@ void disp_files_selected()
 PRIVATE int dof_quit_filer_(void);
 int dof_quit_filer(void)
 {
-	////if ((get_app_stack_depth() == 0) && count_cut_bufs()) {
-	////	int ret = ask_yes_no(ASK_YES_NO | ASK_END,
-	////	 _("Are you OK to quit %s ?"), APP_LONG_NAME);
-	////	if ((ret != ANSWER_YES) && (ret != ANSWER_END)) {
-	////		disp_status_bar_done(_("Cancelled"));
-	////		return 0;
-	////	}
-	////}
+////#define ASK_ON_EXIT
+#ifdef ASK_ON_EXIT
+	if ((get_app_stack_depth() == 0) && count_cut_bufs()) {
+		int ret = ask_yes_no(ASK_YES_NO | ASK_END,
+		 _("Are you OK to quit %s ?"), APP_LONG_NAME);
+		if ((ret != ANSWER_YES) && (ret != ANSWER_END)) {
+			disp_status_bar_done(_("Cancelled"));
+			return 0;
+		}
+	}
+#endif // ASK_ON_EXIT
 	return dof_quit_filer_();
 }
 int dof_quit_home_dir(void)
@@ -833,7 +835,7 @@ int dof_quit_home_dir(void)
 PRIVATE int dof_quit_filer_(void)
 {
 #ifdef ENABLE_HISTORY
-	if (update_history_dir_operate()) {		_WARNING_	}
+	if (dir_history_fix()) { _WARNING_ }
 #endif // ENABLE_HISTORY
 	disp_status_bar_done(_("Quit filer"));
 	filer_do_next = EF_QUIT;

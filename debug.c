@@ -146,11 +146,9 @@ void output_last_d_printf(void)
 {
 #ifdef RING_BUF_LINES
 	FILE *fp;
-	int lines;
-
 	if ((fp = fopen("becrash.log", "w")) == NULL)
 		return;
-	for (lines = 0; lines < RING_BUF_LINES; lines++) {
+	for (int lines = 0; lines < RING_BUF_LINES; lines++) {
 		fprintf(fp, "%s", ring_buffer[ring_buf_idx]);
 		if (++ring_buf_idx >= RING_BUF_LINES)
 			ring_buf_idx = 0;

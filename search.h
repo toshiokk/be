@@ -22,8 +22,6 @@
 #ifndef search_h
 #define search_h
 
-extern char last_searched_needle[MAX_PATH_LEN+1];
-
 extern search_t search__;
 extern matches_t matches__;
 
@@ -50,7 +48,7 @@ int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 
 int prepare_colors_for_bracket_hl();
 int get_colors_for_bracket_hl();
-void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurance, int depth);
+void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurances, int depth);
 void get_color_for_bracket_hl(int color_idx, char *fgc, char *bgc);
 
 #endif // ENABLE_REGEX

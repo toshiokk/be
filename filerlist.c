@@ -538,21 +538,20 @@ PRIVATE int comp_file_info(const void *aa, const void *bb)
 PRIVATE int comp_file_info_(const void *aa, const void *bb)
 {
 	int ret;
-
 	switch (GET_APPMD(fl_FILE_SORT_BY)) {
 	default:
 	case FILE_SORT_BY_NAME:
 	case FILE_SORT_BY_NAME_REV:
-		if ((ret = comp_file_name(aa, bb)))			{	return ret;		}
-		if ((ret = comp_file_extension(aa, bb)))	{	return ret;		}
+		if ((ret = comp_file_name(aa, bb)))			{ return ret; }
+		if ((ret = comp_file_extension(aa, bb)))	{ return ret; }
 		return ret;
 	case FILE_SORT_BY_EXT:
 	case FILE_SORT_BY_EXT_REV:
 		if ((ret = comp_file_executable((file_info_t *)aa, (file_info_t *)bb))) {
 			return ret;
 		}
-		if ((ret = comp_file_extension(aa, bb)))	{	return ret;		}
-		if ((ret = comp_file_name(aa, bb)))			{	return ret;		}
+		if ((ret = comp_file_extension(aa, bb)))	{ return ret; }
+		if ((ret = comp_file_name(aa, bb)))			{ return ret; }
 		return ret;
 	case FILE_SORT_BY_TIME:
 	case FILE_SORT_BY_TIME_REV:
@@ -739,8 +738,7 @@ int get_next_file_idx_selected(int file_idx)
 }
 void unselect_all_files_auto(char selection_bit)
 {
-	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_list_entries;
-	 file_idx++) {
+	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_list_entries; file_idx++) {
 		get_cur_fv_file_ptr(file_idx)->selected
 		 = get_cur_fv_file_ptr(file_idx)->selected & ~selection_bit;
 	}

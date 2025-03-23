@@ -230,15 +230,13 @@ void remalloc_and_null_terminate_length(char **ptr, size_t len)
 //=============================================================================
 
 #define POLYNOMIAL_CRC16CCITT	0x1021
-unsigned short crc16ccitt = 0xffff;
+PRIVATE UINT16 crc16ccitt = 0xffff;
 
-unsigned short clear_crc16ccitt(void)
+void clear_crc16ccitt(void)
 {
 	crc16ccitt = 0xffff;
-	return crc16ccitt;
 }
-
-unsigned short calc_crc16ccitt(unsigned char byte)
+void calc_crc16ccitt(UINT8 byte)
 {
 	int cnt;
 	int do_xor;
@@ -255,6 +253,9 @@ unsigned short calc_crc16ccitt(unsigned char byte)
 			crc16ccitt ^= POLYNOMIAL_CRC16CCITT;
 		byte <<= 1;
 	}
+}
+UINT16 get_crc16ccitt(void)
+{
 	return crc16ccitt;
 }
 //------------------------------------------------------------------------------
@@ -432,14 +433,14 @@ int int_max(int aa, int bb)
 int get_mem_free_in_kb(int update)
 {
 	static int kb = 256 * 1024;		// 256 MB
-	FILE *fp;
-	char buffer[100+1];
-	char buf[100+1];
 
 	if (update) {
+		FILE *fp;
 		if ((fp = fopen("/proc/meminfo", "r")) != NULL) {
+			char buffer[100+1];
 			while (fgets(buffer, 100, fp) != 0) {
 				if (strncmp(buffer, "MemFree:", 8) == 0) {
+					char buf[100+1];
 					if (sscanf(buffer, "%10s %d", buf, &kb) >= 2) {
 						break;
 					}

@@ -76,7 +76,7 @@ int dof_exec_command_with_file(void)
 			 ptr_replace - buffer, STR_TO_BE_REPLACED_WITH_FILE_NAME_LEN,
 			 quote_file_path_static(get_cur_fv_file_ptr(file_idx)->file_name), -1);
 		}
-		exit_status = fork_exec_sh_c_repeat(SEPARATE1 | logging, buffer);
+		exit_status = fork_exec_sh_c_repeat(SEPARATE1 | logging | LOGGING2, buffer);
 	}
 	end_fork_exec_repeat(exit_status);
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
@@ -105,14 +105,14 @@ int dof_exec_command_with_files(void)
 	if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
 		logging = LOGGING2;	// set logging ON
 	}
-	fork_exec_sh_c_once(logging | PAUSE1, command_str);
+	fork_exec_sh_c_once(logging | PAUSE1 | LOGGING2, command_str);
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
 
 #define RUN_MOD_MASK	0x0f
-#define RUN_WITH_LOG	0x10
-#define RUN_SOON		0x20
+#define RUN_SOON		0x10
+#define RUN_WITH_LOG	0x20
 int dof_run_command_rel()
 {
 	struct stat *st_ptr = &get_cur_fv_cur_file_ptr()->st;
@@ -292,8 +292,8 @@ int fork_exec_args_repeat(int flags, ...)
 	return fork_exec_args(SETTERM0 | flags | PAUSE0, args);
 }
 
-// convert va_list to "char *argv[]"
-// Note: va_list and args are opposite in the order.
+// convert "va_list" to "char *argv[]"
+// Note: "va_list" and "args" are opposite in the order of the arguments.
 PRIVATE int args_from_va_list(char **args, va_list ap)
 {
 	int arg_idx;
@@ -314,7 +314,7 @@ PRIVATE int fork_exec_args(int flags, char * const args[])
 	const char *command = exec_args_to_str(args);
 #ifdef ENABLE_HISTORY
 	update_history(HISTORY_TYPE_IDX_EXEC, command);
-mflf_d_printf("exec: [%s]\n", command);
+	mflf_d_printf("exec: [%s]\n", command);
 #endif // ENABLE_HISTORY
 	return fork_exec_before_after(flags | LOGGING0, command, args);
 }
@@ -349,27 +349,31 @@ int send_to_system_clipboard()
 
 int fork_exec_sh_c(int flags, const char *command)
 {
-	char *args[MAX_EXECV_ARGS+1];
-	char buffer[MAX_PATH_LEN+1] = "";
+	char * args[MAX_EXECV_ARGS+1];
 
 	if (flags & SETTERM1) {
 		clear_fork_exec_counter();
 	}
-	// sh -c "command ..."
-#define SH_PROG			"sh"
-#define TEE_PROG_APPEND	"tee -a"
-	args[0] = SH_PROG;
-	args[1] = "-c";
+
 	if ((flags & LOGGING3) == 0) {
+		// "sh -c <command ...>"
+#define SH_PROG			"sh"
+		args[0] = SH_PROG;
+		args[1] = "-c";
 		args[2] = (char *)command;
+		args[3] = NULL;
 	} else {
-		// sh -c "command ... 2>&1 | tee    /home/user/.be/1.long"
-		// sh -c "command ... 2>&1 | tee -a /home/user/.be/1.long"
-		snprintf_(buffer, MAX_PATH_LEN, "%s 2>&1 | %s %s",
-		 command, TEE_PROG_APPEND, get_exec_log_file_path());
-		args[2] = (char *)buffer;
+		// "script -q -O <log_file> -a -c <command ...>"
+#define SCRIPT_PROG		"script"
+		args[0] = SCRIPT_PROG;
+		args[1] = "-q";
+		args[2] = "-O";
+		args[3] = (char *)get_exec_log_file_path();
+		args[4] = "-a";
+		args[5] = "-c";
+		args[6] = (char *)command;
+		args[7] = NULL;
 	}
-	args[3] = NULL;
 
 	mflf_d_printf("logging: %d, exec: {{%s} {%s} {%s}}\n",
 	 (flags & LOGGING3), args[0], args[1], args[2]);
@@ -385,7 +389,7 @@ int fork_exec_sh_c(int flags, const char *command)
 PRIVATE int fork_exec_before_after(int flags, const char *command, char * const args[])
 {
 #ifdef ENABLE_HISTORY
-	if (update_history_dir_operate()) {		_WARNING_	}
+	if (dir_history_fix()) { _WARNING_ }
 #endif // ENABLE_HISTORY
 	if ((flags & SETTERM1) && get_fork_exec_counter() == 0) {
 		restore_term_for_shell();
@@ -393,9 +397,7 @@ PRIVATE int fork_exec_before_after(int flags, const char *command, char * const 
 	if ((flags & SEPARATE1) && (get_fork_exec_counter() == 0)) {
 		char header[MAX_PATH_LEN+1];
 		snprintf(header, MAX_PATH_LEN, "== %c%s%c%c %s ==\n",
-		 (flags & LOGGING3) ? '<' : '[',
-		 full_path_of_cur_dir_s(),
-		 (flags & LOGGING3) ? '>' : ']',
+		 (flags & LOGGING3) ? '<' : '[', full_path_of_cur_dir_s(), (flags & LOGGING3) ? '>' : ']',
 		 (geteuid() == 0) ? '#' : '$', command);
 		// output separator line to log file
 		if (flags & LOGGING3) {
@@ -432,6 +434,9 @@ PRIVATE int fork_exec_before_after(int flags, const char *command, char * const 
 		reinit_term_for_filer();
 	}
 	inc_fork_exec_counter();
+	if (flags & LOGGING3) {
+		write_text_to_file(get_exec_log_file_path(), 1, "\n");
+	}
 	return exit_status;
 }
 
@@ -459,9 +464,8 @@ void pause_after_exec(int exit_status)
 			break;
 	}
 	fcntl(STDIN_FILENO, F_SETFL, 0);				// block in getchar()
-	printf(
-//12345678901234567890123456789012345678901234567890123456789012345678901234567890
- "======== Hit any key to return to %s ======== ", APP_NAME);
+	//      12345678901234567890123456789012345678901234567890123456789012345678901234567890
+	printf("======== Hit any key to return to %s ======== ", APP_NAME);
 	fflush(stdout);
 	getchar();
 	printf("\n");

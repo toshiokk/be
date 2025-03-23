@@ -21,10 +21,27 @@
 
 #include "headers.h"
 
+#ifndef ENABLE_HISTORY
+PRIVATE char last_searched_needle[MAX_PATH_LEN+1] = "";
+#endif // ENABLE_HISTORY
+
+void set_last_searched_needle(const char* needle)
+{
+#ifndef ENABLE_HISTORY
+	strlcpy__(last_searched_needle, needle, MAX_PATH_LEN);
+#endif // ENABLE_HISTORY
+}
+const char* get_last_searched_needle()
+{
+#ifdef ENABLE_HISTORY
+	return history_last_line_str(HISTORY_TYPE_IDX_SEARCH);
+#else // ENABLE_HISTORY
+	return last_searched_needle;
+#endif // ENABLE_HISTORY
+}
+
 #define SEARCH0		0
 #define REPLACE1	1
-
-char last_searched_needle[MAX_PATH_LEN+1] = "";	// Last search string
 
 PRIVATE int found_in_prev_search = 1;
 PRIVATE int direction_of_prev_search = 0;
@@ -63,12 +80,12 @@ PRIVATE int doe_search_first_(void)
 int doe_search_backward_next(void)
 {
 	SET_APPMD(ed_REVERSE_SEARCH);
-	return search_string_once(last_searched_needle, 0);
+	return search_string_once(get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH), 0);
 }
 int doe_search_forward_next(void)
 {
 	CLR_APPMD(ed_REVERSE_SEARCH);
-	return search_string_once(last_searched_needle, 0);
+	return search_string_once(get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH), 0);
 }
 
 //------------------------------------------------------------------------------
@@ -129,13 +146,14 @@ int doe_replace(void)
 // search0_replace1 = 0: search, 1: replace
 int input_search_str(int search0_replace1, char *input_buf)
 {
+	const char* last_needle = get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH);
 	char default_needle[MAX_PATH_LEN+1];
 
-	if (strlen(last_searched_needle)) {
+	if (strlen(last_needle)) {
 		// We use central_win_get_columns() / 3 here because we need to see more on the line
 		snprintf(default_needle, MAX_PATH_LEN+1, "(%.*s%s)",
-		 central_win_get_columns() / 3, last_searched_needle,
-		 strlen(last_searched_needle) > central_win_get_columns() / 3 ? "..." : "");
+		 central_win_get_columns() / 3, last_needle,
+		 strlen(last_needle) > central_win_get_columns() / 3 ? "..." : "");
 	} else {
 		strcpy__(default_needle, "");
 	}
@@ -158,7 +176,7 @@ int input_search_str(int search0_replace1, char *input_buf)
 	}
 	if (strlen(input_buf) == 0) {
 		// nothing input, get last searched string
-		strlcpy__(input_buf, last_searched_needle, MAX_PATH_LEN);
+		strlcpy__(input_buf, last_needle, MAX_PATH_LEN);
 	}
 #ifdef ENABLE_REGEX
 	if (GET_APPMD(ed_USE_REGEXP)) {
@@ -171,6 +189,7 @@ int input_search_str(int search0_replace1, char *input_buf)
 		}
 	}
 #endif // ENABLE_REGEX
+	set_last_searched_needle(input_buf);
 	return 1;							// input normally
 }
 
@@ -182,6 +201,7 @@ int input_replace_str(char *input_buf)
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
 		return 0;
 	}
+	set_last_searched_needle(input_buf);
 	return 1;
 }
 
@@ -202,19 +222,16 @@ PRIVATE int search_needle_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 // Search for a string
 int search_string_once(const char *needle, int search_count)
 {
-	int match_len;
+	const char* last_needle = get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH);
 
 	if (found_in_prev_search == 0 && direction_of_prev_search == SEARCH_DIR()
 	 && line_of_prev_search == EPCBVC_CL && byte_idx_of_prev_search == EPCBVC_CLBI
-	 && strcmp(last_searched_needle, needle) == 0) {
+	 && strcmp(last_needle, needle) == 0) {
 		disp_status_bar_not_found_msg(needle, search_count);
 		return 0;
 	}
-	if (strlen(needle)) {
-		strlcpy__(last_searched_needle, needle, MAX_PATH_LEN);
-	}
 
-	match_len = search_needle_in_buffers(needle,
+	int match_len = search_needle_in_buffers(needle,
 	 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), SKIP_HERE, search_count);
 
 	if (match_len > 0) {
@@ -251,15 +268,10 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 	int num_undone = 0;
 #endif // ENABLE_UNDO
 	int skip_here;
-	int match_len;
 	int ret = 0;
 	long length_change;
 	int prev_ed_REVERSE_SEARCH;
 	key_code_t key;
-
-	if (strlen(needle)) {
-		strlcpy__(last_searched_needle, needle, MAX_PATH_LEN);
-	}
 
 	prev_ed_REVERSE_SEARCH = GET_APPMD(ed_REVERSE_SEARCH);
 	for (skip_here = NO_SKIP_HERE; ; ) {
@@ -269,7 +281,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			skip_here = NO_SKIP_HERE;
 		}
 
-		match_len = search_needle_in_buffers(needle,
+		int match_len = search_needle_in_buffers(needle,
 		 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), skip_here, 0);
 
 		if (match_len) {
@@ -337,7 +349,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 #ifdef ENABLE_UNDO
 				undo_save_after_change();
 #ifdef ENABLE_DEBUG
-				if (check_undo_state_after_change()) {	_WARNING_	}
+				if (check_undo_state_after_change()) { _WARNING_ }
 #endif // ENABLE_DEBUG
 #endif // ENABLE_UNDO
 				// Set the cursor at the last character of the replacement
@@ -377,7 +389,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 	*num_replaced_ = num_replaced;
 	if (num_replaced && strlen(replace_to)) {
 		// copy [string replace_to] ==> [next string to search]
-		strlcpy__(last_searched_needle, replace_to, MAX_PATH_LEN);
+		set_last_searched_needle(replace_to);
 	}
 	return ret;
 }
@@ -447,7 +459,6 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair)
 	be_line_t *line;
 	int byte_idx;
 	int depth;
-	int match_len;
 	int skip_here;
 	int safe_cnt = 0;
 
@@ -469,6 +480,7 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair)
 	memorize_cursor_pos_before_move();
 
 	skip_here = 0;
+	int match_len;
 	for (match_len = 0, depth = 0, safe_cnt = 0; safe_cnt < MAX_BRACKETS_SEARCH; safe_cnt++) {
 		match_len = search_bracket_in_buffer(&line, &byte_idx,
 		 char_under_cursor, needle, search_dir, skip_here, FORWARD_DIR, &depth, NULL);
@@ -628,13 +640,13 @@ int get_colors_for_bracket_hl()
 // BRACKET_HL_TEST       reverse <-- v --> forward
 //              (  (  (  (  )  )  (  (  (  )  )  )  (  (  (  )  )  )  )  )
 // depth       -3 -2 -1  0  0 -1 -1  0  1  1  0 -1 -1  0  1  1  0 -1 -2 -3
-// zero_occurance  -  -  -  -  -  -  1  1  1  2  2  2  3  3  3  4  4  4  4
+// zero_occurances  -  -  -  -  -  -  1  1  1  2  2  2  3  3  3  4  4  4  4
 // color_idx    2  1  8  7  7  8  8  0  1  1  0  7  7  8  1  1  8  7  6  5
 
-// (zero_occurance <  2):  4 5 6 7 0 1 2 3 4 5 6 7 0 ...
-// (zero_occurance >= 2):  5 6 7 8 1 2 3 4 5 6 7 8 1 ...
+// (zero_occurances <  2):  4 5 6 7 0 1 2 3 4 5 6 7 0 ...
+// (zero_occurances >= 2):  5 6 7 8 1 2 3 4 5 6 7 8 1 ...
 
-void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurance, int depth)
+void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurances, int depth)
 {
 	char fgc, bgc;
 	int num_colors_m1 = get_colors_for_bracket_hl() - 1;
@@ -642,7 +654,7 @@ void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurance, int de
 	depth %= num_colors_m1;		// [-num_colors_m1+1, _num_colors_m1-1]
 	depth += num_colors_m1;		// make [0, 2*num_colors_m1-1]
 	depth %= num_colors_m1;		// [0, _num_colors_m1-1]
-	if ((depth_increase < 0) || (*zero_occurance >= 2)) {
+	if ((depth_increase < 0) || (*zero_occurances >= 2)) {
 		// [0, _num_colors_m1-1]
 		depth++;	// shift 1 to avoid 0
 		// [1, _num_colors_m1]
@@ -650,7 +662,7 @@ void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurance, int de
 	get_color_for_bracket_hl(depth, &fgc, &bgc);
 	tio_set_attrs(bgc, fgc, 0);
 	if (depth == 0) {
-		(*zero_occurance)++;
+		(*zero_occurances)++;
 	}
 }
 void get_color_for_bracket_hl(int color_idx, char *fgc, char *bgc)

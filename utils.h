@@ -104,8 +104,9 @@ void remalloc_and_null_terminate_length(char **ptr, size_t len);
 
 //------------------------------------------------------------------------------
 
-unsigned short clear_crc16ccitt(void);
-unsigned short calc_crc16ccitt(unsigned char byte);
+void clear_crc16ccitt();
+void calc_crc16ccitt(UINT8 byte);
+UINT16 get_crc16ccitt();
 
 //------------------------------------------------------------------------------
 #define YYSMMSDD_LEN			8	// "24/12/31"

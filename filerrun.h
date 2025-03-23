@@ -31,7 +31,7 @@
 #define LOGGING0	0x0000						// no logging
 #define LOGGING1	0x0040						// truncate
 #define LOGGING2	0x0080						// append
-#define LOGGING3	((LOGGING1) | (LOGGING2))	// output
+#define LOGGING3	((LOGGING1) | (LOGGING2))	// output (truncate or append)
 
 #ifdef ENABLE_FILER
 

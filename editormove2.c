@@ -146,19 +146,15 @@ void locate_curs_y_in_edit_win(locate_cursor_to_t locate_curs)
 //	+---------------------------------+
 void fix_cursor_y_keeping_vert_scroll_margin(void)
 {
-	int disp_y_preferred;
-	int lines_go_up;
-	be_line_t *line;
-	int byte_idx;
-
 	// keep top/bottom scroll margin
-	disp_y_preferred = MIN_MAX_(
+	int disp_y_preferred = MIN_MAX_(
 	 top_scroll_margin_y(),
 	 EPCBVC_CURS_Y,
 	 bottom_scroll_margin_y());
 
-	line = EPCBVC_CL;
-	byte_idx = EPCBVC_CLBI;
+	be_line_t *line = EPCBVC_CL;
+	int byte_idx = EPCBVC_CLBI;
+	int lines_go_up;
 	for (lines_go_up = 0; lines_go_up < disp_y_preferred; lines_go_up++) {
 		if (cur_line_up(&line, &byte_idx) == 0) {
 			break;
@@ -178,19 +174,13 @@ void memorize_cursor_pos_before_move(void)
 }
 int get_disp_y_after_cursor_move(void)
 {
-	int cur_wl_idx;
-	be_line_t *line;
-	int byte_idx;
-	int wl_idx;
-	int yy;
-
-	cur_wl_idx = start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
+	int cur_wl_idx = start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
 
 	// check if cur_line is in [0, prev_cursor_y]
-	line = prev_cur_line;
-	byte_idx = prev_cur_line_byte_idx;
-	for (yy = prev_cursor_y; yy >= 0; yy--) {
-		wl_idx = start_wl_idx_of_wrap_line(line->data, byte_idx, -1);
+	be_line_t *line = prev_cur_line;
+	int byte_idx = prev_cur_line_byte_idx;
+	for (int yy = prev_cursor_y; yy >= 0; yy--) {
+		int wl_idx = start_wl_idx_of_wrap_line(line->data, byte_idx, -1);
 		if (line == EPCBVC_CL && wl_idx == cur_wl_idx) {
 			// found in screen
 			return yy;
@@ -203,8 +193,8 @@ int get_disp_y_after_cursor_move(void)
 	// check if cur_line is in [prev_cursor_y, edit_win_get_text_lines()]
 	line = prev_cur_line;
 	byte_idx = prev_cur_line_byte_idx;
-	for (yy = prev_cursor_y; yy < edit_win_get_text_lines(); yy++) {
-		wl_idx = start_wl_idx_of_wrap_line(line->data, byte_idx, -1);
+	for (int yy = prev_cursor_y; yy < edit_win_get_text_lines(); yy++) {
+		int wl_idx = start_wl_idx_of_wrap_line(line->data, byte_idx, -1);
 		if (line == EPCBVC_CL && wl_idx == cur_wl_idx) {
 			// found in screen
 			return yy;	// current line is in previous screen
@@ -221,7 +211,6 @@ int get_disp_y_after_cursor_move(void)
 int get_edit_win_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *byte_idx)
 {
 	int line_cnt = 0;
-	int wl_idx;
 
 	if (_cl_->data == NULL) {
 		*line = _cl_;
@@ -229,7 +218,7 @@ int get_edit_win_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **lin
 		return 0;
 	}
 	te_concat_linefeed(_cl_->data);
-	wl_idx = start_wl_idx_of_wrap_line(te_concat_lf_buf, _clbi_, -1);
+	int wl_idx = start_wl_idx_of_wrap_line(te_concat_lf_buf, _clbi_, -1);
 	for ( ; ; ) {
 		if (yy <= 0) {
 			break;
@@ -335,9 +324,9 @@ flf_d_printf("disp_width: %d, text_width: %d, margin: %d, cursor_text_x: %d, min
 // |-------------|-----------|-----------|
 // |  0--5       |-35~-30 / 0|-5~0  /   0|
 // |  6--10      |-31~-25 / 0| 1~5  / 1~5|
-// | 11--15      |-24~-20 / 0|6~10  /0~10|
+// | 11--15      |-24~-20 / 0| 6~10 /0~10|
 // | 16--34      |-19~0   / 0|11~39 /  10|
-// | 35--44      |1~9   / 1~9|40~49 /  10|
+// | 35--44      | 1~9  / 1~9|40~49 /  10|
 // | 45--50      |10~15 /  10|50    /  10|
 
 // C: cursor_text_x, <: left-most, >: right-most, <--->: horizontal-margin

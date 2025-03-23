@@ -183,9 +183,9 @@ func_key_list_t editor_func_key_table[] = {
  { EFNM_EXEC, "Playback-string",     "Playback input string",
    {K_M_3,        KNA, KNA}, F_I(doe_playback_string), get_str_setting_none },
 #endif // ENABLE_HISTORY
- { EFAM_EXEC, "Run line soon",       "Run current line soon",
-   {K_M_x,        KNA, KNA}, F_I(doe_run_line_soon), get_str_setting_none },
  { EFAM_EXEC, "Run line soon(w/ logging)", "Run current line soon w/ log",
+   {K_M_x,        KNA, KNA}, F_I(doe_run_line_soon_w_log), get_str_setting_none },
+ { EFAM_EXEC, "Run command",       " Run command input",
    {K_M_X,        KNA, KNA}, F_I(doe_run_line_input), get_str_setting_none },
 
  { EFNM_EXEC, "",                    "Buffer Menu",

@@ -192,9 +192,7 @@ char *strip_file_from_path(const char *path, char *dir)
 char *get_file_name_extension(char *file_name)
 {
 	char *last_period = NULL;
-	char *ptr;
-
-	ptr = file_name;
+	char *ptr = file_name;
 	if (*ptr == '.') {
 		// "." ==> ""
 		// ".filename" ==> "filename"
@@ -600,9 +598,7 @@ char *get_abs_path(const char *path, char *buf)
 {
 	char full_path[MAX_PATH_LEN+1];
 	get_full_path(path, full_path);			// --> full_path
-flf_d_printf("full_path: [%s]\n", full_path);
 	get_real_path(full_path, buf);			// --> abs path (real path)
-flf_d_printf("buf: [%s]\n", buf);
 	return buf;
 }
 
@@ -647,9 +643,7 @@ char *get_full_path(const char *path, char *buf)
 		// "filename..."   ==> "/home/user/tools/..."
 		// "./filename..." ==> "/home/user/tools/..."
 		cat_dir_and_file(buf, full_path_of_cur_dir_s(), path);
-flf_d_printf("buf: [%s]\n", buf);
 	}
-flf_d_printf("buf: [%s]\n", buf);
 	normalize_full_path(buf);
 	return buf;
 }
