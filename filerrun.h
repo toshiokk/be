@@ -67,8 +67,6 @@ void pause_after_exec(int exit_status);
 int restore_term_for_shell(void);
 int reinit_term_for_filer(void);
 
-const char *get_exec_log_file_path();
-
 #endif // filerrun_h
 
 // End of filerrun.h

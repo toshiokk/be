@@ -84,6 +84,7 @@ int is_path_regular_file(const char *path);
 int is_path_dir(const char *path);
 int is_file_writable(const char *path);
 int is_st_writable(struct stat *st);
+ssize_t get_file_size(const char *path);
 int is_dir_readable(const char *path);
 
 char *getcwd__(char *cwd);

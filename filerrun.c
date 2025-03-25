@@ -335,9 +335,9 @@ PRIVATE const char *exec_args_to_str(char * const *args)
 
 //------------------------------------------------------------------------------
 
-#define UP_SYS_CLIPBOARD_CMD	"update-system-clipboard.sh"
 int send_to_system_clipboard()
 {
+#define UP_SYS_CLIPBOARD_CMD	"update-system-clipboard.sh"
 	if (check_wsl()) {
 		tio_set_cursor_pos(central_win_get_status_line_y(), 0);
 		return fork_exec_sh_c(SETTERM0 | SEPARATE0 | PAUSE0 | LOGGING0, UP_SYS_CLIPBOARD_CMD);
@@ -485,20 +485,6 @@ int reinit_term_for_filer(void)
 	tio_resume();
 	tio_fill_screen();
 	return 0;
-}
-//------------------------------------------------------------------------------
-const char *get_exec_log_file_path()
-{
-	// /dev/tty1 => "tty1.log", /dev/pts/1 => "1.log"
-	static char file_path[MAX_PATH_LEN+1] = "";
-	char dir[MAX_PATH_LEN+1];
-	char file[MAX_PATH_LEN+1];
-	if (is_strlen_0(file_path)) {
-		separate_path_to_dir_and_file(get_tty_name(), dir, file);
-		snprintf_(file_path, MAX_PATH_LEN, "%s/%s.log", get_app_dir(), file);
-flf_d_printf("file_path: [%s]\n", file_path);
-	}
-	return file_path;
 }
 
 // End of filerrun.c

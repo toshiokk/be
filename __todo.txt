@@ -6,9 +6,13 @@
 - CRASH: crash
 - POLICY: things to be kept
 
+- [x] reduce_log_file_size()
+- [] such usage "grep "Temper" file.csv | be"
 - [] Make easy to use for other people
-- [xx ] clean up code
-- [d ] Use `typedef` in variable definision (UINT8/UINT16/UINT32/ssize_t/size_t)
+- [xxx ] clean up code
+- [d ] Use `typedef` in variable definition (UINT8/UINT16/UINT32/ssize_t/size_t)
+- [x] 250324 do not append magic-line on loading and do not remove magic-line on saving
+  - [x] 250325 append magic-line on loading 0 byte file and remove magic-line on saving a file which has only one LF
 
 - [x] IMPR: built in logger that output to the separate log files based on the pty number
   - [x] record output from a program that is started execution by filer in sub shell
@@ -20,13 +24,19 @@
     ```
   - [x] Use `script` for logging
   - [x] not include the output from `be` editor itself because it include many confusing escape sequence
+  - [ ] log file name, which is the more convenient ?
+    - [] `/home/user/.be/1.log`
+    - [] `/home/user/.be/yymmdd-hhmmss.log`
+    - [] `/home/user/logs/yymmdd-hhmmss.log`
+  - [ ] automatic deletion of old log files
+  - [ ] automatic reduction of cut_buffer file size
 
 - [x-] 250322 delete `last_searched_needle` ==> necessary when ENABLE_HISTORY disabled
 - [x] 250322 BUG: It causes `PROGERR` to break loading very large file.
 - [x] 250321 on screen resizing, cursor position become out of screen in editor
 - [x] 250321 delete "-h"(app_HISTORY) option
 - [x] 250315 BUG: cursor position does not restored after undo
-- [?] BUG: keyword seach goes to history-buffers
+- [?] BUG: keyword search goes to history-buffers
 - [x] 250316 IMPR: switchable use of hi-background-color at run time not build time by "--hibgc"
   - [x] 250315 add "--enable-highbgc" option to `configure`
 - [x] 250314 no screen size displayed within input_string_pos() on screen resizing

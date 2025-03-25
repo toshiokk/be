@@ -31,6 +31,7 @@ int load_file_into_new_buf(const char *full_path, int flags);
 
 int load_file_into_buf(be_buf_t *buf, const char *full_path);
 
+#define BACKUP_FILE_SUFFIX		"~"
 int backup_and_save_cur_buf_ask(void);
 int input_new_file_name__ask(char *file_path);
 int backup_and_save_cur_buf(const char *file_path);
@@ -43,6 +44,10 @@ int add_files_loaded(int files);
 int get_files_loaded(void);
 void disp_files_loaded_if_ge_0(void);
 void disp_files_loaded(void);
+
+#define MAX_LOG_FILE_SIZE_MB		2								// 2 * n [MB]
+int reduce_log_file_size(const char *file_path, int size_in_mb);
+const char *get_exec_log_file_path();
 
 #endif // fileio_h
 

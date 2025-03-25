@@ -56,7 +56,15 @@ int load_file_into_new_buf(const char *full_path, int flags)
 	}
 	// successfully loaded into new buffer
 
+///#define PROCESS_MAGIC_LINE
+#ifdef PROCESS_MAGIC_LINE
 	append_magic_line();
+#else // PROCESS_MAGIC_LINE
+	if (buf_is_empty(get_epc_buf())) {
+		// if there is no line, at least one line
+		append_magic_line();
+	}
+#endif // PROCESS_MAGIC_LINE
 	buf_set_view_x_cur_line(get_epc_buf(), 0, CUR_EDIT_BUF_TOP_LINE);
 	buf_set_view_x_cur_line(get_epc_buf(), 1, CUR_EDIT_BUF_TOP_LINE);
 	BUFV0_CLBI(get_epc_buf()) = 0;
@@ -72,9 +80,9 @@ int load_file_into_new_buf(const char *full_path, int flags)
 		disp_status_bar_done(_("New file"));		// new file (0 line)
 	} else {
 		disp_status_bar_ing(P_(_("%d line read %s"),
-						   _("%d lines read %s"),
-						   _("%d liness read %s"),
-						   _("%d linesss read %s"),
+							   _("%d lines read %s"),
+							   _("%d liness read %s"),
+							   _("%d linesss read %s"),
 		 lines), lines, buf_eol_str(get_epc_buf()));
 	}
 	return lines;	// >= 0: success
@@ -270,7 +278,7 @@ PRIVATE char *make_backup_file_path(const char *orig_path, char *backup_path, in
 {
 	strlcpy__(backup_path, orig_path, MAX_PATH_LEN);
 	while (depth--)
-		strlcat__(backup_path, MAX_PATH_LEN, "~");
+		strlcat__(backup_path, MAX_PATH_LEN, BACKUP_FILE_SUFFIX);
 	return backup_path;
 }
 
@@ -796,12 +804,18 @@ PRIVATE int save_cur_buf_to_file_binary(const char *file_path)
 		 shrink_str_to_scr_static(file_path), strerror(errno));
 		return -1;
 	}
-	int lines = 0;
+	int lines_written = 0;
 	for (const be_line_t *line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_INT(line);
 	 line = NODE_NEXT(line)) {
+#ifdef PROCESS_MAGIC_LINE
 		if (IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
-			break;			// do not output the magic line
+			break;			// do not output the magic-line
 		}
+#else // PROCESS_MAGIC_LINE
+		if ((lines_written == 0) && IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
+			break;			// do not output the magic-line
+		}
+#endif // PROCESS_MAGIC_LINE
 		unsigned char bin_buf[BIN_LINE_LEN];
 		int line_len = strlen_path(line->data);
 		int bin_off = 0;
@@ -813,20 +827,20 @@ PRIVATE int save_cur_buf_to_file_binary(const char *file_path)
 				if (bytes < bin_off) {
 					disp_status_bar_err(_("Can not write file [%s]: %s"),
 					 shrink_str_to_scr_static(file_path), strerror(errno));
-					lines = -2;
+					lines_written = -2;
 					break;
 				}
 				bin_off = 0;
-				lines++;
+				lines_written++;
 			}
 		}
 	}
 	if (fclose(fp) != 0) {
 		disp_status_bar_err(_("Can not close file [%s]: %s"),
 		 shrink_str_to_scr_static(file_path), strerror(errno));
-		lines = -3;
+		lines_written = -3;
 	}
-	return lines;
+	return lines_written;
 }
 
 PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
@@ -834,8 +848,15 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 	int lines_written = 0;
 	for (const be_line_t *line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_INT(line);
 	 line = NODE_NEXT(line)) {
-		if (IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0))
-			break;			// do not output the magic line
+#ifdef PROCESS_MAGIC_LINE
+		if (IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
+			break;			// do not output the magic-line
+		}
+#else // PROCESS_MAGIC_LINE
+		if ((lines_written == 0) && IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
+			break;			// do not output the magic-line
+		}
+#endif // PROCESS_MAGIC_LINE
 		size_t line_len = line_strlen(line);
 		size_t size = fwrite(line->data, 1, line_len, fp);
 		if (size < line_len) {
@@ -894,6 +915,37 @@ void disp_files_loaded(void)
 							_("%d filess loaded"),
 							_("%d filesss loaded"),
 	 cnt_files_loaded), cnt_files_loaded);
+}
+
+//------------------------------------------------------------------------------
+int reduce_log_file_size(const char *file_path, int size_in_mb)
+{
+	if (get_file_size(file_path) <= ((ssize_t)size_in_mb * (1024 * 1024))) {
+		return 0;	// no need to reduce
+	}
+
+	char command_str[MAX_PATH_LEN+1] = "";
+	// "tail -c 10M 1.log >1.log~; mv -vf 1.log~ 1.log"
+	snprintf_(command_str, MAX_PATH_LEN, "tail -c %dM %s >%s%s ; mv -vf %s%s %s",
+	 size_in_mb / 2,
+	 file_path, file_path, BACKUP_FILE_SUFFIX,
+	 file_path, BACKUP_FILE_SUFFIX, file_path);
+
+	return fork_exec_sh_c(SETTERM0 | SEPARATE0 | PAUSE0 | LOGGING0, command_str);
+}
+
+const char *get_exec_log_file_path()
+{
+	// /dev/tty1 => "tty1.log", /dev/pts/1 => "1.log"
+	static char file_path[MAX_PATH_LEN+1] = "";
+	char dir[MAX_PATH_LEN+1];
+	char file[MAX_PATH_LEN+1];
+	if (is_strlen_0(file_path)) {
+		separate_path_to_dir_and_file(get_tty_name(), dir, file);
+		snprintf_(file_path, MAX_PATH_LEN, "%s/%s.log", get_app_dir(), file);
+flf_d_printf("file_path: [%s]\n", file_path);
+	}
+	return file_path;
 }
 
 // End of fileio.c

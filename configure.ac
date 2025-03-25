@@ -292,7 +292,9 @@ if test "$enable_ncurses" = yes ; then
 		echo "No ncurses library found. So I turn off --enable-ncurses."
 		enable_ncurses=no
 	fi
-	if test "$enable_highbgc" = "1" ; then
+fi
+if test "$enable_ncurses" = yes ; then
+	if test "$enable_highbgc" = "yes" ; then
 		echo "ncurses does not support lighter background color. So turn off --enable-highbgc."
 		enable_highbgc="no"
 	fi

@@ -358,6 +358,14 @@ int is_st_writable(struct stat *st)
 	}
 	return (st->st_mode & S_IWOTH) != 0;
 }
+ssize_t get_file_size(const char *path)
+{
+	struct stat st;
+	if (stat(path, &st) < 0) {
+		return -1;
+	}
+	return st.st_size;
+}
 
 int is_dir_readable(const char *path)
 {

@@ -86,7 +86,7 @@ void mlc_clear_caller(struct malloc_caller* caller)
 	caller->file_name = NULL;
 }
 
-int mlc_check_leak()
+void mlc_check_leak()
 {
 	int count = 1;
 	flf_d_printf("\n");

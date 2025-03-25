@@ -84,7 +84,7 @@ void mlc_set_caller(const char *file_name, int line_num);
 struct malloc_caller* mlc_register_caller();
 void mlc_update_caller(struct malloc_caller* caller);
 void mlc_clear_caller(struct malloc_caller* caller);
-int mlc_check_leak();
+void mlc_check_leak();
 
 void mlc_check_count();
 void mlc_memorize_count();
