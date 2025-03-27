@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-25 21:51+0900\n"
+"POT-Creation-Date: 2025-03-28 00:19+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,15 +54,15 @@ msgstr ""
 msgid "[LOCKED]"
 msgstr ""
 
-#: ../buffers.c:539
+#: ../buffers.c:541
 msgid "Calculating CRC..."
 msgstr ""
 
-#: ../buffers.c:546
+#: ../buffers.c:548
 msgid "Checking CRC..."
 msgstr ""
 
-#: ../buffers.c:748 ../buffers.c:755
+#: ../buffers.c:750 ../buffers.c:757
 msgid "Tab size"
 msgstr ""
 
@@ -94,7 +94,7 @@ msgstr ""
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr ""
 
-#: ../editor.c:661 ../fileio.c:109
+#: ../editor.c:661 ../fileio.c:112
 msgid "New File"
 msgstr ""
 
@@ -398,155 +398,155 @@ msgstr ""
 msgid "Redo-buffer empty !!"
 msgstr ""
 
-#: ../fileio.c:80
-msgid "New file"
-msgstr ""
-
-#: ../fileio.c:82
-#, c-format
-msgid "%d line read %s"
-msgstr ""
-
 #: ../fileio.c:83
-#, c-format
-msgid "%d lines read %s"
-msgstr ""
-
-#: ../fileio.c:84
-#, c-format
-msgid "%d liness read %s"
+msgid "New file"
 msgstr ""
 
 #: ../fileio.c:85
 #, c-format
+msgid "%d line read %s"
+msgstr ""
+
+#: ../fileio.c:86
+#, c-format
+msgid "%d lines read %s"
+msgstr ""
+
+#: ../fileio.c:87
+#, c-format
+msgid "%d liness read %s"
+msgstr ""
+
+#: ../fileio.c:88
+#, c-format
 msgid "%d linesss read %s"
 msgstr ""
 
-#: ../fileio.c:102
+#: ../fileio.c:105
 #, c-format
 msgid "File [%s] not found"
 msgstr ""
 
-#: ../fileio.c:116
+#: ../fileio.c:119
 #, c-format
 msgid "[%s] is a directory"
 msgstr ""
 
-#: ../fileio.c:116
+#: ../fileio.c:119
 #, c-format
 msgid "[%s] is a special file"
 msgstr ""
 
 #. file size too large
-#: ../fileio.c:124
+#: ../fileio.c:127
 #, c-format
 msgid "[%s] is too large to read into buffer"
 msgstr ""
 
 #. regular file
-#: ../fileio.c:129
+#: ../fileio.c:132
 #, c-format
 msgid "Reading File %s ..."
 msgstr ""
 
-#: ../fileio.c:160
+#: ../fileio.c:163
 msgid "File has modified by another program, OVERWRITE ?"
 msgstr ""
 
-#: ../fileio.c:166
+#: ../fileio.c:169
 #, c-format
 msgid "File [%s] can NOT be written !!"
 msgstr ""
 
-#: ../fileio.c:184
+#: ../fileio.c:187
 msgid "File Name to Write:"
 msgstr ""
 
-#: ../fileio.c:199
+#: ../fileio.c:202
 msgid "Path is not file, can not WRITE it"
 msgstr ""
 
-#: ../fileio.c:207
+#: ../fileio.c:210
 msgid "File exists, OVERWRITE it ?"
 msgstr ""
 
-#: ../fileio.c:224
+#: ../fileio.c:227
 #, c-format
 msgid "File [%s] is NOT regular file !!"
 msgstr ""
 
-#: ../fileio.c:228
+#: ../fileio.c:231
 #, c-format
 msgid "Writing File %s ..."
 msgstr ""
 
-#: ../fileio.c:241
+#: ../fileio.c:244
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr ""
 
-#: ../fileio.c:249
+#: ../fileio.c:252
 #, c-format
 msgid "%d line written"
 msgstr ""
 
-#: ../fileio.c:250
+#: ../fileio.c:253
 #, c-format
 msgid "%d lines written"
 msgstr ""
 
-#: ../fileio.c:251
+#: ../fileio.c:254
 #, c-format
 msgid "%d liness written"
 msgstr ""
 
-#: ../fileio.c:252
+#: ../fileio.c:255
 #, c-format
 msgid "%d linesss written"
 msgstr ""
 
-#: ../fileio.c:310
+#: ../fileio.c:313
 #, c-format
 msgid "BINARY file !! [%s]"
 msgstr ""
 
-#: ../fileio.c:451 ../fileio.c:578 ../fileio.c:594 ../fileio.c:611
+#: ../fileio.c:454 ../fileio.c:581 ../fileio.c:597 ../fileio.c:614
 #, c-format
 msgid "Can not read-open file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:762 ../fileio.c:783 ../fileio.c:803
+#: ../fileio.c:765 ../fileio.c:786 ../fileio.c:806
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr ""
 
 #. -1: error
-#: ../fileio.c:771 ../fileio.c:792 ../fileio.c:839
+#: ../fileio.c:774 ../fileio.c:795 ../fileio.c:847
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:828 ../fileio.c:863
+#: ../fileio.c:836 ../fileio.c:876
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:913
+#: ../fileio.c:926
 #, c-format
 msgid "%d file loaded"
 msgstr ""
 
-#: ../fileio.c:914
+#: ../fileio.c:927
 #, c-format
 msgid "%d files loaded"
 msgstr ""
 
-#: ../fileio.c:915
+#: ../fileio.c:928
 #, c-format
 msgid "%d filess loaded"
 msgstr ""
 
-#: ../fileio.c:916
+#: ../fileio.c:929
 #, c-format
 msgid "%d filesss loaded"
 msgstr ""

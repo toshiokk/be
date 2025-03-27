@@ -271,11 +271,11 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 
 #if 1
 	// highlight marked segment ================================================
-	if (IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE))
+	if (IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE))
 	 && (mark_min_line->line_num <= line->line_num
 	  && line->line_num <= mark_max_line->line_num)) {
 		// this line is at least partially selected
-		switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
+		switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
 		default:
 		case CUT_MODE_0_LINE:
 			break;

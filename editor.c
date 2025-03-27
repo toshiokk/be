@@ -710,7 +710,7 @@ PRIVATE void blink_editor_title_bar()
 {
 	set_color_by_idx(ITEM_COLOR_IDX_TITLE, 0);
 	set_title_bar_color_by_state(
-	 CUR_EBUF_STATE(buf_CUT_MODE) ? ITEM_COLOR_IDX_TEXT_SELECTED1
+	 GET_CUR_EBUF_STATE(buf_CUT_MODE) ? ITEM_COLOR_IDX_TEXT_SELECTED1
 	  : ((is_epc_buf_modifiable() == 0) ? ITEM_COLOR_IDX_WARNING3
 	   : (is_epc_buf_modified() ? ITEM_COLOR_IDX_WARNING1
 	    : (is_any_edit_buf_modified() ? ITEM_COLOR_IDX_WARNING2
@@ -748,7 +748,7 @@ PRIVATE void disp_status_bar_editor(void)
 		 (unsigned int)utf8c_decode(&EPCBVC_CL->data[EPCBVC_CLBI]));
 	}
 
-	if (IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE))) {
+	if (IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE))) {
 		snprintf(buf_lines_sel, SEL_LINES_LEN, " LNS:%2d", lines_selected());
 	}
 

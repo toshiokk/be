@@ -170,7 +170,7 @@ int set_file_type_and_tab_size_by_cur_file_path(void)
 	int ret;
 
 	if ((ret = set_file_type_by_cur_file_path()) != 0) {
-		CUR_EBUF_STATE(buf_TAB_SIZE) = cur_file_type->tab_size;
+		GET_CUR_EBUF_STATE(buf_TAB_SIZE) = cur_file_type->tab_size;
 	}
 	return ret;
 }

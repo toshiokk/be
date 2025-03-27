@@ -140,7 +140,7 @@ int doe_clear_all_cut_bufs(void)
 
 int doe_tog_mark(void)
 {
-	if (IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
+	if (IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
 		// no mark set ==> set mark
 		do_set_mark();
 	} else {
@@ -159,7 +159,7 @@ int do_set_mark(void)
 }
 void do_set_mark_(void)
 {
-	CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_N_LINE;
+	GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_N_LINE;
 	set_mark_pos();
 	setup_cut_region();
 }
@@ -173,7 +173,7 @@ int do_clear_mark(void)
 }
 void do_clear_mark_(void)
 {
-	CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_0_LINE;
+	GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_0_LINE;
 	clear_mark_pos();
 	setup_cut_region();
 }
@@ -225,7 +225,7 @@ int doe_duplicate_text(void)
 int doe_paste_text_with_pop(void)
 {
 	if (copy_delete_paste_pop(
-	 IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE)) == 0
+	 IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0
 	  ? (CDPP_PASTE | CDPP_POP) : (CDPP_REPLACE | CDPP_POP)) <= 0) {
 		return 0;
 	}
@@ -235,7 +235,7 @@ int doe_paste_text_with_pop(void)
 int doe_paste_text_without_pop(void)
 {
 	if (copy_delete_paste_pop(
-	 IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE)) == 0
+	 IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0
 	  ? (CDPP_PASTE | CDPP_NOPOP) : (CDPP_REPLACE | CDPP_NOPOP)) <= 0) {
 		return 0;
 	}
@@ -265,7 +265,7 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 		}
 	}
 
-	if (IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
+	if (IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
 		// no mark set, setup cut-region
 		set_mark_pos();
 		setup_cut_region();
@@ -331,7 +331,7 @@ PRIVATE int copy_text_to_cut_buf(void)
 {
 	int char_cut;
 
-	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
+	switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
@@ -339,7 +339,7 @@ PRIVATE int copy_text_to_cut_buf(void)
 	case CUT_MODE_VH_CHAR:
 	case CUT_MODE_V_LINE:
 	case CUT_MODE_HV_LINE:
-		switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
+		switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
 		default:
 		case CUT_MODE_0_LINE:
 		case CUT_MODE_N_LINE:
@@ -375,7 +375,7 @@ PRIVATE int copy_text_to_cut_buf(void)
 PRIVATE int delete_text_in_cut_region(void)
 {
 	set_cur_buf_modified();
-	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
+	switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:

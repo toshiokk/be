@@ -219,7 +219,7 @@ be_buf_t *get_edit_buf_by_file_name(const char *file_name);
 void create_edit_buf(const char *file_path);
 
 be_line_t *append_string_to_cur_edit_buf(const char *string);
-void append_magic_line(void);
+int append_magic_line(void);
 int edit_bufs_count_buf(void);
 int epc_buf_count_buf(void);
 
@@ -253,7 +253,7 @@ int is_any_edit_buf_modified(void);
 #define CMP_BUF_STATE(buf, var, val)		(BUF_STATE(buf, var) == val)
 
 // current edit buffer state
-#define CUR_EBUF_STATE(var)					BUF_STATE(get_epc_buf(), var)
+#define GET_CUR_EBUF_STATE(var)				BUF_STATE(get_epc_buf(), var)
 #define SET_CUR_EBUF_STATE(var, val)		SET_BUF_STATE(get_epc_buf(), var, val)
 #define TOGGLE_CUR_EBUF_STATE(var)			TOGGLE_BUF_STATE(get_epc_buf(), var)
 #define INC_CUR_EBUF_STATE(var, min, max)	INC_BUF_STATE(get_epc_buf(), var, min, max)

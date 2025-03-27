@@ -307,15 +307,15 @@ int is_epc_buf_closeable()	// closeable by user's intention
 //--------------------------------------
 int is_epc_buf_mode_edit()
 {
-	return CUR_EBUF_STATE(buf_MODE) == buf_MODE_EDIT;
+	return GET_CUR_EBUF_STATE(buf_MODE) == buf_MODE_EDIT;
 }
 int is_epc_buf_mode_list()
 {
-	return CUR_EBUF_STATE(buf_MODE) == buf_MODE_LIST;
+	return GET_CUR_EBUF_STATE(buf_MODE) == buf_MODE_LIST;
 }
 int is_epc_buf_mode_ro()
 {
-	return CUR_EBUF_STATE(buf_MODE) == buf_MODE_RO;
+	return GET_CUR_EBUF_STATE(buf_MODE) == buf_MODE_RO;
 }
 //--------------------------------------
 int is_epc_buf_valid()
@@ -335,12 +335,12 @@ int is_epc_buf_file_wp()	// write protected in the file system
 }
 int is_epc_buf_file_locked()
 {
-	return CUR_EBUF_STATE(buf_LOCKED);
+	return GET_CUR_EBUF_STATE(buf_LOCKED);
 }
 //--------------------------------------
 int is_epc_buf_modified()
 {
-	return CUR_EBUF_STATE(buf_MODIFIED);
+	return GET_CUR_EBUF_STATE(buf_MODIFIED);
 }
 //--------------------------------------
 const char* get_all_buf_state_str()
@@ -465,12 +465,14 @@ be_line_t *append_string_to_cur_edit_buf(const char *string)
 }
 
 // Append a new magic-line to the bottom of the current buffer
-void append_magic_line(void)
+int append_magic_line(void)
 {
 	if (buf_is_empty(get_epc_buf())
 	 || ((buf_is_empty(get_epc_buf()) == 0) && line_strlen(CUR_EDIT_BUF_BOT_LINE))) {
 		append_string_to_cur_edit_buf("");
+		return 1;
 	}
+	return 0;
 }
 
 int edit_bufs_count_buf(void)
@@ -490,7 +492,7 @@ be_buf_t *push_cut_buf(void)
 	 buf_MODE_LIST);
 	bufs_insert_buf_to_top(&cut_buffers, buf);
 	// copy cut-mode to cut-buffer
-	SET_CUR_CBUF_STATE(buf_CUT_MODE, CUR_EBUF_STATE(buf_CUT_MODE));
+	SET_CUR_CBUF_STATE(buf_CUT_MODE, GET_CUR_EBUF_STATE(buf_CUT_MODE));
 	SET_CUR_CBUF_STATE(buf_MODE, buf_MODE_LIST);
 	return buf;
 }
@@ -586,13 +588,13 @@ int tog_buf_line_wrap_mode(void)
 }
 const char *get_str_buf_line_wrap_mode(void)
 {
-	return BOOL_TO_ON_OFF(CUR_EBUF_STATE(buf_LINE_WRAP_MODE));
+	return BOOL_TO_ON_OFF(GET_CUR_EBUF_STATE(buf_LINE_WRAP_MODE));
 }
 
 int tog_buf_tab_size(void)
 {
-	CUR_EBUF_STATE(buf_TAB_SIZE)
-	 = (CUR_EBUF_STATE(buf_TAB_SIZE) == 8) ? 4 : 8;
+	GET_CUR_EBUF_STATE(buf_TAB_SIZE)
+	 = (GET_CUR_EBUF_STATE(buf_TAB_SIZE) == 8) ? 4 : 8;
 	set_wrap_line_tab_size_from_cur_buf();
 	return 0;
 }
@@ -612,8 +614,8 @@ const char *get_str_buf_tab_size(void)
 int get_cur_buf_tab_size(void)
 {
 	// to avoid divided-by-0, check 0 and replace with non-zero-value
-	return CUR_EBUF_STATE(buf_TAB_SIZE) == 0
-	 ? DEFAULT_TAB_SIZE : CUR_EBUF_STATE(buf_TAB_SIZE);
+	return GET_CUR_EBUF_STATE(buf_TAB_SIZE) == 0
+	 ? DEFAULT_TAB_SIZE : GET_CUR_EBUF_STATE(buf_TAB_SIZE);
 }
 // update tab-size in wrap-line from the current buffer
 void set_wrap_line_tab_size_from_cur_buf(void)
@@ -650,7 +652,7 @@ const char *get_str_buf_dos_file(void)
 }
 int set_buf_eol(int eol)
 {
-	CUR_EBUF_STATE(buf_EOL) = eol;
+	GET_CUR_EBUF_STATE(buf_EOL) = eol;
 	return 0;
 }
 const char *get_str_buf_eol(void)
@@ -717,7 +719,7 @@ const char *get_str_buf_enc_binary(void)
 
 int set_buf_encode(int encode)
 {
-	CUR_EBUF_STATE(buf_ENCODE) = encode;
+	GET_CUR_EBUF_STATE(buf_ENCODE) = encode;
 	return 0;
 }
 const char *get_str_buf_encode(void)

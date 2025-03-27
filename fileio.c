@@ -56,9 +56,12 @@ int load_file_into_new_buf(const char *full_path, int flags)
 	}
 	// successfully loaded into new buffer
 
-///#define PROCESS_MAGIC_LINE
+///
+#define PROCESS_MAGIC_LINE
 #ifdef PROCESS_MAGIC_LINE
-	append_magic_line();
+	if (append_magic_line()) {
+		SET_CUR_EBUF_STATE(buf_MAGIC_LINE_ADDED, 1);
+	}
 #else // PROCESS_MAGIC_LINE
 	if (buf_is_empty(get_epc_buf())) {
 		// if there is no line, at least one line
@@ -74,7 +77,7 @@ int load_file_into_new_buf(const char *full_path, int flags)
 
 	int tab_size;
 	if ((tab_size = buf_guess_tab_size(get_epc_buf())) != 0) {
-		CUR_EBUF_STATE(buf_TAB_SIZE) = tab_size;
+		GET_CUR_EBUF_STATE(buf_TAB_SIZE) = tab_size;
 	}
 	if (lines > MAX_LINES_LOADABLE) {
 		disp_status_bar_done(_("New file"));		// new file (0 line)
@@ -251,7 +254,7 @@ int backup_and_save_cur_buf(const char *file_path)
 						   _("%d liness written"),
 						   _("%d linesss written"),
 	 lines_written), lines_written);
-	CUR_EBUF_STATE(buf_MODIFIED) = 0;
+	GET_CUR_EBUF_STATE(buf_MODIFIED) = 0;
 	disp_title_bar_editor();
 
 	return lines_written;		// -1: error
@@ -303,15 +306,15 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int flags)
 
 #ifdef USE_NKF
 	if (GET_APPMD(ed_USE_NKF)) {
-		if (CUR_EBUF_STATE(buf_ENCODE) == ENCODE_ASCII) {
+		if (GET_CUR_EBUF_STATE(buf_ENCODE) == ENCODE_ASCII) {
 			// encoding is not specified on command line
 			guess_encoding_by_nkf(full_path);
-			if (CUR_EBUF_STATE(buf_ENCODE) == ENCODE_BINARY) {
+			if (GET_CUR_EBUF_STATE(buf_ENCODE) == ENCODE_BINARY) {
 				disp_status_bar_warn(_("BINARY file !! [%s]"),
 				 shrink_str_to_scr_static(full_path));
 			}
 		}
-		switch (CUR_EBUF_STATE(buf_ENCODE)) {
+		switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
 		default:
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
@@ -330,7 +333,7 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int flags)
 			nkf_options = "-w";		// output UTF8
 			break;
 		}
-		switch (CUR_EBUF_STATE(buf_ENCODE)) {
+		switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
 		default:
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
@@ -344,7 +347,7 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int flags)
 		}
 	} // if (GET_APPMD(ed_USE_NKF))
 #endif // USE_NKF
-	switch (CUR_EBUF_STATE(buf_ENCODE)) {
+	switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
 	default:
 	case ENCODE_ASCII:
 	case ENCODE_UTF8:
@@ -386,7 +389,7 @@ PRIVATE int save_cur_buf_to_file__(const char *file_path)
 
 #ifdef USE_NKF
 	if (GET_APPMD(ed_USE_NKF)) {
-		switch (CUR_EBUF_STATE(buf_ENCODE)) {
+		switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
 		default:
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
@@ -405,7 +408,7 @@ PRIVATE int save_cur_buf_to_file__(const char *file_path)
 			nkf_options = "-W";		// input UTF8
 			break;
 		}
-		switch (CUR_EBUF_STATE(buf_ENCODE)) {
+		switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
 		default:
 		case ENCODE_ASCII:
 		case ENCODE_UTF8:
@@ -422,7 +425,7 @@ PRIVATE int save_cur_buf_to_file__(const char *file_path)
 		}
 	}
 #endif // USE_NKF
-	switch (CUR_EBUF_STATE(buf_ENCODE)) {
+	switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
 	default:
 	case ENCODE_ASCII:
 	case ENCODE_UTF8:
@@ -442,7 +445,7 @@ PRIVATE int save_cur_buf_to_file__(const char *file_path)
 #ifdef USE_NKF
 PRIVATE int guess_encoding_by_nkf(const char *full_path)
 {
-	CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
+	GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
 	// No encoding specified in the command line
 	char buffer[MAX_PATH_LEN+1];
 	snprintf_(buffer, MAX_PATH_LEN+1, "nkf -g \"%s\"", full_path);
@@ -463,26 +466,26 @@ PRIVATE int guess_encoding_by_nkf(const char *full_path)
 		return -1;
 	}
 	if (strlcmp__(buffer, "ASCII") == 0) {
-		CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
+		GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
 	} else if (strlcmp__(buffer, "UTF-8") == 0) {
-		CUR_EBUF_STATE(buf_ENCODE) = ENCODE_UTF8;
+		GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_UTF8;
 	} else if (strlcmp__(buffer, "EUC-JP") == 0) {
 		int guess_utf8 = my_guess_utf8_file(full_path);
 		if (guess_utf8 < 0) {
-			CUR_EBUF_STATE(buf_ENCODE) = ENCODE_EUCJP;
+			GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_EUCJP;
 		} else {
-			CUR_EBUF_STATE(buf_ENCODE) = ENCODE_UTF8;
+			GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_UTF8;
 		}
 	} else if (strlcmp__(buffer, "Shift_JIS") == 0) {
-		CUR_EBUF_STATE(buf_ENCODE) = ENCODE_SJIS;
+		GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_SJIS;
 	} else if (strlcmp__(buffer, "ISO-2022-JP") == 0) {
-		CUR_EBUF_STATE(buf_ENCODE) = ENCODE_JIS;
+		GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_JIS;
 	} else if (strlcmp__(buffer, "BINARY") == 0
 	 && my_guess_bin_file(full_path)) {
-		CUR_EBUF_STATE(buf_ENCODE) = ENCODE_BINARY;
+		GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_BINARY;
 	} else {
 		// maybe, no nkf is available
-		CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
+		GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
 	}
 	return 0;
 }
@@ -809,7 +812,12 @@ PRIVATE int save_cur_buf_to_file_binary(const char *file_path)
 	 line = NODE_NEXT(line)) {
 #ifdef PROCESS_MAGIC_LINE
 		if (IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
-			break;			// do not output the magic-line
+			// There is a magic-line at the last line of the buffer
+			if (GET_CUR_EBUF_STATE(buf_MAGIC_LINE_ADDED) == 0) {
+				// write this magic-line
+			} else {
+				break;			// do not output the magic-line
+			}
 		}
 #else // PROCESS_MAGIC_LINE
 		if ((lines_written == 0) && IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
@@ -850,7 +858,12 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 	 line = NODE_NEXT(line)) {
 #ifdef PROCESS_MAGIC_LINE
 		if (IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
-			break;			// do not output the magic-line
+			// There is a magic-line at the last line of the buffer
+			if (GET_CUR_EBUF_STATE(buf_MAGIC_LINE_ADDED) == 0) {
+				// write this magic-line
+			} else {
+				break;			// do not output the magic-line
+			}
 		}
 #else // PROCESS_MAGIC_LINE
 		if ((lines_written == 0) && IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
@@ -864,7 +877,7 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 			 shrink_str_to_scr_static(file_path), strerror(errno));
 			return -1;
 		}
-		switch (CUR_EBUF_STATE(buf_EOL)) {
+		switch (GET_CUR_EBUF_STATE(buf_EOL)) {
 		default:
 		case EOL_NIX:
 			putc('\n', fp);

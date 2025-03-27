@@ -45,14 +45,14 @@ typedef struct /*buf_state*/ {
 #define buf_MODE_RO			1				// Read Only open file (unmodifiable)
 #define buf_MODE_LIST		2				// List (unmodifiable)
 	unsigned char buf_LOCKED:1;				// bit 2
-	unsigned char buf_MODIFIED:1;			// bit 3
-	unsigned char buf_LINE_WRAP_MODE:1;		// bit 4
+	unsigned char buf_MAGIC_LINE_ADDED:1;	// bit 3
+	unsigned char buf_MODIFIED:1;			// bit 4
+	unsigned char buf_LINE_WRAP_MODE:1;		// bit 5
 #if 0 // 0
-#define HV_IS_BOX_VH_IS_CHAR
+#define HV_IS_BOX	// HV is BOX-selection-mode, VH is CHAR-selection-mode
 #else
-#define HV_IS_LINE_VH_IS_BOX
+#define VH_IS_BOX	// HV is LINE-selection-mode, VH is BOX-selection-mode
 #endif
-
 #define CUT_MODE_0_LINE			0	// no mark                                    (one line cut)
 #define CUT_MODE_N_LINE			1	// marking started but cursor not moved           (line cut)
 #define CUT_MODE_H_CHAR			2	//  and cursor moved horizontally                 (char cut)
@@ -62,7 +62,7 @@ typedef struct /*buf_state*/ {
 #define CUT_MODE_VH_CHAR		6	//  and cursor moved vertically then horizontally (char cut)
 #define CUT_MODE_VH_BOX			7	//  and cursor moved vertically then horizontally (box cut)
 #define IS_MARK_SET(cut_mode)	((cut_mode) != CUT_MODE_0_LINE)
-	unsigned char buf_CUT_MODE:3;			// bit 5-7
+	unsigned char buf_CUT_MODE:3;			// bit 6-8
 #define TAB_SIZE_MIN			1
 #define TAB_SIZE_0				0			// DEFAULT_TAB_SIZE
 #define TAB_SIZE_1				1
@@ -74,12 +74,12 @@ typedef struct /*buf_state*/ {
 #define TAB_SIZE_7				7
 #define TAB_SIZE_8				8
 #define TAB_SIZE_MAX			TAB_SIZE_8
-	unsigned char buf_TAB_SIZE:4;			// bit 8-11
+	unsigned char buf_TAB_SIZE:4;			// bit 9-12
 #define EOL_NIX					0
 #define EOL_MAC					1
 #define EOL_DOS					2
 #define EOL_MAX					EOL_DOS
-	unsigned char buf_EOL:2;				// bit 12-13
+	unsigned char buf_EOL:2;				// bit 13-14
 #define ENCODE_ASCII			0
 #define ENCODE_UTF8				1
 #ifdef USE_NKF
@@ -89,7 +89,7 @@ typedef struct /*buf_state*/ {
 #endif // USE_NKF
 #define ENCODE_BINARY			5
 #define ENCODE_MAX				ENCODE_BINARY
-	unsigned char buf_ENCODE:3;				// bit 14--16
+	unsigned char buf_ENCODE:3;				// bit 15-17
 } buf_state_t;
 
 #define EDITOR_PANES		MAX_APP_PANES_2

@@ -514,7 +514,7 @@ int doe_carriage_return_with_auto_indent(void)
 		return 0;
 	}
 	// TODO: auto indent if not already indented
-	for (int tab = 0; tab < CUR_EBUF_STATE(buf_TAB_SIZE); tab++) {
+	for (int tab = 0; tab < GET_CUR_EBUF_STATE(buf_TAB_SIZE); tab++) {
 		do_enter_char(' ');
 	}
 	return 1;

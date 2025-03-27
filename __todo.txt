@@ -7,12 +7,15 @@
 - POLICY: things to be kept
 
 - [x] reduce_log_file_size()
-- [] such usage "grep "Temper" file.csv | be"
+- [-] such usage "grep "Temper" file.csv | be"
 - [] Make easy to use for other people
 - [xxx ] clean up code
 - [d ] Use `typedef` in variable definition (UINT8/UINT16/UINT32/ssize_t/size_t)
 - [x] 250324 do not append magic-line on loading and do not remove magic-line on saving
   - [x] 250325 append magic-line on loading 0 byte file and remove magic-line on saving a file which has only one LF
+  - [x] manage magic-line by a flag buf.magic-line-added
+    - on load: no migic-line in file ==> add magic-line and set flag
+    - on save: flag is beeing set and there is a magic-line ==> remove magic-line
 
 - [x] IMPR: built in logger that output to the separate log files based on the pty number
   - [x] record output from a program that is started execution by filer in sub shell
@@ -24,12 +27,12 @@
     ```
   - [x] Use `script` for logging
   - [x] not include the output from `be` editor itself because it include many confusing escape sequence
-  - [ ] log file name, which is the more convenient ?
-    - [] `/home/user/.be/1.log`
-    - [] `/home/user/.be/yymmdd-hhmmss.log`
-    - [] `/home/user/logs/yymmdd-hhmmss.log`
-  - [ ] automatic deletion of old log files
-  - [ ] automatic reduction of cut_buffer file size
+  - [x] log file name, which is the more convenient ?
+    - [x] `/home/user/.be/1.log`
+      - [x] automatic reduction of cut_buffer file size
+    - [-] `/home/user/.be/yymmdd-hhmmss.log`
+    - [-] `/home/user/logs/yymmdd-hhmmss.log`
+      - [-] automatic deletion of old log files
 
 - [x-] 250322 delete `last_searched_needle` ==> necessary when ENABLE_HISTORY disabled
 - [x] 250322 BUG: It causes `PROGERR` to break loading very large file.
@@ -73,6 +76,7 @@
       - [x] dir-A and dir-B are fixed
 
 - [x] 250314 filer: 'u' uncompress files from .tar.gz/.tar.bz2/.zip calling `beunzip`
+  - [-] ask_yes_no() ==> input_str_pos()
 - [x] 250314 filer: 'U' compress files to .tar.gz/.tar.bz2/.zip calling `bezip`
 - [x ] CRASH: on the switch to undo-buffer
   - [-]there may be illegal links from undo-buffer to edit-buffer

@@ -48,7 +48,7 @@ PRIVATE void change_cut_mode_on_mark_region_special_cases(void);
 
 void setup_cut_region_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 {
-	if (IS_MARK_SET(CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
+	if (IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
 		// no mark set
 		return;
 	}
@@ -66,25 +66,27 @@ void setup_cut_region_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 // | CUT_MODE_N_LINE   | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_H_CHAR |enter HV transition mode|
 // | CUT_MODE_N_LINE   | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_V_LINE |enter VH transition mode|
 // | CUT_MODE_N_LINE   |return to start position|CUT_MODE_N_LINE |                        |
+// |HV transition mode-|------------------------|----------------|------------------------|
 // |  CUT_MODE_H_CHAR  | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_H_CHAR |                        |
-// |  CUT_MODE_H_CHAR  | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_HV_BOX |if HV_IS_BOX_VH_IS_CHAR defined|
-// |  CUT_MODE_H_CHAR  | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_HV_LINE|if HV_IS_LINE_VH_IS_BOX defined|
+// |  CUT_MODE_H_CHAR  | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_HV_BOX |if HV_IS_BOX defined    |
+// |  CUT_MODE_H_CHAR  | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_HV_LINE|if VH_IS_BOX defined    |
 // |  CUT_MODE_H_CHAR  |return to start position|CUT_MODE_N_LINE |                        |
-// |   CUT_MODE_HV_BOX | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_H_CHAR |if HV_IS_BOX_VH_IS_CHAR defined|
-// |   CUT_MODE_HV_BOX | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_HV_BOX |if HV_IS_BOX_VH_IS_CHAR defined|
+// |   CUT_MODE_HV_BOX | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_H_CHAR |if HV_IS_BOX defined    |
+// |   CUT_MODE_HV_BOX | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_HV_BOX |if HV_IS_BOX defined    |
 // |   CUT_MODE_HV_BOX |return to start position|CUT_MODE_N_LINE |                        |
-// |   CUT_MODE_HV_LINE| ← → (CURS_MOVE_HORIZ)  |CUT_MODE_H_CHAR |if HV_IS_LINE_VH_IS_BOX defined|
-// |   CUT_MODE_HV_LINE| ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_HV_LINE|if HV_IS_LINE_VH_IS_BOX defined|
+// |   CUT_MODE_HV_LINE| ← → (CURS_MOVE_HORIZ)  |CUT_MODE_H_CHAR |if VH_IS_BOX defined    |
+// |   CUT_MODE_HV_LINE| ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_HV_LINE|if VH_IS_BOX defined    |
 // |   CUT_MODE_HV_LINE|return to start position|CUT_MODE_N_LINE |                        |
-// |  CUT_MODE_V_LINE  | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_VH_CHAR|if HV_IS_BOX_VH_IS_CHAR defined|
-// |  CUT_MODE_V_LINE  | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_VH_BOX |if HV_IS_LINE_VH_IS_BOX defined|
+// |VH transition mode-|------------------------|----------------|------------------------|
+// |  CUT_MODE_V_LINE  | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_VH_CHAR|if HV_IS_BOX defined    |
+// |  CUT_MODE_V_LINE  | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_VH_BOX |if VH_IS_BOX defined    |
 // |  CUT_MODE_V_LINE  | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_V_LINE |                        |
 // |  CUT_MODE_V_LINE  |return to start position|CUT_MODE_N_LINE |                        |
-// |   CUT_MODE_VH_CHAR| ← → (CURS_MOVE_HORIZ)  |CUT_MODE_VH_CHAR|if HV_IS_BOX_VH_IS_CHAR defined|
-// |   CUT_MODE_VH_CHAR| ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_V_LINE |if HV_IS_BOX_VH_IS_CHAR defined|
+// |   CUT_MODE_VH_CHAR| ← → (CURS_MOVE_HORIZ)  |CUT_MODE_VH_CHAR|if HV_IS_BOX defined    |
+// |   CUT_MODE_VH_CHAR| ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_V_LINE |if HV_IS_BOX defined    |
 // |   CUT_MODE_VH_CHAR|return to start position|CUT_MODE_N_LINE |                        |
-// |   CUT_MODE_VH_BOX | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_VH_CHAR|if HV_IS_LINE_VH_IS_BOX defined|
-// |   CUT_MODE_VH_BOX | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_VH_BOX |if HV_IS_LINE_VH_IS_BOX defined|
+// |   CUT_MODE_VH_BOX | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_VH_CHAR|if VH_IS_BOX defined    |
+// |   CUT_MODE_VH_BOX | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_VH_BOX |if VH_IS_BOX defined    |
 // |   CUT_MODE_VH_BOX |return to start position|CUT_MODE_N_LINE |                        |
 
 //
@@ -98,8 +100,8 @@ void setup_cut_region_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 //     -->
 //       |
 //       v
-//     CUT_MODE_HV_BOX: (CURS_MOVE_HORIZ)(if HV_IS_BOX_VH_IS_CHAR defined)
-//     CUT_MODE_HV_LINE:(CURS_MOVE_HORIZ)(if HV_IS_LINE_VH_IS_BOX defined)
+//     CUT_MODE_HV_BOX: (CURS_MOVE_HORIZ)(if HV_IS_BOX defined)
+//     CUT_MODE_HV_LINE:(CURS_MOVE_HORIZ)(if VH_IS_BOX defined)
 //       -->
 //         |
 //         v
@@ -113,8 +115,8 @@ void setup_cut_region_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 //     |
 //     v
 //     -->
-//     CUT_MODE_VH_CHAR:(CURS_MOVE_VERT)(if HV_IS_BOX_VH_IS_CHAR defined)
-//     CUT_MODE_VH_BOX: (CURS_MOVE_VERT)(if HV_IS_LINE_VH_IS_BOX defined)
+//     CUT_MODE_VH_CHAR:(CURS_MOVE_VERT)(if HV_IS_BOX defined)
+//     CUT_MODE_VH_BOX: (CURS_MOVE_VERT)(if VH_IS_BOX defined)
 //       |
 //       v
 //       -->
@@ -126,88 +128,88 @@ void setup_cut_region_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move_t cursor_move)
 {
 flf_d_printf("cut_mode: %d:%s -->\n",
- CUR_EBUF_STATE(buf_CUT_MODE), buf_cut_mode_str(get_epc_buf()));
+ GET_CUR_EBUF_STATE(buf_CUT_MODE), buf_cut_mode_str(get_epc_buf()));
 	switch (cursor_move) {
 	default:
 	case CURS_MOVE_NONE:
 		break;
 	case CURS_MOVE_HORIZ:
-		switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
+		switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
 		default:
 		case CUT_MODE_0_LINE:
 			break;
 		case CUT_MODE_N_LINE:
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
 			break;
 		case CUT_MODE_H_CHAR:
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
 			break;
 		case CUT_MODE_HV_LINE:
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
 			break;
 		case CUT_MODE_V_LINE:
-#ifdef HV_IS_BOX_VH_IS_CHAR
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_CHAR;
+#ifdef HV_IS_BOX
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_CHAR;
 #endif
-#ifdef HV_IS_LINE_VH_IS_BOX
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_BOX;
+#ifdef VH_IS_BOX
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_BOX;
 #endif
 			break;
 		case CUT_MODE_VH_CHAR:
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_CHAR;
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_CHAR;
 			break;
 		case CUT_MODE_HV_BOX:
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
 			break;
 		case CUT_MODE_VH_BOX:
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_BOX;
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_VH_BOX;
 			break;
 		}
 		break;
 	case CURS_MOVE_VERT:
-		switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
+		switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
 		default:
 		case CUT_MODE_0_LINE:
 			break;
 		case CUT_MODE_N_LINE:
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 			break;
 		case CUT_MODE_H_CHAR:
-#ifdef HV_IS_BOX_VH_IS_CHAR
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_BOX;
+#ifdef HV_IS_BOX
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_BOX;
 #endif
-#ifdef HV_IS_LINE_VH_IS_BOX
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_LINE;
+#ifdef VH_IS_BOX
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_LINE;
 #endif
 			break;
 		case CUT_MODE_HV_LINE:
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_LINE;
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_LINE;
 			break;
 		case CUT_MODE_V_LINE:
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 			break;
 		case CUT_MODE_VH_CHAR:
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 			break;
 		case CUT_MODE_HV_BOX:
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_BOX;
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_BOX;
 			break;
 		case CUT_MODE_VH_BOX:
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 			break;
 		}
 		break;
 	case CURS_MOVE_JUMP:
-#ifdef HV_IS_BOX_VH_IS_CHAR
-		CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
+#ifdef HV_IS_BOX
+		GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 #endif
-#ifdef HV_IS_LINE_VH_IS_BOX
-		CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_LINE;
+#ifdef VH_IS_BOX
+		GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_HV_LINE;
 #endif
 		break;
 	}
 flf_d_printf("  cut_mode: %d:%s\n",
- CUR_EBUF_STATE(buf_CUT_MODE), buf_cut_mode_str(get_epc_buf()));
+ GET_CUR_EBUF_STATE(buf_CUT_MODE), buf_cut_mode_str(get_epc_buf()));
 }
 PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 {
@@ -218,10 +220,10 @@ PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 		if (EPCBVC_CLBI == EPCB_MLBI) {
 			// the same line and the same column
 			// change cut-mode to initial mode
-			CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_N_LINE;
+			GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_N_LINE;
 		} else {
 			// the same line, different column
-			switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
+			switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
 			default:
 			case CUT_MODE_0_LINE:
 			case CUT_MODE_N_LINE:
@@ -231,20 +233,20 @@ PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 			case CUT_MODE_V_LINE:
 			case CUT_MODE_HV_LINE:
 				// change cut-mode
-				CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_N_LINE;
+				GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_N_LINE;
 				break;
 			case CUT_MODE_HV_BOX:
 				// change cut-mode
-				CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
+				GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
 				break;
 			case CUT_MODE_VH_BOX:
 				// change cut-mode
-				CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
+				GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 				break;
 			}
 		}
 	}
-	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
+	switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
@@ -258,7 +260,7 @@ PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 		// different line, the same column
 		if (col_idx_from_byte_idx(mark_min_line->data, 0, mark_min_byte_idx)
 		 == col_idx_from_byte_idx(mark_max_line->data, 0, mark_max_byte_idx)) {
-			switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
+			switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
 			default:
 			case CUT_MODE_0_LINE:
 			case CUT_MODE_N_LINE:
@@ -269,11 +271,11 @@ PRIVATE void change_cut_mode_on_mark_region_special_cases(void)
 				break;
 			case CUT_MODE_HV_BOX:
 				// change cut-mode
-				CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
+				GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_H_CHAR;
 				break;
 			case CUT_MODE_VH_BOX:
 				// change cut-mode
-				CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
+				GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_V_LINE;
 				break;
 			}
 			break;
@@ -285,7 +287,7 @@ void setup_cut_region(void)
 	int mark_min_line_col_idx;
 	int mark_max_line_col_idx;
 
-	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
+	switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
@@ -369,7 +371,7 @@ void setup_cut_region(void)
 	}
 
 	// setup mark_min_col_idx, mark_max_col_idx
-	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
+	switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:
@@ -416,7 +418,7 @@ int is_there_cut_region(void)
 int lines_selected(void)
 {
 	int lines = abs(EPCB_ML->line_num - EPCBVC_CL->line_num);
-	switch (CUR_EBUF_STATE(buf_CUT_MODE)) {
+	switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
 	default:
 	case CUT_MODE_0_LINE:
 	case CUT_MODE_N_LINE:

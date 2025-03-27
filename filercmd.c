@@ -646,7 +646,7 @@ int dof_unzip_file(void)
 int dof_zip_file(void)
 {
 	char command_str[MAX_PATH_LEN+1] = "";
-	strlcpy__(command_str, BEZIP, MAX_PATH_LEN);
+	snprintf_(command_str, MAX_PATH_LEN, "%s {}", BEZIP);
 	// "BEZIP file1 file2 ..."
 	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
