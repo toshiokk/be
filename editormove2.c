@@ -239,7 +239,6 @@ int get_edit_win_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **lin
 	*byte_idx = start_byte_idx_of_wrap_line(te_concat_lf_buf, wl_idx, 0, -1);
 	return line_cnt;
 }
-
 //------------------------------------------------------------------------------
 // adjust pointers after moving horizontally or vertically
 void adjust_curs_pos_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
@@ -378,7 +377,6 @@ flf_d_printf("disp_width: %d, text_width: %d, margin: %d, cursor_text_x: %d, min
 //01234567890123456789012345678901234567890123456789
 
 //------------------------------------------------------------------------------
-
 PRIVATE char disabled_update_min_text_x_to_keep = 0;
 void set_disabled_update_min_text_x_to_keep()
 {

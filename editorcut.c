@@ -325,7 +325,6 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 	}
 	return 1;		// done
 }
-
 //------------------------------------------------------------------------------
 PRIVATE int copy_text_to_cut_buf(void)
 {
@@ -417,7 +416,6 @@ PRIVATE int paste_text_from_cut_buf(void)
 	}
 	return 1;
 }
-
 //------------------------------------------------------------------------------
 // e.g.1
 //  aaaaAAAAAAAAAAAAAaaaa
@@ -584,7 +582,6 @@ PRIVATE void delete_rect_region(
 		}
 	}
 }
-
 //------------------------------------------------------------------------------
 // paste data into edit buffer streamlike
 // e.g.

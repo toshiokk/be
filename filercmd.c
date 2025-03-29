@@ -463,7 +463,7 @@ int dof_rename_file(void)
 	 _("Rename to:")))) {
 		return 0;
 	}
-	if (fork_exec_args_once(PAUSE1, "mv", "-i",
+	if (fork_exec_args_once(PAUSE1, "mv", "-iv",
 	 get_cur_fv_cur_file_ptr()->file_name, file_name, 0) == 0) {
 		strlcpy__(get_cur_filer_pane_view()->next_file, file_name, MAX_PATH_LEN);
 		filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
@@ -611,34 +611,26 @@ int dof_size_zero_file(void)
 	return 0;
 }
 
-// BEUNZIP file1.tgz
-// BEUNZIP file2.tgz
-//        :
+// BEUNZIP file1.tgz file2.tgz ...
 int dof_unzip_file(void)
 {
-	int files_selected;
-	int ret;
-	if ((files_selected = get_files_selected_cfv()) == 0) {
-		ret = ask_yes_no(ASK_YES_NO, _("Unzip file %s ?"),
-		 get_cur_fv_cur_file_ptr()->file_name);
-	} else {
-		ret = ask_yes_no(ASK_YES_NO, _("Unzip %d files ?"),
-		 files_selected);
-	}
-	if (ret <= 0) {
-		return 0;
-	}
-	int exit_status = 0;
-	begin_fork_exec_repeat();
+	char command_str[MAX_PATH_LEN+1] = "";
+	snprintf_(command_str, MAX_PATH_LEN, "%s", BEUNZIP);
+	// "BEZIP file1 file2 ..."
 	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
-		if (is_sigint_signaled())
-			break;
-		exit_status = fork_exec_args_repeat(SEPARATE0, BEUNZIP,
-		 get_cur_fv_file_ptr(file_idx)->file_name, 0);
+		concat_file_path_separating_by_space(command_str, MAX_PATH_LEN,
+		 get_cur_fv_file_ptr(file_idx)->file_name);
 	}
-	end_fork_exec_repeat(exit_status);
+
+	if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str, 0,
+	 HISTORY_TYPE_IDX_EXEC,
+	 _("Unzip files:")))) {
+		return 0;
+	}
+
+	fork_exec_sh_c_once(LOGGING1 | PAUSE1, command_str);
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -660,7 +652,8 @@ int dof_zip_file(void)
 	 _("Zip files:")))) {
 		return 0;
 	}
-	fork_exec_sh_c_once(PAUSE1, command_str);
+
+	fork_exec_sh_c_once(LOGGING1 | PAUSE1, command_str);
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -882,6 +875,9 @@ int dof_tog_panes(void)
 }
 int dof_tog_panex(void)
 {
+#ifdef ENABLE_HISTORY
+	if (dir_history_fix()) { _WARNING_ }
+#endif // ENABLE_HISTORY
 	tog_filer_panex();
 	SHOW_MODE("Filer pane index", get_str_filer_panex());
 	filer_do_next = FL_UPDATE_FILE_LIST_AUTO;

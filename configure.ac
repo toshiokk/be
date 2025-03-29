@@ -259,9 +259,21 @@ yes)
 esac
 AC_MSG_RESULT($enable_nkf)
 
+AC_MSG_CHECKING([usability of BSD-script ...])
+AC_CHECK_PROG(have_bsd_script, script, yes, no)
+if test $have_bsd_script = no ; then
+	echo " BDS-script program is not available."
+	echo " To get logging from command execution, install BDS-script program by 'apt install bsdutils'."
+fi
+
 # ---------------------------------------------------------------------------
 # check configuration dependencies
 # ---------------------------------------------------------------------------
+# dependencies between configurations:
+#  configulation   depends on ...
+#  --------------  -----------------------
+#  enable_syntax   enable_regex, enable_rc
+#  enable_highbgc  enable_ncurses=no
 
 if test "$enable_syntax" = yes ; then
 	if test "$enable_rc" = no ; then

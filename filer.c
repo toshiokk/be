@@ -28,7 +28,7 @@ PRIVATE int get_another_filer_pane_idx(int filer_pane_idx);
 
 ef_do_next_t filer_do_next = EF_NONE;
 
-PRIVATE int filer_main_loop(const char *dir, const char *filter, char *path_buf, int buf_len);
+PRIVATE int filer_main_loop(const char *dir, const char *filter, char *path_buf);
 PRIVATE int check_filer_cur_dir(void);
 PRIVATE int update_file_list_of_all_panes(int update_request);
 PRIVATE int update_file_list(filer_view_t *fv, int update_request);
@@ -121,6 +121,11 @@ file_info_t *get_cur_fv_file_ptr(int file_idx)
 {
 	return &(get_cur_fv_file_list_ptr()[file_idx]);
 }
+file_info_t *get_fv_file_ptr(int pane_idx)
+{
+	return &(get_cur_filer_view(pane_idx)->file_list_ptr[
+	 get_cur_filer_view(pane_idx)->cur_file_idx]);
+}
 int get_cur_fv_file_idx()
 {
 	return get_cur_filer_pane_view()->cur_file_idx;
@@ -132,8 +137,8 @@ void set_cur_fv_file_idx(int file_idx)
 
 //------------------------------------------------------------------------------
 
-int do_call_filer(int push_win, int list_mode,
- const char *dir, const char *filter, char *path_buf, int buf_len)
+int do_call_filer(int push_win, int list_mode, const char *dir, const char *filter,
+ char *path_buf)
 {
 flf_d_printf("push: %d, list: %d, dir: %s, filter: [%s]\n", push_win, list_mode, dir, filter);
 #ifdef ENABLE_HISTORY
@@ -154,7 +159,7 @@ flf_d_printf("GET_APPMD(app_EDITOR_FILER): %d\n", GET_APPMD(app_EDITOR_FILER));
 flf_d_printf("push_win:%d, list_mode:%d\n", push_win, list_mode);
 flf_d_printf("<<<<<<<<<<<<<<<<<<<<<<<<<\n");
 
-	int ret = filer_main_loop(dir, filter, path_buf, buf_len);
+	int ret = filer_main_loop(dir, filter, path_buf);
 
 flf_d_printf(">>>>>>>>>>>>>>>>>>>>>>>>>\n");
 flf_d_printf("push_win:%d, list_mode:%d --> ret: %d\n", push_win, list_mode, ret);
@@ -174,15 +179,15 @@ flf_d_printf("[1].cur_dir: [%s]\n", get_cur_filer_view(1)->cur_dir);
 
 	filer_do_next = EF_NONE;	// for caller of do_call_filer(), clear "filer_do_next"
 
-	_D(disp_status_bar_cwd())
+///	_D(disp_status_bar_cwd())
 	return ret;
 }
 
 //------------------------------------------------------------------------------
 
-PRIVATE int filer_main_loop(const char *dir, const char *filter, char *path_buf, int buf_len)
+PRIVATE int filer_main_loop(const char *dir, const char *filter, char *path_buf)
 {
-flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path_buf, buf_len);
+flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path_buf);
 	if (filter) {
 		strlcpy__(get_cur_filer_pane_view()->filter, filter, MAX_PATH_LEN);
 	}
@@ -305,17 +310,17 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 						cat_dir_and_file(path,
 						 get_cur_filer_pane_view()->cur_dir,
 						 get_cur_fv_file_ptr(file_idx)->file_name);
-						concat_file_path_separating_by_space(path_buf, buf_len, path);
+						concat_file_path_separating_by_space(path_buf, MAX_PATH_LEN, path);
 					} else /* if (IS_UPPER_KEY(key_input)) */ {
 						// enter file names: file-1 "file 2" "file 3"
-						concat_file_path_separating_by_space(path_buf, buf_len,
+						concat_file_path_separating_by_space(path_buf, MAX_PATH_LEN,
 						 get_cur_fv_file_ptr(file_idx)->file_name);
 					}
 				}
 				filer_do_next = EF_INPUT_W_ENTER;
 				break;
 			case FL_ENTER_CUR_DIR_PATH:
-				strlcpy__(path_buf, get_cur_filer_pane_view()->cur_dir, buf_len);
+				strlcpy__(path_buf, get_cur_filer_pane_view()->cur_dir, MAX_PATH_LEN);
 				filer_do_next = EF_INPUT_W_ENTER;
 				break;
 			}
@@ -534,7 +539,7 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 				set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 0);
 			} else {
 #define STRIPE_LINES	4
-				if (GET_APPMD(fl_SHOW_ZEBRA_STRIPING)
+				if (GET_APPMD(fl_SHOW_ZEBRA_STRIPE)
 				 && (file_idx % (STRIPE_LINES*2)) >= STRIPE_LINES) {
 					set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL2, 0);
 				} else {

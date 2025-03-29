@@ -39,11 +39,12 @@ filer_view_t *get_another_filer_pane_view(void);
 file_info_t *get_cur_fv_file_list_ptr();
 file_info_t *get_cur_fv_cur_file_ptr();
 file_info_t *get_cur_fv_file_ptr(int file_idx);
+file_info_t *get_fv_file_ptr(int pane_idx);
 int get_cur_fv_file_idx();
 void set_cur_fv_file_idx(int file_idx);
 
-int do_call_filer(int push_win, int list_mode,
- const char *dir, const char *filter, char *path_buf, int buf_len);
+int do_call_filer(int push_win, int list_mode, const char *dir, const char *filter,
+ char *path_buf);
 
 int update_screen_filer(int status_bar, int refresh);
 

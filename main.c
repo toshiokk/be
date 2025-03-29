@@ -75,6 +75,7 @@ flf_d_printf("Start %s ==============================\n", APP_NAME " " __DATE__ 
 	cache_groups();
 	init_default_app_color();
 	check_wsl();
+	check_availability_of_script();
 #ifdef START_UP_TEST
 	start_up_test();
 #endif // START_UP_TEST
@@ -226,7 +227,7 @@ void app_main_loop(void)
 		// application was started as a FILER
 		for ( ; ; ) {
 			char file_path[MAX_PATH_LEN+1];
-			do_call_filer(0, APP_MODE_NORMAL, "", "", file_path, MAX_PATH_LEN);
+			do_call_filer(0, APP_MODE_NORMAL, "", "", file_path);
 			if (edit_bufs_count_buf() == 0) {
 flf_d_printf("no edit buffers: %d\n", edit_bufs_count_buf());
 				// no file loaded in filer

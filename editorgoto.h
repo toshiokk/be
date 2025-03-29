@@ -62,13 +62,12 @@ int doe_switch_to_next_buffers(void);
 void memorize_cur_file_pos_before_jump();
 int doe_return_to_prev_file_pos(void);
 
-//------------------------------------------------------------------------------
-// Top level functions - never called recursively
-// | function name            | actions                                                     |
-// |--------------------------|-------------------------------------------------------------|
-// | load_files_in_cur_buf()  | Load files listed in current buffer							|
-// | load_files_in_string()   | Load files listed in one line of string						|
-// | load_file_name_upp_low() | Try to open file with name in as-it-is, UPPER or lower case	|
+// Top level functions: never called recursively
+// |function name           |actions                                                    |
+// |------------------------|-----------------------------------------------------------|
+// |load_files_in_cur_buf() |Load files listed in current buffer                        |
+// |load_files_in_string()  |Load files listed in one line of string                    |
+// |load_file_name_upp_low()|Try to open file with name in as-it-is, UPPER or lower case|
 //
 // Top level functions must do below steps:
 //  1. call clear_files_loaded()		# clear counter

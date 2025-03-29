@@ -150,9 +150,7 @@ int doe_open_files_in_buf(void)
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
-
 //------------------------------------------------------------------------------
-
 int doe_switch_to_prev_buffer(void)
 {
 	if (switch_epc_buf_to_prev_buf(1, 0) == 0) {
@@ -250,7 +248,6 @@ int doe_return_to_prev_file_pos(void)
 	return 1;
 }
 //------------------------------------------------------------------------------
-
 // Top level functions:
 int load_file_name_upp_low(const char *file_name, int flags)
 {
@@ -879,7 +876,7 @@ int try_to_open_dir_in_str_with_filer(const char *str)
 		strlcpy__(buf_dir, full_path_of_cur_dir_s(), MAX_PATH_LEN);
 	}
 	char file_path[MAX_PATH_LEN+1];
-	do_call_filer(1, APP_MODE_NORMAL, buf_dir, "", file_path, MAX_PATH_LEN);
+	do_call_filer(1, APP_MODE_NORMAL, buf_dir, "", file_path);
 	return 1;
 }
 #endif // ENABLE_FILER

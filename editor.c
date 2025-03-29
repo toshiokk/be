@@ -276,11 +276,11 @@ int doe_run_line_soon(void)
 }
 int doe_run_line_soon_w_log(void)
 {
-	return doe_run_line__(LOGGING2, 0, 0);
+	return doe_run_line__(LOGGING1, 0, 0);
 }
 int doe_run_line_input(void)
 {
-	return doe_run_line__(LOGGING2, EPCBVC_CLBI, 1);
+	return doe_run_line__(LOGGING1, EPCBVC_CLBI, 1);
 }
 PRIVATE int doe_run_line__(int flags, int clbi, int input)
 {
@@ -719,9 +719,7 @@ PRIVATE void blink_editor_title_bar()
 	central_win_output_string(central_win_get_top_win_y() + TITLE_LINE, 0,
 	 editor_title_bar_buf, -1);
 }
-
 //------------------------------------------------------------------------------
-
 PRIVATE void disp_status_bar_editor(void)
 {
 	int bytes, byte_idx;
@@ -794,9 +792,7 @@ PRIVATE void disp_key_list_editor(void)
 	};
 	disp_key_list(editor_key_lists);
 }
-
 //------------------------------------------------------------------------------
-
 int is_editor_unmodifiable_then_warn_it(void)
 {
 	// in Application mode
@@ -813,7 +809,6 @@ int is_editor_unmodifiable_then_warn_it(void)
 	}
 	return 0;
 }
-
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 void dump_cur_pointers(void)

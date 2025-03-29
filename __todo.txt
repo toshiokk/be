@@ -6,16 +6,19 @@
 - CRASH: crash
 - POLICY: things to be kept
 
-- [x] reduce_log_file_size()
-- [-] such usage "grep "Temper" file.csv | be"
 - [] Make easy to use for other people
 - [xxx ] clean up code
-- [d ] Use `typedef` in variable definition (UINT8/UINT16/UINT32/ssize_t/size_t)
-- [x] 250324 do not append magic-line on loading and do not remove magic-line on saving
-  - [x] 250325 append magic-line on loading 0 byte file and remove magic-line on saving a file which has only one LF
-  - [x] manage magic-line by a flag buf.magic-line-added
-    - on load: no migic-line in file ==> add magic-line and set flag
-    - on save: flag is beeing set and there is a magic-line ==> remove magic-line
+  - [d ] Use `typedef` in variable definition (UINT8/UINT16/UINT32/ssize_t/size_t)
+  - [d ] POLICY: variable definition is a initialization.
+
+- [x] add "two dir" mode to filer which enter "/dir/a/file-a.txt /dir/b/file-b.txt" automatically
+- [x] reduce_log_file_size()
+- [-] such usage "grep "Temper" file.csv | be"
+- [-] 250324 do not append magic-line on loading and do not remove magic-line on saving
+  - [-] 250325 append magic-line on loading 0 byte file and remove magic-line on saving a file which has only one LF
+- [x] 250328 manage magic-line by a flag buf.magic_line_added
+  - on load: no magic-line in file ==> add magic-line and set flag
+  - on save: flag is beeing set and there is a magic-line ==> remove magic-line
 
 - [x] IMPR: built in logger that output to the separate log files based on the pty number
   - [x] record output from a program that is started execution by filer in sub shell
@@ -25,7 +28,7 @@
     == [/home/user/tools/be/be]$ pwd ==
     /home/user/tools/be/be
     ```
-  - [x] Use `script` for logging
+  - [x] Use `script` for logging (apt install bsdutils)
   - [x] not include the output from `be` editor itself because it include many confusing escape sequence
   - [x] log file name, which is the more convenient ?
     - [x] `/home/user/.be/1.log`
@@ -33,6 +36,9 @@
     - [-] `/home/user/.be/yymmdd-hhmmss.log`
     - [-] `/home/user/logs/yymmdd-hhmmss.log`
       - [-] automatic deletion of old log files
+  - [x] enable logging from almost all sub shell execution
+  - [x] 250329 workaround for the case when no 'script' executable
+    - [x] check availability of 'script' at startup and does not call if unavailable
 
 - [x-] 250322 delete `last_searched_needle` ==> necessary when ENABLE_HISTORY disabled
 - [x] 250322 BUG: It causes `PROGERR` to break loading very large file.
@@ -55,12 +61,15 @@
         - if the path does not exist as "#/path...", do nothing
       - [x]remove prepended "#" when it gets the entry value from history
       - [x] two temporal entries can not exist
+  - [ ] BUG: sometimes dir not registered after I enter and open project file
+
   # operations:
     - refresh file list
     - select file
     - open file
     - file operations such as copy/move/remove/mkdir/exec
     - other special operation ...
+      - [x] 250329 switch pane
       - quit filer
   # test cases:
     - process-A enters dir-A
@@ -76,7 +85,7 @@
       - [x] dir-A and dir-B are fixed
 
 - [x] 250314 filer: 'u' uncompress files from .tar.gz/.tar.bz2/.zip calling `beunzip`
-  - [-] ask_yes_no() ==> input_str_pos()
+  - [x] ask_yes_no(), interate uncompression ==> input_str_pos(), call `beunzip` once passing all files
 - [x] 250314 filer: 'U' compress files to .tar.gz/.tar.bz2/.zip calling `bezip`
 - [x ] CRASH: on the switch to undo-buffer
   - [-]there may be illegal links from undo-buffer to edit-buffer
@@ -260,20 +269,20 @@ start as a editor
 // |        |                             |          |only|history|locking|FN   |non     |
 // |        |                             |          |    |       |       |     |existent|
 // |--------|-----------------------------|----------|----|-------|-------|-----|--------|
-// | K_e_   | dof_open_file_recursive     |Yes       |    |No     |       |     |        |
-// | K_E_   | dof_open_file_ro            |Yes       |Yes |No     |       |     |        |
-// | K_M_e  | dof_open_file_non_recursive |No        |    |No     |       |     |        |
-// | K_M_E  | dof_open_file_from_history  |Yes       |    |Yes    |       |     |        |
-// | K_MC_E | dof_open_locked_file        |Yes       |    |No     |Yes    |     |        |
-// | K_M_n  | dof_open_new_file           |YEs       |    |       |       |Yes  |Yes     |
+// | K_e_   | dof_open_file_recursive     | Yes      |    | No    |       |     |        |
+// | K_E_   | dof_open_file_ro            | Yes      |Yes | No    |       |     |        |
+// | K_M_e  | dof_open_file_non_recursive | No       |    | No    |       |     |        |
+// | K_M_E  | dof_open_file_from_history  | Yes      |    | Yes   |       |     |        |
+// | K_MC_E | dof_open_locked_file        | Yes      |    | No    | Yes   |     |        |
+// | K_M_n  | dof_open_new_file           | YEs      |    |       |       | Yes | Yes    |
 // |--------|-----------------------------|----------|----|-------|-------|-----|--------|
-// | K_e_   | N/A                         |          |    |       |       |Yes  |        |
-// | K_E_   | N/A                         |          |    |       |       |Yes  |        |
-// | K_M_e  | doe_open_file_recursive     |          |    |       |       |Yes  |        |
-// | K_M_E  | doe_open_file_non_recursive |Yes       |    |       |       |Yes  |        |
-// | K_M_n  | doe_open_new_file           |          |    |       |       |Yes  |Yes     |
-// | XX K_M_E  | XX doe_open_file_ro      |          |Yes |       |       |Yes  |        |
-// | XX K_MC_E | XX doe_open_locked_file  |          |    |       |Yes    |Yes  |        |
+// | K_e_   | N/A                         |          |    |       |       | Yes |        |
+// | K_E_   | N/A                         |          |    |       |       | Yes |        |
+// | K_M_e  | doe_open_file_recursive     |          |    |       |       | Yes |        |
+// | K_M_E  | doe_open_file_non_recursive | Yes      |    |       |       | Yes |        |
+// | K_M_n  | doe_open_new_file           |          |    |       |       | Yes | Yes    |
+// | K_M_E  | doe_open_file_ro            |          |Yes |       |       | Yes |        |
+// | K_MC_E | doe_open_locked_file        |          |    |       | Yes   | Yes |        |
 
 // Execution functions:
 // | key    | filer function              | editor function           |

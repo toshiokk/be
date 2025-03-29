@@ -48,11 +48,11 @@ PRIVATE const char *get_history_newer(int hist_type_idx);
 PRIVATE int has_str_registered_in_the_last_line(int hist_type_idx, const char *str);
 
 PRIVATE void remove_all_exact_match(int hist_type_idx, const char *str);
+PRIVATE int compare_file_path_str(const char *str, const char *file_path);
 PRIVATE void remove_all_file_path_match(int hist_type_idx, const char *str);
 
 PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str);
 
-PRIVATE int compare_file_path_str(const char *str, const char *file_path);
 
 PRIVATE const char* dir_history_add_temporal_mark(const char* dir);
 PRIVATE const char* dir_history_remove_temporal_mark(const char* str);
@@ -116,25 +116,12 @@ void update_history(int hist_type_idx, const char *str)
 	if (is_strlen_0(str)) {
 		return;
 	}
-#ifdef NOT_DELETE_OLD_IDENTICAL_ENTRY
-	if ((hist_type_idx != HISTORY_TYPE_IDX_EXEC)
-	 && has_str_registered_in_the_last_line(hist_type_idx, str)) {
-		// 'str' is registered in the last line, no need update
-		return;
-	}
-#else // NOT_DELETE_OLD_IDENTICAL_ENTRY
 	if (has_str_registered_in_the_last_line(hist_type_idx, str)) {
 		// 'str' is registered in the last line, no need update
 		return;
 	}
-#endif // NOT_DELETE_OLD_IDENTICAL_ENTRY
 	// load-modify(free old entry and append new entry)-save
 	load_history_if_needed(hist_type_idx);
-#ifdef NOT_DELETE_OLD_IDENTICAL_ENTRY
-	if (hist_type_idx == HISTORY_TYPE_IDX_EXEC) {
-		// not delete old entry
-	} else
-#endif // NOT_DELETE_OLD_IDENTICAL_ENTRY
 	if ((hist_type_idx == HISTORY_TYPE_IDX_FILE) || (hist_type_idx == HISTORY_TYPE_IDX_DIR)) {
 		remove_all_file_path_match(hist_type_idx, str);
 	} else {
@@ -148,6 +135,7 @@ void update_history(int hist_type_idx, const char *str)
 void append_history(int hist_type_idx, const char *str)
 {
 	load_history_if_needed(hist_type_idx);
+mflf_d_printf("[%s] <= [%s]\n", get_history_file_path(hist_type_idx), str);
 	append_history_buf(hist_type_idx, str);
 }
 
@@ -219,7 +207,7 @@ PRIVATE int save_history_idx(int hist_type_idx)
 {
 	int error = 0;
 	const char *file_path = get_history_file_path(hist_type_idx);
-mflf_d_printf("[%s]\n", file_path);
+mflf_d_printf("[%s]\n", get_history_file_path(hist_type_idx));
 	FILE *fp = fopen(file_path, "w");
 	if (fp == NULL) {
 		e_printf("Unable to create history file: %s, %s", file_path, strerror(errno));
@@ -264,6 +252,7 @@ PRIVATE int load_history_idx(int hist_type_idx)
 	clear_history_buf(hist_type_idx);
 
 	const char *file_path = get_history_file_path(hist_type_idx);
+mflf_d_printf("[%s]\n", get_history_file_path(hist_type_idx));
 	FILE *fp = fopen(file_path, "r");
 	if (fp == NULL) {
 		if (errno != ENOENT) {
@@ -450,6 +439,7 @@ const char* history_last_line_str(int hist_type_idx)
 // remove all line the same to str
 PRIVATE void remove_all_exact_match(int hist_type_idx, const char *str)
 {
+flf_d_printf("[%s]\n", str);
 	for (be_line_t *line = NODES_BOT_NODE(get_history_buf(hist_type_idx)); IS_NODE_INT(line); ) {
 		be_line_t *prev = NODE_PREV(line);
 		if (strcmp(line->data, str) == 0) {	// exact match
@@ -462,13 +452,14 @@ flf_d_printf("delete line [%s]\n", line->data);
 }
 PRIVATE void remove_all_file_path_match(int hist_type_idx, const char *str)
 {
+flf_d_printf("[%s]\n", str);
 	char file_path[MAX_PATH_LEN+1];
 	// "/dir/file.txt|100,40" ==> "/dir/file.txt"
 	get_file_line_col_from_str(str, file_path, NULL, NULL);
-	const char *path = quote_file_path_static(file_path);
 	for (be_line_t *line = NODES_BOT_NODE(get_history_buf(hist_type_idx)); IS_NODE_INT(line); ) {
 		be_line_t *prev = NODE_PREV(line);
-		if (compare_file_path_str(line->data, path) == 0) {	// file path match
+		if (compare_file_path_str(line->data, file_path) == 0) {	// file path match
+flf_d_printf("delete line [%s]\n", line->data);
 			line_unlink_free(line);		// delete older line
 			set_history_modified(hist_type_idx);
 		}
@@ -486,26 +477,16 @@ PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *s
 	}
 	return NULL;
 }
-const char *search_history_file_path(int hist_type_idx, const char *path)
+const char *search_history_file_path(int hist_type_idx, const char *file_path)
 {
-	path = quote_file_path_static(path);
 	// search from the newest to the oldest
 	for (be_line_t *line = NODES_BOT_NODE(get_history_buf(hist_type_idx)); IS_NODE_INT(line);
 	 line = NODE_PREV(line)) {
-		// /home/user/filename.exp|1234
-		// '/home/user/ filename.exp '|1234
-		const char *ptr;
-		size_t len;
-		if ((ptr = strstr(line->data, FILE_PATH_SEPARATOR)) != NULL) {
-			len = ptr - line->data;
-		} else {
-			len = line_strlen(line);
-		}
-		if (strncmp(line->data, path, len) == 0) {
-			return line->data;
+		if (compare_file_path_str(line->data, file_path) == 0) {
+			return line->data;	// return matched string
 		}
 	}
-	return path;		// return original string
+	return file_path;			// return original string
 }
 PRIVATE int compare_file_path_str(const char *str, const char *file_path)
 {
@@ -521,7 +502,8 @@ PRIVATE int compare_file_path_str(const char *str, const char *file_path)
 	} else {
 		len = strlen_path(str);
 	}
-	return strncmp(str, file_path, len);
+	const char *quoted_file_path = quote_file_path_static(file_path);
+	return strn_strn_cmp__(str, len, quoted_file_path, strlen_path(quoted_file_path));
 }
 
 //------------------------------------------------------------------------------

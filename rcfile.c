@@ -607,11 +607,11 @@ int register_default_color_syntax(void)
 #define CL_TAB_EOL	CL_GY	// color for TAB/EOL/"　" notation
 
 	add_file_type("*", ".*");
-	cur_file_type->tab_size = DEFAULT_TAB_SIZE;	// set default tab size
+	cur_file_type->tab_size = DEFAULT_TAB_SIZE;			// set default tab size
 	add_color_syntax(UTF8_ZEN_SPACE, "", -1, CL_TAB_EOL);	// Full width space
 	add_color_syntax("[\\t]", "", -1, CL_TAB_EOL);		// TAB
 	add_color_syntax("[\\n]", "", -1, CL_TAB_EOL);		// EOL(End of line)
-	default_color_syntax = cur_file_type;	// memorize this color syntax
+	default_color_syntax = cur_file_type;				// memorize this color syntax
 	return 0;
 }
 
@@ -778,12 +778,11 @@ void dump_color_syntax(const color_syntax_t *clr_syntax)
 
 PRIVATE void rcfile_error(const char *msg, ...)
 {
-	va_list ap;
-
 	e_printf("\n");
 	if (rc_line_num > 0) {
 		e_printf("Error in file: %s on line: %d", rc_file_path_reading, rc_line_num);
 	}
+	va_list ap;
 	va_start(ap, msg);
 	e_vprintf(msg, ap);
 	va_end(ap);

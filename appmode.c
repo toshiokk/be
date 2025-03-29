@@ -78,7 +78,7 @@ void init_app_mode(void)
 	CLR_APPMD(fl_FILER_PANES);
 	CLR_APPMD(fl_FILER_PANEX);
 	SET_APPMD_VAL(fl_SHOW_FILE_INFO, SHOW_FILE_INFO_2);
-	SET_APPMD_VAL(fl_SHOW_ZEBRA_STRIPING, SHOW_ZEBRA_STRIPING_OFF);
+	SET_APPMD_VAL(fl_SHOW_ZEBRA_STRIPE, SHOW_ZEBRA_STRIPING_OFF);
 	SET_APPMD_VAL(fl_FILE_SORT_BY, 0);
 }
 
@@ -152,7 +152,7 @@ void set_mode_idx_val(mode_idx_t mode_idx, int val)
 		SET_APPMD_VAL(fl_FILE_SORT_BY, val);
 		break;
 	case FLMD_SHOW_ZEBRA_STRIPING:
-		SET_APPMD_VAL(fl_SHOW_ZEBRA_STRIPING, val);
+		SET_APPMD_VAL(fl_SHOW_ZEBRA_STRIPE, val);
 		break;
 	case FLMD_FILER_PANES:
 		SET_APPMD_VAL(fl_FILER_PANES, val);
@@ -448,11 +448,11 @@ const char *get_str_file_sort_mode(void)
 
 int tog_show_zebra_striping(void)
 {
-	return TOGGLE_APPMD(fl_SHOW_ZEBRA_STRIPING);
+	return TOGGLE_APPMD(fl_SHOW_ZEBRA_STRIPE);
 }
 const char *get_str_show_zebra_striping(void)
 {
-	return BOOL_TO_ON_OFF(GET_APPMD(fl_SHOW_ZEBRA_STRIPING));
+	return BOOL_TO_ON_OFF(GET_APPMD(fl_SHOW_ZEBRA_STRIPE));
 }
 
 #ifdef ENABLE_FILER

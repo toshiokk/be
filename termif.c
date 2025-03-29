@@ -602,9 +602,8 @@ PRIVATE void send_fgc_to_term(int fgc)
 PRIVATE void send_printf_to_term(const char *format, ...)
 {
 #define MAX_ESC_SEQ_LEN		(10+10)	// "e[999;999R"
-	va_list ap;
 	char buffer[MAX_ESC_SEQ_LEN+1];
-
+	va_list ap;
 	va_start(ap, format);
 	int len = vsnprintf(buffer, MAX_ESC_SEQ_LEN+1, format, ap);
 	va_end(ap);

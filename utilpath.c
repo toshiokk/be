@@ -27,7 +27,6 @@
 const char *get_starting_dir(void)
 {
 	static char starting_dir[MAX_PATH_LEN+1] = "";
-
 	if (strlen_path(starting_dir) == 0) {
 		if (strlen_path(getenv_pwd(starting_dir)) == 0) {
 			getcwd__(starting_dir);
@@ -39,10 +38,9 @@ flf_d_printf("starting_dir: [%s]\n", starting_dir);
 const char *get_home_dir(void)
 {
 	static char home_dir[MAX_PATH_LEN+1] = "";
-	char *env_home;
-	const struct passwd *userdata = 0;
-
 	if (strlen_path(home_dir) == 0) {
+		char *env_home;
+		const struct passwd *userdata = 0;
 		if (strlen(env_home = getenv__("HOME"))) {
 			strlcpy__(home_dir, env_home, MAX_PATH_LEN);
 		} else if ((userdata = getpwuid(geteuid())) != NULL) {
@@ -57,7 +55,6 @@ flf_d_printf("home_dir: [%s]\n", home_dir);
 const char *get_tty_name(void)
 {
 	static char tty_name[MAX_PATH_LEN+1] = "";
-
 	if (strlen_path(tty_name) == 0) {
 		strlcpy__(tty_name, ttyname(0), MAX_PATH_LEN);	// /dev/pts/99
 		if (strlen_path(tty_name) == 0) {
@@ -73,11 +70,24 @@ int check_wsl()
 	static int checked = 0;
 	if (! checked) {
 		checked = (is_path_exist("/mnt/c") ? 1 : -1);
+		if (checked > 0) {
+			flf_d_printf("WSL(Linux running on Windows)\n");
+		} else {
+			flf_d_printf("Native Linux\n");
+		}
 	}
-	if (checked > 0) {
-		flf_d_printf("WSL(Linux running on Windows)\n");
-	} else {
-		flf_d_printf("Native Linux\n");
+	return checked > 0;
+}
+int check_availability_of_script()
+{
+	static int checked = 0;
+	if (! checked) {
+		checked = (is_path_exist("/usr/bin/script") ? 1 : -1);
+		if (checked > 0) {
+			flf_d_printf("'script' is available\n");
+		} else {
+			flf_d_printf("'script' is unavailable\n");
+		}
 	}
 	return checked > 0;
 }
@@ -91,7 +101,6 @@ int change_cur_dir_saving_prev_next_dir(const char *path,
 {
 flf_d_printf("path: [%s]\n", path);
 	char dir[MAX_PATH_LEN+1];
-
 	if (is_path_regular_file(path) > 0) {
 		// If path is pointing a file, change to the directory containing it.
 		separate_path_to_dir_and_file(path, dir, next_dir_sel);
@@ -670,7 +679,6 @@ char *get_real_path(const char *path, char *buf)
 char *realpath__(const char *path, char *buf, int buf_len)
 {
 	char buffer[MAX_PATH_LEN+1];
-
 	if (realpath(path, buffer) == NULL) {
 		strlcpy__(buffer, path, MAX_PATH_LEN);	// error, return original path
 	}
@@ -683,7 +691,6 @@ char *realpath__(const char *path, char *buf, int buf_len)
 int readlink__(const char *path, char *buffer, int len)
 {
 	int ret;
-
 	if ((ret = readlink(path, buffer, len)) > 0)
 		buffer[ret] = '\0';
 	return ret;

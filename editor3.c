@@ -151,7 +151,6 @@ PRIVATE int get_line_num_digits(int max_line_num)
 	}
 	return digits;
 }
-
 //------------------------------------------------------------------------------
 int edit_win_get_path_lines(void)
 {
@@ -174,7 +173,6 @@ int edit_win_get_text_y(void)
 {
 	return edit_win_get_path_y() + edit_win_get_path_lines() + get_ruler_lines();
 }
-
 //------------------------------------------------------------------------------
 int te_tab_expand__max_wl_idx(const char *original)
 {

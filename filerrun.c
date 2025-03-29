@@ -46,7 +46,7 @@ int dof_exec_command_with_file(void)
 #define MAX_REPLACEMENTS	10
 	int cnt;
 	int exit_status = 0;
-	int logging = LOGGING0;
+	int logging = LOGGING1;
 
 	if (chk_inp_str_ret_val_filer(input_string_pos("", command_str, MAX_PATH_LEN,
 	 HISTORY_TYPE_IDX_EXEC,
@@ -54,7 +54,7 @@ int dof_exec_command_with_file(void)
 		return 0;
 	}
 	if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
-		logging = LOGGING2;	// set logging ON
+		logging ^= LOGGING1;	// invert logging
 	}
 	if (is_path_dir(command_str) > 0) {
 		return filer_change_dir(command_str);
@@ -76,7 +76,7 @@ int dof_exec_command_with_file(void)
 			 ptr_replace - buffer, STR_TO_BE_REPLACED_WITH_FILE_NAME_LEN,
 			 quote_file_path_static(get_cur_fv_file_ptr(file_idx)->file_name), -1);
 		}
-		exit_status = fork_exec_sh_c_repeat(SEPARATE1 | logging | LOGGING2, buffer);
+		exit_status = fork_exec_sh_c_repeat(SEPARATE1 | logging, buffer);
 	}
 	end_fork_exec_repeat(exit_status);
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
@@ -87,7 +87,7 @@ int dof_exec_command_with_file(void)
 int dof_exec_command_with_files(void)
 {
 	char command_str[MAX_PATH_LEN+1] = "";
-	int logging = LOGGING0;
+	int logging = LOGGING1;
 
 	// "file1 file2 ..."
 	for (int file_idx = select_and_get_first_file_idx_selected();
@@ -103,9 +103,9 @@ int dof_exec_command_with_files(void)
 		return 0;
 	}
 	if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
-		logging = LOGGING2;	// set logging ON
+		logging ^= LOGGING1;	// invert logging
 	}
-	fork_exec_sh_c_once(logging | PAUSE1 | LOGGING2, command_str);
+	fork_exec_sh_c_once(logging | PAUSE1 | logging, command_str);
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -127,13 +127,17 @@ int dof_run_command_abs(void)
 {
 	return dof_run_command_(2);
 }
-int dof_run_command_src_dst(void)
-{
-	return dof_run_command_(5);
-}
 int dof_run_command_symlink(void)
 {
 	return dof_run_command_(4);
+}
+int dof_run_command_src_dst_dir(void)
+{
+	return dof_run_command_(5);
+}
+int dof_run_command_src_dst_file(void)
+{
+	return dof_run_command_(6);
 }
 int dof_run_command_soon(void)
 {
@@ -152,8 +156,8 @@ PRIVATE int dof_run_command_(int mode)
 	char buf2[MAX_PATH_LEN+1];
 	char explanation[MAX_PATH_LEN+1];
 	char command_str[MAX_PATH_LEN+1] = "";
-	int src_fv_idx = 0;
-	int dst_fv_idx = 1;
+	int src_fv_idx = get_filer_cur_pane_idx();
+	int dst_fv_idx = get_filer_another_pane_idx();
 
 	switch (mode & RUN_MOD_MASK) {
 	default:
@@ -186,14 +190,8 @@ PRIVATE int dof_run_command_(int mode)
 		  : quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
 		break;
 	case 5:
-		expl = _("Run (with SRC-path and DEST-path)");
-		if (get_filer_cur_pane_idx() == 0) {
-			src_fv_idx = 0;
-			dst_fv_idx = 1;
-		} else {
-			src_fv_idx = 1;
-			dst_fv_idx = 0;
-		}
+		// " /path/to/dir-A/file-A /path/to/dir-B/file-A"
+		expl = _("Run (with SRC-dir and DEST-dir)");
 		snprintf_(buf_s, MAX_PATH_LEN+1, "%s/%s",
 		 get_cur_filer_view(src_fv_idx)->cur_dir, get_cur_fv_cur_file_ptr()->file_name);
 		snprintf_(buf_d, MAX_PATH_LEN+1, "%s/%s",
@@ -202,11 +200,22 @@ PRIVATE int dof_run_command_(int mode)
 		 quote_file_path_buf(buf1, buf_s),
 		 quote_file_path_buf(buf2, buf_d));
 		break;
+	case 6:
+		// " /path/to/dir-A/file-A /path/to/dir-B/file-B"
+		expl = _("Run (with SRC-file and DEST-file)");
+		snprintf_(buf_s, MAX_PATH_LEN+1, "%s/%s",
+		 get_cur_filer_view(src_fv_idx)->cur_dir, get_fv_file_ptr(src_fv_idx)->file_name);
+		snprintf_(buf_d, MAX_PATH_LEN+1, "%s/%s",
+		 get_cur_filer_view(dst_fv_idx)->cur_dir, get_fv_file_ptr(dst_fv_idx)->file_name);
+		snprintf_(command_str, MAX_PATH_LEN+1, " %s %s",
+		 quote_file_path_buf(buf1, buf_s),
+		 quote_file_path_buf(buf2, buf_d));
+		break;
 	}
 
 	int logging = LOGGING0;
 	if (mode & RUN_WITH_LOG) {
-		logging = LOGGING2;
+		logging = LOGGING1;
 	}
 	if (mode & RUN_SOON) {
 		// run soon without editing command line
@@ -222,7 +231,7 @@ PRIVATE int dof_run_command_(int mode)
 			return 0;
 		}
 		if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
-			logging = LOGGING2;	// set logging ON
+			logging ^= LOGGING1;	// invert logging
 		}
 	}
 
@@ -273,8 +282,8 @@ int fork_exec_sh_c_repeat(int flags, const char *command)
 
 int fork_exec_args_once(int pause_aft_exec, ...)
 {
-	va_list ap;
 	char *args[MAX_EXECV_ARGS+1];
+	va_list ap;
 	va_start(ap, pause_aft_exec);
 	args_from_va_list(args, ap);
 	va_end(ap);
@@ -283,8 +292,8 @@ int fork_exec_args_once(int pause_aft_exec, ...)
 }
 int fork_exec_args_repeat(int flags, ...)
 {
-	va_list ap;
 	char *args[MAX_EXECV_ARGS+1];
+	va_list ap;
 	va_start(ap, flags);
 	args_from_va_list(args, ap);
 	va_end(ap);
@@ -340,7 +349,7 @@ int send_to_system_clipboard()
 #define UP_SYS_CLIPBOARD_CMD	"update-system-clipboard.sh"
 	if (check_wsl()) {
 		tio_set_cursor_pos(central_win_get_status_line_y(), 0);
-		return fork_exec_sh_c(SETTERM0 | SEPARATE0 | PAUSE0 | LOGGING0, UP_SYS_CLIPBOARD_CMD);
+		return fork_exec_sh_c(SETTERM0 | SEPARATE0 | LOGGING0 | PAUSE0, UP_SYS_CLIPBOARD_CMD);
 	}
 	return 0;
 }
@@ -355,13 +364,18 @@ int fork_exec_sh_c(int flags, const char *command)
 		clear_fork_exec_counter();
 	}
 
-	if ((flags & LOGGING3) == 0) {
+	if (check_availability_of_script() == 0) {
+		flags &= ~LOGGING1;		// turn off logging
+	}
+	if ((flags & LOGGING1) == 0) {
 		// "sh -c <command ...>"
 #define SH_PROG			"sh"
 		args[0] = SH_PROG;
 		args[1] = "-c";
 		args[2] = (char *)command;
 		args[3] = NULL;
+		mflf_d_printf("logging: %d, exec: {{%s} {%s} {%s}}\n",
+		 (flags & LOGGING1) != 0, args[0], args[1], args[2]);
 	} else {
 		// "script -q -O <log_file> -a -c <command ...>"
 #define SCRIPT_PROG		"script"
@@ -373,10 +387,10 @@ int fork_exec_sh_c(int flags, const char *command)
 		args[5] = "-c";
 		args[6] = (char *)command;
 		args[7] = NULL;
+		mflf_d_printf("logging: %d, exec: {{%s} {%s} {%s} {%s} {%s} {%s} {%s}}\n",
+		 (flags & LOGGING1) != 0, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
 	}
 
-	mflf_d_printf("logging: %d, exec: {{%s} {%s} {%s}}\n",
-	 (flags & LOGGING3), args[0], args[1], args[2]);
 	// It does not output "sh -c [command arg1 arg2]"
 	//           but output only "command arg1 arg2"
 #ifdef ENABLE_HISTORY
@@ -397,11 +411,13 @@ PRIVATE int fork_exec_before_after(int flags, const char *command, char * const 
 	if ((flags & SEPARATE1) && (get_fork_exec_counter() == 0)) {
 		char header[MAX_PATH_LEN+1];
 		snprintf(header, MAX_PATH_LEN, "== %c%s%c%c %s ==\n",
-		 (flags & LOGGING3) ? '<' : '[', full_path_of_cur_dir_s(), (flags & LOGGING3) ? '>' : ']',
+		 (flags & LOGGING1) ? '<' : '[',
+		 full_path_of_cur_dir_s(),
+		 (flags & LOGGING1) ? '>' : ']',
 		 (geteuid() == 0) ? '#' : '$', command);
 		// output separator line to log file
-		if (flags & LOGGING3) {
-			write_text_to_file(get_exec_log_file_path(), (flags & LOGGING3) == LOGGING2, header);
+		if (flags & LOGGING1) {
+			write_text_to_file(get_exec_log_file_path(), 1, header);
 		}
 		// output separator line to console
 		printf("\n%s", header);
@@ -434,7 +450,7 @@ PRIVATE int fork_exec_before_after(int flags, const char *command, char * const 
 		reinit_term_for_filer();
 	}
 	inc_fork_exec_counter();
-	if (flags & LOGGING3) {
+	if (flags & LOGGING1) {
 		write_text_to_file(get_exec_log_file_path(), 1, "\n");
 	}
 	return exit_status;

@@ -65,9 +65,7 @@
 ///// : code to be deleted
 //DDDD : code be able to be deleted soon
 ////// : code be able to be deleted soon
-
 // DNU : Do Not Use
-
 // NOTE: length of string are categorized into three types
 //	MAX_SCRN_LINE_BUF_LEN	768*6 = 4608
 //	MAX_PATH_LEN			4096

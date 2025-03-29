@@ -434,7 +434,6 @@ int lines_selected(void)
 	}
 	return lines;
 }
-
 //------------------------------------------------------------------------------
 #define CUT_BUFFER_SEPARATOR	(const char*)(S_C_L "\n")
 #define MAX_CUT_BUFFERS			1000

@@ -105,3 +105,4 @@ rm -f _conf_make_all_patterns.log
 
 grep "Summary" _conf_make_all_patterns.log >__error
 cat __error | tee -a _conf_make_all_patterns.log
+cp -auv _conf_make_all_patterns.log _conf_make_all_patterns.latest

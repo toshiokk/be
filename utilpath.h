@@ -30,6 +30,7 @@ const char *get_starting_dir(void);
 const char *get_home_dir(void);
 const char *get_tty_name(void);
 int check_wsl();
+int check_availability_of_script();
 
 // change current directory -----------
 

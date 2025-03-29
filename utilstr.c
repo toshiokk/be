@@ -74,10 +74,8 @@ char* str_tr(char* string, char chr_from, char chr_to)
 char *conv_esc_str(char *string)
 {
 	char *src;
-	char *dest;
 	char buf[MAX_PATH_LEN+1];
-
-	dest = buf;
+	char *dest = buf;
 	for (src = string; *src; src++) {
 		switch (*src) {
 		case '\\':
@@ -196,9 +194,7 @@ char *insert_str_chr(char *buffer, size_t buf_len, size_t offset, char chr)
 char *insert_str(char *buffer, size_t buf_len, size_t offset,
  const char *string, len_t insert_len)
 {
-	int org_len;
-
-	org_len = strnlen(buffer, buf_len);
+	int org_len = strnlen(buffer, buf_len);
 	if (insert_len < 0) {
 		insert_len = strnlen(string, buf_len);
 	}
@@ -324,9 +320,8 @@ size_t strlen_path(const char *str)
 
 char *strcat_printf(char *buffer, size_t buf_len, const char *format, ...)
 {
-	va_list ap;
 	char buf[MAX_PATH_LEN+1];
-
+	va_list ap;
 	va_start(ap, format);
 	vsnprintf(buf, MAX_PATH_LEN+1, format, ap);
 	va_end(ap);
@@ -391,6 +386,13 @@ int strlcmp__(const char *dest, const char *src)
 {
 	return strncmp(dest, src, strlen(src));
 }
+int strn_strn_cmp__(const char *dest, size_t dest_len, const char *src, size_t src_len)
+{
+	if (dest_len != src_len) {
+		return dest_len - src_len;
+	}
+	return strncmp(dest, src, dest_len);
+}
 
 int strlcasecmp(const char *str1, const char *str2)
 {
@@ -449,9 +451,7 @@ char *strnset__(char *buf, char chr, size_t len)
 // dest and src are overlappable
 char *strncpy__(char *dest, const char *src, size_t buf_len)
 {
-	size_t copy_len;
-
-	copy_len = LIM_MAX(strlen(src), buf_len);
+	size_t copy_len = LIM_MAX(strlen(src), buf_len);
 	memmove(dest, src, copy_len);
 	memset(&dest[copy_len], '\0', buf_len - copy_len);
 	return dest;
@@ -471,9 +471,7 @@ int tolower_if_alpha(int chr)
 
 char *strupper(char *buffer)
 {
-	char *ptr;
-
-	for (ptr = buffer ; *ptr; ptr++) {
+	for (char *ptr = buffer ; *ptr; ptr++) {
 		*ptr = toupper(*ptr);
 	}
 	return buffer;
@@ -481,9 +479,7 @@ char *strupper(char *buffer)
 
 char *strlower(char *buffer)
 {
-	char *ptr;
-
-	for (ptr = buffer ; *ptr; ptr++) {
+	for (char *ptr = buffer ; *ptr; ptr++) {
 		*ptr = tolower(*ptr);
 	}
 	return buffer;
@@ -517,11 +513,10 @@ char *shrink_str_static(const char *str, int space, int n_over_10)
 // Note: 'buf' and 'str' are not overlappable
 char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10)
 {
-	int str_cols;
 	int space1 = 0, space2 = 0;
 	int byte_idx1, byte_idx2;
 
-	str_cols = utf8s_columns(str, MAX_PATH_LEN);
+	int str_cols = utf8s_columns(str, MAX_PATH_LEN);
 	if (str_cols <= space) {
 		// enough space
 		strlcpy__(buf, str, MAX_PATH_LEN);
@@ -552,18 +547,14 @@ int adjust_str_columns(char *utf8s, int columns)
 }
 int truncate_str_tail_columns(char *utf8s, int columns)
 {
-	int bytes;
-
-	bytes = get_byte_idx_from_col_idx(utf8s, columns, -1, NULL);
+	int bytes = get_byte_idx_from_col_idx(utf8s, columns, -1, NULL);
 	utf8s[bytes] = '\0';
 	return bytes;
 }
 int expand_str_columns(char *utf8s, int columns)
 {
-	int cols;
 	int bytes;
-
-	cols = utf8s_columns(utf8s, MAX_PATH_LEN);
+	int cols = utf8s_columns(utf8s, MAX_PATH_LEN);
 	if (columns - cols > 0) {
 		bytes = strlen(utf8s);
 		strnset__(&utf8s[bytes], ' ', columns - cols);
@@ -573,12 +564,11 @@ int expand_str_columns(char *utf8s, int columns)
 
 int get_byte_idx_from_col_idx(const char *utf8s, int columns, int left_right, int *col_idx__)
 {
-	int col_idx;
-	int prev_col_idx;
+	int col_idx = 0;
 	const char *ptr;
 	const char *prev_ptr;
 
-	prev_col_idx = columns;
+	int prev_col_idx = columns;
 	for (prev_ptr = ptr = utf8s, col_idx = 0; *ptr && col_idx < columns; ) {
 		prev_col_idx = col_idx;
 		prev_ptr = ptr;

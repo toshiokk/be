@@ -32,9 +32,8 @@ PRIVATE void blank_input_box(void);
 int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, ...)
 {
-	va_list ap;
-
 	_D(disp_status_bar_cwd())
+	va_list ap;
 	va_start(ap, msg);
 	int ret = input_string_pos_(default__, input_buf, cursor_byte_idx, hist_type_idx, msg, ap);
 	va_end(ap);
@@ -51,14 +50,13 @@ PRIVATE int input_string_pos_(const char *default__, char *input_buf, int cursor
 	static int recursively_called = 0;
 	char dir_save[MAX_PATH_LEN + 1];
 	char msg_buf[MAX_SCRN_LINE_BUF_LEN+1];
-	int byte_idx;
 
 	if (recursively_called >= 3) {
 		return -1;				// -1: recursive called
 	}
 
 	vsnprintf(msg_buf, MAX_SCRN_LINE_BUF_LEN+1, msg, ap);
-	byte_idx = byte_idx_from_col_idx(msg_buf, central_win_get_columns(), CHAR_LEFT, NULL);
+	int byte_idx = byte_idx_from_col_idx(msg_buf, central_win_get_columns(), CHAR_LEFT, NULL);
 	msg_buf[byte_idx] = '\0';		// limit message length
 
 	update_screen_app(1, 1);
@@ -298,7 +296,7 @@ flf_d_printf("do_call_editor ret: EF__%d, buffer: [%s]\n", ret, buffer);
 		 || cmp_func_id(func_id, "doe_page_down")
 		 || cmp_func_id(func_id, "doe_last_line")) {
 			//---------------------------------------------------
-			ret = do_call_filer(1, APP_MODE_CHOOSER, "", "", buffer, MAX_PATH_LEN);
+			ret = do_call_filer(1, APP_MODE_CHOOSER, "", "", buffer);
 			//---------------------------------------------------
 flf_d_printf("do_call_filer ret: EF__%d, buffer: [%s]\n", ret, buffer);
 			if ((ret == EF_INPUT_TO_REPLACE) || (ret == EF_INPUT_TO_APPEND)) {
@@ -413,10 +411,9 @@ PRIVATE const char *chars_redo = "Oo";				// redO
 // Ask a simple yes/no question on the status_bar.
 int ask_yes_no(int flags, const char *msg, ...)
 {
-	int key_lines_save;
 	char msg_buf[MAX_SCRN_LINE_BUF_LEN+1] = "";
 
-	key_lines_save = GET_APPMD(app_KEY_LINES);		// save KEY_LINES
+	int key_lines_save = GET_APPMD(app_KEY_LINES);		// save KEY_LINES
 	SET_APPMD_VAL(app_KEY_LINES, LIM_MIN(1, key_lines_save));	// set lines more than 1
 
 	// display prompt message

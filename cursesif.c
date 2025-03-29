@@ -85,9 +85,7 @@ int curses_get_columns(void)
 {
 	return LIM_MAX(MAX_SCRN_COLS, COLS);
 }
-
 //------------------------------------------------------------------------------
-
 PRIVATE int get_color_pair(int bgc, int fgc)
 {
 	if ((GET_BASE_COLOR(bgc) == CL_BK) && (GET_BASE_COLOR(fgc) == CL_BK)) {

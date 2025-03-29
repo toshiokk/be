@@ -26,12 +26,10 @@
 #define SETTERM1	0x0001		// change terminal settings before executing sub process
 #define SEPARATE0	0x0000
 #define SEPARATE1	0x0004		// output separator line before executing sub process
+#define LOGGING0	0x0000		// no logging
+#define LOGGING1	0x0040		// append
 #define PAUSE0		0x0000
 #define PAUSE1		0x0010		// pause after execution of sub process
-#define LOGGING0	0x0000						// no logging
-#define LOGGING1	0x0040						// truncate
-#define LOGGING2	0x0080						// append
-#define LOGGING3	((LOGGING1) | (LOGGING2))	// output (truncate or append)
 
 #ifdef ENABLE_FILER
 
@@ -39,8 +37,9 @@ int dof_exec_command_with_file(void);
 int dof_exec_command_with_files(void);
 int dof_run_command_rel(void);
 int dof_run_command_abs(void);
-int dof_run_command_src_dst(void);
 int dof_run_command_symlink(void);
+int dof_run_command_src_dst_dir(void);
+int dof_run_command_src_dst_file(void);
 int dof_run_command_soon(void);
 int dof_run_command_soon_w_log(void);
 

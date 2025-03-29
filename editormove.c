@@ -745,7 +745,6 @@ PRIVATE void change_str_letters(char *str, size_t len, char mode)
 		}
 	}
 }
-
 //------------------------------------------------------------------------------
 PRIVATE int memorized_columns = 0;
 PRIVATE int doe_fill_spaces_to_columns__(int column_idx);
@@ -772,14 +771,12 @@ PRIVATE int doe_fill_spaces_to_columns__(int column_idx)
 	}
 	return 0;
 }
-
 //------------------------------------------------------------------------------
 int doe_refresh_editor(void)
 {
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
-
 //------------------------------------------------------------------------------
 int move_cursor_left(int move_disp_y)
 {
@@ -883,7 +880,6 @@ int next_line(void)
 	EPCBVC_CLBI = 0;
 	return IS_NODE_BOT_MOST(EPCBVC_CL) ? 1 : 2;
 }
-
 //------------------------------------------------------------------------------
 void first_line(void)
 {

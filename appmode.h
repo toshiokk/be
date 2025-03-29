@@ -115,7 +115,7 @@ typedef struct /*app_mode*/ {
 	unsigned char fl_SHOW_FILE_INFO:3;		// bit 34-36
 #define SHOW_ZEBRA_STRIPING_OFF			0	// off
 #define SHOW_ZEBRA_STRIPING_ON			1	// ON
-	unsigned char fl_SHOW_ZEBRA_STRIPING:1;		// bit 35
+	unsigned char fl_SHOW_ZEBRA_STRIPE:1;	// bit 35
 } app_mode_t;
 
 typedef enum /*mode_idx*/ {

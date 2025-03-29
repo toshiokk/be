@@ -113,7 +113,6 @@ int free_edit_buf(be_buf_t *edit_buf)
 	buf_unlink_free(edit_buf);
 	return ret;		// 0: no buffer remains
 }
-
 //------------------------------------------------------------------------------
 // 'lock' has two meaning:
 // - file lock:   file has been locked by someone
@@ -148,9 +147,7 @@ void unlock_epc_buf_if_file_had_locked_by_myself()
 		// - nothing to do
 	}
 }
-
 //------------------------------------------------------------------------------
-
 // 4 line pointers are referenced from one editor_panes
 //	cur_editor_panes->bufs[0]->buf_views[0]
 //	cur_editor_panes->bufs[0]->buf_views[1] (This pass would be accessed usually) ????
@@ -379,7 +376,6 @@ const char* get_epc_buf_mode_str()
 	}
 	return "";
 }
-
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 void dump_editor_panes(editor_panes_t *eps)
@@ -421,9 +417,7 @@ void dump_buf_view_x(be_buf_t *buf, int pane_idx)
 	 BUFVX_MIN_TEXT_X_TO_KEEP(buf, pane_idx));
 }
 #endif // ENABLE_DEBUG
-
 //------------------------------------------------------------------------------
-
 be_buf_t *get_edit_buf_by_file_path(const char *abs_path)
 {
 	return buf_get_buf_by_file_path(EDIT_BUFS_TOP_BUF, abs_path);
@@ -521,9 +515,7 @@ void clear_all_cut_bufs(void)
 		pop__free_from_cut_buf();
 	}
 }
-
 //------------------------------------------------------------------------------
-
 void renumber_cur_buf_from_top(void)
 {
 	buf_renumber_from_top(get_epc_buf());
@@ -533,9 +525,7 @@ be_line_t *get_line_ptr_in_cur_buf_by_line_num(int line_num)
 {
 	return buf_get_line_ptr_from_line_num(get_epc_buf(), line_num);
 }
-
 //------------------------------------------------------------------------------
-
 void update_cur_buf_crc(void)
 {
 	disp_status_bar_ing(_("Calculating CRC..."));
@@ -568,9 +558,7 @@ int is_any_edit_buf_modified(void)
 	}
 	return 0;
 }
-
 //------------------------------------------------------------------------------
-
 int inc_buf_mode(void)
 {
 	INC_CUR_EBUF_STATE(buf_MODE, buf_MODE_EDIT, buf_MODE_LIST);
@@ -726,9 +714,7 @@ const char *get_str_buf_encode(void)
 {
 	return buf_enc_str(get_epc_buf());
 }
-
 //------------------------------------------------------------------------------
-
 int doe_inc_buf_mode(void)
 {
 	inc_buf_mode();
@@ -815,9 +801,7 @@ int doe_set_buf_enc_binary(void)
 	SHOW_MODE("BINARY format", get_str_buf_enc_binary());
 	return 0;
 }
-
 //------------------------------------------------------------------------------
-
 #ifdef ENABLE_DEBUG
 void dump_cur_edit_buf_lines(void)
 {

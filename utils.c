@@ -39,9 +39,7 @@ void die_on(const char *msg)
 // Should be used as: dest = malloc_strcpy(string);
 char *malloc_strcpy(const char *string)
 {
-	char *buf;
-
-	buf = char_malloc(strlen(string) + 1);
+	char *buf = char_malloc(strlen(string) + 1);
 	strcpy__(buf, string);
 	return buf;
 }
@@ -132,12 +130,10 @@ void mlc_differenciate_count()
 
 void *malloc__(size_t bytes)
 {
-	void *ptr;
-
 #ifdef MEMORY_LEAK_CHECKER
 	bytes += sizeof(struct malloc_header);
 #endif // MEMORY_LEAK_CHECKER
-	ptr = malloc(bytes);
+	void *ptr = malloc(bytes);
 	if (ptr == NULL && bytes != 0) {
 		_FATALERR_
 		die_on(_("Out of memory!"));
@@ -238,10 +234,8 @@ void clear_crc16ccitt(void)
 }
 void calc_crc16ccitt(UINT8 byte)
 {
-	int cnt;
-	int do_xor;
-
-	for (cnt = 0; cnt < 8; cnt++) {
+	for (int cnt = 0; cnt < 8; cnt++) {
+		int do_xor;
 		if (crc16ccitt & 0x8000)
 			do_xor = 1;
 		else
@@ -277,10 +271,9 @@ const char *cur_ctime_cdate(int time0_date1)
 const char *cur_cdate(void)
 {
 	static char buf_date[YYYYSMMSDD_HHCMMCSS_LEN+1];
-	time_t cur_time;
 	char buf_ymd_hms[YYYYSMMSDD_HHCMMCSS_LEN+1];
 
-	cur_time = time(NULL);
+	time_t cur_time = time(NULL);
 	get_yyyysmmsdd_hhcmmcss(cur_time, buf_ymd_hms);
 	strlcpy__(buf_date, &(buf_ymd_hms[2]), YYSMMSDD_LEN);
 	return buf_date;
@@ -288,9 +281,7 @@ const char *cur_cdate(void)
 const char *cur_ctime(void)
 {
 	static char buf_time[HHCMMCSS_LEN+1];
-	time_t cur_time;
-
-	cur_time = time(NULL);
+	time_t cur_time = time(NULL);
 	strlcpy__(buf_time, &(ctime(&cur_time)[11]), HHCMMCSS_LEN);
 	return buf_time;
 }
@@ -298,9 +289,7 @@ const char *cur_hhmmss(void)
 {
 #define HHMMSS_LEN		6	// "235959"
 	static char buf_time[YYYYMMDD_HHMMSS_LEN+1];
-	time_t cur_time;
-
-	cur_time = time(NULL);
+	time_t cur_time = time(NULL);
 	strlcpy__(buf_time, &(get_yyyymmdd_hhmmss(cur_time, buf_time)[8+1]), HHMMSS_LEN);
 	return buf_time;
 }
@@ -308,27 +297,21 @@ const char *cur_yymmdd_hhmmss(void)
 {
 #define HHMMSS_LEN		6	// "235959"
 	static char buf_time[YYYYMMDD_HHMMSS_LEN+1];
-	time_t cur_time;
-
-	cur_time = time(NULL);
+	time_t cur_time = time(NULL);
 	strlcpy__(buf_time, &(get_yyyymmdd_hhmmss(cur_time, buf_time)[2]), YYMMDD_HHMMSS_LEN);
 	return buf_time;
 }
 //------------------------------------------------------------------------------
 char *get_ssspuuuuuu(char *buf)
 {
-	long usec;
-
-	usec = get_usec();
+	long usec = get_usec();
 	snprintf_(buf, 10+1, "%03d.%06d",
 	 (int)(usec / 1000000), (int)(usec % 1000000));
 	return buf;
 }
 char *get_sssssspmmm(char *buf)
 {
-	long msec;
-
-	msec = get_msec();
+	long msec = get_msec();
 	snprintf_(buf, 10+1, "%06d.%03d",
 	 (int)(msec / 1000), (int)(msec % 1000));
 	return buf;
@@ -337,7 +320,6 @@ unsigned long get_msec(void)
 {
 	struct timeval tv;
 	struct timezone tz;
-
 	gettimeofday(&tv, &tz);
 	// 999999.999
 	return (tv.tv_sec % 1000000) * 1000 + (tv.tv_usec / 1000) % 1000;
@@ -346,7 +328,6 @@ unsigned long get_usec(void)
 {
 	struct timeval tv;
 	struct timezone tz;
-
 	gettimeofday(&tv, &tz);
 	// 999.999999
 	return (tv.tv_sec % 1000) * 1000000 + tv.tv_usec;
@@ -466,13 +447,12 @@ int get_mem_free_in_kb(int update)
 #ifdef START_UP_TEST
 void test_zz_from_num(void)
 {
-	int num;
 #ifdef ENABLE_DEBUG
 	char buf[2+1];
 #endif // ENABLE_DEBUG
 
 	// (10 + 26 + 26) * (10 + 26 + 26) = 62 * 62 = 3844
-	for (num = -20; num < (100 + 1040 + 2704) + 10; num++) {
+	for (int num = -20; num < (100 + 1040 + 2704) + 10; num++) {
 		flf_d_printf("%d ==> [%s]\n", num, zz_from_num(num, buf));
 	}
 }

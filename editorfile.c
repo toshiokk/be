@@ -355,7 +355,6 @@ int doe_read_file_into_cur_buf(void)
 	doe_paste_text_with_pop();
 	return 0;
 }
-
 //------------------------------------------------------------------------------
 int write_all_ask(int yes_no, close_after_save_t close)
 {
@@ -445,9 +444,7 @@ flf_d_printf("ret: %d\n", ret);
 	}
 	return ret;		// ANSWER_ALL/ANSWER_YES/ANSWER_NO
 }
-
 //------------------------------------------------------------------------------
-
 #ifdef START_UP_TEST
 void test_flock()
 {

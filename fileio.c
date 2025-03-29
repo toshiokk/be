@@ -814,7 +814,7 @@ PRIVATE int save_cur_buf_to_file_binary(const char *file_path)
 		if (IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
 			// There is a magic-line at the last line of the buffer
 			if (GET_CUR_EBUF_STATE(buf_MAGIC_LINE_ADDED) == 0) {
-				// write this magic-line
+				// output this magic-line to file
 			} else {
 				break;			// do not output the magic-line
 			}
@@ -860,7 +860,7 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 		if (IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
 			// There is a magic-line at the last line of the buffer
 			if (GET_CUR_EBUF_STATE(buf_MAGIC_LINE_ADDED) == 0) {
-				// write this magic-line
+				// output this magic-line to file
 			} else {
 				break;			// do not output the magic-line
 			}
@@ -944,7 +944,7 @@ int reduce_log_file_size(const char *file_path, int size_in_mb)
 	 file_path, file_path, BACKUP_FILE_SUFFIX,
 	 file_path, BACKUP_FILE_SUFFIX, file_path);
 
-	return fork_exec_sh_c(SETTERM0 | SEPARATE0 | PAUSE0 | LOGGING0, command_str);
+	return fork_exec_sh_c(SETTERM0 | SEPARATE0 | LOGGING0 | PAUSE0, command_str);
 }
 
 const char *get_exec_log_file_path()

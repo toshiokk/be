@@ -293,9 +293,7 @@ PRIVATE void win_clear_lines(win_rect_t *win, int line_1, int line_2)
 }
 PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *string, int bytes)
 {
-	int space_columns;
-
-	space_columns = win->columns;
+	int space_columns = win->columns;
 	if (xx >= 0) {
 		space_columns = win->columns - xx;
 	}

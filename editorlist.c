@@ -56,9 +56,7 @@ int doe_view_file_list(void)
 	view_list(HELP_BUF_IDX_EDITOR_FILE_LIST);
 	return 1;
 }
-
 //------------------------------------------------------------------------------
-
 // make help text in help-buffer and view by editor
 int view_list(int help_idx)
 {

@@ -1,3 +1,6 @@
-echo tar -xvf "$1"
-tar -xvf "$1"
+echo "Unzipping file: [$@]"
+for fn in "$@" ; do
+  echo tar -xvf "$fn"
+  tar -xvf "$fn"
+done
 exit $?
