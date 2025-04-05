@@ -691,7 +691,8 @@ char *realpath__(const char *path, char *buf, int buf_len)
 	} else {
 		// `path` does not actually exist.
 		// Maybe `/path/to/file` does not exist but `/path/to` exists.
-		// So get a real path of `/path/to`, it maybe `/real-path/to` and then return `/real-path/to/file`
+		// So get a real path of `/path/to` e.g. `/real-path/to`
+		// and then return `/real-path/to/file`
 		char dir[MAX_PATH_LEN+1];
 		char file[MAX_PATH_LEN+1];
 		separate_path_to_dir_and_file(path, dir, file);
