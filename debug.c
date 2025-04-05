@@ -145,8 +145,8 @@ void put_to_ring_buffer(const char* str)
 void output_last_d_printf(void)
 {
 #ifdef RING_BUF_LINES
-	FILE *fp;
-	if ((fp = fopen("becrash.log", "w")) == NULL)
+	FILE *fp = fopen("becrash.log", "w");
+	if (fp == NULL)
 		return;
 	for (int lines = 0; lines < RING_BUF_LINES; lines++) {
 		fprintf(fp, "%s", ring_buffer[ring_buf_idx]);

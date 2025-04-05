@@ -54,11 +54,11 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	{ CL_LB, CL_BK, S(ITEM_COLOR_IDX_PARENT)			},
 #endif
 	{ CL_WH, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
-	{ CL_BK, CL_BR, S(ITEM_COLOR_IDX_KEY_LIST2)			},
+	{ CL_BK, CL_YL, S(ITEM_COLOR_IDX_KEY_LIST2)			},
 	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL)		},
 	{ CL_LC, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL2)		},
-	{ CL_LR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED1)	},
-	{ CL_LG, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED2)	},
+	{ CL_BL, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED1)	},
+	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED2)	},
 	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED3)	},
 	{ CL_DF, CL_LR, S(ITEM_COLOR_IDX_WARNING1)			},	// high
 	{ CL_DF, CL_LM, S(ITEM_COLOR_IDX_WARNING2)			},	// medium
@@ -125,7 +125,7 @@ flf_d_printf("(%d bgc:%d, fgc:%d)\n", color_idx, bgc, fgc);
 }
 
 // get item color
-void get_color_by_idx(item_color_idx_t color_idx, char *fgc, char *bgc)
+void get_color_by_idx(item_color_idx_t color_idx, char *bgc, char *fgc)
 {
 	if (0 <= color_idx && color_idx < MAX_ITEM_COLORS) {
 		*bgc = item_colors[color_idx].bgc;
@@ -168,7 +168,6 @@ file_type_t *default_color_syntax = NULL;	//!< default color syntax
 int set_file_type_and_tab_size_by_cur_file_path(void)
 {
 	int ret;
-
 	if ((ret = set_file_type_by_cur_file_path()) != 0) {
 		GET_CUR_EBUF_STATE(buf_TAB_SIZE) = cur_file_type->tab_size;
 	}
@@ -223,6 +222,7 @@ const color_syntax_t *get_default_color_syntax_head(void)
 PRIVATE void display_color_pattern(int yy, int xx, int reverse);
 int display_color_pairs(int yy, int xx)
 {
+	tio_fill_screen();
 	display_color_pattern(yy, xx+ 0, 0);
 	display_color_pattern(yy, xx+34, 1);
 	tio_refresh();
@@ -257,10 +257,9 @@ PRIVATE void display_color_pattern(int yy, int xx, int reverse)
 #ifdef ENABLE_DEBUG
 int display_item_colors(int yy, int xx)
 {
-	int item_idx;
-	char buffer[MAX_PATH_LEN+1];
-
-	for (item_idx = 0; item_idx < MAX_ITEM_COLORS; item_idx++) {
+	tio_fill_screen();
+	for (int item_idx = 0; item_idx < MAX_ITEM_COLORS; item_idx++) {
+		char buffer[MAX_PATH_LEN+1];
 		set_color_by_idx(item_idx, 0);
 		snprintf(buffer, MAX_PATH_LEN, "%2d: %-40s",
 		 item_idx, default_item_colors[item_idx].item_name);
@@ -274,6 +273,7 @@ int display_bracket_hl_colors(int yy, int xx)
 {
 	UINT8 zero_occurances = 0;
 
+	tio_fill_screen();
 	prepare_colors_for_bracket_hl();
 	for (int depth = 0; depth < get_colors_for_bracket_hl(); depth++) {
 		char buffer[MAX_PATH_LEN+1];

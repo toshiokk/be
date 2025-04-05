@@ -22,22 +22,6 @@
 #ifndef termif_h
 #define termif_h
 
-// These keywords are defined in curses.h
-#define KEY_RESIZE		0x019a
-#define KEY_HOME		0x0106
-#define KEY_END			0x0168
-#define KEY_UP			0x0103
-#define KEY_DOWN		0x0102
-#define KEY_LEFT		0x0104
-#define KEY_RIGHT		0x0105
-#define KEY_PPAGE		0x0153
-#define KEY_NPAGE		0x0152
-#define KEY_IC			0x014b
-#define KEY_DC			0x014a
-#define KEY_BACKSPACE	0x0107
-#define KEY_ENTER		0x0157
-#define KEY_F(fknum)	(0x0108 + fknum)
-
 #define COLOR_BLACK		0
 #define COLOR_RED		1
 #define COLOR_GREEN		2
@@ -73,10 +57,6 @@ void termif_set_attrs(int bgc, int fgc, int rev);
 void termif_output_string(short yy, short xx, const char *string, int bytes);
 void termif_beep(void);
 void termif_refresh(void);
-
-key_code_t termif_input_key(void);
-
-void investigate_key_sequence(void);
 
 #endif // termif_h
 

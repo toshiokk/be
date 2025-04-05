@@ -43,12 +43,12 @@ int doe_goto_column(void)
 		return 0;
 	}
 	int col_num = 0;
-	if (sscanf(buf, "%d", &col_num) > 0) {
-		EPCBVC_CLBI = byte_idx_from_col_idx(EPCBVC_CL->data, col_num - 1, CHAR_LEFT, NULL);
-		return 1;
+	if (sscanf(buf, "%d", &col_num) < 1) {
+		disp_status_bar_warn(_("Going to the line cancelled"));
+		return 0;
 	}
-	disp_status_bar_done(_("Cancelled"));
-	return 0;
+	EPCBVC_CLBI = byte_idx_from_col_idx(EPCBVC_CL->data, col_num - 1, CHAR_LEFT, NULL);
+	return 1;
 }
 // "123" ==> line number
 // "file.ext:123:45"
@@ -70,7 +70,7 @@ int doe_goto_line(void)
 	// go to file
 	// CURDIR: changed in editor
 	// file.ext:123:45
-	load_files_in_string(buf, TUL0 | OOE0 | MOE1 | RECURS0 | RDOL0 | FOL0 | LFH0);
+	load_files_in_string(buf, TUL0 | OOE0 | MOE1 | RECURS0 | RDOL0 | FOLF0 | LFH0);
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 	return 1;
 }
@@ -81,6 +81,7 @@ int doe_goto_line(void)
 // |doe_tag_jump_in_cur_cursor_pos|jump to the file or directory gotten from cursor pos|
 
 PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx);
+PRIVATE int goto_file_in_string(const char* string);
 
 // TAG JUMP (file_path is taken from the head of current line)
 int doe_tag_jump_in_cur_line(void)
@@ -111,32 +112,27 @@ int doe_tag_jump_in_cur_cursor_pos(void)
 #endif // ENABLE_FILER
 }
 
-#ifdef ENABLE_FILER
-int doe_goto_directory_in_cur_line()
-{
-	return try_to_open_dir_in_cur_line_with_filer(0);
-}
-int doe_goto_directory_in_cur_cursor_pos()
-{
-	return try_to_open_dir_in_cur_line_with_filer(EPCBVC_CLBI);
-}
-#endif // ENABLE_FILER
-
 PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx)
+{
+	return goto_file_in_string(&(EPCBVC_CL->data[line_byte_idx]));
+}
+PRIVATE int goto_file_in_string(const char* string)
 {
 	char dir_save[MAX_PATH_LEN+1];
 	clear_files_loaded();
 
+/////flf_d_printf("try to open file in string [%s]\n", string);
 	memorize_cur_file_pos_before_jump();
 	// CURDIR: changed to cur-file's abs-dir
 	change_cur_dir_by_file_path_after_save(dir_save, buf_get_file_path(get_epc_buf(), NULL));
 	// file_path is taken from the line_byte_idx of current line
-	int files = load_files_in_string(&(EPCBVC_CL->data[line_byte_idx]),
-	 TUL0 | OOE0 | MOE1 | RECURS1 | RDOL0 | FOL0 | LFH1);
+	int files = load_files_in_string(string, TUL0 | OOE0 | MOE1 | RECURS1 | RDOL0 | FOLF0
+	 | LFH1 | MFPL0);
 	change_cur_dir(dir_save);
 
 	disp_files_loaded_if_ge_0();
 	if (files >= 0) {
+/////flf_d_printf("succeeded in openning file in string [%s]\n", string);
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 		editor_do_next = EF_LOADED;
 	}
@@ -150,6 +146,37 @@ int doe_open_files_in_buf(void)
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
+
+#ifdef ENABLE_FILER
+int doe_filer(void)
+{
+	return doe_goto_directory_in_cur_line();
+}
+int doe_goto_directory_in_cur_line()
+{
+	return try_to_open_dir_in_cur_line_with_filer(0);
+}
+int doe_goto_directory_in_cur_cursor_pos()
+{
+	return try_to_open_dir_in_cur_line_with_filer(EPCBVC_CLBI);
+}
+int try_to_open_dir_in_cur_line_with_filer(int line_byte_idx)
+{
+	return try_to_open_dir_in_str_with_filer(&(EPCBVC_CL->data[line_byte_idx]));
+}
+int try_to_open_dir_in_str_with_filer(const char *str)
+{
+	char buf_dir[MAX_PATH_LEN+1];
+	if (check_to_change_dir_in_string(str, buf_dir) == 0) {
+		disp_status_bar_err(_("No valid directory in the current line"));
+		strlcpy__(buf_dir, full_path_of_cur_dir_s(), MAX_PATH_LEN);
+	}
+	char file_path[MAX_PATH_LEN+1];
+	do_call_filer(1, APP_MODE_NORMAL, buf_dir, "", file_path);
+	return 1;
+}
+#endif // ENABLE_FILER
+
 //------------------------------------------------------------------------------
 int doe_switch_to_prev_buffer(void)
 {
@@ -293,6 +320,9 @@ PRIVATE int load_files_in_string_(const char *string, int flags)
 			flags &= ~OOE1;
 			flags &= ~MOE1;
 		}
+		if ((files >= 0) && ((flags & MFPL1) == 0)) {
+			break;
+		}
 	}
 	return files_loaded;
 }
@@ -301,7 +331,7 @@ PRIVATE int load_file_in_string_(const char *string, int flags)
 	char file_path[MAX_PATH_LEN+1];
 	int line_num, col_num;
 
-flf_d_printf("try to open file in string [%s]\n", string);
+/////flf_d_printf("try to open file in string [%s]\n", string);
 	if (get_file_line_col_from_str(string, file_path, &line_num, &col_num) == 0) {
 		return -1;	// nothing loaded nor selected
 	}
@@ -358,7 +388,9 @@ PRIVATE int load_file_name_recurs_(const char *file_name, int flags)
 	if (files >= 0 && (recursive_call_count == 0) && (flags & RECURS1)
 	 && is_file_name_proj_file(file_name, 0)) {
 		recursive_call_count++;
+
 		files += load_files_in_cur_buf_(flags);
+
 		recursive_call_count--;
 	}
 	return files;
@@ -379,14 +411,14 @@ PRIVATE int load_files_in_cur_buf_(int flags)
 		if (line_strlen(EPCBVC_CL) && (EPCBVC_CL->data[0] != '#')) {
 			char file_pos_str2[MAX_PATH_LEN+1];
 			char dir_save[MAX_PATH_LEN+1];
-
 			memorize_cur_file_pos_null(file_pos_str2);
 			// CURDIR: changed to cur-file's abs-dir
 			change_cur_dir_by_file_path_after_save(dir_save,
 			 buf_get_file_path(get_epc_buf(), NULL));
-			ret = load_files_in_string_(EPCBVC_CL->data, flags);
-			change_cur_dir(dir_save);
 
+			ret = load_files_in_string_(EPCBVC_CL->data, flags);
+
+			change_cur_dir(dir_save);
 			disp_title_bar_editor();
 			tio_refresh();
 			recall_file_pos_null(file_pos_str2);
@@ -415,18 +447,20 @@ flf_d_printf("sigint_signaled\n");
 PRIVATE int load_file_name__(const char *file_name, int flags)
 {
 flf_d_printf("[%s]\n", file_name);
-	char full_path[MAX_PATH_LEN+1];
 	int files_loaded = -1;
-
+	char full_path[MAX_PATH_LEN+1];
 	get_full_path(file_name, full_path);
-	// switch to the file of "full_path" if it already loaded
+
+	// trt to switch to the file of "full_path" if it already loaded
 	if (switch_epc_buf_by_file_path(full_path)) {
 		add_files_loaded(0);		// switched
 		// already loaded and select it
 		goto not_goto_line;
 	}
-	// try to load the file
+
+	// try to load file
 	int lines = load_file_into_new_buf(full_path, flags);
+
 	if (lines >= 0) {
 		if (lines <= MAX_LINES_LOADABLE) {
 			add_files_loaded(1);
@@ -435,7 +469,7 @@ flf_d_printf("[%s]\n", file_name);
 		files_loaded++;
 		goto goto_line;
 	}
-	// switch to if the file of the "file-name" already loaded
+	// try to switch to if the file of the "file-name" already loaded
 	if (switch_epc_buf_by_file_name(file_name)) {
 		add_files_loaded(0);		// switched
 		// already loaded and select it
@@ -456,11 +490,13 @@ goto_line:
 #ifdef ENABLE_HISTORY
 	goto_pos_by_history(full_path);
 #endif // ENABLE_HISTORY
+
 not_goto_line:
 	files_loaded = LIM_MIN(0, files_loaded);
 #ifdef ENABLE_SYNTAX
 	set_file_type_and_tab_size_by_cur_file_path();
 #endif // ENABLE_SYNTAX
+flf_d_printf("switched to [%s]\n", file_name);
 	return files_loaded;	// x > 0: files newly loaded, x == 0: file selected
 }
 
@@ -481,7 +517,7 @@ PRIVATE int load_file_from_history(const char *file_name)
 		if (get_file_line_col_from_str(history, file_path, NULL, NULL)) {
 			if (compare_file_path_from_tail(file_path, file_name) == 0) {
 				return load_file_in_string_(history,
-				 TUL0 | OOE0 | MOE0 | RECURS0 | RDOL0 | FOL0 | LFH0);
+				 TUL0 | OOE0 | MOE0 | RECURS0 | RDOL0 | FOLF0 | LFH0);
 			}
 		}
 	}
@@ -792,7 +828,12 @@ int switch_epc_buf_by_file_name(const char *file_name)
 	return 0;		// not found
 }
 
-int switch_epc_buf_to_top_of_edit_buf(void)
+int switch_epc_buf_to_edit_buf()
+{
+	set_epc_buf((&edit_buffers)->cur_buf);
+	return 1;
+}
+int switch_epc_buf_to_top_of_edit_buf()
 {
 	set_epc_buf(EDIT_BUFS_TOP_BUF);
 	return 1;
@@ -858,27 +899,5 @@ int switch_epc_buf_to_another_buf(void)
 //  | 2 | "filename.txt"    | "\"filename.txt\"",100,10 | "\"filename.txt\"" |
 //  | 3 | "file|name.txt"   | "file|name.txt",100,10    | "file|name.txt"    |
 //  | 3 | "file'name.txt"   | "file'name.txt",100,10    | "file'name.txt"    |
-
-#ifdef ENABLE_FILER
-int doe_filer(void)
-{
-	return try_to_open_dir_in_cur_line_with_filer(0);
-}
-int try_to_open_dir_in_cur_line_with_filer(int line_byte_idx)
-{
-	return try_to_open_dir_in_str_with_filer(&(EPCBVC_CL->data[line_byte_idx]));
-}
-int try_to_open_dir_in_str_with_filer(const char *str)
-{
-	char buf_dir[MAX_PATH_LEN+1];
-	if (check_to_change_dir_in_string(str, buf_dir) == 0) {
-		disp_status_bar_err(_("No valid directory in the current line"));
-		strlcpy__(buf_dir, full_path_of_cur_dir_s(), MAX_PATH_LEN);
-	}
-	char file_path[MAX_PATH_LEN+1];
-	do_call_filer(1, APP_MODE_NORMAL, buf_dir, "", file_path);
-	return 1;
-}
-#endif // ENABLE_FILER
 
 // End of editorgoto.c

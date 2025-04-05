@@ -239,7 +239,7 @@ PRIVATE int get_status_bar_color_idx(char status_bar_display)
 	case S_B_D_ING:
 		break;
 	case S_B_D_WARN:
-		color_idx = ITEM_COLOR_IDX_WARNING3;
+		color_idx = ITEM_COLOR_IDX_WARNING2;
 		break;
 	case S_B_D_ERR:
 		color_idx = ITEM_COLOR_IDX_ERROR;

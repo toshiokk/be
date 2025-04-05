@@ -65,7 +65,6 @@ int doe_search_forward_first(void)
 PRIVATE int doe_search_first_(void)
 {
 	char needle[MAX_PATH_LEN+1];
-
 	if (input_search_str(SEARCH0, needle) <= 0) {
 		return 0;
 	}
@@ -170,7 +169,6 @@ int input_search_str(int search0_replace1, char *input_buf)
 #endif // ENABLE_REGEX
 	 GET_APPMD(ed_REVERSE_SEARCH) ? _("[Backward]") : _("[Forward]"),
 	 default_needle))) {
-		// cancelled
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
 		return 0;						// cancelled
 	}
@@ -599,6 +597,16 @@ int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 
 // color management for bracket highlighting
 
+// | 0 | ITEM_COLOR_IDX_TEXT_SELECTED1.bgc | ITEM_COLOR_IDX_TEXT_SELECTED1.fgc   |
+// | 1 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+0 |
+// | 2 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+1 |
+// | 3 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+2 |
+// | 4 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+3 |
+// | 5 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+4 |
+// | 6 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+5 |
+// | 7 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+6 |
+// | 8 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+7 |
+
 #define COLORS_FOR_BRACKET_HL	((COLORS16)-1)	// color pairs for bracket highlighting
 PRIVATE int num_colors_for_bracket_hl = 0;	// [0, COLORS_FOR_BRACKET_HL]
 PRIVATE item_color_t colors_for_bracket_hl[COLORS_FOR_BRACKET_HL];
@@ -609,17 +617,17 @@ int prepare_colors_for_bracket_hl()
 		// already prepared
 		return num_colors_for_bracket_hl;
 	}
-	char fgc_sel2;
-	char bgc_sel2;
-	char fgc_sel;
 	char bgc_sel;
-	get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED1, &fgc_sel, &bgc_sel);
-	get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, &fgc_sel2, &bgc_sel2);
+	char fgc_sel;
+	char bgc_sel2;
+	char fgc;
+	get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED1, &bgc_sel, &fgc_sel);
+	get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, &bgc_sel2, &fgc);
 	int color_idx = 0;
 	colors_for_bracket_hl[color_idx].fgc = fgc_sel;
 	colors_for_bracket_hl[color_idx].bgc = bgc_sel;
 	color_idx++;
-	for (char fgc = fgc_sel+1; color_idx < COLORS_FOR_BRACKET_HL; fgc++) {
+	for (fgc = fgc_sel+1; color_idx < COLORS_FOR_BRACKET_HL; fgc++) {
 		fgc %= COLORS16;
 		if (fgc != (bgc_sel2 % COLORS8)) {	// Because there is no light color in BGC
 			colors_for_bracket_hl[color_idx].fgc = fgc;
@@ -659,16 +667,16 @@ void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurances, int d
 		depth++;	// shift 1 to avoid 0
 		// [1, _num_colors_m1]
 	}
-	get_color_for_bracket_hl(depth, &fgc, &bgc);
+	get_color_for_bracket_hl(depth, &bgc, &fgc);
 	tio_set_attrs(bgc, fgc, 0);
 	if (depth == 0) {
 		(*zero_occurances)++;
 	}
 }
-void get_color_for_bracket_hl(int color_idx, char *fgc, char *bgc)
+void get_color_for_bracket_hl(int color_idx, char *bgc, char *fgc)
 {
 	if (get_colors_for_bracket_hl() == 0) {
-		get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED1, fgc, bgc);
+		get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED1, bgc, fgc);
 	} else {
 		color_idx = MK_IN_RANGE(0, color_idx, COLORS_FOR_BRACKET_HL);
 		*bgc = colors_for_bracket_hl[color_idx].bgc;

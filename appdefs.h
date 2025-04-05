@@ -19,11 +19,11 @@
  *                                                                        *
  **************************************************************************/
 /**
-* @file appdefs.h
-* @brief Application level definitions
-* @author 作成者
-* @date 作成日
-* @details 詳細な説明
+* @file		appdefs.h
+* @brief	Application level definitions
+* @author	Creator
+* @date		Creation date
+* @details	Detailed description
 */
 
 #ifndef appdefs_h

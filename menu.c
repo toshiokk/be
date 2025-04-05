@@ -113,11 +113,11 @@ app_menu_n_up_down:;
 		case K_ENTER:
 			exec_menu_func(group_idx, entry_idx);
 #ifndef ENABLE_FILER
-			if (edit_bufs_count_buf()) {
+			if (count_edit_bufs()) {
 				set_menu_key_for_do_app_menu_0();
 			}
 #else // ENABLE_FILER
-			if (GET_APPMD(app_EDITOR_FILER) || edit_bufs_count_buf()) {
+			if (GET_APPMD(app_EDITOR_FILER) || count_edit_bufs()) {
 				set_menu_key_for_do_app_menu_0();
 			}
 #endif // ENABLE_FILER
@@ -142,11 +142,11 @@ app_menu_n_up_down:;
 		}
 	}
 #ifndef ENABLE_FILER
-	if (edit_bufs_count_buf()) {
+	if (count_edit_bufs()) {
 		update_screen_app(1, 1);
 	}
 #else // ENABLE_FILER
-	if (GET_APPMD(app_EDITOR_FILER) || edit_bufs_count_buf()) {
+	if (GET_APPMD(app_EDITOR_FILER) || count_edit_bufs()) {
 		update_screen_app(1, 1);
 	}
 #endif // ENABLE_FILER

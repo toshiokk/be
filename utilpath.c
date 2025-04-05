@@ -67,7 +67,7 @@ flf_d_printf("tty_name: [%s]\n", tty_name);
 
 int check_wsl()
 {
-	static int checked = 0;
+	static int checked = 0;		// 0: not yet checked
 	if (! checked) {
 		checked = (is_path_exist("/mnt/c") ? 1 : -1);
 		if (checked > 0) {
@@ -80,9 +80,9 @@ int check_wsl()
 }
 int check_availability_of_script()
 {
-	static int checked = 0;
+	static int checked = 0;		// 0: not yet checked
 	if (! checked) {
-		checked = (is_path_exist("/usr/bin/script") ? 1 : -1);
+		checked = ((is_path_regular_file("/usr/bin/script") > 0) ? 1 : -1);
 		if (checked > 0) {
 			flf_d_printf("'script' is available\n");
 		} else {
@@ -99,12 +99,12 @@ int check_availability_of_script()
 int change_cur_dir_saving_prev_next_dir(const char *path,
  char *cur_path, char *prev_path, char *next_dir_sel)
 {
-flf_d_printf("path: [%s]\n", path);
+////flf_d_printf("path: [%s]\n", path);
 	char dir[MAX_PATH_LEN+1];
 	if (is_path_regular_file(path) > 0) {
 		// If path is pointing a file, change to the directory containing it.
 		separate_path_to_dir_and_file(path, dir, next_dir_sel);
-flf_d_printf("path: [%s]\n", path);
+////flf_d_printf("path: [%s]\n", path);
 	} else {
 		if (strcmp(path, ".") == 0) {
 			return 1;	// OK
@@ -121,13 +121,13 @@ flf_d_printf("path: [%s]\n", path);
 			// relative path "some/dir" or "./some/dir"
 			strcpy__(next_dir_sel, "..");
 			// "/cur/dir" + "some/dir" ==> "/cur/dir/some/dir"
-flf_d_printf("cur_path: [%s], path: [%s]\n", cur_path, path);
+////flf_d_printf("cur_path: [%s], path: [%s]\n", cur_path, path);
 			cat_dir_and_file(dir, cur_path, path);
 		}
 	}
-flf_d_printf("dir: [%s]\n", dir);
+////flf_d_printf("dir: [%s]\n", dir);
 	normalize_full_path(dir);
-flf_d_printf("dir: [%s]\n", dir);
+////flf_d_printf("dir: [%s]\n", dir);
 	if (is_dir_readable(dir) == 0) {
 		// We can't open this dir for some reason.
 		return 0;	// Error
@@ -341,31 +341,31 @@ int is_path_regular_file(const char *path)
 {
 	struct stat st;
 	if (stat(path, &st) < 0)
-		return -1;				// no such file nor directory
-	return S_ISREG(st.st_mode);	// 1:file, 0:non-file
+		return -1;				// -1: no such file nor directory
+	return S_ISREG(st.st_mode);	// 1: file, 0: non-file
 }
 int is_path_dir(const char *path)
 {
 	struct stat st;
 	if (stat(path, &st) < 0)
-		return -1;				// no such file nor directory
-	return S_ISDIR(st.st_mode);	// 1:directory, 0:non-directory
+		return -1;				// -1: no such file nor directory
+	return S_ISDIR(st.st_mode);	// 1: directory, 0: non-directory
 }
 int is_file_writable(const char *path)
 {
 	struct stat st;
 	if (stat(path, &st) < 0)
-		return -1;
-	return is_st_writable(&st);
+		return -1;				// -1: no such file
+	return is_st_writable(&st);	// 1: writable, 0: not writable
 }
 int is_st_writable(struct stat *st)
 {
 	if (st->st_uid == geteuid()) {
-		return (st->st_mode & S_IWUSR) != 0;	// 1: writable, 0: non-writable
+		return (st->st_mode & S_IWUSR) != 0;	// 1: writable, 0: not-writable
 	} else if (st->st_gid == getegid()) {
-		return (st->st_mode & S_IWGRP) != 0;
+		return (st->st_mode & S_IWGRP) != 0;	// 1: writable, 0: not-writable
 	}
-	return (st->st_mode & S_IWOTH) != 0;
+	return (st->st_mode & S_IWOTH) != 0;		// 1: writable, 0: not-writable
 }
 ssize_t get_file_size(const char *path)
 {
@@ -488,11 +488,11 @@ char *getenv__(char *env)
 // buf and dir can be the same address
 char *cat_dir_and_file(char *buf, const char *dir, const char *file)
 {
-	char tmp_buf[MAX_PATH_LEN+1];
 	if (file[0] == '/') {
 		// "/file" ==> "file"
 		file++;
 	}
+	char tmp_buf[MAX_PATH_LEN+1];
 	int last = LIM_MIN(0, strlen_path(dir) - 1);
 	if (is_strlen_0(dir) || dir[last] == '/') {
 		// ""            + "file" ==> "file"
@@ -526,7 +526,6 @@ char *cat_dir_and_file(char *buf, const char *dir, const char *file)
 // TODO: memorize_file_pos() shall memorize file path as it is in FULL_PATH not in ABS_PATH
 //       recall_file_pos() shall open file path as it is
 //       goto_file_pos() shall open file path as it is
-
 //------------------------------------------------------------------------------
 
 // /dir1/.  ==> /dir1/
@@ -600,9 +599,7 @@ PRIVATE char *normalize_full_path__(char *full_path, char *parent, char *child)
 	}
 	return child;
 }
-
 //------------------------------------------------------------------------------
-
 int compare_file_path_in_abs_path(const char *file_path_a, const char *file_path_b)
 {
 	char abs_path_a[MAX_PATH_LEN+1];
@@ -611,12 +608,14 @@ int compare_file_path_in_abs_path(const char *file_path_a, const char *file_path
 }
 
 // get absolute path (not include symlinks)
-char *get_abs_path(const char *path, char *buf)
+char *get_abs_path(const char *path, char *abs_path)
 {
 	char full_path[MAX_PATH_LEN+1];
 	get_full_path(path, full_path);			// --> full_path
-	get_real_path(full_path, buf);			// --> abs path (real path)
-	return buf;
+flf_d_printf("full_path: [%s]\n", full_path);
+	get_real_path(full_path, abs_path);		// --> abs path (real path)
+flf_d_printf("abs_path: [%s]\n", abs_path);
+	return abs_path;
 }
 
 // get full path (path begins from "/") but do not resolve symlink
@@ -656,6 +655,9 @@ char *get_full_path(const char *path, char *buf)
 			len++;
 		}
 		cat_dir_and_file(buf, user_dir, &path[len]);
+	} else if (strlcmp__(path, PATH_INVALIDATION_TAG) == 0) {
+		// "#/..."
+		strlcpy__(buf, path, MAX_PATH_LEN);
 	} else {
 		// "filename..."   ==> "/home/user/tools/..."
 		// "./filename..." ==> "/home/user/tools/..."
@@ -676,11 +678,27 @@ char *get_real_path(const char *path, char *buf)
 
 #if defined(HAVE_REALPATH)
 // return normalized(canonicalized) absolute file path
+// NOTE: `realpath()` needs a path actually exists.
+//       otherwise conversion fails.
 char *realpath__(const char *path, char *buf, int buf_len)
 {
 	char buffer[MAX_PATH_LEN+1];
-	if (realpath(path, buffer) == NULL) {
-		strlcpy__(buffer, path, MAX_PATH_LEN);	// error, return original path
+	if (is_path_exist(path)) {
+		// `path` actually exists.
+		if (realpath(path, buffer) == NULL) {
+			strlcpy__(buffer, path, MAX_PATH_LEN);	// error, return original path
+		}
+	} else {
+		// `path` does not actually exist.
+		// Maybe `/path/to/file` does not exist but `/path/to` exists.
+		// So get a real path of `/path/to`, it maybe `/real-path/to` and then return `/real-path/to/file`
+		char dir[MAX_PATH_LEN+1];
+		char file[MAX_PATH_LEN+1];
+		separate_path_to_dir_and_file(path, dir, file);
+		if (realpath(dir, buffer) == NULL) {
+			strlcpy__(buffer, dir, MAX_PATH_LEN);	// error, return original path
+		}
+		cat_dir_and_file(buffer, buffer, file);
 	}
 	strlcpy__(buf, buffer, buf_len);
 	return buf;
@@ -690,8 +708,8 @@ char *realpath__(const char *path, char *buf, int buf_len)
 // read link and null terminate string
 int readlink__(const char *path, char *buffer, int len)
 {
-	int ret;
-	if ((ret = readlink(path, buffer, len)) > 0)
+	int ret = readlink(path, buffer, len);
+	if (ret > 0)
 		buffer[ret] = '\0';
 	return ret;
 }
@@ -704,15 +722,15 @@ BOOL is_abs_path(const char *path)
 //------------------------------------------------------------------------------
 int write_text_to_file(const char *file_path, char append, const char *text)
 {
-	FILE *fp;
-	if ((fp = fopen(file_path, append ? "a" : "w")) != NULL) {
-		fputs(text, fp);
-		if (fclose(fp) != 0) {
-			return -1;
-		}
-		return 0;
+	FILE *fp = fopen(file_path, append ? "a" : "w");
+	if (fp == NULL) {
+		return -1;
 	}
-	return -1;
+	fputs(text, fp);
+	if (fclose(fp) != 0) {
+		return -1;
+	}
+	return 0;
 }
 
 int remove_file(const char* file_path)
@@ -723,7 +741,6 @@ int remove_file(const char* file_path)
 // tests ==============================
 
 #ifdef START_UP_TEST
-
 void test_cwd_PWD()
 {
 	char buf[MAX_PATH_LEN+1];
@@ -974,7 +991,6 @@ PRIVATE void test_separate_path_to_dir_and_file__(char *path, char *buf_dir, cha
 		 buf_file, EQU_STR(buf_file, exp_file), exp_file);
 	}
 }
-
 #endif // START_UP_TEST
 
 // End of utilpath.c

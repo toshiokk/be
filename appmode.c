@@ -19,11 +19,11 @@
  *                                                                        *
  **************************************************************************/
 /**
-* @file appmode.c
-* @brief Application mode management
-* @author 作成者
-* @date 作成日
-* @details 詳細な説明
+* @file		appmode.c
+* @brief	Application mode management
+* @author	Creator
+* @date		Creation date
+* @details	Detailed description
 */
 
 #include "headers.h"
@@ -83,12 +83,12 @@ void init_app_mode(void)
 }
 
 /**
-* @fn void set_mode_idx_val(int mode_idx, int val)
-* @brief 各属性に値を設定する
-* @param[in] mode_idx(引数名) 引数の説明
-* @param[in] val(引数名) 引数の説明
-* @return bool 戻り値の説明
-* @details 詳細な説明
+* @fn			void set_mode_idx_val(int mode_idx, int val)
+* @brief		change application state
+* @param[in]	mode_idx index to select application state variable
+* @param[in]	val application state value to be set to the state
+* @return		void
+* @details		change specified application state variable to the specified value
 */
 void set_mode_idx_val(mode_idx_t mode_idx, int val)
 {

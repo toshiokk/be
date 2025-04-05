@@ -23,7 +23,7 @@
 
 PRIVATE void make_help_buf(int help_idx);
 
-PRIVATE void make_help_file_list(be_buf_t *cur_edit_buf);
+PRIVATE void make_help_file_list(be_buf_t *cur_buf);
 #ifdef ENABLE_HELP
 PRIVATE void make_help_func_list(void);
 PRIVATE void make_help_key_list(void);
@@ -32,17 +32,17 @@ PRIVATE void make_help_key_list(void);
 void init_help_bufs(void)
 {
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node(_("#List of Files loaded"), buf_MODE_LIST));
+	 buf_create_node("#Editor-Files-loaded", buf_MODE_LIST));
 #ifdef ENABLE_HELP
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node(_("#List of Editor Functions"), buf_MODE_LIST));
+	 buf_create_node("#Editor-Functions", buf_MODE_LIST));
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node(_("#List of Editor Key Bindings"), buf_MODE_LIST));
+	 buf_create_node("#Editor-Key-Bindings", buf_MODE_LIST));
 #ifdef ENABLE_FILER
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node(_("#List of Filer Functions"), buf_MODE_LIST));
+	 buf_create_node("#Filer-Functions", buf_MODE_LIST));
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node(_("#List of Filer Key Bindings"), buf_MODE_LIST));
+	 buf_create_node("#Filer-Key-Bindings", buf_MODE_LIST));
 #endif // ENABLE_FILER
 #endif // ENABLE_HELP
 }
@@ -51,11 +51,6 @@ be_buf_t *get_help_buf(int help_buf_idx)
 	return buf_get_buf_by_idx(HELP_BUFS_TOP_BUF, help_buf_idx);
 }
 
-int doe_view_file_list(void)
-{
-	view_list(HELP_BUF_IDX_EDITOR_FILE_LIST);
-	return 1;
-}
 //------------------------------------------------------------------------------
 // make help text in help-buffer and view by editor
 int view_list(int help_idx)
@@ -74,7 +69,7 @@ int view_list(int help_idx)
 	switch (help_idx) {
 	default:
 	case HELP_BUF_IDX_EDITOR_FILE_LIST:
-		disp_status_bar_done(_("File List"));
+		disp_status_bar_done(_("Editor File List"));
 		break;
 #ifdef ENABLE_HELP
 	case HELP_BUF_IDX_EDITOR_FUNC_LIST:
@@ -161,26 +156,37 @@ PRIVATE void make_help_buf(int help_idx)
 	set_epc_buf(cur_edit_buf);
 }
 
-PRIVATE void make_help_file_list(be_buf_t *cur_edit_buf)
+PRIVATE void make_help_file_list(be_buf_t *cur_buf)
 {
-	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 	be_line_t *line_to_go = NULL;
-
-	buf_set_file_path(get_epc_buf(), _("#List of Files currently loaded"));
-
-	for (be_buf_t *edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
-	 edit_buf = NODE_NEXT(edit_buf)) {
-		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-60s %-5s %s %s %04x",
-		 quote_file_path_static(buf_get_abs_path(edit_buf, NULL)),
-		 buf_enc_str(edit_buf), buf_eol_str(edit_buf),
-		 BUF_STATE(edit_buf, buf_MODIFIED) ? "Mo" : "--",
-		 edit_buf->orig_file_crc);
+	for (be_bufs_t *bufs = NODES_TOP_NODE(&all_bufferss); IS_NODE_INT(bufs);
+	 bufs = NODE_NEXT(bufs)) {
+		char buffer[MAX_SCRN_LINE_BUF_LEN+1];
+		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-s", bufs->name);
 		append_string_to_cur_edit_buf(buffer);
-		if (edit_buf == cur_edit_buf) {
-			line_to_go = EPCBVC_CL;
+		if (IS_NODES_EMPTY(bufs)) {
+			snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "  == no buffer ==");
+			append_string_to_cur_edit_buf(buffer);
+			continue;
+		}
+		for (be_buf_t *buf = NODES_TOP_NODE(bufs); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+			char buffer[MAX_SCRN_LINE_BUF_LEN+1];
+			snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "  %-60s %-5s %s %s %04x",
+			 quote_file_path_static(buf_get_abs_path(buf, NULL)),
+			 buf_enc_str(buf), buf_eol_str(buf),
+			 BUF_STATE(buf, buf_MODIFIED) ? "Mo" : "--",
+			 buf->orig_file_crc);
+			append_string_to_cur_edit_buf(buffer);
+			if (buf == cur_buf) {
+				line_to_go = EPCBVC_CL;
+			}
 		}
 	}
-	EPCBVC_CL = line_to_go;
+	if (line_to_go) {
+		EPCBVC_CL = line_to_go;
+	} else {
+		EPCBVC_CL = NODES_TOP_NODE(get_epc_buf());
+	}
 }
 
 #ifdef ENABLE_HELP

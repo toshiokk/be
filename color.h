@@ -53,12 +53,8 @@ typedef enum {
 typedef struct /*item_color*/ {
 	char bgc;			// bg color
 	char fgc;			// fg color
-#ifdef ENABLE_DEBUG
 #define S(str)		#str,
 	char *item_name;	// "ITEM_COLOR_IDX_DEFAULT" ...
-#else // ENABLE_DEBUG
-#define S(str)
-#endif // ENABLE_DEBUG
 } item_color_t;
 
 extern item_color_t item_colors[MAX_ITEM_COLORS];
@@ -95,7 +91,7 @@ void set_work_space_color_warn(void);
 int is_work_space_color_warn(void);
 
 void register_item_color(item_color_idx_t color_idx, int bgc, int fgc);
-void get_color_by_idx(item_color_idx_t color_idx, char *fgc, char *bgc);
+void get_color_by_idx(item_color_idx_t color_idx, char *bgc, char *fgc);
 void set_color_by_idx(item_color_idx_t color_idx, int reverse);
 void set_item_color(const item_color_t *item_color, int reverse);
 

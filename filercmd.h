@@ -139,6 +139,7 @@ int dof_tog_panex(void);
 int dof_inc_key_list_lines(void);
 #ifdef ENABLE_HELP
 int dof_splash(void);
+int dof_view_file_list(void);
 int dof_view_func_list(void);
 #endif // ENABLE_HELP
 

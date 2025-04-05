@@ -51,13 +51,15 @@ char *get_real_path_of_cur_dir(char *dir);
 
 // file path string -------------------
 
+#define PATH_INVALIDATION_TAG		"#"
+
 char *normalize_full_path(char *full_path);
 
 char *cat_dir_and_file(char *buf, const char *dir, const char *file);
 
 int compare_file_path_in_abs_path(const char *file_path_a, const char *file_path_b);
 
-char *get_abs_path(const char *path, char *buf);
+char *get_abs_path(const char *path, char *abs_path);
 char *get_full_path(const char *path, char *buf);
 char *get_real_path(const char *path, char *buf);
 

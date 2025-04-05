@@ -6,10 +6,29 @@
 - CRASH: crash
 - POLICY: things to be kept
 
+- [x] 250405 BUG: new file is unlocked on saving
+  - [x] 250405 BUG: sometimes lock file is made in full-path not in abs-path
+    ==> realpath() does not work if the path does not actually exist
+      ==> workaround: realpath__() makes working even if the path does not actually exist
+- [x] 250404 BUG: can not write to the new file
+- [x] 250404 BUG: open file but does not show it
+- [x] [K_M_SEMCO]file list ==> buffer list
+  - [x] assign ID to all buffers
+    "/path/to/file"
+    "#/home/user/.be/dir_history"
+    "#/home/user/.be/cut_buffer"
+    "#cut-buffer-000"
+  - [x] select buffer by the ID
+  - [] column alignment of japanese message
+  - [x] 250404 BUG: tag-jump from "#..." return EF_5 and does not switch to the buffer
+  - [x] 250405 can not leave from list with message "This buffer is NOT closeable"
+        ==> switch to edit buffer if possible, switch to anchor of edit buffer if impossible
+
 - [] Make easy to use for other people
+- [x] No Japanese but English comment
 - [xxx ] clean up code
   - [d ] Use `typedef` in variable definition (UINT8/UINT16/UINT32/ssize_t/size_t)
-  - [d ] POLICY: variable definition is a initialization.
+  - [d ] POLICY: "definition of variables is a initialization."
 
 - [x] add "two dir" mode to filer which enter "/dir/a/file-a.txt /dir/b/file-b.txt" automatically
 - [x] reduce_log_file_size()
@@ -1243,6 +1262,8 @@ LANチップ中のMACアドレスや、CPUやマザーボードのシリアルNo
 ソフトウエア・アクティベーションの回数はM$の社内でカウントされていて、
 可能なアクティベーションの回数は3回とか5回とかに制限されている。
 
+_D_(dump_editor_cur_panes())
+_D_(dump_editor_cur_panes())
 _D_(dump_file_type(cur_file_type, 0))
 _D_(dump_editor_panes())
 _D_(dump_buf_views(edit_buf_save))

@@ -321,7 +321,7 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 	}
 	// ====  POP  ====
 	if (cp_del_paste_pop & CDPP_POP) {
-		pop__free_from_cut_buf();
+		pop__free_from_cut_bufs();
 	}
 	return 1;		// done
 }

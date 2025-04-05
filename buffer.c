@@ -140,7 +140,6 @@ const char* buf_get_abs_path(be_buf_t *buf, char *abs_path)
 	return get_abs_path(buf_get_file_path(buf, NULL), abs_path);
 }
 
-#define PATH_INVALIDATION_TAG		"#"
 void buf_invalidate_file_path(be_buf_t *buf)
 {
 	char file_path[MAX_PATH_LEN+1];
@@ -330,15 +329,15 @@ int buf_count_lines(be_buf_t *buf, int max_lines)
 	return count;
 }
 //------------------------------------------------------------------------------
-int buf_get_file_stat(be_buf_t *buf)
+int buf_get_file_stat(be_buf_t *buf, const char* file_path)
 {
-	return stat(buf_get_file_path(buf, NULL), &(buf->orig_file_stat));
+	return stat(file_path, &(buf->orig_file_stat));
 }
-int buf_has_orig_file_updated(be_buf_t *buf)
+int buf_has_orig_file_updated(be_buf_t *buf, const char* file_path)
 {
 	struct stat st;
-	if (stat(buf_get_file_path(buf, NULL), &st)) {
-		return -1;										// error
+	if (stat(file_path, &st)) {
+		return -1;										// -1: error
 	}
 	return st.st_mtime > buf->orig_file_stat.st_mtime;	// >0: updated, 0: not updated
 }
@@ -482,9 +481,9 @@ UINT16 buf_get_save_pending_timer(be_buf_t *buf)
 
 int buf_count_buf(be_buf_t *buf)
 {
+	int cnt = 0;
 	buf = buf_make_top_buf(buf);
-	int cnt;
-	for (cnt = 0; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
 		cnt++;
 	}
 	return cnt;
@@ -514,6 +513,12 @@ be_buf_t *buf_get_another_buf(be_buf_t *buf)
 	}
 	// error
 	return buf;
+}
+
+// "#/path/to/file"
+int is_temporal_file_path(const char* str)
+{
+	return strlcmp__(str, TEMPORAL_HISTORY_MARK) == 0;
 }
 
 //------------------------------------------------------------------------------
@@ -648,6 +653,7 @@ be_buf_t *buf_get_buf_by_file_path(be_buf_t *buf, const char *file_path)
 {
 	buf = buf_make_top_buf(buf);
 	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+/////flf_d_printf("[%s]?[%s]\n", buf->file_path_, file_path);
 		// compare in file_path
 		if (strcmp(buf_get_file_path(buf, NULL), file_path) == 0) {
 			return buf;	// found
@@ -810,7 +816,7 @@ void buf_dump_name(be_buf_t *buf)
 		return;
 	}
 	flf_d_printf("file_path: [%s]\n", buf_get_file_path(buf, NULL));
-	flf_d_printf("abs_path_: [%s]\n", buf_get_abs_path(buf, NULL));
+/////	flf_d_printf("abs_path_: [%s]\n", buf_get_abs_path(buf, NULL));
 }
 const char* buf_dump_buf_state(be_buf_t *buf)
 {

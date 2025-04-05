@@ -1,7 +1,7 @@
 /**************************************************************************
- *   editorlist.h                                                         *
+ *   termifkey.h - Linux terminal keyboard interface                      *
  *                                                                        *
- *   Copyright (C) 1999-2003 Chris Allegretta                             *
+ *   Copyright (C) 2020-2020 Toshio Koike                                 *
  *                                                                        *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
@@ -19,42 +19,29 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef editorlist_h
-#define editorlist_h
+#ifndef termifkey_h
+#define termifkey_h
 
-#ifndef ENABLE_HELP
+// These keywords are defined in curses.h
+#define KEY_RESIZE		0x019a
+#define KEY_HOME		0x0106
+#define KEY_END			0x0168
+#define KEY_UP			0x0103
+#define KEY_DOWN		0x0102
+#define KEY_LEFT		0x0104
+#define KEY_RIGHT		0x0105
+#define KEY_PPAGE		0x0153
+#define KEY_NPAGE		0x0152
+#define KEY_IC			0x014b
+#define KEY_DC			0x014a
+#define KEY_BACKSPACE	0x0107
+#define KEY_ENTER		0x0157
+#define KEY_F(fknum)	(0x0108 + fknum)
 
-#define HELP_BUF_IDX_EDITOR_FILE_LIST		0
-#define HELP_BUFS							1
+key_code_t termif_input_key(void);
 
-#else // ENABLE_HELP
+void investigate_key_sequence(void);
 
-#ifndef ENABLE_FILER
+#endif // termifkey_h
 
-#define HELP_BUF_IDX_EDITOR_FILE_LIST		0
-#define HELP_BUF_IDX_EDITOR_KEY_LIST		1
-#define HELP_BUF_IDX_EDITOR_FUNC_LIST		2
-#define HELP_BUFS							3
-
-#else // ENABLE_FILER
-
-#define HELP_BUF_IDX_EDITOR_FILE_LIST		0
-#define HELP_BUF_IDX_EDITOR_FUNC_LIST		1
-#define HELP_BUF_IDX_EDITOR_KEY_LIST		2
-#define HELP_BUF_IDX_FILER_FUNC_LIST		3
-#define HELP_BUF_IDX_FILER_KEY_LIST			4
-#define HELP_BUFS							5
-
-#endif // ENABLE_FILER
-
-#endif // ENABLE_HELP
-
-
-void init_help_bufs(void);
-be_buf_t *get_help_buf(int help_buf_idx);
-
-int view_list(int help_idx);
-
-#endif // editorlist_h
-
-// End of editorlist.h
+// End of termifkey.h

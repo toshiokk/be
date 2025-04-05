@@ -193,8 +193,8 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 ////	free_file_types();		// delete an effect of default_color_syntax();
 ////#endif // ENABLE_SYNTAX
 	rc_line_num = 0;
-	FILE *fp;
-	if ((fp = fopen(rc_file_path, "r")) == NULL) {
+	FILE *fp = fopen(rc_file_path, "r");
+	if (fp == NULL) {
 		/* complain about the file not existing */
 		if (complain) {
 			rcfile_error(_("Unable to open config file: %s, %s\n"),

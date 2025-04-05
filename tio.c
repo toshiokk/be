@@ -416,7 +416,7 @@ void tio_beep(void)
 #ifdef ENABLE_NCURSES
 	curses_beep();
 #else // ENABLE_NCURSES
-	termif_beep();
+//PPP	termif_beep();
 #endif // ENABLE_NCURSES
 }
 

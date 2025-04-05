@@ -33,10 +33,12 @@
 #define LFH0		0x00	//  Not load a file memorized in history
 #define RDOL1		0x10	// Load a file as Read Only
 #define RDOL0		0x00	//  Not load a file as Read Only
-#define FOL1		0x20	// Load a locked file forcibly (Force Open Locked file)
-#define FOL0		0x00	//  Not load a locked file forcibly
-#define RECURS1		0x80	// RECURSively open files
+#define FOLF1		0x20	// Load a locked file forcibly (Force Open Locked file)
+#define FOLF0		0x00	//  Not load a locked file forcibly
+#define RECURS1		0x40	// RECURSively open files
 #define RECURS0		0x00	//  Not RECURSively open files
+#define MFPL1		0x80	// Many Files Per Line
+#define MFPL0		0x00	//  One File Per Line
 // NOTE: LFH1 is very slow. Do not use unless special necessity.
 
 #define FILE_PATH_SEPARATOR		"|"		// candidates are "|", "//", ""\\"
@@ -46,8 +48,11 @@ int doe_goto_line(void);
 int doe_tag_jump_in_cur_line(void);
 int doe_tag_jump_in_cur_cursor_pos(void);
 #ifdef ENABLE_FILER
+int doe_filer(void);
 int doe_goto_directory_in_cur_line();
 int doe_goto_directory_in_cur_cursor_pos();
+int try_to_open_dir_in_cur_line_with_filer(int line_byte_idx);
+int try_to_open_dir_in_str_with_filer(const char *str);
 #endif // ENABLE_FILER
 
 int doe_open_files_in_buf(void);
@@ -112,18 +117,13 @@ int get_file_line_col_from_str(const char *str, char *file_path,
 int switch_epc_buf_by_file_path(const char *abs_path);
 int switch_epc_buf_by_file_name(const char *file_name);
 
+int switch_epc_buf_to_edit_buf();
 int switch_epc_buf_to_top_of_edit_buf();
 int switch_epc_buf_to_top_buf(void);
 int switch_epc_buf_to_bot_buf(void);
 int switch_epc_buf_to_next_buf(int beep_at_end, int goto_top);
 int switch_epc_buf_to_prev_buf(int beep_at_end, int goto_bottom);
 int switch_epc_buf_to_another_buf(void);
-
-#ifdef ENABLE_FILER
-int doe_filer(void);
-int try_to_open_dir_in_cur_line_with_filer(int line_byte_idx);
-int try_to_open_dir_in_str_with_filer(const char *str);
-#endif // ENABLE_FILER
 
 #endif // editorgoto_h
 

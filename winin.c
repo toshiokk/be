@@ -75,7 +75,7 @@ flf_d_printf("ret: %d\n", ret);
 	update_screen_app(1, 1);
 
 	if (ret <= EF_QUIT) {
-		disp_status_bar_done(_("Cancelled"));
+		disp_status_bar_warn(_("Input string cancelled"));
 	}
 #ifdef ENABLE_HISTORY
 	if (IS_EF_INPUT_XX(ret)) {
@@ -235,7 +235,7 @@ flf_d_printf("func_id: [%s]\n", func_id);
 		 || cmp_func_id(func_id, "doe_search_forward_first")
 		 || cmp_func_id(func_id, "doe_replace")) {
 			// get string from edit buffer's current cursor position
-			if (edit_bufs_count_buf()) {
+			if (count_edit_bufs()) {
 				char *line = EPCBVC_CL->data;
 				cursor_byte_idx = strlen_path(input_buf);
 				int start_byte_idx = byte_idx_from_byte_idx(line, EPCBVC_CLBI + cursor_byte_idx);
@@ -275,7 +275,7 @@ flf_d_printf("func_id: [%s]\n", func_id);
 		 || cmp_func_id(func_id, "doe_page_up")
 		 || cmp_func_id(func_id, "doe_first_line")) {
 			//----------------------------------------------------
-			ret = select_from_history_list(hist_type_idx, buffer);
+			int ret = select_from_history_list(hist_type_idx, buffer);
 			//----------------------------------------------------
 flf_d_printf("do_call_editor ret: EF__%d, buffer: [%s]\n", ret, buffer);
 			if ((ret == EF_INPUT_TO_REPLACE) || (ret == EF_INPUT_TO_APPEND)) {

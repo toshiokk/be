@@ -180,7 +180,12 @@ be_buf_view_t *get_epc_buf_view(void);
 void set_epx_buf(int pane_idx, be_buf_t *buf);
 be_buf_t *get_epx_buf(int pane_idx);
 
+void clear_cur_buf_modified(void);
+void set_cur_buf_modified(void);
+int is_any_edit_buf_modified(void);
+
 //DDDbe_bufs_t *set_cur_buf_of_bufs(be_buf_t *buf);
+int is_epc_buf_edit_buf();
 be_bufs_t* get_bufs_contains_buf(be_buf_t* buf);
 const char* get_bufs_name_contains_buf(be_buf_t* buf);
 
@@ -205,6 +210,7 @@ const char* get_epc_buf_mode_str();
 // Some compiler needs "inline static" for inline functions
 
 #ifdef ENABLE_DEBUG
+void dump_editor_cur_panes();
 void dump_editor_panes(editor_panes_t *eps);
 void dump_editor_pane_x(editor_panes_t *eps, int pane_idx);
 void dump_buf_views(be_buf_t *buf);
@@ -220,13 +226,15 @@ void create_edit_buf(const char *file_path);
 
 be_line_t *append_string_to_cur_edit_buf(const char *string);
 int append_magic_line(void);
-int edit_bufs_count_buf(void);
+
+int has_bufs_to_edit();
+int count_edit_bufs(void);
 int epc_buf_count_buf(void);
 
 //------------------------------------------------------------------------------
 
 be_buf_t *push_cut_buf(void);
-int pop__free_from_cut_buf(void);
+int pop__free_from_cut_bufs(void);
 be_line_t *append_string_to_cur_cut_buf(const char *string);
 int count_cut_bufs(void);
 int count_cur_cut_buf_lines(void);
@@ -239,9 +247,6 @@ be_line_t *get_line_ptr_in_cur_buf_by_line_num(int line_num);
 
 void update_cur_buf_crc(void);
 int check_cur_buf_modified(void);
-
-void set_cur_buf_modified(void);
-int is_any_edit_buf_modified(void);
 
 //------------------------------------------------------------------------------
 

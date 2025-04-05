@@ -185,7 +185,7 @@ func_key_list_t editor_func_key_table[] = {
 #endif // ENABLE_HISTORY
  { EFAM_EXEC, "Run line soon(w/ logging)", "Run current line soon w/ log",
    {K_M_x,        KNA, KNA}, F_I(doe_run_line_soon_w_log), get_str_setting_none },
- { EFAM_EXEC, "Run command",       " Run command input",
+ { EFAM_EXEC, "Run command",         "Run command input",
    {K_M_X,        KNA, KNA}, F_I(doe_run_line_input), get_str_setting_none },
 
  { EFNM_EXEC, "",                    "Buffer Menu",
@@ -194,12 +194,10 @@ func_key_list_t editor_func_key_table[] = {
    {K_M_COMMA,    KNA, KNA}, F_I(doe_switch_to_prev_buffer), get_str_setting_none },
  { EFAM_EXEC, "Next buffer",         "Switch to next file",
    {K_M_PERIO,    KNA, KNA}, F_I(doe_switch_to_next_buffer), get_str_setting_none },
- { EFNM_EXEC, "Top File",            "Switch to top file",
+ { EFAM_EXEC, "Top File",            "Switch to top file",
    {K_M_LESST,    KNA, KNA}, F_I(doe_switch_to_top_buffer), get_str_setting_none },
- { EFNM_EXEC, "Bottom File",         "Switch to bottom file",
+ { EFAM_EXEC, "Bottom File",         "Switch to bottom file",
    {K_M_GREAT,    KNA, KNA}, F_I(doe_switch_to_bot_buffer), get_str_setting_none },
- { EFNM_EXEC, "File List",           "Display File List",
-   {K_M_SEMCO,    KNA, KNA}, F_I(doe_view_file_list), get_str_setting_none },
  { EFAM_EXEC, "Previous buffers",    "Switch to previous buffers",
    {KNA,          KNA, KNA}, F_I(doe_switch_to_prev_buffers), get_str_setting_none },
  { EFAM_EXEC, "Next buffers",        "Switch to next buffers",
@@ -211,6 +209,8 @@ func_key_list_t editor_func_key_table[] = {
  { EFNM_EXEC, "Goto prev. pos",      "Goto previous pos.",
    {K_M_SLASH,    KNA, KNA}, F_I(doe_return_to_prev_file_pos), get_str_setting_none },
 #ifdef ENABLE_HELP
+ { EFNM_EXEC, "File List",           "Display File List",
+   {K_M_SEMCO,    KNA, KNA}, F_I(doe_view_file_list), get_str_setting_none },
  { EFNM_EXEC, "Key List",            "Display Key List",
    {K_M_QUEST,    KNA, KNA}, F_I(doe_view_func_list), get_str_setting_none },
 #endif // ENABLE_HELP

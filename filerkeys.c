@@ -168,7 +168,7 @@ func_key_list_t filer_func_key_table[] = {
    {K_M_L,        KNA, KNA}, F_I(dof_real_path),    get_str_setting_none },
 #ifdef ENABLE_HELP
  { EFNM_EXEC, "File List",           "Display File List",
-   {K_M_SEMCO,    KNA, KNA}, F_I(doe_view_file_list), get_str_setting_none },
+   {K_M_SEMCO,    KNA, KNA}, F_I(dof_view_file_list), get_str_setting_none },
  { EFNM_EXEC, "Key List",            "Display Key List",
    {K_M_QUEST,    KNA, KNA}, F_I(dof_view_func_list), get_str_setting_none },
 #endif // ENABLE_HELP

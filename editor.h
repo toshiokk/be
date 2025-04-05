@@ -47,13 +47,15 @@ int doe_run_line_input(void);
 //------------------------------------------------------------------------------
 
 #ifdef ENABLE_HELP
-int doe_splash(void);
+int doe_splash();
+void do_splash();
+int doe_view_file_list(void);
 int doe_view_func_list(void);
 #endif // ENABLE_HELP
 
-void display_color_settings(void);
+void display_color_settings(key_code_t key);
 
-int examine_key_code(void);
+key_code_t examine_key_code(key_code_t key);
 
 int doe_quit_editor(void);
 

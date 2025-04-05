@@ -53,6 +53,7 @@ be_SOURCES = \
 	regexp.c \
 	search.c \
 	sig.c \
+	termifkey.c \
 	termif.c \
 	cursesif.c \
 	tio.c \
@@ -100,6 +101,7 @@ be_SOURCES = \
 	regexp.h \
 	search.h \
 	sig.h \
+	termifkey.h \
 	termif.h \
 	cursesif.h \
 	tio.h \

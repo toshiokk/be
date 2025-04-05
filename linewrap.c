@@ -231,7 +231,7 @@ flf_d_printf("linewrap_tab_size: %d\n", linewrap_tab_size);
 		}									\
 	}
 
-//[全角wrapping]
+//[Zenkaku wrapping]
 // e.g.1
 //  "aaaaaaaa漢"
 //  |aaaaaaaa漢|

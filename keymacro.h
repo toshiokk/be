@@ -23,8 +23,8 @@
 #define keymacro_h
 
 #ifdef ENABLE_HISTORY
-void load_key_macro(int last_n);
-void save_key_macro(void);
+void load_last_key_macro(int last_n);
+void update_key_macro_history(void);
 #endif // ENABLE_HISTORY
 
 int doe_start_rec__cancel_rec(void);

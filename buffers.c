@@ -56,8 +56,6 @@ void init_bufferss(void)
 
 	bufss_insert_bufs_to_bottom(&all_bufferss, bufs_init(&edit_buffers,
 	 "#EDIT", "#edit_bufs_top_anch", "#edit_bufs_bot_anch"));
-	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&cut_buffers,
-	 "#CUT", "#cut_bufs_top_anch", "#cut_bufs_bot_anch"));
 #ifdef ENABLE_HISTORY
 	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&history_buffers,
 	 "#HIST", "#hist_bufs_top_anch", "#hist_bufs_bot_anch"));
@@ -66,6 +64,8 @@ void init_bufferss(void)
 	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&help_buffers,
 	 "#HELP", "#help_bufs_top_anch", "#help_bufs_bot_anch"));
 #endif // ENABLE_HELP
+	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&cut_buffers,
+	 "#CUT", "#cut_bufs_top_anch", "#cut_bufs_bot_anch"));
 #ifdef ENABLE_UNDO
 	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&undo_buffers,
 	 "#UNDO", "#undo_bufs_top_anch", "#undo_bufs_bot_anch"));
@@ -270,6 +270,25 @@ be_buf_t *get_epx_buf(int pane_idx)
 //DDD	return bufs;
 //DDD}
 
+//--------------------------------------
+void clear_cur_buf_modified(void)
+{
+	SET_CUR_EBUF_STATE(buf_MODIFIED, 0);
+}
+void set_cur_buf_modified(void)
+{
+	SET_CUR_EBUF_STATE(buf_MODIFIED, 1);
+}
+int is_epc_buf_modified()
+{
+	return GET_CUR_EBUF_STATE(buf_MODIFIED);
+}
+
+int is_epc_buf_edit_buf()
+{
+	return get_bufs_contains_buf(get_epc_buf()) == &edit_buffers;
+}
+
 be_bufs_t* get_bufs_contains_buf(be_buf_t* buf)
 {
 	return bufs_get_bufs_contains_buf(NODES_TOP_ANCH(&all_bufferss), buf);
@@ -282,12 +301,12 @@ const char* get_bufs_name_contains_buf(be_buf_t* buf)
 int is_epc_buf_modifiable()
 {
 	return 1
+	 && is_epc_buf_valid()
+
 	 && (is_epc_buf_mode_edit())
 
 	 && (is_epc_buf_file_wp() == 0)
 	 && (is_epc_buf_file_locked() == 0)
-
-	 && is_epc_buf_valid()
 	;
 }
 int is_epc_buf_saveable()
@@ -297,8 +316,8 @@ int is_epc_buf_saveable()
 int is_epc_buf_closeable()	// closeable by user's intention
 {
 	return 1
-	 && (is_epc_buf_mode_edit())
 	 && is_epc_buf_valid()
+	 && (is_epc_buf_mode_edit())
 	;
 }
 //--------------------------------------
@@ -333,11 +352,6 @@ int is_epc_buf_file_wp()	// write protected in the file system
 int is_epc_buf_file_locked()
 {
 	return GET_CUR_EBUF_STATE(buf_LOCKED);
-}
-//--------------------------------------
-int is_epc_buf_modified()
-{
-	return GET_CUR_EBUF_STATE(buf_MODIFIED);
 }
 //--------------------------------------
 const char* get_all_buf_state_str()
@@ -378,6 +392,10 @@ const char* get_epc_buf_mode_str()
 }
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
+void dump_editor_cur_panes()
+{
+	dump_editor_panes(get_cur_editor_panes());
+}
 void dump_editor_panes(editor_panes_t *eps)
 {
 	flf_d_printf("{{ %p\n", eps);
@@ -386,10 +404,10 @@ void dump_editor_panes(editor_panes_t *eps)
 	}
 	flf_d_printf("cur_pane_idx: %d\n", get_editor_cur_pane_idx());
 	dump_buf_views(eps->bufs[get_editor_cur_pane_idx()]);
-	////flf_d_printf("pane_idx:0 ---------------------------------------------\n");
-	////dump_editor_pane_x(eps, 0);
-	////flf_d_printf("pane_idx:1 ---------------------------------------------\n");
-	////dump_editor_pane_x(eps, 1);
+///	flf_d_printf("pane_idx:0 ---------------------------------------------\n");
+///	dump_editor_pane_x(eps, 0);
+///	flf_d_printf("pane_idx:1 ---------------------------------------------\n");
+///	dump_editor_pane_x(eps, 1);
 	flf_d_printf("}}\n");
 }
 void dump_editor_pane_x(editor_panes_t *eps, int pane_idx)
@@ -409,18 +427,31 @@ void dump_buf_view_x(be_buf_t *buf, int pane_idx)
 		warning_printf("pane[%d].cur_line is not in cur_buf!!!!\n", pane_idx);
 	}
 	buf_dump_name(buf);
-	line_dump_byte_idx(BUFVX_CL(buf, pane_idx), BUFVX_CLBI(buf, pane_idx));
-	flf_d_printf(
-	 "BUFVX_CURS_Y(buf, pane_idx): %d, BUFVX_CURS_X_TO_KEEP(buf, pane_idx): %d,"
-	 " BUFVX_MIN_TEXT_X_TO_KEEP(buf, pane_idx): %d\n",
-	 BUFVX_CURS_Y(buf, pane_idx), BUFVX_CURS_X_TO_KEEP(buf, pane_idx),
-	 BUFVX_MIN_TEXT_X_TO_KEEP(buf, pane_idx));
+/////	line_dump_byte_idx(BUFVX_CL(buf, pane_idx), BUFVX_CLBI(buf, pane_idx));
+///	flf_d_printf(
+///	 "BUFVX_CURS_Y(buf, pane_idx): %d, BUFVX_CURS_X_TO_KEEP(buf, pane_idx): %d,"
+///	 " BUFVX_MIN_TEXT_X_TO_KEEP(buf, pane_idx): %d\n",
+///	 BUFVX_CURS_Y(buf, pane_idx), BUFVX_CURS_X_TO_KEEP(buf, pane_idx),
+///	 BUFVX_MIN_TEXT_X_TO_KEEP(buf, pane_idx));
 }
 #endif // ENABLE_DEBUG
 //------------------------------------------------------------------------------
 be_buf_t *get_edit_buf_by_file_path(const char *abs_path)
 {
-	return buf_get_buf_by_file_path(EDIT_BUFS_TOP_BUF, abs_path);
+	if (is_temporal_file_path(abs_path) == 0) {
+		// from edit buffers
+		return buf_get_buf_by_file_path(EDIT_BUFS_TOP_BUF, abs_path);
+	} else {
+		// from all buffers
+		for (be_bufs_t *bufs = NODES_TOP_NODE(&all_bufferss); IS_NODE_INT(bufs);
+		 bufs = NODE_NEXT(bufs)) {
+			be_buf_t *buf = buf_get_buf_by_file_path(NODES_TOP_NODE(bufs), abs_path);
+			if (buf) {
+				return buf;
+			}
+		}
+		return NULL;		// not found
+	}
 }
 be_buf_t *get_edit_buf_by_file_name(const char *file_name)
 {
@@ -469,7 +500,11 @@ int append_magic_line(void)
 	return 0;
 }
 
-int edit_bufs_count_buf(void)
+int has_bufs_to_edit(void)
+{
+	return (count_edit_bufs() > 0) || (epc_buf_count_buf() > 0);
+}
+int count_edit_bufs(void)
 {
 	return bufs_count_buf(&edit_buffers);
 }
@@ -482,7 +517,7 @@ int epc_buf_count_buf(void)
 
 be_buf_t *push_cut_buf(void)
 {
-	be_buf_t *buf = buf_create_node(sprintf_s("#cut-buffer-%02d", count_cut_bufs()),
+	be_buf_t *buf = buf_create_node(sprintf_s("#cut-buffer-%03d", count_cut_bufs()),
 	 buf_MODE_LIST);
 	bufs_insert_buf_to_top(&cut_buffers, buf);
 	// copy cut-mode to cut-buffer
@@ -490,7 +525,7 @@ be_buf_t *push_cut_buf(void)
 	SET_CUR_CBUF_STATE(buf_MODE, buf_MODE_LIST);
 	return buf;
 }
-int pop__free_from_cut_buf(void)
+int pop__free_from_cut_bufs(void)
 {
 	if (IS_NODE_BOT_ANCH(TOP_BUF_OF_CUT_BUFS))
 		return 0;
@@ -512,7 +547,7 @@ int count_cur_cut_buf_lines(void)
 void clear_all_cut_bufs(void)
 {
 	while (IS_NODE_INT(TOP_BUF_OF_CUT_BUFS)) {
-		pop__free_from_cut_buf();
+		pop__free_from_cut_bufs();
 	}
 }
 //------------------------------------------------------------------------------
@@ -539,14 +574,10 @@ int check_cur_buf_modified(void)
 		modified = buf_check_crc(get_epc_buf());
 		if (modified == 0) {
 			// clear "modified" flag if it's actually not modified
-			SET_CUR_EBUF_STATE(buf_MODIFIED, 0);
+			clear_cur_buf_modified();
 		}
 	}
 	return modified;
-}
-void set_cur_buf_modified(void)
-{
-	SET_CUR_EBUF_STATE(buf_MODIFIED, 1);
 }
 int is_any_edit_buf_modified(void)
 {

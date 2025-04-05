@@ -40,12 +40,14 @@ typedef struct be_buf_view_t {
 //------------------------------------------------------------------------------
 
 typedef struct /*buf_state*/ {
-	unsigned char buf_MODE:2;				// bit 0,1
 #define buf_MODE_EDIT		0				// Normal buffer (modifiable)
 #define buf_MODE_RO			1				// Read Only open file (unmodifiable)
 #define buf_MODE_LIST		2				// List (unmodifiable)
+	unsigned char buf_MODE:2;				// bit 0,1
 	unsigned char buf_LOCKED:1;				// bit 2
+
 	unsigned char buf_MAGIC_LINE_ADDED:1;	// bit 3
+
 	unsigned char buf_MODIFIED:1;			// bit 4
 	unsigned char buf_LINE_WRAP_MODE:1;		// bit 5
 #if 0 // 0
@@ -202,8 +204,8 @@ int buf_guess_tab_size(be_buf_t *buf);
 
 int buf_count_lines(be_buf_t *buf, int max_lines);
 
-int buf_get_file_stat(be_buf_t *buf);
-int buf_has_orig_file_updated(be_buf_t *buf);
+int buf_get_file_stat(be_buf_t *buf, const char* file_path);
+int buf_has_orig_file_updated(be_buf_t *buf, const char* file_path);
 
 const char *buf_mode_str(be_buf_t *buf);
 const char *buf_eol_str(be_buf_t *buf);
@@ -228,6 +230,9 @@ UINT16 buf_get_save_pending_timer(be_buf_t *buf);
 int buf_count_buf(be_buf_t *buf);
 be_buf_t *buf_make_buf_intermediate(be_buf_t *buf);
 be_buf_t *buf_get_another_buf(be_buf_t *buf);
+
+#define TEMPORAL_HISTORY_MARK		"#"
+int is_temporal_file_path(const char* str);
 
 //------------------------------------------------------------------------------
 be_bufs_t *bufs_init(be_bufs_t *bufs, const char* name,

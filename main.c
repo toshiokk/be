@@ -110,8 +110,8 @@ flf_d_printf("init_histories()\n");
 	init_histories();
 flf_d_printf("load_histories()\n");
 	load_histories();
-flf_d_printf("load_key_macro()\n");
-	load_key_macro(1);
+flf_d_printf("load_last_key_macro()\n");
+	load_last_key_macro(1);
 #endif // ENABLE_HISTORY
 
 	load_cut_buffers();
@@ -146,7 +146,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 			// CURDIR: changed in editor
 			if (load_file_name_upp_low_(argv[optind],
-			 TUL0 | OOE1 | MOE0 | RECURS1 | RDOL0 | FOL0 | LFH0) <= 0) {
+			 TUL0 | OOE1 | MOE0 | RECURS1 | RDOL0 | FOLF0 | LFH0) <= 0) {
 				tio_beep();
 			}
 			tio_refresh();
@@ -156,7 +156,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 		}
 		end_check_break_key();
 	}
-	if (edit_bufs_count_buf()) {
+	if (count_edit_bufs()) {
 #ifdef ENABLE_HISTORY
 		if (goto_last_file_line_col_in_history() == 0) {
 			doe_switch_to_top_buffer();
@@ -202,42 +202,6 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 flf_d_printf("Exit %s ===============================\n", APP_NAME " " __DATE__ " " __TIME__);
 	printf("\n");
 	return 0;
-}
-
-// do_call_editor() : pass a edit-buffer and edit or browse it.
-// do_call_filer()  : pass a directory and manage or browse it.
-void app_main_loop(void)
-{
-	clear_app_stack_depth();
-	clear_whole_screen_update_timer();	// avoid screen flashing on the first key input
-#ifndef ENABLE_FILER
-	if (edit_bufs_count_buf() == 0) {
-		doe_open_file_recursive();
-	}
-	while (edit_bufs_count_buf()) {
-		do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
-	}
-#else // ENABLE_FILER
-	if (edit_bufs_count_buf()) {
-		// application was started as a EDITOR
-		while (edit_bufs_count_buf()) {
-			do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
-		}
-	} else {
-		// application was started as a FILER
-		for ( ; ; ) {
-			char file_path[MAX_PATH_LEN+1];
-			do_call_filer(0, APP_MODE_NORMAL, "", "", file_path);
-			if (edit_bufs_count_buf() == 0) {
-flf_d_printf("no edit buffers: %d\n", edit_bufs_count_buf());
-				// no file loaded in filer
-				break;
-			}
-flf_d_printf("do_call_editor\n");
-			do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
-		}
-	}
-#endif // ENABLE_FILER
 }
 
 //------------------------------------------------------------------------------
@@ -412,7 +376,43 @@ PRIVATE int parse_options(int argc, char *argv[])
 	}
 	return 0;
 }
-
+//------------------------------------------------------------------------------
+// do_call_editor() : pass a edit-buffer and edit or browse it.
+// do_call_filer()  : pass a directory and manage or browse it.
+void app_main_loop(void)
+{
+	clear_app_stack_depth();
+	clear_whole_screen_update_timer();	// avoid screen flashing on the first key input
+#ifndef ENABLE_FILER
+	if (count_edit_bufs() == 0) {
+		doe_open_file_recursive();
+	}
+	while (has_bufs_to_edit()) {
+		do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
+	}
+#else // ENABLE_FILER
+	if (count_edit_bufs()) {
+		// application was started as a EDITOR
+		while (has_bufs_to_edit()) {
+			do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
+		}
+	} else {
+		// application was started as a FILER
+		for ( ; ; ) {
+			char file_path[MAX_PATH_LEN+1];
+			do_call_filer(0, APP_MODE_NORMAL, "", "", file_path);
+			if (has_bufs_to_edit() == 0) {
+flf_d_printf("count_edit_bufs():%d, epc_buf_count_buf():%d\n",
+ count_edit_bufs(), epc_buf_count_buf());
+				// no file loaded in filer
+				break;
+			}
+flf_d_printf("do_call_editor\n");
+			do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
+		}
+	}
+#endif // ENABLE_FILER
+}
 //------------------------------------------------------------------------------
 #ifdef START_UP_TEST
 PRIVATE void start_up_test(void)

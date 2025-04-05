@@ -43,6 +43,7 @@
 #endif // ENABLE_HIGH_BGC
 #include "cursesif.h"	// COLORS and COLOR_PAIRS are variables
 #else // ENABLE_NCURSES
+#include "termifkey.h"	// key sequences recognition beginning from ESC key
 #include "termif.h"		// COLORS and COLOR_PAIRS are macro definitions
 #endif // ENABLE_NCURSES
 

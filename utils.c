@@ -416,29 +416,28 @@ int get_mem_free_in_kb(int update)
 	static int kb = 256 * 1024;		// 256 MB
 
 	if (update) {
-		FILE *fp;
-		if ((fp = fopen("/proc/meminfo", "r")) != NULL) {
+		FILE *fp = fopen("/proc/meminfo", "r");
+		if (fp != NULL) {
 			char buffer[100+1];
 			while (fgets(buffer, 100, fp) != 0) {
-				if (strncmp(buffer, "MemFree:", 8) == 0) {
+				if (strlcmp__(buffer, "MemFree:") == 0) {
 					char buf[100+1];
 					if (sscanf(buffer, "%10s %d", buf, &kb) >= 2) {
+#ifdef ENABLE_DEBUG
+////#define DEBUG_MEM_SHORTAGE
+#ifdef DEBUG_MEM_SHORTAGE
+						kb /= 100;		// 1GB ==> 10MB
+#endif // DEBUG_MEM_SHORTAGE
+#endif // ENABLE_DEBUG
 						break;
 					}
 				}
 			}
-		}
-		if (fclose(fp) != 0) {
-			// error
+			if (fclose(fp) != 0) {
+				// error
+			}
 		}
 	}
-
-#ifdef ENABLE_DEBUG
-////#define DEBUG_MEM_SHORTAGE
-#ifdef DEBUG_MEM_SHORTAGE
-	kb /= 100;		// 1GB ==> 10MB
-#endif // DEBUG_MEM_SHORTAGE
-#endif // ENABLE_DEBUG
 	return kb;
 }
 

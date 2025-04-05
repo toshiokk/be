@@ -36,13 +36,13 @@ PRIVATE int key_strokes_playing_back = -1;		// >=0:playing back
 
 #ifdef ENABLE_HISTORY
 char key_macro_loaded[MAX_PATH_LEN+1] = "";
-void load_key_macro(int last_n)
+void load_last_key_macro(int last_n)
 {
 	strlcpy__(key_macro_loaded, get_history_newest(HISTORY_TYPE_IDX_KEYMACRO, last_n),
 	 MAX_PATH_LEN);
 	key_strokes_recorded = get_key_macro_from_string(key_macro_loaded, key_codes_recorded);
 }
-void save_key_macro(void)
+void update_key_macro_history(void)
 {
 	update_history(HISTORY_TYPE_IDX_KEYMACRO,
 	 get_string_from_key_macro(key_codes_recorded, key_strokes_recorded));
@@ -96,7 +96,7 @@ int doe_end_recording(void)
 	key_macro_end_recording();
 
 #ifdef ENABLE_HISTORY
-	save_key_macro();
+	update_key_macro_history();
 #endif // ENABLE_HISTORY
 
 	disp_title_bar_editor();
@@ -118,7 +118,7 @@ int doe_playback_last_2(void)
 PRIVATE int start_playback_last_n(int last_n)
 {
 #ifdef ENABLE_HISTORY
-	load_key_macro(last_n);
+	load_last_key_macro(last_n);
 #endif // ENABLE_HISTORY
 	key_macro_start_playback();
 	return 0;
@@ -129,7 +129,6 @@ int doe_playback_string(void)
 	if (chk_inp_str_ret_val_editor(input_string_pos(key_macro_loaded,
 	 key_macro_loaded, MAX_PATH_LEN,
 	 HISTORY_TYPE_IDX_KEYMACRO, _("Input key macro to run:")))) {
-		// cancelled
 		return 0;						// cancelled
 	}
 	key_strokes_recorded = get_key_macro_from_string(key_macro_loaded, key_codes_recorded);

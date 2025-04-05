@@ -5,12 +5,21 @@ if [ -f ./be ]; then
   ##./be --version
   ##./be "$@"
   if [ -n "$UCON" ]; then
-    ./be -d -l "$@"
+    if [ "$1" = c ]; then
+      shift
+      LANG=C ./be -d -l "$@"
+    else
+      ./be -d -l "$@"
+    fi
   else
-    ./be -d "$@"
+    if [ "$1" = c ]; then
+      shift
+      LANG=C ./be -d "$@"
+    else
+      ./be -d "$@"
+    fi
   fi
   ##LANG=C.UTF-8 ./be -d "$@"
-  ##LANG=C ./be -d "$@"
   ##./be -c -d "$@"
   if [ ! -f $HOME/.beexit ]; then
     mv -f __be_test.log

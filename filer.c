@@ -328,6 +328,7 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 #ifdef ENABLE_HISTORY
 		save_histories();
 #endif // ENABLE_HISTORY
+flf_d_printf("filer_do_next: %d, [%s]\n", filer_do_next, path_buf);
 
 		// | command modifier key | replace/append string         | return value        |
 		// |----------------------|-------------------------------|---------------------|
