@@ -185,7 +185,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	limit_cut_buffers();
 	save_cut_buffers();
 
-	reduce_log_file_size(get_exec_log_file_path(), MAX_LOG_FILE_SIZE_MB);
+	reduce_log_file_size(get_exec_log_file_path(), MAX_LOG_FILE_SIZE_KB);
 	write_cur_dir_to_exit_file();
 
 	_mlc_check_count

@@ -135,7 +135,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int flags)
 	// set a edit-buffer not saveable if requested
 	SET_CUR_EBUF_STATE(buf_MODE, (flags & RDOL1) ? buf_MODE_RO : 0);
 	// memorize orginal file stat
-	memcpy__(&(get_epc_buf()->orig_file_stat), &st, sizeof(st));
+	buf_get_file_stat(get_epc_buf(), full_path);
 
 	ret = load_file_into_cur_buf__(full_path, flags & MOE1);
 
@@ -168,11 +168,6 @@ int backup_and_save_cur_buf_ask(void)
 		}
 	}
 	return backup_and_save_cur_buf(file_path);
-/////	if ((ret = backup_and_save_cur_buf(file_path)) < 0) {
-/////		disp_status_bar_err(_("File [%s] can NOT be written !!"),
-/////		 shrink_str_to_scr_static(file_path));
-/////	}
-/////	return ret;
 }
 
 int backup_and_save_cur_buf(const char *file_path)
@@ -889,16 +884,16 @@ void disp_files_loaded(void)
 }
 
 //------------------------------------------------------------------------------
-int reduce_log_file_size(const char *file_path, int size_in_mb)
+int reduce_log_file_size(const char *file_path, int size_in_kb)
 {
-	if (get_file_size(file_path) <= ((ssize_t)size_in_mb * (1024 * 1024))) {
+	if (get_file_size(file_path) <= ((ssize_t)size_in_kb * 1024)) {
 		return 0;	// no need to reduce
 	}
 
 	char command_str[MAX_PATH_LEN+1] = "";
-	// "tail -c 10M 1.log >1.log~; mv -vf 1.log~ 1.log"
-	snprintf_(command_str, MAX_PATH_LEN, "tail -c %dM %s >%s%s ; mv -vf %s%s %s",
-	 size_in_mb / 2,
+	// "tail -c 500K 1.log >1.log~; mv -vf 1.log~ 1.log"
+	snprintf_(command_str, MAX_PATH_LEN, "tail -c %dK %s >%s%s ; mv -vf %s%s %s",
+	 size_in_kb / 2,
 	 file_path, file_path, BACKUP_FILE_SUFFIX,
 	 file_path, BACKUP_FILE_SUFFIX, file_path);
 

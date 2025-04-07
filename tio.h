@@ -72,9 +72,6 @@
 #define CL_WH		((CL_HI) + (COLOR_WHITE))	// bright white
 
 #define LIMIT_BGC8(bgc)			((bgc) & ((COLORS8)-1))		// [0, 7]
-#ifdef ENABLE_HIGH_BGC
-#define LIMIT_BGC16(bgc)		((bgc) & ((COLORS16)-1))	// [0, 15]
-#endif // ENABLE_HIGH_BGC
 
 #define LIMIT_FGC(fgc)			((fgc) & ((COLORS16)-1))	// [0, 15]
 #define MAKE_HIGH_COLOR(color)	((color) | (CL_HI))

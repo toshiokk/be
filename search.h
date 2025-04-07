@@ -46,7 +46,7 @@ int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
  char char_under_cursor, const char *needle, int search_dir, int skip_here, char depth_increase,
  int *ptr_depth, int *prev_depth);
 
-int prepare_colors_for_bracket_hl();
+void prepare_colors_for_bracket_hl();
 int get_colors_for_bracket_hl();
 void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurances, int depth);
 void get_color_for_bracket_hl(int color_idx, char *bgc, char *fgc);

@@ -121,7 +121,8 @@ am_be_OBJECTS = main.$(OBJEXT) appmode.$(OBJEXT) editor.$(OBJEXT) \
 	sig.$(OBJEXT) termifkey.$(OBJEXT) termif.$(OBJEXT) \
 	cursesif.$(OBJEXT) tio.$(OBJEXT) utf8.$(OBJEXT) \
 	utils.$(OBJEXT) utilstr.$(OBJEXT) myutf8.$(OBJEXT) \
-	utilpath.$(OBJEXT) winin.$(OBJEXT) winout.$(OBJEXT)
+	utilpath.$(OBJEXT) utilfile.$(OBJEXT) winin.$(OBJEXT) \
+	winout.$(OBJEXT)
 be_OBJECTS = $(am_be_OBJECTS)
 be_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -360,6 +361,7 @@ be_SOURCES = \
 	utilstr.c \
 	myutf8.c \
 	utilpath.c \
+	utilfile.c \
 	winin.c \
 	winout.c \
 	appmode.h \
@@ -408,6 +410,7 @@ be_SOURCES = \
 	utilstr.h \
 	myutf8.h \
 	utilpath.h \
+	utilfile.h \
 	disp.h \
 	winin.h \
 	winout.h
@@ -1201,6 +1204,8 @@ tio.o: tio.c headers.h stdincs.h config.h utilincs.h debug.h utils.h \
  editorfile.h editor.h main.h
 utf8.o: utf8.c utilincs.h stdincs.h config.h debug.h utils.h utilstr.h \
  utilpath.h utf8.h myutf8.h
+utilfile.o: utilfile.c utilincs.h stdincs.h config.h debug.h utils.h \
+ utilstr.h utilpath.h utf8.h myutf8.h
 utilpath.o: utilpath.c utilincs.h stdincs.h config.h debug.h utils.h \
  utilstr.h utilpath.h utf8.h myutf8.h
 utils.o: utils.c utilincs.h stdincs.h config.h debug.h utils.h utilstr.h \

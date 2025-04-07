@@ -4,7 +4,7 @@ appmode.h                             322    1111   11283    93
 buffer.h                              287    1190   11523    96
 buffers.h                             347     998   13168    89
 color.h                               117     464    4768    87
-config.h                              294    1393    8039    78
+config.h                              294    1386    8018    78
 cursesif.h                             65     258    2571    98
 debug.h                               144     621    5864    94
 disp.h                                 58     290    2694    89
@@ -38,23 +38,24 @@ menu.h                                 37     194    1985    76
 myutf8.h                               48     170    1539    96
 rcfile.h                               49     210    2102    76
 regexp.h                              142     568    5875    98
-search.h                               64     282    2982    96
+search.h                               64     282    2983    96
 sig.h                                  43     197    2022    76
 stdincs.h                             118     249    2185    91
 termif.h                               63     269    2616    77
 termifkey.h                            47     223    2095    76
 tio.h                                 136     591    5303    86
 utf8.h                                 49     244    2369    89
+utilfile.h                             58     269    2732    82
 utilincs.h                             17      27     239    21
-utilpath.h                            134     436    4587    85
+utilpath.h                            104     336    3517    85
 utils.h                               171     645    6374    93
 utilstr.h                             150     704    6495    94
 winin.h                                86     498    4140    96
 winout.h                               91     341    3538    78
 appmode.c                             674    1355   16125    97
-buffer.c                              851    2579   24363    98
+buffer.c                              854    2589   24468    98
 buffers.c                             879    2123   24315    97
-color.c                               293    1017    9682    91
+color.c                               299    1032    9830    91
 cursesif.c                            206     624    5314    91
 debug.c                               183     635    5439    90
 disp.c                                320    1023   10033    95
@@ -87,13 +88,14 @@ menu.c                                305    1013    9533    94
 myutf8.c                              149     510    3445    96
 rcfile.c                              793    2248   22502    97
 regexp.c                              638    2137   20799    98
-search.c                              812    2780   25985    96
+search.c                              817    2801   26009    96
 sig.c                                 147     421    4148    76
 termif.c                              631    2359   21344    98
 termifkey.c                           395    1589   11508    94
 tio.c                                 517    1402   11978    87
 utf8.c                                180     669    5161    98
-utilpath.c                            997    3377   33027    96
+utilfile.c                            177     728    6312    92
+utilpath.c                            851    2828   28479    96
 utils.c                               789    2426   20195    93
 utilstr.c                             853    2707   21449    95
 winin.c                               644    2239   22997    99
@@ -101,5 +103,5 @@ winout.c                              318     989   10617    95
 berc                                  197     520    8638    94
 po/ja.po                             1188    2900   27261    79
 README.md                             284    1366    8383    94
-__todo.txt                           1271    8496   61252    173
-Total lines, words, bytes, max-len:   32035  106593 1138436    99
+__todo.txt                           1271    8496   61255    173
+Total lines, words, bytes, max-len:   32108  106980 1142179    99

@@ -276,7 +276,7 @@ void tio_differentiate_fgc_from_bgc_rev(int *bgc, int *fgc, int rev)
 #ifndef ENABLE_HIGH_BGC
 		*bgc = LIMIT_BGC8(*bgc);
 #else // ENABLE_HIGH_BGC
-		*bgc = (high_bgc_enabled == 0) ? LIMIT_BGC8(*bgc) : LIMIT_BGC16(*bgc);
+		*bgc = (high_bgc_enabled == 0) ? LIMIT_BGC8(*bgc) : *bgc;
 #endif // ENABLE_HIGH_BGC
 		*fgc = LIMIT_FGC(*fgc);
 		*fgc = tio_differentiate_fgc_from_bgc(*bgc, *fgc);
@@ -285,7 +285,7 @@ void tio_differentiate_fgc_from_bgc_rev(int *bgc, int *fgc, int rev)
 #ifndef ENABLE_HIGH_BGC
 		*fgc = LIMIT_BGC8(*fgc);
 #else // ENABLE_HIGH_BGC
-		*fgc = (high_bgc_enabled == 0) ? LIMIT_BGC8(*fgc) : LIMIT_BGC16(*fgc);
+		*fgc = (high_bgc_enabled == 0) ? LIMIT_BGC8(*fgc) : *fgc;
 #endif // ENABLE_HIGH_BGC
 		*bgc = LIMIT_FGC(*bgc);
 		*bgc = tio_differentiate_fgc_from_bgc(*fgc, *bgc);
@@ -306,6 +306,7 @@ int tio_differentiate_fgc_from_bgc(int bgc, int fgc)
 		case CL_MG:		fgc = CL_LM;	break;
 		case CL_CY:		fgc = CL_LC;	break;
 		case CL_GY:		fgc = CL_DG;	break;
+#ifdef ENABLE_HIGH_BGC
 		case CL_DG:		fgc = CL_GY;	break;
 		case CL_LR:		fgc = CL_RD;	break;
 		case CL_LG:		fgc = CL_GR;	break;
@@ -314,26 +315,27 @@ int tio_differentiate_fgc_from_bgc(int bgc, int fgc)
 		case CL_LM:		fgc = CL_MG;	break;
 		case CL_LC:		fgc = CL_CY;	break;
 		case CL_WH:		fgc = CL_GY;	break;
+#endif // ENABLE_HIGH_BGC
 		}
 	}
 #if 1 // Avoid similar fgc/bgc
-	if ((bgc == CL_CY) && (fgc == CL_GR)) {
-		fgc = CL_LG;
-	}
-	if ((bgc == CL_GR) && (fgc == CL_CY)) {
-		fgc = CL_LC;
-	}
-	if ((bgc == CL_BR) && (fgc == CL_DG)) {
-		fgc = CL_YL;
-	}
-	if ((bgc == CL_DG) && (fgc == CL_BR)) {
-		fgc = CL_GY;
-	}
-	if ((bgc == CL_WH) && (fgc == CL_YL)) {
-		fgc = CL_BR;
-	}
-	if ((bgc == CL_YL) && (fgc == CL_WH)) {
-		fgc = CL_GY;
+	if (((bgc == CL_RD) && (fgc == CL_MG))
+	 || ((bgc == CL_MG) && (fgc == CL_RD))
+	 || ((bgc == CL_CY) && (fgc == CL_GR))
+	 || ((bgc == CL_GR) && (fgc == CL_CY))
+	 || ((bgc == CL_BR) && (fgc == CL_DG))
+	 || ((bgc == CL_DG) && (fgc == CL_BR))
+#ifdef ENABLE_HIGH_BGC
+	 || ((bgc == CL_LR) && (fgc == CL_LM))
+	 || ((bgc == CL_LM) && (fgc == CL_LR))
+	 || ((bgc == CL_LG) && (fgc == CL_LC))
+	 || ((bgc == CL_LC) && (fgc == CL_LG))
+	 || ((bgc == CL_WH) && (fgc == CL_YL))
+	 || ((bgc == CL_YL) && (fgc == CL_WH))
+#endif // ENABLE_HIGH_BGC
+	) {
+		// invert highlightness (dark color ==> high color, high color ==> dark color)
+		fgc ^= CL_HI;
 	}
 #endif
 	return fgc;

@@ -226,11 +226,11 @@ void remalloc_and_null_terminate_length(char **ptr, size_t len)
 //=============================================================================
 
 #define POLYNOMIAL_CRC16CCITT	0x1021
-PRIVATE UINT16 crc16ccitt = 0xffff;
-
-void clear_crc16ccitt(void)
+#define INITIAL_CRC16CCITT		0xffff
+PRIVATE UINT16 crc16ccitt = INITIAL_CRC16CCITT;
+void clear_crc16ccitt()
 {
-	crc16ccitt = 0xffff;
+	crc16ccitt = INITIAL_CRC16CCITT;
 }
 void calc_crc16ccitt(UINT8 byte)
 {
@@ -248,7 +248,7 @@ void calc_crc16ccitt(UINT8 byte)
 		byte <<= 1;
 	}
 }
-UINT16 get_crc16ccitt(void)
+UINT16 get_crc16ccitt()
 {
 	return crc16ccitt;
 }

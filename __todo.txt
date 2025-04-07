@@ -6,6 +6,7 @@
 - CRASH: crash
 - POLICY: things to be kept
 
+- [-] 250407 create a new file as modified
 - [x] 250405 BUG: new file is unlocked on saving
   - [x] 250405 BUG: sometimes lock file is made in full-path not in abs-path
     ==> realpath() does not work if the path does not actually exist
@@ -18,11 +19,11 @@
     "#/home/user/.be/dir_history"
     "#/home/user/.be/cut_buffer"
     "#cut-buffer-000"
-  - [x] select buffer by the ID
-  - [] column alignment of japanese message
+  - [x] tag-jump by the buffer ID
   - [x] 250404 BUG: tag-jump from "#..." return EF_5 and does not switch to the buffer
   - [x] 250405 can not leave from list with message "This buffer is NOT closeable"
         ==> switch to edit buffer if possible, switch to anchor of edit buffer if impossible
+  - [-] column alignment of japanese message
 
 - [] Make easy to use for other people
 - [x] No Japanese but English comment

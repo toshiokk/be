@@ -80,7 +80,7 @@ void init_bufferss(void)
 
 void free_all_buffers(void)
 {
-	bufs_free_all_bufs(NODES_TOP_ANCH(&all_bufferss));
+	bufs_free_all_bufs(NODES_TOP_NODE(&all_bufferss));
 }
 
 // Edit-buffer manipulation routines

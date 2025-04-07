@@ -597,25 +597,25 @@ int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 
 // color management for bracket highlighting
 
-// | 0 | ITEM_COLOR_IDX_TEXT_SELECTED1.bgc | ITEM_COLOR_IDX_TEXT_SELECTED1.fgc   |
-// | 1 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+0 |
-// | 2 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+1 |
-// | 3 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+2 |
-// | 4 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+3 |
-// | 5 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+4 |
-// | 6 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+5 |
-// | 7 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+6 |
-// | 8 | ITEM_COLOR_IDX_TEXT_SELECTED2.bgc | ITEM_COLOR_IDX_TEXT_SELECTED2.fgc+7 |
+// | 0 | ITEM_..._SELECTED1.bgc | ITEM_..._SELECTED1.fgc   |
+// | 1 | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+0 |
+// | 2 | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+1 |
+// | - | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+2 | == ITEM_..._SELECTED2.bgc
+// | 3 | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+3 |
+// | 4 | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+4 |
+// | 5 | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+5 |
+// | 6 | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+6 |
+// | 7 | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+7 |
 
-#define COLORS_FOR_BRACKET_HL	((COLORS16)-1)	// color pairs for bracket highlighting
+#define COLORS_FOR_BRACKET_HL	(COLORS8)	// color pairs for bracket highlighting
 PRIVATE int num_colors_for_bracket_hl = 0;	// [0, COLORS_FOR_BRACKET_HL]
 PRIVATE item_color_t colors_for_bracket_hl[COLORS_FOR_BRACKET_HL];
 
-int prepare_colors_for_bracket_hl()
+void prepare_colors_for_bracket_hl()
 {
 	if (num_colors_for_bracket_hl) {
 		// already prepared
-		return num_colors_for_bracket_hl;
+		return;
 	}
 	char bgc_sel;
 	char fgc_sel;
@@ -624,24 +624,29 @@ int prepare_colors_for_bracket_hl()
 	get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED1, &bgc_sel, &fgc_sel);
 	get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, &bgc_sel2, &fgc);
 	int color_idx = 0;
-	colors_for_bracket_hl[color_idx].fgc = fgc_sel;
 	colors_for_bracket_hl[color_idx].bgc = bgc_sel;
+	colors_for_bracket_hl[color_idx].fgc = fgc_sel;
 	color_idx++;
 	for (fgc = fgc_sel+1; color_idx < COLORS_FOR_BRACKET_HL; fgc++) {
-		fgc %= COLORS16;
+		fgc = CL_HI | (fgc % COLORS8);
 		if (fgc != (bgc_sel2 % COLORS8)) {	// Because there is no light color in BGC
-			colors_for_bracket_hl[color_idx].fgc = fgc;
 			colors_for_bracket_hl[color_idx].bgc = bgc_sel2;
+			colors_for_bracket_hl[color_idx].fgc = fgc;
 			color_idx++;
 		}
 	}
-	return num_colors_for_bracket_hl = color_idx;
+	num_colors_for_bracket_hl = color_idx;
+#ifdef ENABLE_DEBUG
+	for (color_idx = 0; color_idx < num_colors_for_bracket_hl; color_idx++) {
+		flf_d_printf("color_idx: %d, bgc: %2d, fgc: %2d\n", color_idx,
+		 colors_for_bracket_hl[color_idx].bgc,
+		 colors_for_bracket_hl[color_idx].fgc);
+	}
+#endif // ENABLE_DEBUG
 }
 int get_colors_for_bracket_hl()
 {
-	if (num_colors_for_bracket_hl == 0) {
-		return prepare_colors_for_bracket_hl();
-	}
+	prepare_colors_for_bracket_hl();
 	return num_colors_for_bracket_hl;
 }
 

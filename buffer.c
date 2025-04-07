@@ -137,7 +137,10 @@ const char* buf_get_abs_path(be_buf_t *buf, char *abs_path)
 	if (abs_path == NULL) {
 		abs_path = abs_path_;
 	}
-	return get_abs_path(buf_get_file_path(buf, NULL), abs_path);
+	if (is_temporal_file_path(buf_get_file_path(buf, NULL)) == 0) {
+		return get_abs_path(buf_get_file_path(buf, NULL), abs_path);
+	}
+	return buf_get_file_path(buf, NULL);
 }
 
 void buf_invalidate_file_path(be_buf_t *buf)
@@ -569,8 +572,8 @@ void bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next)
 
 be_bufs_t *bufs_free_all_bufs(be_bufs_t *bufs)
 {
-	for ( ; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs)) {
-		for (be_buf_t *buf = NODES_TOP_ANCH(bufs); IS_PTR_VALID(buf); ) {
+	for ( ; IS_NODE_INT(bufs); bufs = NODE_NEXT(bufs)) {
+		for (be_buf_t *buf = NODES_TOP_NODE(bufs); IS_NODE_INT(buf); ) {
 			if (bufs->cur_buf == buf) {
 				bufs->cur_buf = NODE_NEXT(buf);
 			}

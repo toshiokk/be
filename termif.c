@@ -541,9 +541,6 @@ PRIVATE void send_attrs_to_term(vscreen_char_t attrs)
 		real_bgc = fgc;
 		real_fgc = bgc;
 	}
-//DDD	real_bgc = LIMIT_BGC(real_bgc);
-//DDD	real_fgc = LIMIT_FGC(real_fgc);
-//DDD	real_fgc = tio_differentiate_fgc_from_bgc(real_bgc, real_fgc);
 	send_all_off_to_term();
 	send_bgc_to_term(real_bgc);
 	send_fgc_to_term(real_fgc);

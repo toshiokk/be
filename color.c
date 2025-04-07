@@ -26,12 +26,6 @@
 // Color table for the various items
 item_color_t item_colors[MAX_ITEM_COLORS];
 
-//DDDD#ifndef ENABLE_HIGH_BGC
-//DDDD#define CL_BG	CL_GY	// gray background color
-//DDDD#else // ENABLE_HIGH_BGC
-//DDDD#define CL_BG	CL_WH	// white background color
-//DDDD#endif // ENABLE_HIGH_BGC
-
 item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	//  bgc, fgc
 	{ CL_BK, CL_WH, S(ITEM_COLOR_IDX_DEFAULT)			},
@@ -222,6 +216,7 @@ const color_syntax_t *get_default_color_syntax_head(void)
 PRIVATE void display_color_pattern(int yy, int xx, int reverse);
 int display_color_pairs(int yy, int xx)
 {
+	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 	tio_fill_screen();
 	display_color_pattern(yy, xx+ 0, 0);
 	display_color_pattern(yy, xx+34, 1);
@@ -271,18 +266,23 @@ int display_item_colors(int yy, int xx)
 #ifdef ENABLE_REGEX
 int display_bracket_hl_colors(int yy, int xx)
 {
-	UINT8 zero_occurances = 0;
+	UINT8 zero_occurances;
 
 	tio_fill_screen();
 	prepare_colors_for_bracket_hl();
-	for (int depth = 0; depth < get_colors_for_bracket_hl(); depth++) {
+	zero_occurances = 0;
+	for (int yy = 0; yy < get_colors_for_bracket_hl(); yy++) {
 		char buffer[MAX_PATH_LEN+1];
-		set_color_for_bracket_hl(+1, &zero_occurances, depth);
-		snprintf(buffer, MAX_PATH_LEN, "%3d: ([{<>}]) ", depth);
-		tio_output_string(central_win_get_mid_win_y() + yy + depth, xx + 0, buffer, -1);
-		set_color_for_bracket_hl(-1, &zero_occurances, -depth);
-		snprintf(buffer, MAX_PATH_LEN, "%3d: ([{<>}]) ", -depth);
-		tio_output_string(central_win_get_mid_win_y() + yy + depth, xx + 20, buffer, -1);
+		set_color_for_bracket_hl(-1, &zero_occurances, -yy);
+		snprintf(buffer, MAX_PATH_LEN, "%3d: ([{<>}]) ", -yy);
+		tio_output_string(central_win_get_mid_win_y() + yy, xx + 0, buffer, -1);
+	}
+	for (int yy = 0; yy < get_colors_for_bracket_hl(); yy++) {
+		zero_occurances = 0;
+		char buffer[MAX_PATH_LEN+1];
+		set_color_for_bracket_hl(+1, &zero_occurances, yy);
+		snprintf(buffer, MAX_PATH_LEN, "%3d: ([{<>}]) ", yy);
+		tio_output_string(central_win_get_mid_win_y() + yy, xx + 20, buffer, -1);
 	}
 	tio_refresh();
 	return 0;

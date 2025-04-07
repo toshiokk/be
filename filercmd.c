@@ -164,10 +164,6 @@ PRIVATE int dof_open_file_(int flags)
 		return 0;
 	}
 
-#ifdef ENABLE_HISTORY
-/////	int prev_count_edit_bufs = count_edit_bufs();
-#endif // ENABLE_HISTORY
-
 	clear_files_loaded();
 	begin_check_break_key();
 	for (int file_idx = select_and_get_first_file_idx_selected();
@@ -185,13 +181,6 @@ PRIVATE int dof_open_file_(int flags)
 	}
 	end_check_break_key();
 
-/////	if (get_files_loaded() >= 0) {
-#ifdef ENABLE_HISTORY
-/////		if (prev_count_edit_bufs == 0) {
-/////			goto_last_file_line_col_in_history();
-/////		}
-#endif // ENABLE_HISTORY
-/////	}
 	unselect_all_files_auto(_FILE_SEL_MAN_ | _FILE_SEL_AUTO_);
 	disp_files_loaded_if_ge_0();
 	if (get_files_loaded() < 0) {

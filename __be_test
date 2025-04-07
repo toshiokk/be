@@ -5,6 +5,19 @@ if [ -f ./be ]; then
   ##./be --version
   ##./be "$@"
   if [ -n "$UCON" ]; then
+    light=l
+    if [ "$1" = l ]; then
+      shift
+      light=""
+    fi
+  else
+    light=""
+    if [ "$1" = l ]; then
+      shift
+      light=l
+    fi
+  fi
+  if [ -n "$light" ]; then
     if [ "$1" = c ]; then
       shift
       LANG=C ./be -d -l "$@"

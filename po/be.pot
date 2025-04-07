@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-06 00:41+0900\n"
+"POT-Creation-Date: 2025-04-07 23:02+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../buffer.c:349
+#: ../buffer.c:352
 msgid "[EDIT]"
 msgstr ""
 
-#: ../buffer.c:350
+#: ../buffer.c:353
 msgid "[RO]"
 msgstr ""
 
-#: ../buffer.c:351
+#: ../buffer.c:354
 msgid "[LIST]"
 msgstr ""
 
@@ -180,7 +180,7 @@ msgstr ""
 msgid "Open existing file:"
 msgstr ""
 
-#: ../editorfile.c:60 ../filercmd.c:241
+#: ../editorfile.c:60 ../filercmd.c:230
 msgid "Open new file:"
 msgstr ""
 
@@ -460,89 +460,89 @@ msgid "Overwriting file cancelled"
 msgstr ""
 
 #. directory or special file
-#: ../fileio.c:183
+#: ../fileio.c:178
 #, c-format
 msgid "File [%s] is NOT a regular file !!"
 msgstr ""
 
 #. file_path is exist as a regular file or not exist
-#: ../fileio.c:188
+#: ../fileio.c:183
 #, c-format
 msgid "Writing File %s ..."
 msgstr ""
 
-#: ../fileio.c:192
+#: ../fileio.c:187
 #, c-format
 msgid "Error in backing up File [%s] !!"
 msgstr ""
 
-#: ../fileio.c:203
+#: ../fileio.c:198
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr ""
 
-#: ../fileio.c:212
+#: ../fileio.c:207
 #, c-format
 msgid "%d line written"
 msgstr ""
 
-#: ../fileio.c:213
+#: ../fileio.c:208
 #, c-format
 msgid "%d lines written"
 msgstr ""
 
-#: ../fileio.c:214
+#: ../fileio.c:209
 #, c-format
 msgid "%d liness written"
 msgstr ""
 
-#: ../fileio.c:215
+#: ../fileio.c:210
 #, c-format
 msgid "%d linesss written"
 msgstr ""
 
-#: ../fileio.c:271
+#: ../fileio.c:266
 #, c-format
 msgid "BINARY file !! [%s]"
 msgstr ""
 
-#: ../fileio.c:412 ../fileio.c:539 ../fileio.c:555 ../fileio.c:572
+#: ../fileio.c:407 ../fileio.c:534 ../fileio.c:550 ../fileio.c:567
 #, c-format
 msgid "Can not read-open file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:723 ../fileio.c:744 ../fileio.c:764
+#: ../fileio.c:718 ../fileio.c:739 ../fileio.c:759
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr ""
 
 #. -1: error
-#: ../fileio.c:732 ../fileio.c:753 ../fileio.c:805
+#: ../fileio.c:727 ../fileio.c:748 ../fileio.c:800
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:794 ../fileio.c:834
+#: ../fileio.c:789 ../fileio.c:829
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:884
+#: ../fileio.c:879
 #, c-format
 msgid "%d file loaded"
 msgstr ""
 
-#: ../fileio.c:885
+#: ../fileio.c:880
 #, c-format
 msgid "%d files loaded"
 msgstr ""
 
-#: ../fileio.c:886
+#: ../fileio.c:881
 #, c-format
 msgid "%d filess loaded"
 msgstr ""
 
-#: ../fileio.c:887
+#: ../fileio.c:882
 #, c-format
 msgid "%d filesss loaded"
 msgstr ""
@@ -561,144 +561,144 @@ msgstr ""
 msgid "File view refreshed"
 msgstr ""
 
-#: ../filercmd.c:280
+#: ../filercmd.c:269
 msgid "Copy to:"
 msgstr ""
 
-#: ../filercmd.c:280
+#: ../filercmd.c:269
 msgid "Copy to (Update):"
 msgstr ""
 
-#: ../filercmd.c:321
+#: ../filercmd.c:310
 msgid "Move to:"
 msgstr ""
 
-#: ../filercmd.c:321
+#: ../filercmd.c:310
 msgid "Move to (Update):"
 msgstr ""
 
-#: ../filercmd.c:356
+#: ../filercmd.c:345
 msgid "Drop files to Open(Enter)/Copy(M-c)/Move(M-m):"
 msgstr ""
 
-#: ../filercmd.c:361
+#: ../filercmd.c:350
 msgid "Input files to Open(Enter)/Copy(M-c)/Move(M-m):"
 msgstr ""
 
-#: ../filercmd.c:366
+#: ../filercmd.c:355
 msgid "Drop files to Open:"
 msgstr ""
 
-#: ../filercmd.c:370
+#: ../filercmd.c:359
 msgid "Drop files to Copy here (current directory):"
 msgstr ""
 
-#: ../filercmd.c:373
+#: ../filercmd.c:362
 msgid "Drop files to Move here (current directory):"
 msgstr ""
 
-#: ../filercmd.c:463
+#: ../filercmd.c:452
 msgid "Rename to:"
 msgstr ""
 
-#: ../filercmd.c:479
+#: ../filercmd.c:468
 #, c-format
 msgid "Trash file %s ?"
 msgstr ""
 
-#: ../filercmd.c:482
+#: ../filercmd.c:471
 #, c-format
 msgid "Trash %d files ?"
 msgstr ""
 
-#: ../filercmd.c:514
+#: ../filercmd.c:503
 #, c-format
 msgid "Delete file %s ?"
 msgstr ""
 
-#: ../filercmd.c:517
+#: ../filercmd.c:506
 #, c-format
 msgid "Delete %d files ?"
 msgstr ""
 
-#: ../filercmd.c:546
+#: ../filercmd.c:535
 #, c-format
 msgid "Mark file %s to be Deleted later ?"
 msgstr ""
 
-#: ../filercmd.c:549
+#: ../filercmd.c:538
 #, c-format
 msgid "Mark %d files to be Deleted later ?"
 msgstr ""
 
-#: ../filercmd.c:582
+#: ../filercmd.c:571
 #, c-format
 msgid "Make size of file %s 0 ?"
 msgstr ""
 
-#: ../filercmd.c:585
+#: ../filercmd.c:574
 #, c-format
 msgid "Make size of %d files 0 ?"
 msgstr ""
 
-#: ../filercmd.c:629
+#: ../filercmd.c:618
 msgid "Unzip files:"
 msgstr ""
 
-#: ../filercmd.c:652
+#: ../filercmd.c:641
 msgid "Zip files:"
 msgstr ""
 
-#: ../filercmd.c:666
+#: ../filercmd.c:655
 msgid "Find file:"
 msgstr ""
 
-#: ../filercmd.c:679
+#: ../filercmd.c:668
 msgid "Mkdir:"
 msgstr ""
 
-#: ../filercmd.c:691
+#: ../filercmd.c:680
 msgid "Chdir to:"
 msgstr ""
 
-#: ../filercmd.c:754
+#: ../filercmd.c:743
 msgid "Set file name filter:"
 msgstr ""
 
-#: ../filercmd.c:775
+#: ../filercmd.c:764
 msgid "File selection cleared"
 msgstr ""
 
-#: ../filercmd.c:798
+#: ../filercmd.c:787
 #, c-format
 msgid "%d file selected"
 msgstr ""
 
-#: ../filercmd.c:799
+#: ../filercmd.c:788
 #, c-format
 msgid "%d files selected"
 msgstr ""
 
-#: ../filercmd.c:800
+#: ../filercmd.c:789
 #, c-format
 msgid "%d filess selected"
 msgstr ""
 
-#: ../filercmd.c:801
+#: ../filercmd.c:790
 #, c-format
 msgid "%d filesss selected"
 msgstr ""
 
-#: ../filercmd.c:812
+#: ../filercmd.c:801
 #, c-format
 msgid "Are you OK to quit %s ?"
 msgstr ""
 
-#: ../filercmd.c:814
+#: ../filercmd.c:803
 msgid "Quiting program cancelled"
 msgstr ""
 
-#: ../filercmd.c:833
+#: ../filercmd.c:822
 msgid "Quit filer"
 msgstr ""
 
@@ -990,11 +990,11 @@ msgstr ""
 msgid "[%s] found in %s search"
 msgstr ""
 
-#: ../search.c:251 ../search.c:808 ../winin.c:496
+#: ../search.c:251 ../search.c:813 ../winin.c:496
 msgid "Backward"
 msgstr ""
 
-#: ../search.c:251 ../search.c:808 ../winin.c:499
+#: ../search.c:251 ../search.c:813 ../winin.c:499
 msgid "Forward"
 msgstr ""
 
@@ -1032,17 +1032,17 @@ msgstr ""
 msgid "Bracket nesting too deep (%d)"
 msgstr ""
 
-#: ../search.c:696
+#: ../search.c:701
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr ""
 
-#: ../search.c:806
+#: ../search.c:811
 #, c-format
 msgid "Keyword [%s] not found in %s search"
 msgstr ""
 
-#: ../search.c:808
+#: ../search.c:813
 msgid "Bi-directional"
 msgstr ""
 

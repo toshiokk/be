@@ -1,5 +1,5 @@
 /**************************************************************************
- *   fileio.h                                                             *
+ *   utilfile.h                                                           *
  *                                                                        *
  *   Copyright (C) 1999-2003 Chris Allegretta                             *
  *                                                                        *
@@ -19,35 +19,40 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef fileio_h
-#define fileio_h
+#ifndef utilfile_h
+#define utilfile_h
 
-#define PROJ_FILE_EXTENSION1	".bep"		// BE Project file
-#define PROJ_FILE_EXTENSION2	".pro"		// Qt PROject file
+// file status and permission --------------------
 
-#define MAX_LINES_LOADABLE		9999999	// 9,999,999
+int is_path_exist(const char *path);
+int is_path_regular_file(const char *path);
+int is_path_executable_file(const char *path);
+int is_path_dir(const char *path);
+int is_file_writable(const char *path);
+int is_st_writable(struct stat *st);
+ssize_t get_file_size(const char *path);
+int is_dir_readable(const char *path);
 
-int load_file_into_new_buf(const char *full_path, int flags);
+// change current directory -----------
 
-int load_file_into_buf(be_buf_t *buf, const char *full_path);
+int change_cur_dir_saving_prev_next_dir(const char *path,
+ char *cur_path, char *prev_path, char *next_dir_sel);
 
-#define BACKUP_FILE_SUFFIX		"~"
-int backup_and_save_cur_buf_ask(void);
-int backup_and_save_cur_buf(const char *file_path);
+int change_cur_dir_by_file_path_after_save(char *dir_save, const char *file_path);
+int change_cur_dir_by_file_path(char *file_path);
+int change_cur_dir_after_save(char *dir_save, const char *dir);
 
-int save_buf_to_file(be_buf_t *buf, const char *file_path);
-int save_cur_buf_to_file(const char *file_path);
+char *strip_file_if_path_is_file(const char *path, char *dir);
+char *strip_file_from_path(const char *path, char *dir);
 
-void clear_files_loaded(void);
-int add_files_loaded(int files);
-int get_files_loaded(void);
-void disp_files_loaded_if_ge_0(void);
-void disp_files_loaded(void);
+int change_cur_dir(const char *dir);
+char *get_full_path_of_cur_dir(char *dir);
+const char *full_path_of_cur_dir_s();
+char *get_real_path_of_cur_dir(char *dir);
 
-#define MAX_LOG_FILE_SIZE_KB		1000	// 1000 [KB]
-int reduce_log_file_size(const char *file_path, int size_in_kb);
-const char *get_exec_log_file_path();
+int write_text_to_file(const char *file_path, char append, const char *text);
+int remove_file(const char* file_path);
 
-#endif // fileio_h
+#endif // utilfile_h
 
-// End of fileio.h
+// End of utilfile.h

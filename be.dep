@@ -316,6 +316,8 @@ tio.o: tio.c headers.h stdincs.h config.h utilincs.h debug.h utils.h \
  editorfile.h editor.h main.h
 utf8.o: utf8.c utilincs.h stdincs.h config.h debug.h utils.h utilstr.h \
  utilpath.h utf8.h myutf8.h
+utilfile.o: utilfile.c utilincs.h stdincs.h config.h debug.h utils.h \
+ utilstr.h utilpath.h utf8.h myutf8.h
 utilpath.o: utilpath.c utilincs.h stdincs.h config.h debug.h utils.h \
  utilstr.h utilpath.h utf8.h myutf8.h
 utils.o: utils.c utilincs.h stdincs.h config.h debug.h utils.h utilstr.h \

@@ -103,7 +103,6 @@ void remalloc_and_null_terminate_string(char **ptr);
 void remalloc_and_null_terminate_length(char **ptr, size_t len);
 
 //------------------------------------------------------------------------------
-
 void clear_crc16ccitt();
 void calc_crc16ccitt(UINT8 byte);
 UINT16 get_crc16ccitt();

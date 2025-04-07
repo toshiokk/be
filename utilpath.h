@@ -32,23 +32,6 @@ const char *get_tty_name(void);
 int check_wsl();
 int check_availability_of_script();
 
-// change current directory -----------
-
-int change_cur_dir_saving_prev_next_dir(const char *path,
- char *cur_path, char *prev_path, char *next_dir_sel);
-
-int change_cur_dir_by_file_path_after_save(char *dir_save, const char *file_path);
-int change_cur_dir_by_file_path(char *file_path);
-int change_cur_dir_after_save(char *dir_save, const char *dir);
-
-char *strip_file_if_path_is_file(const char *path, char *dir);
-char *strip_file_from_path(const char *path, char *dir);
-
-int change_cur_dir(const char *dir);
-char *get_full_path_of_cur_dir(char *dir);
-const char *full_path_of_cur_dir_s();
-char *get_real_path_of_cur_dir(char *dir);
-
 // file path string -------------------
 
 #define PATH_INVALIDATION_TAG		"#"
@@ -80,16 +63,6 @@ int compare_file_path_from_tail(const char *full_path, const char *file_path);
 int is_path_wildcard(char *path);
 #endif // ENABLE_FILER
 
-// file permission --------------------
-
-int is_path_exist(const char *path);
-int is_path_regular_file(const char *path);
-int is_path_dir(const char *path);
-int is_file_writable(const char *path);
-int is_st_writable(struct stat *st);
-ssize_t get_file_size(const char *path);
-int is_dir_readable(const char *path);
-
 char *getcwd__(char *cwd);
 char *getenv_pwd(char *cwd);
 char *getenv__(char *env);
@@ -103,9 +76,6 @@ char *realpath__(const char *path, char *buf, int buf_len);
 int readlink__(const char *path, char *buffer, int len);
 
 BOOL is_abs_path(const char *path);
-
-int write_text_to_file(const char *file_path, char append, const char *text);
-int remove_file(const char* file_path);
 
 // tests ======================================================================
 

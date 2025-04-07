@@ -62,6 +62,7 @@ be_SOURCES = \
 	utilstr.c \
 	myutf8.c \
 	utilpath.c \
+	utilfile.c \
 	winin.c \
 	winout.c \
 	appmode.h \
@@ -110,6 +111,7 @@ be_SOURCES = \
 	utilstr.h \
 	myutf8.h \
 	utilpath.h \
+	utilfile.h \
 	disp.h \
 	winin.h \
 	winout.h

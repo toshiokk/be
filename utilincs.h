@@ -9,6 +9,7 @@
 #include "utils.h"
 #include "utilstr.h"
 #include "utilpath.h"
+#include "utilfile.h"
 #include "utf8.h"
 #include "myutf8.h"
 

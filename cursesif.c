@@ -126,9 +126,6 @@ void curses_set_attrs(int bgc, int fgc, int rev)
 		bgc = curses_fgc;
 		fgc = curses_bgc;
 	}
-//DDD	bgc = LIMIT_BGC(bgc);
-//DDD	fgc = LIMIT_FGC(fgc);
-//DDD	fgc = tio_differentiate_fgc_from_bgc(bgc, fgc);
 	if (fgc >= CL_HI) {
 		wattron(curses_win, A_BOLD);	// only foreground(character) color will be lighted
 	} else {
