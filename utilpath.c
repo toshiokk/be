@@ -491,9 +491,7 @@ char *get_abs_path(const char *path, char *abs_path)
 {
 	char full_path[MAX_PATH_LEN+1];
 	get_full_path(path, full_path);			// --> full_path
-flf_d_printf("full_path: [%s]\n", full_path);
 	get_real_path(full_path, abs_path);		// --> abs path (real path)
-flf_d_printf("abs_path: [%s]\n", abs_path);
 	return abs_path;
 }
 

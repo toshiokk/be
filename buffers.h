@@ -228,7 +228,7 @@ be_line_t *append_string_to_cur_edit_buf(const char *string);
 int append_magic_line(void);
 
 int has_bufs_to_edit();
-int count_edit_bufs(void);
+int count_edit_bufs();
 int epc_buf_count_buf(void);
 
 //------------------------------------------------------------------------------

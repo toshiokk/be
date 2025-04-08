@@ -6,6 +6,7 @@
 - CRASH: crash
 - POLICY: things to be kept
 
+- [x] 250408 goto the file previously beeing edited at last
 - [-] 250407 create a new file as modified
 - [x] 250405 BUG: new file is unlocked on saving
   - [x] 250405 BUG: sometimes lock file is made in full-path not in abs-path

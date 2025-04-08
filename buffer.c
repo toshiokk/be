@@ -656,7 +656,6 @@ be_buf_t *buf_get_buf_by_file_path(be_buf_t *buf, const char *file_path)
 {
 	buf = buf_make_top_buf(buf);
 	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
-/////flf_d_printf("[%s]?[%s]\n", buf->file_path_, file_path);
 		// compare in file_path
 		if (strcmp(buf_get_file_path(buf, NULL), file_path) == 0) {
 			return buf;	// found
@@ -819,7 +818,6 @@ void buf_dump_name(be_buf_t *buf)
 		return;
 	}
 	flf_d_printf("file_path: [%s]\n", buf_get_file_path(buf, NULL));
-/////	flf_d_printf("abs_path_: [%s]\n", buf_get_abs_path(buf, NULL));
 }
 const char* buf_dump_buf_state(be_buf_t *buf)
 {

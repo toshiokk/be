@@ -427,7 +427,7 @@ void dump_buf_view_x(be_buf_t *buf, int pane_idx)
 		warning_printf("pane[%d].cur_line is not in cur_buf!!!!\n", pane_idx);
 	}
 	buf_dump_name(buf);
-/////	line_dump_byte_idx(BUFVX_CL(buf, pane_idx), BUFVX_CLBI(buf, pane_idx));
+///	line_dump_byte_idx(BUFVX_CL(buf, pane_idx), BUFVX_CLBI(buf, pane_idx));
 ///	flf_d_printf(
 ///	 "BUFVX_CURS_Y(buf, pane_idx): %d, BUFVX_CURS_X_TO_KEEP(buf, pane_idx): %d,"
 ///	 " BUFVX_MIN_TEXT_X_TO_KEEP(buf, pane_idx): %d\n",
@@ -504,7 +504,7 @@ int has_bufs_to_edit(void)
 {
 	return (count_edit_bufs() > 0) || (epc_buf_count_buf() > 0);
 }
-int count_edit_bufs(void)
+int count_edit_bufs()
 {
 	return bufs_count_buf(&edit_buffers);
 }

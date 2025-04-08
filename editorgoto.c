@@ -121,7 +121,6 @@ PRIVATE int goto_file_in_string(const char* string)
 	char dir_save[MAX_PATH_LEN+1];
 	clear_files_loaded();
 
-/////flf_d_printf("try to open file in string [%s]\n", string);
 	memorize_cur_file_pos_before_jump();
 	// CURDIR: changed to cur-file's abs-dir
 	change_cur_dir_by_file_path_after_save(dir_save, buf_get_file_path(get_epc_buf(), NULL));
@@ -132,7 +131,6 @@ PRIVATE int goto_file_in_string(const char* string)
 
 	disp_files_loaded_if_ge_0();
 	if (files >= 0) {
-/////flf_d_printf("succeeded in openning file in string [%s]\n", string);
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
 		editor_do_next = EF_LOADED;
 	}
@@ -331,7 +329,6 @@ PRIVATE int load_file_in_string_(const char *string, int flags)
 	char file_path[MAX_PATH_LEN+1];
 	int line_num, col_num;
 
-/////flf_d_printf("try to open file in string [%s]\n", string);
 	if (get_file_line_col_from_str(string, file_path, &line_num, &col_num) == 0) {
 		return -1;	// nothing loaded nor selected
 	}

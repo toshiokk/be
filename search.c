@@ -650,15 +650,6 @@ int get_colors_for_bracket_hl()
 	return num_colors_for_bracket_hl;
 }
 
-// BRACKET_HL_TEST       reverse <-- v --> forward
-//              (  (  (  (  )  )  (  (  (  )  )  )  (  (  (  )  )  )  )  )
-// depth       -3 -2 -1  0  0 -1 -1  0  1  1  0 -1 -1  0  1  1  0 -1 -2 -3
-// zero_occurances  -  -  -  -  -  -  1  1  1  2  2  2  3  3  3  4  4  4  4
-// color_idx    2  1  8  7  7  8  8  0  1  1  0  7  7  8  1  1  8  7  6  5
-
-// (zero_occurances <  2):  4 5 6 7 0 1 2 3 4 5 6 7 0 ...
-// (zero_occurances >= 2):  5 6 7 8 1 2 3 4 5 6 7 8 1 ...
-
 void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurances, int depth)
 {
 	char fgc, bgc;

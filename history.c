@@ -136,7 +136,6 @@ void update_history(int hist_type_idx, const char *str)
 void append_history(int hist_type_idx, const char *str)
 {
 	load_history_if_needed(hist_type_idx);
-/////mflf_d_printf("[%s] <= [%s]\n", get_history_file_path(hist_type_idx), str);
 	append_history_buf(hist_type_idx, str);
 }
 

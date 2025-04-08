@@ -277,8 +277,8 @@ int display_bracket_hl_colors(int yy, int xx)
 		snprintf(buffer, MAX_PATH_LEN, "%3d: ([{<>}]) ", -yy);
 		tio_output_string(central_win_get_mid_win_y() + yy, xx + 0, buffer, -1);
 	}
+	zero_occurances = 0;
 	for (int yy = 0; yy < get_colors_for_bracket_hl(); yy++) {
-		zero_occurances = 0;
 		char buffer[MAX_PATH_LEN+1];
 		set_color_for_bracket_hl(+1, &zero_occurances, yy);
 		snprintf(buffer, MAX_PATH_LEN, "%3d: ([{<>}]) ", yy);

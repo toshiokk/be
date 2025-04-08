@@ -166,7 +166,6 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 			save_histories();
 #endif // ENABLE_HISTORY
 		}
-/////flf_d_printf("app_mode: %d, edit-buffers: %d\n", GET_APPMD(app_LIST_MODE), count_edit_bufs());
 		if (is_app_normal_mode()) {
 			if (has_bufs_to_edit() == 0) {
 flf_d_printf("all buffers closed in editor\n");

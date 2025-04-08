@@ -395,7 +395,6 @@ int doe_buffer_utf8c_bytes(char chr)
 	static char utf8c_state = 0;
 
 	utf8c_state = utf8c_len(utf8c_state, chr);
-/////flf_d_printf("<%02x>\n", (unsigned char)chr);
 	// put to send buffer
 	utf8s_send_buf[utf8s_send_buf_bytes++] = chr;
 	utf8s_send_buf[utf8s_send_buf_bytes] = '\0';
@@ -428,7 +427,6 @@ PRIVATE int do_enter_utf8s(const char *utf8s)
 	int bytes_chr;
 	char utf8c[MAX_UTF8C_BYTES+1];
 
-/////flf_d_printf("[%s]\n", utf8s);
 	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
 	}
@@ -452,7 +450,6 @@ PRIVATE int do_enter_utf8s(const char *utf8s)
 }
 PRIVATE int do_enter_utf8c(const char *utf8c)
 {
-/////flf_d_printf("[%s]\n", utf8c);
 	int bytes_insert = strnlen(utf8c, MAX_UTF8C_BYTES);
 	if (line_strlen(EPCBVC_CL) + bytes_insert > MAX_EDIT_LINE_LEN) {
 		// exceeds MAX_EDIT_LINE_LEN, do not enter
