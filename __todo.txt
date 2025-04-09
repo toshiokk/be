@@ -6,6 +6,9 @@
 - CRASH: crash
 - POLICY: things to be kept
 
+- [x] set_color_for_bracket_hl()
+  - [x] not show color of color_idx=0 more than 2 times
+  - [x] not show color of color_idx=0 in the out side of the range [-8 ~ 7]
 - [x] 250408 goto the file previously beeing edited at last
 - [-] 250407 create a new file as modified
 - [x] 250405 BUG: new file is unlocked on saving
@@ -34,6 +37,7 @@
 
 - [x] add "two dir" mode to filer which enter "/dir/a/file-a.txt /dir/b/file-b.txt" automatically
 - [x] reduce_log_file_size()
+  - [x] 250408 changed log size unit from MB to KB
 - [-] such usage "grep "Temper" file.csv | be"
 - [-] 250324 do not append magic-line on loading and do not remove magic-line on saving
   - [-] 250325 append magic-line on loading 0 byte file and remove magic-line on saving a file which has only one LF
@@ -58,6 +62,7 @@
     - [-] `/home/user/logs/yymmdd-hhmmss.log`
       - [-] automatic deletion of old log files
   - [x] enable logging from almost all sub shell execution
+    - [] output all execution to log
   - [x] 250329 workaround for the case when no 'script' executable
     - [x] check availability of 'script' at startup and does not call if unavailable
 
@@ -272,7 +277,7 @@ start as a editor
 // |--------|-----------------------------|---------------------------|-----|------|
 // | K_x_   | dof_exec_command_with_file  | --                        |     |      |
 // | K_X_   | dof_exec_command_with_files | --                        |     |      |
-// | K_M_x  | dof_run_command_soon        | doe_run_line_soon         |     |      |
+// | K_M_x  | dof_run_command_soon_wo_log | doe_run_line_soon_wo_log  |     |      |
 // | K_M_X  | dof_run_command_soon_w_log  | doe_run_line_soon_w_log   |     |      |
 // | K_MC_X | --                          | doe_tog_regex             |     |      |
 // | K_r_   | dof_run_command_rel         | --                        |     |      |
@@ -310,7 +315,7 @@ start as a editor
 // |--------|-----------------------------|---------------------------|
 // | K_x_   | dof_exec_command_with_file  | --                        |
 // | K_X_   | dof_exec_command_with_files | --                        |
-// | K_M_x  | dof_run_command_soon        | doe_run_line_soon         |
+// | K_M_x  | dof_run_command_soon_wo_log | doe_run_line_soon_wo_log  |
 // | K_M_X  | dof_run_command_soon_w_log  | doe_run_line_soon_w_log   |
 // | K_MC_X | --                          | doe_tog_regex             |
 // | K_r_   | dof_run_command_rel         | --                        |
@@ -609,11 +614,11 @@ The seamless text copying:
 //	input_string()		editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
 //						TAG-JUMP(updating root-editor)		RETURN to editor on success(quit/loaded)
 //				filer(LIST)	input file path by selecting file/dir	RETURN to editor(quit/input)
-//	dof_run_command_soon()
+//	dof_run_command_soon_wo_log()
 // editor(NORMAL)
 //	input_string()		editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
 //						TAG-JUMP(updating root-editor)		RETURN to editor on success(quit/loaded)
-//						doe_run_line_soon()			RETURN to editor on success(quit/loaded)
+//						doe_run_line_soon_wo_log()		RETURN to editor on success(quit/loaded)
 //				filer(LIST)	input file path by selecting file/dir	RETURN to editor(quit/input)
 //						open file				RETURN to editor on success(quit/loaded)
 //	doe_open_file()		filer(NORMAL)	open file by selecting file		RETURN to editor on success(quit/loaded)
@@ -624,7 +629,7 @@ The seamless text copying:
 //	doe_view_file_list()	editor(HELP)	TAG-JUMP to file(updating root-editor)	RETURN to editor(quit/loaded)
 //	doe_view_key_list()	editor(HELP)	view help text				return to editor when quit(quit)
 //	doe_view_func_list()	editor(HELP)	view help text				return to editor when quit(quit)
-//	doe_run_line_soon()
+//	doe_run_line_soon_wo_log()
 
 editor/filer	input_string()
 --------------->

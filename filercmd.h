@@ -66,9 +66,9 @@ int dof_refresh_filer(void);
 //|dof_run_command_abs        | v       | -      | --  |
 //|dof_run_command_src_dst    | v       | -      | --  |
 //|dof_run_command_symlink    | v       | -      | --  |
-//|dof_run_command_soon       | --      | --     | --  |
+//|dof_run_command_soon_wo_log| --      | --     | --  |
 //|dof_run_command_soon_w_log | --      | --     | yes |
-//|doe_run_line_soon          | --      | --     | --  |
+//|doe_run_line_soon_wo_log   | --      | --     | --  |
 //|doe_run_line_soon_w_log    | --      | --     | yes |
 
 int dof_tap_file(void);

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-08 23:44+0900\n"
+"POT-Creation-Date: 2025-04-09 22:42+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -752,39 +752,39 @@ msgstr "コマンド実行({}はファイル名に置換される):"
 msgid "Execute with files%s:"
 msgstr "コマンド実行(ファイル名引数付き)%s"
 
-#: ../filerrun.c:102 ../filerrun.c:224
+#: ../filerrun.c:102 ../filerrun.c:221
 msgid "(WITH LOG)"
 msgstr "(log 出力)"
 
-#: ../filerrun.c:165
+#: ../filerrun.c:166
 msgid "Run (current-directory-file)"
 msgstr "コマンド実行(カレントディレクトリファイル)"
 
-#: ../filerrun.c:170
+#: ../filerrun.c:171
 msgid "Run (with file)"
 msgstr "コマンド実行(ファイル名引数付き)"
 
-#: ../filerrun.c:175
+#: ../filerrun.c:176
 msgid "Run (with real-path)"
 msgstr "コマンド実行(絶対パス)"
 
-#: ../filerrun.c:181
+#: ../filerrun.c:182
 msgid "Run (script)"
 msgstr "コマンド実行(スクリプト)"
 
-#: ../filerrun.c:186
+#: ../filerrun.c:187
 #, fuzzy
 msgid "Run (symlink)"
 msgstr "コマンド実行(スクリプト)"
 
 #. " /path/to/dir-A/file-A /path/to/dir-B/file-A"
-#: ../filerrun.c:194
+#: ../filerrun.c:195
 #, fuzzy
 msgid "Run (with SRC-dir and DEST-dir)"
 msgstr "実行(元ファイルパス、先ファイルパス付き)"
 
 #. " /path/to/dir-A/file-A /path/to/dir-B/file-B"
-#: ../filerrun.c:205
+#: ../filerrun.c:206
 #, fuzzy
 msgid "Run (with SRC-file and DEST-file)"
 msgstr "実行(元ファイルパス、先ファイルパス付き)"
@@ -1021,11 +1021,11 @@ msgstr "置換文字列:"
 msgid "[%s] found in %s search"
 msgstr "Keyword [%s] が見つかりました(%s検索)"
 
-#: ../search.c:251 ../search.c:804 ../winin.c:496
+#: ../search.c:251 ../search.c:812 ../winin.c:496
 msgid "Backward"
 msgstr "後方"
 
-#: ../search.c:251 ../search.c:804 ../winin.c:499
+#: ../search.c:251 ../search.c:812 ../winin.c:499
 msgid "Forward"
 msgstr "前方"
 
@@ -1063,17 +1063,17 @@ msgstr "括弧が多過ぎます (%d)"
 msgid "Bracket nesting too deep (%d)"
 msgstr "括弧の入れ子が深過ぎます (%d)"
 
-#: ../search.c:692
+#: ../search.c:700
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr "文字列 [%s] を検索中..."
 
-#: ../search.c:802
+#: ../search.c:810
 #, c-format
 msgid "Keyword [%s] not found in %s search"
 msgstr "Keyword [%s] が見つかりません(%s検索)"
 
-#: ../search.c:804
+#: ../search.c:812
 msgid "Bi-directional"
 msgstr "両方向"
 

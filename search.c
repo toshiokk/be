@@ -596,18 +596,7 @@ int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 }
 
 // color management for bracket highlighting
-
-// | 0 | ITEM_..._SELECTED1.bgc | ITEM_..._SELECTED1.fgc   |
-// | 1 | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+0 |
-// | 2 | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+1 |
-// | - | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+2 | == ITEM_..._SELECTED2.bgc
-// | 3 | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+3 |
-// | 4 | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+4 |
-// | 5 | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+5 |
-// | 6 | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+6 |
-// | 7 | ITEM_..._SELECTED2.bgc | ITEM_..._SELECTED2.fgc+7 |
-
-#define COLORS_FOR_BRACKET_HL	(COLORS8)	// color pairs for bracket highlighting
+#define COLORS_FOR_BRACKET_HL	((COLORS8)+1)	// color pairs for bracket highlighting
 PRIVATE int num_colors_for_bracket_hl = 0;	// [0, COLORS_FOR_BRACKET_HL]
 PRIVATE item_color_t colors_for_bracket_hl[COLORS_FOR_BRACKET_HL];
 
@@ -649,27 +638,46 @@ int get_colors_for_bracket_hl()
 	prepare_colors_for_bracket_hl();
 	return num_colors_for_bracket_hl;
 }
-
-void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurances, int depth)
+// depth_increase > 0, depth_0_occurances < 2
+//   *               *
+//   0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 ...
+//   <-------------> <-------------> <------------->
+//
+// depth_increase > 0, depth_0_occurances >= 2
+//   8 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 ...
+//   <-------------> <-------------> <------------->
+//
+// depth_increase > 0
+//   8 7 6 5 4 3 2 1 8 7 6 5 4 3 2 1 8 7 6 5 4 3 2 1 ...
+//   <-------------> <-------------> <------------->
+int get_color_idx_for_bracket_hl(char depth_increase, UINT8 *depth_0_occurances, int depth)
+{
+	int num_colors_m1 = get_colors_for_bracket_hl() - 1;	// 8
+	int color_idx = depth % num_colors_m1;	// [-8, 8-1]
+	color_idx += num_colors_m1;				// [0, 8*2-1]
+	color_idx %= num_colors_m1;				// [0, 8-1]
+	if ((depth_increase < 0) || (*depth_0_occurances >= 2)) {
+		if (color_idx == 0) {
+			color_idx = num_colors_m1;		// 0 ==> 8
+		}
+	}
+	if (color_idx == 0) {
+		(*depth_0_occurances)++;
+	}
+	return color_idx;
+}
+void set_color_for_bracket_hl(char depth_increase, UINT8 *depth_0_occurances, int depth)
+{
+	set_color_for_bracket_hl_by_idx(
+	 get_color_idx_for_bracket_hl(depth_increase, depth_0_occurances, depth));
+}
+void set_color_for_bracket_hl_by_idx(int color_idx)
 {
 	char fgc, bgc;
-	int num_colors_m1 = get_colors_for_bracket_hl() - 1;
-
-	depth %= num_colors_m1;		// [-num_colors_m1+1, _num_colors_m1-1]
-	depth += num_colors_m1;		// make [0, 2*num_colors_m1-1]
-	depth %= num_colors_m1;		// [0, _num_colors_m1-1]
-	if ((depth_increase < 0) || (*zero_occurances >= 2)) {
-		// [0, _num_colors_m1-1]
-		depth++;	// shift 1 to avoid 0
-		// [1, _num_colors_m1]
-	}
-	get_color_for_bracket_hl(depth, &bgc, &fgc);
+	get_color_for_bracket_hl_by_idx(color_idx, &bgc, &fgc);
 	tio_set_attrs(bgc, fgc, 0);
-	if (depth == 0) {
-		(*zero_occurances)++;
-	}
 }
-void get_color_for_bracket_hl(int color_idx, char *bgc, char *fgc)
+void get_color_for_bracket_hl_by_idx(int color_idx, char *bgc, char *fgc)
 {
 	if (get_colors_for_bracket_hl() == 0) {
 		get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED1, bgc, fgc);

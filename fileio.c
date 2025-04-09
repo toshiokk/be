@@ -897,7 +897,7 @@ int reduce_log_file_size(const char *file_path, int size_in_kb)
 	 file_path, file_path, BACKUP_FILE_SUFFIX,
 	 file_path, BACKUP_FILE_SUFFIX, file_path);
 
-	return fork_exec_sh_c(SETTERM0 | SEPARATE0 | LOGGING0 | PAUSE0, command_str);
+	return fork_exec_sh_c(EX_FLAGS_0, command_str);
 }
 
 const char *get_exec_log_file_path()

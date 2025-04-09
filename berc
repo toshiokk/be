@@ -71,7 +71,7 @@ color_syntax ="\bdefined\b"                                            +lmagenta
 color_syntax ="//.*"                                           +brown
 color_syntax ="///.*"                                          +lcyan
 color_syntax ="////.*"                                         +lgreen
-color_syntax ="/////.*"                                        +lgray
+color_syntax ="/////.*"                                        +gray
 color_syntax <"/\*" >"\*/"                                     +brown
 color_syntax <"^#[ \t]*if[ \t]+0\b"  >"^#[ \t]*(else|endif)\b" +lgreen
 tab_size	4

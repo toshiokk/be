@@ -22,14 +22,13 @@
 #ifndef filerrun_h
 #define filerrun_h
 
-#define SETTERM0	0x0000
-#define SETTERM1	0x0001		// change terminal settings before executing sub process
-#define SEPARATE0	0x0000
-#define SEPARATE1	0x0004		// output separator line before executing sub process
-#define LOGGING0	0x0000		// no logging
-#define LOGGING1	0x0040		// append
-#define PAUSE0		0x0000
-#define PAUSE1		0x0010		// pause after execution of sub process
+#define EX_FLAGS_0		0x0000
+#define EX_MOD_MASK		0x000f
+#define EX_SETTERM		0x0010		// change terminal settings before executing sub process
+#define EX_SEPARATE		0x0040		// output separator line before executing sub process
+#define EX_LOGGING		0x0100		// append
+#define EX_SOON			0x0400		// run soon without confirmation
+#define EX_PAUSE		0x1000		// pause after execution of sub process
 
 #ifdef ENABLE_FILER
 
@@ -37,10 +36,11 @@ int dof_exec_command_with_file(void);
 int dof_exec_command_with_files(void);
 int dof_run_command_rel(void);
 int dof_run_command_abs(void);
+int dof_run_command_shell(void);
 int dof_run_command_symlink(void);
 int dof_run_command_src_dst_dir(void);
 int dof_run_command_src_dst_file(void);
-int dof_run_command_soon(void);
+int dof_run_command_soon_wo_log(void);
 int dof_run_command_soon_w_log(void);
 
 //------------------------------------------------------------------------------

@@ -48,8 +48,10 @@ int search_bracket_in_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 
 void prepare_colors_for_bracket_hl();
 int get_colors_for_bracket_hl();
-void set_color_for_bracket_hl(char depth_increase, UINT8 *zero_occurances, int depth);
-void get_color_for_bracket_hl(int color_idx, char *bgc, char *fgc);
+int get_color_idx_for_bracket_hl(char depth_increase, UINT8 *depth_0_occurances, int depth);
+void set_color_for_bracket_hl(char depth_increase, UINT8 *depth_0_occurances, int depth);
+void set_color_for_bracket_hl_by_idx(int color_idx);
+void get_color_for_bracket_hl_by_idx(int color_idx, char *bgc, char *fgc);
 
 #endif // ENABLE_REGEX
 

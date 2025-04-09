@@ -266,23 +266,25 @@ int display_item_colors(int yy, int xx)
 #ifdef ENABLE_REGEX
 int display_bracket_hl_colors(int yy, int xx)
 {
-	UINT8 zero_occurances;
+	UINT8 depth_0_occurances;
 
 	tio_fill_screen();
 	prepare_colors_for_bracket_hl();
-	zero_occurances = 0;
-	for (int yy = 0; yy < get_colors_for_bracket_hl(); yy++) {
+	depth_0_occurances = 0;
+	for (int yy = 0; yy < get_colors_for_bracket_hl() * 2; yy++) {
 		char buffer[MAX_PATH_LEN+1];
-		set_color_for_bracket_hl(-1, &zero_occurances, -yy);
-		snprintf(buffer, MAX_PATH_LEN, "%3d: ([{<>}]) ", -yy);
+		int color_idx = get_color_idx_for_bracket_hl(-1, &depth_0_occurances, -yy);
+		set_color_for_bracket_hl_by_idx(color_idx);
+		snprintf(buffer, MAX_PATH_LEN, "%3d: %d %d ", -yy, depth_0_occurances, color_idx);
 		tio_output_string(central_win_get_mid_win_y() + yy, xx + 0, buffer, -1);
 	}
-	zero_occurances = 0;
-	for (int yy = 0; yy < get_colors_for_bracket_hl(); yy++) {
+	depth_0_occurances = 0;
+	for (int yy = 0; yy < get_colors_for_bracket_hl() * 2; yy++) {
 		char buffer[MAX_PATH_LEN+1];
-		set_color_for_bracket_hl(+1, &zero_occurances, yy);
-		snprintf(buffer, MAX_PATH_LEN, "%3d: ([{<>}]) ", yy);
-		tio_output_string(central_win_get_mid_win_y() + yy, xx + 20, buffer, -1);
+		int color_idx = get_color_idx_for_bracket_hl(+1, &depth_0_occurances, yy);
+		set_color_for_bracket_hl_by_idx(color_idx);
+		snprintf(buffer, MAX_PATH_LEN, "%3d: %d %d ", yy, depth_0_occurances, color_idx);
+		tio_output_string(central_win_get_mid_win_y() + yy, xx + 10, buffer, -1);
 	}
 	tio_refresh();
 	return 0;

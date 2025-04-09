@@ -537,11 +537,11 @@ PRIVATE void disp_edit_win_bracket_hl()
 // BRACKET_HL_TEST      backword <-- v --> forward
 //              (  (  (  (  )  )  (  (  (  )  )  )  (  (  (  )  )  )  )  )
 // depth       -3 -2 -1  0  0 -1 -1  0  1  1  0 -1 -1  0  1  1  0 -1 -2 -3
-// zero_occurances  -  -  -  -  -  -  1  1  1  2  2  2  3  3  3  4  4  4  4
+// depth_0_occurances  -  -  -  -  -  -  1  1  1  2  2  2  3  3  3  4  4  4  4
 // color_idx    2  1  8  7  7  8  8  0  1  1  0  7  7  8  1  1  8  7  6  5
 
-// (zero_occurances <  2):  4 5 6 7 0 1 2 3 4 5 6 7 0 ...
-// (zero_occurances >= 2):  5 6 7 8 1 2 3 4 5 6 7 8 1 ...
+// (depth_0_occurances <  2):  4 5 6 7 0 1 2 3 4 5 6 7 0 ...
+// (depth_0_occurances >= 2):  5 6 7 8 1 2 3 4 5 6 7 8 1 ...
 
 PRIVATE void disp_edit_win_bracket_hl_dir_bw(int display_dir,
  char char_under_cursor, char *needle, char depth_increase);
@@ -568,7 +568,7 @@ flf_d_printf("display_dir: %d, char_under_cursor: [%c], depth_increase: %d\n",
 PRIVATE void disp_edit_win_bracket_hl_dir_bw(int display_dir,
  char char_under_cursor, char *needle, char depth_increase)
 {
-	UINT8 zero_occurances = 0;
+	UINT8 depth_0_occurances = 0;
 	be_line_t *match_line = EPCBVC_CL;
 	int match_byte_idx = EPCBVC_CLBI;
 	be_line_t *line = EPCBVC_CL;
@@ -601,7 +601,7 @@ PRIVATE void disp_edit_win_bracket_hl_dir_bw(int display_dir,
 				 match_byte_idx, match_byte_idx + match_len,
 				 &left_byte_idx, &right_byte_idx) > 0) {
 					// select color by depth
-					set_color_for_bracket_hl(depth_increase, &zero_occurances, prev_depth);
+					set_color_for_bracket_hl(depth_increase, &depth_0_occurances, prev_depth);
 					output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 					match_len = 0;	// clear match_len so that go to next bracket
 					break;
@@ -623,7 +623,7 @@ PRIVATE void disp_edit_win_bracket_hl_dir_bw(int display_dir,
 PRIVATE void disp_edit_win_bracket_hl_dir_fw(int display_dir,
  char char_under_cursor, char *needle, char depth_increase)
 {
-	UINT8 zero_occurances = 0;
+	UINT8 depth_0_occurances = 0;
 	be_line_t *match_line = EPCBVC_CL;
 	int match_byte_idx = EPCBVC_CLBI;
 	be_line_t *line = EPCBVC_CL;
@@ -656,7 +656,7 @@ PRIVATE void disp_edit_win_bracket_hl_dir_fw(int display_dir,
 				 match_byte_idx, match_byte_idx + match_len,
 				 &left_byte_idx, &right_byte_idx) > 0) {
 					// select color by depth
-					set_color_for_bracket_hl(depth_increase, &zero_occurances, prev_depth);
+					set_color_for_bracket_hl(depth_increase, &depth_0_occurances, prev_depth);
 					output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 					match_len = 0;	// clear match_len so that go to next bracket
 					break;

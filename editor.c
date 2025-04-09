@@ -269,17 +269,17 @@ int doe_read_clipboard_into_cur_pos_(int char0_line1)
 
 //------------------------------------------------------------------------------
 PRIVATE int doe_run_line__(int flags, int clbi, int input);
-int doe_run_line_soon(void)
+int doe_run_line_soon_wo_log(void)
 {
-	return doe_run_line__(LOGGING0, 0, 0);
+	return doe_run_line__(EX_FLAGS_0, 0, 0);
 }
 int doe_run_line_soon_w_log(void)
 {
-	return doe_run_line__(LOGGING1, 0, 0);
+	return doe_run_line__(EX_LOGGING, 0, 0);
 }
 int doe_run_line_input(void)
 {
-	return doe_run_line__(LOGGING1, EPCBVC_CLBI, 1);
+	return doe_run_line__(EX_LOGGING, EPCBVC_CLBI, 1);
 }
 PRIVATE int doe_run_line__(int flags, int clbi, int input)
 {
@@ -296,7 +296,7 @@ PRIVATE int doe_run_line__(int flags, int clbi, int input)
 	}
 
 	clear_fork_exec_counter();
-	fork_exec_sh_c(SETTERM1 | SEPARATE1 | PAUSE1 | flags, buffer);
+	fork_exec_sh_c(EX_SETTERM | EX_SEPARATE | EX_PAUSE | flags, buffer);
 
 	editor_do_next = EF_EXECUTED;
 	doe_refresh_editor();

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-08 23:44+0900\n"
+"POT-Creation-Date: 2025-04-09 22:42+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -726,37 +726,37 @@ msgstr ""
 msgid "Execute with files%s:"
 msgstr ""
 
-#: ../filerrun.c:102 ../filerrun.c:224
+#: ../filerrun.c:102 ../filerrun.c:221
 msgid "(WITH LOG)"
 msgstr ""
 
-#: ../filerrun.c:165
+#: ../filerrun.c:166
 msgid "Run (current-directory-file)"
 msgstr ""
 
-#: ../filerrun.c:170
+#: ../filerrun.c:171
 msgid "Run (with file)"
 msgstr ""
 
-#: ../filerrun.c:175
+#: ../filerrun.c:176
 msgid "Run (with real-path)"
 msgstr ""
 
-#: ../filerrun.c:181
+#: ../filerrun.c:182
 msgid "Run (script)"
 msgstr ""
 
-#: ../filerrun.c:186
+#: ../filerrun.c:187
 msgid "Run (symlink)"
 msgstr ""
 
 #. " /path/to/dir-A/file-A /path/to/dir-B/file-A"
-#: ../filerrun.c:194
+#: ../filerrun.c:195
 msgid "Run (with SRC-dir and DEST-dir)"
 msgstr ""
 
 #. " /path/to/dir-A/file-A /path/to/dir-B/file-B"
-#: ../filerrun.c:205
+#: ../filerrun.c:206
 msgid "Run (with SRC-file and DEST-file)"
 msgstr ""
 
@@ -990,11 +990,11 @@ msgstr ""
 msgid "[%s] found in %s search"
 msgstr ""
 
-#: ../search.c:251 ../search.c:804 ../winin.c:496
+#: ../search.c:251 ../search.c:812 ../winin.c:496
 msgid "Backward"
 msgstr ""
 
-#: ../search.c:251 ../search.c:804 ../winin.c:499
+#: ../search.c:251 ../search.c:812 ../winin.c:499
 msgid "Forward"
 msgstr ""
 
@@ -1032,17 +1032,17 @@ msgstr ""
 msgid "Bracket nesting too deep (%d)"
 msgstr ""
 
-#: ../search.c:692
+#: ../search.c:700
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr ""
 
-#: ../search.c:802
+#: ../search.c:810
 #, c-format
 msgid "Keyword [%s] not found in %s search"
 msgstr ""
 
-#: ../search.c:804
+#: ../search.c:812
 msgid "Bi-directional"
 msgstr ""
 
