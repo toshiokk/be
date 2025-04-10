@@ -46,28 +46,28 @@ int dof_up(void)
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() - 1,
-	 get_cur_filer_pane_view()->file_list_entries-1));
+	 get_cur_filer_pane_view()->file_infos_entries-1));
 	return 1;
 }
 int dof_down(void)
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() + 1,
-	 get_cur_filer_pane_view()->file_list_entries-1));
+	 get_cur_filer_pane_view()->file_infos_entries-1));
 	return 1;
 }
 int dof_page_up(void)
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() - filer_vert_scroll_lines(),
-	 get_cur_filer_pane_view()->file_list_entries-1));
+	 get_cur_filer_pane_view()->file_infos_entries-1));
 	return 1;
 }
 int dof_page_down(void)
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() + filer_vert_scroll_lines(),
-	 get_cur_filer_pane_view()->file_list_entries-1));
+	 get_cur_filer_pane_view()->file_infos_entries-1));
 	return 1;
 }
 int dof_top_of_list(void)
@@ -77,7 +77,7 @@ int dof_top_of_list(void)
 }
 int dof_bottom_of_list(void)
 {
-	set_cur_fv_file_idx(get_cur_filer_pane_view()->file_list_entries-1);
+	set_cur_fv_file_idx(get_cur_filer_pane_view()->file_infos_entries-1);
 	return 1;
 }
 
@@ -762,13 +762,13 @@ int dof_select_file(void)
 {
 	get_cur_fv_cur_file_ptr()->selected = get_cur_fv_cur_file_ptr()->selected ^ _FILE_SEL_MAN_;
 	set_cur_fv_file_idx(MIN_MAX_(0,
-	 get_cur_fv_file_idx() + 1, get_cur_filer_pane_view()->file_list_entries-1));
+	 get_cur_fv_file_idx() + 1, get_cur_filer_pane_view()->file_infos_entries-1));
 	disp_files_selected();
 	return 0;
 }
 int dof_select_no_file(void)
 {
-	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_list_entries;
+	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_infos_entries;
 	 file_idx++) {
 		get_cur_fv_file_ptr(file_idx)->selected = _FILE_SEL_NONE_;
 	}
@@ -777,7 +777,7 @@ int dof_select_no_file(void)
 }
 int dof_select_all_files(void)
 {
-	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_list_entries;
+	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_infos_entries;
 	 file_idx++) {
 		if (strcmp(get_cur_fv_file_ptr(file_idx)->file_name, ".") == 0
 		 || strcmp(get_cur_fv_file_ptr(file_idx)->file_name, "..") == 0)

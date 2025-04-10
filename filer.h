@@ -36,7 +36,7 @@ filer_view_t *get_cur_filer_view(int pane_idx);
 filer_view_t *get_cur_filer_pane_view(void);
 filer_view_t *get_another_filer_pane_view(void);
 
-file_info_t *get_cur_fv_file_list_ptr();
+file_info_t *get_cur_fv_file_infos();
 file_info_t *get_cur_fv_cur_file_ptr();
 file_info_t *get_cur_fv_file_ptr(int file_idx);
 file_info_t *get_fv_file_ptr(int pane_idx);

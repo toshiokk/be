@@ -199,6 +199,10 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	} else if (is_link_broken == 0 && (st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
 		strlcat__(buf_name, MAX_PATH_LEN, "*");
 	}
+	if ((show_link == 0) && (strlcmp__(file_info->file_name, "..") == 0)) {
+		strlcat__(buf_name, MAX_PATH_LEN,
+		 sprintf_s("  [%s|%s]", get_at_host_name(), get_tty_name()));
+	}
 
 	size = show_link ? lst_ptr->st_size : st_ptr->st_size;
 ////#define TEST_HUGE_SIZE
@@ -400,7 +404,7 @@ PRIVATE const char *get_1k_to_999k_str(long size, char *buf)
 //  100G -  999G
 
 //------------------------------------------------------------------------------
-int make_file_list(filer_view_t *fv)
+int make_file_infos(filer_view_t *fv)
 {
 	char dir_save[MAX_PATH_LEN+1];
 	struct dirent *dirent;
@@ -414,19 +418,19 @@ int make_file_list(filer_view_t *fv)
 	}
 	change_cur_dir_after_save(dir_save, fv->cur_dir);
 
-	free_file_list(fv);
+	free_file_infos(fv);
 
 	DIR *dir;
 	if ((dir = opendir(fv->cur_dir)) == NULL) {
 		strcpy__(fv->listed_dir, "");
-		goto make_file_list_ret;
+		goto make_file_infos_ret;
 	}
 	for (file_idx = 0; (dirent = readdir(dir)) != NULL; file_idx++) {
 		// count files
 	}
 	int entries = file_idx;
 	_mlc_set_caller
-	fv->file_list_ptr = (file_info_t *)malloc__(sizeof(file_info_t) * entries);
+	fv->file_infos = (file_info_t *)malloc__(sizeof(file_info_t) * entries);
 
 	rewinddir(dir);
 	for (file_idx = 0; file_idx < entries && (dirent = readdir(dir)) != NULL; ) {
@@ -447,7 +451,7 @@ int make_file_list(filer_view_t *fv)
 			  || ((st.st_mode & RWXRWXRWX) == RW0000RW0)))
 				// ".", ".????" or (mode == 000)
 				continue;
-			file_info_t *ent_ptr = &fv->file_list_ptr[file_idx];
+			file_info_t *ent_ptr = &fv->file_infos[file_idx];
 			// fill file_info_t
 			_mlc_set_caller
 			ent_ptr->file_name = malloc_strcpy(dirent->d_name);
@@ -468,30 +472,30 @@ int make_file_list(filer_view_t *fv)
 		}
 	}
 	closedir(dir);
-	fv->file_list_entries = file_idx;
-	fv->cur_file_idx = MIN_MAX_(0, fv->cur_file_idx, fv->file_list_entries-1);
+	fv->file_infos_entries = file_idx;
+	fv->cur_file_idx = MIN_MAX_(0, fv->cur_file_idx, fv->file_infos_entries-1);
 	strcpy__(fv->listed_dir, fv->cur_dir);
 
-make_file_list_ret:;
+make_file_infos_ret:;
 	change_cur_dir(dir_save);
-	return fv->file_list_entries;
+	return fv->file_infos_entries;
 }
 // Free malloc()ed memory
-void free_file_list(filer_view_t *fv)
+void free_file_infos(filer_view_t *fv)
 {
-	if (fv->file_list_ptr) {
-		for (int file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
-			if (fv->file_list_ptr[file_idx].file_name) {
-				FREE_CLR_PTR(fv->file_list_ptr[file_idx].file_name);
+	if (fv->file_infos) {
+		for (int file_idx = 0; file_idx < fv->file_infos_entries; file_idx++) {
+			if (fv->file_infos[file_idx].file_name) {
+				FREE_CLR_PTR(fv->file_infos[file_idx].file_name);
 			}
-			if (fv->file_list_ptr[file_idx].symlink) {
-				FREE_CLR_PTR(fv->file_list_ptr[file_idx].symlink);
+			if (fv->file_infos[file_idx].symlink) {
+				FREE_CLR_PTR(fv->file_infos[file_idx].symlink);
 			}
 		}
-		FREE_CLR_PTR(fv->file_list_ptr);
+		FREE_CLR_PTR(fv->file_infos);
 		strcpy__(fv->listed_dir, "");
 	}
-	fv->file_list_entries = 0;
+	fv->file_infos_entries = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -507,9 +511,9 @@ PRIVATE int comp_file_executable(file_info_t *aa, file_info_t *bb);
 PRIVATE int get_stat_file_type_num(struct stat *st, const char *file_name);
 PRIVATE int get_file_executable(struct stat *st);
 PRIVATE int strtypecasecmp(const char *s1, const char *s2);
-void sort_file_list(filer_view_t *fv)
+void sort_file_infos(filer_view_t *fv)
 {
-	qsort(fv->file_list_ptr, fv->file_list_entries, sizeof(file_info_t), comp_file_info);
+	qsort(fv->file_infos, fv->file_infos_entries, sizeof(file_info_t), comp_file_info);
 }
 // Comparison functions for file list ------------------------------------------
 PRIVATE int comp_file_info(const void *aa, const void *bb)
@@ -693,8 +697,8 @@ int get_files_selected_cfv(void)
 int get_files_selected(filer_view_t *fv)
 {
 	int files_selected = 0;
-	for (int idx = 0; idx < fv->file_list_entries; idx++) {
-		if (fv->file_list_ptr[idx].selected) {
+	for (int idx = 0; idx < fv->file_infos_entries; idx++) {
+		if (fv->file_infos[idx].selected) {
 			files_selected++;
 		}
 	}
@@ -716,11 +720,11 @@ PRIVATE void select_file_if_none_selected(void)
 int get_first_file_idx_selected(void)
 {
 	int file_idx;
-	for (file_idx = 0; file_idx < get_cur_filer_pane_view()->file_list_entries; file_idx++) {
+	for (file_idx = 0; file_idx < get_cur_filer_pane_view()->file_infos_entries; file_idx++) {
 		if (get_cur_fv_file_ptr(file_idx)->selected)
 			break;
 	}
-	if (file_idx < get_cur_filer_pane_view()->file_list_entries)
+	if (file_idx < get_cur_filer_pane_view()->file_infos_entries)
 		return file_idx;
 	// no file selected, return current file
 	return get_cur_fv_file_idx();
@@ -728,38 +732,39 @@ int get_first_file_idx_selected(void)
 int get_next_file_idx_selected(int file_idx)
 {
 	file_idx = file_idx < 0 ? 0 : file_idx+1;
-	for ( ; file_idx < get_cur_filer_pane_view()->file_list_entries; file_idx++) {
+	for ( ; file_idx < get_cur_filer_pane_view()->file_infos_entries; file_idx++) {
 		if (get_cur_fv_file_ptr(file_idx)->selected)
 			break;
 	}
-	if (file_idx < get_cur_filer_pane_view()->file_list_entries)
+	if (file_idx < get_cur_filer_pane_view()->file_infos_entries)
 		return file_idx;
 	return -1;	// no selected file found
 }
 void unselect_all_files_auto(char selection_bit)
 {
-	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_list_entries; file_idx++) {
+	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_infos_entries;
+	 file_idx++) {
 		get_cur_fv_file_ptr(file_idx)->selected
 		 = get_cur_fv_file_ptr(file_idx)->selected & ~selection_bit;
 	}
 }
 
 //------------------------------------------------------------------------------
-int research_file_name_in_file_list(filer_view_t *fv, const char *file_name)
+int research_file_name_in_file_infos(filer_view_t *fv, const char *file_name)
 {
-	int file_idx = search_file_name_in_file_list(fv, file_name);
+	int file_idx = search_file_name_in_file_infos(fv, file_name);
 	if (file_idx < 0) {
 		if (fv->cur_file_idx >= 0)
 			file_idx = fv->cur_file_idx;
 		else
 			file_idx = 0;
 	}
-	file_idx = MIN_MAX_(0, file_idx, fv->file_list_entries-1);
+	file_idx = MIN_MAX_(0, file_idx, fv->file_infos_entries-1);
 	fv->cur_file_idx = file_idx;
 	return 0;
 }
 
-int search_file_name_in_file_list(filer_view_t *fv, const char *file_name)
+int search_file_name_in_file_infos(filer_view_t *fv, const char *file_name)
 {
 	int file_name_len;
 	// 0,1: the same file type, 2,3: all file
@@ -771,25 +776,25 @@ int search_file_name_in_file_list(filer_view_t *fv, const char *file_name)
 	int cmp_type;
 
 	// exact match
-	for (int file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
-		if (strcmp(fv->file_list_ptr[file_idx].file_name, file_name) == 0) {
+	for (int file_idx = 0; file_idx < fv->file_infos_entries; file_idx++) {
+		if (strcmp(fv->file_infos[file_idx].file_name, file_name) == 0) {
 			return file_idx;
 		}
 	}
 	// partial match
 	for (file_name_len = strlen(file_name); file_name_len; file_name_len--) {
 		for (cmp_type = 0; cmp_type < 4; cmp_type++) {
-			for (int file_idx = 0; file_idx < fv->file_list_entries; file_idx++) {
+			for (int file_idx = 0; file_idx < fv->file_infos_entries; file_idx++) {
 				if ((((cmp_type < 2)		// cmp_type = 0, 1
-				   && (S_ISREG(fv->file_list_ptr[fv->cur_file_idx].st.st_mode)
-					  == S_ISREG(fv->file_list_ptr[file_idx].st.st_mode)))
+				   && (S_ISREG(fv->file_infos[fv->cur_file_idx].st.st_mode)
+					  == S_ISREG(fv->file_infos[file_idx].st.st_mode)))
 				  || (cmp_type >= 2))	// cmp_type = 2, 3
 				 && (((cmp_type % 2) == 0)
 				  // case sensitive
-				  ? (strncmp(fv->file_list_ptr[file_idx].file_name, file_name,
+				  ? (strncmp(fv->file_infos[file_idx].file_name, file_name,
 					  file_name_len) == 0)
 				  // case ignorant
-				  : (strncasecmp(fv->file_list_ptr[file_idx].file_name, file_name,
+				  : (strncasecmp(fv->file_infos[file_idx].file_name, file_name,
 					  file_name_len) == 0))) {
 					return file_idx;
 				}

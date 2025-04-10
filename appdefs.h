@@ -54,18 +54,19 @@
 #define MAX_TAB_SIZE			8
 
 // NOTE: how to use single line comment
-//   simple comment
-//! "doxygen comment"
-/// "doxygen comment"
-////  code commented out
-	////code temporarily commented out
-//PPP : pending(temporarily commented-out) code
-//TTT : temporary added or commented out code for test
-//DDD : code to be deleted
-///// : code to be deleted
-//DDDD : code be able to be deleted soon
-////// : code be able to be deleted soon
+//	// simple comment
+//	//! doxygen comment
+//	/// doxygen comment
+//	////  code commented out
+//	(TABs)	////code temporarily commented out
+//	//PPP : pending(temporarily commented-out) code
+//	//TTT : temporary added or commented out code for test
+//	//DDD : code to be deleted
+//	///// : code to be deleted
+//	//DDDD : code be able to be deleted soon
+//	////// : code be able to be deleted soon
 // DNU : Do Not Use
+
 // NOTE: length of string are categorized into three types
 //	MAX_SCRN_LINE_BUF_LEN	768*6 = 4608
 //	MAX_PATH_LEN			4096

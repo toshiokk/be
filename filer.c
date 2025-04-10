@@ -30,8 +30,8 @@ ef_do_next_t filer_do_next = EF_NONE;
 
 PRIVATE int filer_main_loop(const char *dir, const char *filter, char *path_buf);
 PRIVATE int check_filer_cur_dir(void);
-PRIVATE int update_file_list_of_all_panes(int update_request);
-PRIVATE int update_file_list(filer_view_t *fv, int update_request);
+PRIVATE int update_file_infos_of_all_panes(int update_request);
+PRIVATE int update_file_infos(filer_view_t *fv, int update_request);
 
 PRIVATE void disp_title_bar_filer(const char* dir, const char* filter,
  int cur_idx, int files_selected, int files_total);
@@ -64,7 +64,7 @@ void init_cur_filer_panes(filer_panes_t *fps, const char *cur_dir)
 void destroy_filer_panes()
 {
 	for (int filer_pane_idx = 0; filer_pane_idx < FILER_PANES; filer_pane_idx++) {
-		free_file_list(get_cur_filer_view(filer_pane_idx));
+		free_file_infos(get_cur_filer_view(filer_pane_idx));
 	}
 }
 void copy_filer_panes_cur_dir(filer_panes_t *dest, filer_panes_t *src)
@@ -81,8 +81,8 @@ PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir)
 	strlcpy__(fv->cur_dir, cur_dir, MAX_PATH_LEN);
 	strcpy__(fv->filter, "");
 	strcpy__(fv->listed_dir, "");
-	fv->file_list_entries = 0;
-	fv->file_list_ptr = NULL;
+	fv->file_infos_entries = 0;
+	fv->file_infos = NULL;
 	fv->prev_file_idx = 0;
 	fv->cur_file_idx = -1;
 	fv->top_file_idx = 0;
@@ -109,9 +109,9 @@ PRIVATE int get_another_filer_pane_idx(int filer_pane_idx)
 	return filer_pane_idx == 0 ? 1 : 0;
 }
 
-file_info_t *get_cur_fv_file_list_ptr()
+file_info_t *get_cur_fv_file_infos()
 {
-	return get_cur_filer_pane_view()->file_list_ptr;
+	return get_cur_filer_pane_view()->file_infos;
 }
 file_info_t *get_cur_fv_cur_file_ptr()
 {
@@ -119,11 +119,12 @@ file_info_t *get_cur_fv_cur_file_ptr()
 }
 file_info_t *get_cur_fv_file_ptr(int file_idx)
 {
-	return &(get_cur_fv_file_list_ptr()[file_idx]);
+	return &(get_cur_fv_file_infos()[file_idx]);
 }
 file_info_t *get_fv_file_ptr(int pane_idx)
 {
-	return &(get_cur_filer_view(pane_idx)->file_list_ptr[
+	update_file_infos(get_cur_filer_view(pane_idx), 0);		// get if not yet gotten
+	return &(get_cur_filer_view(pane_idx)->file_infos[
 	 get_cur_filer_view(pane_idx)->cur_file_idx]);
 }
 int get_cur_fv_file_idx()
@@ -217,7 +218,7 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 			strlcpy__(prev_cur_dir, get_cur_filer_pane_view()->cur_dir, MAX_PATH_LEN);
 		}
 #endif // ENABLE_HISTORY
-		update_file_list_of_all_panes(filer_do_next);
+		update_file_infos_of_all_panes(filer_do_next);
 		update_screen_app(IS_KEY_VALID(key_input), 1);
 		//----------------------------------
 		key_input = input_key_wait_return();
@@ -328,7 +329,7 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 #ifdef ENABLE_HISTORY
 		save_histories();
 #endif // ENABLE_HISTORY
-flf_d_printf("filer_do_next: %d, [%s]\n", filer_do_next, path_buf);
+//////flf_d_printf("filer_do_next: %d, [%s]\n", filer_do_next, path_buf);
 
 		// | command modifier key | replace/append string         | return value        |
 		// |----------------------|-------------------------------|---------------------|
@@ -365,13 +366,13 @@ PRIVATE int check_filer_cur_dir(void)
 	return 0;
 }
 
-PRIVATE int update_file_list_of_all_panes(int update_request)
+PRIVATE int update_file_infos_of_all_panes(int update_request)
 {
 	if (GET_APPMD(fl_FILER_PANES) == 0) {
-		update_file_list(get_cur_filer_pane_view(), update_request);
+		update_file_infos(get_cur_filer_pane_view(), update_request);
 	} else {
-		update_file_list(get_cur_filer_view(0), update_request);
-		update_file_list(get_cur_filer_view(1), update_request);
+		update_file_infos(get_cur_filer_view(0), update_request);
+		update_file_infos(get_cur_filer_view(1), update_request);
 	}
 	return 0;
 }
@@ -381,22 +382,22 @@ PRIVATE int update_file_list_of_all_panes(int update_request)
 //  - periodic update of file list
 // the occasion file list update stopped:
 //  - when some files are selected (for file processing e.g. copy, move, delete, ...)
-PRIVATE int update_file_list(filer_view_t *fv, int update_request)
+PRIVATE int update_file_infos(filer_view_t *fv, int update_request)
 {
 	int files = 0;
 	fv->prev_file_idx = fv->cur_file_idx;
-	if ((fv->file_list_ptr == NULL)
+	if ((fv->file_infos == NULL)
 	 || (strcmp(fv->listed_dir, fv->cur_dir) != 0)
 	 || ((update_request == FL_UPDATE_FILE_LIST_AUTO) && (get_files_selected(fv) == 0))
 	 || (update_request == FL_UPDATE_FILE_LIST_FORCE)) {
-		if ((update_request < FL_UPDATE_FILE_LIST_FORCE) && (fv->file_list_ptr != NULL)) {
-			strlcpy__(fv->next_file, fv->file_list_ptr[fv->cur_file_idx].file_name, MAX_PATH_LEN);
+		if ((update_request < FL_UPDATE_FILE_LIST_FORCE) && (fv->file_infos != NULL)) {
+			strlcpy__(fv->next_file, fv->file_infos[fv->cur_file_idx].file_name, MAX_PATH_LEN);
 		} else {
 			// 'fv->next_file' has set by the requester
 		}
-		files = make_file_list(fv);
-		sort_file_list(fv);
-		research_file_name_in_file_list(fv, fv->next_file);
+		files = make_file_infos(fv);
+		sort_file_infos(fv);
+		research_file_name_in_file_infos(fv, fv->next_file);
 	}
 	return files;
 }
@@ -411,7 +412,7 @@ int update_screen_filer(int status_bar, int refresh)
 	// title bar
 	int files_selected = get_files_selected_cfv();
 	disp_title_bar_filer(get_cur_filer_pane_view()->cur_dir, get_cur_filer_pane_view()->filter,
-	 get_cur_fv_file_idx(), files_selected, get_cur_filer_pane_view()->file_list_entries);
+	 get_cur_fv_file_idx(), files_selected, get_cur_filer_pane_view()->file_infos_entries);
 
 	// status bar
 	if (status_bar) {
@@ -501,7 +502,7 @@ PRIVATE void adjust_top_file_idx(filer_view_t *fv)
 	 fv->prev_file_idx - fv->top_file_idx,
 	 filer_win_get_file_list_lines() - filer_vert_scroll_margin_lines() - 1);
 	fv->top_file_idx = MIN_MAX_(0, fv->cur_file_idx - disp_line_idx_to_keep,
-	 fv->file_list_entries-1);
+	 fv->file_infos_entries-1);
 }
 PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 {
@@ -527,16 +528,16 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 	int cur_file_idx = fv->cur_file_idx;
 
 	for (int line_idx = 0;
-	 line_idx < filer_win_get_file_list_lines() && file_idx < fv->file_list_entries;
+	 line_idx < filer_win_get_file_list_lines() && file_idx < fv->file_infos_entries;
 	 line_idx++, file_idx++) {
 		// Highlight the currently selected file/dir.
-		char *ptr = file_info_str(&(fv->file_list_ptr[file_idx]),
-		 1, file_idx != cur_file_idx, fv->file_list_ptr[file_idx].selected);
+		char *ptr = file_info_str(&(fv->file_infos[file_idx]),
+		 1, file_idx != cur_file_idx, fv->file_infos[file_idx].selected);
 		if (cur_pane && (file_idx == cur_file_idx)) {
 			set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 			tio_set_attr_rev(1);		// display current line inverted
 		} else {
-			if (fv->file_list_ptr[file_idx].selected) {
+			if (fv->file_infos[file_idx].selected) {
 				set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 0);
 			} else {
 #define STRIPE_LINES	4

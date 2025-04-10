@@ -40,19 +40,16 @@ PRIVATE int dof_run_command_(int flags);
 // "command ..."
 int dof_exec_command_with_file(void)
 {
-	char command_str[MAX_PATH_LEN+1];
-	char *ptr_replace;
-	char buffer[MAX_PATH_LEN+1];
 #define MAX_REPLACEMENTS	10
-	int cnt;
 	int exit_status = 0;
-	int flags = EX_LOGGING;
 
+	char command_str[MAX_PATH_LEN+1];
 	if (chk_inp_str_ret_val_filer(input_string_pos("", command_str, MAX_PATH_LEN,
 	 HISTORY_TYPE_IDX_EXEC,
 	 _("Execute({} will be replaced with file-name):")))) {
 		return 0;
 	}
+	int flags = EX_LOGGING;
 	if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
 		flags ^= EX_LOGGING;	// invert logging
 	}
@@ -67,8 +64,10 @@ int dof_exec_command_with_file(void)
 			break;
 		// replace "{}" with filename
 		// e.g. "cp -auv {} dir/{}" ==> "cp -auv filename dir/filename"
+		char buffer[MAX_PATH_LEN+1];
 		strlcpy__(buffer, command_str, MAX_PATH_LEN);
-		for (cnt = 0; cnt < MAX_REPLACEMENTS; cnt++) {
+		for (int cnt = 0; cnt < MAX_REPLACEMENTS; cnt++) {
+			char *ptr_replace;
 			if ((ptr_replace = strstr(buffer, STR_TO_BE_REPLACED_WITH_FILE_NAME))
 			 == NULL)
 				break;
@@ -87,8 +86,6 @@ int dof_exec_command_with_file(void)
 int dof_exec_command_with_files(void)
 {
 	char command_str[MAX_PATH_LEN+1] = "";
-	int flags = EX_LOGGING;
-
 	// "file1 file2 ..."
 	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
@@ -99,9 +96,10 @@ int dof_exec_command_with_files(void)
 
 	if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str, 0,
 	 HISTORY_TYPE_IDX_EXEC,
-	 _("Execute with files%s:"), ((flags & EX_LOGGING) == 0) ? "" : _("(WITH LOG)")))) {
+	 _("Execute with files:")))) {
 		return 0;
 	}
+	int flags = EX_LOGGING;
 	if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
 		flags ^= EX_LOGGING;	// invert logging
 	}
@@ -150,12 +148,9 @@ int dof_run_command_soon_w_log(void)
 }
 PRIVATE int dof_run_command_(int flags)
 {
-	const char *expl;
-	char buf_s[MAX_PATH_LEN+1];
-	char buf_d[MAX_PATH_LEN+1];
+	const char *expl = "";
 	char buf1[MAX_PATH_LEN+1];
 	char buf2[MAX_PATH_LEN+1];
-	char explanation[MAX_PATH_LEN+1];
 	char command_str[MAX_PATH_LEN+1] = "";
 	int src_fv_idx = get_filer_cur_pane_idx();
 	int dst_fv_idx = get_filer_another_pane_idx();
@@ -164,28 +159,27 @@ PRIVATE int dof_run_command_(int flags)
 	default:
 	case 0:
 		expl = _("Run (current-directory-file)");
-		snprintf_(command_str, MAX_PATH_LEN+1, "./%s ",
+		snprintf_(command_str, MAX_PATH_LEN, "./%s ",
 		 quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
 		break;
 	case 1:
 		expl = _("Run (with file)");
-		snprintf_(command_str, MAX_PATH_LEN+1, " %s",
+		snprintf_(command_str, MAX_PATH_LEN, " %s",
 		 quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
 		break;
 	case 2:
 		expl = _("Run (with real-path)");
-		snprintf_(buf_s, MAX_PATH_LEN+1, "%s/%s",
-		 get_cur_filer_pane_view()->cur_dir, get_cur_fv_cur_file_ptr()->file_name);
-		quote_file_path_buf(command_str, buf_s);
+		quote_file_path_buf(command_str, sprintf_s("%s/%s",
+		 get_cur_filer_pane_view()->cur_dir, get_cur_fv_cur_file_ptr()->file_name));
 		break;
 	case 3:
 		expl = _("Run (script)");
-		snprintf_(command_str, MAX_PATH_LEN+1, "sh %s",
+		snprintf_(command_str, MAX_PATH_LEN, "sh %s",
 		 quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
 		break;
 	case 4:
 		expl = _("Run (symlink)");
-		snprintf_(command_str, MAX_PATH_LEN+1, "%s",
+		snprintf_(command_str, MAX_PATH_LEN, "%s",
 		 (get_cur_fv_cur_file_ptr()->symlink != NULL)
 		  ? quote_file_path_static(get_cur_fv_cur_file_ptr()->symlink)
 		  : quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
@@ -193,30 +187,27 @@ PRIVATE int dof_run_command_(int flags)
 	case 5:
 		// " /path/to/dir-A/file-A /path/to/dir-B/file-A"
 		expl = _("Run (with SRC-dir and DEST-dir)");
-		snprintf_(buf_s, MAX_PATH_LEN+1, "%s/%s",
-		 get_cur_filer_view(src_fv_idx)->cur_dir, get_cur_fv_cur_file_ptr()->file_name);
-		snprintf_(buf_d, MAX_PATH_LEN+1, "%s/%s",
-		 get_cur_filer_view(dst_fv_idx)->cur_dir, get_cur_fv_cur_file_ptr()->file_name);
-		snprintf_(command_str, MAX_PATH_LEN+1, " %s %s",
-		 quote_file_path_buf(buf1, buf_s),
-		 quote_file_path_buf(buf2, buf_d));
+		snprintf_(command_str, MAX_PATH_LEN, " %s %s",
+		 quote_file_path_buf(buf1, sprintf_s1("%s/%s",
+		  get_cur_filer_view(src_fv_idx)->cur_dir, get_cur_fv_cur_file_ptr()->file_name)),
+		 quote_file_path_buf(buf2, sprintf_s2("%s/%s",
+		  get_cur_filer_view(dst_fv_idx)->cur_dir, get_cur_fv_cur_file_ptr()->file_name)));
 		break;
 	case 6:
 		// " /path/to/dir-A/file-A /path/to/dir-B/file-B"
 		expl = _("Run (with SRC-file and DEST-file)");
-		snprintf_(buf_s, MAX_PATH_LEN+1, "%s/%s",
-		 get_cur_filer_view(src_fv_idx)->cur_dir, get_fv_file_ptr(src_fv_idx)->file_name);
-		snprintf_(buf_d, MAX_PATH_LEN+1, "%s/%s",
-		 get_cur_filer_view(dst_fv_idx)->cur_dir, get_fv_file_ptr(dst_fv_idx)->file_name);
-		snprintf_(command_str, MAX_PATH_LEN+1, " %s %s",
-		 quote_file_path_buf(buf1, buf_s),
-		 quote_file_path_buf(buf2, buf_d));
+		snprintf_(command_str, MAX_PATH_LEN, " %s %s",
+		 quote_file_path_buf(buf1, sprintf_s1("%s/%s",
+		  get_cur_filer_view(src_fv_idx)->cur_dir, get_fv_file_ptr(src_fv_idx)->file_name)),
+		 quote_file_path_buf(buf2, sprintf_s2("%s/%s",
+		  get_cur_filer_view(dst_fv_idx)->cur_dir, get_fv_file_ptr(dst_fv_idx)->file_name)));
 		break;
 	}
 
 	if (flags & EX_SOON) {
 		// run soon without editing command line
 	} else {
+		char explanation[MAX_PATH_LEN+1];
 		snprintf(explanation, MAX_PATH_LEN, "%s%s:",
 		 expl, ((flags & EX_LOGGING) == 0) ? "" : _("(WITH LOG)"));
 		struct stat *st_ptr = &get_cur_fv_cur_file_ptr()->st;

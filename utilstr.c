@@ -21,6 +21,9 @@
 
 #include "utilincs.h"
 
+// NOTE: If no 'buf_len' parameter in the function input arguments,
+//       'MAX_PATH_LEN' would be expected to the buffer size.
+
 #define STR_BUF_LEN		4096
 int is_ctrl_char(unsigned char uchar)
 {
@@ -232,8 +235,8 @@ char *concat_file_path_separating_by_space(char *buffer, size_t buf_len, const c
 }
 const char *quote_file_path_static(const char *string)
 {
-	static char buf[MAX_PATH_LEN+1];
-	return quote_file_path_if_necessary(buf, string);
+	static char buf_s[MAX_PATH_LEN+1];
+	return quote_file_path_if_necessary(buf_s, string);
 }
 const char *quote_file_path_buf(char *buf, const char *string)
 {
@@ -251,9 +254,9 @@ const char *quote_file_path_if_necessary(char *buf, const char *string)
 			return quote_string(buf, string, '\'');
 		}
 	} else {
-		strcpy__(buf, string);
+		strlcpy__(buf, string, MAX_PATH_LEN);	// no quotation necessary
 	}
-	return string;	// no quotation necessary
+	return buf;
 }
 
 #ifdef START_UP_TEST
@@ -323,7 +326,7 @@ char *strcat_printf(char *buffer, size_t buf_len, const char *format, ...)
 	char buf[MAX_PATH_LEN+1];
 	va_list ap;
 	va_start(ap, format);
-	vsnprintf(buf, MAX_PATH_LEN+1, format, ap);
+	vsnprintf(buf, MAX_PATH_LEN, format, ap);
 	va_end(ap);
 	strlcat__(buffer, buf_len, buf);
 	return buffer;
@@ -338,6 +341,24 @@ int snprintf_(char *buffer, size_t buf_len, const char *format, ...)
 	return ret;
 }
 char* sprintf_s(const char *format, ...)
+{
+	static char buffer_s[MAX_PATH_LEN+1];
+	va_list ap;
+	va_start(ap, format);
+	vsnprintf(buffer_s, MAX_PATH_LEN, format, ap);
+	va_end(ap);
+	return buffer_s;
+}
+char* sprintf_s1(const char *format, ...)
+{
+	static char buffer_s[MAX_PATH_LEN+1];
+	va_list ap;
+	va_start(ap, format);
+	vsnprintf(buffer_s, MAX_PATH_LEN, format, ap);
+	va_end(ap);
+	return buffer_s;
+}
+char* sprintf_s2(const char *format, ...)
 {
 	static char buffer_s[MAX_PATH_LEN+1];
 	va_list ap;

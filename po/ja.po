@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-09 22:42+0900\n"
+"POT-Creation-Date: 2025-04-10 16:01+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -739,55 +739,55 @@ msgstr "カレントディレクトリを変更できません [%s]: %s"
 msgid "Changed current directory to [%s]"
 msgstr "カレントディレクトリを変更しました [%s]"
 
-#: ../filerlist.c:330
+#: ../filerlist.c:334
 msgid " <<broken-link>>"
 msgstr ""
 
-#: ../filerrun.c:53
+#: ../filerrun.c:49
 msgid "Execute({} will be replaced with file-name):"
 msgstr "コマンド実行({}はファイル名に置換される):"
 
-#: ../filerrun.c:102
-#, c-format
-msgid "Execute with files%s:"
+#: ../filerrun.c:99
+#, fuzzy
+msgid "Execute with files:"
 msgstr "コマンド実行(ファイル名引数付き)%s"
 
-#: ../filerrun.c:102 ../filerrun.c:221
-msgid "(WITH LOG)"
-msgstr "(log 出力)"
-
-#: ../filerrun.c:166
+#: ../filerrun.c:161
 msgid "Run (current-directory-file)"
 msgstr "コマンド実行(カレントディレクトリファイル)"
 
-#: ../filerrun.c:171
+#: ../filerrun.c:166
 msgid "Run (with file)"
 msgstr "コマンド実行(ファイル名引数付き)"
 
-#: ../filerrun.c:176
+#: ../filerrun.c:171
 msgid "Run (with real-path)"
 msgstr "コマンド実行(絶対パス)"
 
-#: ../filerrun.c:182
+#: ../filerrun.c:176
 msgid "Run (script)"
 msgstr "コマンド実行(スクリプト)"
 
-#: ../filerrun.c:187
+#: ../filerrun.c:181
 #, fuzzy
 msgid "Run (symlink)"
 msgstr "コマンド実行(スクリプト)"
 
 #. " /path/to/dir-A/file-A /path/to/dir-B/file-A"
-#: ../filerrun.c:195
+#: ../filerrun.c:189
 #, fuzzy
 msgid "Run (with SRC-dir and DEST-dir)"
 msgstr "実行(元ファイルパス、先ファイルパス付き)"
 
 #. " /path/to/dir-A/file-A /path/to/dir-B/file-B"
-#: ../filerrun.c:206
+#: ../filerrun.c:198
 #, fuzzy
 msgid "Run (with SRC-file and DEST-file)"
 msgstr "実行(元ファイルパス、先ファイルパス付き)"
+
+#: ../filerrun.c:212
+msgid "(WITH LOG)"
+msgstr "(log 出力)"
 
 #: ../keymacro.c:77
 msgid "Start key macro recording"

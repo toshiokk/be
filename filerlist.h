@@ -42,8 +42,8 @@ typedef struct {
 	char cur_dir[MAX_PATH_LEN+1];		// current directory
 	char filter[MAX_PATH_LEN+1];		// e.g. "*.h", "*.c", "*.[hc], "": no filter
 	char listed_dir[MAX_PATH_LEN+1];	// directory from which file list gotten
-	int file_list_entries;
-	file_info_t *file_list_ptr;
+	file_info_t *file_infos;
+	int file_infos_entries;
 	int prev_file_idx;
 	int cur_file_idx;
 	int top_file_idx;
@@ -66,10 +66,10 @@ void test_get_file_size_str(void);
 #endif // START_UP_TEST
 char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, int selected);
 
-int make_file_list(filer_view_t *fv);
-void free_file_list(filer_view_t *fv);
+int make_file_infos(filer_view_t *fv);
+void free_file_infos(filer_view_t *fv);
 
-void sort_file_list(filer_view_t *fv);
+void sort_file_infos(filer_view_t *fv);
 int get_file_type_num(file_info_t *info);
 
 int get_files_selected_cfv(void);
@@ -80,8 +80,8 @@ int get_first_file_idx_selected(void);
 int get_next_file_idx_selected(int file_idx);
 void unselect_all_files_auto(char selection_bit);
 
-int research_file_name_in_file_list(filer_view_t *fv, const char *file_name);
-int search_file_name_in_file_list(filer_view_t *fv, const char *file_name);
+int research_file_name_in_file_infos(filer_view_t *fv, const char *file_name);
+int search_file_name_in_file_infos(filer_view_t *fv, const char *file_name);
 
 #endif // ENABLE_FILER
 

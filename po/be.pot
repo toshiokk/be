@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-09 22:42+0900\n"
+"POT-Creation-Date: 2025-04-10 16:01+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -713,51 +713,50 @@ msgstr ""
 msgid "Changed current directory to [%s]"
 msgstr ""
 
-#: ../filerlist.c:330
+#: ../filerlist.c:334
 msgid " <<broken-link>>"
 msgstr ""
 
-#: ../filerrun.c:53
+#: ../filerrun.c:49
 msgid "Execute({} will be replaced with file-name):"
 msgstr ""
 
-#: ../filerrun.c:102
-#, c-format
-msgid "Execute with files%s:"
+#: ../filerrun.c:99
+msgid "Execute with files:"
 msgstr ""
 
-#: ../filerrun.c:102 ../filerrun.c:221
-msgid "(WITH LOG)"
-msgstr ""
-
-#: ../filerrun.c:166
+#: ../filerrun.c:161
 msgid "Run (current-directory-file)"
 msgstr ""
 
-#: ../filerrun.c:171
+#: ../filerrun.c:166
 msgid "Run (with file)"
 msgstr ""
 
-#: ../filerrun.c:176
+#: ../filerrun.c:171
 msgid "Run (with real-path)"
 msgstr ""
 
-#: ../filerrun.c:182
+#: ../filerrun.c:176
 msgid "Run (script)"
 msgstr ""
 
-#: ../filerrun.c:187
+#: ../filerrun.c:181
 msgid "Run (symlink)"
 msgstr ""
 
 #. " /path/to/dir-A/file-A /path/to/dir-B/file-A"
-#: ../filerrun.c:195
+#: ../filerrun.c:189
 msgid "Run (with SRC-dir and DEST-dir)"
 msgstr ""
 
 #. " /path/to/dir-A/file-A /path/to/dir-B/file-B"
-#: ../filerrun.c:206
+#: ../filerrun.c:198
 msgid "Run (with SRC-file and DEST-file)"
+msgstr ""
+
+#: ../filerrun.c:212
+msgid "(WITH LOG)"
 msgstr ""
 
 #: ../keymacro.c:77
