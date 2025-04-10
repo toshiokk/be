@@ -329,7 +329,6 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 #ifdef ENABLE_HISTORY
 		save_histories();
 #endif // ENABLE_HISTORY
-//////flf_d_printf("filer_do_next: %d, [%s]\n", filer_do_next, path_buf);
 
 		// | command modifier key | replace/append string         | return value        |
 		// |----------------------|-------------------------------|---------------------|
@@ -562,14 +561,19 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 	return 0;
 }
 //-------------------------------------
-#define FILER_VERT_SCROLL_MERGIN	3
+#define FILER_VERT_SCROLL_MERGIN	VERT_SCROLL_MERGIN
 int filer_vert_scroll_margin_lines()
 {
 	return LIM_MAX(FILER_VERT_SCROLL_MERGIN, filer_win_get_file_list_lines() / 3);	// [0, 3]
 }
 int filer_vert_scroll_lines()
 {
-	return MIN_MAX_(1, filer_win_get_file_list_lines() / 2, 20);
+#ifdef LIMIT_MAX_VERT_SCROLL_LINES
+	return MIN_MAX_(1, filer_win_get_file_list_lines()-1 - filer_vert_scroll_margin_lines() * 2,
+	 LIMIT_MAX_VERT_SCROLL_LINES);
+#else // LIMIT_MAX_VERT_SCROLL_LINES
+	return LIM_MIN(1, filer_win_get_file_list_lines()-1 - filer_vert_scroll_margin_lines() * 2);
+#endif // LIMIT_MAX_VERT_SCROLL_LINES
 }
 //-------------------------------------
 int filer_win_get_file_path_lines(void)

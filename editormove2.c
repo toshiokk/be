@@ -35,7 +35,12 @@ int bottom_scroll_margin_y()
 }
 int editor_vert_scroll_lines()
 {
-	return MIN_MAX_(1, edit_win_get_text_lines()-1 - editor_vert_scroll_margin_lines(), 20);
+#ifdef LIMIT_MAX_VERT_SCROLL_LINES
+	return MIN_MAX_(1, edit_win_get_text_lines()-1 - editor_vert_scroll_margin_lines() * 2,
+	 LIMIT_MAX_VERT_SCROLL_LINES);
+#else // LIMIT_MAX_VERT_SCROLL_LINES
+	return LIM_MIN(1, edit_win_get_text_lines()-1 - editor_vert_scroll_margin_lines() * 2);
+#endif // LIMIT_MAX_VERT_SCROLL_LINES
 }
 
 // name								to does

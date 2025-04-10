@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-10 16:01+0900\n"
+"POT-Creation-Date: 2025-04-10 23:24+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -71,7 +71,7 @@ msgstr "タブサイズ"
 msgid "CWD: %s"
 msgstr ""
 
-#: ../editor.c:126 ../filer.c:241
+#: ../editor.c:126 ../filer.c:242
 #, c-format
 msgid "No command assigned for the key: 0x%04x"
 msgstr "このキーにはコマンドが割り当てられていません: 0x%04x"
@@ -366,39 +366,39 @@ msgstr "Filer-ファンクションリスト"
 msgid "Filer Key List"
 msgstr "Filer-key-リスト"
 
-#: ../editormove.c:196 ../editormove.c:266
+#: ../editormove.c:196 ../editormove.c:259
 #, fuzzy
 msgid "No previous lines"
 msgstr "これ以上前にバッファがありません"
 
-#: ../editormove.c:223 ../editormove.c:307
+#: ../editormove.c:223 ../editormove.c:294
 #, fuzzy
 msgid "No next lines"
 msgstr "これ以上後にバッファがありません"
 
-#: ../editormove.c:338
+#: ../editormove.c:325
 msgid "Input control character [^A-^Z,^[,^\\,^],^^,^_,]"
 msgstr "制御コードを入力してください [^A-^Z,^[,^\\,^],^^,^_,]"
 
-#: ../editormove.c:340
+#: ../editormove.c:327
 #, c-format
 msgid "Key code: %04x"
 msgstr "キーコード: %04x"
 
-#: ../editormove.c:355
+#: ../editormove.c:342
 msgid "Enter Unicode number in hex:"
 msgstr "Unicode を16進数で入力してください:"
 
-#: ../editormove.c:377
+#: ../editormove.c:364
 msgid "Select history string to paste:"
 msgstr "ヒストリー文字列を張り付けます:"
 
-#: ../editormove.c:751
+#: ../editormove.c:738
 #, c-format
 msgid "Column position %d was memorized"
 msgstr "カラム位置 %d を記憶しました"
 
-#: ../editormove.c:758
+#: ../editormove.c:745
 #, c-format
 msgid "Space characters are filled from column %d to %d"
 msgstr "スペース文字をカラム %d から %d まで満たしました"
@@ -569,12 +569,12 @@ msgstr "%d ファイルを読み込みました"
 msgid "%d filesss loaded"
 msgstr "%d ファイルを読み込みました"
 
-#: ../filer.c:171
+#: ../filer.c:172
 #, c-format
 msgid "Cur dir changed: %s"
 msgstr ""
 
-#: ../filer.c:251
+#: ../filer.c:252
 #, c-format
 msgid "Can not execute this function in filer List mode: [%s]"
 msgstr "このコマンドは List mode では実行できません: [%s]"

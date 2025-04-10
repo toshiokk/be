@@ -244,17 +244,10 @@ int doe_page_up(void)
 }
 PRIVATE void doe_page_up_(void)
 {
-	int lines;
-	int cnt;
-
 	if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI)) {
-#define GO_CONST_LINES
-#ifdef GO_CONST_LINES
-		lines = editor_vert_scroll_lines() - 1;
-#else
-		lines = (EPCBVC_CURS_Y - top_scroll_margin_y()) + editor_vert_scroll_lines() - 1;
-#endif
-		for (cnt = 0; cnt < lines; cnt++) {
+		EPCBVC_CURS_Y--;
+		int lines = editor_vert_scroll_lines() - 1;
+		for (int cnt = 0; cnt < lines; cnt++) {
 			EPCBVC_CURS_Y--;
 			if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 				break;
@@ -286,16 +279,10 @@ int doe_page_down(void)
 }
 PRIVATE int doe_page_down_(void)
 {
-	int lines;
-	int cnt;
-
 	if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI)) {
-#ifdef GO_CONST_LINES
-		lines = editor_vert_scroll_lines() - 1;
-#else
-		lines = (bottom_scroll_margin_y() - EPCBVC_CURS_Y) + editor_vert_scroll_lines() - 1;
-#endif
-		for (cnt = 0; cnt < lines; cnt++) {
+		EPCBVC_CURS_Y++;
+		int lines = editor_vert_scroll_lines() - 1;
+		for (int cnt = 0; cnt < lines; cnt++) {
 			EPCBVC_CURS_Y++;
 			if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 				break;

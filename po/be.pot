@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-10 16:01+0900\n"
+"POT-Creation-Date: 2025-04-10 23:24+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +71,7 @@ msgstr ""
 msgid "CWD: %s"
 msgstr ""
 
-#: ../editor.c:126 ../filer.c:241
+#: ../editor.c:126 ../filer.c:242
 #, c-format
 msgid "No command assigned for the key: 0x%04x"
 msgstr ""
@@ -347,37 +347,37 @@ msgstr ""
 msgid "Filer Key List"
 msgstr ""
 
-#: ../editormove.c:196 ../editormove.c:266
+#: ../editormove.c:196 ../editormove.c:259
 msgid "No previous lines"
 msgstr ""
 
-#: ../editormove.c:223 ../editormove.c:307
+#: ../editormove.c:223 ../editormove.c:294
 msgid "No next lines"
 msgstr ""
 
-#: ../editormove.c:338
+#: ../editormove.c:325
 msgid "Input control character [^A-^Z,^[,^\\,^],^^,^_,]"
 msgstr ""
 
-#: ../editormove.c:340
+#: ../editormove.c:327
 #, c-format
 msgid "Key code: %04x"
 msgstr ""
 
-#: ../editormove.c:355
+#: ../editormove.c:342
 msgid "Enter Unicode number in hex:"
 msgstr ""
 
-#: ../editormove.c:377
+#: ../editormove.c:364
 msgid "Select history string to paste:"
 msgstr ""
 
-#: ../editormove.c:751
+#: ../editormove.c:738
 #, c-format
 msgid "Column position %d was memorized"
 msgstr ""
 
-#: ../editormove.c:758
+#: ../editormove.c:745
 #, c-format
 msgid "Space characters are filled from column %d to %d"
 msgstr ""
@@ -547,12 +547,12 @@ msgstr ""
 msgid "%d filesss loaded"
 msgstr ""
 
-#: ../filer.c:171
+#: ../filer.c:172
 #, c-format
 msgid "Cur dir changed: %s"
 msgstr ""
 
-#: ../filer.c:251
+#: ../filer.c:252
 #, c-format
 msgid "Can not execute this function in filer List mode: [%s]"
 msgstr ""

@@ -6,7 +6,8 @@
 - CRASH: crash
 - POLICY: things to be kept
 
-- [] CRASH: in 'dof_run_command_src_dst_file()'
+- [x] contents scrolls one line when page up/down
+- [x] CRASH: in 'dof_run_command_src_dst_file()'
 - [x] set_color_for_bracket_hl()
   - [x] not show color of color_idx=0 more than 2 times
   - [x] not show color of color_idx=0 in the out side of the range [-8 ~ 7]

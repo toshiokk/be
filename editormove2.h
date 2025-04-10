@@ -22,21 +22,24 @@
 #ifndef editormove2_h
 #define editormove2_h
 
+#define VERT_SCROLL_MERGIN				3
+#define LIMIT_MAX_VERT_SCROLL_LINES		25		// define this to limit vert scroll lines
+
 //           +-----------------------------------+
 // 0         |                                   |
-// 1         |                                   |
+// 1         |                                   | top_scroll_margin_y()
 // 2         |                                   |
-// 3         | - - - - - - - - - - - - - - - - - | TOP_SCROLL_MARGIN_IDX
+// 3         | - - - - - - - - - - - - - - - - - |
 // :         |                                   |
 // :         |                                   |
 // :         |                                   |
 // :         |                                   |
-// LINES-1-3 | - - - - - - - - - - - - - - - - - | BOTTOM_SCROLL_MARGIN_IDX
+// LINES-1-3 | - - - - - - - - - - - - - - - - - |
 // LINES-1-2 |                                   |
-// LINES-1-1 |                                   |
+// LINES-1-1 |                                   | bottom_scroll_margin_y()
 // LINES-1-0 |                                   |
 // LINES     +-----------------------------------+
-#define EDITOR_VERT_SCROLL_MERGIN	3
+#define EDITOR_VERT_SCROLL_MERGIN	VERT_SCROLL_MERGIN
 #define HORIZ_SCROLL_MARGIN			5
 int editor_vert_scroll_margin_lines();
 int top_scroll_margin_y();
