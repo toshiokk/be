@@ -253,7 +253,6 @@ PRIVATE int load_history_idx(int hist_type_idx)
 	clear_history_buf(hist_type_idx);
 
 	const char *file_path = get_history_file_path(hist_type_idx);
-mflf_d_printf("[%s]\n", get_history_file_path(hist_type_idx));
 	FILE *fp = fopen(file_path, "r");
 	if (fp == NULL) {
 		e_printf("Unable to open history file: %s, %s",
@@ -366,27 +365,21 @@ PRIVATE void clear_history_buf(int hist_type_idx)
 }
 PRIVATE void clear_history_buf_modified(int hist_type_idx)
 {
-	BUF_STATE(get_history_buf(hist_type_idx), buf_MODIFIED) = 0;
-	buf_set_save_pending_timer(get_history_buf(hist_type_idx), get_msec());
+	buf_clear_buf_modified(get_history_buf(hist_type_idx));
 }
 PRIVATE void set_history_modified(int hist_type_idx)
 {
-	if (BUF_STATE(get_history_buf(hist_type_idx), buf_MODIFIED) == 0) {
-		BUF_STATE(get_history_buf(hist_type_idx), buf_MODIFIED) = 1;
-		buf_set_save_pending_timer(get_history_buf(hist_type_idx), get_msec());
-	}
+	buf_set_modified(get_history_buf(hist_type_idx));
 }
 PRIVATE int is_history_modified(int hist_type_idx)
 {
-	return BUF_STATE(get_history_buf(hist_type_idx), buf_MODIFIED);
+	return buf_get_modified(get_history_buf(hist_type_idx));
 }
 
-#define HISTORY_EXPIRATION_MSEC		1000		// 1000
 PRIVATE int is_history_modified_and_expired(int hist_type_idx)
 {
 	return is_history_modified(hist_type_idx)
-	 && ((((UINT16)get_msec()) - buf_get_save_pending_timer(get_history_buf(hist_type_idx)))
-	  >= HISTORY_EXPIRATION_MSEC);
+	 && buf_check_save_pending_timer(get_history_buf(hist_type_idx), BUFFER_EXPIRATION_MSEC);
 }
 
 PRIVATE void set_history_oldest(int hist_type_idx)
@@ -438,11 +431,9 @@ const char* history_last_line_str(int hist_type_idx)
 // remove all line the same to str
 PRIVATE void remove_all_exact_match(int hist_type_idx, const char *str)
 {
-flf_d_printf("[%s]\n", str);
 	for (be_line_t *line = NODES_BOT_NODE(get_history_buf(hist_type_idx)); IS_NODE_INT(line); ) {
 		be_line_t *prev = NODE_PREV(line);
 		if (strcmp(line->data, str) == 0) {	// exact match
-flf_d_printf("delete line [%s]\n", line->data);
 			line_unlink_free(line);		// delete older line
 			set_history_modified(hist_type_idx);
 		}
@@ -451,14 +442,12 @@ flf_d_printf("delete line [%s]\n", line->data);
 }
 PRIVATE void remove_all_file_path_match(int hist_type_idx, const char *str)
 {
-flf_d_printf("[%s]\n", str);
 	char file_path[MAX_PATH_LEN+1];
 	// "/dir/file.txt|100,40" ==> "/dir/file.txt"
 	get_file_line_col_from_str(str, file_path, NULL, NULL);
 	for (be_line_t *line = NODES_BOT_NODE(get_history_buf(hist_type_idx)); IS_NODE_INT(line); ) {
 		be_line_t *prev = NODE_PREV(line);
 		if (compare_file_path_str(line->data, file_path) == 0) {	// file path match
-flf_d_printf("delete line [%s]\n", line->data);
 			line_unlink_free(line);		// delete older line
 			set_history_modified(hist_type_idx);
 		}
@@ -591,7 +580,7 @@ int select_from_history_list(int hist_type_idx, char *buffer)
 
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
-void dump_history_ix(int hist_type_idx)
+void dump_history_idx(int hist_type_idx)
 {
 	buf_dump_lines(get_history_buf(hist_type_idx), INT_MAX);
 }

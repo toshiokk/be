@@ -504,7 +504,6 @@ void set_term_raw(void)
 	tcgetattr(STDIN_FILENO, &term);
 	cfmakeraw(&term_raw);
 	term.c_iflag = term_raw.c_iflag;
-//TTT
 	term.c_oflag = term_raw.c_oflag;
 	term.c_cflag = term_raw.c_cflag;
 	term.c_lflag = term_raw.c_lflag;

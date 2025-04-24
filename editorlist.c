@@ -32,17 +32,17 @@ PRIVATE void make_help_key_list(void);
 void init_help_bufs(void)
 {
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node("#Editor-Files-loaded", buf_MODE_LIST));
+	 buf_create_node(INTERNAL_FILE_NAME_PREFIX "Editor-Files-loaded", buf_MODE_LIST));
 #ifdef ENABLE_HELP
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node("#Editor-Functions", buf_MODE_LIST));
+	 buf_create_node(INTERNAL_FILE_NAME_PREFIX "Editor-Functions", buf_MODE_LIST));
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node("#Editor-Key-Bindings", buf_MODE_LIST));
+	 buf_create_node(INTERNAL_FILE_NAME_PREFIX "Editor-Key-Bindings", buf_MODE_LIST));
 #ifdef ENABLE_FILER
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node("#Filer-Functions", buf_MODE_LIST));
+	 buf_create_node(INTERNAL_FILE_NAME_PREFIX "Filer-Functions", buf_MODE_LIST));
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node("#Filer-Key-Bindings", buf_MODE_LIST));
+	 buf_create_node(INTERNAL_FILE_NAME_PREFIX "Filer-Key-Bindings", buf_MODE_LIST));
 #endif // ENABLE_FILER
 #endif // ENABLE_HELP
 }
@@ -91,7 +91,6 @@ int view_list(int help_idx)
 
 	int ret = do_call_editor(1, APP_MODE_CHOOSER, get_help_buf(help_idx), NULL, 0);
 
-flf_d_printf("ret: %d\n", ret);
 	return ret;
 }
 PRIVATE void make_help_buf(int help_idx)
@@ -146,7 +145,7 @@ PRIVATE void make_help_buf(int help_idx)
 	case HELP_BUF_IDX_FILER_FUNC_LIST:
 	case HELP_BUF_IDX_FILER_KEY_LIST:
 #endif // ENABLE_FILER
-		append_magic_line();
+		append_magic_line_if_necessary();
 		first_line();
 		break;
 #endif // ENABLE_HELP
@@ -174,7 +173,7 @@ PRIVATE void make_help_file_list(be_buf_t *cur_buf)
 			snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "  %-60s %-5s %s %s %04x",
 			 quote_file_path_static(buf_get_abs_path(buf, NULL)),
 			 buf_enc_str(buf), buf_eol_str(buf),
-			 BUF_STATE(buf, buf_MODIFIED) ? "Mo" : "--",
+			 GET_BUF_STATE(buf, buf_MODIFIED) ? "Mo" : "--",
 			 buf->orig_file_crc);
 			append_string_to_cur_edit_buf(buffer);
 			if (buf == cur_buf) {

@@ -33,7 +33,7 @@
 #define APP_LONG_NAME	APP_NAME " editor"
 #define BIN_NAME		"be"
 
-#define APP_DIR				".be"
+#define APP_DIR				".be"		// $HOME/.be
 #define RC_FILE_NAME		"berc"	// default RC file name (changeable by command line option)
 #define EXIT_FILE_NAME		".beexit"
 #define WARNING_FILE_NAME	".bewarning"

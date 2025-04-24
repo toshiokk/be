@@ -41,9 +41,14 @@ void setup_cut_region_after_cursor_move(cursor_horiz_vert_move_t cursor_move);
 void setup_cut_region(void);
 int is_there_cut_region(void);
 int lines_selected(void);
+int columns_selected(void);
 
 int save_cut_buffers();
 int load_cut_buffers();
+void set_cut_buffers_modified();
+void load_cut_buffers_if_updated();
+/////void save_cut_buffers_if_modified_and_expired();
+void save_cut_buffers_if_modified();
 int limit_cut_buffers();
 
 #endif // editorcut2_h

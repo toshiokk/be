@@ -35,16 +35,22 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	{ CL_LB, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
 	{ CL_GR, CL_BK, S(ITEM_COLOR_IDX_PARENT)			},
 #endif
-#if APP_REL_LVL == APP_REL_LVL_TEST
+#if APP_REL_LVL == APP_REL_LVL_TEST2
 	// test release-1
 	{ CL_CY, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
 	{ CL_CY, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
 	{ CL_LB, CL_BK, S(ITEM_COLOR_IDX_PARENT)			},
 #endif
-#if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
-	// experimental release
+#if APP_REL_LVL == APP_REL_LVL_TEST1
+	// test release-1
 	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
 	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
+	{ CL_LB, CL_BK, S(ITEM_COLOR_IDX_PARENT)			},
+#endif
+#if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
+	// experimental release
+	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
+	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
 	{ CL_LB, CL_BK, S(ITEM_COLOR_IDX_PARENT)			},
 #endif
 	{ CL_WH, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
@@ -111,7 +117,6 @@ int is_work_space_color_warn(void)
 // register item color
 void register_item_color(item_color_idx_t color_idx, int bgc, int fgc)
 {
-flf_d_printf("(%d bgc:%d, fgc:%d)\n", color_idx, bgc, fgc);
 	if (0 <= color_idx && color_idx < MAX_ITEM_COLORS) {
 		item_colors[color_idx].bgc = bgc;
 		item_colors[color_idx].fgc = fgc;
@@ -119,7 +124,7 @@ flf_d_printf("(%d bgc:%d, fgc:%d)\n", color_idx, bgc, fgc);
 }
 
 // get item color
-void get_color_by_idx(item_color_idx_t color_idx, char *bgc, char *fgc)
+void get_item_color_by_idx(item_color_idx_t color_idx, char *bgc, char *fgc)
 {
 	if (0 <= color_idx && color_idx < MAX_ITEM_COLORS) {
 		*bgc = item_colors[color_idx].bgc;
@@ -127,7 +132,7 @@ void get_color_by_idx(item_color_idx_t color_idx, char *bgc, char *fgc)
 	}
 }
 // set current color by item_idx
-void set_color_by_idx(item_color_idx_t color_idx, int reverse)
+void set_item_color_by_idx(item_color_idx_t color_idx, int reverse)
 {
 	if (0 <= color_idx && color_idx < MAX_ITEM_COLORS) {
 		if (color_idx == ITEM_COLOR_IDX_TEXT_NORMAL) {
@@ -138,14 +143,14 @@ void set_color_by_idx(item_color_idx_t color_idx, int reverse)
 			}
 		}
 		if (item_colors[color_idx].bgc == CL_DF) {
-			set_item_color(&item_colors[ITEM_COLOR_IDX_STATUS], reverse);
+			set_item_color_ptr(&item_colors[ITEM_COLOR_IDX_STATUS], reverse);
 		} else if (item_colors[color_idx].fgc == CL_DF) {
-			set_item_color(&item_colors[ITEM_COLOR_IDX_TEXT_NORMAL], reverse);
+			set_item_color_ptr(&item_colors[ITEM_COLOR_IDX_TEXT_NORMAL], reverse);
 		}
-		set_item_color(&item_colors[color_idx], reverse);
+		set_item_color_ptr(&item_colors[color_idx], reverse);
 	}
 }
-void set_item_color(const item_color_t *item_color, int reverse)
+void set_item_color_ptr(const item_color_t *item_color, int reverse)
 {
 	tio_set_attrs(item_color->bgc, item_color->fgc, reverse);
 }
@@ -216,7 +221,7 @@ const color_syntax_t *get_default_color_syntax_head(void)
 PRIVATE void display_color_pattern(int yy, int xx, int reverse);
 int display_color_pairs(int yy, int xx)
 {
-	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 	tio_fill_screen();
 	display_color_pattern(yy, xx+ 0, 0);
 	display_color_pattern(yy, xx+34, 1);
@@ -235,7 +240,7 @@ PRIVATE void display_color_pattern(int yy, int xx, int reverse)
 #define X_OFF		0
 							//01234567890123456789
 	snprintf(buf, BUF_LEN+1, "COLOR_PAIRS: %d, REV: %d", COLOR_PAIRS, reverse);
-	set_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
 	snprintf(buffer, BUF_LEN+1, "%-*s", BUF_LEN, buf);
 	tio_output_string(central_win_get_mid_win_y() + yy + 0, xx + 0, buffer, -1);
 
@@ -255,7 +260,7 @@ int display_item_colors(int yy, int xx)
 	tio_fill_screen();
 	for (int item_idx = 0; item_idx < MAX_ITEM_COLORS; item_idx++) {
 		char buffer[MAX_PATH_LEN+1];
-		set_color_by_idx(item_idx, 0);
+		set_item_color_by_idx(item_idx, 0);
 		snprintf(buffer, MAX_PATH_LEN, "%2d: %-40s",
 		 item_idx, default_item_colors[item_idx].item_name);
 		tio_output_string(central_win_get_mid_win_y() + yy + item_idx, xx + 0, buffer, -1);

@@ -25,10 +25,10 @@ void set_title_bar_color_by_state(int color_idx, char invert)
 {
 	if (geteuid() == 0) {
 		// If you are super user, you see strange color on title bar.
-		set_color_by_idx(ITEM_COLOR_IDX_ERROR, invert);
+		set_item_color_by_idx(ITEM_COLOR_IDX_ERROR, invert);
 	} else {
 		// Normal color
-		set_color_by_idx(color_idx, invert);
+		set_item_color_by_idx(color_idx, invert);
 	}
 }
 
@@ -257,7 +257,7 @@ void redisp_status_bar()
 	int col_idx = app_stk_ptr->status_bar_col_idx;
 	const char *buffer = app_stk_ptr->status_bar_msg;
 
-	set_color_by_idx(color_idx, 0);
+	set_item_color_by_idx(color_idx, 0);
 	blank_status_bar();
 	// display status bar
 	central_win_output_string(central_win_get_status_line_y(), 0, buffer, -1);
@@ -267,7 +267,7 @@ void redisp_status_bar()
 		// col_idx: 0 -- central_win_get_columns()-1
 		byte_idx_1 = byte_idx_from_col_idx(buffer, col_idx, CHAR_LEFT,  &col_idx_1);
 		byte_idx_2 = byte_idx_from_col_idx(buffer, col_idx+1, CHAR_RIGHT, &col_idx_2);
-		set_color_by_idx(color_idx, 1);
+		set_item_color_by_idx(color_idx, 1);
 		// display percent indicator
 		central_win_output_string(central_win_get_status_line_y(), col_idx_1,
 		 &buffer[byte_idx_1], byte_idx_2 - byte_idx_1);
@@ -281,7 +281,7 @@ void blank_status_bar(void)
 
 void blank_key_list_lines(void)
 {
-	set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
 	central_win_clear_lines(central_win_get_key_list_line_y(),
 	 central_win_get_key_list_line_y() + get_key_list_lines());
 }

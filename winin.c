@@ -275,9 +275,9 @@ flf_d_printf("func_id: [%s]\n", func_id);
 		 || cmp_func_id(func_id, "doe_page_up")
 		 || cmp_func_id(func_id, "doe_first_line")) {
 			//----------------------------------------------------
-			int ret = select_from_history_list(hist_type_idx, buffer);
+			ret = select_from_history_list(hist_type_idx, buffer);
 			//----------------------------------------------------
-flf_d_printf("do_call_editor ret: EF__%d, buffer: [%s]\n", ret, buffer);
+			ret = editor_do_next;
 			if ((ret == EF_INPUT_TO_REPLACE) || (ret == EF_INPUT_TO_APPEND)) {
 				if ((ret == EF_INPUT_TO_REPLACE) || cmp_func_id(func_id, "doe_page_up")) {
 					// clear input buffer
@@ -298,7 +298,7 @@ flf_d_printf("do_call_editor ret: EF__%d, buffer: [%s]\n", ret, buffer);
 			//---------------------------------------------------
 			ret = do_call_filer(1, APP_MODE_CHOOSER, "", "", buffer);
 			//---------------------------------------------------
-flf_d_printf("do_call_filer ret: EF__%d, buffer: [%s]\n", ret, buffer);
+			ret = filer_do_next;
 			if ((ret == EF_INPUT_TO_REPLACE) || (ret == EF_INPUT_TO_APPEND)) {
 				if ((ret == EF_INPUT_TO_REPLACE) || cmp_func_id(func_id, "doe_page_down")) {
 					// clear input buffer
@@ -318,9 +318,8 @@ flf_d_printf("do_call_filer ret: EF__%d, buffer: [%s]\n", ret, buffer);
 			break;
 		}
 	}
-flf_d_printf("ret: EF__%d, input_buf: [%s]\n", ret, input_buf);
-	return ret;		// return from input_string_pos__()
-}
+	return ret;
+} // input_string_pos__
 
 /* display input box
 #Prompt message#######################################################
@@ -338,11 +337,11 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 
 	determine_input_line_y();
 	blank_input_box();
-	set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
 	central_win_output_string(get_input_line_y(), 1, msg, -1);
 	central_win_output_string(get_input_line_y()+2, 1,
 	 _("UP/PGUP:history, DOWN/PGDN:filer"), -1);
-	set_color_by_idx(ITEM_COLOR_IDX_INPUT, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_INPUT, 0);
 
 	input_area_width = central_win_get_columns()-2;
 	if (cursor_col_idx < input_area_width) {
@@ -379,13 +378,13 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 PRIVATE void blank_input_box(void)
 {
 	// display frame
-	set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
 	//+--------------------------------------------------------------------+
 	//|                                                                    |
 	//+--------------------------------------------------------------------+
 	central_win_clear_lines(get_input_line_y(), -3);
 	// clear input area
-	set_color_by_idx(ITEM_COLOR_IDX_INPUT, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_INPUT, 0);
 	//+--------------------------------------------------------------------+
 	//|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|
 	//+--------------------------------------------------------------------+
@@ -432,8 +431,8 @@ int ask_yes_no(int flags, const char *msg, ...)
 		// display key list
 		disp_ask_yes_no_msg(flags);
 
-		set_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);
-		set_color_by_idx(ITEM_COLOR_IDX_WARNING1, 1);
+		set_item_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);
+		set_item_color_by_idx(ITEM_COLOR_IDX_WARNING1, 1);
 		blank_status_bar();
 		central_win_output_string(central_win_get_status_line_y(), 0, msg_buf, -1);
 		tio_refresh();
@@ -470,7 +469,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 	}
 
 	// Then blank the status_bar.
-	set_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);
 	blank_status_bar();
 
 	SET_APPMD_VAL(app_KEY_LINES, key_lines_save);	// restore KEY_LINES
@@ -516,9 +515,9 @@ PRIVATE void list_one_key(char key, const char *desc)
 	char key_name[MAX_KEY_NAME_LEN+1];		// "RIGHT"
 
 	snprintf(buf, MAX_SCRN_LINE_BUF_LEN+1, "%s", short_key_name_from_key_code(key, key_name));
-	set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST, 0);
 	central_win_output_string(-1, -1, buf, strnlen(buf, MAX_SCRN_LINE_BUF_LEN));
-	set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
 
 	snprintf(buf, MAX_SCRN_LINE_BUF_LEN+1, "%s ", desc);
 	central_win_output_string(-1, -1, buf, strnlen(buf, MAX_SCRN_LINE_BUF_LEN));
@@ -564,7 +563,7 @@ void disp_key_list(const char *key_lists[])
 PRIVATE void display_reverse_text(int yy, const char *text)
 {
 	int xx = 0;
-	set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
 	central_win_clear_lines(yy, -1);
 	// get default fkey_list
 	for (const char *ptr = text; *ptr && xx < central_win_get_columns(); ) {
@@ -581,7 +580,7 @@ PRIVATE void display_reverse_text(int yy, const char *text)
 			char buf[MAX_SCRN_LINE_BUF_LEN+1];
 			strlcpy__(buf, begin, ptr - begin);
 			if (delimiter == '{') {
-				set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST, 0);
+				set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST, 0);
 			}
 			int columns = LIM_MAX(central_win_get_columns() - xx,
 			 utf8s_columns(buf, MAX_SCRN_COLS));
@@ -589,7 +588,7 @@ PRIVATE void display_reverse_text(int yy, const char *text)
 			central_win_output_string(yy, xx, buf, -1);
 			xx += columns;
 			if (delimiter == '{') {
-				set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
+				set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
 			}
 		}
 	}
@@ -599,7 +598,7 @@ PRIVATE void display_reverse_text(int yy, const char *text)
 PRIVATE void display_func_id_key(int yy, const char *text)
 {
 	int xx = 0;
-	set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
 	central_win_clear_lines(yy, -1);
 	func_key_list_t *fkey_list = NULL;
 	for (const char *ptr = text; *ptr && xx < central_win_get_columns(); ) {
@@ -625,7 +624,7 @@ PRIVATE void display_func_id_key(int yy, const char *text)
 				}
 			}
 			if (delimiter == '<') {
-				set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST, 0);
+				set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST, 0);
 			}
 			if (fkey_list != NULL) {
 				int columns = LIM_MAX(central_win_get_columns() - xx,
@@ -635,7 +634,7 @@ PRIVATE void display_func_id_key(int yy, const char *text)
 				xx += columns;
 			}
 			if (delimiter == '<') {
-				set_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
+				set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
 			}
 		}
 	}

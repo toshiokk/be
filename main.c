@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 #endif // ENABLE_FILER
 
 	init_app_mode();
-flf_d_printf("Start %s ==============================\n", APP_NAME " " __DATE__ " " __TIME__);
+dtflf_d_printf("Start %s ==============================\n", APP_NAME " " __DATE__ " " __TIME__);
 	_mlc_init
 	change_cur_dir(get_starting_dir());
 	get_home_dir();
@@ -91,12 +91,11 @@ flf_d_printf("Start %s ==============================\n", APP_NAME " " __DATE__ 
 	_mlc_differ_count
 #endif // ENABLE_SYNTAX
 
-	// setup terminal
-flf_d_printf("initializing terminal\n");
 	// initialize terminal interface(curses/termif)
+	flf_d_printf("initializing terminal\n");
 	tio_init();
-flf_d_printf("columns:%d lines:%d\n", tio_get_columns(), tio_get_lines());
-flf_d_printf("setting up windows\n");
+	flf_d_printf("columns:%d lines:%d\n", tio_get_columns(), tio_get_lines());
+	flf_d_printf("setting up windows\n");
 	win_init_win_size();
 #ifdef SCRN_COLS_TWO_PANES
 	if (COLS >= SCRN_COLS_TWO_PANES) {
@@ -106,11 +105,13 @@ flf_d_printf("setting up windows\n");
 #endif // SCRN_COLS_TWO_PANES
 
 #ifdef ENABLE_HISTORY
-flf_d_printf("init_histories()\n");
+	flf_d_printf("init_histories()\n");
 	init_histories();
-flf_d_printf("load_histories()\n");
+
+	flf_d_printf("load_histories()\n");
 	load_histories();
-flf_d_printf("load_last_key_macro()\n");
+
+	flf_d_printf("load_last_key_macro()\n");
 	load_last_key_macro(1);
 #endif // ENABLE_HISTORY
 
@@ -179,11 +180,11 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 
 	set_die_on_callback(NULL);
 
-	set_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
 	tio_destroy();
 
 	limit_cut_buffers();
-	save_cut_buffers();
+	save_cut_buffers_if_modified();
 
 	reduce_log_file_size(get_exec_log_file_path(), MAX_LOG_FILE_SIZE_KB);
 	write_cur_dir_to_exit_file();
@@ -199,7 +200,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	_mlc_check_count
 	_D_(_mlc_check_leak)
 
-flf_d_printf("Exit %s ===============================\n", APP_NAME " " __DATE__ " " __TIME__);
+dtflf_d_printf("Exit %s ===============================\n", APP_NAME " " __DATE__ " " __TIME__);
 	printf("\n");
 	return 0;
 }
@@ -258,12 +259,12 @@ PRIVATE int parse_options(int argc, char *argv[])
 {
 	int optchr;
 
-	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
 #ifdef ENABLE_DEBUG
-	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
 	for (optchr = 0; optchr < argc; optchr++) {
 		flf_d_printf("optind:%d: %s\n", optchr, argv[optchr]);
 	}
+	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
+	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
 #endif // ENABLE_DEBUG
 #ifdef HAVE_GETOPT_LONG
 	while ((optchr = getopt_long(argc, argv,
@@ -402,8 +403,8 @@ void app_main_loop(void)
 			char file_path[MAX_PATH_LEN+1];
 			do_call_filer(0, APP_MODE_NORMAL, "", "", file_path);
 			if (has_bufs_to_edit() == 0) {
-flf_d_printf("count_edit_bufs():%d, epc_buf_count_buf():%d\n",
- count_edit_bufs(), epc_buf_count_buf());
+flf_d_printf("count_edit_bufs():%d, epc_buf_count_bufs():%d\n",
+ count_edit_bufs(), epc_buf_count_bufs());
 				// no file loaded in filer
 				break;
 			}
@@ -694,6 +695,11 @@ void show_version(void)
 #else // ENABLE_HELP
 	printf("   --disable-help\n");
 #endif // ENABLE_HELP
+#ifdef ENABLE_HIGH_BGC //-------------------
+	printf("   --enable-highbgc\n");
+#else
+	printf("   --disable-highbgc\n");
+#endif
 #ifdef ENABLE_DEBUG //-------------------
 	printf("   --enable-debug\n");
 #else
@@ -714,7 +720,6 @@ void show_version(void)
 #else
 	printf("   --disable-busybox\n");
 #endif
-///	printf("\n");
 }
 
 //------------------------------------------------------------------------------

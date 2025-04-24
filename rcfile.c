@@ -443,7 +443,9 @@ PRIVATE int parse_include(void)
 PRIVATE int parse_bgc_fgc_register(int color_idx)
 {
 	int ret = parse_bgc_fgc(&bgc, &fgc);
-	register_item_color(color_idx, bgc, fgc);
+	if (ret == 0) {
+		register_item_color(color_idx, bgc, fgc);
+	}
 	return ret;
 }
 PRIVATE int parse_bgc_fgc(int *bgc, int *fgc)

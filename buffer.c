@@ -332,22 +332,9 @@ int buf_count_lines(be_buf_t *buf, int max_lines)
 	return count;
 }
 //------------------------------------------------------------------------------
-int buf_get_file_stat(be_buf_t *buf, const char* file_path)
-{
-	return stat(file_path, &(buf->orig_file_stat));
-}
-int buf_has_orig_file_updated(be_buf_t *buf, const char* file_path)
-{
-	struct stat st;
-	if (stat(file_path, &st)) {
-		return -1;										// -1: error
-	}
-	return st.st_mtime > buf->orig_file_stat.st_mtime;	// >0: updated, 0: not updated
-}
-//------------------------------------------------------------------------------
 const char *buf_mode_str(be_buf_t *buf)
 {
-	switch (BUF_STATE(buf, buf_MODE)) {
+	switch (GET_BUF_STATE(buf, buf_MODE)) {
 	default:
 	case buf_MODE_EDIT:		return _("[EDIT]");
 	case buf_MODE_RO:		return _("[RO]");
@@ -356,7 +343,7 @@ const char *buf_mode_str(be_buf_t *buf)
 }
 const char *buf_eol_str(be_buf_t *buf)
 {
-	switch (BUF_STATE(buf, buf_EOL)) {
+	switch (GET_BUF_STATE(buf, buf_EOL)) {
 	default:
 	case EOL_NIX:		return "LF(NIX)";		/*"NIX"*/;
 	case EOL_MAC:		return "CR(MAC)";		/*"MAC"*/
@@ -365,7 +352,7 @@ const char *buf_eol_str(be_buf_t *buf)
 }
 const char *buf_enc_str(be_buf_t *buf)
 {
-	switch (BUF_STATE(buf, buf_ENCODE)) {
+	switch (GET_BUF_STATE(buf, buf_ENCODE)) {
 	default:
 	case ENCODE_ASCII:		return "ASCII";
 	case ENCODE_UTF8:		return "UTF8";
@@ -379,16 +366,19 @@ const char *buf_enc_str(be_buf_t *buf)
 }
 const char *buf_cut_mode_str(be_buf_t *buf)
 {
-	char *ptr;
-
-	switch (BUF_STATE(buf, buf_CUT_MODE)) {
+	return get_cut_mode_str(GET_BUF_STATE(buf, buf_CUT_MODE));
+}
+const char *get_cut_mode_str(int buf_CUT_MODE)
+{
+	char *ptr = "";
+	switch (buf_CUT_MODE) {
 	default:
 	case CUT_MODE_0_LINE:	ptr = "--";			break;
 	case CUT_MODE_N_LINE:	ptr = "M ";			break;
-	case CUT_MODE_H_CHAR:	ptr = "Mc";			break;
-	case CUT_MODE_VH_CHAR:	ptr = "MC";			break;
 	case CUT_MODE_V_LINE:	ptr = "Ml";			break;
 	case CUT_MODE_HV_LINE:	ptr = "ML";			break;
+	case CUT_MODE_H_CHAR:	ptr = "Mc";			break;
+	case CUT_MODE_VH_CHAR:	ptr = "MC";			break;
 	case CUT_MODE_HV_BOX:	ptr = "Mb";			break;
 	case CUT_MODE_VH_BOX:	ptr = "MB";			break;
 	}
@@ -447,7 +437,20 @@ be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num)
 }
 
 //------------------------------------------------------------------------------
+int buf_get_file_stat(be_buf_t *buf, const char* file_path)
+{
+	return stat(file_path, &(buf->orig_file_stat));
+}
+int buf_has_orig_file_updated(be_buf_t *buf, const char* file_path)
+{
+	struct stat st;
+	if (stat(file_path, &st)) {
+		return -1;										// -1: error
+	}
+	return st.st_mtime > buf->orig_file_stat.st_mtime;	// >0: updated, 0: not updated
+}
 
+//------------------------------------------------------------------------------
 PRIVATE long file_size;
 
 void buf_update_crc(be_buf_t *buf)
@@ -473,6 +476,32 @@ UINT16 buf_calc_crc(be_buf_t *buf)
 	return get_crc16ccitt();
 }
 
+void buf_clear_buf_modified(be_buf_t *buf)
+{
+	GET_BUF_STATE(buf, buf_MODIFIED) = 0;
+	buf_update_save_pending_timer(buf);
+}
+void buf_set_modified(be_buf_t *buf)
+{
+	if (GET_BUF_STATE(buf, buf_MODIFIED) == 0) {
+		GET_BUF_STATE(buf, buf_MODIFIED) = 1;
+		buf_update_save_pending_timer(buf);
+	}
+}
+int buf_get_modified(be_buf_t *buf)
+{
+	return GET_BUF_STATE(buf, buf_MODIFIED);
+}
+
+void buf_update_save_pending_timer(be_buf_t *buf)
+{
+	buf_set_save_pending_timer(buf, get_msec());
+}
+int buf_check_save_pending_timer(be_buf_t *buf, UINT16 msec)
+{
+	return (((UINT16)get_msec()) - buf_get_save_pending_timer(buf)) >= msec;
+}
+
 void buf_set_save_pending_timer(be_buf_t *buf, UINT16 timer)
 {
 	buf->orig_file_crc = timer;
@@ -482,7 +511,7 @@ UINT16 buf_get_save_pending_timer(be_buf_t *buf)
 	return buf->orig_file_crc;
 }
 
-int buf_count_buf(be_buf_t *buf)
+int buf_count_bufs(be_buf_t *buf)
 {
 	int cnt = 0;
 	buf = buf_make_top_buf(buf);
@@ -600,9 +629,9 @@ be_bufs_t *bufs_get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf)
 }
 void bufs_fix_cur_buf(be_bufs_t *bufs)
 {
-	int count_buf = bufs_count_buf(bufs);
+	int count_bufs = bufs_count_bufs(bufs);
 	int buf_idx = buf_get_buf_idx_in_bufs(bufs, bufs->cur_buf);
-	if (1 <= buf_idx && buf_idx <= count_buf) {
+	if (1 <= buf_idx && buf_idx <= count_bufs) {
 		// `bufs->cur_buf` is valid
 	} else {
 		// `bufs->cur_buf` is not valid
@@ -611,9 +640,9 @@ void bufs_fix_cur_buf(be_bufs_t *bufs)
 	buf_fix_cur_line(bufs->cur_buf);		// fix `cur_line` too
 }
 
-int bufs_count_buf(be_bufs_t *bufs)
+int bufs_count_bufs(be_bufs_t *bufs)
 {
-	return buf_count_buf(NODES_TOP_NODE(bufs));
+	return buf_count_bufs(NODES_TOP_NODE(bufs));
 }
 
 //------------------------------------------------------------------------------

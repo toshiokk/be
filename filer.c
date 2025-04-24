@@ -178,8 +178,6 @@ flf_d_printf("[1].cur_dir: [%s]\n", get_cur_filer_view(1)->cur_dir);
 		update_screen_app(1, 1);
 	}
 
-	filer_do_next = EF_NONE;	// for caller of do_call_filer(), clear "filer_do_next"
-
 ///	_D(disp_status_bar_cwd())
 	return ret;
 }
@@ -188,7 +186,7 @@ flf_d_printf("[1].cur_dir: [%s]\n", get_cur_filer_view(1)->cur_dir);
 
 PRIVATE int filer_main_loop(const char *dir, const char *filter, char *path_buf)
 {
-flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path_buf);
+flf_d_printf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 	if (filter) {
 		strlcpy__(get_cur_filer_pane_view()->filter, filter, MAX_PATH_LEN);
 	}
@@ -270,10 +268,9 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s], len: %d\n", dir, filter, path
 					//=========================
 					(*fkey_list->func)();	// call function "dof__...()"
 					//=========================
-					flf_d_printf(">>>> filer_do_next: EF__%d\n", filer_do_next);
+					flf_d_printf(">>>> filer_do_next_%d\n", filer_do_next);
 					unselect_all_files_auto(_FILE_SEL_AUTO_);
 				}
-flf_d_printf("filer_do_next: %d\n", filer_do_next);
 			}
 		}
 		if (is_app_normal_mode()) {
@@ -343,9 +340,8 @@ flf_d_printf("filer_do_next: %d\n", filer_do_next);
 			break;
 		}
 	}
-flf_d_printf("filer_do_next: %d, [%s]\n", filer_do_next, path_buf);
 	return filer_do_next;
-}
+} // filer_main_loop
 
 PRIVATE int check_filer_cur_dir(void)
 {
@@ -510,7 +506,7 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 	} else {
 		clear_work_space_color_dark();
 	}
-	set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 	sub_win_clear_screen();
 
 	if (filer_win_get_file_path_lines()) {
@@ -518,7 +514,7 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 		// on two pane mode, show each directory path
 		strlcpy__(buffer, fv->cur_dir, MAX_SCRN_LINE_BUF_LEN);
 		shrink_str__adjust_col(buffer, central_win_get_columns(), 2);
-		set_color_by_idx(ITEM_COLOR_IDX_TITLE, ! cur_pane);
+		set_item_color_by_idx(ITEM_COLOR_IDX_TITLE, ! cur_pane);
 		sub_win_output_string(filer_win_get_file_path_y(), 0, buffer, -1);
 	}
 
@@ -533,18 +529,18 @@ PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane)
 		char *ptr = file_info_str(&(fv->file_infos[file_idx]),
 		 1, file_idx != cur_file_idx, fv->file_infos[file_idx].selected);
 		if (cur_pane && (file_idx == cur_file_idx)) {
-			set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
+			set_item_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 			tio_set_attr_rev(1);		// display current line inverted
 		} else {
 			if (fv->file_infos[file_idx].selected) {
-				set_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 0);
+				set_item_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, 0);
 			} else {
 #define STRIPE_LINES	4
 				if (GET_APPMD(fl_SHOW_ZEBRA_STRIPE)
 				 && (file_idx % (STRIPE_LINES*2)) >= STRIPE_LINES) {
-					set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL2, 0);
+					set_item_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL2, 0);
 				} else {
-					set_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
+					set_item_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 				}
 			}
 		}

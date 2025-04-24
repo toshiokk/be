@@ -310,6 +310,7 @@ PRIVATE int load_files_in_string_(const char *string, int flags)
 		if (*str == '\0') {
 			break;
 		}
+flf_d_printf("str: [%s]\n", str);
 		int files = load_file_in_string_(str, flags);
 		if (files >= 0) {
 			// once any file has loaded, show no more error message
@@ -379,11 +380,10 @@ int load_file_name_upp_low_(const char *file_name, int flags)
 PRIVATE int load_file_name_recurs_(const char *file_name, int flags)
 {
 	static int recursive_call_count = 0;
-
 	int files = load_file_name__(file_name, flags);
 
-	if (files >= 0 && (recursive_call_count == 0) && (flags & RECURS1)
-	 && is_file_name_proj_file(file_name, 0)) {
+	if ((flags & RECURS1) && (recursive_call_count == 0)
+	 && (files >= 0) && is_file_name_proj_file(file_name, 0)) {
 		recursive_call_count++;
 
 		files += load_files_in_cur_buf_(flags);
@@ -433,7 +433,6 @@ PRIVATE int load_files_in_cur_buf_(int flags)
 			break;
 		}
 		if (check_break_key()) {
-flf_d_printf("sigint_signaled\n");
 			break;
 		}
 	}
@@ -493,7 +492,7 @@ not_goto_line:
 #ifdef ENABLE_SYNTAX
 	set_file_type_and_tab_size_by_cur_file_path();
 #endif // ENABLE_SYNTAX
-flf_d_printf("switched to [%s]\n", file_name);
+flf_d_printf("loaded/switched to [%s]\n", file_name);
 	return files_loaded;	// x > 0: files newly loaded, x == 0: file selected
 }
 

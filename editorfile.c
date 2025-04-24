@@ -45,7 +45,7 @@ PRIVATE int open_file_recursive(int flags)
 	}
 	// CURDIR: changed in editor
 	if (load_files_in_string(file_path,
-	 TUL0 | OOE0 | MOE1 | RECURS1 | (flags & (RDOL1 | FOLF1 | LFH0))) < 0) {
+	 TUL0 | OOE0 | MOE1 | RECURS1 | MFPL1 | (flags & (RDOL1 | FOLF1 | LFH0))) < 0) {
 		return 0;
 	}
 	disp_files_loaded_if_ge_0();
@@ -61,9 +61,8 @@ int doe_open_new_file(void)
 		return 0;
 	}
 
-	// CURDIR: changed in editor
 	if (load_files_in_string(file_path,
-	 TUL0 | OOE1 | MOE0 | RECURS0 | RDOL0 | FOLF0 | LFH1) >= 0) {
+	 TUL0 | OOE1 | MOE0 | RECURS0 | MFPL1 | RDOL0 | FOLF0 | LFH1) >= 0) {
 		disp_files_loaded_if_ge_0();
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 		return 1;
@@ -471,7 +470,6 @@ int write_file_ask(int yes_no, close_after_save_t close)
 
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	update_screen_editor(1, 1);
-flf_d_printf("ret: %d\n", ret);
 	if (ret < ANSWER_ALL) {
 		ret = ask_yes_no(ASK_YES_NO | ASK_ALL,
 		 close == 0
@@ -494,7 +492,6 @@ flf_d_printf("ret: %d\n", ret);
 #ifdef START_UP_TEST
 void test_flock()
 {
-_FLF_
 	MY_UT_INT(flock_lock("relative/path/to/file.txt"), 0);
 	MY_UT_INT(flock_unlock("relative/path/to/file.txt"), 0);
 	MY_UT_INT(flock_lock("relative/path/to/file.txt"), 0);
@@ -541,12 +538,10 @@ int flock_is_locked(const char *full_path)
 }
 PRIVATE int flock_create_lock_file(const char *full_path)
 {
-flf_d_printf("[%s]>[%s]\n", full_path, flock_get_lock_file_path(full_path));
 	return write_text_to_file(flock_get_lock_file_path(full_path), 0, "");
 }
 PRIVATE int flock_delete_lock_file(const char *full_path)
 {
-flf_d_printf("[%s]>[%s]\n", full_path, flock_get_lock_file_path(full_path));
 	return remove_file(flock_get_lock_file_path(full_path));
 }
 

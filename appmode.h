@@ -32,6 +32,11 @@ typedef struct /*app_mode*/ {
 	// fl_XXXX		settings for filer
 
 	// application (editor and filer) settings
+#ifdef ENABLE_DEBUG
+#define DEBUG_NONE				0
+#define DEBUG_PRINTF			1
+	unsigned char app_DEBUG_PRINTF:1;		// bit 6
+#endif // ENABLE_DEBUG
 #ifdef ENABLE_RC
 	unsigned char app_RCFILE:1;				// bit 0
 #endif // ENABLE_RC
@@ -47,9 +52,6 @@ typedef struct /*app_mode*/ {
 #define KEY_LINES_3				3
 #define KEY_LINES_MAX			KEY_LINES_3
 	unsigned char app_KEY_LINES:2;			// bit 4,5
-#define DEBUG_NONE				0
-#define DEBUG_PRINTF			1
-	unsigned char app_DEBUG_PRINTF:1;		// bit 6
 #define EF_EDITOR				0
 #define EF_FILER				1
 	unsigned char app_EDITOR_FILER:1;		// bit 7

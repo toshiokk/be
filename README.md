@@ -158,7 +158,7 @@ So BE editor is 微 editor, is Small-editor.
 | Source code size (lines) | 23000 | 66000 | 22000 |
 | Source code size (in KB) | 698kb | 1521kb | 670kb |
 | Translation            | en, ja, de, fr, it ... | ?? | en, ja |
-| Origin                 | U.S.A | U.S.A | Japan |
+| Origin                 | USA | USA | Japan |
 
 ## Requirement
 ### Build and execution requirements
@@ -248,7 +248,7 @@ PCR
 | $HOME/.be/dir_history      | history of directory selected |
 | $HOME/.be/file_history     | history of file position |
 | $HOME/.be/keymacro_history | history of keymacro executed |
-| $HOME/.be/clipboard        | clipboard file, common to all be-editor instances in one user |
+| $HOME/.be/cut_buffer       | clipboard file, common to all be-editor instances in one user |
 
 ## Project file
 

@@ -63,8 +63,6 @@ flf_d_printf("push_win:%d --> ret: %d\n", push_win, ret);
 		update_screen_app(1, 1);
 	}
 
-//PPP	editor_do_next = EF_NONE;
-
 	return ret;		// EF_...
 }
 
@@ -155,7 +153,7 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 					//=========================
 					(*fkey_list->func)();	// call function "doe__...()"
 					//=========================
-					mflf_d_printf("}}}} editor_do_next: EF__%d\n", editor_do_next);
+					mflf_d_printf("}}}} editor_do_next_%d\n", editor_do_next);
 					easy_buffer_switching_count();
 #if defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
 					if (check_undo_state_after_change()) { _WARNING_ }
@@ -165,19 +163,21 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 #ifdef ENABLE_HISTORY
 			save_histories();
 #endif // ENABLE_HISTORY
+			save_cut_buffers_if_modified();
 		}
 		if (is_app_normal_mode()) {
 			if (has_bufs_to_edit() == 0) {
-flf_d_printf("all buffers closed in editor\n");
 #ifdef ENABLE_HISTORY
-				update_history(HISTORY_TYPE_IDX_FILE, last_touched_file_pos_str);
+				if (is_internal_buf_file_name(last_touched_file_pos_str) == 0) {
+flf_d_printf("[%s]\n", last_touched_file_pos_str);
+					update_history(HISTORY_TYPE_IDX_FILE, last_touched_file_pos_str);
+				}
 #endif // ENABLE_HISTORY
 				// If all files closed on editor, exit editor.
 				break;
 			}
 		} else /* if (is_app_chooser_viewer_mode()) */ {
 			if (editor_do_next) {
-flf_d_printf("editor_do_next: %d\n", editor_do_next);
 				break;
 			}
 		}
@@ -186,7 +186,7 @@ flf_d_printf("editor_do_next: %d\n", editor_do_next);
 	key_macro_cancel_recording();
 #endif // ENABLE_HISTORY
 	if (editor_do_next == EF_INPUT_W_ENTER) {
-		if (str_buf && epc_buf_count_buf()) {
+		if (str_buf && epc_buf_count_bufs()) {
 			// get a text from editor current line
 			strlcpy__(str_buf, EPCBVC_CL->data, buf_len);
 		}
@@ -195,7 +195,7 @@ flf_d_printf("editor_do_next: %d\n", editor_do_next);
 		 : EF_INPUT_TO_APPEND;		// Append input file/dir name
 	}
 	return editor_do_next;
-}
+} // editor_main_loop
 
 //------------------------------------------------------------------------------
 int chk_inp_str_ret_val_editor(int ret)
@@ -214,57 +214,6 @@ char *get_app_dir(void)
 	snprintf_(dir, MAX_PATH_LEN+1, "%s", get_home_dir());
 #endif // APP_DIR
 	return dir;
-}
-
-#define _CLIPBOARD_FILE_NAME	"clipboard"		// default clipboard file name
-#if defined(APP_DIR)
-#define CLIPBOARD_FILE_NAME		_CLIPBOARD_FILE_NAME
-#else // APP_DIR
-#define CLIPBOARD_FILE_NAME		"." _CLIPBOARD_FILE_NAME
-#endif // APP_DIR
-
-// clipboard file is common to all be-editor instances in one user
-const char *get_clipboard_file_path()
-{
-	static char file_path[MAX_PATH_LEN+1];
-
-	snprintf_(file_path, MAX_PATH_LEN+1, "%s/%s", get_app_dir(), CLIPBOARD_FILE_NAME);
-	return file_path;
-}
-int save_cut_buf_to_clipboard_file()
-{
-	return save_buf_to_file(CUT_BUFS_TOP_BUF, get_clipboard_file_path());
-}
-
-int load_clipboard_into_cut_buf()
-{
-	return load_file_into_buf(CUT_BUFS_TOP_BUF, get_clipboard_file_path());
-}
-
-int doe_read_clipboard_into_cur_char()
-{
-	return doe_read_clipboard_into_cur_pos_(0);
-}
-int doe_read_clipboard_into_cur_line()
-{
-	return doe_read_clipboard_into_cur_pos_(1);
-}
-int doe_read_clipboard_into_cur_pos_(int char0_line1)
-{
-	push_cut_buf();
-	if (load_clipboard_into_cut_buf() < 0) {
-		pop__free_from_cut_bufs();
-		return 0;
-	}
-	if (char0_line1 == 0) {
-		// set character cut ==> character paste
-		SET_CUR_CBUF_STATE(buf_CUT_MODE, CUT_MODE_H_CHAR);
-	} else {
-		// set line cut ==> line paste
-		SET_CUR_CBUF_STATE(buf_CUT_MODE, CUT_MODE_N_LINE);
-	}
-	doe_paste_text_with_pop();
-	return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -537,7 +486,7 @@ void update_screen_app(int status_bar, int refresh)
 			update_screen_app__(status_bar, refresh && (depth >= cur_app_stack_depth));
 			break;
 		}
-		set_color_by_idx(ITEM_COLOR_IDX_PARENT, 0);
+		set_item_color_by_idx(ITEM_COLOR_IDX_PARENT, 0);
 		central_win_clear_screen();		// draw dark frame
 		inc_win_depth();
 	}
@@ -657,7 +606,7 @@ void disp_title_bar_editor(void)
 	int bufs_idx = bufs_get_bufs_idx_in_bufss(NODES_TOP_ANCH(&all_bufferss), get_epc_buf());
 	const char* bufs_name = get_bufs_name_contains_buf(get_epc_buf());
 	int buf_idx = buf_get_buf_idx(get_epc_buf());
-	int count_buf = epc_buf_count_buf();
+	int count_bufs = epc_buf_count_bufs();
 	const char *path = buf_get_file_path(get_epc_buf(), NULL);
 
 	tio_set_cursor_on(0);
@@ -667,13 +616,13 @@ void disp_title_bar_editor(void)
 	snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%s%d%c%d%s%c%d/%d:%s",
 	 root_notation(),
 	 get_editor_cur_pane_idx()+1, separator_char, bufs_idx, bufs_name,
-	 separator_char, buf_idx, count_buf,
+	 separator_char, buf_idx, count_bufs,
 	 (path[0] == '\0') ? _("New File") : path);
 	strlcat__(buf_path, MAX_SCRN_LINE_BUF_LEN, get_all_buf_state_str());
 
 	//-------------------------------------------------------------------------
 	// edit buffer cut mode
-	if (BUF_STATE(get_epc_buf(), buf_CUT_MODE) != CUT_MODE_0_LINE) {
+	if (GET_BUF_STATE(get_epc_buf(), buf_CUT_MODE) != CUT_MODE_0_LINE) {
 		strcat_printf(buf_bufs, MAX_SCRN_LINE_BUF_LEN, " %s", buf_cut_mode_str(get_epc_buf()));
 	}
 	// edit buffers
@@ -718,12 +667,12 @@ void disp_title_bar_editor(void)
 }
 PRIVATE void blink_editor_title_bar()
 {
-	set_color_by_idx(ITEM_COLOR_IDX_TITLE, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_TITLE, 0);
 	set_title_bar_color_by_state(
-	 GET_CUR_EBUF_STATE(buf_CUT_MODE) ? ITEM_COLOR_IDX_TEXT_SELECTED1
-	  : ((is_epc_buf_modifiable() == 0) ? ITEM_COLOR_IDX_WARNING3
-	   : (is_epc_buf_modified() ? ITEM_COLOR_IDX_WARNING1
-	    : (is_any_edit_buf_modified() ? ITEM_COLOR_IDX_WARNING2
+	 (is_epc_buf_modifiable() == 0) ? ITEM_COLOR_IDX_WARNING3
+	  : (is_epc_buf_modified() ? ITEM_COLOR_IDX_WARNING1
+	   : (is_any_edit_buf_modified() ? ITEM_COLOR_IDX_WARNING2
+	    : (GET_CUR_EBUF_STATE(buf_CUT_MODE) ? ITEM_COLOR_IDX_TEXT_SELECTED1
 	     : ITEM_COLOR_IDX_TITLE))),
 	 get_title_bar_inversion());
 	central_win_output_string(central_win_get_top_win_y() + TITLE_LINE, 0,
@@ -737,8 +686,8 @@ PRIVATE void disp_status_bar_editor(void)
 	char buf_char_code[UTF8_CODE_LEN+1] = "";	// "00-00-00-00-00-00(U+xxxxxx)"
 	unsigned long xx;
 	unsigned long disp_len;
-#define SEL_LINES_LEN		(1+4+10+1)		// " LNS:9999999999"
-	char buf_lines_sel[SEL_LINES_LEN] = "";
+#define SEL_LINES_COLS_LEN		(1+1+4+10+1+5+4+1)		// " (LNS:9999999999 COLS:9999)"
+	char buf_lines_sel[SEL_LINES_COLS_LEN] = "";
 	char buffer[MAX_EDIT_LINE_LEN+1] = "";
 
 	xx = col_idx_from_byte_idx(EPCBVC_CL->data, 0, EPCBVC_CLBI) + 1;
@@ -757,7 +706,8 @@ PRIVATE void disp_status_bar_editor(void)
 	}
 
 	if (IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE))) {
-		snprintf(buf_lines_sel, SEL_LINES_LEN, " LNS:%2d", lines_selected());
+		snprintf(buf_lines_sel, SEL_LINES_COLS_LEN, " (LNS:%2d COLS:%2d)",
+		 lines_selected(), columns_selected());
 	}
 
 	strlcat__(buffer, MAX_EDIT_LINE_LEN,

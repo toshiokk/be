@@ -108,35 +108,70 @@ int dof_exec_command_with_files(void)
 	return 0;
 }
 
+PRIVATE int dof_run_command_rel_abs();
 int dof_run_command_rel()
 {
-	struct stat *st_ptr = &get_cur_fv_cur_file_ptr()->st;
-	if ((st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
-		dof_run_command_(0 | EX_LOGGING);
-	} else {
-		dof_run_command_(1 | EX_LOGGING);
-	}
-	return 0;
+	return dof_run_command_rel_abs(0 | EX_LOGGING);
 }
 int dof_run_command_abs(void)
 {
-	return dof_run_command_(2 | EX_LOGGING);
+	return dof_run_command_rel_abs(2 | EX_LOGGING);
+}
+PRIVATE int dof_run_command_rel_abs(int flags)
+{
+	if (get_files_selected_cfv() == 0) {
+		struct stat *st_ptr = &get_cur_fv_cur_file_ptr()->st;
+		if ((st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
+			dof_run_command_(flags | 0 | EX_LOGGING);
+		} else {
+			dof_run_command_(flags | 1 | EX_LOGGING);
+		}
+		return 0;
+	}
+
+	char command_str[MAX_PATH_LEN+1] = " ";
+	// "file1 file2 ..."
+	for (int file_idx = select_and_get_first_file_idx_selected();
+	 file_idx >= 0;
+	 file_idx = get_next_file_idx_selected(file_idx)) {
+		if ((flags & EX_MOD_MASK) == 0) {
+			concat_file_path_separating_by_space(command_str, MAX_PATH_LEN,
+			 get_cur_fv_file_ptr(file_idx)->file_name);
+		} else {
+			concat_file_path_separating_by_space(command_str, MAX_PATH_LEN,
+			 sprintf_s("%s/%s",
+			  get_cur_filer_pane_view()->cur_dir, get_cur_fv_file_ptr(file_idx)->file_name));
+		}
+	}
+
+	if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str, 0,
+	 HISTORY_TYPE_IDX_EXEC,
+	 _("Execute with files:")))) {
+		return 0;
+	}
+	flags = EX_LOGGING;
+	if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
+		flags ^= EX_LOGGING;	// invert logging
+	}
+	fork_exec_sh_c_once(flags | EX_PAUSE, command_str);
+	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
+	return 0;
 }
 int dof_run_command_shell(void)
 {
-	return dof_run_command_(3 | EX_LOGGING);
+	return dof_run_command_(4 | EX_LOGGING);
 }
 int dof_run_command_symlink(void)
 {
-	return dof_run_command_(4 | EX_LOGGING);
+	return dof_run_command_(5 | EX_LOGGING);
 }
 int dof_run_command_src_dst_dir(void)
 {
-	return dof_run_command_(5 | EX_LOGGING);
+	return dof_run_command_(6 | EX_LOGGING);
 }
 int dof_run_command_src_dst_file(void)
 {
-	return dof_run_command_(6 | EX_LOGGING);
+	return dof_run_command_(7 | EX_LOGGING);
 }
 int dof_run_command_soon_wo_log(void)
 {
@@ -168,23 +203,24 @@ PRIVATE int dof_run_command_(int flags)
 		 quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
 		break;
 	case 2:
-		expl = _("Run (with real-path)");
+	case 3:
+		expl = _("Run (with abs-path)");
 		quote_file_path_buf(command_str, sprintf_s("%s/%s",
 		 get_cur_filer_pane_view()->cur_dir, get_cur_fv_cur_file_ptr()->file_name));
 		break;
-	case 3:
+	case 4:
 		expl = _("Run (script)");
 		snprintf_(command_str, MAX_PATH_LEN, "sh %s",
 		 quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
 		break;
-	case 4:
+	case 5:
 		expl = _("Run (symlink)");
 		snprintf_(command_str, MAX_PATH_LEN, "%s",
 		 (get_cur_fv_cur_file_ptr()->symlink != NULL)
 		  ? quote_file_path_static(get_cur_fv_cur_file_ptr()->symlink)
 		  : quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
 		break;
-	case 5:
+	case 6:
 		// " /path/to/dir-A/file-A /path/to/dir-B/file-A"
 		expl = _("Run (with SRC-dir and DEST-dir)");
 		snprintf_(command_str, MAX_PATH_LEN, " %s %s",
@@ -193,7 +229,7 @@ PRIVATE int dof_run_command_(int flags)
 		 quote_file_path_buf(buf2, sprintf_s2("%s/%s",
 		  get_cur_filer_view(dst_fv_idx)->cur_dir, get_cur_fv_cur_file_ptr()->file_name)));
 		break;
-	case 6:
+	case 7:
 		// " /path/to/dir-A/file-A /path/to/dir-B/file-B"
 		expl = _("Run (with SRC-file and DEST-file)");
 		snprintf_(command_str, MAX_PATH_LEN, " %s %s",
@@ -227,7 +263,6 @@ PRIVATE int dof_run_command_(int flags)
 		return filer_change_dir(command_str);
 	}
 
-flf_d_printf("command_str [%s]\n", command_str);
 	fork_exec_sh_c_once(flags | EX_PAUSE, command_str);
 
 	if (is_app_chooser_mode()) {
@@ -309,7 +344,7 @@ PRIVATE int fork_exec_args(int flags, char * const args[])
 		clear_fork_exec_counter();
 	}
 	const char *command = exec_args_to_str(args);
-	return fork_exec_before_after(flags, command, args);
+	return fork_exec_sh_c(flags, command);
 }
 
 PRIVATE const char *exec_args_to_str(char * const *args)
@@ -328,27 +363,16 @@ PRIVATE const char *exec_args_to_str(char * const *args)
 
 //------------------------------------------------------------------------------
 
-int send_to_system_clipboard()
-{
-#define UP_SYS_CLIPBOARD_CMD	"update-system-clipboard.sh"
-	if (check_wsl()) {
-		tio_set_cursor_pos(central_win_get_status_line_y(), 0);
-		return fork_exec_sh_c(EX_FLAGS_0, UP_SYS_CLIPBOARD_CMD);
-	}
-	return 0;
-}
-
-//------------------------------------------------------------------------------
-
 int fork_exec_sh_c(int flags, const char *command)
 {
 	char * args[MAX_EXECV_ARGS+1];
 
+	flags |= EX_LOGGING;
 	if (flags & EX_SETTERM) {
 		clear_fork_exec_counter();
 	}
 
-	if (check_availability_of_script() == 0) {
+	if (check_availability_of_script() < 0) {
 		flags &= ~EX_LOGGING;		// turn off logging
 	}
 	if ((flags & EX_LOGGING) == 0) {

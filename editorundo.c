@@ -77,11 +77,11 @@ int delete_unredo_buf(be_buf_t *do_buf, be_buf_t *edit_buf)
 }
 int count_undo_bufs(void)
 {
-	return bufs_count_buf(&undo_buffers);
+	return bufs_count_bufs(&undo_buffers);
 }
 int count_redo_bufs(void)
 {
-	return bufs_count_buf(&redo_buffers);
+	return bufs_count_bufs(&redo_buffers);
 }
 
 #ifdef ENABLE_DEBUG

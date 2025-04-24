@@ -30,14 +30,6 @@ int chk_inp_str_ret_val_editor(int ret);
 
 char *get_app_dir(void);
 
-const char *get_clipboard_file_path();
-int save_cut_buf_to_clipboard_file();
-int load_clipboard_into_cut_buf();
-
-int doe_read_clipboard_into_cur_char();
-int doe_read_clipboard_into_cur_line();
-int doe_read_clipboard_into_cur_pos_(int char0_line1);
-
 //------------------------------------------------------------------------------
 
 int doe_run_line_soon_wo_log(void);

@@ -469,7 +469,7 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair)
 	search__.direction = reverse_pair;
 	SET_APPMD(ed_USE_REGEXP);
 
-	set_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);
 	blank_status_bar();
 
 	line = EPCBVC_CL;
@@ -610,8 +610,8 @@ void prepare_colors_for_bracket_hl()
 	char fgc_sel;
 	char bgc_sel2;
 	char fgc;
-	get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED1, &bgc_sel, &fgc_sel);
-	get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, &bgc_sel2, &fgc);
+	get_item_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED1, &bgc_sel, &fgc_sel);
+	get_item_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED2, &bgc_sel2, &fgc);
 	int color_idx = 0;
 	colors_for_bracket_hl[color_idx].bgc = bgc_sel;
 	colors_for_bracket_hl[color_idx].fgc = fgc_sel;
@@ -680,7 +680,7 @@ void set_color_for_bracket_hl_by_idx(int color_idx)
 void get_color_for_bracket_hl_by_idx(int color_idx, char *bgc, char *fgc)
 {
 	if (get_colors_for_bracket_hl() == 0) {
-		get_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED1, bgc, fgc);
+		get_item_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED1, bgc, fgc);
 	} else {
 		color_idx = MK_IN_RANGE(0, color_idx, COLORS_FOR_BRACKET_HL);
 		*bgc = colors_for_bracket_hl[color_idx].bgc;
@@ -695,11 +695,9 @@ void get_color_for_bracket_hl_by_idx(int color_idx, char *bgc, char *fgc)
 PRIVATE int search_needle_in_buffers(
  const char *needle, int search_dir, int ignore_case, int skip_here, int search_count)
 {
-	int match_len;
-
 	disp_status_bar_ing(_("Searching word: [%s]..."), needle);
 
-	match_len = search_needle_in_buffer(&(EPCBVC_CL), &(EPCBVC_CLBI),
+	int match_len = search_needle_in_buffer(&(EPCBVC_CL), &(EPCBVC_CLBI),
 	 needle, search_dir, ignore_case, skip_here, INTER_BUFFER_SEARCH);
 
 	if (match_len > 0) {

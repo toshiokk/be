@@ -54,8 +54,6 @@ int fork_exec_args_repeat(int flags, ...);
 
 #endif // ENABLE_FILER
 
-int send_to_system_clipboard();
-
 int fork_exec_sh_c(int flags, const char *command);
 
 void clear_fork_exec_counter(void);

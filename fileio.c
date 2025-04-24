@@ -56,18 +56,10 @@ int load_file_into_new_buf(const char *full_path, int flags)
 	}
 	// successfully loaded into new buffer
 
-///
-#define PROCESS_MAGIC_LINE
-#ifdef PROCESS_MAGIC_LINE
-	if (append_magic_line()) {
+	if (append_magic_line_if_necessary()) {
+		// Automatically add a magic-line
 		SET_CUR_EBUF_STATE(buf_MAGIC_LINE_ADDED, 1);
 	}
-#else // PROCESS_MAGIC_LINE
-	if (buf_is_empty(get_epc_buf())) {
-		// if there is no line, at least one line
-		append_magic_line();
-	}
-#endif // PROCESS_MAGIC_LINE
 	buf_set_view_x_cur_line(get_epc_buf(), 0, CUR_EDIT_BUF_TOP_LINE);
 	buf_set_view_x_cur_line(get_epc_buf(), 1, CUR_EDIT_BUF_TOP_LINE);
 	BUFV0_CLBI(get_epc_buf()) = 0;
@@ -641,7 +633,9 @@ PRIVATE int load_into_cur_buf_fp(FILE *fp)
 			load_into_cur_buf_append_line(line, line_buf, &len, &lines_read);
 			break;
 		default:
-			if (len >= MAX_EDIT_LINE_LEN) {
+			if ((IS_UTF8_1ST_BYTE(chr_int) == 0)
+			 ? (len >= MAX_EDIT_LINE_LEN)
+			 : (len + utf8c_len(0, chr_int) >= MAX_EDIT_LINE_LEN)) {
 				load_into_cur_buf_append_line(line, line_buf, &len, &lines_read);
 			}
 			line_buf[len++] = chr_int;
@@ -763,20 +757,13 @@ PRIVATE int save_cur_buf_to_file_binary(const char *file_path)
 	int lines_written = 0;
 	for (const be_line_t *line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_INT(line);
 	 line = NODE_NEXT(line)) {
-#ifdef PROCESS_MAGIC_LINE
 		if (IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
 			// There is a magic-line at the last line of the buffer
-			if (GET_CUR_EBUF_STATE(buf_MAGIC_LINE_ADDED) == 0) {
-				// output this magic-line to file
-			} else {
-				break;			// do not output the magic-line
+			if (GET_CUR_EBUF_STATE(buf_MAGIC_LINE_ADDED)) {
+				// This magic-line is the one automatically added
+				break;			// So do not output the magic-line
 			}
 		}
-#else // PROCESS_MAGIC_LINE
-		if ((lines_written == 0) && IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
-			break;			// do not output the magic-line
-		}
-#endif // PROCESS_MAGIC_LINE
 		unsigned char bin_buf[BIN_LINE_LEN];
 		int line_len = strlen_path(line->data);
 		int bin_off = 0;
@@ -809,20 +796,13 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 	int lines_written = 0;
 	for (const be_line_t *line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_INT(line);
 	 line = NODE_NEXT(line)) {
-#ifdef PROCESS_MAGIC_LINE
 		if (IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
 			// There is a magic-line at the last line of the buffer
-			if (GET_CUR_EBUF_STATE(buf_MAGIC_LINE_ADDED) == 0) {
-				// output this magic-line to file
-			} else {
-				break;			// do not output the magic-line
+			if (GET_CUR_EBUF_STATE(buf_MAGIC_LINE_ADDED)) {
+				// This magic-line is the one automatically added
+				break;			// So do not output the magic-line
 			}
 		}
-#else // PROCESS_MAGIC_LINE
-		if ((lines_written == 0) && IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
-			break;			// do not output the magic-line
-		}
-#endif // PROCESS_MAGIC_LINE
 		size_t line_len = line_strlen(line);
 		size_t size = fwrite(line->data, 1, line_len, fp);
 		if (size < line_len) {
@@ -909,7 +889,6 @@ const char *get_exec_log_file_path()
 	if (is_strlen_0(file_path)) {
 		separate_path_to_dir_and_file(get_tty_name(), dir, file);
 		snprintf_(file_path, MAX_PATH_LEN, "%s/%s.log", get_app_dir(), file);
-flf_d_printf("file_path: [%s]\n", file_path);
 	}
 	return file_path;
 }

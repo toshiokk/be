@@ -38,6 +38,7 @@ void test_wcwidth(void);
 int utf8s_chars(const char *utf8s);
 int utf8s_columns(const char *utf8s, int bytes);
 int utf8c_bytes(const char *utf8s);
+#define IS_UTF8_1ST_BYTE(chr)		((chr & 0xc0) == 0xc0)	// 11xxxxxx
 int utf8c_len(char utf8c_state, char utf8c);
 int utf8c_prev_bytes(const char *utf8s_min, const char *utf8s);
 int utf8c_columns(const char *utf8s);

@@ -35,6 +35,11 @@ void init_app_mode(void)
 	// setup application settings
 	memset(&app_mode__, 0x00, sizeof(app_mode__));
 
+#ifdef ENABLE_DEBUG
+	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);
+	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
+#endif // ENABLE_DEBUG
+
 	// editor and filer
 #ifdef ENABLE_RC
 	SET_APPMD(app_RCFILE);
@@ -44,11 +49,6 @@ void init_app_mode(void)
 	CLR_APPMD(app_HIGH_BGC);
 #endif // ENABLE_HIGH_BGC
 	SET_APPMD_VAL(app_KEY_LINES, 3);
-	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_NONE);
-#ifdef FORCE_ENABLE_DEBUG
-	SET_APPMD_VAL(app_DEBUG_PRINTF, DEBUG_PRINTF);
-	set_debug_printf_output(GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF);
-#endif // FORCE_ENABLE_DEBUG
 	// editor mode
 	CLR_APPMD(app_EDITOR_FILER);
 	SET_APPMD_VAL(app_LIST_MODE, APP_MODE_NORMAL);

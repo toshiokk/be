@@ -1,7 +1,11 @@
 echo "Generating BE project file __be.bep ..."
+
+mk_backup_files2 __be.bep
+
 if [ ! -f config.h ]; then
   ./configure  # generate config.h
 fi
+
 {
 ##  for file in *.h *.c berc emacs.berc wordstar.berc po/*.po README.md __todo.txt; do
   for file in *.h *.c berc po/*.po README.md __todo.txt; do

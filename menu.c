@@ -213,13 +213,13 @@ flf_d_printf("menu_y:%d f_idx:%d entry_idx:%d, desc:[%s]\n",
 	char template_[] = " %-32s  %-*s %-*s  %-12s ";
 	char buffer[MAX_PATH_LEN+1];
 
-	set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
 	central_win_output_string(yy + menu_y, xx, " ", -1);
 	if ((menu_y == 0) || fkey_list[f_idx].desc[0]) {
 		if (fkey_list[f_idx].desc[0]) {
-			set_color_by_idx(ITEM_COLOR_IDX_MENU_ITEM, 0);
+			set_item_color_by_idx(ITEM_COLOR_IDX_MENU_ITEM, 0);
 			if (f_idx == entry_idx) {
-				set_color_by_idx(ITEM_COLOR_IDX_MENU_SELECTED, 0);
+				set_item_color_by_idx(ITEM_COLOR_IDX_MENU_SELECTED, 0);
 			}
 		}
 		snprintf(buffer, MAX_PATH_LEN+1, template_,
@@ -239,7 +239,7 @@ flf_d_printf("menu_y:%d f_idx:%d entry_idx:%d, desc:[%s]\n",
 	}
 flf_d_printf("[%s]\n", buffer);
 	central_win_output_string(-1, -1, buffer, -1);
-	set_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
 	central_win_output_string(-1, -1, " ", -1);
 }
 

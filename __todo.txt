@@ -6,7 +6,16 @@
 - CRASH: crash
 - POLICY: things to be kept
 
-- [x] contents scrolls one line when page up/down
+- [x] 250423 properly separate very long line at UTF8 character boundary
+- [x] 250423 share cut-buffer among all BE editor instances
+- [x] 250421 open more than 2 files in doe_open_file()
+- [x] 250421 BUG: switch "#cut-buffer-xxx" on opening file.
+- [x] 250420 show columns selected in status bar "COLS:9999"
+- [x] 250423 save cut_buffer with information of cut-mode (Line/Char/Box)
+- [x] 250420 select more than two files and 'r'/'R' enters all file names/file path
+- [x] expand maximum screen size to equivalent to 8K screen
+- [x] make possible to tag-jump in List-mode editor
+- [x] BUG: contents scrolls one line when page up/down
 - [x] CRASH: in 'dof_run_command_src_dst_file()'
 - [x] set_color_for_bracket_hl()
   - [x] not show color of color_idx=0 more than 2 times
@@ -75,7 +84,7 @@
 - [x] 250321 delete "-h"(app_HISTORY) option
 - [x] 250315 BUG: cursor position does not restored after undo
 - [?] BUG: keyword search goes to history-buffers
-- [x] 250316 IMPR: switchable use of hi-background-color at run time not build time by "--hibgc"
+- [x] 250316 IMPR: switchable use of hi-background-color at run time not build time by "--highbgc"
   - [x] 250315 add "--enable-highbgc" option to `configure`
 - [x] 250314 no screen size displayed within input_string_pos() on screen resizing
 - [x] use file time stamp for checking update of history file by other processes
@@ -954,7 +963,7 @@ Editor 2 pane mode
 [pd]cursor position history
 //[pd]line wrapping
 //	avoid current line hopping
-//	marked segment highlighting
+//	marked region highlighting
 //	line cut copy paste
 //	line end "<" - notation
 //	C comment syntax highlighting /* ... */

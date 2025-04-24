@@ -132,9 +132,10 @@ PRIVATE int doe_cut_to_tail_(int delete0_cut1)
 	return 1;
 }
 
-int doe_clear_all_cut_bufs(void)
+int doe_clear_all_cut_buffers(void)
 {
-	clear_all_cut_bufs();
+	clear_cut_bufs();
+	disp_status_bar_done(_("Cut buffer cleared"));
 	return 1;
 }
 
@@ -193,6 +194,15 @@ int doe_copy_text_to_system_clipboard(void)
 	doe_copy_text();
 	send_to_system_clipboard();
 	return 1;
+}
+int send_to_system_clipboard()
+{
+#define UP_SYS_CLIPBOARD_CMD	"update-system-clipboard.sh"
+	if (check_wsl()) {
+		tio_set_cursor_pos(central_win_get_status_line_y(), 0);
+		return fork_exec_sh_c(EX_FLAGS_0, UP_SYS_CLIPBOARD_CMD);
+	}
+	return 0;
 }
 
 int doe_delete_text(void)
@@ -259,6 +269,7 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 	}
 	if ((cp_del_paste_pop & CDPP_COPY) == 0
 	 && (cp_del_paste_pop & CDPP_PASTE)) {
+		load_cut_buffers_if_updated();
 		if (count_cut_bufs() == 0) {
 			disp_status_bar_err(_("Cut-buffer empty !!"));
 			return -1;		// error
@@ -367,8 +378,6 @@ PRIVATE int copy_text_to_cut_buf(void)
 		 mark_max_line, mark_max_col_idx);
 		break;
 	}
-	// copy cut text to clip board file
-	save_cut_buf_to_clipboard_file();
 	return 1;
 }
 PRIVATE int delete_text_in_cut_region(void)

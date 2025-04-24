@@ -207,7 +207,6 @@ const char *short_key_name_from_func_id(char *buf)
 PRIVATE key_code_t menu_key = -1;
 void set_menu_key(key_code_t key)
 {
-flf_d_printf("set_menu_key(%04x)\n", (UINT16)key);
 	menu_key = key;
 }
 key_code_t get_menu_key(void)
@@ -216,7 +215,6 @@ key_code_t get_menu_key(void)
 	if (menu_key >= 0) {
 		key = menu_key;
 		menu_key = K_NONE;
-flf_d_printf("get_menu_key(%04x)\n", (UINT16)key);
 	}
 	return key;
 }
@@ -400,7 +398,6 @@ PRIVATE key_code_t input_key_check_break_key(void)
 			key_codes_saved = -1;		// clear saved keys
 			key_codes_restored = -1;	// stop restoration
 		}
-flf_d_printf("<[%04x]\n", (UINT16)key);
 		return key;
 	}
 	key = tio_input_key();
@@ -410,7 +407,6 @@ flf_d_printf("<[%04x]\n", (UINT16)key);
 		if (key >= 0) {
 			key_codes_check_break_key[key_codes_saved] = key;
 			key_codes_saved++;
-flf_d_printf(">[%04x]\n", (UINT16)key);
 		}
 	}
 	return key;
@@ -447,7 +443,7 @@ key_code_t map_key_code(key_code_t key)
 		}
 		break;
 	case KEY_DC:
-flf_d_printf("KEY_DC ==> DEL\n");
+		flf_d_printf("KEY_DC ==> DEL\n");
 		// Delete(0x0113) key code was seen.
 		SET_APPMD(app_MAP_KEY_7F_BS);	// set conversion of CHAR_DEL ==> BS
 		key = K_DEL;

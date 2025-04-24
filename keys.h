@@ -547,7 +547,7 @@ typedef enum {	// | Normal-mode  | List-mode    |
 	EFAM_EXEC,	// | executable   | executable   | executable in All mode
 	EFNM_EXEC,	// | executable   |not executable| executable only in Normal mode
 	EFLM_EXEC,	// |not executable| executable   | executable only in List mode
-	E_LM_CULN,	// | executable   | get a text in current line and return FL_INPUT |
+	E_LM_CULN,	// | executable   | get a text from current line and return FL_INPUT |
 	F_LM_FLNM,	// | executable   | input file name/path and return FL_ENTER_FILE_NAME_OR_PATH |
 	F_LM_CUDI,	// | executable   | input current directory and return FL_ENTER_CUR_DIR_PATH   |
 } list_mode_t;

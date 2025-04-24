@@ -116,7 +116,6 @@ char *conv_esc_str(char *string)
 #ifdef START_UP_TEST
 void test_utilstr(void)
 {
-_FLF_
 	MY_UT_INT(contain_chr("(){}", ' '), 0);
 	MY_UT_INT(contain_chr("(){}", '('), 1);
 	MY_UT_INT(contain_chrs("(){}", "<>"), 0);

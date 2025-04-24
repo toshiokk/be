@@ -3,5 +3,6 @@
 LANG=C; export LANG
 #sudo chown `whoami` *
 echo "## ./configure ##" >_conf.log
+##./configure --enable-debug --disable-syntax 2>&1 | tee -a _conf.log
 ./configure --enable-debug 2>&1 | tee -a _conf.log
 echo "#### End of ./configure ####" >>_conf.log

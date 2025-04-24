@@ -25,12 +25,13 @@
 int doe_select_all_lines(void);
 int doe_copy_text(void);
 int doe_copy_text_to_system_clipboard(void);
+int send_to_system_clipboard();
 
 int doe_delete_to_head(void);
 int doe_cut_to_head(void);
 int doe_delete_to_tail(void);
 int doe_cut_to_tail(void);
-int doe_clear_all_cut_bufs(void);
+int doe_clear_all_cut_buffers(void);
 
 int doe_tog_mark(void);
 int do_set_mark(void);

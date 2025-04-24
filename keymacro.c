@@ -170,7 +170,6 @@ void key_macro_end_recording(void)
 	if (key_macro_is_recording()) {
 		key_macro_delete_last_key();	// cancel the last key (End-rec Key)
 	}
-flf_d_printf("key_strokes_recording: %d\n", key_strokes_recording);
 	key_strokes_recorded = key_strokes_recording;
 	// copy "recording" to "recorded"
 	memcpy__(key_codes_recorded, key_codes_recording,
@@ -258,8 +257,8 @@ void test_key_code_from_to_key_name()
 	key_code_t key_codes2[MAX_KEY_STROKES+1];
 	int keys2;
 
-flf_d_printf("MAX_KEY_STROKES: %d\n", MAX_KEY_STROKES);
-flf_d_printf("get_key_name_table_entries(): %d\n", get_key_name_table_entries());
+	flf_d_printf("MAX_KEY_STROKES: %d\n", MAX_KEY_STROKES);
+	flf_d_printf("get_key_name_table_entries(): %d\n", get_key_name_table_entries());
 	for (key_code_t key = 0x0000; key < 0x0110; key++) {
 		if (keys >= MAX_KEY_STROKES) {
 			break;

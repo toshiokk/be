@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-10 23:24+0900\n"
+"POT-Creation-Date: 2025-04-24 23:05+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../buffer.c:352
+#: ../buffer.c:339
 msgid "[EDIT]"
 msgstr ""
 
-#: ../buffer.c:353
+#: ../buffer.c:340
 msgid "[RO]"
 msgstr ""
 
-#: ../buffer.c:354
+#: ../buffer.c:341
 msgid "[LIST]"
 msgstr ""
 
@@ -54,15 +54,15 @@ msgstr ""
 msgid "[LOCKED]"
 msgstr ""
 
-#: ../buffers.c:566
+#: ../buffers.c:572
 msgid "Calculating CRC..."
 msgstr ""
 
-#: ../buffers.c:573
+#: ../buffers.c:579
 msgid "Checking CRC..."
 msgstr ""
 
-#: ../buffers.c:767 ../buffers.c:774
+#: ../buffers.c:773 ../buffers.c:780
 msgid "Tab size"
 msgstr ""
 
@@ -71,43 +71,43 @@ msgstr ""
 msgid "CWD: %s"
 msgstr ""
 
-#: ../editor.c:126 ../filer.c:242
+#: ../editor.c:127 ../filer.c:243
 #, c-format
 msgid "No command assigned for the key: 0x%04x"
 msgstr ""
 
-#: ../editor.c:133
+#: ../editor.c:134
 #, c-format
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr ""
 
-#: ../editor.c:293
+#: ../editor.c:247
 msgid "Edit command line:"
 msgstr ""
 
-#: ../editor.c:365
+#: ../editor.c:319
 msgid "Input key to show key code"
 msgstr ""
 
-#: ../editor.c:371
+#: ../editor.c:325
 #, c-format
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr ""
 
-#: ../editor.c:671 ../fileio.c:112
+#: ../editor.c:625 ../fileio.c:104
 msgid "New File"
 msgstr ""
 
-#: ../editor.c:764
+#: ../editor.c:719
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:810
+#: ../editor.c:765
 msgid "Modification not allowed in VIEW mode application"
 msgstr ""
 
-#: ../editor.c:815
+#: ../editor.c:770
 #, c-format
 msgid "Modification not allowed to %s file"
 msgstr ""
@@ -140,39 +140,43 @@ msgstr ""
 msgid "Cut to line tail"
 msgstr ""
 
-#: ../editorcut.c:157
+#: ../editorcut.c:138
+msgid "Cut buffer cleared"
+msgstr ""
+
+#: ../editorcut.c:158
 msgid "Mark Set"
 msgstr ""
 
-#: ../editorcut.c:171
+#: ../editorcut.c:172
 msgid "Mark UNset"
 msgstr ""
 
-#: ../editorcut.c:187
+#: ../editorcut.c:188
 msgid "Text Copied to Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:203
+#: ../editorcut.c:213
 msgid "Text Deleted"
 msgstr ""
 
-#: ../editorcut.c:212
+#: ../editorcut.c:222
 msgid "Text Cut to Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:221
+#: ../editorcut.c:231
 msgid "Text Duplicated"
 msgstr ""
 
-#: ../editorcut.c:232
+#: ../editorcut.c:242
 msgid "Text Pasted with popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:242
+#: ../editorcut.c:252
 msgid "Text Pasted without popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:263 ../editorcut.c:293
+#: ../editorcut.c:274 ../editorcut.c:304
 msgid "Cut-buffer empty !!"
 msgstr ""
 
@@ -184,86 +188,86 @@ msgstr ""
 msgid "Open new file:"
 msgstr ""
 
-#: ../editorfile.c:123
+#: ../editorfile.c:122
 msgid "No project file found"
 msgstr ""
 
-#: ../editorfile.c:164
+#: ../editorfile.c:163
 msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr ""
 
-#: ../editorfile.c:186
+#: ../editorfile.c:185
 msgid "File re-loaded"
 msgstr ""
 
-#: ../editorfile.c:215
+#: ../editorfile.c:214
 msgid "Writing to specified file cancelled"
 msgstr ""
 
-#: ../editorfile.c:224
+#: ../editorfile.c:223
 #, c-format
 msgid "Buffer [%s] is locked"
 msgstr ""
 
-#: ../editorfile.c:230
+#: ../editorfile.c:229
 #, c-format
 msgid "File [%s] is locked"
 msgstr ""
 
-#: ../editorfile.c:258
+#: ../editorfile.c:257
 #, c-format
 msgid "Written to the file: %s"
 msgstr ""
 
-#: ../editorfile.c:277
+#: ../editorfile.c:276
 msgid "File Name to Write:"
 msgstr ""
 
-#: ../editorfile.c:292
+#: ../editorfile.c:291
 msgid "Path is not file, can not WRITE it"
 msgstr ""
 
-#: ../editorfile.c:300
+#: ../editorfile.c:299
 msgid "File exists, OVERWRITE it ?"
 msgstr ""
 
-#: ../editorfile.c:350
+#: ../editorfile.c:349
 msgid "Switched from not closeable buffer"
 msgstr ""
 
-#: ../editorfile.c:362
+#: ../editorfile.c:361
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editorfile.c:419
+#: ../editorfile.c:418
 msgid "All modified buffers are saved"
 msgstr ""
 
-#: ../editorfile.c:442
+#: ../editorfile.c:441
 msgid "This buffer is NOT closeable"
 msgstr ""
 
-#: ../editorfile.c:464
+#: ../editorfile.c:463
 msgid "This buffer is NOT modified"
 msgstr ""
 
-#: ../editorfile.c:468
+#: ../editorfile.c:467
 msgid "This buffer is NOT saveable"
 msgstr ""
 
-#: ../editorfile.c:478
+#: ../editorfile.c:477
 msgid "Save modified buffer ?"
 msgstr ""
 
-#: ../editorfile.c:479
+#: ../editorfile.c:478
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr ""
 
-#: ../editorfile.c:481
+#: ../editorfile.c:480
 msgid "Saving modified buffer cancelled"
 msgstr ""
 
-#: ../editorfile.c:489
+#: ../editorfile.c:488
 msgid "Buffer saved to file"
 msgstr ""
 
@@ -303,27 +307,27 @@ msgstr ""
 msgid "Switched to the first buffer"
 msgstr ""
 
-#: ../editorgoto.c:231
+#: ../editorgoto.c:232
 msgid "Switched to the last buffer"
 msgstr ""
 
-#: ../editorgoto.c:239
+#: ../editorgoto.c:240
 msgid "No previous buffers"
 msgstr ""
 
-#: ../editorgoto.c:245
+#: ../editorgoto.c:246
 msgid "Switched to the previous buffers"
 msgstr ""
 
-#: ../editorgoto.c:252
+#: ../editorgoto.c:253
 msgid "No next buffers"
 msgstr ""
 
-#: ../editorgoto.c:258
+#: ../editorgoto.c:259
 msgid "Switched to the next buffers"
 msgstr ""
 
-#: ../editorgoto.c:272
+#: ../editorgoto.c:273
 msgid "Returned to previous pos"
 msgstr ""
 
@@ -396,153 +400,153 @@ msgstr ""
 msgid "Redo-buffer empty !!"
 msgstr ""
 
-#: ../fileio.c:83
+#: ../fileio.c:75
 msgid "New file"
 msgstr ""
 
-#: ../fileio.c:85
+#: ../fileio.c:77
 #, c-format
 msgid "%d line read %s"
 msgstr ""
 
-#: ../fileio.c:86
+#: ../fileio.c:78
 #, c-format
 msgid "%d lines read %s"
 msgstr ""
 
-#: ../fileio.c:87
+#: ../fileio.c:79
 #, c-format
 msgid "%d liness read %s"
 msgstr ""
 
-#: ../fileio.c:88
+#: ../fileio.c:80
 #, c-format
 msgid "%d linesss read %s"
 msgstr ""
 
-#: ../fileio.c:105
+#: ../fileio.c:97
 #, c-format
 msgid "File [%s] not found"
 msgstr ""
 
-#: ../fileio.c:119
+#: ../fileio.c:111
 #, c-format
 msgid "[%s] is a directory"
 msgstr ""
 
-#: ../fileio.c:119
+#: ../fileio.c:111
 #, c-format
 msgid "[%s] is a special file"
 msgstr ""
 
 #. file size too large
-#: ../fileio.c:127
+#: ../fileio.c:119
 #, c-format
 msgid "[%s] is too large to read into buffer"
 msgstr ""
 
 #. regular file
-#: ../fileio.c:132
+#: ../fileio.c:124
 #, c-format
 msgid "Reading File %s ..."
 msgstr ""
 
-#: ../fileio.c:158
+#: ../fileio.c:150
 msgid "File name is invalid"
 msgstr ""
 
-#: ../fileio.c:164
+#: ../fileio.c:156
 msgid "File has modified by another program, OVERWRITE ?"
 msgstr ""
 
-#: ../fileio.c:166
+#: ../fileio.c:158
 msgid "Overwriting file cancelled"
 msgstr ""
 
 #. directory or special file
-#: ../fileio.c:178
+#: ../fileio.c:170
 #, c-format
 msgid "File [%s] is NOT a regular file !!"
 msgstr ""
 
 #. file_path is exist as a regular file or not exist
-#: ../fileio.c:183
+#: ../fileio.c:175
 #, c-format
 msgid "Writing File %s ..."
 msgstr ""
 
-#: ../fileio.c:187
+#: ../fileio.c:179
 #, c-format
 msgid "Error in backing up File [%s] !!"
 msgstr ""
 
-#: ../fileio.c:198
+#: ../fileio.c:190
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr ""
 
-#: ../fileio.c:207
+#: ../fileio.c:199
 #, c-format
 msgid "%d line written"
 msgstr ""
 
-#: ../fileio.c:208
+#: ../fileio.c:200
 #, c-format
 msgid "%d lines written"
 msgstr ""
 
-#: ../fileio.c:209
+#: ../fileio.c:201
 #, c-format
 msgid "%d liness written"
 msgstr ""
 
-#: ../fileio.c:210
+#: ../fileio.c:202
 #, c-format
 msgid "%d linesss written"
 msgstr ""
 
-#: ../fileio.c:266
+#: ../fileio.c:258
 #, c-format
 msgid "BINARY file !! [%s]"
 msgstr ""
 
-#: ../fileio.c:407 ../fileio.c:534 ../fileio.c:550 ../fileio.c:567
+#: ../fileio.c:399 ../fileio.c:526 ../fileio.c:542 ../fileio.c:559
 #, c-format
 msgid "Can not read-open file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:718 ../fileio.c:739 ../fileio.c:759
+#: ../fileio.c:712 ../fileio.c:733 ../fileio.c:753
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr ""
 
 #. -1: error
-#: ../fileio.c:727 ../fileio.c:748 ../fileio.c:800
+#: ../fileio.c:721 ../fileio.c:742 ../fileio.c:787
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:789 ../fileio.c:829
+#: ../fileio.c:776 ../fileio.c:809
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:879
+#: ../fileio.c:859
 #, c-format
 msgid "%d file loaded"
 msgstr ""
 
-#: ../fileio.c:880
+#: ../fileio.c:860
 #, c-format
 msgid "%d files loaded"
 msgstr ""
 
-#: ../fileio.c:881
+#: ../fileio.c:861
 #, c-format
 msgid "%d filess loaded"
 msgstr ""
 
-#: ../fileio.c:882
+#: ../fileio.c:862
 #, c-format
 msgid "%d filesss loaded"
 msgstr ""
@@ -552,7 +556,7 @@ msgstr ""
 msgid "Cur dir changed: %s"
 msgstr ""
 
-#: ../filer.c:252
+#: ../filer.c:253
 #, c-format
 msgid "Can not execute this function in filer List mode: [%s]"
 msgstr ""
@@ -721,41 +725,41 @@ msgstr ""
 msgid "Execute({} will be replaced with file-name):"
 msgstr ""
 
-#: ../filerrun.c:99
+#: ../filerrun.c:99 ../filerrun.c:149
 msgid "Execute with files:"
 msgstr ""
 
-#: ../filerrun.c:161
+#: ../filerrun.c:196
 msgid "Run (current-directory-file)"
 msgstr ""
 
-#: ../filerrun.c:166
+#: ../filerrun.c:201
 msgid "Run (with file)"
 msgstr ""
 
-#: ../filerrun.c:171
-msgid "Run (with real-path)"
+#: ../filerrun.c:207
+msgid "Run (with abs-path)"
 msgstr ""
 
-#: ../filerrun.c:176
+#: ../filerrun.c:212
 msgid "Run (script)"
 msgstr ""
 
-#: ../filerrun.c:181
+#: ../filerrun.c:217
 msgid "Run (symlink)"
 msgstr ""
 
 #. " /path/to/dir-A/file-A /path/to/dir-B/file-A"
-#: ../filerrun.c:189
+#: ../filerrun.c:225
 msgid "Run (with SRC-dir and DEST-dir)"
 msgstr ""
 
 #. " /path/to/dir-A/file-A /path/to/dir-B/file-B"
-#: ../filerrun.c:198
+#: ../filerrun.c:234
 msgid "Run (with SRC-file and DEST-file)"
 msgstr ""
 
-#: ../filerrun.c:212
+#: ../filerrun.c:248
 msgid "(WITH LOG)"
 msgstr ""
 
@@ -783,12 +787,12 @@ msgstr ""
 msgid "Input key macro to run:"
 msgstr ""
 
-#: ../keys.c:318
+#: ../keys.c:316
 #, c-format
 msgid "Screen resized to (%d, %d)"
 msgstr ""
 
-#: ../main.c:600
+#: ../main.c:601
 #, c-format
 msgid ""
 "\n"
@@ -796,114 +800,114 @@ msgid ""
 msgstr ""
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:602
+#: ../main.c:603
 msgid "Option"
 msgstr ""
 
-#: ../main.c:602
+#: ../main.c:603
 msgid "Long option"
 msgstr ""
 
-#: ../main.c:602
+#: ../main.c:603
 msgid "Meaning"
 msgstr ""
 
-#: ../main.c:603
+#: ../main.c:604
 msgid "Set tab-size to NUM[1-15]"
 msgstr ""
 
-#: ../main.c:604
+#: ../main.c:605
 msgid "View mode(Read only mode)"
 msgstr ""
 
-#: ../main.c:606
+#: ../main.c:607
 msgid "Read RCFILE"
 msgstr ""
 
-#: ../main.c:607
+#: ../main.c:608
 msgid "Don't look at berc files"
 msgstr ""
 
-#: ../main.c:610
+#: ../main.c:611
 msgid "Don't use nkf"
 msgstr ""
 
-#: ../main.c:611
+#: ../main.c:612
 msgid "ASCII character encoding"
 msgstr ""
 
-#: ../main.c:612
+#: ../main.c:613
 msgid "JIS character encoding"
 msgstr ""
 
-#: ../main.c:613
+#: ../main.c:614
 msgid "EUCJP character encoding"
 msgstr ""
 
-#: ../main.c:614
+#: ../main.c:615
 msgid "SJIS character encoding"
 msgstr ""
 
-#: ../main.c:615
+#: ../main.c:616
 msgid "UTF8 character encoding"
 msgstr ""
 
-#: ../main.c:616
+#: ../main.c:617
 msgid "BINARY file"
 msgstr ""
 
-#: ../main.c:617
+#: ../main.c:618
 msgid "BINARY file (same as '-e b')"
 msgstr ""
 
-#: ../main.c:618
+#: ../main.c:619
 msgid "TEXT file (same as '-e u')"
 msgstr ""
 
-#: ../main.c:621
+#: ../main.c:622
 msgid "Two pane mode"
 msgstr ""
 
-#: ../main.c:624
+#: ../main.c:625
 msgid "Use High Background Color"
 msgstr ""
 
-#: ../main.c:627
+#: ../main.c:628
 msgid "Output debug log to stderr"
 msgstr ""
 
-#: ../main.c:629
+#: ../main.c:630
 msgid "Show version information"
 msgstr ""
 
-#: ../main.c:630
+#: ../main.c:631
 msgid "Show this message"
 msgstr ""
 
-#: ../main.c:631
+#: ../main.c:632
 msgid "Start at line number NUM"
 msgstr ""
 
-#: ../main.c:633
+#: ../main.c:634
 msgid "Investigate key sequence"
 msgstr ""
 
-#: ../main.c:649
+#: ../main.c:650
 #, c-format
 msgid "%s version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:651
+#: ../main.c:652
 #, c-format
 msgid " Build Options:\n"
 msgstr ""
 
-#: ../main.c:903
+#: ../main.c:908
 #, c-format
 msgid "Screen size: %dx%d"
 msgstr ""
 
-#: ../main.c:909
+#: ../main.c:914
 msgid "We're invincible with this !!"
 msgstr ""
 
@@ -917,12 +921,12 @@ msgstr ""
 msgid "Not valid number: %s\n"
 msgstr ""
 
-#: ../rcfile.c:405 ../rcfile.c:466 ../rcfile.c:588
+#: ../rcfile.c:405 ../rcfile.c:468 ../rcfile.c:590
 #, c-format
 msgid "unknown color name %s\n"
 msgstr ""
 
-#: ../rcfile.c:628 ../rcfile.c:662 ../rcfile.c:670
+#: ../rcfile.c:630 ../rcfile.c:664 ../rcfile.c:672
 #, c-format
 msgid "Bad regexp: [%s]:%s\n"
 msgstr ""
@@ -989,11 +993,11 @@ msgstr ""
 msgid "[%s] found in %s search"
 msgstr ""
 
-#: ../search.c:251 ../search.c:812 ../winin.c:496
+#: ../search.c:251 ../search.c:810 ../winin.c:507
 msgid "Backward"
 msgstr ""
 
-#: ../search.c:251 ../search.c:812 ../winin.c:499
+#: ../search.c:251 ../search.c:810 ../winin.c:510
 msgid "Forward"
 msgstr ""
 
@@ -1031,17 +1035,17 @@ msgstr ""
 msgid "Bracket nesting too deep (%d)"
 msgstr ""
 
-#: ../search.c:700
+#: ../search.c:698
 #, c-format
 msgid "Searching word: [%s]..."
 msgstr ""
 
-#: ../search.c:810
+#: ../search.c:808
 #, c-format
 msgid "Keyword [%s] not found in %s search"
 msgstr ""
 
-#: ../search.c:812
+#: ../search.c:810
 msgid "Bi-directional"
 msgstr ""
 
@@ -1053,34 +1057,34 @@ msgstr ""
 msgid "Input string cancelled"
 msgstr ""
 
-#: ../winin.c:344
+#: ../winin.c:355
 msgid "UP/PGUP:history, DOWN/PGDN:filer"
 msgstr ""
 
-#: ../winin.c:487
+#: ../winin.c:498
 msgid "Yes"
 msgstr ""
 
-#: ../winin.c:490
+#: ../winin.c:501
 msgid "No"
 msgstr ""
 
-#: ../winin.c:493
+#: ../winin.c:504
 msgid "All"
 msgstr ""
 
-#: ../winin.c:501
+#: ../winin.c:512
 msgid "Cancel"
 msgstr ""
 
-#: ../winin.c:503
+#: ../winin.c:514
 msgid "End"
 msgstr ""
 
-#: ../winin.c:506
+#: ../winin.c:517
 msgid "Undo"
 msgstr ""
 
-#: ../winin.c:509
+#: ../winin.c:520
 msgid "Redo"
 msgstr ""

@@ -38,7 +38,6 @@ int chk_inp_str_ret_val_filer(int ret)
 		// EF_CANCELLED, EF_QUIT ==> EF_NONE so that filer does not quit
 		filer_do_next = EF_NONE;
 	}
-flf_d_printf("filer_do_next: EF__%d\n", filer_do_next);
 	return !IS_EF_INPUT_XX(ret);
 }
 
@@ -630,7 +629,7 @@ int dof_unzip_file(void)
 		return 0;
 	}
 
-	fork_exec_sh_c_once(EX_LOGGING | EX_PAUSE, command_str);
+	fork_exec_sh_c_once(EX_PAUSE, command_str);
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
@@ -653,7 +652,7 @@ int dof_zip_file(void)
 		return 0;
 	}
 
-	fork_exec_sh_c_once(EX_LOGGING | EX_PAUSE, command_str);
+	fork_exec_sh_c_once(EX_PAUSE, command_str);
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }

@@ -50,11 +50,6 @@ typedef struct /*buf_state*/ {
 
 	unsigned char buf_MODIFIED:1;			// bit 4
 	unsigned char buf_LINE_WRAP_MODE:1;		// bit 5
-#if 0 // 0
-#define HV_IS_BOX	// HV is BOX-selection-mode, VH is CHAR-selection-mode
-#else
-#define VH_IS_BOX	// HV is LINE-selection-mode, VH is BOX-selection-mode
-#endif
 #define CUT_MODE_0_LINE			0	// no mark                                    (one line cut)
 #define CUT_MODE_N_LINE			1	// marking started but cursor not moved           (line cut)
 #define CUT_MODE_H_CHAR			2	//  and cursor moved horizontally                 (char cut)
@@ -204,13 +199,11 @@ int buf_guess_tab_size(be_buf_t *buf);
 
 int buf_count_lines(be_buf_t *buf, int max_lines);
 
-int buf_get_file_stat(be_buf_t *buf, const char* file_path);
-int buf_has_orig_file_updated(be_buf_t *buf, const char* file_path);
-
 const char *buf_mode_str(be_buf_t *buf);
 const char *buf_eol_str(be_buf_t *buf);
 const char *buf_enc_str(be_buf_t *buf);
 const char *buf_cut_mode_str(be_buf_t *buf);
+const char *get_cut_mode_str(int buf_CUT_MODE);
 
 //------------------------------------------------------------------------------
 void buf_fix_cur_line(be_buf_t *buf);
@@ -220,14 +213,23 @@ be_line_t *buf_move_cur_line_to_next(be_buf_t *buf);
 
 be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num);
 
+int buf_get_file_stat(be_buf_t *buf, const char* file_path);
+int buf_has_orig_file_updated(be_buf_t *buf, const char* file_path);
+
 void buf_update_crc(be_buf_t *buf);
 int buf_check_crc(be_buf_t *buf);
 UINT16 buf_calc_crc(be_buf_t *buf);
 
+void buf_clear_buf_modified(be_buf_t *buf);
+void buf_set_modified(be_buf_t *buf);
+int buf_get_modified(be_buf_t *buf);
+#define BUFFER_EXPIRATION_MSEC		1000		// 1000
+void buf_update_save_pending_timer(be_buf_t *buf);
+int buf_check_save_pending_timer(be_buf_t *buf, UINT16 msec);
 void buf_set_save_pending_timer(be_buf_t *buf, UINT16 timer);
 UINT16 buf_get_save_pending_timer(be_buf_t *buf);
 
-int buf_count_buf(be_buf_t *buf);
+int buf_count_bufs(be_buf_t *buf);
 be_buf_t *buf_make_buf_intermediate(be_buf_t *buf);
 be_buf_t *buf_get_another_buf(be_buf_t *buf);
 
@@ -247,7 +249,7 @@ void bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next);
 be_bufs_t *bufs_free_all_bufs(be_bufs_t *bufs);
 be_bufs_t *bufs_get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf);
 void bufs_fix_cur_buf(be_bufs_t *bufs);
-int bufs_count_buf(be_bufs_t *bufs);
+int bufs_count_bufs(be_bufs_t *bufs);
 
 //------------------------------------------------------------------------------
 be_buf_t *buf_get_buf_by_idx(be_buf_t *buf, int buf_idx);
@@ -277,7 +279,7 @@ void buf_dump_ptrs(be_buf_t *buf);
 void buf_dump_name(be_buf_t *buf);
 const char* buf_dump_buf_state(be_buf_t *buf);
 
-void bufs_dump_all_bufs(be_bufs_t *buf);
+void bufs_dump_all_bufs(be_bufs_t *bufs);
 void bufs_dump_name(be_bufs_t *bufs);
 
 #endif // ENABLE_DEBUG

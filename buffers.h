@@ -112,7 +112,6 @@ extern be_bufs_t cut_buffers;
 #define CUT_BUFS_BOT_BUF		NODES_BOT_NODE(&cut_buffers)
 #define CUT_BUFS_BOT_ANCH		NODES_BOT_ANCH(&cut_buffers)
 // current cut buffer ---------------------------------------------------------
-#define TOP_BUF_OF_CUT_BUFS		CUT_BUFS_TOP_BUF
 #define CUR_CUT_BUF_TOP_LINE	NODES_TOP_NODE(CUT_BUFS_TOP_BUF)	// (be_line_t*)
 #define CUR_CUT_BUF_BOT_ANCH	NODES_BOT_ANCH(CUT_BUFS_TOP_BUF)	// (be_line_t*)
 
@@ -225,11 +224,11 @@ be_buf_t *get_edit_buf_by_file_name(const char *file_name);
 void create_edit_buf(const char *file_path);
 
 be_line_t *append_string_to_cur_edit_buf(const char *string);
-int append_magic_line(void);
+int append_magic_line_if_necessary(void);
 
 int has_bufs_to_edit();
 int count_edit_bufs();
-int epc_buf_count_buf(void);
+int epc_buf_count_bufs(void);
 
 //------------------------------------------------------------------------------
 
@@ -238,7 +237,7 @@ int pop__free_from_cut_bufs(void);
 be_line_t *append_string_to_cur_cut_buf(const char *string);
 int count_cut_bufs(void);
 int count_cur_cut_buf_lines(void);
-void clear_all_cut_bufs(void);
+void clear_cut_bufs(void);
 
 //------------------------------------------------------------------------------
 
@@ -250,23 +249,23 @@ int check_cur_buf_modified(void);
 
 //------------------------------------------------------------------------------
 
-#define BUF_STATE(buf, var)					(&(buf)->buf_state)->var
-#define SET_BUF_STATE(buf, var, val)		(BUF_STATE(buf, var) = val)
-#define TOGGLE_BUF_STATE(buf, var)			(BUF_STATE(buf, var)++)
-#define INC_BUF_STATE(buf, var, min, max)	((++BUF_STATE(buf, var) <= (max)) \
- ? (BUF_STATE(buf, var)) : (BUF_STATE(buf, var) = (min)))
-#define CMP_BUF_STATE(buf, var, val)		(BUF_STATE(buf, var) == val)
+#define GET_BUF_STATE(buf, var)				(&(buf)->buf_state)->var
+#define SET_BUF_STATE(buf, var, val)		(GET_BUF_STATE(buf, var) = val)
+#define TOGGLE_BUF_STATE(buf, var)			(GET_BUF_STATE(buf, var)++)
+#define INC_BUF_STATE(buf, var, min, max)	((++GET_BUF_STATE(buf, var) <= (max)) \
+ ? (GET_BUF_STATE(buf, var)) : (GET_BUF_STATE(buf, var) = (min)))
+#define CMP_BUF_STATE(buf, var, val)		(GET_BUF_STATE(buf, var) == val)
 
 // current edit buffer state
-#define GET_CUR_EBUF_STATE(var)				BUF_STATE(get_epc_buf(), var)
+#define GET_CUR_EBUF_STATE(var)				GET_BUF_STATE(get_epc_buf(), var)
 #define SET_CUR_EBUF_STATE(var, val)		SET_BUF_STATE(get_epc_buf(), var, val)
 #define TOGGLE_CUR_EBUF_STATE(var)			TOGGLE_BUF_STATE(get_epc_buf(), var)
 #define INC_CUR_EBUF_STATE(var, min, max)	INC_BUF_STATE(get_epc_buf(), var, min, max)
 #define CMP_CUR_EBUF_STATE(var, val)		CMP_BUF_STATE(get_epc_buf(), var, val)
 
 // current cut buffer state
-#define CUR_CBUF_STATE(var)					BUF_STATE(TOP_BUF_OF_CUT_BUFS, var)
-#define SET_CUR_CBUF_STATE(var, val)		SET_BUF_STATE(TOP_BUF_OF_CUT_BUFS, var, val)
+#define CUR_CBUF_STATE(var)					GET_BUF_STATE(CUT_BUFS_TOP_BUF, var)
+#define SET_CUR_CBUF_STATE(var, val)		SET_BUF_STATE(CUT_BUFS_TOP_BUF, var, val)
 
 int inc_buf_mode(void);
 const char *get_str_buf_mode(void);
@@ -331,7 +330,10 @@ int doe_set_buf_enc_jis(void);
 int doe_set_buf_enc_binary(void);
 
 //------------------------------------------------------------------------------
+#define INTERNAL_FILE_NAME_PREFIX	"#"
+int is_internal_buf_file_name(const char* file_name);
 
+//------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 void dump_cur_edit_buf_lines(void);
 void dump_edit_bufs(void);

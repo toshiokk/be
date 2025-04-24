@@ -22,7 +22,7 @@
 #ifndef winin_h
 #define winin_h
 
-// EF__
+// editor_do_next_X, filer_do_next_X
 typedef enum {
 	EF_NONE						= 0,	// nothing done yet and nothing to do next
 										// in filer loop:

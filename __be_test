@@ -35,7 +35,7 @@ if [ -f ./be ]; then
   ##LANG=C.UTF-8 ./be -d "$@"
   ##./be -c -d "$@"
   if [ ! -f $HOME/.beexit ]; then
-    mv -f __be_test.log
+    mv -f __be_test.log __be_crash.log
   fi
 fi 2>__be_test.log
 

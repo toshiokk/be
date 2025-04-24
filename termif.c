@@ -36,14 +36,11 @@
 //   ESC [ 90m					// DNU: Linux console does NOT support this.
 //   ESC [ 100m					// DNU: Linux console does NOT support this.
 
-////#define TERMIF_MAX_SCRN_COLS		384		// = 1920[pixels] / 5[pixels/char] (Full HD)
-////#define TERMIF_MAX_SCRN_COLS		512		// = 2560[pixels] / 5[pixels/char] (WQXGA)
-#define TERMIF_MAX_SCRN_COLS		768		// = 3840[pixels] / 5[pixels/char] (4K landscape)
-////#define TERMIF_MAX_SCRN_COLS		1536	// = 7680[pixels] / 5[pixels/char] (8K landscape)
+//#define TERMIF_MAX_SCRN_COLS		768		// = 3840[pixels] / 5[pixels/char] (4K landscape)
+#define TERMIF_MAX_SCRN_COLS		1536	// = 7680[pixels] / 5[pixels/char] (8K landscape)
 
-////#define TERMIF_MAX_SCRN_LINES		108		// = 1080[pixels] / 10[pixels/char] (Full HD)
-#define TERMIF_MAX_SCRN_LINES		384		// = 3840[pixels] / 10[pixels/char] (4K portrait)
-////#define TERMIF_MAX_SCRN_LINES		768		// = 7680[pixels] / 10[pixels/char] (8K portrait)
+//#define TERMIF_MAX_SCRN_LINES		384		// = 3840[pixels] / 10[pixels/char] (4K portrait)
+#define TERMIF_MAX_SCRN_LINES		768		// = 7680[pixels] / 10[pixels/char] (8K portrait)
 
 #define TERMIF_LINE_BUF_LEN			(TERMIF_MAX_SCRN_COLS * MAX_UTF8C_BYTES)
 
@@ -184,7 +181,7 @@ int termif_get_screen_size_from_term(void)
 		send_cursor_pos_to_term(TERMIF_MAX_SCRN_LINES-1, TERMIF_MAX_SCRN_COLS-1);
 		if (receive_cursor_pos_from_term(&lines, &cols)) {
 			if (lines < TERMIF_MAX_SCRN_LINES && cols < TERMIF_MAX_SCRN_COLS) {
-mflf_d_printf("cols: %d, lines: %d\n", cols + 1, lines + 1);
+				mflf_d_printf("cols: %d, lines: %d\n", cols + 1, lines + 1);
 				termif_set_screen_size(lines + 1, cols + 1);
 				return 1;
 			}

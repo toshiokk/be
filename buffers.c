@@ -465,7 +465,7 @@ void create_edit_buf(const char *full_path)
 	be_buf_t *buf = buf_create_node(full_path, buf_MODE_EDIT);
 	// copy default encoding from EDIT_BUFS_BOT_ANCH
 #ifdef USE_NKF
-	SET_BUF_STATE(buf, buf_ENCODE, BUF_STATE(EDIT_BUFS_BOT_ANCH, buf_ENCODE));
+	SET_BUF_STATE(buf, buf_ENCODE, GET_BUF_STATE(EDIT_BUFS_BOT_ANCH, buf_ENCODE));
 #endif // USE_NKF
 	bufs_insert_buf_to_bottom(&edit_buffers, buf);
 	set_epc_buf(buf);
@@ -490,7 +490,7 @@ be_line_t *append_string_to_cur_edit_buf(const char *string)
 }
 
 // Append a new magic-line to the bottom of the current buffer
-int append_magic_line(void)
+int append_magic_line_if_necessary(void)
 {
 	if (buf_is_empty(get_epc_buf())
 	 || ((buf_is_empty(get_epc_buf()) == 0) && line_strlen(CUR_EDIT_BUF_BOT_LINE))) {
@@ -502,51 +502,56 @@ int append_magic_line(void)
 
 int has_bufs_to_edit(void)
 {
-	return (count_edit_bufs() > 0) || (epc_buf_count_buf() > 0);
+	return (count_edit_bufs() > 0) || (epc_buf_count_bufs() > 0);
 }
 int count_edit_bufs()
 {
-	return bufs_count_buf(&edit_buffers);
+	return bufs_count_bufs(&edit_buffers);
 }
-int epc_buf_count_buf(void)
+int epc_buf_count_bufs(void)
 {
-	return buf_count_buf(get_epc_buf());
+	return buf_count_bufs(get_epc_buf());
 }
 
 // Cut-buffers manipulation routines -----------------------------------------
 
 be_buf_t *push_cut_buf(void)
 {
-	be_buf_t *buf = buf_create_node(sprintf_s("#cut-buffer-%03d", count_cut_bufs()),
-	 buf_MODE_LIST);
+	be_buf_t *buf = buf_create_node(sprintf_s(INTERNAL_FILE_NAME_PREFIX "cut-buffer-%03d",
+	 count_cut_bufs()), buf_MODE_LIST);
 	bufs_insert_buf_to_top(&cut_buffers, buf);
 	// copy cut-mode to cut-buffer
 	SET_CUR_CBUF_STATE(buf_CUT_MODE, GET_CUR_EBUF_STATE(buf_CUT_MODE));
 	SET_CUR_CBUF_STATE(buf_MODE, buf_MODE_LIST);
+	set_cut_buffers_modified();
 	return buf;
 }
 int pop__free_from_cut_bufs(void)
 {
-	if (IS_NODE_BOT_ANCH(TOP_BUF_OF_CUT_BUFS))
+	if (IS_NODE_BOT_ANCH(CUT_BUFS_TOP_BUF))
 		return 0;
-	buf_unlink_free(TOP_BUF_OF_CUT_BUFS);
+	buf_unlink_free(CUT_BUFS_TOP_BUF);
+	set_cut_buffers_modified();
 	return 1;
 }
 be_line_t *append_string_to_cur_cut_buf(const char *string)
 {
-	return line_insert_with_string(CUR_CUT_BUF_BOT_ANCH, INSERT_BEFORE, string);
+	BUFVX_CL(CUT_BUFS_TOP_BUF, 0) = BUFVX_CL(CUT_BUFS_TOP_BUF, 1)
+	 = line_insert_with_string(CUR_CUT_BUF_BOT_ANCH, INSERT_BEFORE, string);
+	BUFVX_CLBI(CUT_BUFS_TOP_BUF, 0) = BUFVX_CLBI(CUT_BUFS_TOP_BUF, 1) = 0;
+	return BUFVX_CL(CUT_BUFS_TOP_BUF, 0);
 }
 int count_cut_bufs(void)
 {
-	return bufs_count_buf(&cut_buffers);
+	return bufs_count_bufs(&cut_buffers);
 }
 int count_cur_cut_buf_lines(void)
 {
-	return buf_count_lines(TOP_BUF_OF_CUT_BUFS, MAX_LINES_LOADABLE);
+	return buf_count_lines(CUT_BUFS_TOP_BUF, MAX_LINES_LOADABLE);
 }
-void clear_all_cut_bufs(void)
+void clear_cut_bufs(void)
 {
-	while (IS_NODE_INT(TOP_BUF_OF_CUT_BUFS)) {
+	while (IS_NODE_INT(CUT_BUFS_TOP_BUF)) {
 		pop__free_from_cut_bufs();
 	}
 }
@@ -583,7 +588,7 @@ int is_any_edit_buf_modified(void)
 {
 	for (be_buf_t *edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
 	 edit_buf = NODE_NEXT(edit_buf)) {
-		if (BUF_STATE(edit_buf, buf_MODIFIED)) {
+		if (GET_BUF_STATE(edit_buf, buf_MODIFIED)) {
 			return 1;
 		}
 	}
@@ -831,6 +836,11 @@ int doe_set_buf_enc_binary(void)
 	set_buf_enc_binary();
 	SHOW_MODE("BINARY format", get_str_buf_enc_binary());
 	return 0;
+}
+//------------------------------------------------------------------------------
+int is_internal_buf_file_name(const char* file_name)
+{
+	return (strlcmp__(file_name, INTERNAL_FILE_NAME_PREFIX) == 0);
 }
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG

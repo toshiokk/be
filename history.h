@@ -85,7 +85,7 @@ int select_from_history_list(int hist_type_idx, char *buffer);
 
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
-void dump_history_ix(int hist_type_idx);
+void dump_history_idx(int hist_type_idx);
 void dump_hist_bufs(void);
 void dump_hist_bufs_lines(void);
 #endif // ENABLE_DEBUG
