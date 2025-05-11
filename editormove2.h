@@ -23,7 +23,8 @@
 #define editormove2_h
 
 #define VERT_SCROLL_MERGIN				3
-#define LIMIT_MAX_VERT_SCROLL_LINES		25		// define this to limit vert scroll lines
+// define this to limit the number of vertical scroll lines in large screen
+#define LIMIT_MAX_VERT_SCROLL_LINES		25
 
 //           +-----------------------------------+
 // 0         |                                   |
@@ -67,14 +68,14 @@ void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_
  locate_cursor_to_t locate_cursor, int update_needed);
 
 void locate_curs_y_in_edit_win(locate_cursor_to_t locate_curs);
-void fix_cursor_y_keeping_vert_scroll_margin(void);
+void fix_cursor_y_keeping_vert_scroll_margin();
 
-void memorize_cursor_pos_before_move(void);
-int get_disp_y_after_cursor_move(void);
+void memorize_cursor_pos_before_move();
+int get_disp_y_after_cursor_move();
 
 int get_edit_win_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *byte_idx);
 
-void adjust_curs_pos_after_cursor_move(cursor_horiz_vert_move_t cursor_move);
+void update_text_x_to_keep_after_cursor_move(cursor_horiz_vert_move_t cursor_move);
 
 void update_min_text_x_to_keep(int text_x);
 

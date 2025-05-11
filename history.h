@@ -58,10 +58,10 @@
 #define MAX_HISTORY_LINES		1000
 #define MAX_HISTORY_LINES_10K	10000
 
-void init_histories(void);
+void init_histories();
 
-void load_histories(void);
-void save_histories(void);
+void load_histories();
+void save_histories();
 
 void update_history(int hist_type_idx, const char *str);
 void append_history(int hist_type_idx, const char *str);
@@ -86,8 +86,8 @@ int select_from_history_list(int hist_type_idx, char *buffer);
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 void dump_history_idx(int hist_type_idx);
-void dump_hist_bufs(void);
-void dump_hist_bufs_lines(void);
+void dump_hist_bufs();
+void dump_hist_bufs_lines();
 #endif // ENABLE_DEBUG
 
 #endif // ENABLE_HISTORY

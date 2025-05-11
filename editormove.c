@@ -75,7 +75,7 @@ int easy_buffer_switching_check(easy_buffer_switching_t top_bottom)
 }
 
 //------------------------------------------------------------------------------
-int doe_left(void)
+int doe_left()
 {
 	if (is_app_chooser_mode()) {
 		return doe_switch_to_prev_buffer();
@@ -86,7 +86,7 @@ int doe_left(void)
 	return 1;
 }
 
-int doe_right(void)
+int doe_right()
 {
 	if (is_app_chooser_mode()) {
 		return doe_switch_to_next_buffer();
@@ -113,7 +113,7 @@ PRIVATE int get_char_type(char chr)
 }
 
 // go to previous word
-int doe_prev_word(void)
+int doe_prev_word()
 {
 	if (EPCBVC_CLBI > 0) {
 		// is head of the word ?
@@ -138,7 +138,7 @@ int doe_prev_word(void)
 	return 0;
 }
 // go to next word
-int doe_next_word(void)
+int doe_next_word()
 {
 	int chr_type;
 
@@ -158,14 +158,14 @@ int doe_next_word(void)
 	return 0;
 }
 
-int doe_start_of_line(void)
+int doe_start_of_line()
 {
 	EPCBVC_CLBI = 0;
 
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
 	return 1;
 }
-int doe_end_of_line(void)
+int doe_end_of_line()
 {
 	EPCBVC_CLBI = line_strlen(EPCBVC_CL);
 
@@ -174,8 +174,8 @@ int doe_end_of_line(void)
 }
 
 //------------------------------------------------------------------------------
-PRIVATE void doe_up_(void);
-int doe_up(void)
+PRIVATE void doe_up_();
+int doe_up()
 {
 	if (GET_APPMD(ed_DUAL_SCROLL) == 0) {
 		doe_up_();
@@ -187,7 +187,7 @@ int doe_up(void)
 	}
 	return 1;
 }
-PRIVATE void doe_up_(void)
+PRIVATE void doe_up_()
 {
 	if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI)) {
 		EPCBVC_CURS_Y--;
@@ -201,8 +201,8 @@ PRIVATE void doe_up_(void)
 	}
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
-PRIVATE void doe_down_(void);
-int doe_down(void)
+PRIVATE void doe_down_();
+int doe_down()
 {
 	if (GET_APPMD(ed_DUAL_SCROLL) == 0) {
 		doe_down_();
@@ -214,7 +214,7 @@ int doe_down(void)
 	}
 	return 1;
 }
-PRIVATE void doe_down_(void)
+PRIVATE void doe_down_()
 {
 	if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI)) {
 		EPCBVC_CURS_Y++;
@@ -229,8 +229,8 @@ PRIVATE void doe_down_(void)
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 
-PRIVATE void doe_page_up_(void);
-int doe_page_up(void)
+PRIVATE void doe_page_up_();
+int doe_page_up()
 {
 	if (GET_APPMD(ed_DUAL_SCROLL) == 0) {
 		doe_page_up_();
@@ -242,13 +242,13 @@ int doe_page_up(void)
 	}
 	return 1;
 }
-PRIVATE void doe_page_up_(void)
+PRIVATE void doe_page_up_()
 {
 	if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI)) {
-		EPCBVC_CURS_Y--;
+///PPP		EPCBVC_CURS_Y--;
 		int lines = editor_vert_scroll_lines() - 1;
 		for (int cnt = 0; cnt < lines; cnt++) {
-			EPCBVC_CURS_Y--;
+///PPP			EPCBVC_CURS_Y--;
 			if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 				break;
 			}
@@ -264,8 +264,8 @@ PRIVATE void doe_page_up_(void)
 	}
 }
 
-PRIVATE int doe_page_down_(void);
-int doe_page_down(void)
+PRIVATE int doe_page_down_();
+int doe_page_down()
 {
 	if (GET_APPMD(ed_DUAL_SCROLL) == 0) {
 		doe_page_down_();
@@ -277,13 +277,13 @@ int doe_page_down(void)
 	}
 	return 1;
 }
-PRIVATE int doe_page_down_(void)
+PRIVATE int doe_page_down_()
 {
 	if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI)) {
-		EPCBVC_CURS_Y++;
+///PPP		EPCBVC_CURS_Y++;
 		int lines = editor_vert_scroll_lines() - 1;
 		for (int cnt = 0; cnt < lines; cnt++) {
-			EPCBVC_CURS_Y++;
+///PPP			EPCBVC_CURS_Y++;
 			if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 				break;
 			}
@@ -300,13 +300,13 @@ PRIVATE int doe_page_down_(void)
 	return 1;
 }
 
-int doe_first_line(void)
+int doe_first_line()
 {
 	first_line();
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_TOP, UPDATE_SCRN_ALL);
 	return 1;
 }
-int doe_last_line(void)
+int doe_last_line()
 {
 	last_line();
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_BOTTOM, UPDATE_SCRN_ALL);
@@ -316,7 +316,7 @@ int doe_last_line(void)
 PRIVATE int do_enter_char(char chr);
 PRIVATE int do_enter_utf8s(const char *utf8s);
 PRIVATE int do_enter_utf8c(const char *utf8c);
-int doe_control_code(void)
+int doe_control_code()
 {
 	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
@@ -330,7 +330,7 @@ int doe_control_code(void)
 	}
 	return 1;
 }
-int doe_charcode(void)
+int doe_charcode()
 {
 	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
@@ -352,7 +352,7 @@ int doe_charcode(void)
 	return 0;
 }
 
-int doe_paste_from_history(void)
+int doe_paste_from_history()
 {
 	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
@@ -368,7 +368,7 @@ int doe_paste_from_history(void)
 	return 0;
 }
 
-int doe_tab(void)
+int doe_tab()
 {
 	return do_enter_char('\t');
 }
@@ -390,7 +390,7 @@ int doe_buffer_utf8c_bytes(char chr)
 	}
 	return 1;
 }
-int doe_enter_buffered_utf8c_bytes(void)
+int doe_enter_buffered_utf8c_bytes()
 {
 	if (utf8s_send_buf_bytes == 0) {
 		return 0;	// no character sent
@@ -448,11 +448,8 @@ PRIVATE int do_enter_utf8c(const char *utf8c)
 	return 1;
 }
 
-int doe_carriage_return(void)
+int doe_carriage_return()
 {
-	const char *ptr_s, *ptr_d;
-	int len_s, len_d;
-
 	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
 	}
@@ -471,11 +468,13 @@ int doe_carriage_return(void)
 	// >^bbbb
 
 	if (GET_APPMD(ed_AUTO_INDENT)) {
+		const char *ptr_s, *ptr_d;
 		// autoindent: auto insert the previous lines preceeding spaces to the next line
 		ptr_s = NODE_PREV(EPCBVC_CL)->data;
 		SKIP_SPACE(ptr_s);
 		ptr_d = EPCBVC_CL->data; 
 		SKIP_SPACE(ptr_d);
+		int len_s, len_d;
 		len_s = ptr_s - NODE_PREV(EPCBVC_CL)->data;
 		len_d = ptr_d - EPCBVC_CL->data;
 		line_string_replace(EPCBVC_CL, 0, len_d, NODE_PREV(EPCBVC_CL)->data, len_s);
@@ -492,26 +491,26 @@ int doe_carriage_return(void)
 	}
 	return 1;
 }
-int doe_carriage_return_with_auto_indent(void)
+int doe_carriage_return_with_auto_indent()
 {
 	if (doe_carriage_return() == 0) {
 		return 0;
 	}
-	// TODO: auto indent if not already indented
+	// TODO: auto indent only if not already indented
 	for (int tab = 0; tab < GET_CUR_EBUF_STATE(buf_TAB_SIZE); tab++) {
 		do_enter_char(' ');
 	}
 	return 1;
 }
 
-int doe_backspace_limited(void)
+int doe_backspace_limited()
 {
 	if (EPCBVC_CLBI <= 0) {
 		return 0;
 	}
 	return doe_backspace();
 }
-int doe_backspace(void)
+int doe_backspace()
 {
 	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
@@ -549,7 +548,7 @@ int doe_backspace(void)
 	return 1;
 }
 
-int doe_delete_char(void)
+int doe_delete_char()
 {
 	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
@@ -607,15 +606,15 @@ PRIVATE int doe_conv_upp_low_letter_(char mode);
 PRIVATE void change_str_letters(char *str, size_t len, char mode);
 #endif // CAMEL_CASE
 
-int doe_conv_upp_low_letter(void)
+int doe_conv_upp_low_letter()
 {
 	return doe_conv_upp_low_letter_(LETTER_BIDIR);
 }
-int doe_conv_upp_letter(void)
+int doe_conv_upp_letter()
 {
 	return doe_conv_upp_low_letter_(LETTER_TO_UPP);
 }
-int doe_conv_low_letter(void)
+int doe_conv_low_letter()
 {
 	return doe_conv_upp_low_letter_(LETTER_TO_LOW);
 }
@@ -756,7 +755,7 @@ PRIVATE int doe_fill_spaces_to_columns__(int column_idx)
 	return 0;
 }
 //------------------------------------------------------------------------------
-int doe_refresh_editor(void)
+int doe_refresh_editor()
 {
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
@@ -789,8 +788,7 @@ int move_cursor_left(int move_disp_y)
 	}
 	return 1;
 }
-
-int move_cursor_right(void)
+int move_cursor_right()
 {
 	if (EPCBVC_CLBI < line_strlen(EPCBVC_CL)) {
 		int wl_idx = start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
@@ -855,7 +853,8 @@ int cur_line_down(be_line_t **line, int *byte_idx)
 	*byte_idx = line_byte_idx;
 	return 1;
 }
-int next_line(void)
+//------------------------------------------------------------------------------
+int next_line()
 {
 	if (IS_NODE_BOT_MOST(EPCBVC_CL)) {
 		return 0;
@@ -865,11 +864,11 @@ int next_line(void)
 	return IS_NODE_BOT_MOST(EPCBVC_CL) ? 1 : 2;
 }
 //------------------------------------------------------------------------------
-void first_line(void)
+void first_line()
 {
 	EPCBVC_CL = CUR_EDIT_BUF_TOP_LINE;
 }
-void last_line(void)
+void last_line()
 {
 	EPCBVC_CL = CUR_EDIT_BUF_BOT_LINE;
 }

@@ -558,9 +558,9 @@ typedef struct {
 	char *explanation;			// explanation
 #define MAX_KEYS_BIND	3
 	key_code_t keys[MAX_KEYS_BIND];
-	int (*func)(void);
+	int (*func)();
 	char *func_id;
-	const char *(*func_get)(void);	// function to get assigned value
+	const char *(*func_get)();	// function to get assigned value
 } func_key_list_t;
 
 #define MAX_KEY_NAME_LEN	8		// "MC-UNDLN"
@@ -574,7 +574,7 @@ extern key_name_table_t key_name_table[];
 
 #define KEY_CODE_STR_LEN	(1+MAX_KEY_NAME_LEN+1+1)	// "(MC-UNDLN)"
 
-func_key_list_t *get_app_func_key_table(void);
+func_key_list_t *get_app_func_key_table();
 
 int cmp_func_id(const char *func_id_1, const char *func_id_2);
 void *get_app_function_for_key(key_code_t key);
@@ -594,8 +594,8 @@ void bind_key_to_func(func_key_list_t *fkey_list, key_code_t *keys);
 const char *short_key_name_from_func_id(char *buf);
 
 void set_menu_key(key_code_t key);
-key_code_t get_menu_key(void);
-void set_menu_key_for_do_app_menu_0(void);
+key_code_t get_menu_key();
+void set_menu_key_for_do_app_menu_0();
 
 void clear_whole_screen_update_timer();
 int check_whole_screen_update_timer();
@@ -603,14 +603,14 @@ int check_whole_screen_update_timer();
 void update_msec_when_input_key();
 unsigned long msec_past_input_key();
 
-key_code_t input_key_loop(void);
-key_code_t input_unmapped_key_loop(void);
-key_code_t input_key_wait_return(void);
-key_code_t input_key_macro(void);
+key_code_t input_key_loop();
+key_code_t input_unmapped_key_loop();
+key_code_t input_key_wait_return();
+key_code_t input_key_macro();
 
-void begin_check_break_key(void);
-void end_check_break_key(void);
-int check_break_key(void);
+void begin_check_break_key();
+void end_check_break_key();
+int check_break_key();
 
 key_code_t map_key_code(key_code_t key);
 
@@ -624,7 +624,7 @@ const char *short_key_name_from_key_name(const char *key_name, char *buf);
 key_code_t key_code_from_key_name(char *key_name);
 key_code_t key_code_from_short_key_name(char *short_key_name);
 
-int get_key_name_table_entries(void);
+int get_key_name_table_entries();
 
 int is_key_ctrl(key_code_t key);
 int is_key_graph(key_code_t key);

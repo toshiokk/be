@@ -50,7 +50,9 @@ void die_on(const char *msg);
 #define char_malloc(bytes)			(char *)malloc__(bytes)
 #define char_remalloc(ptr, bytes)	(char *)remalloc__(ptr, bytes)
 
-////#define MEMORY_LEAK_CHECKER
+#ifdef ENABLE_DEBUG
+////#define MEMORY_LEAK_CHECKER		// define this to check memory leak
+#endif // ENABLE_DEBUG
 #ifndef MEMORY_LEAK_CHECKER
 
 #define _mlc_init
@@ -112,20 +114,20 @@ UINT16 get_crc16ccitt();
 #define HHCMMCSS_LEN			8	// "23:59:59"
 #define HHCMMCSS_YYSMMSDD_LEN	8	// "23:59:59" / "24/10/09"
 const char *cur_ctime_cdate(int time0_date1);
-const char *cur_cdate(void);
-const char *cur_ctime(void);
-const char *cur_hhmmss(void);
-const char *cur_yymmdd_hhmmss(void);
+const char *cur_cdate();
+const char *cur_ctime();
+const char *cur_hhmmss();
+const char *cur_yymmdd_hhmmss();
 
 #define USEC_VAR	long usec = get_usec();
 #define USEC_BEGIN	usec = get_usec();
 #define USEC_END	flf_d_printf("%d[usec]\n", get_usec() - usec); USEC_BEGIN
 char *get_ssspuuuuuu(char *buf);
 char *get_sssssspmmm(char *buf);
-unsigned long get_msec(void);
-unsigned long get_usec(void);
-const char *cur_hhcmmcss_mmm(void);
-const char *cur_hhcmmcss_uuuuuu(void);
+unsigned long get_msec();
+unsigned long get_usec();
+const char *cur_hhcmmcss_mmm();
+const char *cur_hhcmmcss_uuuuuu();
 
 #define MSLEEP(msec)		usleep((msec) * 1000);
 
@@ -149,15 +151,15 @@ int int_max(int aa, int bb);
 int get_mem_free_in_kb(int update);
 
 #ifdef START_UP_TEST
-void test_zz_from_num(void);
+void test_zz_from_num();
 #endif // START_UP_TEST
 char *zz_from_num(int num, char *buf);
 
 const char *get_user_name(uid_t uid);
 const char *get_user_home_dir(const char *user_name);
 const char *get_group_name(gid_t gid);
-int cache_users(void);
-int cache_groups(void);
+int cache_users();
+int cache_groups();
 
 const char *get_at_host_name();
 const char *get_host_name();

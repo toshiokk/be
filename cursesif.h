@@ -39,15 +39,15 @@
 
 //------------------------------------------------------------------------------
 
-int curses_init(void);
-int curses_begin(void);
-int curses_end(void);
+int curses_init();
+int curses_begin();
+int curses_end();
 
 void curses_set_screen_size(int lines, int columns);
-int curses_get_lines(void);
-int curses_get_columns(void);
+int curses_get_lines();
+int curses_get_columns();
 
-void curses_clear_screen(void);
+void curses_clear_screen();
 void curses_set_cursor_on(int on_off);
 void curses_set_cursor_pos(int yy, int xx);
 void curses_get_cursor_pos(int *yy, int *xx);
@@ -55,10 +55,10 @@ void curses_get_cursor_pos(int *yy, int *xx);
 void curses_set_attrs(int bgc, int fgc, int rev);
 
 void curses_output_string(int yy, int xx, const char *string, int bytes);
-void curses_beep(void);
-void curses_refresh(void);
+void curses_beep();
+void curses_refresh();
 
-key_code_t curses_input_key(void);
+key_code_t curses_input_key();
 
 #endif // cursesif_h
 

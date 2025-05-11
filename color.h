@@ -80,15 +80,15 @@ extern file_type_t *cur_file_type;
 extern file_type_t *default_color_syntax;
 #endif // ENABLE_SYNTAX
 
-void init_default_app_color(void);
+void init_default_app_color();
 void set_work_space_color_on_app_list_mode();
 
-void set_work_space_color_dark(void);
-void clear_work_space_color_dark(void);
-int is_work_space_color_dark(void);
+void set_work_space_color_dark();
+void clear_work_space_color_dark();
+int is_work_space_color_dark();
 
-void set_work_space_color_warn(void);
-int is_work_space_color_warn(void);
+void set_work_space_color_warn();
+int is_work_space_color_warn();
 
 void register_item_color(item_color_idx_t color_idx, int bgc, int fgc);
 void get_item_color_by_idx(item_color_idx_t color_idx, char *bgc, char *fgc);
@@ -96,11 +96,11 @@ void set_item_color_by_idx(item_color_idx_t color_idx, int reverse);
 void set_item_color_ptr(const item_color_t *item_color, int reverse);
 
 #ifdef ENABLE_SYNTAX
-int set_file_type_and_tab_size_by_cur_file_path(void);
-int set_file_type_by_cur_file_path(void);
+int set_file_type_and_tab_size_by_cur_file_path();
+int set_file_type_by_cur_file_path();
 int set_file_type_by_file_name(const char *file_path);
-const color_syntax_t *get_color_syntax_head(void);
-const color_syntax_t *get_default_color_syntax_head(void);
+const color_syntax_t *get_color_syntax_head();
+const color_syntax_t *get_default_color_syntax_head();
 #endif // ENABLE_SYNTAX
 
 int display_color_pairs(int yy, int xx);

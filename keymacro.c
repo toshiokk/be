@@ -42,7 +42,7 @@ void load_last_key_macro(int last_n)
 	 MAX_PATH_LEN);
 	key_strokes_recorded = get_key_macro_from_string(key_macro_loaded, key_codes_recorded);
 }
-void update_key_macro_history(void)
+void update_key_macro_history()
 {
 	update_history(HISTORY_TYPE_IDX_KEYMACRO,
 	 get_string_from_key_macro(key_codes_recorded, key_strokes_recorded));
@@ -51,7 +51,7 @@ void update_key_macro_history(void)
 
 //------------------------------------------------------------------------------
 // start/abort recording
-int doe_start_rec__cancel_rec(void)
+int doe_start_rec__cancel_rec()
 {
 	if (key_macro_is_recording() == 0) {
 		doe_start_recording();
@@ -61,7 +61,7 @@ int doe_start_rec__cancel_rec(void)
 	return 0;
 }
 // end recording/start playback
-int doe_end_rec__playback(void)
+int doe_end_rec__playback()
 {
 	if (key_macro_is_recording()) {
 		doe_end_recording();
@@ -72,7 +72,7 @@ int doe_end_rec__playback(void)
 }
 //------------------------------------------------------------------------------
 PRIVATE int start_playback_last_n(int last_n);
-int doe_start_recording(void)
+int doe_start_recording()
 {
 	disp_status_bar_done(_("Start key macro recording"));
 	key_macro_start_recording();
@@ -81,7 +81,7 @@ int doe_start_recording(void)
 	tio_refresh();
 	return 0;
 }
-int doe_cancel_recording(void)
+int doe_cancel_recording()
 {
 	disp_status_bar_done(_("Cancel key macro recording"));
 	key_macro_cancel_recording();
@@ -90,7 +90,7 @@ int doe_cancel_recording(void)
 	tio_refresh();
 	return 0;
 }
-int doe_end_recording(void)
+int doe_end_recording()
 {
 	disp_status_bar_done(_("End key macro recording"));
 	key_macro_end_recording();
@@ -103,13 +103,13 @@ int doe_end_recording(void)
 	tio_refresh();
 	return 0;
 }
-int doe_playback_last_1(void)
+int doe_playback_last_1()
 {
 	disp_status_bar_ing(_("Start playing back 1st latest key macro"));
 	start_playback_last_n(1);
 	return 0;
 }
-int doe_playback_last_2(void)
+int doe_playback_last_2()
 {
 	disp_status_bar_ing(_("Start playing back 2nd latest key macro"));
 	start_playback_last_n(2);
@@ -124,7 +124,7 @@ PRIVATE int start_playback_last_n(int last_n)
 	return 0;
 }
 #ifdef ENABLE_HISTORY
-int doe_playback_string(void)
+int doe_playback_string()
 {
 	if (chk_inp_str_ret_val_editor(input_string_pos(key_macro_loaded,
 	 key_macro_loaded, MAX_PATH_LEN,
@@ -136,7 +136,7 @@ int doe_playback_string(void)
 	return 0;
 }
 #endif // ENABLE_HISTORY
-void key_macro_start_recording(void)
+void key_macro_start_recording()
 {
 	key_strokes_recording = 0;		// start recording
 	start_title_bar_blinking();
@@ -150,22 +150,22 @@ void key_macro_put_key(key_code_t key)
 			key_codes_recording[key_strokes_recording++] = key;
 	}
 }
-void key_macro_delete_last_key(void)
+void key_macro_delete_last_key()
 {
 	if (key_strokes_recording > 0) {
 		key_strokes_recording--;	// cancel the last key (End-rec Key)
 	}
 }
-int key_macro_is_recording(void)
+int key_macro_is_recording()
 {
 	return key_strokes_recording >= 0;
 }
-void key_macro_cancel_recording(void)
+void key_macro_cancel_recording()
 {
 	key_strokes_recording = -1;		// abort recording
 	stop_title_bar_blinking();
 }
-void key_macro_end_recording(void)
+void key_macro_end_recording()
 {
 	if (key_macro_is_recording()) {
 		key_macro_delete_last_key();	// cancel the last key (End-rec Key)
@@ -178,7 +178,7 @@ void key_macro_end_recording(void)
 }
 
 //------------------------------------------------------------------------------
-int key_macro_start_playback(void)
+int key_macro_start_playback()
 {
 	if (key_macro_is_recording()) {
 		key_macro_delete_last_key();	// cancel the last key (Start-playback Key)
@@ -188,7 +188,7 @@ int key_macro_start_playback(void)
 	}
 	return key_strokes_recorded;
 }
-key_code_t key_macro_get_key(void)
+key_code_t key_macro_get_key()
 {
 	key_code_t key = K_NONE;
 	if (key_macro_is_playing_back()) {
@@ -203,11 +203,11 @@ key_code_t key_macro_get_key(void)
 	}
 	return key;
 }
-void key_macro_end_playback(void)
+void key_macro_end_playback()
 {
 	key_strokes_playing_back = -1;		// stop playback
 }
-int key_macro_is_playing_back(void)
+int key_macro_is_playing_back()
 {
 	return key_strokes_playing_back >= 0;
 }

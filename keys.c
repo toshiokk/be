@@ -22,7 +22,7 @@
 
 #include "headers.h"
 
-func_key_list_t *get_app_func_key_table(void)
+func_key_list_t *get_app_func_key_table()
 {
 #ifdef ENABLE_FILER
 	if (GET_APPMD(app_EDITOR_FILER) == 0) {
@@ -209,7 +209,7 @@ void set_menu_key(key_code_t key)
 {
 	menu_key = key;
 }
-key_code_t get_menu_key(void)
+key_code_t get_menu_key()
 {
 	key_code_t key = K_NONE;
 	if (menu_key >= 0) {
@@ -219,7 +219,7 @@ key_code_t get_menu_key(void)
 	return key;
 }
 
-void set_menu_key_for_do_app_menu_0(void)
+void set_menu_key_for_do_app_menu_0()
 {
 #ifndef ENABLE_FILER
 	set_menu_key(get_key_for_func_id("doe_menu_0"));
@@ -253,17 +253,17 @@ unsigned long msec_past_input_key()
 	return get_msec() - msec_when_input_key;
 }
 
-PRIVATE key_code_t input_key_timeout(void);
-PRIVATE key_code_t input_key_check_break_key(void);
+PRIVATE key_code_t input_key_timeout();
+PRIVATE key_code_t input_key_check_break_key();
 
-key_code_t input_key_loop(void)
+key_code_t input_key_loop()
 {
 	key_code_t key;
 	while ((key = input_key_wait_return()) < 0) {
 	}
 	return key;
 }
-key_code_t input_unmapped_key_loop(void)
+key_code_t input_unmapped_key_loop()
 {
 	key_code_t key;
 	while ((key = tio_input_key()) < 0) {
@@ -275,7 +275,7 @@ key_code_t input_unmapped_key_loop(void)
 // |-----------------------|-----------------|
 // | repaint all of screen | 10000           |
 //
-key_code_t input_key_wait_return(void)
+key_code_t input_key_wait_return()
 {
 	static key_code_t prev_key = KEY_NONE;
 	key_code_t key = input_key_timeout();
@@ -302,7 +302,7 @@ key_code_t input_key_wait_return(void)
 //
 #define DEFAULT_KEY_WAIT_MSEC		1000	// return every 1[Sec]
 #define KEY_MACRO_KEY_WAIT_MSEC		200		// fast title bar blinking
-PRIVATE key_code_t input_key_timeout(void)
+PRIVATE key_code_t input_key_timeout()
 {
 	long key_wait_time_msec = DEFAULT_KEY_WAIT_MSEC;
 	if (key_macro_is_recording()) {
@@ -326,7 +326,7 @@ PRIVATE key_code_t input_key_timeout(void)
 	return key;
 }
 
-key_code_t input_key_macro(void)
+key_code_t input_key_macro()
 {
 	key_code_t key = K_NONE;
 	if (IS_KEY_VALID(key = get_menu_key())) {
@@ -350,25 +350,25 @@ PRIVATE int key_codes_saved = -1;			// >=0: saving,    -1: not recording
 PRIVATE int key_codes_restored = -1;		// >=0: restoring, -1: not restoring
 #define MAX_KEY_STROKES_CHECK_BREAK_KEY		40
 PRIVATE key_code_t key_codes_check_break_key[MAX_KEY_STROKES_CHECK_BREAK_KEY+1];
-PRIVATE int is_saving_check_break_key(void);
-PRIVATE int is_restoring_check_break_key(void);
+PRIVATE int is_saving_check_break_key();
+PRIVATE int is_restoring_check_break_key();
 
-PRIVATE int is_saving_check_break_key(void)
+PRIVATE int is_saving_check_break_key()
 {
 	return (0 <= key_codes_saved && key_codes_saved < MAX_KEY_STROKES_CHECK_BREAK_KEY)
 	 && (is_restoring_check_break_key() == 0);
 }
-PRIVATE int is_restoring_check_break_key(void)
+PRIVATE int is_restoring_check_break_key()
 {
 	return (0 <= key_codes_restored && key_codes_restored < key_codes_saved);
 }
-void begin_check_break_key(void)
+void begin_check_break_key()
 {
 	key_codes_saved = 0;		// start saving
 	key_codes_restored = -1;	// stop restoration
 	clear_sigint_signaled();
 }
-void end_check_break_key(void)
+void end_check_break_key()
 {
 	if (key_codes_saved > 0) {
 		key_codes_restored = 0;		// start restoring
@@ -377,7 +377,7 @@ void end_check_break_key(void)
 		key_codes_restored = -1;	// stop restoration
 	}
 }
-int check_break_key(void)
+int check_break_key()
 {
 	if (is_saving_check_break_key()) {
 		if (input_key_check_break_key() == K_C_C) {	// Ctrl-C key is break key
@@ -387,7 +387,7 @@ flf_d_printf("sigint_signaled\n");
 	}
 	return is_sigint_signaled();
 }
-PRIVATE key_code_t input_key_check_break_key(void)
+PRIVATE key_code_t input_key_check_break_key()
 {
 	key_code_t key;
 	if (is_restoring_check_break_key()) {
@@ -845,7 +845,7 @@ key_code_t key_code_from_short_key_name(char *short_key_name)
 	return -1;
 }
 
-int get_key_name_table_entries(void)
+int get_key_name_table_entries()
 {
 	return ARRAY_SIZE_OF(key_name_table);
 }

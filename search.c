@@ -48,21 +48,21 @@ PRIVATE int direction_of_prev_search = 0;
 PRIVATE be_line_t *line_of_prev_search = NULL;
 PRIVATE int byte_idx_of_prev_search = 0;
 
-PRIVATE int doe_search_first_(void);
+PRIVATE int doe_search_first_();
 PRIVATE int input_search_str(int search0_replace1, char *input_buf);
 PRIVATE int input_replace_str(char *input_buf);
 
-int doe_search_backward_first(void)
+int doe_search_backward_first()
 {
 	SET_APPMD(ed_REVERSE_SEARCH);
 	return doe_search_first_();
 }
-int doe_search_forward_first(void)
+int doe_search_forward_first()
 {
 	CLR_APPMD(ed_REVERSE_SEARCH);
 	return doe_search_first_();
 }
-PRIVATE int doe_search_first_(void)
+PRIVATE int doe_search_first_()
 {
 	char needle[MAX_PATH_LEN+1];
 	if (input_search_str(SEARCH0, needle) <= 0) {
@@ -76,12 +76,12 @@ PRIVATE int doe_search_first_(void)
 	TOGGLE_APPMD(ed_REVERSE_SEARCH);
 	return search_string_once(needle, 1);
 }
-int doe_search_backward_next(void)
+int doe_search_backward_next()
 {
 	SET_APPMD(ed_REVERSE_SEARCH);
 	return search_string_once(get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH), 0);
 }
-int doe_search_forward_next(void)
+int doe_search_forward_next()
 {
 	CLR_APPMD(ed_REVERSE_SEARCH);
 	return search_string_once(get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH), 0);
@@ -89,12 +89,8 @@ int doe_search_forward_next(void)
 
 //------------------------------------------------------------------------------
 
-// TODO: search wrap around of files
-//  on forward search, end of the last file ==> top of the first file
-//  on reverse search, top of the first file ==> end of the last file
-
 // Replace a string
-int doe_replace(void)
+int doe_replace()
 {
 	char replace_from[MAX_PATH_LEN+1];
 	char replace_to[MAX_PATH_LEN+1];
@@ -433,19 +429,19 @@ PRIVATE int do_find_bracket_(int search1_hilight0, int reverse_pair);
 // )))))))))))))))))))))))))))))))))))))))))))))))))))
 // {{}}} <<>>> {{{}} <<<>>
 // }}{{{ }}}{{ >><<< >>><<
-int doe_find_bracket(void)
+int doe_find_bracket()
 {
 	return do_find_bracket_(1, FORWARD_SEARCH);
 }
-int doe_find_bracket_reverse(void)
+int doe_find_bracket_reverse()
 {
 	return do_find_bracket_(1, BACKWARD_SEARCH);
 }
-int doe_highlight_bracket(void)
+int doe_highlight_bracket()
 {
 	return do_find_bracket_(0, FORWARD_DIR);
 }
-int doe_highlight_bracket_reverse(void)
+int doe_highlight_bracket_reverse()
 {
 	return do_find_bracket_(0, BACKWARD_DIR);
 }
@@ -709,6 +705,9 @@ PRIVATE int search_needle_in_buffers(
 	return 0;
 }
 
+// search wrap around of files
+//  on forward search, end of the last file ==> top of the first file
+//  on reverse search, top of the first file ==> end of the last file
 // search keyword in buffer (when global_search is false) or buffers (when true).
 // when keyword not found, return to original cursor position.
 // WARNING: When "global_search" is true, epc_buf may be changed.

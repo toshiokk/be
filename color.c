@@ -74,7 +74,7 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 };
 
 // Initialize with default application color set.
-void init_default_app_color(void)
+void init_default_app_color()
 {
 	memcpy__(item_colors, default_item_colors, sizeof(default_item_colors));
 }
@@ -89,25 +89,25 @@ void set_work_space_color_on_app_list_mode()
 }
 
 PRIVATE char work_space_color_dark = 0;
-void set_work_space_color_dark(void)
+void set_work_space_color_dark()
 {
 	work_space_color_dark = 1;
 }
-void clear_work_space_color_dark(void)
+void clear_work_space_color_dark()
 {
 	work_space_color_dark = 0;
 }
-int is_work_space_color_dark(void)
+int is_work_space_color_dark()
 {
 	return work_space_color_dark;
 }
 
 PRIVATE char work_space_color_warn = 0;
-void set_work_space_color_warn(void)
+void set_work_space_color_warn()
 {
 	work_space_color_warn = 1;
 }
-int is_work_space_color_warn(void)
+int is_work_space_color_warn()
 {
 	return work_space_color_warn;
 }
@@ -164,7 +164,7 @@ file_type_t *cur_file_type = NULL;			//!< current file type
 file_type_t *default_color_syntax = NULL;	//!< default color syntax
 
 // Select color set by current file name
-int set_file_type_and_tab_size_by_cur_file_path(void)
+int set_file_type_and_tab_size_by_cur_file_path()
 {
 	int ret;
 	if ((ret = set_file_type_by_cur_file_path()) != 0) {
@@ -172,7 +172,7 @@ int set_file_type_and_tab_size_by_cur_file_path(void)
 	}
 	return ret;
 }
-int set_file_type_by_cur_file_path(void)
+int set_file_type_by_cur_file_path()
 {
 	return set_file_type_by_file_name(buf_get_file_path(get_epc_buf(), NULL));
 }
@@ -201,13 +201,13 @@ int set_file_type_by_file_name(const char *file_path)
 }
 
 // get the beginning of the currently selected color set
-const color_syntax_t *get_color_syntax_head(void)
+const color_syntax_t *get_color_syntax_head()
 {
 	if (cur_file_type)
 		return cur_file_type->color_syntax;	// top of the color set
 	return NULL;
 }
-const color_syntax_t *get_default_color_syntax_head(void)
+const color_syntax_t *get_default_color_syntax_head()
 {
 	if (default_color_syntax)
 		return default_color_syntax->color_syntax;	// top of the color set
@@ -221,7 +221,7 @@ const color_syntax_t *get_default_color_syntax_head(void)
 PRIVATE void display_color_pattern(int yy, int xx, int reverse);
 int display_color_pairs(int yy, int xx)
 {
-	set_item_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
+	set_item_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
 	tio_fill_screen();
 	display_color_pattern(yy, xx+ 0, 0);
 	display_color_pattern(yy, xx+34, 1);

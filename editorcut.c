@@ -34,9 +34,9 @@
 PRIVATE int copy_delete_paste_pop(int cp_del_paste_pop);
 PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop);
 
-PRIVATE int copy_text_to_cut_buf(void);
-PRIVATE int delete_text_in_cut_region(void);
-PRIVATE int paste_text_from_cut_buf(void);
+PRIVATE int copy_text_to_cut_buf();
+PRIVATE int delete_text_in_cut_region();
+PRIVATE int paste_text_from_cut_buf();
 
 PRIVATE void copy_region_to_cut_buf(
  be_line_t *min_line, int min_byte_idx,
@@ -53,11 +53,11 @@ PRIVATE void delete_rect_region(
  be_line_t *min_line, int min_col_idx,
  be_line_t *max_line, int max_col_idx);
 
-PRIVATE int paste_cut_buf_char(void);
-PRIVATE int paste_cut_buf_line(void);
-PRIVATE int paste_cut_buf_rect(void);
+PRIVATE int paste_cut_buf_char();
+PRIVATE int paste_cut_buf_line();
+PRIVATE int paste_cut_buf_rect();
 
-int doe_select_all_lines(void)
+int doe_select_all_lines()
 {
 	doe_first_line();
 	doe_start_of_line();
@@ -68,11 +68,11 @@ int doe_select_all_lines(void)
 }
 
 PRIVATE int doe_cut_to_head_(int delete0_cut1);
-int doe_delete_to_head(void)
+int doe_delete_to_head()
 {
 	return doe_cut_to_head_(0);
 }
-int doe_cut_to_head(void)
+int doe_cut_to_head()
 {
 	return doe_cut_to_head_(1);
 }
@@ -83,6 +83,7 @@ PRIVATE int doe_cut_to_head_(int delete0_cut1)
 		return 0;
 	}
 
+	// To restore horizontal cursor pos. after undoing
 	int prev_byte_idx = EPCBVC_CLBI;
 	doe_start_of_line();
 	do_set_mark();
@@ -99,11 +100,11 @@ PRIVATE int doe_cut_to_head_(int delete0_cut1)
 	return 1;
 }
 PRIVATE int doe_cut_to_tail_(int delete0_cut1);
-int doe_delete_to_tail(void)
+int doe_delete_to_tail()
 {
 	return doe_cut_to_tail_(0);
 }
-int doe_cut_to_tail(void)
+int doe_cut_to_tail()
 {
 	return doe_cut_to_tail_(1);
 }
@@ -115,6 +116,7 @@ PRIVATE int doe_cut_to_tail_(int delete0_cut1)
 	}
 	set_disabled_update_min_text_x_to_keep();	// avoid contents jump around
 
+	// To restore horizontal cursor pos. after undoing
 	int prev_byte_idx = EPCBVC_CLBI;
 	EPCBVC_CLBI = line_strlen(EPCBVC_CL);
 	doe_end_of_line();
@@ -132,14 +134,14 @@ PRIVATE int doe_cut_to_tail_(int delete0_cut1)
 	return 1;
 }
 
-int doe_clear_all_cut_buffers(void)
+int doe_clear_all_cut_buffers()
 {
 	clear_cut_bufs();
 	disp_status_bar_done(_("Cut buffer cleared"));
 	return 1;
 }
 
-int doe_tog_mark(void)
+int doe_tog_mark()
 {
 	if (IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
 		// no mark set ==> set mark
@@ -150,7 +152,7 @@ int doe_tog_mark(void)
 	}
 	return 1;
 }
-int do_set_mark(void)
+int do_set_mark()
 {
 	do_set_mark_();
 
@@ -158,13 +160,12 @@ int do_set_mark(void)
 	disp_status_bar_done(_("Mark Set"));
 	return 1;
 }
-void do_set_mark_(void)
+void do_set_mark_()
 {
 	GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_N_LINE;
 	set_mark_pos();
-	setup_cut_region();
 }
-int do_clear_mark(void)
+int do_clear_mark()
 {
 	do_clear_mark_();
 
@@ -172,14 +173,31 @@ int do_clear_mark(void)
 	disp_status_bar_done(_("Mark UNset"));
 	return 1;
 }
-void do_clear_mark_(void)
+void do_clear_mark_()
 {
 	GET_CUR_EBUF_STATE(buf_CUT_MODE) = CUT_MODE_0_LINE;
 	clear_mark_pos();
-	setup_cut_region();
 }
 
-int doe_copy_text(void)
+int doe_delete_text()
+{
+	if (copy_delete_paste_pop(CDPP_DELETE) <= 0) {
+		return 0;
+	}
+	disp_status_bar_done(_("Text Deleted"));
+	return 1;
+}
+
+int doe_cut_text()
+{
+	if (copy_delete_paste_pop(CDPP_CUT) <= 0) {
+		return 0;
+	}
+	disp_status_bar_done(_("Text Cut to Cut-buffer"));
+	return 1;
+}
+
+int doe_copy_text()
 {
 	if (copy_delete_paste_pop(CDPP_COPY) <= 0) {
 		return 0;
@@ -189,41 +207,33 @@ int doe_copy_text(void)
 	return 1;
 }
 
-int doe_copy_text_to_system_clipboard(void)
+int doe_cut_text_to_system_clipboard()
+{
+	doe_cut_text();
+	// copy cut text to clip board file
+	save_top_cut_buf_to_clipboard_file();
+	send_to_system_clipboard();
+	return 1;
+}
+int doe_copy_text_to_system_clipboard()
 {
 	doe_copy_text();
+	// copy cut text to clip board file
+	save_top_cut_buf_to_clipboard_file();
 	send_to_system_clipboard();
 	return 1;
 }
 int send_to_system_clipboard()
 {
-#define UP_SYS_CLIPBOARD_CMD	"update-system-clipboard.sh"
+#define UPDATE_SYS_CLIPBOARD_CMD	"update-system-clipboard.sh"
 	if (check_wsl()) {
 		tio_set_cursor_pos(central_win_get_status_line_y(), 0);
-		return fork_exec_sh_c(EX_FLAGS_0, UP_SYS_CLIPBOARD_CMD);
+		return fork_exec_sh_c(EX_FLAGS_0, UPDATE_SYS_CLIPBOARD_CMD);
 	}
 	return 0;
 }
 
-int doe_delete_text(void)
-{
-	if (copy_delete_paste_pop(CDPP_DELETE) <= 0) {
-		return 0;
-	}
-	disp_status_bar_done(_("Text Deleted"));
-	return 1;
-}
-
-int doe_cut_text(void)
-{
-	if (copy_delete_paste_pop(CDPP_CUT) <= 0) {
-		return 0;
-	}
-	disp_status_bar_done(_("Text Cut to Cut-buffer"));
-	return 1;
-}
-
-int doe_duplicate_text(void)
+int doe_duplicate_text()
 {
 	if (copy_delete_paste_pop(CDPP_DUPLICATE | CDPP_POP) <= 0) {
 		return 0;
@@ -232,7 +242,7 @@ int doe_duplicate_text(void)
 	return 1;
 }
 
-int doe_paste_text_with_pop(void)
+int doe_paste_text_with_pop()
 {
 	if (copy_delete_paste_pop(
 	 IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0
@@ -242,7 +252,7 @@ int doe_paste_text_with_pop(void)
 	disp_status_bar_done(_("Text Pasted with popping Cut-buffer"));
 	return 1;
 }
-int doe_paste_text_without_pop(void)
+int doe_paste_text_without_pop()
 {
 	if (copy_delete_paste_pop(
 	 IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0
@@ -261,12 +271,14 @@ PRIVATE int copy_delete_paste_pop(int cp_del_paste_pop)
 }
 PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 {
+_FLF_
 	if (cp_del_paste_pop & CDPP_REPLACE) {
 		// in view mode, DELETE and PASTE may not be performed
 		if (is_editor_unmodifiable_then_warn_it()) {
 			return -1;		// error
 		}
 	}
+_FLF_
 	if ((cp_del_paste_pop & CDPP_COPY) == 0
 	 && (cp_del_paste_pop & CDPP_PASTE)) {
 		load_cut_buffers_if_updated();
@@ -275,29 +287,33 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 			return -1;		// error
 		}
 	}
+_FLF_
 
 	if (IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
 		// no mark set, setup cut-region
 		set_mark_pos();
-		setup_cut_region();
 	}
-	be_line_t *top_line = NODE_PREV(mark_min_line);
+_FLF_
+	be_line_t *top_line = NODE_PREV(mark_min_line__);
 	// ====  COPY  ====
 	if (cp_del_paste_pop & CDPP_COPY) {
 		copy_text_to_cut_buf();
 	}
+_FLF_
 #ifdef ENABLE_UNDO
 	if (((cp_del_paste_pop & CDPP_DELETE) && is_there_cut_region())
 	 || ((cp_del_paste_pop & CDPP_PASTE) && count_cut_bufs())) {
 		// buffer will be modified
-		undo_set_region__save_before_change(mark_min_line, mark_max_line,
+		undo_set_region__save_before_change(mark_min_line__, mark_max_line__,
 		 count_cur_cut_buf_lines());
 	}
 #endif // ENABLE_UNDO
+_FLF_
 	// ====  DELETE  ====
 	if (cp_del_paste_pop & CDPP_DELETE) {
 		delete_text_in_cut_region();
 	}
+_FLF_
 	// ====  PASTE  ====
 	if (cp_del_paste_pop & CDPP_PASTE) {
 		if (count_cut_bufs() == 0) {
@@ -306,9 +322,17 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 			paste_text_from_cut_buf();
 		}
 	}
+_FLF_
+	// ====  POP  ====
+	if (cp_del_paste_pop & CDPP_POP) {
+		pop__free_from_cut_bufs();
+	}
 
+	do_clear_mark_();	// always clear mark
+_FLF_
 	clear_disabled_update_min_text_x_to_keep();
 
+_FLF_
 	if (cp_del_paste_pop & CDPP_REPLACE) {
 		switch (CUR_CBUF_STATE(buf_CUT_MODE)) {
 		default:
@@ -330,14 +354,11 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 			break;
 		}
 	}
-	// ====  POP  ====
-	if (cp_del_paste_pop & CDPP_POP) {
-		pop__free_from_cut_bufs();
-	}
+_FLF_
 	return 1;		// done
 }
 //------------------------------------------------------------------------------
-PRIVATE int copy_text_to_cut_buf(void)
+PRIVATE int copy_text_to_cut_buf()
 {
 	int char_cut;
 
@@ -367,20 +388,20 @@ PRIVATE int copy_text_to_cut_buf(void)
 			break;
 		}
 		copy_region_to_cut_buf(
-		 mark_min_line, mark_min_byte_idx,
-		 mark_max_line, mark_max_byte_idx,
+		 mark_min_line__, mark_min_byte_idx,
+		 mark_max_line__, mark_max_byte_idx,
 		 char_cut);
 		break;
 	case CUT_MODE_HV_BOX:
 	case CUT_MODE_VH_BOX:
 		copy_rect_region_to_cut_buf(
-		 mark_min_line, mark_min_col_idx,
-		 mark_max_line, mark_max_col_idx);
+		 mark_min_line__, mark_min_col_idx,
+		 mark_max_line__, mark_max_col_idx);
 		break;
 	}
 	return 1;
 }
-PRIVATE int delete_text_in_cut_region(void)
+PRIVATE int delete_text_in_cut_region()
 {
 	set_cur_buf_modified();
 	switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
@@ -392,19 +413,19 @@ PRIVATE int delete_text_in_cut_region(void)
 	case CUT_MODE_V_LINE:
 	case CUT_MODE_HV_LINE:
 		delete_region(
-		 mark_min_line, mark_min_byte_idx,
-		 mark_max_line, mark_max_byte_idx);
+		 mark_min_line__, mark_min_byte_idx,
+		 mark_max_line__, mark_max_byte_idx);
 		break;
 	case CUT_MODE_HV_BOX:
 	case CUT_MODE_VH_BOX:
 		delete_rect_region(
-		 mark_min_line, mark_min_col_idx,
-		 mark_max_line, mark_max_col_idx);
+		 mark_min_line__, mark_min_col_idx,
+		 mark_max_line__, mark_max_col_idx);
 		break;
 	}
 	return 1;
 }
-PRIVATE int paste_text_from_cut_buf(void)
+PRIVATE int paste_text_from_cut_buf()
 {
 	switch (CUR_CBUF_STATE(buf_CUT_MODE)) {
 	case CUT_MODE_H_CHAR:
@@ -604,7 +625,7 @@ PRIVATE void delete_rect_region(
 //   aaaaAAAA
 //   BBBB
 //   CCCC^bbbb
-PRIVATE int paste_cut_buf_char(void)
+PRIVATE int paste_cut_buf_char()
 {
 	set_cur_buf_modified();
 
@@ -654,7 +675,7 @@ PRIVATE int paste_cut_buf_char(void)
 //   AAAA
 //   BBBB
 //   aaaa^bbbb
-PRIVATE int paste_cut_buf_line(void)
+PRIVATE int paste_cut_buf_line()
 {
 	set_cur_buf_modified();
 
@@ -693,7 +714,7 @@ PRIVATE int paste_cut_buf_line(void)
 //  [AFTER]
 //   aaaaAAAAbbbb
 //   BBBB^
-PRIVATE int paste_cut_buf_rect(void)
+PRIVATE int paste_cut_buf_rect()
 {
 	set_cur_buf_modified();
 

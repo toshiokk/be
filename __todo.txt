@@ -6,6 +6,12 @@
 - CRASH: crash
 - POLICY: things to be kept
 
+- [x] 250511 CRASH: when it cuts a text from the later line to the former line
+- [x] 250509 BUG: execution-log does not update soon from the point of view of another terminal
+- [x] 250509 re-start BE (M^Q)
+- [x] 2505?? func(void) ==> func()
+- [x] 250425 BUG: not sent to system-clipboard
+- [x] 250424 improve cut-mode transition between character cut and rectangular cut
 - [x] 250423 properly separate very long line at UTF8 character boundary
 - [x] 250423 share cut-buffer among all BE editor instances
 - [x] 250421 open more than 2 files in doe_open_file()
@@ -594,13 +600,13 @@ The seamless text copying:
 - [xx] tag-jump in editor:				open file with tag and tag-jump
 - [xx] tag-jump in history called from editor:		open files M-h UP LEFT... UP... F12
 - [xx] tag-jump in file list:				open files M-; UP... F12
-- [xx] tag-jump in history called from filer:		start filer, x UP UP... F12
+- [xx] tag-jump in history called from filer:		start filer, `x` UP UP... F12
 - [xx] key-list view and func-list view:		open file, M-U ESC or M-? ESC
 - [xx] input from history (replace/append(Alt)):	open file, M-h UP Enter or M-Enter
-- [xx] input from filer (replace/append(Alt), file/full-path(Shift)):	start filer, x DOWN select file, e or M-e or E or M-E
+- [xx] input from filer (replace/append(Alt), file/full-path(Shift)):	start filer, `x` DOWN select file, e or M-e or E or M-E
 - [xx] start as a editor:				start with argument of file name, ^Q
 - [xx] call-filer:					open file, M-F
-- [xx] call-filer and open file:			open file, M-F select file, e
+- [xx] call-filer and open file:			open file, M-F select file, `e`
 
   Entering text from editor:
   |command key    |Text entered |Replace/Insert|comments|
@@ -1231,7 +1237,7 @@ filer_panes		-		O		O
 Maximum line length of the source code: 100.
 //--------------------------------
 int _abc; // not-recommended
-int main(void)
+int main()
 {
   int abc__def; // not-recommended
   int _Abc;     // not-recommended

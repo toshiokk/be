@@ -38,9 +38,9 @@
 #define KEY_ENTER		0x0157
 #define KEY_F(fknum)	(0x0108 + fknum)
 
-key_code_t termif_input_key(void);
+key_code_t termif_input_key();
 
-void investigate_key_sequence(void);
+void investigate_key_sequence();
 
 #endif // termifkey_h
 

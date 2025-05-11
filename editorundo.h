@@ -25,35 +25,35 @@
 #ifdef ENABLE_UNDO
 
 be_buf_t *push_undo_buf_node(be_buf_t *buf);
-be_buf_t *pop_undo_buf(void);
+be_buf_t *pop_undo_buf();
 be_buf_t *push_redo_buf_node(be_buf_t *buf);
-be_buf_t *pop_redo_buf(void);
+be_buf_t *pop_redo_buf();
 int delete_undo_redo_buf(be_buf_t *edit_buf);
 int delete_unredo_buf(be_buf_t *do_buf, be_buf_t *edit_buf);
-int count_undo_bufs(void);
-int count_redo_bufs(void);
+int count_undo_bufs();
+int count_redo_bufs();
 
 //------------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
 extern char prev_func_id[MAX_PATH_LEN+1];
 void memorize_undo_state_before_change(const char *func_id);
-int check_undo_state_after_change(void);
+int check_undo_state_after_change();
 #endif // ENABLE_DEBUG
 
 //------------------------------------------------------------------------------
 
 void undo_set_region__save_before_change(be_line_t *min_line, be_line_t *max_line,
  int cut_buf_lines);
-void undo_save_after_change(void);
-int doe_undo(void);
-int doe_redo(void);
+void undo_save_after_change();
+int doe_undo();
+int doe_redo();
 
 //------------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
-void dump_undo_bufs_lines(void);
-void dump_redo_bufs_lines(void);
+void dump_undo_bufs_lines();
+void dump_redo_bufs_lines();
 #endif // ENABLE_DEBUG
 
 #endif // ENABLE_UNDO

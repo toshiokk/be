@@ -34,29 +34,29 @@
 #define COLORS			8
 #define COLOR_PAIRS		((COLORS) * (COLORS))
 
-int termif_init(void);
-int termif_begin(void);
-int termif_end(void);
+int termif_init();
+int termif_begin();
+int termif_end();
 
 char investigate_wcwidth(wchar_t wc);
 char investigate_utf8c_width(const char *utf8c);
 
-int termif_get_screen_size_from_term(void);
+int termif_get_screen_size_from_term();
 void termif_set_screen_size(int lines, int columns);
-int termif_get_lines(void);
-int termif_get_columns(void);
+int termif_get_lines();
+int termif_get_columns();
 
-void termif_clear_screen(void);
-void termif_clear_vscreen_to_paint(void);
-void termif_clear_vscreen_painted(void);
+void termif_clear_screen();
+void termif_clear_vscreen_to_paint();
+void termif_clear_vscreen_painted();
 void termif_set_cursor_pos(short yy, short xx);
 void termif_get_cursor_pos(int *yy, int *xx);
 void termif_set_cursor_on(char on_off);
 
 void termif_set_attrs(int bgc, int fgc, int rev);
 void termif_output_string(short yy, short xx, const char *string, int bytes);
-void termif_beep(void);
-void termif_refresh(void);
+void termif_beep();
+void termif_refresh();
 
 #endif // termif_h
 

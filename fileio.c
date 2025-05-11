@@ -139,7 +139,7 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int flags)
 }
 
 //------------------------------------------------------------------------------
-int backup_and_save_cur_buf_ask(void)
+int backup_and_save_cur_buf_ask()
 {
 	char file_path[MAX_PATH_LEN+1];
 	int ret = 0;
@@ -311,6 +311,7 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int flags)
 
 int save_buf_to_file(be_buf_t *buf, const char *file_path)
 {
+flf_d_printf("[%s]\n", file_path);
 	be_buf_t *buf_save = get_epc_buf();
 	set_epc_buf(buf);
 
@@ -320,13 +321,7 @@ int save_buf_to_file(be_buf_t *buf, const char *file_path)
 	return ret;
 }
 
-PRIVATE int save_cur_buf_to_file__(const char *file_path);
 int save_cur_buf_to_file(const char *file_path)
-{
-	int ret = save_cur_buf_to_file__(file_path);
-	return ret;
-}
-PRIVATE int save_cur_buf_to_file__(const char *file_path)
 {
 #ifdef USE_NKF
 	const char *nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
@@ -591,7 +586,7 @@ PRIVATE int load_file_into_cur_buf_binary(const char *full_path)
 	return lines;
 }
 
-PRIVATE void fgetc_bufed_clear(void);
+PRIVATE void fgetc_bufed_clear();
 PRIVATE int fgetc_buffered(FILE *fp);
 
 PRIVATE inline void load_into_cur_buf_append_line(be_line_t* line, char* line_buf, int* len,
@@ -675,7 +670,7 @@ PRIVATE char fgetc_bufed_buf[MAX_EDIT_LINE_LEN+1];
 PRIVATE int fgetc_bufed_read_len = 0;
 PRIVATE int fgetc_bufed_byte_idx = 0;
 
-PRIVATE void fgetc_bufed_clear(void)
+PRIVATE void fgetc_bufed_clear()
 {
 	fgetc_bufed_read_len = 0;
 	fgetc_bufed_byte_idx = 0;
@@ -830,7 +825,7 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 
 //------------------------------------------------------------------------------
 PRIVATE int cnt_files_loaded = -1;	// -1: no file switched/loaded, 0: switched, 1--: loaded
-void clear_files_loaded(void)
+void clear_files_loaded()
 {
 #ifdef ENABLE_HISTORY
 	if (dir_history_fix()) { _WARNING_ }
@@ -844,17 +839,17 @@ int add_files_loaded(int files)	// files = 0: not loaded but switched
 	}
 	return cnt_files_loaded += files;
 }
-int get_files_loaded(void)
+int get_files_loaded()
 {
 	return cnt_files_loaded;
 }
-void disp_files_loaded_if_ge_0(void)
+void disp_files_loaded_if_ge_0()
 {
 	if (cnt_files_loaded >= 0) {
 		disp_files_loaded();
 	}
 }
-void disp_files_loaded(void)
+void disp_files_loaded()
 {
 	disp_status_bar_done(P_(_("%d file loaded"),
 							_("%d files loaded"),
@@ -882,13 +877,14 @@ int reduce_log_file_size(const char *file_path, int size_in_kb)
 
 const char *get_exec_log_file_path()
 {
-	// /dev/tty1 => "tty1.log", /dev/pts/1 => "1.log"
+	// /dev/tty1  => "/home/user/.be/tty1.log"
+	// /dev/pts/1 => "/home/user/.be/1.log"
 	static char file_path[MAX_PATH_LEN+1] = "";
 	char dir[MAX_PATH_LEN+1];
 	char file[MAX_PATH_LEN+1];
 	if (is_strlen_0(file_path)) {
 		separate_path_to_dir_and_file(get_tty_name(), dir, file);
-		snprintf_(file_path, MAX_PATH_LEN, "%s/%s.log", get_app_dir(), file);
+		cat_dir_and_file(file_path, get_app_dir(), sprintf_s("%s.log", file));
 	}
 	return file_path;
 }

@@ -37,14 +37,14 @@ PRIVATE int output_edit_line_num(int yy, const be_line_t *line);
 PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
  int byte_idx_1, int byte_idx_2, const char *vis_code);
 
-PRIVATE int get_edit_win_x_of_cursor_x(void);
-PRIVATE int get_cursor_text_x(void);
-PRIVATE int get_max_text_x_to_keep(void);
+PRIVATE int get_edit_win_x_of_cursor_x();
+PRIVATE int get_cursor_text_x();
+PRIVATE int get_max_text_x_to_keep();
 PRIVATE int get_edit_win_x_of_text_x(int text_x);
 PRIVATE int get_edit_win_x_of_view_x(int view_x);
 
-PRIVATE void clear_cur_buf_line_num_columns(void);
-PRIVATE int get_cur_buf_line_num_columns(void);
+PRIVATE void clear_cur_buf_line_num_columns();
+PRIVATE int get_cur_buf_line_num_columns();
 
 //------------------------------------------------------------------------------
 PRIVATE int edit_win_update_needed = UPDATE_SCRN_NONE;
@@ -54,11 +54,11 @@ void set_edit_win_update_needed(int update_needed)
 		update_needed |= UPDATE_SCRN_ALL;
 	edit_win_update_needed |= update_needed;
 }
-int get_edit_win_update_needed(void)
+int get_edit_win_update_needed()
 {
 	return edit_win_update_needed;
 }
-void clear_edit_win_update_needed(void)
+void clear_edit_win_update_needed()
 {
 	edit_win_update_needed = UPDATE_SCRN_NONE;
 }
@@ -272,8 +272,8 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 	// highlight marked region ================================================
 	if (is_epc_buf_modifiable()
 	 && IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) && is_there_cut_region()
-	 && (mark_min_line->line_num <= line->line_num
-	  && line->line_num <= mark_max_line->line_num)) {
+	 && (mark_min_line__->line_num <= line->line_num
+	  && line->line_num <= mark_max_line__->line_num)) {
 		// this line is at least partially selected
 		switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
 		default:
@@ -284,20 +284,20 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 		case CUT_MODE_VH_CHAR:
 		case CUT_MODE_V_LINE:
 		case CUT_MODE_HV_LINE:
-			if (mark_min_line == line && mark_max_line == line) {
+			if (mark_min_line__ == line && mark_max_line__ == line) {
 				// selection starts and ends within this line
 				left_byte_idx = mark_min_byte_idx;
 				right_byte_idx = mark_max_byte_idx;
-			} else if (mark_min_line->line_num < line->line_num 
-			 && line->line_num < mark_max_line->line_num) {
+			} else if (mark_min_line__->line_num < line->line_num 
+			 && line->line_num < mark_max_line__->line_num) {
 				// whole line is selected
 				left_byte_idx = 0;
 				right_byte_idx = INT_MAX;
-			} else if (mark_min_line->line_num == line->line_num) {
+			} else if (mark_min_line__->line_num == line->line_num) {
 				// selection starts from this line
 				left_byte_idx = mark_min_byte_idx;
 				right_byte_idx = INT_MAX;
-			} else if (line->line_num == mark_max_line->line_num) {
+			} else if (line->line_num == mark_max_line__->line_num) {
 				// selection ends at this line
 				left_byte_idx = 0;
 				right_byte_idx = mark_max_byte_idx;
@@ -709,7 +709,7 @@ PRIVATE int output_edit_line_num(int yy, const be_line_t *line)
 }
 
 // Set cursor at (cursor_y, cur_line_byte_idx).
-void set_edit_cursor_pos(void)
+void set_edit_cursor_pos()
 {
 	sub_win_set_cursor_pos(edit_win_get_text_y() + EPCBVC_CURS_Y, get_edit_win_x_of_cursor_x());
 	win_save_cursor_pos();
@@ -751,15 +751,15 @@ PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
 	return bytes;
 }
 
-PRIVATE int get_edit_win_x_of_cursor_x(void)
+PRIVATE int get_edit_win_x_of_cursor_x()
 {
 	return get_edit_win_x_of_text_x(get_cursor_text_x());
 }
-PRIVATE int get_cursor_text_x(void)
+PRIVATE int get_cursor_text_x()
 {
 	return start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
 }
-PRIVATE int get_max_text_x_to_keep(void)
+PRIVATE int get_max_text_x_to_keep()
 {
 	return EPCBVC_MIN_TEXT_X_TO_KEEP + get_edit_win_columns_for_text();
 }
@@ -772,7 +772,7 @@ PRIVATE int get_edit_win_x_of_view_x(int view_x)
 	return get_cur_buf_line_num_columns() + view_x;
 }
 // width of text view area (window-width - line-number-width)
-int get_edit_win_columns_for_text(void)
+int get_edit_win_columns_for_text()
 {
 	// <text-to-edit................................>
 	// 999 <text-to-edit............................>
@@ -780,12 +780,12 @@ int get_edit_win_columns_for_text(void)
 }
 
 PRIVATE int cur_buf_line_num_columns = -1;
-PRIVATE void clear_cur_buf_line_num_columns(void)
+PRIVATE void clear_cur_buf_line_num_columns()
 {
 	cur_buf_line_num_columns = -1;
 }
 // text x position (line-number-width)
-PRIVATE int get_cur_buf_line_num_columns(void)
+PRIVATE int get_cur_buf_line_num_columns()
 {
 	if (cur_buf_line_num_columns < 0) {
 		// value not set, calculate now

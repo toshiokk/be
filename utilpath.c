@@ -24,10 +24,10 @@
 #define IS_EQ_STR(gotten, expected)		(strcmp(gotten, expected) == 0)
 #define EQU_STR(gotten, expected)		(IS_EQ_STR(gotten, expected) ? '=' : '!')
 
-const char *get_starting_dir(void)
+const char *get_starting_dir()
 {
 	static char starting_dir[MAX_PATH_LEN+1] = "";
-	if (strlen_path(starting_dir) == 0) {
+	if (strlen_path(starting_dir) == 0) {		// prepare on-demand
 		if (strlen_path(getenv_pwd(starting_dir)) == 0) {
 			getcwd__(starting_dir);
 		}
@@ -35,10 +35,10 @@ flf_d_printf("starting_dir: [%s]\n", starting_dir);
 	}
 	return starting_dir;
 }
-const char *get_home_dir(void)
+const char *get_home_dir()
 {
 	static char home_dir[MAX_PATH_LEN+1] = "";
-	if (strlen_path(home_dir) == 0) {
+	if (strlen_path(home_dir) == 0) {		// prepare on-demand
 		char *env_home;
 		const struct passwd *userdata = 0;
 		if (strlen(env_home = getenv__("HOME"))) {
@@ -52,10 +52,10 @@ flf_d_printf("home_dir: [%s]\n", home_dir);
 	}
 	return home_dir;
 }
-const char *get_tty_name(void)
+const char *get_tty_name()
 {
 	static char tty_name[MAX_PATH_LEN+1] = "";
-	if (strlen_path(tty_name) == 0) {
+	if (strlen_path(tty_name) == 0) {		// prepare on-demand
 		strlcpy__(tty_name, ttyname(0), MAX_PATH_LEN);	// /dev/pts/99
 		if (strlen_path(tty_name) == 0) {
 			strlcpy__(tty_name, cur_hhmmss(), MAX_PATH_LEN);
@@ -68,7 +68,7 @@ flf_d_printf("tty_name: [%s]\n", tty_name);
 int check_wsl()
 {
 	static int checked = 0;		// 0: not yet checked
-	if (! checked) {
+	if (! checked) {		// prepare on-demand
 		checked = (is_path_exist("/mnt/c") ? 1 : -1);
 		if (checked > 0) {
 			flf_d_printf("WSL(Linux running on Windows)\n");
@@ -81,7 +81,7 @@ int check_wsl()
 int check_availability_of_script()
 {
 	static int checked = 0;		// 0: not yet checked
-	if (! checked) {
+	if (! checked) {		// prepare on-demand
 		checked = ((is_path_executable_file("/usr/bin/script") > 0) ? 1 : -1);
 		if (checked > 0) {
 			flf_d_printf("'script' is available\n");
@@ -357,6 +357,21 @@ char *getenv__(char *env)
 	return ptr;
 }
 
+const char *cat_dir_and_file_s(const char *dir, const char *file)
+{
+	static char file_path[MAX_PATH_LEN+1];
+	return cat_dir_and_file(file_path, dir, file);
+}
+const char *cat_dir_and_file_s1(const char *dir, const char *file)
+{
+	static char file_path[MAX_PATH_LEN+1];
+	return cat_dir_and_file(file_path, dir, file);
+}
+const char *cat_dir_and_file_s2(const char *dir, const char *file)
+{
+	static char file_path[MAX_PATH_LEN+1];
+	return cat_dir_and_file(file_path, dir, file);
+}
 // Concatenate path and file
 // "/dir1/dir2"   "file"       ==> "/dir1/dir2/file"
 // "/dir1/dir2/"  "file"       ==> "/dir1/dir2/file"
@@ -644,7 +659,7 @@ PRIVATE void test_cat_dir_and_file_(char *buf, const char *dir, const char *file
 // /aaa/bbb/./ccc ==> /aaa/bbb/ccc
 // /. ==> /
 PRIVATE const char *test_normalize_path_(const char *templ, const char *path);
-int test_normalize_path(void)
+int test_normalize_path()
 {
 	flf_d_printf("-----------------------\n");
 	MY_UT_STR(test_normalize_path_("%s", "///"), "/");
@@ -730,7 +745,7 @@ PRIVATE const char *test_normalize_path_(const char *templ, const char *path)
 }
 
 PRIVATE void test_get_full_path_(const char *path);
-void test_get_full_path(void)
+void test_get_full_path()
 {
 	flf_d_printf("-----------------------\n");
 	test_get_full_path_("~");
@@ -766,7 +781,7 @@ PRIVATE void test_get_full_path_(const char *path)
 
 #if defined(HAVE_REALPATH)
 PRIVATE const char *test_realpath_(const char *path);
-void test_realpath(void)
+void test_realpath()
 {
 	flf_d_printf("-----------------------\n");
 	MY_UT_STR(test_realpath_("~"), "~");
@@ -793,7 +808,7 @@ PRIVATE const char *test_realpath_(const char *path)
 #endif // HAVE_REALPATH
 
 PRIVATE const char *get_file_name_extension_(char *file_name);
-void test_get_file_name_extension(void)
+void test_get_file_name_extension()
 {
 	flf_d_printf("-----------------------\n");
 	MY_UT_STR(get_file_name_extension_("filename"), "");

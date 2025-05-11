@@ -110,7 +110,7 @@ PRIVATE void send_cursor_pos_to_term(short yy, short xx);
 PRIVATE int receive_cursor_pos_from_term(int *yy, int *xx);
 PRIVATE vscreen_char_t attrs_sent = VSCR_CHAR_ATTRS_DEFAULT;	// attributes sent to terminal
 PRIVATE void send_attrs_to_term(vscreen_char_t attrs);
-PRIVATE void send_all_off_to_term(void);
+PRIVATE void send_all_off_to_term();
 PRIVATE void send_bold_to_term(int bold);
 PRIVATE void send_bgc_to_term(int bgc);
 PRIVATE void send_fgc_to_term(int fgc);
@@ -121,12 +121,12 @@ PRIVATE void send_string_to_term__(const char *string, int bytes);
 
 //------------------------------------------------------------------------------
 
-int termif_init(void)
+int termif_init()
 {
 	save_term_settings(&term_settings_save);
 	return 0;
 }
-int termif_begin(void)
+int termif_begin()
 {
 	set_term_no_intr();
 	set_term_raw();
@@ -136,7 +136,7 @@ int termif_begin(void)
 	termif_clear_screen();
 	return 0;
 }
-int termif_end(void)
+int termif_end()
 {
 	send_all_off_to_term();
 	send_cursor_on_to_term(1);
@@ -166,7 +166,7 @@ char investigate_utf8c_width(const char *utf8c)
 }
 //------------------------------------------------------------------------------
 // get screen size from terminal
-int termif_get_screen_size_from_term(void)
+int termif_get_screen_size_from_term()
 {
 	int termif_lines_save;
 	int termif_columns_save;
@@ -195,23 +195,23 @@ void termif_set_screen_size(int lines, int columns)
 	termif_lines = lines;
 	termif_columns = columns;
 }
-int termif_get_lines(void)
+int termif_get_lines()
 {
 	return termif_lines;
 }
-int termif_get_columns(void)
+int termif_get_columns()
 {
 	return termif_columns;
 }
 //------------------------------------------------------------------------------
-void termif_clear_screen(void)
+void termif_clear_screen()
 {
 	termif_clear_vscreen_to_paint();
 	termif_clear_vscreen_painted();
 	// screen state is cached and not transfered to the console until 'termif_refresh()' called
 	send_string_to_term("\x1b" "c", -1);
 }
-void termif_clear_vscreen_to_paint(void)
+void termif_clear_vscreen_to_paint()
 {
 	for (int yy = 0; yy < termif_lines; yy++) {
 		for (int xx = 0; xx < termif_columns; xx++) {
@@ -219,7 +219,7 @@ void termif_clear_vscreen_to_paint(void)
 		}
 	}
 }
-void termif_clear_vscreen_painted(void)
+void termif_clear_vscreen_painted()
 {
 	for (int yy = 0; yy < termif_lines; yy++) {
 		for (int xx = 0; xx < termif_columns; xx++) {
@@ -378,7 +378,7 @@ PRIVATE void dump_vscreen(int yy, int len)
 //------------------------------------------------------------------------------
 // transfer display data to the console
 
-void termif_beep(void)
+void termif_beep()
 {
 	send_string_to_term("\x07", -1);	// "\a"(^G)
 }
@@ -392,7 +392,7 @@ void termif_beep(void)
 	  || vscreen_painted[yy][xx+1] != vscreen_to_paint[yy][xx+1]))
 
 // refresh screen by sending pending data in vscreen_to_paint to the screen.
-void termif_refresh(void)
+void termif_refresh()
 {
 	int start_xx;
 	vscreen_char_t start_attrs;
@@ -543,7 +543,7 @@ PRIVATE void send_attrs_to_term(vscreen_char_t attrs)
 	send_fgc_to_term(real_fgc);
 	attrs_sent = attrs;
 }
-PRIVATE void send_all_off_to_term(void)
+PRIVATE void send_all_off_to_term()
 {
 	send_string_to_term("\x1b[0m", -1);
 	attrs_sent = VSCR_CHAR_ATTRS_DEFAULT;

@@ -22,7 +22,7 @@
 #include "utilincs.h"
 
 #ifdef START_UP_TEST
-void test_utf8c_encode(void)
+void test_utf8c_encode()
 {
 	char utf8c[MAX_UTF8C_BYTES+1];
 #ifdef ENABLE_DEBUG
@@ -48,7 +48,7 @@ const char *dump_utf8c(const char *utf8c, char *buf)
 	return buf;
 }
 
-void test_utf8c_bytes(void)
+void test_utf8c_bytes()
 {
 	const char str[] = "\xed\xa0\x80\xed\xa0\x81 \xed\xa0\xa0\xed\xa0\xa1";
 	const char *ptr = str;
@@ -58,7 +58,7 @@ void test_utf8c_bytes(void)
 	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 10);
 	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 13);
 }
-void test_wcwidth(void)
+void test_wcwidth()
 {
 	wchar_t wc;
 #ifdef ENABLE_DEBUG

@@ -59,7 +59,7 @@ PRIVATE const char* dir_history_remove_temporal_mark(const char* str);
 
 // search/replace(directory and execution) history support functions
 
-void init_histories(void)
+void init_histories()
 {
 	// prepare ~/.be directory
 	if (is_path_exist(get_app_dir()) == 0) {
@@ -76,7 +76,7 @@ void init_histories(void)
 	for (int hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
 		// Create a buffer of LIST mode
 		bufs_insert_buf_to_bottom(&history_buffers,
-		 buf_create_node(dir_history_add_temporal_mark(get_history_file_path(hist_type_idx)),
+		 buf_create(dir_history_add_temporal_mark(get_history_file_path(hist_type_idx)),
 		  buf_MODE_LIST));
 		init_history(hist_type_idx);
 	}
@@ -84,7 +84,7 @@ void init_histories(void)
 
 //------------------------------------------------------------------------------
 // load history files into buffers
-void load_histories(void)
+void load_histories()
 {
 	for (int hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
 		load_history_if_needed(hist_type_idx);
@@ -93,7 +93,7 @@ void load_histories(void)
 }
 
 // save histories to file
-void save_histories(void)
+void save_histories()
 {
 	for (int hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP; hist_type_idx++) {
 		save_history_if_modified(hist_type_idx);
@@ -312,7 +312,7 @@ PRIVATE const char *get_history_file_path(int hist_type_idx)
 		file = BASH_HISTORY_FILE_NAME;
 		break;
 	}
-	snprintf_(file_path, MAX_PATH_LEN+1, "%s/%s", dir, file);
+	cat_dir_and_file(file_path, dir, file);
 	return file_path;
 }
 PRIVATE int get_history_max_lines(int hist_type_idx)
@@ -490,7 +490,7 @@ PRIVATE int compare_file_path_str(const char *str, const char *file_path)
 	} else {
 		len = strlen_path(str);
 	}
-	const char *quoted_file_path = quote_file_path_static(file_path);
+	const char *quoted_file_path = quote_file_path_s(file_path);
 	return strn_strn_cmp__(str, len, quoted_file_path, strlen_path(quoted_file_path));
 }
 
@@ -584,11 +584,11 @@ void dump_history_idx(int hist_type_idx)
 {
 	buf_dump_lines(get_history_buf(hist_type_idx), INT_MAX);
 }
-void dump_hist_bufs(void)
+void dump_hist_bufs()
 {
 	buf_dump_bufs(HIST_BUFS_TOP_BUF);
 }
-void dump_hist_bufs_lines(void)
+void dump_hist_bufs_lines()
 {
 	buf_dump_bufs_lines(HIST_BUFS_TOP_BUF, "hist-bufs");
 }

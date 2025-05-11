@@ -22,15 +22,15 @@
 #include "headers.h"
 
 PRIVATE int open_file_recursive(int flags);
-int doe_open_file_recursive(void)
+int doe_open_file_recursive()
 {
 	return open_file_recursive(RECURS1 | RDOL0 | FOLF0 | LFH0);
 }
-int doe_open_file_ro(void)
+int doe_open_file_ro()
 {
 	return open_file_recursive(RECURS1 | RDOL1 | FOLF0 | LFH0);
 }
-int doe_open_locked_file(void)
+int doe_open_locked_file()
 {
 	return open_file_recursive(RECURS1 | RDOL0 | FOLF1 | LFH0);
 }
@@ -52,7 +52,7 @@ PRIVATE int open_file_recursive(int flags)
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
-int doe_open_new_file(void)
+int doe_open_new_file()
 {
 	char file_path[MAX_PATH_LEN+1];
 	if (chk_inp_str_ret_val_editor(input_string_pos("", file_path, MAX_PATH_LEN,
@@ -75,20 +75,20 @@ int doe_open_new_file(void)
 	return 0;
 }
 
-int doe_open_proj_file(void)
+int doe_open_proj_file()
 {
 	do_open_proj_file();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
-int doe_open_exec_log_file(void)
+int doe_open_exec_log_file()
 {
 	do_open_exec_log_file();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
 
-int do_open_proj_file(void)
+int do_open_proj_file()
 {
 	int loop;
 	DIR *dir;
@@ -132,7 +132,7 @@ int do_open_proj_file(void)
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
-int do_open_exec_log_file(void)
+int do_open_exec_log_file()
 {
 	// CURDIR: changed in editor
 	if (load_file_name_upp_low(get_exec_log_file_path(),
@@ -144,7 +144,7 @@ int do_open_exec_log_file(void)
 	return 1;
 }
 
-int doe_reopen_file_last_line(void)
+int doe_reopen_file_last_line()
 {
 	if (doe_reopen_file() == 0) {
 		return 0;
@@ -152,7 +152,7 @@ int doe_reopen_file_last_line(void)
 	doe_last_line();
 	return 1;
 }
-int doe_reopen_file(void)
+int doe_reopen_file()
 {
 	char file_pos_str[MAX_PATH_LEN+1];
 	char file_path[MAX_PATH_LEN+1];
@@ -202,7 +202,7 @@ int doe_reopen_file(void)
 
 PRIVATE int input_new_file_name__ask(char *file_path);
 
-int doe_write_file_to(void)
+int doe_write_file_to()
 {
 	char cur_file_path[MAX_PATH_LEN+1];
 	char next_file_path[MAX_PATH_LEN+1];
@@ -308,15 +308,15 @@ PRIVATE int input_new_file_name__ask(char *file_path)
 	return 1;		// input
 }
 
-int doe_write_file_ask(void)
+int doe_write_file_ask()
 {
 	return write_file_ask(ANSWER_NO, NO_CLOSE_AFTER_SAVE_0);
 }
-int doe_write_file_always(void)
+int doe_write_file_always()
 {
 	return write_file_ask(ANSWER_FORCE, NO_CLOSE_AFTER_SAVE_0);
 }
-int doe_write_all_ask(void)
+int doe_write_all_ask()
 {
 	char file_pos_str[MAX_PATH_LEN+1];
 	memorize_cur_file_pos_null(file_pos_str);
@@ -324,7 +324,7 @@ int doe_write_all_ask(void)
 	recall_file_pos_null(file_pos_str);
 	return 1;
 }
-int doe_write_all_modified(void)
+int doe_write_all_modified()
 {
 	char file_pos_str[MAX_PATH_LEN+1];
 	memorize_cur_file_pos_null(file_pos_str);
@@ -334,11 +334,11 @@ int doe_write_all_modified(void)
 }
 
 PRIVATE int close_file_ask(int yes_no);
-int doe_close_file_ask(void)
+int doe_close_file_ask()
 {
 	return close_file_ask(ANSWER_NO);
 }
-int doe_close_file_always(void)
+int doe_close_file_always()
 {
 	return close_file_ask(ANSWER_FORCE);
 }
@@ -362,12 +362,12 @@ PRIVATE int close_file_ask(int yes_no)
 	return ANSWER_YES;
 }
 PRIVATE int write_close_all(int yes_no);
-int doe_close_all_ask(void)
+int doe_close_all_ask()
 {
 	write_close_all(ANSWER_NO);
 	return 0;
 }
-int doe_close_all_modified(void)
+int doe_close_all_modified()
 {
 	write_close_all(ANSWER_ALL);
 	return 0;
@@ -382,7 +382,7 @@ PRIVATE int write_close_all(int yes_no)
 }
 
 //------------------------------------------------------------------------------
-int doe_read_file_into_cur_buf(void)
+int doe_read_file_into_cur_buf()
 {
 	char file_pos_str[MAX_PATH_LEN+1];
 	memorize_cur_file_pos_null(file_pos_str);
@@ -418,7 +418,7 @@ int write_all_ask(int yes_no, close_after_save_t close)
 	disp_status_bar_done(_("All modified buffers are saved"));
 	return 1;
 }
-int close_all_not_modified(void)
+int close_all_not_modified()
 {
 	switch_epc_buf_to_top_of_edit_buf();
 	while (IS_NODE_INT(get_epc_buf())) {
@@ -433,7 +433,7 @@ int close_all_not_modified(void)
 	}
 	return 0;
 }
-int close_all_saved(void)
+int close_all_saved()
 {
 	switch_epc_buf_to_top_of_edit_buf();
 	while (IS_NODE_INT(get_epc_buf())) {
@@ -558,7 +558,7 @@ PRIVATE const char* flock_get_lock_file_path(const char* full_path)
 	if (strlcmp__(abs_path, "$") != 0) {
 		progerr_printf("not full path [%s]\n", abs_path);
 	}
-	snprintf_(lock_file_path, MAX_PATH_LEN, "%s/$%s", get_app_dir(), abs_path);
+	cat_dir_and_file(lock_file_path, get_app_dir(), sprintf_s("$%s", abs_path));
 	return lock_file_path;
 }
 

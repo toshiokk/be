@@ -28,20 +28,25 @@
 #define CUT_BUFFER_FILE_NAME		"." _CUT_BUFFER_FILE_NAME
 #endif // APP_DIR
 
-extern be_line_t *mark_min_line;
+extern be_line_t *mark_min_line__;
 extern int mark_min_byte_idx;
 extern int mark_min_col_idx;
-extern be_line_t *mark_max_line;
+extern be_line_t *mark_max_line__;
 extern int mark_max_byte_idx;
 extern int mark_max_col_idx;
 
-void clear_mark_pos(void);
-void set_mark_pos(void);
+void clear_mark_pos();
+void set_mark_pos();
+
 void setup_cut_region_after_cursor_move(cursor_horiz_vert_move_t cursor_move);
-void setup_cut_region(void);
-int is_there_cut_region(void);
-int lines_selected(void);
-int columns_selected(void);
+void clear_cut_region();
+void setup_cut_region();
+int is_there_cut_region();
+#ifdef ENABLE_DEBUG
+void dump_cut_region();
+#endif // ENABLE_DEBUG
+int lines_selected();
+int columns_selected();
 
 int save_cut_buffers();
 int load_cut_buffers();

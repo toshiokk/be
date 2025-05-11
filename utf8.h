@@ -28,11 +28,11 @@
 #define UTF8_ZEN_SPACE_NOTATION		"＿"	// Zenkaku(full width) low line "\xef\xbc\xbf"
 
 #ifdef START_UP_TEST
-void test_utf8c_encode(void);
+void test_utf8c_encode();
 #define DUMP_UTF8_BUF_LEN	(18+1)	// "00-00-00-00-00-00-"
 const char *dump_utf8c(const char *utf8c, char *buf);
-void test_utf8c_bytes(void);
-void test_wcwidth(void);
+void test_utf8c_bytes();
+void test_wcwidth();
 #endif // START_UP_TEST
 
 int utf8s_chars(const char *utf8s);

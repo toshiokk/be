@@ -50,7 +50,7 @@
 #endif // ENABLE_HELP
 
 
-void init_help_bufs(void);
+void init_help_bufs();
 be_buf_t *get_help_buf(int help_buf_idx);
 
 int view_list(int help_idx);

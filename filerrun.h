@@ -32,20 +32,20 @@
 
 #ifdef ENABLE_FILER
 
-int dof_exec_command_with_file(void);
-int dof_exec_command_with_files(void);
-int dof_run_command_rel(void);
-int dof_run_command_abs(void);
-int dof_run_command_shell(void);
-int dof_run_command_symlink(void);
-int dof_run_command_src_dst_dir(void);
-int dof_run_command_src_dst_file(void);
-int dof_run_command_soon_wo_log(void);
-int dof_run_command_soon_w_log(void);
+int dof_exec_command_with_file();
+int dof_exec_command_with_files();
+int dof_run_command_rel();
+int dof_run_command_abs();
+int dof_run_command_shell();
+int dof_run_command_symlink();
+int dof_run_command_src_dst_dir();
+int dof_run_command_src_dst_file();
+int dof_run_command_soon_wo_log();
+int dof_run_command_soon_w_log();
 
 //------------------------------------------------------------------------------
 
-void begin_fork_exec_repeat(void);
+void begin_fork_exec_repeat();
 void end_fork_exec_repeat(int exit_status);
 int fork_exec_sh_c_once(int flags, const char *command);
 int fork_exec_sh_c_repeat(int flags, const char *command);
@@ -56,13 +56,13 @@ int fork_exec_args_repeat(int flags, ...);
 
 int fork_exec_sh_c(int flags, const char *command);
 
-void clear_fork_exec_counter(void);
-int get_fork_exec_counter(void);
-int inc_fork_exec_counter(void);
+void clear_fork_exec_counter();
+int get_fork_exec_counter();
+int inc_fork_exec_counter();
 
 void pause_after_exec(int exit_status);
-int restore_term_for_shell(void);
-int reinit_term_for_filer(void);
+int restore_term_for_shell();
+int reinit_term_for_filer();
 
 #endif // filerrun_h
 

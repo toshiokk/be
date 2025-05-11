@@ -129,38 +129,8 @@ typedef struct be_bufss_t {
 	be_bufs_t *cur_bufs;		//!< current buffer
 } be_bufss_t;
 
-// Structure of collections of buffers:
-//   be_bufs_t all_bufferss.top_anchor
-//   be_bufs_t edit_bufs
-//     be_buf_t main.c
-//          :
-//     be_buf_t headers.h
-//   be_bufs_t cut_bufs
-//     be_buf_t cut-1
-//          :
-//     be_buf_t cut-n
-//   be_bufs_t hist_bufs
-//     be_buf_t exec_hist
-//     be_buf_t dir_hist
-//     be_buf_t key_macro_hist
-//     be_buf_t shell_hist
-//     be_buf_t file_pos_hist
-//   be_bufs_t help_bufs
-//     be_buf_t file_list
-//     be_buf_t key_binding_list
-//     be_buf_t func_list
-//   be_bufs_t undo_bufs
-//     be_buf_t undo-1
-//          :
-//     be_buf_t undo-n
-//   be_bufs_t redo_bufs
-//     be_buf_t redo-1
-//          :
-//     be_buf_t redo-n
-//   be_bufs_t all_bufferss.bot_anchor
-
-be_buf_t *buf_create_node(const char *full_path, unsigned char buf_mode_);
-be_buf_t *buf_free_node(be_buf_t *buf);
+be_buf_t *buf_create(const char *full_path, unsigned char buf_mode_);
+be_buf_t *buf_free(be_buf_t *buf);
 
 be_buf_t *buf_init(be_buf_t *buf, const char *full_path, unsigned char buf_mode_);
 void buf_views_init(be_buf_t *buf);

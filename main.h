@@ -22,14 +22,15 @@
 #ifndef main_h
 #define main_h
 
-void app_main_loop(void);
+extern int restart_be;
 
+int progerr_cb_func(const char* warning);
 int write_to_warning_file(const char* warning);
 void app_die_on(const char *msg);
-void free_all_allocated_memory(void);
+void free_all_allocated_memory();
 
-void show_usage(void);
-void show_version(void);
+void show_usage();
+void show_version();
 
 #ifdef ENABLE_HELP
 void disp_splash(int delay);

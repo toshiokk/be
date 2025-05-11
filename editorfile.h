@@ -23,30 +23,30 @@
 #define editorfile_h
 
 // "doe_..."  DO Editor function
-int doe_open_file_recursive(void);
-int doe_open_file_ro(void);
-int doe_open_locked_file(void);
-int doe_open_new_file(void);
-int doe_open_proj_file(void);
-int doe_open_exec_log_file(void);
-int do_open_proj_file(void);
-int do_open_exec_log_file(void);
-int doe_reopen_file_last_line(void);
-int doe_reopen_file(void);
+int doe_open_file_recursive();
+int doe_open_file_ro();
+int doe_open_locked_file();
+int doe_open_new_file();
+int doe_open_proj_file();
+int doe_open_exec_log_file();
+int do_open_proj_file();
+int do_open_exec_log_file();
+int doe_reopen_file_last_line();
+int doe_reopen_file();
 
-int doe_write_file_to(void);
+int doe_write_file_to();
 
-int doe_write_file_ask(void);
-int doe_write_file_always(void);
-int doe_write_all_ask(void);
-int doe_write_all_modified(void);
+int doe_write_file_ask();
+int doe_write_file_always();
+int doe_write_all_ask();
+int doe_write_all_modified();
 
-int doe_close_file_ask(void);
-int doe_close_file_always(void);
-int doe_close_all_ask(void);
-int doe_close_all_modified(void);
+int doe_close_file_ask();
+int doe_close_file_always();
+int doe_close_all_ask();
+int doe_close_all_modified();
 
-int doe_read_file_into_cur_buf(void);
+int doe_read_file_into_cur_buf();
 
 //------------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ typedef enum {
 } close_after_save_t;
 
 int write_all_ask(int yes_no, close_after_save_t close);
-int close_all_not_modified(void);
+int close_all_not_modified();
 int close_all_saved();
 int write_file_ask(int yes_no, close_after_save_t close);
 

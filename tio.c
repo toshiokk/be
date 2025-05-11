@@ -24,7 +24,7 @@
 PRIVATE char tio_blank_line_buf[MAX_SCRN_LINE_BUF_LEN+1] = "";		// A blank line ' '
 
 #ifdef START_UP_TEST
-void tio_test(void)
+void tio_test()
 {
 	int yy = 0;
 	int xx = 0;
@@ -131,11 +131,11 @@ void tio_test(void)
 PRIVATE int tio_initialized = FALSE;
 PRIVATE int high_bgc_enabled = FALSE;
 //------------------------------------------------------------------------------
-int tio_is_initialized(void)
+int tio_is_initialized()
 {
 	return tio_initialized;
 }
-int tio_init(void)
+int tio_init()
 {
 	strnset__(tio_blank_line_buf, ' ', MAX_SCRN_LINE_BUF_LEN);
 #ifdef ENABLE_NCURSES
@@ -152,13 +152,13 @@ void tio_enable_high_bgc(int enable)
 {
 	high_bgc_enabled = enable;
 }
-int tio_destroy(void)
+int tio_destroy()
 {
 	tio_end();
 	return 0;
 }
 
-int tio_begin(void)
+int tio_begin()
 {
 #ifdef ENABLE_NCURSES
 	curses_begin();
@@ -168,7 +168,7 @@ int tio_begin(void)
 	tio_initialized = TRUE;
 	return 0;
 }
-int tio_end(void)
+int tio_end()
 {
 #ifdef ENABLE_NCURSES
 	curses_end();
@@ -179,7 +179,7 @@ int tio_end(void)
 	return 0;
 }
 
-int tio_resize(void)
+int tio_resize()
 {
 	// update screen size
 	// re-initialize terminal interface to reflect new terminal size
@@ -187,12 +187,12 @@ int tio_resize(void)
 	tio_begin();
 	return 0;
 }
-int tio_suspend(void)
+int tio_suspend()
 {
 	tio_end();
 	return 0;
 }
-int tio_resume(void)
+int tio_resume()
 {
 	tio_begin();
 	return 0;
@@ -205,7 +205,7 @@ int tio_resume(void)
 // How to get win size:
 //  1. ioctl TIOCGWINSZ
 //  2. set cursor pos ("0x1b[999;999R") and get cursor pos ("\x1b[6n")
-int tio_check_update_terminal_size(void)
+int tio_check_update_terminal_size()
 {
 	if (is_sigwinch_signaled()) {
 mflf_d_printf("sigwinch_signaled\n");
@@ -227,7 +227,7 @@ void tio_set_screen_size(int lines, int columns)
 	termif_set_screen_size(lines, columns);
 #endif // ENABLE_NCURSES
 }
-int tio_get_lines(void)
+int tio_get_lines()
 {
 #ifdef ENABLE_NCURSES
 	return curses_get_lines();
@@ -235,7 +235,7 @@ int tio_get_lines(void)
 	return termif_get_lines();
 #endif // ENABLE_NCURSES
 }
-int tio_get_columns(void)
+int tio_get_columns()
 {
 #ifdef ENABLE_NCURSES
 	return curses_get_columns();
@@ -371,7 +371,7 @@ void tio_get_cursor_pos(int *yy, int *xx)
 #endif // ENABLE_NCURSES
 }
 
-void tio_clear_screen(void)
+void tio_clear_screen()
 {
 #ifdef ENABLE_NCURSES
 	curses_clear_screen();
@@ -413,7 +413,7 @@ void tio_output_string(int yy, int xx, const char *string, int bytes)
 #endif // ENABLE_NCURSES
 }
 
-void tio_beep(void)
+void tio_beep()
 {
 #ifdef ENABLE_NCURSES
 	curses_beep();
@@ -422,7 +422,7 @@ void tio_beep(void)
 #endif // ENABLE_NCURSES
 }
 
-void tio_refresh(void)
+void tio_refresh()
 {
 #ifdef ENABLE_NCURSES
 	curses_refresh();
@@ -430,7 +430,7 @@ void tio_refresh(void)
 	termif_refresh();
 #endif // ENABLE_NCURSES
 }
-void tio_repaint_all(void)
+void tio_repaint_all()
 {
 #ifdef ENABLE_NCURSES
 	// no function
@@ -439,7 +439,7 @@ void tio_repaint_all(void)
 #endif // ENABLE_NCURSES
 }
 
-key_code_t tio_input_key(void)
+key_code_t tio_input_key()
 {
 #ifdef ENABLE_NCURSES
 	return curses_input_key();
@@ -476,7 +476,7 @@ void restore_term_settings(struct termios *term_settings)
 }
 
 // disable program termination by ^C
-void set_term_no_intr(void)
+void set_term_no_intr()
 {
 #ifdef _POSIX_VDISABLE
 	struct termios term;
@@ -496,7 +496,7 @@ void set_term_no_intr(void)
 }
 
 // raw terminal mode (disable local echo, turn off cooked mode)
-void set_term_raw(void)
+void set_term_raw()
 {
 	struct termios term;
 	struct termios term_raw;
@@ -510,7 +510,7 @@ void set_term_raw(void)
 	tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
 
-int init_stderr(void)
+int init_stderr()
 {
 	return dup2(STDOUT_FILENO, STDERR_FILENO);
 }

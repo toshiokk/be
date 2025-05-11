@@ -62,7 +62,7 @@ extern filer_panes_t *cur_filer_panes;	// Current Filer Panes (instance is alloc
 //------------------------------------------------------------------------------
 
 #ifdef START_UP_TEST
-void test_get_file_size_str(void);
+void test_get_file_size_str();
 #endif // START_UP_TEST
 char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, int selected);
 
@@ -72,11 +72,11 @@ void free_file_infos(filer_view_t *fv);
 void sort_file_infos(filer_view_t *fv);
 int get_file_type_num(file_info_t *info);
 
-int get_files_selected_cfv(void);
+int get_files_selected_cfv();
 int get_files_selected(filer_view_t *fv);
 
-int select_and_get_first_file_idx_selected(void);
-int get_first_file_idx_selected(void);
+int select_and_get_first_file_idx_selected();
+int get_first_file_idx_selected();
 int get_next_file_idx_selected(int file_idx);
 void unselect_all_files_auto(char selection_bit);
 

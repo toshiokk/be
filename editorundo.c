@@ -35,7 +35,7 @@ be_buf_t *push_undo_buf_node(be_buf_t *buf)
 	return buf_insert_after(UNDO_BUFS_TOP_ANCH, buf);
 }
 // pop ==> remove buffer from top of buffers
-be_buf_t *pop_undo_buf(void)
+be_buf_t *pop_undo_buf()
 {
 	if (IS_NODE_BOT_ANCH(UNDO_BUFS_TOP_BUF))
 		return NULL;
@@ -48,7 +48,7 @@ be_buf_t *push_redo_buf_node(be_buf_t *buf)
 				 &(buf->buf_views[get_editor_cur_pane_idx()]));
 	return buf_insert_after(REDO_BUFS_TOP_ANCH, buf);
 }
-be_buf_t *pop_redo_buf(void)
+be_buf_t *pop_redo_buf()
 {
 	if (IS_NODE_BOT_ANCH(REDO_BUFS_TOP_BUF))
 		return NULL;
@@ -75,11 +75,11 @@ int delete_unredo_buf(be_buf_t *do_buf, be_buf_t *edit_buf)
 	}
 	return deleted;
 }
-int count_undo_bufs(void)
+int count_undo_bufs()
 {
 	return bufs_count_bufs(&undo_buffers);
 }
-int count_redo_bufs(void)
+int count_redo_bufs()
 {
 	return bufs_count_bufs(&redo_buffers);
 }
@@ -98,7 +98,7 @@ void memorize_undo_state_before_change(const char *func_id)
 		strlcpy__(undo_state_func_id_done, func_id, MAX_PATH_LEN);
 	}
 }
-int check_undo_state_after_change(void)
+int check_undo_state_after_change()
 {
 	int error = 0;
 	if (get_epc_buf() != EDIT_BUFS_TOP_ANCH
@@ -125,11 +125,11 @@ int check_undo_state_after_change(void)
 PRIVATE be_line_t *undo_min_line = NULL;
 PRIVATE be_line_t *undo_max_line = NULL;
 PRIVATE int undo_lines = 0;
-PRIVATE void save_region_to_undo_buf(void);
+PRIVATE void save_region_to_undo_buf();
 
 PRIVATE void undo_set_region(be_line_t *min_line, be_line_t *max_line, int cut_buf_lines);
-PRIVATE void undo_adjust_max_line(void);
-PRIVATE void undo_save_before_change(void);
+PRIVATE void undo_adjust_max_line();
+PRIVATE void undo_save_before_change();
 // set region and save before change
 void undo_set_region__save_before_change(be_line_t *min_line, be_line_t *max_line,
  int cut_buf_lines)
@@ -145,7 +145,7 @@ PRIVATE void undo_set_region(be_line_t *min_line, be_line_t *max_line, int cut_b
 
 	undo_adjust_max_line();
 }
-PRIVATE void undo_adjust_max_line(void)
+PRIVATE void undo_adjust_max_line()
 {
 	char has_past_max_line = 0;
 
@@ -163,13 +163,13 @@ PRIVATE void undo_adjust_max_line(void)
 	undo_max_line = line;	// adjust max line
 }
 // save undo info before change
-PRIVATE void undo_save_before_change(void)
+PRIVATE void undo_save_before_change()
 {
 	save_region_to_undo_buf();
 }
 
 // save undo info after change
-void undo_save_after_change(void)
+void undo_save_after_change()
 {
 	if (count_undo_bufs() % 2) {
 		// count_undo_bufs() is odd.
@@ -180,15 +180,15 @@ void undo_save_after_change(void)
 			// compare buffer after change and buffer before change
 			if (buf_compare(UNDO_BUFS_TOP_BUF, NODE_NEXT(UNDO_BUFS_TOP_BUF)) == 0) {
 				// not changed, pop two buffer (pushed "after" and "before")
-				buf_free_node(pop_undo_buf());
-				buf_free_node(pop_undo_buf());
+				buf_free(pop_undo_buf());
+				buf_free(pop_undo_buf());
 			} else {
 				set_cur_buf_modified();
 			}
 		}
 	}
 }
-PRIVATE void save_region_to_undo_buf(void)
+PRIVATE void save_region_to_undo_buf()
 {
 	push_undo_buf_node(get_epc_buf());
 	for (be_line_t *line = NODE_NEXT(undo_min_line); line != undo_max_line;
@@ -208,7 +208,7 @@ PRIVATE be_line_t *restore_region_from_buffer(undo0_redo1_t undo0_redo1);
 PRIVATE be_line_t *delete_region_in_buf(be_buf_t *buf);
 PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf);
 
-int doe_undo(void)
+int doe_undo()
 {
 	do_clear_mark_();
 	if (count_undo_bufs() < 2) {
@@ -217,7 +217,7 @@ int doe_undo(void)
 	}
 	return do_undo_redo_(UNDO0);
 }
-int doe_redo(void)
+int doe_redo()
 {
 	do_clear_mark_();
 	if (count_redo_bufs() < 2) {
@@ -309,11 +309,11 @@ PRIVATE be_line_t *insert_region_from_buf(be_line_t *edit_line, be_buf_t *buf)
 }
 
 #ifdef ENABLE_DEBUG
-void dump_undo_bufs_lines(void)
+void dump_undo_bufs_lines()
 {
 	buf_dump_bufs_lines(UNDO_BUFS_TOP_BUF, "undo-bufs");
 }
-void dump_redo_bufs_lines(void)
+void dump_redo_bufs_lines()
 {
 	buf_dump_bufs_lines(REDO_BUFS_TOP_BUF, "redo-bufs");
 }

@@ -25,24 +25,24 @@ PRIVATE void make_help_buf(int help_idx);
 
 PRIVATE void make_help_file_list(be_buf_t *cur_buf);
 #ifdef ENABLE_HELP
-PRIVATE void make_help_func_list(void);
-PRIVATE void make_help_key_list(void);
+PRIVATE void make_help_func_list();
+PRIVATE void make_help_key_list();
 #endif // ENABLE_HELP
 
-void init_help_bufs(void)
+void init_help_bufs()
 {
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node(INTERNAL_FILE_NAME_PREFIX "Editor-Files-loaded", buf_MODE_LIST));
+	 buf_create(INTERNAL_FILE_NAME_PREFIX "Editor-Files-loaded", buf_MODE_LIST));
 #ifdef ENABLE_HELP
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node(INTERNAL_FILE_NAME_PREFIX "Editor-Functions", buf_MODE_LIST));
+	 buf_create(INTERNAL_FILE_NAME_PREFIX "Editor-Functions", buf_MODE_LIST));
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node(INTERNAL_FILE_NAME_PREFIX "Editor-Key-Bindings", buf_MODE_LIST));
+	 buf_create(INTERNAL_FILE_NAME_PREFIX "Editor-Key-Bindings", buf_MODE_LIST));
 #ifdef ENABLE_FILER
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node(INTERNAL_FILE_NAME_PREFIX "Filer-Functions", buf_MODE_LIST));
+	 buf_create(INTERNAL_FILE_NAME_PREFIX "Filer-Functions", buf_MODE_LIST));
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create_node(INTERNAL_FILE_NAME_PREFIX "Filer-Key-Bindings", buf_MODE_LIST));
+	 buf_create(INTERNAL_FILE_NAME_PREFIX "Filer-Key-Bindings", buf_MODE_LIST));
 #endif // ENABLE_FILER
 #endif // ENABLE_HELP
 }
@@ -150,8 +150,6 @@ PRIVATE void make_help_buf(int help_idx)
 		break;
 #endif // ENABLE_HELP
 	}
-
-	SET_CUR_EBUF_STATE(buf_MODE, buf_MODE_LIST);	// A list
 	set_epc_buf(cur_edit_buf);
 }
 
@@ -160,22 +158,18 @@ PRIVATE void make_help_file_list(be_buf_t *cur_buf)
 	be_line_t *line_to_go = NULL;
 	for (be_bufs_t *bufs = NODES_TOP_NODE(&all_bufferss); IS_NODE_INT(bufs);
 	 bufs = NODE_NEXT(bufs)) {
-		char buffer[MAX_SCRN_LINE_BUF_LEN+1];
-		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "%-s", bufs->name);
-		append_string_to_cur_edit_buf(buffer);
+		append_string_to_cur_edit_buf(sprintf_s("%-s", bufs->name));
 		if (IS_NODES_EMPTY(bufs)) {
-			snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "  == no buffer ==");
-			append_string_to_cur_edit_buf(buffer);
+			append_string_to_cur_edit_buf(sprintf_s("  == no buffer =="));
 			continue;
 		}
 		for (be_buf_t *buf = NODES_TOP_NODE(bufs); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
-			char buffer[MAX_SCRN_LINE_BUF_LEN+1];
-			snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, "  %-60s %-5s %s %s %04x",
-			 quote_file_path_static(buf_get_abs_path(buf, NULL)),
-			 buf_enc_str(buf), buf_eol_str(buf),
-			 GET_BUF_STATE(buf, buf_MODIFIED) ? "Mo" : "--",
-			 buf->orig_file_crc);
-			append_string_to_cur_edit_buf(buffer);
+			append_string_to_cur_edit_buf(
+			 sprintf_s("  %s  %-5s-%s-%s",
+			  expand_str_columns(quote_file_path_s(buf_get_file_path(buf, NULL)),
+			   central_win_get_columns() - win_size_shrink_columns() - (4 + 2 + 20)),
+			  buf_enc_str(buf), buf_eol_str(buf),
+			  GET_BUF_STATE(buf, buf_MODIFIED) ? "Mo" : "--"));
 			if (buf == cur_buf) {
 				line_to_go = EPCBVC_CL;
 			}
@@ -189,7 +183,7 @@ PRIVATE void make_help_file_list(be_buf_t *cur_buf)
 }
 
 #ifdef ENABLE_HELP
-PRIVATE void make_help_func_list(void)
+PRIVATE void make_help_func_list()
 {
 	char buf1[MAX_KEY_NAME_LEN+1];
 	char buf2[MAX_KEY_NAME_LEN+1];
@@ -224,7 +218,7 @@ PRIVATE void make_help_func_list(void)
 		append_string_to_cur_edit_buf(buffer);
 	}
 }
-PRIVATE void make_help_key_list(void)
+PRIVATE void make_help_key_list()
 {
 	char *template_ = "%-*s  %-32s  %-*s %-*s  %-32s";
 	//			   12345678901234567890123456789012

@@ -31,7 +31,7 @@ void set_wrap_line_tab_size(int tab_size)
 //------------------------------------------------------------------------------
 
 #ifdef START_UP_TEST
-void test_wrap_line(void)
+void test_wrap_line()
 {
 flf_d_printf("----------------------------------------------------------------------\n");
 flf_d_printf("linewrap_tab_size: %d\n", linewrap_tab_size);
@@ -486,40 +486,11 @@ int vis_idx_from_byte_idx(const char *utf8s, int bytes)
 	return vis_idx;
 }
 
-#if 0
-int char_idx_from_byte_idx(const char *utf8s, int bytes);
-int char_idx_from_byte_idx(const char *utf8s, int bytes)
-{
-	int char_idx;
-	int col_idx;
-	const char *ptr;
-
-	char_idx = 0;
-	for (ptr = utf8s, col_idx = 0; *ptr && ptr - utf8s < bytes;
-	 char_idx++) {
-		FORWARD_COL_IDX()
-	}
-	return char_idx;
-}
-int vis_idx_from_col_idx(const char *utf8s, int columns);
-int vis_idx_from_col_idx(const char *utf8s, int columns)
-{
-	int vis_idx;
-	int col_idx;
-	const char *ptr;
-
-	for (ptr = utf8s, col_idx = 0, vis_idx = 0; *ptr && col_idx < columns; ) {
-		FORWARD_VIS_IDX()
-	}
-	return vis_idx;
-}
-#endif
-
 //------------------------------------------------------------------------------
 #ifdef START_UP_TEST
 PRIVATE int test_get_intersection_(int min1, int max1, int min2, int max2,
  int expected_ret, int expected_min, int expected_max);
-void test_get_intersection(void)
+void test_get_intersection()
 {
 	flf_d_printf("-----------------------\n");
 	// aaaaaa bbbbbb

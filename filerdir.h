@@ -24,9 +24,9 @@
 
 #ifdef ENABLE_FILER
 
-int filer_change_dir_to_cur_sel(void);
+int filer_change_dir_to_cur_sel();
 int filer_change_dir_if_not_yet(char *dir);
-int filer_change_dir_to_prev_dir(void);
+int filer_change_dir_to_prev_dir();
 
 #endif // ENABLE_FILER
 

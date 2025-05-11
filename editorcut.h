@@ -22,28 +22,29 @@
 #ifndef editorcut_h
 #define editorcut_h
 
-int doe_select_all_lines(void);
-int doe_copy_text(void);
-int doe_copy_text_to_system_clipboard(void);
+int doe_select_all_lines();
+
+int doe_delete_to_head();
+int doe_cut_to_head();
+int doe_copy_text();
+int doe_cut_text_to_system_clipboard();
+int doe_copy_text_to_system_clipboard();
 int send_to_system_clipboard();
+int doe_delete_to_tail();
+int doe_cut_to_tail();
+int doe_clear_all_cut_buffers();
 
-int doe_delete_to_head(void);
-int doe_cut_to_head(void);
-int doe_delete_to_tail(void);
-int doe_cut_to_tail(void);
-int doe_clear_all_cut_buffers(void);
+int doe_tog_mark();
+int do_set_mark();
+void do_set_mark_();
+int do_clear_mark();
+void do_clear_mark_();
 
-int doe_tog_mark(void);
-int do_set_mark(void);
-void do_set_mark_(void);
-int do_clear_mark(void);
-void do_clear_mark_(void);
-
-int doe_delete_text(void);
-int doe_cut_text(void);
-int doe_duplicate_text(void);
-int doe_paste_text_with_pop(void);
-int doe_paste_text_without_pop(void);
+int doe_delete_text();
+int doe_cut_text();
+int doe_duplicate_text();
+int doe_paste_text_with_pop();
+int doe_paste_text_without_pop();
 
 #endif // editorcut_h
 

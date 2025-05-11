@@ -25,19 +25,19 @@
 extern search_t search__;
 extern matches_t matches__;
 
-int doe_search_backward_first(void);
-int doe_search_forward_first(void);
-int doe_search_backward_next(void);
-int doe_search_forward_next(void);
+int doe_search_backward_first();
+int doe_search_forward_first();
+int doe_search_backward_next();
+int doe_search_forward_next();
 
-int doe_replace(void);
+int doe_replace();
 
 #ifdef ENABLE_REGEX
 
-int doe_find_bracket(void);
-int doe_find_bracket_reverse(void);
-int doe_highlight_bracket(void);
-int doe_highlight_bracket_reverse(void);
+int doe_find_bracket();
+int doe_find_bracket_reverse();
+int doe_highlight_bracket();
+int doe_highlight_bracket_reverse();
 #define BRACKET_SEARCH_REGEXP_STR_LEN	4	// "[<>]"
 #define MAX_BRACKET_NESTINGS	1000
 #define MAX_BRACKETS_SEARCH		10000	// for avoiding infinite loop

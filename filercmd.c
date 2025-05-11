@@ -41,46 +41,46 @@ int chk_inp_str_ret_val_filer(int ret)
 	return !IS_EF_INPUT_XX(ret);
 }
 
-int dof_up(void)
+int dof_up()
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() - 1,
 	 get_cur_filer_pane_view()->file_infos_entries-1));
 	return 1;
 }
-int dof_down(void)
+int dof_down()
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() + 1,
 	 get_cur_filer_pane_view()->file_infos_entries-1));
 	return 1;
 }
-int dof_page_up(void)
+int dof_page_up()
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() - filer_vert_scroll_lines(),
 	 get_cur_filer_pane_view()->file_infos_entries-1));
 	return 1;
 }
-int dof_page_down(void)
+int dof_page_down()
 {
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() + filer_vert_scroll_lines(),
 	 get_cur_filer_pane_view()->file_infos_entries-1));
 	return 1;
 }
-int dof_top_of_list(void)
+int dof_top_of_list()
 {
 	set_cur_fv_file_idx(0);
 	return 1;
 }
-int dof_bottom_of_list(void)
+int dof_bottom_of_list()
 {
 	set_cur_fv_file_idx(get_cur_filer_pane_view()->file_infos_entries-1);
 	return 1;
 }
 
-int dof_refresh_filer(void)
+int dof_refresh_filer()
 {
 #ifdef ENABLE_HISTORY
 	if (dir_history_fix()) { _WARNING_ }
@@ -89,7 +89,7 @@ int dof_refresh_filer(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 1;
 }
-int dof_tap_file(void)
+int dof_tap_file()
 {
 	if (filer_change_dir_to_cur_sel()) {
 		return 0;
@@ -102,7 +102,7 @@ int dof_tap_file(void)
 	}
 	return dof_view_file();
 }
-int dof_view_file(void)
+int dof_view_file()
 {
 	if (filer_change_dir_to_cur_sel()) {
 		return 0;
@@ -117,7 +117,7 @@ int dof_view_file(void)
 	}
 	return 0;
 }
-int dof_tail_file(void)	// view file with "tail" command
+int dof_tail_file()	// view file with "tail" command
 {
 	if (filer_change_dir_to_cur_sel()) {
 		return 0;
@@ -131,27 +131,27 @@ int dof_tail_file(void)	// view file with "tail" command
 
 PRIVATE int dof_open_file_(int flags);
 
-int dof_open_file_recursive(void)
+int dof_open_file_recursive()
 {
 	dof_open_file_(RECURS1 | RDOL0 | FOLF0 | LFH0);
 	return 1;
 }
-int dof_open_file_ro(void)
+int dof_open_file_ro()
 {
 	dof_open_file_(RECURS1 | RDOL1 | FOLF0 | LFH0);
 	return 1;
 }
-int dof_open_locked_file(void)
+int dof_open_locked_file()
 {
 	dof_open_file_(RECURS1 | RDOL0 | FOLF1 | LFH0);
 	return 1;
 }
-int dof_open_file_non_recursive(void)
+int dof_open_file_non_recursive()
 {
 	dof_open_file_(RECURS0 | RDOL0 | FOLF0 | LFH0);
 	return 1;
 }
-int dof_open_file_from_history(void)
+int dof_open_file_from_history()
 {
 	dof_open_file_(RECURS1 | RDOL0 | FOLF0 | LFH1);
 	return 1;
@@ -203,7 +203,7 @@ PRIVATE int dof_open_file_(int flags)
 
 //------------------------------------------------------------------------------
 
-int dof_open_proj_file(void)
+int dof_open_proj_file()
 {
 	do_open_proj_file();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
@@ -213,7 +213,7 @@ int dof_open_proj_file(void)
 	clear_files_loaded();
 	return 1;
 }
-int dof_open_exec_log_file(void)
+int dof_open_exec_log_file()
 {
 	do_open_exec_log_file();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
@@ -225,7 +225,7 @@ int dof_open_exec_log_file(void)
 }
 
 PRIVATE int dof_open_new_file_(const char *str);
-int dof_open_new_file(void)
+int dof_open_new_file()
 {
 	char file_path[MAX_PATH_LEN+1] = "";
 	concat_file_path_separating_by_space(file_path, MAX_PATH_LEN,
@@ -253,21 +253,21 @@ PRIVATE int dof_open_new_file_(const char *str)
 	tio_beep();
 	return 0;
 }
-int dof_input_files_to_open(void)
+int dof_input_files_to_open()
 {
 	return dof_drop_files_to_do_action_(ACTION_INPUT);
 }
-int dof_drop_files_to_open(void)
+int dof_drop_files_to_open()
 {
 	return dof_drop_files_to_do_action_(ACTION_SEL);
 }
 
 PRIVATE int dof_copy_file_(int update1);
-int dof_copy_file(void)
+int dof_copy_file()
 {
 	return dof_copy_file_(0);
 }
-int dof_copy_file_update(void)
+int dof_copy_file_update()
 {
 	return dof_copy_file_(1);
 }
@@ -298,17 +298,17 @@ PRIVATE int dof_copy_file_(int update1)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_drop_files_to_copy(void)
+int dof_drop_files_to_copy()
 {
 	return dof_drop_files_to_do_action_(ACTION_COPY);
 }
 
 PRIVATE int dof_move_file_(int update1);
-int dof_move_file(void)
+int dof_move_file()
 {
 	return dof_move_file_(0);
 }
-int dof_move_file_update(void)
+int dof_move_file_update()
 {
 	return dof_move_file_(1);
 }
@@ -453,7 +453,7 @@ int dof_drop_files_to_do_action_(int action)
 	return 0;
 }
 
-int dof_rename_file(void)
+int dof_rename_file()
 {
 	char file_name[MAX_PATH_LEN+1];
 	strlcpy__(file_name, get_cur_fv_cur_file_ptr()->file_name, MAX_PATH_LEN);
@@ -469,7 +469,7 @@ int dof_rename_file(void)
 	}
 	return 0;
 }
-int dof_trash_file(void)
+int dof_trash_file()
 {
 	int files_selected;
 	int ret;
@@ -504,7 +504,7 @@ int dof_trash_file(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_delete_file(void)
+int dof_delete_file()
 {
 	int files_selected;
 	int ret;
@@ -536,7 +536,7 @@ int dof_delete_file(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_mark_to_delete_file(void)
+int dof_mark_to_delete_file()
 {
 	int files_selected;
 	int ret;
@@ -572,7 +572,7 @@ int dof_mark_to_delete_file(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_size_zero_file(void)
+int dof_size_zero_file()
 {
 	int files_selected;
 	int ret;
@@ -611,7 +611,7 @@ int dof_size_zero_file(void)
 }
 
 // BEUNZIP file1.tgz file2.tgz ...
-int dof_unzip_file(void)
+int dof_unzip_file()
 {
 	char command_str[MAX_PATH_LEN+1] = "";
 	snprintf_(command_str, MAX_PATH_LEN, "%s", BEUNZIP);
@@ -634,7 +634,7 @@ int dof_unzip_file(void)
 	return 0;
 }
 // BEZIP file.tgz file1 file2 file3 ...
-int dof_zip_file(void)
+int dof_zip_file()
 {
 	char command_str[MAX_PATH_LEN+1] = "";
 	snprintf_(command_str, MAX_PATH_LEN, "%s {}", BEZIP);
@@ -657,7 +657,7 @@ int dof_zip_file(void)
 	return 0;
 }
 
-int dof_find_file(void)
+int dof_find_file()
 {
 	char file_path[MAX_PATH_LEN+1];
 	if (chk_inp_str_ret_val_filer(input_string_pos("", file_path, MAX_PATH_LEN,
@@ -670,7 +670,7 @@ int dof_find_file(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_make_directory(void)
+int dof_make_directory()
 {
 	char file_path[MAX_PATH_LEN+1];
 	if (chk_inp_str_ret_val_filer(input_string_pos("", file_path, MAX_PATH_LEN,
@@ -682,7 +682,7 @@ int dof_make_directory(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_change_directory(void)
+int dof_change_directory()
 {
 	char string[MAX_PATH_LEN+1];
 	if (chk_inp_str_ret_val_filer(input_string_pos("", string, MAX_PATH_LEN,
@@ -695,7 +695,7 @@ int dof_change_directory(void)
 	return filer_change_dir_parent(file_path);
 }
 
-int dof_parent_directory(void)
+int dof_parent_directory()
 {
 	if (filer_change_dir("..")) {
 		return 1;   // OK
@@ -707,23 +707,23 @@ int dof_parent_directory(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_beginning_directory(void)
+int dof_beginning_directory()
 {
 	return filer_change_dir_if_not_yet(get_cur_filer_pane_view()->org_cur_dir);
 }
-int dof_home_directory(void)
+int dof_home_directory()
 {
 	return filer_change_dir_if_not_yet("~");
 }
-int dof_root_directory(void)
+int dof_root_directory()
 {
 	return filer_change_dir_if_not_yet("/");
 }
-int dof_prev_directory(void)
+int dof_prev_directory()
 {
 	return filer_change_dir_to_prev_dir();
 }
-int dof_real_path(void)
+int dof_real_path()
 {
 	char dir[MAX_PATH_LEN+1];
 	file_info_t *f_info = get_cur_fv_cur_file_ptr();
@@ -745,7 +745,7 @@ int dof_real_path(void)
 	return filer_change_dir_if_not_yet(dir);
 }
 //------------------------------------------------------------------------------
-int dof_set_filter(void)
+int dof_set_filter()
 {
 	char filter[MAX_PATH_LEN+1];
 	if (chk_inp_str_ret_val_editor(input_string_pos("", filter, MAX_PATH_LEN,
@@ -757,7 +757,7 @@ int dof_set_filter(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_select_file(void)
+int dof_select_file()
 {
 	get_cur_fv_cur_file_ptr()->selected = get_cur_fv_cur_file_ptr()->selected ^ _FILE_SEL_MAN_;
 	set_cur_fv_file_idx(MIN_MAX_(0,
@@ -765,7 +765,7 @@ int dof_select_file(void)
 	disp_files_selected();
 	return 0;
 }
-int dof_select_no_file(void)
+int dof_select_no_file()
 {
 	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_infos_entries;
 	 file_idx++) {
@@ -774,7 +774,7 @@ int dof_select_no_file(void)
 	disp_status_bar_done(_("File selection cleared"));
 	return 0;
 }
-int dof_select_all_files(void)
+int dof_select_all_files()
 {
 	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_infos_entries;
 	 file_idx++) {
@@ -801,8 +801,8 @@ void disp_files_selected()
 	 files_selected), files_selected);
 }
 
-PRIVATE int dof_quit_filer_(void);
-int dof_quit_filer(void)
+PRIVATE int dof_quit_filer_();
+int dof_quit_filer()
 {
 ////#define ASK_ON_EXIT
 #ifdef ASK_ON_EXIT
@@ -817,14 +817,20 @@ int dof_quit_filer(void)
 #endif // ASK_ON_EXIT
 	return dof_quit_filer_();
 }
-int dof_quit_home_dir(void)
+int dof_quit_home_dir()
 {
 	if (get_app_stack_depth() == 0) {
 		dof_home_directory();
 	}
 	return dof_quit_filer_();
 }
-PRIVATE int dof_quit_filer_(void)
+int dof_restart_filer()
+{
+	restart_be = 1;
+	return dof_quit_filer_();
+}
+
+PRIVATE int dof_quit_filer_()
 {
 #ifdef ENABLE_HISTORY
 	if (dir_history_fix()) { _WARNING_ }
@@ -833,46 +839,46 @@ PRIVATE int dof_quit_filer_(void)
 	filer_do_next = EF_QUIT;
 	return 0;
 }
-int dof_tog_show_dot_file(void)
+int dof_tog_show_dot_file()
 {
 	do_tog_show_dot_file();
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_inc_file_view_mode(void)
+int dof_inc_file_view_mode()
 {
 	inc_file_view_mode();
 	SHOW_MODE("File information", get_str_file_view_mode());
 	return 0;
 }
-int dof_clear_file_sort_mode(void)
+int dof_clear_file_sort_mode()
 {
 	clear_file_sort_mode();
 	SHOW_MODE("Clear File sort mode", get_str_file_sort_mode());
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_inc_file_sort_mode(void)
+int dof_inc_file_sort_mode()
 {
 	inc_file_sort_mode();
 	SHOW_MODE("File sort mode", get_str_file_sort_mode());
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_tog_show_zebra_striping(void)
+int dof_tog_show_zebra_striping()
 {
 	do_tog_show_zebra_striping();
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_tog_panes(void)
+int dof_tog_panes()
 {
 	tog_filer_panes();
 	SHOW_MODE("Filer panes", get_str_filer_panes());
 	filer_do_next = FL_UPDATE_FILE_LIST_AUTO;
 	return 0;
 }
-int dof_tog_panex(void)
+int dof_tog_panex()
 {
 #ifdef ENABLE_HISTORY
 	if (dir_history_fix()) { _WARNING_ }
@@ -882,7 +888,7 @@ int dof_tog_panex(void)
 	filer_do_next = FL_UPDATE_FILE_LIST_AUTO;
 	return 0;
 }
-int dof_inc_key_list_lines(void)
+int dof_inc_key_list_lines()
 {
 	do_inc_key_list_lines_();
 	return 0;
@@ -896,19 +902,19 @@ int dof_splash()
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_view_file_list(void)
+int dof_view_file_list()
 {
 	filer_do_next = view_list(HELP_BUF_IDX_EDITOR_FILE_LIST);
 	return 1;
 }
-int dof_view_func_list(void)
+int dof_view_func_list()
 {
 	view_list(HELP_BUF_IDX_FILER_FUNC_LIST);
 	return 1;
 }
 #endif // ENABLE_HELP
 
-int dof_menu_0(void)
+int dof_menu_0()
 {
 	return filer_menu_n(-1);
 }

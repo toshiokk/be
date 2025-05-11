@@ -253,7 +253,7 @@ PRIVATE const char *stristr(const char *haystack, const char *needle)
 // Regular expression helper functions ----------------------------------------
 
 #ifdef START_UP_TEST
-void test_regexp(void)
+void test_regexp()
 {
 	regexp_t regexp;
 	regexp_matches_t regexp_matches;
@@ -331,7 +331,7 @@ void test_regexp(void)
 }
 #endif // START_UP_TEST
 
-regexp_t *regexp_alloc(void)
+regexp_t *regexp_alloc()
 {
 	regexp_t *regexp;
 
@@ -486,9 +486,7 @@ int regexp_replace(regexp_t *regexp, regexp_matches_t *regexp_matches,
 void regexp_matches_clear(regexp_matches_t *regexp_matches)
 {
 #if 0
-	int match_idx;
-
-	for (match_idx = 0; match_idx < MAX_REGEX_MATCHES; match_idx__) {
+	for (int match_idx = 0; match_idx < MAX_REGEX_MATCHES; match_idx__) {
 		regexp_matches->matches[match_idx].rm_so = 0;
 		regexp_matches->matches[match_idx].rm_eo = 0;
 	}

@@ -96,9 +96,9 @@ void matches_dump_matches(matches_t *matches);
 #ifdef ENABLE_REGEX
 
 #ifdef START_UP_TEST
-void test_regexp(void);
+void test_regexp();
 #endif // START_UP_TEST
-regexp_t *regexp_alloc(void);
+regexp_t *regexp_alloc();
 regexp_t *regexp_init(regexp_t *regexp);
 void regexp_free_regex_compiled(regexp_t *regexp);
 void regexp_free(regexp_t *regexp);

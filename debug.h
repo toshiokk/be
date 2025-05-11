@@ -22,15 +22,90 @@
 #ifndef debug_h
 #define debug_h
 
-////#define FORCE_ENABLE_DEBUG		// define this to force output debug log
-#ifdef FORCE_ENABLE_DEBUG
-#define ENABLE_DEBUG 1
-#endif // FORCE_ENABLE_DEBUG
+// If you wish enable debugging temprarily without running ./configure, define here
+////#define ENABLE_DEBUG 1
 
 #ifdef ENABLE_DEBUG
-////#define START_UP_TEST
+////#define START_UP_TEST		// define this to run unit tests at the start up of application
 #endif // ENABLE_DEBUG
 
+//------------------------------------------------------------------------------
+#ifdef ENABLE_DEBUG
+
+#define _FN_		__FUNCTION__
+#define _FL_		__FILE__
+#define _LN_		__LINE__
+
+#define _D_(debug)							_FLF_;	debug;
+#define _D(debug)							_FLF;	debug;
+#define fl_d_printf(args...)				tflfl_d_printf_(0, _FL_, _LN_, "", "", args)
+#define flf_d_printf(args...)				tflfl_d_printf_(0, _FL_, _LN_, _FN_, "", args)
+#define tflf_d_printf(args...)				tflfl_d_printf_(1, _FL_, _LN_, _FN_, "", args)
+#define mflf_d_printf(args...)				tflfl_d_printf_(3, _FL_, _LN_, _FN_, "", args)
+#define uflf_d_printf(args...)				tflfl_d_printf_(6, _FL_, _LN_, _FN_, "", args)
+#define dtflf_d_printf(args...)				tflfl_d_printf_(9, _FL_, _LN_, _FN_, "", args)
+#define flfl_d_printf(label, args...)		tflfl_d_printf_(0, _FL_, _LN_, _FN_, label, args)
+#define dtflfl_d_printf(label, args...)		tflfl_d_printf_(9, _FL_, _LN_, _FN_, label, args)
+#define dtflfl_sprintf_s(label, args...)	tflfl_sprintf_s_(9, _FL_, _LN_, _FN_, label, args)
+#define d_printf(args...)					tflfl_d_printf_(0, "", 0, "", "", args)
+#define e_printf(args...)					debug_printf(args)
+#define e_vprintf(args...)					debug_vprintf(args)
+#define progerr_printf(args...)		tflfl_d_printf_(0x10 | 9, _FL_, _LN_, _FN_, "PROGERR", args)
+
+#else // ENABLE_DEBUG
+
+#define _D_(debug)
+#define _D(debug)
+#define fl_d_printf(args...)
+#define flf_d_printf(args...)
+#define tflf_d_printf(args...)
+#define mflf_d_printf(args...)
+#define uflf_d_printf(args...)
+#define dtflf_d_printf(args...)
+#define flfl_d_printf(label, args...)
+#define dtflfl_sprintf_s(label, args...)
+#define d_printf(args...)
+#define e_printf(args...)
+#define e_vprintf(args...)
+#define progerr_printf(args...)
+
+#endif // ENABLE_DEBUG
+
+#define warning_printf(args...)		flfl_d_printf("WARNING !!", args)
+#define fatalerr_printf(args...)	flfl_d_printf("FATALERR !!!!", args)
+#define _TFLF_						tflf_d_printf("\n");
+#define _MFLF_						mflf_d_printf("\n");
+#define _UFLF_						uflf_d_printf("\n");
+#define _FLF_						flf_d_printf("\n");
+#define _FLF						flf_d_printf("");
+#define _PROGERR_					flf_d_printf("PROGERR\n");
+#define _FATALERR_					flf_d_printf("FATALERR\n");
+#define _WARNING_					flf_d_printf("WARNING\n");
+
+#ifdef ENABLE_DEBUG
+
+void dump_memory(char *message, void *memory, int bytes);
+void dump_string(char *message, const char* string);
+
+void tflfl_d_printf_(int time, const char *file, int line,
+ const char *func, const char *label, const char *format, ...);
+const char* tflfl_sprintf_s_(int time, const char *file, int line,
+ const char *func, const char *label, const char *format, ...);
+const char* tflfl_vsprintf(char *buffer, int time, const char *file, int line,
+ const char *func, const char *label, const char *format, va_list list);
+void output_last_d_printf();
+
+void set_debug_printf_output(int on1_off0);
+void debug_printf(const char *format, ...);
+void debug_vprintf(const char *format, va_list ap);
+
+typedef int (*progerr_callback_t)(const char*);
+void set_progerr_callback(progerr_callback_t callback);
+int call_progerr_callback(const char* message);
+
+#endif // ENABLE_DEBUG
+
+//------------------------------------------------------------------------------
 #ifdef START_UP_TEST
 #define MY_UT_INT(actual, expected)		if ((actual) != (expected)) {		\
   warning_printf("[%d] != [%d]\n", actual, expected); assert(1);			\
@@ -49,80 +124,6 @@
     dump_memory("expected:", expected, expected_len);						\
 }
 #endif // START_UP_TEST
-
-#ifdef ENABLE_DEBUG
-
-#define _FN_		__FUNCTION__
-#define _FL_		__FILE__
-#define _LN_		__LINE__
-
-#define _D_(debug)						_FLF_;	debug;
-#define _D(debug)						_FLF;	debug;
-#define fl_d_printf(args...)			tflfl_d_printf_(0, _FL_, _LN_, "", "", args)
-#define flf_d_printf(args...)			tflfl_d_printf_(0, _FL_, _LN_, _FN_, "", args)
-#define tflf_d_printf(args...)			tflfl_d_printf_(1, _FL_, _LN_, _FN_, "", args)
-#define mflf_d_printf(args...)			tflfl_d_printf_(3, _FL_, _LN_, _FN_, "", args)
-#define uflf_d_printf(args...)			tflfl_d_printf_(6, _FL_, _LN_, _FN_, "", args)
-#define dtflf_d_printf(args...)			tflfl_d_printf_(9, _FL_, _LN_, _FN_, "", args)
-#define flfl_d_printf(label, args...)	tflfl_d_printf_(0, _FL_, _LN_, _FN_, label, args)
-#define dtflfl_sprintf_s(label, args...)	tflfl_sprintf_s_(9, _FL_, _LN_, _FN_, label, args)
-#define d_printf(args...)				tflfl_d_printf_(0, "", 0, "", "", args)
-#define e_printf(args...)				debug_printf(args)
-#define e_vprintf(args...)				debug_vprintf(args)
-
-#define progerr_printf(args...)		{							\
-  set_work_space_color_warn();									\
-  flfl_d_printf("PROGERR !!", args);							\
-  write_to_warning_file(dtflfl_sprintf_s("PROGERR !!", args));	\
-}
-
-#else // ENABLE_DEBUG
-
-#define _D_(debug)
-#define _D(debug)
-#define fl_d_printf(args...)
-#define flf_d_printf(args...)
-#define tflf_d_printf(args...)
-#define mflf_d_printf(args...)
-#define uflf_d_printf(args...)
-#define dtflf_d_printf(args...)
-#define flfl_d_printf(label, args...)
-#define dtflfl_sprintf_s(label, args...)
-#define d_printf(args...)
-#define e_printf(args...)
-#define e_vprintf(args...)
-
-#define progerr_printf(args...)
-
-#endif // ENABLE_DEBUG
-
-#define warning_printf(args...)		flfl_d_printf("WARNING !!", args)
-#define fatalerr_printf(args...)	flfl_d_printf("FATALERR !!!!", args)
-#define _TFLF_						tflf_d_printf("\n");
-#define _MFLF_						mflf_d_printf("\n");
-#define _UFLF_						uflf_d_printf("\n");
-#define _FLF_						flf_d_printf("\n");
-#define _FLF						flf_d_printf("");
-#define _PROGERR_					flf_d_printf("PROGERR\n");
-#define _FATALERR_					flf_d_printf("FATALERR\n");
-#define _WARNING_					flf_d_printf("WARNING\n");
-
-#ifdef ENABLE_DEBUG
-void dump_memory(char *message, void *memory, int bytes);
-void dump_string(char *message, const char* string);
-
-void tflfl_d_printf_(int time, const char *file, int line,
- const char *func, const char *label, const char *format, ...);
-const char* tflfl_sprintf_s_(int time, const char *file, int line,
- const char *func, const char *label, const char *format, ...);
-const char* tflfl_vsprintf(char *buffer, int time, const char *file, int line,
- const char *func, const char *label, const char *format, va_list list);
-void output_last_d_printf(void);
-
-void set_debug_printf_output(int on1_off0);
-void debug_printf(const char *format, ...);
-void debug_vprintf(const char *format, va_list ap);
-#endif // ENABLE_DEBUG
 
 // Usage of "FALLTHROUGH":
 //	switch (value) {

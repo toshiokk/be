@@ -243,7 +243,7 @@ flf_d_printf("[%s]\n", buffer);
 	central_win_output_string(-1, -1, " ", -1);
 }
 
-int get_groups_in_func_key_table(void)
+int get_groups_in_func_key_table()
 {
 	func_key_list_t *app_func_key_table = get_app_func_key_table();
 	int group_idx = 0;

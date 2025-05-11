@@ -21,7 +21,7 @@
 
 #include "headers.h"
 
-void signal_init(void)
+void signal_init()
 {
 	struct sigaction sigact;
 
@@ -51,7 +51,7 @@ void signal_init(void)
 #endif
 }
 
-void signal_fork(void)
+void signal_fork()
 {
 	struct sigaction sigact;
 
@@ -65,7 +65,7 @@ void signal_fork(void)
 	sigaction(SIGWINCH, &sigact, NULL);
 }
 
-void signal_clear(void)
+void signal_clear()
 {
 	struct sigaction sigact;
 
@@ -83,11 +83,11 @@ void signal_clear(void)
 }
 
 PRIVATE int sigint_signaled = 0;
-void clear_sigint_signaled(void)
+void clear_sigint_signaled()
 {
 	sigint_signaled = 0;
 }
-void set_sigint_signaled(void)
+void set_sigint_signaled()
 {
 	sigint_signaled = 1;
 }
@@ -95,7 +95,7 @@ RETSIGTYPE handler_sigint(int signal)
 {
 	set_sigint_signaled();
 }
-int is_sigint_signaled(void)
+int is_sigint_signaled()
 {
 	return sigint_signaled;
 }
@@ -131,7 +131,7 @@ RETSIGTYPE handler_sigsegv(int signal)
 }
 
 PRIVATE int sigwinch_signaled = 0;
-void clear_sigwinch_signaled(void)
+void clear_sigwinch_signaled()
 {
 	sigwinch_signaled = 0;
 }
@@ -139,7 +139,7 @@ RETSIGTYPE handle_sigwinch(int signal)
 {
 	sigwinch_signaled = 1;
 }
-int is_sigwinch_signaled(void)
+int is_sigwinch_signaled()
 {
 	return sigwinch_signaled;
 }

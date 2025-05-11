@@ -26,19 +26,19 @@
 
 int read_rc_file(const char *rc_file_name);
 #ifdef ENABLE_SYNTAX
-int register_default_color_syntax(void);
+int register_default_color_syntax();
 #endif // ENABLE_SYNTAX
-void free_file_types(void);
+void free_file_types();
 
 #ifdef ENABLE_DEBUG
-void dump_app_mode(void);
+void dump_app_mode();
 #endif // ENABLE_DEBUG
 
 #endif // ENABLE_RC
 
 #ifdef ENABLE_SYNTAX
 #ifdef ENABLE_DEBUG
-void dump_file_types(void);
+void dump_file_types();
 void dump_file_type(const file_type_t *file_type, int syntax);
 void dump_color_syntax(const color_syntax_t *clr_syntax);
 #endif // ENABLE_DEBUG

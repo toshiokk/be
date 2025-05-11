@@ -26,8 +26,8 @@
 PRIVATE WINDOW *curses_win;
 
 PRIVATE int get_color_pair(int bgc, int fgc);
-PRIVATE int init_color_pairs(void);
-PRIVATE key_code_t getch_(void);
+PRIVATE int init_color_pairs();
+PRIVATE key_code_t getch_();
 
 //------------------------------------------------------------------------------
 PRIVATE struct termios term_settings_save;	/* The user's original term settings */
@@ -37,7 +37,7 @@ PRIVATE char curses_rev = 0;
 PRIVATE char curses_color_pair = -1;
 PRIVATE char curses_cur_color_pair = -1;
 
-int curses_init(void)
+int curses_init()
 {
 	curses_bgc = 0;
 	curses_fgc = 7;
@@ -47,7 +47,7 @@ int curses_init(void)
 	save_term_settings(&term_settings_save);
 	return 0;
 }
-int curses_begin(void)
+int curses_begin()
 {
 	set_term_no_intr();
 	set_term_raw();
@@ -62,7 +62,7 @@ int curses_begin(void)
 	init_color_pairs();
 	return 0;
 }
-int curses_end(void)
+int curses_end()
 {
 	keypad(curses_win, TRUE);
 	nocbreak();
@@ -77,11 +77,11 @@ void curses_set_screen_size(int lines, int columns)
 	LINES = lines;
 	COLS = columns;
 }
-int curses_get_lines(void)
+int curses_get_lines()
 {
 	return LINES;
 }
-int curses_get_columns(void)
+int curses_get_columns()
 {
 	return LIM_MAX(MAX_SCRN_COLS, COLS);
 }
@@ -94,7 +94,7 @@ PRIVATE int get_color_pair(int bgc, int fgc)
 	return CP_FROM_CBF(bgc, fgc);	// [1, COLOR_PAIRS-1]
 }
 
-PRIVATE int init_color_pairs(void)
+PRIVATE int init_color_pairs()
 {
 	int fgc, bgc;
 
@@ -155,7 +155,7 @@ void curses_get_cursor_pos(int *yy, int *xx)
 	*xx = curses_cursor_xx;
 }
 
-void curses_clear_screen(void)
+void curses_clear_screen()
 {
 	clear();
 }
@@ -165,16 +165,16 @@ void curses_output_string(int yy, int xx, const char *string, int bytes)
 		curses_set_cursor_pos(yy, xx);
 	waddnstr(curses_win, (char *)string, bytes);
 }
-void curses_beep(void)
+void curses_beep()
 {
 	beep();
 }
-void curses_refresh(void)
+void curses_refresh()
 {
 	refresh();
 }
 //------------------------------------------------------------------------------
-key_code_t curses_input_key(void)
+key_code_t curses_input_key()
 {
 	key_code_t key1;
 	key_code_t key2;
@@ -190,7 +190,7 @@ key_code_t curses_input_key(void)
 	return key1;
 }
 
-PRIVATE key_code_t getch_(void)
+PRIVATE key_code_t getch_()
 {
 	int key;
 

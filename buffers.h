@@ -149,10 +149,10 @@ extern be_bufs_t redo_buffers;
 
 //=============================================================================
 
-void init_bufferss(void);
-void free_all_buffers(void);
+void init_bufferss();
+void free_all_buffers();
 
-int free_cur_edit_buf(void);
+int free_cur_edit_buf();
 int free_edit_buf(be_buf_t *edit_buf);
 
 void lock_epc_buf_if_file_already_locked(BOOL lock_buffer_if_already_locked);
@@ -173,15 +173,15 @@ void destroy_editor_panes();
 void copy_editor_panes(editor_panes_t *dest, editor_panes_t *src);
 
 void set_epc_buf(be_buf_t *buf);
-be_buf_t *get_epc_buf(void);
-be_buf_view_t *get_epc_buf_view(void);
+be_buf_t *get_epc_buf();
+be_buf_view_t *get_epc_buf_view();
 
 void set_epx_buf(int pane_idx, be_buf_t *buf);
 be_buf_t *get_epx_buf(int pane_idx);
 
-void clear_cur_buf_modified(void);
-void set_cur_buf_modified(void);
-int is_any_edit_buf_modified(void);
+void clear_cur_buf_modified();
+void set_cur_buf_modified();
+int is_any_edit_buf_modified();
 
 //DDDbe_bufs_t *set_cur_buf_of_bufs(be_buf_t *buf);
 int is_epc_buf_edit_buf();
@@ -224,28 +224,28 @@ be_buf_t *get_edit_buf_by_file_name(const char *file_name);
 void create_edit_buf(const char *file_path);
 
 be_line_t *append_string_to_cur_edit_buf(const char *string);
-int append_magic_line_if_necessary(void);
+int append_magic_line_if_necessary();
 
 int has_bufs_to_edit();
 int count_edit_bufs();
-int epc_buf_count_bufs(void);
+int epc_buf_count_bufs();
 
 //------------------------------------------------------------------------------
 
-be_buf_t *push_cut_buf(void);
-int pop__free_from_cut_bufs(void);
+be_buf_t *push_cut_buf();
+int pop__free_from_cut_bufs();
 be_line_t *append_string_to_cur_cut_buf(const char *string);
-int count_cut_bufs(void);
-int count_cur_cut_buf_lines(void);
-void clear_cut_bufs(void);
+int count_cut_bufs();
+int count_cur_cut_buf_lines();
+void clear_cut_bufs();
 
 //------------------------------------------------------------------------------
 
-void renumber_cur_buf_from_top(void);
+void renumber_cur_buf_from_top();
 be_line_t *get_line_ptr_in_cur_buf_by_line_num(int line_num);
 
-void update_cur_buf_crc(void);
-int check_cur_buf_modified(void);
+void update_cur_buf_crc();
+int check_cur_buf_modified();
 
 //------------------------------------------------------------------------------
 
@@ -267,67 +267,67 @@ int check_cur_buf_modified(void);
 #define CUR_CBUF_STATE(var)					GET_BUF_STATE(CUT_BUFS_TOP_BUF, var)
 #define SET_CUR_CBUF_STATE(var, val)		SET_BUF_STATE(CUT_BUFS_TOP_BUF, var, val)
 
-int inc_buf_mode(void);
-const char *get_str_buf_mode(void);
+int inc_buf_mode();
+const char *get_str_buf_mode();
 
-int tog_line_wrap_mode(void);
-const char *get_str_buf_line_wrap_mode(void);
+int tog_line_wrap_mode();
+const char *get_str_buf_line_wrap_mode();
 
-int tog_buf_tab_size(void);
-int inc_buf_tab_size(void);
-const char *get_str_buf_tab_size(void);
+int tog_buf_tab_size();
+int inc_buf_tab_size();
+const char *get_str_buf_tab_size();
 
-int get_cur_buf_tab_size(void);
-void set_wrap_line_tab_size_from_cur_buf(void);
+int get_cur_buf_tab_size();
+void set_wrap_line_tab_size_from_cur_buf();
 
-int set_buf_nix_file(void);
-const char *get_str_buf_nix_file(void);
-int set_buf_mac_file(void);
-const char *get_str_buf_mac_file(void);
-int set_buf_dos_file(void);
-const char *get_str_buf_dos_file(void);
+int set_buf_nix_file();
+const char *get_str_buf_nix_file();
+int set_buf_mac_file();
+const char *get_str_buf_mac_file();
+int set_buf_dos_file();
+const char *get_str_buf_dos_file();
 int set_buf_eol(int eol);
-const char *get_str_buf_eol(void);
+const char *get_str_buf_eol();
 
-int set_buf_enc_ascii(void);
-const char *get_str_buf_enc_ascii(void);
+int set_buf_enc_ascii();
+const char *get_str_buf_enc_ascii();
 
-int set_buf_enc_utf8(void);
-const char *get_str_buf_enc_utf8(void);
+int set_buf_enc_utf8();
+const char *get_str_buf_enc_utf8();
 
 #ifdef USE_NKF
-int set_buf_enc_eucjp(void);
-const char *get_str_buf_enc_eucjp(void);
+int set_buf_enc_eucjp();
+const char *get_str_buf_enc_eucjp();
 
-int set_buf_enc_sjis(void);
-const char *get_str_buf_enc_sjis(void);
+int set_buf_enc_sjis();
+const char *get_str_buf_enc_sjis();
 
-int set_buf_enc_jis(void);
-const char *get_str_buf_enc_jis(void);
+int set_buf_enc_jis();
+const char *get_str_buf_enc_jis();
 #endif // USE_NKF
 
-int set_buf_enc_binary(void);
-const char *get_str_buf_enc_binary(void);
+int set_buf_enc_binary();
+const char *get_str_buf_enc_binary();
 
 int set_buf_encode(int encode);
-const char *get_str_buf_encode(void);
+const char *get_str_buf_encode();
 
-int doe_inc_buf_mode(void);
-int doe_tog_buf_line_wrap_mode(void);
-int doe_tog_buf_tab_size(void);
-int doe_inc_buf_tab_size(void);
-int doe_set_buf_nix_file(void);
-int doe_set_buf_mac_file(void);
-int doe_set_buf_dos_file(void);
+int doe_inc_buf_mode();
+int doe_tog_buf_line_wrap_mode();
+int doe_tog_buf_tab_size();
+int doe_inc_buf_tab_size();
+int doe_set_buf_nix_file();
+int doe_set_buf_mac_file();
+int doe_set_buf_dos_file();
 
-int doe_set_buf_enc_ascii(void);
-int doe_set_buf_enc_utf8(void);
+int doe_set_buf_enc_ascii();
+int doe_set_buf_enc_utf8();
 #ifdef USE_NKF
-int doe_set_buf_enc_eucjp(void);
-int doe_set_buf_enc_sjis(void);
-int doe_set_buf_enc_jis(void);
+int doe_set_buf_enc_eucjp();
+int doe_set_buf_enc_sjis();
+int doe_set_buf_enc_jis();
 #endif // USE_NKF
-int doe_set_buf_enc_binary(void);
+int doe_set_buf_enc_binary();
 
 //------------------------------------------------------------------------------
 #define INTERNAL_FILE_NAME_PREFIX	"#"
@@ -335,13 +335,13 @@ int is_internal_buf_file_name(const char* file_name);
 
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
-void dump_cur_edit_buf_lines(void);
-void dump_edit_bufs(void);
-void dump_edit_bufs_lines(void);
-void dump_cut_bufs(void);
-void dump_cut_bufs_lines(void);
+void dump_cur_edit_buf_lines();
+void dump_edit_bufs();
+void dump_edit_bufs_lines();
+void dump_cut_bufs();
+void dump_cut_bufs_lines();
 
-void dump_cur_edit_buf(void);
+void dump_cur_edit_buf();
 #endif // ENABLE_DEBUG
 
 #endif // buffers_h

@@ -23,10 +23,10 @@
 
 #ifndef ENABLE_NCURSES
 
-PRIVATE key_code_t input_and_decode_key_sequences(void);
-PRIVATE key_code_t input_key(void);
+PRIVATE key_code_t input_and_decode_key_sequences();
+PRIVATE key_code_t input_key();
 
-key_code_t termif_input_key(void)
+key_code_t termif_input_key()
 {
 	return input_and_decode_key_sequences();
 }
@@ -241,7 +241,7 @@ struct _key_seq_ {
 
 PRIVATE int strcmp_match_len(const char *str1, size_t str1_len, const char *str2);
 
-PRIVATE key_code_t input_and_decode_key_sequences(void)
+PRIVATE key_code_t input_and_decode_key_sequences()
 {
 	// NOTE: This MUST be `unsigned` for UTF8 8bit character.
 	static unsigned char key_buffer[MAX_KEY_SEQ+1] = "";	// 1 for NUL terminator
@@ -331,7 +331,7 @@ PRIVATE int strcmp_match_len(const char *str1, size_t str1_len, const char *str2
 	return len;		// match len: 0--
 }
 
-PRIVATE key_code_t input_key(void)
+PRIVATE key_code_t input_key()
 {
 	key_code_t key = -1;
 	unsigned char buf[1];
@@ -343,7 +343,7 @@ PRIVATE key_code_t input_key(void)
 	return key;
 }
 
-void investigate_key_sequence(void)
+void investigate_key_sequence()
 {
 #if 1
 	key_code_t key;

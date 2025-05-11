@@ -22,21 +22,21 @@
 #ifndef sig_h
 #define sig_h
 
-void signal_init(void);
-void signal_fork(void);
-void signal_clear(void);
-void clear_sigint_signaled(void);
-void set_sigint_signaled(void);
+void signal_init();
+void signal_fork();
+void signal_clear();
+void clear_sigint_signaled();
+void set_sigint_signaled();
 RETSIGTYPE handler_sigint(int signal);
-int is_sigint_signaled(void);
+int is_sigint_signaled();
 
 RETSIGTYPE handler_sighup(int signal);
 RETSIGTYPE handler_sigterm(int signal);
 RETSIGTYPE handler_sigsegv(int signal);
 
-void clear_sigwinch_signaled(void);
+void clear_sigwinch_signaled();
 RETSIGTYPE handle_sigwinch(int signal);
-int is_sigwinch_signaled(void);
+int is_sigwinch_signaled();
 
 #endif // sig_h
 

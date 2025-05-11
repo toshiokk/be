@@ -38,7 +38,7 @@ PRIVATE int dof_run_command_(int flags);
 // "command file-1"
 // "command file-2"
 // "command ..."
-int dof_exec_command_with_file(void)
+int dof_exec_command_with_file()
 {
 #define MAX_REPLACEMENTS	10
 	int exit_status = 0;
@@ -73,7 +73,7 @@ int dof_exec_command_with_file(void)
 				break;
 			replace_str(buffer, MAX_PATH_LEN,
 			 ptr_replace - buffer, STR_TO_BE_REPLACED_WITH_FILE_NAME_LEN,
-			 quote_file_path_static(get_cur_fv_file_ptr(file_idx)->file_name), -1);
+			 quote_file_path_s(get_cur_fv_file_ptr(file_idx)->file_name), -1);
 		}
 		exit_status = fork_exec_sh_c_repeat(EX_SEPARATE | flags, buffer);
 	}
@@ -83,7 +83,7 @@ int dof_exec_command_with_file(void)
 }
 // If two or more files selected, pass all to command line at once.
 // "command file-1 file-2 ..."
-int dof_exec_command_with_files(void)
+int dof_exec_command_with_files()
 {
 	char command_str[MAX_PATH_LEN+1] = "";
 	// "file1 file2 ..."
@@ -113,7 +113,7 @@ int dof_run_command_rel()
 {
 	return dof_run_command_rel_abs(0 | EX_LOGGING);
 }
-int dof_run_command_abs(void)
+int dof_run_command_abs()
 {
 	return dof_run_command_rel_abs(2 | EX_LOGGING);
 }
@@ -139,8 +139,8 @@ PRIVATE int dof_run_command_rel_abs(int flags)
 			 get_cur_fv_file_ptr(file_idx)->file_name);
 		} else {
 			concat_file_path_separating_by_space(command_str, MAX_PATH_LEN,
-			 sprintf_s("%s/%s",
-			  get_cur_filer_pane_view()->cur_dir, get_cur_fv_file_ptr(file_idx)->file_name));
+			 cat_dir_and_file_s(get_cur_filer_pane_view()->cur_dir,
+			  get_cur_fv_file_ptr(file_idx)->file_name));
 		}
 	}
 
@@ -157,27 +157,27 @@ PRIVATE int dof_run_command_rel_abs(int flags)
 	filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	return 0;
 }
-int dof_run_command_shell(void)
+int dof_run_command_shell()
 {
 	return dof_run_command_(4 | EX_LOGGING);
 }
-int dof_run_command_symlink(void)
+int dof_run_command_symlink()
 {
 	return dof_run_command_(5 | EX_LOGGING);
 }
-int dof_run_command_src_dst_dir(void)
+int dof_run_command_src_dst_dir()
 {
 	return dof_run_command_(6 | EX_LOGGING);
 }
-int dof_run_command_src_dst_file(void)
+int dof_run_command_src_dst_file()
 {
 	return dof_run_command_(7 | EX_LOGGING);
 }
-int dof_run_command_soon_wo_log(void)
+int dof_run_command_soon_wo_log()
 {
 	return dof_run_command_(0 | EX_SOON);
 }
-int dof_run_command_soon_w_log(void)
+int dof_run_command_soon_w_log()
 {
 	return dof_run_command_(0 | EX_SOON | EX_LOGGING);
 }
@@ -195,47 +195,47 @@ PRIVATE int dof_run_command_(int flags)
 	case 0:
 		expl = _("Run (current-directory-file)");
 		snprintf_(command_str, MAX_PATH_LEN, "./%s ",
-		 quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
+		 quote_file_path_s(get_cur_fv_cur_file_ptr()->file_name));
 		break;
 	case 1:
 		expl = _("Run (with file)");
 		snprintf_(command_str, MAX_PATH_LEN, " %s",
-		 quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
+		 quote_file_path_s(get_cur_fv_cur_file_ptr()->file_name));
 		break;
 	case 2:
 	case 3:
 		expl = _("Run (with abs-path)");
-		quote_file_path_buf(command_str, sprintf_s("%s/%s",
+		quote_file_path_buf(command_str, cat_dir_and_file_s(
 		 get_cur_filer_pane_view()->cur_dir, get_cur_fv_cur_file_ptr()->file_name));
 		break;
 	case 4:
 		expl = _("Run (script)");
 		snprintf_(command_str, MAX_PATH_LEN, "sh %s",
-		 quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
+		 quote_file_path_s(get_cur_fv_cur_file_ptr()->file_name));
 		break;
 	case 5:
 		expl = _("Run (symlink)");
 		snprintf_(command_str, MAX_PATH_LEN, "%s",
 		 (get_cur_fv_cur_file_ptr()->symlink != NULL)
-		  ? quote_file_path_static(get_cur_fv_cur_file_ptr()->symlink)
-		  : quote_file_path_static(get_cur_fv_cur_file_ptr()->file_name));
+		  ? quote_file_path_s(get_cur_fv_cur_file_ptr()->symlink)
+		  : quote_file_path_s(get_cur_fv_cur_file_ptr()->file_name));
 		break;
 	case 6:
 		// " /path/to/dir-A/file-A /path/to/dir-B/file-A"
 		expl = _("Run (with SRC-dir and DEST-dir)");
 		snprintf_(command_str, MAX_PATH_LEN, " %s %s",
-		 quote_file_path_buf(buf1, sprintf_s1("%s/%s",
+		 quote_file_path_buf(buf1, cat_dir_and_file_s1(
 		  get_cur_filer_view(src_fv_idx)->cur_dir, get_cur_fv_cur_file_ptr()->file_name)),
-		 quote_file_path_buf(buf2, sprintf_s2("%s/%s",
+		 quote_file_path_buf(buf2, cat_dir_and_file_s2(
 		  get_cur_filer_view(dst_fv_idx)->cur_dir, get_cur_fv_cur_file_ptr()->file_name)));
 		break;
 	case 7:
 		// " /path/to/dir-A/file-A /path/to/dir-B/file-B"
 		expl = _("Run (with SRC-file and DEST-file)");
 		snprintf_(command_str, MAX_PATH_LEN, " %s %s",
-		 quote_file_path_buf(buf1, sprintf_s1("%s/%s",
+		 quote_file_path_buf(buf1, cat_dir_and_file_s1(
 		  get_cur_filer_view(src_fv_idx)->cur_dir, get_fv_file_ptr(src_fv_idx)->file_name)),
-		 quote_file_path_buf(buf2, sprintf_s2("%s/%s",
+		 quote_file_path_buf(buf2, cat_dir_and_file_s2(
 		  get_cur_filer_view(dst_fv_idx)->cur_dir, get_fv_file_ptr(dst_fv_idx)->file_name)));
 		break;
 	}
@@ -274,7 +274,7 @@ PRIVATE int dof_run_command_(int flags)
 }
 
 //------------------------------------------------------------------------------
-void begin_fork_exec_repeat(void)
+void begin_fork_exec_repeat()
 {
 	restore_term_for_shell();
 	clear_fork_exec_counter();
@@ -467,15 +467,15 @@ PRIVATE int fork_exec_before_after(int flags, const char *command, char * const 
 }
 
 PRIVATE int fork_exec_counter = 0;
-void clear_fork_exec_counter(void)
+void clear_fork_exec_counter()
 {
 	fork_exec_counter = 0;
 }
-int get_fork_exec_counter(void)
+int get_fork_exec_counter()
 {
 	return fork_exec_counter;
 }
-int inc_fork_exec_counter(void)
+int inc_fork_exec_counter()
 {
 	return fork_exec_counter++;
 }
@@ -498,14 +498,14 @@ void pause_after_exec(int exit_status)
 }
 
 //------------------------------------------------------------------------------
-int restore_term_for_shell(void)
+int restore_term_for_shell()
 {
 	tio_set_cursor_on(1);
 	tio_suspend();
 	signal_fork();
 	return 0;
 }
-int reinit_term_for_filer(void)
+int reinit_term_for_filer()
 {
 	signal_init();
 	tio_resume();

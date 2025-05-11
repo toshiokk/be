@@ -27,14 +27,14 @@
 int chk_inp_str_ret_val_filer(int ret);
 
 // "dof_..."  DO Editor function
-int dof_up(void);
-int dof_down(void);
-int dof_page_up(void);
-int dof_page_down(void);
-int dof_top_of_list(void);
-int dof_bottom_of_list(void);
+int dof_up();
+int dof_down();
+int dof_page_up();
+int dof_page_down();
+int dof_top_of_list();
+int dof_bottom_of_list();
 
-int dof_refresh_filer(void);
+int dof_refresh_filer();
 
 // current : subject currently selected file to command
 // marked  : subject marked files to command
@@ -71,27 +71,27 @@ int dof_refresh_filer(void);
 //|doe_run_line_soon_wo_log   | --      | --     | --  |
 //|doe_run_line_soon_w_log    | --      | --     | yes |
 
-int dof_tap_file(void);
-int dof_view_file(void);
-int dof_tail_file(void);
+int dof_tap_file();
+int dof_view_file();
+int dof_tail_file();
 
-int dof_open_file_recursive(void);
-int dof_open_file_non_recursive(void);
-int dof_open_file_ro(void);
-int dof_open_locked_file(void);
-int dof_open_file_from_history(void);
-int dof_open_proj_file(void);
-int dof_open_exec_log_file(void);
-int dof_open_new_file(void);
-int dof_input_files_to_open(void);
-int dof_drop_files_to_open(void);
+int dof_open_file_recursive();
+int dof_open_file_non_recursive();
+int dof_open_file_ro();
+int dof_open_locked_file();
+int dof_open_file_from_history();
+int dof_open_proj_file();
+int dof_open_exec_log_file();
+int dof_open_new_file();
+int dof_input_files_to_open();
+int dof_drop_files_to_open();
 
-int dof_copy_file(void);
-int dof_copy_file_update(void);
-int dof_drop_files_to_copy(void);
+int dof_copy_file();
+int dof_copy_file_update();
+int dof_drop_files_to_copy();
 
-int dof_move_file(void);
-int dof_move_file_update(void);
+int dof_move_file();
+int dof_move_file_update();
 int dof_drop_files_to_move();
 
 #define ACTION_SEL		0	// choose from 'open', 'copy' or 'move'
@@ -101,49 +101,50 @@ int dof_drop_files_to_move();
 #define ACTION_MOVE		4
 int dof_drop_files_to_do_action_(int action);
 
-int dof_rename_file(void);
-int dof_trash_file(void);
-int dof_delete_file(void);
-int dof_mark_to_delete_file(void);
-int dof_size_zero_file(void);
+int dof_rename_file();
+int dof_trash_file();
+int dof_delete_file();
+int dof_mark_to_delete_file();
+int dof_size_zero_file();
 
-int dof_unzip_file(void);
-int dof_zip_file(void);
+int dof_unzip_file();
+int dof_zip_file();
 
-int dof_find_file(void);
-int dof_make_directory(void);
-int dof_change_directory(void);
-int dof_parent_directory(void);
-int dof_beginning_directory(void);
-int dof_home_directory(void);
-int dof_root_directory(void);
-int dof_prev_directory(void);
+int dof_find_file();
+int dof_make_directory();
+int dof_change_directory();
+int dof_parent_directory();
+int dof_beginning_directory();
+int dof_home_directory();
+int dof_root_directory();
+int dof_prev_directory();
 
-int dof_set_filter(void);
-int dof_select_file(void);
-int dof_select_no_file(void);
-int dof_select_all_files(void);
+int dof_set_filter();
+int dof_select_file();
+int dof_select_no_file();
+int dof_select_all_files();
 void disp_files_selected();
 
-int dof_real_path(void);
-int dof_quit_filer(void);
-int dof_quit_home_dir(void);
+int dof_real_path();
+int dof_quit_filer();
+int dof_quit_home_dir();
+int dof_restart_filer();
 
-int dof_tog_show_dot_file(void);
-int dof_inc_file_view_mode(void);
-int dof_clear_file_sort_mode(void);
-int dof_inc_file_sort_mode(void);
-int dof_tog_show_zebra_striping(void);
-int dof_tog_panes(void);
-int dof_tog_panex(void);
-int dof_inc_key_list_lines(void);
+int dof_tog_show_dot_file();
+int dof_inc_file_view_mode();
+int dof_clear_file_sort_mode();
+int dof_inc_file_sort_mode();
+int dof_tog_show_zebra_striping();
+int dof_tog_panes();
+int dof_tog_panex();
+int dof_inc_key_list_lines();
 #ifdef ENABLE_HELP
-int dof_splash(void);
-int dof_view_file_list(void);
-int dof_view_func_list(void);
+int dof_splash();
+int dof_view_file_list();
+int dof_view_func_list();
 #endif // ENABLE_HELP
 
-int dof_menu_0(void);
+int dof_menu_0();
 
 int goto_dir_in_string(const char *str);
 int check_to_change_dir_in_string(const char *str, char* buf_dir);

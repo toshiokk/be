@@ -27,7 +27,7 @@ PRIVATE int get_line_num_digits(int max_line_num);
 // ruler ======================================================================
 
 #ifdef START_UP_TEST
-void test_make_ruler_text(void)
+void test_make_ruler_text()
 {
 	MY_UT_STR(make_ruler_text(0, 40), "1---5----10---15---20---25---30---35---4");
 	MY_UT_STR(make_ruler_text(97, 40), "--100--105--110--115--120--125--130--135");
@@ -152,24 +152,24 @@ PRIVATE int get_line_num_digits(int max_line_num)
 	return digits;
 }
 //------------------------------------------------------------------------------
-int edit_win_get_path_lines(void)
+int edit_win_get_path_lines()
 {
 	return GET_APPMD(ed_EDITOR_PANES);	// 0/1
 }
-int edit_win_get_text_lines(void)
+int edit_win_get_text_lines()
 {
 	return sub_win_get_lines() - edit_win_get_path_lines() - get_ruler_lines();
 }
 
-int edit_win_get_path_y(void)
+int edit_win_get_path_y()
 {
 	return 0;
 }
-int edit_win_get_ruler_y(void)
+int edit_win_get_ruler_y()
 {
 	return edit_win_get_path_y() + edit_win_get_path_lines();
 }
-int edit_win_get_text_y(void)
+int edit_win_get_text_y()
 {
 	return edit_win_get_path_y() + edit_win_get_path_lines() + get_ruler_lines();
 }

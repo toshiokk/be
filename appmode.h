@@ -35,23 +35,23 @@ typedef struct /*app_mode*/ {
 #ifdef ENABLE_DEBUG
 #define DEBUG_NONE				0
 #define DEBUG_PRINTF			1
-	unsigned char app_DEBUG_PRINTF:1;		// bit 6
+	unsigned char app_DEBUG_PRINTF:1;		// bit 0
 #endif // ENABLE_DEBUG
 #ifdef ENABLE_RC
-	unsigned char app_RCFILE:1;				// bit 0
+	unsigned char app_RCFILE:1;				// bit 1
 #endif // ENABLE_RC
-	unsigned char app_DRAW_CURSOR:1;		// bit 1
+	unsigned char app_DRAW_CURSOR:1;		// bit 2
 #ifdef ENABLE_HIGH_BGC
-	unsigned char app_HIGH_BGC:1;			// bit 2
+	unsigned char app_HIGH_BGC:1;			// bit 3
 #endif // ENABLE_HIGH_BGC
-	unsigned char app_MAP_KEY_7F_BS:1;		// bit 3
+	unsigned char app_MAP_KEY_7F_BS:1;		// bit 4
 #define MAX_KEY_LINES			3
 #define KEY_LINES_0				0
 #define KEY_LINES_1				1
 #define KEY_LINES_2				2
 #define KEY_LINES_3				3
 #define KEY_LINES_MAX			KEY_LINES_3
-	unsigned char app_KEY_LINES:2;			// bit 4,5
+	unsigned char app_KEY_LINES:2;			// bit 5,6
 #define EF_EDITOR				0
 #define EF_FILER				1
 	unsigned char app_EDITOR_FILER:1;		// bit 7
@@ -149,9 +149,6 @@ typedef enum /*mode_idx*/ {
 	FLMD_SHOW_ZEBRA_STRIPING,
 	FLMD_FILER_PANES,
 #endif // ENABLE_FILER
-
-	BUFST_VIEW_MODE,
-	BUFST_TAB_SIZE,
 } mode_idx_t;
 
 extern app_mode_t app_mode__;
@@ -178,76 +175,76 @@ extern app_mode_t app_mode__;
 
 #define SHOW_MODE(item_name, get_str)	disp_status_bar_done("%s: %s", item_name, get_str)
 
-void init_app_mode(void);
+void init_app_mode();
 
 void set_mode_idx_val(mode_idx_t mode_idx, int val);
 const char *get_str_mode_idx_val(mode_idx_t mode_idx);
 
-int inc_app_mode(void);
-const char *get_str_app_mode(void);
-int tog_draw_cursor(void);
-const char *get_str_draw_cursor(void);
-int tog_auto_indent(void);
-const char *get_str_auto_indent(void);
-int tog_dual_scroll(void);
-const char *get_str_dual_scroll(void);
-int tog_ignore_case(void);
-const char *get_str_ignore_case(void);
+int inc_app_mode();
+const char *get_str_app_mode();
+int tog_draw_cursor();
+const char *get_str_draw_cursor();
+int tog_auto_indent();
+const char *get_str_auto_indent();
+int tog_dual_scroll();
+const char *get_str_dual_scroll();
+int tog_ignore_case();
+const char *get_str_ignore_case();
 #ifdef ENABLE_REGEX
-int tog_regexp(void);
-const char *get_str_regexp(void);
+int tog_regexp();
+const char *get_str_regexp();
 #endif // ENABLE_REGEX
-int inc_cursor_positioning(void);
-const char *get_str_cursor_positioning(void);
-int get_cursor_positioning(void);
+int inc_cursor_positioning();
+const char *get_str_cursor_positioning();
+int get_cursor_positioning();
 
 #ifdef ENABLE_SYNTAX
-int tog_syntax_hl(void);
-const char *get_str_syntax_hl(void);
-int tog_tab_eol_notation(void);
-const char *get_str_tab_eol_notation(void);
+int tog_syntax_hl();
+const char *get_str_syntax_hl();
+int tog_tab_eol_notation();
+const char *get_str_tab_eol_notation();
 #endif // ENABLE_SYNTAX
 
-int tog_show_ruler(void);
-const char *get_str_show_ruler(void);
-int get_ruler_lines(void);
-int tog_show_line_num(void);
-const char *get_str_show_line_num(void);
+int tog_show_ruler();
+const char *get_str_show_ruler();
+int get_ruler_lines();
+int tog_show_line_num();
+const char *get_str_show_line_num();
 
-int tog_map_key_7f_bs(void);
-const char *get_str_map_key_7f_bs(void);
+int tog_map_key_7f_bs();
+const char *get_str_map_key_7f_bs();
 
-int inc_backup_files(void);
-const char *get_str_backup_files(void);
-int get_backup_files(void);
+int inc_backup_files();
+const char *get_str_backup_files();
+int get_backup_files();
 
 int tog_editor_panes();
-const char *get_str_editor_panes(void);
+const char *get_str_editor_panes();
 int tog_editor_panex();
-const char *get_str_editor_panex(void);
+const char *get_str_editor_panex();
 
-int tog_show_dot_file(void);
-const char *get_str_show_dot_file(void);
-int inc_file_view_mode(void);
-const char *get_str_file_view_mode(void);
-int clear_file_sort_mode(void);
-int inc_file_sort_mode(void);
-const char *get_str_file_sort_mode(void);
-int tog_show_zebra_striping(void);
-const char *get_str_show_zebra_striping(void);
+int tog_show_dot_file();
+const char *get_str_show_dot_file();
+int inc_file_view_mode();
+const char *get_str_file_view_mode();
+int clear_file_sort_mode();
+int inc_file_sort_mode();
+const char *get_str_file_sort_mode();
+int tog_show_zebra_striping();
+const char *get_str_show_zebra_striping();
 
 #ifdef ENABLE_FILER
-int tog_filer_panes(void);
-const char *get_str_filer_panes(void);
-int tog_filer_panex(void);
-const char *get_str_filer_panex(void);
+int tog_filer_panes();
+const char *get_str_filer_panes();
+int tog_filer_panex();
+const char *get_str_filer_panex();
 #endif // ENABLE_FILER
 
-int inc_key_list_lines(void);
-const char *get_str_key_list_lines(void);
-int get_key_list_lines(void);
+int inc_key_list_lines();
+const char *get_str_key_list_lines();
+int get_key_list_lines();
 
-const char *get_str_setting_none(void);
+const char *get_str_setting_none();
 
 // View mode and List mode of editor:
 // |editor mode     |load|save|cursor    |modify|mark  |choose|purpose     |
@@ -266,29 +263,29 @@ const char *get_str_setting_none(void);
 // |APP_MODE_CHOOSER|no                |yes  |yes   |yes   |file/dir chooser|
 // |APP_MODE_VIEWER |--                |--   |--    |--    |--              |
 
-BOOL is_app_normal_mode(void);
-BOOL is_app_chooser_mode(void);
-BOOL is_app_viewer_mode(void);
-BOOL is_app_chooser_viewer_mode(void);
+BOOL is_app_normal_mode();
+BOOL is_app_chooser_mode();
+BOOL is_app_viewer_mode();
+BOOL is_app_chooser_viewer_mode();
 
-int doe_inc_app_mode(void);
-int doe_tog_panes(void);
-int doe_tog_panex(void);
-int doe_tog_draw_cursor(void);
-int doe_tog_auto_indent(void);
-int doe_tog_dual_scroll(void);
-int doe_tog_ignore_case(void);
-int doe_tog_regexp(void);
-int doe_inc_cursor_positioning(void);
-int doe_tog_syntax_hl(void);
-int doe_tog_tab_eol_notation(void);
-int doe_tog_show_ruler(void);
-int doe_tog_show_line_num(void);
-int doe_tog_map_key_7f_bs(void);
-int doe_inc_backup_files(void);
-int do_tog_show_dot_file(void);
-int do_tog_show_zebra_striping(void);
-int do_inc_key_list_lines_(void);
+int doe_inc_app_mode();
+int doe_tog_panes();
+int doe_tog_panex();
+int doe_tog_draw_cursor();
+int doe_tog_auto_indent();
+int doe_tog_dual_scroll();
+int doe_tog_ignore_case();
+int doe_tog_regexp();
+int doe_inc_cursor_positioning();
+int doe_tog_syntax_hl();
+int doe_tog_tab_eol_notation();
+int doe_tog_show_ruler();
+int doe_tog_show_line_num();
+int doe_tog_map_key_7f_bs();
+int doe_inc_backup_files();
+int do_tog_show_dot_file();
+int do_tog_show_zebra_striping();
+int do_inc_key_list_lines_();
 
 inline char indication_of_app_mode()
 {
@@ -312,8 +309,8 @@ inline char indication_of_app_mode()
 }
 
 int set_editor_cur_pane_idx(int pane_idx);
-int get_editor_cur_pane_idx(void);
-int get_editor_another_pane_idx(void);
+int get_editor_cur_pane_idx();
+int get_editor_another_pane_idx();
 
 int set_filer_cur_pane_idx(int pane_idx);
 int get_filer_cur_pane_idx();

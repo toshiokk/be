@@ -40,8 +40,8 @@ char *conv_esc_str(char *string);
 
 typedef int len_t;	// len_t can be -1 indicating that length is NOT_SPECIFIED
 
-void test_utilstr(void);
-void test_replace_str(void);
+void test_utilstr();
+void test_replace_str();
 char *replace_str(char *buffer, size_t buf_len, size_t start, int delete_len,
  const char *str, len_t insert_len);
 int insert_str_separating_by_space(char *buffer, size_t buf_len,
@@ -54,9 +54,9 @@ char* str_prepend(char* buffer, size_t buf_len, const char* str);
 
 char *concat_file_path_separating_by_space(char *buffer, size_t buf_len,
  const char *string);
-const char *quote_file_path_static(const char *string);
-const char *quote_file_path_buf(char *buf, const char *string);
-const char *quote_file_path_if_necessary(char *buf, const char *string);
+char *quote_file_path_s(const char *string);
+char *quote_file_path_buf(char *buf, const char *string);
+char *quote_file_path_if_necessary(char *buf, const char *string);
 
 #ifdef START_UP_TEST
 void test_get_one_file_path();
@@ -100,9 +100,9 @@ char *shrink_str(char *str, int space, int n_over_10);
 char *shrink_str_static(const char *str, int space, int n_over_10);
 char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10);
 
-int adjust_str_columns(char *utf8s, int columns);
+char* adjust_str_columns(char *utf8s, int columns);
 int truncate_str_tail_columns(char *utf8s, int columns);
-int expand_str_columns(char *utf8s, int columns);
+char* expand_str_columns(char *utf8s, int columns);
 
 int get_byte_idx_from_col_idx(const char *utf8s, int columns, int left_right, int *col_idx__);
 

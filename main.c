@@ -31,28 +31,35 @@
 ////#warning "Terminal control via own terminal interface library (termif_...)"
 #endif // ENABLE_NCURSES
 
-PRIVATE int init_locale(void);
+PRIVATE int init_locale();
 PRIVATE int parse_options(int argc, char *argv[]);
 #ifdef START_UP_TEST
-PRIVATE void start_up_test(void);
-PRIVATE void start_up_test2(void);
+PRIVATE void start_up_test();
+PRIVATE void start_up_test2();
 PRIVATE void test_modulo();
 #endif // START_UP_TEST
-PRIVATE int write_cur_dir_to_exit_file(void);
+
+PRIVATE int write_exit_file(int restart);
+
 PRIVATE void die_save_file(const char *die_file_path);
 
-char *main_rc_file_name = RC_FILE_NAME;	// standard rc file
+PRIVATE void app_main_loop();
+
+PRIVATE editor_panes_t root_editor_panes;
+#ifdef ENABLE_FILER
+PRIVATE filer_panes_t root_filer_panes;
+#endif // ENABLE_FILER
+#ifdef ENABLE_RC
+PRIVATE const char *main_rc_file_name = RC_FILE_NAME;	// standard rc file
+#endif // ENABLE_RC
+
+int restart_be = 0;
 
 // If screen columns is wider than this value, set two panes mode at start up
 ////#define SCRN_COLS_TWO_PANES		120
 
 int main(int argc, char *argv[])
 {
-	editor_panes_t root_editor_panes;
-#ifdef ENABLE_FILER
-	filer_panes_t root_filer_panes;
-#endif // ENABLE_FILER
-
 	init_app_mode();
 dtflf_d_printf("Start %s ==============================\n", APP_NAME " " __DATE__ " " __TIME__);
 	_mlc_init
@@ -61,6 +68,11 @@ dtflf_d_printf("Start %s ==============================\n", APP_NAME " " __DATE_
 	get_tty_name();
 	signal_init();
 	init_locale();
+	cache_users();
+	cache_groups();
+#ifdef ENABLE_DEBUG
+	set_progerr_callback(progerr_cb_func);
+#endif // ENABLE_DEBUG
 
 	_mlc_memorize_count
 	init_bufferss();		// parse_options() needs epc_buf. So create here.
@@ -71,8 +83,6 @@ dtflf_d_printf("Start %s ==============================\n", APP_NAME " " __DATE_
 	_mlc_differ_count
 
 	parse_options(argc, argv);		// parse command line options
-	cache_users();
-	cache_groups();
 	init_default_app_color();
 	check_wsl();
 	check_availability_of_script();
@@ -187,7 +197,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	save_cut_buffers_if_modified();
 
 	reduce_log_file_size(get_exec_log_file_path(), MAX_LOG_FILE_SIZE_KB);
-	write_cur_dir_to_exit_file();
+	write_exit_file(restart_be);
 
 	_mlc_check_count
 	free_all_allocated_memory();
@@ -196,6 +206,9 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 #endif // ENABLE_FILER
 	destroy_editor_panes();
 	signal_clear();
+#ifdef ENABLE_DEBUG
+	set_progerr_callback(NULL);
+#endif // ENABLE_DEBUG
 
 	_mlc_check_count
 	_D_(_mlc_check_leak)
@@ -207,7 +220,7 @@ dtflf_d_printf("Exit %s ===============================\n", APP_NAME " " __DATE_
 
 //------------------------------------------------------------------------------
 
-PRIVATE int init_locale(void)
+PRIVATE int init_locale()
 {
 	// setup system environment
 	setlocale(LC_ALL, "");	// set locale so that wchar related functions work
@@ -380,7 +393,7 @@ PRIVATE int parse_options(int argc, char *argv[])
 //------------------------------------------------------------------------------
 // do_call_editor() : pass a edit-buffer and edit or browse it.
 // do_call_filer()  : pass a directory and manage or browse it.
-void app_main_loop(void)
+PRIVATE void app_main_loop()
 {
 	clear_app_stack_depth();
 	clear_whole_screen_update_timer();	// avoid screen flashing on the first key input
@@ -416,7 +429,7 @@ flf_d_printf("do_call_editor\n");
 }
 //------------------------------------------------------------------------------
 #ifdef START_UP_TEST
-PRIVATE void start_up_test(void)
+PRIVATE void start_up_test()
 {
 	flf_d_printf("{{{{---------------------------------------------------------\n");
 	test_flock();
@@ -499,7 +512,7 @@ PRIVATE void start_up_test(void)
 }
 #endif // START_UP_TEST
 #ifdef START_UP_TEST
-PRIVATE void start_up_test2(void)
+PRIVATE void start_up_test2()
 {
 	flf_d_printf("{{{{---------------------------------------------------------\n");
 	check_multiple_assignment_of_key();
@@ -519,19 +532,28 @@ PRIVATE void test_modulo()
 
 //------------------------------------------------------------------------------
 
-PRIVATE int write_cur_dir_to_exit_file(void)
+PRIVATE int write_exit_file(int restart)
 {
+	char script[MAX_PATH_LEN+1] = "";
 	char file_path[MAX_PATH_LEN+1];
-	// write current directory to the $HOME/EXIT_FILE_NAME
-	snprintf(file_path, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), EXIT_FILE_NAME);
-	return write_text_to_file(file_path, 0, full_path_of_cur_dir_s());
+	// "cd %s\n"
+	// "restartbe=1\n"
+	strcat_printf(script, MAX_PATH_LEN+1, "cd '%s'\n", full_path_of_cur_dir_s());
+	strcat_printf(script, MAX_PATH_LEN+1, "restartbe=%d\n", restart);
+	cat_dir_and_file(file_path, get_home_dir(), EXIT_FILE_NAME);
+	return write_text_to_file(file_path, 0, script);
 }
 
+int progerr_cb_func(const char* warning)
+{
+	set_work_space_color_warn();
+	return write_to_warning_file(warning);
+}
 int write_to_warning_file(const char* warning)
 {
 	char file_path[MAX_PATH_LEN+1];
 	// record a warning message even when no debug logging enabled
-	snprintf(file_path, MAX_PATH_LEN+1, "%s/%s", get_app_dir(), WARNING_FILE_NAME);
+	cat_dir_and_file(file_path, get_app_dir(), WARNING_FILE_NAME);
 	return write_text_to_file(file_path, 1, warning);
 }
 
@@ -579,7 +601,7 @@ PRIVATE void die_save_file(const char *die_file_path)
 
 //------------------------------------------------------------------------------
 
-void free_all_allocated_memory(void)
+void free_all_allocated_memory()
 {
 #ifdef ENABLE_HISTORY
 	save_histories();
@@ -596,7 +618,7 @@ void free_all_allocated_memory(void)
 //------------------------------------------------------------------------------
 
 PRIVATE void show_one_option(const char *shortflag, const char *longflag, const char *desc);
-void show_usage(void)
+void show_usage()
 {
 	printf(_("\nUsage: " BIN_NAME " [+LINE] [option] [file(s)]\n"));
 	//               12345678901234567890 12345678901234567890 12345678901234567890
@@ -645,7 +667,7 @@ PRIVATE void show_one_option(const char *shortflag, const char *longflag, const 
 	printf(" %s\n", desc);
 }
 
-void show_version(void)
+void show_version()
 {
 	printf(_("%s version %s (compiled at %s, %s)\n"),
 	 APP_LONG_NAME, VERSION, __TIME__, __DATE__);
@@ -723,6 +745,7 @@ void show_version(void)
 }
 
 //------------------------------------------------------------------------------
+
 #ifdef ENABLE_HELP
 const char *splash_text_b[] = {
 //012345678901234567890123456789

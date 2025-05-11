@@ -54,6 +54,7 @@ int editor_vert_scroll_lines()
 void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_move,
  locate_cursor_to_t locate_cursor, int update_needed)
 {
+_FLF_
 	switch (GET_APPMD(ed_CURS_POSITIONING)) {
 	default:
 	case CURS_POSITIONING_NONE:		break;		// not change
@@ -61,16 +62,25 @@ void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_
 	case CURS_POSITIONING_CENTER:	locate_cursor = LOCATE_CURS_CENTER;		break;
 	case CURS_POSITIONING_BOTTOM:	locate_cursor = LOCATE_CURS_BOTTOM;		break;
 	}
+_FLF_
 	if (renum_from) {
 		buf_renumber_from_line(get_epc_buf(), renum_from);
 	}
-	adjust_curs_pos_after_cursor_move(cursor_move);
+_FLF_
+	if (is_disabled_update_min_text_x_to_keep() == 0) {
+		update_text_x_to_keep_after_cursor_move(cursor_move);
+	}
+_FLF_
 	setup_cut_region_after_cursor_move(cursor_move);
+_FLF_
 	locate_curs_y_in_edit_win(locate_cursor);
+_FLF_
 	set_edit_win_update_needed(update_needed);
+_FLF_
 #ifdef ENABLE_UNDO
 	undo_save_after_change();
 #endif // ENABLE_UNDO
+_FLF_
 	return;
 }
 
@@ -149,7 +159,7 @@ void locate_curs_y_in_edit_win(locate_cursor_to_t locate_curs)
 //	|                                 |
 //	|                                 |
 //	+---------------------------------+
-void fix_cursor_y_keeping_vert_scroll_margin(void)
+void fix_cursor_y_keeping_vert_scroll_margin()
 {
 	// keep top/bottom scroll margin
 	int disp_y_preferred = MIN_MAX_(
@@ -171,13 +181,13 @@ void fix_cursor_y_keeping_vert_scroll_margin(void)
 PRIVATE be_line_t *prev_cur_line = NULL;	// Previous EPCBVC_CL
 PRIVATE int prev_cur_line_byte_idx = 0;		// Previous EPCBVC_CLBI
 PRIVATE int prev_cursor_y = 0;				// Previous cursor_y
-void memorize_cursor_pos_before_move(void)
+void memorize_cursor_pos_before_move()
 {
 	prev_cur_line = EPCBVC_CL;
 	prev_cur_line_byte_idx = EPCBVC_CLBI;
 	prev_cursor_y = EPCBVC_CURS_Y;
 }
-int get_disp_y_after_cursor_move(void)
+int get_disp_y_after_cursor_move()
 {
 	int cur_wl_idx = start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
 
@@ -246,28 +256,23 @@ int get_edit_win_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **lin
 }
 //------------------------------------------------------------------------------
 // adjust pointers after moving horizontally or vertically
-void adjust_curs_pos_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
+void update_text_x_to_keep_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 {
-	int wl_idx;
-	int cursor_x_in_text;
-
-	if (is_disabled_update_min_text_x_to_keep() == 0) {
-		if ((cursor_move == CURS_MOVE_HORIZ) || (cursor_move == CURS_MOVE_JUMP)) {
-			// update `buf_view->cursor_x_to_keep`
-			// and    `buf_view->min_text_x_to_keep`
-			EPCBVC_CURS_X_TO_KEEP = start_col_idx_of_wrap_line(
-			 EPCBVC_CL->data, EPCBVC_CLBI, -1);
-			update_min_text_x_to_keep(EPCBVC_CURS_X_TO_KEEP);
-		} else {
-			// not upate  `buf_view->cursor_x_to_keep`
-			// and update `buf_view->min_text_x_to_keep`
-			wl_idx = start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
-			EPCBVC_CLBI = end_byte_idx_of_wrap_line_le(EPCBVC_CL->data, wl_idx,
-			 EPCBVC_CURS_X_TO_KEEP, -1);
-			cursor_x_in_text = start_col_idx_of_wrap_line(
-			 EPCBVC_CL->data, EPCBVC_CLBI, -1);
-			update_min_text_x_to_keep(cursor_x_in_text);
-		}
+	if ((cursor_move == CURS_MOVE_HORIZ) || (cursor_move == CURS_MOVE_JUMP)) {
+		// update `buf_view->cursor_x_to_keep`
+		// and    `buf_view->min_text_x_to_keep`
+		EPCBVC_CURS_X_TO_KEEP = start_col_idx_of_wrap_line(
+		 EPCBVC_CL->data, EPCBVC_CLBI, -1);
+		update_min_text_x_to_keep(EPCBVC_CURS_X_TO_KEEP);
+	} else {
+		// not upate  `buf_view->cursor_x_to_keep`
+		// and update `buf_view->min_text_x_to_keep`
+		int wl_idx = start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
+		EPCBVC_CLBI = end_byte_idx_of_wrap_line_le(EPCBVC_CL->data, wl_idx,
+		 EPCBVC_CURS_X_TO_KEEP, -1);
+		int cursor_x_in_text = start_col_idx_of_wrap_line(
+		 EPCBVC_CL->data, EPCBVC_CLBI, -1);
+		update_min_text_x_to_keep(cursor_x_in_text);
 	}
 }
 

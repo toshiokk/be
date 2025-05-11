@@ -35,7 +35,6 @@ int is_graph_char(unsigned char uchar)
 }
 
 //------------------------------------------------------------------------------
-
 #ifndef HAVE_STRCASECMP
 /* This function is equivalent to strcasecmp(). */
 int my_stricmp(const char *s1, const char *s2)
@@ -73,13 +72,11 @@ char* str_tr(char* string, char chr_from, char chr_to)
 }
 
 //------------------------------------------------------------------------------
-
 char *conv_esc_str(char *string)
 {
-	char *src;
 	char buf[MAX_PATH_LEN+1];
 	char *dest = buf;
-	for (src = string; *src; src++) {
+	for (char *src = string; *src; src++) {
 		switch (*src) {
 		case '\\':
 			switch (*(src+1)) {
@@ -114,14 +111,14 @@ char *conv_esc_str(char *string)
 
 //------------------------------------------------------------------------------
 #ifdef START_UP_TEST
-void test_utilstr(void)
+void test_utilstr()
 {
 	MY_UT_INT(contain_chr("(){}", ' '), 0);
 	MY_UT_INT(contain_chr("(){}", '('), 1);
 	MY_UT_INT(contain_chrs("(){}", "<>"), 0);
 	MY_UT_INT(contain_chrs("(){}", "({"), 1);
 }
-void test_replace_str(void)
+void test_replace_str()
 {
 	char buffer[100+1];
 
@@ -226,22 +223,22 @@ char *concat_file_path_separating_by_space(char *buffer, size_t buf_len, const c
 		// "command" ==> "command "
 		strlcat__(buffer, buf_len, " ");
 	}
-	string = quote_file_path_static(string);
+	string = quote_file_path_s(string);
 	if (strnlen(buffer, buf_len) + strnlen(string, buf_len) <= buf_len) {
 		strlcat__(buffer, buf_len, string);
 	}
 	return buffer;
 }
-const char *quote_file_path_static(const char *string)
+char *quote_file_path_s(const char *string)
 {
 	static char buf_s[MAX_PATH_LEN+1];
 	return quote_file_path_if_necessary(buf_s, string);
 }
-const char *quote_file_path_buf(char *buf, const char *string)
+char *quote_file_path_buf(char *buf, const char *string)
 {
 	return quote_file_path_if_necessary(buf, string);
 }
-const char *quote_file_path_if_necessary(char *buf, const char *string)
+char *quote_file_path_if_necessary(char *buf, const char *string)
 {
 	if (contain_chrs(string, " \"'")) {
 		if (contain_chr(string, '\'')) {
@@ -506,17 +503,14 @@ char *strlower(char *buffer)
 }
 
 //------------------------------------------------------------------------------
-
 char *shrink_str__adjust_col(char *str, int space, int n_over_10)
 {
 	shrink_str(str, space, n_over_10);
-	expand_str_columns(str, space);
-	return str;
+	return expand_str_columns(str, space);
 }
 char *shrink_str(char *str, int space, int n_over_10)
 {
 	char buf[MAX_PATH_LEN+1];
-
 	shrink_str_buf(buf, str, space, n_over_10);
 	strlcpy__(str, buf, MAX_PATH_LEN);		// copy back to original buffer
 	return str;
@@ -524,18 +518,13 @@ char *shrink_str(char *str, int space, int n_over_10)
 char *shrink_str_static(const char *str, int space, int n_over_10)
 {
 	static char buf[MAX_PATH_LEN+1];
-
-	shrink_str_buf(buf, str, space, n_over_10);
-	return buf;
+	return shrink_str_buf(buf, str, space, n_over_10);
 }
 // "/very/long/long/path/to/file" ==> "/very/lo...th/to/file"
 //                                       n/10         (10-n)/10
 // Note: 'buf' and 'str' are not overlappable
 char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10)
 {
-	int space1 = 0, space2 = 0;
-	int byte_idx1, byte_idx2;
-
 	int str_cols = utf8s_columns(str, MAX_PATH_LEN);
 	if (str_cols <= space) {
 		// enough space
@@ -544,23 +533,23 @@ char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10)
 #define STR_TILDE		"~~"
 #define STR_TILDE_LEN	2	// strlen(STR_TILDE)
 		if (space > STR_TILDE_LEN) {
-			space1 = LIM_MIN(0, (space - STR_TILDE_LEN) * n_over_10 / 10);
-			space2 = LIM_MIN(0, (space - STR_TILDE_LEN) - space1);
-			byte_idx1 = get_byte_idx_from_col_idx(str, space1, -1, NULL);
-			byte_idx2 = get_byte_idx_from_col_idx(str, str_cols - space2, +1, NULL);
+			int space1 = LIM_MIN(0, (space - STR_TILDE_LEN) * n_over_10 / 10);
+			int space2 = LIM_MIN(0, (space - STR_TILDE_LEN) - space1);
+			int byte_idx1 = get_byte_idx_from_col_idx(str, space1, -1, NULL);
+			int byte_idx2 = get_byte_idx_from_col_idx(str, str_cols - space2, +1, NULL);
 			strlcpy__(buf, str, byte_idx1);
 			strcat__(buf, STR_TILDE);
 			strcat__(buf, &str[byte_idx2]);
 		} else {
-			space2 = LIM_MIN(0, space);
-			byte_idx2 = get_byte_idx_from_col_idx(str, str_cols - space2, +1, NULL);
+			int space2 = LIM_MIN(0, space);
+			int byte_idx2 = get_byte_idx_from_col_idx(str, str_cols - space2, +1, NULL);
 			strlcpy__(buf, &str[byte_idx2], MAX_PATH_LEN);
 		}
 	}
 	return buf;
 }
 
-int adjust_str_columns(char *utf8s, int columns)
+char* adjust_str_columns(char *utf8s, int columns)
 {
 	truncate_str_tail_columns(utf8s, columns);
 	return expand_str_columns(utf8s, columns);
@@ -571,15 +560,14 @@ int truncate_str_tail_columns(char *utf8s, int columns)
 	utf8s[bytes] = '\0';
 	return bytes;
 }
-int expand_str_columns(char *utf8s, int columns)
+char* expand_str_columns(char *utf8s, int columns)
 {
-	int bytes;
 	int cols = utf8s_columns(utf8s, MAX_PATH_LEN);
 	if (columns - cols > 0) {
-		bytes = strlen(utf8s);
+		int bytes = strlen(utf8s);
 		strnset__(&utf8s[bytes], ' ', columns - cols);
 	}
-	return LIM_MIN(columns, cols);
+	return utf8s;
 }
 
 int get_byte_idx_from_col_idx(const char *utf8s, int columns, int left_right, int *col_idx__)
@@ -614,7 +602,6 @@ char *utf8s_strnset__(char *buf, const char *utf8c, size_t len)
 }
 
 //------------------------------------------------------------------------------
-
 int skip_space(const char **ptr)
 {
 	while (IS_SPACE(*ptr))
@@ -822,7 +809,6 @@ char tail_char(const char *str)
 }
 
 //------------------------------------------------------------------------------
-
 #ifdef ENABLE_DEBUG
 void dump_str_w_caret(const char *string, int byte_idx)
 {

@@ -207,7 +207,6 @@ void free__(void *ptr)
 }
 
 //------------------------------------------------------------------------------
-
 // remalloc memory just enough for a string
 // NOTE: DONOT use for be_line_t::data
 void remalloc_and_null_terminate_string(char **ptr)
@@ -268,7 +267,7 @@ const char *cur_ctime_cdate(int time0_date1)
 		return cur_cdate();
 	}
 }
-const char *cur_cdate(void)
+const char *cur_cdate()
 {
 	static char buf_date[YYYYSMMSDD_HHCMMCSS_LEN+1];
 	char buf_ymd_hms[YYYYSMMSDD_HHCMMCSS_LEN+1];
@@ -278,14 +277,14 @@ const char *cur_cdate(void)
 	strlcpy__(buf_date, &(buf_ymd_hms[2]), YYSMMSDD_LEN);
 	return buf_date;
 }
-const char *cur_ctime(void)
+const char *cur_ctime()
 {
 	static char buf_time[HHCMMCSS_LEN+1];
 	time_t cur_time = time(NULL);
 	strlcpy__(buf_time, &(ctime(&cur_time)[11]), HHCMMCSS_LEN);
 	return buf_time;
 }
-const char *cur_hhmmss(void)
+const char *cur_hhmmss()
 {
 #define HHMMSS_LEN		6	// "235959"
 	static char buf_time[YYYYMMDD_HHMMSS_LEN+1];
@@ -293,7 +292,7 @@ const char *cur_hhmmss(void)
 	strlcpy__(buf_time, &(get_yyyymmdd_hhmmss(cur_time, buf_time)[8+1]), HHMMSS_LEN);
 	return buf_time;
 }
-const char *cur_yymmdd_hhmmss(void)
+const char *cur_yymmdd_hhmmss()
 {
 #define HHMMSS_LEN		6	// "235959"
 	static char buf_time[YYYYMMDD_HHMMSS_LEN+1];
@@ -316,7 +315,7 @@ char *get_sssssspmmm(char *buf)
 	 (int)(msec / 1000), (int)(msec % 1000));
 	return buf;
 }
-unsigned long get_msec(void)
+unsigned long get_msec()
 {
 	struct timeval tv;
 	struct timezone tz;
@@ -324,7 +323,7 @@ unsigned long get_msec(void)
 	// 999999.999
 	return (tv.tv_sec % 1000000) * 1000 + (tv.tv_usec / 1000) % 1000;
 }
-unsigned long get_usec(void)
+unsigned long get_usec()
 {
 	struct timeval tv;
 	struct timezone tz;
@@ -332,7 +331,7 @@ unsigned long get_usec(void)
 	// 999.999999
 	return (tv.tv_sec % 1000) * 1000000 + tv.tv_usec;
 }
-const char *cur_hhcmmcss_mmm(void)
+const char *cur_hhcmmcss_mmm()
 {
 #define HHCMMCSS_MMM_LEN		(8+1+3)
 	static char buf_time[HHCMMCSS_MMM_LEN+1];
@@ -348,7 +347,7 @@ const char *cur_hhcmmcss_mmm(void)
 	 hhcmmcss, (int)(tv.tv_usec / 1000 % 1000));
 	return buf_time;
 }
-const char *cur_hhcmmcss_uuuuuu(void)
+const char *cur_hhcmmcss_uuuuuu()
 {
 #define HHCMMCSS_UUUUUU_LEN		(8+1+6)
 	static char buf_time[HHCMMCSS_UUUUUU_LEN+1];
@@ -424,7 +423,7 @@ int get_mem_free_in_kb(int update)
 					char buf[100+1];
 					if (sscanf(buffer, "%10s %d", buf, &kb) >= 2) {
 #ifdef ENABLE_DEBUG
-////#define DEBUG_MEM_SHORTAGE
+////#define DEBUG_MEM_SHORTAGE		// define this to test the behavior on memory shortage
 #ifdef DEBUG_MEM_SHORTAGE
 						kb /= 100;		// 1GB ==> 10MB
 #endif // DEBUG_MEM_SHORTAGE
@@ -444,7 +443,7 @@ int get_mem_free_in_kb(int update)
 //------------------------------------------------------------------------------
 
 #ifdef START_UP_TEST
-void test_zz_from_num(void)
+void test_zz_from_num()
 {
 #ifdef ENABLE_DEBUG
 	char buf[2+1];
@@ -565,7 +564,7 @@ const char *get_group_name(gid_t gid)
 	snprintf_(group_id, USER_ID_LEN+1, "%d", gid);
 	return group_id;
 }
-int cache_users(void)
+int cache_users()
 {
 	struct passwd *pwent;
 
@@ -581,7 +580,7 @@ int cache_users(void)
 	endpwent();
 	return num_users;
 }
-int cache_groups(void)
+int cache_groups()
 {
 	struct group *grent;
 
@@ -597,6 +596,7 @@ int cache_groups(void)
 	return num_groups;
 }
 
+//------------------------------------------------------------------------------
 const char *get_at_host_name()
 {
 #define HOST_NAME_LEN		20
@@ -616,7 +616,6 @@ const char *get_host_name()
 }
 
 //------------------------------------------------------------------------------
-
 char *select_plural_form(char *singular, char *plural, char *type3, char *type4, int number)
 {
 	switch (get_plural_form_index(number)) {

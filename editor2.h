@@ -34,13 +34,13 @@
 #define UPDATE_SCRN_CUR_NEXT	(UPDATE_SCRN_CUR | UPDATE_SCRN_NEXT)
 #define UPDATE_SCRN_ALL_SOON	(UPDATE_SCRN_ALL | UPDATE_SCRN_SOON)
 void set_edit_win_update_needed(int update_needed);
-int get_edit_win_update_needed(void);
-void clear_edit_win_update_needed(void);
+int get_edit_win_update_needed();
+void clear_edit_win_update_needed();
 
 void disp_edit_win(int cur_pane);
-void set_edit_cursor_pos(void);
+void set_edit_cursor_pos();
 
-int get_edit_win_columns_for_text(void);
+int get_edit_win_columns_for_text();
 
 #endif // editor2_h
 

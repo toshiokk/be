@@ -30,14 +30,14 @@ PRIVATE be_bufs_t *bufs_make_top_anchor(be_bufs_t *bufs);
 // (common to edit-buffer, cut-buffer, undo-redo-buffer and history)
 
 // Create a new buffer be_buf_t
-be_buf_t *buf_create_node(const char *full_path, unsigned char buf_mode_)
+be_buf_t *buf_create(const char *full_path, unsigned char buf_mode_)
 {
 	_mlc_set_caller
 	be_buf_t *buf = (be_buf_t *)malloc__(sizeof(be_buf_t));
 	return buf_init(buf, full_path, buf_mode_);
 }
 // Free a buffer be_buf_t
-be_buf_t *buf_free_node(be_buf_t *buf)
+be_buf_t *buf_free(be_buf_t *buf)
 {
 	be_buf_t *next = NODE_NEXT(buf);
 	buf_free_lines(buf);
@@ -207,7 +207,7 @@ be_buf_t *buf_link(be_buf_t *prev, be_buf_t *next)
 
 be_buf_t *buf_create_copy_node(be_buf_t *buf)
 {
-	buf = buf_copy(buf_create_node("", buf_MODE_EDIT), buf);
+	buf = buf_copy(buf_create("", buf_MODE_EDIT), buf);
 	SET_BUF_STATE(buf, buf_MODE, buf_MODE_LIST);	// A copy must not be changeable
 	SET_BUF_STATE(buf, buf_MODIFIED, 0);			// clear 'modified' flag
 	return buf;
@@ -232,7 +232,7 @@ be_buf_t *buf_unlink_free(be_buf_t *buf)
 	be_buf_t *next = NODE_NEXT(buf);
 	if (IS_NODE_INT(buf)) {
 		buf_unlink(buf);
-		buf_free_node(buf);
+		buf_free(buf);
 	} else
 	if (IS_NODE_ANCH(buf)) {
 		// not unlink and not free frame
@@ -345,9 +345,12 @@ const char *buf_eol_str(be_buf_t *buf)
 {
 	switch (GET_BUF_STATE(buf, buf_EOL)) {
 	default:
-	case EOL_NIX:		return "LF(NIX)";		/*"NIX"*/;
-	case EOL_MAC:		return "CR(MAC)";		/*"MAC"*/
-	case EOL_DOS:		return "CR+LF(DOS)";	/*"DOS"*/
+	case EOL_NIX:		return "LF";	/*"NIX"*/;
+	case EOL_MAC:		return "CR";	/*"MAC"*/
+	case EOL_DOS:		return "CR+LF";	/*"DOS"*/
+///	case EOL_NIX:		return "LF(NIX)";		/*"NIX"*/;
+///	case EOL_MAC:		return "CR(MAC)";		/*"MAC"*/
+///	case EOL_DOS:		return "CR+LF(DOS)";	/*"DOS"*/
 	}
 }
 const char *buf_enc_str(be_buf_t *buf)

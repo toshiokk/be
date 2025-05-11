@@ -23,7 +23,7 @@
 
 // be_line_t manipulation routines ============================================
 
-be_line_t *line_create(void)
+be_line_t *line_create()
 {
 	be_line_t *line;
 	_mlc_set_caller
@@ -42,6 +42,29 @@ be_line_t *line_init(be_line_t *line, char *initial_data)
 	line->buf_size = 0;
 	return line;
 }
+
+void line_free(be_line_t *line)
+{
+	if (line == NULL) {
+		_PROGERR_
+		return;
+	}
+	line_free_data(line);	// only free data (good for top/bottom_anchor)
+	free__(line);
+}
+void line_free_data(be_line_t *line)	// only free data (good for top/bottom_anchor)
+{
+	if (line == NULL) {
+		_PROGERR_
+		return;
+	}
+	if (line->data == NULL) {
+		_PROGERR_
+		return;
+	}
+	FREE_CLR_PTR(line->data);
+}
+
 be_line_t *line_create_with_string(const char *string)
 {
 	return line_create_with_string_len(string, -1);
@@ -83,27 +106,6 @@ be_line_t *line_set_string_len(be_line_t *line, const char *string, len_t len)
 char *line_get_string(be_line_t *line)
 {
 	return line->data;
-}
-void line_free(be_line_t *line)
-{
-	if (line == NULL) {
-		_PROGERR_
-		return;
-	}
-	line_free_data(line);	// only free data (good for top/bottom_anchor)
-	free__(line);
-}
-void line_free_data(be_line_t *line)	// only free data (good for top/bottom_anchor)
-{
-	if (line == NULL) {
-		_PROGERR_
-		return;
-	}
-	if (line->data == NULL) {
-		_PROGERR_
-		return;
-	}
-	FREE_CLR_PTR(line->data);
 }
 
 // This is deep-copy.

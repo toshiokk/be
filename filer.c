@@ -29,7 +29,7 @@ PRIVATE int get_another_filer_pane_idx(int filer_pane_idx);
 ef_do_next_t filer_do_next = EF_NONE;
 
 PRIVATE int filer_main_loop(const char *dir, const char *filter, char *path_buf);
-PRIVATE int check_filer_cur_dir(void);
+PRIVATE int check_filer_cur_dir();
 PRIVATE int update_file_infos_of_all_panes(int update_request);
 PRIVATE int update_file_infos(filer_view_t *fv, int update_request);
 
@@ -37,7 +37,7 @@ PRIVATE void disp_title_bar_filer(const char* dir, const char* filter,
  int cur_idx, int files_selected, int files_total);
 PRIVATE int disp_file_list(filer_view_t *fv, int cur_pane);
 
-PRIVATE void disp_key_list_filer(void);
+PRIVATE void disp_key_list_filer();
 
 void set_cur_filer_panes(filer_panes_t *fps)
 {
@@ -96,11 +96,11 @@ filer_view_t *get_cur_filer_view(int pane_idx)
 	}
 	return &(cur_filer_panes->filer_views[pane_idx]);
 }
-filer_view_t *get_cur_filer_pane_view(void)
+filer_view_t *get_cur_filer_pane_view()
 {
 	return get_cur_filer_view(get_filer_cur_pane_idx());
 }
-filer_view_t *get_another_filer_pane_view(void)
+filer_view_t *get_another_filer_pane_view()
 {
 	return get_cur_filer_view(get_another_filer_pane_idx(get_filer_cur_pane_idx()));
 }
@@ -343,7 +343,7 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 	return filer_do_next;
 } // filer_main_loop
 
-PRIVATE int check_filer_cur_dir(void)
+PRIVATE int check_filer_cur_dir()
 {
 	// check if cur_dir is readable
 	if (is_dir_readable(get_cur_filer_pane_view()->cur_dir) == 0) {
@@ -572,25 +572,25 @@ int filer_vert_scroll_lines()
 #endif // LIMIT_MAX_VERT_SCROLL_LINES
 }
 //-------------------------------------
-int filer_win_get_file_path_lines(void)
+int filer_win_get_file_path_lines()
 {
 	return GET_APPMD(fl_FILER_PANES);
 }
-int filer_win_get_file_list_lines(void)
+int filer_win_get_file_list_lines()
 {
 	return LIM_MIN(0, sub_win_get_lines() - filer_win_get_file_path_lines());
 }
 //-------------------------------------
-int filer_win_get_file_path_y(void)
+int filer_win_get_file_path_y()
 {
 	return 0;
 }
-int filer_win_get_file_list_y(void)
+int filer_win_get_file_list_y()
 {
 	return filer_win_get_file_path_y() + filer_win_get_file_path_lines();
 }
 //-------------------------------------
-PRIVATE void disp_key_list_filer(void)
+PRIVATE void disp_key_list_filer()
 {
 	disp_fkey_list();
 

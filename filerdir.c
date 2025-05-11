@@ -104,7 +104,7 @@ PRIVATE int change_cur_dir_from_history(const char *dir)
 }
 #endif // ENABLE_HISTORY
 
-int filer_change_dir_to_cur_sel(void)
+int filer_change_dir_to_cur_sel()
 {
 	if (S_ISDIR(get_cur_fv_cur_file_ptr()->st.st_mode)) {
 		if (filer_change_dir(get_cur_fv_cur_file_ptr()->file_name)) {
@@ -121,7 +121,7 @@ int filer_change_dir_if_not_yet(char *dir)
 		return filer_change_dir(dir);
 	}
 }
-int filer_change_dir_to_prev_dir(void)
+int filer_change_dir_to_prev_dir()
 {
 	if (is_strlen_not_0(get_cur_filer_pane_view()->prev_dir)) {
 		return filer_change_dir(get_cur_filer_pane_view()->prev_dir);

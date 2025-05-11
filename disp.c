@@ -32,7 +32,7 @@ void set_title_bar_color_by_state(int color_idx, char invert)
 	}
 }
 
-const char *root_notation(void)
+const char *root_notation()
 {
 	static char notation[MAX_PATH_LEN+1];
 	snprintf_(notation, MAX_PATH_LEN, "%s%s",
@@ -274,12 +274,12 @@ void redisp_status_bar()
 	}
 }
 
-void blank_status_bar(void)
+void blank_status_bar()
 {
 	central_win_clear_lines(central_win_get_status_line_y(), -1);
 }
 
-void blank_key_list_lines(void)
+void blank_key_list_lines()
 {
 	set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
 	central_win_clear_lines(central_win_get_key_list_line_y(),
@@ -308,11 +308,11 @@ int determine_input_line_y()
 	}
 	return input_line_y = MIN_MAX_(TITLE_LINES, input_line_y, central_win_get_status_line_y());
 }
-int get_input_line_y(void)
+int get_input_line_y()
 {
 	return input_line_y;
 }
-int default_input_line_y(void)
+int default_input_line_y()
 {
 	return central_win_get_mid_win_y() + central_win_get_mid_win_lines() / 2;
 }

@@ -23,7 +23,7 @@
 #define disp_h
 
 void set_title_bar_color_by_state(int color_idx, char invert);
-const char *root_notation(void);
+const char *root_notation();
 
 //! priority to display on the status bar
 typedef enum /*s_b_d*/ {	// Status Bar Displayed
@@ -44,14 +44,14 @@ void disp_status_bar_done(const char *msg, ...);
 void disp_status_bar_async(const char *msg, ...);
 void redisp_status_bar();
 
-void blank_status_bar(void);
-void blank_key_list_lines(void);
+void blank_status_bar();
+void blank_key_list_lines();
 
 void disp_status_bar_cwd();
 
 int determine_input_line_y();
-int get_input_line_y(void);
-int default_input_line_y(void);
+int get_input_line_y();
+int default_input_line_y();
 
 #endif // disp_h
 

@@ -156,13 +156,14 @@ typedef enum {
 	INSERT_AFTER	// insert after
 } insert_before_after_t;
 
-be_line_t *line_create(void);
+be_line_t *line_create();
 be_line_t *line_init(be_line_t *line, char *initial_data);
+void line_free(be_line_t *line);
+void line_free_data(be_line_t *line);
+
 be_line_t *line_set_string(be_line_t *line, const char *string);
 be_line_t *line_set_string_len(be_line_t *line, const char *string, len_t len);
 char *line_get_string(be_line_t *line);
-void line_free(be_line_t *line);
-void line_free_data(be_line_t *line);
 
 be_line_t *line_create_copy(be_line_t *src);
 be_line_t *line_copy(be_line_t *dest, be_line_t *src);

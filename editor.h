@@ -28,32 +28,34 @@ int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf, in
 
 int chk_inp_str_ret_val_editor(int ret);
 
-char *get_app_dir(void);
+const char *get_app_dir();
+
+const char *get_clipboard_file_path();
+int save_top_cut_buf_to_clipboard_file();
 
 //------------------------------------------------------------------------------
-
-int doe_run_line_soon_wo_log(void);
-int doe_run_line_soon_w_log(void);
-int doe_run_line_input(void);
+int doe_run_line_soon_wo_log();
+int doe_run_line_soon_w_log();
+int doe_run_line_input();
 
 //------------------------------------------------------------------------------
 
 #ifdef ENABLE_HELP
 int doe_splash();
 void do_splash();
-int doe_view_file_list(void);
-int doe_view_func_list(void);
+int doe_view_file_list();
+int doe_view_func_list();
 #endif // ENABLE_HELP
 
 void display_color_settings(key_code_t key);
 
 key_code_t examine_key_code(key_code_t key);
 
-int doe_quit_editor(void);
+int doe_quit_editor();
 
-int doe_menu_0(void);
+int doe_menu_0();
 
-int doe_inc_key_list_lines(void);
+int doe_inc_key_list_lines();
 
 typedef struct /*app_stack_entry*/ {
 	app_mode_t appmode_save;
@@ -91,12 +93,12 @@ void update_screen_editor(int status_bar, int refresh);
 
 void start_title_bar_blinking();
 void stop_title_bar_blinking();
-void disp_title_bar_editor(void);
+void disp_title_bar_editor();
 
-int is_editor_unmodifiable_then_warn_it(void);
+int is_editor_unmodifiable_then_warn_it();
 
 #ifdef ENABLE_DEBUG
-void dump_cur_pointers(void);
+void dump_cur_pointers();
 #endif // ENABLE_DEBUG
 
 #endif // editor_h

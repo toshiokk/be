@@ -75,6 +75,9 @@ const char *format, ...)
 
 	put_to_ring_buffer(buffer);
 	debug_printf("%s", buffer);
+	if (time & 0x10) {
+		call_progerr_callback(buffer);
+	}
 }
 const char* tflfl_sprintf_s_(int time, const char *file, int line,
  const char *func, const char *label, const char *format, ...)
@@ -85,6 +88,12 @@ const char* tflfl_sprintf_s_(int time, const char *file, int line,
 	const char* str = tflfl_vsprintf(buffer, time, file, line, func, label, format, list);
 	va_end(list);
 	return str;
+}
+const char* tflfl_vsprintf_s_(int time, const char *file, int line,
+ const char *func, const char *label, const char *format, va_list list)
+{
+	static char buffer[DEBUG_BUF_LEN+1];
+	return tflfl_vsprintf(buffer, time, file, line, func, label, format, list);
 }
 const char* tflfl_vsprintf(char *buffer, int time, const char *file, int line,
  const char *func, const char *label, const char *format, va_list list)
@@ -144,7 +153,7 @@ void put_to_ring_buffer(const char* str)
 }
 #endif
 
-void output_last_d_printf(void)
+void output_last_d_printf()
 {
 #ifdef RING_BUF_LINES
 	FILE *fp = fopen("becrash.log", "w");
@@ -181,6 +190,18 @@ void debug_vprintf(const char *format, va_list ap)
 	}
 }
 
+PRIVATE progerr_callback_t progerr_callback = NULL;
+void set_progerr_callback(progerr_callback_t callback)
+{
+	progerr_callback = callback;
+}
+int call_progerr_callback(const char* message)
+{
+	if (progerr_callback) {
+		return progerr_callback(message);
+	}
+	return 0;
+}
 #endif // ENABLE_DEBUG
 
 // End of debug.c

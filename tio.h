@@ -78,25 +78,25 @@
 //------------------------------------------------------------------------------
 
 #ifdef START_UP_TEST
-void tio_test(void);
+void tio_test();
 #endif // START_UP_TEST
 
-int tio_is_initialized(void);
-int tio_init(void);
+int tio_is_initialized();
+int tio_init();
 void tio_enable_high_bgc(int enable);
-int tio_destroy(void);
-int tio_begin(void);
-int tio_end(void);
+int tio_destroy();
+int tio_begin();
+int tio_end();
 
-int tio_resize(void);
-int tio_suspend(void);
-int tio_resume(void);
+int tio_resize();
+int tio_suspend();
+int tio_resume();
 
-int tio_check_update_terminal_size(void);
+int tio_check_update_terminal_size();
 
 void tio_set_screen_size(int lines, int columns);
-int tio_get_lines(void);
-int tio_get_columns(void);
+int tio_get_lines();
+int tio_get_columns();
 
 void tio_differentiate_fgc_from_bgc_rev(int *bgc, int *fgc, int rev);
 int tio_differentiate_fgc_from_bgc(int bgc, int fgc);
@@ -107,24 +107,24 @@ void tio_set_cursor_on(int on_off);
 void tio_set_cursor_pos(int yy, int xx);
 void tio_get_cursor_pos(int *yy, int *xx);
 
-void tio_clear_screen(void);
+void tio_clear_screen();
 void tio_flash_screen(int delay);
 void tio_fill_screen();
 void tio_fill_lines(int line_1, int line_2);
 const char *tio_blank_line();
 
 void tio_output_string(int yy, int xx, const char *string, int bytes);
-void tio_beep(void);
-void tio_refresh(void);
-void tio_repaint_all(void);
+void tio_beep();
+void tio_refresh();
+void tio_repaint_all();
 
-key_code_t tio_input_key(void);
+key_code_t tio_input_key();
 
 void save_term_settings(struct termios *term_settings);
 void restore_term_settings(struct termios *term_settings);
-void set_term_no_intr(void);
-void set_term_raw(void);
-int init_stderr(void);
+void set_term_no_intr();
+void set_term_raw();
+int init_stderr();
 
 #endif // tio_h
 

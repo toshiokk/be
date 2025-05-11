@@ -31,7 +31,7 @@ PRIVATE char *safe_file_name_str(const char *file_name);
 PRIVATE char *get_file_size_str(char *buf_size, loff_t size);
 PRIVATE const char *get_1k_to_999k_str(long size, char *buf);
 #ifdef START_UP_TEST
-void test_get_file_size_str(void)
+void test_get_file_size_str()
 {
 	loff_t size;
 	loff_t zeros;
@@ -690,7 +690,7 @@ PRIVATE int strtypecasecmp(const char *s1, const char *s2)
 }
 
 //------------------------------------------------------------------------------
-int get_files_selected_cfv(void)
+int get_files_selected_cfv()
 {
 	return get_files_selected(get_cur_filer_pane_view());
 }
@@ -705,19 +705,19 @@ int get_files_selected(filer_view_t *fv)
 	return files_selected;
 }
 
-PRIVATE void select_file_if_none_selected(void);
-int select_and_get_first_file_idx_selected(void)
+PRIVATE void select_file_if_none_selected();
+int select_and_get_first_file_idx_selected()
 {
 	select_file_if_none_selected();
 	return get_first_file_idx_selected();
 }
-PRIVATE void select_file_if_none_selected(void)
+PRIVATE void select_file_if_none_selected()
 {
 	if (get_files_selected_cfv() == 0) {
 		get_cur_fv_cur_file_ptr()->selected = _FILE_SEL_AUTO_;
 	}
 }
-int get_first_file_idx_selected(void)
+int get_first_file_idx_selected()
 {
 	int file_idx;
 	for (file_idx = 0; file_idx < get_cur_filer_pane_view()->file_infos_entries; file_idx++) {

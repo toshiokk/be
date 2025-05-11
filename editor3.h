@@ -27,19 +27,19 @@ const char *get_line_num_string(const be_buf_t *buf, const be_line_t *line, char
 int get_buf_line_num_columns(const be_buf_t *buf);
 
 #ifdef START_UP_TEST
-void test_make_ruler_text(void);
+void test_make_ruler_text();
 #endif // START_UP_TEST
 
 const char *get_ruler_text(int col_idx);
 const char *make_ruler_text(int col_x, int columns);
 
-int edit_win_get_path_lines(void);
-int edit_win_get_path_columns(void);
-int edit_win_get_text_lines(void);
+int edit_win_get_path_lines();
+int edit_win_get_path_columns();
+int edit_win_get_text_lines();
 
-int edit_win_get_path_y(void);
-int edit_win_get_ruler_y(void);
-int edit_win_get_text_y(void);
+int edit_win_get_path_y();
+int edit_win_get_ruler_y();
+int edit_win_get_text_y();
 
 int te_tab_expand__max_wl_idx(const char *original);
 extern int te_concat_lf_bytes;

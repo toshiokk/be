@@ -26,9 +26,9 @@
 
 // directory
 
-const char *get_starting_dir(void);
-const char *get_home_dir(void);
-const char *get_tty_name(void);
+const char *get_starting_dir();
+const char *get_home_dir();
+const char *get_tty_name();
 int check_wsl();
 int check_availability_of_script();
 
@@ -38,6 +38,9 @@ int check_availability_of_script();
 
 char *normalize_full_path(char *full_path);
 
+const char *cat_dir_and_file_s(const char *dir, const char *file);
+const char *cat_dir_and_file_s1(const char *dir, const char *file);
+const char *cat_dir_and_file_s2(const char *dir, const char *file);
 char *cat_dir_and_file(char *buf, const char *dir, const char *file);
 
 int compare_file_path_in_abs_path(const char *file_path_a, const char *file_path_b);
@@ -83,17 +86,17 @@ BOOL is_abs_path(const char *path);
 
 void test_cwd_PWD();
 
-int test_normalize_path(void);
+int test_normalize_path();
 
 void test_cat_dir_and_file();
 
-void test_get_full_path(void);
+void test_get_full_path();
 
 #if defined(HAVE_REALPATH)
-void test_realpath(void);
+void test_realpath();
 #endif // HAVE_REALPATH
 
-void test_get_file_name_extension(void);
+void test_get_file_name_extension();
 
 void test_separate_path_to_dir_and_file();
 

@@ -26,7 +26,7 @@ PRIVATE int input_string_pos_(const char *default__, char *input_buf, int cursor
 PRIVATE int input_string_pos__(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg);
 PRIVATE void disp_input_box(const char *buf, const char *input_buf, int x);
-PRIVATE void blank_input_box(void);
+PRIVATE void blank_input_box();
 
 // input string
 int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx,
@@ -68,7 +68,7 @@ PRIVATE int input_string_pos_(const char *default__, char *input_buf, int cursor
 	int ret = input_string_pos__(default__, input_buf, cursor_byte_idx, hist_type_idx, msg_buf);
 	//--------------------------------------------------------------------------
 	recursively_called--;
-flf_d_printf("ret: %d\n", ret);
+flf_d_printf("ret__: %d\n", ret);
 	tio_set_cursor_on(0);
 	change_cur_dir(dir_save);
 
@@ -325,9 +325,6 @@ flf_d_printf("func_id: [%s]\n", func_id);
 #Prompt message#######################################################
 #input-string                                                        #
 ###UP:history##DOWN:browser###########################################
-+Prompt message------------------------------------------------------+
-|input-string                                                        |
-+--------------------------------------------------------------------+
 */
 PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_byte_idx)
 {
@@ -375,7 +372,7 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 	tio_refresh();
 }
 
-PRIVATE void blank_input_box(void)
+PRIVATE void blank_input_box()
 {
 	// display frame
 	set_item_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
@@ -393,7 +390,6 @@ PRIVATE void blank_input_box(void)
 }
 
 //------------------------------------------------------------------------------
-
 PRIVATE void disp_ask_yes_no_msg(int flags);
 PRIVATE void list_one_key(char key, const char *desc);
 
@@ -524,7 +520,6 @@ PRIVATE void list_one_key(char key, const char *desc)
 }
 
 //------------------------------------------------------------------------------
-
 PRIVATE void display_reverse_text(int yy, const char *text);
 PRIVATE void display_func_id_key(int yy, const char *text);
 

@@ -1,14 +1,26 @@
-mk_backup_file ~/__be.log
-rm -f ~/.beexit
-if [ -z "$UCON" ]; then
-  be -d "$@" 2>~/__be.log
-else
-  be -d -l "$@" 2>~/__be.log  # enable high BGC color
-fi
-if [ -f ~/.beexit ]; then
-  cd `cat ~/.beexit`
-  cp ~/__be.log ~/__be.log~
-else
-  mk_backup_file ~/__be_crash.log
-  cp ~/__be.log ~/__be_crash.log
-fi
+while : ; do
+  mk_backup_file ~/__be.log
+  rm -f ~/.beexit
+
+  if [ -z "$UCON" ]; then
+    be -d "$@" 2>~/__be.log
+  else
+    be -d -l "$@" 2>~/__be.log  # enable high BGC color
+  fi
+
+  cat ~/.beexit
+  if [ -f ~/.beexit ]; then
+    chmod +x ~/.beexit
+    . ~/.beexit
+    if [ "$restartbe" -le 0 ]; then
+      break
+    fi
+    echo "restarting be ...";
+    sleep 0.5
+  else
+    mk_backup_file ~/__be_crash.log
+    cp ~/__be.log ~/__be_crash.log
+    echo "BE has crashed";
+    break
+  fi
+done

@@ -42,57 +42,47 @@ int rc_file_nest_count = 0;
 // config file priority:
 //		'pwd'/.berc
 //		$HOME/.berc
-//		SYSCONFDIR/berc
 int read_rc_file(const char *rc_file_name)
 {
 	char rc_file_path[MAX_PATH_LEN+1];
 	// read ./.berc
-	snprintf_(rc_file_path, MAX_PATH_LEN+1, "%s/.%s", get_starting_dir(), rc_file_name);
+	cat_dir_and_file(rc_file_path, get_starting_dir(), rc_file_name);
 	if (read_rc_path(rc_file_path, 0) == 0)
 		return 0;
 	// read $HOME/.berc
-	snprintf_(rc_file_path, MAX_PATH_LEN+1, "%s/.%s", get_home_dir(), rc_file_name);
+	cat_dir_and_file(rc_file_path, get_home_dir(), rc_file_name);
 	if (read_rc_path(rc_file_path, 0) == 0)
 		return 0;
-
-////#define SYSCONFDIR		"/usr/local/etc"	// $SYSCONFDIR/berc
-#ifdef SYSCONFDIR
-	// read /usr/local/etc/berc
-	snprintf_(rc_file_path, MAX_PATH_LEN+1, "%s/%s", SYSCONFDIR, rc_file_name);
-	/* Try to open system wide rc file */
-	if (read_rc_path(rc_file_path, 0) == 0)
-		return 0;
-#endif // SYSCONFDIR
 	return -1;
 }
 
-PRIVATE int parse_number(void);
-PRIVATE int parse_color_default(void);
-PRIVATE int parse_color_title(void);
-PRIVATE int parse_color_status(void);
-PRIVATE int parse_color_key_list(void);
-PRIVATE int parse_color_key_list2(void);
-PRIVATE int parse_color_text_normal(void);
-PRIVATE int parse_color_text_selected1(void);
-PRIVATE int parse_color_text_selected2(void);
-PRIVATE int parse_color_text_selected3(void);
-PRIVATE int parse_color_error(void);
-PRIVATE int parse_color_warning1(void);
-PRIVATE int parse_color_warning2(void);
-PRIVATE int parse_color_warning3(void);
-PRIVATE int parse_color_cursor(void);
-PRIVATE int parse_color_cursor_line(void);
-PRIVATE int parse_color_line_number(void);
-PRIVATE int parse_color_menu_frame(void);
-PRIVATE int parse_color_menu_item(void);
-PRIVATE int parse_color_menu_selected(void);
-PRIVATE int parse_color_input(void);
+PRIVATE int parse_number();
+PRIVATE int parse_color_default();
+PRIVATE int parse_color_title();
+PRIVATE int parse_color_status();
+PRIVATE int parse_color_key_list();
+PRIVATE int parse_color_key_list2();
+PRIVATE int parse_color_text_normal();
+PRIVATE int parse_color_text_selected1();
+PRIVATE int parse_color_text_selected2();
+PRIVATE int parse_color_text_selected3();
+PRIVATE int parse_color_error();
+PRIVATE int parse_color_warning1();
+PRIVATE int parse_color_warning2();
+PRIVATE int parse_color_warning3();
+PRIVATE int parse_color_cursor();
+PRIVATE int parse_color_cursor_line();
+PRIVATE int parse_color_line_number();
+PRIVATE int parse_color_menu_frame();
+PRIVATE int parse_color_menu_item();
+PRIVATE int parse_color_menu_selected();
+PRIVATE int parse_color_input();
 #ifdef ENABLE_SYNTAX
-PRIVATE int parse_file_type(void);
-PRIVATE int parse_color_syntax(void);
-PRIVATE int parse_tab_size(void);
+PRIVATE int parse_file_type();
+PRIVATE int parse_color_syntax();
+PRIVATE int parse_tab_size();
 #endif // ENABLE_SYNTAX
-PRIVATE int parse_include(void);
+PRIVATE int parse_include();
 
 PRIVATE int parse_bgc_fgc_register(int color_idx);
 PRIVATE int parse_bgc_fgc(int *bgc, int *fgc);
@@ -258,7 +248,7 @@ read_rc_path_match:;
 }
 
 #ifdef ENABLE_DEBUG
-void dump_app_mode(void)
+void dump_app_mode()
 {
 	for (int idx = 0; idx < ARRAY_SIZE_OF(rc_cmd_idx); idx++) {
 		flf_d_printf("%s = %s\n",
@@ -267,7 +257,7 @@ void dump_app_mode(void)
 }
 #endif // ENABLE_DEBUG
 
-PRIVATE int parse_number(void)
+PRIVATE int parse_number()
 {
 	int val;
 	if (sscanf(rc_line_ptr, "%d", &val) == 0) {
@@ -277,83 +267,83 @@ PRIVATE int parse_number(void)
 	return val;
 }
 
-PRIVATE int parse_color_default(void)
+PRIVATE int parse_color_default()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_DEFAULT);
 }
-PRIVATE int parse_color_title(void)
+PRIVATE int parse_color_title()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_TITLE);
 }
-PRIVATE int parse_color_status(void)
+PRIVATE int parse_color_status()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_STATUS);
 }
-PRIVATE int parse_color_key_list(void)
+PRIVATE int parse_color_key_list()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_KEY_LIST);
 }
-PRIVATE int parse_color_key_list2(void)
+PRIVATE int parse_color_key_list2()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_KEY_LIST2);
 }
-PRIVATE int parse_color_text_normal(void)
+PRIVATE int parse_color_text_normal()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_TEXT_NORMAL);
 }
-PRIVATE int parse_color_text_selected1(void)
+PRIVATE int parse_color_text_selected1()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_TEXT_SELECTED1);
 }
-PRIVATE int parse_color_text_selected2(void)
+PRIVATE int parse_color_text_selected2()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_TEXT_SELECTED2);
 }
-PRIVATE int parse_color_text_selected3(void)
+PRIVATE int parse_color_text_selected3()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_TEXT_SELECTED3);
 }
-PRIVATE int parse_color_warning1(void)
+PRIVATE int parse_color_warning1()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_WARNING1);
 }
-PRIVATE int parse_color_warning2(void)
+PRIVATE int parse_color_warning2()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_WARNING2);
 }
-PRIVATE int parse_color_warning3(void)
+PRIVATE int parse_color_warning3()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_WARNING3);
 }
-PRIVATE int parse_color_error(void)
+PRIVATE int parse_color_error()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_ERROR);
 }
-PRIVATE int parse_color_cursor(void)
+PRIVATE int parse_color_cursor()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_CURSOR_CHAR);
 }
-PRIVATE int parse_color_cursor_line(void)
+PRIVATE int parse_color_cursor_line()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_CURSOR_LINE);
 }
-PRIVATE int parse_color_line_number(void)
+PRIVATE int parse_color_line_number()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_LINE_NUMBER);
 }
-PRIVATE int parse_color_menu_frame(void)
+PRIVATE int parse_color_menu_frame()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_MENU_FRAME);
 }
-PRIVATE int parse_color_menu_item(void)
+PRIVATE int parse_color_menu_item()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_MENU_ITEM);
 }
-PRIVATE int parse_color_menu_selected(void)
+PRIVATE int parse_color_menu_selected()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_MENU_SELECTED);
 }
-PRIVATE int parse_color_input(void)
+PRIVATE int parse_color_input()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_INPUT);
 }
@@ -361,7 +351,7 @@ PRIVATE int parse_color_input(void)
 PRIVATE int fgc, bgc;
 
 #ifdef ENABLE_SYNTAX
-PRIVATE int parse_file_type(void)
+PRIVATE int parse_file_type()
 {
 #define MAX_FILE_TYPE_NAME	40
 #define MAX_REGEXP_LEN		256
@@ -373,7 +363,7 @@ PRIVATE int parse_file_type(void)
 }
 
 // Parse the color stuff into the item_colors array
-PRIVATE int parse_color_syntax(void)
+PRIVATE int parse_color_syntax()
 {
 	char regexp_start[MAX_REGEXP_LEN+1] = "";
 	char regexp_end[MAX_REGEXP_LEN+1] = "";
@@ -408,7 +398,7 @@ PRIVATE int parse_color_syntax(void)
 	}
 	return add_color_syntax(regexp_start, regexp_end, bgc, fgc);
 }
-PRIVATE int parse_tab_size(void)
+PRIVATE int parse_tab_size()
 {
 	SKIP_SPACE(rc_line_ptr);
 	int tab_size = DEFAULT_TAB_SIZE;
@@ -423,7 +413,7 @@ PRIVATE int parse_tab_size(void)
 #endif // ENABLE_SYNTAX
 
 // "include .emacs.berc"
-PRIVATE int parse_include(void)
+PRIVATE int parse_include()
 {
 	int ret = 0;
 	SKIP_SPACE(rc_line_ptr);
@@ -433,7 +423,7 @@ PRIVATE int parse_include(void)
 		char rc_file_path[MAX_PATH_LEN+1];
 		++rc_file_nest_count;
 		separate_path_to_dir_and_file(rc_file_path_reading, dir_part, file_part);
-		snprintf_(rc_file_path, MAX_PATH_LEN+1, "%s/%s", dir_part, rc_line_ptr);
+		cat_dir_and_file(rc_file_path, dir_part, rc_line_ptr);
 		ret = read_rc_path(rc_file_path, 1);
 		--rc_file_nest_count;
 	}
@@ -604,7 +594,7 @@ PRIVATE int parse_keyword(const char **rc_line_ptr, const char *keyword)
 
 #ifdef ENABLE_SYNTAX
 
-int register_default_color_syntax(void)
+int register_default_color_syntax()
 {
 #define CL_TAB_EOL	CL_GY	// color for TAB/EOL/"　" notation
 
@@ -702,7 +692,7 @@ PRIVATE int link_color_syntax_w_file_type(file_type_t *file_type, color_syntax_t
 	return 0;
 }
 
-void free_file_types(void)
+void free_file_types()
 {
 	file_type_t *file_type, *f_next;
 	color_syntax_t *clr_syntax, *c_next;
@@ -734,7 +724,7 @@ void free_file_types(void)
 //------------------------------------------------------------------------------
 
 #ifdef ENABLE_DEBUG
-void dump_file_types(void)
+void dump_file_types()
 {
 	file_type_t *file_type;
 

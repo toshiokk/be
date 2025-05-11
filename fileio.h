@@ -32,17 +32,17 @@ int load_file_into_new_buf(const char *full_path, int flags);
 int load_file_into_buf(be_buf_t *buf, const char *full_path);
 
 #define BACKUP_FILE_SUFFIX		"~"
-int backup_and_save_cur_buf_ask(void);
+int backup_and_save_cur_buf_ask();
 int backup_and_save_cur_buf(const char *file_path);
 
 int save_buf_to_file(be_buf_t *buf, const char *file_path);
 int save_cur_buf_to_file(const char *file_path);
 
-void clear_files_loaded(void);
+void clear_files_loaded();
 int add_files_loaded(int files);
-int get_files_loaded(void);
-void disp_files_loaded_if_ge_0(void);
-void disp_files_loaded(void);
+int get_files_loaded();
+void disp_files_loaded_if_ge_0();
+void disp_files_loaded();
 
 #define MAX_LOG_FILE_SIZE_KB		1000	// 1000 [KB]
 int reduce_log_file_size(const char *file_path, int size_in_kb);

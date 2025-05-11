@@ -33,50 +33,50 @@ void easy_buffer_switching_clear();
 void easy_buffer_switching_count();
 int easy_buffer_switching_check(easy_buffer_switching_t top_bottom);
 
-int doe_left(void);
-int doe_right(void);
+int doe_left();
+int doe_right();
 
-int doe_start_of_line(void);
-int doe_end_of_line(void);
+int doe_start_of_line();
+int doe_end_of_line();
 
-int doe_up(void);
-int doe_down(void);
-int doe_page_up(void);
-int doe_page_down(void);
+int doe_up();
+int doe_down();
+int doe_page_up();
+int doe_page_down();
 
-int doe_prev_word(void);
-int doe_next_word(void);
-int doe_first_line(void);
-int doe_last_line(void);
-int doe_control_code(void);
-int doe_charcode(void);
-int doe_paste_from_history(void);
+int doe_prev_word();
+int doe_next_word();
+int doe_first_line();
+int doe_last_line();
+int doe_control_code();
+int doe_charcode();
+int doe_paste_from_history();
 
-int doe_tab(void);
+int doe_tab();
 int doe_buffer_utf8c_bytes(char chr);
-int doe_enter_buffered_utf8c_bytes(void);
-int doe_carriage_return(void);
-int doe_carriage_return_with_auto_indent(void);
-int doe_backspace_limited(void);
-int doe_backspace(void);
-int doe_delete_char(void);
-int doe_conv_upp_low_letter(void);
-int doe_conv_upp_letter(void);
-int doe_conv_low_letter(void);
+int doe_enter_buffered_utf8c_bytes();
+int doe_carriage_return();
+int doe_carriage_return_with_auto_indent();
+int doe_backspace_limited();
+int doe_backspace();
+int doe_delete_char();
+int doe_conv_upp_low_letter();
+int doe_conv_upp_letter();
+int doe_conv_low_letter();
 
 int doe_memorize_columns();
 int doe_fill_spaces_to_columns();
 
-int doe_refresh_editor(void);
+int doe_refresh_editor();
 
 int move_cursor_left(int move_disp_y);
-int move_cursor_right(void);
+int move_cursor_right();
 
 int cur_line_up(be_line_t **line, int *byte_idx);
 int cur_line_down(be_line_t **line, int *byte_idx);
-int next_line(void);
-void first_line(void);
-void last_line(void);
+int next_line();
+void first_line();
+void last_line();
 
 #endif // editormove_h
 

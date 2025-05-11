@@ -204,29 +204,45 @@ int chk_inp_str_ret_val_editor(int ret)
 }
 
 //------------------------------------------------------------------------------
-char *get_app_dir(void)
+const char *get_app_dir()
 {
-	static char dir[MAX_PATH_LEN+1];
-
 #if defined(APP_DIR)
-	snprintf_(dir, MAX_PATH_LEN+1, "%s/%s", get_home_dir(), APP_DIR);
+	static char dir[MAX_PATH_LEN+1];
+	return cat_dir_and_file(dir, get_home_dir(), APP_DIR);
 #else // APP_DIR
-	snprintf_(dir, MAX_PATH_LEN+1, "%s", get_home_dir());
+	return get_home_dir();
 #endif // APP_DIR
-	return dir;
+}
+
+#define _CLIPBOARD_FILE_NAME	"clipboard"		// default clipboard file name
+#if defined(APP_DIR)
+#define CLIPBOARD_FILE_NAME		_CLIPBOARD_FILE_NAME
+#else // APP_DIR
+#define CLIPBOARD_FILE_NAME		"." _CLIPBOARD_FILE_NAME
+#endif // APP_DIR
+
+// clipboard file is common to all be-editor instances in one user
+const char *get_clipboard_file_path()
+{
+	static char file_path[MAX_PATH_LEN+1];
+	return cat_dir_and_file(file_path, get_app_dir(), CLIPBOARD_FILE_NAME);
+}
+int save_top_cut_buf_to_clipboard_file()
+{
+	return save_buf_to_file(CUT_BUFS_TOP_BUF, get_clipboard_file_path());
 }
 
 //------------------------------------------------------------------------------
 PRIVATE int doe_run_line__(int flags, int clbi, int input);
-int doe_run_line_soon_wo_log(void)
+int doe_run_line_soon_wo_log()
 {
 	return doe_run_line__(EX_FLAGS_0, 0, 0);
 }
-int doe_run_line_soon_w_log(void)
+int doe_run_line_soon_w_log()
 {
 	return doe_run_line__(EX_LOGGING, 0, 0);
 }
-int doe_run_line_input(void)
+int doe_run_line_input()
 {
 	return doe_run_line__(EX_LOGGING, EPCBVC_CLBI, 1);
 }
@@ -270,12 +286,12 @@ void do_splash()
 	}
 	display_color_settings(key);
 }
-int doe_view_file_list(void)
+int doe_view_file_list()
 {
 	view_list(HELP_BUF_IDX_EDITOR_FILE_LIST);
 	return 1;
 }
-int doe_view_func_list(void)
+int doe_view_func_list()
 {
 	view_list(HELP_BUF_IDX_EDITOR_FUNC_LIST);
 	return 1;
@@ -329,18 +345,18 @@ PRIVATE void examine_key_code_show(key_code_t key)
 }
 
 //------------------------------------------------------------------------------
-int doe_quit_editor(void)
+int doe_quit_editor()
 {
 	editor_do_next = EF_QUIT;
 	return 0;
 }
 
-int doe_menu_0(void)
+int doe_menu_0()
 {
 	return editor_menu_n(-1);
 }
 
-int doe_inc_key_list_lines(void)
+int doe_inc_key_list_lines()
 {
 	do_inc_key_list_lines_();
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
@@ -507,8 +523,8 @@ PRIVATE void update_screen_app__(int status_bar, int refresh)
 
 //------------------------------------------------------------------------------
 
-PRIVATE void disp_status_bar_editor(void);
-PRIVATE void disp_key_list_editor(void);
+PRIVATE void disp_status_bar_editor();
+PRIVATE void disp_key_list_editor();
 
 void update_screen_editor(int status_bar, int refresh)
 {
@@ -584,7 +600,7 @@ PRIVATE void blink_editor_title_bar();
 #define HHCMMCSS_BUF_LEN	(1+8)	// " 23:59:59"/" 24/10/09"
 PRIVATE char editor_title_bar_buf[MAX_SCRN_LINE_BUF_LEN+1] = "";
 //1:/home/...editor2.c[MOD]    Mc e99c0u0r0 1234M 11:55:04
-void disp_title_bar_editor(void)
+void disp_title_bar_editor()
 {
 	static int prev_edit_bufs = 0;
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
@@ -669,7 +685,7 @@ PRIVATE void blink_editor_title_bar()
 {
 	set_item_color_by_idx(ITEM_COLOR_IDX_TITLE, 0);
 	set_title_bar_color_by_state(
-	 (is_epc_buf_modifiable() == 0) ? ITEM_COLOR_IDX_WARNING3
+	 (is_epc_buf_modifiable() == 0) ? ITEM_COLOR_IDX_ERROR
 	  : (is_epc_buf_modified() ? ITEM_COLOR_IDX_WARNING1
 	   : (is_any_edit_buf_modified() ? ITEM_COLOR_IDX_WARNING2
 	    : (GET_CUR_EBUF_STATE(buf_CUT_MODE) ? ITEM_COLOR_IDX_TEXT_SELECTED1
@@ -679,7 +695,7 @@ PRIVATE void blink_editor_title_bar()
 	 editor_title_bar_buf, -1);
 }
 //------------------------------------------------------------------------------
-PRIVATE void disp_status_bar_editor(void)
+PRIVATE void disp_status_bar_editor()
 {
 	int bytes, byte_idx;
 #define UTF8_CODE_LEN		(17+1+8+1)			// "00-00-00-00-00-00(U+xxxxxx)"
@@ -718,7 +734,7 @@ PRIVATE void disp_status_bar_editor(void)
 	 buf_enc_str(get_epc_buf()), buf_eol_str(get_epc_buf()));
 }
 
-PRIVATE void disp_key_list_editor(void)
+PRIVATE void disp_key_list_editor()
 {
 	disp_fkey_list();
 
@@ -753,7 +769,7 @@ PRIVATE void disp_key_list_editor(void)
 	disp_key_list(editor_key_lists);
 }
 //------------------------------------------------------------------------------
-int is_editor_unmodifiable_then_warn_it(void)
+int is_editor_unmodifiable_then_warn_it()
 {
 	// in Application mode
 	if (is_app_chooser_viewer_mode()) {
@@ -770,7 +786,7 @@ int is_editor_unmodifiable_then_warn_it(void)
 }
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
-void dump_cur_pointers(void)
+void dump_cur_pointers()
 {
 	flf_d_printf("epc_buf:[%s]\n", buf_get_file_path(get_epc_buf(), NULL));
 	flf_d_printf("%d:[%s]\n", EPCBVC_CL->line_num, EPCBVC_CL->data);

@@ -48,9 +48,38 @@ be_bufs_t redo_buffers;
 #endif // ENABLE_UNDO
 
 //=============================================================================
+// Structure of collections of buffers:
+//   be_bufs_t all_bufferss.top_anchor
+//   be_bufs_t edit_bufs
+//     be_buf_t main.c
+//          :
+//     be_buf_t headers.h
+//   be_bufs_t hist_bufs
+//     be_buf_t exec_hist
+//     be_buf_t dir_hist
+//     be_buf_t key_macro_hist
+//     be_buf_t shell_hist
+//     be_buf_t file_pos_hist
+//   be_bufs_t help_bufs
+//     be_buf_t file_list
+//     be_buf_t key_binding_list
+//     be_buf_t func_list
+//   be_bufs_t cut_bufs
+//     be_buf_t cut-1
+//          :
+//     be_buf_t cut-n
+//   be_bufs_t undo_bufs
+//     be_buf_t undo-1
+//          :
+//     be_buf_t undo-n
+//   be_bufs_t redo_bufs
+//     be_buf_t redo-1
+//          :
+//     be_buf_t redo-n
+//   be_bufs_t all_bufferss.bot_anchor
 
 // Initialize collection of buffers.
-void init_bufferss(void)
+void init_bufferss()
 {
 	bufss_init(&all_bufferss, "##BUFSS", "##bufss_top_anch", "##bufss_bot_anch");
 
@@ -78,7 +107,7 @@ void init_bufferss(void)
 #endif // ENABLE_HELP
 }
 
-void free_all_buffers(void)
+void free_all_buffers()
 {
 	bufs_free_all_bufs(NODES_TOP_NODE(&all_bufferss));
 }
@@ -87,7 +116,7 @@ void free_all_buffers(void)
 
 // free current be_buf_t
 // the next or previous buffer will be set to current
-int free_cur_edit_buf(void)
+int free_cur_edit_buf()
 {
 	unlock_epc_buf_if_file_had_locked_by_myself();
 	return free_edit_buf(get_epc_buf());
@@ -232,11 +261,11 @@ void set_epc_buf(be_buf_t *buf)	// set edit buffer to current pane
 {
 	set_epx_buf(-1, buf);
 }
-be_buf_t *get_epc_buf(void)
+be_buf_t *get_epc_buf()
 {
 	return get_epx_buf(-1);
 }
-be_buf_view_t *get_epc_buf_view(void)
+be_buf_view_t *get_epc_buf_view()
 {
 	return &(get_epc_buf()->buf_views[get_editor_cur_pane_idx()]);
 }
@@ -271,11 +300,11 @@ be_buf_t *get_epx_buf(int pane_idx)
 //DDD}
 
 //--------------------------------------
-void clear_cur_buf_modified(void)
+void clear_cur_buf_modified()
 {
 	SET_CUR_EBUF_STATE(buf_MODIFIED, 0);
 }
-void set_cur_buf_modified(void)
+void set_cur_buf_modified()
 {
 	SET_CUR_EBUF_STATE(buf_MODIFIED, 1);
 }
@@ -462,7 +491,7 @@ be_buf_t *get_edit_buf_by_file_name(const char *file_name)
 // create new be_buf_t
 void create_edit_buf(const char *full_path)
 {
-	be_buf_t *buf = buf_create_node(full_path, buf_MODE_EDIT);
+	be_buf_t *buf = buf_create(full_path, buf_MODE_EDIT);
 	// copy default encoding from EDIT_BUFS_BOT_ANCH
 #ifdef USE_NKF
 	SET_BUF_STATE(buf, buf_ENCODE, GET_BUF_STATE(EDIT_BUFS_BOT_ANCH, buf_ENCODE));
@@ -490,7 +519,7 @@ be_line_t *append_string_to_cur_edit_buf(const char *string)
 }
 
 // Append a new magic-line to the bottom of the current buffer
-int append_magic_line_if_necessary(void)
+int append_magic_line_if_necessary()
 {
 	if (buf_is_empty(get_epc_buf())
 	 || ((buf_is_empty(get_epc_buf()) == 0) && line_strlen(CUR_EDIT_BUF_BOT_LINE))) {
@@ -500,7 +529,7 @@ int append_magic_line_if_necessary(void)
 	return 0;
 }
 
-int has_bufs_to_edit(void)
+int has_bufs_to_edit()
 {
 	return (count_edit_bufs() > 0) || (epc_buf_count_bufs() > 0);
 }
@@ -508,16 +537,16 @@ int count_edit_bufs()
 {
 	return bufs_count_bufs(&edit_buffers);
 }
-int epc_buf_count_bufs(void)
+int epc_buf_count_bufs()
 {
 	return buf_count_bufs(get_epc_buf());
 }
 
 // Cut-buffers manipulation routines -----------------------------------------
 
-be_buf_t *push_cut_buf(void)
+be_buf_t *push_cut_buf()
 {
-	be_buf_t *buf = buf_create_node(sprintf_s(INTERNAL_FILE_NAME_PREFIX "cut-buffer-%03d",
+	be_buf_t *buf = buf_create(sprintf_s(INTERNAL_FILE_NAME_PREFIX "cut-buffer-%03d",
 	 count_cut_bufs()), buf_MODE_LIST);
 	bufs_insert_buf_to_top(&cut_buffers, buf);
 	// copy cut-mode to cut-buffer
@@ -526,7 +555,7 @@ be_buf_t *push_cut_buf(void)
 	set_cut_buffers_modified();
 	return buf;
 }
-int pop__free_from_cut_bufs(void)
+int pop__free_from_cut_bufs()
 {
 	if (IS_NODE_BOT_ANCH(CUT_BUFS_TOP_BUF))
 		return 0;
@@ -541,22 +570,22 @@ be_line_t *append_string_to_cur_cut_buf(const char *string)
 	BUFVX_CLBI(CUT_BUFS_TOP_BUF, 0) = BUFVX_CLBI(CUT_BUFS_TOP_BUF, 1) = 0;
 	return BUFVX_CL(CUT_BUFS_TOP_BUF, 0);
 }
-int count_cut_bufs(void)
+int count_cut_bufs()
 {
 	return bufs_count_bufs(&cut_buffers);
 }
-int count_cur_cut_buf_lines(void)
+int count_cur_cut_buf_lines()
 {
 	return buf_count_lines(CUT_BUFS_TOP_BUF, MAX_LINES_LOADABLE);
 }
-void clear_cut_bufs(void)
+void clear_cut_bufs()
 {
 	while (IS_NODE_INT(CUT_BUFS_TOP_BUF)) {
 		pop__free_from_cut_bufs();
 	}
 }
 //------------------------------------------------------------------------------
-void renumber_cur_buf_from_top(void)
+void renumber_cur_buf_from_top()
 {
 	buf_renumber_from_top(get_epc_buf());
 }
@@ -566,12 +595,12 @@ be_line_t *get_line_ptr_in_cur_buf_by_line_num(int line_num)
 	return buf_get_line_ptr_from_line_num(get_epc_buf(), line_num);
 }
 //------------------------------------------------------------------------------
-void update_cur_buf_crc(void)
+void update_cur_buf_crc()
 {
 	disp_status_bar_ing(_("Calculating CRC..."));
 	buf_update_crc(get_epc_buf());
 }
-int check_cur_buf_modified(void)
+int check_cur_buf_modified()
 {
 	int modified = 0;
 	if (is_epc_buf_modified()) {
@@ -584,7 +613,7 @@ int check_cur_buf_modified(void)
 	}
 	return modified;
 }
-int is_any_edit_buf_modified(void)
+int is_any_edit_buf_modified()
 {
 	for (be_buf_t *edit_buf = EDIT_BUFS_TOP_BUF; IS_NODE_INT(edit_buf);
 	 edit_buf = NODE_NEXT(edit_buf)) {
@@ -595,82 +624,82 @@ int is_any_edit_buf_modified(void)
 	return 0;
 }
 //------------------------------------------------------------------------------
-int inc_buf_mode(void)
+int inc_buf_mode()
 {
 	INC_CUR_EBUF_STATE(buf_MODE, buf_MODE_EDIT, buf_MODE_LIST);
 	return 0;
 }
-const char *get_str_buf_mode(void)
+const char *get_str_buf_mode()
 {
 	return buf_mode_str(get_epc_buf());
 }
 
-int tog_buf_line_wrap_mode(void)
+int tog_buf_line_wrap_mode()
 {
 	TOGGLE_CUR_EBUF_STATE(buf_LINE_WRAP_MODE);
 	return 0;
 }
-const char *get_str_buf_line_wrap_mode(void)
+const char *get_str_buf_line_wrap_mode()
 {
 	return BOOL_TO_ON_OFF(GET_CUR_EBUF_STATE(buf_LINE_WRAP_MODE));
 }
 
-int tog_buf_tab_size(void)
+int tog_buf_tab_size()
 {
 	GET_CUR_EBUF_STATE(buf_TAB_SIZE)
 	 = (GET_CUR_EBUF_STATE(buf_TAB_SIZE) == 8) ? 4 : 8;
 	set_wrap_line_tab_size_from_cur_buf();
 	return 0;
 }
-int inc_buf_tab_size(void)
+int inc_buf_tab_size()
 {
 	INC_CUR_EBUF_STATE(buf_TAB_SIZE, TAB_SIZE_MIN, TAB_SIZE_MAX);
 	set_wrap_line_tab_size_from_cur_buf();
 	return 0;
 }
-const char *get_str_buf_tab_size(void)
+const char *get_str_buf_tab_size()
 {
 	static char buf[2+1];
 
 	snprintf(buf, 2+1, "%d", get_cur_buf_tab_size());
 	return buf;
 }
-int get_cur_buf_tab_size(void)
+int get_cur_buf_tab_size()
 {
 	// to avoid divided-by-0, check 0 and replace with non-zero-value
 	return GET_CUR_EBUF_STATE(buf_TAB_SIZE) == 0
 	 ? DEFAULT_TAB_SIZE : GET_CUR_EBUF_STATE(buf_TAB_SIZE);
 }
 // update tab-size in wrap-line from the current buffer
-void set_wrap_line_tab_size_from_cur_buf(void)
+void set_wrap_line_tab_size_from_cur_buf()
 {
 	set_wrap_line_tab_size(get_cur_buf_tab_size());
 }
 
-int set_buf_nix_file(void)
+int set_buf_nix_file()
 {
 	set_buf_eol(EOL_NIX);
 	return 0;
 }
-const char *get_str_buf_nix_file(void)
+const char *get_str_buf_nix_file()
 {
 	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_EOL, EOL_NIX));
 }
-int set_buf_mac_file(void)
+int set_buf_mac_file()
 {
 	set_buf_eol(EOL_MAC);
 	return 0;
 }
-const char *get_str_buf_mac_file(void)
+const char *get_str_buf_mac_file()
 {
 	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_EOL, EOL_MAC));
 }
-int set_buf_dos_file(void)
+int set_buf_dos_file()
 {
 	set_buf_eol(EOL_DOS);
 	return 0;
 }
-const char *get_str_buf_dos_file(void)
+const char *get_str_buf_dos_file()
 {
 	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_EOL, EOL_DOS));
 }
@@ -679,64 +708,64 @@ int set_buf_eol(int eol)
 	GET_CUR_EBUF_STATE(buf_EOL) = eol;
 	return 0;
 }
-const char *get_str_buf_eol(void)
+const char *get_str_buf_eol()
 {
 	return buf_eol_str(get_epc_buf());
 }
 
-int set_buf_enc_ascii(void)
+int set_buf_enc_ascii()
 {
 	set_buf_encode(ENCODE_ASCII);
 	return 0;
 }
-const char *get_str_buf_enc_ascii(void)
+const char *get_str_buf_enc_ascii()
 {
 	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_ASCII));
 }
-int set_buf_enc_utf8(void)
+int set_buf_enc_utf8()
 {
 	set_buf_encode(ENCODE_UTF8);
 	return 0;
 }
-const char *get_str_buf_enc_utf8(void)
+const char *get_str_buf_enc_utf8()
 {
 	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_UTF8));
 }
 #ifdef USE_NKF
-int set_buf_enc_eucjp(void)
+int set_buf_enc_eucjp()
 {
 	set_buf_encode(ENCODE_EUCJP);
 	return 0;
 }
-const char *get_str_buf_enc_eucjp(void)
+const char *get_str_buf_enc_eucjp()
 {
 	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_EUCJP));
 }
-int set_buf_enc_sjis(void)
+int set_buf_enc_sjis()
 {
 	set_buf_encode(ENCODE_SJIS);
 	return 0;
 }
-const char *get_str_buf_enc_sjis(void)
+const char *get_str_buf_enc_sjis()
 {
 	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_SJIS));
 }
-int set_buf_enc_jis(void)
+int set_buf_enc_jis()
 {
 	set_buf_encode(ENCODE_JIS);
 	return 0;
 }
-const char *get_str_buf_enc_jis(void)
+const char *get_str_buf_enc_jis()
 {
 	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_JIS));
 }
 #endif // USE_NKF
-int set_buf_enc_binary(void)
+int set_buf_enc_binary()
 {
 	set_buf_encode(ENCODE_BINARY);
 	return 0;
 }
-const char *get_str_buf_enc_binary(void)
+const char *get_str_buf_enc_binary()
 {
 	return SELECTED_OR_NOT(CMP_CUR_EBUF_STATE(buf_ENCODE, ENCODE_BINARY));
 }
@@ -746,18 +775,18 @@ int set_buf_encode(int encode)
 	GET_CUR_EBUF_STATE(buf_ENCODE) = encode;
 	return 0;
 }
-const char *get_str_buf_encode(void)
+const char *get_str_buf_encode()
 {
 	return buf_enc_str(get_epc_buf());
 }
 //------------------------------------------------------------------------------
-int doe_inc_buf_mode(void)
+int doe_inc_buf_mode()
 {
 	inc_buf_mode();
 	SHOW_MODE("View mode", get_str_buf_mode());
 	return 0;
 }
-int doe_tog_buf_line_wrap_mode(void)
+int doe_tog_buf_line_wrap_mode()
 {
 	tog_buf_line_wrap_mode();
 	SHOW_MODE("Line-wrap mode", get_str_buf_line_wrap_mode());
@@ -766,72 +795,72 @@ int doe_tog_buf_line_wrap_mode(void)
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
-int doe_tog_buf_tab_size(void)
+int doe_tog_buf_tab_size()
 {
 	tog_buf_tab_size();
 	SHOW_MODE(_("Tab size"), get_str_buf_tab_size());
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
-int doe_inc_buf_tab_size(void)
+int doe_inc_buf_tab_size()
 {
 	inc_buf_tab_size();
 	SHOW_MODE(_("Tab size"), get_str_buf_tab_size());
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 0;
 }
-int doe_set_buf_nix_file(void)
+int doe_set_buf_nix_file()
 {
 	set_buf_nix_file();
 	SHOW_MODE("File format", get_str_buf_eol());
 	return 0;
 }
-int doe_set_buf_mac_file(void)
+int doe_set_buf_mac_file()
 {
 	set_buf_mac_file();
 	SHOW_MODE("File format", get_str_buf_eol());
 	return 0;
 }
-int doe_set_buf_dos_file(void)
+int doe_set_buf_dos_file()
 {
 	set_buf_dos_file();
 	SHOW_MODE("File format", get_str_buf_eol());
 	return 0;
 }
 //------------------------------------------------------------------------------
-int doe_set_buf_enc_ascii(void)
+int doe_set_buf_enc_ascii()
 {
 	set_buf_enc_ascii();
 	SHOW_MODE("ASCII format", get_str_buf_enc_ascii());
 	return 0;
 }
-int doe_set_buf_enc_utf8(void)
+int doe_set_buf_enc_utf8()
 {
 	set_buf_enc_utf8();
 	SHOW_MODE("UTF-8 format", get_str_buf_enc_utf8());
 	return 0;
 }
 #ifdef USE_NKF
-int doe_set_buf_enc_eucjp(void)
+int doe_set_buf_enc_eucjp()
 {
 	set_buf_enc_eucjp();
 	SHOW_MODE("EUC-JP format", get_str_buf_enc_eucjp());
 	return 0;
 }
-int doe_set_buf_enc_sjis(void)
+int doe_set_buf_enc_sjis()
 {
 	set_buf_enc_sjis();
 	SHOW_MODE("SJIS format", get_str_buf_enc_sjis());
 	return 0;
 }
-int doe_set_buf_enc_jis(void)
+int doe_set_buf_enc_jis()
 {
 	set_buf_enc_jis();
 	SHOW_MODE("JIS format", get_str_buf_enc_jis());
 	return 0;
 }
 #endif // USE_NKF
-int doe_set_buf_enc_binary(void)
+int doe_set_buf_enc_binary()
 {
 	set_buf_enc_binary();
 	SHOW_MODE("BINARY format", get_str_buf_enc_binary());
@@ -844,29 +873,29 @@ int is_internal_buf_file_name(const char* file_name)
 }
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
-void dump_cur_edit_buf_lines(void)
+void dump_cur_edit_buf_lines()
 {
 	buf_dump_lines(get_epc_buf(), 3);
 }
-void dump_edit_bufs(void)
+void dump_edit_bufs()
 {
 	buf_dump_bufs(EDIT_BUFS_TOP_BUF);
 }
-void dump_edit_bufs_lines(void)
+void dump_edit_bufs_lines()
 {
 	buf_dump_bufs_lines(EDIT_BUFS_TOP_BUF, "edit-bufs");
 }
-void dump_cut_bufs(void)
+void dump_cut_bufs()
 {
 	buf_dump_bufs(CUT_BUFS_TOP_BUF);
 }
-void dump_cut_bufs_lines(void)
+void dump_cut_bufs_lines()
 {
 	buf_dump_bufs_lines(CUT_BUFS_TOP_BUF, "cut-bufs");
 }
 
 // dump current buffer
-void dump_cur_edit_buf(void)
+void dump_cur_edit_buf()
 {
 	flf_d_printf("<<<\n");
 	flf_d_printf("CUR_EDIT_BUF_TOP_LINE:%08lx\n", CUR_EDIT_BUF_TOP_LINE);

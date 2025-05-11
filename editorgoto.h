@@ -43,29 +43,29 @@
 
 #define FILE_PATH_SEPARATOR		"|"		// candidates are "|", "//", ""\\"
 
-int doe_goto_column(void);
-int doe_goto_line(void);
-int doe_tag_jump_in_cur_line(void);
-int doe_tag_jump_in_cur_cursor_pos(void);
+int doe_goto_column();
+int doe_goto_line();
+int doe_tag_jump_in_cur_line();
+int doe_tag_jump_in_cur_cursor_pos();
 #ifdef ENABLE_FILER
-int doe_filer(void);
+int doe_filer();
 int doe_goto_directory_in_cur_line();
 int doe_goto_directory_in_cur_cursor_pos();
 int try_to_open_dir_in_cur_line_with_filer(int line_byte_idx);
 int try_to_open_dir_in_str_with_filer(const char *str);
 #endif // ENABLE_FILER
 
-int doe_open_files_in_buf(void);
-int doe_switch_to_prev_buffer(void);
-int doe_switch_to_next_buffer(void);
-int doe_switch_to_top_buffer(void);
-int doe_switch_to_bot_buffer(void);
+int doe_open_files_in_buf();
+int doe_switch_to_prev_buffer();
+int doe_switch_to_next_buffer();
+int doe_switch_to_top_buffer();
+int doe_switch_to_bot_buffer();
 
-int doe_switch_to_prev_buffers(void);
-int doe_switch_to_next_buffers(void);
+int doe_switch_to_prev_buffers();
+int doe_switch_to_next_buffers();
 
 void memorize_cur_file_pos_before_jump();
-int doe_return_to_prev_file_pos(void);
+int doe_return_to_prev_file_pos();
 
 // Top level functions: never called recursively
 // |function name           |actions                                                    |
@@ -82,7 +82,7 @@ int doe_return_to_prev_file_pos(void);
 
 // Top level functions:
 int load_file_name_upp_low(const char *file_name, int flags);
-int load_files_in_cur_buf(void);
+int load_files_in_cur_buf();
 int load_files_in_string(const char *string, int flags);
 
 int load_file_name_upp_low_(const char *file_name, int flags);
@@ -90,7 +90,7 @@ int load_file_name_upp_low_(const char *file_name, int flags);
 int is_file_name_proj_file(const char *file_name, int type);
 
 #ifdef START_UP_TEST
-void test_get_n_th_file(void);
+void test_get_n_th_file();
 #endif // START_UP_TEST
 #define MAX_FILES_TO_TRY_TO_LOAD_IN_A_LINE	10
 int get_n_th_file_line_col_from_str(const char *str, int field_idx,
@@ -108,7 +108,7 @@ int recall_file_pos_null(const char *str);
 int goto_str_line_col_in_cur_buf(const char *str);
 int goto_line_col_in_cur_buf(int line_num, int col_no);
 
-char *mk_cur_file_pos_str_static(void);
+char *mk_cur_file_pos_str_static();
 char *mk_cur_file_pos_str_buf(char *buffer);
 char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col_no);
 int get_file_line_col_from_str(const char *str, char *file_path,
@@ -119,11 +119,11 @@ int switch_epc_buf_by_file_name(const char *file_name);
 
 int switch_epc_buf_to_edit_buf();
 int switch_epc_buf_to_top_of_edit_buf();
-int switch_epc_buf_to_top_buf(void);
-int switch_epc_buf_to_bot_buf(void);
+int switch_epc_buf_to_top_buf();
+int switch_epc_buf_to_bot_buf();
 int switch_epc_buf_to_next_buf(int beep_at_end, int goto_top);
 int switch_epc_buf_to_prev_buf(int beep_at_end, int goto_bottom);
-int switch_epc_buf_to_another_buf(void);
+int switch_epc_buf_to_another_buf();
 
 #endif // editorgoto_h
 

@@ -24,31 +24,31 @@
 
 #ifdef ENABLE_HISTORY
 void load_last_key_macro(int last_n);
-void update_key_macro_history(void);
+void update_key_macro_history();
 #endif // ENABLE_HISTORY
 
-int doe_start_rec__cancel_rec(void);
-int doe_end_rec__playback(void);
+int doe_start_rec__cancel_rec();
+int doe_end_rec__playback();
 
-int doe_start_recording(void);
-int doe_cancel_recording(void);
-int doe_end_recording(void);
-int doe_playback_last_1(void);
-int doe_playback_last_2(void);
+int doe_start_recording();
+int doe_cancel_recording();
+int doe_end_recording();
+int doe_playback_last_1();
+int doe_playback_last_2();
 #ifdef ENABLE_HISTORY
-int doe_playback_string(void);
+int doe_playback_string();
 #endif // ENABLE_HISTORY
 
-void key_macro_start_recording(void);
+void key_macro_start_recording();
 void key_macro_put_key(key_code_t key);
-int key_macro_is_recording(void);
-void key_macro_cancel_recording(void);
-void key_macro_end_recording(void);
+int key_macro_is_recording();
+void key_macro_cancel_recording();
+void key_macro_end_recording();
 
-int key_macro_start_playback(void);
-key_code_t key_macro_get_key(void);
-void key_macro_end_playback(void);
-int key_macro_is_playing_back(void);
+int key_macro_start_playback();
+key_code_t key_macro_get_key();
+void key_macro_end_playback();
+int key_macro_is_playing_back();
 
 char *get_string_from_key_macro(key_code_t *key_codes, int keys);
 int get_key_macro_from_string(const char *string, key_code_t *key_codes);
