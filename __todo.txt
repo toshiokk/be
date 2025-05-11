@@ -6,6 +6,7 @@
 - CRASH: crash
 - POLICY: things to be kept
 
+- [x] 250511 BUG: not copyable of a text in the list mode
 - [x] 250511 CRASH: when it cuts a text from the later line to the former line
 - [x] 250509 BUG: execution-log does not update soon from the point of view of another terminal
 - [x] 250509 re-start BE (M^Q)

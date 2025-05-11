@@ -270,8 +270,7 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 
 #ifdef HL_MARKED_REGION
 	// highlight marked region ================================================
-	if (is_epc_buf_modifiable()
-	 && IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) && is_there_cut_region()
+	if (IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) && is_there_cut_region()
 	 && (mark_min_line__->line_num <= line->line_num
 	  && line->line_num <= mark_max_line__->line_num)) {
 		// this line is at least partially selected

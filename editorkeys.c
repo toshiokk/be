@@ -217,7 +217,7 @@ func_key_list_t editor_func_key_table[] = {
 
  { EFNM_EXEC, "",                    "Cut-buffer Menu",
    {KNA,          KNA, KNA}, F_I(doe_menu_0), get_str_setting_none },
- { EFNM_EXEC, "Mark ",               "Mark text",
+ { EFAM_EXEC, "Mark ",               "Mark text",
    {K_F05, K_C_N, K_M_5},    F_I(doe_tog_mark), get_str_setting_none },
  { EFNM_EXEC, "Select all",          "Select all of buffer",
    {K_S_F05, K_M_PERCE, KNA}, F_I(doe_select_all_lines), get_str_setting_none },
