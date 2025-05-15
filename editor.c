@@ -190,9 +190,13 @@ flf_d_printf("[%s]\n", last_touched_file_pos_str);
 			// get a text from editor current line
 			strlcpy__(str_buf, EPCBVC_CL->data, buf_len);
 		}
+		// | command modifier key | replace/append string       | return value        |
+		// |----------------------|-----------------------------|---------------------|
+		// | none                 | replace input file/dir name | EF_INPUT_TO_REPLACE |
+		// | ALT                  | append  input file/dir name | EF_INPUT_TO_APPEND  |
 		editor_do_next = (IS_META_KEY(key_input) == 0)
 		 ? EF_INPUT_TO_REPLACE		// Replace input file/dir name
-		 : EF_INPUT_TO_APPEND;		// Append input file/dir name
+		 : EF_INPUT_TO_APPEND;		// Append  input file/dir name
 	}
 	return editor_do_next;
 } // editor_main_loop

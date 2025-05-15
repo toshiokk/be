@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-11 16:52+0900\n"
+"POT-Creation-Date: 2025-05-16 00:02+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -81,35 +81,35 @@ msgstr "このキーにはコマンドが割り当てられていません: 0x%0
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr "このコマンドは List mode では実行できません: [%s]"
 
-#: ../editor.c:258
+#: ../editor.c:262
 msgid "Edit command line:"
 msgstr ""
 
-#: ../editor.c:330
+#: ../editor.c:334
 msgid "Input key to show key code"
 msgstr "キーコードを表示するキーを入力してください"
 
-#: ../editor.c:336
+#: ../editor.c:340
 #, fuzzy, c-format
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr "キーコード: %04x [%s]"
 
-#: ../editor.c:636 ../fileio.c:104
+#: ../editor.c:640 ../fileio.c:104
 msgid "New File"
 msgstr "新規ファイル"
 
-#: ../editor.c:730
+#: ../editor.c:734
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 "行:%4lu/%-4lu 桁:%3lu/%-3lu サイズ:%6lu%s 文字コード:%s エンコード:%s 行末:%s"
 
-#: ../editor.c:776
+#: ../editor.c:780
 #, fuzzy
 msgid "Modification not allowed in VIEW mode application"
 msgstr "%s モードのファイルは編集できません"
 
-#: ../editor.c:781
+#: ../editor.c:785
 #, c-format
 msgid "Modification not allowed to %s file"
 msgstr "%s モードのファイルは編集できません"
@@ -179,7 +179,7 @@ msgstr "テキストを張り付けました(カットバッファをポップ)"
 msgid "Text Pasted without popping Cut-buffer"
 msgstr "テキストを張り付けました(カットバッファは変化なし)"
 
-#: ../editorcut.c:286 ../editorcut.c:326
+#: ../editorcut.c:286 ../editorcut.c:320
 msgid "Cut-buffer empty !!"
 msgstr "カットバッファが空です !!"
 

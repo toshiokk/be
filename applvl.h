@@ -22,7 +22,7 @@
 #ifndef applvl_h
 #define applvl_h
 
-#define APP_REL_LVL 0	// Application Release Level (0: experimental, 1: test, 2: stable)
+#define APP_REL_LVL 3	// Application Release Level (0: experimental, 1: test, 2: stable)
 #define APP_REL_LVL_EXPERIMENTAL	0	// experimental release
 #define APP_REL_LVL_TEST1			1	// test-1       release
 #define APP_REL_LVL_TEST2			2	// test-2       release

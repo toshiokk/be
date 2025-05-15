@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-11 16:52+0900\n"
+"POT-Creation-Date: 2025-05-16 00:02+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,33 +81,33 @@ msgstr ""
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr ""
 
-#: ../editor.c:258
+#: ../editor.c:262
 msgid "Edit command line:"
 msgstr ""
 
-#: ../editor.c:330
+#: ../editor.c:334
 msgid "Input key to show key code"
 msgstr ""
 
-#: ../editor.c:336
+#: ../editor.c:340
 #, c-format
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr ""
 
-#: ../editor.c:636 ../fileio.c:104
+#: ../editor.c:640 ../fileio.c:104
 msgid "New File"
 msgstr ""
 
-#: ../editor.c:730
+#: ../editor.c:734
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:776
+#: ../editor.c:780
 msgid "Modification not allowed in VIEW mode application"
 msgstr ""
 
-#: ../editor.c:781
+#: ../editor.c:785
 #, c-format
 msgid "Modification not allowed to %s file"
 msgstr ""
@@ -176,7 +176,7 @@ msgstr ""
 msgid "Text Pasted without popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:286 ../editorcut.c:326
+#: ../editorcut.c:286 ../editorcut.c:320
 msgid "Cut-buffer empty !!"
 msgstr ""
 

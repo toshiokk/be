@@ -415,7 +415,7 @@ PRIVATE int fork_exec_before_after(int flags, const char *command, char * const 
 	mflf_d_printf("exec: [%s]\n", command);
 #endif // ENABLE_HISTORY
 
-	if ((flags & EX_SETTERM) && get_fork_exec_counter() == 0) {
+	if ((flags & EX_SETTERM) && (get_fork_exec_counter() == 0)) {
 		restore_term_for_shell();
 	}
 	if ((flags & EX_SEPARATE) && (get_fork_exec_counter() == 0)) {
