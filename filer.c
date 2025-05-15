@@ -304,7 +304,7 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 				 file_idx = get_next_file_idx_selected(file_idx)) {
 					// | command key    | file info | e.g.              |
 					// |----------------|-----------|-------------------|
-					// | lower letter   | file name | filename.ext      |
+					// | small   letter | file name | filename.ext      |
 					// | capital letter | file path | /path/to/file.ext |
 					if (IS_UPPER_KEY(key_input) == 0) {
 						// enter file names: file-1 "file 2" "file 3"
