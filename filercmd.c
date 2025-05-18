@@ -890,8 +890,7 @@ int dof_tog_panex()
 }
 int dof_inc_key_list_lines()
 {
-	do_inc_key_list_lines_();
-	return 0;
+	return do_inc_key_list_lines_();
 }
 
 #ifdef ENABLE_HELP
@@ -904,13 +903,11 @@ int dof_splash()
 }
 int dof_view_file_list()
 {
-	filer_do_next = view_list(HELP_BUF_IDX_EDITOR_FILE_LIST);
-	return 1;
+	return view_list(HELP_BUF_IDX_EDITOR_FILE_LIST);
 }
 int dof_view_func_list()
 {
-	view_list(HELP_BUF_IDX_FILER_FUNC_LIST);
-	return 1;
+	return view_list(HELP_BUF_IDX_FILER_FUNC_LIST);
 }
 #endif // ENABLE_HELP
 

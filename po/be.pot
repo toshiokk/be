@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-16 00:10+0900\n"
+"POT-Creation-Date: 2025-05-12 07:29+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,33 +81,33 @@ msgstr ""
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr ""
 
-#: ../editor.c:262
+#: ../editor.c:258
 msgid "Edit command line:"
 msgstr ""
 
-#: ../editor.c:334
+#: ../editor.c:330
 msgid "Input key to show key code"
 msgstr ""
 
-#: ../editor.c:340
+#: ../editor.c:336
 #, c-format
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr ""
 
-#: ../editor.c:640 ../fileio.c:104
+#: ../editor.c:636 ../fileio.c:104
 msgid "New File"
 msgstr ""
 
-#: ../editor.c:734
+#: ../editor.c:730
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:780
+#: ../editor.c:776
 msgid "Modification not allowed in VIEW mode application"
 msgstr ""
 
-#: ../editor.c:785
+#: ../editor.c:781
 #, c-format
 msgid "Modification not allowed to %s file"
 msgstr ""

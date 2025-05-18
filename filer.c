@@ -266,7 +266,7 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 				if (filer_do_next == EF_NONE) {
 					flf_d_printf("<<<< CALL_FUNC_FILER [%s]\n", fkey_list->func_id);
 					//=========================
-					(*fkey_list->func)();	// call function "dof__...()"
+					(*fkey_list->func)();	// call function "dof_...()"
 					//=========================
 					flf_d_printf(">>>> filer_do_next_%d\n", filer_do_next);
 					unselect_all_files_auto(_FILE_SEL_AUTO_);
@@ -302,21 +302,17 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 				for (int file_idx = select_and_get_first_file_idx_selected();
 				 file_idx >= 0;
 				 file_idx = get_next_file_idx_selected(file_idx)) {
-					// | command key    | file info | e.g.              |
-					// |----------------|-----------|-------------------|
-					// | small   letter | file name | filename.ext      |
-					// | capital letter | file path | /path/to/file.ext |
 					if (IS_UPPER_KEY(key_input) == 0) {
-						// enter file names: file-1 "file 2" "file 3"
-						concat_file_path_separating_by_space(path_buf, MAX_PATH_LEN,
-						 get_cur_fv_file_ptr(file_idx)->file_name);
-					} else /* if (IS_UPPER_KEY(key_input)) */ {
 						// enter file paths: /path/to/file-1 "/path/to/file 2" "/path/to/file 3"
 						char path[MAX_PATH_LEN];
 						cat_dir_and_file(path,
 						 get_cur_filer_pane_view()->cur_dir,
 						 get_cur_fv_file_ptr(file_idx)->file_name);
 						concat_file_path_separating_by_space(path_buf, MAX_PATH_LEN, path);
+					} else /* if (IS_UPPER_KEY(key_input)) */ {
+						// enter file names: file-1 "file 2" "file 3"
+						concat_file_path_separating_by_space(path_buf, MAX_PATH_LEN,
+						 get_cur_fv_file_ptr(file_idx)->file_name);
 					}
 				}
 				filer_do_next = EF_INPUT_W_ENTER;
@@ -331,14 +327,14 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 		save_histories();
 #endif // ENABLE_HISTORY
 
-		// | command modifier key | replace/append string       | return value        |
-		// |----------------------|-----------------------------|---------------------|
-		// | none                 | replace input file/dir name | EF_INPUT_TO_REPLACE |
-		// | ALT                  | append  input file/dir name | EF_INPUT_TO_APPEND  |
+		// | command modifier key | replace/append string         | return value        |
+		// |----------------------|-------------------------------|---------------------|
+		// | none                 | replacing input file/dir name | EF_INPUT_TO_REPLACE |
+		// | ALT                  | appending input file/dir name | EF_INPUT_TO_APPEND  |
 		if (filer_do_next == EF_INPUT_W_ENTER) {
 			filer_do_next = (IS_META_KEY(key_input) == 0)
 			 ? EF_INPUT_TO_REPLACE		// Replace input file/dir name
-			 : EF_INPUT_TO_APPEND;		// Append  input file/dir name
+			 : EF_INPUT_TO_APPEND;		// Append input file/dir name
 		}
 		if (filer_do_next >= EF_QUIT) {
 			break;

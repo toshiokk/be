@@ -55,6 +55,11 @@ be_buf_t *get_help_buf(int help_buf_idx)
 // make help text in help-buffer and view by editor
 int view_list(int help_idx)
 {
+#ifdef ENABLE_HISTORY
+	load_histories();
+#endif // ENABLE_HISTORY
+	load_cut_buffers_if_updated();
+
 	make_help_buf(HELP_BUF_IDX_EDITOR_FILE_LIST);
 #ifdef ENABLE_HELP
 	make_help_buf(HELP_BUF_IDX_EDITOR_FUNC_LIST);
@@ -89,9 +94,8 @@ int view_list(int help_idx)
 #endif // ENABLE_HELP
 	}
 
-	int ret = do_call_editor(1, APP_MODE_CHOOSER, get_help_buf(help_idx), NULL, 0);
+	return do_call_editor(1, APP_MODE_CHOOSER, get_help_buf(help_idx), NULL, 0);
 
-	return ret;
 }
 PRIVATE void make_help_buf(int help_idx)
 {

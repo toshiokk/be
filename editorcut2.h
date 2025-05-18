@@ -52,7 +52,6 @@ int save_cut_buffers();
 int load_cut_buffers();
 void set_cut_buffers_modified();
 void load_cut_buffers_if_updated();
-/////void save_cut_buffers_if_modified_and_expired();
 void save_cut_buffers_if_modified();
 int limit_cut_buffers();
 

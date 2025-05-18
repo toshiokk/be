@@ -271,14 +271,12 @@ PRIVATE int copy_delete_paste_pop(int cp_del_paste_pop)
 }
 PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 {
-_FLF_
 	if (cp_del_paste_pop & CDPP_REPLACE) {
 		// in view mode, DELETE and PASTE may not be performed
 		if (is_editor_unmodifiable_then_warn_it()) {
 			return -1;		// error
 		}
 	}
-_FLF_
 	if ((cp_del_paste_pop & CDPP_COPY) == 0
 	 && (cp_del_paste_pop & CDPP_PASTE)) {
 		load_cut_buffers_if_updated();
@@ -287,19 +285,16 @@ _FLF_
 			return -1;		// error
 		}
 	}
-_FLF_
 
 	if (IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0) {
 		// no mark set, setup cut-region
 		set_mark_pos();
 	}
-_FLF_
 	be_line_t *top_line = NODE_PREV(mark_min_line__);
 	// ====  COPY  ====
 	if (cp_del_paste_pop & CDPP_COPY) {
 		copy_text_to_cut_buf();
 	}
-_FLF_
 #ifdef ENABLE_UNDO
 	if (((cp_del_paste_pop & CDPP_DELETE) && is_there_cut_region())
 	 || ((cp_del_paste_pop & CDPP_PASTE) && count_cut_bufs())) {
@@ -308,12 +303,10 @@ _FLF_
 		 count_cur_cut_buf_lines());
 	}
 #endif // ENABLE_UNDO
-_FLF_
 	// ====  DELETE  ====
 	if (cp_del_paste_pop & CDPP_DELETE) {
 		delete_text_in_cut_region();
 	}
-_FLF_
 	// ====  PASTE  ====
 	if (cp_del_paste_pop & CDPP_PASTE) {
 		if (count_cut_bufs() == 0) {
@@ -322,17 +315,14 @@ _FLF_
 			paste_text_from_cut_buf();
 		}
 	}
-_FLF_
 	// ====  POP  ====
 	if (cp_del_paste_pop & CDPP_POP) {
 		pop__free_from_cut_bufs();
 	}
 
 	do_clear_mark_();	// always clear mark
-_FLF_
 	clear_disabled_update_min_text_x_to_keep();
 
-_FLF_
 	if (cp_del_paste_pop & CDPP_REPLACE) {
 		switch (CUR_CBUF_STATE(buf_CUT_MODE)) {
 		default:
@@ -354,7 +344,6 @@ _FLF_
 			break;
 		}
 	}
-_FLF_
 	return 1;		// done
 }
 //------------------------------------------------------------------------------

@@ -55,7 +55,7 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path, unsigned char buf_mode_
 	buf->orig_file_stat.st_uid = geteuid();
 	buf->orig_file_stat.st_gid = getegid();
 	buf->orig_file_stat.st_mode = RW0RW0R00;		// regular file rw-rw-r--(664)
-	buf->orig_file_stat.st_mtime = 0;
+	buf->orig_file_stat.st_mtime = 0;				// 1970/01/01 00:00:00 (UTC)
 	buf->orig_file_crc = 0;
 
 	buf_init_anchors(buf, buf->file_path_);

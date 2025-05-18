@@ -54,7 +54,6 @@ int editor_vert_scroll_lines()
 void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_move,
  locate_cursor_to_t locate_cursor, int update_needed)
 {
-_FLF_
 	switch (GET_APPMD(ed_CURS_POSITIONING)) {
 	default:
 	case CURS_POSITIONING_NONE:		break;		// not change
@@ -62,25 +61,18 @@ _FLF_
 	case CURS_POSITIONING_CENTER:	locate_cursor = LOCATE_CURS_CENTER;		break;
 	case CURS_POSITIONING_BOTTOM:	locate_cursor = LOCATE_CURS_BOTTOM;		break;
 	}
-_FLF_
 	if (renum_from) {
 		buf_renumber_from_line(get_epc_buf(), renum_from);
 	}
-_FLF_
 	if (is_disabled_update_min_text_x_to_keep() == 0) {
 		update_text_x_to_keep_after_cursor_move(cursor_move);
 	}
-_FLF_
 	setup_cut_region_after_cursor_move(cursor_move);
-_FLF_
 	locate_curs_y_in_edit_win(locate_cursor);
-_FLF_
 	set_edit_win_update_needed(update_needed);
-_FLF_
 #ifdef ENABLE_UNDO
 	undo_save_after_change();
 #endif // ENABLE_UNDO
-_FLF_
 	return;
 }
 

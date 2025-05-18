@@ -568,6 +568,8 @@ PRIVATE const char* dir_history_remove_temporal_mark(const char* str)
 int select_from_history_list(int hist_type_idx, char *buffer)
 {
 	load_histories();
+	load_cut_buffers_if_updated();
+
 	//----------------------------------------------------
 	int ret = do_call_editor(1, APP_MODE_CHOOSER, get_history_buf(hist_type_idx),
 	 buffer, MAX_PATH_LEN);

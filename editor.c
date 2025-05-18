@@ -151,7 +151,7 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 					search_clear(&search__);
 					mflf_d_printf("{{{{ CALL_FUNC_EDITOR [%s]\n", fkey_list->func_id);
 					//=========================
-					(*fkey_list->func)();	// call function "doe__...()"
+					(*fkey_list->func)();	// call function "doe_...()"
 					//=========================
 					mflf_d_printf("}}}} editor_do_next_%d\n", editor_do_next);
 					easy_buffer_switching_count();
@@ -190,13 +190,9 @@ flf_d_printf("[%s]\n", last_touched_file_pos_str);
 			// get a text from editor current line
 			strlcpy__(str_buf, EPCBVC_CL->data, buf_len);
 		}
-		// | command modifier key | replace/append string       | return value        |
-		// |----------------------|-----------------------------|---------------------|
-		// | none                 | replace input file/dir name | EF_INPUT_TO_REPLACE |
-		// | ALT                  | append  input file/dir name | EF_INPUT_TO_APPEND  |
 		editor_do_next = (IS_META_KEY(key_input) == 0)
 		 ? EF_INPUT_TO_REPLACE		// Replace input file/dir name
-		 : EF_INPUT_TO_APPEND;		// Append  input file/dir name
+		 : EF_INPUT_TO_APPEND;		// Append input file/dir name
 	}
 	return editor_do_next;
 } // editor_main_loop
@@ -292,13 +288,11 @@ void do_splash()
 }
 int doe_view_file_list()
 {
-	view_list(HELP_BUF_IDX_EDITOR_FILE_LIST);
-	return 1;
+	return view_list(HELP_BUF_IDX_EDITOR_FILE_LIST);
 }
 int doe_view_func_list()
 {
-	view_list(HELP_BUF_IDX_EDITOR_FUNC_LIST);
-	return 1;
+	return view_list(HELP_BUF_IDX_EDITOR_FUNC_LIST);
 }
 #endif // ENABLE_HELP
 
