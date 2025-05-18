@@ -631,13 +631,6 @@ int is_key_graph(key_code_t key);
 int is_key_utf8_byte(key_code_t key);
 int is_key_char(key_code_t key);
 
-#ifdef ENABLE_DEBUG
-#ifdef START_UP_TEST
-int check_multiple_assignment_of_key();
-int check_all_functions_accessible_without_function_key();
-#endif // START_UP_TEST
-#endif // ENABLE_DEBUG
-
 #endif // keys_h
 
 // End of keys.h

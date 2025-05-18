@@ -32,10 +32,6 @@ void free_all_allocated_memory();
 void show_usage();
 void show_version();
 
-#ifdef ENABLE_HELP
-void disp_splash(int delay);
-#endif // ENABLE_HELP
-
 #endif // main_h
 
 // End of main.h

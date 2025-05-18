@@ -28,7 +28,7 @@ be_SOURCES = \
 	editorgoto.c \
 	editorcut.c \
 	editorcut2.c \
-	editorlist.c \
+	help.c \
 	editorkeys.c \
 	editorundo.c \
 	line.c \
@@ -80,7 +80,7 @@ be_SOURCES = \
 	editorgoto.h \
 	editorcut.h \
 	editorcut2.h \
-	editorlist.h \
+	help.h \
 	editorkeys.h \
 	editorundo.h \
 	fileio.h \

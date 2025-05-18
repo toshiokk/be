@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-12 07:29+0900\n"
+"POT-Creation-Date: 2025-05-18 23:55+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -85,31 +85,31 @@ msgstr "このコマンドは List mode では実行できません: [%s]"
 msgid "Edit command line:"
 msgstr ""
 
-#: ../editor.c:330
+#: ../editor.c:328
 msgid "Input key to show key code"
 msgstr "キーコードを表示するキーを入力してください"
 
-#: ../editor.c:336
+#: ../editor.c:334
 #, fuzzy, c-format
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr "キーコード: %04x [%s]"
 
-#: ../editor.c:636 ../fileio.c:104
+#: ../editor.c:634 ../fileio.c:104
 msgid "New File"
 msgstr "新規ファイル"
 
-#: ../editor.c:730
+#: ../editor.c:728
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 "行:%4lu/%-4lu 桁:%3lu/%-3lu サイズ:%6lu%s 文字コード:%s エンコード:%s 行末:%s"
 
-#: ../editor.c:776
+#: ../editor.c:774
 #, fuzzy
 msgid "Modification not allowed in VIEW mode application"
 msgstr "%s モードのファイルは編集できません"
 
-#: ../editor.c:781
+#: ../editor.c:779
 #, c-format
 msgid "Modification not allowed to %s file"
 msgstr "%s モードのファイルは編集できません"
@@ -179,7 +179,7 @@ msgstr "テキストを張り付けました(カットバッファをポップ)"
 msgid "Text Pasted without popping Cut-buffer"
 msgstr "テキストを張り付けました(カットバッファは変化なし)"
 
-#: ../editorcut.c:286 ../editorcut.c:320
+#: ../editorcut.c:284 ../editorcut.c:313
 msgid "Cut-buffer empty !!"
 msgstr "カットバッファが空です !!"
 
@@ -345,31 +345,6 @@ msgstr "次のバッファリストに切り替えました"
 #: ../editorgoto.c:272
 msgid "Returned to previous pos"
 msgstr "以前の位置に戻りました"
-
-#: ../editorlist.c:72
-#, fuzzy
-msgid "Editor File List"
-msgstr "Editor-ファイルリスト"
-
-#: ../editorlist.c:76
-#, fuzzy
-msgid "Editor Function List"
-msgstr "Editor-ファンクションリスト"
-
-#: ../editorlist.c:79
-#, fuzzy
-msgid "Editor Key List"
-msgstr "Editor-キーリスト"
-
-#: ../editorlist.c:83
-#, fuzzy
-msgid "Filer Function List"
-msgstr "Filer-ファンクションリスト"
-
-#: ../editorlist.c:86
-#, fuzzy
-msgid "Filer Key List"
-msgstr "Filer-key-リスト"
 
 #: ../editormove.c:196 ../editormove.c:259
 #, fuzzy
@@ -795,6 +770,40 @@ msgstr "実行(元ファイルパス、先ファイルパス付き)"
 msgid "(WITH LOG)"
 msgstr "(log 出力)"
 
+#: ../help.c:77
+#, fuzzy
+msgid "Editor File List"
+msgstr "Editor-ファイルリスト"
+
+#: ../help.c:81
+#, fuzzy
+msgid "Editor Function List"
+msgstr "Editor-ファンクションリスト"
+
+#: ../help.c:84
+#, fuzzy
+msgid "Editor Key List"
+msgstr "Editor-キーリスト"
+
+#: ../help.c:88
+#, fuzzy
+msgid "Filer Function List"
+msgstr "Filer-ファンクションリスト"
+
+#: ../help.c:91
+#, fuzzy
+msgid "Filer Key List"
+msgstr "Filer-key-リスト"
+
+#: ../help.c:483
+#, c-format
+msgid "Screen size: %dx%d"
+msgstr "画面サイズ: %dx%d"
+
+#: ../help.c:489
+msgid "We're invincible with this !!"
+msgstr "これさえあれば俺達は無敵だ!!"
+
 #: ../keymacro.c:77
 msgid "Start key macro recording"
 msgstr "キーマクロ記録開始"
@@ -935,15 +944,6 @@ msgstr ""
 #, c-format
 msgid " Build Options:\n"
 msgstr " ビルドオプション:\n"
-
-#: ../main.c:931
-#, c-format
-msgid "Screen size: %dx%d"
-msgstr "画面サイズ: %dx%d"
-
-#: ../main.c:937
-msgid "We're invincible with this !!"
-msgstr "これさえあれば俺達は無敵だ!!"
 
 #: ../rcfile.c:190
 #, c-format

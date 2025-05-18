@@ -59,7 +59,7 @@
 #include "editorgoto.h"
 #include "editorcut2.h"
 #include "editorcut.h"
-#include "editorlist.h"
+#include "help.h"
 #include "editor3.h"
 #include "editor2.h"
 #include "editorfile.h"

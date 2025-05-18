@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-12 07:29+0900\n"
+"POT-Creation-Date: 2025-05-18 23:55+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -85,29 +85,29 @@ msgstr ""
 msgid "Edit command line:"
 msgstr ""
 
-#: ../editor.c:330
+#: ../editor.c:328
 msgid "Input key to show key code"
 msgstr ""
 
-#: ../editor.c:336
+#: ../editor.c:334
 #, c-format
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr ""
 
-#: ../editor.c:636 ../fileio.c:104
+#: ../editor.c:634 ../fileio.c:104
 msgid "New File"
 msgstr ""
 
-#: ../editor.c:730
+#: ../editor.c:728
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:776
+#: ../editor.c:774
 msgid "Modification not allowed in VIEW mode application"
 msgstr ""
 
-#: ../editor.c:781
+#: ../editor.c:779
 #, c-format
 msgid "Modification not allowed to %s file"
 msgstr ""
@@ -176,7 +176,7 @@ msgstr ""
 msgid "Text Pasted without popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:286 ../editorcut.c:320
+#: ../editorcut.c:284 ../editorcut.c:313
 msgid "Cut-buffer empty !!"
 msgstr ""
 
@@ -329,26 +329,6 @@ msgstr ""
 
 #: ../editorgoto.c:272
 msgid "Returned to previous pos"
-msgstr ""
-
-#: ../editorlist.c:72
-msgid "Editor File List"
-msgstr ""
-
-#: ../editorlist.c:76
-msgid "Editor Function List"
-msgstr ""
-
-#: ../editorlist.c:79
-msgid "Editor Key List"
-msgstr ""
-
-#: ../editorlist.c:83
-msgid "Filer Function List"
-msgstr ""
-
-#: ../editorlist.c:86
-msgid "Filer Key List"
 msgstr ""
 
 #: ../editormove.c:196 ../editormove.c:259
@@ -763,6 +743,35 @@ msgstr ""
 msgid "(WITH LOG)"
 msgstr ""
 
+#: ../help.c:77
+msgid "Editor File List"
+msgstr ""
+
+#: ../help.c:81
+msgid "Editor Function List"
+msgstr ""
+
+#: ../help.c:84
+msgid "Editor Key List"
+msgstr ""
+
+#: ../help.c:88
+msgid "Filer Function List"
+msgstr ""
+
+#: ../help.c:91
+msgid "Filer Key List"
+msgstr ""
+
+#: ../help.c:483
+#, c-format
+msgid "Screen size: %dx%d"
+msgstr ""
+
+#: ../help.c:489
+msgid "We're invincible with this !!"
+msgstr ""
+
 #: ../keymacro.c:77
 msgid "Start key macro recording"
 msgstr ""
@@ -900,15 +909,6 @@ msgstr ""
 #: ../main.c:674
 #, c-format
 msgid " Build Options:\n"
-msgstr ""
-
-#: ../main.c:931
-#, c-format
-msgid "Screen size: %dx%d"
-msgstr ""
-
-#: ../main.c:937
-msgid "We're invincible with this !!"
 msgstr ""
 
 #: ../rcfile.c:190

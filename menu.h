@@ -32,6 +32,13 @@ short get_func_key_code(int group_idx, int entry_idx);
 func_key_list_t *get_func_key_group_from_group_idx(int group_idx);
 int get_menu_items_from_group_idx(int group_idx);
 
+#ifdef ENABLE_DEBUG
+#ifdef START_UP_TEST
+int check_multiple_assignment_of_key();
+int check_all_functions_accessible_without_function_key();
+#endif // START_UP_TEST
+#endif // ENABLE_DEBUG
+
 #endif // menu_h
 
 // End of menu.h

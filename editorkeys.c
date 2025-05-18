@@ -30,7 +30,7 @@ func_key_list_t editor_func_key_table[] = {
  { EFLM_EXEC, "Menu",                "Previous Menu",
    {K_ESC,        KNA, KNA}, F_I(doe_quit_editor), get_str_setting_none },
 
- { EFNM_EXEC, "",                    "File Menu",
+ { EFNM_EXEC, "",                    "Editor File Menu",
    {KNA,          KNA, KNA}, F_I(doe_menu_0), get_str_setting_none },
  { E_LM_CULN, "Open file",           "Open file",
    {K_M_e,        KNA, KNA}, F_I(doe_open_file_recursive), get_str_setting_none },
@@ -72,12 +72,8 @@ func_key_list_t editor_func_key_table[] = {
  { EFAM_EXEC, "Open filer",          "Open filer",
    {K_M_F,        KNA, KNA}, F_I(doe_filer), get_str_setting_none },
 #endif // ENABLE_FILER
-#ifdef ENABLE_HELP
- { EFNM_EXEC, "Splash",              "Splash screen",
-   {K_M_v,        KNA, KNA}, F_I(doe_splash), get_str_setting_none },
-#endif // ENABLE_HELP
 
- { EFNM_EXEC, "",                    "Cursor Menu",
+ { EFNM_EXEC, "",                    "Editor Cursor Menu",
    {KNA,          KNA, KNA}, F_I(doe_menu_0), get_str_setting_none },
  { EFAM_EXEC, "Up",                  "Move cursor UP",
    {K_C_E, K_UP,       KNA}, F_I(doe_up), get_str_setting_none },
@@ -118,7 +114,7 @@ func_key_list_t editor_func_key_table[] = {
  { EFAM_EXEC, "TagJp",               "Tag-jump to file or directory",
    {K_F12, K_M_j,      KNA}, F_I(doe_tag_jump_in_cur_line), get_str_setting_none },
 
- { EFNM_EXEC, "",                    "Edit Menu",
+ { EFNM_EXEC, "",                    "Editor Editing Menu",
    {KNA,          KNA, KNA}, F_I(doe_menu_0), get_str_setting_none },
  { EFNM_EXEC, "Tab",                 "Insert a TAB character",
    {K_TAB,        KNA, KNA}, F_I(doe_tab), get_str_setting_none },
@@ -153,7 +149,7 @@ func_key_list_t editor_func_key_table[] = {
    {K_M_o,        KNA, KNA}, F_I(doe_redo), get_str_setting_none },
 #endif // ENABLE_UNDO
 
- { EFNM_EXEC, "",                    "Search/Replace Menu",
+ { EFNM_EXEC, "",                    "Editor Search/Replace Menu",
    {KNA,          KNA, KNA}, F_I(doe_menu_0), get_str_setting_none },
  { EFAM_EXEC, "SrchB",               "Search keyword forward",
    {K_S_F03, K_C_RBRAK, KNA}, F_I(doe_search_backward_first), get_str_setting_none },
@@ -188,7 +184,7 @@ func_key_list_t editor_func_key_table[] = {
  { EFAM_EXEC, "Run command",         "Run command input",
    {K_M_X,        KNA, KNA}, F_I(doe_run_line_input), get_str_setting_none },
 
- { EFNM_EXEC, "",                    "Buffer Menu",
+ { EFNM_EXEC, "",                    "Editor Buffer Menu",
    {KNA,          KNA, KNA}, F_I(doe_menu_0), get_str_setting_none },
  { EFAM_EXEC, "Previous buffer",     "Switch to previous file",
    {K_M_COMMA,    KNA, KNA}, F_I(doe_switch_to_prev_buffer), get_str_setting_none },
@@ -209,13 +205,15 @@ func_key_list_t editor_func_key_table[] = {
  { EFNM_EXEC, "Goto prev. pos",      "Goto previous pos.",
    {K_M_SLASH,    KNA, KNA}, F_I(doe_return_to_prev_file_pos), get_str_setting_none },
 #ifdef ENABLE_HELP
+ { EFNM_EXEC, "Splash",              "Splash screen",
+   {K_M_v,        KNA, KNA}, F_I(doe_splash), get_str_setting_none },
  { EFNM_EXEC, "File List",           "Display File List",
    {K_M_SEMCO,    KNA, KNA}, F_I(doe_view_file_list), get_str_setting_none },
  { EFNM_EXEC, "Key List",            "Display Key List",
    {K_M_QUEST,    KNA, KNA}, F_I(doe_view_func_list), get_str_setting_none },
 #endif // ENABLE_HELP
 
- { EFNM_EXEC, "",                    "Cut-buffer Menu",
+ { EFNM_EXEC, "",                    "Editor Cut-buffer Menu",
    {KNA,          KNA, KNA}, F_I(doe_menu_0), get_str_setting_none },
  { EFAM_EXEC, "Mark ",               "Mark text",
    {K_F05, K_C_N, K_M_5},    F_I(doe_tog_mark), get_str_setting_none },
@@ -248,7 +246,7 @@ func_key_list_t editor_func_key_table[] = {
  { EFNM_EXEC, "ClrCB",               "Clear all cut buffers",
    {K_SCM_DEL,    KNA, KNA}, F_I(doe_clear_all_cut_buffers), get_str_setting_none },
 
- { EFNM_EXEC, "",                    "Settings Menu",
+ { EFNM_EXEC, "",                    "Editor Mode Menu",
    {KNA,          KNA, KNA}, F_I(doe_menu_0), get_str_setting_none },
  { EFAM_EXEC, "App mode",            "Increment mode",
    {KNA,          KNA, KNA}, F_I(doe_inc_app_mode), get_str_app_mode },
@@ -287,7 +285,7 @@ func_key_list_t editor_func_key_table[] = {
  { EFNM_EXEC, "Code-7F Key-BS",      "Toggle Code-7F Key-BS",
    {K_M_BS,       KNA, KNA}, F_I(doe_tog_map_key_7f_bs), get_str_map_key_7f_bs },
 
- { EFNM_EXEC, "",                    "File type Menu",
+ { EFNM_EXEC, "",                    "Editor Buffer Mode Menu",
    {KNA,          KNA, KNA}, F_I(doe_menu_0), get_str_setting_none },
  { EFNM_EXEC, "nix format",          "Set nix format (LF)",
    {KNA,          KNA, KNA}, F_I(doe_set_buf_nix_file),       get_str_buf_nix_file },

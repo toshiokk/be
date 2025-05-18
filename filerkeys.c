@@ -39,7 +39,7 @@ func_key_list_t filer_func_key_table[] = {
  { EFLM_EXEC, "Menu",                "Previous Menu",
    {K_ESC,        KNA, KNA}, F_I(dof_quit_filer), get_str_setting_none },
 
- { EFNM_EXEC, "",                    "Filer Menu-1",
+ { EFNM_EXEC, "",                    "Filer Editor Menu",
    {KNA,          KNA, KNA}, F_I(dof_menu_0), get_str_setting_none },
  { EFAM_EXEC, "Quit",                "Quit filer",
    {K_q_, K_C_Q, K_M_q},     F_I(dof_quit_filer),   get_str_setting_none },
@@ -67,18 +67,8 @@ func_key_list_t filer_func_key_table[] = {
    {K_M_l,        KNA, KNA}, F_I(dof_open_exec_log_file), get_str_setting_none },
  { EFAM_EXEC, "Open project file",   "Open project file",
    {K_M_p, K_M_P,      KNA}, F_I(dof_open_proj_file), get_str_setting_none },
- { EFAM_EXEC, "Enter file/dir",      "Enter file/directory",
-   {K_ENTER,      KNA, KNA}, F_I(dof_tap_file),   get_str_setting_none },
- { F_LM_FLNM, "Enter file/dir",      "Enter file/directory",
-   {K_M_ENTER,    KNA, KNA}, F_I(dof_tap_file),   get_str_setting_none },
- { EFAM_EXEC, "Parent directory",    "Parent directory",
-   {K_C_H, K_BS,       KNA}, F_I(dof_parent_directory), get_str_setting_none },
-#ifdef ENABLE_HELP
- { EFNM_EXEC, "Splash",              "Splash screen",
-   {K_M_v,        KNA, KNA}, F_I(dof_splash), get_str_setting_none },
-#endif // ENABLE_HELP
 
- { EFNM_EXEC, "",                    "Filer Menu-2",
+ { EFNM_EXEC, "",                    "Filer File Menu",
    {KNA,          KNA, KNA}, F_I(dof_menu_0), get_str_setting_none },
  { F_LM_FLNM, "Copy ",           "Copy file",
    {K_c_, K_F01, K_M_c},     F_I(dof_copy_file),    get_str_setting_none },
@@ -113,7 +103,7 @@ func_key_list_t filer_func_key_table[] = {
  { EFAM_EXEC, "Zip file",            "Zip file",
    {K_U_,         KNA, KNA}, F_I(dof_zip_file),    get_str_setting_none },
 
- { EFNM_EXEC, "",                    "Filer Menu-3",
+ { EFNM_EXEC, "",                    "Filer Cursor Menu",
    {KNA,          KNA, KNA}, F_I(dof_menu_0), get_str_setting_none },
  { EFAM_EXEC, "Up",                  "Move cursor UP",
    {K_C_E, K_UP,       KNA}, F_I(dof_up), get_str_setting_none },
@@ -135,6 +125,9 @@ func_key_list_t filer_func_key_table[] = {
    {K_a_,         KNA, KNA}, F_I(dof_select_all_files), get_str_setting_none },
  { EFAM_EXEC, "Select none",         "Select no files",
    {K_A_,         KNA, KNA}, F_I(dof_select_no_file), get_str_setting_none },
+
+ { EFNM_EXEC, "",                    "Filer Directory Menu",
+   {KNA,          KNA, KNA}, F_I(dof_menu_0), get_str_setting_none },
  { EFAM_EXEC, "Mkdir",               "Make directory",
    {K_k_, K_F07, K_M_k},     F_I(dof_make_directory), get_str_setting_none },
  { EFAM_EXEC, "Chdir",               "Change directory",
@@ -147,8 +140,14 @@ func_key_list_t filer_func_key_table[] = {
    {K_SLASH,      KNA, KNA}, F_I(dof_root_directory), get_str_setting_none },
  { EFAM_EXEC, "Previous dir.",       "Previous directory",
    {K_b_, K_M_SLASH,   KNA}, F_I(dof_prev_directory), get_str_setting_none },
+ { EFAM_EXEC, "Enter file/dir",      "Enter file/directory",
+   {K_ENTER,      KNA, KNA}, F_I(dof_tap_file),   get_str_setting_none },
+ { F_LM_FLNM, "Enter file/dir",      "Enter file/directory",
+   {K_M_ENTER,    KNA, KNA}, F_I(dof_tap_file),   get_str_setting_none },
+ { EFAM_EXEC, "Parent directory",    "Parent directory",
+   {K_C_H, K_BS,       KNA}, F_I(dof_parent_directory), get_str_setting_none },
 
- { EFNM_EXEC, "",                    "Filer Menu-4",
+ { EFNM_EXEC, "",                    "Filer Execution Menu",
    {KNA,          KNA, KNA}, F_I(dof_menu_0), get_str_setting_none },
  { F_LM_FLNM, "Exec ",               "Execute command with file",
    {K_x_, K_F09,       KNA}, F_I(dof_exec_command_with_file), get_str_setting_none },
@@ -169,13 +168,15 @@ func_key_list_t filer_func_key_table[] = {
  { EFNM_EXEC, "Real path",           "Convert Symlink to Real path",
    {K_M_L,        KNA, KNA}, F_I(dof_real_path),    get_str_setting_none },
 #ifdef ENABLE_HELP
+ { EFNM_EXEC, "Splash",              "Splash screen",
+   {K_M_v,        KNA, KNA}, F_I(dof_splash), get_str_setting_none },
  { EFNM_EXEC, "File List",           "Display File List",
    {K_M_SEMCO,    KNA, KNA}, F_I(dof_view_file_list), get_str_setting_none },
  { EFNM_EXEC, "Key List",            "Display Key List",
    {K_M_QUEST,    KNA, KNA}, F_I(dof_view_func_list), get_str_setting_none },
 #endif // ENABLE_HELP
 
- { EFNM_EXEC, "",                    "Filer Menu-5",
+ { EFNM_EXEC, "",                    "Filer Mode Menu",
    {KNA,          KNA, KNA}, F_I(dof_menu_0), get_str_setting_none },
  { EFAM_EXEC, "Split pane",          "Split screen into panes",
    {K_VERTB, K_M_VERTB, KNA}, F_I(dof_tog_panes), get_str_filer_panes },

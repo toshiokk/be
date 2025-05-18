@@ -16,7 +16,6 @@ editorcut2.h                           60     235    2504    78
 editorfile.h                           75     271    2923    80
 editorgoto.h                          130     617    5750    89
 editorkeys.h                           30     172    1737    76
-editorlist.h                           60     223    2290    76
 editormove.h                           83     292    3010    76
 editormove2.h                          88     417    4176    98
 editorundo.h                           63     229    2651    82
@@ -27,14 +26,15 @@ filerdir.h                             35     175    1765    76
 filerkeys.h                            30     172    1732    76
 filerlist.h                            90     381    3779    94
 filerrun.h                             69     284    2962    92
-headers.h                              71     245    2465    76
+headers.h                              71     245    2459    76
+help.h                                 63     231    2336    76
 history.h                              97     370    4255    81
 keymacro.h                             62     230    2522    76
-keys.h                                643    2367   21257    96
+keys.h                                636    2353   21069    96
 line.h                                215    1043    9761    97
 linewrap.h                             60     315    2955    87
-main.h                                 41     192    1883    76
-menu.h                                 37     194    1981    76
+main.h                                 37     184    1812    76
+menu.h                                 44     208    2169    76
 myutf8.h                               48     170    1539    96
 rcfile.h                               49     210    2086    76
 regexp.h                              142     568    5867    98
@@ -67,7 +67,6 @@ editorcut2.c                          525    1565   16120    99
 editorfile.c                          565    1702   16970    95
 editorgoto.c                          899    2813   27412    98
 editorkeys.c                          323    1945   20525    95
-editorlist.c                          300     839   10045    92
 editormove.c                          876    2384   23203    95
 editormove2.c                         394    1383   14208    97
 editorundo.c                          324    1023   10524    94
@@ -78,13 +77,14 @@ filerdir.c                            181     563    5610    96
 filerkeys.c                           207    1247   12936    93
 filerlist.c                           809    2881   24993    94
 filerrun.c                            516    1551   15341    99
+help.c                                495    1658   17225    92
 history.c                             601    1900   19814    98
 keymacro.c                            293     880    9221    91
-keys.c                                947    3312   27484    97
+keys.c                                875    3105   25182    97
 line.c                                391    1197   10987    96
 linewrap.c                            556    2052   23983    98
-main.c                                943    2873   30071    97
-menu.c                                305    1013    9549    94
+main.c                                747    2054   22884    97
+menu.c                                378    1220   11852    94
 myutf8.c                              149     510    3445    96
 rcfile.c                              785    2212   21932    97
 regexp.c                              636    2136   20778    98
@@ -101,7 +101,7 @@ utilstr.c                             859    2757   21873    95
 winin.c                               638    2217   22672    99
 winout.c                              325    1001   10670    95
 berc                                  201     532    8905    94
-po/ja.po                             1194    2913   27363    79
+po/ja.po                             1194    2913   27333    79
 README.md                             291    1398    8877    97
 __todo.txt                           1298    8780   62892    173
-Total lines, words, bytes, max-len:   32124  107193 1139903    99
+Total lines, words, bytes, max-len:   32123  107193 1139866    99
