@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-19 00:10+0900\n"
+"POT-Creation-Date: 2025-05-19 00:15+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -741,6 +741,35 @@ msgstr ""
 
 #: ../filerrun.c:248
 msgid "(WITH LOG)"
+msgstr ""
+
+#: ../help.c:77
+msgid "Editor File List"
+msgstr ""
+
+#: ../help.c:81
+msgid "Editor Function List"
+msgstr ""
+
+#: ../help.c:84
+msgid "Editor Key List"
+msgstr ""
+
+#: ../help.c:88
+msgid "Filer Function List"
+msgstr ""
+
+#: ../help.c:91
+msgid "Filer Key List"
+msgstr ""
+
+#: ../help.c:483
+#, c-format
+msgid "Screen size: %dx%d"
+msgstr ""
+
+#: ../help.c:489
+msgid "We're invincible with this !!"
 msgstr ""
 
 #: ../keymacro.c:77
