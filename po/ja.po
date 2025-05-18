@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: be 0.500\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-18 23:55+0900\n"
+"POT-Creation-Date: 2025-05-19 00:10+0900\n"
 "PO-Revision-Date: 2006-11-04 22:00+0900\n"
 "Last-Translator: Toshio Koike <toshiokk@hotmail.com>\n"
 "Language-Team: ja <toshiokk@hotmail.com>\n"
@@ -770,40 +770,6 @@ msgstr "実行(元ファイルパス、先ファイルパス付き)"
 msgid "(WITH LOG)"
 msgstr "(log 出力)"
 
-#: ../help.c:77
-#, fuzzy
-msgid "Editor File List"
-msgstr "Editor-ファイルリスト"
-
-#: ../help.c:81
-#, fuzzy
-msgid "Editor Function List"
-msgstr "Editor-ファンクションリスト"
-
-#: ../help.c:84
-#, fuzzy
-msgid "Editor Key List"
-msgstr "Editor-キーリスト"
-
-#: ../help.c:88
-#, fuzzy
-msgid "Filer Function List"
-msgstr "Filer-ファンクションリスト"
-
-#: ../help.c:91
-#, fuzzy
-msgid "Filer Key List"
-msgstr "Filer-key-リスト"
-
-#: ../help.c:483
-#, c-format
-msgid "Screen size: %dx%d"
-msgstr "画面サイズ: %dx%d"
-
-#: ../help.c:489
-msgid "We're invincible with this !!"
-msgstr "これさえあれば俺達は無敵だ!!"
-
 #: ../keymacro.c:77
 msgid "Start key macro recording"
 msgstr "キーマクロ記録開始"
@@ -1123,6 +1089,33 @@ msgstr "アンドゥ-"
 #: ../winin.c:504
 msgid "Redo"
 msgstr "リドゥ-"
+
+#, fuzzy
+#~ msgid "Editor File List"
+#~ msgstr "Editor-ファイルリスト"
+
+#, fuzzy
+#~ msgid "Editor Function List"
+#~ msgstr "Editor-ファンクションリスト"
+
+#, fuzzy
+#~ msgid "Editor Key List"
+#~ msgstr "Editor-キーリスト"
+
+#, fuzzy
+#~ msgid "Filer Function List"
+#~ msgstr "Filer-ファンクションリスト"
+
+#, fuzzy
+#~ msgid "Filer Key List"
+#~ msgstr "Filer-key-リスト"
+
+#, c-format
+#~ msgid "Screen size: %dx%d"
+#~ msgstr "画面サイズ: %dx%d"
+
+#~ msgid "We're invincible with this !!"
+#~ msgstr "これさえあれば俺達は無敵だ!!"
 
 #, fuzzy
 #~ msgid "Switched to one of edit buffer"
