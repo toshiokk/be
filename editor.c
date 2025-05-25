@@ -23,9 +23,9 @@
 
 ef_do_next_t editor_do_next = EF_NONE;
 
-PRIVATE int editor_main_loop(char *str_buf, int buf_len);
+PRIVATE int editor_main_loop(char *str_buf);
 
-int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf, int buf_len)
+int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf)
 {
 #ifdef ENABLE_HISTORY
 	save_histories();
@@ -46,14 +46,14 @@ int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf, in
 	SET_APPMD_VAL(app_EDITOR_FILER, EF_EDITOR);
 	SET_APPMD_VAL(app_LIST_MODE, list_mode);
 
-flf_d_printf("GET_APPMD(app_EDITOR_FILER): %d\n", GET_APPMD(app_EDITOR_FILER));
-flf_d_printf("push_win:%d\n", push_win);
-flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
+	flf_d_printf("GET_APPMD(app_EDITOR_FILER): %d\n", GET_APPMD(app_EDITOR_FILER));
+	flf_d_printf("push_win:%d\n", push_win);
+	flf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 
-	int ret = editor_main_loop(str_buf, buf_len);
+	int ret = editor_main_loop(str_buf);
 
-flf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}\n");
-flf_d_printf("push_win:%d --> ret: %d\n", push_win, ret);
+	flf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}\n");
+	flf_d_printf("push_win:%d --> ret: %d\n", push_win, ret);
 	_mlc_check_count
 
 	if (push_win) {
@@ -71,7 +71,7 @@ flf_d_printf("push_win:%d --> ret: %d\n", push_win, ret);
 char last_touched_file_pos_str[MAX_PATH_LEN+1];
 #endif // ENABLE_HISTORY
 
-PRIVATE int editor_main_loop(char *str_buf, int buf_len)
+PRIVATE int editor_main_loop(char *str_buf)
 {
 	if (str_buf) {
 		strcpy__(str_buf, "");
@@ -118,25 +118,22 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 #ifdef ENABLE_REGEX
 			matches_clear(&matches__);
 #endif // ENABLE_REGEX
-			func_key_list_t *fkey_list;
-			if ((fkey_list = get_fkey_entry_table_from_key(
-			 editor_func_key_table, key_input, -1, 1)) == NULL) {
-				disp_status_bar_warn(_("No command assigned for the key: 0x%04x"),
-				 (UINT16)key_input);
+			func_key_t *func_key;
+			if ((func_key = get_fkey_entry_from_key(editor_func_key_table, key_input, -1))
+			 == NULL) {
+				disp_status_bar_warn(_("No command assigned for the key: 0x%04x(%s)"),
+				 (UINT16)key_input, long_key_name_from_key_code(key_input, NULL));
 			} else {
 				if (is_app_chooser_mode()) {
-					switch (fkey_list->list_mode) {
-					case EFNM_EXEC:	// not executable in editor List mode
+					switch (func_key->list_mode) {
+					case EFNM:	// not executable in editor List mode
 						disp_status_bar_done(
 						 _("Can not execute this function in editor List mode: [%s]"),
-						 fkey_list->func_id);
+						 func_key->func_id);
 						editor_do_next = EF_QUIT;
 						break;
-					case E_LM_CULN:	// not executable in editor List mode, get a text
-						editor_do_next = EF_INPUT_W_ENTER;
-						break;
-					case EFLM_EXEC:	// executable in editor List mode
-					case EFAM_EXEC:
+					case EFLM:	// executable in editor List mode
+					case EFAM:
 					default:
 						break;
 					}
@@ -146,12 +143,12 @@ PRIVATE int editor_main_loop(char *str_buf, int buf_len)
 					memorize_cur_file_pos_null(last_touched_file_pos_str);
 #endif // ENABLE_HISTORY
 #if defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
-					memorize_undo_state_before_change(fkey_list->func_id);
+					memorize_undo_state_before_change(func_key->func_id);
 #endif // defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
 					search_clear(&search__);
-					mflf_d_printf("{{{{ CALL_FUNC_EDITOR [%s]\n", fkey_list->func_id);
+					mflf_d_printf("{{{{ CALL_FUNC_EDITOR [%s]\n", func_key->func_id);
 					//=========================
-					(*fkey_list->func)();	// call function "doe_...()"
+					(*func_key->func)();	// call function "doe_...()"
 					//=========================
 					mflf_d_printf("}}}} editor_do_next_%d\n", editor_do_next);
 					easy_buffer_switching_count();
@@ -185,14 +182,14 @@ flf_d_printf("[%s]\n", last_touched_file_pos_str);
 #ifdef ENABLE_HISTORY
 	key_macro_cancel_recording();
 #endif // ENABLE_HISTORY
-	if (editor_do_next == EF_INPUT_W_ENTER) {
+	if (editor_do_next == EF_ENTER_STRING) {
 		if (str_buf && epc_buf_count_bufs()) {
 			// get a text from editor current line
-			strlcpy__(str_buf, EPCBVC_CL->data, buf_len);
+			strlcpy__(str_buf, EPCBVC_CL->data, MAX_PATH_LEN);
 		}
 		editor_do_next = (IS_META_KEY(key_input) == 0)
-		 ? EF_INPUT_TO_REPLACE		// Replace input file/dir name
-		 : EF_INPUT_TO_APPEND;		// Append input file/dir name
+		 ? EF_ENTER_STRING				// Replace input file/dir name
+		 : EF_ENTER_STRING_APPEND;		// Append input file/dir name
 	}
 	return editor_do_next;
 } // editor_main_loop
@@ -528,19 +525,22 @@ void update_screen_editor(int status_bar, int refresh)
 {
 	win_select_cur_sub_win(WIN_IDX_CENTRAL);
 
-	////mflf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
+	mflf_d_printf("{{{{{{{{{{{{{{{{{{{{{{{{{\n");
 	// title bar
 	disp_title_bar_editor();
 
+_FLF_
 	// status bar
 	if (status_bar) {
 		disp_status_bar_editor();
 	} else {
 		redisp_status_bar();
 	}
+_FLF_
 	// key list
 	disp_key_list_editor();
 
+_FLF_
 	if (get_edit_win_update_needed()) {
 		if (GET_APPMD(ed_EDITOR_PANES) == 0) {		// 1 pane
 			win_select_cur_sub_win(WIN_IDX_SUB_WHOLE);
@@ -557,12 +557,13 @@ void update_screen_editor(int status_bar, int refresh)
 		}
 	}
 
+_FLF_
 	set_edit_cursor_pos();
 	if (refresh) {
 		tio_refresh();
 	}
 	clear_edit_win_update_needed();
-	////mflf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}\n");
+	mflf_d_printf("}}}}}}}}}}}}}}}}}}}}}}}}}\n");
 }
 
 //------------------------------------------------------------------------------
@@ -704,8 +705,8 @@ PRIVATE void disp_status_bar_editor()
 	char buf_lines_sel[SEL_LINES_COLS_LEN] = "";
 	char buffer[MAX_EDIT_LINE_LEN+1] = "";
 
-	xx = col_idx_from_byte_idx(EPCBVC_CL->data, 0, EPCBVC_CLBI) + 1;
-	disp_len = col_idx_from_byte_idx(EPCBVC_CL->data, 0, MAX_EDIT_LINE_LEN) + 1;
+	xx = col_idx_from_byte_idx(EPCBVC_CL->data, EPCBVC_CLBI) + 1;
+	disp_len = col_idx_from_byte_idx(EPCBVC_CL->data, MAX_EDIT_LINE_LEN) + 1;
 
 	bytes = utf8c_bytes(&EPCBVC_CL->data[EPCBVC_CLBI]);
 	for (byte_idx = 0; byte_idx < bytes; byte_idx++) {
@@ -736,35 +737,39 @@ PRIVATE void disp_key_list_editor()
 {
 	disp_fkey_list();
 
-	const char *editor_key_lists[] = {
- "<doe_quit_editor>Quit "
- "<doe_close_file_ask>Quit "
- "<doe_first_line>TopOfFile "
- "<doe_last_line>BotOfFile "
- "<doe_prev_word>PrevWord "
- "<doe_next_word>NextWord ",
- "<doe_cut_to_head>CutToHead "
- "<doe_cut_text>CutLine "
- "<doe_cut_to_tail>CutToTail "
- "<doe_copy_text>CopyLine "
- "<doe_paste_text_with_pop>PasteWPop "
- "<doe_paste_text_without_pop>PasteWoPop "
- "<doe_duplicate_text>DupLine "
-
- "<doe_close_all_ask>CloseAll "
- "<doe_open_file_recursive>OpenFile "
- "<doe_write_file_ask>WriteFile "
- "<doe_search_backward_first>Search BW "
- "<doe_search_forward_first>Search FW "
- "<doe_replace>Replace "
- "<doe_view_file_list>FileList "
+	const char *editor_keys_in_normal_mode[] = {
+	 "<doe_close_file_ask>Quit "
+	 "<doe_first_line>TopOfFile "
+	 "<doe_last_line>BotOfFile "
+	 "<doe_prev_word>PrevWord "
+	 "<doe_next_word>NextWord "
+	 "<doe_cut_to_head>CutToHead "
+	 "<doe_cut_text>CutLine "
+	 "<doe_cut_to_tail>CutToTail ",
+	 "<doe_copy_text>CopyLine "
+	 "<doe_paste_text_with_pop>PasteWPop "
+	 "<doe_paste_text_without_pop>PasteWoPop "
+	 "<doe_duplicate_text>DupLine "
+	 "<doe_close_all_ask>CloseAll "
+	 "<doe_open_file_recursive>OpenFile "
+	 "<doe_write_file_ask>WriteFile "
+	 "<doe_search_backward_first>Search BW "
+	 "<doe_search_forward_first>Search FW "
+	 "<doe_replace>Replace "
+	 "<doe_view_file_list>FileList "
 #ifdef ENABLE_HELP
- "<doe_view_func_list>KeyList "
+	 "<doe_view_func_list>KeyList "
 #endif // ENABLE_HELP
- "<doe_switch_to_prev_buffer>PrevBuf "
- "<doe_switch_to_next_buffer>NextBuf "
+	 "<doe_switch_to_prev_buffer>PrevBuf "
+	 "<doe_switch_to_next_buffer>NextBuf "
 	};
-	disp_key_list(editor_key_lists);
+	const char *editor_keys_in_list_mode[] = {
+	 "<doe_enter_text>Enter text (replace) "
+	 "<doe_enter_text_append>Enter text (insert) ",
+	 ""
+	};
+	disp_key_list_lines(is_app_chooser_viewer_mode() == 0
+	 ? editor_keys_in_normal_mode : editor_keys_in_list_mode);
 }
 //------------------------------------------------------------------------------
 int is_editor_unmodifiable_then_warn_it()

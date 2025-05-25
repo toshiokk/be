@@ -265,8 +265,7 @@ be_line_t *line_separate(be_line_t *line, int byte_idx, insert_before_after_t be
 	be_line_t *new_line;
 
 	_mlc_set_caller
-	if (before_after == INSERT_BEFORE) {
-		// insert before
+	if (before_after == INSERT_BEFORE) {	// insert before
 		// aaaa^BBBBBB
 		new_line = line_insert_with_string_len(line, before_after, line->data, byte_idx);
 		// aaaa				<== newly created line
@@ -274,8 +273,7 @@ be_line_t *line_separate(be_line_t *line, int byte_idx, insert_before_after_t be
 		line_set_string(line, &(line->data[byte_idx]));		// aaaaBBBBBB ==> BBBBBB
 		// aaaa				<== newly created line
 		// BBBBBB
-	} else {
-		// insert after
+	} else {								// insert after
 		// aaaa^bbbbbb
 		new_line = line_insert_with_string(line, before_after, &line->data[byte_idx]);
 		// aaaa^BBBBBB

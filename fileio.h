@@ -44,9 +44,13 @@ int get_files_loaded();
 void disp_files_loaded_if_ge_0();
 void disp_files_loaded();
 
-#define MAX_LOG_FILE_SIZE_KB		1000	// 1000 [KB]
-int reduce_log_file_size(const char *file_path, int size_in_kb);
-const char *get_exec_log_file_path();
+//------------------------------------------------------------------------------
+#ifdef START_UP_TEST
+void test_flock();
+#endif // START_UP_TEST
+int flock_lock(const char *full_path);
+int flock_unlock(const char *full_path);
+int flock_is_locked(const char *full_path);
 
 #endif // fileio_h
 

@@ -491,7 +491,7 @@ int doe_carriage_return()
 	}
 	return 1;
 }
-int doe_carriage_return_with_auto_indent()
+int doe_carriage_return_indent()
 {
 	if (doe_carriage_return() == 0) {
 		return 0;
@@ -752,6 +752,17 @@ PRIVATE int doe_fill_spaces_to_columns__(int column_idx)
 		do_enter_utf8s(" ");
 		col_idx = start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
 	}
+	return 0;
+}
+//------------------------------------------------------------------------------
+int doe_enter_text()
+{
+	editor_do_next = EF_ENTER_STRING;
+	return 0;
+}
+int doe_enter_text_append()
+{
+	editor_do_next = EF_ENTER_STRING;
 	return 0;
 }
 //------------------------------------------------------------------------------

@@ -220,7 +220,7 @@ int search_string_once(const char *needle, int search_count)
 
 	if (found_in_prev_search == 0 && direction_of_prev_search == SEARCH_DIR()
 	 && line_of_prev_search == EPCBVC_CL && byte_idx_of_prev_search == EPCBVC_CLBI
-	 && strcmp(last_needle, needle) == 0) {
+	 && (strcmp(last_needle, needle) == 0)) {
 		disp_status_bar_not_found_msg(needle, search_count);
 		return 0;
 	}

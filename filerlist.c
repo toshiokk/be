@@ -446,7 +446,7 @@ int make_file_infos(filer_view_t *fv)
 		if (S_ISDIR(st.st_mode)
 		 || (S_ISDIR(st.st_mode) == 0 && fnmatch(filter, dirent->d_name, 0) == 0)) {
 			if (GET_APPMD(fl_SHOW_DOT_FILE) == 0
-			 && ((strncmp(dirent->d_name, ".", 1) == 0 && strcmp(dirent->d_name, "..") != 0)
+			 && (((strncmp(dirent->d_name, ".", 1) == 0) && (strcmp(dirent->d_name, "..") != 0))
 			  || ((st.st_mode & RWXRWXRWX) == 0)
 			  || ((st.st_mode & RWXRWXRWX) == RW0000RW0)))
 				// ".", ".????" or (mode == 000)
@@ -714,14 +714,14 @@ int select_and_get_first_file_idx_selected()
 PRIVATE void select_file_if_none_selected()
 {
 	if (get_files_selected_cfv() == 0) {
-		get_cur_fv_cur_file_ptr()->selected = _FILE_SEL_AUTO_;
+		get_cur_fv_cur_file_info()->selected = _FILE_SEL_AUTO_;
 	}
 }
 int get_first_file_idx_selected()
 {
 	int file_idx;
 	for (file_idx = 0; file_idx < get_cur_filer_pane_view()->file_infos_entries; file_idx++) {
-		if (get_cur_fv_file_ptr(file_idx)->selected)
+		if (get_cur_fv_file_info(file_idx)->selected)
 			break;
 	}
 	if (file_idx < get_cur_filer_pane_view()->file_infos_entries)
@@ -733,7 +733,7 @@ int get_next_file_idx_selected(int file_idx)
 {
 	file_idx = file_idx < 0 ? 0 : file_idx+1;
 	for ( ; file_idx < get_cur_filer_pane_view()->file_infos_entries; file_idx++) {
-		if (get_cur_fv_file_ptr(file_idx)->selected)
+		if (get_cur_fv_file_info(file_idx)->selected)
 			break;
 	}
 	if (file_idx < get_cur_filer_pane_view()->file_infos_entries)
@@ -744,8 +744,8 @@ void unselect_all_files_auto(char selection_bit)
 {
 	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_infos_entries;
 	 file_idx++) {
-		get_cur_fv_file_ptr(file_idx)->selected
-		 = get_cur_fv_file_ptr(file_idx)->selected & ~selection_bit;
+		get_cur_fv_file_info(file_idx)->selected
+		 = get_cur_fv_file_info(file_idx)->selected & ~selection_bit;
 	}
 }
 

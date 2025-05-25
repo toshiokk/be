@@ -3,7 +3,7 @@
 show_help()
 {
   echo "change Application Release Level -- APP_REL_LVL definition in applvl.h"
-  echo "Usage: $0 [0|1|2|-]"
+  echo "Usage: $0 [0|1|2|3|-]"
   echo " e.g.: $0 0        # set to experimental release"
   echo " e.g.: $0 1        # set to test-1 release"
   echo " e.g.: $0 2        # set to test-2 release"

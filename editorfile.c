@@ -283,7 +283,7 @@ PRIVATE int input_new_file_name__ask(char *file_path)
 #endif // ENABLE_FILER
 		if (is_path_exist(file_path) == 0) {
 			// file of the path is not exist
- 			break;
+			break;
 		}
 		if (is_path_regular_file(file_path) <= 0) {
 			// ask non regular file
@@ -489,77 +489,38 @@ int write_file_ask(int yes_no, close_after_save_t close)
 	return ret;		// ANSWER_ALL/ANSWER_YES/ANSWER_NO
 }
 //------------------------------------------------------------------------------
-#ifdef START_UP_TEST
-void test_flock()
+// The word 'lock' has two meanings:
+// - file lock:   file has been locked by someone
+// - buffer lock: buffer contents was loaded from a locked file
+//                and the buffer was locked from modification
+void lock_epc_buf_if_file_already_locked(BOOL lock_buffer_if_already_locked)
 {
-	MY_UT_INT(flock_lock("relative/path/to/file.txt"), 0);
-	MY_UT_INT(flock_unlock("relative/path/to/file.txt"), 0);
-	MY_UT_INT(flock_lock("relative/path/to/file.txt"), 0);
-	MY_UT_INT(flock_lock("relative/path/to/file.txt"), 1);
-	MY_UT_INT(flock_unlock("relative/path/to/file.txt"), 0);
-	MY_UT_INT(flock_unlock("relative/path/to/file.txt"), 1);
-
-	////MY_UT_INT(flock_lock("relative/path/to/file.txt"), 0);
-
-	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
-	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 0);
-	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
-	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 1);
-	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 0);
-	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 1);
-
-	////MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
-}
-#endif // START_UP_TEST
-
-PRIVATE int flock_create_lock_file(const char *full_path);
-PRIVATE int flock_delete_lock_file(const char *full_path);
-PRIVATE const char* flock_get_lock_file_path(const char* full_path);
-
-int flock_lock(const char *full_path)
-{
-	if (flock_is_locked(full_path)) {
-		return 1;	// lock already exist
+	SET_CUR_EBUF_STATE(buf_LOCKED, 0);
+	if (flock_lock(buf_get_abs_path(get_epc_buf(), NULL)) == 0) {
+		// file has successfully locked: this is the 1st load
+	} else {
+		// already file has been locked: lock this buffer
+		if (lock_buffer_if_already_locked) {
+			SET_CUR_EBUF_STATE(buf_LOCKED, 1);
+		}
 	}
-	flock_create_lock_file(full_path);
-	return 0;		// successfully locked
 }
-int flock_unlock(const char *full_path)
+void unlock_epc_buf_if_file_had_locked_by_myself()
 {
-	if (flock_is_locked(full_path) == 0) {
-		return 1;	// lock not exist
+	if (is_epc_buf_file_locked() == 0) {
+		// this buffer has NOT been locked:
+		// - this file must had been locked by myself
+		// - unlock by myself
+		if (flock_unlock(buf_get_abs_path(get_epc_buf(), NULL)) == 0) {
+			// successfully unlocked
+		} else {
+			// already unlocked by another instance: ERROR
+			progerr_printf("already unlocked [%s]\n", buf_get_abs_path(get_epc_buf(), NULL));
+		}
+	} else {
+		// this file has been locked by another instance:
+		// - nothing to do
 	}
-	flock_delete_lock_file(full_path);
-	return 0;		// successfully unlocked
-}
-int flock_is_locked(const char *full_path)
-{
-	return is_path_exist(flock_get_lock_file_path(full_path));
-}
-PRIVATE int flock_create_lock_file(const char *full_path)
-{
-	return write_text_to_file(flock_get_lock_file_path(full_path), 0, "");
-}
-PRIVATE int flock_delete_lock_file(const char *full_path)
-{
-	return remove_file(flock_get_lock_file_path(full_path));
-}
-
-// -    "/path/to/a/file/being/locked.txt"
-//  ==> "$$path$to$a$file$being$locked.txt"
-//  ==> "$APP_DIR/$$path$to$a$file$being$locked.txt"
-// e.g. "/home/user/.be/$$home$user$tools$be$be$app_defs.txt"
-PRIVATE const char* flock_get_lock_file_path(const char* full_path)
-{
-	static char lock_file_path[MAX_PATH_LEN+1];
-	char abs_path[MAX_PATH_LEN+1];
-	get_abs_path(full_path, abs_path);
-	str_tr(abs_path, '/', '$');
-	if (strlcmp__(abs_path, "$") != 0) {
-		progerr_printf("not full path [%s]\n", abs_path);
-	}
-	cat_dir_and_file(lock_file_path, get_app_dir(), sprintf_s("$%s", abs_path));
-	return lock_file_path;
 }
 
 // End of editorfile.c

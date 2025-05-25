@@ -53,7 +53,10 @@ int load_cut_buffers();
 void set_cut_buffers_modified();
 void load_cut_buffers_if_updated();
 void save_cut_buffers_if_modified();
-int limit_cut_buffers();
+void save_cut_buffers_if_modified_or_limited();
+int is_cut_buffers_updated();
+int is_cut_buffers_modified();
+int limit_cut_buffers_in_size();
 
 #endif // editorcut2_h
 

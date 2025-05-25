@@ -29,7 +29,7 @@ int disp_drop_down_menu(int group_idx, int sel_idx, int yy, int xx);
 int get_groups_in_func_key_table();
 int get_func_key_group_entries(int group_idx);
 short get_func_key_code(int group_idx, int entry_idx);
-func_key_list_t *get_func_key_group_from_group_idx(int group_idx);
+func_key_t *get_func_key_group_from_group_idx(int group_idx);
 int get_menu_items_from_group_idx(int group_idx);
 
 #ifdef ENABLE_DEBUG

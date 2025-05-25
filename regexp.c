@@ -378,8 +378,8 @@ int regexp_search(regexp_t *regexp, regexp_matches_t *regexp_matches, const char
 int regexp_compile(regexp_t *regexp, const char *needle, int cflags)
 {
 	if (regexp->is_compiled) {
-		if (strcmp(needle, regexp->needle_compiled) != 0
-		 || cflags != regexp->cflags_compiled) {
+		if ((strcmp(needle, regexp->needle_compiled) != 0)
+		 || (cflags != regexp->cflags_compiled)) {
 			regexp_free_regex_compiled(regexp);
 		}
 	}

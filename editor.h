@@ -24,7 +24,7 @@
 
 extern ef_do_next_t editor_do_next;
 
-int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf, int buf_len);
+int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf);
 
 int chk_inp_str_ret_val_editor(int ret);
 

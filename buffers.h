@@ -153,10 +153,7 @@ void init_bufferss();
 void free_all_buffers();
 
 int free_cur_edit_buf();
-int free_edit_buf(be_buf_t *edit_buf);
-
-void lock_epc_buf_if_file_already_locked(BOOL lock_buffer_if_already_locked);
-void unlock_epc_buf_if_file_had_locked_by_myself();
+int free_edit_buf(be_buf_t *buf);
 
 void buf_avoid_wild_ptr_cur(be_buf_t *buf);
 void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr);
@@ -183,7 +180,6 @@ void clear_cur_buf_modified();
 void set_cur_buf_modified();
 int is_any_edit_buf_modified();
 
-//DDDbe_bufs_t *set_cur_buf_of_bufs(be_buf_t *buf);
 int is_epc_buf_edit_buf();
 be_bufs_t* get_bufs_contains_buf(be_buf_t* buf);
 const char* get_bufs_name_contains_buf(be_buf_t* buf);

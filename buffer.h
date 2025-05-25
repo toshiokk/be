@@ -126,7 +126,7 @@ typedef struct be_bufss_t {
 	char name[MAX_NAME_LEN+1];	//! name
 	be_bufs_t top_anchor;		//!< top    buffer
 	be_bufs_t bot_anchor;		//!< bottom buffer
-	be_bufs_t *cur_bufs;		//!< current buffer
+///	be_bufs_t *cur_bufs;		//!< current buffer
 } be_bufss_t;
 
 be_buf_t *buf_create(const char *full_path, unsigned char buf_mode_);

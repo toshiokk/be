@@ -78,7 +78,7 @@ flf_d_printf("ret__: %d\n", ret);
 		disp_status_bar_warn(_("Input string cancelled"));
 	}
 #ifdef ENABLE_HISTORY
-	if (IS_EF_INPUT_XX(ret)) {
+	if (IS_EF_STRING_ENTERED(ret)) {
 		// input normally
 		update_history(hist_type_idx, input_buf);
 	}
@@ -124,39 +124,39 @@ PRIVATE int input_string_pos__(const char *default__, char *input_buf, int curso
 		const char *func_id = get_func_id_from_key(key_input);
 flf_d_printf("func_id: [%s]\n", func_id);
 		if ((key_input == K_ESC) || (key_input == K_M_ESC)
-		 || cmp_func_id(func_id, "doe_close_file_ask")
-		 || cmp_func_id(func_id, "doe_close_all_ask")
-		 || cmp_func_id(func_id, "doe_close_all_modified")) {
+		 || (strcmp(func_id, "doe_close_file_ask") == 0)
+		 || (strcmp(func_id, "doe_close_all_ask") == 0)
+		 || (strcmp(func_id, "doe_close_all_modified") == 0)) {
 			strcpy__(input_buf, "");
 			ret = EF_CANCELLED;				// cancelled, return
 		} else
 		if (key_input == K_ENTER) {
-			ret = EF_INPUT_W_ENTER;			// confirm a string input
+			ret = EF_ENTER_STRING;			// confirm a string input
 		} else
 		if (key_input == K_M_ENTER) {
-			ret = EF_INPUT_W_ALT_ENTER;		// confirm a string input
+			ret = EF_ENTER_STRING_APPEND;		// confirm a string input
 		} else
-		if (cmp_func_id(func_id, "dof_copy_file")
-		 || cmp_func_id(func_id, "dof_drop_files_to_copy")) {
-			ret = EF_INPUT_W_ALT_C;			// Alt-c
+		if ((strcmp(func_id, "dof_copy_file") == 0)
+		 || (strcmp(func_id, "dof_drop_files_to_copy") == 0)) {
+			ret = EF_INPUT_PATH_TO_COPY;
 		} else
-		if (cmp_func_id(func_id, "dof_move_file")
-		 || cmp_func_id(func_id, "dof_drop_files_to_move")) {
-			ret = EF_INPUT_W_ALT_M;			// Alt-m
+		if ((strcmp(func_id, "dof_move_file") == 0)
+		 || (strcmp(func_id, "dof_drop_files_to_move") == 0)) {
+			ret = EF_INPUT_PATH_TO_MOVE;
 		} else
-		if (cmp_func_id(func_id, "doe_left")) {
+		if (strcmp(func_id, "doe_left") == 0) {
 			// cursor left
 			if (cursor_byte_idx > 0) {
 				cursor_byte_idx -= utf8c_prev_bytes(input_buf, &input_buf[cursor_byte_idx]);
 			}
 		} else
-		if (cmp_func_id(func_id, "doe_right")) {
+		if (strcmp(func_id, "doe_right") == 0) {
 			// cursor right
 			if (cursor_byte_idx < strlen_path(input_buf)) {
 				cursor_byte_idx += utf8c_bytes(&input_buf[cursor_byte_idx]);
 			}
 		} else
-		if (cmp_func_id(func_id, "doe_prev_word")) {
+		if (strcmp(func_id, "doe_prev_word") == 0) {
 			// goto a prev word
 			if (cursor_byte_idx > 0) {
 				cursor_byte_idx -= utf8c_prev_bytes(input_buf, &input_buf[cursor_byte_idx]);
@@ -169,7 +169,7 @@ flf_d_printf("func_id: [%s]\n", func_id);
 				}
 			}
 		} else
-		if (cmp_func_id(func_id, "doe_next_word")) {
+		if (strcmp(func_id, "doe_next_word") == 0) {
 			// goto a next word
 			while (cursor_byte_idx < strlen_path(input_buf)) {
 				cursor_byte_idx += utf8c_bytes(&input_buf[cursor_byte_idx]);
@@ -179,15 +179,15 @@ flf_d_printf("func_id: [%s]\n", func_id);
 				}
 			}
 		} else
-		if (cmp_func_id(func_id, "doe_start_of_line")) {
+		if (strcmp(func_id, "doe_start_of_line") == 0) {
 			// goto line head
 			cursor_byte_idx = 0;
 		} else
-		if (cmp_func_id(func_id, "doe_end_of_line")) {
+		if (strcmp(func_id, "doe_end_of_line") == 0) {
 			// goto line tail
 			cursor_byte_idx = strlen_path(input_buf);
 		} else
-		if (cmp_func_id(func_id, "doe_backspace")
+		if ((strcmp(func_id, "doe_backspace") == 0)
 		 || (key_input == K_BS)) {
 			// backspace
 			if (cursor_byte_idx > 0) {
@@ -196,7 +196,7 @@ flf_d_printf("func_id: [%s]\n", func_id);
 				delete_str(input_buf, cursor_byte_idx, bytes);
 			}
 		} else
-		if (cmp_func_id(func_id, "doe_delete_char")
+		if ((strcmp(func_id, "doe_delete_char") == 0)
 		 || (key_input == K_DEL)) {
 			// delete
 			if (cursor_byte_idx < strlen_path(input_buf)) {
@@ -204,44 +204,44 @@ flf_d_printf("func_id: [%s]\n", func_id);
 				delete_str(input_buf, cursor_byte_idx, bytes);
 			}
 		} else
-		if (cmp_func_id(func_id, "doe_cut_to_head")) {
+		if (strcmp(func_id, "doe_cut_to_head") == 0) {
 			// cut to line head
 			strcut__(cut_buf, MAX_PATH_LEN, input_buf, 0, cursor_byte_idx);
 			delete_str(input_buf, 0, cursor_byte_idx);
 			cursor_byte_idx = 0;
 		} else
-		if (cmp_func_id(func_id, "doe_cut_text")) {
+		if (strcmp(func_id, "doe_cut_text") == 0) {
 			// cut line
 			strlcpy__(cut_buf, input_buf, MAX_PATH_LEN);
 			strcpy__(input_buf, "");
 			cursor_byte_idx = 0;
 		} else
-		if (cmp_func_id(func_id, "doe_cut_to_tail")) {
+		if (strcmp(func_id, "doe_cut_to_tail") == 0) {
 			// cut to line tail
 			strcut__(cut_buf, MAX_PATH_LEN,
 			 input_buf, cursor_byte_idx, strlen_path(input_buf));
 			delete_str(input_buf, cursor_byte_idx,
 			 strlen_path(input_buf) - cursor_byte_idx);
 		} else
-		if (cmp_func_id(func_id, "doe_copy_text")) {
+		if (strcmp(func_id, "doe_copy_text") == 0) {
 			// copy to the cut buffer
 			strlcpy__(cut_buf, input_buf, MAX_PATH_LEN);
 		} else
-		if (cmp_func_id(func_id, "doe_paste_text_with_pop")) {
+		if (strcmp(func_id, "doe_paste_text_with_pop") == 0) {
 			// paste from the cut buffer
 			insert_str(input_buf, MAX_PATH_LEN, cursor_byte_idx, cut_buf, -1);
 		} else
-		if (cmp_func_id(func_id, "doe_search_backward_first")
-		 || cmp_func_id(func_id, "doe_search_forward_first")
-		 || cmp_func_id(func_id, "doe_replace")) {
+		if ((strcmp(func_id, "doe_search_backward_first") == 0)
+		 || (strcmp(func_id, "doe_search_forward_first") == 0)
+		 || (strcmp(func_id, "doe_replace") == 0)) {
 			// get string from edit buffer's current cursor position
 			if (count_edit_bufs()) {
 				char *line = EPCBVC_CL->data;
 				cursor_byte_idx = strlen_path(input_buf);
 				int start_byte_idx = byte_idx_from_byte_idx(line, EPCBVC_CLBI + cursor_byte_idx);
 				int byte_idx = start_byte_idx;
-				if ((cmp_func_id(func_id, "doe_search_backward_first") && (SEARCH_DIR() > 0))
-				 || (cmp_func_id(func_id, "doe_search_forward_first") && (SEARCH_DIR() < 0))) {
+				if (((strcmp(func_id, "doe_search_backward_first") == 0) && (SEARCH_DIR() > 0))
+				 || ((strcmp(func_id, "doe_search_forward_first") == 0) && (SEARCH_DIR() < 0))) {
 					// copy whole line
 					byte_idx = byte_idx_from_byte_idx(line, MAX_PATH_LEN);
 				} else {
@@ -271,15 +271,14 @@ flf_d_printf("func_id: [%s]\n", func_id);
 			 MAX_PATH_LEN);
 			cursor_byte_idx = strlen_path(input_buf);
 		} else
-		if (cmp_func_id(func_id, "doe_up")
-		 || cmp_func_id(func_id, "doe_page_up")
-		 || cmp_func_id(func_id, "doe_first_line")) {
+		if ((strcmp(func_id, "doe_up") == 0)
+		 || (strcmp(func_id, "doe_page_up") == 0)
+		 || (strcmp(func_id, "doe_first_line") == 0)) {
 			//----------------------------------------------------
 			ret = select_from_history_list(hist_type_idx, buffer);
 			//----------------------------------------------------
-			ret = editor_do_next;
-			if ((ret == EF_INPUT_TO_REPLACE) || (ret == EF_INPUT_TO_APPEND)) {
-				if ((ret == EF_INPUT_TO_REPLACE) || cmp_func_id(func_id, "doe_page_up")) {
+			if ((ret == EF_ENTER_STRING) || (ret == EF_ENTER_STRING_APPEND)) {
+				if ((ret == EF_ENTER_STRING) || (strcmp(func_id, "doe_page_up") == 0)) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
@@ -289,18 +288,18 @@ flf_d_printf("func_id: [%s]\n", func_id);
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
 				 cursor_byte_idx, buffer);
 			}
+			ret = EF_NONE;
 #endif // ENABLE_HISTORY
 #ifdef ENABLE_FILER
 		} else
-		if (cmp_func_id(func_id, "doe_down")
-		 || cmp_func_id(func_id, "doe_page_down")
-		 || cmp_func_id(func_id, "doe_last_line")) {
+		if ((strcmp(func_id, "doe_down") == 0)
+		 || (strcmp(func_id, "doe_page_down") == 0)
+		 || (strcmp(func_id, "doe_last_line") == 0)) {
 			//---------------------------------------------------
 			ret = do_call_filer(1, APP_MODE_CHOOSER, "", "", buffer);
 			//---------------------------------------------------
-			ret = filer_do_next;
-			if ((ret == EF_INPUT_TO_REPLACE) || (ret == EF_INPUT_TO_APPEND)) {
-				if ((ret == EF_INPUT_TO_REPLACE) || cmp_func_id(func_id, "doe_page_down")) {
+			if ((ret == EF_ENTER_STRING) || (ret == EF_ENTER_STRING_APPEND)) {
+				if ((ret == EF_ENTER_STRING) || (strcmp(func_id, "doe_page_down") == 0)) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
@@ -310,10 +309,11 @@ flf_d_printf("func_id: [%s]\n", func_id);
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
 				 cursor_byte_idx, buffer);
 			}
+			ret = EF_NONE;
 #endif // ENABLE_FILER
 		}
 		// EF_QUIT: stay in this loop
-		if ((ret == EF_CANCELLED) || IS_EF_INPUT_XX(ret)
+		if ((ret == EF_CANCELLED) || IS_EF_STRING_ENTERED(ret)
 		 || (ret == EF_LOADED) || (ret == EF_EXECUTED)) {
 			break;
 		}
@@ -328,7 +328,7 @@ flf_d_printf("func_id: [%s]\n", func_id);
 */
 PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_byte_idx)
 {
-	int cursor_col_idx = col_idx_from_byte_idx(input_buf, 0, cursor_byte_idx);
+	int cursor_col_idx = col_idx_from_byte_idx(input_buf, cursor_byte_idx);
 	int input_area_width;
 	int start_byte_idx;
 
@@ -366,8 +366,7 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 		central_win_output_string(-1, -1, &input_buf[start_byte_idx], bytes);
 		central_win_set_cursor_pos(get_input_line_y()+1,
 		 1 + utf8s_columns(TRUNCATION_MARK, MAX_SCRN_COLS)
-		 + col_idx_from_byte_idx(&input_buf[start_byte_idx],
-		 0, cursor_byte_idx - start_byte_idx));
+		 + col_idx_from_byte_idx(&input_buf[start_byte_idx], cursor_byte_idx - start_byte_idx));
 	}
 	tio_refresh();
 }
@@ -391,7 +390,7 @@ PRIVATE void blank_input_box()
 
 //------------------------------------------------------------------------------
 PRIVATE void disp_ask_yes_no_msg(int flags);
-PRIVATE void list_one_key(char key, const char *desc);
+PRIVATE void list_one_key(key_code_t key, const char *desc);
 
 PRIVATE const char *chars_yes = "Yy";				// Yes(replace)
 PRIVATE const char *chars_no = "Nn";				// No
@@ -448,11 +447,11 @@ int ask_yes_no(int flags, const char *msg, ...)
 			answer = ANSWER_ALL;
 		else if ((flags & ASK_BACKWARD)
 		 && ((strchr__(chars_backward, key_input) != NULL)
-		  || cmp_func_id(func_id, "doe_search_backward_next")))
+		  || (strcmp(func_id, "doe_search_backward_next") == 0)))
 			answer = ANSWER_BACKWARD;
 		else if ((flags & ASK_FORWARD)
 		 && ((strchr__(chars_forward, key_input) != NULL)
-		  || cmp_func_id(func_id, "doe_search_forward_next")))
+		  || (strcmp(func_id, "doe_search_forward_next") == 0)))
 			answer = ANSWER_FORWARD;
 		else if (strchr__(chars_cancel, key_input) != NULL)
 			answer = ANSWER_CANCEL;
@@ -505,7 +504,7 @@ PRIVATE void disp_ask_yes_no_msg(int flags)
 		}
 	}
 }
-PRIVATE void list_one_key(char key, const char *desc)
+PRIVATE void list_one_key(key_code_t key, const char *desc)
 {
 	char buf[MAX_SCRN_LINE_BUF_LEN+1];
 	char key_name[MAX_KEY_NAME_LEN+1];		// "RIGHT"
@@ -521,7 +520,6 @@ PRIVATE void list_one_key(char key, const char *desc)
 
 //------------------------------------------------------------------------------
 PRIVATE void display_reverse_text(int yy, const char *text);
-PRIVATE void display_func_id_key(int yy, const char *text);
 
 void disp_fkey_list()
 {
@@ -535,22 +533,15 @@ void disp_fkey_list()
 			if (func_keys[key_idx] == K_SP) {
 				strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, " ");	// separator
 			} else {
-				func_key_list_t *fkey_list = get_fkey_entry_table_from_key(
-				 NULL, func_keys[key_idx], -1, 1);
-				if (fkey_list) {
-					strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, "{%s} ", fkey_list->desc);
+				func_key_t *func_key = get_fkey_entry_from_key(NULL, func_keys[key_idx], -1);
+				if (func_key) {
+					strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, "{%s} ", func_key->desc);
 				} else {
 					strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, "{-----} ");
 				}
 			}
 		}
 		display_reverse_text(central_win_get_key_list_line_y() + 0, buf);
-	}
-}
-void disp_key_list(const char *key_lists[])
-{
-	for (int line_idx = 1; line_idx < get_key_list_lines(); line_idx++) {
-		display_func_id_key(central_win_get_key_list_line_y() + line_idx, key_lists[line_idx - 1]);
 	}
 }
 // display text parenthesized by {} in reverse
@@ -560,7 +551,6 @@ PRIVATE void display_reverse_text(int yy, const char *text)
 	int xx = 0;
 	set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
 	central_win_clear_lines(yy, -1);
-	// get default fkey_list
 	for (const char *ptr = text; *ptr && xx < central_win_get_columns(); ) {
 		char delimiter = 0;
 		const char *begin;
@@ -577,58 +567,51 @@ PRIVATE void display_reverse_text(int yy, const char *text)
 			if (delimiter == '{') {
 				set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST, 0);
 			}
-			int columns = LIM_MAX(central_win_get_columns() - xx,
-			 utf8s_columns(buf, MAX_SCRN_COLS));
-			adjust_str_columns(buf, columns);
-			central_win_output_string(yy, xx, buf, -1);
-			xx += columns;
+			xx += central_win_output_string(yy, xx, buf, -1);
 			if (delimiter == '{') {
 				set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
 			}
 		}
 	}
 }
+
+PRIVATE void display_key_list_one_line(int yy, const char *text);
+
+void disp_key_list_lines(const char *key_lists[])
+{
+	for (int line_idx = 1; line_idx < get_key_list_lines(); line_idx++) {
+		display_key_list_one_line(central_win_get_key_list_line_y() + line_idx,
+		 key_lists[line_idx - 1]);
+	}
+}
 // display text parenthesized by <> in reverse
 // "<doe_first_line>TopOfFile ..."
-PRIVATE void display_func_id_key(int yy, const char *text)
+PRIVATE void display_key_list_one_line(int yy, const char *text)
 {
 	int xx = 0;
 	set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
 	central_win_clear_lines(yy, -1);
-	func_key_list_t *fkey_list = NULL;
 	for (const char *ptr = text; *ptr && xx < central_win_get_columns(); ) {
-		char delimiter = 0;
-		const char *begin;
+		char start_chr = 0;
+		char end_chr = 0;
 		if (*ptr == '<' || *ptr == '>') {
-			delimiter = *ptr++;
+			start_chr = *ptr++;
+			end_chr = (start_chr == '<') ? '>' : '<';
 		}
+		const char *begin;
 		for (begin = ptr; *ptr; ptr++) {
-			if (*ptr == '<' || *ptr == '>')
+			if (*ptr == end_chr)
 				break;
 		}
 		if (ptr > begin) {
-			char buf[MAX_SCRN_LINE_BUF_LEN+1];
-			strlcpy__(buf, begin, ptr - begin);
-			if (delimiter == '<') {
-				fkey_list = get_fkey_entry_from_func_id(buf);
-				if (fkey_list) {
-					strlcpy__(buf, short_key_name_from_func_id(buf), MAX_SCRN_LINE_BUF_LEN);
-					if (is_fkey_entry_executable(fkey_list, -1) < 2) {
-						fkey_list = NULL;
-					}
-				}
-			}
-			if (delimiter == '<') {
+			char func_id[MAX_SCRN_LINE_BUF_LEN+1];
+			strlcpy__(func_id, begin, ptr - begin);
+			if (start_chr == '<') {
+				conv_func_id_to_key_names(func_id, 3);
 				set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST, 0);
 			}
-			if (fkey_list != NULL) {
-				int columns = LIM_MAX(central_win_get_columns() - xx,
-				 utf8s_columns(buf, MAX_SCRN_COLS));
-				adjust_str_columns(buf, columns);
-				central_win_output_string(yy, xx, buf, -1);
-				xx += columns;
-			}
-			if (delimiter == '<') {
+			xx += central_win_output_string(yy, xx, func_id, -1);
+			if (start_chr == '<') {
 				set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
 			}
 		}

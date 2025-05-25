@@ -38,7 +38,7 @@ int chk_inp_str_ret_val_filer(int ret)
 		// EF_CANCELLED, EF_QUIT ==> EF_NONE so that filer does not quit
 		filer_do_next = EF_NONE;
 	}
-	return !IS_EF_INPUT_XX(ret);
+	return !IS_EF_STRING_ENTERED(ret);
 }
 
 int dof_up()
@@ -94,21 +94,29 @@ int dof_tap_file()
 	if (filer_change_dir_to_cur_sel()) {
 		return 0;
 	}
-	if (is_app_chooser_mode()) {
-		if (get_file_type_num(get_cur_fv_cur_file_ptr()) >= 80) {
-			filer_do_next = FL_ENTER_FILE_NAME_OR_PATH;
-			return 1;
-		}
-	}
 	return dof_view_file();
+}
+int dof_tap_file_to_enter()
+{
+	if (filer_change_dir_to_cur_sel()) {
+		return 0;
+	}
+	return dof_enter_file_name();
+}
+int dof_tap_file_to_enter_append()
+{
+	if (filer_change_dir_to_cur_sel()) {
+		return 0;
+	}
+	return dof_enter_file_name_append();
 }
 int dof_view_file()
 {
 	if (filer_change_dir_to_cur_sel()) {
 		return 0;
 	}
-	if (S_ISREG(get_cur_fv_cur_file_ptr()->st.st_mode)) {
-		const char *file_name = get_cur_fv_cur_file_ptr()->file_name;
+	if (S_ISREG(get_cur_fv_cur_file_info()->st.st_mode)) {
+		const char *file_name = get_cur_fv_cur_file_name();
 		if (fork_exec_args_once(EX_FLAGS_0, BEPAGER, file_name, 0)) {
 			if (fork_exec_args_once(EX_FLAGS_0, "less", file_name, 0)) {
 				fork_exec_args_once(EX_FLAGS_0, "more", file_name, 0);
@@ -122,8 +130,8 @@ int dof_tail_file()	// view file with "tail" command
 	if (filer_change_dir_to_cur_sel()) {
 		return 0;
 	}
-	if (S_ISREG(get_cur_fv_cur_file_ptr()->st.st_mode)) {
-		const char *file_name = get_cur_fv_cur_file_ptr()->file_name;
+	if (S_ISREG(get_cur_fv_cur_file_info()->st.st_mode)) {
+		const char *file_name = get_cur_fv_cur_file_name();
 		fork_exec_args_once(EX_FLAGS_0, BETAIL, file_name, 0);
 	}
 	return 0;
@@ -172,8 +180,8 @@ PRIVATE int dof_open_file_(int flags)
 	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
-		if (S_ISREG(get_cur_fv_file_ptr(file_idx)->st.st_mode)) {
-			if (load_file_name_upp_low_(get_cur_fv_file_ptr(file_idx)->file_name,
+		if (S_ISREG(get_cur_fv_file_info(file_idx)->st.st_mode)) {
+			if (load_file_name_upp_low_(get_cur_fv_file_name(file_idx),
 			 TUL0 | OOE0 | MOE1 | (flags & (RECURS1 | RDOL1 | FOLF1 | LFH1))) <= 0) {
 				tio_beep();
 			}
@@ -229,7 +237,7 @@ int dof_open_new_file()
 {
 	char file_path[MAX_PATH_LEN+1] = "";
 	concat_file_path_separating_by_space(file_path, MAX_PATH_LEN,
-	 get_cur_fv_cur_file_ptr()->file_name);
+	 get_cur_fv_cur_file_name());
 	return dof_open_new_file_(file_path);
 }
 PRIVATE int dof_open_new_file_(const char *str)
@@ -288,10 +296,10 @@ PRIVATE int dof_copy_file_(int update1)
 			break;
 #ifndef	USE_BUSYBOX
 		exit_status = fork_exec_args_repeat(EX_SEPARATE, "cp", (update1 == 0) ? "-afv" : "-auv",
-		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
+		 get_cur_fv_file_name(file_idx), file_path, 0);
 #else
 		exit_status = fork_exec_args_repeat(EX_SEPARATE, "cp", "-a",
-		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
+		 get_cur_fv_file_name(file_idx), file_path, 0);
 #endif
 	}
 	end_fork_exec_repeat(exit_status);
@@ -329,10 +337,10 @@ PRIVATE int dof_move_file_(int update1)
 			break;
 #ifndef	USE_BUSYBOX
 		exit_status = fork_exec_args_repeat(EX_SEPARATE, "mv", (update1 == 0) ? "-fv" : "-uv",
-		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
+		 get_cur_fv_file_name(file_idx), file_path, 0);
 #else
 		exit_status = fork_exec_args_repeat(EX_SEPARATE, "mv",
-		 get_cur_fv_file_ptr(file_idx)->file_name, file_path, 0);
+		 get_cur_fv_file_name(file_idx), file_path, 0);
 #endif
 	}
 	end_fork_exec_repeat(exit_status);
@@ -379,10 +387,10 @@ int dof_drop_files_to_do_action_(int action)
 	 request))) {
 		return 0;
 	}
-	if (filer_do_next == EF_INPUT_W_ALT_C) {
+	if (filer_do_next == EF_INPUT_PATH_TO_COPY) {
 		action = ACTION_COPY;
 	} else
-	if (filer_do_next == EF_INPUT_W_ALT_M) {
+	if (filer_do_next == EF_INPUT_PATH_TO_MOVE) {
 		action = ACTION_MOVE;
 	}
 
@@ -456,14 +464,14 @@ int dof_drop_files_to_do_action_(int action)
 int dof_rename_file()
 {
 	char file_name[MAX_PATH_LEN+1];
-	strlcpy__(file_name, get_cur_fv_cur_file_ptr()->file_name, MAX_PATH_LEN);
+	strlcpy__(file_name, get_cur_fv_cur_file_name(), MAX_PATH_LEN);
 	if (chk_inp_str_ret_val_filer(input_string_pos(file_name, file_name, MAX_PATH_LEN,
 	 HISTORY_TYPE_IDX_EXEC,
 	 _("Rename to:")))) {
 		return 0;
 	}
 	if (fork_exec_args_once(EX_PAUSE, "mv", "-iv",
-	 get_cur_fv_cur_file_ptr()->file_name, file_name, 0) == 0) {
+	 get_cur_fv_cur_file_name(), file_name, 0) == 0) {
 		strlcpy__(get_cur_filer_pane_view()->next_file, file_name, MAX_PATH_LEN);
 		filer_do_next = FL_UPDATE_FILE_LIST_FORCE;
 	}
@@ -476,7 +484,7 @@ int dof_trash_file()
 
 	if ((files_selected = get_files_selected_cfv()) == 0)
 		ret = ask_yes_no(ASK_YES_NO, _("Trash file %s ?"),
-		 get_cur_fv_cur_file_ptr()->file_name);
+		 get_cur_fv_cur_file_name());
 	else
 		ret = ask_yes_no(ASK_YES_NO, _("Trash %d files ?"), files_selected);
 	if (ret <= 0) {
@@ -489,14 +497,13 @@ int dof_trash_file()
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if (is_sigint_signaled())
 			break;
-		if (fork_exec_args_repeat(EX_SEPARATE, BETRASH,
-		 get_cur_fv_file_ptr(file_idx)->file_name, 0)) {
+		if (fork_exec_args_repeat(EX_SEPARATE, BETRASH, get_cur_fv_file_name(file_idx), 0)) {
 #ifndef	USE_BUSYBOX
 			exit_status = fork_exec_args_repeat(EX_SEPARATE, "rm", "-rv",
-			 get_cur_fv_file_ptr(file_idx)->file_name, 0);
+			 get_cur_fv_file_name(file_idx), 0);
 #else
 			exit_status = fork_exec_args_repeat(EX_SEPARATE, "rm", "-r",
-			 get_cur_fv_file_ptr(file_idx)->file_name, 0);
+			 get_cur_fv_file_name(file_idx), 0);
 #endif
 		}
 	}
@@ -511,7 +518,7 @@ int dof_delete_file()
 
 	if ((files_selected = get_files_selected_cfv()) == 0)
 		ret = ask_yes_no(ASK_YES_NO, _("Delete file %s ?"),
-		 get_cur_fv_cur_file_ptr()->file_name);
+		 get_cur_fv_cur_file_name());
 	else
 		ret = ask_yes_no(ASK_YES_NO, _("Delete %d files ?"), files_selected);
 	if (ret <= 0) {
@@ -526,10 +533,10 @@ int dof_delete_file()
 			break;
 #ifndef	USE_BUSYBOX
 		exit_status = fork_exec_args_repeat(EX_SEPARATE, "rm", "-rvf",
-		 get_cur_fv_file_ptr(file_idx)->file_name, 0);
+		 get_cur_fv_file_name(file_idx), 0);
 #else
 		exit_status = fork_exec_args_repeat(EX_SEPARATE, "rm", "-rf",
-		 get_cur_fv_file_ptr(file_idx)->file_name, 0);
+		 get_cur_fv_file_name(file_idx), 0);
 #endif
 	}
 	end_fork_exec_repeat(exit_status);
@@ -543,7 +550,7 @@ int dof_mark_to_delete_file()
 
 	if ((files_selected = get_files_selected_cfv()) == 0)
 		ret = ask_yes_no(ASK_YES_NO, _("Mark file %s to be Deleted later ?"),
-		 get_cur_fv_cur_file_ptr()->file_name);
+		 get_cur_fv_cur_file_name());
 	else
 		ret = ask_yes_no(ASK_YES_NO, _("Mark %d files to be Deleted later ?"),
 		 files_selected);
@@ -557,14 +564,13 @@ int dof_mark_to_delete_file()
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if (is_sigint_signaled())
 			break;
-		if (fork_exec_args_repeat(EX_FLAGS_0, BEMARKDEL,
-		 get_cur_fv_file_ptr(file_idx)->file_name, 0)) {
+		if (fork_exec_args_repeat(EX_FLAGS_0, BEMARKDEL, get_cur_fv_file_name(file_idx), 0)) {
 #ifndef	USE_BUSYBOX
 			exit_status = fork_exec_args_repeat(EX_FLAGS_0, "chmod", "-v", "606",
-			 get_cur_fv_file_ptr(file_idx)->file_name, 0);
+			 get_cur_fv_file_name(file_idx), 0);
 #else
 			exit_status = fork_exec_args_repeat(EX_FLAGS_0, "chmod", "606",
-			 get_cur_fv_file_ptr(file_idx)->file_name, 0);
+			 get_cur_fv_file_name(file_idx), 0);
 #endif
 		}
 	}
@@ -579,7 +585,7 @@ int dof_size_zero_file()
 
 	if ((files_selected = get_files_selected_cfv()) == 0) {
 		ret = ask_yes_no(ASK_YES_NO, _("Make size of file %s 0 ?"),
-		 get_cur_fv_cur_file_ptr()->file_name);
+		 get_cur_fv_cur_file_name());
 	} else {
 		ret = ask_yes_no(ASK_YES_NO, _("Make size of %d files 0 ?"),
 		 files_selected);
@@ -594,14 +600,13 @@ int dof_size_zero_file()
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if (is_sigint_signaled())
 			break;
-		if (fork_exec_args_repeat(EX_FLAGS_0, BESIZE0,
-		 get_cur_fv_file_ptr(file_idx)->file_name, 0)) {
+		if (fork_exec_args_repeat(EX_FLAGS_0, BESIZE0, get_cur_fv_file_name(file_idx), 0)) {
 #ifndef	USE_BUSYBOX
 			exit_status = fork_exec_args_repeat(EX_FLAGS_0, "chmod", "-v", "000",
-			 get_cur_fv_file_ptr(file_idx)->file_name, 0);
+			 get_cur_fv_file_name(file_idx), 0);
 #else
 			exit_status = fork_exec_args_repeat(EX_FLAGS_0, "chmod", "000",
-			 get_cur_fv_file_ptr(file_idx)->file_name, 0);
+			 get_cur_fv_file_name(file_idx), 0);
 #endif
 		}
 	}
@@ -620,7 +625,7 @@ int dof_unzip_file()
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		concat_file_path_separating_by_space(command_str, MAX_PATH_LEN,
-		 get_cur_fv_file_ptr(file_idx)->file_name);
+		 get_cur_fv_file_name(file_idx));
 	}
 
 	if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str, 0,
@@ -643,7 +648,7 @@ int dof_zip_file()
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		concat_file_path_separating_by_space(command_str, MAX_PATH_LEN,
-		 get_cur_fv_file_ptr(file_idx)->file_name);
+		 get_cur_fv_file_name(file_idx));
 	}
 
 	if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str, 0,
@@ -726,7 +731,7 @@ int dof_prev_directory()
 int dof_real_path()
 {
 	char dir[MAX_PATH_LEN+1];
-	file_info_t *f_info = get_cur_fv_cur_file_ptr();
+	file_info_t *f_info = get_cur_fv_cur_file_info();
 	if (S_ISLNK(f_info->lst.st_mode)) {
 		// get real path of selected symlink
 		if (is_abs_path(f_info->symlink)) {
@@ -745,6 +750,13 @@ int dof_real_path()
 	return filer_change_dir_if_not_yet(dir);
 }
 //------------------------------------------------------------------------------
+int dof_enter_file_name()        { filer_do_next = FL_ENTER_FILE_NAME;	return 0; }
+int dof_enter_file_name_append() { filer_do_next = FL_ENTER_FILE_NAME_APPEND;	return 0; }
+int dof_enter_file_path()        { filer_do_next = FL_ENTER_FILE_PATH;	return 0; }
+int dof_enter_file_path_append() { filer_do_next = FL_ENTER_FILE_PATH_APPEND;	return 0; }
+int dof_enter_dir_path()        { filer_do_next = FL_ENTER_DIR_PATH;	return 0; }
+int dof_enter_dir_path_append() { filer_do_next = FL_ENTER_DIR_PATH_APPEND;	return 0; }
+//------------------------------------------------------------------------------
 int dof_set_filter()
 {
 	char filter[MAX_PATH_LEN+1];
@@ -759,7 +771,7 @@ int dof_set_filter()
 }
 int dof_select_file()
 {
-	get_cur_fv_cur_file_ptr()->selected = get_cur_fv_cur_file_ptr()->selected ^ _FILE_SEL_MAN_;
+	get_cur_fv_cur_file_info()->selected = get_cur_fv_cur_file_info()->selected ^ _FILE_SEL_MAN_;
 	set_cur_fv_file_idx(MIN_MAX_(0,
 	 get_cur_fv_file_idx() + 1, get_cur_filer_pane_view()->file_infos_entries-1));
 	disp_files_selected();
@@ -769,7 +781,7 @@ int dof_select_no_file()
 {
 	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_infos_entries;
 	 file_idx++) {
-		get_cur_fv_file_ptr(file_idx)->selected = _FILE_SEL_NONE_;
+		get_cur_fv_file_info(file_idx)->selected = _FILE_SEL_NONE_;
 	}
 	disp_status_bar_done(_("File selection cleared"));
 	return 0;
@@ -778,12 +790,12 @@ int dof_select_all_files()
 {
 	for (int file_idx = 0 ; file_idx < get_cur_filer_pane_view()->file_infos_entries;
 	 file_idx++) {
-		if (strcmp(get_cur_fv_file_ptr(file_idx)->file_name, ".") == 0
-		 || strcmp(get_cur_fv_file_ptr(file_idx)->file_name, "..") == 0)
-			get_cur_fv_file_ptr(file_idx)->selected = 0;
+		if ((strcmp(get_cur_fv_file_name(file_idx), ".") == 0)
+		 || (strcmp(get_cur_fv_file_name(file_idx), "..") == 0))
+			get_cur_fv_file_info(file_idx)->selected = 0;
 		else
-			get_cur_fv_file_ptr(file_idx)->selected
-			 = get_cur_fv_file_ptr(file_idx)->selected ^ _FILE_SEL_MAN_;
+			get_cur_fv_file_info(file_idx)->selected
+			 = get_cur_fv_file_info(file_idx)->selected ^ _FILE_SEL_MAN_;
 	}
 	disp_files_selected();
 	return 0;

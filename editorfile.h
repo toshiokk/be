@@ -49,7 +49,6 @@ int doe_close_all_modified();
 int doe_read_file_into_cur_buf();
 
 //------------------------------------------------------------------------------
-
 typedef enum {
 	NO_CLOSE_AFTER_SAVE_0,	// 0: File will be kept open
 	CLOSE_AFTER_SAVE_1		// 1: File will be closed after save
@@ -62,13 +61,8 @@ int close_all_saved();
 int write_file_ask(int yes_no, close_after_save_t close);
 
 //------------------------------------------------------------------------------
-
-#ifdef START_UP_TEST
-void test_flock();
-#endif // START_UP_TEST
-int flock_lock(const char *full_path);
-int flock_unlock(const char *full_path);
-int flock_is_locked(const char *full_path);
+void lock_epc_buf_if_file_already_locked(BOOL lock_buffer_if_already_locked);
+void unlock_epc_buf_if_file_had_locked_by_myself();
 
 #endif // editorfile_h
 

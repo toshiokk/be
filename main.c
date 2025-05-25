@@ -118,8 +118,8 @@ dtflf_d_printf("Start %s ==============================\n", APP_NAME " " __DATE_
 	flf_d_printf("init_histories()\n");
 	init_histories();
 
-	flf_d_printf("load_histories()\n");
-	load_histories();
+	flf_d_printf("load_histories_if_needed()\n");
+	load_histories_if_needed();
 
 	flf_d_printf("load_last_key_macro()\n");
 	load_last_key_macro(1);
@@ -193,8 +193,7 @@ flf_d_printf("optind:%d: %s\n", optind, argv[optind]);
 	set_item_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
 	tio_destroy();
 
-	limit_cut_buffers();
-	save_cut_buffers_if_modified();
+	save_cut_buffers_if_modified_or_limited();
 
 	reduce_log_file_size(get_exec_log_file_path(), MAX_LOG_FILE_SIZE_KB);
 	write_exit_file(restart_be);
@@ -402,13 +401,13 @@ PRIVATE void app_main_loop()
 		doe_open_file_recursive();
 	}
 	while (has_bufs_to_edit()) {
-		do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
+		do_call_editor(0, APP_MODE_NORMAL, NULL, NULL);
 	}
 #else // ENABLE_FILER
 	if (count_edit_bufs()) {
 		// application was started as a EDITOR
 		while (has_bufs_to_edit()) {
-			do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
+			do_call_editor(0, APP_MODE_NORMAL, NULL, NULL);
 		}
 	} else {
 		// application was started as a FILER
@@ -422,7 +421,7 @@ flf_d_printf("count_edit_bufs():%d, epc_buf_count_bufs():%d\n",
 				break;
 			}
 flf_d_printf("do_call_editor\n");
-			do_call_editor(0, APP_MODE_NORMAL, NULL, NULL, 0);
+			do_call_editor(0, APP_MODE_NORMAL, NULL, NULL);
 		}
 	}
 #endif // ENABLE_FILER
@@ -493,7 +492,7 @@ PRIVATE void start_up_test()
 
 	////test_get_intersection();
 	get_mem_free_in_kb(1);
-	////test_zz_from_num();
+	test_zz_from_num();
 	////test_utf8c_encode();
 	test_utf8c_bytes();
 	////test_wcwidth();
@@ -510,8 +509,6 @@ PRIVATE void start_up_test()
 	////test_key_code_from_to_key_name();
 	flf_d_printf("}}}}---------------------------------------------------------\n");
 }
-#endif // START_UP_TEST
-#ifdef START_UP_TEST
 PRIVATE void start_up_test2()
 {
 	flf_d_printf("{{{{---------------------------------------------------------\n");
@@ -656,7 +653,6 @@ void show_usage()
 	show_one_option("-k",                "--keyseq",          _("Investigate key sequence"));
 #endif // ENABLE_NCURSES
 }
-
 // Print one option explanation to the screen
 PRIVATE void show_one_option(const char *shortflag, const char *longflag, const char *desc)
 {

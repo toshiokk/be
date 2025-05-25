@@ -91,7 +91,7 @@ char *strnset__(char *buf, char chr, size_t len);
 char *strncpy__(char *dest, const char *src, size_t buf_len);
 void *memcpy__(void *dest, const void *src, size_t len);
 
-int tolower_if_alpha(int chr);
+int tolower__(int chr);
 char *strupper(char *buffer);
 char *strlower(char *buffer);
 

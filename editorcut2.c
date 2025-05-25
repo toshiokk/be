@@ -114,8 +114,8 @@ PRIVATE void change_cut_mode_after_cursor_horiz_vert_move(cursor_horiz_vert_move
 	case CURS_MOVE_NONE:
 		break;
 	case CURS_MOVE_HORIZ:
-		int epcbvc_col_idx = col_idx_from_byte_idx(EPCBVC_CL->data, 0, EPCBVC_CLBI);
-		int epcb_col_idx = col_idx_from_byte_idx(EPCB_ML->data, 0, EPCB_MLBI);
+		int epcbvc_col_idx = col_idx_from_byte_idx(EPCBVC_CL->data, EPCBVC_CLBI);
+		int epcb_col_idx = col_idx_from_byte_idx(EPCB_ML->data, EPCB_MLBI);
 		if (epcbvc_col_idx == epcb_col_idx) {
 			// current column == beginning column
 			switch (GET_CUR_EBUF_STATE(buf_CUT_MODE)) {
@@ -334,9 +334,9 @@ void setup_cut_region()
 	case CUT_MODE_HV_BOX:
 	case CUT_MODE_VH_BOX:
 		int mark_min_line_col_idx
-		 = col_idx_from_byte_idx(mark_min_line__->data, 0, mark_min_byte_idx);
+		 = col_idx_from_byte_idx(mark_min_line__->data, mark_min_byte_idx);
 		int mark_max_line_col_idx
-		 = col_idx_from_byte_idx(mark_max_line__->data, 0, mark_max_byte_idx);
+		 = col_idx_from_byte_idx(mark_max_line__->data, mark_max_byte_idx);
 		if (mark_min_line_col_idx <= mark_max_line_col_idx) {
 			mark_min_col_idx = mark_min_line_col_idx;
 			mark_max_col_idx = mark_max_line_col_idx;
@@ -393,7 +393,6 @@ int columns_selected()
 #define CUT_BUF_SEPARATOR_L		(const char*)("Ｌ\n")
 #define CUT_BUF_SEPARATOR_C		(const char*)("Ｃ\n")
 #define CUT_BUF_SEPARATOR_B		(const char*)("Ｂ\n")
-#define MAX_CUT_BUFFERS			1000
 // "Ｌ^L"
 // "line cut strings"
 // "Ｃ^C"
@@ -460,8 +459,8 @@ int load_cut_buffers()
 		}
 		if ((buf_mode == CUT_MODE_N_LINE) || (buf_mode == CUT_MODE_0_LINE)) {
 			if (strcmp(buffer, CUT_BUF_SEPARATOR_L) == 0) { buf_mode = CUT_MODE_HV_LINE; }
-			if (strcmp(buffer, CUT_BUF_SEPARATOR_C) == 0) { buf_mode = CUT_MODE_VH_CHAR; }
-			if (strcmp(buffer, CUT_BUF_SEPARATOR_B) == 0) { buf_mode = CUT_MODE_VH_BOX; }
+			else if (strcmp(buffer, CUT_BUF_SEPARATOR_C) == 0) { buf_mode = CUT_MODE_VH_CHAR; }
+			else if (strcmp(buffer, CUT_BUF_SEPARATOR_B) == 0) { buf_mode = CUT_MODE_VH_BOX; }
 		}
 		if (buf_mode != CUT_MODE_0_LINE) {
 			if (buf_mode != CUT_MODE_N_LINE) {
@@ -492,26 +491,57 @@ void set_cut_buffers_modified()
 }
 void load_cut_buffers_if_updated()
 {
-	if (buf_has_orig_file_updated(NODES_BOT_ANCH(&cut_buffers), get_cut_buffer_file_path())) {
+	if (is_cut_buffers_updated()) {
 		load_cut_buffers();
 	}
 }
 void save_cut_buffers_if_modified()
 {
-	if (buf_get_modified(NODES_BOT_ANCH(&cut_buffers))) {
+	if (is_cut_buffers_modified()) {
 		save_cut_buffers();
 	}
 }
-int limit_cut_buffers()
+void save_cut_buffers_if_modified_or_limited()
 {
-	int buf_cnt = 0;
-	for (be_buf_t* buf = NODES_TOP_NODE(&cut_buffers); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
-		if (buf_cnt >= MAX_CUT_BUFFERS) {
-			buf = buf_unlink_free(buf);
-		}
-		buf_cnt++;
+	// | updated | modified | limited || saving |
+	// |---------|----------|---------||--------|
+	// |    1    |     *    |    *    ||  No    | keep other process's change
+	// |    0    |     0    |    0    ||  No    | no need of saving
+	// |    0    |     0    |    1    ||  Yes   | save reduced buffers
+	// |    1    |     1    |    0    ||  Yes   | save modified buffers
+	// |    1    |     1    |    1    ||  Yes   | save
+	if ((is_cut_buffers_updated() == 0)
+	 && (is_cut_buffers_modified() || limit_cut_buffers_in_size())) {
+		save_cut_buffers();
 	}
-	return buf_cnt;
+}
+int is_cut_buffers_updated()
+{
+	return buf_has_orig_file_updated(NODES_BOT_ANCH(&cut_buffers), get_cut_buffer_file_path()) > 0;
+}
+int is_cut_buffers_modified()
+{
+	return buf_get_modified(NODES_BOT_ANCH(&cut_buffers));
+}
+int limit_cut_buffers_in_size()
+{
+#define MAX_CUT_BUFFERS			100
+#define MAX_CUT_BUFFER_LINES	1000
+	int buf_cnt = 0;
+	int line_cnt = 0;
+	for (be_buf_t* buf = NODES_TOP_NODE(&cut_buffers); IS_NODE_INT(buf); ) {
+/////flf_d_printf("buf_cnt: %d, line_cnt: %d\n", buf_cnt, line_cnt);
+		if ((buf_cnt < MAX_CUT_BUFFERS) && (line_cnt < MAX_CUT_BUFFER_LINES)) {
+			buf_cnt++;
+			line_cnt += buf_count_lines(buf, MAX_CUT_BUFFER_LINES);
+			buf = NODE_NEXT(buf);
+		} else {
+			buf = buf_unlink_free(buf);
+			set_cut_buffers_modified();
+		}
+	}
+flf_d_printf("buf_cnt: %d\n", count_cut_bufs());
+	return buf_get_modified(NODES_BOT_ANCH(&cut_buffers));
 }
 PRIVATE char *get_cut_buffer_file_path()
 {

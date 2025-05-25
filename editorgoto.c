@@ -75,10 +75,10 @@ int doe_goto_line()
 	return 1;
 }
 
-// |function name                 |difference|
-// |------------------------------|----------|
-// |doe_tag_jump_in_cur_line      |jump to the file or directory gotten from line top  |
-// |doe_tag_jump_in_cur_cursor_pos|jump to the file or directory gotten from cursor pos|
+// |function name               |difference|
+// |----------------------------|----------|
+// |doe_tag_jump_in_cur_line    |jump to the file or directory gotten from line top  |
+// |doe_tag_jump_in_cur_curs_pos|jump to the file or directory gotten from cursor pos|
 
 PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx);
 PRIVATE int goto_file_in_string(const char* string);
@@ -92,13 +92,13 @@ int doe_tag_jump_in_cur_line()
 	}
 #ifdef ENABLE_FILER
 	// going to change directory
-	return doe_goto_directory_in_cur_line();
+	return doe_goto_dir_in_cur_line();
 #else // ENABLE_FILER
 	return 0;
 #endif // ENABLE_FILER
 }
 // TAG JUMP (file_path is taken from the current cursor position)
-int doe_tag_jump_in_cur_cursor_pos()
+int doe_tag_jump_in_cur_curs_pos()
 {
 	if (goto_file_in_cur_line_byte_idx(EPCBVC_CLBI) >= 0) {
 		// files opened
@@ -106,7 +106,7 @@ int doe_tag_jump_in_cur_cursor_pos()
 	}
 #ifdef ENABLE_FILER
 	// going to change directory
-	return doe_goto_directory_in_cur_cursor_pos();
+	return doe_goto_dir_in_cur_curs_pos();
 #else // ENABLE_FILER
 	return 0;
 #endif // ENABLE_FILER
@@ -148,13 +148,13 @@ int doe_open_files_in_buf()
 #ifdef ENABLE_FILER
 int doe_filer()
 {
-	return doe_goto_directory_in_cur_line();
+	return doe_goto_dir_in_cur_line();
 }
-int doe_goto_directory_in_cur_line()
+int doe_goto_dir_in_cur_line()
 {
 	return try_to_open_dir_in_cur_line_with_filer(0);
 }
-int doe_goto_directory_in_cur_cursor_pos()
+int doe_goto_dir_in_cur_curs_pos()
 {
 	return try_to_open_dir_in_cur_line_with_filer(EPCBVC_CLBI);
 }

@@ -6,6 +6,17 @@
 - CRASH: crash
 - POLICY: things to be kept
 
+- [x] BUG: pasting string does not forward cursor position ==> how to reproduce it ??
+- [] BUG: sometimes execution does not update other instance
+- [x] ISSUE: loading cut-buffer takes long time at startup ==> properly limit log file in size
+- [x] ISSUE: show key bindings in list mode in the status bar correctly by defining keys separately in normal and list mode in filerkeys.c
+- [x] 250520 ISSUE: in filer just Enter input full path.
+- [d] ISSUE: can not delete files containing '$' (by shell substitution)
+  ```
+  betrash $$home$user$git$KOIKE$@doc$@refs$1-Wire$DS18B20-85-deg$250512$250509-DS18B20-85deg.md
+  rm -rvf $$home$user$git$KOIKE$@doc$@refs$1-Wire$DS18B20-85-deg$250512$250509-DS18B20-85deg.md
+  ```
+  - [x] 250520 change the separator substitution of '/' from '$' to '.'
 - [x] 250518 on the opening help buffer, reload all help buffers and cut-buffers
 - [x] 250511 BUG: not copyable of a text in the list mode
 - [x] 250511 CRASH: when it cuts a text from the later line to the former line

@@ -26,7 +26,8 @@
 ////#define ENABLE_DEBUG 1
 
 #ifdef ENABLE_DEBUG
-////#define START_UP_TEST		// define this to run unit tests at the start up of application
+////
+#define START_UP_TEST		// define this to run unit tests at the start up of application
 #endif // ENABLE_DEBUG
 
 //------------------------------------------------------------------------------
@@ -120,7 +121,7 @@ int call_progerr_callback(const char* message);
  if ((memcmp((actual), (expected), MIN_(actual_len, expected_len)) == 0)	\
   && (actual_len != expected_len)) {										\
   warning_printf("binary data different\n");								\
-    dump_memory("actual:", actual, actual_len);							\
+    dump_memory("actual:", actual, actual_len);								\
     dump_memory("expected:", expected, expected_len);						\
 }
 #endif // START_UP_TEST

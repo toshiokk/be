@@ -72,6 +72,8 @@ int dof_refresh_filer();
 //|doe_run_line_soon_w_log    | --      | --     | yes |
 
 int dof_tap_file();
+int dof_tap_file_to_enter();
+int dof_tap_file_to_enter_append();
 int dof_view_file();
 int dof_tail_file();
 
@@ -119,6 +121,13 @@ int dof_home_directory();
 int dof_root_directory();
 int dof_prev_directory();
 
+int dof_enter_file_name();
+int dof_enter_file_name_append();
+int dof_enter_file_path();
+int dof_enter_file_path_append();
+int dof_enter_dir_path();
+int dof_enter_dir_path_append();
+
 int dof_set_filter();
 int dof_select_file();
 int dof_select_no_file();
@@ -151,7 +160,7 @@ int check_to_change_dir_in_string(const char *str, char* buf_dir);
 int try_to_chdir_parent(char* buf_dir);
 
 int filer_change_dir_parent(char *path);
-int filer_change_dir(char *dir);
+int filer_change_dir(const char *dir);
 
 int change_cur_dir_saving_prev_next(const char *dir);
 

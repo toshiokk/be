@@ -22,7 +22,7 @@
 
 #include "headers.h"
 
-func_key_list_t *get_app_func_key_table()
+func_key_t *get_app_func_key_table()
 {
 #ifdef ENABLE_FILER
 	if (GET_APPMD(app_EDITOR_FILER) == 0) {
@@ -36,50 +36,107 @@ func_key_list_t *get_app_func_key_table()
 }
 
 //------------------------------------------------------------------------------
-int cmp_func_id(const char *func_id_1, const char *func_id_2)
+// "dof_quit_filer" ==> "q|^q|@q"
+void conv_func_id_to_key_names(char *func_id, int max_keys)
 {
-	return strcmp(func_id_1, func_id_2) == 0;
+#define MAX_KEY_NAMES_LEN	(MAX_KEY_NAME_LEN * MAX_KEYS_BIND + 1 * (MAX_KEYS_BIND-1))
+	char key_names[MAX_KEY_NAMES_LEN + 1] = "";			// "KEY1|KEY2|KEY3"
+	func_key_t *func_key = get_fkey_entry_from_func_id(func_id, -1);
+	if (func_key == NULL) {
+		return;
+	}
+	for (int key_idx = 0; key_idx < max_keys; key_idx++) {
+		if (func_key->keys[key_idx] != KNA) {
+			const char *key_name = short_key_name_from_key_code(func_key->keys[key_idx], NULL);
+			if (is_strlen_not_0(key_names)) {
+				strlcat__(key_names, MAX_KEY_NAMES_LEN, "|");
+			}
+			strlcat__(key_names, MAX_KEY_NAMES_LEN, key_name);
+		}
+	}
+	if (is_strlen_not_0(key_names)) {
+		// copy into func_id and return it to the caller
+		strlcpy__(func_id, key_names, MAX_KEY_NAMES_LEN);
+	}
 }
+
 void *get_app_function_for_key(key_code_t key)
 {
-	func_key_list_t *fkey_list = get_fkey_entry_table_from_key(NULL, key, 0, 1);
-	if (fkey_list) {
-		return (void *)fkey_list->func;
+	func_key_t *func_key = get_fkey_entry_from_key(NULL, key, 0);
+	if (func_key) {
+		return (void *)func_key->func;
 	}
 	return NULL;
 }
 const char *get_func_id_from_key(key_code_t key)
 {
-	func_key_list_t *fkey_list = get_fkey_entry_table_from_key(editor_func_key_table, key, 0, 1);
-	if (fkey_list) {
-		return fkey_list->func_id;
+	func_key_t *func_key = get_fkey_entry_from_key(editor_func_key_table, key, 0);
+	if (func_key) {
+		return func_key->func_id;
 	}
 #ifdef ENABLE_FILER
-	fkey_list = get_fkey_entry_table_from_key(filer_func_key_table, key, 0, 1);
-	if (fkey_list) {
-		return fkey_list->func_id;
+	func_key = get_fkey_entry_from_key(filer_func_key_table, key, 0);
+	if (func_key) {
+		return func_key->func_id;
 	}
 #endif // ENABLE_FILER
 	return "";
 }
-// exec_lvl:
-//   `1`: get EXEC_LVL_1 and EXEC_LVL_2
-//   `2`: get EXEC_LVL_2
-func_key_list_t *get_fkey_entry_table_from_key(func_key_list_t *fkey_list, key_code_t key,
- int list_mode, int exec_lvl)
+func_key_t *get_fkey_entry_from_key(func_key_t *func_key, key_code_t key, int list_mode)
 {
-	if (fkey_list == NULL) {
-		fkey_list = get_app_func_key_table();
+	if (func_key == NULL) {
+		func_key = get_app_func_key_table();
 	}
-	for (int f_idx = 0; fkey_list[f_idx].explanation[0]; f_idx++) {
-		if (is_key_assigned_to_func(key, &fkey_list[f_idx])
-		 && (is_fkey_entry_executable(&fkey_list[f_idx], list_mode) >= exec_lvl)) {
-			return &fkey_list[f_idx];
+	for (int f_idx = 0; func_key[f_idx].explanation[0]; f_idx++) {
+		if (is_key_assigned_to_func(key, &func_key[f_idx])
+		 && is_fkey_entry_executable(&func_key[f_idx], list_mode)) {
+			return &func_key[f_idx];
 		}
 	}
 	return NULL;
 }
-int is_fkey_entry_executable(func_key_list_t *fkey_list, int list_mode)
+
+key_code_t get_key_for_func_id(const char *func_id)
+{
+	func_key_t *func_key = get_fkey_entry_from_func_id(func_id, -1);
+	if (func_key == NULL) {
+		return K_NONE;
+	}
+	// return a key which is not K_Fxx
+	return (IS_BETWEEN(K_F01, func_key->keys[0], K_F12) == 0)
+	 ? func_key->keys[0] : func_key->keys[1];
+}
+
+PRIVATE func_key_t *get_fkey_entry_from_func_id__(func_key_t *func_key,
+ const char *func_id, int list_mode);
+
+func_key_t *get_fkey_entry_from_func_id(const char *func_id, int list_mode)
+{
+	func_key_t *func_key = get_fkey_entry_from_func_id__(editor_func_key_table,
+	 func_id, list_mode);
+	if (func_key) {
+		return func_key;
+	}
+#ifdef ENABLE_FILER
+	func_key = get_fkey_entry_from_func_id__(filer_func_key_table, func_id, list_mode);
+	if (func_key) {
+		return func_key;
+	}
+#endif // ENABLE_FILER
+	return NULL;
+}
+PRIVATE func_key_t *get_fkey_entry_from_func_id__(func_key_t *func_key,
+ const char *func_id, int list_mode)
+{
+	for (int f_idx = 0; func_key[f_idx].explanation[0]; f_idx++) {
+		if ((strcmp(func_key[f_idx].func_id, func_id) == 0)
+		 && is_fkey_entry_executable(&func_key[f_idx], list_mode)) {
+			return &func_key[f_idx];
+		}
+	}
+	return NULL;
+}
+int is_fkey_entry_executable(func_key_t *func_key, int list_mode)
 {
 	// list_mode:
 	//   0: normal_mode
@@ -88,119 +145,66 @@ int is_fkey_entry_executable(func_key_list_t *fkey_list, int list_mode)
 	if (list_mode < 0) {
 		list_mode = is_app_chooser_viewer_mode();
 	}
-#define EXEC_LVL_0	0	// not executable
-#define EXEC_LVL_1	1	// partially executable
-#define EXEC_LVL_2	2	// fully executable
 	if (list_mode == 0) {
 		// normal mode
-		switch (fkey_list->list_mode) {
+		switch (func_key->list_mode) {
 		default:
-		case EFAM_EXEC:
-		case EFNM_EXEC:
-		case E_LM_CULN:
-		case F_LM_FLNM:
-		case F_LM_CUDI:
-			return EXEC_LVL_2;		// fully executable
-		case EFLM_EXEC:
-			return EXEC_LVL_0;		// not executable
+		case EFAM:
+		case EFNM:
+			return 1;		// executable
+		case EFLM:
+			return 0;		// not executable
 		}
 	} else {
 		// list mode
-		switch (fkey_list->list_mode) {
+		switch (func_key->list_mode) {
 		default:
-		case EFAM_EXEC:
-		case EFLM_EXEC:
-			return EXEC_LVL_2;		// fully executable
-		case E_LM_CULN:
-		case F_LM_FLNM:
-		case F_LM_CUDI:
-			return EXEC_LVL_1;		// partially executable
-		case EFNM_EXEC:
-			return EXEC_LVL_0;		// not executable
+		case EFAM:
+		case EFLM:
+			return 1;		// executable
+		case EFNM:
+			return 0;		// not executable
 		}
 	}
 }
 
-key_code_t get_key_for_func_id(char *func_id)
-{
-	func_key_list_t *fkey_list = get_fkey_entry_from_func_id(func_id);
-	if (fkey_list == NULL) {
-		return K_NONE;
-	}
-	// return a key which is not Fxx
-	return (IS_BETWEEN(K_F01, fkey_list->keys[0], K_F12) == 0)
-	 ? fkey_list->keys[0] : fkey_list->keys[1];
-}
-PRIVATE func_key_list_t *get_fkey_entry_from_func_id__(func_key_list_t *fkey_list,
- const char *func_id);
-func_key_list_t *get_fkey_entry_from_func_id(const char *func_id)
-{
-	func_key_list_t *fkey_list = get_fkey_entry_from_func_id__(editor_func_key_table, func_id);
-	if (fkey_list) {
-		return fkey_list;
-	}
-#ifdef ENABLE_FILER
-	fkey_list = get_fkey_entry_from_func_id__(filer_func_key_table, func_id);
-	if (fkey_list) {
-		return fkey_list;
-	}
-#endif // ENABLE_FILER
-	return NULL;
-}
-PRIVATE func_key_list_t *get_fkey_entry_from_func_id__(func_key_list_t *fkey_list,
- const char *func_id)
-{
-	for (int f_idx = 0; fkey_list[f_idx].explanation[0]; f_idx++) {
-		if (strcmp(fkey_list[f_idx].func_id, func_id) == 0) {
-			return &fkey_list[f_idx];
-		}
-	}
-	return NULL;
-}
-
-int is_key_assigned_to_func(key_code_t key, func_key_list_t *fkey_list)
+int is_key_assigned_to_func(key_code_t key, func_key_t *func_key)
 {
 	return (key != KNA)
-	 && ((key == fkey_list->keys[0])
-	  || (key == fkey_list->keys[1])
-	  || (key == fkey_list->keys[2]));
+	 && ((key == func_key->keys[0])
+	  || (key == func_key->keys[1])
+	  || (key == func_key->keys[2]));
 }
 void clear_fkey_tbl_using_these_keys(key_code_t *keys)
 {
-	func_key_list_t *fkey_list = editor_func_key_table;
-	for (int f_idx = 0; fkey_list[f_idx].func != NULL; f_idx++) {
-		clear_key_if_bound_to_func(keys[0], &fkey_list[f_idx]);
-		clear_key_if_bound_to_func(keys[1], &fkey_list[f_idx]);
+	func_key_t *func_key = editor_func_key_table;
+	for (int f_idx = 0; func_key[f_idx].func != NULL; f_idx++) {
+		clear_key_if_bound_to_func(keys[0], &func_key[f_idx]);
+		clear_key_if_bound_to_func(keys[1], &func_key[f_idx]);
 	}
 }
-void clear_key_if_bound_to_func(key_code_t key, func_key_list_t *fkey_list)
+void clear_key_if_bound_to_func(key_code_t key, func_key_t *func_key)
 {
 	for (int key_idx = 0; key_idx < MAX_KEYS_BIND; key_idx++) {
-		if (fkey_list->keys[key_idx] == key) {
-			fkey_list->keys[0] = KNA;
+		if (func_key->keys[key_idx] == key) {
+			func_key->keys[0] = KNA;
 		}
 	}
 }
-void clear_fkey_tbl_keys(func_key_list_t *fkey_list)
+void clear_fkey_tbl_keys(func_key_t *func_key)
 {
-	fkey_list->keys[0] = KNA;
-	fkey_list->keys[1] = KNA;
+	func_key->keys[0] = KNA;
+	func_key->keys[1] = KNA;
 }
 
-void bind_key_to_func(func_key_list_t *fkey_list, key_code_t *keys)
+void bind_key_to_func(func_key_t *func_key, key_code_t *keys)
 {
-	clear_fkey_tbl_keys(fkey_list);	// clear keys before assigning keys
+	clear_fkey_tbl_keys(func_key);	// clear keys before assigning keys
 	for (int key_idx = 0; key_idx < MAX_KEYS_BIND; key_idx++) {
 		if (IS_KEY_VALID(keys[key_idx])) {
-			fkey_list->keys[key_idx] = keys[key_idx];
+			func_key->keys[key_idx] = keys[key_idx];
 		}
 	}
-}
-
-// "dof_quit_filer" ==> 0x71 ==> "q"
-const char *short_key_name_from_func_id(char *buf)
-{
-	return short_key_name_from_key_code(get_key_for_func_id(buf), buf);
 }
 
 //------------------------------------------------------------------------------
@@ -486,17 +490,17 @@ key_name_table_t key_name_table[] = {
 	{ NUM_STR(K_C_X)		, "C-X", },
 	{ NUM_STR(K_C_Y)		, "C-Y", },
 	{ NUM_STR(K_C_Z)		, "C-Z", },
-	{ NUM_STR(K_ESC)		, "ESC", },
-	{ NUM_STR(K_C_BAKSL)	, "C-\\", },
-	{ NUM_STR(K_C_RBRAK)	, "C-]", },
-	{ NUM_STR(K_C_CARET)	, "C-^", },
-	{ NUM_STR(K_C_UNDLN)	, "C-_", },
+	{ NUM_STR(K_ESC)		, "ESC", },		// 0x1b
+	{ NUM_STR(K_C_BAKSL)	, "C-\\", },	// 0x1c
+	{ NUM_STR(K_C_RBRAK)	, "C-]", },		// 0x1d
+	{ NUM_STR(K_C_CARET)	, "C-^", },		// 0x1e
+	{ NUM_STR(K_C_UNDLN)	, "C-_", },		// 0x1f
 
-	{ NUM_STR(K_SP)			, "SP", },
+	{ NUM_STR(K_SP)			, "SP", },		// 0x20
 
-	{ NUM_STR(CHAR_DEL)		, "DEL", },
-	{ NUM_STR(K_BS)			, "K_BS", },
-	{ NUM_STR(K_DEL)		, "K_DEL", },
+	{ NUM_STR(CHAR_DEL)		, "CHAR_DEL", },
+	{ NUM_STR(K_BS)			, "BS", },
+	{ NUM_STR(K_DEL)		, "DEL", },
 	{ NUM_STR(K_INS)		, "INS", },
 	{ NUM_STR(K_HOME)		, "HOME", },
 	{ NUM_STR(K_END)		, "END", },
@@ -515,15 +519,13 @@ key_name_table_t key_name_table[] = {
 	{ NUM_STR(K_MC_E)		, "MC-E", },
 	{ NUM_STR(K_MC_F)		, "MC-F", },
 	{ NUM_STR(K_MC_G)		, "MC-G", },
-	{ NUM_STR(K_M_BS)		, "M-BS", },
 	{ NUM_STR(K_MC_H)		, "MC-H", },
-	{ NUM_STR(K_M_TAB)		, "M-TAB", },
 	{ NUM_STR(K_MC_I)		, "MC-I", },
 	{ NUM_STR(K_MC_J)		, "MC-J", },
 	{ NUM_STR(K_MC_K)		, "MC-K", },
 	{ NUM_STR(K_MC_L)		, "MC-L", },
 	{ NUM_STR(K_M_ENTER)	, "M-ENTER", },
-	{ NUM_STR(K_MC_M)		, "MC-M", },
+///	{ NUM_STR(K_MC_M)		, "MC-M", },
 	{ NUM_STR(K_MC_N)		, "MC-N", },
 	{ NUM_STR(K_MC_O)		, "MC-O", },
 	{ NUM_STR(K_MC_P)		, "MC-P", },
@@ -644,7 +646,10 @@ key_name_table_t key_name_table[] = {
 	{ NUM_STR(K_M_VERTB)	, "M-|", },
 	{ NUM_STR(K_M_RBRAC)	, "M-}", },
 	{ NUM_STR(K_M_TILDE)	, "M-~", },
-	{ NUM_STR(K_M_DEL)		, "M-DEL", },
+	{ NUM_STR(K_M_CHAR_DEL)	, "M-CHAR_DEL", },
+
+/////	{ NUM_STR(K_M_BS)		, "M-BS", },
+	{ NUM_STR(K_M_TAB)		, "M-TAB", },
 
 	{ NUM_STR(K_F01)		, "F01", },
 	{ NUM_STR(K_F02)		, "F02", },
@@ -764,7 +769,8 @@ int key_code_from_key_str(const char* str, key_code_t* key_code)
 // "C-@", "SP", "%", ... "0", "A", "漢", "MC-UNDLN", "ffff"
 const char *long_key_none_str()
 {
-	return long_key_name_from_key_code(K_NONE, NULL);
+	static char buf_s_[MAX_KEY_NAME_LEN+1];
+	return strnset__(buf_s_, '-', MAX_KEY_NAME_LEN);	// "--------"
 }
 const char *long_key_name_from_key_code(key_code_t key_code, char *buf)
 {
@@ -772,8 +778,24 @@ const char *long_key_name_from_key_code(key_code_t key_code, char *buf)
 	if (buf == NULL) {
 		buf = buf_s_;
 	}
+	const char *cbuf = long_key_name_from_key_code_null(key_code, buf);
+	if (is_strlen_not_0(cbuf))
+		return cbuf;
+	if ((key_code & 0xff00) == K_M(0)) {	// 0x1bxx
+		snprintf(buf_s_, MAX_KEY_NAME_LEN+1, "%04x", (UINT16)key_code);
+		return buf_s_;
+	}
+	return long_key_none_str();
+}
+const char *long_key_name_from_key_code_null(key_code_t key_code, char *buf)
+{
+	static char buf_s_[MAX_KEY_NAME_LEN+1];
+	if (buf == NULL) {
+		buf = buf_s_;
+	}
+	strcpy__(buf, "");
 	if (IS_KEY_INVALID(key_code)) {
-		return strnset__(buf, '-', MAX_KEY_NAME_LEN);	// "--------"
+		return buf;
 	}
 	for (int f_idx = 0; f_idx < ARRAY_SIZE_OF(key_name_table); f_idx++) {
 		if (key_name_table[f_idx].key_code == key_code) {
@@ -781,21 +803,17 @@ const char *long_key_name_from_key_code(key_code_t key_code, char *buf)
 		}
 	}
 	if (is_key_graph(key_code) || is_key_utf8_byte(key_code)) {
-		snprintf(buf_s_, MAX_KEY_NAME_LEN+1, "%c", key_code);
+		snprintf(buf, MAX_KEY_NAME_LEN+1, "%c", key_code);
 	} else
 	if ((key_code & 0xff00) == K_M(0)) {	// 0x1bxx
 		unsigned char chr = key_code & 0x00ff;
 		if (isgraph(chr)) {
-			snprintf(buf_s_, MAX_KEY_NAME_LEN+1, "M-%c", chr);
+			snprintf(buf, MAX_KEY_NAME_LEN+1, "M-%c", chr);
 		} else if (0 <= chr && chr < 0x20) {
-			snprintf(buf_s_, MAX_KEY_NAME_LEN+1, "MC-%c", '@' + chr);
-		} else {
-			snprintf(buf_s_, MAX_KEY_NAME_LEN+1, "%04x", (UINT16)key_code);
+			snprintf(buf, MAX_KEY_NAME_LEN+1, "MC-%c", '@' + chr);
 		}
-	} else {
-		snprintf(buf_s_, MAX_KEY_NAME_LEN+1, "%04x", (UINT16)key_code);
 	}
-	return buf_s_;
+	return buf;
 }
 const char *short_key_name_from_key_code(key_code_t key_code, char *buf)
 {

@@ -512,8 +512,6 @@ PRIVATE int my_guess_utf8_file(const char *full_path)
 }
 PRIVATE int load_file_into_cur_buf_nkf(const char *full_path, const char *nkf_options)
 {
-	int lines;
-
 	char buffer[MAX_PATH_LEN+1];
 	snprintf_(buffer, MAX_PATH_LEN+1, "nkf %s \"%s\"", nkf_options, full_path);
 	FILE *fp;
@@ -522,7 +520,7 @@ PRIVATE int load_file_into_cur_buf_nkf(const char *full_path, const char *nkf_op
 		 shrink_str_to_scr_static(full_path), strerror(errno));
 		return -1;
 	}
-	lines = load_into_cur_buf_fp(fp);
+	int lines = load_into_cur_buf_fp(fp);
 	if (pclose(fp) == -1) {	// -1: error
 		lines = -1;
 	}
@@ -859,34 +857,77 @@ void disp_files_loaded()
 }
 
 //------------------------------------------------------------------------------
-int reduce_log_file_size(const char *file_path, int size_in_kb)
+#ifdef START_UP_TEST
+void test_flock()
 {
-	if (get_file_size(file_path) <= ((ssize_t)size_in_kb * 1024)) {
-		return 0;	// no need to reduce
+	MY_UT_INT(flock_lock("relative/path/to/file.txt"), 0);
+	MY_UT_INT(flock_unlock("relative/path/to/file.txt"), 0);
+	MY_UT_INT(flock_lock("relative/path/to/file.txt"), 0);
+	MY_UT_INT(flock_lock("relative/path/to/file.txt"), 1);
+	MY_UT_INT(flock_unlock("relative/path/to/file.txt"), 0);
+	MY_UT_INT(flock_unlock("relative/path/to/file.txt"), 1);
+
+	////MY_UT_INT(flock_lock("relative/path/to/file.txt"), 0);
+
+	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
+	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 0);
+	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
+	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 1);
+	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 0);
+	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 1);
+
+	////MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
+}
+#endif // START_UP_TEST
+
+PRIVATE int flock_create_lock_file(const char *full_path);
+PRIVATE int flock_delete_lock_file(const char *full_path);
+PRIVATE const char* flock_get_lock_file_path(const char* full_path);
+
+int flock_lock(const char *full_path)
+{
+	if (flock_is_locked(full_path)) {
+		return 1;	// lock already exist
 	}
-
-	char command_str[MAX_PATH_LEN+1] = "";
-	// "tail -c 500K 1.log >1.log~; mv -vf 1.log~ 1.log"
-	snprintf_(command_str, MAX_PATH_LEN, "tail -c %dK %s >%s%s ; mv -vf %s%s %s",
-	 size_in_kb / 2,
-	 file_path, file_path, BACKUP_FILE_SUFFIX,
-	 file_path, BACKUP_FILE_SUFFIX, file_path);
-
-	return fork_exec_sh_c(EX_FLAGS_0, command_str);
+	flock_create_lock_file(full_path);
+	return 0;		// successfully locked
+}
+int flock_unlock(const char *full_path)
+{
+	if (flock_is_locked(full_path) == 0) {
+		return 1;	// lock not exist
+	}
+	flock_delete_lock_file(full_path);
+	return 0;		// successfully unlocked
+}
+int flock_is_locked(const char *full_path)
+{
+	return is_path_exist(flock_get_lock_file_path(full_path));
+}
+PRIVATE int flock_create_lock_file(const char *full_path)
+{
+	return write_text_to_file(flock_get_lock_file_path(full_path), 0, "");
+}
+PRIVATE int flock_delete_lock_file(const char *full_path)
+{
+	return remove_file(flock_get_lock_file_path(full_path));
 }
 
-const char *get_exec_log_file_path()
+//      "/path/to/a/file/being/locked.txt"
+//  ==> ".path.to.a.file.being.locked.txt"
+//  ==> "$APP_DIR/.path.to.a.file.being.locked.txt"
+// e.g. "/home/user/.be/.home.user.tools.be.be.app_defs.txt"
+PRIVATE const char* flock_get_lock_file_path(const char* full_path)
 {
-	// /dev/tty1  => "/home/user/.be/tty1.log"
-	// /dev/pts/1 => "/home/user/.be/1.log"
-	static char file_path[MAX_PATH_LEN+1] = "";
-	char dir[MAX_PATH_LEN+1];
-	char file[MAX_PATH_LEN+1];
-	if (is_strlen_0(file_path)) {
-		separate_path_to_dir_and_file(get_tty_name(), dir, file);
-		cat_dir_and_file(file_path, get_app_dir(), sprintf_s("%s.log", file));
+	static char lock_file_path[MAX_PATH_LEN+1];
+	char abs_path[MAX_PATH_LEN+1];
+	get_abs_path(full_path, abs_path);
+	if (strlcmp__(abs_path, "/") != 0) {
+		progerr_printf("not full path [%s]\n", abs_path);
 	}
-	return file_path;
+	str_tr(abs_path, '/', '.');
+	cat_dir_and_file(lock_file_path, get_app_dir(), abs_path);
+	return lock_file_path;
 }
 
 // End of fileio.c

@@ -498,7 +498,7 @@ BOOL is_app_chooser_mode()		// in editor: text list mode, in filer: file list mo
 {
 	return GET_APPMD(app_LIST_MODE) == APP_MODE_CHOOSER;
 }
-BOOL is_app_viewer_mode()		// in editor: test viewer, in filer: directory viewer
+BOOL is_app_viewer_mode()		// in editor: text viewer, in filer: directory viewer
 {
 	return GET_APPMD(app_LIST_MODE) == APP_MODE_VIEWER;
 }

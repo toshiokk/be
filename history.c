@@ -84,7 +84,7 @@ void init_histories()
 
 //------------------------------------------------------------------------------
 // load history files into buffers
-void load_histories()
+void load_histories_if_needed()
 {
 	for (int hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP_AND_SHELL; hist_type_idx++) {
 		load_history_if_needed(hist_type_idx);
@@ -567,12 +567,11 @@ PRIVATE const char* dir_history_remove_temporal_mark(const char* str)
 //------------------------------------------------------------------------------
 int select_from_history_list(int hist_type_idx, char *buffer)
 {
-	load_histories();
+	load_histories_if_needed();
 	load_cut_buffers_if_updated();
 
 	//----------------------------------------------------
-	int ret = do_call_editor(1, APP_MODE_CHOOSER, get_history_buf(hist_type_idx),
-	 buffer, MAX_PATH_LEN);
+	int ret = do_call_editor(1, APP_MODE_CHOOSER, get_history_buf(hist_type_idx), buffer);
 	//----------------------------------------------------
 	if (hist_type_idx == HISTORY_TYPE_IDX_DIR) {
 		strlcpy__(buffer, dir_history_remove_temporal_mark(buffer), MAX_PATH_LEN);

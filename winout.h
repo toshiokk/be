@@ -76,14 +76,14 @@ int central_win_get_key_list_line_y();
 void central_win_set_cursor_pos(int yy, int xx);
 void central_win_clear_screen();
 void central_win_clear_lines(int line_1, int line_2);
-void central_win_output_string(int yy, int xx, const char *string, int bytes);
+int central_win_output_string(int yy, int xx, const char *string, int bytes);
 
 int sub_win_get_lines();
 int sub_win_get_columns();
 void sub_win_set_cursor_pos(int yy, int xx);
 void sub_win_clear_screen();
 void sub_win_clear_lines(int line_1, int line_2);
-void sub_win_output_string(int yy, int xx, const char *string, int bytes);
+int sub_win_output_string(int yy, int xx, const char *string, int bytes);
 
 void win_save_cursor_pos();
 int win_get_saved_cursor_y();

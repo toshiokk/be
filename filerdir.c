@@ -106,8 +106,8 @@ PRIVATE int change_cur_dir_from_history(const char *dir)
 
 int filer_change_dir_to_cur_sel()
 {
-	if (S_ISDIR(get_cur_fv_cur_file_ptr()->st.st_mode)) {
-		if (filer_change_dir(get_cur_fv_cur_file_ptr()->file_name)) {
+	if (S_ISDIR(get_cur_fv_cur_file_info()->st.st_mode)) {
+		if (filer_change_dir(get_cur_fv_cur_file_name())) {
 			return 1;		// OK
 		}
 	}
@@ -149,7 +149,7 @@ int filer_change_dir_parent(char *path)
 	}
 	return 1;	// changed
 }
-int filer_change_dir(char *dir)
+int filer_change_dir(const char *dir)
 {
 	if (change_cur_dir_saving_prev_next(dir) == 0) {
 		// We can't open this dir for some reason. Complain.

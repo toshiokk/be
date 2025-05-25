@@ -60,7 +60,7 @@
 
 void init_histories();
 
-void load_histories();
+void load_histories_if_needed();
 void save_histories();
 
 void update_history(int hist_type_idx, const char *str);

@@ -31,7 +31,7 @@ PRIVATE int win_get_columns(win_rect_t *win);
 PRIVATE void win_set_cursor_pos(win_rect_t *win, int yy, int xx);
 PRIVATE void win_clear_screen(win_rect_t *win);
 PRIVATE void win_clear_lines(win_rect_t *win, int line_1, int line_2);
-PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *string, int bytes);
+PRIVATE int win_output_string(win_rect_t *win, int yy, int xx, const char *string, int bytes);
 
 //------------------------------------------------------------------------------
 PRIVATE int win_depth = 0;			// 0:root window, 1,2,...:child window
@@ -234,9 +234,9 @@ void central_win_clear_lines(int line_1, int line_2)
 {
 	win_clear_lines(central_win, line_1, line_2);
 }
-void central_win_output_string(int yy, int xx, const char *string, int bytes)
+int central_win_output_string(int yy, int xx, const char *string, int bytes)
 {
-	win_output_string(central_win, yy, xx, string, bytes);
+	return win_output_string(central_win, yy, xx, string, bytes);
 }
 //------------------------------------------------------------------------------
 int sub_win_get_lines()
@@ -259,9 +259,9 @@ void sub_win_clear_lines(int line_1, int line_2)
 {
 	win_clear_lines(cur_sub_win, line_1, line_2);
 }
-void sub_win_output_string(int yy, int xx, const char *string, int bytes)
+int sub_win_output_string(int yy, int xx, const char *string, int bytes)
 {
-	win_output_string(cur_sub_win, yy, xx, string, bytes);
+	return win_output_string(cur_sub_win, yy, xx, string, bytes);
 }
 //------------------------------------------------------------------------------
 PRIVATE int win_get_lines(win_rect_t *win)
@@ -305,7 +305,7 @@ PRIVATE void win_clear_lines(win_rect_t *win, int line_1, int line_2)
 		win_output_string(win, yy, 0, tio_blank_line(), win_get_columns(win));
 	}
 }
-PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *string, int bytes)
+PRIVATE int win_output_string(win_rect_t *win, int yy, int xx, const char *string, int bytes)
 {
 	int space_columns = win->columns;
 	if (xx >= 0) {
@@ -320,6 +320,7 @@ PRIVATE void win_output_string(win_rect_t *win, int yy, int xx, const char *stri
 		bytes = byte_idx_from_col_idx(string, space_columns, CHAR_LEFT, NULL);
 	}
 	tio_output_string(yy, xx, string, bytes);
+	return col_idx_from_byte_idx(string, bytes);
 }
 
 // End of winout.c

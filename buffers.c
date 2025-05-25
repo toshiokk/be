@@ -112,69 +112,33 @@ void free_all_buffers()
 	bufs_free_all_bufs(NODES_TOP_NODE(&all_bufferss));
 }
 
-// Edit-buffer manipulation routines
-
-// free current be_buf_t
-// the next or previous buffer will be set to current
+// free current edit buffer
+// the next or previous buffer will be selected as a current
 int free_cur_edit_buf()
 {
 	unlock_epc_buf_if_file_had_locked_by_myself();
 	return free_edit_buf(get_epc_buf());
 }
-int free_edit_buf(be_buf_t *edit_buf)
+int free_edit_buf(be_buf_t *buf)
 {
-	if (IS_NODE_INT(edit_buf) == 0) {
+	if (IS_NODE_INT(buf) == 0) {
 		return 0;
 	}
-	disp_status_bar_ing(_("Freeing edit buffer %s ..."), buf_get_file_path(get_epc_buf(), NULL));
+	disp_status_bar_ing(_("Freeing edit buffer %s ..."), buf_get_file_path(buf, NULL));
 #ifdef ENABLE_HISTORY
 	update_history(HISTORY_TYPE_IDX_FILE, mk_cur_file_pos_str_static());
 #endif // ENABLE_HISTORY
 	int ret = 1;
-	if (edit_buf == get_epc_buf()) {
+	if (buf == get_epc_buf()) {
 		// select other buffer
 		ret = switch_epc_buf_to_another_buf();
 	}
 #ifdef ENABLE_UNDO
 	// free undo/redo buffers related to this edit_buf
-	delete_undo_redo_buf(edit_buf);
+	delete_undo_redo_buf(buf);
 #endif // ENABLE_UNDO
-	buf_unlink_free(edit_buf);
+	buf_unlink_free(buf);
 	return ret;		// 0: no buffer remains
-}
-//------------------------------------------------------------------------------
-// 'lock' has two meaning:
-// - file lock:   file has been locked by someone
-// - buffer lock: buffer contents was loaded from a locked file
-//                and the buffer was locked from modification
-void lock_epc_buf_if_file_already_locked(BOOL lock_buffer_if_already_locked)
-{
-	SET_CUR_EBUF_STATE(buf_LOCKED, 0);
-	if (flock_lock(buf_get_abs_path(get_epc_buf(), NULL)) == 0) {
-		// file has successfully locked: this is the 1st load
-	} else {
-		// already file has been locked: lock this buffer
-		if (lock_buffer_if_already_locked) {
-			SET_CUR_EBUF_STATE(buf_LOCKED, 1);
-		}
-	}
-}
-void unlock_epc_buf_if_file_had_locked_by_myself()
-{
-	if (is_epc_buf_file_locked() == 0) {
-		// this buffer has NOT been locked:
-		// - this file must had been locked by myself
-		// - unlock by myself
-		if (flock_unlock(buf_get_abs_path(get_epc_buf(), NULL)) == 0) {
-			// successfully unlocked
-		} else {
-			// already unlocked by another instance: ERROR
-			progerr_printf("already unlocked [%s]\n", buf_get_abs_path(get_epc_buf(), NULL));
-		}
-	} else {
-		// this file has been locked by another instance:
-		// - nothing to do
-	}
 }
 //------------------------------------------------------------------------------
 // 4 line pointers are referenced from one editor_panes
@@ -289,16 +253,6 @@ be_buf_t *get_epx_buf(int pane_idx)
 	return cur_editor_panes->bufs[pane_idx];
 }
 
-//DDDbe_bufs_t *set_cur_buf_of_bufs(be_buf_t *buf)
-//DDD{
-//DDD	buf = buf_make_buf_intermediate(buf);
-//DDD	be_bufs_t *bufs = get_bufs_contains_buf(buf);
-//DDD	if (IS_NODE_INT(bufs)) {
-//DDD		bufs->cur_buf = buf;	// set as a current buffer of buffers
-//DDD	}
-//DDD	return bufs;
-//DDD}
-
 //--------------------------------------
 void clear_cur_buf_modified()
 {
@@ -332,7 +286,7 @@ int is_epc_buf_modifiable()
 	return 1
 	 && is_epc_buf_valid()
 
-	 && (is_epc_buf_mode_edit())
+	 && is_epc_buf_mode_edit()
 
 	 && (is_epc_buf_file_wp() == 0)
 	 && (is_epc_buf_file_locked() == 0)
@@ -660,7 +614,6 @@ int inc_buf_tab_size()
 const char *get_str_buf_tab_size()
 {
 	static char buf[2+1];
-
 	snprintf(buf, 2+1, "%d", get_cur_buf_tab_size());
 	return buf;
 }

@@ -227,13 +227,13 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 					goto read_rc_path_match;
 				}
 			}
-			func_key_list_t *fkey_list;
-			if ((fkey_list = get_fkey_entry_from_func_id(cmd)) != NULL) {
+			func_key_t *func_key = get_fkey_entry_from_func_id(cmd, 0);
+			if (func_key) {
 				key_code_t keys[MAX_KEYS_BIND];
 				parse_key_names(keys);
 				if (IS_KEY_VALID(keys[0])) {
 					clear_fkey_tbl_using_these_keys(keys);
-					bind_key_to_func(fkey_list, keys);
+					bind_key_to_func(func_key, keys);
 					goto read_rc_path_match;
 				}
 			}

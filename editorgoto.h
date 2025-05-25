@@ -46,11 +46,11 @@
 int doe_goto_column();
 int doe_goto_line();
 int doe_tag_jump_in_cur_line();
-int doe_tag_jump_in_cur_cursor_pos();
+int doe_tag_jump_in_cur_curs_pos();
 #ifdef ENABLE_FILER
 int doe_filer();
-int doe_goto_directory_in_cur_line();
-int doe_goto_directory_in_cur_cursor_pos();
+int doe_goto_dir_in_cur_line();
+int doe_goto_dir_in_cur_curs_pos();
 int try_to_open_dir_in_cur_line_with_filer(int line_byte_idx);
 int try_to_open_dir_in_str_with_filer(const char *str);
 #endif // ENABLE_FILER

@@ -33,21 +33,25 @@ typedef enum {
 	EF_QUIT						= 4,	//   quit editor/filer
 	EF_LOADED					= 5,	//   file was loaded and return from editor/filer
 	EF_EXECUTED					= 6,	//   command was executed and return from editor/filer
-										// enter file/dir path in filer:
-	FL_ENTER_FILE_NAME_OR_PATH	= 7,	//   return file name(file, dir)
-										//       or file path(/path/to/file, /path/to/dir)
-	FL_ENTER_CUR_DIR_PATH		= 8,	//   return current directory path (/path/to/dir)
-										// input text from editor/filer:
-	EF_INPUT_TO_REPLACE			= 9,	//   input string(file/dir name or path) to replace
-	EF_INPUT_TO_APPEND			= 10,	//   input string(file/dir name or path) to append
+										// enter file/dir path from filer:
+	FL_ENTER_FILE_NAME			= 7,	//   enter file name(file, dir)
+	FL_ENTER_FILE_NAME_APPEND	= 8,	//   enter file name(file, dir)
+	FL_ENTER_FILE_PATH			= 9,	//   enter file path(/path/to/file, /path/to/dir)
+	FL_ENTER_FILE_PATH_APPEND	= 10,	//   enter file path(/path/to/file, /path/to/dir)
+	FL_ENTER_DIR_PATH			= 11,	//   enter directory path (/path/to/dir)
+	FL_ENTER_DIR_PATH_APPEND	= 12,	//   enter directory path (/path/to/dir)
+										// enter text from editor/filer:
+	EF_ENTER_STRING				= 13,	//   enter string(file/dir name or path) to replace
+	EF_ENTER_STRING_APPEND		= 14,	//   enter string(file/dir name or path) to append
 										// input text:
-	EF_INPUT_W_ENTER			= 11,	//   input string(file/dir name or path)
-	EF_INPUT_W_ALT_C			= 12,	//   input string(by Alt-c key)
-	EF_INPUT_W_ALT_M			= 13,	//   input string(by Alt-m key)
-	EF_INPUT_W_ALT_ENTER		= 14,	//   input string(by Alt-Enter key)
+///	EF_INPUT_W_ENTER			= 15,	//   input string(file/dir name or path)
+	EF_INPUT_PATH_TO_COPY		= 16,	//   input string(by Alt-c key)
+	EF_INPUT_PATH_TO_MOVE		= 17,	//   input string(by Alt-m key)
+///	EF_INPUT_W_ALT_ENTER		= 18,	//   input string(by Alt-Enter key)
 } ef_do_next_t;
 
-#define IS_EF_INPUT_XX(ret)		((EF_INPUT_W_ENTER <= (ret)) && ((ret) <= EF_INPUT_W_ALT_ENTER))
+#define IS_EF_STRING_ENTERED(ret)		\
+	((EF_ENTER_STRING <= (ret)) && ((ret) <= EF_ENTER_STRING_APPEND))
 
 int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, ...);
@@ -79,7 +83,7 @@ int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx
 int ask_yes_no(int flags, const char *msg, ...);
 
 void disp_fkey_list();
-void disp_key_list(const char *key_lists[]);
+void disp_key_list_lines(const char *key_lists[]);
 
 #endif // winin_h
 

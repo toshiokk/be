@@ -448,60 +448,51 @@ void test_zz_from_num()
 #ifdef ENABLE_DEBUG
 	char buf[2+1];
 #endif // ENABLE_DEBUG
-
-	// (10 + 26 + 26) * (10 + 26 + 26) = 62 * 62 = 3844
-	for (int num = -20; num < (100 + 1040 + 2704) + 10; num++) {
-		flf_d_printf("%d ==> [%s]\n", num, zz_from_num(num, buf));
+	// (10 * 10) + (52 + 62) = 100 + 3224 = 3324
+	for (int num = -(10 + 62); num < 100 + 3224 + 10; num++) {
+		flf_d_printf("%4d ==> [%s]\n", num, zz_from_num(num, buf));
 	}
 }
 #endif // START_UP_TEST
-// 00 - 99: 100   =  100
-// 0A - 0z:
-//   :
-// 9A - 9z: 10*52 =  520
-// A0 - Az:
-//   :
-// z0 - zz: 52*62 = 3224
-// ---------------- 3844
+
+// | expression  | number range | count of numbers |
+// |-------------|--------------|--------------|
+// | "-@"        |      ~  -62  |              |
+// | "-z" ~ "-1" |  -61 ~   -1  |  1*62 =   62 |
+// | "00" ~ "99" |    0 ~   99  | 10*10 =  100 |
+// | "A0" ~ "Az" |  100 ~  161  |              |
+// |      :      |      :       |              |
+// | "z0" ~ "zz" | 3262 ~ 3323  | 52*62 = 3224 |
+// | "@@"        | 3324 ~       |              |
 char *zz_from_num(int num, char *buf)
 {
-	inline char AZaz_from_num(int num) { // [0, 51] ==> [A-Za-z]
-		char chr = '_';
-		if (num < 26) {
-			chr = 'A' + num % 26;
-		} else
-		if (num < 26 + 26) {
-			num -= 26;
-			chr = 'a' + num % 26;
-		}
-		return chr;
-	}
-	inline char _09AZaz_from_num(int num) { // [0, 61] ==> [0-9A-Za-z]
+	inline char _0toz_from_num(int num) { // [0, 61] ==> '0'-'9','A'-'Z','a'-'z'
 		char chr = '_';
 		if (num < 10) {
-			chr = '0' + num % 10;
+			chr = '0' + num;
+		} else
+		if (num < 10 + 26) {
+			chr = 'A' + (num-10);
 		} else
 		if (num < 10 + 26 + 26) {
-			num -= 10;
-			chr = AZaz_from_num(num);
+			chr = 'a' + (num-(10+26));
 		}
 		return chr;
 	}
-	if (num < -9) {
-		snprintf_(buf, 2+1, "-@");			// -@
-	} else if (num < 0) {
-		snprintf_(buf, 2+1, "-%d", -num);	// -9 -- -1
-	} else if (num < 100) {
-		snprintf_(buf, 2+1, "%02d", num);	// 00 -- 99
-	} else if (num < 100 + 520) {
+	inline char Atoz_from_num(int num) { // [0, 51] ==> 'A'-'Z','a'-'z'
+		return _0toz_from_num(num + 10);
+	}
+	if (num < -61) {						//     ~ -62
+		snprintf_(buf, 2+1, "-@");			// "-@"
+	} else if (num < 0) {					// -61 ~ -1
+		snprintf_(buf, 2+1, "-%c", _0toz_from_num(-num));
+	} else if (num < 100) {					// 0 ~ 99
+		snprintf_(buf, 2+1, "%02d", num);
+	} else if (num < 100 + 3224) {			// 100 ~ 3323
 		num -= 100;
-		snprintf_(buf, 2+1, "%d%c", num / 52, AZaz_from_num(num % 52));	// 0A -- 0z, 9A -- 9z
-	} else if (num < 100 + 520 + 3224) {
-		num -= (100 + 520);
-		snprintf_(buf, 2+1, "%c%c",
-		 AZaz_from_num(num / 62), _09AZaz_from_num(num % 62));			// A0 -- Az, z0 -- zz
-	} else {
-		snprintf_(buf, 2+1, "%c%c", '@', '@');		// @@
+		snprintf_(buf, 2+1, "%c%c", Atoz_from_num(num / 62), _0toz_from_num(num % 62));
+	} else {								// 3324 ~
+		snprintf_(buf, 2+1, "%c%c", '@', '@');	// @@
 	}
 	return buf;
 }

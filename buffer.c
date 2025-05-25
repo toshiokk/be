@@ -235,7 +235,7 @@ be_buf_t *buf_unlink_free(be_buf_t *buf)
 		buf_free(buf);
 	} else
 	if (IS_NODE_ANCH(buf)) {
-		// not unlink and not free frame
+		// free only lines and not free frame
 		buf_free_lines(buf);
 	} else {
 		WARN_PTR(buf);
@@ -450,7 +450,7 @@ int buf_has_orig_file_updated(be_buf_t *buf, const char* file_path)
 	if (stat(file_path, &st)) {
 		return -1;										// -1: error
 	}
-	return st.st_mtime > buf->orig_file_stat.st_mtime;	// >0: updated, 0: not updated
+	return st.st_mtime > buf->orig_file_stat.st_mtime;	// 1: updated, 0: not updated
 }
 
 //------------------------------------------------------------------------------
@@ -729,12 +729,12 @@ void bufss_init(be_bufss_t *bufss, const char *name,
 	bufs_init(NODES_TOP_ANCH(bufss), name_top, "##BUFSS_top_top_anch", "##BUFSS_top_bot_anch");
 	bufs_init(NODES_BOT_ANCH(bufss), name_bottom, "##BUFSS_bot_top_anch", "##BUFSS_bot_bot_anch");
 	bufs_link(NODES_TOP_ANCH(bufss), NODES_BOT_ANCH(bufss));
-	bufss->cur_bufs = NODES_BOT_ANCH(bufss);
+///	bufss->cur_bufs = NODES_BOT_ANCH(bufss);
 }
 void bufss_insert_bufs_to_bottom(be_bufss_t *bufss, be_bufs_t *bufs)
 {
 	bufs_insert_before(NODES_BOT_ANCH(bufss), bufs);
-	bufss->cur_bufs = bufs;
+///	bufss->cur_bufs = bufs;
 }
 
 // top-anchor:0, bufs1:1, bufs2:2, ..., bufsN:n, bottom-anchor:(n+1)

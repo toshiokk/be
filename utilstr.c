@@ -241,14 +241,15 @@ char *quote_file_path_buf(char *buf, const char *string)
 char *quote_file_path_if_necessary(char *buf, const char *string)
 {
 	if (contain_chrs(string, " \"'")) {
-		if (contain_chr(string, '\'')) {
-			// [abc'def.txt] ==> ["abc'def.txt"]
-			return quote_string(buf, string, '"');
-		} else {
-			// [abc"def.txt] ==> ['abc"def.txt']
+///		if (contain_chr(string, '\'')) {
+///			// [abc'def.txt] ==> ["abc'def.txt"]
+///			return quote_string(buf, string, '"');
+///		} else {
 			// [abc def.txt] ==> ['abc def.txt']
+			// [abc"def.txt] ==> ['abc"def.txt']
+			// [abc'def.txt] ==> ['abc\'def.txt']
 			return quote_string(buf, string, '\'');
-		}
+///		}
 	} else {
 		strlcpy__(buf, string, MAX_PATH_LEN);	// no quotation necessary
 	}
@@ -479,7 +480,7 @@ void *memcpy__(void *dest, const void *src, size_t len)
 	return memmove(dest, src, len);
 }
 
-int tolower_if_alpha(int chr)
+int tolower__(int chr)
 {
 	if (isalpha(chr))
 		return tolower(chr);
@@ -523,6 +524,8 @@ char *shrink_str_static(const char *str, int space, int n_over_10)
 // "/very/long/long/path/to/file" ==> "/very/lo...th/to/file"
 //                                       n/10         (10-n)/10
 // Note: 'buf' and 'str' are not overlappable
+#define STR_TILDE		"~~"
+#define STR_TILDE_LEN	2	// strlen(STR_TILDE)
 char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10)
 {
 	int str_cols = utf8s_columns(str, MAX_PATH_LEN);
@@ -530,8 +533,6 @@ char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10)
 		// enough space
 		strlcpy__(buf, str, MAX_PATH_LEN);
 	} else {
-#define STR_TILDE		"~~"
-#define STR_TILDE_LEN	2	// strlen(STR_TILDE)
 		if (space > STR_TILDE_LEN) {
 			int space1 = LIM_MIN(0, (space - STR_TILDE_LEN) * n_over_10 / 10);
 			int space2 = LIM_MIN(0, (space - STR_TILDE_LEN) - space1);
@@ -747,11 +748,12 @@ char *quote_string(char *buffer, const char *string, char quote_chr)
 	char buf[MAX_PATH_LEN+1];
 	// file name ==> "file name" or 'file name'
 	if (contain_chr(string, '\'')) {
-		// "'file'name'" ==> "'\'file\'name\''"
+		// quote_chr = '\'':  ['file'name'] ==> ['\'file\'name\'']
+		// quote_chr = '"' :  ['file'name'] ==> ["\'file\'name\'"]
 		escape_quote_chr(buf, string, quote_chr);
 		snprintf(buffer, MAX_PATH_LEN+1, "%c%s%c", quote_chr, buf, quote_chr);
 	} else {
-		// "filename" ==> "'filename'"
+		// [filename] ==> ['filename']
 		snprintf(buffer, MAX_PATH_LEN+1, "%c%s%c", quote_chr, string, quote_chr);
 	}
 	return buffer;

@@ -64,6 +64,10 @@ void pause_after_exec(int exit_status);
 int restore_term_for_shell();
 int reinit_term_for_filer();
 
+#define MAX_LOG_FILE_SIZE_KB		1000	// 1000 [KB]
+int reduce_log_file_size(const char *file_path, int size_in_kb);
+const char *get_exec_log_file_path();
+
 #endif // filerrun_h
 
 // End of filerrun.h

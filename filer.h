@@ -37,8 +37,10 @@ filer_view_t *get_cur_filer_pane_view();
 filer_view_t *get_another_filer_pane_view();
 
 file_info_t *get_cur_fv_file_infos();
-file_info_t *get_cur_fv_cur_file_ptr();
-file_info_t *get_cur_fv_file_ptr(int file_idx);
+const char* get_cur_fv_cur_file_name();
+const char* get_cur_fv_file_name(int file_idx);
+file_info_t *get_cur_fv_cur_file_info();
+file_info_t *get_cur_fv_file_info(int file_idx);
 file_info_t *get_fv_file_ptr(int pane_idx);
 int get_cur_fv_file_idx();
 void set_cur_fv_file_idx(int file_idx);

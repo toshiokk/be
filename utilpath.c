@@ -221,7 +221,7 @@ char *remove_last_slash(char *path)
 
 char *add_last_slash_to_dir(char *dir)
 {
-	if (strcmp(dir, "/") != 0 && strlen(dir) && dir[strlen(dir) - 1] != '/') {
+	if ((strcmp(dir, "/") != 0) && strlen(dir) && (dir[strlen(dir) - 1] != '/')) {
 		strlcat__(dir, MAX_PATH_LEN, "/");
 	}
 	return dir;

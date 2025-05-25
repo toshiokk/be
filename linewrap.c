@@ -448,12 +448,11 @@ int byte_idx_from_byte_idx(const char *utf8s, int bytes)
 int byte_idx_from_col_idx(const char *utf8s, int columns, char_left_right_t left_right,
  int *col_idx__)
 {
-	int col_idx;
+	int col_idx = 0;
 	const char *ptr;
 	const char *prev_ptr;
-
 	int prev_col_idx = columns;
-	for (prev_ptr = ptr = utf8s, col_idx = 0; *ptr && col_idx < columns; ) {
+	for (prev_ptr = ptr = utf8s; *ptr && col_idx < columns; ) {
 		prev_col_idx = col_idx;
 		prev_ptr = ptr;
 		FORWARD_COL_IDX()
@@ -467,8 +466,9 @@ int byte_idx_from_col_idx(const char *utf8s, int columns, char_left_right_t left
 	return ptr - utf8s;
 }
 
-int col_idx_from_byte_idx(const char *utf8s, int col_idx, int bytes)
+int col_idx_from_byte_idx(const char *utf8s, int bytes)
 {
+	int col_idx = 0;
 	for (const char *ptr = utf8s; *ptr && ptr - utf8s < bytes; ) {
 		FORWARD_COL_IDX()
 	}
@@ -477,10 +477,10 @@ int col_idx_from_byte_idx(const char *utf8s, int col_idx, int bytes)
 
 int vis_idx_from_byte_idx(const char *utf8s, int bytes)
 {
-	int vis_idx;
-	int col_idx;
+	int vis_idx = 0;
+	int col_idx = 0;
 	const char *ptr;
-	for (ptr = utf8s, col_idx = 0, vis_idx = 0; *ptr && ptr - utf8s < bytes; ) {
+	for (ptr = utf8s; *ptr && ptr - utf8s < bytes; ) {
 		FORWARD_VIS_IDX()
 	}
 	return vis_idx;

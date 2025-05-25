@@ -50,7 +50,7 @@ int dof_exec_command_with_file()
 		return 0;
 	}
 	int flags = EX_LOGGING;
-	if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
+	if (filer_do_next == EF_ENTER_STRING_APPEND) {
 		flags ^= EX_LOGGING;	// invert logging
 	}
 	if (is_path_dir(command_str) > 0) {
@@ -73,7 +73,7 @@ int dof_exec_command_with_file()
 				break;
 			replace_str(buffer, MAX_PATH_LEN,
 			 ptr_replace - buffer, STR_TO_BE_REPLACED_WITH_FILE_NAME_LEN,
-			 quote_file_path_s(get_cur_fv_file_ptr(file_idx)->file_name), -1);
+			 quote_file_path_s(get_cur_fv_file_name(file_idx)), -1);
 		}
 		exit_status = fork_exec_sh_c_repeat(EX_SEPARATE | flags, buffer);
 	}
@@ -91,7 +91,7 @@ int dof_exec_command_with_files()
 	 file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		concat_file_path_separating_by_space(command_str, MAX_PATH_LEN,
-		 get_cur_fv_file_ptr(file_idx)->file_name);
+		 get_cur_fv_file_name(file_idx));
 	}
 
 	if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str, 0,
@@ -100,7 +100,7 @@ int dof_exec_command_with_files()
 		return 0;
 	}
 	int flags = EX_LOGGING;
-	if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
+	if (filer_do_next == EF_ENTER_STRING_APPEND) {
 		flags ^= EX_LOGGING;	// invert logging
 	}
 	fork_exec_sh_c_once(flags | EX_PAUSE, command_str);
@@ -120,7 +120,7 @@ int dof_run_command_abs()
 PRIVATE int dof_run_command_rel_abs(int flags)
 {
 	if (get_files_selected_cfv() == 0) {
-		struct stat *st_ptr = &get_cur_fv_cur_file_ptr()->st;
+		struct stat *st_ptr = &get_cur_fv_cur_file_info()->st;
 		if ((st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
 			dof_run_command_(flags | 0 | EX_LOGGING);
 		} else {
@@ -136,11 +136,11 @@ PRIVATE int dof_run_command_rel_abs(int flags)
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		if ((flags & EX_MOD_MASK) == 0) {
 			concat_file_path_separating_by_space(command_str, MAX_PATH_LEN,
-			 get_cur_fv_file_ptr(file_idx)->file_name);
+			 get_cur_fv_file_name(file_idx));
 		} else {
 			concat_file_path_separating_by_space(command_str, MAX_PATH_LEN,
 			 cat_dir_and_file_s(get_cur_filer_pane_view()->cur_dir,
-			  get_cur_fv_file_ptr(file_idx)->file_name));
+			  get_cur_fv_file_name(file_idx)));
 		}
 	}
 
@@ -150,7 +150,7 @@ PRIVATE int dof_run_command_rel_abs(int flags)
 		return 0;
 	}
 	flags = EX_LOGGING;
-	if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
+	if (filer_do_next == EF_ENTER_STRING_APPEND) {
 		flags ^= EX_LOGGING;	// invert logging
 	}
 	fork_exec_sh_c_once(flags | EX_PAUSE, command_str);
@@ -195,39 +195,39 @@ PRIVATE int dof_run_command_(int flags)
 	case 0:
 		expl = _("Run (current-directory-file)");
 		snprintf_(command_str, MAX_PATH_LEN, "./%s ",
-		 quote_file_path_s(get_cur_fv_cur_file_ptr()->file_name));
+		 quote_file_path_s(get_cur_fv_cur_file_name()));
 		break;
 	case 1:
 		expl = _("Run (with file)");
 		snprintf_(command_str, MAX_PATH_LEN, " %s",
-		 quote_file_path_s(get_cur_fv_cur_file_ptr()->file_name));
+		 quote_file_path_s(get_cur_fv_cur_file_name()));
 		break;
 	case 2:
 	case 3:
 		expl = _("Run (with abs-path)");
 		quote_file_path_buf(command_str, cat_dir_and_file_s(
-		 get_cur_filer_pane_view()->cur_dir, get_cur_fv_cur_file_ptr()->file_name));
+		 get_cur_filer_pane_view()->cur_dir, get_cur_fv_cur_file_name()));
 		break;
 	case 4:
 		expl = _("Run (script)");
 		snprintf_(command_str, MAX_PATH_LEN, "sh %s",
-		 quote_file_path_s(get_cur_fv_cur_file_ptr()->file_name));
+		 quote_file_path_s(get_cur_fv_cur_file_name()));
 		break;
 	case 5:
 		expl = _("Run (symlink)");
 		snprintf_(command_str, MAX_PATH_LEN, "%s",
-		 (get_cur_fv_cur_file_ptr()->symlink != NULL)
-		  ? quote_file_path_s(get_cur_fv_cur_file_ptr()->symlink)
-		  : quote_file_path_s(get_cur_fv_cur_file_ptr()->file_name));
+		 (get_cur_fv_cur_file_info()->symlink != NULL)
+		  ? quote_file_path_s(get_cur_fv_cur_file_info()->symlink)
+		  : quote_file_path_s(get_cur_fv_cur_file_name()));
 		break;
 	case 6:
 		// " /path/to/dir-A/file-A /path/to/dir-B/file-A"
 		expl = _("Run (with SRC-dir and DEST-dir)");
 		snprintf_(command_str, MAX_PATH_LEN, " %s %s",
 		 quote_file_path_buf(buf1, cat_dir_and_file_s1(
-		  get_cur_filer_view(src_fv_idx)->cur_dir, get_cur_fv_cur_file_ptr()->file_name)),
+		  get_cur_filer_view(src_fv_idx)->cur_dir, get_cur_fv_cur_file_name())),
 		 quote_file_path_buf(buf2, cat_dir_and_file_s2(
-		  get_cur_filer_view(dst_fv_idx)->cur_dir, get_cur_fv_cur_file_ptr()->file_name)));
+		  get_cur_filer_view(dst_fv_idx)->cur_dir, get_cur_fv_cur_file_name())));
 		break;
 	case 7:
 		// " /path/to/dir-A/file-A /path/to/dir-B/file-B"
@@ -246,7 +246,7 @@ PRIVATE int dof_run_command_(int flags)
 		char explanation[MAX_PATH_LEN+1];
 		snprintf(explanation, MAX_PATH_LEN, "%s%s:",
 		 expl, ((flags & EX_LOGGING) == 0) ? "" : _("(WITH LOG)"));
-		struct stat *st_ptr = &get_cur_fv_cur_file_ptr()->st;
+		struct stat *st_ptr = &get_cur_fv_cur_file_info()->st;
 		if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str,
 		 (S_ISREG(st_ptr->st_mode) && (st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
 		  ? MAX_PATH_LEN : 0,
@@ -254,7 +254,7 @@ PRIVATE int dof_run_command_(int flags)
 		 explanation))) {
 			return 0;
 		}
-		if (filer_do_next == EF_INPUT_W_ALT_ENTER) {
+		if (filer_do_next == EF_ENTER_STRING_APPEND) {
 			flags ^= EX_LOGGING;	// invert logging
 		}
 	}
@@ -376,16 +376,14 @@ int fork_exec_sh_c(int flags, const char *command)
 		flags &= ~EX_LOGGING;		// turn off logging
 	}
 	if ((flags & EX_LOGGING) == 0) {
-		// "sh -c <command ...>"
 #define SH_PROG			"sh"
 		args[0] = SH_PROG;
 		args[1] = "-c";
 		args[2] = (char *)command;
 		args[3] = NULL;
-		mflf_d_printf("logging: %d, exec: {{%s} {%s} {%s}}\n",
-		 (flags & EX_LOGGING) != 0, args[0], args[1], args[2]);
+		// "sh -c <command ...>"
+		mflf_d_printf("exec: [%s] [%s] [%s]\n", args[0], args[1], args[2]);
 	} else {
-		// "script -q -O <log_file> -a -c <command ...>"
 #define SCRIPT_PROG		"script"
 		args[0] = SCRIPT_PROG;
 		args[1] = "-q";
@@ -395,8 +393,9 @@ int fork_exec_sh_c(int flags, const char *command)
 		args[5] = "-c";
 		args[6] = (char *)command;
 		args[7] = NULL;
-		mflf_d_printf("logging: %d, exec: {{%s} {%s} {%s} {%s} {%s} {%s} {%s}}\n",
-		 (flags & EX_LOGGING) != 0, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+		// "script -q -O <log_file> -a -c <command ...>"
+		mflf_d_printf("exec: [%s] [%s] [%s] [%s] [%s] [%s] [%s]\n",
+		 args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
 	}
 
 	return fork_exec_before_after(flags, command, args);
@@ -511,6 +510,37 @@ int reinit_term_for_filer()
 	tio_resume();
 	tio_fill_screen();
 	return 0;
+}
+
+//------------------------------------------------------------------------------
+int reduce_log_file_size(const char *file_path, int size_in_kb)
+{
+	if (get_file_size(file_path) <= ((ssize_t)size_in_kb * 1024)) {
+		return 0;	// no need to reduce
+	}
+
+	char command_str[MAX_PATH_LEN+1] = "";
+	// "tail -c 500K 1.log >1.log~; mv -vf 1.log~ 1.log"
+	snprintf_(command_str, MAX_PATH_LEN, "tail -c %dK %s >%s%s ; mv -vf %s%s %s",
+	 size_in_kb / 2,
+	 file_path, file_path, BACKUP_FILE_SUFFIX,
+	 file_path, BACKUP_FILE_SUFFIX, file_path);
+
+	return fork_exec_sh_c(EX_FLAGS_0, command_str);
+}
+
+const char *get_exec_log_file_path()
+{
+	// /dev/tty1  => "/home/user/.be/tty1.log"
+	// /dev/pts/1 => "/home/user/.be/1.log"
+	static char file_path[MAX_PATH_LEN+1] = "";
+	char dir[MAX_PATH_LEN+1];
+	char file[MAX_PATH_LEN+1];
+	if (is_strlen_0(file_path)) {
+		separate_path_to_dir_and_file(get_tty_name(), dir, file);
+		cat_dir_and_file(file_path, get_app_dir(), sprintf_s("%s.log", file));
+	}
+	return file_path;
 }
 
 // End of filerrun.c
