@@ -467,20 +467,6 @@ int doe_carriage_return()
 	//  aaaa
 	// >^bbbb
 
-	if (GET_APPMD(ed_AUTO_INDENT)) {
-		const char *ptr_s, *ptr_d;
-		// autoindent: auto insert the previous lines preceeding spaces to the next line
-		ptr_s = NODE_PREV(EPCBVC_CL)->data;
-		SKIP_SPACE(ptr_s);
-		ptr_d = EPCBVC_CL->data; 
-		SKIP_SPACE(ptr_d);
-		int len_s, len_d;
-		len_s = ptr_s - NODE_PREV(EPCBVC_CL)->data;
-		len_d = ptr_d - EPCBVC_CL->data;
-		line_string_replace(EPCBVC_CL, 0, len_d, NODE_PREV(EPCBVC_CL)->data, len_s);
-		EPCBVC_CLBI = len_s;
-	}
-
 	if (EPCBVC_CURS_Y < bottom_scroll_margin_y()) {
 		EPCBVC_CURS_Y++;
 		post_cmd_processing(NODE_PREV(EPCBVC_CL), CURS_MOVE_HORIZ, LOCATE_CURS_NONE,
@@ -496,10 +482,15 @@ int doe_carriage_return_indent()
 	if (doe_carriage_return() == 0) {
 		return 0;
 	}
-	// TODO: auto indent only if not already indented
-	for (int tab = 0; tab < GET_CUR_EBUF_STATE(buf_TAB_SIZE); tab++) {
-		do_enter_char(' ');
-	}
+	// autoindent: auto insert the same spaces as the previous line
+	const char *ptr_s = NODE_PREV(EPCBVC_CL)->data;
+	SKIP_SPACE(ptr_s);
+	const char *ptr_d = EPCBVC_CL->data; 
+	SKIP_SPACE(ptr_d);
+	int len_s = ptr_s - NODE_PREV(EPCBVC_CL)->data;
+	int len_d = ptr_d - EPCBVC_CL->data;
+	line_string_replace(EPCBVC_CL, 0, len_d, NODE_PREV(EPCBVC_CL)->data, len_s);
+	EPCBVC_CLBI = len_s;
 	return 1;
 }
 
@@ -760,9 +751,9 @@ int doe_enter_text()
 	editor_do_next = EF_ENTER_STRING;
 	return 0;
 }
-int doe_enter_text_append()
+int doe_enter_text_add()
 {
-	editor_do_next = EF_ENTER_STRING;
+	editor_do_next = EF_ENTER_STRING_ADD;
 	return 0;
 }
 //------------------------------------------------------------------------------

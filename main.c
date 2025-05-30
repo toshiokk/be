@@ -460,20 +460,20 @@ PRIVATE void start_up_test()
 	flf_d_printf("malloc  : %p\n", allocated);
 	free__(allocated);
 
-	flf_d_printf("#define KEY_RESIZE	0x%04x\n", KEY_RESIZE);
-	flf_d_printf("#define KEY_HOME		0x%04x\n", KEY_HOME);
-	flf_d_printf("#define KEY_END		0x%04x\n", KEY_END);
-	flf_d_printf("#define KEY_UP		0x%04x\n", KEY_UP);
-	flf_d_printf("#define KEY_DOWN		0x%04x\n", KEY_DOWN);
-	flf_d_printf("#define KEY_LEFT		0x%04x\n", KEY_LEFT);
-	flf_d_printf("#define KEY_RIGHT		0x%04x\n", KEY_RIGHT);
-	flf_d_printf("#define KEY_PPAGE		0x%04x\n", KEY_PPAGE);
-	flf_d_printf("#define KEY_NPAGE		0x%04x\n", KEY_NPAGE);
-	flf_d_printf("#define KEY_IC		0x%04x\n", KEY_IC);
-	flf_d_printf("#define KEY_DC		0x%04x\n", KEY_DC);
-	flf_d_printf("#define KEY_BACKSPACE	0x%04x\n", KEY_BACKSPACE);
-	flf_d_printf("#define KEY_ENTER		0x%04x\n", KEY_ENTER);
-	flf_d_printf("#define KEY_F(0)		0x%04x\n", KEY_F(0));
+	flf_d_printf("#define KEY_RESIZE     0x%04x\n", KEY_RESIZE);
+	flf_d_printf("#define KEY_HOME       0x%04x\n", KEY_HOME);
+	flf_d_printf("#define KEY_END        0x%04x\n", KEY_END);
+	flf_d_printf("#define KEY_UP         0x%04x\n", KEY_UP);
+	flf_d_printf("#define KEY_DOWN       0x%04x\n", KEY_DOWN);
+	flf_d_printf("#define KEY_LEFT       0x%04x\n", KEY_LEFT);
+	flf_d_printf("#define KEY_RIGHT      0x%04x\n", KEY_RIGHT);
+	flf_d_printf("#define KEY_PPAGE      0x%04x\n", KEY_PPAGE);
+	flf_d_printf("#define KEY_NPAGE      0x%04x\n", KEY_NPAGE);
+	flf_d_printf("#define KEY_IC         0x%04x\n", KEY_IC);
+	flf_d_printf("#define KEY_DC         0x%04x\n", KEY_DC);
+	flf_d_printf("#define KEY_BACKSPACE  0x%04x\n", KEY_BACKSPACE);
+	flf_d_printf("#define KEY_ENTER      0x%04x\n", KEY_ENTER);
+	flf_d_printf("#define KEY_F(0)       0x%04x\n", KEY_F(0));
 
 	////test_wrap_line();
 	test_cwd_PWD();

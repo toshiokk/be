@@ -609,6 +609,12 @@ int skip_space(const char **ptr)
 		(*ptr)++;
 	return IS_EOL(*ptr);
 }
+int skip_space_mutable(char **ptr)
+{
+	while (IS_SPACE(*ptr))
+		(*ptr)++;
+	return IS_EOL(*ptr);
+}
 const char *skip_chars(const char *ptr, const char *chars)
 {
 	while (*ptr && strchr__(chars, *ptr)) {

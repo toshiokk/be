@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-25 22:46+0900\n"
+"POT-Creation-Date: 2025-05-30 13:03+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,33 +81,33 @@ msgstr ""
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr ""
 
-#: ../editor.c:255
+#: ../editor.c:251
 msgid "Edit command line:"
 msgstr ""
 
-#: ../editor.c:325
+#: ../editor.c:321
 msgid "Input key to show key code"
 msgstr ""
 
-#: ../editor.c:331
+#: ../editor.c:327
 #, c-format
 msgid "Key code input: %04x: [%s|%s], mapped: %04x [%s|%s]"
 msgstr ""
 
-#: ../editor.c:635 ../fileio.c:104
+#: ../editor.c:631 ../fileio.c:104
 msgid "New File"
 msgstr ""
 
-#: ../editor.c:729
+#: ../editor.c:725
 #, c-format
 msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CODE:%s ENC:%s EOL:%s"
 msgstr ""
 
-#: ../editor.c:779
+#: ../editor.c:776
 msgid "Modification not allowed in VIEW mode application"
 msgstr ""
 
-#: ../editor.c:784
+#: ../editor.c:781
 #, c-format
 msgid "Modification not allowed to %s file"
 msgstr ""
@@ -176,7 +176,7 @@ msgstr ""
 msgid "Text Pasted without popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:284 ../editorcut.c:313
+#: ../editorcut.c:284 ../editorcut.c:318
 msgid "Cut-buffer empty !!"
 msgstr ""
 
@@ -356,12 +356,12 @@ msgstr ""
 msgid "Select history string to paste:"
 msgstr ""
 
-#: ../editormove.c:737
+#: ../editormove.c:728
 #, c-format
 msgid "Column position %d was memorized"
 msgstr ""
 
-#: ../editormove.c:744
+#: ../editormove.c:735
 #, c-format
 msgid "Space characters are filled from column %d to %d"
 msgstr ""
@@ -495,38 +495,38 @@ msgstr ""
 msgid "Can not read-open file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:705 ../fileio.c:726 ../fileio.c:746
+#: ../fileio.c:702 ../fileio.c:723 ../fileio.c:743
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr ""
 
 #. -1: error
-#: ../fileio.c:714 ../fileio.c:735 ../fileio.c:780
+#: ../fileio.c:711 ../fileio.c:732 ../fileio.c:777
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:769 ../fileio.c:802
+#: ../fileio.c:766 ../fileio.c:799
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:852
+#: ../fileio.c:849
 #, c-format
 msgid "%d file loaded"
 msgstr ""
 
-#: ../fileio.c:853
+#: ../fileio.c:850
 #, c-format
 msgid "%d files loaded"
 msgstr ""
 
-#: ../fileio.c:854
+#: ../fileio.c:851
 #, c-format
 msgid "%d filess loaded"
 msgstr ""
 
-#: ../fileio.c:855
+#: ../fileio.c:852
 #, c-format
 msgid "%d filesss loaded"
 msgstr ""
@@ -697,50 +697,46 @@ msgstr ""
 msgid "Changed current directory to [%s]"
 msgstr ""
 
-#: ../filerlist.c:334
+#: ../filerlist.c:339
 msgid " <<broken-link>>"
 msgstr ""
 
-#: ../filerrun.c:49
+#: ../filerrun.c:47
 msgid "Execute({} will be replaced with file-name):"
 msgstr ""
 
-#: ../filerrun.c:99 ../filerrun.c:149
+#: ../filerrun.c:98 ../filerrun.c:148
 msgid "Execute with files:"
 msgstr ""
 
-#: ../filerrun.c:196
+#: ../filerrun.c:190
 msgid "Run (current-directory-file)"
 msgstr ""
 
-#: ../filerrun.c:201
+#: ../filerrun.c:195
 msgid "Run (with file)"
 msgstr ""
 
-#: ../filerrun.c:207
+#: ../filerrun.c:201
 msgid "Run (with abs-path)"
 msgstr ""
 
-#: ../filerrun.c:212
+#: ../filerrun.c:206
 msgid "Run (script)"
 msgstr ""
 
-#: ../filerrun.c:217
+#: ../filerrun.c:211
 msgid "Run (symlink)"
 msgstr ""
 
 #. " /path/to/dir-A/file-A /path/to/dir-B/file-A"
-#: ../filerrun.c:225
+#: ../filerrun.c:219
 msgid "Run (with SRC-dir and DEST-dir)"
 msgstr ""
 
 #. " /path/to/dir-A/file-A /path/to/dir-B/file-B"
-#: ../filerrun.c:234
+#: ../filerrun.c:228
 msgid "Run (with SRC-file and DEST-file)"
-msgstr ""
-
-#: ../filerrun.c:248
-msgid "(WITH LOG)"
 msgstr ""
 
 #: ../help.c:77
@@ -796,7 +792,7 @@ msgstr ""
 msgid "Input key macro to run:"
 msgstr ""
 
-#: ../keys.c:320
+#: ../keys.c:322
 #, c-format
 msgid "Screen resized to (%d, %d)"
 msgstr ""
@@ -921,12 +917,12 @@ msgstr ""
 msgid "Not valid number: %s\n"
 msgstr ""
 
-#: ../rcfile.c:395 ../rcfile.c:458 ../rcfile.c:580
+#: ../rcfile.c:395 ../rcfile.c:458 ../rcfile.c:579
 #, c-format
 msgid "unknown color name %s\n"
 msgstr ""
 
-#: ../rcfile.c:620 ../rcfile.c:654 ../rcfile.c:662
+#: ../rcfile.c:616 ../rcfile.c:648 ../rcfile.c:656
 #, c-format
 msgid "Bad regexp: [%s]:%s\n"
 msgstr ""
@@ -993,11 +989,11 @@ msgstr ""
 msgid "[%s] found in %s search"
 msgstr ""
 
-#: ../search.c:247 ../search.c:809 ../winin.c:490
+#: ../search.c:247 ../search.c:809 ../winin.c:483
 msgid "Backward"
 msgstr ""
 
-#: ../search.c:247 ../search.c:809 ../winin.c:493
+#: ../search.c:247 ../search.c:809 ../winin.c:486
 msgid "Forward"
 msgstr ""
 
@@ -1057,34 +1053,34 @@ msgstr ""
 msgid "Input string cancelled"
 msgstr ""
 
-#: ../winin.c:340
+#: ../winin.c:334
 msgid "UP/PGUP:history, DOWN/PGDN:filer"
 msgstr ""
 
-#: ../winin.c:481
+#: ../winin.c:474
 msgid "Yes"
 msgstr ""
 
-#: ../winin.c:484
+#: ../winin.c:477
 msgid "No"
 msgstr ""
 
-#: ../winin.c:487
+#: ../winin.c:480
 msgid "All"
 msgstr ""
 
-#: ../winin.c:495
+#: ../winin.c:488
 msgid "Cancel"
 msgstr ""
 
-#: ../winin.c:497
+#: ../winin.c:490
 msgid "End"
 msgstr ""
 
-#: ../winin.c:500
+#: ../winin.c:493
 msgid "Undo"
 msgstr ""
 
-#: ../winin.c:503
+#: ../winin.c:496
 msgid "Redo"
 msgstr ""

@@ -103,12 +103,12 @@ int dof_tap_file_to_enter()
 	}
 	return dof_enter_file_name();
 }
-int dof_tap_file_to_enter_append()
+int dof_tap_file_to_enter_add()
 {
 	if (filer_change_dir_to_cur_sel()) {
 		return 0;
 	}
-	return dof_enter_file_name_append();
+	return dof_enter_file_name_add();
 }
 int dof_view_file()
 {
@@ -750,12 +750,12 @@ int dof_real_path()
 	return filer_change_dir_if_not_yet(dir);
 }
 //------------------------------------------------------------------------------
-int dof_enter_file_name()        { filer_do_next = FL_ENTER_FILE_NAME;	return 0; }
-int dof_enter_file_name_append() { filer_do_next = FL_ENTER_FILE_NAME_APPEND;	return 0; }
-int dof_enter_file_path()        { filer_do_next = FL_ENTER_FILE_PATH;	return 0; }
-int dof_enter_file_path_append() { filer_do_next = FL_ENTER_FILE_PATH_APPEND;	return 0; }
-int dof_enter_dir_path()        { filer_do_next = FL_ENTER_DIR_PATH;	return 0; }
-int dof_enter_dir_path_append() { filer_do_next = FL_ENTER_DIR_PATH_APPEND;	return 0; }
+int dof_enter_file_name()     { filer_do_next = FL_ENTER_FILE_NAME;	return 0; }
+int dof_enter_file_name_add() { filer_do_next = FL_ENTER_FILE_NAME_ADD;	return 0; }
+int dof_enter_file_path()     { filer_do_next = FL_ENTER_FILE_PATH;	return 0; }
+int dof_enter_file_path_add() { filer_do_next = FL_ENTER_FILE_PATH_ADD;	return 0; }
+int dof_enter_dir_path()     { filer_do_next = FL_ENTER_DIR_PATH;	return 0; }
+int dof_enter_dir_path_add() { filer_do_next = FL_ENTER_DIR_PATH_ADD;	return 0; }
 //------------------------------------------------------------------------------
 int dof_set_filter()
 {

@@ -294,10 +294,8 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 		 get_group_name(show_link ? lst_ptr->st_gid : st_ptr->st_gid));
 		break;
 	}
-	for (info_str_ptr = buf_info; *info_str_ptr; info_str_ptr++) {
-		if (info_str_ptr[1] != ' ')	// skip space
-			break;
-	}
+	info_str_ptr = buf_info;
+	skip_space_mutable(&info_str_ptr);	// "  123" ==> "123"
 	info_str_len = strnlen(info_str_ptr, FILE_INFO_BUF_LEN);
 
 	file_name_cols = utf8s_columns(buf_name, central_win_get_columns());
@@ -318,15 +316,22 @@ char *file_info_str(file_info_t *file_info, int show_link, int trunc_file_name, 
 	}
 	if (file_name_cols > file_name_space) {
 		truncate_str_tail_columns(buf_name, file_name_space-1);
-		strlcat__(buf_name, MAX_PATH_LEN, "~");	// add truncated-mark
+		strlcat__(buf_name, MAX_PATH_LEN, "~");	// add truncation-mark
+		file_name_cols = utf8s_columns(buf_name, MAX_PATH_LEN);	// update with truncated len
 	}
 	expand_str_columns(buf_name, file_name_space);
-	info_space = LIM_MIN(0, sub_win_get_columns() - (SELECTED_MARK_LEN + file_name_space));
+	info_space = LIM_MIN(0, sub_win_get_columns() - (SELECTED_MARK_LEN + file_name_cols));
 	if (info_space < strnlen(info_str_ptr, FILE_INFO_BUF_LEN)) {
 		// truncate head
 		info_str_ptr = &info_str_ptr[strnlen(info_str_ptr, FILE_INFO_BUF_LEN) - info_space];
-		if (info_space >= 3) {
-			info_str_ptr[0] = ' ';	// truncate-head mark
+		// "*ffffffffffff ~ii"
+		// "*fffffffffffff ~i"
+		// "*ffffffffffffff ~"
+		// "*fffffffffffffff "
+		if (info_space >= 1) {
+			info_str_ptr[0] = ' ';	// space
+		}
+		if (info_space >= 2) {
 			info_str_ptr[1] = '~';	// truncate-head mark
 		}
 	}

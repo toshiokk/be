@@ -64,7 +64,7 @@ void init_app_mode()
 #ifdef USE_NKF
 	SET_APPMD(ed_USE_NKF);
 #endif // USE_NKF
-	CLR_APPMD(ed_AUTO_INDENT);
+/////	CLR_APPMD(ed_AUTO_INDENT);
 	SET_APPMD_VAL(ed_BACKUP_FILES, BACKUP_FILES_MAX);
 #ifdef ENABLE_REGEX
 	SET_APPMD(ed_USE_REGEXP);
@@ -118,9 +118,9 @@ void set_mode_idx_val(mode_idx_t mode_idx, int val)
 	case EDMD_CURS_POSITIONING:
 		SET_APPMD_VAL(ed_CURS_POSITIONING, val);
 		break;
-	case EDMD_AUTO_INDENT:
-		SET_APPMD_VAL(ed_AUTO_INDENT, val);
-		break;
+/////	case EDMD_AUTO_INDENT:
+/////		SET_APPMD_VAL(ed_AUTO_INDENT, val);
+/////		break;
 	case EDMD_BACKUP_FILES:
 		SET_APPMD_VAL(ed_BACKUP_FILES, val);
 		break;
@@ -181,8 +181,8 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 		return get_str_show_line_num();
 	case EDMD_CURS_POSITIONING:
 		return get_str_cursor_positioning();
-	case EDMD_AUTO_INDENT:
-		return get_str_auto_indent();
+/////	case EDMD_AUTO_INDENT:
+/////		return get_str_auto_indent();
 	case EDMD_BACKUP_FILES:
 		return get_str_backup_files();
 	case EDMD_IGNORE_CASE:
@@ -240,14 +240,14 @@ const char *get_str_draw_cursor()
 	return BOOL_TO_ON_OFF(GET_APPMD(app_DRAW_CURSOR));
 }
 
-int tog_auto_indent()
-{
-	return TOGGLE_APPMD(ed_AUTO_INDENT);
-}
-const char *get_str_auto_indent()
-{
-	return BOOL_TO_ON_OFF(GET_APPMD(ed_AUTO_INDENT));
-}
+/////int tog_auto_indent()
+/////{
+/////	return TOGGLE_APPMD(ed_AUTO_INDENT);
+/////}
+/////const char *get_str_auto_indent()
+/////{
+/////	return BOOL_TO_ON_OFF(GET_APPMD(ed_AUTO_INDENT));
+/////}
 
 int tog_dual_scroll()
 {
@@ -539,12 +539,12 @@ int doe_tog_draw_cursor()
 	SHOW_MODE("Draw cursor", get_str_draw_cursor());
 	return 0;
 }
-int doe_tog_auto_indent()
-{
-	tog_auto_indent();
-	SHOW_MODE("Auto indent", get_str_auto_indent());
-	return 0;
-}
+/////int doe_tog_auto_indent()
+/////{
+/////	tog_auto_indent();
+/////	SHOW_MODE("Auto indent", get_str_auto_indent());
+/////	return 0;
+/////}
 int doe_tog_dual_scroll()
 {
 	tog_dual_scroll();

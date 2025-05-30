@@ -192,9 +192,7 @@ key_code_t curses_input_key()
 
 PRIVATE key_code_t getch_()
 {
-	int key;
-
-	key = getch();
+	int key = getch();
 	return key;
 }
 

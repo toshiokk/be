@@ -110,6 +110,7 @@ char *utf8s_strnset__(char *buf, const char *utf8c, size_t len);
 
 //------------------------------------------------------------------------------
 int skip_space(const char **ptr);
+int skip_space_mutable(char **ptr);
 const char *skip_chars(const char *ptr, const char *chars);
 const char *skip_to_file_path(const char *ptr);
 const char *skip_file_path(const char *ptr);

@@ -66,14 +66,12 @@ int dof_refresh_filer();
 //|dof_run_command_abs        | v       | -      | --  |
 //|dof_run_command_src_dst    | v       | -      | --  |
 //|dof_run_command_symlink    | v       | -      | --  |
-//|dof_run_command_soon_wo_log| --      | --     | --  |
-//|dof_run_command_soon_w_log | --      | --     | yes |
-//|doe_run_line_soon_wo_log   | --      | --     | --  |
-//|doe_run_line_soon_w_log    | --      | --     | yes |
+//|dof_run_command_soon       | --      | --     | yes |
+//|doe_run_line_soon          | --      | --     | yes |
 
 int dof_tap_file();
 int dof_tap_file_to_enter();
-int dof_tap_file_to_enter_append();
+int dof_tap_file_to_enter_add();
 int dof_view_file();
 int dof_tail_file();
 
@@ -122,11 +120,11 @@ int dof_root_directory();
 int dof_prev_directory();
 
 int dof_enter_file_name();
-int dof_enter_file_name_append();
+int dof_enter_file_name_add();
 int dof_enter_file_path();
-int dof_enter_file_path_append();
+int dof_enter_file_path_add();
 int dof_enter_dir_path();
-int dof_enter_dir_path_append();
+int dof_enter_dir_path_add();
 
 int dof_set_filter();
 int dof_select_file();

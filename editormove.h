@@ -68,7 +68,7 @@ int doe_memorize_columns();
 int doe_fill_spaces_to_columns();
 
 int doe_enter_text();
-int doe_enter_text_append();
+int doe_enter_text_add();
 
 int doe_refresh_editor();
 

@@ -76,7 +76,7 @@ typedef struct /*app_mode*/ {
 	unsigned char ed_SYNTAX_HIGHLIGHT:1;	// bit 17
 	unsigned char ed_TAB_EOL_NOTATION:1;	// bit 18
 #endif // ENABLE_SYNTAX
-	unsigned char ed_AUTO_INDENT:1;			// bit 19
+/////	unsigned char ed_AUTO_INDENT:1;			// bit 19
 	unsigned char ed_REVERSE_SEARCH:1;		// bit 20
 	unsigned char ed_IGNORE_CASE:1;			// bit 21
 #ifdef ENABLE_REGEX
@@ -131,7 +131,7 @@ typedef enum /*mode_idx*/ {
 	EDMD_SHOW_RULER,
 	EDMD_SHOW_LINE_NUMBER,
 	EDMD_CURS_POSITIONING,
-	EDMD_AUTO_INDENT,
+/////	EDMD_AUTO_INDENT,
 	EDMD_BACKUP_FILES,
 	EDMD_IGNORE_CASE,
 #ifdef ENABLE_REGEX
@@ -184,8 +184,8 @@ int inc_app_mode();
 const char *get_str_app_mode();
 int tog_draw_cursor();
 const char *get_str_draw_cursor();
-int tog_auto_indent();
-const char *get_str_auto_indent();
+/////int tog_auto_indent();
+/////const char *get_str_auto_indent();
 int tog_dual_scroll();
 const char *get_str_dual_scroll();
 int tog_ignore_case();
@@ -272,7 +272,7 @@ int doe_inc_app_mode();
 int doe_tog_panes();
 int doe_tog_panex();
 int doe_tog_draw_cursor();
-int doe_tog_auto_indent();
+/////int doe_tog_auto_indent();
 int doe_tog_dual_scroll();
 int doe_tog_ignore_case();
 int doe_tog_regexp();

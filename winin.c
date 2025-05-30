@@ -100,11 +100,9 @@ PRIVATE int input_string_pos__(const char *default__, char *input_buf, int curso
 	strlcpy__(input_buf, default__, MAX_PATH_LEN);
 	cursor_byte_idx = MIN_MAX_(0, cursor_byte_idx, strlen_path(default__));
 
-	blank_key_list_lines();
 	// Main input loop
 	for ( ; ; ) {
 		ret = EF_NONE;
-
 		disp_input_box(message, input_buf, cursor_byte_idx);
 		//---------------------------
 		key_input = input_key_wait_return();
@@ -134,7 +132,7 @@ flf_d_printf("func_id: [%s]\n", func_id);
 			ret = EF_ENTER_STRING;			// confirm a string input
 		} else
 		if (key_input == K_M_ENTER) {
-			ret = EF_ENTER_STRING_APPEND;		// confirm a string input
+			ret = EF_ENTER_STRING_ADD;		// confirm a string input
 		} else
 		if ((strcmp(func_id, "dof_copy_file") == 0)
 		 || (strcmp(func_id, "dof_drop_files_to_copy") == 0)) {
@@ -277,7 +275,7 @@ flf_d_printf("func_id: [%s]\n", func_id);
 			//----------------------------------------------------
 			ret = select_from_history_list(hist_type_idx, buffer);
 			//----------------------------------------------------
-			if ((ret == EF_ENTER_STRING) || (ret == EF_ENTER_STRING_APPEND)) {
+			if ((ret == EF_ENTER_STRING) || (ret == EF_ENTER_STRING_ADD)) {
 				if ((ret == EF_ENTER_STRING) || (strcmp(func_id, "doe_page_up") == 0)) {
 					// clear input buffer
 					strcpy__(input_buf, "");
@@ -298,7 +296,7 @@ flf_d_printf("func_id: [%s]\n", func_id);
 			//---------------------------------------------------
 			ret = do_call_filer(1, APP_MODE_CHOOSER, "", "", buffer);
 			//---------------------------------------------------
-			if ((ret == EF_ENTER_STRING) || (ret == EF_ENTER_STRING_APPEND)) {
+			if ((ret == EF_ENTER_STRING) || (ret == EF_ENTER_STRING_ADD)) {
 				if ((ret == EF_ENTER_STRING) || (strcmp(func_id, "doe_page_down") == 0)) {
 					// clear input buffer
 					strcpy__(input_buf, "");
@@ -328,10 +326,6 @@ flf_d_printf("func_id: [%s]\n", func_id);
 */
 PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_byte_idx)
 {
-	int cursor_col_idx = col_idx_from_byte_idx(input_buf, cursor_byte_idx);
-	int input_area_width;
-	int start_byte_idx;
-
 	determine_input_line_y();
 	blank_input_box();
 	set_item_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
@@ -340,7 +334,8 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 	 _("UP/PGUP:history, DOWN/PGDN:filer"), -1);
 	set_item_color_by_idx(ITEM_COLOR_IDX_INPUT, 0);
 
-	input_area_width = central_win_get_columns()-2;
+	int input_area_width = central_win_get_columns()-2;
+	int cursor_col_idx = col_idx_from_byte_idx(input_buf, cursor_byte_idx);
 	if (cursor_col_idx < input_area_width) {
 		int bytes = byte_idx_from_col_idx(input_buf, input_area_width, CHAR_LEFT, NULL);
 		central_win_output_string(get_input_line_y()+1, 1, input_buf, bytes);
@@ -350,15 +345,13 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 		//"abcdefghijklmnopqrstuvwxyz"
 		// ==> |.ghijklmnopqrstuvwxyz |
 		//                           ^cursor
-		//
 		//    "abcdefghijklmnopqrstuvwxyz"
 		// ==> |.cdefghijklmnopqrstuvw|
 		//                           ^cursor
-		//
 		//     "abcdefghijklmnopqrstuvwxyz"
 		// ==> |abcdefghijklmnopqrstuv|
 		//                           ^cursor
-		start_byte_idx = byte_idx_from_col_idx(input_buf,
+		int start_byte_idx = byte_idx_from_col_idx(input_buf,
 		 cursor_col_idx - (input_area_width-2), CHAR_RIGHT, NULL);
 		int bytes = byte_idx_from_col_idx(&input_buf[start_byte_idx],
 		 input_area_width - utf8s_columns(TRUNCATION_MARK, MAX_SCRN_COLS), CHAR_LEFT, NULL);
@@ -607,7 +600,7 @@ PRIVATE void display_key_list_one_line(int yy, const char *text)
 			char func_id[MAX_SCRN_LINE_BUF_LEN+1];
 			strlcpy__(func_id, begin, ptr - begin);
 			if (start_chr == '<') {
-				conv_func_id_to_key_names(func_id, 3);
+				conv_func_id_to_key_names(func_id, 2);
 				set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST, 0);
 			}
 			xx += central_win_output_string(yy, xx, func_id, -1);

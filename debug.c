@@ -70,7 +70,7 @@ const char *format, ...)
 	char buffer[DEBUG_BUF_LEN+1];
 	va_list list;
 	va_start(list, format);
-	tflfl_vsprintf(buffer, time, file, line, func, label, format, list);
+	tflfl_vsprintf(buffer, time & 0x0f, file, line, func, label, format, list);
 	va_end(list);
 
 	put_to_ring_buffer(buffer);
@@ -107,13 +107,13 @@ const char* tflfl_vsprintf(char *buffer, int time, const char *file, int line,
 		snprintf_(buf_time, MAX_PATH_LEN, "SEC %s", buffer);
 		break;
 	case 3:
-		strlcat__(buf_time, MAX_PATH_LEN, cur_hhcmmcss_mmm());
+		strlcpy__(buf_time, cur_hhcmmcss_mmm(), MAX_PATH_LEN);
 		break;
 	case 6:
-		strlcat__(buf_time, MAX_PATH_LEN, cur_hhcmmcss_uuuuuu());
+		strlcpy__(buf_time, cur_hhcmmcss_uuuuuu(), MAX_PATH_LEN);
 		break;
 	case 9:
-		strlcat__(buf_time, MAX_PATH_LEN, cur_yymmdd_hhmmss());
+		strlcpy__(buf_time, cur_yymmdd_hhmmss(), MAX_PATH_LEN);
 		break;
 	default:
 		break;

@@ -25,6 +25,13 @@
 PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_);
 PRIVATE void exec_menu_func(int group_idx, int entry_idx);
 
+PRIVATE int disp_drop_down_menu(int group_idx, int entry_idx, int yy, int xx);
+PRIVATE void disp_drop_down_menu_line(func_key_t *func_key, int menu_y, int menu_lines,
+ int entry_idx, int fx_idx, int entries, int yy, int xx);
+PRIVATE int get_groups_in_func_key_table();
+PRIVATE int get_func_key_group_entries(int group_idx);
+PRIVATE func_key_t *get_func_key_executable_by_idx(func_key_t *func_key, int f_ex_idx);
+
 int editor_menu_n(int grp_idx)
 {
 	// previous selection in editor
@@ -156,24 +163,22 @@ app_menu_n_up_down:;
 	*entry_idx_ = entry_idx;
 }
 
-PRIVATE void disp_drop_down_menu_line(func_key_t *func_key, int menu_y, int f_idx, int entry_idx,
- int yy, int xx);
-
-int disp_drop_down_menu(int group_idx, int entry_idx, int yy, int xx)
+PRIVATE int disp_drop_down_menu(int group_idx, int entry_idx, int yy, int xx)
 {
 	func_key_t *func_key;
 	if ((func_key = get_func_key_group_from_group_idx(group_idx)) == NULL) {
 		return 0;
 	}
 	// menu contents:
-	//  "File Menu"    None None state  ^
-	//  "Item-1"       @e   @E   --     |
-	//  "Item-2"                        |
-	//  "Item-3"                        |
-	//  "Item-4"       ^Q   @Q          |
-	//  "Item-5"       ^Q   @Q          |
-	//  "Item-6"       ^Q   @Q          v items
-	//  ""                             
+	//  "File Menu"    None None state  ^            0
+	//  "Item-1"       @e   @E   --     |            1
+	//  "Item-2"                        |            :
+	//  "Item-3"                        |            :
+	//  "Item-4"       ^Q   @Q          |            :
+	//  "Item-5"       ^Q   @Q          |            :
+	//  "Item-6"       ^Q   @Q          v entries  entries-1
+	//  ""                                         entries
+	//
 	// menu display:
 	// ##File#Menu#####Key1#Key1#state##  ^            : top bar
 	// # Open file     @e   @E   --    #  |
@@ -181,69 +186,60 @@ int disp_drop_down_menu(int group_idx, int entry_idx, int yy, int xx)
 	// #                               #  |
 	// # Close fil     ^Q   @Q         #  |
 	// #################################  v menu_lines : bottom bar
-	int items = get_func_key_group_entries(group_idx);
-	int menu_lines = MIN_(items + 1, central_win_get_lines());
+	int entries = get_func_key_group_entries(group_idx);
+	int menu_lines = MIN_(entries + 1, central_win_get_lines());
 	int shift = MAX_(0, entry_idx - (menu_lines-2));
-flf_d_printf("items:%d menu_lines:%d entry_idx:%d shift:%d\n",
- items, menu_lines, entry_idx, shift);
 	for (int menu_y = 0; menu_y < menu_lines; menu_y++) {
-		int f_idx = 0;
+		int fx_idx = 0;
 		if (menu_y == 0) {
-			f_idx = 0;		// top bar
-		} else if (menu_y < menu_lines - 1) {
-			f_idx = menu_y + shift;
+			fx_idx = 0;		// top bar
 		} else {
-			f_idx = items;	// bottom bar
+			fx_idx = menu_y + shift;
 		}
-flf_d_printf("menu_y:%d menu_lines:%d\n", menu_y, menu_lines);
-		disp_drop_down_menu_line(func_key, menu_y, f_idx,
-		 (menu_y < menu_lines-1) ? entry_idx : (((shift + menu_lines) <= items) ? -1 : 0),
-		 yy, xx);
+		disp_drop_down_menu_line(func_key, menu_y, menu_lines, entry_idx, fx_idx, entries, yy, xx);
 	}
 	return 0;
 }
 
-PRIVATE void disp_drop_down_menu_line(func_key_t *func_key, int menu_y, int f_idx, int entry_idx,
- int yy, int xx)
+PRIVATE void disp_drop_down_menu_line(func_key_t *func_key, int menu_y, int menu_lines,
+ int entry_idx, int fx_idx, int entries, int yy, int xx)
 {
-flf_d_printf("menu_y:%d f_idx:%d entry_idx:%d, desc:[%s]\n",
- menu_y, f_idx, entry_idx, func_key[f_idx].desc);
 	char buf1[MAX_KEY_NAME_LEN+1];
 	char buf2[MAX_KEY_NAME_LEN+1];
 	char template_[] = " %-32s  %-*s %-*s  %-12s ";
 	char buffer[MAX_PATH_LEN+1];
 
+	func_key = get_func_key_executable_by_idx(func_key, fx_idx);
 	set_item_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
 	central_win_output_string(yy + menu_y, xx, " ", -1);
-	if ((menu_y == 0) || func_key[f_idx].desc[0]) {
-		if (func_key[f_idx].desc[0]) {
-			set_item_color_by_idx(ITEM_COLOR_IDX_MENU_ITEM, 0);
-			if (f_idx == entry_idx) {
-				set_item_color_by_idx(ITEM_COLOR_IDX_MENU_SELECTED, 0);
-			}
+	if (menu_y == 0) {
+		snprintf(buffer, MAX_PATH_LEN+1, template_,
+		 func_key->explanation, MAX_KEY_NAME_LEN, "Key1", MAX_KEY_NAME_LEN, "Key2",
+		 "state");
+	} else
+	if (menu_y < menu_lines-1) {
+		set_item_color_by_idx(ITEM_COLOR_IDX_MENU_ITEM, 0);
+		if (fx_idx == entry_idx) {
+			set_item_color_by_idx(ITEM_COLOR_IDX_MENU_SELECTED, 0);
 		}
 		snprintf(buffer, MAX_PATH_LEN+1, template_,
-		 func_key[f_idx].explanation,
-		 MAX_KEY_NAME_LEN, (func_key[f_idx].desc[0] == 0) ? "Key1"
-		  : short_key_name_from_key_code(func_key[f_idx].keys[0], buf1),
-		 MAX_KEY_NAME_LEN, (func_key[f_idx].desc[0] == 0) ? "Key2"
-		  : short_key_name_from_key_code(func_key[f_idx].keys[1], buf2),
-		 (func_key[f_idx].desc[0] == 0) ? "state"
-		  : func_key[f_idx].func_get());
+		 func_key->explanation,
+		 MAX_KEY_NAME_LEN, short_key_name_from_key_code(func_key->keys[0], buf1),
+		 MAX_KEY_NAME_LEN, short_key_name_from_key_code(func_key->keys[1], buf2),
+		 func_key->func_get());
 	} else {
 		snprintf(buffer, MAX_PATH_LEN+1, template_,
-		 entry_idx < 0 ? ":" : "",
+		 fx_idx < entries ? ":" : "",
 		 MAX_KEY_NAME_LEN, "",
 		 MAX_KEY_NAME_LEN, "",
 		 "");
 	}
-flf_d_printf("[%s]\n", buffer);
 	central_win_output_string(-1, -1, buffer, -1);
 	set_item_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
 	central_win_output_string(-1, -1, " ", -1);
 }
 
-int get_groups_in_func_key_table()
+PRIVATE int get_groups_in_func_key_table()
 {
 	func_key_t *app_func_key_table = get_app_func_key_table();
 	int group_idx = 0;
@@ -255,27 +251,32 @@ int get_groups_in_func_key_table()
 	return group_idx;
 }
 
-int get_func_key_group_entries(int group_idx)
+PRIVATE int get_func_key_group_entries(int group_idx)
 {
 	func_key_t *func_key;
 	if ((func_key = get_func_key_group_from_group_idx(group_idx)) == NULL) {
 		return 0;
 	}
-	int f_idx;
-	for (f_idx = 1; func_key[f_idx].desc[0]; f_idx++) {
-		// loop
+	int entries = 0;
+	for (int f_idx = 0; func_key[f_idx].desc[0] || (f_idx == 0); f_idx++) {
+		if (is_fkey_entry_executable(&func_key[f_idx], -1)) {
+			entries++;
+		}
 	}
-	return f_idx;		// number of lines including menu group title such as "File Menu"
+	return entries;		// number of lines executable in normal mode
+}
+PRIVATE func_key_t *get_func_key_executable_by_idx(func_key_t *func_key, int fx_idx)
+{
+	int fx_cnt = 0;		// count of entries executable
+	int f_idx;
+	for (f_idx = 0; (func_key[f_idx].desc[0] || (f_idx == 0)) && (fx_cnt < fx_idx); f_idx++) {
+		if (is_fkey_entry_executable(&func_key[f_idx], -1)) {
+			fx_cnt++;
+		}
+	}
+	return &func_key[f_idx];
 }
 
-key_code_t get_func_key_code(int group_idx, int entry_idx)
-{
-	func_key_t *func_key;
-	if ((func_key = get_func_key_group_from_group_idx(group_idx)) == NULL) {
-		return -1;
-	}
-	return func_key[entry_idx].keys[0];
-}
 
 PRIVATE void exec_menu_func(int group_idx, int entry_idx)
 {

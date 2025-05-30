@@ -182,14 +182,14 @@ flf_d_printf("[%s]\n", last_touched_file_pos_str);
 #ifdef ENABLE_HISTORY
 	key_macro_cancel_recording();
 #endif // ENABLE_HISTORY
-	if (editor_do_next == EF_ENTER_STRING) {
+	if ((editor_do_next == EF_ENTER_STRING) || (editor_do_next == EF_ENTER_STRING_ADD)) {
 		if (str_buf && epc_buf_count_bufs()) {
 			// get a text from editor current line
 			strlcpy__(str_buf, EPCBVC_CL->data, MAX_PATH_LEN);
 		}
 		editor_do_next = (IS_META_KEY(key_input) == 0)
-		 ? EF_ENTER_STRING				// Replace input file/dir name
-		 : EF_ENTER_STRING_APPEND;		// Append input file/dir name
+		 ? EF_ENTER_STRING			// Replace input file/dir name
+		 : EF_ENTER_STRING_ADD;		// Append input file/dir name
 	}
 	return editor_do_next;
 } // editor_main_loop
@@ -231,17 +231,13 @@ int save_top_cut_buf_to_clipboard_file()
 
 //------------------------------------------------------------------------------
 PRIVATE int doe_run_line__(int flags, int clbi, int input);
-int doe_run_line_soon_wo_log()
+int doe_run_line_soon()
 {
 	return doe_run_line__(EX_FLAGS_0, 0, 0);
 }
-int doe_run_line_soon_w_log()
-{
-	return doe_run_line__(EX_LOGGING, 0, 0);
-}
 int doe_run_line_input()
 {
-	return doe_run_line__(EX_LOGGING, EPCBVC_CLBI, 1);
+	return doe_run_line__(EX_FLAGS_0, EPCBVC_CLBI, 1);
 }
 PRIVATE int doe_run_line__(int flags, int clbi, int input)
 {
@@ -744,8 +740,9 @@ PRIVATE void disp_key_list_editor()
 	 "<doe_prev_word>PrevWord "
 	 "<doe_next_word>NextWord "
 	 "<doe_cut_to_head>CutToHead "
-	 "<doe_cut_text>CutLine "
 	 "<doe_cut_to_tail>CutToTail ",
+	 "<doe_tog_mark>Mark "
+	 "<doe_cut_text>CutLine "
 	 "<doe_copy_text>CopyLine "
 	 "<doe_paste_text_with_pop>PasteWPop "
 	 "<doe_paste_text_without_pop>PasteWoPop "
@@ -764,8 +761,8 @@ PRIVATE void disp_key_list_editor()
 	 "<doe_switch_to_next_buffer>NextBuf "
 	};
 	const char *editor_keys_in_list_mode[] = {
-	 "<doe_enter_text>Enter text (replace) "
-	 "<doe_enter_text_append>Enter text (insert) ",
+	 "<doe_enter_text>Enter text "
+	 "<doe_enter_text_add>Enter text (add) ",
 	 ""
 	};
 	disp_key_list_lines(is_app_chooser_viewer_mode() == 0

@@ -49,7 +49,9 @@ void conv_func_id_to_key_names(char *func_id, int max_keys)
 		if (func_key->keys[key_idx] != KNA) {
 			const char *key_name = short_key_name_from_key_code(func_key->keys[key_idx], NULL);
 			if (is_strlen_not_0(key_names)) {
-				strlcat__(key_names, MAX_KEY_NAMES_LEN, "|");
+////#define KEY_SEPERATOR	"|"
+#define KEY_SEPERATOR	"/"
+				strlcat__(key_names, MAX_KEY_NAMES_LEN, KEY_SEPERATOR);
 			}
 			strlcat__(key_names, MAX_KEY_NAMES_LEN, key_name);
 		}
@@ -94,6 +96,14 @@ func_key_t *get_fkey_entry_from_key(func_key_t *func_key, key_code_t key, int li
 		}
 	}
 	return NULL;
+}
+
+int is_key_assigned_to_func(key_code_t key, func_key_t *func_key)
+{
+	return (key != KNA)
+	 && ((key == func_key->keys[0])
+	  || (key == func_key->keys[1])
+	  || (key == func_key->keys[2]));
 }
 
 key_code_t get_key_for_func_id(const char *func_id)
@@ -166,14 +176,6 @@ int is_fkey_entry_executable(func_key_t *func_key, int list_mode)
 			return 0;		// not executable
 		}
 	}
-}
-
-int is_key_assigned_to_func(key_code_t key, func_key_t *func_key)
-{
-	return (key != KNA)
-	 && ((key == func_key->keys[0])
-	  || (key == func_key->keys[1])
-	  || (key == func_key->keys[2]));
 }
 void clear_fkey_tbl_using_these_keys(key_code_t *keys)
 {

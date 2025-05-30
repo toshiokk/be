@@ -299,12 +299,15 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 			case EF_EXECUTED:
 				break;
 			case FL_ENTER_FILE_NAME:
+			case FL_ENTER_FILE_NAME_ADD:
 			case FL_ENTER_FILE_PATH:
+			case FL_ENTER_FILE_PATH_ADD:
 				strcpy__(path_buf, "");
 				for (int file_idx = select_and_get_first_file_idx_selected();
 				 file_idx >= 0;
 				 file_idx = get_next_file_idx_selected(file_idx)) {
-					if (filer_do_next == FL_ENTER_FILE_NAME) {
+					if ((filer_do_next == FL_ENTER_FILE_NAME)
+					 || (filer_do_next == FL_ENTER_FILE_NAME_ADD)) {
 						// enter file names: file-1 "file 2" "file 3"
 						concat_file_path_separating_by_space(path_buf, MAX_PATH_LEN,
 						 get_cur_fv_file_name(file_idx));
@@ -316,26 +319,35 @@ flf_d_printf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 						concat_file_path_separating_by_space(path_buf, MAX_PATH_LEN, path);
 					}
 				}
-				filer_do_next = EF_ENTER_STRING;
+				if ((filer_do_next == FL_ENTER_FILE_NAME)
+				 || (filer_do_next == FL_ENTER_FILE_PATH)) {
+					filer_do_next = EF_ENTER_STRING;
+				} else {
+					filer_do_next = EF_ENTER_STRING_ADD;
+				}
 				break;
 			case FL_ENTER_DIR_PATH:
+			case FL_ENTER_DIR_PATH_ADD:
 				strlcpy__(path_buf, get_cur_filer_pane_view()->cur_dir, MAX_PATH_LEN);
-				filer_do_next = EF_ENTER_STRING;
+				if (filer_do_next == FL_ENTER_DIR_PATH) {
+					filer_do_next = EF_ENTER_STRING;
+				} else {
+					filer_do_next = EF_ENTER_STRING_ADD;
+				}
 				break;
 			}
 		}
 #ifdef ENABLE_HISTORY
 		save_histories();
 #endif // ENABLE_HISTORY
-
-		// | command modifier key | replace/append string         | return value           |
-		// |----------------------|-------------------------------|------------------------|
-		// | none                 | replacing input file/dir name | EF_ENTER_STRING        |
-		// | ALT                  | appending input file/dir name | EF_ENTER_STRING_APPEND |
+		// | command modifier key | replace/add string            | return value        |
+		// |----------------------|-------------------------------|---------------------|
+		// | none                 | replacing input file/dir name | EF_ENTER_STRING     |
+		// | ALT                  | adding    input file/dir name | EF_ENTER_STRING_ADD |
 		if (filer_do_next == EF_ENTER_STRING) {
 			filer_do_next = (IS_META_KEY(key_input) == 0)
-			 ? EF_ENTER_STRING				// Replace input file/dir name
-			 : EF_ENTER_STRING_APPEND;		// Append input file/dir name
+			 ? EF_ENTER_STRING			// Replace input file/dir name
+			 : EF_ENTER_STRING_ADD;		// Append input file/dir name
 		}
 		if (filer_do_next >= EF_QUIT) {
 			break;
@@ -606,12 +618,12 @@ PRIVATE void disp_key_list_filer()
 	 "<dof_rename_file>Rename "
 	 "<dof_trash_file>Trash "
 	 "<dof_delete_file>Delete "
-	 "<dof_mark_to_delete_file>MarkToDelete "
+	 "<dof_mark_to_delete_file>MarkToDel "
 	 "<dof_exec_command_with_file>Exec "
-	 "<dof_run_command_rel>Run "
-	 "<dof_select_file>SelectFile "
-	 "<dof_select_all_files>SelAllFiles ",
-	 "<dof_select_no_file>SelNoFile "
+	 "<dof_run_command_rel>Run ",
+	 "<dof_select_file>SelFile "
+	 "<dof_select_all_files>SelAll "
+	 "<dof_select_no_file>SelNone "
 	 "<dof_home_directory>HomeDir "
 	 "<dof_root_directory>RootDir "
 	 "<dof_change_directory>ChgDir "
@@ -628,13 +640,13 @@ PRIVATE void disp_key_list_filer()
 	};
 	const char *filer_keys_list_mode[] = {
 	 "<dof_enter_file_name>Enter FN "
-	 "<dof_enter_file_name_append>Enter FN(append) "
+	 "<dof_enter_file_name_add>Enter FN(add) "
 	 "<dof_enter_file_path>Enter file path "
-	 "<dof_enter_file_path_append>Enter file path(append) ",
+	 "<dof_enter_file_path_add>Enter file path(add) ",
 	 "<dof_enter_dir_path>Enter DIR "
-	 "<dof_enter_dir_path_append>Enter DIR(append) "
+	 "<dof_enter_dir_path_add>Enter DIR(add) "
 	 "<dof_tap_file_to_enter>Enter FN "
-	 "<dof_tap_file_to_enter_append>Enter FN(append) "
+	 "<dof_tap_file_to_enter_add>Enter FN(add) "
 	};
 	disp_key_list_lines(is_app_chooser_viewer_mode() == 0
 	 ? filer_keys_normal_mode : filer_keys_list_mode);

@@ -22,13 +22,13 @@
 #ifndef filerrun_h
 #define filerrun_h
 
-#define EX_FLAGS_0		0x0000
 #define EX_MOD_MASK		0x000f
 #define EX_SETTERM		0x0010		// change terminal settings before executing sub process
 #define EX_SEPARATE		0x0040		// output separator line before executing sub process
 #define EX_LOGGING		0x0100		// append
 #define EX_SOON			0x0400		// run soon without confirmation
 #define EX_PAUSE		0x1000		// pause after execution of sub process
+#define EX_FLAGS_0		EX_LOGGING
 
 #ifdef ENABLE_FILER
 
@@ -40,8 +40,7 @@ int dof_run_command_shell();
 int dof_run_command_symlink();
 int dof_run_command_src_dst_dir();
 int dof_run_command_src_dst_file();
-int dof_run_command_soon_wo_log();
-int dof_run_command_soon_w_log();
+int dof_run_command_soon();
 
 //------------------------------------------------------------------------------
 

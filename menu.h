@@ -25,12 +25,16 @@
 int editor_menu_n(int group_idx);
 int filer_menu_n(int group_idx);
 
-int disp_drop_down_menu(int group_idx, int sel_idx, int yy, int xx);
-int get_groups_in_func_key_table();
-int get_func_key_group_entries(int group_idx);
-short get_func_key_code(int group_idx, int entry_idx);
+/////key_code_t get_func_key_code(int group_idx, int entry_idx);
+/////key_code_t get_func_key_code(int group_idx, int entry_idx)
+/////{
+/////	func_key_t *func_key;
+/////	if ((func_key = get_func_key_group_from_group_idx(group_idx)) == NULL) {
+/////		return K_NONE;
+/////	}
+/////	return func_key[entry_idx].keys[0];
+/////}
 func_key_t *get_func_key_group_from_group_idx(int group_idx);
-int get_menu_items_from_group_idx(int group_idx);
 
 #ifdef ENABLE_DEBUG
 #ifdef START_UP_TEST

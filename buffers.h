@@ -260,7 +260,7 @@ int check_cur_buf_modified();
 #define CMP_CUR_EBUF_STATE(var, val)		CMP_BUF_STATE(get_epc_buf(), var, val)
 
 // current cut buffer state
-#define CUR_CBUF_STATE(var)					GET_BUF_STATE(CUT_BUFS_TOP_BUF, var)
+#define GET_CUR_CBUF_STATE(var)				GET_BUF_STATE(CUT_BUFS_TOP_BUF, var)
 #define SET_CUR_CBUF_STATE(var, val)		SET_BUF_STATE(CUT_BUFS_TOP_BUF, var, val)
 
 int inc_buf_mode();

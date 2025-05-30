@@ -6,12 +6,30 @@
 - CRASH: crash
 - POLICY: things to be kept
 
-- [x] BUG: pasting string does not forward cursor position ==> how to reproduce it ??
-- [] BUG: sometimes execution does not update other instance
-- [x] ISSUE: loading cut-buffer takes long time at startup ==> properly limit log file in size
-- [x] ISSUE: show key bindings in list mode in the status bar correctly by defining keys separately in normal and list mode in filerkeys.c
+- [L] ISSUE: change dir structure
+  - be
+    - src
+      - po
+    - doc
+    - script
+    - demo
+    - unused
+    - testfiles
+- [L] Make easy to use for other people
+- [x] 250530 BUG: pasting string does not forward cursor position
+      ==> wrong vaue LOCATE_CURS_NONE passed to post_cmd_processing()
+- [x] 250530 BUG: in editor list mode, @ENTER does not work
+- [x] 250529 BUG: in filer list mode, @e does not work
+- [x] 250529 BUG: fix file info trancation in filer
+- [x] 250527 make capable to cancel autoindentation by one undoing
+- [x] 250527 BUG: sometimes execution does not update other instance
+- [x] 250527 Delete "w_logging"
+- [x] 250527 BUG: show menu depending on the current list mode
+- [x] 250527 CRASH: crash on showing menu
+- [x] 250524 ISSUE: loading cut-buffer takes long time at startup ==> properly limit log file in size
+- [x] 250524 ISSUE: show key bindings in list mode in the status bar correctly by defining keys separately in normal and list mode in filerkeys.c
 - [x] 250520 ISSUE: in filer just Enter input full path.
-- [d] ISSUE: can not delete files containing '$' (by shell substitution)
+- [d] 250520 ISSUE: can not delete files containing '$' (by shell substitution)
   ```
   betrash $$home$user$git$KOIKE$@doc$@refs$1-Wire$DS18B20-85-deg$250512$250509-DS18B20-85deg.md
   rm -rvf $$home$user$git$KOIKE$@doc$@refs$1-Wire$DS18B20-85-deg$250512$250509-DS18B20-85deg.md
@@ -59,7 +77,6 @@
         ==> switch to edit buffer if possible, switch to anchor of edit buffer if impossible
   - [-] column alignment of japanese message
 
-- [] Make easy to use for other people
 - [x] No Japanese but English comment
 - [xxx ] clean up code
   - [d ] Use `typedef` in variable definition (UINT8/UINT16/UINT32/ssize_t/size_t)
@@ -308,8 +325,8 @@ start as a editor
 // |--------|-----------------------------|---------------------------|-----|------|
 // | K_x_   | dof_exec_command_with_file  | --                        |     |      |
 // | K_X_   | dof_exec_command_with_files | --                        |     |      |
-// | K_M_x  | dof_run_command_soon_wo_log | doe_run_line_soon_wo_log  |     |      |
-// | K_M_X  | dof_run_command_soon_w_log  | doe_run_line_soon_w_log   |     |      |
+// | K_M_x  | dof_run_command_soon        | doe_run_line_soon         |     |      |
+// | K_M_X  | --                          | --                        |     |      |
 // | K_MC_X | --                          | doe_tog_regex             |     |      |
 // | K_r_   | dof_run_command_rel         | --                        |     |      |
 // | K_R_   | dof_run_command_abs         | --                        |     |      |
@@ -340,24 +357,6 @@ start as a editor
 // | K_M_n  | doe_open_new_file           |          |    |       |       | Yes | Yes    |
 // | K_M_E  | doe_open_file_ro            |          |Yes |       |       | Yes |        |
 // | K_MC_E | doe_open_locked_file        |          |    |       | Yes   | Yes |        |
-
-// Execution functions:
-// | key    | filer function              | editor function           |
-// |--------|-----------------------------|---------------------------|
-// | K_x_   | dof_exec_command_with_file  | --                        |
-// | K_X_   | dof_exec_command_with_files | --                        |
-// | K_M_x  | dof_run_command_soon_wo_log | doe_run_line_soon_wo_log  |
-// | K_M_X  | dof_run_command_soon_w_log  | doe_run_line_soon_w_log   |
-// | K_MC_X | --                          | doe_tog_regex             |
-// | K_r_   | dof_run_command_rel         | --                        |
-// | K_R_   | dof_run_command_abs         | --                        |
-// | K_M_r  | --                          | doe_start_rec__cancel_rec |
-// | K_M_R  | --                          | --                        |
-// | K_MC_R | --                          | doe_tog_show_ruler        |
-// | K_M_p  | doe_open_proj_file          | doe_end_rec__playback     |
-// | K_M_P  | doe_open_proj_file          | doe_open_proj_file        |
-// | K_t_   | dof_run_command_src_dst     | --                        |
-// | K_T_   | dof_run_command_symlink     | --                        |
 
 The seamless text copying:
 | from                          | to               |action to be able to do                           |
@@ -546,7 +545,6 @@ The seamless text copying:
 
 [x] return a valid value from the execution (may because of pipe line)
     [-] --> No good way to do `set -o pipefail` in each time before execution
-    [x] --> ..._wo_log() show a valid value
 [x] improve previous_word(), next_word()
 [x] improve get string from editor text in search_string()
 [x] crash on opening from editor by Alt-e, change to sub-dir, open html file
@@ -615,8 +613,8 @@ The seamless text copying:
 - [xx] tag-jump in file list:				open files M-; UP... F12
 - [xx] tag-jump in history called from filer:		start filer, `x` UP UP... F12
 - [xx] key-list view and func-list view:		open file, M-U ESC or M-? ESC
-- [xx] input from history (replace/append(Alt)):	open file, M-h UP Enter or M-Enter
-- [xx] input from filer (replace/append(Alt), file/full-path(Shift)):	start filer, `x` DOWN select file, e or M-e or E or M-E
+- [xx] input from history (replace/add(Alt)):	open file, M-h UP Enter or M-Enter
+- [xx] input from filer (replace/add(Alt), file/full-path(Shift)):	start filer, `x` DOWN select file, e or M-e or E or M-E
 - [xx] start as a editor:				start with argument of file name, ^Q
 - [xx] call-filer:					open file, M-F
 - [xx] call-filer and open file:			open file, M-F select file, `e`
@@ -645,11 +643,11 @@ The seamless text copying:
 //	input_string()		editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
 //						TAG-JUMP(updating root-editor)		RETURN to editor on success(quit/loaded)
 //				filer(LIST)	input file path by selecting file/dir	RETURN to editor(quit/input)
-//	dof_run_command_soon_wo_log()
+//	dof_run_command_soon()
 // editor(NORMAL)
 //	input_string()		editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
 //						TAG-JUMP(updating root-editor)		RETURN to editor on success(quit/loaded)
-//						doe_run_line_soon_wo_log()		RETURN to editor on success(quit/loaded)
+//						doe_run_line_soon()		RETURN to editor on success(quit/loaded)
 //				filer(LIST)	input file path by selecting file/dir	RETURN to editor(quit/input)
 //						open file				RETURN to editor on success(quit/loaded)
 //	doe_open_file()		filer(NORMAL)	open file by selecting file		RETURN to editor on success(quit/loaded)
@@ -660,7 +658,7 @@ The seamless text copying:
 //	doe_view_file_list()	editor(HELP)	TAG-JUMP to file(updating root-editor)	RETURN to editor(quit/loaded)
 //	doe_view_key_list()	editor(HELP)	view help text				return to editor when quit(quit)
 //	doe_view_func_list()	editor(HELP)	view help text				return to editor when quit(quit)
-//	doe_run_line_soon_wo_log()
+//	doe_run_line_soon()
 
 editor/filer	input_string()
 --------------->

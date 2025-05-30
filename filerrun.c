@@ -41,21 +41,20 @@ PRIVATE int dof_run_command_(int flags);
 int dof_exec_command_with_file()
 {
 #define MAX_REPLACEMENTS	10
-	int exit_status = 0;
-
 	char command_str[MAX_PATH_LEN+1];
 	if (chk_inp_str_ret_val_filer(input_string_pos("", command_str, MAX_PATH_LEN,
 	 HISTORY_TYPE_IDX_EXEC,
 	 _("Execute({} will be replaced with file-name):")))) {
 		return 0;
 	}
-	int flags = EX_LOGGING;
-	if (filer_do_next == EF_ENTER_STRING_APPEND) {
+	int flags = EX_FLAGS_0;
+	if (filer_do_next == EF_ENTER_STRING_ADD) {
 		flags ^= EX_LOGGING;	// invert logging
 	}
 	if (is_path_dir(command_str) > 0) {
 		return filer_change_dir(command_str);
 	}
+	int exit_status = 0;
 	begin_fork_exec_repeat();
 	for (int file_idx = select_and_get_first_file_idx_selected();
 	 file_idx >= 0;
@@ -99,8 +98,8 @@ int dof_exec_command_with_files()
 	 _("Execute with files:")))) {
 		return 0;
 	}
-	int flags = EX_LOGGING;
-	if (filer_do_next == EF_ENTER_STRING_APPEND) {
+	int flags = EX_FLAGS_0;
+	if (filer_do_next == EF_ENTER_STRING_ADD) {
 		flags ^= EX_LOGGING;	// invert logging
 	}
 	fork_exec_sh_c_once(flags | EX_PAUSE, command_str);
@@ -111,20 +110,20 @@ int dof_exec_command_with_files()
 PRIVATE int dof_run_command_rel_abs();
 int dof_run_command_rel()
 {
-	return dof_run_command_rel_abs(0 | EX_LOGGING);
+	return dof_run_command_rel_abs(0 | EX_FLAGS_0);
 }
 int dof_run_command_abs()
 {
-	return dof_run_command_rel_abs(2 | EX_LOGGING);
+	return dof_run_command_rel_abs(2 | EX_FLAGS_0);
 }
 PRIVATE int dof_run_command_rel_abs(int flags)
 {
 	if (get_files_selected_cfv() == 0) {
 		struct stat *st_ptr = &get_cur_fv_cur_file_info()->st;
 		if ((st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
-			dof_run_command_(flags | 0 | EX_LOGGING);
+			dof_run_command_(flags | 0 | EX_FLAGS_0);
 		} else {
-			dof_run_command_(flags | 1 | EX_LOGGING);
+			dof_run_command_(flags | 1 | EX_FLAGS_0);
 		}
 		return 0;
 	}
@@ -149,8 +148,7 @@ PRIVATE int dof_run_command_rel_abs(int flags)
 	 _("Execute with files:")))) {
 		return 0;
 	}
-	flags = EX_LOGGING;
-	if (filer_do_next == EF_ENTER_STRING_APPEND) {
+	if (filer_do_next == EF_ENTER_STRING_ADD) {
 		flags ^= EX_LOGGING;	// invert logging
 	}
 	fork_exec_sh_c_once(flags | EX_PAUSE, command_str);
@@ -159,27 +157,23 @@ PRIVATE int dof_run_command_rel_abs(int flags)
 }
 int dof_run_command_shell()
 {
-	return dof_run_command_(4 | EX_LOGGING);
+	return dof_run_command_(4 | EX_FLAGS_0);
 }
 int dof_run_command_symlink()
 {
-	return dof_run_command_(5 | EX_LOGGING);
+	return dof_run_command_(5 | EX_FLAGS_0);
 }
 int dof_run_command_src_dst_dir()
 {
-	return dof_run_command_(6 | EX_LOGGING);
+	return dof_run_command_(6 | EX_FLAGS_0);
 }
 int dof_run_command_src_dst_file()
 {
-	return dof_run_command_(7 | EX_LOGGING);
+	return dof_run_command_(7 | EX_FLAGS_0);
 }
-int dof_run_command_soon_wo_log()
+int dof_run_command_soon()
 {
 	return dof_run_command_(0 | EX_SOON);
-}
-int dof_run_command_soon_w_log()
-{
-	return dof_run_command_(0 | EX_SOON | EX_LOGGING);
 }
 PRIVATE int dof_run_command_(int flags)
 {
@@ -244,8 +238,7 @@ PRIVATE int dof_run_command_(int flags)
 		// run soon without editing command line
 	} else {
 		char explanation[MAX_PATH_LEN+1];
-		snprintf(explanation, MAX_PATH_LEN, "%s%s:",
-		 expl, ((flags & EX_LOGGING) == 0) ? "" : _("(WITH LOG)"));
+		snprintf(explanation, MAX_PATH_LEN, "%s:", expl);
 		struct stat *st_ptr = &get_cur_fv_cur_file_info()->st;
 		if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str,
 		 (S_ISREG(st_ptr->st_mode) && (st_ptr->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
@@ -254,7 +247,7 @@ PRIVATE int dof_run_command_(int flags)
 		 explanation))) {
 			return 0;
 		}
-		if (filer_do_next == EF_ENTER_STRING_APPEND) {
+		if (filer_do_next == EF_ENTER_STRING_ADD) {
 			flags ^= EX_LOGGING;	// invert logging
 		}
 	}
@@ -410,7 +403,8 @@ PRIVATE int fork_exec_before_after(int flags, const char *command, char * const 
 	// It does not output "sh -c [command arg1 arg2]"
 	//           but output only "command arg1 arg2"
 #ifdef ENABLE_HISTORY
-	update_history(HISTORY_TYPE_IDX_EXEC, command);
+	// save to file soon, because a command execution may take long time
+	update_save_history(HISTORY_TYPE_IDX_EXEC, command);
 	mflf_d_printf("exec: [%s]\n", command);
 #endif // ENABLE_HISTORY
 

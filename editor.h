@@ -34,8 +34,8 @@ const char *get_clipboard_file_path();
 int save_top_cut_buf_to_clipboard_file();
 
 //------------------------------------------------------------------------------
-int doe_run_line_soon_wo_log();
-int doe_run_line_soon_w_log();
+int doe_run_line_soon();
+int doe_run_line_soon();
 int doe_run_line_input();
 
 //------------------------------------------------------------------------------

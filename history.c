@@ -110,6 +110,12 @@ PRIVATE be_buf_t *get_history_buf(int hist_type_idx)
 	return buf_get_buf_by_idx(HIST_BUFS_TOP_BUF, hist_type_idx);
 }
 
+void update_save_history(int hist_type_idx, const char *str)
+{
+	update_history(hist_type_idx, str);
+	save_history_if_modified(hist_type_idx);
+}
+
 //------------------------------------------------------------------------------
 // update history list (load, modify, save)
 void update_history(int hist_type_idx, const char *str)

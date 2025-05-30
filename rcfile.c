@@ -111,7 +111,7 @@ struct /*_rc_cmd_idx_*/ {
  { "show_ruler",			EDMD_SHOW_RULER,			},
  { "show_line_num",			EDMD_SHOW_LINE_NUMBER,		},
  { "cursor_center",			EDMD_CURS_POSITIONING,		},
- { "auto_indent",			EDMD_AUTO_INDENT,			},
+///// { "auto_indent",			EDMD_AUTO_INDENT,			},
  { "backup_files",			EDMD_BACKUP_FILES,			},
  { "ignore_case",			EDMD_IGNORE_CASE,			},
 #ifdef ENABLE_REGEX
@@ -561,7 +561,6 @@ PRIVATE struct /*_color_index_*/ {
 PRIVATE int parse_color_name(int *bright, int *color)
 {
 	int index;
-
 	*bright = 0;
 	*color = -1;
 	if (parse_keyword(&rc_line_ptr, "bright") == 0) {
@@ -596,8 +595,7 @@ PRIVATE int parse_keyword(const char **rc_line_ptr, const char *keyword)
 
 int register_default_color_syntax()
 {
-#define CL_TAB_EOL	CL_GY	// color for TAB/EOL/"　" notation
-
+#define CL_TAB_EOL	CL_LG	// color for TAB/EOL/"　" notation
 	add_file_type("*", ".*");
 	cur_file_type->tab_size = DEFAULT_TAB_SIZE;			// set default tab size
 	add_color_syntax(UTF8_ZEN_SPACE, "", -1, CL_TAB_EOL);	// Full width space
@@ -610,10 +608,8 @@ int register_default_color_syntax()
 PRIVATE int add_file_type(const char *file_type_name, const char *regexp_file_name)
 {
 	file_type_t **file_type_ptr;
-	file_type_t *file_type = NULL;
-
 	_mlc_set_caller
-	file_type = (file_type_t *)malloc__(sizeof(file_type_t));
+	file_type_t *file_type = (file_type_t *)malloc__(sizeof(file_type_t));
 	file_type->regexp = regexp_alloc();
 	file_type->next = NULL;
 	if (regexp_compile(file_type->regexp, regexp_file_name, 0)) {
@@ -639,13 +635,11 @@ add_file_type_err:;
 
 PRIVATE int add_color_syntax(const char *regexp_start, const char *regexp_end, int bgc, int fgc)
 {
-	color_syntax_t *clr_syntax;
-
 	if (strlen(regexp_start) == 0)
 		return 1;
 
 	_mlc_set_caller
-	clr_syntax = (color_syntax_t *)malloc__(sizeof(color_syntax_t));
+	color_syntax_t *clr_syntax = (color_syntax_t *)malloc__(sizeof(color_syntax_t));
 	clr_syntax->next = NULL;
 	clr_syntax->regexp_end = NULL;
 
@@ -683,7 +677,6 @@ add_color_syntax_err1:;
 PRIVATE int link_color_syntax_w_file_type(file_type_t *file_type, color_syntax_t *clr_syntax)
 {
 	color_syntax_t **color_syntax_ptr_ptr = NULL;
-
 	for (color_syntax_ptr_ptr = &file_type->color_syntax;
 	 *color_syntax_ptr_ptr != NULL; ) {
 		color_syntax_ptr_ptr = &(*color_syntax_ptr_ptr)->next;
@@ -694,25 +687,22 @@ PRIVATE int link_color_syntax_w_file_type(file_type_t *file_type, color_syntax_t
 
 void free_file_types()
 {
-	file_type_t *file_type, *f_next;
-	color_syntax_t *clr_syntax, *c_next;
-
 	_mlc_memorize_count
-	for (file_type = file_types_head; file_type != NULL; ) {
+	for (file_type_t *file_type = file_types_head; file_type != NULL; ) {
 		FREE_CLR_PTR(file_type->desc);
 		regexp_free(file_type->regexp);
-		for (clr_syntax = file_type->color_syntax; clr_syntax != NULL; ) {
+		for (color_syntax_t *clr_syntax = file_type->color_syntax; clr_syntax != NULL; ) {
 			if (clr_syntax->regexp_start) {
 				FREE_CLR_PTR(clr_syntax->regexp_start);
 			}
 			if (clr_syntax->regexp_end) {
 				FREE_CLR_PTR(clr_syntax->regexp_end);
 			}
-			c_next = clr_syntax->next;
+			color_syntax_t *c_next = clr_syntax->next;
 			FREE_CLR_PTR(clr_syntax);
 			clr_syntax = c_next;
 		}
-		f_next = file_type->next;
+		file_type_t *f_next = file_type->next;
 		FREE_CLR_PTR(file_type);
 		file_type = f_next;
 	}
@@ -726,22 +716,20 @@ void free_file_types()
 #ifdef ENABLE_DEBUG
 void dump_file_types()
 {
-	file_type_t *file_type;
-
 flf_d_printf("{{\n");
-	for (file_type = file_types_head; file_type != NULL; file_type = file_type->next) {
+	for (file_type_t *file_type = file_types_head; file_type != NULL;
+	 file_type = file_type->next) {
 		dump_file_type(file_type, 0);
 	}
 flf_d_printf("--------------------------------------------------\n");
-	for (file_type = file_types_head; file_type != NULL; file_type = file_type->next) {
+	for (file_type_t *file_type = file_types_head; file_type != NULL;
+	 file_type = file_type->next) {
 		dump_file_type(file_type, 1);
 	}
 flf_d_printf("}}\n");
 }
 void dump_file_type(const file_type_t *file_type, int syntax)
 {
-	color_syntax_t *clr_syntax;
-
 	if (file_type == NULL) {
 		flf_d_printf("file_type: NULL\n");
 	}
@@ -749,7 +737,7 @@ void dump_file_type(const file_type_t *file_type, int syntax)
 	 file_type == cur_file_type ? ">" : " ",
 	 file_type->desc, file_type->regexp->needle_compiled, file_type->tab_size);
 	if (syntax) {
-		for (clr_syntax = file_type->color_syntax; clr_syntax != NULL;
+		for (color_syntax_t *clr_syntax = file_type->color_syntax; clr_syntax != NULL;
 		 clr_syntax = clr_syntax->next) {
 			dump_color_syntax(clr_syntax);
 		}

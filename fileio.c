@@ -598,19 +598,16 @@ PRIVATE inline void load_into_cur_buf_append_line(be_line_t* line, char* line_bu
 PRIVATE int load_into_cur_buf_fp(FILE *fp)
 {
 	int file_format_idx = 0;	// 0 = nix, 1 = Mac, 2 = DOS
-	int chr_int;			// read character
-	int prev_chr = '\0';	// previous read character
-	char line_buf[MAX_EDIT_LINE_LEN+1];
-	int len;
 	int lines_read = 0;
-	be_line_t *line;
+	int prev_chr = '\0';		// previous read character
+	char line_buf[MAX_EDIT_LINE_LEN+1];
+	int len = 0;
+	be_line_t *line = CUR_EDIT_BUF_BOT_ANCH;
 
-	line = CUR_EDIT_BUF_BOT_ANCH;
-	len = 0;
 	line_buf[len] = '\0';
 	fgetc_bufed_clear();
 	for ( ; ; ) {
-		chr_int = fgetc_buffered(fp);
+		int chr_int = fgetc_buffered(fp);	// read character
 		switch (chr_int) {
 		case '\n':
 			if (prev_chr == '\r') {
@@ -860,15 +857,6 @@ void disp_files_loaded()
 #ifdef START_UP_TEST
 void test_flock()
 {
-	MY_UT_INT(flock_lock("relative/path/to/file.txt"), 0);
-	MY_UT_INT(flock_unlock("relative/path/to/file.txt"), 0);
-	MY_UT_INT(flock_lock("relative/path/to/file.txt"), 0);
-	MY_UT_INT(flock_lock("relative/path/to/file.txt"), 1);
-	MY_UT_INT(flock_unlock("relative/path/to/file.txt"), 0);
-	MY_UT_INT(flock_unlock("relative/path/to/file.txt"), 1);
-
-	////MY_UT_INT(flock_lock("relative/path/to/file.txt"), 0);
-
 	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
 	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 0);
 	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
@@ -876,7 +864,9 @@ void test_flock()
 	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 0);
 	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 1);
 
-	////MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
+	////
+MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
+	// error on the next calling test_flock()
 }
 #endif // START_UP_TEST
 

@@ -303,8 +303,13 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 		 count_cur_cut_buf_lines());
 	}
 #endif // ENABLE_UNDO
+
+	UINT8 delete_cut_mode = CUT_MODE_0_LINE;
+	UINT8 paste_cut_mode = CUT_MODE_0_LINE;
+
 	// ====  DELETE  ====
 	if (cp_del_paste_pop & CDPP_DELETE) {
+		delete_cut_mode = GET_CUR_EBUF_STATE(buf_CUT_MODE);
 		delete_text_in_cut_region();
 	}
 	// ====  PASTE  ====
@@ -312,6 +317,7 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 		if (count_cut_bufs() == 0) {
 			disp_status_bar_err(_("Cut-buffer empty !!"));
 		} else {
+			paste_cut_mode = GET_CUR_CBUF_STATE(buf_CUT_MODE);
 			paste_text_from_cut_buf();
 		}
 	}
@@ -323,8 +329,22 @@ PRIVATE int copy_delete_paste_pop__(int cp_del_paste_pop)
 	do_clear_mark_();	// always clear mark
 	clear_disabled_update_min_text_x_to_keep();
 
+	// | delete_cut_mode | paste_cut_mode || desirable horizontal cursor positioning |
+	// |-----------------|----------------||-----------------|
+	// | char            | char           || horizontal move |
+	// | char            | line           || vertical move   |
+	// | char            | box            || horizontal move |
+	// | line            | char           || horizontal move |
+	// | line            | line           || vertical move   |
+	// | line            | box            || horizontal move |
+	// | box             | char           || horizontal move |
+	// | box             | line           || vertical move   |
+	// | box             | box            || horizontal move |
 	if (cp_del_paste_pop & CDPP_REPLACE) {
-		switch (CUR_CBUF_STATE(buf_CUT_MODE)) {
+		if (paste_cut_mode == CUT_MODE_0_LINE) {
+			paste_cut_mode = delete_cut_mode;
+		}
+		switch (paste_cut_mode) {
 		default:
 		case CUT_MODE_0_LINE:
 			post_cmd_processing(top_line, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
@@ -416,7 +436,7 @@ PRIVATE int delete_text_in_cut_region()
 }
 PRIVATE int paste_text_from_cut_buf()
 {
-	switch (CUR_CBUF_STATE(buf_CUT_MODE)) {
+	switch (GET_CUR_CBUF_STATE(buf_CUT_MODE)) {
 	case CUT_MODE_H_CHAR:
 	case CUT_MODE_VH_CHAR:
 		paste_cut_buf_char();
@@ -634,15 +654,15 @@ PRIVATE int paste_cut_buf_char()
 	while (cut_line = NODE_NEXT(cut_line), IS_NODE_INT(cut_line)) {
 		new_line = line_insert_with_string(EPCBVC_CL, INSERT_BEFORE, cut_line->data);
 		//  aaaaAAAA
-		//  BBBB
+		//  BBBB  <== new_line
 		// >bbbb
 		EPCBVC_CURS_Y++;
 	}
+	EPCBVC_CLBI = line_strlen(new_line);
 	//  aaaaAAAA
 	//  BBBB
-	//  CCCC  <== new_line
+	//  CCCC^  <== new_line
 	// >bbbb
-	EPCBVC_CLBI = line_strlen(new_line);
 	line_concat_with_prev(EPCBVC_CL);
 	//  aaaaAAAA
 	//  BBBB
@@ -667,12 +687,12 @@ PRIVATE int paste_cut_buf_line()
 	for (be_line_t *cut_line = CUR_CUT_BUF_TOP_LINE; IS_NODE_INT(cut_line); ) {
 		line_insert_with_string(EPCBVC_CL, INSERT_BEFORE, cut_line->data);
 		cut_line = NODE_NEXT(cut_line);
-		if (IS_MARK_SET(CUR_CBUF_STATE(buf_CUT_MODE))) {
+		if (IS_MARK_SET(GET_CUR_CBUF_STATE(buf_CUT_MODE))) {
 			// marked cut/copy
 			EPCBVC_CURS_Y++;
 		}
 	}
-	if (IS_MARK_SET(CUR_CBUF_STATE(buf_CUT_MODE)) == 0) {
+	if (IS_MARK_SET(GET_CUR_CBUF_STATE(buf_CUT_MODE)) == 0) {
 		// unmarked cut/copy
 		EPCBVC_CL = NODE_PREV(EPCBVC_CL);
 		EPCBVC_CLBI = LIM_MAX(EPCBVC_CLBI, line_strlen(EPCBVC_CL));	// limit cursor pos

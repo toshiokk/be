@@ -43,7 +43,7 @@ func_key_t editor_func_key_table[] = {
  {EFLM, "Enter text",            "Enter text in the cur line",
    {K_M_e, K_M_n, K_ENTER  }, F_I(doe_enter_text),                 get_str_setting_none },
  {EFLM, "Enter text",            "Enter text in the cur line",
-   {K_M_E, K_M_N, K_M_ENTER}, F_I(doe_enter_text_append),          get_str_setting_none },
+   {K_M_E, K_M_N, K_M_ENTER}, F_I(doe_enter_text_add),             get_str_setting_none },
  {EFNM, "Reopen",                "Reopen file",
    {K_C_Z,         KNA, KNA}, F_I(doe_reopen_file),                get_str_setting_none },
  {EFNM, "Reopen, goto Last pos.","Reopen and go to Last line",
@@ -184,7 +184,7 @@ func_key_t editor_func_key_table[] = {
    {K_M_3,         KNA, KNA}, F_I(doe_playback_string),            get_str_setting_none },
 #endif // ENABLE_HISTORY
  {EFAM, "Run line soon(logging)","Run current line soon w/ log",
-   {K_M_x,         KNA, KNA}, F_I(doe_run_line_soon_w_log),        get_str_setting_none },
+   {K_M_x,         KNA, KNA}, F_I(doe_run_line_soon),        get_str_setting_none },
  {EFAM, "Run command",           "Run command input",
    {K_M_X,         KNA, KNA}, F_I(doe_run_line_input),             get_str_setting_none },
 
@@ -262,8 +262,8 @@ func_key_t editor_func_key_table[] = {
    {K_MC_C,        KNA, KNA}, F_I(doe_tog_draw_cursor),            get_str_draw_cursor },
  {EFNM, "Ignore case",           "Toggle Ignore case",
    {K_MC_G,        KNA, KNA}, F_I(doe_tog_ignore_case),            get_str_ignore_case },
- {EFNM, "Auto indent",           "Toggle Auto indent",
-   {K_MC_O,        KNA, KNA}, F_I(doe_tog_auto_indent),            get_str_auto_indent },
+///// {EFNM, "Auto indent",           "Toggle Auto indent",
+/////   {K_MC_O,        KNA, KNA}, F_I(doe_tog_auto_indent),            get_str_auto_indent },
  {EFNM, "Display key list",      "Increment Displaying key list",
    {K_MC_K,        KNA, KNA}, F_I(doe_inc_key_list_lines),         get_str_key_list_lines },
  {EFNM, "Back up files",         "Increment Back up files",
