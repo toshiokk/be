@@ -1,0 +1,45 @@
+echo debugging be ...
+rm -f $HOME/.beexit
+mk_backup_log_file __be_test.log
+if [ -f ./be ]; then
+  ##./be --version
+  ##./be "$@"
+  if [ -n "$UCON" ]; then
+    light=l
+    if [ "$1" = l ]; then
+      shift
+      light=""
+    fi
+  else
+    light=""
+    if [ "$1" = l ]; then
+      shift
+      light=l
+    fi
+  fi
+  if [ -n "$light" ]; then
+    if [ "$1" = c ]; then
+      shift
+      LANG=C ./be -d -l "$@"
+    else
+      ./be -d -l "$@"
+    fi
+  else
+    if [ "$1" = c ]; then
+      shift
+      LANG=C ./be -d "$@"
+    else
+      ./be -d "$@"
+    fi
+  fi
+  ##LANG=C.UTF-8 ./be -d "$@"
+  ##./be -c -d "$@"
+  if [ ! -f $HOME/.beexit ]; then
+    mv -f __be_test.log __be_crash.log
+  fi
+fi 2>__be_test.log
+
+rt
+#echo "be exited"
+#rm be
+

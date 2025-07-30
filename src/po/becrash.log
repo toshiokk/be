@@ -1,0 +1,10 @@
+22:43:14.282 editor.c 156 editor_main_loop }}}} editor_do_next: EF__0
+editor.c 167 editor_main_loop app_mode: 0, edit-buffers: 1
+22:43:14.283 disp.c 203 disp_status_bar_percent_va SB(1): [Up  |    ?                                                                                                       ]
+editor2.c 243 disp_edit_win cursor_y:3
+editor.c 167 editor_main_loop app_mode: 0, edit-buffers: 1
+editor2.c 243 disp_edit_win cursor_y:3
+22:43:15.850 editor.c 104 editor_main_loop input_key:0x001f(^_|C-_)=======================
+22:43:15.850 editor.c 151 editor_main_loop {{{{ CALL_FUNC_EDITOR [doe_goto_line]
+sig.c 129 handler_sigsegv Received SIGSEGV
+sig.c 141 handler_sigsegv 

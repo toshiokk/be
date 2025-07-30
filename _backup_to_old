@@ -1,8 +1,8 @@
-# backup "be" directory to ../old/
+# backup "be" directory to ../old/be
 
-back_dir=be`yymmdd-hhmmss`
-cp -auv ../be ../old/$back_dir
+back_dir_name=be`yymmdd-hhmmss`
+cp -auv ../be ../old/$back_dir_name
 rm -f ../old/be
-ln -s ../old/$back_dir ../old/be
+ln -s ../old/$back_dir_name ../old/be
 
-##### EOF
+# EOF

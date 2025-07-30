@@ -1,3 +1,0 @@
-# copy BE-EDITOR support shell scripts
-cp -av scripts/* ~/bin
-#cp -av be ~/bin

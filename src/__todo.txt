@@ -1,0 +1,1371 @@
+#### BE-editor to do list
+ (H: high priority, L: Low priority, e: easy, d: difficult, x/v: done, -: impossible/pending)
+- BUG:  bug
+- IMPR: to be improved issues
+- ISSUE: to be improved or fixed problems
+- CRASH: crash
+- POLICY: things to be kept
+
+- [L] Make easy to use for other people
+- [x] 250730 Make it possible to copy from list mode buffers
+- [x] 250725 line number is '0' when switched by doe_switch_to_next_buffers()
+- [x] 250725 line number is '0' in newly appended lines
+- [x] 250723 show real dir-path in status bar when a cursor is pointing "." or ".."
+- [x] 250717 do sync_cut_buffers_and_histories() in all keyboard input loop
+- [x] 250716 show re-loading of buffers on title bar
+- [x] 250710 show title bar in strange color in list mode for filer
+- [x] 250701 prevent frequent update of dir-history
+- [x] 250630 delete all lock files "/home/user/.be/.*", at the start of dof_open_file_locked()/doe_open_file_locked()
+- [x] 250620 make backup files for history files
+- [x] 250620 change cut_buffer from push/pop stack style(newer first) to append/truncate style(newer last)
+  - [x] the same as in cut_buffer file
+- [x] 250620 a line-cut text in another instance is pasted as one-line-cut text
+- [x] 250620 in cut_buffer view, text are shown marked
+- [x] 250620 wrongly changeable cut-mode in viewing cut_buffer
+- [-] 250620 doing `copy` to cut_buffer when viewing cut_buffer causes crash on app because `copy` changes cut_buffer
+- [-] 250620 when viewing, wrongly cut/copy/paste-able in cut_buffer
+      - cut_buffer is updated even when you are viewing it
+      - cut_buffer is automatically reloaded even when you are viewing it
+- [x] add expiration timer of 1000mSec to cut_buffer
+- [x] ISSUE: Slow bracket search
+  - in What case, slows down ?
+    - update_screen_app() with bracket HL
+    - many files loaded in editor
+    - bracket HL
+      ==> in `disp_edit_win_bracket_hl_dir_fw()` and `disp_edit_win_bracket_hl_dir_bw()`, so many useless looping
+- [x] BUG: share cut_buffer among editor instances.
+  - before update local cut_buffer, if the cut_buffer file is newer and reload it.
+  - after updated local cut_buffer, if the local cut_buffer is newer and write it.
+  - [x] apply the same policy to history_buffer
+  Test cases:
+  | step | action                                   | expected reaction       |
+  |------|------------------------------------------|-------------------------|
+  |  1   | start two instances I1 and I2            | none                    |
+  |  1   | I1: goto diff. dir. and refresh view     | I2: reload dir-history  |
+  |  1   | I1: goto diff. dir. and refresh view     | I2: reload dir-history  |
+  |  1   | I1: just goto diff. dir.                 | I2: nothing done        |
+  |  1   | I2: exec `ls'                            | I1: exec-hist updated   |
+  |  1   | I2: exec `pwd'                           | I1: exec-hist updated   |
+  |  2   | I1: open file and copy one line          | I2: re-load cut-buf     |
+  |  2   | I2: open file and paste cut-buf with pop | I1: re-load cut-buf     |
+  |  2   | I2: search some keyword                  | I1: re-load search-hist |
+  |  3   | none                                     | I1: file-hist updated   |
+  |  3   | none                                     | I2: file-hist updated   |
+
+- [x] BUG: cut_buffer soon overflawn, why ?
+  ==> loaded without clearing it
+- [x] ISSUE: can not open file in doe_open_file and doe_open_new_file
+  - (x) input file name as a full path
+  - (-) load file in the dir which is changed by the filer
+- [L] save modified configuration to $HOME/.berc
+  - separate configuration(.berc) into basic settings (.besettings), syntax highlighting (.besyntaxhl) and keybindings (.bekeybind)
+  - load and save (.besettings)
+- [x] To avoid file losses in dof_copy_file() and dof_move_file(),
+      use "-t dest-dir" option when source is more than two files
+- [x] `@/`: return previous position alternating two file positions
+- [x] 250609 change the return value type of `func_key_t::(*func)()` from `int` to `void`
+- [x] 250608 filer: keep previous cursor y position when returned from the parent dir.
+  - [xx] 250608 BUG: cursor y position pops on file update
+  - [xx] in filer, cursor shown at 1 line below from current line
+    - reproduction of the phenominon: [select files and delete it]/[select files and move it]/[.]
+    - suspicion of the cause: [when some files disappered, cursor_y keeps old value]
+  - [x] keep previous cursor pos when opening sub filer
+- [x] show total file size selected on status bar
+- [x] 250613 ISSUE: change dir structure
+  - be
+    - src
+      - po
+    - doc
+    - script
+    - demo
+    - unused
+    - testfiles
+- [x] 250530 BUG: pasting string does not forward cursor position
+      ==> wrong value LOCATE_CURS_NONE passed to post_cmd_processing()
+- [x] 250530 BUG: in editor list mode, @ENTER does not work
+- [x] 250529 BUG: in filer list mode, @e does not work
+- [x] 250529 BUG: fix file info trancation in filer
+- [x] 250527 make capable to cancel autoindentation by one undoing
+- [x] 250527 BUG: sometimes execution does not update other instance
+- [x] 250527 Delete "w_logging"
+- [x] 250527 BUG: show menu depending on the current list mode
+- [x] 250527 CRASH: crash on showing menu
+- [x] 250524 ISSUE: loading cut_buffer takes long time at startup ==> properly limit log file in size
+- [x] 250524 ISSUE: show key bindings in list mode in the status bar correctly by defining keys separately in normal and list mode in filerkeys.c
+- [x] 250520 ISSUE: in filer just Enter input full path.
+- [d] 250520 ISSUE: can not delete files containing '$' (by shell substitution)
+  ```
+  betrash $$home$user$git$KOIKE$@doc$@refs$1-Wire$DS18B20-85-deg$250512$250509-DS18B20-85deg.md
+  rm -rvf $$home$user$git$KOIKE$@doc$@refs$1-Wire$DS18B20-85-deg$250512$250509-DS18B20-85deg.md
+  ```
+  - [x] 250520 change the separator substitution of '/' from '$' to '.'
+- [x] 250518 on the opening help buffer, reload all help buffers and cut_buffers
+- [x] 250511 BUG: not copyable of a text in the list mode
+- [x] 250511 CRASH: when it cuts a text from the later line to the former line
+- [x] 250509 BUG: execution-log does not update soon from the point of view of another terminal
+- [x] 250509 re-start BE (M^Q)
+- [x] 2505?? func(void) ==> func()
+- [x] 250425 BUG: not sent to system-clipboard
+- [x] 250424 improve cut-mode transition between character cut and rectangular cut
+- [x] 250423 properly separate very long line at UTF8 character boundary
+- [x] 250423 share cut_buffer among all BE editor instances
+- [x] 250421 open more than 2 files in doe_open_file()
+- [x] 250421 BUG: switch "#cut_buffer-xxx" on opening file.
+- [x] 250420 show columns selected in status bar "COLS:9999"
+- [x] 250423 save cut_buffer with information of cut-mode (Line/Char/Box)
+- [x] 250420 select more than two files and 'r'/'R' enters all file names/file path
+- [x] expand maximum screen size to equivalent to 8K screen
+- [x] make possible to tag-jump in List-mode editor
+- [x] BUG: contents scrolls one line when page up/down
+- [x] CRASH: in 'dof_run_command_src_dst_file()'
+- [x] set_color_for_bracket_hl()
+  - [x] not show color of color_idx=0 more than 2 times
+  - [x] not show color of color_idx=0 in the out side of the range [-8 ~ 7]
+- [x] 250408 goto the file previously beeing edited at last
+- [-] 250407 create a new file as modified
+- [x] 250405 BUG: new file is unlocked on saving
+  - [x] 250405 BUG: sometimes lock file is made in full-path not in abs-path
+    ==> realpath() does not work if the path does not actually exist
+      ==> workaround: realpath__() makes working even if the path does not actually exist
+- [x] 250404 BUG: can not write to the new file
+- [x] 250404 BUG: open file but does not show it
+- [x] [K_M_SEMCO]file list ==> buffer list
+  - [x] assign ID to all buffers
+    "/path/to/file"
+    "#/home/user/.be/dir_history"
+    "#/home/user/.be/cut_buffer"
+    "#cut_buffer-000"
+  - [x] tag-jump by the buffer ID
+  - [x] 250404 BUG: tag-jump from "#..." return EF_5 and does not switch to the buffer
+  - [x] 250405 can not leave from list with message "This buffer is NOT closeable"
+        ==> switch to edit buffer if possible, switch to anchor of edit buffer if impossible
+  - [-] column alignment of japanese message
+
+- [x] No Japanese but English comment
+- [xxx ] clean up code
+  - [d ] Use `typedef` in variable definition (UINT8/UINT16/UINT32/ssize_t/size_t)
+  - [d ] POLICY: "definition of variables is a initialization."
+  - [d ] POLICY: minimize variable scope as narrower as possible
+
+- [x] add "two dir" mode to filer which enter "/dir/a/file-a.txt /dir/b/file-b.txt" automatically
+- [x] reduce_log_file_size()
+  - [x] 250408 changed log size unit from MB to KB
+- [-] such usage "grep "Temper" file.csv | be"
+- [-] 250324 do not append magic-line on loading and do not remove magic-line on saving
+  - [-] 250325 append magic-line on loading 0 byte file and remove magic-line on saving a file which has only one LF
+- [x] 250328 manage magic-line by a flag buf.magic_line_added
+  - on load: no magic-line in file ==> add magic-line and set flag
+  - on save: flag is beeing set and there is a magic-line ==> remove magic-line
+
+- [x] IMPR: built in logger that output to the separate log files based on the pty number
+  - [x] record output from a program that is started execution by filer in sub shell
+    ```
+    == [/home/user/tools/be/be]$ whoami ==
+    user
+    == [/home/user/tools/be/be]$ pwd ==
+    /home/user/tools/be/be
+    ```
+  - [x] Use `script` for logging (apt install bsdutils)
+  - [x] not include the output from `be` editor itself because it include many confusing escape sequence
+  - [x] log file name, which is the more convenient ?
+    - [x] `/home/user/.be/1.log`
+      - [x] automatic reduction of cut_buffer file size
+    - [-] `/home/user/.be/yymmdd-hhmmss.log`
+    - [-] `/home/user/logs/yymmdd-hhmmss.log`
+      - [-] automatic deletion of old log files
+  - [x] enable logging from almost all sub shell execution
+    - [] output all execution to log
+  - [x] 250329 workaround for the case when no 'script' executable
+    - [x] check availability of 'script' at startup and does not call if unavailable
+
+- [x-] 250322 delete `last_searched_needle` ==> necessary when ENABLE_HISTORY disabled
+- [x] 250322 BUG: It causes `PROGERR` to break loading very large file.
+- [x] 250321 on screen resizing, cursor position become out of screen in editor
+- [x] 250321 delete "-h"(app_HISTORY) option
+- [x] 250315 BUG: cursor position does not restored after undo
+- [?] BUG: keyword search goes to history-buffers
+- [x] 250316 IMPR: switchable use of hi-background-color at run time not build time by "--highbgc"
+  - [x] 250315 add "--enable-highbgc" option to `configure`
+- [x] 250314 no screen size displayed within input_string_pos() on screen resizing
+- [x] use file time stamp for checking update of history file by other processes
+- [x] 250304 update dir-history only when some operation actually done in the dir
+  - [x] this is sometimes inconvenient. how to improve it
+    - temporarily add dir as "#/path" form
+      - [x]on changing cur dir to other
+        - if the path still exist as "#/path...", remove it
+        - if the path does not exist as "#/path...", do nothing
+      - [x]on the operation in the dir
+        - if the path still exist as "#/path...", change from "#/path..." to "/path..."
+        - if the path does not exist as "#/path...", do nothing
+      - [x]remove prepended "#" when it gets the entry value from history
+      - [x] two temporal entries can not exist
+  - [ ] BUG: sometimes dir not registered after I enter and open project file
+
+  # operations:
+    - refresh file list
+    - select file
+    - open file
+    - file operations such as copy/move/remove/mkdir/exec
+    - other special operation ...
+      - [x] 250329 switch pane
+      - quit filer
+  # test cases:
+    - process-A enters dir-A
+    - process-B enters dir-B
+      - [x] dir-A and dir-B are pending
+    - process-A leaves dir-A
+    - process-B leaves dir-B
+      - [x] dir-A and dir-B should be removed
+    - process-A enters dir-A
+    - process-B enters dir-B
+    - fix dir-A
+    - fix dir-B
+      - [x] dir-A and dir-B are fixed
+
+- [x] 250314 filer: 'u' uncompress files from .tar.gz/.tar.bz2/.zip calling `beunzip`
+  - [x] ask_yes_no(), interate uncompression ==> input_str_pos(), call `beunzip` once passing all files
+- [x] 250314 filer: 'U' compress files to .tar.gz/.tar.bz2/.zip calling `bezip`
+- [x ] CRASH: on the switch to undo-buffer
+  - [-]there may be illegal links from undo-buffer to edit-buffer
+  - [x] ==> undo_buf->cur_buf is not fixed
+  - [x] [MOD]/[LIST] states gonna be cleared in undo/redo-buf
+- [x] BUG: opening file at command line creates a lock file such as "$shared-documents.md" that have no dir-part
+  - get_full_path() should add the dir-part to the file path only contains file-part
+
+- [x] 250313 ask_yes_no(): change to more highlighted display ==> red background by inverting color
+
+- buffer state:
+  |state |operations possible    |explanation                                                     |
+  |------|-----------------------|----------------------------------------------------------------|
+  |normal|R/W, saveable/closeable| normal edit buffer                                             |
+  |RO    |RO, closeable          | read-only: file is loaded as read-only by a user's intention   |
+  |locked|RO, closeable          | locked   : file is not writable because other program open it  |
+  |WP    |RO, closeable          | write-protected: file is write protected by the file system    |
+  |LIST  |RO, not-closeable by user's intention | list  : help/file-list/history/cut-buf/undo-buf |
+  |anchor|RO, not-closeable by user's intention | anchor: buffer is an anchor                     |
+  |empty |RO, not-closeable by user's intention | empty : buffer is empty                         |
+
+  |anchor|empty|list| RO |locked| WP ||modifiable|saveable|closeable|
+  |------|-----|----|----|------|----||----------|--------|---------|
+  |  0   |  0  | 0  | 0  |  0   | 0  ||    1     |    1   |    1    | edit-buf
+  |  0   |  0  | 0  | 1  |  0   | 0  ||    0     |    0   |    1    | edit-buf(read-only open)
+  |  0   |  0  | 0  | 0  |  1   | 0  ||    0     |    0   |    1    | edit-buf(locked file)
+  |  0   |  0  | 0  | 0  |  0   | 1  ||    0     |    0   |    1    | edit-buf(write-protected file)
+  |  0   |  0  | 1  | 0  |  0   | 0  ||    0     |    0   |    0    | help/history/cut/undo/redo-buf
+  |  1   |  0  | 0  | 0  |  0   | 0  ||    0     |    0   |    0    | an anchor (not a valid buffer)
+  |  0   |  1  | 0  | 0  |  0   | 0  ||    0     |    0   |    0    | empty  (not a valid buffer)
+
+- [x] an anchor of undo/redo buffer being open when swithed
+- [x] It is not proper that undo/redo buffer have the same `abs_path` to the original edit-buffer
+  ==> "/path/to/the/file" --> "#/path/to/the/file" (prepend '#')
+
+- [d ] change directory by selecting from directory tree
+  - get directory list by 'find -type d' (output to file or pty)
+    - limit lines to 1000
+    - avoid searching too deep by '-maxdepth 3'
+  - open in list mode and let it be choosen
+
+- [x] run line from cursor position
+
+- [x] It is confising that cur dir has changed after file move with a call to filer
+  ==> does not change cur dir after calling filer in LIST mode
+- [x] stripes filer file list lines ==> only FGC (black/dark-gray)
+  - [x] toggle 'zebra striping' ON/off by key '_'
+- [x] reconsider options for dof_copy_...() and dof_move...()
+  - [x] dof_copy_file()         "cp -afv ..."  ==> "cp -afv ..."
+  - [x] dof_copy_file_update()  "cp -aufv ..." ==> "cp -auv ..."
+  - [x] dof_move_file_force()                      "mv -fv ..."
+  - [x] add dof_move_file_update()                 "mv -uv ..."
+- [-] list functions from small letter to capital letter
+- [-] make it able to cut/copy text in the list mode buffer
+- [?] Speed down of the cursor movement in input_str_pos() with GNU-screen on WSL
+- [x] 250305 Clear or Limit size of cut_buffers(1000 buffers)
+
+- [-] "LANG=C be" does not show UTF8 characters in editing text ==> natural
+- [x] "LANG=C.UTF-8 be" does not show UTF8 characters in editing text
+- [x] enable debug-logging from just after app startup
+  |No.|ENABLE_DEBUG|FORCE_ENABLE_DEBUG|`-d` option|start main()|after parse_options()|
+  |---|------------|------------------|-----------|------------|---------------------|
+  | 0 | --         | --               | none      | None       | None   |
+  | 1 | --         | --               | -d        | None       | None   |
+  | 2 | --         |FORCE_ENABLE_DEBUG| none      | Output     | None   |
+  | 3 | --         |FORCE_ENABLE_DEBUG| -d        | Output     | Output |
+  | 4 |ENABLE_DEBUG| --               | none      | None       | None   |
+  | 5 |ENABLE_DEBUG| --               | -d        | None       | Output |
+  | 6 |ENABLE_DEBUG|FORCE_ENABLE_DEBUG| none      | Output     | None   |
+  | 7 |ENABLE_DEBUG|FORCE_ENABLE_DEBUG| -d        | Output     | Output |
+
+- [x] BUG: quit from filer which is called from editor by K_M_Q changes cur_dir to "/home/user"
+
+- [-] 250301 "File not found" message on loading `.bep` file
+      ==> error message should be shown when no file could be loaded within one line
+
+- [x] 250301 change_cur_dir() returns "0: on success" ==> "1: on success"
+
+- [x] 250301 BUG: infinite loop at changing to non existent dir
+
+- [x] make it easy to do:
+  - [x] open shell script, change current dir, run one line of the shell script
+    - [x] change editor current directory in the sub-filer
+    - [x] how to show current directory in editor ==> show on the status-bar while input_str_pos()
+  - [XX] change current dir, open shell script, run one line of the shell script
+
+- [.] ISSUE: manage process's current directory
+  - POLICY: do not change current directory without consideration.
+
+- [x] can not Undo
+
+- [x] fix file locking problem on write_file_to()
+//   |writing to the|current buffer state |another file state   | what to do |
+//   |--------------|---------------------|---------------------|------------|
+//[x]|current file  |not locked           |--                   |write to it         |
+//[x]|current file  |locked               |--                   |can NOT write to it |
+//[x]|another file  |--                   |has not locked       |unlock prev file, write to it and lock it|
+//[x]|another file  |--                   |has locked by someone|can NOT write to it |
+
+- [x] scroll pull down menu in small screen
+  - [x] does not re-displayed menu on screen resizing
+- [x] delete EFLM_QUIT
+- [x] 250219 in viewer mode, ESC quits the viewer
+- [x] BUG: switch_to_bot_buffer() at the bottom of buffer switches to edit-buffer
+- [x] cover all Fxx keys modified any conbination of modifier keys of S, C, M in the key key_seq_table
+  no any key seq does outputs a funny text such as "19;7~"
+- [x] 250207 do switch_to_prev_buffer on the top of buffers ==> switch_to_prev_buffers
+- [x] 250207 do switch_to_next_buffer on the top of buffers ==> switch_to_next_buffers
+- [x] 250206 root directory is shown as "//"
+- [x] 250202 read file into current cursor position
+- [x] current buffer is not be switched to the newly loaded file
+- [x] open directory selecting from file open histotry "/file/opened.txt|1:2" in F09 and F10
+  - [-] update the current directory in caller
+
+## various operations and call tree ============================================
+start as a filer
+- [x] edit a file in the current directory
+  - filer(select file to edit)                              => open it
+- [x] execute a file in the current directory
+  - filer(select file to execute)                           => execute it
+- [x] input command and execute it
+  - filer -> input_string(input command)
+          <-                                                => input command and execute it
+- [x] select a dir from history and change current dir to it
+  - filer -> input_string() -> editor(select from history)
+          <- input_string() <-                              => change current dir
+- [x] select a command from history and execute it
+  - filer -> input_string() -> editor(select from history)
+          <- input_string() <-                              => execute command
+- [XX] switch to the execution dir, open command file from the another dir
+  and execute a line as a command line [XX]in the switched dir
+  - filer(change current dir) -> input_string() -> editor(select from history)
+                              <- input_string() <-          => execute command
+
+start as a editor
+- [x] select a string from history and input into the editing text
+  - editor -> input_string() -> editor(select from history)
+              input_string() <-                             => input string to the editing text
+- [x] select a string from history and search it in the editing text
+  - editor -> input_string() -> editor(select from history)
+              input_string() <-                             => search a keyword in the editing text
+- [x] select a line from the editing text and execute it as a command line in the current dir
+  - editor(select a line)                                   => execute it as a command line
+- [x]open commend file and call filer, switch to the execution dir, select a line from the editing text
+  and execute it as a commend line in the switched dir
+  - editor -> filer(change dir) -> editor(select a line)    => execute it as a command line
+
+- [] regression test list
+// Editing functions:
+// | key    | filer function              | editor function           |filer|editor|
+// |--------|-----------------------------|---------------------------|-----|------|
+// | K_e_   | dof_open_file_recursive     | --                        |  v  |      |
+// | K_M_e  | dof_open_file_non_recursive | doe_open_file_recursive   |  v  |      |
+// | K_E_   | dof_open_file_ro            | --                        |  v  |      |
+// | K_M_E  | dof_open_file_from_history  | doe_open_file_ro          |  v  |      |
+// | K_MC_E | dof_open_file_locked        | doe_open_file_locked      |     |      |
+// | K_M_n  | dof_open_new_file           | doe_open_new_file         |     |      |
+// | K_M_N  | dof_open_new_file           | doe_open_new_file         |     |      |
+// | K_MC_N | --                          | doe_tog_show_line_num     |     |      |
+
+// Execution functions:
+// | key    | filer function              | editor function           |filer|editor|
+// |--------|-----------------------------|---------------------------|-----|------|
+// | K_x_   | dof_exec_command_with_file  | --                        |     |      |
+// | K_X_   | dof_exec_command_with_files | --                        |     |      |
+// | K_M_x  | dof_run_command_soon        | doe_run_line_soon         |     |      |
+// | K_M_X  | --                          | --                        |     |      |
+// | K_MC_X | --                          | doe_tog_regex             |     |      |
+// | K_r_   | dof_run_command_rel         | --                        |     |      |
+// | K_R_   | dof_run_command_abs         | --                        |     |      |
+// | K_M_r  | --                          | doe_start_rec__cancel_rec |     |      |
+// | K_M_R  | --                          | --                        |     |      |
+// | K_MC_R | --                          | doe_tog_show_ruler        |     |      |
+// | K_M_p  | doe_open_proj_file          | doe_end_rec__playback     |     |      |
+// | K_M_P  | doe_open_proj_file          | doe_open_proj_file        |     |      |
+// | K_t_   | dof_run_command_src_dst     | --                        |     |      |
+// | K_T_   | dof_run_command_symlink     | --                        |     |      |
+
+// Editor file open functions:
+// | key    | filer function              |recursive |read|Use    |Un     |input|Allow   |
+// |        |                             |          |only|history|locking|FN   |non     |
+// |        |                             |          |    |       |       |     |existent|
+// |--------|-----------------------------|----------|----|-------|-------|-----|--------|
+// | K_e_   | dof_open_file_recursive     | Yes      |    | No    |       |     |        |
+// | K_E_   | dof_open_file_ro            | Yes      |Yes | No    |       |     |        |
+// | K_M_e  | dof_open_file_non_recursive | No       |    | No    |       |     |        |
+// | K_M_E  | dof_open_file_from_history  | Yes      |    | Yes   |       |     |        |
+// | K_MC_E | dof_open_file_locked        | Yes      |    | No    | Yes   |     |        |
+// | K_M_n  | dof_open_new_file           | Yes      |    |       |       | Yes | Yes    |
+// |--------|-----------------------------|----------|----|-------|-------|-----|--------|
+// | K_e_   | N/A                         |          |    |       |       | Yes |        |
+// | K_E_   | N/A                         |          |    |       |       | Yes |        |
+// | K_M_e  | doe_open_file_recursive     |          |    |       |       | Yes |        |
+// | K_M_E  | doe_open_file_non_recursive | Yes      |    |       |       | Yes |        |
+// | K_M_n  | doe_open_new_file           |          |    |       |       | Yes | Yes    |
+// | K_M_E  | doe_open_file_ro            |          |Yes |       |       | Yes |        |
+// | K_MC_E | doe_open_file_locked        |          |    |       | Yes   | Yes |        |
+
+The seamless text copying:
+| from                          | to               |action to be able to do                           |
+|-------------------------------|------------------|--------------------------------------------------|
+|editor line                    |editor line       |Edit: cut/copy and paste editor line to editor line    |
+|editor line                    |filer command line|Execute: paste editor line to filer command line       |
+|(file/dir) (name/path) in filer|editor line       |Edit:    paste file name in filer to editor line       |
+|(file/dir) (name/path) in filer|filer command line|Execute: paste file name in filer to filer command line|
+|history line                   |editor line       |Edit:    paste history line to editor line             |
+|history line                   |filer command line|Execute: paste history line to filer command line      |
+|Key-word searched/replaced     |search-history    |Available from editor and filer |
+|Command executed               |execution-history |Available from editor and filer |
+|File opened                    |file-history      |Available from editor and filer |
+|Directory browsed              |dir-history       |Available from editor and filer |
+|Keymacro recorded              |keymacro-history  |Available from editor and filer |
+
+|file-history                   |file Tag-jump     |open file and jump to the line |
+|file-history                   |dir Tag-jump      |change dir and open with filer |
+|dir-history                    |dir Tag-jump      |change dir and open with filer |
+
+- [x] file name filter
+- [x] Too long time would be taken when you open missing files with project file
+- [x] 250120 Does not show the function keys not available on the current state
+- [x] 250116 No new window size shown when beeing open input_str()
+- [x] How to manage discarded file lock (on BE-editor crash) ==> eof_open_locked_file()
+- [x] BUG: dof_open_file_ro() opens rw mode in recursive open
+- [x] buffer "VIEW" ==> "RO"
+- [x] corrupted message at 3rd key in menu
+- [x] BUG: changed from WP to WRITABLE when re-loading file
+- [x] force opening a locked file as a unlocked file (dof_open_file_locked)
+- [x] enter not symlink but destination of the symlink
+- [ ] logging without using "| tee -a file" but using pty
+
+- [?] 241226 CRASH: on tag-jump in dir-history
+- [x] 241224 change [MOD] title bar color not red background
+- [x] 241224 M-E open in RO mode
+- [x] 241224 integrate VIEWER, RO and WP mode
+- [x] 241222 unlock file name before rename it and lock file name after rename to
+- [x] 241223 properly show a file name which include control characters and rename it safely
+- [x] 241222 check a file being opened from other process
+- [x] 241222 disable saving to file in list-mode buffer
+- [x] naturally show cut_buffers
+  - [x] set `bufs->cur_buf` on appending buf
+  - [x] set `bufs->cur_buf` on appending line
+  - [x] set `cur_buf` on switching cur_bufs (from cur_bufs->cur_buf)
+  - [x] set `cur_line` on switching cur_buf
+- [x] open the directory of the current line with filer (M-F)
+- [x] save cut_buffers to file on exit and load on startup
+- [x] make quitable by 'q' then 'Alt-q'
+- [x] define EDITOR_VERT_SCROLL_MERGIN as 3 and FILER_VERT_SCROLL_MERGIN as 3
+- [x] BUG: line after LF is not cleared on the editor screen in line-wrap mode
+  VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- 
+- [-] search not moving cursor pos. as possible ==> Cursor center mode
+- [x] "M_LBRAC" ==> "M-{", "\(M-))" ==> "\{M-)}"
+- [x] 241203 IMPR: does not go to previous cursor x position after undoing "cut-to-head"/"cut-to_tail"
+- [x] keep cut buffers after exiting app.
+- [x] 241202 in editor-list-mode, M-e inserts text to input_str
+- [x] make editor and filer to work more seamless as possible.
+  - [x] cut-copy 1 line ==> view cut_buffer
+  - [x] 241201 to be able to paste texts cut from editor into filer (add cut text to search history)
+- [x] 241201 move pane_idx(editor/filer) into app_mode_t
+- [x] 241202 locate cursor to the position at which some modification done after doing undo
+  - [-] add line-number in be_buf_t for undo to locate cursor to right line on doing
+- [x] 241201 BUG: parent window cleared in input_str...() when no input more than 10 secs.
+- [x] 241201 make list mode be able to quit on ESC
+- [x] 241201 make not quitable from filer by ESC key
+- [x] 241201 "Open and close file" reset the two pane mode
+- [x] 241201 ISSUE: too easily quit from application ==> add confirmation of Yes/No
+  - [x] 241201 ask only when unused cut/undo buffer exist
+- [?] BUG: funny tr messages when open editor menu
+  - Ubuntu 24.04: reproduce
+  - WSL Ubuntu 22.04: does not reproduce
+- [x] 241201 BUG: tog/inc_tab_size
+- [x] CRASH: on modifying in the empty buffer of list mode
+- [x] 241130 adequitely place cursor in the buffer "No lines in this buffer"
+- [x] 241130 exit editor on the mode at the editor started, not on the buffer mode
+- [x] 2411?? BUG: tag-jump from file-list
+- [x] 241120 get whole line from edit buffer '^\' '^]' or '^]' '^\'
+- [x] 241120 cut-to-head and cut-to-tail w/wo copy into cut_buffer
+- [x] 241120 BUG: doe_open_new_file says "100 files loaded" though just 1 file
+- [x] 241120 BUG: doe_open_new_file says "1 files loaded" at a new file ==> "New file"
+- [x] fix no buffer and no line problems.
+  - Is it not good at the anchor method ?
+     ==> There are good points at the anchor method
+         - It is good to point the anchor for cur_line
+    - top-bottom-anchor method:
+      - when empty:
+	be_line_t top_anchor:	be_line_t *prev       , be_line_t *next = NULL;
+	be_line_t bot_anchor:	be_line_t *prev = NULL, be_line_t *next;
+      - when not empty:
+	be_line_t top_anchor:	be_line_t *prev = NULL, be_line_t *next;
+	be_line_t line_1:	be_line_t *prev       , be_line_t *next;
+	be_line_t line_2:	be_line_t *prev       , be_line_t *next;
+	be_line_t line_3:	be_line_t *prev       , be_line_t *next;
+	be_line_t bot_anchor:	be_line_t *prev       , be_line_t *next = NULL;
+      - is_empty() (IS_NODES_EMPTY())
+        if top_anchor->next->next or bot_anchor->prev->prev is NULL
+    - top-bottom-link method:
+      - when empty:
+	be_line_t *top_link = NULL;
+	be_line_t *bot_link = NULL;
+      - when not empty:
+	be_line_t *top_link;
+	be_line_t line_1:	be_line_t *prev = NULL, be_line_t *next;
+	be_line_t line_2:	be_line_t *prev       , be_line_t *next;
+	be_line_t line_3:	be_line_t *prev       , be_line_t *next = NULL;
+	be_line_t *bot_link;
+      - is_empty() (IS_NODES_EMPTY())
+        if top_link or bottom_link is NULL
+- [x] 241118 auto checking font width
+- [x] 241119 my own UTF8 guessing on 'nkf -g' guessing EUC-JP
+- [x] 241119 FIX: draw cursor myself
+- [x] 241118 CRASH: on switching buffers
+- [x] 241120 CRASH: on F12 in history view
+- [x] 241118 browse all buffers.
+  - [x] 241118 show bufs index in the title bar as "1:1:1:/home/user/..."
+- [x] 241119 BUG: fix key macro play back
+- [x] 241118 syntax highlighting not selected after swiching bufs
+- [x] 241114 fix status bar color
+# status bar display management
+- Editor main loop
+  - first loop		"PREV" | "NEXT" (e.g.: N files loaded | LINE: ...)
+  - no key input	nothing
+  - cursor move		display new cursor information
+  - error		show error message (e.g.: Key word not found)
+  - done		show completion message (e.g.: File closed)
+- Filer main loop
+  - first loop		"PREV" | "NEXT" (e.g.: Files closed | README.md ...)
+  - no key input	nothing
+  - cursor move		display new file information
+  - error		show error message (e.g.: No function assigned to the key)
+  - done		show completion message (e.g.: N files copied)
+- [d] 241118 show current buffer after switching buffers
+- [x] 241115 define a structure which contains all buffers 'be_bufss_t'
+- [x] 241114 change title bar design on HOME dir.
+- [x] 241114 do not delete old entry of exec history
+- [x] 241115 Run key-marcro inputting key sequence as a text (M-3)
+- [x] 241114 show all key bindings
+- [x] redraw whole windows after screen resizing
+  - [x] redraw input box after screen resizing
+  - [x] redraw parent window after screen resizing
+- [x] log all execution command lines
+- [x] search in editor list mode
+- [x] repaint on laptop rid opened (10 secs)
+- [x] place cursor on the head of file name in filer
+- [x] The position indicator is shown on not currect position after file opening.
+
+- [-] 241022 record start time of execution to log file
+- [x] 241021 be able to output log in all execution command
+  |Entering key|logging in execution|comments|
+  |------------|--------------------|--------|
+  |Enter       |None                |-- |
+  |@Enter      |Logging             |-- |
+
+- Unevitable batting key bindings with short-cuts in WSL(Linux on Windows)
+  - Alt-TAB (but Ctrl-Alt-I does not batting, use this instead)
+  - Alt-ESC
+  - Alt-`
+  - Ctrl--, Ctrl-+
+- [x] 241020 fix editor key/func list
+- [x] 241020 Not update common history files soon
+- [x] 241018 add filer funckey list
+- [x] 241011 do not show splash when screen resized
+- [x] 241007 goto the last touched file when reloading files
+- [x] 241007 minimize file open history on exitting editor
+- [x] 241007 enter into directory by 'e' key
+- [x] 241006 cursor jumps even after no jump on tag jump
+- [x] 241004 main filer quit on EF_CANCELLED and EF_EXECUTED
+- [x] 241004 can not go up dir by BS
+- [x] relationship of list-mode and help-mode
+- [x] relationship of edit-bufs and help-bufs
+- [x] 241003 it's not good not to be able to use pager.
+      --> Make "No log output" default action.
+- [x] 241003 not able to quit help viewer
+- [x] 241001 Avoid showing input box over the current line
+- [x] 241002 remove duplicate lines as below:
+  /home/user/tools/be/be/editormove.h|1:1
+  /home/user/tools/be/be/editormove.h|84:1
+  /home/user/tools/be/be/editormove.h|100:1
+- [x] 241002 increase open file history size from 1000 to 10000
+- [x] 241001 fill spaces to columns (e.g. 80 columns)
+  1. memorize columns number                   (M-{ : 1b7b)
+  2. fill to the memorized columns with spaces (M-} : 1b7d)
+
+[x] 240830 show from the top of the file if file contains less lines than the screen lines.
+
+[x] return a valid value from the execution (may because of pipe line)
+    [-] --> No good way to do `set -o pipefail` in each time before execution
+[x] improve previous_word(), next_word()
+[x] improve get string from editor text in search_string()
+[x] crash on opening from editor by Alt-e, change to sub-dir, open html file
+[x] 240910 convert lower letter "Alt-Ctrl-W"
+  [x] 240909 convert camel case "camel" -> "Camel" -> "CAMEL" -> "cAMEL" ->
+  [x] 240910 convert camel case "camel" -> "CAMEL" -> "Camel" -> "cAMEL" ->
+  [x] 240926 "F_A..." can not be converted
+  [x] 241111 convert camel case "camel" -> "Camel" -> "CAMEL" -> "cAMEL" ->
+  [x] 241111 convert camel case "CAMEL" -> "cAMEL" -> "camel" -> "Camel" ->
+[x] goto colmuns "Alt-Ctrl-F columns"
+[x] Handle drop event from window managers such as: '/mnt/c/Users/t_koike/Downloads/20240731.zip'
+  | state                            | event "'file-1' 'file-2' ..." | event "'dir-1' 'dir-2' ..." |
+  |----------------------------------|-------------------------------|-----------------------------|
+  |[x]in filer                       | [x]open these files           | [x]open dir                 |
+  |[x]in filer  - "dof_open_new_file"| [x]open these files           | [x]open dir                 |
+  |[-]in editor                      | can not handle it because ->  | "'" is ordinary character   |
+  |[x]in editor - "doe_open_new_file"| open these files              | [x]open dir                 |
+  - [x] open file
+    - [x] 250228 select action from open/copy/move after drop
+  - [x] 250228 copy(K_M_c), move(K_M_m)
+  - [-] 250228 process dropped files by command
+[x] capture stdout/err into be-editor buffer
+  back-scroll vs log-file
+  - [-] back-scroll method - Bad: hard to handle(get, edit, copy).
+  - [x] log-file    method - Good: easy to handle(get, edit, copy).
+  - [x] stderr is not captured
+  - [d-] when you start BE from BE, `1.log` might be overwritten.
+  - [d] `less file.txt` does not pause scrolling because less's FD-1 is not actual console
+  - [x] cat all output when "command {}" executed to files
+
+  standard
+   +----------------------+
+   |application--+--FD:1--->----/dev/pts/1
+   |             \--FD:2--->----/dev/pts/1
+   +----------------------+
+  tee
+   +----------------------+      /--->1.log
+   |application--+--FD:1----+--[tee]->/dev/pts/1
+   |             \--FD:2----/
+   +----------------------+
+
+[x] arrange ENABLE_FILER and ENABLE_HISTORY sections
+[x] can not open recursively from __be_test.pro and __be_test2.pro --> K_M_E (load-from-history)
+[x] tag-jump goes to line-1
+[x] 0 length file --> 1 file loaded
+[x] testfiles --> change cur-dir to be/testfiles
+   [x] (based on the directory of current file)
+   [x] (searching from the dir history)
+[x] F11/F12 is not working to directory
+[d ] make goodly UTF8 supported `screen`
+[d-] How to link with static libraries
+[x] different string is paste from bash history
+[x] after execution from history in filer-x command, does not return to filer
+
+[x] open symlinked file's dir not file itself (dof_real_path: Alt-L)
+[x] force loading as a binary(-b/-binary) / text(-x/-text) file
+[x] crash on browsing /proc/1/pwd
+[x] crash after closing key-func/func-key view by Alt-q
+[x] crash after closing key-func/func-key view
+[x] on tag jump in `paste from history`, return to editor soon, not staying in view mode.
+[x] doe_close_all_modified --> write soon all modified file and close all
+
+[x] tests of switching policy of filer and editor	operations-------------------------
+- [xx] tag-jump in editor:				open file with tag and tag-jump
+- [xx] tag-jump in history called from editor:		open files M-h UP LEFT... UP... F12
+- [xx] tag-jump in file list:				open files M-; UP... F12
+- [xx] tag-jump in history called from filer:		start filer, `x` UP UP... F12
+- [xx] key-list view and func-list view:		open file, M-U ESC or M-? ESC
+- [xx] input from history (replace/add(Alt)):	open file, M-h UP Enter or M-Enter
+- [xx] input from filer (replace/add(Alt), file/full-path(Shift)):	start filer, `x` DOWN select file, e or M-e or E or M-E
+- [xx] start as a editor:				start with argument of file name, ^Q
+- [xx] call-filer:					open file, M-F
+- [xx] call-filer and open file:			open file, M-F select file, `e`
+
+  Entering text from editor:
+  |command key    |Text entered |Replace/Add|comments|
+  |---------------|-------------|-----------|--------|
+  |Enter          |selected line|Replace    |-- |
+  |@Enter         |selected line|Add        |-- |
+
+  Entering text from filer:
+  |command key  |Text entered |Replace/Add|comments|
+  |-------------|-------------|-----------|--------|
+  |e,n,Enter    |file name    |Replace    | input file name replacing previous string |
+  |@e,@n,@Enter |file name    |Add        | input file path replacing previous string |
+  |E,N          |file path    |Replace    | input file name adding to previous string |
+  |@E,@N        |file path    |Add        | input file path adding to previous string |
+  |c,m,C,M      |cur dir path |Replace    | input dir path replacing previous string  |
+  |@c,@m        |cur dir path |Add        | input dir path adding to previous string  |
+
+[x] editor: stay in editor while `get_edit_bufs() > 0` and exit when `get_edit_bufs() == 0`
+
+//Transitions between filer and editor:
+// filer(NORMAL)									return code-------------
+//	dof_open_file()		open file by selecting file				RETURN to editor on success(quit/loaded)
+//	input_string()		editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
+//						TAG-JUMP(updating root-editor)		RETURN to editor on success(quit/loaded)
+//				filer(LIST)	input file path by selecting file/dir	RETURN to editor(quit/input)
+//	dof_run_command_soon()
+// editor(NORMAL)
+//	input_string()		editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
+//						TAG-JUMP(updating root-editor)		RETURN to editor on success(quit/loaded)
+//						doe_run_line_soon()		RETURN to editor on success(quit/loaded)
+//				filer(LIST)	input file path by selecting file/dir	RETURN to editor(quit/input)
+//						open file				RETURN to editor on success(quit/loaded)
+//	doe_open_file()		filer(NORMAL)	open file by selecting file		RETURN to editor on success(quit/loaded)
+//	doe_read_file_into_cur_buf()
+//				filer(NORMAL)	read file into selecting file		RETURN to editor
+//	doe_call_filer()			manage file in filer(NORMAL)		return to editor when quit(quit)
+//	doe_tag_jump() 		TAG-JUMP to dir and manage file in filer(NORMAL)	return to editor when quit(quit)
+//	doe_view_file_list()	editor(HELP)	TAG-JUMP to file(updating root-editor)	RETURN to editor(quit/loaded)
+//	doe_view_key_list()	editor(HELP)	view help text				return to editor when quit(quit)
+//	doe_view_func_list()	editor(HELP)	view help text				return to editor when quit(quit)
+//	doe_run_line_soon()
+
+editor/filer	input_string()
+--------------->
+		--> editor(LIST)
+		 <-----	QUIT
+		 <-----	INPUT
+ <---------------------	LOADED
+ <---------------------	EXECUTED
+		--> filer(LIST)
+		 <-----	QUIT
+		 <-----	INPUT
+ <---------------------	LOADED
+ <---------------------	EXECUTED
+
+[?] operation policy
+- always works on ESC key to exit from current screen and Enter key to enter the selected item.
+
+[-] Is it good to migrate to C++ ? --> No, C++ library is too big.
+[v] rearrange function keys for entering file/path from filer
+[v] update vague width char list
+
+[v] properly input UTF8 string even when ON_DEMAND... enabled
+[v] list symlink on top of file list
+[v] character cut mode after KW search --> line cut
+[v] crash on KW search in processing KW search --> disable in the List mode
+[v] current line position when it displays history file first time
+[v] Hang up on F12 in editor
+[v] Crash on \ in filer
+[v] make always ENABLE_UTF8 is ON  [v] delete ENABLE_UTF8.
+
+[v] Show title bar in Yellow if there is any file modified.
+[v] Show title bar in Red if the current file is modified.
+[v] START_UP_TEST --> UT(assert)
+[v] switch buffers by left/right arrow keys in editor in view mode
+[d] automatically check wide character by using terminal's "report cursor position" function
+    [v] check on demand (when displaying it)
+[v] point the same file after updating file list
+    [v] fix when file is selected
+
+[v] TODO: all functions accessible without function-key
+[v] check duplicate assignment of key
+
+[v] Backspace limited by line top
+[v] M-P load project file in filer and editor
+[v] discrimination of open and load
+	open -> load -> edit -> save -> close
+
+[v] shown "2 files loaded", when only 1
+[v] fix reverse direction color in bracket hl 
+[v] switch to a preloaded file matching from the tail of path (compo_ctrl/src/component/stt/sagitta/frame/param.h)
+
+[v] When started as a editor, do not return to filer.
+[v] Encoding options("-e u") does not work for "©®" (misrecognized as EUCJP)
+
+[v] treat situation of ENABLE_FILER undefined
+
+[v] exchange clip-board with GUI session on X-Window/MS-Windows
+- check system type Linux/WSL on app startup
+	- on Linux: run clipboard-update.sh continuously from the system boot up
+	- on WSL: run clipboard-update.sh every time cut/copy performed
+		[v] do not switch terminal on execution of clip.exe
+[v] 0 bytes file can not be loaded
+[l-] differenciate "buffer saved" and "buffer checked"
+
+[v] Show screen size on status-bar when resized
+[v] fix: path displayed on filer title-bar 
+[v] fix: dof_previous_dir() on symlinked dir
+[v] fix: goto real-path from symlinked-path (M-l)
+
+[v] show "@host-name" when current directory is $HOME
+[-] show "@host-name" after "../" like "../ [@host-name]"
+[v] Writing file loaded through symlink to symlinked file not file of symlink name.
+   XX Current state : rename symlink name to symlink~ and write to a file named symlink
+   OO Required state: write to the file of real_path.
+
+[hv] BUG: crash on editor pane-2
+[v] Do not show error message when finaly succeeded in command execution (Ex. loading-file, searching KW)
+[v] BUG: open one file twice in different path(full_path/abs_path)
+[v] make capable to back scroll screen after executing shell command
+
+[v] treat symlink path as is and not in real-path
+[v] sort symlinks to the next of directories in file list
+
+[v] delete "Save unmodified file ??"
+
+[v] show file path on the title bar as long as possible
+
+[v] tag jump with just file_name.ext switches already open file
+[v] tag jump with just file_name.ext opens file listed in file_history
+[v] return to file positon where KW replace has begun
+[v] return to file positon where KW search has begun
+
+[v] re-support tag jump from MS-C compiler error message "main.c(100,10)"
+[v] when reopened, current file pos is the last line in all file
+[v] tag jump opens too many files. F11 opens only one file maximum
+
+[v] share cut_buffer between BE-editor-instances (Use system clip-board or own clip-board file)
+	F06/F07 cut/copy selection to clip-board
+	[v] Shift-F07 paste clip-board into current cursor pos(character based paste)
+	[v] Shift-F08 paste clip-board into current line(line based paste)
+	[v] support both character copy and line copy (on GUI based app. there is the only character based cut)
+
+[] difficult to memorize below function keys for human
+
+[v] The same data should be saved after loading binary file.(Ex. PNG file)
+  load: 0x00--0x1f,0x7f--0xff ==> 0x0100--0x011f, 0x17f--0x1ff
+  save: 0x0100--0x011f,0x17f--0x1ff ==> 0x00--0x1f,0x7f--0xff
+
+[v] change directory on file path "/dir/to/file.txt" to directory "/dir/to/"
+[v] change directory on relative file path "./dir/to/file.txt" to relative directory "./dir/to/"
+[-] after changing directory to "./dir/to/" by "./dir/to/file.txt", point "file.txt"
+[v] open file based on buffer's direcotry
+[v] change directory based on buffer's direcotry
+
+[v] cursor position when returned to filer
+[v] automatic fallback when no nkf filter available
+
+[v] Show `username@hostname` in the title bar in filer (no need in editor)
+[v] Avoid showing directory path like "///" (remove_redundant_slash())
+[v] Avoid changing directory on "///" (contain_redundant_slash())
+
+[v] Execute script specifying absolute path from current directory.(E/R/T/X)
+
+[v] code clean up for filer view mode
+
+[v] Avoid inputting garbage on Atl-Fxx key. ==> register all xterm keys
+[-] Auto indent by Alt-Enter
+
+[v] recognize Alt-UP, Alt-Down, Alt-Right, Alt-Left keys
+              \e[1;3A \e[1;3B \e[1;3D \e[1;3C
+[v] recognize Ctrl-UP, Ctrl-Down, Ctrl-Right, Ctrl-Left keys
+              \e[1;5A \e[1;5B \e[1;5D \e[1;5C
+[v] cut_to_head(), cut_to_tail() ==> delete_to_head(), delete_to_tail()
+[v] start up in two pane filer ==> add "-w" command line option
+[v] update history with cur-dir just before changing cur-dir
+[v] Not delimit file path by # ("abc#def" ==> "abc#def", "abc #def" ==> "abc" "#def")
+[v] blink title bar when recording key macro or marking text
+[v] Avoid screen corruption on binary file
+	- convert fake UTF-8 character to normal UTF-8 char.
+	==> input nkf -w, output: nkf -W
+
+Filer <==> Editor switching and collaboration
+[] Fix [goto filer] key and [goto editor] key
+  | mode      | F11         | F12                                 |
+  | --------- | ----------- | ----------------------------------- |
+  | in filer  | GOTO EDITOR | open file in editor / open in filer |
+  | in editor | GOTO FILER  | open file in editor / open in filer |
+v F: Load file and open editor
+   E: Edit
+v F: Inputxq command line to execute
+   E: Select from exec-history
+  F: Execute selected command line
+v F: Input keyword to search
+   F: Select from search-history
+  F: Do search
+- F: Load file and open editor (wo saving cur-dir)
+   E: Change current-directory to the directory of the current-line
+- F: Load file and open editor (wo saving cur-dir)
+   E: Change current-directory to the directory of the current-line
+   E: Open filer
+  F: Do something in current-directory (**possible to implement**)
+- F: Load script file and open editor (wo saving cur-dir)
+   E: Open filer
+    F: Change current-directory
+   E: Execute current-line as a command
+      (preserve current-directory if changed in execution(***DIFFICULT***))
+
+[v] inherit filer view(cur_sel_idx) in "filer list view"
+[v] after screen resized, status bar is not displayed
+
+[ ] show tree and select file/directory
+[] change current directory by selecting from directory tree (find . -type d -maxdepth 3)
+[] load file                by selecting from file      tree (find . -type f -maxdepth 3)
+   (how to limit max lines to be loaded into editor)
+
+[v] change current directory in editor
+    [x] show current directory in editor (==> shown after change)
+
+/home/user/tools/be/be
+/home/user/tools/be/be/po
+/home/user/tools/be/be/doc
+/home/user/tools/be/be/demo
+/home/user/tools/be/be/scripts
+/home/user/tools/be/be/protected
+/home/user/tools/be/be/testfiles
+/home/user/tools/be/be/autom4te.cache
+/home/user/tools/be/be/m4
+[] How to manage a state of 0 node
+[] How can I avoid NULL pointer crash ?
+[v] Use title-bar fully for file path
+  [p:i:/path/to/file.txt Enn Cnn Unn Rnn mmmmMB HH:MM:DD]
+  [p:i:/long/long/long/path/to/file.txt  mmmmMB HH:MM:DD]
+  [p:i:/long/long/very-long/path/to/file.txt    HH:MM:DD]
+
+[v] Repaint whole of screen after wake up from sleep
+[v] Stop loading large or many files. (by Ctrl-C)
+[v] Show date in space for Time just after key press
+[v] sofisticate filer_do_next mechanism
+[v] sofisticate editor_quit mechanism
+
+[v] easy goto prev/next buffer
+	- UP then PAGEUP ==> prev.buf, DOWN then PAGEDOWN ==> next.buf)
+	- PAGEUP then UP ==> prev.buf, PAGEDOWN then DOWN ==> next.buf)
+
+[v] check memory leak
+  [v] fix memory leak
+[v] lighter background color by ESC [ {100,107} m
+[v] easily change release-level: stable-release, test-release, experimental-release
+[-] visit all cut mode by moving cursor horizontal and vertical in specific way.
+    ==> [v] clear cut mode by returning cursor to beginning position.
+[v] editor: when scrolling reverse direction, previous area should be shown.
+[v] return to filer main screen after run file soon
+
+#### thinking
+- Which is the better practice
+	1. strict type specification uint8_t, int8_t, int16_t, int32_t
+	2. vague type specification unsigned char, char, int ...
+	3. typedef char color_idx, items_idx, ...
+	May be 3. is the better.
+
+### Reconsideration of editor/filer 2 panes:
+  Editor 2 panes
+    - each pane has buffer refrence.
+    - current pane selector (cur_pane_idx)
+  Filer 2 panes
+    - each pane has directory refrence.
+    - current pane selector (cur_pane_idx)
+  Buffer has 2 views which is referenced from editor 2 panes
+    - each view has current position in buffer
+
+[v] Highlight only current cursor position's peer of brackets in first-highlight-color.
+  [v] Highlight not-current-peer in second-hightlight-color.
+[v] go back to the last cursor pos. in the last file.
+[v] limit current y position of editor on screen resizing
+[v] directory invert search direction on Key B and F.
+[v] line tail indicator when line shift
+[v] If not-modified in write_file_modified, clear [Modified] flag.
+[ ] Check object copy
+[v] Write Node policy
+[v] Adopt Node policy
+
+[v] Do not update file_open_history if current line not changed
+[v] Draw cursor off
+[v] If no keyword found on first search, search reverse direction.
+[vv] Fix editor crash problem
+[v] avoid view shift at cut_to_tail
+[v] Save all modified buffer with ask, without ask.
+[v] Play back key macro when recording key macro.
+   - separate two key assigns of stop-rec-key-macro and play-back-key-macro[K_M_2].
+[vv] counter bracket highlighting {[(< >)]}
+[v] Color of selection
+[v] avoid cursor to jump around the line tail
+[v] History list ==> multi-buffer accessible from editor as edit buffers.
+[v] Link all buffers
+[v] Switch all buffers
+[v] When playbacking key-macro, do-not jump cursor.(any side effect ?)
+[v] Show lines selected on status bar.
+[v] Try to read more than 1000 lines in proj-file.
+
+[v] Show line tail pos on ruler.
+[v] Screen auto resizing allong with terminal resizing
+[v] Refresh all screen to clear scam.
+
+[x]can not open file with file name including ' ' in head or tail.
+ (Ex. " filename.exe" or "filename.ext ")
+  - own file list: enclose by '|'. Ex. '/home/user/tmp/ file name.txt '|100:20
+  - command line: enclose by '"' or "'". Ex. " file name.txt " or ' file name.txt '
+
+[-]Improbe page-up, page-down cursow movement.
+
+[-]Self investigate which character width in Zenkaku or Hankaku characters.
+  ==> Impossible. OS library does not treat Zenkaku char correctly.
+  ==> Workaround: Treat all unbiguous char as a Zenkaku char. and
+                  increment display position by 2 selfly not depending on
+                  terminal display capability.
+
+[x]#bot_anchor
+[v]avoid cur_line became wild pointer
+
+Editor 2 pane mode
+  initialize
+    pane-1		anchor		anchor
+  open
+    selected-pane	open-file	valid-bufferに補正
+  switch pane
+    pane-2		open-file	valid-bufferに補正
+  delete line
+    pane-1		delete-line	chose cur_line before unlinking line
+  close
+    selected-pane	chose valid-buffer before unlink	chose valid-buffer before unlink
+
+[v]switch 1 pane when entering list-mode
+
+[v]Undo後にカーソルが変更か所に移動しない。
+[]M-z (reopen_file) bug
+
+[ex]long sequence of key macro
+[d ]scroll back screen(input/output log)
+[e ]Open new file without file-name
+[dx]simple UNDO/REDO
+[ex]change current dir on start up
+[?x]Flash IMJ input line
+[dx]display ruler
+12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567
+1---5----10---15---20---25---30---35---40---45---50---55---60---65---70---75---80---85---90---95---100--105
+[dx]non-bit-map-based setting variables
+[ex]history ==> buffer
+[dx]display line number
+[dx]syntax highlighting with line wrapping
+[dx]multi search word highlighting
+[e-]periodically check opening file update by other apps
+[d-]keep files open until exiting be
+[d-]avoid corruption of kanji display using ncurses
+[dx]read binary file
+[x]force kanji encoding on read -ej(JIS) -ee(EUCJP) -es(SJIS) -eu(UTF8) -ea(ASCII:No nkf conversion)
+[]auto backup to filename.ext~~~~~~~~~~~
+[]M-x ==> ESC-x
+//[pe]cursor positioning to the previous on reopening file
+[pd]cursor position history
+//[pd]line wrapping
+//	avoid current line hopping
+//	marked region highlighting
+//	line cut copy paste
+//	line end "<" - notation
+//	C comment syntax highlighting /* ... */
+//	do_down()
+//	tab display
+//[e]Prevent from reading too large file(>128MB).
+
+[]Wide char mode '#' ==> '＃'
+[-]replace mode
+[pd]embedded/minimal environment(wo/curses ,termcap and termlib. only dumb terminal)
+[pe]display line number
+[pe]memorize line and return
+
+//[pe]write not to symlink but to realpath
+[pe]write as
+//[pe]readable key macro history
+//[pd]support Qt .pro as a project file
+[pe]#include <file.h> search path /usr/include, /usr/local/include
+[ d]output to history of all actions done
+[ d]open so many files in background (by thread)
+[pe]input from stdin
+//[nd]undo
+//[pe]select history from list displayed
+//[pe]search/exec/dir/open-file history
+//[pe]multi-line character cut
+//[pd]speed down on large file
+//[pd]consider vulnerability sprintf==>snprintf
+//truely change directory
+//break repeating execution of filer command by ^C
+//tab size selection of file type(c|h:4, text:8)
+//keep browsing directory and don't change filer directory
+//755 ==> rwsr-xr-x
+//funny color in super user
+//[pe]distinguish history types:
+// execution(x)/directory(d)/search-string(s)	2006/07/31>08/03
+//[pe]a command(select all files)		2006/07/31>08/01
+//don't change cur directory of the original filer
+//file selection by Enter in file open mode
+
+//not return beginning position after replacing
+//ChDir to ..
+//Shift-F4 hang-up on Slang-1.4.9
+//red screen for super user
+//[pe]file sort by name or extension
+//[pd]box cut/paste
+//[nd]backward replace search yes/no/back/undo/cancel
+//[pd]preserve very long line 3200-->65536
+//[pd]ESC key handling on SLang
+//[pd]./configure, make, make install (adopt to autoconf/automake)
+//[pe]eliminate needless screen update
+//[pd]automatic euc/sjis/utf8 recognition and import/export using nkf
+//[pe]write current file (even though not modified)
+//[pe]usability in various terminals ==> SLkp_getkey() and SLkp_define_keysym()
+//[pd]make cursor movement reasonable after search, replace, move and page up/down
+//[pd]change direct calling to disp_edit_win() to set_update_ne...()
+//[nd]understand search.c
+//check file modification of original file on writing file
+//[pe]avoid double file open by comparing absolute path
+//[pe]avoid double file open by comparing real path of symbolic-link
+//[pe]reopen / undo (M-U)
+//cursor brought to the last line
+//[pd]cursor line highlighting
+//[pe]new file
+//[pe]do not open unexistent file on Goto file
+//extend key board macro strokes from 100 to 1000
+//screen update in do_close_all()
+//[pe]open project file(Alt-p)
+//[pe]display key bindings by key code order or by function order
+//[pd]file list currently open
+//[pd]speed up drawing
+//[pd]utf-8 support
+//[pd]use Slang instead of ncurses
+//[pd]abstruct a terminal abstruction layer
+//[nd]control code in regex keyword search/replace(\t, \x1b, ...) ==> PCRE
+//[nd]make winio.c comprehensive
+//[pa]re-ordering file classification
+//[pa]delete unused functions -- mouse/justification/spell
+//[pe]rename all user function to do_xxxx()
+//[pd]display key bindings
+// ==File======================
+// | Close file       C-Q     |
+// | Close all files  M-Q     |
+// | Save all files   M-S     |
+// | Read file        M-R     |
+// | Write file       M-W     |
+// | Tagged jump      M-J,F12 |
+// ============================
+//memory fault on paste when marking
+//[pd]Save only truelly modified files (CRC checksum)
+//[pd]select more than one files in file browser
+//[pe]save keyboard macro to file
+//[pd]history string ordering
+//[pd]paste on cursor position
+//[pe]tab size switch 8 <==> 4
+//cursor pos after region cut
+//[pe]beep on Memory fault (SIGSEGV)
+//[pe]preserve original file's permissions
+//[pd]vertical/horizontal scroll margin also at searching
+//[pe]switch between two previouslly selected files(Alt-/)
+//[pe]switch files(Alt-</Alt->)
+//[pe]current file highlighting when top file selected
+//[pe]input control code(like mifes ^V-c)
+//[pe]UPPER/lower case conversion(^W)
+//[pe]indicate new file on status bar
+//[pe]cursor position after pasting
+//[nd]project management file / listing files opened in editor
+//[pe]returning to original position after global search/replace
+//[nd]global keyword search/replace
+//[pe]screen scrolling after pasting
+//[ne]To be able to Load long-long line
+//[pe]Save all modified files(Alt-A)
+//[pe]Close all files(Alt-Q)
+//[pe]read .rc file from the current directory at start up
+//[pe]replace previous words
+//[bug]replace-string listing ordering
+//[p]make usable ESC key
+//[p]make usable Shift-Fx in Xterm
+//  Shift-Fx ==> Alt-x (ex. Shift-F4 ==> Alt-4)
+//[pe]Cancel key = ^Z
+//[p]make block cursor visible in Xterm
+//  Alt-C toggles block cursor on and off
+//[ne]action when screen resized
+//[pe]make "previous word/next word" efficient
+//speed up file browser
+//[pe]TAB color, EOL color, normal color, cursor color
+//[pe]Character base cut / Line base cut
+//[pe]TAB character/end of line/double byte space indication
+//[pe]Cursor Inversion and Blinking
+//[bug]replace string history Not memoried
+//[bug]^L:cut to end of line
+//[pe]Function key help
+//  Menu1 Menu2 Replac Search  Mark- Cut-- Copy- Paste  ----- Jump- ----- -----
+//[pe]stack type cutbuffer
+//replace a word at the cursor pos
+//[pe]goto file - don't open pre-opened file. compare by full path
+//do_left bug
+//colorfull screen
+//keep previous search string
+//goto file
+//scroll horizontally
+//cut to the tail of the line
+//keyboard macro
+//quick keyword search
+//search forward/backward keys
+//display cutbuffer status
+//keyboard function mapping
+//expand editing area
+//previous word/next word
+//exit without asking file name
+//No confirmation of output file name at Exit
+//Two bytes key code
+//Copy function (Cut/Uncut) ==> (Cut/Copy/Uncut)
+//Not automatically add magicline(The last line).
+
+Change log by Koike -- n:neccesary,p:preferable,e:easy,d:difficult,a:always
+
+[Schedule]----------------------------------------------2006/07/10
+//[pd]own configuration file				2006/07/20
+//[pd]customizable key bindings				2006/07/25
+//[pe]define menu_color					2006/07/25
+//[pe]assign filer command to function keys		2006/07/25
+//[pe]determine nice color set				2006/07/25
+[pd]test building on various environments		2006/07/31
+[pd]make key mapping mifes/vz/ws			2006/07/31
+[pd]own comment						2006/08/06
+[pd]send nano author and be allowed to publish		2006/08/10
+[pd]upload sourceforge.net				2006/08/31
+
+[publishing]--------------------------------------------2013/07/10
+Change log -- n:neccesary,p:preferable,e:easy,d:difficult,a:always
+[x]avoid flickering in drop down menu.
+[]Scroll drop down menu.
+[d]Read text from the file.
+[v]editor two pane mode.
+[v]paste absolute or relative file or directory path.
+[v]duplicate file if not modified when "write file" invoked.
+[v]incorporate .bash_history
+[x]Delete Monocrome mode
+[x] 8 colors ==> 16 colors
+
+[BUGS]--------------------------------------------------------------------------
+//UTF8 directory/file name support
+
+[Crash/Fixes]-------------------------------------------------------------------
+CFCFCFCFCFCFFF
+
+[Build and Running environments tested]
+RH8
+RH9
+FC1
+FC2
+FC3
+FC4
+FC5
+VINE
+TL10
+TL11	No-ncurses.h,pcre.h
+Ubuntu
+SUSE
+
+[Filer 2 pane mode]
+123456789012345678901234567890123456789012345678901234567890
+user@tl11fuji:tty1                                  23:59:59
+1:/home/user/dir1/dir2       |2:/home/user/dir3/dir4
+buffer.c                     |
+buffer.h                     |
+buffer.o                     |
+build.log                    |
+color.c                      |
+buffer.c     12345  rwxrwxrwx|buffer.c     12345  rwxrwxrwx
+
+[Editor 2 pane mode]
+123456789012345678901234567890123456789012345678901234567890
+1:/home/user/todo.txt                               23:59:59
+1:/home/user/todo.txt        |2:/home/user/todo2.txt
+config.status                |
+config.sub                   |
+configure                    |
+configure.ac                 |
+configure.log                |
+buffer.c     12345  rwxrwxrwx|buffer.c     12345  rwxrwxrwx
+
+[buffer type]
+	edit buffer
+	internal buffer
+		cut buffer
+		file list
+		key list
+		function list
+	history buffer
+		history list
+
+--------------------------------------------------------------------------------
+Function	command-line	   config-file	    command
+--------------	------------	   -----------	    -------
+rcfile			O		-		-
+norcfile		O		-		-
+nohistory		O		-		-
+nonkf			O		-		-
+debug			O		-		-
+encoding		O		-		-
+tabsize			O		O		O
+view			O		-		-
+
+//monocrome		-		O		O
+draw_cursor		+		O		O
+key_list_lines		3		O		O
+key_code_7f_bs		-		O		O
+utf8
+show_ruler		+		O		O
+show_line_num		+		O		O
+cursor_center		-		O		O
+auto_indent		-		O		O
+backup_files		10		O		O
+ignore_case		-		O		O
+regexp			-		O		O
+syntax_hl		+		O		O
+tab_eol_notation	+		O		O
+show_dot_file		-		O		O
+show_file_info		6		O		O
+sort_by			0		O		O
+filer_panes		-		O		O
+
+//--------------------------------
+Maximum line length of the source code: 100.
+//--------------------------------
+int _abc; // not-recommended
+int main()
+{
+  int abc__def; // not-recommended
+  int _Abc;     // not-recommended
+}
+//--------------------------------
+
+[BUGS]--------------------------------------------------------------------------
+//not return beginning position after replacing
+//ChDir to ..
+
+//[pe]distinguish history types:
+// execution(x)/directory(d)/search-string(s)		2006/07/31>08/03
+//[pe]a command(select all files)			2006/07/31>08/01
+
+[pe]emulate cursor blinking
+
+[pe]input from stdin
+//[pe]cursor positioning after reopening file
+
+--------------------------------------------------------------------------------
+
+open/close(device)
+begin/end
+init/destroy
+init/finalize
+create/free(memory)
+construct/destruct(object)
+clear/set(value)
+show/hide(window)
+start/terminate(process)
+
+--------------------------------------------------------------------------------
+USB bootable Linux can be a killer application to Windose.
+USB からブート可能なOS(Linux)は、きっとWindoseに対するキラーアプリになる。
+
+Linux は便利な利用法としてUSBディスクからのブートが可能である。
+しかし、M$ は Linux のこの利便性を真似する事が出来ない。
+なぜなら、そうすることは彼らのもっとも重要なソフトウエア製品の野放図な使用を
+許すことになってしまうからである。
+
+M$のソフトウエアはPCにインストール後、ソフトウエア・アクティベーションを行う必要がある。
+アクティベートされたソフトウエアは異なるコンピュータ上で実行できない様になっている。
+LANチップ中のMACアドレスや、CPUやマザーボードのシリアルNo.などを記憶し、
+それらが変わった時は異なるPC上で実行されたと判断し、使用できなくしている。
+そうする事によって、彼らの製品の野放図な使用を行えなくしているのだ。
+
+ソフトウエア・アクティベーションの回数はM$の社内でカウントされていて、
+可能なアクティベーションの回数は3回とか5回とかに制限されている。
+
+_D_(dump_cur_editor_panes())
+_D_(dump_cur_editor_panes())
+_D_(dump_file_type(cur_file_type, 0))
+_D_(dump_editor_panes())
+_D_(dump_buf_views(edit_buf_save))
+_D_(buf_dump_name(edit_buf))
+_D_(line_dump_byte_idx(EPCBVC_CL, 0))

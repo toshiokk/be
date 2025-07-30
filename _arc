@@ -1,7 +1,9 @@
 # archive source files
 #make clean
 if [ -z "$1" ]; then
+  cd src
   ./_distclean
+  cd ..
 fi
 
 cd ..

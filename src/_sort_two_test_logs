@@ -1,0 +1,2 @@
+# merge two log files and sort
+cat __be_test.log __be_test.log~ | sort >__be_test.log~~
