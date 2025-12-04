@@ -357,10 +357,10 @@ int is_there_cut_region()
 #ifdef ENABLE_DEBUG
 void dump_cut_region()
 {
-	flf_d_printf("%d\n", is_there_cut_region());
-	flf_d_printf("%p:%d, %p:%d\n",
+	flf_dprintf("%d\n", is_there_cut_region());
+	flf_dprintf("%p:%d, %p:%d\n",
 	 mark_min_line__, mark_min_byte_idx, mark_max_line__, mark_max_byte_idx);
-	flf_d_printf("\n[%s]\n[%s]\n",
+	flf_dprintf("\n[%s]\n[%s]\n",
 	 mark_min_line__->data, mark_max_line__->data);
 }
 #endif // ENABLE_DEBUG
@@ -414,7 +414,7 @@ PRIVATE const char *get_cut_buffer_file_path();
 int save_cut_buffers()
 {
 	const char *file_path = get_cut_buffer_file_path();
-hmtflf_d_printf("ZZZZSSSS[%s]\n", file_path);
+/////hmtflf_dprintf("ZZZZSSSS[%s]\n", file_path);
 	make_backup_files(file_path, get_backup_files());
 	FILE *fp = fopen(file_path, "w");
 	if (fp == NULL) {
@@ -422,7 +422,7 @@ hmtflf_d_printf("ZZZZSSSS[%s]\n", file_path);
 	}
 	int ret = 0;
 	for (be_buf_t* buf = CUT_BUFS_OLDEST_BUF; IS_NODE_INT(buf); buf = CUT_BUF_NEWER(buf)) {
-		const char* buf_sep_str = CUT_BUF_SEPARATOR_L;
+		const char *buf_sep_str = CUT_BUF_SEPARATOR_L;
 		switch (GET_BUF_STATE(buf, buf_CUT_MODE)) {
 		default:
 		case CUT_MODE_0_NONE:
@@ -457,7 +457,7 @@ hmtflf_d_printf("ZZZZSSSS[%s]\n", file_path);
 int load_cut_buffers()
 {
 	const char *file_path = get_cut_buffer_file_path();
-hmtflf_d_printf("ZZZZLLLL[%s]\n", file_path);
+/////hmtflf_dprintf("ZZZZLLLL[%s]\n", file_path);
 	FILE *fp = fopen(file_path, "r");
 	if (fp == NULL) {
 		return EOF;
@@ -495,6 +495,7 @@ hmtflf_d_printf("ZZZZLLLL[%s]\n", file_path);
 	}
 	bufs_get_file_stat(&cut_buffers, file_path);
 	bufs_clear_modified(&cut_buffers);
+	bufs_renumber_all_bufs_from_top(&cut_buffers);
 
 	return ret;
 }
@@ -536,7 +537,7 @@ PRIVATE int is_cut_buffers_file_newer()
 PRIVATE int is_cut_buffers_modified_newer__expired()
 {
 	return bufs_is_modified_newer__expired(&cut_buffers,
-	 get_cut_buffer_file_path(), BUFFER_EXPIRATION_MSEC);
+	 get_cut_buffer_file_path(), BUFFER_EXPIRATION_DSEC);
 }
 PRIVATE int limit_cut_buffers_in_size()
 {
@@ -554,14 +555,14 @@ PRIVATE int limit_cut_buffers_in_size()
 			set_cut_buffers_modified();
 		}
 	}
-flf_d_printf("buf_cnt: %d\n", count_cut_bufs());
+flf_dprintf("buf_cnt: %d\n", count_cut_bufs());
 	return bufs_get_modified(&cut_buffers);
 }
 PRIVATE const char *get_cut_buffer_file_path()
 {
 	static char file_path[MAX_PATH_LEN+1] = "";
 	if (is_strlen_0(file_path)) {
-		cat_dir_and_file(file_path, get_app_dir(), CUT_BUFFER_FILE_NAME);
+		concat_dir_and_file(file_path, get_app_dir(), CUT_BUFFER_FILE_NAME);
 	}
 	return file_path;
 }

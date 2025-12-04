@@ -22,10 +22,11 @@
 #ifndef main_h
 #define main_h
 
+extern int quit_soon;
 extern int restart_be;
 
-int progerr_cb_func(const char* warning);
-int write_to_warning_file(const char* warning);
+int progerr_cb_func(const char *warning);
+int write_to_warning_file(const char *warning);
 void app_die_on(const char *msg);
 void free_all_allocated_memory();
 

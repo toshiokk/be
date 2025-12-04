@@ -125,8 +125,8 @@ RETSIGTYPE handler_sigterm(int signal)
 }
 RETSIGTYPE handler_sigsegv(int signal)
 {
-	flf_d_printf("Received SIGSEGV\n");
-	_D_(output_last_d_printf())
+	flf_dprintf("Received SIGSEGV\n");
+	_D_(output_last_dprintf())
 	exit(255);
 }
 

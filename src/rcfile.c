@@ -46,11 +46,11 @@ int read_rc_file(const char *rc_file_name)
 {
 	char rc_file_path[MAX_PATH_LEN+1];
 	// read ./.berc
-	cat_dir_and_file(rc_file_path, get_starting_dir(), rc_file_name);
+	concat_dir_and_file(rc_file_path, get_starting_dir(), rc_file_name);
 	if (read_rc_path(rc_file_path, 0) == 0)
 		return 0;
 	// read $HOME/.berc
-	cat_dir_and_file(rc_file_path, get_home_dir(), rc_file_name);
+	concat_dir_and_file(rc_file_path, get_home_dir(), rc_file_name);
 	if (read_rc_path(rc_file_path, 0) == 0)
 		return 0;
 	return -1;
@@ -178,9 +178,6 @@ PRIVATE int read_rc_path(const char *rc_file_path, int complain)
 }
 PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 {
-////#ifdef ENABLE_SYNTAX
-////	free_file_types();		// delete an effect of default_color_syntax();
-////#endif // ENABLE_SYNTAX
 	rc_line_num = 0;
 	FILE *fp = fopen(rc_file_path, "r");
 	if (fp == NULL) {
@@ -250,7 +247,7 @@ read_rc_path_match:;
 void dump_app_mode()
 {
 	for (int idx = 0; idx < ARRAY_SIZE_OF(rc_cmd_idx); idx++) {
-		flf_d_printf("%s = %s\n",
+		flf_dprintf("%s = %s\n",
 		 rc_cmd_idx[idx].command, get_str_mode_idx_val(rc_cmd_idx[idx].mode_idx));
 	}
 }
@@ -422,7 +419,7 @@ PRIVATE int parse_include()
 		char rc_file_path[MAX_PATH_LEN+1];
 		++rc_file_nest_count;
 		separate_path_to_dir_and_file(rc_file_path_reading, dir_part, file_part);
-		cat_dir_and_file(rc_file_path, dir_part, rc_line_ptr);
+		concat_dir_and_file(rc_file_path, dir_part, rc_line_ptr);
 		ret = read_rc_path(rc_file_path, 1);
 		--rc_file_nest_count;
 	}
@@ -497,7 +494,7 @@ PRIVATE int parse_word(char *buffer, int buf_len)
 	if (SKIP_SPACE(rc_line_ptr))
 		return 1;
 	for (begin = rc_line_ptr; *rc_line_ptr; rc_line_ptr++) {
-		if (IS_SPACE(rc_line_ptr) || IS_EOL(rc_line_ptr))
+		if (IS_WHITE_SPACE(rc_line_ptr) || IS_EOL(rc_line_ptr))
 			break;
 	}
 	if (rc_line_ptr - begin > buf_len)
@@ -715,24 +712,24 @@ void free_file_types()
 #ifdef ENABLE_DEBUG
 void dump_file_types()
 {
-flf_d_printf("{{\n");
+flf_dprintf("{{\n");
 	for (file_type_t *file_type = file_types_head; file_type != NULL;
 	 file_type = file_type->next) {
 		dump_file_type(file_type, 0);
 	}
-flf_d_printf("--------------------------------------------------\n");
+flf_dprintf("--------------------------------------------------\n");
 	for (file_type_t *file_type = file_types_head; file_type != NULL;
 	 file_type = file_type->next) {
 		dump_file_type(file_type, 1);
 	}
-flf_d_printf("}}\n");
+flf_dprintf("}}\n");
 }
 void dump_file_type(const file_type_t *file_type, int syntax)
 {
 	if (file_type == NULL) {
-		flf_d_printf("file_type: NULL\n");
+		flf_dprintf("file_type: NULL\n");
 	}
-	flf_d_printf("%sfile_type:[%s][%s] tab_size:%d\n",
+	flf_dprintf("%sfile_type:[%s][%s] tab_size:%d\n",
 	 file_type == cur_file_type ? ">" : " ",
 	 file_type->desc, file_type->regexp->needle_compiled, file_type->tab_size);
 	if (syntax) {
@@ -744,7 +741,7 @@ void dump_file_type(const file_type_t *file_type, int syntax)
 }
 void dump_color_syntax(const color_syntax_t *clr_syntax)
 {
-	flf_d_printf("%p: [%s]-[%s] %d/%d ->next:%p\n",
+	flf_dprintf("%p: [%s]-[%s] %d/%d ->next:%p\n",
 	 clr_syntax,
 	 clr_syntax->regexp_start->needle_compiled,
 	 clr_syntax->regexp_end ? clr_syntax->regexp_end->needle_compiled : "",
@@ -757,13 +754,13 @@ void dump_color_syntax(const color_syntax_t *clr_syntax)
 
 PRIVATE void rcfile_error(const char *msg, ...)
 {
-	e_printf("\n");
+	debug_e_printf("\n");
 	if (rc_line_num > 0) {
-		e_printf("Error in file: %s on line: %d", rc_file_path_reading, rc_line_num);
+		debug_e_printf("Error in file: %s on line: %d", rc_file_path_reading, rc_line_num);
 	}
 	va_list ap;
 	va_start(ap, msg);
-	e_vprintf(msg, ap);
+	debug_e_vprintf(msg, ap);
 	va_end(ap);
 }
 

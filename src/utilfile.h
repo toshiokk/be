@@ -32,15 +32,17 @@ int is_file_writable(const char *path);
 int is_st_writable(struct stat *st);
 ssize_t get_file_size(const char *path);
 int is_dir_readable(const char *path);
+time_t get_file_mtime(const char *file_path);
+int get_file_stat(const char *file_path, struct stat *stat_);
 
 // change current directory -----------
 
-int change_cur_dir_saving_prev_next_dir(const char *path,
+int chdir_saving_prev_next_dir(const char *path,
  char *cur_path, char *prev_path, char *next_dir_sel);
 
-int change_cur_dir_by_file_path_after_save(char *dir_save, const char *file_path);
-int change_cur_dir_by_file_path(char *file_path);
-int change_cur_dir_after_save(char *dir_save, const char *dir);
+int chdir_by_file_path_after_save(char *dir_save, const char *file_path);
+int chdir_by_file_path(char *file_path);
+int chdir_after_save(char *dir_save, const char *dir);
 
 char *strip_file_if_path_is_file(const char *path, char *dir);
 char *strip_file_from_path(const char *path, char *dir);
@@ -49,8 +51,12 @@ int change_cur_dir(const char *dir);
 const char *get_full_path_of_cur_dir(char *dir);
 const char *get_real_path_of_cur_dir(char *dir);
 
+char *getcwd__(char *cwd);
+char *getenv_pwd(char *pwd);
+char *getenv__(char *env);
+
 int write_text_to_file(const char *file_path, char append, const char *text);
-int remove_file(const char* file_path);
+int remove_file(const char *file_path);
 
 #endif // utilfile_h
 

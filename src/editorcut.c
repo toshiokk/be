@@ -206,13 +206,16 @@ void doe_cut_text_to_sys_clipboard()
 {
 	doe_cut_text();
 	// copy cut text to clip board file
-	save_newest_cut_buf_to_clipboard_file();
-	send_to_sys_clipboard();
+	save_cut_buf__send_to_sys_clipboard();
 }
 void doe_copy_text_to_sys_clipboard()
 {
 	doe_copy_text();
 	// copy cut text to clip board file
+	save_cut_buf__send_to_sys_clipboard();
+}
+void save_cut_buf__send_to_sys_clipboard()
+{
 	save_newest_cut_buf_to_clipboard_file();
 	send_to_sys_clipboard();
 }
@@ -236,8 +239,7 @@ void doe_duplicate_text()
 
 void doe_paste_text_with_pop()
 {
-	if (copy_delete_paste_pop(
-	 IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0
+	if (copy_delete_paste_pop(IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0
 	  ? (CDPP_PASTE | CDPP_POP) : (CDPP_REPLACE | CDPP_POP)) <= 0) {
 		return;
 	}
@@ -245,8 +247,7 @@ void doe_paste_text_with_pop()
 }
 void doe_paste_text_without_pop()
 {
-	if (copy_delete_paste_pop(
-	 IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0
+	if (copy_delete_paste_pop(IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0
 	  ? (CDPP_PASTE | CDPP_NOPOP) : (CDPP_REPLACE | CDPP_NOPOP)) <= 0) {
 		return;
 	}
@@ -573,7 +574,7 @@ PRIVATE void copy_rect_region_to_cut_buf(
 		append_string_to_newest_cut_buf(
 		 strcut__(buf, MAX_EDIT_LINE_LEN, line->data, min_byte_idx, max_byte_idx));
 		if (line == max_line)
-			break;		// copy till the selection bottom ?
+			break;		// copied till the selection bottom ?
 	}
 }
 

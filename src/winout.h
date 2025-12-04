@@ -44,9 +44,7 @@ extern win_rect_t *cur_sub_win;
 void win_init_win_size();
 
 void set_win_depth(int nesting_depth);
-void inc_win_depth();
-void dec_win_depth();
-const int get_win_depth();
+int get_win_depth();
 void win_reinit_win_size();
 
 int win_size_shrink_lines();
@@ -54,6 +52,7 @@ int win_size_shrink_columns();
 void win_setup_win_size(int win_depth);
 void win_select_cur_sub_win(int sub_win_idx);
 #ifdef ENABLE_DEBUG
+void dump_cur_central_win();
 void dump_cur_sub_win();
 #endif // ENABLE_DEBUG
 

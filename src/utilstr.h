@@ -34,7 +34,7 @@ int my_stricmp(const char *s1, const char *s2);
 int my_strnicmp(const char *s1, const char *s2, size_t n);
 #endif // HAVE_STRNCASECMP
 
-char* str_tr(char* string, char chr_from, char chr_to);
+char *str_tr(char *string, char chr_from, char chr_to);
 
 char *conv_esc_str(char *string);
 
@@ -44,16 +44,14 @@ void test_utilstr();
 void test_replace_str();
 char *replace_str(char *buffer, size_t buf_len, size_t start, int delete_len,
  const char *str, len_t insert_len);
-int insert_str_separating_by_space(char *buffer, size_t buf_len,
- size_t offset, const char *str);
+int insert_str_separating_by_space(char *buffer, size_t buf_len, size_t offset, const char *str);
 char *delete_str(char *buffer, size_t start, len_t delete_len);
 char *insert_str_chr(char *buffer, size_t buf_len, size_t offset, char chr);
 char *insert_str(char *buffer, size_t buf_len, size_t offset,
  const char *string, len_t insert_len);
-char* str_prepend(char* dest, size_t buf_len, const char* str);
+char *str_prepend(char *dest, size_t buf_len, const char *str);
 
-char *concat_file_path_separating_by_space(char *buffer, size_t buf_len,
- const char *string);
+char *concat_file_path_separating_by_space(char *buffer, size_t buf_len, const char *string);
 char *quote_file_path_s(const char *string);
 char *quote_file_path_buf(char *buf, const char *string);
 char *quote_file_path_if_necessary(char *buf, const char *string);
@@ -69,9 +67,9 @@ size_t strlen_path(const char *str);
 
 char *strcat_printf(char *buffer, size_t buf_len, const char *format, ...);
 int snprintf_(char *buffer, size_t buf_len, const char *format, ...);
-char* sprintf_s(const char *format, ...);
-char* sprintf_s1(const char *format, ...);
-char* sprintf_s2(const char *format, ...);
+char *sprintf_s(const char *format, ...);
+char *sprintf_s1(const char *format, ...);
+char *sprintf_s2(const char *format, ...);
 char *strcpy__(char *dest, const char *src);
 char *strlcpy__(char *dest, const char *src, size_t len);
 char *strcat__(char *dest, const char *src);
@@ -84,9 +82,9 @@ int strn_strn_cmp__(const char *dest, size_t dest_len, const char *src, size_t s
 int strlcasecmp(const char *str1, const char *str2);
 int strcmp_from_tail(const char *dest, const char *src);
 
-char *strchr__(const char *str, char chr);
+const char *strchr__(const char *str, char chr);
 int contain_chr(const char *str, char chr);
-int contain_chrs(const char *str, const char* chrs);
+int contain_chrs(const char *str, const char *chrs);
 char *strnset__(char *buf, char chr, size_t len);
 char *strncpy__(char *dest, const char *src, size_t buf_len);
 void *memcpy__(void *dest, const void *src, size_t len);
@@ -100,9 +98,9 @@ char *shrink_str(char *str, int space, int n_over_10);
 char *shrink_str_static(const char *str, int space, int n_over_10);
 char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10);
 
-char* adjust_str_columns(char *utf8s, int columns);
+char *adjust_str_columns(char *utf8s, int columns);
 int truncate_str_tail_columns(char *utf8s, int columns);
-char* expand_str_columns(char *utf8s, int columns);
+char *expand_str_columns(char *utf8s, int columns);
 
 int get_byte_idx_from_col_idx(const char *utf8s, int columns, int left_right, int *col_idx__);
 
@@ -114,21 +112,25 @@ int skip_space_mutable(char **ptr);
 const char *skip_chars(const char *ptr, const char *chars);
 const char *skip_to_file_path(const char *ptr);
 const char *skip_file_path(const char *ptr);
-char *skip_file_name(char *ptr);
-#if 0
-const char *skip_separator(const char *ptr);
-#endif
-const char *skip_one_separator(const char *ptr);
-const char *skip_two_spaces(const char *ptr);
+char *skip_file_name_min(char *ptr);
+char *skip_file_name_max(char *ptr);
+const char *skip_one_separator_const(const char *ptr);
+const char *skip_two_white_spaces(const char *ptr);
+const char *skip_white_space(const char *ptr);
 const char *skip_to_digit(const char *ptr);
 const char *skip_digits(const char *ptr);
 const char *skip_string_const(const char *ptr);
 char *skip_string_mutable(char *ptr);
+char *skip_slash(char *ptr);
 
+char *remove_line_tail_space(char *line);
 char *remove_line_tail_lf(char *line);
 
-int is_char_file_path(const char *ptr);
-int is_char_file_name(const char *ptr);
+int is_char_file_path_min(const char *ptr);
+int is_char_file_name_min(const char *ptr);
+int is_char_file_path_max(const char *ptr);
+int is_char_file_name_max(const char *ptr);
+
 int is_char_id(char chr);
 int is_char_separator(char chr);
 int is_char_non_white_space_separator(char chr);
@@ -141,6 +143,10 @@ char is_quoted(const char *str, char quote_chr);
 char tail_char(const char *str);
 
 //------------------------------------------------------------------------------
+
+#ifdef ENABLE_DEBUG
+void test_quote_string();
+#endif // ENABLE_DEBUG
 
 #ifdef ENABLE_DEBUG
 void dump_str_w_caret(const char *string, int byte_idx);

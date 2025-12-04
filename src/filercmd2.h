@@ -1,5 +1,5 @@
 /**************************************************************************
- *   filercmd.h                                                           *
+ *   filercmd2.h                                                           *
  *                                                                        *
  *   Copyright (C) 1999-2003 Chris Allegretta                             *
  *                                                                        *
@@ -19,22 +19,10 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef filercmd_h
-#define filercmd_h
+#ifndef filercmd2_h
+#define filercmd2_h
 
 #ifdef ENABLE_FILER
-
-int chk_inp_str_ret_val_filer(int ret);
-
-// "dof_..."  DO Editor function
-void dof_up();
-void dof_down();
-void dof_page_up();
-void dof_page_down();
-void dof_top_of_list();
-void dof_bottom_of_list();
-
-void dof_refresh_filer();
 
 // current : subject currently selected file to command
 // marked  : subject marked files to command
@@ -105,7 +93,9 @@ void dof_size_zero_file();
 void dof_unzip_file();
 void dof_zip_file();
 
-void dof_find_file();
+void dof_clip_file();
+void dof_clip_path();
+
 void dof_make_directory();
 void dof_change_directory();
 void dof_parent_directory();
@@ -113,6 +103,7 @@ void dof_beginning_directory();
 void dof_home_directory();
 void dof_root_directory();
 void dof_prev_directory();
+void dof_real_path();
 
 void dof_enter_file_name();
 void dof_enter_file_name_add();
@@ -121,44 +112,21 @@ void dof_enter_file_path_add();
 void dof_enter_dir_path();
 void dof_enter_dir_path_add();
 
-void dof_set_filter();
-void dof_select_file();
-void dof_select_no_file();
-void dof_select_all_files();
-void disp_files_selected();
-
-void dof_real_path();
-void dof_quit_filer();
+void dof_quit();
+void dof_quit_soon();
 void dof_quit_home_dir();
 void dof_restart_filer();
 
-void dof_tog_show_dot_file();
-void dof_inc_file_view_mode();
-void dof_clear_file_sort_mode();
-void dof_inc_file_sort_mode();
-void dof_tog_show_zebra_striping();
-void dof_tog_panes();
-void dof_tog_panex();
-void dof_inc_key_list_lines();
-#ifdef ENABLE_HELP
-void dof_splash();
-void dof_view_file_list();
-void dof_view_func_list();
-#endif // ENABLE_HELP
+int try_to_chdir_in_string(const char *str, char *buf_dir);
+int chdir_there_or_parent(char *buf_dir);
 
-void dof_menu_0();
+int filer_chdir_parent(const char *path);
+int filer_chdir(const char *dir);
 
-int goto_dir_in_string(const char *str);
-int check_to_change_dir_in_string(const char *str, char* buf_dir);
-int try_to_chdir_parent(char* buf_dir);
-
-int filer_change_dir_parent(char *path);
-int filer_change_dir(const char *dir);
-
-int change_cur_dir_saving_prev_next(const char *dir);
+int chdir_saving_prev_next(const char *dir);
 
 #endif // ENABLE_FILER
 
-#endif // filercmd_h
+#endif // filercmd2_h
 
-// End of filercmd.h
+// End of filercmd2.h

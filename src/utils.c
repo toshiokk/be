@@ -46,6 +46,7 @@ char *malloc_strcpy(const char *string)
 
 //------------------------------------------------------------------------------
 #ifdef MEMORY_LEAK_CHECKER
+#warning "MEMORY_LEAK_CHECKER defined (This slows down app execution)"
 
 static struct malloc_caller malloc_callers[MAX_MALLOCS_TO_MONITOR];
 
@@ -86,15 +87,17 @@ void mlc_clear_caller(struct malloc_caller* caller)
 
 void mlc_check_leak()
 {
-	int count = 1;
-	flf_d_printf("\n");
+	int count = 0;
 	for (int alloc_idx = 0; alloc_idx < MAX_MALLOCS_TO_MONITOR; alloc_idx++) {
 		if (malloc_callers[alloc_idx].file_name) {
+			count++;
 			d_printf("%3d:%3d: file_name: [%s], line_num: %d\n", count, alloc_idx,
 			 malloc_callers[alloc_idx].file_name,
 			 malloc_callers[alloc_idx].line_num);
-			count++;
 		}
+	}
+	if (count == 0) {
+		flf_dprintf("** No memory leakage **\n");
 	}
 }
 
@@ -111,7 +114,7 @@ static size_t save_malloced_size = 0;
 
 void mlc_check_count()
 {
-	flf_d_printf("max_count: %d, max_size: %d, count: %d, size: %d\n",
+	flf_dprintf("max_count: %d, max_size: %d, count: %d, size: %d\n",
 	 max_malloced_count, max_malloced_size, malloced_count, malloced_size);
 }
 void mlc_memorize_count()
@@ -123,7 +126,7 @@ void mlc_memorize_count()
 void mlc_differenciate_count()
 {
 	mlc_check_count();
-	flf_d_printf("count: %d, size: %d\n",
+	flf_dprintf("count: %d, size: %d\n",
 	 malloced_count - save_malloced_count, malloced_size - save_malloced_size);
 }
 #endif // MEMORY_LEAK_CHECKER
@@ -322,6 +325,14 @@ time_t get_sec()
 {
 	return time(NULL);
 }
+unsigned long get_dsec()	// Deci Seconds
+{
+	struct timeval tv;
+	struct timezone tz;
+	gettimeofday(&tv, &tz);
+	// 99999999.9
+	return (tv.tv_sec % 100000000) * 10 + (tv.tv_usec / 100000) % 10;
+}
 unsigned long get_msec()
 {
 	struct timeval tv;
@@ -458,12 +469,17 @@ int get_mem_free_in_kb(int update)
 #ifdef START_UP_TEST
 void test_zz_from_num()
 {
-#ifdef ENABLE_DEBUG
-	char buf[2+1];
-#endif // ENABLE_DEBUG
 	// (10 * 10) + (52 + 62) = 100 + 3224 = 3324
 	for (int num = -(10 + 62); num < 100 + 3224 + 10; num++) {
-		flf_d_printf("%4d ==> [%s]\n", num, zz_from_num(num, buf));
+		flf_dprintf("%4d ==> [%s]\n", num, zz_from_num(num, NULL));
+	}
+}
+void test_modulo()
+{
+	flf_dprintf("modulo test --------------\n");
+	for (int nn = -9; nn < 10; nn++) {
+		flf_dprintf("%2d mod 7 = %2d, %2d mod 5 = %2d, %2d mod 3 = %2d\n",
+		 nn, nn % 7, nn, nn % 5, nn, nn % 3);
 	}
 }
 #endif // START_UP_TEST
@@ -479,6 +495,10 @@ void test_zz_from_num()
 // | "@@"        | 3324 ~       |              |
 char *zz_from_num(int num, char *buf)
 {
+	static char buf_s[2+1];
+	if (buf == NULL) {
+		buf = buf_s;
+	}
 	inline char _0toz_from_num(int num) { // [0, 61] ==> '0'-'9','A'-'Z','a'-'z'
 		char chr = '_';
 		if (num < 10) {

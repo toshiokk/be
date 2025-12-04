@@ -31,7 +31,7 @@ void test_utf8c_encode()
 
 	for (wchar_t wc = 0x0000; wc <= 0x1fffff; wc++) {	// 21 bits(UCS21)
 		utf8c_encode(wc, utf8c);
-		flf_d_printf("%06x ==> [%s] ==> %06x\n", wc, dump_utf8c(utf8c, buf), utf8c_decode(utf8c));
+		flf_dprintf("%06x ==> [%s] ==> %06x\n", wc, dump_utf8c(utf8c, buf), utf8c_decode(utf8c));
 		if (wc >= 0x10000) {
 			wc += (0x1000 - 1);
 		} else if (wc >= 0x100) {
@@ -68,7 +68,7 @@ void test_wcwidth()
 	for (wc = 0x0000; wc < 0xffff; wc++) {
 		columns = my_wcwidth(wc);
 		if ((wc & 0x1f) == 0) {
-			flf_d_printf("%04x", wc);
+			flf_dprintf("%04x", wc);
 		}
 		d_printf(" %d", columns);
 		if ((wc & 0x1f) == 0x1f) {

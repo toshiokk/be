@@ -1,6 +1,6 @@
 # backup "be" directory to ../old/be
 
-back_dir_name=be`yymmdd-hhmmss`
+back_dir_name=be`date "+%y%m%d-%H%M%S"`
 cp -auv ../be ../old/$back_dir_name
 rm -f ../old/be
 ln -s ../old/$back_dir_name ../old/be

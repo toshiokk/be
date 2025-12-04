@@ -188,7 +188,8 @@ const char *file_info_str(file_info_t *file_info,
 	if ((show_link == 0)
 	 && ((strlcmp__(file_info->file_name, ".") == 0)
 	  || (strlcmp__(file_info->file_name, "..") == 0))) {
-		if (strcmp(get_real_path_of_cur_dir(NULL), get_full_path_of_cur_dir(NULL)) != 0) {
+		if (compare_dir_path_w_or_wo_trailing_slash(
+		 get_real_path_of_cur_dir(NULL), get_full_path_of_cur_dir(NULL)) != 0) {
 			strlcat__(buf_name, MAX_PATH_LEN,
 			 sprintf_s("  [%s]", get_real_path_of_cur_dir(NULL)));
 		} else {
@@ -356,7 +357,7 @@ PRIVATE char *safe_file_name_str(const char *file_name)
 	static char file_name_safe[MAX_PATH_LEN+1];
 	size_t len = strlen_path(file_name);
 	file_name_safe[0] = '\0';
-	for (const char* ptr = file_name; ((ptr - file_name) < len) && *ptr; ) {
+	for (const char *ptr = file_name; ((ptr - file_name) < len) && *ptr; ) {
 		if (is_graph_char(*ptr) == 0) {		// ((UINT8)*ptr) < 0x80
 			strcat_printf(file_name_safe, MAX_PATH_LEN, "%%%02X", *ptr);	// "%xx"
 		} else
@@ -425,7 +426,7 @@ int read_file_info_array(filer_view_t *fv)
 	if (is_strlen_0(filter)) {
 		filter = "*";
 	}
-	change_cur_dir_after_save(dir_save, fv->cur_dir);
+	chdir_after_save(dir_save, fv->cur_dir);
 
 	free_file_info_array(fv);
 
@@ -443,23 +444,51 @@ int read_file_info_array(filer_view_t *fv)
 
 	rewinddir(dir);
 	for (file_idx = 0; file_idx < entries && (dirent = readdir(dir)) != NULL; ) {
-		if (lstat(dirent->d_name, &lst) < 0)	// stat link itself
-			continue;
+		lstat(dirent->d_name, &lst);	// stat link itself if it's a link
 		if (S_ISLNK(lst.st_mode)
 		 && stat(dirent->d_name, &st) >= 0) {	// stat linked file
-			// stating file succeeded
+			// statting file succeeded
 		} else {
-			// stating file succeeded, copy from lst to st
+			// statting file succeeded, copy from lst to st
 			memcpy__(&st, &lst, sizeof(lst));
 		}
-		if (S_ISDIR(st.st_mode)
-		 || (S_ISDIR(st.st_mode) == 0 && fnmatch(filter, dirent->d_name, 0) == 0)) {
-			if (GET_APPMD(fl_SHOW_DOT_FILE) == 0
-			 && (((strncmp(dirent->d_name, ".", 1) == 0) && (strcmp(dirent->d_name, "..") != 0))
-			  || ((st.st_mode & RWXRWXRWX) == 0)
-			  || ((st.st_mode & RWXRWXRWX) == RW0000RW0)))
-				// ".", ".????" or (mode == 000)
-				continue;
+		// Total Condition:
+		// | condition-1 | condition-2 || total show or not |
+		// |-------------|-------------||-------------------|
+		// |    0        | --          || not show          |
+		// |    --       | 0           || not show          |
+		// |    1        | 1           || show              |
+		// - Condition-1:
+		//   | ISDIR() | criteria                || show or not |
+		//   |---------|-------------------------||-------------|
+		//   |    1    | --                      || 1           |
+		//   |    0    | match with 'filter'     || 1           |
+		//   |    0    | not match with 'filter' || 0           |
+		// - Condition-2:
+		//   | fl_SHOW_DOT_FILE | condition-2-1 | condition-2-2 || show or not |
+		//   |------------------|---------------|---------------||-------------|
+		//   |    1             | --            | --            || 1           |
+		//   |    0             | 0             | --            || 0           |
+		//   |    0             | --            | 0             || 0           |
+		//   |    0             | 1             | 1             || 1           |
+		//   - Condition-2-1:
+		//     | file/dir name  || show or not |
+		//     |----------------||-------------|
+		//     | ".."           || 1           |
+		//     | "." or ".????" || 0           |
+		//   - Condition-2-2:
+		//     | file attribute || show or not |
+		//     |----------------||-------------|
+		//     | ---------      || 0           |
+		//     | rw?---rw?      || 0           |
+		//     | (others)       || 1           |
+		if ((S_ISDIR(st.st_mode) ? 1					// all dir
+		  : (fnmatch(filter, dirent->d_name, 0) == 0))	// files which match with 'filter'
+		 && (GET_APPMD(fl_SHOW_DOT_FILE) ? 1			// all files
+														// ("." or ".???") but not ".."
+		  : (((strcmp(dirent->d_name, "..") == 0) || (strlcmp__(dirent->d_name, ".") != 0))
+														// Not have a "hidden" attribute
+		   && ((st.st_mode & RW0RW0RW0) != 0) && ((st.st_mode & RW0RW0RW0) != RW0000RW0)))) {
 			file_info_t *ent_ptr = &fv->file_info_array[file_idx];
 			// fill file_info_t
 			_mlc_set_caller
@@ -794,7 +823,6 @@ int research_file_name_in_file_info_array(filer_view_t *fv, const char *file_nam
 
 int search_file_name_in_file_info_array(filer_view_t *fv, const char *file_name)
 {
-	int file_name_len;
 	// exact match
 	for (int file_idx = 0; file_idx < fv->file_info_entries; file_idx++) {
 		if (strcmp(fv->file_info_array[file_idx].file_name, file_name) == 0) {
@@ -802,28 +830,41 @@ int search_file_name_in_file_info_array(filer_view_t *fv, const char *file_name)
 		}
 	}
 	// partial match
-	int cmp_type;
 	// 0,1: the same file type, 2,3: all file
-	// 0,2: case sensitive, 1,3: case ignorant
-	// 0: the same file type    , case sensitive
-	// 1: the same file type    , case ignorant
-	// 2: may diffrent file type, case sensitive
-	// 3: may diffrent file type, case ignorant
-	for (file_name_len = strlen(file_name); file_name_len; file_name_len--) {
-		for (cmp_type = 0; cmp_type < 4; cmp_type++) {
+	// 0,2: case sensitive, 1,3: case insensitive
+	// 0: the same file type, case sensitive
+	// 1: the same file type, case insensitive
+	// 2: any file type     , case sensitive
+	// 3: any file type     , case insensitive
+	for (int file_name_len = strlen(file_name); file_name_len; file_name_len--) {
+		for (int cmp_type = 0; cmp_type < 4; cmp_type++) {
 			for (int file_idx = 0; file_idx < fv->file_info_entries; file_idx++) {
-				if ((((cmp_type < 2)		// cmp_type = 0, 1
-				   && (S_ISREG(fv->file_info_array[FV_CUR_F_IDX(fv)].st.st_mode)
-					  == S_ISREG(fv->file_info_array[file_idx].st.st_mode)))
-				  || (cmp_type >= 2))	// cmp_type = 2, 3
-				 && (((cmp_type % 2) == 0)
-				  // case sensitive
-				  ? (strncmp(fv->file_info_array[file_idx].file_name, file_name,
-					  file_name_len) == 0)
-				  // case ignorant
-				  : (strncasecmp(fv->file_info_array[file_idx].file_name, file_name,
-					  file_name_len) == 0))) {
-					return file_idx;
+				char is_same_file_type = (S_ISREG(fv->file_info_array[FV_CUR_F_IDX(fv)].st.st_mode)
+				 == S_ISREG(fv->file_info_array[file_idx].st.st_mode));
+				char is_same_name_in_case_sensitive =
+				 (strncmp(fv->file_info_array[file_idx].file_name, file_name,
+				   file_name_len) == 0);
+				char is_same_name_in_case_insensitive =
+				 (strncasecmp(fv->file_info_array[file_idx].file_name, file_name,
+				   file_name_len) == 0);
+				switch (cmp_type) {
+				case 0:
+					if (is_same_file_type && is_same_name_in_case_sensitive)
+						return file_idx;
+					break;
+				case 1:
+					if (is_same_file_type && is_same_name_in_case_insensitive)
+						return file_idx;
+					break;
+				case 2:
+					if (is_same_name_in_case_sensitive)
+						return file_idx;
+					break;
+				case 3:
+				default:
+					if (is_same_name_in_case_insensitive)
+						return file_idx;
+					break;
 				}
 			}
 		}

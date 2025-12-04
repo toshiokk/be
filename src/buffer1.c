@@ -1,5 +1,5 @@
 /**************************************************************************
- *   buffer.c                                                             *
+ *   buffer1.c                                                             *
  *                                                                        *
  *   Copyright (C) 1999-2003 Chris Allegretta                             *
  *                                                                        *
@@ -23,7 +23,6 @@
 
 PRIVATE be_buf_t *buf_make_top_anchor(be_buf_t *buf);
 PRIVATE be_buf_t *buf_make_top_buf(be_buf_t *buf);
-PRIVATE be_bufs_t *bufs_make_top_anchor(be_bufs_t *bufs);
 
 // be_buf_t manipulation routines ==========================================
 // (common to edit-buffer, cut-buffer, undo-redo-buffer and history)
@@ -121,7 +120,7 @@ void buf_set_file_path(be_buf_t *buf, const char *file_path)
 {
 	strlcpy__(buf->file_path_, file_path, MAX_PATH_LEN);
 }
-const char* buf_get_file_path(be_buf_t *buf, char *file_path)
+const char *buf_get_file_path(be_buf_t *buf, char *file_path)
 {
 	if (file_path == NULL) {
 		file_path = buf->file_path_;
@@ -130,35 +129,27 @@ const char* buf_get_file_path(be_buf_t *buf, char *file_path)
 	}
 	return file_path;
 }
-const char* buf_get_abs_path(be_buf_t *buf, char *abs_path)
+const char *buf_get_abs_path(be_buf_t *buf, char *abs_path)
 {
 	static char abs_path_[MAX_PATH_LEN+1];
 	if (abs_path == NULL) {
 		abs_path = abs_path_;
 	}
-	if (is_temporal_file_path(buf_get_file_path(buf, NULL)) == 0) {
-		return get_abs_path(buf_get_file_path(buf, NULL), abs_path);
-	}
-	return buf_get_file_path(buf, NULL);
+	return get_buf_abs_path(buf_get_file_path(buf, NULL), abs_path);
 }
 
-void buf_invalidate_file_path(be_buf_t *buf)
-{
-	// "/path/to/file" ==> "#/path/to/file"
-	buf_set_file_path(buf, add_temporal_file_path_prefix(buf_get_file_path(buf, NULL)));
-}
-const char* buf_get_file_path_valid(be_buf_t *buf, char *file_path)
-{
-	// "#/path/to/file" ==> "/path/to/file"
-	return remove_temporal_file_path_prefix(buf_get_file_path(buf, NULL));
-}
-const char* buf_get_abs_path_valid(be_buf_t *buf, char *abs_path)
+// get abs-path from full-path which may contain internal_buffer_file_path: "#..."
+const char *get_buf_abs_path(const char *full_path, char *abs_path)
 {
 	static char abs_path_[MAX_PATH_LEN+1];
 	if (abs_path == NULL) {
 		abs_path = abs_path_;
 	}
-	return get_abs_path(buf_get_file_path_valid(buf, NULL), abs_path);
+	// make it full_path if it's not internal_buffer_file_path: "#..."
+	if (! is_internal_buf_file_path(full_path)) {
+		return get_abs_path(full_path, abs_path);
+	}
+	return full_path;
 }
 
 BOOL buf_is_empty(be_buf_t *buf)
@@ -218,6 +209,7 @@ be_buf_t *buf_copy(be_buf_t *dest, be_buf_t *src)
 
 be_buf_t *buf_unlink_free_ret_prev(be_buf_t *buf)
 {
+hmflf_dprintf("[%s]\n", buf_get_file_path(buf, NULL));
 	be_buf_t *prev = NODE_PREV(buf);
 	if (IS_NODE_INT(buf)) {
 		buf_unlink(buf);
@@ -283,14 +275,11 @@ be_line_t *buf_append_line_to_bottom(be_buf_t *buf, be_line_t *line)
 // compare two buffers in only contents
 int buf_compare(be_buf_t *buf1, be_buf_t *buf2)
 {
-	be_line_t *line1;
-	be_line_t *line2;
-	int diff;
-
-	for (line1 = NODES_TOP_NODE(buf1), line2 = NODES_TOP_NODE(buf2);
-	 IS_NODE_INT(line1) && IS_NODE_INT(line2); 
+	be_line_t *line1 = NODES_TOP_NODE(buf1);
+	be_line_t *line2 = NODES_TOP_NODE(buf2);
+	for ( ; IS_NODE_INT(line1) && IS_NODE_INT(line2);
 	 line1 = NODE_NEXT(line1), line2 = NODE_NEXT(line2)) {
-		diff = strncmp(line1->data, line2->data, MAX_EDIT_LINE_LEN);
+		int diff = strncmp(line1->data, line2->data, MAX_EDIT_LINE_LEN);
 		if (diff)
 			return diff;
 	}
@@ -312,7 +301,6 @@ int buf_guess_tab_size(be_buf_t *buf)
 #define LINES_TO_GUESS_TAB_SIZE		1000
 	int lines_checked = 0;
 	int lines_space4 = 0;
-
 	for (be_line_t *line = NODES_TOP_NODE(buf); IS_NODE_INT(line); line = NODE_NEXT(line)) {
 		if (line_strlen(line) > 4) {
 			if (strlcmp__(line->data, "    ") == 0 && line->data[4] != ' ')
@@ -328,9 +316,8 @@ int buf_guess_tab_size(be_buf_t *buf)
 }
 int buf_count_lines(be_buf_t *buf, int max_lines)
 {
-	int count;
-	be_line_t *line;
-	for (count = 0, line = NODES_TOP_NODE(buf); count < max_lines && IS_NODE_INT(line);
+	int count = 0;
+	for (be_line_t *line = NODES_TOP_NODE(buf); count < max_lines && IS_NODE_INT(line);
 	 line = NODE_NEXT(line), count++) {
 		// NOTHING_TO_DO
 	}
@@ -429,7 +416,6 @@ be_line_t *buf_move_cur_line_to_next(be_buf_t *buf)
 be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num)
 {
 	be_line_t *line;
-
 	for (line = NODES_TOP_NODE(buf); line_num > 1 && IS_NODE_INT(line);
 	 line_num--, line = NODE_NEXT(line)) {
 		// NOTHING_TO_DO
@@ -442,7 +428,7 @@ be_line_t *buf_get_line_ptr_from_line_num(be_buf_t *buf, int line_num)
 }
 
 //------------------------------------------------------------------------------
-int buf_get_file_stat(be_buf_t *buf, const char* file_path)
+int buf_get_file_stat(be_buf_t *buf, const char *file_path)
 {
 	return stat(file_path, &(buf->orig_file_stat));		// -1: error
 }
@@ -450,28 +436,6 @@ void buf_update_mtime(be_buf_t *buf)
 {
 	buf->orig_file_stat.st_mtime = get_sec();
 }
-
-// File synching policy:
-// |------conditions-------||--action--|--comment--|
-// |        |buffer|write  ||to be done|           |
-// |file    |update|pending||          |           |
-// |mtime   |time  |timer  ||          |           |
-// |        |      |expired||          |           |
-// |--------|------|-------||----------|-----------|
-// |   --   |   -- |  --   ||--        |--         |
-// | later  |   -- |  --   ||reload    |file update by other program instance          |
-// |   --   |later |   0   ||pending   |local buffer updated but timer not expired yet |
-// |   --   |later |   1   ||save      |local buffer updated and timer expired         |
-//
-// before referencing buffer:
-// - if file is newer than local-buffer ==> reload
-// before modification of buffer:
-// - if file is newer than local-buffer ==> reload
-// saving buffer:
-// - if local-buffer is newer than the corresponding file
-//   and write-pending-timer expired ==> save it to file
-// write pending timer:
-// - the timer is used to avoid too frequent file update and speed down of the program execution
 
 // Three timers:
 // - org: original file mtime (when a file loaded. never change)
@@ -481,19 +445,15 @@ void buf_update_mtime(be_buf_t *buf)
 // |case|comparison-1|comparison-2|comparison-3|comment                        |to do      |
 // |----|------------|------------|------------|-------------------------------|-----------|
 // |  0 | org == cur | org == buf | cur == buf |just loaded and no update      |nothing    |
-// |  1 | org <  cur | org == buf | cur >  buf |file modified                  |reload file|
-// |  2 | org == cur | org <  buf | cur <  buf |buffer modified                |save file  |
-// |  3 | org <  cur | org <  buf | cur >  buf |file modified later than buffer|reload file|
-// |  4 | org <  cur | org <  buf | cur <  buf |buffer modified later than file|save file  |
+// |  1 | org <  cur | org == buf |*cur >  buf*|file modified                  |reload file|
+// |  2 | org == cur | org <  buf |*cur <  buf*|buffer modified                |save file  |
+// |  3 | org <  cur | org <  buf |*cur >  buf*|file modified later than buffer|reload file|
+// |  4 | org <  cur | org <  buf |*cur <  buf*|buffer modified later than file|save file  |
 
-int buf_compare_mtime_to_cur_file(be_buf_t *buf, const char* file_path)
+int buf_compare_mtime_to_cur_file(be_buf_t *buf, const char *file_path)
 {
-	struct stat file_stat;
-	if (stat(file_path, &file_stat)) {
-		file_stat.st_mtime = 0;		// no such file
-	}
 	// >0: buffer is newer, 0: the same, <0: file is newer
-	return (int)buf->orig_file_stat.st_mtime - (int)file_stat.st_mtime;
+	return (int)buf->orig_file_stat.st_mtime - (int)get_file_mtime(file_path);
 }
 
 //------------------------------------------------------------------------------
@@ -518,9 +478,9 @@ UINT16 buf_calc_crc(be_buf_t *buf)
 	return get_crc16ccitt();
 }
 
-void buf_clear_modified(be_buf_t *buf)
+void buf_clear_modified__pending_timer(be_buf_t *buf)
 {
-	GET_BUF_STATE(buf, buf_MODIFIED) = 0;
+	SET_BUF_STATE(buf, buf_MODIFIED, 0);
 	buf_start_pending_timer(buf);
 }
 void buf_set_modified__pending_timer(be_buf_t *buf)
@@ -529,18 +489,40 @@ void buf_set_modified__pending_timer(be_buf_t *buf)
 		buf_set_modified(buf);
 		buf_update_mtime(buf);
 		buf_start_pending_timer(buf);
+/////hmtflf_dprintf("ZZZZUUUU[%s]\n", buf_get_abs_path(buf, NULL));
 	}
 }
-int buf_is_modified_newer__expired(be_buf_t *buf, const char *file_path, UINT16 msec)
+
+// File synching policy:
+// |------conditions-----------||action |comment    |
+// |     |buffer|buffer|write  ||to be  |           |
+// |file |modifi|modifi|pending||done   |           |
+// |mtime|cation|cation|timer  ||       |           |
+// |     |      |time  |expired||       |           |
+// |-----|------|------|-------||-------|-----------|
+// | --  |   0  |   -- |  --   ||none   |--         |
+// |later|   0  |   -- |  --   ||reload |file updated by other program instance        |
+// | --  |   1  | later|   0   ||pending|local buffer updated but timer not expired yet|
+// | --  |   1  | later|   1   ||save   |local buffer updated and timer expired        |
+//
+// before referencing buffer:
+// - if file is newer than local-buffer ==> reload
+// before modification of buffer:
+// - if file is newer than local-buffer ==> reload
+// saving buffer:
+// - if local-buffer is newer than the corresponding file
+//   and write-pending-timer expired ==> save it to file
+// write pending timer:
+// - the timer used to avoid too frequent file update and speed down program execution
+int buf_is_modified_newer__expired(be_buf_t *buf, const char *file_path, UINT16 dsec)
 {
-	return (buf_get_modified(buf)
-	  || (buf_compare_mtime_to_cur_file(buf, file_path) > 0))
-	 && buf_is_pending_timer_expired(buf, msec);
+	return (buf_get_modified(buf) && (buf_compare_mtime_to_cur_file(buf, file_path) >= 0))
+	 && buf_is_pending_timer_expired(buf, dsec);
 }
 
 void buf_set_modified(be_buf_t *buf)
 {
-	GET_BUF_STATE(buf, buf_MODIFIED) = 1;
+	SET_BUF_STATE(buf, buf_MODIFIED, 1);
 }
 int buf_get_modified(be_buf_t *buf)
 {
@@ -551,30 +533,30 @@ int buf_get_modified(be_buf_t *buf)
 // - `buf_is_pending_timer_expired(msec)` check if more than `msec` past since started
 void buf_start_pending_timer(be_buf_t *buf)
 {
-	buf_set_pending_timer(buf, get_msec());
+	buf_set_pending_timer(buf, get_dsec());
 }
-int buf_is_pending_timer_expired(be_buf_t *buf, UINT16 msec)
+int buf_is_pending_timer_expired(be_buf_t *buf, UINT16 dsec)
 {
-/////dtmflf_d_printf("cur: %d - mod: %d = past: %d\n",
-///// (UINT16)get_msec(), buf_get_pending_timer(buf),
-///// (UINT16)get_msec() - buf_get_pending_timer(buf));
-	return (((UINT16)get_msec()) - buf_get_pending_timer(buf)) >= msec;
+	return buf_get_pending_timer_elapsed(buf) >= dsec;
+}
+int buf_get_pending_timer_elapsed(be_buf_t *buf)
+{
+	return (int)(UINT16)get_dsec() - (int)buf_get_pending_timer(buf);
 }
 
-void buf_set_pending_timer(be_buf_t *buf, UINT16 timer)
+void buf_set_pending_timer(be_buf_t *buf, UINT16 abs_dsec)
 {
-	buf->orig_file_crc16 = timer;
+	buf->orig_file_crc16 = abs_dsec;
 }
 UINT16 buf_get_pending_timer(be_buf_t *buf)
 {
 	return buf->orig_file_crc16;
 }
 
-int buf_count_bufs(be_buf_t *buf)
+int buf_count(be_buf_t *buf)
 {
 	int cnt = 0;
-	buf = buf_make_top_buf(buf);
-	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+	for (buf = buf_make_top_buf(buf); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
 		cnt++;
 	}
 	return cnt;
@@ -607,139 +589,12 @@ be_buf_t *buf_get_another_buf(be_buf_t *buf)
 }
 
 //------------------------------------------------------------------------------
-be_bufs_t *bufs_init(be_bufs_t *bufs, const char* name,
- const char* name_top, const char* name_bottom)
-{
-	bufs->prev = bufs->next = NULL;
-	strlcpy__(bufs->name, name, MAX_NAME_LEN);
-	bufs_init_anchors(bufs, name_top, name_bottom);
-	bufs_set_cur_buf(bufs, NODES_BOT_ANCH(bufs));
-	return bufs;
-}
-void bufs_init_anchors(be_bufs_t *bufs, const char *full_path_top, const char *full_path_bot)
-{
-	buf_init(NODES_TOP_ANCH(bufs), full_path_top, BUF_MODE_LIST);
-	buf_init(NODES_BOT_ANCH(bufs), full_path_bot, BUF_MODE_LIST);
-	buf_link(NODES_TOP_ANCH(bufs), NODES_BOT_ANCH(bufs));
-}
-void bufs_link(be_bufs_t *top_anchor, be_bufs_t *bot_anchor)
-{
-	top_anchor->next = bot_anchor;
-	bot_anchor->prev = top_anchor;
-}
-void bufs_set_cur_buf(be_bufs_t* bufs, be_buf_t* buf)
-{
-	bufs->cur_buf = buf;
-}
-
-void bufs_insert_buf_to_top(be_bufs_t *bufs, be_buf_t *buf)
-{
-	buf_insert_after(NODES_TOP_ANCH(bufs), buf);
-	bufs_set_cur_buf(bufs, buf);
-}
-void bufs_insert_buf_to_bottom(be_bufs_t *bufs, be_buf_t *buf)
-{
-	buf_insert_before(NODES_BOT_ANCH(bufs), buf);
-	bufs_set_cur_buf(bufs, buf);
-}
-void bufs_insert_before(be_bufs_t *bufs, be_bufs_t *other)
-{
-	bufs_insert_between(NODE_PREV(bufs), other, bufs);
-}
-void bufs_insert_between(be_bufs_t *prev, be_bufs_t *mid, be_bufs_t *next)
-{
-	bufs_link(prev, mid);
-	bufs_link(mid, next);
-}
-
-be_bufs_t *bufs_free_all_bufs(be_bufs_t *bufs)
-{
-	for ( ; IS_NODE_INT(bufs); bufs = NODE_NEXT(bufs)) {
-		for (be_buf_t *buf = NODES_TOP_NODE(bufs); IS_NODE_INT(buf); ) {
-			if (bufs->cur_buf == buf) {
-				bufs->cur_buf = NODE_NEXT(buf);
-			}
-			buf = buf_unlink_free(buf);
-		}
-	}
-	return bufs;
-}
-
-be_bufs_t *bufs_get_bufs_contains_buf(be_bufs_t *bufs, be_buf_t *cur_buf)
-{
-	if (cur_buf) {
-		bufs = bufs_make_top_anchor(bufs);
-		for ( ; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs)) {
-			for (be_buf_t *buf = NODES_TOP_ANCH(bufs); IS_PTR_VALID(buf); buf = NODE_NEXT(buf)) {
-				if (buf == cur_buf) {
-					return bufs;
-				}
-			}
-		}
-	}
-	// not found in all buffers
-	return NULL;
-}
-void bufs_fix_cur_buf(be_bufs_t *bufs)
-{
-	int count_bufs = bufs_count_bufs(bufs);
-	int buf_idx = buf_get_buf_idx_in_bufs(bufs, bufs->cur_buf);
-	if (1 <= buf_idx && buf_idx <= count_bufs) {
-		// `bufs->cur_buf` is valid
-	} else {
-		// `bufs->cur_buf` is not valid
-		bufs->cur_buf = NODES_TOP_NODE(bufs);	// fix `cur_buf`
-	}
-	buf_fix_cur_line(bufs->cur_buf);		// fix `cur_line` too
-}
-
-int bufs_count_bufs(be_bufs_t *bufs)
-{
-	return buf_count_bufs(NODES_TOP_NODE(bufs));
-}
-
-int bufs_get_file_stat(be_bufs_t *bufs, const char* file_path)
-{
-	return buf_get_file_stat(BUFS_INFO_BUF(bufs), file_path);
-}
-void bufs_update_mtime(be_bufs_t *bufs)
-{
-	buf_update_mtime(BUFS_INFO_BUF(bufs));
-}
-
-void bufs_set_modified__pending_timer(be_bufs_t *bufs)
-{
-	buf_set_modified__pending_timer(BUFS_INFO_BUF(bufs));
-}
-int bufs_is_modified_newer__expired(be_bufs_t *bufs, const char *file_path, UINT16 msec)
-{
-	return buf_is_modified_newer__expired(BUFS_INFO_BUF(bufs), file_path, msec);
-}
-
-void bufs_clear_modified(be_bufs_t *bufs)
-{
-	buf_clear_modified(BUFS_INFO_BUF(bufs));
-}
-void bufs_set_modified(be_bufs_t *bufs)
-{
-	buf_set_modified(BUFS_INFO_BUF(bufs));
-}
-int bufs_get_modified(be_bufs_t *bufs)
-{
-	return buf_get_modified(BUFS_INFO_BUF(bufs));
-}
-int bufs_compare_mtime_to_cur_file(be_bufs_t *bufs, const char* file_path)
-{
-	return buf_compare_mtime_to_cur_file(BUFS_INFO_BUF(bufs), file_path);
-}
-
-//------------------------------------------------------------------------------
 
 be_buf_t *buf_get_buf_by_idx(be_buf_t *buf, int buf_idx)
 {
 	// making sure that bufs is TOP_BUF
-	buf = buf_make_top_buf(buf);
-	for ( ; buf_idx > 0 && IS_NODE_INT(buf); buf = NODE_NEXT(buf), buf_idx--) {
+	for (buf = buf_make_top_buf(buf); buf_idx > 0 && IS_NODE_INT(buf);
+	 buf = NODE_NEXT(buf), buf_idx--) {
 		// NOTHING_TO_DO
 	}
 	return buf;	// buf may(possibly) be top/bottom anchor
@@ -754,13 +609,7 @@ int buf_get_buf_idx(be_buf_t *buf)
 	}
 	return buf_idx;		// 0: anchor, 1~: intermediate buffer
 }
-PRIVATE int buf_get_buf_idx_from_top_anch(be_buf_t *buff, be_buf_t *buf);
-int buf_get_buf_idx_in_bufs(be_bufs_t *bufs, be_buf_t *buf)
-{
-	// -1:not found in the `bufs`
-	return buf_get_buf_idx_from_top_anch(NODES_TOP_ANCH(bufs), buf);
-}
-PRIVATE int buf_get_buf_idx_from_top_anch(be_buf_t *buff, be_buf_t *buf)
+int buf_get_buf_idx_from_top_anch(be_buf_t *buff, be_buf_t *buf)
 {
 	for (int buf_idx = 0; IS_PTR_VALID(buff); buff = NODE_NEXT(buff), buf_idx++) {
 		if (buff == buf)
@@ -769,10 +618,9 @@ PRIVATE int buf_get_buf_idx_from_top_anch(be_buf_t *buff, be_buf_t *buf)
 	return -1;	// not found
 }
 
-be_buf_t *buf_get_buf_by_file_path(be_buf_t *buf, const char *file_path)
+be_buf_t *buf_get_buf_by_full_path(be_buf_t *buf, const char *file_path)
 {
-	buf = buf_make_top_buf(buf);
-	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+	for (buf = buf_make_top_buf(buf); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
 		// compare in file_path
 		if (strcmp(buf_get_file_path(buf, NULL), file_path) == 0) {
 			return buf;	// found
@@ -784,60 +632,23 @@ be_buf_t *buf_get_buf_by_file_path(be_buf_t *buf, const char *file_path)
 	}
 	return NULL;		// not found
 }
-be_buf_t *buf_get_buf_by_file_name(be_buf_t *buf, const char *file_name)
+be_buf_t *buf_get_buf_by_file_path(be_buf_t *buf, const char *file_path)
 {
-	buf = buf_make_top_buf(buf);
-	for ( ; IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
-		if (compare_file_path_from_tail(buf_get_file_path(buf, NULL), file_name) == 0) {
+	for (buf = buf_make_top_buf(buf); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
+		if (compare_file_path_from_tail(buf_get_file_path(buf, NULL), file_path) == 0) {
 			return buf;	// found by file_path
 		}
-		if (compare_file_path_from_tail(buf_get_abs_path(buf, NULL), file_name) == 0) {
+		if (compare_file_path_from_tail(buf_get_abs_path(buf, NULL), file_path) == 0) {
 			return buf;	// found by abs_path
 		}
 	}
 	return NULL;		// not found
 }
 
-//------------------------------------------------------------------------------
-void bufs_renumber_all_bufs_from_top(be_bufs_t *bufs)
-{
-	for (be_buf_t *buf = NODES_TOP_NODE(bufs); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
-		buf_renumber_from_top(buf);
-	}
-}
-
-//------------------------------------------------------------------------------
-void bufss_init(be_bufss_t *bufss, const char *name,
- const char *name_top, const char *name_bottom)
-{
-	strlcpy__(bufss->name, name, MAX_NAME_LEN);
-	bufs_init(NODES_TOP_ANCH(bufss), name_top, "##BUFSS_top_top_anch", "##BUFSS_top_bot_anch");
-	bufs_init(NODES_BOT_ANCH(bufss), name_bottom, "##BUFSS_bot_top_anch", "##BUFSS_bot_bot_anch");
-	bufs_link(NODES_TOP_ANCH(bufss), NODES_BOT_ANCH(bufss));
-///	bufss->cur_bufs = NODES_BOT_ANCH(bufss);
-}
-void bufss_insert_bufs_to_bottom(be_bufss_t *bufss, be_bufs_t *bufs)
-{
-	bufs_insert_before(NODES_BOT_ANCH(bufss), bufs);
-///	bufss->cur_bufs = bufs;
-}
-
-// top-anchor:0, bufs1:1, bufs2:2, ..., bufsN:n, bottom-anchor:(n+1)
-int bufs_get_bufs_idx_in_bufss(be_bufs_t *bufs, be_buf_t *buf)
-{
-	bufs = bufs_make_top_anchor(bufs);
-	for (int bufs_idx = 0; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs), bufs_idx++) {
-		if (buf_get_buf_idx_in_bufs(bufs, buf) >= 0) {
-			// buf was found in the bufs
-			return bufs_idx;	// return bufs_idx of the bufs
-		}
-	}
-	return -1;	// not found
-}
 
 PRIVATE be_buf_t *buf_make_top_anchor(be_buf_t *buf)
 {
-	for ( ; IS_PTR_VALID(buf) && IS_NODE_TOP_ANCH(buf) == 0; buf = NODE_PREV(buf)) {
+	for ( ; IS_NODE_TOP_OOL(buf) == 0; buf = NODE_PREV(buf)) {
 		// NOTHING_TO_DO
 	}
 	return buf;
@@ -849,14 +660,6 @@ PRIVATE be_buf_t *buf_make_top_buf(be_buf_t *buf)
 		buf = NODE_NEXT(buf);
 	}
 	return buf;
-}
-
-PRIVATE be_bufs_t *bufs_make_top_anchor(be_bufs_t *bufs)
-{
-	for ( ; IS_PTR_VALID(bufs) && IS_NODE_TOP_ANCH(bufs) == 0; bufs = NODE_PREV(bufs)) {
-		// NOTHING_TO_DO
-	}
-	return bufs;
 }
 
 //------------------------------------------------------------------------------
@@ -879,20 +682,18 @@ be_line_t *buf_check_line_is_buf_anchs(be_buf_t *buf, be_line_t *line_)
 }
 void buf_dump_bufs(be_buf_t *buf)
 {
-	int cnt;
-
-	flf_d_printf("0============================================\n");
-	for (cnt = 0; cnt < 100 && IS_NODE_INT(buf); cnt++, buf = NODE_NEXT(buf)) {
+	flf_dprintf("0============================================\n");
+	for (int cnt = 0; cnt < 100 && IS_NODE_INT(buf); cnt++, buf = NODE_NEXT(buf)) {
 		dump_buf_view_x(buf, 0);
 		dump_buf_view_x(buf, 1);
 		if (IS_NODE_BOT_ANCH(buf))
 			break;
 	}
-	flf_d_printf("9============================================\n");
+	flf_dprintf("9============================================\n");
 }
 void buf_dump_bufs_lines(be_buf_t *buf, const char *label)
 {
-	flf_d_printf("%s {{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n", label);
+	flf_dprintf("%s {{{{\n", label);
 	for (int cnt = 0; cnt < 100 && IS_PTR_VALID(buf); cnt++, buf = NODE_NEXT(buf)) {
 		if (buf_count_lines(buf, 3)) {
 			buf_dump_lines(buf, 3);
@@ -900,7 +701,7 @@ void buf_dump_bufs_lines(be_buf_t *buf, const char *label)
 		if (IS_NODE_BOT_ANCH(buf))
 			break;
 	}
-	flf_d_printf("%s }}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n", label);
+	flf_dprintf("%s }}}}\n", label);
 }
 void buf_dump_lines(be_buf_t *buf, int lines)
 {
@@ -912,7 +713,7 @@ void buf_dump_lines(be_buf_t *buf, int lines)
 }
 void buf_dump_ptrs(be_buf_t *buf)
 {
-	flf_d_printf("%saddr:%08lx,prev:%08lx,next:%08lx,line:%08lx\n",
+	flf_dprintf("%saddr:%08lx,prev:%08lx,next:%08lx,line:%08lx\n",
 	 buf == get_epc_buf() ? ">" : " ",
 	 buf, NODE_PREV(buf), NODE_NEXT(buf), NODES_TOP_NODE(buf));
 	line_dump_lines(NODES_TOP_ANCH(buf), 3, BV0_CL(buf));
@@ -921,39 +722,16 @@ void buf_dump_ptrs(be_buf_t *buf)
 void buf_dump_name(be_buf_t *buf)
 {
 	if (buf == NULL) {
-		flf_d_printf("buf: NULL\n");
+		flf_dprintf("buf: NULL\n");
 		return;
 	}
-	flf_d_printf("file_path: [%s]\n", buf_get_file_path(buf, NULL));
+	flf_dprintf("file_path: [%s]\n", buf_get_file_path(buf, NULL));
 }
-const char* buf_dump_buf_state(be_buf_t *buf)
+const char *buf_dump_buf_state(be_buf_t *buf)
 {
 	return sprintf_s("buf_state:%08lx", buf->buf_state);
 }
 
-void bufs_dump_all_bufs(be_bufs_t *bufs)
-{
-	flf_d_printf("00============================================\n");
-	for ( ; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs)) {
-		flf_d_printf("bufs: [%s]\n", bufs->name);
-		for (be_buf_t *buf = NODES_TOP_ANCH(bufs); IS_PTR_VALID(buf); buf = NODE_NEXT(buf)) {
-			flf_d_printf(" %cbuf: [%s]\n",
-			 (bufs->cur_buf == buf) ? '>' : ' ', buf_get_file_path(buf, NULL));
-			flf_d_printf("    buf->v0_str: [%s]\n", buf->buf_views[0].cur_line->data);
-			flf_d_printf("    buf->v1_str: [%s]\n", buf->buf_views[1].cur_line->data);
-		}
-	}
-	flf_d_printf("99============================================\n");
-}
-void bufs_dump_name(be_bufs_t *bufs)
-{
-	if (bufs == NULL) {
-		flf_d_printf("bufs: NULL\n");
-		return;
-	}
-	flf_d_printf("name: [%s]\n", bufs->name);
-}
-
 #endif // ENABLE_DEBUG
 
-// End of buffer.c
+// End of buffer1.c

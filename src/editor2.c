@@ -50,8 +50,9 @@ PRIVATE int get_cur_buf_line_num_columns();
 PRIVATE int edit_win_update_needed = UPDATE_SCRN_NONE;
 void set_edit_win_update_needed(int update_needed)
 {
-	if (edit_win_update_needed & (UPDATE_SCRN_PREV | UPDATE_SCRN_NEXT))
+	if (edit_win_update_needed & (UPDATE_SCRN_PREV_LINE | UPDATE_SCRN_NEXT_LINE)) {
 		update_needed |= UPDATE_SCRN_ALL;
+	}
 	edit_win_update_needed |= update_needed;
 }
 int get_edit_win_update_needed()
@@ -109,7 +110,9 @@ void disp_edit_win(int cur_pane)
 
 	if (edit_win_get_path_lines()) {
 		// on two pane mode, show each file path
-		set_item_color_by_idx(ITEM_COLOR_IDX_TITLE, ! cur_pane);
+		if (cur_pane) {
+			set_item_color_by_idx(ITEM_COLOR_IDX_TITLE, 0);
+		}
 		sub_win_clear_lines(edit_win_get_path_y(), -1);
 		buf_idx = buf_get_buf_idx(get_epc_buf());
 		snprintf_(buf_path, MAX_SCRN_LINE_BUF_LEN+1, "%d%c%s",
@@ -119,8 +122,9 @@ void disp_edit_win(int cur_pane)
 	}
 
 	// make cursor position within the screen after resizing screen
-	EPCBVC_CURS_Y = MIN(edit_win_get_text_lines()-1, EPCBVC_CURS_Y);
-	get_edit_win_screen_top(EPCBVC_CL, EPCBVC_CLBI, EPCBVC_CURS_Y, &line, &byte_idx);
+	EPCBVC_CURS_Y = MIN_MAX_(0, EPCBVC_CURS_Y, bottom_scroll_margin_y());
+	EPCBVC_CURS_Y = MIN_MAX_(0, EPCBVC_CURS_Y, 
+	 get_edit_win_screen_top(EPCBVC_CL, EPCBVC_CLBI, EPCBVC_CURS_Y, &line, &byte_idx));
 	for (yy = 0; yy < edit_win_get_text_lines(); ) {
 		disp_edit_line_blank(yy, line);
 		if (IS_NODE_INT(line) == 0) {
@@ -178,11 +182,11 @@ void disp_edit_win(int cur_pane)
 		const char *ruler = get_ruler_text(EPCBVC_MIN_TEXT_X_TO_KEEP);
 		set_item_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 0);
 		sub_win_output_string(edit_win_get_ruler_y(), get_cur_buf_line_num_columns(), ruler, -1);
-		// display cursor column indicator in reverse text on ruler
+		// display cursor column indicator in reverse video on ruler
 		set_item_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 1);
 		sub_win_output_string(edit_win_get_ruler_y(), get_edit_win_x_of_cursor_x(),
 		 &ruler[get_cursor_text_x() - EPCBVC_MIN_TEXT_X_TO_KEEP], 1);
-		// display line tail column indicator in reverse text on ruler
+		// display line tail column indicator in reverse video on ruler
 		if (cursor_line_right_text_x >= 0) {
 			int view_x = cursor_line_right_text_x-1 - EPCBVC_MIN_TEXT_X_TO_KEEP;
 			if (view_x < get_edit_win_columns_for_text()) {
@@ -359,6 +363,7 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 #endif // HL_SEARCH_CURSOR
 		// draw cursor myself ===========================================================
 		if (GET_APPMD(app_DRAW_CURSOR) && (yy == EPCBVC_CURS_Y)) {
+			// display character at cursor in reverse video
 			set_item_color_by_idx(ITEM_COLOR_IDX_CURSOR_CHAR, 1);
 			vis_idx = vis_idx_from_byte_idx(EPCBVC_CL->data, EPCBVC_CLBI);
 			output_edit_line_text(EPCBVC_CURS_Y, te_vis_code_buf,
@@ -699,6 +704,7 @@ PRIVATE int output_edit_line_num(int yy, const be_line_t *line)
 		return 0;
 	}
 	if (line == EPCBVC_CL) {
+		// display line number at the current line in reverse video
 		set_item_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 1);
 	} else {
 		set_item_color_by_idx(ITEM_COLOR_IDX_LINE_NUMBER, 0);

@@ -1,4 +1,4 @@
-./be \
+./be -s \
  appdefs.h \
  appmode.h \
  buffer.h \
@@ -23,7 +23,8 @@
  fileio.h \
  filer.h \
  filer2.h \
- filercmd.h \
+ filercmd1.h \
+ filercmd2.h \
  filerkeys.h \
  filerrun.h \
  headers.h \
@@ -70,7 +71,8 @@
  fileio.c \
  filer.c \
  filer2.c \
- filercmd.c \
+ filercmd1.c \
+ filercmd2.c \
  filerkeys.c \
  filerrun.c \
  history.c \

@@ -26,32 +26,31 @@ void set_title_bar_color_by_state(int color_idx, char invert);
 const char *root_notation();
 
 //! priority to display on the status bar
-typedef enum /*s_b_d*/ {	// Status Bar Displayed
-	S_B_D_NONE,				//! 0 none
-	S_B_D_CURS,				//! 1 cursor movement in editor/filer
-	S_B_D_ING,				//! 2 processing (overwritable by WARN, ERR and DONE)
-	S_B_D_WARN,				//! 3 warn (overwritable by DONE)
-	S_B_D_ERR,				//! 4 error (overwritable by DONE)
-	S_B_D_DONE,				//! 5 done  (this message outputs on completion of a command)
-	S_B_D_ASYN,				//! 6 done  (this message outputs the asyncronous event)
+typedef enum /*S_B*/ {	// Status Bar Displayed
+	S_B_NONE,				//! 0 none
+	S_B_AUTO,				//! 1 automatic periodic update of information in editor/filer
+	S_B_CURS,				//! 2 update on cursor movement in editor/filer by user
+	S_B_ING,				//! 3 processing (overwritable by WARN, ERR and DONE)
+	S_B_WARN,				//! 4 warning (overwritable by ERR and DONE)
+	S_B_ERR,				//! 5 error (overwritable by DONE)
+	S_B_DONE,				//! 6 done  (this message outputs on completion of a command)
+	S_B_ASYN,				//! 7 asynchronous event (such as history file update by other inst.)
+	S_B_TYPES,				//! 8 Number from S_B_NONE to S_B_ASYN
 } s_b_d_t;
 
-void disp_status_bar_cursor(const char *msg, ...);
-void disp_status_bar_ing(const char *msg, ...);
-void disp_status_bar_warn(const char *msg, ...);
-void disp_status_bar_err(const char *msg, ...);
-void disp_status_bar_done(const char *msg, ...);
-void disp_status_bar_async(const char *msg, ...);
+#define disp_status_bar_ing(args...)	disp_status_bar_type(S_B_ING, args)
+#define disp_status_bar_warn(args...)	disp_status_bar_type(S_B_WARN, args)
+#define disp_status_bar_err(args...)	disp_status_bar_type(S_B_ERR, args)
+#define disp_status_bar_done(args...)	disp_status_bar_type(S_B_DONE, args)
+#define disp_status_bar_async(args...)	disp_status_bar_type(S_B_ASYN, args)
+void clear_status_bar_displayed();
+void disp_status_bar_type(s_b_d_t status_bar_to_display, const char *msg, ...);
 void redisp_status_bar();
 
 void blank_status_bar();
 void blank_key_list_lines();
 
 void disp_status_bar_cwd();
-
-int determine_input_line_y();
-int get_input_line_y();
-int default_input_line_y();
 
 #endif // disp_h
 

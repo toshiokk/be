@@ -3,9 +3,10 @@ while : ; do
   rm -f ~/.beexit
 
   if [ -z "$UCON" ]; then
-    be -d "$@" 2>~/__be.log
+    be -d -s "$@" 2>~/__be.log
   else
-    be -d -l "$@" 2>~/__be.log  # enable high BGC color
+    be -d -s "$@" 2>~/__be.log  # enable high BGC color
+##    be -d -s -l "$@" 2>~/__be.log  # enable high BGC color
   fi
 
   cat ~/.beexit

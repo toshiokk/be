@@ -67,18 +67,19 @@ PRIVATE void app_menu_n(int *group_idx_, int *entry_idx_)
 	int group_idx = *group_idx_;
 	int entry_idx = *entry_idx_;	// 1 -- "number of menu entries"
 
+	key_code_t key_input = K_VALID;
 	for ( ; ; ) {
 		int quit_menu = 0;
-		update_screen_app(1, 0);
+		update_screen_app((key_input == K_NONE) ? S_B_AUTO : S_B_CURS, 0);
 		tio_set_cursor_on(0);
 		disp_drop_down_menu(group_idx, entry_idx, central_win_get_top_win_y(), group_idx * 1);
 		tio_refresh();
 
 		//---------------------------------------------
-		key_code_t key_input = input_key_wait_return();
+		key_input = input_key_wait_return();
 		//---------------------------------------------
-		hmflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
-		 '_', key_input, short_key_name_from_key_code(key_input, NULL));
+		hmflf_dprintf("input%ckey:0x%04x(%s)================\n",
+		 '_', (UINT16)key_input, short_key_name_from_key_code(key_input, NULL));
 
 		switch (key_input) {
 		case K_LEFT:
@@ -150,11 +151,11 @@ app_menu_n_up_down:;
 	}
 #ifndef ENABLE_FILER
 	if (count_edit_bufs()) {
-		update_screen_app(1, 1);
+		update_screen_app(S_B_CURS, 1);
 	}
 #else // ENABLE_FILER
 	if ((GET_APPMD(app_EDITOR_FILER) == EF_FILER) || count_edit_bufs()) {
-		update_screen_app(1, 1);
+		update_screen_app(S_B_CURS, 1);
 	}
 #endif // ENABLE_FILER
 
@@ -284,9 +285,9 @@ PRIVATE void exec_menu_func(int group_idx, int entry_idx)
 	if ((func_key = get_func_key_group_from_group_idx(group_idx)) == NULL) {
 		return;
 	}
-	flf_d_printf("[[[[ CALL_FUNC_MENU [%s]\n", func_key[entry_idx].func_id);
+	flf_dprintf("[[[[ CALL_FUNC_MENU [%s]\n", func_key[entry_idx].func_id);
 	func_key[entry_idx].func();
-	flf_d_printf("]]]]\n");
+	flf_dprintf("]]]]\n");
 }
 
 func_key_t *get_func_key_group_from_group_idx(int group_idx)
@@ -311,7 +312,7 @@ PRIVATE int check_multiple_assignment_of_key_(func_key_t *func_key);
 
 int check_multiple_assignment_of_key()
 {
-flf_d_printf("-------------------------\n");
+flf_dprintf("-------------------------\n");
 	int err = check_multiple_assignment_of_key_(editor_func_key_table);
 #ifdef ENABLE_FILER
 	err += check_multiple_assignment_of_key_(filer_func_key_table);
@@ -352,7 +353,7 @@ PRIVATE int check_all_functions_accessible_without_function_key_(func_key_t *fun
 
 int check_all_functions_accessible_without_function_key()
 {
-flf_d_printf("-------------------------\n");
+flf_dprintf("-------------------------\n");
 	int err = check_all_functions_accessible_without_function_key_(editor_func_key_table);
 #ifdef ENABLE_FILER
 	err += check_all_functions_accessible_without_function_key_(filer_func_key_table);

@@ -356,9 +356,9 @@ int tog_editor_panex()
 {
 	return set_editor_cur_pane_idx(get_editor_another_pane_idx());
 }
-const char *get_str_editor_panex()
+const char *get_str_editor_pane_num()
 {
-	return BOOL_TO_0_1(get_editor_cur_pane_idx());
+	return BOOL_TO_1_2(get_editor_cur_pane_idx());
 }
 
 int tog_show_dot_file()
@@ -442,9 +442,9 @@ int tog_filer_panex()
 {
 	return set_filer_cur_pane_idx(get_filer_another_pane_idx());
 }
-const char *get_str_filer_panex()
+const char *get_str_filer_pane_num()
 {
-	return BOOL_TO_0_1(get_filer_cur_pane_idx());
+	return BOOL_TO_1_2(get_filer_cur_pane_idx());
 }
 #endif // ENABLE_FILER
 
@@ -465,7 +465,7 @@ int get_key_list_lines()
 	return GET_APPMD(app_KEY_LINES);
 }
 
-const char* get_str_setting_none()
+const char *get_str_setting_none()
 {
 	return "--";
 }
@@ -506,7 +506,7 @@ void doe_tog_panes()
 void doe_tog_panex()
 {
 	tog_editor_panex();
-	SHOW_MODE("Editor pane index", get_str_editor_panex());
+	SHOW_MODE("Editor pane index", get_str_editor_pane_num());
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 

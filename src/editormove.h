@@ -39,6 +39,9 @@ void doe_right();
 void doe_start_of_line();
 void doe_end_of_line();
 
+void set_column_idx_at_which_curs_vert_moved(int col_idx);
+int get_column_idx_at_which_curs_vert_moved();
+
 void doe_up();
 void doe_down();
 void doe_page_up();

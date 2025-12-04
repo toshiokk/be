@@ -36,7 +36,7 @@ int is_graph_char(unsigned char uchar)
 
 //------------------------------------------------------------------------------
 #ifndef HAVE_STRCASECMP
-/* This function is equivalent to strcasecmp(). */
+// This function is equivalent to strcasecmp().
 int my_stricmp(const char *s1, const char *s2)
 {
 	for ( ; *s1 && *s2; s1++, s2++) {
@@ -47,7 +47,7 @@ int my_stricmp(const char *s1, const char *s2)
 }
 #endif
 #ifndef HAVE_STRNCASECMP
-/* This function is equivalent to strncasecmp(). */
+// This function is equivalent to strncasecmp().
 int my_strnicmp(const char *s1, const char *s2, size_t n)
 {
 	for ( ; n > 0 && *s1 && *s2; n--, s1++, s2++) {
@@ -61,9 +61,9 @@ int my_strnicmp(const char *s1, const char *s2, size_t n)
 #endif
 
 // translate a character to a character
-char* str_tr(char* string, char chr_from, char chr_to)
+char *str_tr(char *string, char chr_from, char chr_to)
 {
-	for (char* ptr = string; *ptr; ptr++) {
+	for (char *ptr = string; *ptr; ptr++) {
 		if (*ptr == chr_from) {
 			*ptr = chr_to;
 		}
@@ -84,15 +84,9 @@ char *conv_esc_str(char *string)
 			case 'r':
 			case 't':
 				switch (*(src+1)) {
-				case 'a':
-					*dest = '\a';
-					break;
-				case 't':
-					*dest = '\t';
-					break;
-				case 'r':
-					*dest = '\r';
-					break;
+				case 'a':		*dest = '\a';		break;
+				case 't':		*dest = '\t';		break;
+				case 'r':		*dest = '\r';		break;
 				}
 				src++;
 				dest++;
@@ -145,8 +139,7 @@ char *replace_str(char *buffer, size_t buf_len, size_t start, int delete_len,
 	return buffer;
 }
 
-int insert_str_separating_by_space(char *buffer, size_t buf_len, size_t offset,
- const char *str)
+int insert_str_separating_by_space(char *buffer, size_t buf_len, size_t offset, const char *str)
 {
 	if (offset) {
 		// not head of line
@@ -210,7 +203,7 @@ char *insert_str(char *buffer, size_t buf_len, size_t offset,
 
 // "aaaaaaaaaa", "bb" ==> "bbaaaaaaaaaa"
 // NOTE: 'buffer' must have at least the size ('len' + 1)
-char* str_prepend(char* dest, size_t buf_len, const char* str)
+char *str_prepend(char *dest, size_t buf_len, const char *str)
 {
 	size_t len = strnlen(str, buf_len);
 	buf_len = LIM_MIN(0, buf_len - len);		// avoid buffer overrun
@@ -242,16 +235,11 @@ char *quote_file_path_buf(char *buf, const char *string)
 }
 char *quote_file_path_if_necessary(char *buf, const char *string)
 {
-	if (contain_chrs(string, " \"'")) {
-///		if (contain_chr(string, '\'')) {
-///			// [abc'def.txt] ==> ["abc'def.txt"]
-///			return quote_string(buf, string, '"');
-///		} else {
-			// [abc def.txt] ==> ['abc def.txt']
-			// [abc"def.txt] ==> ['abc"def.txt']
-			// [abc'def.txt] ==> ['abc\'def.txt']
-			return quote_string(buf, string, '\'');
-///		}
+	if (contain_chrs(string, " \"'$#|&<>()")) {
+		// [abc def.txt] ==> ['abc def.txt']
+		// [abc"def.txt] ==> ['abc"def.txt']
+		// [abc'def.txt] ==> ['abc\'def.txt']
+		return quote_string(buf, string, '\'');
 	} else {
 		strlcpy__(buf, string, MAX_PATH_LEN);	// no quotation necessary
 	}
@@ -259,24 +247,32 @@ char *quote_file_path_if_necessary(char *buf, const char *string)
 }
 
 #ifdef START_UP_TEST
-PRIVATE void test_get_one_file_path__();
+PRIVATE void test_get_one_file_path__(const char *file_paths,
+ const char *path1, const char *path2, const char *path3, const char *path4, const char *path5);
 void test_get_one_file_path()
 {
-	test_get_one_file_path__(" '/path/to/file 1' '/path/to/file 2' '/path/to/file 3' ");
-	test_get_one_file_path__(" \" path/to/file 1 \" ' path/to/file 2 ' \" path/to/file 3 \" ");
-	test_get_one_file_path__(" /path/to/file-1 /path/to/file-2 /path/to/file-3 ");
-	test_get_one_file_path__("'/path/to/file 1' '/path/to/file 2' '/path/to/file 3");
+	flf_dprintf("-----------------------\n");
+	test_get_one_file_path__(" '/path/to/file 1' '/path/to/file 2' '/path/to/file 3' ",
+	 "/path/to/file 1", "/path/to/file 2", "/path/to/file 3", "", "");
+	test_get_one_file_path__(" \" path/to/file 1 \" ' path/to/file 2 ' \" path/to/file 3 \" ",
+	 " path/to/file 1 ", " path/to/file 2 ", " path/to/file 3 ", "", "");
+	test_get_one_file_path__(" /path/to/file-1 /path/to/file-2 /path/to/file-3 ",
+	 "/path/to/file-1", "/path/to/file-2", "/path/to/file-3", "", "");
+	test_get_one_file_path__("'/path/to/file 1' '/path/to/file 2' '/path/to/file 3",
+	 "/path/to/file 1", "/path/to/file 2", "/path/to/file 3", "", "");
 }
-PRIVATE void test_get_one_file_path__(const char *file_paths)
+PRIVATE void test_get_one_file_path__(const char *file_paths,
+ const char *path1, const char *path2, const char *path3, const char *path4, const char *path5)
 {
 	char path[MAX_PATH_LEN+1];
-	flf_d_printf("[%s]:\n", file_paths);
 	for (const char *ptr = file_paths; ; ) {
-		ptr = get_one_file_path(ptr, path);
+		const char *ptr2 = get_one_file_path(ptr, path);
+		MY_UT_STR(path, path1);
 		if (is_strlen_0(path)) {
 			break;
 		}
-		flf_d_printf(" ->[%s]\n", path);
+		ptr = ptr2;
+		path1 = path2, path2 = path3, path3 = path4, path4 = path5;
 	}
 }
 #endif // START_UP_TEST
@@ -300,10 +296,6 @@ const char *get_one_file_path(const char *str, char *buf)
 		*dest++ = *ptr++;
 	}
 	*dest = '\0';
-flf_d_printf("[%s]:\n", str);
-if (is_strlen_not_0(buf)) {
-	flf_d_printf(" ->[%s]\n", buf);
-}
 	return ptr;
 }
 
@@ -339,7 +331,7 @@ int snprintf_(char *buffer, size_t buf_len, const char *format, ...)
 	va_end(ap);
 	return ret;
 }
-char* sprintf_s(const char *format, ...)
+char *sprintf_s(const char *format, ...)
 {
 	static char buffer_s[MAX_PATH_LEN+1];
 	va_list ap;
@@ -348,7 +340,7 @@ char* sprintf_s(const char *format, ...)
 	va_end(ap);
 	return buffer_s;
 }
-char* sprintf_s1(const char *format, ...)
+char *sprintf_s1(const char *format, ...)
 {
 	static char buffer_s[MAX_PATH_LEN+1];
 	va_list ap;
@@ -357,7 +349,7 @@ char* sprintf_s1(const char *format, ...)
 	va_end(ap);
 	return buffer_s;
 }
-char* sprintf_s2(const char *format, ...)
+char *sprintf_s2(const char *format, ...)
 {
 	static char buffer_s[MAX_PATH_LEN+1];
 	va_list ap;
@@ -441,7 +433,7 @@ int strcmp_from_tail(const char *dest, const char *src)
 // | 'z'  | NULL     | NULL       |
 // | '\0' | non-null | NULL       | <-- problem of strchr()
 
-char *strchr__(const char *str, char chr)
+const char *strchr__(const char *str, char chr)
 {
 	return chr ? strchr(str, chr) : NULL;
 }
@@ -449,7 +441,7 @@ int contain_chr(const char *str, char chr)
 {
 	return strchr__(str, chr) != NULL;
 }
-int contain_chrs(const char *str, const char* chrs)
+int contain_chrs(const char *str, const char *chrs)
 {
 	while (*chrs) {
 		if (strchr__(str, *chrs++))
@@ -507,45 +499,45 @@ char *strlower(char *buffer)
 }
 
 //------------------------------------------------------------------------------
-char *shrink_str__adjust_col(char *str, int space, int n_over_10)
+char *shrink_str__adjust_col(char *str, int columns, int n_over_10)
 {
-	shrink_str(str, space, n_over_10);
-	return expand_str_columns(str, space);
+	shrink_str(str, columns, n_over_10);
+	return expand_str_columns(str, columns);
 }
-char *shrink_str(char *str, int space, int n_over_10)
+char *shrink_str(char *str, int columns, int n_over_10)
 {
 	char buf[MAX_PATH_LEN+1];
-	shrink_str_buf(buf, str, space, n_over_10);
+	shrink_str_buf(buf, str, columns, n_over_10);
 	strlcpy__(str, buf, MAX_PATH_LEN);		// copy back to original buffer
 	return str;
 }
-char *shrink_str_static(const char *str, int space, int n_over_10)
+char *shrink_str_static(const char *str, int columns, int n_over_10)
 {
 	static char buf[MAX_PATH_LEN+1];
-	return shrink_str_buf(buf, str, space, n_over_10);
+	return shrink_str_buf(buf, str, columns, n_over_10);
 }
 // "/very/long/long/path/to/file" ==> "/very/lo...th/to/file"
 //                                       n/10         (10-n)/10
 // Note: 'buf' and 'str' are not overlappable
 #define STR_TILDE		"~~"
 #define STR_TILDE_LEN	2	// strlen(STR_TILDE)
-char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10)
+char *shrink_str_buf(char *buf, const char *str, int columns, int n_over_10)
 {
 	int str_cols = utf8s_columns(str, MAX_PATH_LEN);
-	if (str_cols <= space) {
+	if (str_cols <= columns) {
 		// enough space
 		strlcpy__(buf, str, MAX_PATH_LEN);
 	} else {
-		if (space > STR_TILDE_LEN) {
-			int space1 = LIM_MIN(0, (space - STR_TILDE_LEN) * n_over_10 / 10);
-			int space2 = LIM_MIN(0, (space - STR_TILDE_LEN) - space1);
+		if (columns > STR_TILDE_LEN) {
+			int space1 = LIM_MIN(0, (columns - STR_TILDE_LEN) * n_over_10 / 10);
+			int space2 = LIM_MIN(0, (columns - STR_TILDE_LEN) - space1);
 			int byte_idx1 = get_byte_idx_from_col_idx(str, space1, -1, NULL);
 			int byte_idx2 = get_byte_idx_from_col_idx(str, str_cols - space2, +1, NULL);
 			strlcpy__(buf, str, byte_idx1);
 			strcat__(buf, STR_TILDE);
 			strcat__(buf, &str[byte_idx2]);
 		} else {
-			int space2 = LIM_MIN(0, space);
+			int space2 = LIM_MIN(0, columns);
 			int byte_idx2 = get_byte_idx_from_col_idx(str, str_cols - space2, +1, NULL);
 			strlcpy__(buf, &str[byte_idx2], MAX_PATH_LEN);
 		}
@@ -553,7 +545,7 @@ char *shrink_str_buf(char *buf, const char *str, int space, int n_over_10)
 	return buf;
 }
 
-char* adjust_str_columns(char *utf8s, int columns)
+char *adjust_str_columns(char *utf8s, int columns)
 {
 	truncate_str_tail_columns(utf8s, columns);
 	return expand_str_columns(utf8s, columns);
@@ -564,7 +556,7 @@ int truncate_str_tail_columns(char *utf8s, int columns)
 	utf8s[bytes] = '\0';
 	return bytes;
 }
-char* expand_str_columns(char *utf8s, int columns)
+char *expand_str_columns(char *utf8s, int columns)
 {
 	int cols = utf8s_columns(utf8s, MAX_PATH_LEN);
 	if (columns > cols) {
@@ -608,13 +600,13 @@ char *utf8s_strnset__(char *buf, const char *utf8c, size_t len)
 //------------------------------------------------------------------------------
 int skip_space(const char **ptr)
 {
-	while (IS_SPACE(*ptr))
+	while (IS_WHITE_SPACE(*ptr))
 		(*ptr)++;
 	return IS_EOL(*ptr);
 }
 int skip_space_mutable(char **ptr)
 {
-	while (IS_SPACE(*ptr))
+	while (IS_WHITE_SPACE(*ptr))
 		(*ptr)++;
 	return IS_EOL(*ptr);
 }
@@ -628,7 +620,7 @@ const char *skip_chars(const char *ptr, const char *chars)
 
 const char *skip_to_file_path(const char *ptr)
 {
-	while (*ptr && is_char_file_path(ptr) == 0) {
+	while (*ptr && is_char_file_path_min(ptr) == 0) {
 		// skip to beginning of a file path
 		ptr++;
 	}
@@ -654,50 +646,49 @@ const char *skip_file_path(const char *ptr)
 		}
 	} else {
 		// filename.txt
-		while (is_char_file_path(ptr)) {
+		while (is_char_file_path_min(ptr)) {
 			ptr += utf8c_bytes(ptr);
 		}
 	}
 	return ptr;
 }
-char *skip_file_name(char *ptr)
+char *skip_file_name_min(char *ptr)
 {
-	while (is_char_file_name(ptr)) {
+	while (is_char_file_name_min(ptr)) {
 		// skip file name
 		ptr += utf8c_bytes(ptr);
 	}
 	return ptr;
 }
-#if 0
-const char *skip_separator(const char *ptr)
+char *skip_file_name_max(char *ptr)
 {
-	for ( ; is_char_separator(*ptr); ) {
-		ptr++;
-		// skip to the next token
+	while (is_char_file_name_max(ptr)) {
+		// skip file name
+		ptr += utf8c_bytes(ptr);
 	}
 	return ptr;
 }
-#endif
-const char *skip_one_separator(const char *ptr)
+const char *skip_one_separator_const(const char *ptr)
 {
 	if (is_char_separator(*ptr)) {
 		ptr++;	// skip it
 	}
 	return ptr;
 }
-const char *skip_two_spaces(const char *ptr)
+const char *skip_two_white_spaces(const char *ptr)
 {
-	if (IS_SPACE(ptr))
-		ptr++;
-	if (IS_SPACE(ptr))
+	return skip_white_space(skip_white_space(ptr));
+}
+const char *skip_white_space(const char *ptr)
+{
+	if (IS_WHITE_SPACE(ptr))
 		ptr++;
 	return ptr;
 }
 const char *skip_to_digit(const char *ptr)
 {
 	for ( ; *ptr && isdigit(*ptr) == 0; ) {
-		ptr++;
-		// skip digits
+		ptr++;		// skip digits
 	}
 	return ptr;
 }
@@ -717,7 +708,23 @@ char *skip_string_mutable(char *ptr)
 {
 	return ptr + strlen(ptr);
 }
+char *skip_slash(char *ptr)
+{
+	if (*ptr == '/')
+		ptr++;
+	return ptr;
+}
 
+char *remove_line_tail_space(char *line)
+{
+	for (int off = strlen(line)-1; off >= 0; off--) {
+		if (line[off] != ' ') {
+			line[off+1] = '\0';
+			break;
+		}
+	}
+	return line;
+}
 char *remove_line_tail_lf(char *line)
 {
 	int len = LIM_MIN(0, (int)strlen(line) - 1);
@@ -726,14 +733,26 @@ char *remove_line_tail_lf(char *line)
 	return line;
 }
 
-int is_char_file_path(const char *ptr)
+// Less flexible spec for file name,
+// some characters are reserved for separator and not usable for file name
+int is_char_file_path_min(const char *ptr)
 {
-	return is_char_file_name(ptr) || strchr__("/", *ptr);
+	return is_char_file_name_min(ptr) || (*ptr == '/');
 }
-int is_char_file_name(const char *ptr)
+int is_char_file_name_min(const char *ptr)
 {
-	return isalnum(*ptr) || strchr__("_-+.~!#$%&@=\"\'", *ptr) || (utf8c_bytes(ptr) >= 2);
-	// non-file-name-chars are ' ' '\t' '/' '|' ':'
+	// non-file-name-chars are 0x01~0x1f," ()*,/:;<=>?[\]^`{|}~"
+	return isalnum(*ptr) || strchr__("!\"#$%&\'+-.=@_~", *ptr) || (utf8c_bytes(ptr) >= 2);
+}
+// The most flexible spec for file name, only '/' is not usable for file name
+int is_char_file_path_max(const char *ptr)
+{
+	return is_char_file_name_max(ptr) || (*ptr == '/');
+}
+int is_char_file_name_max(const char *ptr)
+{
+	// non-file-name-char is only '/'
+	return (('\0' < *ptr && *ptr < 0x80) && (*ptr != '/')) || (utf8c_bytes(ptr) >= 2);
 }
 int is_char_id(char chr)
 {
@@ -752,22 +771,24 @@ int is_char_white_space(char chr)
 	return strchr__(" \t", chr) != NULL;
 }
 
+// 'buffer' and 'string' can be the same address
 char *quote_string(char *buffer, const char *string, char quote_chr)
 {
-	char buf[MAX_PATH_LEN+1];
+	char buf1[MAX_PATH_LEN+1];
+	char buf2[MAX_PATH_LEN+1];
 	// file name ==> "file name" or 'file name'
 	if (contain_chr(string, '\'')) {
 		// quote_chr = '\'':  ['file'name'] ==> ['\'file\'name\'']
 		// quote_chr = '"' :  ['file'name'] ==> ["\'file\'name\'"]
-		escape_quote_chr(buf, string, quote_chr);
-		snprintf(buffer, MAX_PATH_LEN+1, "%c%s%c", quote_chr, buf, quote_chr);
-	} else {
-		// [filename] ==> ['filename']
-		snprintf(buffer, MAX_PATH_LEN+1, "%c%s%c", quote_chr, string, quote_chr);
+		escape_quote_chr(buf1, string, quote_chr);
+		string = buf1;
 	}
+	// [filename] ==> ['filename']
+	snprintf(buf2, MAX_PATH_LEN+1, "%c%s%c", quote_chr, string, quote_chr);
+	strlcpy__(buffer, buf2, MAX_PATH_LEN);
 	return buffer;
 }
-// "'file'name'" ==> "\'file\'name\'"
+// ['file'name'] ==> [\'file\'name\']
 char *escape_quote_chr(char *buffer, const char *string, char quote_chr)
 {
 	buffer[0] = '\0';
@@ -781,13 +802,15 @@ char *escape_quote_chr(char *buffer, const char *string, char quote_chr)
 	return buffer;
 }
 
+// ['file\'name'] ==> [file'name]
+// ["file\"name"] ==> [file"name]
 char *unquote_string(char *buffer)
 {
 	if (is_quoted(buffer, '\'') || is_quoted(buffer, '"')) {
 		char quote_chr = buffer[0];
 		size_t len = strlen_path(buffer);
 		char *ptr = buffer;
-		for (int idx = 1; idx < len-1; idx++) {
+		for (int idx = 1; idx < len-1; idx++) {		// ["quoted-string"] ==> [quoted-string]
 			if (buffer[idx] == '\\' && buffer[idx+1] == quote_chr) {
 				*ptr++ = buffer[idx+1];	// "\'" ==> "'", '\"' ==> '"'
 				idx++;
@@ -799,6 +822,7 @@ char *unquote_string(char *buffer)
 	}
 	return buffer;
 }
+// ['string-quoted'] or ["string-quoted"]
 char is_quoted(const char *str, char quote_chr)
 {
 	if (strlen_path(str) >= 2) {
@@ -821,6 +845,34 @@ char tail_char(const char *str)
 
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
+void test_quote_string()
+{
+	flf_dprintf("-----------------------\n");
+	char buffer[MAX_PATH_LEN+1];
+	MY_UT_STR(quote_file_path_buf(buffer, "abc\"def"), "'abc\"def'");
+	MY_UT_STR(unquote_string(buffer), "abc\"def");
+	MY_UT_STR(quote_file_path_buf(buffer, "abc'def"), "'abc\\'def'");
+	MY_UT_STR(unquote_string(buffer), "abc'def");
+	MY_UT_STR(quote_file_path_buf(buffer, "abc#def"), "'abc#def'");
+	MY_UT_STR(unquote_string(buffer), "abc#def");
+	MY_UT_STR(quote_file_path_buf(buffer, "abc$def"), "'abc$def'");
+	MY_UT_STR(unquote_string(buffer), "abc$def");
+	MY_UT_STR(quote_file_path_buf(buffer, "abc<def"), "'abc<def'");
+	MY_UT_STR(unquote_string(buffer), "abc<def");
+	MY_UT_STR(quote_file_path_buf(buffer, "abc>def"), "'abc>def'");
+	MY_UT_STR(unquote_string(buffer), "abc>def");
+	MY_UT_STR(quote_file_path_buf(buffer, "abc(def"), "'abc(def'");
+	MY_UT_STR(unquote_string(buffer), "abc(def");
+	MY_UT_STR(quote_file_path_buf(buffer, "abc)def"), "'abc)def'");
+	MY_UT_STR(unquote_string(buffer), "abc)def");
+	MY_UT_STR(quote_file_path_buf(buffer, "abc|def"), "'abc|def'");
+	MY_UT_STR(unquote_string(buffer), "abc|def");
+	MY_UT_STR(quote_file_path_buf(buffer, "abc&def"), "'abc&def'");
+	MY_UT_STR(unquote_string(buffer), "abc&def");
+	// no need of quoting
+	MY_UT_STR(quote_file_path_buf(buffer, "abc@def"), "'abc@def'");
+	MY_UT_STR(unquote_string(buffer), "abc@def");
+}
 void dump_str_w_caret(const char *string, int byte_idx)
 {
 	char buf1[STR_BUF_LEN+1];
@@ -851,7 +903,7 @@ void dump_str_w_caret2(const char *string, int byte_idx_1, int byte_idx_2)
 	strcut__(buf1, STR_BUF_LEN, string, 0, byte_idx_1);
 	strcut__(buf2, STR_BUF_LEN, string, byte_idx_1, byte_idx_2);
 	strcut__(buf3, STR_BUF_LEN, string, byte_idx_2, strlen(string));
-	flf_d_printf("[%s{%s}%s]\n", buf1, buf2, buf3);
+	flf_dprintf("[%s{%s}%s]\n", buf1, buf2, buf3);
 }
 
 char *dump_str(const char *str, char *buf)

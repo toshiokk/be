@@ -111,18 +111,18 @@ am_be_OBJECTS = main.$(OBJEXT) appmode.$(OBJEXT) editor.$(OBJEXT) \
 	editormove.$(OBJEXT) editormove2.$(OBJEXT) \
 	editorgoto.$(OBJEXT) editorcut.$(OBJEXT) editorcut2.$(OBJEXT) \
 	help.$(OBJEXT) editorkeys.$(OBJEXT) editorundo.$(OBJEXT) \
-	line.$(OBJEXT) linewrap.$(OBJEXT) buffer.$(OBJEXT) \
-	buffers.$(OBJEXT) color.$(OBJEXT) debug.$(OBJEXT) \
-	disp.$(OBJEXT) fileio.$(OBJEXT) filer.$(OBJEXT) \
-	filerlist.$(OBJEXT) filercmd.$(OBJEXT) filerdir.$(OBJEXT) \
-	filerrun.$(OBJEXT) filerkeys.$(OBJEXT) history.$(OBJEXT) \
-	keymacro.$(OBJEXT) keys.$(OBJEXT) menu.$(OBJEXT) \
-	rcfile.$(OBJEXT) regexp.$(OBJEXT) search.$(OBJEXT) \
-	sig.$(OBJEXT) termifkey.$(OBJEXT) termif.$(OBJEXT) \
-	cursesif.$(OBJEXT) tio.$(OBJEXT) utf8.$(OBJEXT) \
-	utils.$(OBJEXT) utilstr.$(OBJEXT) myutf8.$(OBJEXT) \
-	utilpath.$(OBJEXT) utilfile.$(OBJEXT) winin.$(OBJEXT) \
-	winout.$(OBJEXT)
+	line.$(OBJEXT) linewrap.$(OBJEXT) buffer1.$(OBJEXT) \
+	buffer2.$(OBJEXT) buffers.$(OBJEXT) color.$(OBJEXT) \
+	debug.$(OBJEXT) disp.$(OBJEXT) fileio.$(OBJEXT) \
+	filer.$(OBJEXT) filerlist.$(OBJEXT) filercmd1.$(OBJEXT) \
+	filercmd2.$(OBJEXT) filerdir.$(OBJEXT) filerrun.$(OBJEXT) \
+	filerkeys.$(OBJEXT) history.$(OBJEXT) keymacro.$(OBJEXT) \
+	keys.$(OBJEXT) menu.$(OBJEXT) rcfile.$(OBJEXT) \
+	regexp.$(OBJEXT) search.$(OBJEXT) sig.$(OBJEXT) \
+	termifkey.$(OBJEXT) termif.$(OBJEXT) cursesif.$(OBJEXT) \
+	tio.$(OBJEXT) utf8.$(OBJEXT) utils.$(OBJEXT) utilstr.$(OBJEXT) \
+	myutf8.$(OBJEXT) utilpath.$(OBJEXT) utilfile.$(OBJEXT) \
+	winin.$(OBJEXT) winout.$(OBJEXT)
 be_OBJECTS = $(am_be_OBJECTS)
 be_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -332,7 +332,8 @@ be_SOURCES = \
 	editorundo.c \
 	line.c \
 	linewrap.c \
-	buffer.c \
+	buffer1.c \
+	buffer2.c \
 	buffers.c \
 	color.c \
 	debug.c \
@@ -340,7 +341,8 @@ be_SOURCES = \
 	fileio.c \
 	filer.c \
 	filerlist.c \
-	filercmd.c \
+	filercmd1.c \
+	filercmd2.c \
 	filerdir.c \
 	filerrun.c \
 	filerkeys.c \
@@ -365,7 +367,8 @@ be_SOURCES = \
 	winin.c \
 	winout.c \
 	appmode.h \
-	buffer.h \
+	buffer1.h \
+	buffer2.h \
 	buffers.h \
 	config.h \
 	color.h \
@@ -385,7 +388,8 @@ be_SOURCES = \
 	fileio.h \
 	filer.h \
 	filerlist.h \
-	filercmd.h \
+	filercmd1.h \
+	filercmd2.h \
 	filerdir.h \
 	filerrun.h \
 	filerkeys.h \
@@ -888,321 +892,346 @@ uninstall-am: uninstall-binPROGRAMS
 
 appmode.o: appmode.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
-buffer.o: buffer.c headers.h stdincs.h config.h utilincs.h debug.h \
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
+buffer1.o: buffer1.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
+buffer2.o: buffer2.c headers.h stdincs.h config.h utilincs.h debug.h \
+ utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 buffers.o: buffers.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 color.o: color.c headers.h stdincs.h config.h utilincs.h debug.h utils.h \
  utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h applvl.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h \
+ applvl.h
 cursesif.o: cursesif.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 debug.o: debug.c utilincs.h stdincs.h config.h debug.h utils.h utilstr.h \
  utilpath.h utilfile.h utf8.h myutf8.h
 disp.o: disp.c headers.h stdincs.h config.h utilincs.h debug.h utils.h \
  utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 editor.o: editor.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 editor2.o: editor2.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 editor3.o: editor3.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 editorcut.o: editorcut.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 editorcut2.o: editorcut2.c headers.h stdincs.h config.h utilincs.h \
  debug.h utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h \
- appdefs.h appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h \
- menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
- search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
- filerdir.h filercmd.h filerlist.h filer.h editorundo.h editorkeys.h \
- editormove2.h editormove.h editorgoto.h editorcut2.h editorcut.h help.h \
- editor3.h editor2.h editorfile.h editor.h main.h
+ appdefs.h appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h \
+ color.h sig.h menu.h tio.h termifkey.h termif.h fileio.h history.h \
+ keymacro.h rcfile.h search.h disp.h winout.h winin.h linewrap.h \
+ filerkeys.h filerrun.h filerdir.h filercmd1.h filercmd2.h filerlist.h \
+ filer.h editorundo.h editorkeys.h editormove2.h editormove.h \
+ editorgoto.h editorcut2.h editorcut.h help.h editor3.h editor2.h \
+ editorfile.h editor.h main.h
 editorfile.o: editorfile.c headers.h stdincs.h config.h utilincs.h \
  debug.h utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h \
- appdefs.h appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h \
- menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
- search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
- filerdir.h filercmd.h filerlist.h filer.h editorundo.h editorkeys.h \
- editormove2.h editormove.h editorgoto.h editorcut2.h editorcut.h help.h \
- editor3.h editor2.h editorfile.h editor.h main.h
+ appdefs.h appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h \
+ color.h sig.h menu.h tio.h termifkey.h termif.h fileio.h history.h \
+ keymacro.h rcfile.h search.h disp.h winout.h winin.h linewrap.h \
+ filerkeys.h filerrun.h filerdir.h filercmd1.h filercmd2.h filerlist.h \
+ filer.h editorundo.h editorkeys.h editormove2.h editormove.h \
+ editorgoto.h editorcut2.h editorcut.h help.h editor3.h editor2.h \
+ editorfile.h editor.h main.h
 editorgoto.o: editorgoto.c headers.h stdincs.h config.h utilincs.h \
  debug.h utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h \
- appdefs.h appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h \
- menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
- search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
- filerdir.h filercmd.h filerlist.h filer.h editorundo.h editorkeys.h \
- editormove2.h editormove.h editorgoto.h editorcut2.h editorcut.h help.h \
- editor3.h editor2.h editorfile.h editor.h main.h
+ appdefs.h appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h \
+ color.h sig.h menu.h tio.h termifkey.h termif.h fileio.h history.h \
+ keymacro.h rcfile.h search.h disp.h winout.h winin.h linewrap.h \
+ filerkeys.h filerrun.h filerdir.h filercmd1.h filercmd2.h filerlist.h \
+ filer.h editorundo.h editorkeys.h editormove2.h editormove.h \
+ editorgoto.h editorcut2.h editorcut.h help.h editor3.h editor2.h \
+ editorfile.h editor.h main.h
 editorkeys.o: editorkeys.c headers.h stdincs.h config.h utilincs.h \
  debug.h utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h \
- appdefs.h appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h \
- menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
- search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
- filerdir.h filercmd.h filerlist.h filer.h editorundo.h editorkeys.h \
- editormove2.h editormove.h editorgoto.h editorcut2.h editorcut.h help.h \
- editor3.h editor2.h editorfile.h editor.h main.h
+ appdefs.h appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h \
+ color.h sig.h menu.h tio.h termifkey.h termif.h fileio.h history.h \
+ keymacro.h rcfile.h search.h disp.h winout.h winin.h linewrap.h \
+ filerkeys.h filerrun.h filerdir.h filercmd1.h filercmd2.h filerlist.h \
+ filer.h editorundo.h editorkeys.h editormove2.h editormove.h \
+ editorgoto.h editorcut2.h editorcut.h help.h editor3.h editor2.h \
+ editorfile.h editor.h main.h
 editormove.o: editormove.c headers.h stdincs.h config.h utilincs.h \
  debug.h utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h \
- appdefs.h appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h \
- menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
- search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
- filerdir.h filercmd.h filerlist.h filer.h editorundo.h editorkeys.h \
- editormove2.h editormove.h editorgoto.h editorcut2.h editorcut.h help.h \
- editor3.h editor2.h editorfile.h editor.h main.h
+ appdefs.h appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h \
+ color.h sig.h menu.h tio.h termifkey.h termif.h fileio.h history.h \
+ keymacro.h rcfile.h search.h disp.h winout.h winin.h linewrap.h \
+ filerkeys.h filerrun.h filerdir.h filercmd1.h filercmd2.h filerlist.h \
+ filer.h editorundo.h editorkeys.h editormove2.h editormove.h \
+ editorgoto.h editorcut2.h editorcut.h help.h editor3.h editor2.h \
+ editorfile.h editor.h main.h
 editormove2.o: editormove2.c headers.h stdincs.h config.h utilincs.h \
  debug.h utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h \
- appdefs.h appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h \
- menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
- search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
- filerdir.h filercmd.h filerlist.h filer.h editorundo.h editorkeys.h \
- editormove2.h editormove.h editorgoto.h editorcut2.h editorcut.h help.h \
- editor3.h editor2.h editorfile.h editor.h main.h
+ appdefs.h appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h \
+ color.h sig.h menu.h tio.h termifkey.h termif.h fileio.h history.h \
+ keymacro.h rcfile.h search.h disp.h winout.h winin.h linewrap.h \
+ filerkeys.h filerrun.h filerdir.h filercmd1.h filercmd2.h filerlist.h \
+ filer.h editorundo.h editorkeys.h editormove2.h editormove.h \
+ editorgoto.h editorcut2.h editorcut.h help.h editor3.h editor2.h \
+ editorfile.h editor.h main.h
 editorundo.o: editorundo.c headers.h stdincs.h config.h utilincs.h \
  debug.h utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h \
- appdefs.h appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h \
- menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
- search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
- filerdir.h filercmd.h filerlist.h filer.h editorundo.h editorkeys.h \
- editormove2.h editormove.h editorgoto.h editorcut2.h editorcut.h help.h \
- editor3.h editor2.h editorfile.h editor.h main.h
+ appdefs.h appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h \
+ color.h sig.h menu.h tio.h termifkey.h termif.h fileio.h history.h \
+ keymacro.h rcfile.h search.h disp.h winout.h winin.h linewrap.h \
+ filerkeys.h filerrun.h filerdir.h filercmd1.h filercmd2.h filerlist.h \
+ filer.h editorundo.h editorkeys.h editormove2.h editormove.h \
+ editorgoto.h editorcut2.h editorcut.h help.h editor3.h editor2.h \
+ editorfile.h editor.h main.h
 fileio.o: fileio.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 filer.o: filer.c headers.h stdincs.h config.h utilincs.h debug.h utils.h \
  utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
-filercmd.o: filercmd.c headers.h stdincs.h config.h utilincs.h debug.h \
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
+filercmd1.o: filercmd1.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
+filercmd2.o: filercmd2.c headers.h stdincs.h config.h utilincs.h debug.h \
+ utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 filerdir.o: filerdir.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 filerkeys.o: filerkeys.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 filerlist.o: filerlist.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 filerrun.o: filerrun.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 help.o: help.c headers.h stdincs.h config.h utilincs.h debug.h utils.h \
  utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 history.o: history.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 keymacro.o: keymacro.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 keys.o: keys.c headers.h stdincs.h config.h utilincs.h debug.h utils.h \
  utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 line.o: line.c headers.h stdincs.h config.h utilincs.h debug.h utils.h \
  utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 linewrap.o: linewrap.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 main.o: main.c headers.h stdincs.h config.h utilincs.h debug.h utils.h \
  utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h \
+ applvl.h
 menu.o: menu.c headers.h stdincs.h config.h utilincs.h debug.h utils.h \
  utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 myutf8.o: myutf8.c utilincs.h stdincs.h config.h debug.h utils.h \
  utilstr.h utilpath.h utilfile.h utf8.h myutf8.h tio.h keys.h termifkey.h \
  termif.h
 rcfile.o: rcfile.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 regexp.o: regexp.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 search.o: search.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 sig.o: sig.c headers.h stdincs.h config.h utilincs.h debug.h utils.h \
  utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 termif.o: termif.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 termifkey.o: termifkey.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 tio.o: tio.c headers.h stdincs.h config.h utilincs.h debug.h utils.h \
  utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 utf8.o: utf8.c utilincs.h stdincs.h config.h debug.h utils.h utilstr.h \
  utilpath.h utilfile.h utf8.h myutf8.h
 utilfile.o: utilfile.c utilincs.h stdincs.h config.h debug.h utils.h \
@@ -1215,20 +1244,20 @@ utilstr.o: utilstr.c utilincs.h stdincs.h config.h debug.h utils.h \
  utilstr.h utilpath.h utilfile.h utf8.h myutf8.h
 winin.o: winin.c headers.h stdincs.h config.h utilincs.h debug.h utils.h \
  utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 winout.o: winout.c headers.h stdincs.h config.h utilincs.h debug.h \
  utils.h utilstr.h utilpath.h utilfile.h utf8.h myutf8.h keys.h appdefs.h \
- appmode.h line.h buffer.h buffers.h regexp.h color.h sig.h menu.h tio.h \
- termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h search.h \
- disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h filerdir.h \
- filercmd.h filerlist.h filer.h editorundo.h editorkeys.h editormove2.h \
- editormove.h editorgoto.h editorcut2.h editorcut.h help.h editor3.h \
- editor2.h editorfile.h editor.h main.h
+ appmode.h line.h buffer1.h buffer2.h buffers.h regexp.h color.h sig.h \
+ menu.h tio.h termifkey.h termif.h fileio.h history.h keymacro.h rcfile.h \
+ search.h disp.h winout.h winin.h linewrap.h filerkeys.h filerrun.h \
+ filerdir.h filercmd1.h filercmd2.h filerlist.h filer.h editorundo.h \
+ editorkeys.h editormove2.h editormove.h editorgoto.h editorcut2.h \
+ editorcut.h help.h editor3.h editor2.h editorfile.h editor.h main.h
 
 # Include the output of "gcc -MM *.c"
 

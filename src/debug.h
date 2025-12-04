@@ -22,8 +22,8 @@
 #ifndef debug_h
 #define debug_h
 
-// If you wish enable debugging temprarily without running ./configure, define here
-////#define ENABLE_DEBUG 1
+// If you wish enable debugging temporarily without running ./configure, define this
+////#define ENABLE_DEBUG	1
 
 #ifdef ENABLE_DEBUG
 ////
@@ -33,7 +33,7 @@
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 
-#define DT0			0	// no Time in Debug log
+#define DT0			0	// DT...: Debug Time, no Time in Debug log
 #define DTSM		1	// SSSSSS.mmm
 #define DTSU		2	// SSS.uuuuuu
 #define DTHM		3	// HH:MM:SS.mmm
@@ -48,77 +48,92 @@
 
 #define _D_(debug)							_FLF_;	debug;
 #define _D(debug)							_FLF;	debug;
-#define fl_d_printf(args...)				tflfl_d_printf_(DT0, _FL_, _LN_, "", "", args)
-#define flf_d_printf(args...)				tflfl_d_printf_(DT0, _FL_, _LN_, _FN_, "", args)
-#define smflf_d_printf(args...)				tflfl_d_printf_(DTSM, _FL_, _LN_, _FN_, "", args)
-#define suflf_d_printf(args...)				tflfl_d_printf_(DTSU, _FL_, _LN_, _FN_, "", args)
-#define hm_d_printf(args...)				tflfl_d_printf_(DTHM, "", 0, "", "", args)
-#define hmflf_d_printf(args...)				tflfl_d_printf_(DTHM, _FL_, _LN_, _FN_, "", args)
-#define hmtflf_d_printf(args...)			tflfl_d_printf_(DTHMT, _FL_, _LN_, _FN_, "", args)
-#define huflf_d_printf(args...)				tflfl_d_printf_(DTHU, _FL_, _LN_, _FN_, "", args)
-#define dtflf_d_printf(args...)				tflfl_d_printf_(DTYH, _FL_, _LN_, _FN_, "", args)
-#define dthmflf_d_printf(args...)			tflfl_d_printf_(DTYHM, _FL_, _LN_, _FN_, "", args)
-#define dtflfl_d_printf(label, args...)		tflfl_d_printf_(DTYH, _FL_, _LN_, _FN_, label, args)
-#define flfl_d_printf(label, args...)		tflfl_d_printf_(DT0, _FL_, _LN_, _FN_, label, args)
-#define d_printf(args...)					tflfl_d_printf_(DT0, "", 0, "", "", args)
-#define e_printf(args...)					debug_printf(args)
-#define e_vprintf(args...)					debug_vprintf(args)
-#define progerr_printf(args...)		tflfl_d_printf_(0x10 | DTYH, _FL_, _LN_, _FN_, "PROGERR", args)
+#define fl_dprintf(args...)					tflfl_dprintf_(DT0, _FL_, _LN_, "", "", args)
+#define flf_dprintf(args...)				tflfl_dprintf_(DT0, _FL_, _LN_, _FN_, "", args)
+#define smflf_dprintf(args...)				tflfl_dprintf_(DTSM, _FL_, _LN_, _FN_, "", args)
+#define suflf_dprintf(args...)				tflfl_dprintf_(DTSU, _FL_, _LN_, _FN_, "", args)
+#define hm_dprintf(args...)					tflfl_dprintf_(DTHM, "", 0, "", "", args)
+#define hmflf_dprintf(args...)				tflfl_dprintf_(DTHM, _FL_, _LN_, _FN_, "", args)
+#define hmtflf_dprintf(args...)				tflfl_dprintf_(DTHMT, _FL_, _LN_, _FN_, "", args)
+#define huflf_dprintf(args...)				tflfl_dprintf_(DTHU, _FL_, _LN_, _FN_, "", args)
+#define dtflf_dprintf(args...)				tflfl_dprintf_(DTYH, _FL_, _LN_, _FN_, "", args)
+#define dthmflf_dprintf(args...)			tflfl_dprintf_(DTYHM, _FL_, _LN_, _FN_, "", args)
+#define dtflfl_dprintf(label, args...)		tflfl_dprintf_(DTYH, _FL_, _LN_, _FN_, label, args)
+#define flfl_dprintf(label, args...)		tflfl_dprintf_(DT0, _FL_, _LN_, _FN_, label, args)
+#define d_printf(args...)					tflfl_dprintf_(DT0, "", 0, "", "", args)
+#define debug_e_printf(args...)				debug_e_printf_(args)
+#define debug_e_vprintf(args...)			debug_e_vprintf_(args)
+#define debug_b_printf(args...)				debug_b_printf_(args)
+#define debug_b_vprintf(args...)			debug_b_vprintf_(args)
+#define progerr_printf(args...)		tflfl_dprintf_(0x10 | DTYH, _FL_, _LN_, _FN_, "PROGERR", args)
 
 #else // ENABLE_DEBUG
 
 #define _D_(debug)
 #define _D(debug)
-#define fl_d_printf(args...)
-#define flf_d_printf(args...)
-#define smflf_d_printf(args...)
-#define suflf_d_printf(args...)
-#define hm_d_printf(args...)
-#define hmflf_d_printf(args...)
-#define hmtflf_d_printf(args...)
-#define huflf_d_printf(args...)
-#define dtflf_d_printf(args...)
-#define dthmflf_d_printf(args...)
-#define dtflfl_d_printf(label, args...)
-#define flfl_d_printf(label, args...)
+#define fl_dprintf(args...)
+#define flf_dprintf(args...)
+#define smflf_dprintf(args...)
+#define suflf_dprintf(args...)
+#define hm_dprintf(args...)
+#define hmflf_dprintf(args...)
+#define hmtflf_dprintf(args...)
+#define huflf_dprintf(args...)
+#define dtflf_dprintf(args...)
+#define dthmflf_dprintf(args...)
+#define dtflfl_dprintf(label, args...)
+#define flfl_dprintf(label, args...)
 #define d_printf(args...)
-#define e_printf(args...)
-#define e_vprintf(args...)
+#define debug_e_printf(args...)
+#define debug_e_vprintf(args...)
+#define debug_b_printf(args...)
+#define debug_b_vprintf(args...)
 #define progerr_printf(args...)
 
 #endif // ENABLE_DEBUG
 
-#define warning_printf(args...)		flfl_d_printf("WARNING !!", args)
-#define fatalerr_printf(args...)	flfl_d_printf("FATALERR !!!!", args)
-#define _SMFLF_						smflf_d_printf("\n");
-#define _HMFLF_						hmflf_d_printf("\n");
-#define _UFLF_						huflf_d_printf("\n");
-#define _FLF_						flf_d_printf("\n");
-#define _FLF						flf_d_printf("");
-#define _PROGERR_					flf_d_printf("PROGERR\n");
-#define _FATALERR_					flf_d_printf("FATALERR\n");
-#define _WARNING_					flf_d_printf("WARNING\n");
+#define warning_printf(args...)		flfl_dprintf("WARNING !!", args)
+#define fatalerr_printf(args...)	flfl_dprintf("FATALERR !!!!", args)
+#define _SMFLF_						smflf_dprintf("\n");
+#define _HMFLF_						hmflf_dprintf("\n");
+#define _UFLF_						huflf_dprintf("\n");
+#define _FLF_						flf_dprintf("\n");
+#define _FLF						flf_dprintf("");
+#define _PROGERR_					flf_dprintf("PROGERR\n");
+#define _FATALERR_					flf_dprintf("FATALERR\n");
+#define _WARNING_					flf_dprintf("WARNING\n");
 
 #ifdef ENABLE_DEBUG
 
 void dump_memory(char *message, void *memory, int bytes);
-void dump_string(char *message, const char* string);
+void dump_string(char *message, const char *string);
 
-void tflfl_d_printf_(int time, const char *file, int line,
+void tflfl_dprintf_(int time, const char *file, int line,
  const char *func, const char *label, const char *format, ...);
-const char* tflfl_vsprintf(char *buffer, int time, const char *file, int line,
+const char *tflfl_vsprintf(char *buffer, int time, const char *file, int line,
  const char *func, const char *label, const char *format, va_list list);
-void output_last_d_printf();
+void output_last_dprintf();
 
 void set_debug_printf_output(int on1_off0);
-void debug_printf(const char *format, ...);
-void debug_vprintf(const char *format, va_list ap);
+void debug_o_printf_(const char *format, ...);
+void debug_o_vprintf_(const char *format, va_list ap);
+void debug_e_printf_(const char *format, ...);
+void debug_e_vprintf_(const char *format, va_list ap);
+void debug_b_printf_(const char *format, ...);
+void debug_b_vprintf_(const char *format, va_list ap);
 
 typedef int (*progerr_callback_t)(const char*);
 void set_progerr_callback(progerr_callback_t callback);
-int call_progerr_callback(const char* message);
+int call_progerr_callback(const char *message);
 
 #endif // ENABLE_DEBUG
+
+void b_printf(const char *format, ...);
+void b_vprintf(const char *format, va_list ap);
+void o_printf(const char *format, ...);
+void o_vprintf(const char *format, va_list ap);
+void e_printf(const char *format, ...);
+void e_vprintf(const char *format, va_list ap);
 
 //------------------------------------------------------------------------------
 #ifdef START_UP_TEST

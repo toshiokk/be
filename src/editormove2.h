@@ -22,7 +22,7 @@
 #ifndef editormove2_h
 #define editormove2_h
 
-#define VERT_SCROLL_MERGIN				3
+#define VERT_SCROLL_MARGIN				3
 // define this to limit the number of vertical scroll lines in large screen
 #define LIMIT_MAX_VERT_SCROLL_LINES		25
 
@@ -40,7 +40,7 @@
 // LINES-1-1 |                                   | bottom_scroll_margin_y()
 // LINES-1-0 |                                   |
 // LINES     +-----------------------------------+
-#define EDITOR_VERT_SCROLL_MERGIN	VERT_SCROLL_MERGIN
+#define EDITOR_VERT_SCROLL_MARGIN	VERT_SCROLL_MARGIN
 #define HORIZ_SCROLL_MARGIN			5
 int editor_vert_scroll_margin_lines();
 int top_scroll_margin_y();

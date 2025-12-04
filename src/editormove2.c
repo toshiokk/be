@@ -23,7 +23,7 @@
 
 int editor_vert_scroll_margin_lines()
 {
-	return LIM_MAX(EDITOR_VERT_SCROLL_MERGIN, edit_win_get_text_lines() / 3);		// [0, 3]
+	return LIM_MAX(EDITOR_VERT_SCROLL_MARGIN, edit_win_get_text_lines() / 3);		// [0, 3]
 }
 int top_scroll_margin_y()
 {
@@ -54,6 +54,7 @@ int editor_vert_scroll_lines()
 void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_move,
  locate_cursor_to_t locate_cursor, int update_needed)
 {
+flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	switch (GET_APPMD(ed_CURS_POSITIONING)) {
 	default:
 	case CURS_POSITIONING_NONE:		break;		// not change
@@ -61,18 +62,25 @@ void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_
 	case CURS_POSITIONING_CENTER:	locate_cursor = LOCATE_CURS_CENTER;		break;
 	case CURS_POSITIONING_BOTTOM:	locate_cursor = LOCATE_CURS_BOTTOM;		break;
 	}
+flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	if (renum_from) {
 		buf_renumber_from_line(get_epc_buf(), renum_from);
 	}
 	if (is_disabled_update_min_text_x_to_keep() == 0) {
+flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 		update_text_x_to_keep_after_cursor_move(cursor_move);
+flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	}
 	setup_cut_region_after_cursor_move(cursor_move);
+flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	locate_curs_y_in_edit_win(locate_cursor);
+flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	set_edit_win_update_needed(update_needed);
+flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 #ifdef ENABLE_UNDO
 	undo_save_after_change();
 #endif // ENABLE_UNDO
+flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	return;
 }
 
@@ -214,11 +222,10 @@ int get_disp_y_after_cursor_move()
 	return -1;	// current line is out of previous screen
 }
 
-// go backward to screen top and return line and byte_idx
+// investigate the line at the top of the screen
+// - go backward to the screen top and return the point in 'line' and 'byte_idx'
 int get_edit_win_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **line, int *byte_idx)
 {
-	int line_cnt = 0;
-
 	if (_cl_->data == NULL) {
 		*line = _cl_;
 		*byte_idx = _clbi_;
@@ -226,14 +233,16 @@ int get_edit_win_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **lin
 	}
 	te_concat_linefeed(_cl_->data);
 	int wl_idx = start_wl_idx_of_wrap_line(te_concat_lf_buf, _clbi_, -1);
+	int line_cnt = 0;
 	for ( ; ; ) {
 		if (yy <= 0) {
 			break;
 		}
 		if (wl_idx <= 0) {
-			if (IS_NODE_TOP_MOST(_cl_) == 0) {
-				_cl_ = NODE_PREV(_cl_);
+			if (IS_NODE_TOP_MOST(_cl_)) {
+				break;		// no previous line
 			}
+			_cl_ = NODE_PREV(_cl_);
 			te_concat_linefeed(_cl_->data);
 			wl_idx = max_wrap_line_idx(te_concat_lf_buf, -1);
 		} else {
@@ -257,7 +266,7 @@ void update_text_x_to_keep_after_cursor_move(cursor_horiz_vert_move_t cursor_mov
 		 EPCBVC_CL->data, EPCBVC_CLBI, -1);
 		update_min_text_x_to_keep(EPCBVC_CURS_X_TO_KEEP);
 	} else {
-		// not upate  `buf_view->cursor_x_to_keep`
+		// not update `buf_view->cursor_x_to_keep`
 		// and update `buf_view->min_text_x_to_keep`
 		int wl_idx = start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
 		EPCBVC_CLBI = end_byte_idx_of_wrap_line_le(EPCBVC_CL->data, wl_idx,
@@ -268,7 +277,7 @@ void update_text_x_to_keep_after_cursor_move(cursor_horiz_vert_move_t cursor_mov
 	}
 }
 
-// cursor_text_x                                          : X position in contents of cursor
+// cursor_text_x                                          : X position of cursor in contents
 // text_x, min_text_x, max_text_x,
 //  left_text_x, right_text_x, text_left_x, text_right_x  : X position in contents
 // disp_x, min_disp_x, max_disp_x,
@@ -302,7 +311,7 @@ PRIVATE int calc_min_text_x_to_keep()
 	 EPCBVC_MIN_TEXT_X_TO_KEEP);
 }
 
-// Calculate the column number of the first character displayed left most
+// Calculate the column number of the character displayed left most
 // in window when the cursor is at the given column 'cursor_text_x' in the text.
 PRIVATE int recalc_min_text_x_to_keep(int disp_width, int text_width, int margin,
  int cursor_text_x, int min_text_x)

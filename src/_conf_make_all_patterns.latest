@@ -144,6 +144,9 @@ ConfigurationNo.:  0
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -159,7 +162,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -167,7 +171,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -191,10 +196,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  0
-BE editor version 250618 (compiled at 22:55:17, Jun 24 2025)
+BE editor version 251127 (compiled at 23:10:58, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -212,7 +217,7 @@ BE editor version 250618 (compiled at 22:55:17, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  0 ------------------------------
 Summary - Running: ./configure
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 371888  6月 24 22:55 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:11 be
 
 ConfigurationNo.: 1, SizeOfExecutableFile ======================
 Running: ./configure --enable-all
@@ -360,6 +365,9 @@ ConfigurationNo.:  1
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -375,7 +383,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -383,7 +392,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -407,10 +417,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  1
-BE editor version 250618 (compiled at 22:56:04, Jun 24 2025)
+BE editor version 251127 (compiled at 23:11:26, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -428,7 +438,7 @@ BE editor version 250618 (compiled at 22:56:04, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  1 ------------------------------
 Summary - Running: ./configure --enable-all
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 371888  6月 24 22:56 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:11 be
 
 ConfigurationNo.: 2, SizeOfExecutableFile ======================
 Running: ./configure --disable-all
@@ -574,6 +584,9 @@ ConfigurationNo.:  2
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -589,7 +602,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -597,7 +611,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -621,10 +636,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  2
-BE editor version 250618 (compiled at 22:56:51, Jun 24 2025)
+BE editor version 251127 (compiled at 23:11:54, Dec  4 2025)
  Build Options:
    --disable-filer
    --disable-nls
@@ -642,7 +657,7 @@ BE editor version 250618 (compiled at 22:56:51, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  2 ------------------------------
 Summary - Running: ./configure --disable-all
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 246056  6月 24 22:57 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 250160 12月  4 23:12 be
 
 ConfigurationNo.: 3, SizeOfExecutableFile ======================
 Running: ./configure --disable-nls --disable-nkf --disable-history --disable-rc --disable-syntax --disable-regex --disable-syntax --disable-pcre --disable-undo --disable-busybox --disable-help --disable-debug --enable-filer
@@ -788,6 +803,9 @@ ConfigurationNo.:  3
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -803,7 +821,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -811,7 +830,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -835,10 +855,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  3
-BE editor version 250618 (compiled at 22:57:30, Jun 24 2025)
+BE editor version 251127 (compiled at 23:12:17, Dec  4 2025)
  Build Options:
    --enable-filer
    --disable-nls
@@ -856,7 +876,7 @@ BE editor version 250618 (compiled at 22:57:30, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  3 ------------------------------
 Summary - Running: ./configure --disable-nls --disable-nkf --disable-history --disable-rc --disable-syntax --disable-regex --disable-syntax --disable-pcre --disable-undo --disable-busybox --disable-help --disable-debug --enable-filer
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 308136  6月 24 22:57 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 312528 12月  4 23:12 be
 
 ConfigurationNo.: 4, SizeOfExecutableFile ======================
 Running: ./configure --disable-nls --disable-nkf --disable-history --disable-rc --disable-syntax --disable-regex --disable-syntax --disable-pcre --disable-undo --disable-busybox --disable-help --disable-filer --enable-debug
@@ -1002,6 +1022,9 @@ ConfigurationNo.:  4
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -1017,7 +1040,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -1028,7 +1052,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -1052,17 +1077,17 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  4
-250624-225842 debug.c 163 set_debug_printf_output: debug_printf() enabled
-250624-225842 main.c 64 main: Start BE Jun 24 2025 22:58:12 ==============================
-utilpath.c 34 get_starting_dir: starting_dir: [/home/user/very-very-long-symlink-name-to-tools/be/be/src]
-utilpath.c 51 get_home_dir: home_dir: [/home/user]
-utilpath.c 63 get_tty_name: tty_name: [/dev/pts/2]
-main.c 276 parse_options: optind:0: ./be
-main.c 276 parse_options: optind:1: -v
-BE editor version 250618 (compiled at 22:58:12, Jun 24 2025)
+251204-231301 debug.c 168 set_debug_printf_output: debug_printf() enabled
+251204-231301 main.c 66 main: START-BE Dec  4 2025 23:12:42 ==============================
+utilpath.c 37 get_starting_dir: starting_dir: [/home/user/very-very-long-symlink-name-to-tools/be/be/src/]
+utilpath.c 55 get_home_dir: home_dir: [/home/user/]
+utilpath.c 67 get_tty_name: tty_name: [/dev/pts/1]
+main.c 285 parse_options: optind:0: ./be
+main.c 285 parse_options: optind:1: -v
+BE editor version 251127 (compiled at 23:12:42, Dec  4 2025)
  Build Options:
    --disable-filer
    --disable-nls
@@ -1080,7 +1105,7 @@ BE editor version 250618 (compiled at 22:58:12, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  4 ------------------------------
 Summary - Running: ./configure --disable-nls --disable-nkf --disable-history --disable-rc --disable-syntax --disable-regex --disable-syntax --disable-pcre --disable-undo --disable-busybox --disable-help --disable-filer --enable-debug
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 319784  6月 24 22:58 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 336176 12月  4 23:13 be
 
 ConfigurationNo.: 5, SizeOfExecutableFile ======================
 Running: ./configure --disable-filer
@@ -1226,6 +1251,9 @@ ConfigurationNo.:  5
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -1241,7 +1269,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -1249,7 +1278,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -1273,10 +1303,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  5
-BE editor version 250618 (compiled at 22:58:55, Jun 24 2025)
+BE editor version 251127 (compiled at 23:13:08, Dec  4 2025)
  ビルドオプション:
    --disable-filer
    --enable-nls
@@ -1294,7 +1324,7 @@ BE editor version 250618 (compiled at 22:58:55, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  5 ------------------------------
 Summary - Running: ./configure --disable-filer
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 309584  6月 24 22:59 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 309560 12月  4 23:13 be
 
 ConfigurationNo.: 6, SizeOfExecutableFile ======================
 Running: ./configure --disable-history
@@ -1440,6 +1470,9 @@ ConfigurationNo.:  6
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -1455,7 +1488,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -1463,7 +1497,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -1487,10 +1522,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  6
-BE editor version 250618 (compiled at 22:59:38, Jun 24 2025)
+BE editor version 251127 (compiled at 23:13:34, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -1508,7 +1543,7 @@ BE editor version 250618 (compiled at 22:59:38, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  6 ------------------------------
 Summary - Running: ./configure --disable-history
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359536  6月 24 23:00 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359832 12月  4 23:13 be
 
 ConfigurationNo.: 7, SizeOfExecutableFile ======================
 Running: ./configure --disable-undo
@@ -1654,6 +1689,9 @@ ConfigurationNo.:  7
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -1669,7 +1707,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -1677,7 +1716,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -1701,10 +1741,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  7
-BE editor version 250618 (compiled at 23:00:24, Jun 24 2025)
+BE editor version 251127 (compiled at 23:14:02, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -1722,7 +1762,7 @@ BE editor version 250618 (compiled at 23:00:24, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  7 ------------------------------
 Summary - Running: ./configure --disable-undo
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 363568  6月 24 23:00 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372056 12月  4 23:14 be
 
 ConfigurationNo.: 8, SizeOfExecutableFile ======================
 Running: ./configure --disable-nls
@@ -1868,6 +1908,9 @@ ConfigurationNo.:  8
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -1883,7 +1926,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -1891,7 +1935,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -1915,10 +1960,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  8
-BE editor version 250618 (compiled at 23:01:11, Jun 24 2025)
+BE editor version 251127 (compiled at 23:14:30, Dec  4 2025)
  Build Options:
    --enable-filer
    --disable-nls
@@ -1936,7 +1981,7 @@ BE editor version 250618 (compiled at 23:01:11, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  8 ------------------------------
 Summary - Running: ./configure --disable-nls
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359592  6月 24 23:01 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 368080 12月  4 23:14 be
 
 ConfigurationNo.: 9, SizeOfExecutableFile ======================
 Running: ./configure --disable-syntax
@@ -2082,6 +2127,9 @@ ConfigurationNo.:  9
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -2097,7 +2145,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -2105,7 +2154,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -2129,10 +2179,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  9
-BE editor version 250618 (compiled at 23:01:57, Jun 24 2025)
+BE editor version 251127 (compiled at 23:14:58, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -2150,7 +2200,7 @@ BE editor version 250618 (compiled at 23:01:57, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  9 ------------------------------
 Summary - Running: ./configure --disable-syntax
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359408  6月 24 23:02 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 367896 12月  4 23:15 be
 
 ConfigurationNo.: 10, SizeOfExecutableFile ======================
 Running: ./configure --disable-syntax --disable-rc
@@ -2296,6 +2346,9 @@ ConfigurationNo.:  10
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -2311,7 +2364,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -2319,7 +2373,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -2343,10 +2398,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  10
-BE editor version 250618 (compiled at 23:02:43, Jun 24 2025)
+BE editor version 251127 (compiled at 23:15:26, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -2364,7 +2419,7 @@ BE editor version 250618 (compiled at 23:02:43, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  10 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-rc
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 358736  6月 24 23:03 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359032 12月  4 23:15 be
 
 ConfigurationNo.: 11, SizeOfExecutableFile ======================
 Running: ./configure --disable-syntax --disable-regex
@@ -2510,6 +2565,9 @@ ConfigurationNo.:  11
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -2525,7 +2583,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -2533,7 +2592,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -2557,10 +2617,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  11
-BE editor version 250618 (compiled at 23:03:29, Jun 24 2025)
+BE editor version 251127 (compiled at 23:15:54, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -2578,7 +2638,7 @@ BE editor version 250618 (compiled at 23:03:29, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  11 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-regex
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 351056  6月 24 23:04 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 355448 12月  4 23:16 be
 
 ConfigurationNo.: 12, SizeOfExecutableFile ======================
 Running: ./configure --disable-syntax --disable-rc --disable-regex
@@ -2724,6 +2784,9 @@ ConfigurationNo.:  12
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -2739,7 +2802,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -2747,7 +2811,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -2771,10 +2836,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  12
-BE editor version 250618 (compiled at 23:04:15, Jun 24 2025)
+BE editor version 251127 (compiled at 23:16:21, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -2792,7 +2857,7 @@ BE editor version 250618 (compiled at 23:04:15, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  12 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-rc --disable-regex
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 342192  6月 24 23:04 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 350680 12月  4 23:17 be
 
 ConfigurationNo.: 13, SizeOfExecutableFile ======================
 Running: ./configure --enable-ncurses
@@ -2939,6 +3004,9 @@ ConfigurationNo.:  13
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -2954,7 +3022,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -2962,7 +3031,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -2986,10 +3056,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  13
-BE editor version 250618 (compiled at 23:05:00, Jun 24 2025)
+BE editor version 251127 (compiled at 23:17:08, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -3007,7 +3077,7 @@ BE editor version 250618 (compiled at 23:05:00, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  13 ------------------------------
 Summary - Running: ./configure --enable-ncurses
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 371888  6月 24 23:05 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:17 be
 
 ConfigurationNo.: 14, SizeOfExecutableFile ======================
 Running: ./configure --enable-ncurses --enable-highbgc
@@ -3155,6 +3225,9 @@ ConfigurationNo.:  14
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -3170,7 +3243,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -3178,7 +3252,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -3202,10 +3277,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  14
-BE editor version 250618 (compiled at 23:05:47, Jun 24 2025)
+BE editor version 251127 (compiled at 23:17:36, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -3223,7 +3298,7 @@ BE editor version 250618 (compiled at 23:05:47, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  14 ------------------------------
 Summary - Running: ./configure --enable-ncurses --enable-highbgc
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 371888  6月 24 23:06 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:17 be
 
 ConfigurationNo.: 15, SizeOfExecutableFile ======================
 Running: ./configure --enable-pcre
@@ -3370,6 +3445,9 @@ ConfigurationNo.:  15
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -3385,7 +3463,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -3393,7 +3472,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -3417,10 +3497,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  15
-BE editor version 250618 (compiled at 23:06:33, Jun 24 2025)
+BE editor version 251127 (compiled at 23:18:06, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -3438,7 +3518,7 @@ BE editor version 250618 (compiled at 23:06:33, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  15 ------------------------------
 Summary - Running: ./configure --enable-pcre
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 371888  6月 24 23:07 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:18 be
 
 ConfigurationNo.: 16, SizeOfExecutableFile ======================
 Running: ./configure --disable-nkf
@@ -3584,6 +3664,9 @@ ConfigurationNo.:  16
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -3599,7 +3682,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -3607,7 +3691,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -3631,10 +3716,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  16
-BE editor version 250618 (compiled at 23:07:20, Jun 24 2025)
+BE editor version 251127 (compiled at 23:18:34, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -3652,7 +3737,7 @@ BE editor version 250618 (compiled at 23:07:20, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  16 ------------------------------
 Summary - Running: ./configure --disable-nkf
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359408  6月 24 23:07 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 367896 12月  4 23:18 be
 
 ConfigurationNo.: 17, SizeOfExecutableFile ======================
 Running: ./configure --enable-busybox
@@ -3798,6 +3883,9 @@ ConfigurationNo.:  17
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -3813,7 +3901,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -3821,7 +3910,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -3845,10 +3935,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  17
-BE editor version 250618 (compiled at 23:08:07, Jun 24 2025)
+BE editor version 251127 (compiled at 23:19:03, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -3866,7 +3956,7 @@ BE editor version 250618 (compiled at 23:08:07, Jun 24 2025)
    --enable-busybox
 Summary - ConfigurationNo.:  17 ------------------------------
 Summary - Running: ./configure --enable-busybox
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 363696  6月 24 23:08 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:19 be
 
 ConfigurationNo.: 18, SizeOfExecutableFile ======================
 Running: ./configure --enable-highbgc
@@ -4012,6 +4102,9 @@ ConfigurationNo.:  18
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -4027,7 +4120,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -4035,7 +4129,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -4059,10 +4154,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  18
-BE editor version 250618 (compiled at 23:08:58, Jun 24 2025)
+BE editor version 251127 (compiled at 23:19:31, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -4080,7 +4175,7 @@ BE editor version 250618 (compiled at 23:08:58, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  18 ------------------------------
 Summary - Running: ./configure --enable-highbgc
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 371888  6月 24 23:09 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:19 be
 
 ConfigurationNo.: 19, SizeOfExecutableFile ======================
 Running: ./configure --disable-help
@@ -4220,12 +4315,18 @@ configure: creating ./config.status
 config.status: creating Makefile
 config.status: creating config.h
 config.status: executing depfiles commands
+ cd . && /bin/bash /home/user/very-very-long-symlink-name-to-tools/be/be/src/missing automake-1.16 --gnu Makefile
+ cd . && /bin/bash ./config.status Makefile 
+config.status: creating Makefile
 test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  19
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -4241,7 +4342,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -4249,7 +4351,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -4273,10 +4376,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  19
-BE editor version 250618 (compiled at 23:09:58, Jun 24 2025)
+BE editor version 251127 (compiled at 23:20:01, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -4294,7 +4397,7 @@ BE editor version 250618 (compiled at 23:09:58, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  19 ------------------------------
 Summary - Running: ./configure --disable-help
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 358640  6月 24 23:10 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 363032 12月  4 23:20 be
 
 ConfigurationNo.: 20, SizeOfExecutableFile ======================
 Running: ./configure --enable-debug
@@ -4440,6 +4543,9 @@ ConfigurationNo.:  20
 make  all-am
 make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
+main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  410 | #warning "#undef ASK_ON_EXIT"
+      |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
@@ -4455,7 +4561,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorundo.o editorundo.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o line.o line.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o linewrap.o linewrap.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer.o buffer.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer1.o buffer1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffer2.o buffer2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o buffers.o buffers.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o color.o color.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
@@ -4466,7 +4573,8 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd.o filercmd.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd1.o filercmd1.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filercmd2.o filercmd2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerdir.o filerdir.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerrun.o filerrun.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerkeys.o filerkeys.c
@@ -4490,20 +4598,20 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
 ConfigurationNo.:  20
-250624-231123 debug.c 163 set_debug_printf_output: debug_printf() enabled
-250624-231123 main.c 64 main: Start BE Jun 24 2025 23:10:44 ==============================
-utilpath.c 34 get_starting_dir: starting_dir: [/home/user/very-very-long-symlink-name-to-tools/be/be/src]
-utilpath.c 51 get_home_dir: home_dir: [/home/user]
-utilpath.c 63 get_tty_name: tty_name: [/dev/pts/2]
-main.c 227 init_locale: LANG: [ja_JP.UTF-8]
-main.c 228 init_locale: cur locale: [ja_JP.UTF-8]
-main.c 229 init_locale: PACKAGE: [be], LOCALEDIR: [/usr/share/locale]
-main.c 276 parse_options: optind:0: ./be
-main.c 276 parse_options: optind:1: -v
-BE editor version 250618 (compiled at 23:10:44, Jun 24 2025)
+251204-232055 debug.c 168 set_debug_printf_output: debug_printf() enabled
+251204-232055 main.c 66 main: START-BE Dec  4 2025 23:20:30 ==============================
+utilpath.c 37 get_starting_dir: starting_dir: [/home/user/very-very-long-symlink-name-to-tools/be/be/src/]
+utilpath.c 55 get_home_dir: home_dir: [/home/user/]
+utilpath.c 67 get_tty_name: tty_name: [/dev/pts/1]
+main.c 235 init_locale: LANG: [ja_JP.UTF-8]
+main.c 236 init_locale: cur locale: [ja_JP.UTF-8]
+main.c 237 init_locale: PACKAGE: [be], LOCALEDIR: [/usr/share/locale]
+main.c 285 parse_options: optind:0: ./be
+main.c 285 parse_options: optind:1: -v
+BE editor version 251127 (compiled at 23:20:30, Dec  4 2025)
  ビルドオプション:
    --enable-filer
    --enable-nls
@@ -4521,7 +4629,7 @@ BE editor version 250618 (compiled at 23:10:44, Jun 24 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  20 ------------------------------
 Summary - Running: ./configure --enable-debug
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 454448  6月 24 23:11 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 479320 12月  4 23:20 be
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
@@ -4662,64 +4770,64 @@ config.status: executing depfiles commands
 ----conf_make_all_patterns-complete----
 Summary - ConfigurationNo.:  0 ------------------------------
 Summary - Running: ./configure
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 371888  6月 24 22:55 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:11 be
 Summary - ConfigurationNo.:  1 ------------------------------
 Summary - Running: ./configure --enable-all
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 371888  6月 24 22:56 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:11 be
 Summary - ConfigurationNo.:  2 ------------------------------
 Summary - Running: ./configure --disable-all
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 246056  6月 24 22:57 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 250160 12月  4 23:12 be
 Summary - ConfigurationNo.:  3 ------------------------------
 Summary - Running: ./configure --disable-nls --disable-nkf --disable-history --disable-rc --disable-syntax --disable-regex --disable-syntax --disable-pcre --disable-undo --disable-busybox --disable-help --disable-debug --enable-filer
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 308136  6月 24 22:57 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 312528 12月  4 23:12 be
 Summary - ConfigurationNo.:  4 ------------------------------
 Summary - Running: ./configure --disable-nls --disable-nkf --disable-history --disable-rc --disable-syntax --disable-regex --disable-syntax --disable-pcre --disable-undo --disable-busybox --disable-help --disable-filer --enable-debug
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 319784  6月 24 22:58 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 336176 12月  4 23:13 be
 Summary - ConfigurationNo.:  5 ------------------------------
 Summary - Running: ./configure --disable-filer
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 309584  6月 24 22:59 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 309560 12月  4 23:13 be
 Summary - ConfigurationNo.:  6 ------------------------------
 Summary - Running: ./configure --disable-history
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359536  6月 24 23:00 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359832 12月  4 23:13 be
 Summary - ConfigurationNo.:  7 ------------------------------
 Summary - Running: ./configure --disable-undo
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 363568  6月 24 23:00 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372056 12月  4 23:14 be
 Summary - ConfigurationNo.:  8 ------------------------------
 Summary - Running: ./configure --disable-nls
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359592  6月 24 23:01 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 368080 12月  4 23:14 be
 Summary - ConfigurationNo.:  9 ------------------------------
 Summary - Running: ./configure --disable-syntax
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359408  6月 24 23:02 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 367896 12月  4 23:15 be
 Summary - ConfigurationNo.:  10 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-rc
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 358736  6月 24 23:03 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359032 12月  4 23:15 be
 Summary - ConfigurationNo.:  11 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-regex
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 351056  6月 24 23:04 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 355448 12月  4 23:16 be
 Summary - ConfigurationNo.:  12 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-rc --disable-regex
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 342192  6月 24 23:04 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 350680 12月  4 23:17 be
 Summary - ConfigurationNo.:  13 ------------------------------
 Summary - Running: ./configure --enable-ncurses
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 371888  6月 24 23:05 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:17 be
 Summary - ConfigurationNo.:  14 ------------------------------
 Summary - Running: ./configure --enable-ncurses --enable-highbgc
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 371888  6月 24 23:06 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:17 be
 Summary - ConfigurationNo.:  15 ------------------------------
 Summary - Running: ./configure --enable-pcre
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 371888  6月 24 23:07 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:18 be
 Summary - ConfigurationNo.:  16 ------------------------------
 Summary - Running: ./configure --disable-nkf
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359408  6月 24 23:07 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 367896 12月  4 23:18 be
 Summary - ConfigurationNo.:  17 ------------------------------
 Summary - Running: ./configure --enable-busybox
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 363696  6月 24 23:08 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:19 be
 Summary - ConfigurationNo.:  18 ------------------------------
 Summary - Running: ./configure --enable-highbgc
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 371888  6月 24 23:09 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:19 be
 Summary - ConfigurationNo.:  19 ------------------------------
 Summary - Running: ./configure --disable-help
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 358640  6月 24 23:10 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 363032 12月  4 23:20 be
 Summary - ConfigurationNo.:  20 ------------------------------
 Summary - Running: ./configure --enable-debug
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 454448  6月 24 23:11 be
+Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 479320 12月  4 23:20 be

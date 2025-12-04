@@ -26,9 +26,9 @@
 
 #define ARRAY_SIZE_OF(array)	(sizeof(array) / sizeof(array[0]))
 
-#define SKIP_SPACE(ptr)		skip_space(&ptr)
-#define IS_SPACE(ptr)		(*ptr == ' ' || *ptr == '\t')
-#define IS_EOL(ptr)			(*ptr == '\n' || *ptr == '\0')
+#define SKIP_SPACE(ptr)			skip_space(&ptr)
+#define IS_WHITE_SPACE(ptr)		(*ptr == ' ' || *ptr == '\t')
+#define IS_EOL(ptr)				(*ptr == '\n' || *ptr == '\0')
 
 #define IDIV(xx, yy)	((xx) / ((yy) != 0 ? (yy) : 1))
 
@@ -96,7 +96,7 @@ void mlc_differenciate_count();
 char *malloc_strcpy(const char *string);
 void *malloc__(size_t bytes);
 void *remalloc__(void *ptr, size_t bytes);
-#define FREE_CLR_PTR(ptr)	free_ptr((void **)&(ptr))
+#define FREE_CLR_PTR(ptr)		free_ptr((void **)&(ptr))
 #define FREE_CLR_PTR_FLF(ptr)	{ if (ptr) { _FLF_ } free_ptr((void **)&(ptr)); }
 void free_ptr(void **ptr);
 void free__(void *ptr);
@@ -123,10 +123,11 @@ const char *cur_yymmdd_hhmmsspmmm();
 
 #define USEC_VAR	long usec = get_usec();
 #define USEC_BEGIN	usec = get_usec();
-#define USEC_END	flf_d_printf("%d[usec]\n", get_usec() - usec); USEC_BEGIN
+#define USEC_END	flf_dprintf("%d[usec]\n", get_usec() - usec); USEC_BEGIN
 const char *get_ssspuuuuuu(char *buf);
 const char *get_sssssspmmm(char *buf);
 time_t get_sec();
+unsigned long get_dsec();
 unsigned long get_msec();
 unsigned long get_usec();
 const char *cur_hhcmmcss();
@@ -156,7 +157,11 @@ int get_mem_free_in_kb(int update);
 
 #ifdef START_UP_TEST
 void test_zz_from_num();
+void test_modulo();
 #endif // START_UP_TEST
+
+#define SHORT_STR_BUF_LEN		100
+
 char *zz_from_num(int num, char *buf);
 
 const char *get_user_name(uid_t uid);

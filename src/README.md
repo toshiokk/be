@@ -160,9 +160,9 @@ So BE editor (微 editor) means Small-editor.
    | Runs on                  | Linux | Linux/Unix/Windows | Linux |
    | Mouse operation          | Yes   | Yes | No  |
    | GUI support              | No    | Yes | No  |
-   | Binary size              | 200kb | 340kb | 200kb |
-   | Source code size (lines) | 23000 | 66000 | 22000 |
-   | Source code size (in KB) | 698kb | 1521kb | 670kb |
+   | Binary size              | 200kb | 340kb | 370kb |
+   | Source code size (lines) | 23,000 | 66,000  | 30,000  |
+   | Source code size (in KB) | 698kb  | 1,521kb | 1,000kb |
    | Translation              | en, ja, de, fr, it ... | ?? | en, ja |
    | Origin                   | USA   | USA | Japan |
 

@@ -33,19 +33,19 @@ void dump_memory(char *message, void *memory, int bytes)
 	int left;
 
 	ptr = (unsigned char *)memory;
-	e_printf("%s(%d)\n", message, bytes);
+	debug_e_printf("%s(%d)\n", message, bytes);
 	for (cnt = 0; cnt < bytes; ) {
-		e_printf("%08x ", ptr);
+		debug_e_printf("%08x ", ptr);
 		for (left = cnt; cnt < left + 32 && cnt < bytes; cnt++) {
 			if (cnt % 4 != 3)
-				e_printf("%02x-", *ptr++);
+				debug_e_printf("%02x-", *ptr++);
 			else
-				e_printf("%02x ", *ptr++);
+				debug_e_printf("%02x ", *ptr++);
 		}
-		e_printf("\n");
+		debug_e_printf("\n");
 	}
 }
-void dump_string(char *message, const char* string)
+void dump_string(char *message, const char *string)
 {
 	char buffer[DEBUG_BUF_LEN+1] = "";
 	for (const char *ptr = string; *ptr; ptr++) {
@@ -55,15 +55,15 @@ void dump_string(char *message, const char* string)
 			strcat_printf(buffer, DEBUG_BUF_LEN, "%%%02x", (UINT8)*ptr);
 		}
 	}
-	e_printf("%s [%s]\n", message, buffer);
+	debug_e_printf("%s [%s]\n", message, buffer);
 }
 
 #define RING_BUF_LINES		10
 #ifdef RING_BUF_LINES
-void put_to_ring_buffer(const char* str);
+void put_to_ring_buffer(const char *str);
 #endif
 
-void tflfl_d_printf_(int time, const char *file, int line,
+void tflfl_dprintf_(int time, const char *file, int line,
  const char *func, const char *label, const char *format, ...)
 {
 	char buffer[DEBUG_BUF_LEN+1];
@@ -73,12 +73,12 @@ void tflfl_d_printf_(int time, const char *file, int line,
 	va_end(list);
 
 	put_to_ring_buffer(buffer);
-	debug_printf("%s", buffer);
+	debug_e_printf("%s", buffer);
 	if (time & 0x10) {
 		call_progerr_callback(buffer);
 	}
 }
-const char* tflfl_vsprintf(char *buffer, int time, const char *file, int line,
+const char *tflfl_vsprintf(char *buffer, int time, const char *file, int line,
  const char *func, const char *label, const char *format, va_list list)
 {
 	char buf_time[MAX_PATH_LEN+1] = "";
@@ -136,7 +136,7 @@ const char* tflfl_vsprintf(char *buffer, int time, const char *file, int line,
 PRIVATE int ring_buf_idx = 0;
 PRIVATE char ring_buffer[RING_BUF_LINES][DEBUG_BUF_LEN+1] =
  { "", "", "", "", "", "", "", "", "", "", };
-void put_to_ring_buffer(const char* str)
+void put_to_ring_buffer(const char *str)
 {
 	strlcpy__(ring_buffer[ring_buf_idx], str, DEBUG_BUF_LEN);
 	if (++ring_buf_idx >= RING_BUF_LINES)
@@ -144,7 +144,7 @@ void put_to_ring_buffer(const char* str)
 }
 #endif
 
-void output_last_d_printf()
+void output_last_dprintf()
 {
 #ifdef RING_BUF_LINES
 	FILE *fp = fopen("becrash.log", "w");
@@ -165,19 +165,45 @@ PRIVATE int debug_printf_output = 0;
 void set_debug_printf_output(int on1_off0)
 {
 	debug_printf_output = on1_off0;
-	dtflf_d_printf("debug_printf() %s\n", debug_printf_output ? "enabled" : "disabled");
+	dtflf_dprintf("debug_printf() %s\n", debug_printf_output ? "enabled" : "disabled");
 }
-void debug_printf(const char *format, ...)
+void debug_o_printf_(const char *format, ...)
 {
 	va_list list;
 	va_start(list, format);
-	debug_vprintf(format, list);
+	debug_o_vprintf_(format, list);
 	va_end(list);
 }
-void debug_vprintf(const char *format, va_list ap)
+void debug_o_vprintf_(const char *format, va_list ap)
 {
 	if (debug_printf_output) {
-		vfprintf(stderr, format, ap);
+		o_vprintf(format, ap);
+	}
+}
+void debug_e_printf_(const char *format, ...)
+{
+	va_list list;
+	va_start(list, format);
+	debug_e_vprintf_(format, list);
+	va_end(list);
+}
+void debug_e_vprintf_(const char *format, va_list ap)
+{
+	if (debug_printf_output) {
+		e_vprintf(format, ap);
+	}
+}
+void debug_b_printf_(const char *format, ...)
+{
+	va_list list;
+	va_start(list, format);
+	debug_b_vprintf_(format, list);
+	va_end(list);
+}
+void debug_b_vprintf_(const char *format, va_list ap)
+{
+	if (debug_printf_output) {
+		b_vprintf(format, ap);
 	}
 }
 
@@ -186,7 +212,7 @@ void set_progerr_callback(progerr_callback_t callback)
 {
 	progerr_callback = callback;
 }
-int call_progerr_callback(const char* message)
+int call_progerr_callback(const char *message)
 {
 	if (progerr_callback) {
 		return progerr_callback(message);
@@ -194,5 +220,40 @@ int call_progerr_callback(const char* message)
 	return 0;
 }
 #endif // ENABLE_DEBUG
+
+void b_printf(const char *format, ...)
+{
+	va_list list;
+	va_start(list, format);
+	b_vprintf(format, list);
+	va_end(list);
+}
+void b_vprintf(const char *format, va_list ap)
+{
+	o_vprintf(format, ap);
+	e_vprintf(format, ap);
+}
+void o_printf(const char *format, ...)
+{
+	va_list list;
+	va_start(list, format);
+	o_vprintf(format, list);
+	va_end(list);
+}
+void o_vprintf(const char *format, va_list ap)
+{
+	vfprintf(stdout, format, ap);
+}
+void e_printf(const char *format, ...)
+{
+	va_list list;
+	va_start(list, format);
+	e_vprintf(format, list);
+	va_end(list);
+}
+void e_vprintf(const char *format, va_list ap)
+{
+	vfprintf(stderr, format, ap);
+}
 
 // End of debug.c

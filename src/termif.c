@@ -23,6 +23,10 @@
 
 #ifndef ENABLE_NCURSES
 
+PRIVATE struct termios term_settings_save;	// The user's original term settings
+
+//------------------------------------------------------------------------------
+
 // Escape sequences used:
 //   ESC c						// clear screen
 //   ESC [ 6 n					// report cursor pos.
@@ -90,10 +94,6 @@ PRIVATE int termif_columns = 80;
 
 //------------------------------------------------------------------------------
 
-PRIVATE struct termios term_settings_save;	/* The user's original term settings */
-
-//------------------------------------------------------------------------------
-
 PRIVATE void set_string_to_vscreen(const char *string, int bytes);
 PRIVATE void put_narrow_char_to_vscreen(vscreen_char_t ucs21);
 PRIVATE void put_wide_char_to_vscreen(vscreen_char_t ucs21);
@@ -155,10 +155,10 @@ char investigate_wcwidth(wchar_t wc)
 }
 char investigate_utf8c_width(const char *utf8c)
 {
-	int yy;
-	int xx;
 	send_cursor_pos_to_term(0, 0);
 	send_string_to_term(utf8c, -1);
+	int yy;
+	int xx;
 	if (receive_cursor_pos_from_term(&yy, &xx)) {
 		return MIN_MAX_(1, xx - 0, 2);	// 1 / 2
 	}
@@ -168,20 +168,17 @@ char investigate_utf8c_width(const char *utf8c)
 // get screen size from terminal
 int termif_get_screen_size_from_term()
 {
-	int termif_lines_save;
-	int termif_columns_save;
-	int lines;
-	int cols;
-
 #define MAX_REPORT_TRIES		3
-	termif_lines_save = termif_get_lines();
-	termif_columns_save = termif_get_columns();
+	int termif_lines_save = termif_get_lines();
+	int termif_columns_save = termif_get_columns();
 	termif_set_screen_size(TERMIF_MAX_SCRN_LINES, TERMIF_MAX_SCRN_COLS);
 	for (int tries = 0; tries < MAX_REPORT_TRIES; tries++) {
 		send_cursor_pos_to_term(TERMIF_MAX_SCRN_LINES-1, TERMIF_MAX_SCRN_COLS-1);
+		int lines;
+		int cols;
 		if (receive_cursor_pos_from_term(&lines, &cols)) {
 			if (lines < TERMIF_MAX_SCRN_LINES && cols < TERMIF_MAX_SCRN_COLS) {
-				hmflf_d_printf("cols: %d, lines: %d\n", cols + 1, lines + 1);
+				hmflf_dprintf("cols: %d, lines: %d\n", cols + 1, lines + 1);
 				termif_set_screen_size(lines + 1, cols + 1);
 				return 1;
 			}
@@ -284,13 +281,9 @@ void termif_output_string(short yy, short xx, const char *string, int bytes)
 
 PRIVATE void set_string_to_vscreen(const char *string, int bytes)
 {
-	const char *str;
-	vscreen_char_t ucs21;
-	int width;
-
-	for (str = string; (str - string) < bytes; str += utf8c_bytes(str)) {
-		ucs21 = utf8c_decode(str);
-		width = utf8c_columns(str);
+	for (const char *str = string; (str - string) < bytes; str += utf8c_bytes(str)) {
+		vscreen_char_t ucs21 = utf8c_decode(str);
+		int width = utf8c_columns(str);
 		if (width == 1) {			// narrow char.
 			put_narrow_char_to_vscreen(ucs21);
 		} else if (width == 2) {	// wide char.
@@ -368,7 +361,7 @@ PRIVATE void dump_vscreen(int yy, int len)
 	char utf8c[MAX_UTF8C_BYTES + 1];
 	for (int vscr_idx = 0; vscr_idx < 2; vscr_idx++) {
 		vscreen_buf_t *buf = (vscr_idx == 0) ? &vscreen_to_paint : &vscreen_painted;
-		flf_d_printf("%s(%d): ", (vscr_idx == 0) ? "topaint" : "painted", yy);
+		flf_dprintf("%s(%d): ", (vscr_idx == 0) ? "topaint" : "painted", yy);
 		for (int idx = 0; idx < len; idx++) {
 			utf8c_encode((*buf)[yy][idx] & VSCR_CHAR_UCS21, utf8c);
 			d_printf(" %s", utf8c);
@@ -395,26 +388,23 @@ void termif_beep()
 	 : (vscreen_painted[yy][xx] != vscreen_to_paint[yy][xx]			\
 	  || vscreen_painted[yy][xx+1] != vscreen_to_paint[yy][xx+1]))
 
-// refresh screen by sending pending data in vscreen_to_paint to the screen.
+// refresh screen by sending pending data stored in vscreen_to_paint to the screen.
 void termif_refresh()
 {
-	int start_xx;
-	vscreen_char_t start_attrs;
-	char utf8c[MAX_UTF8C_BYTES + 1];
-	wchar_t ucs21;
-
+	send_all_off_to_term();
 	for (int yy = 0; yy < termif_lines; yy++) {
 		for (int xx = 0; xx < termif_columns; ) {
-			start_attrs = (vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS);
+			vscreen_char_t start_attrs = (vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS);
 			if (CMP_NARR_OR_WIDE_CHR()) {
 				char line_buf[TERMIF_LINE_BUF_LEN + 1] = "";
-				start_xx = xx;
+				int start_xx = xx;
 				for ( ; xx < termif_columns; ) {
-					ucs21 = vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21;
+					wchar_t ucs21 = vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21;
 					if (((vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS) != start_attrs)
 					 || CMP_NARR_OR_WIDE_CHR() == 0) {
 						break;
 					}
+					char utf8c[MAX_UTF8C_BYTES + 1];
 					utf8c_encode(ucs21, utf8c);
 					strlcat__(line_buf, TERMIF_LINE_BUF_LEN, utf8c);
 					if (VSCR_IS_COL1_WIDE_CHAR(vscreen_to_paint[yy][xx])
@@ -493,8 +483,8 @@ PRIVATE int receive_cursor_pos_from_term(int *yy, int *xx)
 		if ((get_usec() - usec_enter) >= MAX_WAIT_USEC) {
 			time_out = 1;	// time out
 		}
-		int len;
-		if ((len = read(STDIN_FILENO, bufr, MAX_REPORT_LEN)) > 0) {
+		int len = read(STDIN_FILENO, bufr, MAX_REPORT_LEN);
+		if (len > 0) {
 			bufr[len] = '\0';
 			strlcat__(buf, MAX_REPORT_LEN, bufr);
 			if ((strlen(buf) >= MAX_REPORT_LEN) || (tail_char(buf) == 'R')) {
@@ -522,18 +512,15 @@ PRIVATE int receive_cursor_pos_from_term(int *yy, int *xx)
 
 PRIVATE void send_attrs_to_term(vscreen_char_t attrs)
 {
-	vscreen_char_t attrs_xor;
-	attrs_xor = (attrs_sent ^ attrs) & VSCR_CHAR_ATTRS;
+	vscreen_char_t attrs_xor = (attrs_sent ^ attrs) & VSCR_CHAR_ATTRS;
 	if (attrs_xor == 0) {		// attributes changed ?
 		return;
 	}
 
-	int bgc;
-	int fgc;
+	int bgc = BGC_FROM_VSCR_CHAR_ATTRS(attrs);
+	int fgc = FGC_FROM_VSCR_CHAR_ATTRS(attrs);
 	int real_bgc;
 	int real_fgc;
-	bgc = BGC_FROM_VSCR_CHAR_ATTRS(attrs);
-	fgc = FGC_FROM_VSCR_CHAR_ATTRS(attrs);
 	if ((attrs & VSCR_CHAR_REV) == 0) {
 		real_bgc = bgc;
 		real_fgc = fgc;
@@ -610,16 +597,15 @@ PRIVATE void send_string_to_term(const char *string, int bytes)
 }
 PRIVATE void send_string_to_term__(const char *string, int bytes)
 {
-	int written;
-
 	if (bytes < 0) {
 		bytes = strlen(string);
 	}
 	fcntl(STDOUT_FILENO, F_SETFL, 0);		// Block in write()
-	if ((written = write(STDOUT_FILENO, string, bytes)) < bytes) {
-		hmflf_d_printf("ERROR: writing to STDOUT(%s)(%d < %d)\n",
+	int written = write(STDOUT_FILENO, string, bytes);
+	if (written < bytes) {
+		hmflf_dprintf("ERROR: writing to STDOUT(%s)(%d < %d)\n",
 		 strerror(errno), written, bytes);
-		hmflf_d_printf("[%s]\n", string);
+		hmflf_dprintf("[%s]\n", string);
 	}
 	fsync(STDOUT_FILENO);
 }

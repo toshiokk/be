@@ -139,22 +139,21 @@ int tio_init()
 {
 	strnset__(tio_blank_line_buf, ' ', MAX_SCRN_LINE_BUF_LEN);
 #ifdef ENABLE_NCURSES
-	flf_d_printf("Using curses (cursesif)\n");
+	flf_dprintf("Using curses (cursesif)\n");
 	curses_init();
 #else // ENABLE_NCURSES
-	flf_d_printf("Direct terminal control (termif)\n");
+	flf_dprintf("Direct terminal control (termif)\n");
 	termif_init();
 #endif // ENABLE_NCURSES
+	o_printf("\r\nBE_EDITOR_A{{\r\n");
+	MSLEEP(200);
 	tio_begin();
 	return 0;
-}
-void tio_enable_high_bgc(int enable)
-{
-	high_bgc_enabled = enable;
 }
 int tio_destroy()
 {
 	tio_end();
+	o_printf("\r\nBE_EDITOR_Z}}\r\n");
 	return 0;
 }
 
@@ -179,12 +178,21 @@ int tio_end()
 	return 0;
 }
 
+void tio_enable_high_bgc(int enable)
+{
+	high_bgc_enabled = enable;
+}
 int tio_resize()
 {
 	// update screen size
 	// re-initialize terminal interface to reflect new terminal size
-	tio_end();
-	tio_begin();
+#ifdef ENABLE_NCURSES
+	curses_end();
+	curses_begin();
+#else // ENABLE_NCURSES
+	termif_get_screen_size_from_term();
+	termif_clear_screen();
+#endif // ENABLE_NCURSES
 	return 0;
 }
 int tio_suspend()
@@ -208,7 +216,7 @@ int tio_resume()
 int tio_check_update_terminal_size()
 {
 	if (is_sigwinch_signaled()) {
-hmflf_d_printf("sigwinch_signaled\n");
+hmflf_dprintf("sigwinch_signaled\n");
 		clear_sigwinch_signaled();
 		tio_resize();
 		return 1;
@@ -424,6 +432,7 @@ void tio_beep()
 
 void tio_refresh()
 {
+_FLF_
 #ifdef ENABLE_NCURSES
 	curses_refresh();
 #else // ENABLE_NCURSES
@@ -459,7 +468,7 @@ void dump_term_settings(char *msg, struct termios *term)
 	for (ncc = 0; ncc < NCCS; ncc++) {
 		snprintf(&buf[ncc * 3], 3+1, " %02x", term->c_cc[ncc]);
 	}
-	flf_d_printf("term_settings-%s i: %08lx o: %08lx c: %08lx l: %08lx\ncc:%s\n",
+	flf_dprintf("term_settings-%s i: %08lx o: %08lx c: %08lx l: %08lx\ncc:%s\n",
 	 msg, term->c_iflag, term->c_oflag, term->c_cflag, term->c_lflag, buf);
 }
 #endif // ENABLE_DEBUG

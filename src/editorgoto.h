@@ -45,14 +45,10 @@
 
 void doe_goto_column();
 void doe_goto_line();
-void doe_tag_jump_in_cur_line();
-void doe_tag_jump_in_cur_curs_pos();
 #ifdef ENABLE_FILER
 void doe_filer();
 void doe_goto_dir_in_cur_line();
 void doe_goto_dir_in_cur_curs_pos();
-int try_to_open_dir_in_cur_line_with_filer(int line_byte_idx);
-int try_to_open_dir_in_str_with_filer(const char *str);
 #endif // ENABLE_FILER
 
 void doe_open_files_in_buf();
@@ -64,12 +60,10 @@ void doe_switch_to_bot_buffer();
 void doe_switch_to_prev_bufs_boundary();
 void doe_switch_to_next_bufs_boundary();
 
-///void doe_switch_to_prev_buffers();
-///void doe_switch_to_next_buffers();
-
 void memorize_cur_file_pos_before_jump();
 int memorize_prev_file_pos_if_changed();
 void doe_return_to_prev_file_pos();
+void recall_file_pos_before_jump();
 
 // Top level functions: never called recursively
 // |function name           |actions                                                    |
@@ -116,8 +110,8 @@ char *mk_file_pos_str(char *buffer, const char *file_path, int line_num, int col
 int get_file_line_col_from_str(const char *str, char *file_path,
  int *line_num, int *col_num);
 
-int switch_epc_buf_by_file_path(const char *abs_path);
-int switch_epc_buf_by_file_name(const char *file_name);
+int switch_epc_buf_by_full_path(const char *abs_path);
+int switch_epc_buf_by_rel_path(const char *file_path);
 
 int switch_epc_buf_to_edit_buf();
 int switch_epc_buf_to_top_of_edit_buf();

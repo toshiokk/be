@@ -2,8 +2,16 @@
 BETRASH=~/.betrash
 mkdir -p $BETRASH/files
 mkdir -p $BETRASH/dirs
-if [ -f "$1" ]; then
-  mv -fv "$1" $BETRASH/files
+filepath="$1"
+if [ ! -d "$filepath" ]; then
+  mv -fv "$filepath" $BETRASH/files
 else
-  mv -fv "$1" $BETRASH/dirs
+  if [ -d "$BETRASH/dirs" ]; then
+    echo -n "Are you sure to copy [$filepath] to [$BETRASH] and remove it ? "; read key
+    cp -av "$filepath" $BETRASH/dirs
+    echo -n "Are you sure to remove [$filepath] after copying to [$BETRASH] ? "; read key
+    rm -rv "$filepath"
+  else
+    mv -fv "$filepath" $BETRASH/dirs
+  fi
 fi

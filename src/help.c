@@ -57,10 +57,8 @@ int view_list(int help_idx)
 {
 #ifdef ENABLE_HISTORY
 	load_histories_if_file_newer();
-	bufs_renumber_all_bufs_from_top(&history_buffers);
 #endif // ENABLE_HISTORY
 	load_cut_buffers_if_file_newer();
-	bufs_renumber_all_bufs_from_top(&cut_buffers);
 
 	make_help_buf(HELP_BUF_IDX_EDITOR_FILE_LIST);
 #ifdef ENABLE_HELP
@@ -71,7 +69,6 @@ int view_list(int help_idx)
 	make_help_buf(HELP_BUF_IDX_FILER_KEY_LIST);
 #endif // ENABLE_FILER
 #endif // ENABLE_HELP
-	bufs_renumber_all_bufs_from_top(&help_buffers);
 
 	switch (help_idx) {
 	default:
@@ -155,7 +152,7 @@ PRIVATE void make_help_buf(int help_idx)
 		break;
 #endif // ENABLE_HELP
 	}
-	set_epc_buf(cur_edit_buf);
+	renumber_cur_buf_from_top();
 }
 
 PRIVATE void make_help_file_list(be_buf_t *cur_buf)

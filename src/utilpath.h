@@ -23,6 +23,7 @@
 #define utilpath_h
 
 #define MAX_PATH_LEN		PATH_MAX	// =4096
+#define HANDLE_DIR_PATH_WITH_TRAINLING_SLASH	// /path/to/dir ==> /path/to/dir/
 
 // directory
 
@@ -35,15 +36,17 @@ int check_availability_of_script();
 
 // file path string -------------------
 
-char *normalize_full_path(char *full_path);
+char *normalize_file_path(char *full_path);
 
-const char *cat_dir_and_file_s(const char *dir, const char *file);
-const char *cat_dir_and_file_s1(const char *dir, const char *file);
-const char *cat_dir_and_file_s2(const char *dir, const char *file);
-char *cat_dir_and_file(char *buf, const char *dir, const char *file);
+const char *concat_dir_and_file_s(const char *dir, const char *file);
+const char *concat_dir_and_file_s1(const char *dir, const char *file);
+const char *concat_dir_and_file_s2(const char *dir, const char *file);
+char *concat_dir_and_dir(char *buf, const char *dir, const char *dir2);
+char *concat_dir_and_file(char *buf, const char *dir, const char *file);
 
 int compare_file_path_in_abs_path(const char *file_path_a, const char *file_path_b);
 
+char *get_abs_dir_path(const char *path, char *abs_path);
 char *get_abs_path(const char *path, char *abs_path);
 char *get_full_path(const char *path, char *buf);
 char *get_real_path(const char *path, char *buf);
@@ -52,24 +55,23 @@ char *get_file_name_extension(char *file_name);
 
 char *separate_path_to_dir_and_file(const char *path, char *buf_dir, char *buf_file);
 
-char *remove_last_slash(char *path);
-char *add_last_slash_to_dir(char *dir);
+char *get_last_slash(char *path);
 
 int contain_redundant_slash(char *path);
 char *remove_redundant_slash(char *path);
-char *get_last_slash(char *path);
 
+int compare_dir_path_w_or_wo_trailing_slash(const char *dir1, const char *dir2);
 int compare_file_path_from_tail(const char *full_path, const char *file_path);
+
+char *add_trailing_slash_in_handling(char *dir);
+char *add_trailing_slash(const char *dir, char *buf);
+char *remove_trailing_slash(const char *str, char *buf);
 
 BOOL is_abs_path(const char *path);
 
 #ifdef ENABLE_FILER
 int is_path_wildcard(char *path);
 #endif // ENABLE_FILER
-
-char *getcwd__(char *cwd);
-char *getenv_pwd(char *cwd);
-char *getenv__(char *env);
 
 // realpath() -------------------------
 #if defined(HAVE_REALPATH)
@@ -79,16 +81,12 @@ char *realpath__(const char *path, char *buf, int buf_len);
 // readlink() -------------------------
 int readlink__(const char *path, char *buffer, int len);
 
-const char* add_temporal_file_path_prefix(const char* file_path);
-const char* remove_temporal_file_path_prefix(const char* file_path);
-int is_temporal_file_path(const char* file_path);
-
 // tests ======================================================================
 
 #ifdef START_UP_TEST
 
 void test_cwd_PWD();
-void test_normalize_path();
+void test_normalize_file_path();
 void test_cat_dir_and_file();
 void test_get_full_path();
 

@@ -60,21 +60,22 @@ typedef struct /*app_mode*/ {
 #define APP_MODE_CHOOSER		1			// text chooser		file/dir chooser
 #define APP_MODE_VIEWER			2			// text viewer		----
 	unsigned char app_LIST_MODE:2;			// bit 8,9
+	unsigned char app_SILENT:1;				// bit 10
 
 	// editor settings
-	unsigned char ed_EDITOR_PANES:1;		// bit 10 (0: 1 pane / 1: 2 panes)
-	unsigned char ed_EDITOR_PANEX:1;		// bit 11 (0: pane-0 / 1: pane-1)
-	unsigned char ed_DUAL_SCROLL:1;			// bit 12
-	unsigned char ed_SHOW_RULER:1;			// bit 13
-	unsigned char ed_SHOW_LINE_NUMBER:1;	// bit 14
+	unsigned char ed_EDITOR_PANES:1;		// bit 11 (0: 1 pane / 1: 2 panes)
+	unsigned char ed_EDITOR_PANEX:1;		// bit 12 (0: pane-0 / 1: pane-1)
+	unsigned char ed_DUAL_SCROLL:1;			// bit 13
+	unsigned char ed_SHOW_RULER:1;			// bit 14
+	unsigned char ed_SHOW_LINE_NUMBER:1;	// bit 15
 #define CURS_POSITIONING_NONE		0
 #define CURS_POSITIONING_TOP		1
 #define CURS_POSITIONING_CENTER		2
 #define CURS_POSITIONING_BOTTOM		3
-	unsigned char ed_CURS_POSITIONING:2;	// bit 15,16
+	unsigned char ed_CURS_POSITIONING:2;	// bit 16,17
 #ifdef ENABLE_SYNTAX
-	unsigned char ed_SYNTAX_HIGHLIGHT:1;	// bit 17
-	unsigned char ed_TAB_EOL_NOTATION:1;	// bit 18
+	unsigned char ed_SYNTAX_HIGHLIGHT:1;	// bit 18
+	unsigned char ed_TAB_EOL_NOTATION:1;	// bit 19
 #endif // ENABLE_SYNTAX
 	unsigned char ed_REVERSE_SEARCH:1;		// bit 20
 	unsigned char ed_IGNORE_CASE:1;			// bit 21
@@ -96,7 +97,7 @@ typedef struct /*app_mode*/ {
 	// filer settings
 	unsigned char fl_FILER_PANES:1;			// bit 28 (0: 1 pane / 1: 2 panes)
 	unsigned char fl_FILER_PANEX:1;			// bit 29 (0: pane-0 / 1: panes-1)
-	unsigned char fl_SHOW_DOT_FILE:1;		// bit 30
+	unsigned char fl_SHOW_DOT_FILE:1;		// bit 30 (1: show hidden files)
 #define FILE_SORT_BY_NAME		0
 #define FILE_SORT_BY_EXT		1
 #define FILE_SORT_BY_TIME		2
@@ -116,7 +117,7 @@ typedef struct /*app_mode*/ {
 	unsigned char fl_SHOW_FILE_INFO:3;		// bit 34-36
 #define SHOW_ZEBRA_STRIPING_OFF			0	// off
 #define SHOW_ZEBRA_STRIPING_ON			1	// ON
-	unsigned char fl_SHOW_ZEBRA_STRIPE:1;	// bit 35
+	unsigned char fl_SHOW_ZEBRA_STRIPE:1;	// bit 37
 } app_mode_t;
 
 typedef enum /*mode_idx*/ {
@@ -217,7 +218,7 @@ int get_backup_files();
 int tog_editor_panes();
 const char *get_str_editor_panes();
 int tog_editor_panex();
-const char *get_str_editor_panex();
+const char *get_str_editor_pane_num();
 
 int tog_show_dot_file();
 const char *get_str_show_dot_file();
@@ -233,7 +234,7 @@ const char *get_str_show_zebra_striping();
 int tog_filer_panes();
 const char *get_str_filer_panes();
 int tog_filer_panex();
-const char *get_str_filer_panex();
+const char *get_str_filer_pane_num();
 #endif // ENABLE_FILER
 
 int inc_key_list_lines();
@@ -244,8 +245,8 @@ const char *get_str_setting_none();
 
 // View mode and List mode of editor:
 // |editor mode     |load|save|cursor    |modify|mark  |choose|purpose     |
-// |editor mode     |load|save| move     |      | /cut |by tap|            |
-// |editor mode     |load|save|          |      | /copy|      |            |
+// |                |    |    | move     |      | /cut |by tap|            |
+// |                |    |    |          |      | /copy|      |            |
 // |----------------|----|----|----------|------|------|------|------------|
 // |APP_MODE_NORMAL |yes |yes |everywhere|all   |yes   |no    |text editor |
 // |APP_MODE_CHOOSER|auto|auto|vertical  |none  |no    |yes   |text chooser|
@@ -253,7 +254,7 @@ const char *get_str_setting_none();
 
 // View mode of filer:
 // |filer mode      |open/copy/move/ren|chdir|search|choose|purpose         |
-// |filer mode      |/remove/mkdir/exec|     |      |by tap|                |
+// |                |/remove/mkdir/exec|     |      |by tap|                |
 // |----------------|------------------|-----|------|------|----------------|
 // |APP_MODE_NORMAL |yes               |yes  |yes   |no    |file manager    |
 // |APP_MODE_CHOOSER|no                |yes  |yes   |yes   |file/dir chooser|

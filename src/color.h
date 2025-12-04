@@ -48,6 +48,10 @@ typedef enum {
 	MAX_ITEM_COLORS,
 } item_color_idx_t;
 
+#define CL_D0		((CL_DF)-0)		// use the same color with ITEM_COLOR_IDX_DEFAULT
+#define CL_D1		((CL_DF)-1)		// use the same color with ITEM_COLOR_IDX_TITLE
+#define CL_D2		((CL_DF)-2)		// use the same color with ITEM_COLOR_IDX_TEXT_NORMAL
+
 //------------------------------------------------------------------------------
 
 typedef struct /*item_color*/ {

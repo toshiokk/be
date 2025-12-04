@@ -98,7 +98,6 @@ be_line_t *line_set_string_len(be_line_t *line, const char *string, len_t len)
 		len = byte_idx_from_byte_idx(string, LIM_MAX(MAX_EDIT_LINE_LEN, len));
 	}
 	line->size = len + 1;
-	////_mlc_set_caller
 	line->data = char_remalloc(line->data, len + 1);
 	strlcpy__(line->data, string, len);	// copy string
 	return line;			// return line
@@ -373,7 +372,7 @@ void line_dump_cur(const be_line_t *line, const be_line_t *cur_line)
 		WARN_PTR(line);
 		return;
 	}
-	flf_d_printf("%s%03d,%08lx,<%08lx,>%08lx,%04d,%06d,%08lx[%s]\n",
+	flf_dprintf("%s%03d,%08lx,<%08lx,>%08lx,%04d,%06d,%08lx[%s]\n",
 	 line == cur_line ? ">" : " ",
 	 line->line_num,
 	 line, NODE_PREV(line), NODE_NEXT(line),
@@ -382,7 +381,7 @@ void line_dump_cur(const be_line_t *line, const be_line_t *cur_line)
 }
 void line_dump_byte_idx(const be_line_t *line, int byte_idx)
 {
-	flf_d_printf("line-%3d: ", line->line_num);	dump_str_w_caret(line->data, byte_idx);
+	flf_dprintf("line-%3d: ", line->line_num);	dump_str_w_caret(line->data, byte_idx);
 }
 #endif // ENABLE_DEBUG
 

@@ -30,7 +30,7 @@ PRIVATE int init_color_pairs();
 PRIVATE key_code_t getch_();
 
 //------------------------------------------------------------------------------
-PRIVATE struct termios term_settings_save;	/* The user's original term settings */
+PRIVATE struct termios term_settings_save;	// The user's original term settings
 PRIVATE char curses_bgc = 0;
 PRIVATE char curses_fgc = 7;
 PRIVATE char curses_rev = 0;
@@ -127,7 +127,7 @@ void curses_set_attrs(int bgc, int fgc, int rev)
 		fgc = curses_bgc;
 	}
 	if (fgc >= CL_HI) {
-		wattron(curses_win, A_BOLD);	// only foreground(character) color will be lighted
+		wattron(curses_win, A_BOLD);	// only foreground have lighter color
 	} else {
 		wattroff(curses_win, A_BOLD);
 	}

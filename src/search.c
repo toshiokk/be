@@ -21,23 +21,28 @@
 
 #include "headers.h"
 
-#ifndef ENABLE_HISTORY
-PRIVATE char last_searched_needle[MAX_PATH_LEN+1] = "";
+#ifdef ENABLE_HISTORY
+// define this to share it among BE editor instances
+#define GET_LAST_SEARCHED_NEEDLE_FROM_HISTORY
 #endif // ENABLE_HISTORY
 
-void set_last_searched_needle(const char* needle)
+#ifndef GET_LAST_SEARCHED_NEEDLE_FROM_HISTORY
+PRIVATE char last_searched_needle[MAX_PATH_LEN+1] = "";
+#endif // GET_LAST_SEARCHED_NEEDLE_FROM_HISTORY
+
+void set_last_searched_needle(const char *needle)
 {
-#ifndef ENABLE_HISTORY
+#ifndef GET_LAST_SEARCHED_NEEDLE_FROM_HISTORY
 	strlcpy__(last_searched_needle, needle, MAX_PATH_LEN);
-#endif // ENABLE_HISTORY
+#endif // GET_LAST_SEARCHED_NEEDLE_FROM_HISTORY
 }
-const char* get_last_searched_needle()
+const char *get_last_searched_needle()
 {
-#ifdef ENABLE_HISTORY
-	return history_last_line_str(HISTORY_TYPE_IDX_SEARCH);
-#else // ENABLE_HISTORY
+#ifndef GET_LAST_SEARCHED_NEEDLE_FROM_HISTORY
 	return last_searched_needle;
-#endif // ENABLE_HISTORY
+#else // GET_LAST_SEARCHED_NEEDLE_FROM_HISTORY
+	return history_last_line_str(HISTORY_TYPE_IDX_SEARCH);
+#endif // GET_LAST_SEARCHED_NEEDLE_FROM_HISTORY
 }
 
 #define SEARCH0		0
@@ -138,14 +143,14 @@ void doe_replace()
 // search0_replace1 = 0: search, 1: replace
 int input_search_str(int search0_replace1, char *input_buf)
 {
-	const char* last_needle = get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH);
+	const char *last_needle = get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH);
 	char default_needle[MAX_PATH_LEN+1];
 
 	if (strlen(last_needle)) {
 		// We use central_win_get_columns() / 3 here because we need to see more on the line
 		snprintf(default_needle, MAX_PATH_LEN+1, "(%.*s%s)",
 		 central_win_get_columns() / 3, last_needle,
-		 strlen(last_needle) > central_win_get_columns() / 3 ? "..." : "");
+		 (strlen(last_needle) > (central_win_get_columns() / 3)) ? "..." : "");
 	} else {
 		strcpy__(default_needle, "");
 	}
@@ -181,6 +186,7 @@ int input_search_str(int search0_replace1, char *input_buf)
 	}
 #endif // ENABLE_REGEX
 	set_last_searched_needle(input_buf);
+	SET_editor_do_next(EF_NONE);
 	return 1;							// input normally
 }
 
@@ -193,6 +199,7 @@ int input_replace_str(char *input_buf)
 		return 0;
 	}
 	set_last_searched_needle(input_buf);
+	SET_editor_do_next(EF_NONE);
 	return 1;
 }
 
@@ -213,7 +220,7 @@ PRIVATE int search_needle_among_bufs(be_line_t **ptr_line, int *ptr_byte_idx,
 // Search for a string
 int search_string_once(const char *needle, int search_count)
 {
-	const char* last_needle = get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH);
+	const char *last_needle = get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH);
 
 	memorize_cur_file_pos_before_jump();
 	if (found_in_prev_search == 0 && direction_of_prev_search == SEARCH_DIR()
@@ -281,7 +288,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			// found
 			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_CENTER,
 			 UPDATE_SCRN_ALL);
-			update_screen_editor(1, 1);
+			update_screen_editor(S_B_CURS, 1);
 			if (ret < ANSWER_ALL) {
 #ifdef ENABLE_UNDO
 				ret = ask_yes_no(ASK_YES_NO | ASK_ALL | ASK_BACKWARD | ASK_FORWARD | ASK_END
@@ -293,7 +300,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			} else {
 				// break ALL-replacing loop
 				if ((key = tio_input_key()) >= 0) {
-					if (key == K_C_C) {
+					if (key == K_C_c) {
 						ret = ANSWER_CANCEL;
 					} else
 					if (key == K_ESC) {
@@ -304,7 +311,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 		} else {
 			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_CENTER,
 			 UPDATE_SCRN_ALL);
-			update_screen_editor(1, 1);
+			update_screen_editor(S_B_CURS, 1);
 			// not found message has been displayed
 #ifdef ENABLE_UNDO
 			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_FORWARD | ASK_END
@@ -332,7 +339,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			if (match_len) {
 #ifdef ENABLE_UNDO
 #ifdef ENABLE_DEBUG
-				memorize_undo_state_before_change(NULL);
+				memorize_undo_state_before_change(__FUNCTION__);
 #endif // ENABLE_DEBUG
 				undo_set_region__save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
 #endif // ENABLE_UNDO
@@ -619,13 +626,6 @@ void prepare_colors_for_bracket_hl()
 		}
 	}
 	num_colors_for_bracket_hl = color_idx;
-#ifdef ENABLE_DEBUG
-///	for (color_idx = 0; color_idx < num_colors_for_bracket_hl; color_idx++) {
-///		flf_d_printf("color_idx: %d, bgc: %2d, fgc: %2d\n", color_idx,
-///		 colors_for_bracket_hl[color_idx].bgc,
-///		 colors_for_bracket_hl[color_idx].fgc);
-///	}
-#endif // ENABLE_DEBUG
 }
 int get_colors_for_bracket_hl()
 {

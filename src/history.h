@@ -55,8 +55,8 @@
 #define BASH_HISTORY_FILE_NAME			".bash_history"
 
 // Maximum number of search/execution/directory history strings saved
-#define MAX_HISTORY_LINES		1000
-#define MAX_HISTORY_LINES_10K	10000
+#define MAX_HISTORY_LINES		999
+#define MAX_HISTORY_LINES_10K	9999
 
 void init_histories();
 
@@ -65,8 +65,9 @@ void save_histories_if_modified();
 void save_histories_if_modified_newer__expired();
 int load_histories_if_file_newer();
 
+be_buf_t *get_history_buf(int hist_type_idx);
 void modify_save_history(int hist_type_idx, const char *str);
-void modify_history_w_sync(int hist_type_idx, const char *str);
+void modify_history_w_reloading(int hist_type_idx, const char *str);
 
 const char *get_history_newest(int hist_type_idx, int last_n);
 const char *get_history_completion(int hist_type_idx, const char *str);
@@ -75,12 +76,11 @@ const char *search_history_file_path(int hist_type_idx, const char *path);
 void set_history_newest(int hist_type_idx);
 const char *get_history_older(int hist_type_idx);
 
-const char* history_last_line_str(int hist_type_idx);
+const char *history_last_line_str(int hist_type_idx);
 
 //------------------------------------------------------------------------------
-void dir_history_append_temporarily(const char *dir);
-int dir_history_remove();
-int dir_history_fix();
+void dir_history_update(const char *dir);
+void dir_history_fix();
 
 //------------------------------------------------------------------------------
 int select_from_history_list(int hist_type_idx, char *buffer);

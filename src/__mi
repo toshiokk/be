@@ -22,8 +22,12 @@ echo ""
 ./__m
 
 strip be
+./be --version
 ls -l be
 echo -n "To install this, hit Enter: "; read key
+if [ "$rel_lvl" = 1 ]; then
+  cp -av be $HOME/mybin/
+fi
 sd sudo whoami
 sudo sh ./__m install
 sh _cp_be_scripts

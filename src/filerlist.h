@@ -44,7 +44,6 @@ typedef struct {
 	char listed_dir[MAX_PATH_LEN+1];	// directory from which file list gotten
 	file_info_t *file_info_array;		// array
 	int file_info_entries;				// array size
-///	int prev_file_idx;		// previous cur_file_idx. This is usable to locate cursor properly
 	int cur_file_idx;					// current index into array
 	int cursor_y;						// cursor y position in file view
 	char prev_dir[MAX_PATH_LEN+1];		// previous current directory

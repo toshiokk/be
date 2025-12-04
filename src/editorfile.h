@@ -37,16 +37,21 @@ void doe_reopen_file();
 void doe_write_file_to();
 
 void doe_write_file_ask();
-void doe_write_file_always();
+void doe_write_file_modified();
 void doe_write_all_ask();
 void doe_write_all_modified();
 
 void doe_close_file_ask();
 void doe_close_file_always();
 void doe_close_all_ask();
-void doe_close_all_modified();
+void doe_close_all_always();
 
 void doe_read_file_into_cur_buf();
+
+void doe_tag_jump_in_cur_line();
+void doe_tag_jump_in_cur_curs_pos();
+void doe_goto_file_in_cur_line();
+void doe_goto_file_in_cur_curs_pos();
 
 //------------------------------------------------------------------------------
 typedef enum {
@@ -63,6 +68,15 @@ int write_file_ask(int yes_no, close_after_save_t close);
 //------------------------------------------------------------------------------
 void lock_epc_buf_if_file_already_locked(BOOL lock_buffer_if_already_locked);
 void unlock_epc_buf_if_file_had_locked_by_myself();
+//------------------------------------------------------------------------------
+#ifdef START_UP_TEST
+void test_flock();
+#endif // START_UP_TEST
+
+int flock_lock(const char *full_path);
+int flock_unlock(const char *full_path);
+int flock_is_locked(const char *full_path);
+int delete_all_lock_files();
 
 #endif // editorfile_h
 

@@ -46,19 +46,7 @@ void set_win_depth(int nesting_depth)
 	win_depth = nesting_depth;
 	win_reinit_win_size();
 }
-void inc_win_depth()
-{
-	win_depth++;
-	win_reinit_win_size();
-}
-void dec_win_depth()
-{
-	if (win_depth > 0) {
-		win_depth--;
-		win_reinit_win_size();
-	}
-}
-const int get_win_depth()
+int get_win_depth()
 {
 	return win_depth;
 }
@@ -155,18 +143,23 @@ void win_select_cur_sub_win(int sub_win_idx)
 }
 
 #ifdef ENABLE_DEBUG
+void dump_cur_central_win()
+{
+	flf_dprintf("central_win: top-left(%d, %d), lines-columns(%d, %d)\n",
+	 central_win->top, central_win->left, central_win->lines, central_win->columns);
+}
 void dump_cur_sub_win()
 {
-	flf_d_printf("sub_win-%d: top-left(%d, %d), lines-columns(%d, %d)\n",
-	 cur_sub_win_idx, cur_sub_win->top, cur_sub_win->left,
-	 cur_sub_win->lines, cur_sub_win->columns);
+	flf_dprintf("sub_win-%d: top-left(%d, %d), lines-columns(%d, %d)\n",
+	 cur_sub_win_idx,
+	 cur_sub_win->top, cur_sub_win->left, cur_sub_win->lines, cur_sub_win->columns);
 }
 #endif // ENABLE_DEBUG
 
 //------------------------------------------------------------------------------
 const char *shrink_str_to_scr_static(const char *str)
 {
-	return shrink_str_static(str, central_win_get_columns() / 2, 5);
+	return shrink_str_static(str, central_win_get_columns() / 3 * 2, 5);
 }
 
 //------------------------------------------------------------------------------

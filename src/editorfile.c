@@ -68,11 +68,6 @@ void doe_open_new_file()
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 		return;
 	}
-#ifdef ENABLE_FILER
-	if (try_to_open_dir_in_str_with_filer(file_path)) {
-		return;
-	}
-#endif // ENABLE_FILER
 }
 
 void doe_open_proj_file()
@@ -180,7 +175,7 @@ PRIVATE int _doe_reopen_file()
 #ifdef ENABLE_UNDO
 #ifdef ENABLE_DEBUG
 	// file was reopened, re-memorize undo state.
-	memorize_undo_state_before_change(NULL);
+	memorize_undo_state_before_change(__FUNCTION__);
 #endif // ENABLE_DEBUG
 #endif // ENABLE_UNDO
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL_SOON);
@@ -189,18 +184,18 @@ PRIVATE int _doe_reopen_file()
 }
 
 //------------------------------------------------------------------------------
-//|file saving function    |files|close|unmod|ask  |file-name|Key|
-//|                        |     |     |ified| Y/N |         |   |
-//|------------------------|-----|-----|-----|-----|---------|---|
-//|doe_write_file_to()     | one |no   | Yes |none |New-name |@s |write to new file
-//|doe_write_file_ask()    | one |no   | no  |Ask  |cur-name |@w |
-//|doe_write_file_always() | one |no   | no  |none |cur-name |@W |write soon if modified
-//|doe_write_all_ask()     | All |no   | no  |Ask  |cur-name |@a |
-//|doe_write_all_modified()| All |no   | no  |none |cur-name |@A |
-//|doe_close_file_ask()    | one |Close| no  |Ask  |cur-name |^Q |
-//|doe_close_file_always() | one |Close| no  |none |cur-name |@^Q|write soon if mod. and close
-//|doe_close_all_ask()     | All |Close| no  |Ask  |cur-name |@q |
-//|doe_close_all_modified()| All |Close| no  |none |cur-name |@Q |write soon if mod. and close
+//|file saving function     |files|close|unmod|ask  |file-name|Key|
+//|                         |     |     |ified| Y/N |         |   |
+//|-------------------------|-----|-----|-----|-----|---------|---|
+//|doe_write_file_to()      | one |no   | Yes |none |New-name |@s |write to new file
+//|doe_write_file_ask()     | one |no   | no  |Ask  |cur-name |@w |
+//|doe_write_file_modified()| one |no   | no  |none |cur-name |@W |write soon if modified
+//|doe_write_all_ask()      | All |no   | no  |Ask  |cur-name |@a |
+//|doe_write_all_modified() | All |no   | no  |none |cur-name |@A |
+//|doe_close_file_ask()     | one |Close| no  |Ask  |cur-name |^Q |
+//|doe_close_file_always()  | one |Close| no  |none |cur-name |@^Q|write soon if mod. and close
+//|doe_close_all_ask()      | All |Close| no  |Ask  |cur-name |@q |
+//|doe_close_all_always()   | All |Close| no  |none |cur-name |@Q |write soon if mod. and close
 
 PRIVATE int input_new_file_name__ask(char *file_path);
 
@@ -310,7 +305,7 @@ void doe_write_file_ask()
 {
 	write_file_ask(ANSWER_NO, NO_CLOSE_AFTER_SAVE_0);
 }
-void doe_write_file_always()
+void doe_write_file_modified()
 {
 	write_file_ask(ANSWER_FORCE, NO_CLOSE_AFTER_SAVE_0);
 }
@@ -362,7 +357,7 @@ void doe_close_all_ask()
 {
 	write_close_all(ANSWER_NO);
 }
-void doe_close_all_modified()
+void doe_close_all_always()
 {
 	write_close_all(ANSWER_ALL);
 }
@@ -395,6 +390,85 @@ void doe_read_file_into_cur_buf()
 	recall_file_pos_from_str(file_pos_str);
 	doe_paste_text_with_pop();
 }
+
+// |function name               |difference                                          |
+// |----------------------------|----------------------------------------------------|
+// |doe_tag_jump_in_cur_line    |jump to the file or directory gotten from line top  |
+// |doe_tag_jump_in_cur_curs_pos|jump to the file or directory gotten from cursor pos|
+
+// TAG JUMP (file_path is taken from the head of current line)
+void doe_tag_jump_in_cur_line()
+{
+	doe_goto_file_in_cur_line();
+	if (editor_do_next == EF_LOADED_RET_TO_EDITOR) {
+		// files opened
+		return;
+	}
+#ifdef ENABLE_FILER
+	// going to change directory
+	doe_goto_dir_in_cur_line();
+#endif // ENABLE_FILER
+}
+// TAG JUMP (file_path is taken from the current cursor position)
+void doe_tag_jump_in_cur_curs_pos()
+{
+	doe_goto_file_in_cur_curs_pos();
+	if (editor_do_next == EF_LOADED_RET_TO_EDITOR) {
+		// files opened
+		return;
+	}
+#ifdef ENABLE_FILER
+	// going to change directory
+	doe_goto_dir_in_cur_curs_pos();
+#endif // ENABLE_FILER
+}
+
+PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx);
+PRIVATE int goto_file_in_string(const char *string);
+void doe_goto_file_in_cur_line()
+{
+	goto_file_in_cur_line_byte_idx(0);
+}
+void doe_goto_file_in_cur_curs_pos()
+{
+	goto_file_in_cur_line_byte_idx(EPCBVC_CLBI);
+}
+PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx)
+{
+	return goto_file_in_string(&(EPCBVC_CL->data[line_byte_idx]));
+}
+PRIVATE int goto_file_in_string(const char *string)
+{
+	clear_files_loaded();
+
+	char file_pos_str[MAX_PATH_LEN+1];
+	memorize_cur_file_pos_into_str(file_pos_str);
+	// CURDIR: changed to cur-file's abs-dir
+	char dir_save[MAX_PATH_LEN+1];
+	chdir_by_file_path_after_save(dir_save, buf_get_file_path(get_epc_buf(), NULL));
+	// file_path is taken from the line_byte_idx of current line
+	int files = load_files_in_string(string, TUL0 | OOE0 | MOE1 | LFH1 | RDOL0 | FOLF0
+	 | RECURS1 | MFPL1);
+	change_cur_dir(dir_save);
+
+	disp_files_loaded_if_ge_0();
+	if (files < 0) {
+		recall_file_pos_from_str(file_pos_str);
+	} else {
+		memorize_prev_file_pos_if_changed();
+		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
+		SET_editor_do_next(EF_LOADED_RET_TO_EDITOR);
+	}
+	return files;
+}
+
+void doe_open_files_in_buf()
+{
+	load_files_in_cur_buf();
+	disp_files_loaded_if_ge_0();
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+}
+
 //------------------------------------------------------------------------------
 int write_all_ask(int yes_no, close_after_save_t close)
 {
@@ -408,7 +482,7 @@ int write_all_ask(int yes_no, close_after_save_t close)
 		if (switch_epc_buf_to_next_buf(0, 0) == 0)
 			break;
 	}
-	disp_status_bar_done(_("All modified buffers are saved"));
+	disp_status_bar_done(_("All buffers are saved"));
 	return 1;
 }
 int close_all_not_modified()
@@ -462,7 +536,7 @@ int write_file_ask(int yes_no, close_after_save_t close)
 	}
 
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
-	update_screen_editor(1, 1);
+	update_screen_editor(S_B_CURS, 1);
 	if (ret < ANSWER_ALL) {
 		ret = ask_yes_no(ASK_YES_NO | ASK_ALL,
 		 close == 0
@@ -481,6 +555,7 @@ int write_file_ask(int yes_no, close_after_save_t close)
 	}
 	return ret;		// ANSWER_ALL/ANSWER_YES/ANSWER_NO
 }
+
 //------------------------------------------------------------------------------
 // The word 'lock' has two meanings:
 // - file lock:   file has been locked by someone
@@ -514,6 +589,84 @@ void unlock_epc_buf_if_file_had_locked_by_myself()
 		// this file has been locked by another instance:
 		// - nothing to do
 	}
+}
+
+//------------------------------------------------------------------------------
+#ifdef START_UP_TEST
+void test_flock()
+{
+	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
+	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 0);
+	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
+	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 1);
+	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 0);
+	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 1);
+
+	// below line causes error at the next calling test_flock()
+	////MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
+}
+#endif // START_UP_TEST
+
+PRIVATE int flock_create_lock_file(const char *full_path);
+PRIVATE int flock_delete_lock_file(const char *full_path);
+PRIVATE const char *flock_get_lock_file_path(const char *full_path);
+
+int flock_lock(const char *full_path)
+{
+	if (flock_is_locked(full_path)) {
+		return 1;	// lock already exist
+	}
+	flock_create_lock_file(full_path);
+	return 0;		// successfully locked
+}
+int flock_unlock(const char *full_path)
+{
+	if (flock_is_locked(full_path) == 0) {
+		return 1;	// lock not exist
+	}
+	flock_delete_lock_file(full_path);
+	return 0;		// successfully unlocked
+}
+int flock_is_locked(const char *full_path)
+{
+	return is_path_exist(flock_get_lock_file_path(full_path));
+}
+PRIVATE int flock_create_lock_file(const char *full_path)
+{
+	return write_text_to_file(flock_get_lock_file_path(full_path), 0, "");
+}
+PRIVATE int flock_delete_lock_file(const char *full_path)
+{
+	return remove_file(flock_get_lock_file_path(full_path));
+}
+
+//      "/path/to/a/file/being/locked.txt"
+//  ==> ".path.to.a.file.being.locked.txt"
+//  ==> "$APP_DIR/.path.to.a.file.being.locked.txt"
+// e.g. "/home/user/.be/.home.user.tools.be.be.app_defs.txt"
+PRIVATE const char *flock_get_lock_file_path(const char *full_path)
+{
+	static char lock_file_path[MAX_PATH_LEN+1];
+	char abs_path[MAX_PATH_LEN+1];
+	get_abs_path(full_path, abs_path);
+	if (strlcmp__(abs_path, "/") != 0) {
+		progerr_printf("not full path [%s]\n", abs_path);
+	}
+	str_tr(abs_path, '/', '.');
+	concat_dir_and_file(lock_file_path, get_app_dir(), abs_path);
+	return lock_file_path;
+}
+
+int delete_all_lock_files()
+{
+	char lock_file_path[MAX_PATH_LEN+1];
+	concat_dir_and_file(lock_file_path, get_app_dir(), ".*");
+
+	char command_str[MAX_PATH_LEN+1] = "";
+	// "rm -v /home/user/.be/.*"
+	snprintf_(command_str, MAX_PATH_LEN, "rm -v %s >/dev/null 2>&1", lock_file_path);
+
+	return fork_exec_sh_c(EX_FLAGS_0, command_str);
 }
 
 // End of editorfile.c

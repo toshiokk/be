@@ -77,7 +77,7 @@ extern be_bufs_t edit_buffers;
 
 #define BV_CL(bv)						((bv)->cur_line)
 #define BV_CL_DATA(bv)					((bv)->cur_line->data)
-#define BV_CLBI(bv)					((bv)->cur_line_byte_idx)
+#define BV_CLBI(bv)						((bv)->cur_line_byte_idx)
 #define BV_CURS_Y(bv)					((bv)->cursor_y)
 #define BV_CURS_X_TO_KEEP(bv)			((bv)->cursor_x_to_keep)
 #define BV_MIN_TEXT_X_TO_KEEP(bv)		((bv)->min_text_x_to_keep)
@@ -171,7 +171,8 @@ void line_avoid_wild_ptr(be_line_t **line_ptr, be_line_t *line);
 
 void set_cur_editor_panes(editor_panes_t *editor_panes);
 editor_panes_t* get_cur_editor_panes();
-void init_cur_editor_panes(editor_panes_t *eps, be_buf_t *buf);
+void init_editor_panes(editor_panes_t *eps);
+void inherit_editor_panes(editor_panes_t *eps, be_buf_t *buf);
 void free_editor_panes();
 void copy_editor_panes(editor_panes_t *dest, editor_panes_t *src);
 
@@ -188,7 +189,7 @@ int is_any_ebuf_modified();
 
 int is_epc_buf_edit_buf();
 be_bufs_t* get_bufs_contains_buf(be_buf_t* buf);
-const char* get_bufs_name_contains_buf(be_buf_t* buf);
+const char *get_bufs_name_contains_buf(be_buf_t* buf);
 
 int is_epc_buf_modifiable();
 int is_epc_buf_saveable();
@@ -203,9 +204,9 @@ int is_epc_buf_file_wp();
 int is_epc_buf_file_locked();
 int is_epc_buf_modified();
 
-const char* get_all_buf_state_str();
-const char* get_all_buf_unmodifiable_str();
-const char* get_epc_buf_mode_str();
+const char *get_all_buf_state_str();
+const char *get_all_buf_unmodifiable_str();
+const char *get_epc_buf_mode_str();
 
 //------------------------------------------------------------------------------
 // Some compiler needs "inline static" for inline functions
@@ -220,8 +221,8 @@ void dump_buf_view_x(be_buf_t *buf, int pane_idx);
 
 //------------------------------------------------------------------------------
 
-be_buf_t *get_edit_buf_by_file_path(const char *abs_path);
-be_buf_t *get_edit_buf_by_file_name(const char *file_name);
+be_buf_t *get_any_buf_by_full_path(const char *file_path);
+be_buf_t *get_edit_buf_by_file_path(const char *file_name);
 
 void create_edit_buf(const char *file_path);
 
@@ -230,7 +231,7 @@ int append_magic_line_if_necessary();
 
 int has_bufs_to_edit();
 int count_edit_bufs();
-int epc_buf_count_bufs();
+int epc_buf_count();
 
 //------------------------------------------------------------------------------
 
@@ -332,8 +333,8 @@ void doe_set_buf_enc_jis();
 void doe_set_buf_enc_binary();
 
 //------------------------------------------------------------------------------
-const char* make_internal_buf_file_path(const char* file_path);
-int is_internal_buf_file_path(const char* file_path);
+const char *make_internal_buf_file_path(const char *file_path);
+int is_internal_buf_file_path(const char *file_path);
 
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG

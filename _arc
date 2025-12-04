@@ -9,7 +9,18 @@ fi
 cd ..
 rm_tildes -
 
-tar -czvf be`yymmdd-hhmm`.tgz be/*
+tgz_file=be`yymmdd-hhmm`.tgz
+tar -czvf $tgz_file be/*
+
+echo -n "Do you want to copy the archive file to USB drive in Linux ? [y/N] "; read key
+if [ "$key" = y ]; then
+  cp -av $tgz_file /home/user/media-user/8E5A-A6E8/
+fi
+
+echo -n "Do you want to copy the archive file to USB drive in WSL ? [y/N] "; read key
+if [ "$key" = y ]; then
+  ./_to_usb.sh $tgz_file
+fi
 
 cd be
 #./__m

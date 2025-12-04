@@ -21,6 +21,33 @@
 
 #include "headers.h"
 
+const char *get_ef_name(ef_do_next_t do_next)
+{
+	switch (do_next) {
+	default:						return "EF_UNKNOWN";
+	case EF_NONE:					return "EF_NONE";
+	case FL_UPDATE_AUTO:			return "FL_UPDATE_AUTO";
+	case FL_UPDATE_FORCE:			return "FL_UPDATE_FORCE";
+	case EF_CANCELLED:				return "EF_CANCELLED";
+	case EF_TO_QUIT:				return "EF_TO_QUIT";
+	case EF_CHDIR_RET_TO_FILER:		return "EF_CHDIR_RET_TO_FILER";
+	case EF_LOADED_RET_TO_EDITOR:	return "EF_LOADED_RET_TO_EDITOR";
+	case EF_EXECUTED_RET_TO_CALLER:	return "EF_EXECUTED_RET_TO_CALLER";
+	case FL_ENTER_FILE_NAME:		return "FL_ENTER_FILE_NAME";
+	case FL_ENTER_FILE_NAME_ADD:	return "FL_ENTER_FILE_NAME_ADD";
+	case FL_ENTER_FILE_PATH:		return "FL_ENTER_FILE_PATH";
+	case FL_ENTER_FILE_PATH_ADD:	return "FL_ENTER_FILE_PATH_ADD";
+	case FL_ENTER_DIR_PATH:			return "FL_ENTER_DIR_PATH";
+	case FL_ENTER_DIR_PATH_ADD:		return "FL_ENTER_DIR_PATH_ADD";
+	case EF_ENTER_STRING:			return "EF_ENTER_STRING";
+	case EF_ENTER_STRING_ADD:		return "EF_ENTER_STRING_ADD";
+	case EF_INPUT_PATH_TO_COPY:		return "EF_INPUT_PATH_TO_COPY";
+	case EF_INPUT_PATH_TO_MOVE:		return "EF_INPUT_PATH_TO_MOVE";
+	}
+}
+
+int input_string_full_path = 0;
+
 PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, va_list ap);
 PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_byte_idx,
@@ -28,7 +55,8 @@ PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_b
 PRIVATE void disp_input_box(const char *buf, const char *input_buf, int x);
 PRIVATE void blank_input_box();
 
-int input_string_full_path = 0;
+PRIVATE int determine_input_box_y();
+PRIVATE int get_input_box_y();
 
 // input_string:
 // - "file-name"
@@ -43,8 +71,6 @@ int input_string_full_path = 0;
 //   input_new_file_name__ask()
 //   _dof_open_new_file()
 
-
-
 int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, ...)
 {
@@ -54,6 +80,7 @@ int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx
 	int ret = input_str_pos_(default__, input_buf, cursor_byte_idx, hist_type_idx, msg, ap);
 	va_end(ap);
 	disp_status_bar_cwd();
+flf_dprintf("is_epc_buf_modified(): %d\n", is_epc_buf_modified());
 	return ret;
 }
 int input_full_path(const char *default__, char *input_buf, int cursor_byte_idx,
@@ -88,30 +115,31 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 	int byte_idx = byte_idx_from_col_idx(msg_buf, central_win_get_columns(), CHAR_LEFT, NULL);
 	msg_buf[byte_idx] = '\0';		// limit message length
 
-	update_screen_app(1, 1);
+	update_screen_app(S_B_CURS, 1);
 
 	get_full_path_of_cur_dir(dir_save);
 	tio_set_cursor_on(1);
 	recursively_called++;
 	//--------------------------------------------------------------------------
 	int ret = input_str_pos__(default__, input_buf, cursor_byte_idx, hist_type_idx, msg_buf);
+	flf_dprintf("app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_ef_name(ret));
 	//--------------------------------------------------------------------------
 	recursively_called--;
-flf_d_printf("ret__: %d\n", ret);
 	tio_set_cursor_on(0);
 	change_cur_dir(dir_save);
 
-	update_screen_app(1, 1);
+	update_screen_app(S_B_CURS, 1);
 
-	if (ret <= EF_QUIT) {
+	if (ret <= EF_TO_QUIT) {
 		disp_status_bar_warn(_("Input string cancelled"));
 	}
 #ifdef ENABLE_HISTORY
-	if (IS_EF_STRING_ENTERED(ret)) {
+	if (IS_EF_ENTER_STRING(ret)) {
 		// input normally
-		modify_history_w_sync(hist_type_idx, input_buf);
+		modify_history_w_reloading(hist_type_idx, input_buf);
 	}
 #endif
+flf_dprintf("ret__[%s]\n", get_ef_name(ret));
 	return ret;
 }
 
@@ -136,7 +164,7 @@ PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_b
 		//----------------------------------
 		key_input = input_key_wait_return();
 		//----------------------------------
-		hmflf_d_printf("input%ckey:0x%04x(%s)=======================================\n",
+		hmflf_dprintf("input%ckey:0x%04x(%s)================\n",
 		 '_', (UINT16)key_input, short_key_name_from_key_code(key_input, NULL));
 
 		if (is_key_print(key_input)) {
@@ -149,11 +177,11 @@ PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_b
 		}
 		// function key
 		const char *func_id = get_func_id_from_key(key_input);
-flf_d_printf("func_id: [%s]\n", func_id);
+flf_dprintf("func_id: [%s]\n", func_id);
 		if ((key_input == K_ESC) || (key_input == K_M_ESC)
 		 || (strcmp(func_id, "doe_close_file_ask") == 0)
 		 || (strcmp(func_id, "doe_close_all_ask") == 0)
-		 || (strcmp(func_id, "doe_close_all_modified") == 0)) {
+		 || (strcmp(func_id, "doe_close_all_always") == 0)) {
 			strcpy__(input_buf, "");
 			ret = EF_CANCELLED;				// cancelled, return
 		} else
@@ -304,7 +332,8 @@ flf_d_printf("func_id: [%s]\n", func_id);
 			//----------------------------------------------------
 			ret = select_from_history_list(hist_type_idx, buffer);
 			//----------------------------------------------------
-			if ((ret == EF_ENTER_STRING) || (ret == EF_ENTER_STRING_ADD)) {
+			hmflf_dprintf("app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_ef_name(ret));
+			if (IS_EF_ENTER_STRING(ret)) {
 				if ((ret == EF_ENTER_STRING) || (strcmp(func_id, "doe_page_up") == 0)) {
 					// clear input buffer
 					strcpy__(input_buf, "");
@@ -315,7 +344,9 @@ flf_d_printf("func_id: [%s]\n", func_id);
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
 				 cursor_byte_idx, buffer);
 			}
-			ret = EF_NONE;
+			if (! IS_EF_DONE(ret)) {
+				ret = EF_NONE;
+			}
 #endif // ENABLE_HISTORY
 #ifdef ENABLE_FILER
 		} else
@@ -325,7 +356,8 @@ flf_d_printf("func_id: [%s]\n", func_id);
 			//---------------------------------------------------
 			ret = do_call_filer(1, APP_MODE_CHOOSER, "", "", buffer);
 			//---------------------------------------------------
-			if ((ret == EF_ENTER_STRING) || (ret == EF_ENTER_STRING_ADD)) {
+			hmflf_dprintf("app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_ef_name(ret));
+			if (IS_EF_ENTER_STRING(ret)) {
 				if ((ret == EF_ENTER_STRING) || (strcmp(func_id, "doe_page_down") == 0)) {
 					// clear input buffer
 					strcpy__(input_buf, "");
@@ -336,40 +368,58 @@ flf_d_printf("func_id: [%s]\n", func_id);
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
 				 cursor_byte_idx, buffer);
 			}
-			ret = EF_NONE;
+			if (! IS_EF_DONE(ret)) {
+				ret = EF_NONE;
+			}
 #endif // ENABLE_FILER
 		}
-		// EF_QUIT: stay in this loop
-		if ((ret == EF_CANCELLED) || IS_EF_STRING_ENTERED(ret)
-		 || (ret == EF_LOADED) || (ret == EF_EXECUTED)) {
+flf_dprintf("func_id: [%s], key_input: %04x, ret__[%s]\n", func_id, key_input, get_ef_name(ret));
+		if ((ret == EF_CANCELLED) || IS_EF_ENTER_STRING(ret) || IS_EF_DONE(ret)) {
 			break;
 		}
 		sync_cut_buffers_and_histories();
 	}
+flf_dprintf("key_input: %04x, ret__[%s]\n", key_input, get_ef_name(ret));
 	return ret;
 } // input_str_pos__
 
-/* display input box
-#Prompt message#######################################################
-#input-string                                                        #
-###UP:history##DOWN:browser###########################################
-*/
+	// display input box
+	//+Prompt message------------------------------------------------------+
+	//|input-string                                                        |
+	//|UP:history DOWN:browser---------------------------------------------|
+	//+CWD: /usr/local/bin-------------------------------------------------+
+#define INPUT_BOX_LINES				4
+#define INPUT_BOX_X_L_BORDER_WIDTH	1
+#define INPUT_BOX_X_R_BORDER_WIDTH	1
+#define INPUT_BOX_X_LR_BORDER_WIDTH	(INPUT_BOX_X_L_BORDER_WIDTH + INPUT_BOX_X_R_BORDER_WIDTH)
+#define INPUT_BOX_Y_PROMPT			0
+#define INPUT_BOX_Y_INPUT			1
+#define INPUT_BOX_Y_HELP			2
+#define INPUT_BOX_Y_CWD				3
 PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_byte_idx)
 {
-	determine_input_line_y();
+	determine_input_box_y();
 	blank_input_box();
 	set_item_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
-	central_win_output_string(get_input_line_y(), 1, msg, -1);
-	central_win_output_string(get_input_line_y()+2, 1,
-	 _("UP/PGUP:history, DOWN/PGDN:filer"), -1);
+
+	int input_area_width = central_win_get_columns()-INPUT_BOX_X_LR_BORDER_WIDTH;
+	char buf_cwd[MAX_PATH_LEN+1];
+	snprintf_(buf_cwd, MAX_PATH_LEN, _("CWD: %s"), get_full_path_of_cur_dir(NULL));
+	central_win_output_string(get_input_box_y()+INPUT_BOX_Y_PROMPT,
+	 INPUT_BOX_X_L_BORDER_WIDTH, msg, -1);
+	central_win_output_string(get_input_box_y()+INPUT_BOX_Y_HELP,
+	 INPUT_BOX_X_L_BORDER_WIDTH, _("UP/PGUP:history, DOWN/PGDN:filer"), -1);
+	central_win_output_string(get_input_box_y()+INPUT_BOX_Y_CWD,
+	 INPUT_BOX_X_L_BORDER_WIDTH, shrink_str(buf_cwd, input_area_width, 5), -1);
 	set_item_color_by_idx(ITEM_COLOR_IDX_INPUT, 0);
 
-	int input_area_width = central_win_get_columns()-2;
 	int cursor_col_idx = col_idx_from_byte_idx(input_buf, cursor_byte_idx);
 	if (cursor_col_idx < input_area_width) {
 		int bytes = byte_idx_from_col_idx(input_buf, input_area_width, CHAR_LEFT, NULL);
-		central_win_output_string(get_input_line_y()+1, 1, input_buf, bytes);
-		central_win_set_cursor_pos(get_input_line_y()+1, 1 + cursor_col_idx);
+		central_win_output_string(get_input_box_y()+INPUT_BOX_Y_INPUT,
+		 INPUT_BOX_X_L_BORDER_WIDTH, input_buf, bytes);
+		central_win_set_cursor_pos(get_input_box_y()+INPUT_BOX_Y_INPUT,
+		 INPUT_BOX_X_L_BORDER_WIDTH + cursor_col_idx);
 	} else {
 #define TRUNCATION_MARK	"."
 		//"abcdefghijklmnopqrstuvwxyz"
@@ -385,10 +435,11 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 		 cursor_col_idx - (input_area_width-2), CHAR_RIGHT, NULL);
 		int bytes = byte_idx_from_col_idx(&input_buf[start_byte_idx],
 		 input_area_width - utf8s_columns(TRUNCATION_MARK, MAX_SCRN_COLS), CHAR_LEFT, NULL);
-		central_win_output_string(get_input_line_y()+1, 1, TRUNCATION_MARK, -1);
+		central_win_output_string(get_input_box_y()+INPUT_BOX_Y_INPUT,
+		 INPUT_BOX_X_L_BORDER_WIDTH, TRUNCATION_MARK, -1);
 		central_win_output_string(-1, -1, &input_buf[start_byte_idx], bytes);
-		central_win_set_cursor_pos(get_input_line_y()+1,
-		 1 + utf8s_columns(TRUNCATION_MARK, MAX_SCRN_COLS)
+		central_win_set_cursor_pos(get_input_box_y()+INPUT_BOX_Y_INPUT,
+		 INPUT_BOX_X_L_BORDER_WIDTH + utf8s_columns(TRUNCATION_MARK, MAX_SCRN_COLS)
 		 + col_idx_from_byte_idx(&input_buf[start_byte_idx], cursor_byte_idx - start_byte_idx));
 	}
 	tio_refresh();
@@ -401,14 +452,40 @@ PRIVATE void blank_input_box()
 	//+--------------------------------------------------------------------+
 	//|                                                                    |
 	//+--------------------------------------------------------------------+
-	central_win_clear_lines(get_input_line_y(), -3);
+	//+--------------------------------------------------------------------+
+	central_win_clear_lines(get_input_box_y(), -INPUT_BOX_LINES);
 	// clear input area
 	set_item_color_by_idx(ITEM_COLOR_IDX_INPUT, 0);
 	//+--------------------------------------------------------------------+
 	//|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|
 	//+--------------------------------------------------------------------+
-	central_win_output_string(get_input_line_y()+1, 1, tio_blank_line(),
-	 central_win_get_columns()-2);
+	//+--------------------------------------------------------------------+
+	int input_area_width = central_win_get_columns()-INPUT_BOX_X_LR_BORDER_WIDTH;
+	central_win_output_string(get_input_box_y()+INPUT_BOX_Y_INPUT,
+	 INPUT_BOX_X_L_BORDER_WIDTH, tio_blank_line(), input_area_width);
+}
+
+PRIVATE int input_box_y = 2;
+// determines Y position of input-box avoiding the current cursor line
+PRIVATE int determine_input_box_y()
+{
+	int cursor_y = win_get_saved_cursor_y();
+	input_box_y = central_win_get_mid_win_y() + central_win_get_mid_win_lines() / 2;
+	if (IS_IN_RANGE(input_box_y-1, cursor_y, input_box_y + INPUT_BOX_LINES+1)) {
+		// avoid showing input box over the current cursor line
+		if (input_box_y <= cursor_y) {
+			// avoid above
+			input_box_y = cursor_y - (INPUT_BOX_LINES+1);
+		} else {
+			// avoid below
+			input_box_y = cursor_y + 1+1;
+		}
+	}
+	return input_box_y = MIN_MAX_(TITLE_LINES, input_box_y, central_win_get_status_line_y());
+}
+PRIVATE int get_input_box_y()
+{
+	return input_box_y;
 }
 
 //------------------------------------------------------------------------------
@@ -449,8 +526,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 		// display key list
 		disp_ask_yes_no_msg(flags);
 
-		set_item_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);
-		set_item_color_by_idx(ITEM_COLOR_IDX_WARNING1, 1);
+		set_item_color_by_idx(ITEM_COLOR_IDX_WARNING1, 0);
 		blank_status_bar();
 		central_win_output_string(central_win_get_status_line_y(), 0, msg_buf, -1);
 		tio_refresh();
@@ -460,6 +536,10 @@ int ask_yes_no(int flags, const char *msg, ...)
 		//---------------------------------------------
 		key_code_t key_input = input_key_wait_return();
 		//---------------------------------------------
+		if (IS_KEY_VALID(key_input)) {
+			hmflf_dprintf("input%ckey:0x%04x(%s)================\n",
+			 '_', (UINT16)key_input, short_key_name_from_key_code(key_input, NULL));
+		}
 		const char *func_id = get_func_id_from_key(key_input);
 		// Look for the key_input in yes/no/all
 		if (strchr__(chars_yes, key_input) != NULL)
@@ -492,7 +572,7 @@ int ask_yes_no(int flags, const char *msg, ...)
 	blank_status_bar();
 
 	SET_APPMD_VAL(app_KEY_LINES, key_lines_save);	// restore KEY_LINES
-	update_screen_app(1, 1);
+	update_screen_app(S_B_CURS, 1);
 
 	return answer;	// x > 0: yes, x = 0: no, x < 0: cancel
 }
@@ -544,29 +624,29 @@ PRIVATE void list_one_key(key_code_t key, const char *desc)
 
 //------------------------------------------------------------------------------
 PRIVATE void display_reverse_text(int yy, const char *text);
-
 void disp_fkey_list()
 {
 	key_code_t func_keys[] = { K_ESC,
 	 K_SP, K_F01, K_F02, K_F03, K_F04,
 	 K_SP, K_F05, K_F06, K_F07, K_F08,
 	 K_SP, K_F09, K_F10, K_F11, K_F12, K_NONE };
-	if (get_key_list_lines() > 0) {
-		char buf[MAX_SCRN_LINE_BUF_LEN+1] = "";
-		for (int key_idx = 0; func_keys[key_idx] != K_NONE; key_idx++) {
-			if (func_keys[key_idx] == K_SP) {
-				strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, " ");	// separator
+	if (get_key_list_lines() <= 0) {
+		return;
+	}
+	char buf[MAX_SCRN_LINE_BUF_LEN+1] = "";
+	for (int key_idx = 0; func_keys[key_idx] != K_NONE; key_idx++) {
+		if (func_keys[key_idx] == K_SP) {
+			strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, " ");	// separator
+		} else {
+			func_key_t *func_key = get_fkey_entry_from_key(NULL, func_keys[key_idx], -1);
+			if (func_key) {
+				strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, "{%s} ", func_key->desc);
 			} else {
-				func_key_t *func_key = get_fkey_entry_from_key(NULL, func_keys[key_idx], -1);
-				if (func_key) {
-					strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, "{%s} ", func_key->desc);
-				} else {
-					strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, "{-----} ");
-				}
+				strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, "{-----} ");
 			}
 		}
-		display_reverse_text(central_win_get_key_list_line_y() + 0, buf);
 	}
+	display_reverse_text(central_win_get_key_list_line_y() + 0, buf);
 }
 // display text parenthesized by {} in reverse
 // "{Menu}  {RecKM} ..."

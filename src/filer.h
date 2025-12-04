@@ -25,15 +25,23 @@
 #ifdef ENABLE_FILER
 
 extern ef_do_next_t filer_do_next;
+#ifndef ENABLE_DEBUG
+#define SET_filer_do_next(do_next)		filer_do_next = do_next
+#else // ENABLE_DEBUG
+#define SET_filer_do_next(do_next)		filer_do_next = do_next \
+  , hmflf_dprintf("set-filer_do_next(%s)\n", get_ef_name(filer_do_next))
+#endif // ENABLE_DEBUG
 
 void set_cur_filer_panes(filer_panes_t *fps);
 filer_panes_t* get_cur_filer_panes();
-void init_cur_filer_panes(filer_panes_t *fps, const char *cur_dir);
+void init_filer_panes(filer_panes_t *fps, const char *cur_dir);
+void inherit_filer_panes(filer_panes_t *fps);
 void free_filer_panes();
 void copy_filer_panes_cur_dir(filer_panes_t *dest, filer_panes_t *src);
 
 #ifdef ENABLE_DEBUG
 void dump_filer_view(filer_view_t *fv);
+void dump_filer_view_cur_dir(filer_view_t *fv);
 #endif // ENABLE_DEBUG
 
 filer_view_t *get_fv_from_pane(int pane_idx);
@@ -52,18 +60,17 @@ filer_view_t *get_fv_from_other_pane();
 #define FV_F_INFO_SELECTED(fv, idx)		((fv)->file_info_array[idx]->selected)
 file_info_t *get_cur_fv_file_info_array();
 int get_cur_fv_file_info_entries();
-const char* get_cur_fv_cur_file_name();
-const char* get_cur_fv_file_name(int file_idx);
+const char *get_cur_fv_cur_file_name();
+const char *get_cur_fv_file_name(int file_idx);
 file_info_t *get_cur_fv_cur_file_info();
 file_info_t *get_cur_fv_file_info(int file_idx);
 file_info_t *get_cur_fv_file_ptr_from_pane(int pane_idx);
 int get_cur_fv_file_idx();
-///void set_cur_fv_file_idx(int file_idx);
 
 int do_call_filer(int push_win, int list_mode, const char *dir, const char *filter,
  char *path_buf);
 
-int update_screen_filer(int status_bar, int refresh);
+int update_screen_filer(s_b_d_t status_bar, int refresh);
 
 int filer_vert_scroll_margin_lines();
 int filer_vert_scroll_lines();

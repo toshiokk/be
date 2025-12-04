@@ -83,11 +83,11 @@ void tio_test();
 
 int tio_is_initialized();
 int tio_init();
-void tio_enable_high_bgc(int enable);
 int tio_destroy();
 int tio_begin();
 int tio_end();
 
+void tio_enable_high_bgc(int enable);
 int tio_resize();
 int tio_suspend();
 int tio_resume();

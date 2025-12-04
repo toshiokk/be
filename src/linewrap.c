@@ -33,8 +33,8 @@ void set_wrap_line_tab_size(int tab_size)
 #ifdef START_UP_TEST
 void test_wrap_line()
 {
-flf_d_printf("----------------------------------------------------------------------\n");
-flf_d_printf("linewrap_tab_size: %d\n", linewrap_tab_size);
+flf_dprintf("----------------------------------------------------------------------\n");
+flf_dprintf("linewrap_tab_size: %d\n", linewrap_tab_size);
 #define CMP_RET(func_call, ret)		_FLF_; if (func_call != ret) { _WARNING_ }
 #define C_R(func_call, ret)			CMP_RET(func_call, ret)
 	C_R(max_wrap_line_idx("1234567890", 10), 0)
@@ -492,7 +492,7 @@ PRIVATE int test_get_intersection_(int min1, int max1, int min2, int max2,
  int expected_ret, int expected_min, int expected_max);
 void test_get_intersection()
 {
-	flf_d_printf("-----------------------\n");
+	flf_dprintf("-----------------------\n");
 	// aaaaaa bbbbbb
 	MY_UT_INT(test_get_intersection_(0, 54, 64, 65, -10, 64, 54), 0);
 	// aaaaaa bbbbbb

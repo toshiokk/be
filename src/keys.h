@@ -85,34 +85,34 @@ typedef short key_code_t;		// signed short
 
 #define K_C_AT			K_C('@')
 #define K_C_SP			K_C('@')
-#define K_C_A			K_C('A')
-#define K_C_B			K_C('B')
-#define K_C_C			K_C('C')
-#define K_C_D			K_C('D')
-#define K_C_E			K_C('E')
-#define K_C_F			K_C('F')
-#define K_C_G			K_C('G')
-#define K_C_H			K_C('H')
-#define K_C_I			K_C('I')
-#define K_TAB			K_C_I		// 0x09
-#define K_C_J			K_C('J')
-#define K_C_K			K_C('K')
-#define K_C_L			K_C('L')
-#define K_C_M			K_C('M')
-#define K_ENTER			K_C_M		// 0x0d
-#define K_C_N			K_C('N')
-#define K_C_O			K_C('O')
-#define K_C_P			K_C('P')
-#define K_C_Q			K_C('Q')
-#define K_C_R			K_C('R')
-#define K_C_S			K_C('S')
-#define K_C_T			K_C('T')
-#define K_C_U			K_C('U')
-#define K_C_V			K_C('V')
-#define K_C_W			K_C('W')
-#define K_C_X			K_C('X')
-#define K_C_Y			K_C('Y')
-#define K_C_Z			K_C('Z')
+#define K_C_a			K_C('A')
+#define K_C_b			K_C('B')
+#define K_C_c			K_C('C')
+#define K_C_d			K_C('D')
+#define K_C_e			K_C('E')
+#define K_C_f			K_C('F')
+#define K_C_g			K_C('G')
+#define K_C_h			K_C('H')
+#define K_C_i			K_C('I')
+#define K_TAB			K_C_i		// 0x09
+#define K_C_j			K_C('J')
+#define K_C_k			K_C('K')
+#define K_C_l			K_C('L')
+#define K_C_m			K_C('M')
+#define K_ENTER			K_C_m		// 0x0d
+#define K_C_n			K_C('N')
+#define K_C_o			K_C('O')
+#define K_C_p			K_C('P')
+#define K_C_q			K_C('Q')
+#define K_C_r			K_C('R')
+#define K_C_s			K_C('S')
+#define K_C_t			K_C('T')
+#define K_C_u			K_C('U')
+#define K_C_v			K_C('V')
+#define K_C_w			K_C('W')
+#define K_C_x			K_C('X')
+#define K_C_y			K_C('Y')
+#define K_C_z			K_C('Z')
 #define K_C_LBRAK		K_C('[')	// 0x1b
 #define K_ESC			CHAR_ESC	// 0x1b
 #define K_C_BAKSL		K_C('\\')	// 0x1c
@@ -121,30 +121,30 @@ typedef short key_code_t;		// signed short
 #define K_C_UNDLN		K_C('_')	// 0x1f
 #define K_SP			' '			// ' '
 
-#define K_EXCLA			K_('!')		// 0x1b21
-#define K_QUOTA			K_('"')		// 0x1b22
-#define K_SHARP			K_('#')		// 0x1b23
-#define K_DOLLA			K_('$')		// 0x1b24
-#define K_PERCE			K_('%')		// 0x1b25
-#define K_AMPSD			K_('&')		// 0x1b26
-#define K_APOST			K_('\'')	// 0x1b27
-#define K_LPARE			K_('(')		// 0x1b28
-#define K_RPARE			K_(')')		// 0x1b29
-#define K_ASTER			K_('*')		// 0x1b2a
-#define K_PLUS			K_('+')		// 0x1b2b
-#define K_COMMA			K_(',')		// 0x1b2c
-#define K_HYPHE			K_('-')		// 0x1b2d
-#define K_PERIO			K_('.')		// 0x1b2e
-#define K_SLASH			K_('/')		// 0x1b2f
+#define K_EXCLA			K_('!')		// 0x21
+#define K_QUOTA			K_('"')		// 0x22
+#define K_SHARP			K_('#')		// 0x23
+#define K_DOLLA			K_('$')		// 0x24
+#define K_PERCE			K_('%')		// 0x25
+#define K_AMPSD			K_('&')		// 0x26
+#define K_APOST			K_('\'')	// 0x27
+#define K_LPARE			K_('(')		// 0x28
+#define K_RPARE			K_(')')		// 0x29
+#define K_ASTER			K_('*')		// 0x2a
+#define K_PLUS			K_('+')		// 0x2b
+#define K_COMMA			K_(',')		// 0x2c
+#define K_HYPHE			K_('-')		// 0x2d
+#define K_PERIO			K_('.')		// 0x2e
+#define K_SLASH			K_('/')		// 0x2f
 
-#define K_COLON			K_(':')		// 0x1b3a
-#define K_SEMCO			K_(';')		// 0x1b3b
-#define K_LESST			K_('<')		// 0x1b3c
-#define K_EQUAL			K_('=')		// 0x1b3d
-#define K_GREAT			K_('>')		// 0x1b3e
-#define K_QUEST			K_('?')		// 0x1b3f
+#define K_COLON			K_(':')		// 0x3a
+#define K_SEMCO			K_(';')		// 0x3b
+#define K_LESST			K_('<')		// 0x3c
+#define K_EQUAL			K_('=')		// 0x3d
+#define K_GREAT			K_('>')		// 0x3e
+#define K_QUEST			K_('?')		// 0x3f
 
-#define K_AT			K_('@')		// 0x1b40
+#define K_AT			K_('@')		// 0x40
 #define K_A_			K_('A')
 #define K_B_			K_('B')
 #define K_C_			K_('C')
@@ -172,9 +172,9 @@ typedef short key_code_t;		// signed short
 #define K_Y_			K_('Y')
 #define K_Z_			K_('Z')
 
-#define K_LBRAK			K_('[')		// 0x5b
+#define K_LBRAK			K_('[')		// 0x5b (Left Bracket)
 #define K_BAKSL			K_('\\')	// 0x5c
-#define K_RBRAK			K_(']')		// 0x5d
+#define K_RBRAK			K_(']')		// 0x5d (Right Bracket)
 #define K_CARET			K_('^')		// 0x5e
 #define K_UNDLN			K_('_')		// 0x5f
 
@@ -206,9 +206,9 @@ typedef short key_code_t;		// signed short
 #define K_y_			K_('y')
 #define K_z_			K_('z')
 
-#define K_LBRAC			K_('{')		// 0x7b
+#define K_LBRAC			K_('{')		// 0x7b (Left Brace)
 #define K_VERTB			K_('|')		// 0x7c
-#define K_RBRAC			K_('}')		// 0x7d
+#define K_RBRAC			K_('}')		// 0x7d (Right Brace)
 #define K_TILDE			K_('~')		// 0x7e
 
 #define K_M_SP			K_M(K_SP)		// 0x1b20
@@ -314,34 +314,34 @@ typedef short key_code_t;		// signed short
 #define K_M_CHAR_DEL	K_M(CHAR_DEL)	// 0x1b7f
 
 #define K_MC_AT			K_M(K_C_AT)		// 1b00
-#define K_MC_A			K_M(K_C_A)		// 1b01
-#define K_MC_B			K_M(K_C_B)
-#define K_MC_C			K_M(K_C_C)
-#define K_MC_D			K_M(K_C_D)
-#define K_MC_E			K_M(K_C_E)
-#define K_MC_F			K_M(K_C_F)
-#define K_MC_G			K_M(K_C_G)
-#define K_MC_H			K_M(K_C_H)
-#define K_MC_I			K_M(K_C_I)
+#define K_MC_a			K_M(K_C_a)		// 1b01
+#define K_MC_b			K_M(K_C_b)
+#define K_MC_c			K_M(K_C_c)
+#define K_MC_d			K_M(K_C_d)
+#define K_MC_e			K_M(K_C_e)
+#define K_MC_f			K_M(K_C_f)
+#define K_MC_g			K_M(K_C_g)
+#define K_MC_h			K_M(K_C_h)
+#define K_MC_i			K_M(K_C_i)
 #define K_M_TAB			K_M(K_TAB)		// 0x1b09
-#define K_MC_J			K_M(K_C_J)
-#define K_MC_K			K_M(K_C_K)
-#define K_MC_L			K_M(K_C_L)
-#define K_MC_M			K_M(K_C_M)
-#define K_M_ENTER		K_MC_M
-#define K_MC_N			K_M(K_C_N)
-#define K_MC_O			K_M(K_C_O)
-#define K_MC_P			K_M(K_C_P)
-#define K_MC_Q			K_M(K_C_Q)
-#define K_MC_R			K_M(K_C_R)
-#define K_MC_S			K_M(K_C_S)
-#define K_MC_T			K_M(K_C_T)
-#define K_MC_U			K_M(K_C_U)
-#define K_MC_V			K_M(K_C_V)
-#define K_MC_W			K_M(K_C_W)
-#define K_MC_X			K_M(K_C_X)
-#define K_MC_Y			K_M(K_C_Y)
-#define K_MC_Z			K_M(K_C_Z)			// 0x1b1a
+#define K_MC_j			K_M(K_C_j)
+#define K_MC_k			K_M(K_C_k)
+#define K_MC_l			K_M(K_C_l)
+#define K_MC_m			K_M(K_C_m)
+#define K_M_ENTER		K_MC_m
+#define K_MC_n			K_M(K_C_n)
+#define K_MC_o			K_M(K_C_o)
+#define K_MC_p			K_M(K_C_p)
+#define K_MC_q			K_M(K_C_q)
+#define K_MC_r			K_M(K_C_r)
+#define K_MC_s			K_M(K_C_s)
+#define K_MC_t			K_M(K_C_t)
+#define K_MC_u			K_M(K_C_u)
+#define K_MC_v			K_M(K_C_v)
+#define K_MC_w			K_M(K_C_w)
+#define K_MC_x			K_M(K_C_x)
+#define K_MC_y			K_M(K_C_y)
+#define K_MC_z			K_M(K_C_z)			// 0x1b1a
 #define K_MC_LBRAK		K_M(K_C_LBRAK)		// 0x1b1b
 #define K_M_ESC			K_M(CHAR_ESC)		// 0x1b1b
 #define K_MC_BAKSL		K_M(K_C_BAKSL)		// 0x1b1c
@@ -597,7 +597,7 @@ unsigned long msec_past_input_key();
 key_code_t input_key_loop();
 key_code_t input_unmapped_key_loop();
 key_code_t input_key_wait_return();
-key_code_t input_key_macro();
+key_code_t input_key_with_macro_playback();
 
 void begin_check_break_key();
 void end_check_break_key();
@@ -605,8 +605,8 @@ int check_break_key();
 
 key_code_t map_key_code(key_code_t key);
 
-const char* key_str_from_key_code(key_code_t key_code);
-int key_code_from_key_str(const char* str, key_code_t* key_code);
+const char *key_str_from_key_code(key_code_t key_code);
+int key_code_from_key_str(const char *str, key_code_t* key_code);
 
 const char *long_key_none_str();
 const char *long_key_name_from_key_code(key_code_t key_code, char *buf);

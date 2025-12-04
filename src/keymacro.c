@@ -44,7 +44,7 @@ void load_last_key_macro(int last_n)
 }
 void update_key_macro_history()
 {
-	modify_history_w_sync(HISTORY_TYPE_IDX_KEYMACRO,
+	modify_history_w_reloading(HISTORY_TYPE_IDX_KEYMACRO,
 	 get_string_from_key_macro(key_codes_recorded, key_strokes_recorded));
 }
 #endif // ENABLE_HISTORY
@@ -212,7 +212,7 @@ char *get_string_from_key_macro(key_code_t *key_codes, int keys)
 	static char str_buf[MAX_KEY_MACRO_STR_LEN + 1];
 	strcpy__(str_buf, "");
 	for (int key_idx = 0; key_idx < keys; key_idx++) {
-		const char* str = key_str_from_key_code(key_codes[key_idx]);
+		const char *str = key_str_from_key_code(key_codes[key_idx]);
 		if (strlen(str_buf) + strlen(str) < MAX_KEY_MACRO_STR_LEN) {
 			strlcat__(str_buf, MAX_KEY_MACRO_STR_LEN, str);
 		}
@@ -249,8 +249,8 @@ void test_key_code_from_to_key_name()
 	key_code_t key_codes2[MAX_KEY_STROKES+1];
 	int keys2;
 
-	flf_d_printf("MAX_KEY_STROKES: %d\n", MAX_KEY_STROKES);
-	flf_d_printf("get_key_name_table_entries(): %d\n", get_key_name_table_entries());
+	flf_dprintf("MAX_KEY_STROKES: %d\n", MAX_KEY_STROKES);
+	flf_dprintf("get_key_name_table_entries(): %d\n", get_key_name_table_entries());
 	for (key_code_t key = 0x0000; key < 0x0110; key++) {
 		if (keys >= MAX_KEY_STROKES) {
 			break;

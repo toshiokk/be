@@ -29,6 +29,7 @@ void doe_cut_to_head();
 void doe_copy_text();
 void doe_cut_text_to_sys_clipboard();
 void doe_copy_text_to_sys_clipboard();
+void save_cut_buf__send_to_sys_clipboard();
 int send_to_sys_clipboard();
 void doe_delete_to_tail();
 void doe_cut_to_tail();

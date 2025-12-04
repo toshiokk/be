@@ -33,7 +33,8 @@ be_SOURCES = \
 	editorundo.c \
 	line.c \
 	linewrap.c \
-	buffer.c \
+	buffer1.c \
+	buffer2.c \
 	buffers.c \
 	color.c \
 	debug.c \
@@ -41,7 +42,8 @@ be_SOURCES = \
 	fileio.c \
 	filer.c \
 	filerlist.c \
-	filercmd.c \
+	filercmd1.c \
+	filercmd2.c \
 	filerdir.c \
 	filerrun.c \
 	filerkeys.c \
@@ -66,7 +68,8 @@ be_SOURCES = \
 	winin.c \
 	winout.c \
 	appmode.h \
-	buffer.h \
+	buffer1.h \
+	buffer2.h \
 	buffers.h \
 	config.h \
 	color.h \
@@ -86,7 +89,8 @@ be_SOURCES = \
 	fileio.h \
 	filer.h \
 	filerlist.h \
-	filercmd.h \
+	filercmd1.h \
+	filercmd2.h \
 	filerdir.h \
 	filerrun.h \
 	filerkeys.h \

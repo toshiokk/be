@@ -73,11 +73,11 @@ int load_file_into_new_buf(const char *full_path, int flags)
 	if (lines > MAX_LINES_LOADABLE) {
 		disp_status_bar_done(_("New file"));		// new file (0 line)
 	} else {
-		disp_status_bar_ing(P_(_("%d line read %s"),
-							   _("%d lines read %s"),
-							   _("%d liness read %s"),
-							   _("%d linesss read %s"),
-		 lines), lines, buf_eol_str(get_epc_buf()));
+		disp_status_bar_ing(P_(_("%d line read"),
+							   _("%d lines read"),
+							   _("%d liness read"),
+							   _("%d linesss read"),
+		 lines), lines);
 	}
 	return lines;	// >= 0: success
 }
@@ -163,35 +163,37 @@ int backup_and_save_cur_buf_ask()
 
 int backup_and_save_cur_buf(const char *file_path)
 {
+	char abs_path[MAX_PATH_LEN+1];
+	get_abs_path(file_path, abs_path);
 	// TODO: do minimum check
-	if (is_path_regular_file(file_path) == 0) {
+	if (is_path_regular_file(abs_path) == 0) {
 		// directory or special file
 		disp_status_bar_err(_("File [%s] is NOT a regular file !!"),
-		 shrink_str_to_scr_static(file_path));
+		 shrink_str_to_scr_static(abs_path));
 		return -1;
 	}
-	// file_path is exist as a regular file or not exist
+	// abs_path is exist as a regular file or not exist
 	disp_status_bar_ing(_("Writing File %s ..."),
-	 shrink_str_to_scr_static(file_path));
+	 shrink_str_to_scr_static(abs_path));
 	if (GET_APPMD(ed_BACKUP_FILES)) {
-		if (make_backup_files(file_path, get_backup_files()) < 0) {
+		if (make_backup_files(abs_path, get_backup_files()) < 0) {
 			disp_status_bar_err(_("Error in backing up File [%s] !!"),
-			 shrink_str_to_scr_static(file_path));
+			 shrink_str_to_scr_static(abs_path));
 			return -1;
 		}
 	}
 
-	int lines_written = save_cur_buf_to_file(file_path);
+	int lines_written = save_cur_buf_to_file(abs_path);
 
 	if (S_ISREG(get_epc_buf()->orig_file_stat.st_mode)) {
 		int mask = get_epc_buf()->orig_file_stat.st_mode & 07777;
-		if (chmod(file_path, mask) < 0) {
+		if (chmod(abs_path, mask) < 0) {
 			disp_status_bar_err(_("Can not set permissions %1$o on [%2$s]: %3$s"),
-			 mask, shrink_str_to_scr_static(file_path), strerror(errno));
+			 mask, shrink_str_to_scr_static(abs_path), strerror(errno));
 		}
 	}
 	// file was overwritten, get current file stat into orig_file_stat
-	buf_get_file_stat(get_epc_buf(), file_path);
+	buf_get_file_stat(get_epc_buf(), abs_path);
 	update_cur_ebuf_crc();
 	clear_cur_ebuf_modified();
 
@@ -310,7 +312,7 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int flags)
 
 int save_buf_to_file(be_buf_t *buf, const char *file_path)
 {
-flf_d_printf("[%s]\n", file_path);
+flf_dprintf("[%s]\n", file_path);
 	be_buf_t *buf_save = get_epc_buf();
 	set_epc_buf(buf);
 
@@ -586,7 +588,7 @@ PRIVATE int load_file_into_cur_buf_binary(const char *full_path)
 PRIVATE void fgetc_bufed_clear();
 PRIVATE int fgetc_buffered(FILE *fp);
 
-PRIVATE inline void load_into_cur_buf_append_line(be_line_t* line, char* line_buf, int* len,
+PRIVATE inline void load_into_cur_buf_append_line(be_line_t* line, char *line_buf, int* len,
  int* lines_read)
 {
 	line_insert_with_string_len_before(line, line_buf, *len);
@@ -821,9 +823,6 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 PRIVATE int cnt_files_loaded = -1;	// -1: no file switched/loaded, 0: switched, 1--: loaded
 void clear_files_loaded()
 {
-#ifdef ENABLE_HISTORY
-	if (dir_history_fix()) { _WARNING_ }
-#endif // ENABLE_HISTORY
 	cnt_files_loaded = -1;
 }
 int add_files_loaded(int files)	// files = 0: not loaded but switched
@@ -850,85 +849,6 @@ void disp_files_loaded()
 							_("%d filess loaded"),
 							_("%d filesss loaded"),
 	 cnt_files_loaded), cnt_files_loaded);
-}
-
-//------------------------------------------------------------------------------
-#ifdef START_UP_TEST
-void test_flock()
-{
-	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
-	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 0);
-	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
-	MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 1);
-	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 0);
-	MY_UT_INT(flock_unlock("/absolute/path/to/file.txt"), 1);
-
-	// error on the next calling test_flock()
-	////MY_UT_INT(flock_lock("/absolute/path/to/file.txt"), 0);
-}
-#endif // START_UP_TEST
-
-PRIVATE int flock_create_lock_file(const char *full_path);
-PRIVATE int flock_delete_lock_file(const char *full_path);
-PRIVATE const char* flock_get_lock_file_path(const char* full_path);
-
-int flock_lock(const char *full_path)
-{
-	if (flock_is_locked(full_path)) {
-		return 1;	// lock already exist
-	}
-	flock_create_lock_file(full_path);
-	return 0;		// successfully locked
-}
-int flock_unlock(const char *full_path)
-{
-	if (flock_is_locked(full_path) == 0) {
-		return 1;	// lock not exist
-	}
-	flock_delete_lock_file(full_path);
-	return 0;		// successfully unlocked
-}
-int flock_is_locked(const char *full_path)
-{
-	return is_path_exist(flock_get_lock_file_path(full_path));
-}
-PRIVATE int flock_create_lock_file(const char *full_path)
-{
-	return write_text_to_file(flock_get_lock_file_path(full_path), 0, "");
-}
-PRIVATE int flock_delete_lock_file(const char *full_path)
-{
-	return remove_file(flock_get_lock_file_path(full_path));
-}
-
-//      "/path/to/a/file/being/locked.txt"
-//  ==> ".path.to.a.file.being.locked.txt"
-//  ==> "$APP_DIR/.path.to.a.file.being.locked.txt"
-// e.g. "/home/user/.be/.home.user.tools.be.be.app_defs.txt"
-PRIVATE const char* flock_get_lock_file_path(const char* full_path)
-{
-	static char lock_file_path[MAX_PATH_LEN+1];
-	char abs_path[MAX_PATH_LEN+1];
-	get_abs_path(full_path, abs_path);
-	if (strlcmp__(abs_path, "/") != 0) {
-		progerr_printf("not full path [%s]\n", abs_path);
-	}
-	str_tr(abs_path, '/', '.');
-	cat_dir_and_file(lock_file_path, get_app_dir(), abs_path);
-	return lock_file_path;
-}
-
-int delete_all_lock_files()
-{
-	char lock_file_path[MAX_PATH_LEN+1];
-	cat_dir_and_file(lock_file_path, get_app_dir(), ".*");
-
-	char command_str[MAX_PATH_LEN+1] = "";
-	// "rm -v /home/user/.be/.*"
-	snprintf_(command_str, MAX_PATH_LEN, "rm -v %s", lock_file_path);
-/////flf_d_printf("[%s]\n", command_str);
-
-	return fork_exec_sh_c(EX_FLAGS_0, command_str);
 }
 
 // End of fileio.c

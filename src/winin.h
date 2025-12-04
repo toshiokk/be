@@ -22,34 +22,46 @@
 #ifndef winin_h
 #define winin_h
 
-// editor_do_next_X, filer_do_next_X
+// editor_do_next_X, filer_do_next_X, ret__X
 typedef enum {
 	EF_NONE						= 0,	// nothing done yet and nothing to do next
 										// in filer loop:
-	FL_UPDATE_FILE_LIST_AUTO	= 1,	//   periodic file list update
-	FL_UPDATE_FILE_LIST_FORCE	= 2,	//   force immediate file list update
+	FL_UPDATE_AUTO				= 1,	//   automatic periodic file list update
+	FL_UPDATE_FORCE				= 2,	//   force immediate file list update
+										// input string:
+	EF_CANCELLED				= 3,	//   input cancelled
 										// quit from editor/filer:
-	EF_CANCELLED				= 3,	//   cancelled
-	EF_QUIT						= 4,	//   quit editor/filer
-	EF_LOADED					= 5,	//   file was loaded and return from editor/filer
-	EF_EXECUTED					= 6,	//   command was executed and return from editor/filer
-										// enter file/dir path from filer:
-	FL_ENTER_FILE_NAME			= 7,	//   enter file name(file, dir)
-	FL_ENTER_FILE_NAME_ADD		= 8,	//   enter file name(file, dir)
-	FL_ENTER_FILE_PATH			= 9,	//   enter file path(/path/to/file, /path/to/dir)
-	FL_ENTER_FILE_PATH_ADD		= 10,	//   enter file path(/path/to/file, /path/to/dir)
-	FL_ENTER_DIR_PATH			= 11,	//   enter directory path (/path/to/dir)
-	FL_ENTER_DIR_PATH_ADD		= 12,	//   enter directory path (/path/to/dir)
-										// enter text from editor/filer:
-	EF_ENTER_STRING				= 13,	//   enter string(file/dir name or path) to replace
-	EF_ENTER_STRING_ADD			= 14,	//   enter string(file/dir name or path) to add
-										// input text:
-	EF_INPUT_PATH_TO_COPY		= 15,	//   input string(by Alt-c key)
-	EF_INPUT_PATH_TO_MOVE		= 16,	//   input string(by Alt-m key)
+	EF_TO_QUIT					= 4,	//   quit editor/filer
+										// action done and next action to do:
+	EF_LOADED_RET_TO_EDITOR		= 5,	//   file was loaded and return from editor/filer
+										//    ==> return to the root editor
+	EF_CHDIR_RET_TO_FILER		= 6,	//   current directory changed
+										//    ==> return to the root filer
+	EF_EXECUTED_RET_TO_CALLER	= 7,	//   command was executed and return from editor/filer
+										//    ==> return to the root caller(filer/editor)
+										// to enter file/dir path from filer:
+	FL_ENTER_FILE_NAME			= 8,	//   enter file name(file, dir)
+	FL_ENTER_FILE_NAME_ADD		= 9,	//   enter file name(file, dir)
+	FL_ENTER_FILE_PATH			= 10,	//   enter file path(/path/to/file, /path/to/dir)
+	FL_ENTER_FILE_PATH_ADD		= 11,	//   enter file path(/path/to/file, /path/to/dir)
+	FL_ENTER_DIR_PATH			= 12,	//   enter directory path (/path/to/dir)
+	FL_ENTER_DIR_PATH_ADD		= 13,	//   enter directory path (/path/to/dir)
+										// to enter text from editor/filer:
+	EF_ENTER_STRING				= 14,	//   enter string(file/dir name or path) to replace
+	EF_ENTER_STRING_ADD			= 15,	//   enter string(file/dir name or path) to add
+										// file path has input:
+	EF_INPUT_PATH_TO_COPY		= 16,	//   input string(by Alt-c key)
+	EF_INPUT_PATH_TO_MOVE		= 27,	//   input string(by Alt-m key)
 } ef_do_next_t;
 
-#define IS_EF_STRING_ENTERED(ret)		\
-	((EF_ENTER_STRING <= (ret)) && ((ret) <= EF_ENTER_STRING_ADD))
+#define IS_EF_ENTER_STRING(ret)		\
+	((EF_ENTER_STRING <= (ret)) && ((ret) <= EF_INPUT_PATH_TO_MOVE))
+#define IS_EF_DONE(ret)							\
+	(((ret) == EF_CHDIR_RET_TO_FILER)			\
+	 || ((ret) == EF_LOADED_RET_TO_EDITOR)		\
+	 || ((ret) == EF_EXECUTED_RET_TO_CALLER))
+
+const char *get_ef_name(ef_do_next_t do_next);
 
 extern int input_string_full_path;
 

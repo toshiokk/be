@@ -78,13 +78,13 @@ int easy_buffer_switching_check(easy_buffer_switching_t top_bottom)
 void doe_left()
 {
 	move_cursor_left(1);
-	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR_LINE);
 }
 
 void doe_right()
 {
 	move_cursor_right();
-	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR_LINE);
 }
 
 PRIVATE int get_char_type(char chr)
@@ -124,7 +124,7 @@ void doe_prev_word()
 		move_cursor_left(1);
 	}
 
-	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR_LINE);
 }
 // go to next word
 void doe_next_word()
@@ -143,23 +143,32 @@ void doe_next_word()
 		move_cursor_right();
 	}
 
-	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR_LINE);
 }
 
 void doe_start_of_line()
 {
 	EPCBVC_CLBI = 0;
 
-	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR_LINE);
 }
 void doe_end_of_line()
 {
 	EPCBVC_CLBI = line_strlen(EPCBVC_CL);
 
-	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR_LINE);
 }
 
 //------------------------------------------------------------------------------
+PRIVATE int column_idx_at_which_curs_vert_moved = 0;
+void set_column_idx_at_which_curs_vert_moved(int col_idx)
+{
+	column_idx_at_which_curs_vert_moved = col_idx;
+}
+int get_column_idx_at_which_curs_vert_moved()
+{
+	return column_idx_at_which_curs_vert_moved;
+}
 PRIVATE void doe_up_();
 void doe_up()
 {
@@ -174,17 +183,22 @@ void doe_up()
 }
 PRIVATE void doe_up_()
 {
+flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
+	set_column_idx_at_which_curs_vert_moved(
+	 start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1));
 	if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI)) {
 		EPCBVC_CURS_Y--;
 	} else {
 		if (easy_buffer_switching_check(EBS_UP_AT_TOP) == 0) {
-			disp_status_bar_done(_("No previous lines"));
+			disp_status_bar_warn(_("No previous lines"));
 		} else {
 			// already top of buffer, go to the previous buffer's last line
 			doe_switch_to_prev_buffer();
 		}
 	}
+flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 }
 PRIVATE void doe_down_();
 void doe_down()
@@ -200,11 +214,13 @@ void doe_down()
 }
 PRIVATE void doe_down_()
 {
+	set_column_idx_at_which_curs_vert_moved(
+	 start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1));
 	if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI)) {
 		EPCBVC_CURS_Y++;
 	} else {
 		if (easy_buffer_switching_check(EBS_DOWN_AT_BOTTOM) == 0) {
-			disp_status_bar_done(_("No next lines"));
+			disp_status_bar_warn(_("No next lines"));
 		} else {
 			// already bottom of buffer, go to the next buffer's top line
 			doe_switch_to_next_buffer();
@@ -228,10 +244,8 @@ void doe_page_up()
 PRIVATE void doe_page_up_()
 {
 	if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI)) {
-///PPP		EPCBVC_CURS_Y--;
 		int lines = editor_vert_scroll_lines() - 1;
 		for (int cnt = 0; cnt < lines; cnt++) {
-///PPP			EPCBVC_CURS_Y--;
 			if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 				break;
 			}
@@ -239,7 +253,7 @@ PRIVATE void doe_page_up_()
 		post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	} else {
 		if (easy_buffer_switching_check(EBS_PAGEUP_AT_TOP) == 0) {
-			disp_status_bar_done(_("No previous lines"));
+			disp_status_bar_warn(_("No previous lines"));
 		} else {
 			// already top of buffer, go to the previous buffer's last line
 			doe_switch_to_prev_buffer();
@@ -262,10 +276,8 @@ void doe_page_down()
 PRIVATE int doe_page_down_()
 {
 	if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI)) {
-///PPP		EPCBVC_CURS_Y++;
 		int lines = editor_vert_scroll_lines() - 1;
 		for (int cnt = 0; cnt < lines; cnt++) {
-///PPP			EPCBVC_CURS_Y++;
 			if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 				break;
 			}
@@ -273,7 +285,7 @@ PRIVATE int doe_page_down_()
 		post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 	} else {
 		if (easy_buffer_switching_check(EBS_PAGEDOWN_AT_BOTTOM) == 0) {
-			disp_status_bar_done(_("No next lines"));
+			disp_status_bar_warn(_("No next lines"));
 		} else {
 			// already bottom of buffer, go to the next buffer's top line
 			doe_switch_to_next_buffer();
@@ -305,7 +317,7 @@ void doe_control_code()
 	disp_status_bar_ing(_("Input control character [^A-^Z,^[,^\\,^],^^,^_,\x7f]"));
 	key_code_t key = input_key_loop();
 	disp_status_bar_ing(_("Key code: %04x"), key);
-	if ((K_C_A <= key && key < ' ') || key == CHAR_DEL) {
+	if ((K_C_a <= key && key < ' ') || key == CHAR_DEL) {
 		_doe_enter_char(key);
 	}
 }
@@ -340,9 +352,12 @@ void doe_paste_from_history()
 	if (chk_inp_str_ret_val_editor(input_string_pos("", string, MAX_PATH_LEN,
 	 HISTORY_TYPE_IDX_SEARCH,
 	 _("Select history string to paste:")))) {
+flf_dprintf("is_epc_buf_modified(): %d\n", is_epc_buf_modified());
 		return;
 	}
+flf_dprintf("is_epc_buf_modified(): %d\n", is_epc_buf_modified());
 	_doe_enter_utf8s(string);
+flf_dprintf("is_epc_buf_modified(): %d\n", is_epc_buf_modified());
 }
 
 void doe_tab()
@@ -489,8 +504,9 @@ void doe_backspace()
 	clear_mark();
 
 	if (EPCBVC_CLBI <= 0) {
+		// line top
 		if (IS_NODE_TOP(EPCBVC_CL)) {
-			// top of file, can not backspace
+			// top of buffer, can not backspace
 			return;
 		}
 		// line top, concatenate to the previous line
@@ -512,7 +528,7 @@ void doe_backspace()
 		EPCBVC_CLBI -= bytes;
 		line_string_delete(EPCBVC_CL, EPCBVC_CLBI, bytes);
 		get_epc_buf()->buf_size -= bytes;
-		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR_LINE);
 	}
 	set_cur_ebuf_modified();
 }
@@ -538,11 +554,11 @@ void doe_delete_char()
 		}
 
 		get_epc_buf()->buf_size -= bytes;
-		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR);
+		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_CUR_LINE);
 	} else {
 		// line end
 		if (IS_NODE_BOT_MOST(EPCBVC_CL)) {
-			// line end and the last line
+			// bottom of buffer, can not delete
 			return;
 		}
 		// line end, concatenate with the next line
@@ -697,37 +713,27 @@ PRIVATE void change_str_letters(char *str, size_t len, char mode)
 	}
 }
 //------------------------------------------------------------------------------
-PRIVATE int memorized_columns = 0;
-PRIVATE int doe_fill_spaces_to_columns__(int column_idx);
 void doe_memorize_columns()
 {
-	memorized_columns = start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
-	disp_status_bar_done(_("Column position %d was memorized"), FROM_IDX(memorized_columns));
 }
 void doe_fill_spaces_to_columns()
 {
-	int col_idx = start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
-	doe_fill_spaces_to_columns__(memorized_columns);
-	disp_status_bar_done(_("Space characters are filled from column %d to %d"),
-	 FROM_IDX(col_idx), FROM_IDX(memorized_columns));
-}
-PRIVATE int doe_fill_spaces_to_columns__(int column_idx)
-{
-	int col_idx = start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
-	for (int loop = 0; col_idx < column_idx && loop < column_idx; loop++) {
+	int col_idx_from = start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
+	int col_idx_to = get_column_idx_at_which_curs_vert_moved();
+	for (int col_idx = col_idx_from; col_idx < col_idx_to; col_idx++) {
 		_doe_enter_utf8s(" ");
-		col_idx = start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
 	}
-	return 0;
+	disp_status_bar_done(_("Space characters are filled from column %d to %d"),
+	 FROM_IDX(col_idx_from), FROM_IDX(col_idx_to));
 }
 //------------------------------------------------------------------------------
 void doe_enter_text()
 {
-	editor_do_next = EF_ENTER_STRING;
+	SET_editor_do_next(EF_ENTER_STRING);
 }
 void doe_enter_text_add()
 {
-	editor_do_next = EF_ENTER_STRING_ADD;
+	SET_editor_do_next(EF_ENTER_STRING_ADD);
 }
 //------------------------------------------------------------------------------
 void doe_refresh_editor()

@@ -23,6 +23,12 @@
 #define editor_h
 
 extern ef_do_next_t editor_do_next;
+#ifndef ENABLE_DEBUG
+#define SET_editor_do_next(do_next)		editor_do_next = (do_next)
+#else // ENABLE_DEBUG
+#define SET_editor_do_next(do_next)		editor_do_next = (do_next) \
+  , hmflf_dprintf("set-editor_do_next(%s)\n", get_ef_name(editor_do_next))
+#endif // ENABLE_DEBUG
 
 int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf);
 
@@ -86,9 +92,9 @@ void pop_app_stack(BOOL change_parent_editor, BOOL change_parent_filer);
 void save_cur_app_state(int depth);
 void load_cur_app_state(int depth);
 
-void update_screen_app(int status_bar, int refresh);
+void update_screen_app(s_b_d_t status_bar, int refresh);
 
-void update_screen_editor(int status_bar, int refresh);
+void update_screen_editor(s_b_d_t status_bar, int refresh);
 
 void start_title_bar_blinking();
 void stop_title_bar_blinking();

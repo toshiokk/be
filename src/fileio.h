@@ -45,16 +45,6 @@ int get_files_loaded();
 void disp_files_loaded_if_ge_0();
 void disp_files_loaded();
 
-//------------------------------------------------------------------------------
-#ifdef START_UP_TEST
-void test_flock();
-#endif // START_UP_TEST
-
-int flock_lock(const char *full_path);
-int flock_unlock(const char *full_path);
-int flock_is_locked(const char *full_path);
-int delete_all_lock_files();
-
 #endif // fileio_h
 
 // End of fileio.h

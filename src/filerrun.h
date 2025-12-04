@@ -22,7 +22,7 @@
 #ifndef filerrun_h
 #define filerrun_h
 
-#define EX_MOD_MASK		0x000f
+#define EX_MOD_MASK		0x000f		// EX_MOD: Execution Mode
 #define EX_MOD_0		0x0000		// "./command"
 #define EX_MOD_1		0x0001		// "command"
 #define EX_MOD_2		0x0002		// "/full/path/to/command"
