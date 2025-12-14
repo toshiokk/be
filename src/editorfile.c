@@ -538,7 +538,7 @@ int write_file_ask(int yes_no, close_after_save_t close)
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	update_screen_editor(S_B_CURS, 1);
 	if (ret < ANSWER_ALL) {
-		ret = ask_yes_no(ASK_YES_NO | ASK_ALL,
+		ret = ask_yes_no(ASK_YES_NO | ASK_ALL_YES,
 		 close == 0
 		  ? _("Save modified buffer ?")
 		  : _("Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"));
@@ -667,6 +667,17 @@ int delete_all_lock_files()
 	snprintf_(command_str, MAX_PATH_LEN, "rm -v %s >/dev/null 2>&1", lock_file_path);
 
 	return fork_exec_sh_c(EX_FLAGS_0, command_str);
+}
+
+//------------------------------------------------------------------------------
+const char *get_app_dir()
+{
+#if defined(APP_DIR)
+	static char dir[MAX_PATH_LEN+1];
+	return concat_dir_and_dir(dir, get_home_dir(), APP_DIR);
+#else // APP_DIR
+	return get_home_dir();
+#endif // APP_DIR
 }
 
 // End of editorfile.c

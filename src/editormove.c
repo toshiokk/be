@@ -183,7 +183,6 @@ void doe_up()
 }
 PRIVATE void doe_up_()
 {
-flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	set_column_idx_at_which_curs_vert_moved(
 	 start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1));
 	if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI)) {
@@ -196,9 +195,7 @@ flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 			doe_switch_to_prev_buffer();
 		}
 	}
-flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
-flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 }
 PRIVATE void doe_down_();
 void doe_down()
@@ -219,11 +216,17 @@ PRIVATE void doe_down_()
 	if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI)) {
 		EPCBVC_CURS_Y++;
 	} else {
-		if (easy_buffer_switching_check(EBS_DOWN_AT_BOTTOM) == 0) {
-			disp_status_bar_warn(_("No next lines"));
+		if (line_strlen(EPCBVC_CL) == 0) {
+			if (easy_buffer_switching_check(EBS_DOWN_AT_BOTTOM) == 0) {
+				disp_status_bar_warn(_("No next lines"));
+			} else {
+				// already bottom of buffer, go to the next buffer's top line
+				doe_switch_to_next_buffer();
+			}
 		} else {
-			// already bottom of buffer, go to the next buffer's top line
-			doe_switch_to_next_buffer();
+			doe_end_of_line();
+			doe_carriage_return();
+			disp_status_bar_warn(_("Automatically append magic line"));
 		}
 	}
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
@@ -358,6 +361,7 @@ flf_dprintf("is_epc_buf_modified(): %d\n", is_epc_buf_modified());
 flf_dprintf("is_epc_buf_modified(): %d\n", is_epc_buf_modified());
 	_doe_enter_utf8s(string);
 flf_dprintf("is_epc_buf_modified(): %d\n", is_epc_buf_modified());
+	SET_editor_do_next(EF_NONE);
 }
 
 void doe_tab()

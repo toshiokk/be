@@ -71,11 +71,13 @@ void *get_app_function_for_key(key_code_t key)
 }
 const char *get_func_id_from_key(key_code_t key)
 {
+	// First, search from editor function keys
 	func_key_t *func_key = get_fkey_entry_from_key(editor_func_key_table, key, 0);
 	if (func_key) {
 		return func_key->func_id;
 	}
 #ifdef ENABLE_FILER
+	// Second, search from filer function keys
 	func_key = get_fkey_entry_from_key(filer_func_key_table, key, 0);
 	if (func_key) {
 		return func_key->func_id;
@@ -308,6 +310,7 @@ PRIVATE key_code_t input_key_timeout()
 			disp_status_bar_async(_("Screen resized to (%d, %d)"),
 			 tio_get_columns(), tio_get_lines());
 			update_screen_app(S_B_NONE, 1);
+			break;		// return to caller
 		}
 		if ((long)(get_msec() - msec_enter) >= key_wait_time_msec) {
 			break;

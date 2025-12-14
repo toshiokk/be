@@ -290,6 +290,10 @@ int buf_renumber_from_top(be_buf_t *buf)
 {
 	return buf_renumber_from_line(buf, NODES_TOP_NODE(buf));
 }
+int buf_renumber_from_bottom(be_buf_t *buf)
+{
+	return buf_renumber_from_line(buf, NODES_BOT_NODE(buf));
+}
 
 int buf_renumber_from_line(be_buf_t *buf, be_line_t *line)
 {
@@ -514,9 +518,14 @@ void buf_set_modified__pending_timer(be_buf_t *buf)
 //   and write-pending-timer expired ==> save it to file
 // write pending timer:
 // - the timer used to avoid too frequent file update and speed down program execution
+int buf_is_modified_newer(be_buf_t *buf, const char *file_path)
+{
+	return buf_get_modified(buf)
+	 && (buf_compare_mtime_to_cur_file(buf, file_path) >= 0);
+}
 int buf_is_modified_newer__expired(be_buf_t *buf, const char *file_path, UINT16 dsec)
 {
-	return (buf_get_modified(buf) && (buf_compare_mtime_to_cur_file(buf, file_path) >= 0))
+	return buf_is_modified_newer(buf, file_path)
 	 && buf_is_pending_timer_expired(buf, dsec);
 }
 

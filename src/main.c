@@ -409,6 +409,7 @@ PRIVATE int parse_options(int argc, char *argv[])
 #undef ASK_ON_EXIT
 #warning "#undef ASK_ON_EXIT"
 #endif
+#define ASK_ON_EXIT
 // do_call_editor() : pass a edit-buffer and edit or browse it.
 // do_call_filer()  : pass a directory and manage or browse it.
 PRIVATE void app_main_loop()
@@ -454,8 +455,9 @@ PRIVATE void app_main_loop()
 			if (quit_soon) {
 				break;
 			}
-			int ret = ask_yes_no(ASK_YES_NO, _("Are you OK to quit %s ?"), APP_LONG_NAME);
-			if (ret == ANSWER_YES) {
+			int ret = ask_yes_no(ASK_YES_NO | ASK_QUIT,
+			 _("Are you OK to quit %s ?"), APP_LONG_NAME);
+			if ((ret == ANSWER_YES) || (ret == ANSWER_QUIT)) {
 				break;
 			}
 			disp_status_bar_warn(_("Quiting program cancelled"));
@@ -635,7 +637,7 @@ PRIVATE void die_save_file(const char *die_file_path)
 void free_all_allocated_memory()
 {
 #ifdef ENABLE_HISTORY
-	save_histories_if_modified();
+	save_histories_if_modified_newer();
 #endif // ENABLE_HISTORY
 	_mlc_memorize_count
 	free_all_buffers();

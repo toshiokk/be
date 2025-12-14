@@ -77,7 +77,7 @@ void dof_exec_command_with_file()
 
 	}
 	end_fork_exec_repeat(exit_status);
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 
 PRIVATE int input_command_line_and_execute(char *command_str, int flags);
@@ -148,7 +148,7 @@ PRIVATE int input_command_line_and_execute(char *command_str, int flags)
 		flags ^= EX_LOGGING;	// invert logging
 	}
 	fork_exec_sh_c_once(flags | EX_PAUSE, command_str);
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 	return 0;
 }
 void dof_run_command_shell()
@@ -259,7 +259,7 @@ PRIVATE int _dof_run_command(int flags)
 	if (is_app_chooser_mode()) {
 		SET_filer_do_next(EF_EXECUTED_RET_TO_CALLER);
 	} else {
-		SET_filer_do_next(FL_UPDATE_FORCE);
+		SET_filer_do_next(FL_UPDATE_FORCED);
 	}
 	return 0;
 }
@@ -403,8 +403,9 @@ PRIVATE int fork_exec_before_after(int flags, const char *command, char * const 
 	//           but output only "command arg1 arg2"
 #ifdef ENABLE_HISTORY
 	// save to file soon, because a command execution may take long time
-	modify_save_history(HISTORY_TYPE_IDX_EXEC, command);
 	hmflf_dprintf("exec: [%s]\n", command);
+	modify_history_w_reloading(HISTORY_TYPE_IDX_EXEC, command);
+	sync_cut_buffers_and_histories(1);
 #endif // ENABLE_HISTORY
 
 	if ((flags & EX_SETTERM) && (get_fork_exec_counter() == 0)) {

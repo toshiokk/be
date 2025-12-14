@@ -99,7 +99,7 @@ void dof_refresh_filer()
 	dir_history_fix();
 #endif // ENABLE_HISTORY
 	disp_status_bar_done(_("File view refreshed"));
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 //------------------------------------------------------------------------------
 void dof_enter_file_name()     { SET_filer_do_next(((input_string_full_path == 0)
@@ -120,7 +120,7 @@ void dof_set_filter()
 		return;
 	}
 	strlcpy__(get_fv_from_cur_pane()->filter, filter, MAX_PATH_LEN);
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 void dof_select_file()
 {
@@ -201,14 +201,14 @@ void dof_find_file()
 		return;
 	}
 	strlcpy__(get_fv_from_cur_pane()->next_file, file_path, MAX_PATH_LEN);
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 
 
 void dof_tog_show_dot_file()
 {
 	_dof_tog_show_dot_file();
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 void dof_inc_file_view_mode()
 {
@@ -219,24 +219,24 @@ void dof_clear_file_sort_mode()
 {
 	clear_file_sort_mode();
 	SHOW_MODE("Clear File sort mode", get_str_file_sort_mode());
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 void dof_inc_file_sort_mode()
 {
 	inc_file_sort_mode();
 	SHOW_MODE("File sort mode", get_str_file_sort_mode());
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 void dof_tog_show_zebra_striping()
 {
 	_dof_tog_show_zebra_striping();
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 void dof_tog_panes()
 {
 	tog_filer_panes();
 	SHOW_MODE("Filer panes", get_str_filer_panes());
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 void dof_tog_panex()
 {
@@ -245,7 +245,7 @@ void dof_tog_panex()
 #endif // ENABLE_HISTORY
 	tog_filer_panex();
 	SHOW_MODE("Filer pane index", get_str_filer_pane_num());
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 void dof_inc_key_list_lines()
 {
@@ -257,7 +257,7 @@ void dof_splash()
 {
 	do_splash();
 
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 void dof_view_file_list()
 {

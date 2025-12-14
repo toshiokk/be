@@ -9,7 +9,6 @@ else
   if [ -d "$BETRASH/dirs" ]; then
     echo -n "Are you sure to copy [$filepath] to [$BETRASH] and remove it ? "; read key
     cp -av "$filepath" $BETRASH/dirs
-    echo -n "Are you sure to remove [$filepath] after copying to [$BETRASH] ? "; read key
     rm -rv "$filepath"
   else
     mv -fv "$filepath" $BETRASH/dirs

@@ -24,8 +24,9 @@
 #ifdef ENABLE_HISTORY
 
 PRIVATE int load_history_if_file_newer(int hist_type_idx);
-PRIVATE void save_history_if_modified_newer__expired(int hist_type_idx);
-PRIVATE void save_history_if_modified(int hist_type_idx);
+PRIVATE int save_history_if_modified(int hist_type_idx);
+PRIVATE int save_history_if_modified_newer(int hist_type_idx);
+PRIVATE int save_history_if_modified_newer__expired(int hist_type_idx);
 
 PRIVATE int save_history_idx(int hist_type_idx);
 PRIVATE int load_history_idx(int hist_type_idx);
@@ -41,7 +42,8 @@ PRIVATE void clear_history_buf_modified(int hist_type_idx);
 PRIVATE void set_history_modified(int hist_type_idx);
 PRIVATE int is_history_modified(int hist_type_idx);
 PRIVATE int is_history_file_newer(int hist_type_idx);
-PRIVATE int is_history_buffer_modified_newer__expired(int hist_type_idx);
+PRIVATE int is_history_modified_newer(int hist_type_idx);
+PRIVATE int is_history_modified_newer__expired(int hist_type_idx);
 
 PRIVATE void set_history_oldest(int hist_type_idx);
 PRIVATE const char *get_history_newer(int hist_type_idx);
@@ -50,7 +52,6 @@ PRIVATE int has_str_registered_in_the_last_line(int hist_type_idx, const char *s
 
 PRIVATE void remove_all_exact_match(int hist_type_idx, const char *str);
 PRIVATE void remove_all_file_path_match(int hist_type_idx, const char *str);
-PRIVATE void remove_one_exact_match_newest(int hist_type_idx, const char *str);
 PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str);
 PRIVATE int compare_file_path_str(const char *str, const char *file_path);
 
@@ -80,32 +81,58 @@ void init_histories()
 }
 
 //------------------------------------------------------------------------------
-void sync_histories_if_necessary()
+void sync_histories_if_necessary(char soon)
 {
-	save_histories_if_modified_newer__expired();
-	int hist_type_idx = load_histories_if_file_newer();
+	int hist_type_idx = 0;
+	if (soon) {
+		hist_type_idx = save_histories_if_modified_newer();
+	} else {
+		hist_type_idx = save_histories_if_modified_newer__expired();
+	}
 	if (hist_type_idx >= 0) {
-		disp_status_bar_async(_("%s %s buffer re-loaded"),
-		 cur_hhcmmcss(), get_history_file_name(hist_type_idx));
+		disp_status_bar_async(_("%s %s[%s] saved"), cur_hhcmmcss(),
+		 get_history_file_name(hist_type_idx), history_last_line_str(hist_type_idx));
+	}
+	hist_type_idx = load_histories_if_file_newer();
+	if (hist_type_idx >= 0) {
+		disp_status_bar_async(_("%s %s[%s] re-loaded"), cur_hhcmmcss(),
+		 get_history_file_name(hist_type_idx), history_last_line_str(hist_type_idx));
 	}
 }
 
 // save history buffers to file
-void save_histories_if_modified()
+int save_histories_if_modified()
 {
+	int hist_type_idx_saved = -1;
 	for (int hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP; hist_type_idx++) {
-		save_history_if_modified(hist_type_idx);
+		if (save_history_if_modified(hist_type_idx) >= 0) {
+			hist_type_idx_saved = hist_type_idx;
+		}
 	}
+	return hist_type_idx_saved;
 }
-// save history buffers to files
-void save_histories_if_modified_newer__expired()
+int save_histories_if_modified_newer()
 {
+	int hist_type_idx_saved = -1;
 	for (int hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP; hist_type_idx++) {
-		save_history_if_modified_newer__expired(hist_type_idx);
+		if (save_history_if_modified_newer(hist_type_idx) >= 0) {
+			hist_type_idx_saved = hist_type_idx;
+		}
 	}
+	return hist_type_idx_saved;
+}
+int save_histories_if_modified_newer__expired()
+{
+	int hist_type_idx_saved = -1;
+	for (int hist_type_idx = 0; hist_type_idx < HISTORY_TYPES_APP; hist_type_idx++) {
+		if (save_history_if_modified_newer__expired(hist_type_idx) >= 0) {
+			hist_type_idx_saved = hist_type_idx;
+		}
+	}
+	return hist_type_idx_saved;
 }
 
-// load history files into buffers
+// load history file into buffers
 int load_histories_if_file_newer()
 {
 	int hist_type_idx_loaded = -1;
@@ -127,12 +154,6 @@ be_buf_t *get_history_buf(int hist_type_idx)
 	return buf_get_buf_by_idx(HIST_BUFS_TOP_BUF, hist_type_idx);
 }
 
-void modify_save_history(int hist_type_idx, const char *str)
-{
-	modify_history_w_reloading(hist_type_idx, str);
-	save_history_if_modified(hist_type_idx);
-}
-
 //------------------------------------------------------------------------------
 // update history list (load, modify, save)
 void modify_history_w_reloading(int hist_type_idx, const char *str)
@@ -144,9 +165,11 @@ void modify_history_w_reloading(int hist_type_idx, const char *str)
 	load_history_if_file_newer(hist_type_idx);
 
 	if (has_str_registered_in_the_last_line(hist_type_idx, str)) {
+hmflf_dprintf("%s: exist [%s]\n", get_history_file_name(hist_type_idx), str);
 		// already registered at the last line
 		return;
 	}
+hmflf_dprintf("%s: append [%s]\n", get_history_file_name(hist_type_idx), str);
 	if (hist_type_idx == HISTORY_TYPE_IDX_FILE) {
 		remove_all_file_path_match(hist_type_idx, str);
 	} else {
@@ -187,24 +210,48 @@ PRIVATE int load_history_if_file_newer(int hist_type_idx)
 	}
 	return -1;
 }
-PRIVATE void save_history_if_modified_newer__expired(int hist_type_idx)
-{
-	if (is_history_buffer_modified_newer__expired(hist_type_idx)) {
-		save_history_idx(hist_type_idx);
-	}
-}
-PRIVATE void save_history_if_modified(int hist_type_idx)
+
+// | buf-mod | buf vs file | expired || to-do         | function                                  |
+// |---------------------------------||-----------------------------------------------------------|
+// |    0    | buf == file |     0   || none          | ---                                       |
+// |    0    | buf < file  |     0   || reload        | load_history_if_file_newer()              |
+// |    1    | buf < file  |     0   || reload        | load_history_if_file_newer()              |
+// |    1    | buf < file  |     1   || reload        | load_history_if_file_newer()              |
+// |    1    | ---         |   ---   || pending write | save_history_if_modified()                |
+// |    1    | buf > file  |     0   || pending write | save_history_if_modified_newer()          |
+// |    1    | buf > file  |     1   || write         | save_history_if_modified_newer__expired() |
+
+PRIVATE int save_history_if_modified(int hist_type_idx)
 {
 	if (is_history_modified(hist_type_idx)) {
 		save_history_idx(hist_type_idx);
+		return hist_type_idx;
 	}
+	return -1;
+}
+PRIVATE int save_history_if_modified_newer(int hist_type_idx)
+{
+	if (is_history_modified_newer(hist_type_idx)) {
+		save_history_if_modified(hist_type_idx);
+		return hist_type_idx;
+	}
+	return -1;
+}
+PRIVATE int save_history_if_modified_newer__expired(int hist_type_idx)
+{
+	if (is_history_modified_newer__expired(hist_type_idx)) {
+		save_history_if_modified_newer(hist_type_idx);
+		return hist_type_idx;
+	}
+	return -1;
 }
 
 //------------------------------------------------------------------------------
 PRIVATE int save_history_idx(int hist_type_idx)
 {
 	const char *file_path = get_history_file_path(hist_type_idx);
-/////hmtflf_dprintf("ZZZZSSSS[%s]\n", file_path);
+/////
+hmtflf_dprintf("ZZZZSSSS[%s]\n", file_path);
 	make_backup_files(file_path, get_backup_files());
 	int error = 0;
 	FILE *fp = fopen(file_path, "w");
@@ -248,7 +295,8 @@ save_history_2:;
 PRIVATE int load_history_idx(int hist_type_idx)
 {
 	const char *file_path = get_history_file_path(hist_type_idx);
-/////hmtflf_dprintf("ZZZZLLLL[%s]\n", file_path);
+/////
+hmtflf_dprintf("ZZZZLLLL[%s]\n", file_path);
 	int error = 0;
 	FILE *fp = fopen(file_path, "r");
 	if (fp == NULL) {
@@ -377,6 +425,7 @@ hmflf_dprintf("append: [%s]\n", str);
 #endif // ENABLE_DEBUG
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	buf_set_cur_line(buf, line_insert_with_string(NODES_BOT_ANCH(buf), INSERT_BEFORE, str));
+	buf_renumber_from_bottom(buf);
 	set_history_modified(hist_type_idx);
 }
 PRIVATE void clear_history_buf(int hist_type_idx)
@@ -401,7 +450,12 @@ PRIVATE int is_history_file_newer(int hist_type_idx)
 	return buf_compare_mtime_to_cur_file(get_history_buf(hist_type_idx),
 	 get_history_file_path(hist_type_idx)) < 0;
 }
-PRIVATE int is_history_buffer_modified_newer__expired(int hist_type_idx)
+PRIVATE int is_history_modified_newer(int hist_type_idx)
+{
+	return buf_is_modified_newer(get_history_buf(hist_type_idx),
+	 get_history_file_path(hist_type_idx));
+}
+PRIVATE int is_history_modified_newer__expired(int hist_type_idx)
 {
 	return buf_is_modified_newer__expired(get_history_buf(hist_type_idx),
 	 get_history_file_path(hist_type_idx), BUFFER_EXPIRATION_DSEC);
@@ -479,16 +533,6 @@ PRIVATE void remove_all_file_path_match(int hist_type_idx, const char *str)
 		line = prev;
 	}
 }
-PRIVATE void remove_one_exact_match_newest(int hist_type_idx, const char *str)
-{
-	for (be_line_t *line = NODES_BOT_NODE(get_history_buf(hist_type_idx)); IS_NODE_INT(line); ) {
-		if (strcmp(line->data, str) == 0) {	// exact match
-			line_unlink_free(line);			// delete it
-			set_history_modified(hist_type_idx);
-		}
-		break;
-	}
-}
 
 // find first line containing string str in history list
 PRIVATE be_line_t *search_history_partial_match(int hist_type_idx, const char *str)
@@ -523,15 +567,31 @@ PRIVATE int compare_file_path_str(const char *str, const char *file_path)
 }
 
 //------------------------------------------------------------------------------
-// Record only the directory in which some operation actually done in the directory.
-// Do not record the directory in which nothing done and it has just visited the directory.
+////#define RECORD_DIR_ONLY_WHEN_SOMETHING_DONE
+#ifndef RECORD_DIR_ONLY_WHEN_SOMETHING_DONE
+// Record all directories entered even when nothing done there.
+PRIVATE char prev_dir_history[MAX_PATH_LEN+1] = "";
+void dir_history_update(const char *dir)
+{
+	if (strcmp(prev_dir_history, dir) != 0) {
+		strlcpy__(prev_dir_history, dir, MAX_PATH_LEN);
+		modify_history_w_reloading(HISTORY_TYPE_IDX_DIR, dir);
+	}
+}
+void dir_history_fix()
+{
+	// nothing to do
+}
+#else // RECORD_DIR_ONLY_WHEN_SOMETHING_DONE
+// Record only the directory in which some operations actually done there.
+// Do not record the directory in which nothing done and it has just visited short period.
 
 PRIVATE char dir_history_temporary[MAX_PATH_LEN+1] = "";
 #define MIN_TIME_T			0				// no timer running
 #define MAX_TIME_T			0x7fffffff		// timer stopped
 #define IS_TIME_T_VALID(time_t)		((MIN_TIME_T < time_t) && (time_t < MAX_TIME_T))
 PRIVATE time_t dir_history_temporary_abs_sec = MIN_TIME_T;
-#define STAYED_DIR_LONG_PERIOD_SECS		2
+#define STAYED_DIR_LONG_PERIOD_SECS		1
 PRIVATE void dir_history_append_temporarily(const char *dir);
 PRIVATE void dir_history_remove_temporary();
 // current directory has changed
@@ -569,16 +629,18 @@ hmflf_dprintf("dir: [%s]\n", dir);
 PRIVATE void dir_history_remove_temporary()
 {
 hmflf_dprintf("dir: [%s]\n", dir_history_temporary);
-	if (dir_history_temporary[0] && IS_TIME_T_VALID(dir_history_temporary_abs_sec)) {
-		if (get_sec() >= (dir_history_temporary_abs_sec + STAYED_DIR_LONG_PERIOD_SECS)) {
+	if (dir_history_temporary[0]) {
+		if (IS_TIME_T_VALID(dir_history_temporary_abs_sec)
+		 && (get_sec() >= (dir_history_temporary_abs_sec + STAYED_DIR_LONG_PERIOD_SECS))) {
 			// stayed the directory long period, record the directory
 			dir_history_fix();
 		} else {
 			// not stayed long period, remove temporary entry
 			load_history_if_file_newer(HISTORY_TYPE_IDX_DIR);
-			remove_one_exact_match_newest(HISTORY_TYPE_IDX_DIR,
+			remove_all_exact_match(HISTORY_TYPE_IDX_DIR,
 			 remove_trailing_slash(dir_history_temporary, NULL));
 			save_history_if_modified_newer__expired(HISTORY_TYPE_IDX_DIR);
+
 			strlcpy__(dir_history_temporary, "", MAX_PATH_LEN);
 			dir_history_temporary_abs_sec = MIN_TIME_T;
 		}
@@ -598,6 +660,7 @@ void dir_history_fix()
 		dir_history_temporary_abs_sec = MAX_TIME_T;
 	}
 }
+#endif // RECORD_DIR_ONLY_WHEN_SOMETHING_DONE
 
 //------------------------------------------------------------------------------
 int select_from_history_list(int hist_type_idx, char *buffer)

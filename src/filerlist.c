@@ -414,7 +414,7 @@ PRIVATE const char *get_1k_to_999k_str(long size)
 //  100G -  999G
 
 //------------------------------------------------------------------------------
-int read_file_info_array(filer_view_t *fv)
+int read_into_file_info_array(filer_view_t *fv)
 {
 	char dir_save[MAX_PATH_LEN+1];
 	struct dirent *dirent;
@@ -433,7 +433,7 @@ int read_file_info_array(filer_view_t *fv)
 	DIR *dir;
 	if ((dir = opendir(fv->cur_dir)) == NULL) {
 		strcpy__(fv->listed_dir, "");
-		goto read_file_info_array_ret;
+		goto read_into_file_info_array_ret;
 	}
 	for (file_idx = 0; (dirent = readdir(dir)) != NULL; file_idx++) {
 		// count files
@@ -514,7 +514,7 @@ int read_file_info_array(filer_view_t *fv)
 	FV_CUR_F_IDX(fv) = MIN_MAX_(0, FV_CUR_F_IDX(fv), fv->file_info_entries-1);
 	strcpy__(fv->listed_dir, fv->cur_dir);
 
-read_file_info_array_ret:;
+read_into_file_info_array_ret:;
 	change_cur_dir(dir_save);
 	return fv->file_info_entries;
 }

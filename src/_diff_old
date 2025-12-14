@@ -14,6 +14,6 @@ OLD_DIR=../../old/be/src
 
 rm -f _diff.txt _sdiff.txt
 
-for fn in *.h *.c __todo.txt ; do
+for fn in *.h *.c __todo.txt configure.ac ; do
   proc_one $fn
 done

@@ -78,6 +78,9 @@ int flock_unlock(const char *full_path);
 int flock_is_locked(const char *full_path);
 int delete_all_lock_files();
 
+//------------------------------------------------------------------------------
+const char *get_app_dir();
+
 #endif // editorfile_h
 
 // End of editorfile.h

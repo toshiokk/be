@@ -147,6 +147,7 @@ be_line_t *buf_append_line_to_bottom(be_buf_t *buf, be_line_t *line);
 int buf_compare(be_buf_t *buf1, be_buf_t *buf2);
 
 int buf_renumber_from_top(be_buf_t *buf);
+int buf_renumber_from_bottom(be_buf_t *buf);
 int buf_renumber_from_line(be_buf_t *buf, be_line_t *line);
 int buf_guess_tab_size(be_buf_t *buf);
 
@@ -176,6 +177,7 @@ UINT16 buf_calc_crc(be_buf_t *buf);
 
 #define BUFFER_EXPIRATION_DSEC		10			// 100 * 10 = 1000 msec (32767 * 0.1 = 3276 secs)
 void buf_set_modified__pending_timer(be_buf_t *buf);
+int buf_is_modified_newer(be_buf_t *buf, const char *file_path);
 int buf_is_modified_newer__expired(be_buf_t *buf, const char *file_path, UINT16 msec);
 
 void buf_clear_modified__pending_timer(be_buf_t *buf);

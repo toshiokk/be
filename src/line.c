@@ -312,10 +312,9 @@ int line_renumber_from_line(be_line_t *line, size_t *_buf_size_)
 	}
 	if (IS_NODE_TOP_ANCH(line)) {
 		line = NODE_NEXT(line);
-	} else if (IS_NODE_TOP(line)) {
-		// nothing to do
-	} else {
-		// continue renumbering from middle line
+	}
+	if (IS_NODE_INT(line)) {
+		// start renumbering from middle line
 		line_num = NODE_PREV(line)->line_num;
 		buf_size = NODE_PREV(line)->buf_size;
 	}

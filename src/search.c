@@ -250,7 +250,7 @@ int search_string_once(const char *needle, int search_count)
 		}
 		memorize_prev_file_pos_if_changed();
 		disp_status_bar_done(_("Keyword [%s] found in %s search"), needle,
-		 GET_APPMD(ed_REVERSE_SEARCH) ? _("Backward") : _("Forward"));
+		 (SEARCH_DIR() < 0) ? _("Backward") : _("Forward"));
 	}
 
 	found_in_prev_search = match_len;
@@ -291,10 +291,10 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			update_screen_editor(S_B_CURS, 1);
 			if (ret < ANSWER_ALL) {
 #ifdef ENABLE_UNDO
-				ret = ask_yes_no(ASK_YES_NO | ASK_ALL | ASK_BACKWARD | ASK_FORWARD | ASK_END
+				ret = ask_yes_no(ASK_YES_NO | ASK_ALL_YES | ASK_BACKWARD | ASK_FORWARD | ASK_END
 				 | (num_replaced ? ASK_UNDO : 0) | (num_undone ? ASK_REDO : 0),
 #else // ENABLE_UNDO
-				ret = ask_yes_no(ASK_YES_NO | ASK_ALL | ASK_BACKWARD | ASK_FORWARD | ASK_END,
+				ret = ask_yes_no(ASK_YES_NO | ASK_ALL_YES | ASK_BACKWARD | ASK_FORWARD | ASK_END,
 #endif // ENABLE_UNDO
 				 _("Replace from [%s] to [%s] ?"), needle, replace_to);
 			} else {
@@ -319,7 +319,8 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 #else // ENABLE_UNDO
 			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_FORWARD | ASK_END,
 #endif // ENABLE_UNDO
-			 _("Keyword [%s] not found"), needle);
+			 _("Keyword [%s] NOT found in %s search"), needle,
+			 (SEARCH_DIR() < 0) ? _("Backward") : _("Forward"));
 		}
 		if (ret == ANSWER_NO) {
 			// Not replace and search next
@@ -802,7 +803,7 @@ PRIVATE int search_needle_among_bufs(be_line_t **ptr_line, int *ptr_byte_idx,
 // search_count = 1: second uni-directional search (bi-directional search done)
 void disp_status_bar_not_found_msg(const char *str, int search_count)
 {
-	disp_status_bar_warn(_("Keyword [%s] not found in %s search"),
+	disp_status_bar_warn(_("Keyword [%s] NOT found in %s search"),
 	 shrink_str_to_scr_static(str), (search_count == 0)
 	  ? ((SEARCH_DIR() < 0) ? _("Backward") : _("Forward")) : _("Bi-directional"));
 	set_edit_win_update_needed(UPDATE_SCRN_ALL);

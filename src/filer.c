@@ -180,10 +180,11 @@ int do_call_filer(int push_win, int list_mode, const char *dir, const char *filt
  char *path_buf)
 {
 flf_dprintf("push: %d, list: %d, dir: %s, filter: [%s]\n", push_win, list_mode, dir, filter);
-#ifdef ENABLE_HISTORY
-	save_histories_if_modified();
-#endif // ENABLE_HISTORY
 	strcpy__(path_buf, "");
+
+#ifdef ENABLE_HISTORY
+	save_histories_if_modified_newer();
+#endif // ENABLE_HISTORY
 
 	editor_panes_t next_eps;
 	filer_panes_t next_fps;
@@ -227,26 +228,23 @@ flf_dprintf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 	if (path_buf) {
 		strcpy__(path_buf, "");
 	}
-
 	if (is_strlen_not_0(dir)) {
 		chdir_saving_prev_next(dir);
 	}
+
 #ifdef ENABLE_HISTORY
 	dir_history_update(get_fv_from_cur_pane()->cur_dir);
 	dir_history_fix();
 #endif // ENABLE_HISTORY
 
-	key_code_t key_input = K_VALID;
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_AUTO);	// update file list soon
+	clear_status_bar_displayed();		// allow updating status bar
+	key_code_t key_input = K_VALID;		// update status bar soon
 
 	// Main input loop
 	for ( ; ; ) {
 		check_filer_cur_dir();
-#ifdef ENABLE_HISTORY
-		dir_history_update(get_fv_from_cur_pane()->cur_dir);
-#endif // ENABLE_HISTORY
 		update_file_info_of_all_panes(filer_do_next);
-_FLF_
 		update_screen_app((IS_KEY_VALID(key_input) == 0) ? S_B_AUTO : S_B_CURS, 1);
 		//----------------------------------
 		key_input = input_key_wait_return();
@@ -279,7 +277,7 @@ _FLF_
 						disp_status_bar_done(
 						 _("Can not execute this function in filer List mode: [%s]"),
 						 func_key->func_id);
-						SET_filer_do_next(FL_UPDATE_FORCE);
+						SET_filer_do_next(FL_UPDATE_FORCED);
 						break;
 					case EFLM:		// executable in editor List mode
 					case EFAM:
@@ -315,7 +313,10 @@ _FLF_
 		if (filer_do_next >= EF_TO_QUIT) {
 			break;
 		}
-		sync_cut_buffers_and_histories();
+#ifdef ENABLE_HISTORY
+		dir_history_update(get_fv_from_cur_pane()->cur_dir);
+#endif // ENABLE_HISTORY
+		sync_cut_buffers_and_histories(0);
 	}
 #ifdef ENABLE_HISTORY
 	dir_history_fix();
@@ -388,7 +389,7 @@ PRIVATE int check_filer_cur_dir()
 	if (is_dir_readable(get_fv_from_cur_pane()->cur_dir) == 0) {
 		// current directory is not readable or disappeared
 		while (is_dir_readable(get_fv_from_cur_pane()->cur_dir) == 0) {
-			// go up to the root dir
+			// go up toward the root dir
 			dof_parent_directory();
 		}
 		tio_beep();
@@ -422,14 +423,14 @@ PRIVATE void update_file_info(filer_view_t *fv, int update_request)
 	if ((fv->file_info_array == NULL)
 	 || cur_dir_changed
 	 || ((update_request == FL_UPDATE_AUTO) && (get_files_selected(fv) == 0))
-	 || (update_request == FL_UPDATE_FORCE)) {
-		if ((update_request < FL_UPDATE_FORCE) && (fv->file_info_array != NULL)) {
+	 || (update_request == FL_UPDATE_FORCED)) {
+		if ((update_request == FL_UPDATE_AUTO) && (fv->file_info_array != NULL)) {
 			strlcpy__(fv->next_file, fv->file_info_array[FV_CUR_F_IDX(fv)].file_name,
 			 MAX_PATH_LEN);
 		} else {
 			// 'fv->next_file' has set by the requesters
 		}
-		read_file_info_array(fv);
+		read_into_file_info_array(fv);
 		sort_file_info_array(fv);
 		research_file_name_in_file_info_array(fv, fv->next_file, cur_dir_changed);
 	}

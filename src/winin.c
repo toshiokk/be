@@ -27,7 +27,7 @@ const char *get_ef_name(ef_do_next_t do_next)
 	default:						return "EF_UNKNOWN";
 	case EF_NONE:					return "EF_NONE";
 	case FL_UPDATE_AUTO:			return "FL_UPDATE_AUTO";
-	case FL_UPDATE_FORCE:			return "FL_UPDATE_FORCE";
+	case FL_UPDATE_FORCED:			return "FL_UPDATE_FORCED";
 	case EF_CANCELLED:				return "EF_CANCELLED";
 	case EF_TO_QUIT:				return "EF_TO_QUIT";
 	case EF_CHDIR_RET_TO_FILER:		return "EF_CHDIR_RET_TO_FILER";
@@ -371,13 +371,26 @@ flf_dprintf("func_id: [%s]\n", func_id);
 			if (! IS_EF_DONE(ret)) {
 				ret = EF_NONE;
 			}
+		} else
+		if ((strcmp(func_id, "doe_tag_jump_in_cur_curs_pos") == 0)
+		 || (strcmp(func_id, "doe_tag_jump_in_cur_line") == 0)) {
+			//---------------------------------------------------
+			ret = do_call_filer(1, APP_MODE_CHOOSER, input_buf, "", buffer);
+			//---------------------------------------------------
+			hmflf_dprintf("app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_ef_name(ret));
+			if (IS_EF_ENTER_STRING(ret)) {
+				strlcpy__(input_buf, buffer, MAX_PATH_LEN);
+			}
+			if (! IS_EF_DONE(ret)) {
+				ret = EF_NONE;
+			}
 #endif // ENABLE_FILER
 		}
 flf_dprintf("func_id: [%s], key_input: %04x, ret__[%s]\n", func_id, key_input, get_ef_name(ret));
 		if ((ret == EF_CANCELLED) || IS_EF_ENTER_STRING(ret) || IS_EF_DONE(ret)) {
 			break;
 		}
-		sync_cut_buffers_and_histories();
+		sync_cut_buffers_and_histories(0);
 	}
 flf_dprintf("key_input: %04x, ret__[%s]\n", key_input, get_ef_name(ret));
 	return ret;
@@ -489,6 +502,7 @@ PRIVATE int get_input_box_y()
 }
 
 //------------------------------------------------------------------------------
+PRIVATE int check_ask_yes_no_key(int flags, key_code_t key_input, const char *func_id);
 PRIVATE void disp_ask_yes_no_msg(int flags);
 PRIVATE void list_one_key(key_code_t key, const char *desc);
 
@@ -497,8 +511,10 @@ PRIVATE const char *chars_no = "Nn";				// No
 PRIVATE const char *chars_all = "Aa";				// All
 PRIVATE const char *chars_backward = "Bb";			// Backward search
 PRIVATE const char *chars_forward = "Ff ";			// Forward search
-PRIVATE const char *chars_cancel = "CcSs" S_ESC;	// Cancel/Stop/ESC
-PRIVATE const char *chars_end = "EeQqRr" S_C_Q;		// End/Quit/Return/Ctrl-Q
+PRIVATE const char *chars_cancel = "CcSs" S_ESC;	// Cancel/ESC
+PRIVATE const char *chars_stop = "SsCc" S_ESC;		// Stop
+PRIVATE const char *chars_end = "EeRrQq";			// End/Return
+PRIVATE const char *chars_quit = "Qq" S_C_Q;		// Quit/Ctrl-Q
 PRIVATE const char *chars_undo = "Uu";				// Undo
 PRIVATE const char *chars_redo = "Oo";				// redO
 
@@ -521,8 +537,8 @@ int ask_yes_no(int flags, const char *msg, ...)
 		msg_buf[byte_idx] = '\0';
 	}
 
-	int answer;
-	for (answer = ANSWER_NONE; answer == ANSWER_NONE; ) {
+	int answer = ANSWER_NONE;
+	for ( ; answer == ANSWER_NONE; ) {
 		// display key list
 		disp_ask_yes_no_msg(flags);
 
@@ -539,32 +555,9 @@ int ask_yes_no(int flags, const char *msg, ...)
 		if (IS_KEY_VALID(key_input)) {
 			hmflf_dprintf("input%ckey:0x%04x(%s)================\n",
 			 '_', (UINT16)key_input, short_key_name_from_key_code(key_input, NULL));
+			answer = check_ask_yes_no_key(flags, key_input, get_func_id_from_key(key_input));
 		}
-		const char *func_id = get_func_id_from_key(key_input);
-		// Look for the key_input in yes/no/all
-		if (strchr__(chars_yes, key_input) != NULL)
-			answer = ANSWER_YES;
-		else if (strchr__(chars_no, key_input) != NULL)
-			answer = ANSWER_NO;
-		else if ((flags & ASK_ALL) && (strchr__(chars_all, key_input) != NULL))
-			answer = ANSWER_ALL;
-		else if ((flags & ASK_BACKWARD)
-		 && ((strchr__(chars_backward, key_input) != NULL)
-		  || (strcmp(func_id, "doe_search_backward_next") == 0)))
-			answer = ANSWER_BACKWARD;
-		else if ((flags & ASK_FORWARD)
-		 && ((strchr__(chars_forward, key_input) != NULL)
-		  || (strcmp(func_id, "doe_search_forward_next") == 0)))
-			answer = ANSWER_FORWARD;
-		else if (strchr__(chars_cancel, key_input) != NULL)
-			answer = ANSWER_CANCEL;
-		else if ((flags & ASK_END || flags & ASK_NO) && (strchr__(chars_end, key_input) != NULL))
-			answer = ANSWER_END;
-		else if ((flags & ASK_UNDO) && (strchr__(chars_undo, key_input) != NULL))
-			answer = ANSWER_UNDO;
-		else if ((flags & ASK_REDO) && (strchr__(chars_redo, key_input) != NULL))
-			answer = ANSWER_REDO;
-		sync_cut_buffers_and_histories();
+		sync_cut_buffers_and_histories(0);
 	}
 
 	// Then blank the status_bar.
@@ -575,6 +568,43 @@ int ask_yes_no(int flags, const char *msg, ...)
 	update_screen_app(S_B_CURS, 1);
 
 	return answer;	// x > 0: yes, x = 0: no, x < 0: cancel
+}
+PRIVATE int check_ask_yes_no_key(int flags, key_code_t key_input, const char *func_id)
+{
+	int answer = ANSWER_NONE;
+	// Look for the key_input in yes/no/all ...
+	if (strchr__(chars_yes, key_input) != NULL)
+		answer = ANSWER_YES;
+	else if (strchr__(chars_no, key_input) != NULL)
+		answer = ANSWER_NO;
+	else if ((flags & ASK_ALL_YES)
+	 && (strchr__(chars_all, key_input) != NULL))
+		answer = ANSWER_ALL;
+	else if ((flags & ASK_BACKWARD)
+	 && ((strchr__(chars_backward, key_input) != NULL)
+	  || (strcmp(func_id, "doe_up") == 0) || (strcmp(func_id, "doe_page_up") == 0)
+	  || (strcmp(func_id, "doe_search_backward_next") == 0)))
+		answer = ANSWER_BACKWARD;
+	else if ((flags & ASK_FORWARD)
+	 && ((strchr__(chars_forward, key_input) != NULL)
+	  || (strcmp(func_id, "doe_down") == 0) || (strcmp(func_id, "doe_page_down") == 0)
+	  || (strcmp(func_id, "doe_search_forward_next") == 0)))
+		answer = ANSWER_FORWARD;
+	else if (strchr__(chars_cancel, key_input) != NULL)
+		answer = ANSWER_CANCEL;
+	else if ((flags & ASK_STOP)
+	 && (strchr__(chars_stop, key_input) != NULL))
+		answer = ANSWER_CANCEL;
+	else if ((flags & ASK_END)
+	 && (strchr__(chars_end, key_input) != NULL))
+		answer = ANSWER_END;
+	else if ((flags & ASK_QUIT) && (strchr__(chars_quit, key_input) != NULL))
+		answer = ANSWER_QUIT;
+	else if ((flags & ASK_UNDO) && (strchr__(chars_undo, key_input) != NULL))
+		answer = ANSWER_UNDO;
+	else if ((flags & ASK_REDO) && (strchr__(chars_redo, key_input) != NULL))
+		answer = ANSWER_REDO;
+	return answer;
 }
 PRIVATE void disp_ask_yes_no_msg(int flags)
 {
@@ -587,7 +617,7 @@ PRIVATE void disp_ask_yes_no_msg(int flags)
 		if (flags & ASK_NO) {
 			list_one_key(chars_no[0], _("No"));
 		}
-		if (flags & ASK_ALL) {
+		if (flags & ASK_ALL_YES) {
 			list_one_key(chars_all[0], _("All"));
 		}
 		if (flags & ASK_BACKWARD) {
@@ -597,8 +627,14 @@ PRIVATE void disp_ask_yes_no_msg(int flags)
 			list_one_key(chars_forward[0], _("Forward"));
 		}
 		list_one_key(chars_cancel[0], _("Cancel"));
-		if (flags & ASK_END || flags & ASK_NO) {
+		if (flags & ASK_STOP) {
+			list_one_key(chars_stop[0], _("Stop"));
+		}
+		if (flags & ASK_END) {
 			list_one_key(chars_end[0], _("End"));
+		}
+		if (flags & ASK_QUIT) {
+			list_one_key(chars_quit[0], _("Quit"));
 		}
 		if (flags & ASK_UNDO) {
 			list_one_key(chars_undo[0], _("Undo"));
@@ -722,11 +758,11 @@ PRIVATE void display_key_list_one_line(int yy, const char *text)
 	}
 }
 
-void sync_cut_buffers_and_histories()
+void sync_cut_buffers_and_histories(char soon)
 {
 	sync_cut_buffers_if_necessary();
 #ifdef ENABLE_HISTORY
-	sync_histories_if_necessary();
+	sync_histories_if_necessary(soon);
 #endif // ENABLE_HISTORY
 }
 

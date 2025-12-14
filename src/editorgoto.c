@@ -493,6 +493,7 @@ PRIVATE void goto_pos_by_history(const char *full_path)
 	if (goto_str_line_col_in_cur_buf(str)) {
 		EPCBVX_CL(0) = EPCBVX_CL(1) = EPCBVC_CL;
 		EPCBVX_CLBI(0) = EPCBVX_CLBI(1) = EPCBVC_CLBI;
+		disp_status_bar_ing(_("goes to line-%d, byte-%d"), EPCBVC_CL->line_num, EPCBVC_CLBI);
 	}
 }
 #endif // ENABLE_HISTORY

@@ -28,7 +28,7 @@ PRIVATE int editor_main_loop(char *str_buf);
 int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf)
 {
 #ifdef ENABLE_HISTORY
-	save_histories_if_modified();
+	save_histories_if_modified_newer();
 #endif // ENABLE_HISTORY
 
 #ifdef ENABLE_FILER
@@ -84,14 +84,15 @@ PRIVATE int editor_main_loop(char *str_buf)
 	matches_clear(&matches__);
 #endif // ENABLE_REGEX
 
-	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
-
 	key_code_t key_input = K_NONE;
 
 	// Main input loop
 	for ( ; ; ) {
 flf_dprintf("[%04x]\n", (UINT16)key_input);
-		SET_editor_do_next(EF_NONE);
+#ifdef ENABLE_HISTORY
+		dir_history_update(get_fv_from_cur_pane()->cur_dir);
+#endif // ENABLE_HISTORY
+flf_dprintf("is_epc_buf_modified(): %d\n", is_epc_buf_modified());
 		if (key_macro_is_playing_back()) {
 			// During playing back key-macro, do not update screen for speed up.
 		} else {
@@ -100,7 +101,7 @@ flf_dprintf("[%04x]\n", (UINT16)key_input);
 		//----------------------------------
 		key_input = input_key_wait_return();
 		//----------------------------------
-		SET_editor_do_next(FL_UPDATE_AUTO);
+		SET_editor_do_next(EF_NONE);
 		if (IS_KEY_VALID(key_input)) {
 			clear_status_bar_displayed();
 			hmflf_dprintf("input%ckey:0x%04x([%s]|[%s])========================================\n",
@@ -190,8 +191,7 @@ flf_dprintf("[%04x]\n", (UINT16)key_input);
 		if (editor_do_next >= EF_TO_QUIT) {
 			break;
 		}
-		sync_cut_buffers_and_histories();
-flf_dprintf("is_epc_buf_modified(): %d\n", is_epc_buf_modified());
+		sync_cut_buffers_and_histories(0);
 	}
 #ifdef ENABLE_HISTORY
 	key_macro_cancel_recording();
@@ -219,15 +219,6 @@ int chk_inp_str_ret_val_editor(int ret)
 }
 
 //------------------------------------------------------------------------------
-const char *get_app_dir()
-{
-#if defined(APP_DIR)
-	static char dir[MAX_PATH_LEN+1];
-	return concat_dir_and_dir(dir, get_home_dir(), APP_DIR);
-#else // APP_DIR
-	return get_home_dir();
-#endif // APP_DIR
-}
 
 #define _CLIPBOARD_FILE_NAME	"clipboard"		// default clipboard file name
 #if defined(APP_DIR)

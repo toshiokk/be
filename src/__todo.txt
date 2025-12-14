@@ -6,6 +6,12 @@
 - CRASH: crash
 - POLICY: things to be kept
 
+- [x] pop dir_history list when selecting from it ==> undefine `RECORD_DIR_ONLY_WHEN_SOMETHING_DONE`
+- [x] K_F12 key in input_str() calls filer with the directory input in the string field
+- [x] after reloading history file, renumbering is performed.
+      but after appending to history file, renumbering is not performed.
+- [x] 251209 delay before updating file list after returning to filer
+- [x] 251208 % indicator displayed at the not correct position in filer just after entering dir
 - [x] 251203 avoid the input-box from overlapping on the cursor line more than one line
 - [x] 251201 no file path shown when regioning
 - [x] 251128 after reloading history file, renumber its buffer
@@ -934,7 +940,7 @@ editor/filer	input_string()
 [v] automatic fallback when no nkf filter available
 
 [v] Show `username@hostname` in the title bar in filer (no need in editor)
-[v] Avoid showing directory path like "///" (remove_redundant_slash())
+[v] Avoid showing directory path such as "///" (remove_redundant_slash())
 [v] Avoid changing directory on "///" (contain_redundant_slash())
 
 [v] Execute script specifying absolute path from current directory.(E/R/T/X)

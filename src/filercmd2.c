@@ -138,7 +138,7 @@ PRIVATE int dof_open_file_(int flags)
 
 	unselect_all_files_auto(_FILE_SEL_MAN_ | _FILE_SEL_AUTO_);
 	if (get_files_loaded() < 0) {
-		SET_filer_do_next(FL_UPDATE_FORCE);
+		SET_filer_do_next(FL_UPDATE_FORCED);
 	} else {
 		SET_filer_do_next(EF_LOADED_RET_TO_EDITOR);
 	}
@@ -235,7 +235,7 @@ PRIVATE int dof_copy_file_(int update1)
 	if (chk_inp_str_ret_val_filer(input_string_pos(get_fv_from_other_pane()->cur_dir,
 	 file_path, MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
 	 (update1 == 0) ? _("Copy to:") : _("Copy to (Update):")))) {
-		return 0;
+		return 0;				// cancelled
 	}
 	int use_target_dir = 0;		// "-t target-dir"
 	if (get_number_of_selected_files() >= 2) {
@@ -275,8 +275,8 @@ PRIVATE int dof_copy_file_(int update1)
 
 	}
 	end_fork_exec_repeat(exit_status);
-	SET_filer_do_next(FL_UPDATE_FORCE);
-	return 0;
+	SET_filer_do_next(FL_UPDATE_FORCED);
+	return 1;					// executed
 }
 void dof_drop_files_to_copy()
 {
@@ -298,7 +298,7 @@ PRIVATE int dof_move_file_(int update1)
 	if (chk_inp_str_ret_val_filer(input_string_pos(get_fv_from_other_pane()->cur_dir,
 	 file_path, MAX_PATH_LEN, HISTORY_TYPE_IDX_DIR,
 	 (update1 == 0) ? _("Move to:") : _("Move to (Update):")))) {
-		return 0;
+		return 0;				// cancelled
 	}
 	int use_target_dir = 0;		// "-t target-dir"
 	if (get_number_of_selected_files() >= 2) {
@@ -332,8 +332,8 @@ PRIVATE int dof_move_file_(int update1)
 
 	}
 	end_fork_exec_repeat(exit_status);
-	SET_filer_do_next(FL_UPDATE_FORCE);
-	return 0;
+	SET_filer_do_next(FL_UPDATE_FORCED);
+	return 1;					// executed
 }
 void dof_drop_files_to_move()
 {
@@ -411,7 +411,7 @@ PRIVATE int _dof_drop_files_to_do_action(int action)
 				disp_files_loaded_if_ge_0();
 				SET_filer_do_next(EF_LOADED_RET_TO_EDITOR);
 			} else {
-				SET_filer_do_next(FL_UPDATE_FORCE);
+				SET_filer_do_next(FL_UPDATE_FORCED);
 			}
 			break;
 		case ACTION_COPY:
@@ -443,7 +443,7 @@ PRIVATE int _dof_drop_files_to_do_action(int action)
 	case ACTION_COPY:
 	case ACTION_MOVE:
 		end_fork_exec_repeat(exit_status);
-		SET_filer_do_next(FL_UPDATE_FORCE);
+		SET_filer_do_next(FL_UPDATE_FORCED);
 		break;
 	}
 	return 0;
@@ -461,7 +461,7 @@ void dof_rename_file()
 	if (fork_exec_args_once(EX_PAUSE, "mv", "-iv",
 	 get_cur_fv_cur_file_name(), file_name, 0) == 0) {
 		strlcpy__(get_fv_from_cur_pane()->next_file, file_name, MAX_PATH_LEN);
-		SET_filer_do_next(FL_UPDATE_FORCE);
+		SET_filer_do_next(FL_UPDATE_FORCED);
 	}
 }
 void dof_trash_file()
@@ -470,8 +470,7 @@ void dof_trash_file()
 	int ret;
 
 	if ((files_selected = get_files_selected_cfv()) == 0)
-		ret = ask_yes_no(ASK_YES_NO, _("Trash file %s ?"),
-		 get_cur_fv_cur_file_name());
+		ret = ask_yes_no(ASK_YES_NO, _("Trash file %s ?"), get_cur_fv_cur_file_name());
 	else
 		ret = ask_yes_no(ASK_YES_NO, _("Trash %d files ?"), files_selected);
 	if (ret <= 0) {
@@ -496,7 +495,7 @@ void dof_trash_file()
 
 	}
 	end_fork_exec_repeat(exit_status);
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 void dof_delete_file()
 {
@@ -504,8 +503,7 @@ void dof_delete_file()
 	int ret;
 
 	if ((files_selected = get_files_selected_cfv()) == 0)
-		ret = ask_yes_no(ASK_YES_NO, _("Delete file %s ?"),
-		 get_cur_fv_cur_file_name());
+		ret = ask_yes_no(ASK_YES_NO, _("Delete file %s ?"), get_cur_fv_cur_file_name());
 	else
 		ret = ask_yes_no(ASK_YES_NO, _("Delete %d files ?"), files_selected);
 	if (ret <= 0) {
@@ -528,7 +526,7 @@ void dof_delete_file()
 
 	}
 	end_fork_exec_repeat(exit_status);
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 void dof_mark_to_delete_file()
 {
@@ -563,7 +561,7 @@ void dof_mark_to_delete_file()
 
 	}
 	end_fork_exec_repeat(exit_status);
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 void dof_size_zero_file()
 {
@@ -571,11 +569,9 @@ void dof_size_zero_file()
 	int ret;
 
 	if ((files_selected = get_files_selected_cfv()) == 0) {
-		ret = ask_yes_no(ASK_YES_NO, _("Make size of file %s 0 ?"),
-		 get_cur_fv_cur_file_name());
+		ret = ask_yes_no(ASK_YES_NO, _("Make size of file %s 0 ?"), get_cur_fv_cur_file_name());
 	} else {
-		ret = ask_yes_no(ASK_YES_NO, _("Make size of %d files 0 ?"),
-		 files_selected);
+		ret = ask_yes_no(ASK_YES_NO, _("Make size of %d files 0 ?"), files_selected);
 	}
 	if (ret <= 0) {
 		return;
@@ -599,7 +595,7 @@ void dof_size_zero_file()
 
 	}
 	end_fork_exec_repeat(exit_status);
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 
 // BEUNZIP file1.tgz file2.tgz ...
@@ -622,7 +618,7 @@ void dof_unzip_file()
 	}
 
 	fork_exec_sh_c_once(EX_PAUSE, command_str);
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 // BEZIP file.tgz file1 file2 file3 ...
 void dof_zip_file()
@@ -644,7 +640,7 @@ void dof_zip_file()
 	}
 
 	fork_exec_sh_c_once(EX_PAUSE, command_str);
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 
 //------------------------------------------------------------------------------
@@ -680,7 +676,7 @@ void dof_make_directory()
 		return;
 	}
 	fork_exec_args_once(EX_PAUSE, "mkdir", "-p", file_path, 0);
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 void dof_change_directory()
 {
@@ -692,7 +688,11 @@ void dof_change_directory()
 	}
 	char file_path[MAX_PATH_LEN+1];
 	get_file_line_col_from_str(string, file_path, NULL, NULL);
-	filer_chdir_parent(file_path);
+	if (filer_chdir_parent(file_path)) {
+		SET_filer_do_next(EF_CHDIR_RET_TO_FILER);
+		return;
+	}
+	SET_filer_do_next(EF_NONE);
 }
 
 void dof_parent_directory()
@@ -704,7 +704,7 @@ void dof_parent_directory()
 	 get_fv_from_cur_pane()->cur_dir,
 	 get_fv_from_cur_pane()->cur_dir,
 	 get_fv_from_cur_pane()->next_file);
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_filer_do_next(FL_UPDATE_FORCED);
 }
 void dof_beginning_directory()
 {

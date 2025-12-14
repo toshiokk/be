@@ -27,7 +27,7 @@ typedef enum {
 	EF_NONE						= 0,	// nothing done yet and nothing to do next
 										// in filer loop:
 	FL_UPDATE_AUTO				= 1,	//   automatic periodic file list update
-	FL_UPDATE_FORCE				= 2,	//   force immediate file list update
+	FL_UPDATE_FORCED			= 2,	//   force immediate file list update
 										// input string:
 	EF_CANCELLED				= 3,	//   input cancelled
 										// quit from editor/filer:
@@ -70,14 +70,16 @@ int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx
 int input_full_path(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, ...);
 
-#define ASK_ALL			0x80
-#define ASK_REDO		0x40
-#define ASK_UNDO		0x20
-#define ASK_END			0x10
-#define ASK_BACKWARD	0x08
-#define ASK_FORWARD		0x04
-#define ASK_YES			0x02
-#define ASK_NO			0x01
+#define ASK_YES			0x001
+#define ASK_NO			0x002
+#define ASK_ALL_YES		0x004
+#define ASK_BACKWARD	0x008
+#define ASK_FORWARD		0x010
+#define ASK_UNDO		0x020
+#define ASK_REDO		0x040
+#define ASK_STOP		0x080
+#define ASK_END			0x100
+#define ASK_QUIT		0x200
 #define ASK_YES_NO		(ASK_YES | ASK_NO)
 
 						// positive answers ----------------------
@@ -92,14 +94,15 @@ int input_full_path(const char *default__, char *input_buf, int cursor_byte_idx,
 #define ANSWER_NO		0	// No (save or replace)
 						// not valid answers ---------------------
 #define ANSWER_NONE		-1	// Not yet answered
-#define ANSWER_CANCEL	-2	// cancel string-replacing and not-return to beginning pos
-#define ANSWER_END		-3	// cancel string-replacing and return to beginning pos
+#define ANSWER_CANCEL	-2	// cancel string-replacing and NOT-return to the beginning pos
+#define ANSWER_END		-3	// cancel string-replacing and return to the beginning pos
+#define ANSWER_QUIT		-4	// quit from application
 int ask_yes_no(int flags, const char *msg, ...);
 
 void disp_fkey_list();
 void disp_key_list_lines(const char *key_lists[]);
 
-void sync_cut_buffers_and_histories();
+void sync_cut_buffers_and_histories(char soon);
 
 #endif // winin_h
 

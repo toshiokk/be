@@ -73,6 +73,8 @@ void disp_status_bar_type(s_b_d_t status_bar_to_display, const char *msg, ...)
 // |S_B_ERR  | over-W | over-W | over-W | over-W | over-W | over-W | over-W | over-W |
 // |S_B_DONE | over-W | over-W | over-W | over-W |prv:nxt |prv:nxt | over-W | over-W |
 // |S_B_ASYN | over-W | over-W | over-W | over-W | over-W | over-W | over-W | over-W |
+// Note: 'prv:nxt' uses previous color
+// over-W: over-write
 PRIVATE char sb_overwrite_policy_table[S_B_TYPES][S_B_TYPES] = {
 //             |S_B_NONE|S_B_AUTO|S_B_CURS|S_B_ING |S_B_WARN|S_B_ERR |S_B_DONE|S_B_ASYN|
 /* S_B_NONE */ {    1   ,    1   ,    1   ,    1   ,    1   ,    1   ,    1   ,    1   },
@@ -84,8 +86,6 @@ PRIVATE char sb_overwrite_policy_table[S_B_TYPES][S_B_TYPES] = {
 /* S_B_DONE */ {    1   ,    1   ,    1   ,    1   ,    2   ,    2   ,    1   ,    1   },
 /* S_B_ASYN */ {    1   ,    1   ,    1   ,    1   ,    1   ,    1   ,    1   ,    1   },
 };
-// Note: 'prv:nxt' uses previous color
-// over-W: over-write
 
 // Examples:
 //  Reading File filename.ext ...
@@ -96,22 +96,9 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
  const char *msg, va_list ap)
 {
 	app_stack_entry *app_stk_ptr = get_app_stack_ptr(-1);
-	int dividend = 1;
-	int divisor = 1;
 
 hmflf_dprintf("[%d](%d?%d)[%s]\n", get_app_stack_depth(),
  app_stk_ptr->status_bar_displayed, status_bar_to_display, msg);
-#ifdef ENABLE_FILER
-	if (GET_APPMD(app_EDITOR_FILER) == EF_EDITOR) {
-#endif // ENABLE_FILER
-		dividend = EPCBVC_CL->line_num-1;
-		divisor = get_epc_buf()->buf_lines-1;
-#ifdef ENABLE_FILER
-	} else {
-		dividend = get_cur_fv_file_idx();
-		divisor = get_cur_fv_file_info_entries();
-	}
-#endif // ENABLE_FILER
 
 	char update = sb_overwrite_policy_table
 		[MIN_MAX_(S_B_NONE, status_bar_to_display, S_B_ASYN)]
@@ -155,19 +142,33 @@ flf_dprintf("update: %d\n", update);
 			break;
 		}
 		adjust_str_columns(buffer, central_win_get_columns());
-		int col_idx = -1;
-		if (divisor > 0) {
-			// display percent indicator
-			col_idx = MIN_MAX_(0, (central_win_get_columns() - 1) * dividend / divisor,
-			 central_win_get_columns() - 1);
-		}
 		app_stk_ptr->status_bar_color_idx = color_idx;
-		app_stk_ptr->status_bar_col_idx = col_idx;
 		strlcpy__(app_stk_ptr->status_bar_msg, buffer, MAX_SCRN_LINE_BUF_LEN);
 		app_stk_ptr->status_bar_displayed = status_bar_to_display;
 hm_dprintf("_SB_[%d](%d)[%s]\n", get_app_stack_depth(),
  status_bar_to_display, app_stk_ptr->status_bar_msg);
 	}
+	// percent indicator
+	int dividend = 1;
+	int divisor = 1;
+#ifdef ENABLE_FILER
+	if (GET_APPMD(app_EDITOR_FILER) == EF_EDITOR) {
+#endif // ENABLE_FILER
+		dividend = EPCBVC_CL->line_num-1;
+		divisor = get_epc_buf()->buf_lines-1;
+#ifdef ENABLE_FILER
+	} else {
+		dividend = get_cur_fv_file_idx();
+		divisor = get_cur_fv_file_info_entries();
+	}
+#endif // ENABLE_FILER
+	int col_idx = -1;
+	if (divisor > 0) {
+		// display percent indicator
+		col_idx = MIN_MAX_(0, (central_win_get_columns() - 1) * dividend / divisor,
+		 central_win_get_columns() - 1);
+	}
+	app_stk_ptr->status_bar_col_idx = col_idx;
 	redisp_status_bar();
 }
 PRIVATE int get_status_bar_color_idx(char status_bar_display)

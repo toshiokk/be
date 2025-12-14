@@ -54,7 +54,6 @@ int editor_vert_scroll_lines()
 void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_move,
  locate_cursor_to_t locate_cursor, int update_needed)
 {
-flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	switch (GET_APPMD(ed_CURS_POSITIONING)) {
 	default:
 	case CURS_POSITIONING_NONE:		break;		// not change
@@ -62,25 +61,18 @@ flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	case CURS_POSITIONING_CENTER:	locate_cursor = LOCATE_CURS_CENTER;		break;
 	case CURS_POSITIONING_BOTTOM:	locate_cursor = LOCATE_CURS_BOTTOM;		break;
 	}
-flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	if (renum_from) {
 		buf_renumber_from_line(get_epc_buf(), renum_from);
 	}
 	if (is_disabled_update_min_text_x_to_keep() == 0) {
-flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 		update_text_x_to_keep_after_cursor_move(cursor_move);
-flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	}
 	setup_cut_region_after_cursor_move(cursor_move);
-flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	locate_curs_y_in_edit_win(locate_cursor);
-flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	set_edit_win_update_needed(update_needed);
-flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 #ifdef ENABLE_UNDO
 	undo_save_after_change();
 #endif // ENABLE_UNDO
-flf_dprintf("EPCBVC_MIN_TEXT_X_TO_KEEP: %d\n", EPCBVC_MIN_TEXT_X_TO_KEEP);
 	return;
 }
 
@@ -123,13 +115,13 @@ void locate_curs_y_in_edit_win(locate_cursor_to_t locate_curs)
 			switch (locate_curs) {
 			default:
 			case LOCATE_CURS_JUMP_BACKWARD:	// upper one third of the screen
-				disp_y_preferred = edit_win_get_text_lines() * 1 / 3;
+				disp_y_preferred = LIM_MIN(0, edit_win_get_text_lines() * 1 / 3 - 1);
 				break;
 			case LOCATE_CURS_JUMP_CENTER:	// center
-				disp_y_preferred = edit_win_get_text_lines() / 2;
+				disp_y_preferred = LIM_MIN(0, edit_win_get_text_lines() / 2 - 1);
 				break;
 			case LOCATE_CURS_JUMP_FORWARD:	// lower one third of the screen
-				disp_y_preferred = edit_win_get_text_lines() * 2 / 3;
+				disp_y_preferred = LIM_MIN(0, edit_win_get_text_lines() * 2 / 3 - 1);
 				break;
 			}
 			disp_y_preferred = MK_IN_RANGE(0, disp_y_preferred, edit_win_get_text_lines());
@@ -139,10 +131,10 @@ void locate_curs_y_in_edit_win(locate_cursor_to_t locate_curs)
 		disp_y_preferred = 0;
 		break;
 	case LOCATE_CURS_CENTER:
-		disp_y_preferred = edit_win_get_text_lines() / 2;
+		disp_y_preferred = LIM_MIN(0, edit_win_get_text_lines() / 2 - 1);
 		break;
 	case LOCATE_CURS_BOTTOM:
-		disp_y_preferred = edit_win_get_text_lines() - 1;
+		disp_y_preferred = LIM_MIN(0, edit_win_get_text_lines() - 1);
 		break;
 	}
 	EPCBVC_CURS_Y = disp_y_preferred;

@@ -60,13 +60,13 @@
 
 void init_histories();
 
-void sync_histories_if_necessary();
-void save_histories_if_modified();
-void save_histories_if_modified_newer__expired();
+void sync_histories_if_necessary(char soon);
+int save_histories_if_modified();
+int save_histories_if_modified_newer();
+int save_histories_if_modified_newer__expired();
 int load_histories_if_file_newer();
 
 be_buf_t *get_history_buf(int hist_type_idx);
-void modify_save_history(int hist_type_idx, const char *str);
 void modify_history_w_reloading(int hist_type_idx, const char *str);
 
 const char *get_history_newest(int hist_type_idx, int last_n);

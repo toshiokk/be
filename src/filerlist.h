@@ -67,7 +67,7 @@ const char *file_info_str(file_info_t *file_info,
  int show_link, int trunc_file_name, int selected);
 const char *get_file_size_str(char *buf_size, loff_t size);
 
-int read_file_info_array(filer_view_t *fv);
+int read_into_file_info_array(filer_view_t *fv);
 void free_file_info_array(filer_view_t *fv);
 
 void sort_file_info_array(filer_view_t *fv);
