@@ -15,7 +15,7 @@ regexp			1
 tab_eol_notation	1
 map_key_7f_bs		1
 
-key_list_lines		0
+key_list_lines		1
 tab_size		8
 
 [color]
@@ -109,6 +109,24 @@ color_syntax ="\b(elif|else|except|finally|for|from|global)\b"   +red
 color_syntax ="\b(if|import|in|is|lambda|nonlocal|not|or)\b"     +red
 color_syntax ="\b(pass|raise|return|try|while|with|yield)\b"     +red
 color_syntax ="\b(bool|int|float|str|__init__|__name__)\b"       +blue
+color_syntax ="\b(abs|aiter|all|anext|any|ascii)\b"              +magenta
+color_syntax ="\b(id|input|int|isinstance|issubclass|iter)\b"    +magenta
+color_syntax ="\b(abs|aiter|all|anext|any|ascii)\b"              +magenta
+color_syntax ="\b(bin|bool|breakpoint|bytearray|bytes)\b"        +magenta
+color_syntax ="\b(callable|chr|classmethod|compile|complex)\b"   +magenta
+color_syntax ="\b(delattr|dict|dir|divmod)\b"                    +magenta
+color_syntax ="\b(enumerate|eval|exec)\b"                        +magenta
+color_syntax ="\b(filter|float|format|frozenset)\b"              +magenta
+color_syntax ="\b(getattr|globals)\b"                            +magenta
+color_syntax ="\b(hasattr|hash|help|hex)\b"                      +magenta
+color_syntax ="\b(id|input|int|isinstance|issubclass|iter)\b"    +magenta
+color_syntax ="\b(len|list|locals)\b"                            +magenta
+color_syntax ="\b(map|max|memoryview|min|next)\b"                +magenta
+color_syntax ="\b(object|oct|open|ord)\b"                        +magenta
+color_syntax ="\b(pow|print|property)\b"                         +magenta
+color_syntax ="\b(range|repr|reversed|round)\b"                  +magenta
+color_syntax ="\b(set|setattr|slice|sorted|staticmethod|str|sum|super)\b"    +magenta
+color_syntax ="\b(tuple|type|vars|zip)\b"                        +magenta
 color_syntax ="\"\"\".*"              +brown
 color_syntax ="'''.*"                 +brown
 tab_size	4

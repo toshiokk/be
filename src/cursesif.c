@@ -25,26 +25,29 @@
 
 PRIVATE WINDOW *curses_win;
 
-PRIVATE int get_color_pair(int bgc, int fgc);
-PRIVATE int init_color_pairs();
+PRIVATE short get_color_pair(char bgc, char fgc);
+PRIVATE void init_color_pairs();
 PRIVATE key_code_t getch_();
 
 //------------------------------------------------------------------------------
-PRIVATE struct termios term_settings_save;	// The user's original term settings
+PRIVATE char curses_enabled = 0;
+PRIVATE struct termios term_settings_saved;	// The user's original term settings
 PRIVATE char curses_bgc = 0;
 PRIVATE char curses_fgc = 7;
 PRIVATE char curses_rev = 0;
-PRIVATE char curses_color_pair = -1;
-PRIVATE char curses_cur_color_pair = -1;
+PRIVATE short curses_color_pair = -1;
 
 int curses_init()
 {
+	// ncurses shows only 16 grayscale monochrome colors if "TERM=xterm-256color".
+	// so change it to "TERM=linux" or "TERM=xterm"
+///	setenv("TERM", "linux", 1);
+	setenv("TERM", "xterm", 1);
 	curses_bgc = 0;
 	curses_fgc = 7;
 	curses_rev = 0;
 	curses_color_pair = -1;
-	curses_cur_color_pair = -1;
-	save_term_settings(&term_settings_save);
+	save_term_settings(&term_settings_saved);
 	return 0;
 }
 int curses_begin()
@@ -60,6 +63,7 @@ int curses_begin()
 	nodelay(curses_win, TRUE);
 	ESCDELAY = 1;
 	init_color_pairs();
+	curses_enabled = 1;
 	return 0;
 }
 int curses_end()
@@ -68,7 +72,8 @@ int curses_end()
 	nocbreak();
 	echo();
 	endwin();
-	restore_term_settings(&term_settings_save);
+	restore_term_settings(&term_settings_saved);
+	curses_enabled = 0;
 	return 0;
 }
 //------------------------------------------------------------------------------
@@ -86,7 +91,7 @@ int curses_get_columns()
 	return LIM_MAX(MAX_SCRN_COLS, COLS);
 }
 //------------------------------------------------------------------------------
-PRIVATE int get_color_pair(int bgc, int fgc)
+PRIVATE short get_color_pair(char bgc, char fgc)
 {
 	if ((GET_BASE_COLOR(bgc) == CL_BK) && (GET_BASE_COLOR(fgc) == CL_BK)) {
 		fgc = CL_GY;	// (0, 0) ==> (0, 7)
@@ -94,21 +99,20 @@ PRIVATE int get_color_pair(int bgc, int fgc)
 	return CP_FROM_CBF(bgc, fgc);	// [1, COLOR_PAIRS-1]
 }
 
-PRIVATE int init_color_pairs()
+PRIVATE void init_color_pairs()
 {
-	int fgc, bgc;
-
 	start_color();
-	for (bgc = 0; bgc < COLORS; bgc++) {
-		for (fgc = 0; fgc < COLORS; fgc++) {
+	for (int bgc = 0; bgc < COLORS; bgc++) {
+		for (int fgc = 0; fgc < COLORS; fgc++) {
 			init_pair(get_color_pair(bgc, fgc), fgc, bgc);
 		}
 	}
-	return 0;
 }
 
 void curses_set_attrs(int bgc, int fgc, int rev)
 {
+	if (! curses_enabled)
+		return;
 	if (bgc >= 0) {
 		curses_bgc = bgc;
 	}
@@ -131,20 +135,24 @@ void curses_set_attrs(int bgc, int fgc, int rev)
 	} else {
 		wattroff(curses_win, A_BOLD);
 	}
-	curses_color_pair = get_color_pair(bgc, fgc);
-	if (curses_cur_color_pair != curses_color_pair) {
-		wattron(curses_win, COLOR_PAIR(curses_color_pair));
+	short color_pair = get_color_pair(bgc, fgc);
+	if (curses_color_pair != color_pair) {
+		wattron(curses_win, COLOR_PAIR(color_pair));
 	}
-	curses_cur_color_pair = curses_color_pair;
+	curses_color_pair = color_pair;
 }
 void curses_set_cursor_on(int on_off)
 {
+	if (! curses_enabled)
+		return;
 	curs_set(on_off);
 }
 PRIVATE int curses_cursor_yy = 0;
 PRIVATE int curses_cursor_xx = 0;
 void curses_set_cursor_pos(int yy, int xx)
 {
+	if (! curses_enabled)
+		return;
 	curses_cursor_yy = yy;
 	curses_cursor_xx = xx;
 	wmove(curses_win, yy, xx);
@@ -161,20 +169,28 @@ void curses_get_cursor_pos(int *yy, int *xx)
 
 void curses_clear_screen()
 {
+	if (! curses_enabled)
+		return;
 	clear();
 }
 void curses_output_string(int yy, int xx, const char *string, int bytes)
 {
+	if (! curses_enabled)
+		return;
 	if (yy >= 0 && xx >= 0)
 		curses_set_cursor_pos(yy, xx);
 	waddnstr(curses_win, (char *)string, bytes);
 }
 void curses_beep()
 {
+	if (! curses_enabled)
+		return;
 	beep();
 }
 void curses_refresh()
 {
+	if (! curses_enabled)
+		return;
 	refresh();
 }
 //------------------------------------------------------------------------------

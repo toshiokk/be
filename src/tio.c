@@ -118,7 +118,7 @@ void tio_test()
 		if (key == 'q')
 			break;
 		snprintf(buf, BUF_LEN+1, "%04x{%s}",
-		 key, short_key_name_from_key_code(key, buf_key_name));
+		 key, get_key_name_from_key_code(key, buf_key_name));
 		tio_output_string(yy, xx, buf, -1);
 	}
 
@@ -432,20 +432,29 @@ void tio_beep()
 
 void tio_refresh()
 {
-_FLF_
 #ifdef ENABLE_NCURSES
 	curses_refresh();
 #else // ENABLE_NCURSES
 	termif_refresh();
 #endif // ENABLE_NCURSES
 }
-void tio_repaint_all()
+void tio_repaint()
+{
+#ifdef ENABLE_NCURSES
+	// no function
+#else // ENABLE_NCURSES
+	termif_send_clear();
+#endif // ENABLE_NCURSES
+	tio_redraw();
+}
+void tio_redraw()
 {
 #ifdef ENABLE_NCURSES
 	// no function
 #else // ENABLE_NCURSES
 	termif_clear_vscreen_painted();
 #endif // ENABLE_NCURSES
+	tio_refresh();
 }
 
 key_code_t tio_input_key()

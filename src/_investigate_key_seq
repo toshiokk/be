@@ -1,2 +1,2 @@
 #./be -k
-./be -keyseq
+./be -keyseq | tee -a _investigate_key_seq.txt

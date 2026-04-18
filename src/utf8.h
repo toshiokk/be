@@ -31,8 +31,8 @@
 void test_utf8c_encode();
 #define DUMP_UTF8_BUF_LEN	(18+1)	// "00-00-00-00-00-00-"
 const char *dump_utf8c(const char *utf8c, char *buf);
-void test_utf8c_bytes();
 void test_wcwidth();
+void test_utf8c_bytes();
 #endif // START_UP_TEST
 
 int utf8s_chars(const char *utf8s);
@@ -43,7 +43,8 @@ int utf8c_len(char utf8c_state, char utf8c);
 int utf8c_prev_bytes(const char *utf8s_min, const char *utf8s);
 int utf8c_columns(const char *utf8s);
 wchar_t utf8c_decode(const char *utf8c);
-int utf8c_encode(wchar_t wc, char *utf8c);
+char *utf8c_encode(wchar_t wc, char *utf8c);
+int utf8c_encode_bytes(wchar_t wc, char *utf8c);
 
 #endif // utf8_h
 

@@ -294,43 +294,8 @@ save_history_2:;
 
 PRIVATE int load_history_idx(int hist_type_idx)
 {
-	const char *file_path = get_history_file_path(hist_type_idx);
-/////
-hmtflf_dprintf("ZZZZLLLL[%s]\n", file_path);
-	int error = 0;
-	FILE *fp = fopen(file_path, "r");
-	if (fp == NULL) {
-		debug_e_printf("Unable to open history file: %s, %s",
-		 file_path, strerror(errno));
-		error = 1;
-		goto load_history_1;
-	}
-	clear_history_buf(hist_type_idx);
-	int lines;
-	char str[MAX_EDIT_LINE_LEN+1];
-	// count total lines
-	for (lines = 0; fgets(str, MAX_EDIT_LINE_LEN, fp) != NULL; ) {
-		// count lines
-		lines++;
-	}
-	lines = LIM_MIN(0, lines - get_history_max_lines(hist_type_idx));
-	fseek(fp, 0, SEEK_SET);
-	// skip lines
-	for ( ; fgets(str, MAX_EDIT_LINE_LEN, fp) != NULL; ) {
-		if (lines-- > 0)
-			continue;
-		// load the last get_history_max_lines(hist_type_idx) lines
-		str[MAX_EDIT_LINE_LEN] = '\0';
-		append_history_buf(hist_type_idx, remove_line_tail_lf(str));
-	}
-	if (fclose(fp) != 0) {
-		error = 1;
-	}
-	buf_get_file_stat(get_history_buf(hist_type_idx), file_path);
-	buf_renumber_from_top(get_history_buf(hist_type_idx));
-load_history_1:;
-	clear_history_buf_modified(hist_type_idx);
-	return error;
+	return read_file_into_buf_max_lines(get_history_file_path(hist_type_idx),
+	 get_history_buf(hist_type_idx), get_history_max_lines(hist_type_idx));
 }
 //------------------------------------------------------------------------------
 const char *get_history_file_path(int hist_type_idx)
@@ -387,7 +352,7 @@ PRIVATE int get_history_max_lines(int hist_type_idx)
 		lines = MAX_HISTORY_LINES;
 		break;
 	case HISTORY_TYPE_IDX_FILE:
-		lines = MAX_HISTORY_LINES_10K;
+		lines = MAX_HISTORY_LINES_9999;
 		break;
 	case HISTORY_TYPE_IDX_SEARCH:
 		lines = MAX_HISTORY_LINES;
@@ -396,7 +361,7 @@ PRIVATE int get_history_max_lines(int hist_type_idx)
 		lines = MAX_HISTORY_LINES;
 		break;
 	case HISTORY_TYPE_IDX_KEYMACRO:
-		lines = MAX_HISTORY_LINES;
+		lines = MAX_HISTORY_LINES_99;
 		break;
 	case HISTORY_TYPE_IDX_SHELL:
 		lines = MAX_HISTORY_LINES;
@@ -409,8 +374,9 @@ PRIVATE int get_history_max_lines(int hist_type_idx)
 // initialize search and replace history lists
 PRIVATE void init_history(int hist_type_idx)
 {
-	set_history_newest(hist_type_idx);
+	clear_history_buf(hist_type_idx);
 	clear_history_buf_modified(hist_type_idx);
+	set_history_newest(hist_type_idx);
 }
 // add string to the bottom of history list
 PRIVATE void append_history_buf(int hist_type_idx, const char *str)
@@ -418,11 +384,6 @@ PRIVATE void append_history_buf(int hist_type_idx, const char *str)
 	if (is_strlen_0(str)) {
 		return;
 	}
-#ifdef ENABLE_DEBUG
-if (hist_type_idx == HISTORY_TYPE_IDX_DIR) {
-hmflf_dprintf("append: [%s]\n", str);
-}
-#endif // ENABLE_DEBUG
 	be_buf_t *buf = get_history_buf(hist_type_idx);
 	buf_set_cur_line(buf, line_insert_with_string(NODES_BOT_ANCH(buf), INSERT_BEFORE, str));
 	buf_renumber_from_bottom(buf);
@@ -567,8 +528,6 @@ PRIVATE int compare_file_path_str(const char *str, const char *file_path)
 }
 
 //------------------------------------------------------------------------------
-////#define RECORD_DIR_ONLY_WHEN_SOMETHING_DONE
-#ifndef RECORD_DIR_ONLY_WHEN_SOMETHING_DONE
 // Record all directories entered even when nothing done there.
 PRIVATE char prev_dir_history[MAX_PATH_LEN+1] = "";
 void dir_history_update(const char *dir)
@@ -578,98 +537,15 @@ void dir_history_update(const char *dir)
 		modify_history_w_reloading(HISTORY_TYPE_IDX_DIR, dir);
 	}
 }
-void dir_history_fix()
-{
-	// nothing to do
-}
-#else // RECORD_DIR_ONLY_WHEN_SOMETHING_DONE
-// Record only the directory in which some operations actually done there.
-// Do not record the directory in which nothing done and it has just visited short period.
-
-PRIVATE char dir_history_temporary[MAX_PATH_LEN+1] = "";
-#define MIN_TIME_T			0				// no timer running
-#define MAX_TIME_T			0x7fffffff		// timer stopped
-#define IS_TIME_T_VALID(time_t)		((MIN_TIME_T < time_t) && (time_t < MAX_TIME_T))
-PRIVATE time_t dir_history_temporary_abs_sec = MIN_TIME_T;
-#define STAYED_DIR_LONG_PERIOD_SECS		1
-PRIVATE void dir_history_append_temporarily(const char *dir);
-PRIVATE void dir_history_remove_temporary();
-// current directory has changed
-void dir_history_update(const char *dir)
-{
-/////hmflf_dprintf("dir: [%s]\n", dir);
-	if (compare_dir_path_w_or_wo_trailing_slash(dir_history_temporary, dir) == 0) {
-		if (IS_TIME_T_VALID(dir_history_temporary_abs_sec)
-		 && (get_sec() >= (dir_history_temporary_abs_sec + STAYED_DIR_LONG_PERIOD_SECS))) {
-			// stayed the directory long period, record the directory
-			dir_history_fix();
-		}
-	} else {
-		// remove previous dir
-		dir_history_remove_temporary();
-
-		dir_history_append_temporarily(dir);
-	}
-}
-PRIVATE void dir_history_append_temporarily(const char *dir)
-{
-hmflf_dprintf("dir: [%s]\n", dir);
-	strlcpy__(dir_history_temporary, dir, MAX_PATH_LEN);
-	dir_history_temporary_abs_sec = get_sec();
-
-	if (has_str_registered_in_the_last_line(HISTORY_TYPE_IDX_DIR, dir_history_temporary) == 0) {
-		load_history_if_file_newer(HISTORY_TYPE_IDX_DIR);
-		// temporarily register dir
-		append_history_buf(HISTORY_TYPE_IDX_DIR,
-		 remove_trailing_slash(dir_history_temporary, NULL));
-		save_history_if_modified_newer__expired(HISTORY_TYPE_IDX_DIR);
-	}
-}
-// no operation has done before leaving the directory
-PRIVATE void dir_history_remove_temporary()
-{
-hmflf_dprintf("dir: [%s]\n", dir_history_temporary);
-	if (dir_history_temporary[0]) {
-		if (IS_TIME_T_VALID(dir_history_temporary_abs_sec)
-		 && (get_sec() >= (dir_history_temporary_abs_sec + STAYED_DIR_LONG_PERIOD_SECS))) {
-			// stayed the directory long period, record the directory
-			dir_history_fix();
-		} else {
-			// not stayed long period, remove temporary entry
-			load_history_if_file_newer(HISTORY_TYPE_IDX_DIR);
-			remove_all_exact_match(HISTORY_TYPE_IDX_DIR,
-			 remove_trailing_slash(dir_history_temporary, NULL));
-			save_history_if_modified_newer__expired(HISTORY_TYPE_IDX_DIR);
-
-			strlcpy__(dir_history_temporary, "", MAX_PATH_LEN);
-			dir_history_temporary_abs_sec = MIN_TIME_T;
-		}
-	}
-}
-// some operation is about to do or has been done in the directory
-void dir_history_fix()
-{
-/////hmflf_dprintf("dir: [%s]\n", dir_history_temporary);
-	if (dir_history_temporary[0]) {
-		// some operation has done in the dir, remove temporary and append dir
-		load_history_if_file_newer(HISTORY_TYPE_IDX_DIR);
-		remove_all_exact_match(HISTORY_TYPE_IDX_DIR,
-		 remove_trailing_slash(dir_history_temporary, NULL));
-		modify_history_w_reloading(HISTORY_TYPE_IDX_DIR,
-		 add_trailing_slash(dir_history_temporary, NULL));
-		dir_history_temporary_abs_sec = MAX_TIME_T;
-	}
-}
-#endif // RECORD_DIR_ONLY_WHEN_SOMETHING_DONE
 
 //------------------------------------------------------------------------------
-int select_from_history_list(int hist_type_idx, char *buffer)
+int do_call_editor_history(int hist_type_idx, char *buffer)
 {
 	load_histories_if_file_newer();
 	load_cut_buffers_if_file_newer();
 
 	//----------------------------------------------------
-	int ret = do_call_editor(1, APP_MODE_CHOOSER, get_history_buf(hist_type_idx), buffer);
+	int ret = do_call_editor(1, APP_MODE_VIEWER, get_history_buf(hist_type_idx), buffer);
 	//----------------------------------------------------
 	return ret;
 }

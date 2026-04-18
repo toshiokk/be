@@ -38,8 +38,10 @@ int termif_init();
 int termif_begin();
 int termif_end();
 
+#ifdef ON_DEMAND_WCWIDTH
 char investigate_wcwidth(wchar_t wc);
 char investigate_utf8c_width(const char *utf8c);
+#endif // ON_DEMAND_WCWIDTH
 
 int termif_get_screen_size_from_term();
 void termif_set_screen_size(int lines, int columns);
@@ -55,6 +57,7 @@ void termif_set_cursor_on(char on_off);
 
 void termif_set_attrs(int bgc, int fgc, int rev);
 void termif_output_string(short yy, short xx, const char *string, int bytes);
+void termif_send_clear();
 void termif_beep();
 void termif_refresh();
 

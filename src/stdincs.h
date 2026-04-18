@@ -98,6 +98,7 @@
 #ifndef BOOL
 #define BOOL	unsigned char
 #endif
+#define INT2BOOL(integer)	((integer) != 0)
 
 #define UINT8	unsigned char
 #define INT8	char

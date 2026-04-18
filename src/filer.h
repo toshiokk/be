@@ -46,29 +46,42 @@ void dump_filer_view_cur_dir(filer_view_t *fv);
 
 filer_view_t *get_fv_from_pane(int pane_idx);
 filer_view_t *get_fv_from_cur_pane();
-filer_view_t *get_fv_from_other_pane();
+filer_view_t *get_fv_from_another_pane();
+#define FV_ORG_CUR_DIR(fv)				((fv)->org_cur_dir)
 #define FV_CUR_DIR(fv)					((fv)->cur_dir)
+#define FV_FILTER(fv)					((fv)->filter)
+#define FV_LISTED_DIR(fv)				((fv)->listed_dir)
+#define FV_SEL_F_IDX(fv)				((fv)->selecting_file_idx)
 #define FV_CUR_F_IDX(fv)				((fv)->cur_file_idx)
 #define FV_CURS_Y(fv)					((fv)->cursor_y)
-#define FV_F_INFO_ARRAY(fv)				((fv)->file_info_array)
 #define FV_F_INFO_ENTRIES(fv)			((fv)->file_info_entries)
-#define FV_F_INFO(fv, idx)				((fv)->file_info_array[idx])
-#define FV_F_INFO_F_NAME(fv, idx)		((fv)->file_info_array[idx]->file_name)
-#define FV_F_INFO_ST(fv, idx)			((fv)->file_info_array[idx]->st)
-#define FV_F_INFO_LST(fv, idx)			((fv)->file_info_array[idx]->lst)
-#define FV_F_INFO_SLINK(fv, idx)		((fv)->file_info_array[idx]->symlink)
-#define FV_F_INFO_SELECTED(fv, idx)		((fv)->file_info_array[idx]->selected)
-file_info_t *get_cur_fv_file_info_array();
-int get_cur_fv_file_info_entries();
-const char *get_cur_fv_cur_file_name();
-const char *get_cur_fv_file_name(int file_idx);
-file_info_t *get_cur_fv_cur_file_info();
-file_info_t *get_cur_fv_file_info(int file_idx);
-file_info_t *get_cur_fv_file_ptr_from_pane(int pane_idx);
-int get_cur_fv_file_idx();
+#define FV_F_INFO_ARRAY(fv)				((fv)->file_info_array)
+#define FV_F_INFO(fv, idx)				(FV_F_INFO_ARRAY(fv)[idx])
+#define FV_F_INFO_F_NAME(fv, idx)		(FV_F_INFO(fv, idx).file_name)
+#define FV_F_INFO_ST(fv, idx)			(FV_F_INFO(fv, idx).st)
+#define FV_F_INFO_LST(fv, idx)			(FV_F_INFO(fv, idx).lst)
+#define FV_F_INFO_SLINK(fv, idx)		(FV_F_INFO(fv, idx).symlink)
+#define FV_F_INFO_SELECTED(fv, idx)		(FV_F_INFO(fv, idx).selected)
+file_info_t *get_cfv_file_info_array();
+int get_cfv_file_info_entries();
+int get_fv_file_info_entries(filer_view_t *fv);
+file_info_t *get_fv_file_info(filer_view_t *fv, int file_idx);
+
+file_info_t *get_cfv_file_info(int file_idx);
+const char *get_cfv_file_name(int file_idx);
+const char *get_cfv_symlink(int file_idx);
+struct stat get_cfv_file_st(int file_idx);
+__mode_t get_cfv_file_st_mode(int file_idx);
+void set_cfv_file_selected(int file_idx, char selected);
+char get_cfv_file_selected(int file_idx);
+
+file_info_t *get_cfv_file_ptr_from_pane(int pane_idx);
+void set_cur_fv_file_idx(int file_idx);
+int get_cfv_file_idx();
 
 int do_call_filer(int push_win, int list_mode, const char *dir, const char *filter,
  char *path_buf);
+void set_text_to_output_buf_filer(char *text);
 
 int update_screen_filer(s_b_d_t status_bar, int refresh);
 

@@ -93,7 +93,7 @@ int view_list(int help_idx)
 #endif // ENABLE_HELP
 	}
 
-	return do_call_editor(1, APP_MODE_CHOOSER, get_help_buf(help_idx), NULL);
+	return do_call_editor(1, APP_MODE_VIEWER, get_help_buf(help_idx), NULL);
 }
 PRIVATE void make_help_buf(int help_idx)
 {
@@ -133,25 +133,8 @@ PRIVATE void make_help_buf(int help_idx)
 	}
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 
-	switch (help_idx) {
-	default:
-	case HELP_BUF_IDX_EDITOR_FILE_LIST:
-		if (EPCBVC_CL == NULL) {
-			last_line();
-		}
-		break;
-#ifdef ENABLE_HELP
-	case HELP_BUF_IDX_EDITOR_FUNC_LIST:
-	case HELP_BUF_IDX_EDITOR_KEY_LIST:
-#ifdef ENABLE_FILER
-	case HELP_BUF_IDX_FILER_FUNC_LIST:
-	case HELP_BUF_IDX_FILER_KEY_LIST:
-#endif // ENABLE_FILER
-		append_magic_line_if_necessary();
-		first_line();
-		break;
-#endif // ENABLE_HELP
-	}
+	append_string_to_cur_edit_buf("");
+	first_line();
 	renumber_cur_buf_from_top();
 }
 
@@ -187,35 +170,45 @@ PRIVATE void make_help_file_list(be_buf_t *cur_buf)
 #ifdef ENABLE_HELP
 PRIVATE void make_help_func_list()
 {
-	char buf1[MAX_KEY_NAME_LEN+1];
-	char buf2[MAX_KEY_NAME_LEN+1];
-	char buf3[MAX_KEY_NAME_LEN+1];
-	char *template_ = "%-32s  %-*s %-*s %-*s  %-32s";
+	char *template_ = "%-32s %-4s %-*s %-*s %-*s %-*s  %-32s";
 	//			   12345678901234567890123456789012
 	char *func_ = "--------------------------------";
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
 
 	func_key_t *func_key = get_func_key_group_from_group_idx(0);
-	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, "Function",
+	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
+	 "Function",
+	 "Mode",
 	 MAX_KEY_NAME_LEN, "Key1",
 	 MAX_KEY_NAME_LEN, "Key2",
 	 MAX_KEY_NAME_LEN, "Key3",
+	 MAX_KEY_NAME_LEN, "Key4",
 	 "func_id");
 	append_string_to_cur_edit_buf(buffer);
-	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, func_,
-	 MAX_KEY_NAME_LEN, long_key_none_str(),
-	 MAX_KEY_NAME_LEN, long_key_none_str(),
-	 MAX_KEY_NAME_LEN, long_key_none_str(),
-	 func_);
-	append_string_to_cur_edit_buf(buffer);
 	for (int f_idx = 0; func_key[f_idx].explanation[0]; f_idx++) {
-		if (f_idx != 0 && func_key[f_idx].desc[0] == 0) {
-			append_string_to_cur_edit_buf("");
+		if (func_key[f_idx].desc[0] == 0) {
+			snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
+			 func_,
+			 "-",
+			 MAX_KEY_NAME_LEN, key_none_str(),
+			 MAX_KEY_NAME_LEN, key_none_str(),
+			 MAX_KEY_NAME_LEN, key_none_str(),
+			 MAX_KEY_NAME_LEN, key_none_str(),
+			 func_);
+			append_string_to_cur_edit_buf(buffer);
 		}
-		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_, func_key[f_idx].explanation,
-		 MAX_KEY_NAME_LEN, short_key_name_from_key_code(func_key[f_idx].keys[0], buf1),
-		 MAX_KEY_NAME_LEN, short_key_name_from_key_code(func_key[f_idx].keys[1], buf2),
-		 MAX_KEY_NAME_LEN, short_key_name_from_key_code(func_key[f_idx].keys[2], buf3),
+		char buf1[MAX_KEY_NAME_LEN+1];
+		char buf2[MAX_KEY_NAME_LEN+1];
+		char buf3[MAX_KEY_NAME_LEN+1];
+		char buf4[MAX_KEY_NAME_LEN+1];
+		snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
+		 func_key[f_idx].explanation,
+		 func_key[f_idx].list_mode == EFAM ? "A"
+		  : (func_key[f_idx].list_mode == EFNM ? "N" : "L"),
+		 MAX_KEY_NAME_LEN, get_key_name_from_key_code(func_key[f_idx].keys[0], buf1),
+		 MAX_KEY_NAME_LEN, get_key_name_from_key_code(func_key[f_idx].keys[1], buf2),
+		 MAX_KEY_NAME_LEN, get_key_name_from_key_code(func_key[f_idx].keys[2], buf3),
+		 MAX_KEY_NAME_LEN, get_key_name_from_key_code(func_key[f_idx].keys[3], buf4),
 		 func_key[f_idx].func_id);
 		append_string_to_cur_edit_buf(buffer);
 	}
@@ -227,19 +220,25 @@ struct key_code_range {
 } key_code_ranges[] = {
 	{ 0x0060, 0x007f },		// "`"  ~ "z"
 	{ 0x0040, 0x005f },		// "@"  ~ "Z"
-	{ 0x0030, 0x004f },		// "0"  ~ "9"
-	{ 0x0020, 0x002f },		// " "  ~ "/"
 	{ 0x0000, 0x001f },		// "^@" ~ "^Z"
+	{ 0x0020, 0x002f },		// " "  ~ "/"
+	{ 0x0030, 0x003f },		// "0"  ~ "?"
 	{ 0x1b60, 0x1b7f },		// "@`"  ~ "@z"
 	{ 0x1b40, 0x1b5f },		// "@@"  ~ "@Z"
-	{ 0x1b30, 0x1b4f },		// "@0"  ~ "@9"
-	{ 0x1b20, 0x1b2f },		// "@ "  ~ "@/"
 	{ 0x1b00, 0x1b1f },		// "@^@"  ~ "@^Z"
-	{ 0x0100, 0x077f },		// other function keys
+	{ 0x1b20, 0x1b2f },		// "@ "  ~ "@/"
+	{ 0x1b30, 0x1b3f },		// "@0"  ~ "@?"
+	{ 0x0100, 0x017f },		// other function keys
+	{ 0x0200, 0x027f },		// other function keys
+	{ 0x0300, 0x037f },		// other function keys
+	{ 0x0400, 0x047f },		// other function keys
+	{ 0x0500, 0x057f },		// other function keys
+	{ 0x0600, 0x067f },		// other function keys
+	{ 0x0700, 0x077f },		// other function keys
 };
 PRIVATE void make_help_key_list()
 {
-	char *template_ = "%-*s  %-32s  %-*s %-*s  %-32s";
+	char *template_ = "%-*s  %-32s  %-*s %-*s %-*s  %-32s";
 	//			   12345678901234567890123456789012
 	char *func_ = "--------------------------------";
 	char buffer[MAX_SCRN_LINE_BUF_LEN+1];
@@ -249,56 +248,64 @@ PRIVATE void make_help_key_list()
 	 "Function",
 	 MAX_KEY_NAME_LEN, "Key2",
 	 MAX_KEY_NAME_LEN, "Key3",
+	 MAX_KEY_NAME_LEN, "Key4",
 	 "func_id");
 	append_string_to_cur_edit_buf(buffer);
 	snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
-	 MAX_KEY_NAME_LEN, long_key_none_str(),
+	 MAX_KEY_NAME_LEN, key_none_str(),
 	 func_,
-	 MAX_KEY_NAME_LEN, long_key_none_str(),
-	 MAX_KEY_NAME_LEN, long_key_none_str(),
+	 MAX_KEY_NAME_LEN, key_none_str(),
+	 MAX_KEY_NAME_LEN, key_none_str(),
+	 MAX_KEY_NAME_LEN, key_none_str(),
      func_);
 	append_string_to_cur_edit_buf(buffer);
 	for (int range_idx = 0; range_idx < ARRAY_SIZE_OF(key_code_ranges); range_idx++) {
-		func_key_t *func_key = NULL;
-		key_code_t key = K_NONE;
-		for (key = key_code_ranges[range_idx].start; key < key_code_ranges[range_idx].end; key++) {
-			if (get_fkey_entry_from_key(NULL, key, -1))
+		key_code_t key;
+		for (key = key_code_ranges[range_idx].start; key <= key_code_ranges[range_idx].end;
+		 key++) {
+			func_key_t *func_key = get_fkey_entry_from_key(NULL, key, EF0M);
+			if (func_key)
 				break;
 		}
-		if (key >= key_code_ranges[range_idx].end)
-			continue;		// no key assignment for the range
-		for (key = key_code_ranges[range_idx].start; key < key_code_ranges[range_idx].end; key++) {
-			if (is_strlen_0(long_key_name_from_key_code_null(key, NULL)))
-				continue;
+		if (key > key_code_ranges[range_idx].end) {
+			continue;
+		}
+		for (key = key_code_ranges[range_idx].start; key <= key_code_ranges[range_idx].end;
+		 key++) {
 			key_code_t keys[MAX_KEYS_BIND];
 			for (int key_idx = 0; key_idx < MAX_KEYS_BIND; key_idx++) {
 				keys[key_idx] = K_NONE;
 			}
 			int keys_set = 0;
 			keys[keys_set++] = key;
-			func_key = get_fkey_entry_from_key(NULL, key, -1);
-			for (int key_idx2 = 0; key_idx2 < MAX_KEYS_BIND; key_idx2++) {
-				if (IS_KEY_VALID(func_key->keys[key_idx2])) {
-					for (int key_idx = 0; key_idx < MAX_KEYS_BIND; key_idx++) {
-						if (keys[key_idx] == func_key->keys[key_idx2]) {
-							// already set
-							break;
+			func_key_t *func_key = get_fkey_entry_from_key(NULL, key, EF0M);
+			if (func_key) {
+				for (int key_idx2 = 0; key_idx2 < MAX_KEYS_BIND; key_idx2++) {
+					if (IS_KEY_VALID(func_key->keys[key_idx2])) {
+						int key_idx = 0;
+						for ( ; key_idx < MAX_KEYS_BIND; key_idx++) {
+							if (keys[key_idx] == func_key->keys[key_idx2]) {
+								// already set
+								break;
+							}
 						}
-					}
-					if (key_idx2 >= MAX_KEYS_BIND) {
-						// not yet set
-						keys[keys_set++] = func_key->keys[key_idx2];
+						if (key_idx >= MAX_KEYS_BIND) {
+							// not yet set
+							keys[keys_set++] = func_key->keys[key_idx2];
+						}
 					}
 				}
 			}
 			char buf1[MAX_KEY_NAME_LEN+1];
 			char buf2[MAX_KEY_NAME_LEN+1];
 			char buf3[MAX_KEY_NAME_LEN+1];
+			char buf4[MAX_KEY_NAME_LEN+1];
 			snprintf_(buffer, MAX_SCRN_LINE_BUF_LEN+1, template_,
-			 MAX_KEY_NAME_LEN, short_key_name_from_key_code(keys[0], buf1),
+			 MAX_KEY_NAME_LEN, get_key_name_from_key_code(keys[0], buf1),
 			 func_key ? func_key->explanation : "-- No function assigned --",
-			 MAX_KEY_NAME_LEN, short_key_name_from_key_code(keys[1], buf2),
-			 MAX_KEY_NAME_LEN, short_key_name_from_key_code(keys[2], buf3),
+			 MAX_KEY_NAME_LEN, get_key_name_from_key_code(keys[1], buf2),
+			 MAX_KEY_NAME_LEN, get_key_name_from_key_code(keys[2], buf3),
+			 MAX_KEY_NAME_LEN, get_key_name_from_key_code(keys[3], buf4),
 			 func_key ? func_key->func_id : "-- None --");
 			append_string_to_cur_edit_buf(buffer);
 		}

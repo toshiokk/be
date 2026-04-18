@@ -75,7 +75,9 @@ PRIVATE int parse_color_cursor_line();
 PRIVATE int parse_color_line_number();
 PRIVATE int parse_color_menu_frame();
 PRIVATE int parse_color_menu_item();
+PRIVATE int parse_color_menu_item_disabled();
 PRIVATE int parse_color_menu_selected();
+PRIVATE int parse_color_menu_selected_disabled();
 PRIVATE int parse_color_input();
 #ifdef ENABLE_SYNTAX
 PRIVATE int parse_file_type();
@@ -136,26 +138,28 @@ struct /*_rc_cmd_func_*/ {
 	char *command;
 	int (*func)();
 } rc_cmd_func[] = {
-	{ "color_default",			parse_color_default,		},
-	{ "color_title",			parse_color_title,			},
-	{ "color_status",			parse_color_status,			},
-	{ "color_key_list",			parse_color_key_list,		},
-	{ "color_key_list2",		parse_color_key_list2,		},
-	{ "color_text_normal",		parse_color_text_normal,	},
-	{ "color_text_selected",	parse_color_text_selected1,	},
-	{ "color_text_selected2",	parse_color_text_selected2,	},
-	{ "color_text_selected3",	parse_color_text_selected3,	},
-	{ "color_error",			parse_color_error,			},
-	{ "color_warning1",			parse_color_warning1,		},
-	{ "color_warning2",			parse_color_warning2,		},
-	{ "color_warning3",			parse_color_warning3,		},
-	{ "color_cursor",			parse_color_cursor,			},
-	{ "color_cursor_line",		parse_color_cursor_line,	},
-	{ "color_line_number",		parse_color_line_number,	},
-	{ "color_menu_frame",		parse_color_menu_frame,		},
-	{ "color_menu_item",		parse_color_menu_item,		},
-	{ "color_menu_selected",	parse_color_menu_selected,	},
-	{ "color_input",			parse_color_input,			},
+	{ "color_default",					parse_color_default,				},
+	{ "color_title",					parse_color_title,					},
+	{ "color_status",					parse_color_status,					},
+	{ "color_key_list",					parse_color_key_list,				},
+	{ "color_key_list2",				parse_color_key_list2,				},
+	{ "color_text_normal",				parse_color_text_normal,			},
+	{ "color_text_selected",			parse_color_text_selected1,			},
+	{ "color_text_selected2",			parse_color_text_selected2,			},
+	{ "color_text_selected3",			parse_color_text_selected3,			},
+	{ "color_error",					parse_color_error,					},
+	{ "color_warning1",					parse_color_warning1,				},
+	{ "color_warning2",					parse_color_warning2,				},
+	{ "color_warning3",					parse_color_warning3,				},
+	{ "color_cursor",					parse_color_cursor,					},
+	{ "color_cursor_line",				parse_color_cursor_line,			},
+	{ "color_line_number",				parse_color_line_number,			},
+	{ "color_menu_frame",				parse_color_menu_frame,				},
+	{ "color_menu_item",				parse_color_menu_item,				},
+	{ "color_menu_item_disabled",		parse_color_menu_item_disabled,		},
+	{ "color_menu_selected",			parse_color_menu_selected,			},
+	{ "color_menu_selected_disabled",	parse_color_menu_selected_disabled,	},
+	{ "color_input",					parse_color_input,					},
 #ifdef ENABLE_SYNTAX
 	{ "file_type",				parse_file_type,			},
 	{ "color_syntax",			parse_color_syntax,			},
@@ -194,7 +198,7 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 		remove_line_tail_lf(rc_line_buf);
 		rc_line_ptr = rc_line_buf;
 		rc_line_num++;
-		if (SKIP_SPACE(rc_line_ptr))
+		if (skip_space_ptr(&rc_line_ptr))
 			continue;
 		if (*rc_line_ptr == '#') {
 			continue;		// Skip comment line
@@ -223,7 +227,7 @@ PRIVATE int read_rc_path__(const char *rc_file_path, int complain)
 					goto read_rc_path_match;
 				}
 			}
-			func_key_t *func_key = get_fkey_entry_from_func_id(cmd, 0);
+			func_key_t *func_key = get_fkey_entry_from_func_id(cmd, EFAM);
 			if (func_key) {
 				key_code_t keys[MAX_KEYS_BIND];
 				parse_key_names(keys);
@@ -335,9 +339,17 @@ PRIVATE int parse_color_menu_item()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_MENU_ITEM);
 }
+PRIVATE int parse_color_menu_item_disabled()
+{
+	return parse_bgc_fgc_register(ITEM_COLOR_IDX_MENU_ITEM_DISABLED);
+}
 PRIVATE int parse_color_menu_selected()
 {
 	return parse_bgc_fgc_register(ITEM_COLOR_IDX_MENU_SELECTED);
+}
+PRIVATE int parse_color_menu_selected_disabled()
+{
+	return parse_bgc_fgc_register(ITEM_COLOR_IDX_MENU_SELECTED_DISABLED);
 }
 PRIVATE int parse_color_input()
 {
@@ -364,7 +376,7 @@ PRIVATE int parse_color_syntax()
 	char regexp_start[MAX_REGEXP_LEN+1] = "";
 	char regexp_end[MAX_REGEXP_LEN+1] = "";
 	while (*rc_line_ptr) {
-		if (SKIP_SPACE(rc_line_ptr))
+		if (skip_space_ptr(&rc_line_ptr))
 			break;
 		switch (*rc_line_ptr) {
 		case '<':
@@ -396,7 +408,7 @@ PRIVATE int parse_color_syntax()
 }
 PRIVATE int parse_tab_size()
 {
-	SKIP_SPACE(rc_line_ptr);
+	skip_space_ptr(&rc_line_ptr);
 	int tab_size = DEFAULT_TAB_SIZE;
 	if (sscanf(rc_line_ptr, "%d", &tab_size) == 1) {
 		tab_size = tab_size ? tab_size : DEFAULT_TAB_SIZE;
@@ -412,13 +424,12 @@ PRIVATE int parse_tab_size()
 PRIVATE int parse_include()
 {
 	int ret = 0;
-	SKIP_SPACE(rc_line_ptr);
+	skip_space_ptr(&rc_line_ptr);
 	if (rc_file_nest_count < MAX_RC_NEST_COUNT) {
 		char dir_part[MAX_PATH_LEN+1];
-		char file_part[MAX_PATH_LEN+1];
 		char rc_file_path[MAX_PATH_LEN+1];
 		++rc_file_nest_count;
-		separate_path_to_dir_and_file(rc_file_path_reading, dir_part, file_part);
+		separate_path_to_dir_and_file(rc_file_path_reading, dir_part, NULL);
 		concat_dir_and_file(rc_file_path, dir_part, rc_line_ptr);
 		ret = read_rc_path(rc_file_path, 1);
 		--rc_file_nest_count;
@@ -439,7 +450,7 @@ PRIVATE int parse_bgc_fgc(int *bgc, int *fgc)
 	int bright;
 	*fgc = *bgc = -1;
 	while (*rc_line_ptr) {
-		if (SKIP_SPACE(rc_line_ptr))
+		if (skip_space_ptr(&rc_line_ptr))
 			break;
 		switch (*rc_line_ptr) {
 		case '-':
@@ -469,12 +480,12 @@ PRIVATE int parse_key_names(key_code_t *keys)
 	for (key_idx = 0; key_idx < MAX_KEYS_BIND; ) {
 		char key_name[MAX_KEY_NAME_LEN+1];
 		key_code_t key;
-		if (SKIP_SPACE(rc_line_ptr))
+		if (skip_space_ptr(&rc_line_ptr))
 			break;
 		if (parse_word(key_name, MAX_KEY_NAME_LEN)) {
 			return 1;
 		}
-		if ((key = key_code_from_short_key_name(key_name)) < 0) {
+		if (IS_KEY_INVALID(key = get_key_code_from_key_name(key_name))) {
 			// unknown key name
 		} else {
 			if (key_idx >= MAX_KEYS_BIND) {
@@ -491,10 +502,10 @@ PRIVATE int parse_word(char *buffer, int buf_len)
 {
 	const char *begin;
 
-	if (SKIP_SPACE(rc_line_ptr))
+	if (skip_space_ptr(&rc_line_ptr))
 		return 1;
 	for (begin = rc_line_ptr; *rc_line_ptr; rc_line_ptr++) {
-		if (IS_WHITE_SPACE(rc_line_ptr) || IS_EOL(rc_line_ptr))
+		if (is_ptr_char_white_space(rc_line_ptr) || is_ptr_char_eol(rc_line_ptr))
 			break;
 	}
 	if (rc_line_ptr - begin > buf_len)
@@ -508,20 +519,20 @@ PRIVATE int parse_string(char *buffer, int buf_len)
 {
 	const char *begin;
 
-	if (SKIP_SPACE(rc_line_ptr))
+	if (skip_space_ptr(&rc_line_ptr))
 		return 1;
 	if (*rc_line_ptr != '"')
 		return 1;
 	rc_line_ptr++;
 	begin = rc_line_ptr;
 	while (*rc_line_ptr) {
-		if (*rc_line_ptr == '"' || IS_EOL(rc_line_ptr))
+		if (*rc_line_ptr == '"' || is_ptr_char_eol(rc_line_ptr))
 			break;
-		if (*rc_line_ptr == '\\' && !IS_EOL(rc_line_ptr+1))
+		if (*rc_line_ptr == '\\' && !is_ptr_char_eol(rc_line_ptr+1))
 			rc_line_ptr++;
 		rc_line_ptr++;
 	}
-	if (IS_EOL(rc_line_ptr))
+	if (is_ptr_char_eol(rc_line_ptr))
 		return 1;
 	if (rc_line_ptr - begin > buf_len)
 		return 1;
@@ -708,7 +719,6 @@ void free_file_types()
 }
 
 //------------------------------------------------------------------------------
-
 #ifdef ENABLE_DEBUG
 void dump_file_types()
 {

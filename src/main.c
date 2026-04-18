@@ -35,12 +35,17 @@
 
 PRIVATE int init_locale();
 PRIVATE int parse_options(int argc, char *argv[]);
+
 #ifdef START_UP_TEST
 PRIVATE void start_up_test();
 PRIVATE void start_up_test2();
 #endif // START_UP_TEST
 
 PRIVATE int write_exit_file(int restart);
+#ifdef ENABLE_FILER
+PRIVATE void save_cwd_from_another_pane();
+PRIVATE void load_cwd_into_another_pane();
+#endif // ENABLE_FILER
 
 PRIVATE void die_save_file(const char *die_file_path);
 
@@ -54,7 +59,7 @@ PRIVATE filer_panes_t root_filer_panes;
 PRIVATE const char *main_rc_file_name = RC_FILE_NAME;	// standard rc file
 #endif // ENABLE_RC
 
-int quit_soon = 0;
+int quit_immediate = 0;
 int restart_be = 0;
 
 // If screen columns is wider than this value, set two panes mode at start up
@@ -81,6 +86,7 @@ dtflf_dprintf("START-%s ==============================\n", APP_NAME " " __DATE__
 	init_editor_panes(&root_editor_panes);
 #ifdef ENABLE_FILER
 	init_filer_panes(&root_filer_panes, get_starting_dir());
+	load_cwd_into_another_pane();
 #endif // ENABLE_FILER
 	_mlc_differ_count
 
@@ -96,7 +102,7 @@ dtflf_dprintf("START-%s ==============================\n", APP_NAME " " __DATE__
 
 #ifdef ENABLE_RC
 	if (GET_APPMD(app_RCFILE)) {
-		read_rc_file(main_rc_file_name);			// read standard rc file
+		read_rc_file(main_rc_file_name);	// read standard rc file
 	}
 #endif // ENABLE_RC
 #ifdef ENABLE_SYNTAX
@@ -203,12 +209,13 @@ flf_dprintf("optind:%d: %s\n", optind, argv[optind]);
 
 	save_cut_buffers_if_local_newer();
 
-	reduce_log_file_size(get_exec_log_file_path(), MAX_LOG_FILE_SIZE_KB);
+	reduce_exec_log_file_size();
 	write_exit_file(restart_be);
 
 	_mlc_check_count
 	free_all_allocated_memory();
 #ifdef ENABLE_FILER
+	save_cwd_from_another_pane();
 	free_filer_panes();
 #endif // ENABLE_FILER
 	free_editor_panes();
@@ -410,12 +417,12 @@ PRIVATE int parse_options(int argc, char *argv[])
 #warning "#undef ASK_ON_EXIT"
 #endif
 #define ASK_ON_EXIT
-// do_call_editor() : pass a edit-buffer and edit or browse it.
-// do_call_filer()  : pass a directory and manage or browse it.
+// do_call_editor() : pass a edit-buffer to be edited or browsed by the editor
+// do_call_filer()  : pass a directory to be managed or browsed by the filer
 PRIVATE void app_main_loop()
 {
 	clear_app_stack_depth();
-	clear_whole_screen_update_timer();	// avoid screen flashing on the first key input
+	clear_msec_past_after_key_input();	// avoid screen flashing on the first key input
 #ifndef ENABLE_FILER
 	if (count_edit_bufs() == 0) {
 		doe_open_file_recursive();
@@ -452,12 +459,12 @@ PRIVATE void app_main_loop()
 				}
 			}
 #ifdef ASK_ON_EXIT
-			if (quit_soon) {
+			if (quit_immediate) {
 				break;
 			}
-			int ret = ask_yes_no(ASK_YES_NO | ASK_QUIT,
+			int ret = ask_yes_no(ASK_YES_NO_QUIT | ASK_OTHERS,
 			 _("Are you OK to quit %s ?"), APP_LONG_NAME);
-			if ((ret == ANSWER_YES) || (ret == ANSWER_QUIT)) {
+			if (ret == ANSWER_YES) {
 				break;
 			}
 			disp_status_bar_warn(_("Quiting program cancelled"));
@@ -493,6 +500,7 @@ PRIVATE void start_up_test()
 	flf_dprintf("MAX_PATH_LEN: %d\n", MAX_PATH_LEN);
 	flf_dprintf("MAX_SCRN_LINE_BUF_LEN: %d\n", MAX_SCRN_LINE_BUF_LEN);
 	flf_dprintf("MAX_EDIT_LINE_LEN: %d\n", MAX_EDIT_LINE_LEN);
+	flf_dprintf("EOF: %d\n", EOF);
 
 	// memory address of various object
 	flf_dprintf("mem adrs: 0x1234567890123456\n");
@@ -503,7 +511,6 @@ PRIVATE void start_up_test()
 	flf_dprintf("malloc  : %p\n", allocated);
 	free__(allocated);
 
-	flf_dprintf("#define KEY_RESIZE     0x%04x\n", KEY_RESIZE);
 	flf_dprintf("#define KEY_HOME       0x%04x\n", KEY_HOME);
 	flf_dprintf("#define KEY_END        0x%04x\n", KEY_END);
 	flf_dprintf("#define KEY_UP         0x%04x\n", KEY_UP);
@@ -517,6 +524,11 @@ PRIVATE void start_up_test()
 	flf_dprintf("#define KEY_BACKSPACE  0x%04x\n", KEY_BACKSPACE);
 	flf_dprintf("#define KEY_ENTER      0x%04x\n", KEY_ENTER);
 	flf_dprintf("#define KEY_F(0)       0x%04x\n", KEY_F(0));
+	flf_dprintf("#define KEY_RESIZE     0x%04x\n", KEY_RESIZE);
+	flf_dprintf("#define AK_BS          0x%04x\n", AK_BS);
+	flf_dprintf("#define AK_DEL         0x%04x\n", AK_DEL);
+	flf_dprintf("#define AK_M_BS        0x%04x\n", AK_M_BS);
+	flf_dprintf("#define AK_M_DEL       0x%04x\n", AK_M_DEL);
 
 	////test_wrap_line();
 	test_cwd_PWD();
@@ -533,17 +545,17 @@ PRIVATE void start_up_test()
 	test_utilstr();
 	test_get_one_file_path();
 
-	////test_get_intersection();
+	test_get_intersection();
 	get_mem_free_in_kb(1);
 	////test_zz_from_num();
-	////test_modulo();
+	test_modulo();
 	////test_utf8c_encode();
-	test_utf8c_bytes();
 	////test_wcwidth();
+	test_utf8c_bytes();
 #ifdef ENABLE_REGEX
 	test_regexp();
 #endif // ENABLE_REGEX
-	////test_make_ruler_text();
+	test_make_ruler_text();
 #ifdef ENABLE_FILER
 	test_get_file_size_str();
 	test_get_n_th_file();
@@ -551,7 +563,9 @@ PRIVATE void start_up_test()
 	test_replace_str();
 	test_quote_string();
 
-	////test_key_code_from_to_key_name();
+	test_conversion_key_name__key_code();
+	test_key_code_from_to_key_name();
+
 	flf_dprintf("}}}}---------------------------------------------------------\n");
 }
 PRIVATE void start_up_test2()
@@ -576,6 +590,26 @@ PRIVATE int write_exit_file(int restart)
 	concat_dir_and_file(file_path, get_home_dir(), EXIT_FILE_NAME);
 	return write_text_to_file(file_path, 0, script);
 }
+#ifdef ENABLE_FILER
+PRIVATE void save_cwd_from_another_pane()
+{
+	write_text_to_file(get_exec_log_file_path(), 1,
+	 sprintf_s("%s\n", root_filer_panes.filer_views[get_filer_another_pane_idx()].cur_dir));
+}
+PRIVATE void load_cwd_into_another_pane()
+{
+	read_file_into_buf_max_lines(get_exec_log_file_path(),
+	 get_help_buf(HELP_BUF_IDX_EDITOR_FILE_LIST), 1);
+	strlcpy__(root_filer_panes.filer_views[1].cur_dir,
+	 NODES_TOP_NODE(get_help_buf(HELP_BUF_IDX_EDITOR_FILE_LIST))->data, MAX_EDIT_LINE_LEN);
+	if (is_strlen_0(root_filer_panes.filer_views[1].cur_dir)) {
+		strlcpy__(root_filer_panes.filer_views[1].cur_dir, root_filer_panes.filer_views[0].cur_dir,
+		 MAX_PATH_LEN);
+	}
+flf_dprintf("cur_dir-0: [%s]\n", root_filer_panes.filer_views[0].cur_dir);
+flf_dprintf("cur_dir-1: [%s]\n", root_filer_panes.filer_views[1].cur_dir);
+}
+#endif // ENABLE_FILER
 
 int progerr_cb_func(const char *warning)
 {

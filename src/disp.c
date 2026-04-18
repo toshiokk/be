@@ -37,7 +37,7 @@ const char *root_notation()
 	static char notation[MAX_PATH_LEN+1];
 	snprintf_(notation, MAX_PATH_LEN, "%s%s",
 	 (geteuid() == 0) ? "[ROOT] " : "",
-	 is_app_chooser_viewer_mode() ? get_str_app_mode() : "");
+	 is_app_viewer_mode() ? get_str_app_mode() : "");
 	return notation;
 }
 
@@ -79,7 +79,7 @@ PRIVATE char sb_overwrite_policy_table[S_B_TYPES][S_B_TYPES] = {
 //             |S_B_NONE|S_B_AUTO|S_B_CURS|S_B_ING |S_B_WARN|S_B_ERR |S_B_DONE|S_B_ASYN|
 /* S_B_NONE */ {    1   ,    1   ,    1   ,    1   ,    1   ,    1   ,    1   ,    1   },
 /* S_B_AUTO */ {    1   ,    1   ,    1   ,    1   ,    0   ,    0   ,    0   ,    0   },
-/* S_B_CURS */ {    1   ,    1   ,    1   ,    1   ,    0   ,    0   ,    0   ,    1   },
+/* S_B_CURS */ {    1   ,    1   ,    1   ,    1   ,    1   ,    1   ,    1   ,    1   },
 /* S_B_ING  */ {    1   ,    1   ,    1   ,    1   ,    0   ,    0   ,    1   ,    1   },
 /* S_B_WARN */ {    1   ,    1   ,    1   ,    1   ,    1   ,    0   ,    1   ,    1   },
 /* S_B_ERR  */ {    1   ,    1   ,    1   ,    1   ,    1   ,    1   ,    1   ,    1   },
@@ -96,14 +96,9 @@ PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
  const char *msg, va_list ap)
 {
 	app_stack_entry *app_stk_ptr = get_app_stack_ptr(-1);
-
-hmflf_dprintf("[%d](%d?%d)[%s]\n", get_app_stack_depth(),
- app_stk_ptr->status_bar_displayed, status_bar_to_display, msg);
-
 	char update = sb_overwrite_policy_table
 		[MIN_MAX_(S_B_NONE, status_bar_to_display, S_B_ASYN)]
-		[MIN_MAX_(S_B_NONE, app_stk_ptr->status_bar_displayed, S_B_ASYN)]
-	;
+		[MIN_MAX_(S_B_NONE, app_stk_ptr->status_bar_displayed, S_B_ASYN)];
 	int color_idx = ITEM_COLOR_IDX_STATUS;
 	switch (update) {
 	default:
@@ -116,7 +111,6 @@ hmflf_dprintf("[%d](%d?%d)[%s]\n", get_app_stack_depth(),
 		break;
 	}
 
-flf_dprintf("update: %d\n", update);
 	if (update) {
 		char buf[MAX_SCRN_LINE_BUF_LEN+1];
 		char buffer[MAX_SCRN_LINE_BUF_LEN+1] = "";
@@ -158,8 +152,8 @@ hm_dprintf("_SB_[%d](%d)[%s]\n", get_app_stack_depth(),
 		divisor = get_epc_buf()->buf_lines-1;
 #ifdef ENABLE_FILER
 	} else {
-		dividend = get_cur_fv_file_idx();
-		divisor = get_cur_fv_file_info_entries();
+		dividend = get_cfv_file_idx();
+		divisor = get_cfv_file_info_entries();
 	}
 #endif // ENABLE_FILER
 	int col_idx = -1;
@@ -170,6 +164,10 @@ hm_dprintf("_SB_[%d](%d)[%s]\n", get_app_stack_depth(),
 	}
 	app_stk_ptr->status_bar_col_idx = col_idx;
 	redisp_status_bar();
+	if (update && (status_bar_to_display >= S_B_ING)) {
+		// refresh screen soon
+		tio_refresh();
+	}
 }
 PRIVATE int get_status_bar_color_idx(char status_bar_display)
 {
@@ -202,7 +200,6 @@ void redisp_status_bar()
 
 	set_item_color_by_idx(color_idx, 0);
 	// display status bar
-flf_dprintf("[%d] y:%d, [%s]\n", get_app_stack_depth(), central_win_get_status_line_y(), msg);
 	central_win_output_string(central_win_get_status_line_y(), 0, msg, -1);
 	if (col_idx >= 0) {
 		int col_idx_1, col_idx_2;

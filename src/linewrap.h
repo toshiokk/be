@@ -30,6 +30,7 @@ void set_wrap_line_tab_size(int tab_size);
 #ifdef START_UP_TEST
 void test_wrap_line();
 #endif // START_UP_TEST
+
 int max_wrap_line_idx(const char *line, int width);
 int start_wl_idx_of_wrap_line(const char *line, int byte_idx, int width);
 int end_wl_idx_of_wrap_line(const char *line, int byte_idx, int width);
@@ -53,6 +54,7 @@ int vis_idx_from_byte_idx(const char *utf8s, int bytes);
 #ifdef START_UP_TEST
 void test_get_intersection();
 #endif // START_UP_TEST
+
 int get_intersection(int min1, int max1, int min2, int max2, int *min, int *max);
 
 #endif // linewrap_h

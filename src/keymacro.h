@@ -34,13 +34,13 @@ void doe_start_recording();
 void doe_cancel_recording();
 void doe_end_recording();
 void doe_playback_last_1();
-void doe_playback_last_2();
 #ifdef ENABLE_HISTORY
 void doe_playback_string();
 #endif // ENABLE_HISTORY
 
 void key_macro_start_recording();
 void key_macro_put_key(key_code_t key);
+key_code_t key_macro_delete_last_key();
 int key_macro_is_recording();
 void key_macro_cancel_recording();
 void key_macro_end_recording();
@@ -50,12 +50,12 @@ key_code_t key_macro_get_key();
 void key_macro_end_playback();
 int key_macro_is_playing_back();
 
-char *get_string_from_key_macro(key_code_t *key_codes, int keys);
-int get_key_macro_from_string(const char *string, key_code_t *key_codes);
-
 #ifdef START_UP_TEST
 void test_key_code_from_to_key_name();
 #endif // START_UP_TEST
+
+char *get_string_from_key_macro(key_code_t *key_codes, int keys);
+int get_key_macro_from_string(const char *string, key_code_t *key_codes);
 
 #endif // keymacro_h
 

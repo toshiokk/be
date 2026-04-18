@@ -62,6 +62,7 @@ void doe_carriage_return();
 void doe_carriage_return_indent();
 void doe_backspace_limited();
 void doe_backspace();
+void doe_delete_char_limited();
 void doe_delete_char();
 void doe_conv_upp_low_letter();
 void doe_conv_upp_letter();

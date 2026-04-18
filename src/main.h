@@ -22,7 +22,7 @@
 #ifndef main_h
 #define main_h
 
-extern int quit_soon;
+extern int quit_immediate;
 extern int restart_be;
 
 int progerr_cb_func(const char *warning);

@@ -24,6 +24,9 @@
 
 // file status and permission --------------------
 
+#define IS_ST_EXECUTABLE(st_mode)	\
+	(S_ISREG(st_mode) && ((st_mode) & (S_IXUSR | S_IXGRP | S_IXOTH)))
+
 int is_path_exist(const char *path);
 int is_path_regular_file(const char *path);
 int is_path_executable_file(const char *path);
@@ -46,6 +49,7 @@ int chdir_after_save(char *dir_save, const char *dir);
 
 char *strip_file_if_path_is_file(const char *path, char *dir);
 char *strip_file_from_path(const char *path, char *dir);
+char *strip_file_or_dir_from_path(const char *path, char *dir);
 
 int change_cur_dir(const char *dir);
 const char *get_full_path_of_cur_dir(char *dir);
@@ -56,6 +60,8 @@ char *getenv_pwd(char *pwd);
 char *getenv__(char *env);
 
 int write_text_to_file(const char *file_path, char append, const char *text);
+int read_file_tail_into_buf(const char *file_path, int line_from_tail, const char *buf);
+
 int remove_file(const char *file_path);
 
 #endif // utilfile_h

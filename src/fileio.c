@@ -55,14 +55,12 @@ int load_file_into_new_buf(const char *full_path, int flags)
 	}
 	// successfully loaded into new buffer
 
-	if (append_magic_line_if_necessary()) {
-		// Automatically add a magic-line
-		SET_CUR_EBUF_STATE(buf_MAGIC_LINE_ADDED, 1);
-	}
+	buf_append_magic_line_if_necessary(get_epc_buf());
+
 	buf_set_view_x_cur_line(get_epc_buf(), 0, CUR_EDIT_BUF_TOP_LINE);
+	EPCBV0_CLBI = 0;
 	buf_set_view_x_cur_line(get_epc_buf(), 1, CUR_EDIT_BUF_TOP_LINE);
-	BV0_CLBI(get_epc_buf()) = 0;
-	BV1_CLBI(get_epc_buf()) = 0;
+	EPCBV1_CLBI = 0;
 	renumber_cur_buf_from_top();
 	update_cur_ebuf_crc();
 
@@ -151,7 +149,7 @@ int backup_and_save_cur_buf_ask()
 	}
 	if (buf_compare_mtime_to_cur_file(get_epc_buf(), file_path) < 0) {
 		// file is modified by another program
-		ret = ask_yes_no(ASK_YES_NO,
+		ret = ask_yes_no(ASK_YES_NO_QUIT,
 		 _("File has modified by another program, OVERWRITE ?"));
 		if (ret < 0) {
 			disp_status_bar_warn(_("Overwriting file cancelled"));
@@ -233,16 +231,16 @@ PRIVATE char *make_backup_file_path(const char *orig_path, char *backup_path, in
 
 //------------------------------------------------------------------------------
 
-int load_file_into_buf(be_buf_t *buf, const char *full_path)
-{
-	be_buf_t *buf_save = get_epc_buf();
-	set_epc_buf(buf);
-
-	int ret = load_file_into_cur_buf__(full_path, 0);
-
-	set_epc_buf(buf_save);
-	return ret;		// >= 0: success
-}
+////int load_file_into_buf(const char *full_path, be_buf_t *buf)
+////{
+////	be_buf_t *buf_save = get_epc_buf();
+////	set_epc_buf(buf);
+////
+////	int ret = load_file_into_cur_buf__(full_path, 0);
+////
+////	set_epc_buf(buf_save);
+////	return ret;		// >= 0: success
+////}
 
 PRIVATE int load_file_into_cur_buf__(const char *full_path, int flags)
 {
@@ -276,7 +274,7 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int flags)
 			nkf_options = "-Jwx";	// input JIS, output UTF8, preserve HankakuKana
 			break;
 		case ENCODE_BINARY:
-			nkf_options = "-w";		// output UTF8
+/////			nkf_options = "-w";		// output UTF8
 			break;
 		}
 		switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
@@ -346,7 +344,7 @@ int save_cur_buf_to_file(const char *file_path)
 			nkf_options = "-Wjx";	// input UTF8, output JIS, preserve HankakuKana
 			break;
 		case ENCODE_BINARY:
-			nkf_options = "-W";		// input UTF8
+/////			nkf_options = "-W";		// input UTF8
 			break;
 		}
 		switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
@@ -568,7 +566,7 @@ PRIVATE int load_file_into_cur_buf_binary(const char *full_path)
 			int utf8c_len;
 			if (byte < ' ' || 0x7f <= byte) {
 				// 0x00 ~ 0x1f --> 0xXX00 ~ 0xXX1f, 0x7f ~ 0xff --> 0xXX7f ~ 0xXXff
-				utf8c_len = utf8c_encode(BIN_BASE_CODE + byte, utf8c);
+				utf8c_len = utf8c_encode_bytes(BIN_BASE_CODE + byte, utf8c);
 			} else {
 				utf8c[0] = byte;
 				utf8c[1] = '\0';
@@ -585,6 +583,8 @@ PRIVATE int load_file_into_cur_buf_binary(const char *full_path)
 	return lines;
 }
 
+#define FEOF		(-1)
+#define FERR		(-2)
 PRIVATE void fgetc_bufed_clear();
 PRIVATE int fgetc_buffered(FILE *fp);
 
@@ -599,13 +599,12 @@ PRIVATE inline void load_into_cur_buf_append_line(be_line_t* line, char *line_bu
 PRIVATE int load_into_cur_buf_fp(FILE *fp)
 {
 	int file_format_idx = 0;	// 0 = nix, 1 = Mac, 2 = DOS
-	int lines_read = 0;
-	int prev_chr = '\0';		// previous read character
-	char line_buf[MAX_EDIT_LINE_LEN+1];
-	int len = 0;
-	be_line_t *line = CUR_EDIT_BUF_BOT_ANCH;
+	int prev_chr = '\0';		// previously read character
 
-	line_buf[len] = '\0';
+	be_line_t *line = CUR_EDIT_BUF_BOT_ANCH;
+	char line_buf[MAX_EDIT_LINE_LEN+1] = "";
+	int len = 0;
+	int lines_read = 0;
 	fgetc_bufed_clear();
 	for ( ; ; ) {
 		int chr_int = fgetc_buffered(fp);	// read character
@@ -632,14 +631,15 @@ PRIVATE int load_into_cur_buf_fp(FILE *fp)
 			line_buf[len++] = chr_int;
 			line_buf[len] = '\0';
 			break;
-		case EOF:
-			if (len > 0) {
-				load_into_cur_buf_append_line(line, line_buf, &len, &lines_read);
-			}
+		case FEOF:
+			// append the last line or the magic line
+			load_into_cur_buf_append_line(line, line_buf, &len, &lines_read);
+			break;
+		case FERR:
 			break;
 		}
 		prev_chr = chr_int;
-		if (chr_int == EOF)
+		if ((chr_int == FEOF) || (chr_int == FERR))
 			break;
 	}
 	switch (file_format_idx) {
@@ -654,7 +654,7 @@ PRIVATE int load_into_cur_buf_fp(FILE *fp)
 		set_buf_eol(EOL_DOS);
 		break;
 	}
-	if (check_break_key()) {
+	if (check_break_key() || (prev_chr == FERR)) {
 		lines_read = -1;
 	}
 	// 0 bytes of file returns 0
@@ -675,11 +675,10 @@ PRIVATE int fgetc_buffered(FILE *fp)
 {
 	if (fgetc_bufed_byte_idx >= fgetc_bufed_read_len) {
 		if (check_break_key()) {
-			return EOF;
+			return FEOF;
 		}
-		if ((fgetc_bufed_read_len = fread(fgetc_bufed_buf, 1, MAX_EDIT_LINE_LEN, fp))
-		 <= 0) {
-			return EOF;
+		if ((fgetc_bufed_read_len = fread(fgetc_bufed_buf, 1, MAX_EDIT_LINE_LEN, fp)) <= 0) {
+			return feof(fp) ? FEOF : FERR;	// distinguish error from eof
 		}
 		fgetc_bufed_byte_idx = 0;
 	}
@@ -748,13 +747,6 @@ PRIVATE int save_cur_buf_to_file_binary(const char *file_path)
 	int lines_written = 0;
 	for (const be_line_t *line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_INT(line);
 	 line = NODE_NEXT(line)) {
-		if (IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
-			// There is a magic-line at the last line of the buffer
-			if (GET_CUR_EBUF_STATE(buf_MAGIC_LINE_ADDED)) {
-				// This magic-line is the one automatically added
-				break;			// So do not output the magic-line
-			}
-		}
 		unsigned char bin_buf[BIN_LINE_LEN];
 		int line_len = strlen_path(line->data);
 		int bin_off = 0;
@@ -787,32 +779,29 @@ PRIVATE int save_cur_buf_to_fp(const char *file_path, FILE *fp)
 	int lines_written = 0;
 	for (const be_line_t *line = CUR_EDIT_BUF_TOP_LINE; IS_NODE_INT(line);
 	 line = NODE_NEXT(line)) {
-		if (IS_NODE_BOT_MOST(line) && (line_strlen(line) == 0)) {
-			// There is a magic-line at the last line of the buffer
-			if (GET_CUR_EBUF_STATE(buf_MAGIC_LINE_ADDED)) {
-				// This magic-line is the one automatically added
-				break;			// So do not output the magic-line
+		size_t line_len = line_strlen(line);
+		if (line_len > 0) {
+			size_t written = fwrite(line->data, 1, line_len, fp);
+			if (written < line_len) {
+				disp_status_bar_err(_("Can not write file [%s]: %s"),
+				 shrink_str_to_scr_static(file_path), strerror(errno));
+				return -1;
 			}
 		}
-		size_t line_len = line_strlen(line);
-		size_t size = fwrite(line->data, 1, line_len, fp);
-		if (size < line_len) {
-			disp_status_bar_err(_("Can not write file [%s]: %s"),
-			 shrink_str_to_scr_static(file_path), strerror(errno));
-			return -1;
-		}
-		switch (GET_CUR_EBUF_STATE(buf_EOL)) {
-		default:
-		case EOL_NIX:
-			putc('\n', fp);
-			break;
-		case EOL_MAC:
-			putc('\r', fp);
-			break;
-		case EOL_DOS:
-			putc('\r', fp);
-			putc('\n', fp);
-			break;
+		if (IS_NODE_INT(line) && (IS_NODE_BOT_MOST(line) == 0)) {
+			switch (GET_CUR_EBUF_STATE(buf_EOL)) {
+			default:
+			case EOL_NIX:
+				putc('\n', fp);
+				break;
+			case EOL_MAC:
+				putc('\r', fp);
+				break;
+			case EOL_DOS:
+				putc('\r', fp);
+				putc('\n', fp);
+				break;
+			}
 		}
 		lines_written++;
 	}

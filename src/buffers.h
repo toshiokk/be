@@ -83,6 +83,7 @@ extern be_bufs_t edit_buffers;
 #define BV_MIN_TEXT_X_TO_KEEP(bv)		((bv)->min_text_x_to_keep)
 
 #define BVX_CL(buf, idx)					BV_CL(BUF_VX((buf), (idx)))
+#define BVX_CL_DATA(buf, idx)				BV_CL_DATA(BUF_VX((buf), (idx)))
 #define BVX_CLBI(buf, idx)					BV_CLBI(BUF_VX((buf), (idx)))
 #define BVX_CURS_Y(buf, idx)				BV_CURS_Y(BUF_VX((buf), (idx)))
 #define BVX_CURS_X_TO_KEEP(buf, idx)		BV_CURS_X_TO_KEEP(BUF_VX((buf), (idx)))
@@ -93,14 +94,20 @@ extern be_bufs_t edit_buffers;
 #define BV1_CLBI(buf)						BVX_CLBI((buf), 1)
 
 #define EPCBVC_CL							BV_CL(get_epc_buf_view())
+#define EPCBVC_CL_DATA						BV_CL_DATA(get_epc_buf_view())
 #define EPCBVC_CLBI							BV_CLBI(get_epc_buf_view())
 #define EPCBVC_CURS_Y						BV_CURS_Y(get_epc_buf_view())
 #define EPCBVC_CURS_X_TO_KEEP				BV_CURS_X_TO_KEEP(get_epc_buf_view())
 #define EPCBVC_MIN_TEXT_X_TO_KEEP			BV_MIN_TEXT_X_TO_KEEP(get_epc_buf_view())
-#define EPCBVC_CL_EPCBVC_CLBI				(&(EPCBVC_CL->data[EPCBVC_CLBI]))
+#define EPCBVC_CL_EPCBVC_CLBI				(&(EPCBVC_CL_DATA[EPCBVC_CLBI]))
 
 #define EPCBVX_CL(idx)						BVX_CL(get_epc_buf(), (idx))
+#define EPCBVX_CL_DATA(idx)					BVX_CL_DATA(get_epc_buf(), (idx))
 #define EPCBVX_CLBI(idx)					BVX_CLBI(get_epc_buf(), (idx))
+#define EPCBV0_CL(idx)						BVX_CL(get_epc_buf(), 0)
+#define EPCBV1_CL(idx)						BVX_CL(get_epc_buf(), 1)
+#define EPCBV0_CLBI							BVX_CLBI(get_epc_buf(), 0)
+#define EPCBV1_CLBI							BVX_CLBI(get_epc_buf(), 1)
 
 #define EPCB_ML								(get_epc_buf()->mark_line)
 #define EPCB_MLBI							(get_epc_buf()->mark_line_byte_idx)
@@ -198,15 +205,22 @@ int is_epc_buf_closeable();
 int is_epc_buf_mode_edit();
 int is_epc_buf_mode_list();
 int is_epc_buf_mode_ro();
+
+int is_epc_buf_locked();
+
 int is_epc_buf_valid();
 int is_epc_buf_empty();
 int is_epc_buf_file_wp();
-int is_epc_buf_file_locked();
 int is_epc_buf_modified();
 
 const char *get_all_buf_state_str();
 const char *get_all_buf_unmodifiable_str();
-const char *get_epc_buf_mode_str();
+
+const char *get_str_buf_mode_if_set();
+const char *get_str_buf_locked_if_set();
+const char *get_str_buf_cut_mode_on_cut_if_set();
+
+int read_file_into_buf_max_lines(const char *file_path, be_buf_t *buf, int max_lines);
 
 //------------------------------------------------------------------------------
 // Some compiler needs "inline static" for inline functions
@@ -221,17 +235,16 @@ void dump_buf_view_x(be_buf_t *buf, int pane_idx);
 
 //------------------------------------------------------------------------------
 
-be_buf_t *get_any_buf_by_full_path(const char *file_path);
+be_buf_t *get_edit_buf_by_full_path(const char *file_path);
 be_buf_t *get_edit_buf_by_file_path(const char *file_name);
 
 void create_edit_buf(const char *file_path);
 
 be_line_t *append_string_to_cur_edit_buf(const char *string);
-int append_magic_line_if_necessary();
 
 int has_bufs_to_edit();
 int count_edit_bufs();
-int epc_buf_count();
+int epc_buf_count_bufs();
 
 //------------------------------------------------------------------------------
 
@@ -272,9 +285,13 @@ int check_cur_ebuf_modified();
 
 int inc_buf_mode();
 const char *get_str_buf_mode();
+int tog_buf_locked();
+const char *get_str_buf_locked();
+
+const char *get_str_buf_cut_mode_on_cut();
 
 int tog_line_wrap_mode();
-const char *get_str_buf_line_wrap_mode();
+const char *get_str_buf_line_wrap();
 
 int tog_buf_tab_size();
 int inc_buf_tab_size();
@@ -316,7 +333,8 @@ int set_buf_encode(int encode);
 const char *get_str_buf_encode();
 
 void doe_inc_buf_mode();
-void doe_tog_buf_line_wrap_mode();
+void doe_tog_buf_locked();
+void doe_tog_buf_line_wrap();
 void doe_tog_buf_tab_size();
 void doe_inc_buf_tab_size();
 void doe_set_buf_nix_file();
@@ -338,6 +356,7 @@ int is_internal_buf_file_path(const char *file_path);
 
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
+void dump_cur_edit_buf_name();
 void dump_cur_edit_buf_lines();
 void dump_edit_bufs();
 void dump_edit_bufs_lines();

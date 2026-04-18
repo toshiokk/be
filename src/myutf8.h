@@ -15,26 +15,16 @@ extern "C" {
 int my_mbwidth(const char *utf8c, int max_len);
 int my_wcwidth(wchar_t wc);
 
-#define VAGUE_WIDTH_CHAR	// treat characters which width is vague as a wide character
-#ifdef VAGUE_WIDTH_CHAR
+// |VAGUE_CHAR_AS_WIDE|ON_DEMAND_WCWIDTH| meaning                 |
+// |------------------|-----------------|-------------------------|
+// |    undefined     |    undefined    | vague character's width is gotten from 'wcwidth()' |
+// |    DEFINED       |    --           | vague character's width is assumed as 'wide'       |
+// |    undefined     |    DEFINED      | vague character's width is gotten on demand        |
+
+#define WA_VAGUE_CHAR_AS_WIDE	// treat characters which width is vague as a wide character
 #ifndef ENABLE_NCURSES
-#define ON_DEMAND_WCWIDTH	// make wcwidth table on demand (when displaying the character)
+///#define ON_DEMAND_WCWIDTH	// make wcwidth table on demand (when displaying the character)
 #endif // ENABLE_NCURSES
-
-// |VAGUE_WIDTH_CHAR|ON_DEMAND_WCWIDTH| meaning                 |
-// |----------------|-----------------|-------------------------|
-// |    DEFINED     |    DEFINED      | vague character's width will be investigated on demand |
-// |    DEFINED     |    undefined    | vague character's width is assumed as `wide`           |
-// |    undefined   |    undefined    | invalid setting (error) |
-// |    undefined   |    DEFINED      | invalid setting (error) |
-
-int is_wide_chr(wchar_t wc);
-int is_vague_width_chr(wchar_t wc);
-#ifdef ON_DEMAND_WCWIDTH
-void clear_wcwidth_cache();
-char get_wcwidth_cache(wchar_t wc);
-#endif // ON_DEMAND_WCWIDTH
-#endif // VAGUE_WIDTH_CHAR
 
 int my_mblen(const char *utf8c, int max_len);
 int my_mbtowc(const char *utf8c, int max_len);

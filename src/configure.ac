@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.71])
-AC_INIT([BE],[251204],[BUG-REPORT-ADDRESS])
+AC_INIT([BE],[260104],[BUG-REPORT-ADDRESS])
 AC_CONFIG_SRCDIR([buffers.h])
 AC_CONFIG_HEADERS([config.h])
 
@@ -45,13 +45,18 @@ AC_CHECK_HEADERS(ncursesw/curses.h, ncursesw_curses_h=1, ncursesw_curses_h=0)
 AC_CHECK_HEADERS(pcreposix.h, pcreposix_h=1, pcreposix_h=0)
 AC_CHECK_HEADERS(pcre/pcreposix.h, pcre_pcreposix_h=1, pcre_pcreposix_h=0)
 
-AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],[AC_COMPILE_IFELSE(
-[AC_LANG_PROGRAM([#include <sys/types.h>
-#include <signal.h>
-],
-		 [return *(signal (0, 0)) (0) == 1;])],
-		   [ac_cv_type_signal=int],
-		   [ac_cv_type_signal=void])])
+AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],
+  [AC_COMPILE_IFELSE(
+    [AC_LANG_PROGRAM([#include <sys/types.h>
+        #include <signal.h>
+        ],
+        [return *(signal (0, 0)) (0) == 1;]
+    )],
+    [ac_cv_type_signal=int],
+    [ac_cv_type_signal=void]
+  )
+])
+
 AC_DEFINE_UNQUOTED([RETSIGTYPE],[$ac_cv_type_signal],[Define as the return type of signal handlers
 		    (`int' or `void').])
 
@@ -149,31 +154,31 @@ yes|no)		;;
 *)	enable_debug=no		;;
 esac
 
-AC_ARG_ENABLE(ncurses, [  --enable-ncurses  Use the ncurses library instead of own library])
+AC_ARG_ENABLE(ncurses, [  --enable-ncurses  Use the ncurses library instead of own library (disabled by default)])
 case "$enable_ncurses" in
 yes|no)		;;
 *)	enable_ncurses=no	;;
 esac
 
-AC_ARG_ENABLE(pcre, [  --enable-pcre  Use the pcre library instead of regex])
+AC_ARG_ENABLE(pcre, [  --enable-pcre  Use the pcre library instead of regex (disabled by default)])
 case "$enable_pcre" in
 yes|no)		;;
 *)	enable_pcre=no	;;
 esac
 
-AC_ARG_ENABLE(nkf, [  --enable-nkf  Use NKF for automatic character encoding conversion])
+AC_ARG_ENABLE(nkf, [  --enable-nkf  Use NKF for automatic character encoding conversion (enabled by default)])
 case "$enable_nkf" in
 yes|no)		;;
 *)	enable_nkf=yes	;;
 esac
 
-AC_ARG_ENABLE(busybox, [  --enable-busybox  Use BUSYBOX instead of GNU tools])
+AC_ARG_ENABLE(busybox, [  --enable-busybox  Use BUSYBOX instead of GNU tools (disabled by default)])
 case "$enable_busybox" in
 yes|no)		;;
 *)	enable_busybox=no	;;
 esac
 
-AC_ARG_ENABLE(highbgc, [  --enable-highbgc  Use lighter Backgound color (8--15)])
+AC_ARG_ENABLE(highbgc, [  --enable-highbgc  Use lighter Backgound color (8--15) (enabled by default)])
 case "$enable_highbgc" in
 yes|no)		;;
 *)	enable_highbgc=yes	;;
@@ -355,7 +360,7 @@ if test "$enable_highbgc" = yes ; then
 	AC_DEFINE(ENABLE_HIGH_BGC, 1, [Define this to use HIGH_BGC.])
 fi
 
-echo "final configurations ===============================:"
+echo "final configuration ===============================:"
 echo "enable_filer=$enable_filer"
 echo "enable_history=$enable_history"
 echo "enable_undo=$enable_undo"

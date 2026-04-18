@@ -89,8 +89,11 @@ void doe_right()
 
 PRIVATE int get_char_type(char chr)
 {
-/* '\0':0, space:1, alpha-numeric:2, others:3, UTF-8:4 */
-#define CHR_TYPE(chr)	((chr) == '\0' ? 0 :							\
+/* '\0':0, space:1, alpha-numeric:2, punctuation:(its-code), others:3, UTF-8:4 */
+//				!@#$%^&*()=+ abc_def-ghi
+// CHR_TYPE()	^^^^^^^^^^^^^^      ^^  
+// CHR_TYPE2()	^^^^^^^^^^^^^^          
+#define CHR_TYPE1(chr)	((chr) == '\0' ? 0 :							\
 						 (is_char_white_space(chr) ? 1 :				\
 						  (is_char_id(chr) ? 2 :						\
 						    (ispunct(chr) ? (chr) :						\
@@ -99,7 +102,17 @@ PRIVATE int get_char_type(char chr)
 						  )												\
 						 )												\
 						)
-	return CHR_TYPE(chr);
+#define CHR_TYPE2(chr)	((chr) == '\0' ? 0 :							\
+						 (is_char_white_space(chr) ? 1 :				\
+						  (is_char_id2(chr) ? 2 :						\
+						    (ispunct(chr) ? (chr) :						\
+						     (((unsigned char)(chr)) < 0x80 ? 3 : 4)	\
+						    )											\
+						  )												\
+						 )												\
+						)
+	return CHR_TYPE1(chr);
+///	return CHR_TYPE2(chr);
 }
 
 // go to previous word
@@ -198,6 +211,7 @@ PRIVATE void doe_up_()
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 PRIVATE void doe_down_();
+PRIVATE int _doe_carriage_return();
 void doe_down()
 {
 	if (GET_APPMD(ed_DUAL_SCROLL) == 0) {
@@ -224,9 +238,10 @@ PRIVATE void doe_down_()
 				doe_switch_to_next_buffer();
 			}
 		} else {
-			doe_end_of_line();
-			doe_carriage_return();
-			disp_status_bar_warn(_("Automatically append magic line"));
+			if (is_editor_unmodifiable_then_warn_it() == 0) {
+				doe_end_of_line();
+				_doe_carriage_return();
+			}
 		}
 	}
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
@@ -264,7 +279,7 @@ PRIVATE void doe_page_up_()
 	}
 }
 
-PRIVATE int doe_page_down_();
+PRIVATE void doe_page_down_();
 void doe_page_down()
 {
 	if (GET_APPMD(ed_DUAL_SCROLL) == 0) {
@@ -276,7 +291,7 @@ void doe_page_down()
 		doe_page_down_();
 	}
 }
-PRIVATE int doe_page_down_()
+PRIVATE void doe_page_down_()
 {
 	if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI)) {
 		int lines = editor_vert_scroll_lines() - 1;
@@ -294,7 +309,6 @@ PRIVATE int doe_page_down_()
 			doe_switch_to_next_buffer();
 		}
 	}
-	return 1;
 }
 
 void doe_first_line()
@@ -317,12 +331,10 @@ void doe_control_code()
 		return;
 	}
 
-	disp_status_bar_ing(_("Input control character [^A-^Z,^[,^\\,^],^^,^_,\x7f]"));
+	disp_status_bar_ing(_("Input control character [^A-^Z,^[,^\\,^],^^,^_,DEL]"));
 	key_code_t key = input_key_loop();
-	disp_status_bar_ing(_("Key code: %04x"), key);
-	if ((K_C_a <= key && key < ' ') || key == CHAR_DEL) {
-		_doe_enter_char(key);
-	}
+	disp_status_bar_done(_("Key code: %04x"), key);
+	_doe_enter_char(key);
 }
 void doe_charcode()
 {
@@ -338,9 +350,7 @@ void doe_charcode()
 	}
 	unsigned int chr;
 	if (sscanf(string, "%x", &chr) == 1) {
-		char utf8c[MAX_UTF8C_BYTES+1];
-		utf8c_encode(chr, utf8c);
-		_doe_enter_utf8s(utf8c);
+		_doe_enter_utf8s(utf8c_encode(chr, NULL));
 		return;
 	}
 }
@@ -442,7 +452,6 @@ PRIVATE int _doe_enter_utf8c(const char *utf8c)
 	return 1;
 }
 
-PRIVATE int _doe_carriage_return();
 void doe_carriage_return()
 {
 	_doe_carriage_return();
@@ -454,9 +463,9 @@ void doe_carriage_return_indent()
 	}
 	// autoindent: auto insert the same spaces as the previous line
 	const char *ptr_s = NODE_PREV(EPCBVC_CL)->data;
-	SKIP_SPACE(ptr_s);
+	skip_space_ptr(&ptr_s);
 	const char *ptr_d = EPCBVC_CL->data; 
-	SKIP_SPACE(ptr_d);
+	skip_space_ptr(&ptr_d);
 	int len_s = ptr_s - NODE_PREV(EPCBVC_CL)->data;
 	int len_d = ptr_d - EPCBVC_CL->data;
 	line_string_replace(EPCBVC_CL, 0, len_d, NODE_PREV(EPCBVC_CL)->data, len_s);
@@ -467,8 +476,6 @@ PRIVATE int _doe_carriage_return()
 	if (is_editor_unmodifiable_then_warn_it()) {
 		return 0;
 	}
-
-	clear_mark();
 
 #ifdef ENABLE_UNDO
 	undo_set_region__save_before_change(EPCBVC_CL, EPCBVC_CL, 1);
@@ -537,6 +544,13 @@ void doe_backspace()
 	set_cur_ebuf_modified();
 }
 
+void doe_delete_char_limited()
+{
+	if (line_strlen(EPCBVC_CL) <= EPCBVC_CLBI) {
+		return;
+	}
+	doe_delete_char();
+}
 void doe_delete_char()
 {
 	if (is_editor_unmodifiable_then_warn_it()) {
@@ -733,10 +747,12 @@ void doe_fill_spaces_to_columns()
 //------------------------------------------------------------------------------
 void doe_enter_text()
 {
+	set_text_to_output_buf_editor(EPCBVC_CL->data);
 	SET_editor_do_next(EF_ENTER_STRING);
 }
 void doe_enter_text_add()
 {
+	set_text_to_output_buf_editor(EPCBVC_CL->data);
 	SET_editor_do_next(EF_ENTER_STRING_ADD);
 }
 //------------------------------------------------------------------------------
@@ -806,6 +822,7 @@ int cur_line_up(be_line_t **line, int *byte_idx)
 		line_byte_idx = end_byte_idx_of_wrap_line_le(te_concat_lf_buf, wl_idx, col_idx, -1);
 	} else {
 		if (IS_PREV_NODE_INT(*line) == 0) {
+			// already the first line
 			return 0;	// no move
 		}
 		*line = NODE_PREV(*line);
@@ -827,6 +844,7 @@ int cur_line_down(be_line_t **line, int *byte_idx)
 		line_byte_idx = end_byte_idx_of_wrap_line_le(te_concat_lf_buf, wl_idx, col_idx, -1);
 	} else {
 		if (IS_NEXT_NODE_INT(*line) == 0) {
+			// already the last line
 			return 0;	// no move
 		}
 		*line = NODE_NEXT(*line);

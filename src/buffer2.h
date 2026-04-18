@@ -1,5 +1,5 @@
 /**************************************************************************
- *   buffer2.h                                                             *
+ *   buffer2.h                                                            *
  *                                                                        *
  *   Copyright (C) 1999-2003 Chris Allegretta                             *
  *                                                                        *
@@ -23,7 +23,7 @@
 #define buffer2_h
 
 #define MAX_NAME_LEN	80
-//! buffers, collection of buffers
+//! buffers, collection of buffer
 typedef struct be_bufs_t {
 	struct be_bufs_t *prev;		//!< Previous be_bufs_t
 	struct be_bufs_t *next;		//!< Next     be_bufs_t
@@ -36,8 +36,8 @@ typedef struct be_bufs_t {
 //! bufferss, collection of buffers
 typedef struct be_bufss_t {
 	char name[MAX_NAME_LEN+1];	//! name
-	be_bufs_t top_anchor;		//!< top    buffer
-	be_bufs_t bot_anchor;		//!< bottom buffer
+	be_bufs_t top_anchor;		//!< top    buffers
+	be_bufs_t bot_anchor;		//!< bottom buffers
 } be_bufss_t;
 
 //------------------------------------------------------------------------------
@@ -74,6 +74,8 @@ void bufss_insert_bufs_to_bottom(be_bufss_t *bufss, be_bufs_t *bufs);
 
 int bufs_get_bufs_idx_in_bufss(be_bufs_t *bufs, be_buf_t *buf);
 int bufs_get_buf_idx(be_bufs_t *bufs, be_buf_t *buf);
+
+be_buf_t *bufs_get_buf_by_buffer_id(be_bufs_t *bufs, const char *file_path);
 
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG

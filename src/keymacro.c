@@ -22,8 +22,8 @@
 #include "headers.h"
 
 // Keyboard macro
-#define MAX_KEY_STROKES			MAX_EDIT_LINE_LEN / KEY_CODE_STR_LEN
-#define MAX_KEY_MACRO_STR_LEN	(MAX_KEY_STROKES * KEY_CODE_STR_LEN)
+#define MAX_KEY_STROKES			MAX_EDIT_LINE_LEN / MAX_KEY_STR_LEN
+#define MAX_KEY_MACRO_STR_LEN	(MAX_KEY_STROKES * MAX_KEY_STR_LEN)
 // key macro recording ---------------------------------------------------------
 PRIVATE int key_strokes_recording = -1;			// >=0:recording, -1: not recording
 PRIVATE key_code_t key_codes_recording[MAX_KEY_STROKES+1];
@@ -41,11 +41,14 @@ void load_last_key_macro(int last_n)
 	strlcpy__(key_macro_loaded, get_history_newest(HISTORY_TYPE_IDX_KEYMACRO, last_n),
 	 MAX_PATH_LEN);
 	key_strokes_recorded = get_key_macro_from_string(key_macro_loaded, key_codes_recorded);
+flf_dprintf("key_macro__:[%s]\n", key_macro_loaded);
 }
 void update_key_macro_history()
 {
 	modify_history_w_reloading(HISTORY_TYPE_IDX_KEYMACRO,
 	 get_string_from_key_macro(key_codes_recorded, key_strokes_recorded));
+flf_dprintf("key_macro__:[%s]\n",
+ get_string_from_key_macro(key_codes_recorded, key_strokes_recorded));
 }
 #endif // ENABLE_HISTORY
 
@@ -103,11 +106,6 @@ void doe_playback_last_1()
 	disp_status_bar_ing(_("Start playing back 1st latest key macro"));
 	start_playback_last_n(1);
 }
-void doe_playback_last_2()
-{
-	disp_status_bar_ing(_("Start playing back 2nd latest key macro"));
-	start_playback_last_n(2);
-}
 PRIVATE int start_playback_last_n(int last_n)
 {
 #ifdef ENABLE_HISTORY
@@ -126,6 +124,7 @@ void doe_playback_string()
 	}
 	key_strokes_recorded = get_key_macro_from_string(key_macro_loaded, key_codes_recorded);
 	key_macro_start_playback();
+	SET_editor_do_next(EF_NONE);	// return to editor and playback key_macro
 }
 #endif // ENABLE_HISTORY
 void key_macro_start_recording()
@@ -135,18 +134,21 @@ void key_macro_start_recording()
 }
 void key_macro_put_key(key_code_t key)
 {
-	if (key >= 0 && key_macro_is_recording()) {
+	if (IS_KEY_VALID(key) && key_macro_is_recording()) {
 		// recording
-		if (key_strokes_recording < MAX_KEY_STROKES)
+		if (key_strokes_recording < MAX_KEY_STROKES) {
 			// record one key stroke
 			key_codes_recording[key_strokes_recording++] = key;
+		}
 	}
 }
-void key_macro_delete_last_key()
+key_code_t key_macro_delete_last_key()
 {
-	if (key_strokes_recording > 0) {
-		key_strokes_recording--;	// cancel the last key (End-rec Key)
+	if (key_macro_is_recording() && (key_strokes_recording > 0)) {
+		key_strokes_recording--;	// cancel the last key
+		return key_codes_recording[key_strokes_recording];
 	}
+	return K_NONE;
 }
 int key_macro_is_recording()
 {
@@ -176,7 +178,7 @@ int key_macro_start_playback()
 		key_macro_delete_last_key();	// cancel the last key (Start-playback Key)
 	}
 	if (key_strokes_recorded > 0) {		// recorded ?
-		key_strokes_playing_back = 0;		// playback key strokes
+		key_strokes_playing_back = 0;	// start playback key strokes
 	}
 	return key_strokes_recorded;
 }
@@ -204,11 +206,51 @@ int key_macro_is_playing_back()
 	return key_strokes_playing_back >= 0;
 }
 //------------------------------------------------------------------------------
+
+#ifdef START_UP_TEST
+void test_key_code_from_to_key_name()
+{
+_FLF_
+	flf_dprintf("MAX_KEY_STROKES: %d\n", MAX_KEY_STROKES);
+	key_code_t key_codes[MAX_KEY_STROKES+1];
+	int keys = 0;			// recorded key strokes
+	for (key_code_t key = 0x0000; key < 0x0110; key++) {
+		if (keys >= MAX_KEY_STROKES) {
+			break;
+		}
+		key_codes[keys++] = (UINT16)key;
+	}
+	///_D_(dump_memory("input:", key_codes, keys * 2))
+	const char *ptr = get_string_from_key_macro(key_codes, keys);
+	///_D_(dump_string("string", ptr))
+	key_code_t key_codes2[MAX_KEY_STROKES+1];
+	int keys2 = get_key_macro_from_string(ptr, key_codes2);
+	///_D_(dump_memory("output:", key_codes2, keys2 * 2))
+	MY_UT_BIN(key_codes2, keys2 * 2, key_codes, keys * 2);
+
+	flf_dprintf("get_key_name_table_entries(): %d\n", get_key_name_table_entries());
+	keys = 0;			// recorded key strokes
+	for (int idx = 0; idx < get_key_name_table_entries(); idx++) {
+		if (keys >= MAX_KEY_STROKES) {
+			break;
+		}
+		key_codes[keys++] = key_name_table[idx].key_code;
+	}
+	///_D_(dump_memory("input:", key_codes, keys * 2))
+	ptr = get_string_from_key_macro(key_codes, keys);
+	///_D_(dump_string("string", ptr))
+	keys2 = get_key_macro_from_string(ptr, key_codes2);
+	///_D_(dump_memory("output:", key_codes2, keys2 * 2))
+	MY_UT_BIN(key_codes2, keys2 * 2, key_codes, keys * 2);
+}
+#endif // START_UP_TEST
+
 // ==> "0"~"9", "A"~"Z", "a"~"z", "Ａ"~"Ｚ", "あ"~"ん", "亜"~"輪", ...
-// ==> "\{M-(}", "\(M-{)", "\{UP}", "\{DEL}", ...
-// ==> "\1b00", ...
+// ==> "{M-(}", "(M-{)", "{UP}", "{DEL}", ...
+// ==> "1b00", ...
 char *get_string_from_key_macro(key_code_t *key_codes, int keys)
 {
+/////_D_(dump_memory("key_macro__:", key_codes, keys * 2))
 	static char str_buf[MAX_KEY_MACRO_STR_LEN + 1];
 	strcpy__(str_buf, "");
 	for (int key_idx = 0; key_idx < keys; key_idx++) {
@@ -239,47 +281,5 @@ int get_key_macro_from_string(const char *str, key_code_t *key_codes)
 	}
 	return key_idx;
 }
-
-#ifdef START_UP_TEST
-void test_key_code_from_to_key_name()
-{
-	key_code_t key_codes[MAX_KEY_STROKES+1];
-	int keys = 0;			// recorded key strokes
-	const char *ptr;
-	key_code_t key_codes2[MAX_KEY_STROKES+1];
-	int keys2;
-
-	flf_dprintf("MAX_KEY_STROKES: %d\n", MAX_KEY_STROKES);
-	flf_dprintf("get_key_name_table_entries(): %d\n", get_key_name_table_entries());
-	for (key_code_t key = 0x0000; key < 0x0110; key++) {
-		if (keys >= MAX_KEY_STROKES) {
-			break;
-		}
-		key_codes[keys++] = (UINT16)key;
-	}
-	_D_(dump_memory("input:", key_codes, keys * 2))
-	ptr = get_string_from_key_macro(key_codes, keys);
-	_D_(dump_string("string", ptr))
-
-	keys2 = get_key_macro_from_string(ptr, key_codes2);
-	_D_(dump_memory("output:", key_codes2, keys2 * 2))
-	MY_UT_BIN(key_codes, keys * 2, key_codes2, keys2 * 2);
-
-	keys = 0;			// recorded key strokes
-	for (int idx = 0; idx < get_key_name_table_entries(); idx++) {
-		if (keys >= MAX_KEY_STROKES) {
-			break;
-		}
-		key_codes[keys++] = key_name_table[idx].key_code;
-	}
-	_D_(dump_memory("input:", key_codes, keys * 2))
-	ptr = get_string_from_key_macro(key_codes, keys);
-	_D_(dump_string("string", ptr))
-
-	keys2 = get_key_macro_from_string(ptr, key_codes2);
-	_D_(dump_memory("output:", key_codes2, keys2 * 2))
-	MY_UT_BIN(key_codes, keys * 2, key_codes2, keys2 * 2);
-}
-#endif // START_UP_TEST
 
 // End of keymacro.c

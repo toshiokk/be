@@ -66,8 +66,7 @@ void clear_edit_win_update_needed()
 
 #ifdef ENABLE_REGEX
 PRIVATE void disp_edit_win_bracket_hl();
-PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
- char char_under_cursor, char *needle, char depth_increase);
+PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir, char depth_increase);
 #endif // ENABLE_REGEX
 
 //-111111111111<   |
@@ -236,13 +235,13 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 
 	set_item_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
 	if (line == EPCBVC_CL) {
-		set_item_color_by_idx(ITEM_COLOR_IDX_CURSOR_LINE, 0);
+		set_item_color_by_idx(ITEM_COLOR_IDX_CURSOR_LINE, cur_pane == 0);
 	}
-	// display text simply =====================================================
+	// display text simply ========================================================================
 	output_edit_line_text(yy, line->data, byte_idx_1, byte_idx_2);
 
 #ifdef ENABLE_SYNTAX
-	// display syntax color highlighting =======================================
+	// display syntax color highlighting ==========================================================
 	if (GET_APPMD(ed_SYNTAX_HIGHLIGHT)) {
 		// check for all of syntaxes
 		for (syntax_idx = 0; syntax_idx < 2; syntax_idx++) {
@@ -273,7 +272,7 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 #endif // ENABLE_SYNTAX
 
 #ifdef HL_MARKED_REGION
-	// highlight marked region ================================================
+	// highlight marked region ====================================================================
 	if (IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE))
 	 && is_there_cut_region()
 	 && (mark_min_line__->line_num <= line->line_num
@@ -325,10 +324,10 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 #endif // HL_MARKED_REGION
 #ifdef HL_SEARCH_OTHER
 	if (search_is_needle_set(&search__) == 1) {
-		// display all text matched in the screen =======================================
+		// display all text matched in the screen =================================================
 		for (int byte_idx = 0; byte_idx < byte_idx_2; ) {
 			if (search_str_in_line(&search__, &matches, NULL,
-			 FORWARD_SEARCH, CASE_SENSITIVE, line->data, byte_idx) == 0) {
+			 FORWARD_SEARCH, search_get_ignore_case(&search__)/*CASE_SENSITIVE*/, line->data, byte_idx) == 0) {
 				// not found
 				break;
 			}
@@ -346,9 +345,9 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 	if (cur_pane) {
 #ifdef HL_SEARCH_CURSOR
 		if ((search_is_needle_set(&search__) == 1) && (line == EPCBVC_CL)) {
-			// display matched text at cursor pos ===========================================
+			// display matched text at cursor pos =================================================
 			if (search_str_in_line(&search__, &matches, NULL,
-			 FORWARD_SEARCH, CASE_SENSITIVE, line->data, EPCBVC_CLBI)) {
+			 FORWARD_SEARCH, search_get_ignore_case(&search__)/*CASE_SENSITIVE*/, line->data, EPCBVC_CLBI)) {
 				// found
 				if (matches_start_idx(&matches) == EPCBVC_CLBI) {
 					if (get_intersection(byte_idx_1, byte_idx_2,
@@ -361,7 +360,7 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 			}
 		}
 #endif // HL_SEARCH_CURSOR
-		// draw cursor myself ===========================================================
+		// draw cursor myself =====================================================================
 		if (GET_APPMD(app_DRAW_CURSOR) && (yy == EPCBVC_CURS_Y)) {
 			// display character at cursor in reverse video
 			set_item_color_by_idx(ITEM_COLOR_IDX_CURSOR_CHAR, 1);
@@ -526,19 +525,22 @@ step_two:
 #endif // ENABLE_SYNTAX
 
 #ifdef ENABLE_REGEX
+// | rev_pairing | text    | search_dir   | display order         |
+// |-------------|---------|--------------|-----------------------|
+// | 1(normal)   | } [{] } |  1(forward)  | backward ==> forward  |
+// | 1(normal)   | { [}] { | -1(backward) | forward  ==> backward |
+// |-1(reverse)  | } [{] } | -1(backward) | forward  ==> backward |
+// |-1(reverse)  | { [}] { |  1(forward)  | backward ==> forward  |
+// Note:
+// - [?] : cursor position
+
 PRIVATE void disp_edit_win_bracket_hl()
 {
-	char char_under_cursor;
-	char needle[BRACKET_SEARCH_REGEXP_STR_LEN+1];
-	int counterpart_direction;
-
-	prepare_colors_for_bracket_hl();
-	char_under_cursor = *EPCBVC_CL_EPCBVC_CLBI;
-
-	counterpart_direction = setup_bracket_search(char_under_cursor, search__.direction, needle);
-
-	disp_edit_win_bracket_hl_dir(- counterpart_direction, char_under_cursor, needle, -1);
-	disp_edit_win_bracket_hl_dir(+ counterpart_direction, char_under_cursor, needle, +1);
+	int search_dir = search_get_direction(&search__);
+	// 1st: display in the direction in which a pair does not exist
+	disp_edit_win_bracket_hl_dir(- search_dir, -1);
+	// 2nd: display in the direction in which a pair possibly exist
+	disp_edit_win_bracket_hl_dir(+ search_dir, +1);
 }
 
 // BRACKET_HL_TEST      backword <-- v --> forward
@@ -550,28 +552,26 @@ PRIVATE void disp_edit_win_bracket_hl()
 // (depth_0_occurances <  2):  4 5 6 7 0 1 2 3 4 5 6 7 0 ...
 // (depth_0_occurances >= 2):  5 6 7 8 1 2 3 4 5 6 7 8 1 ...
 
-PRIVATE void disp_edit_win_bracket_hl_dir_bw(int display_dir,
- char char_under_cursor, char *needle, char depth_increase);
-PRIVATE void disp_edit_win_bracket_hl_dir_fw(int display_dir,
- char char_under_cursor, char *needle, char depth_increase);
+// draw backward [0, yy] from cursor pos
+PRIVATE void disp_edit_win_bracket_hl_dir_bw(int display_dir, char depth_increase);
+// draw forward [yy, edit_win_get_text_lines()-1] from cursor pos
+PRIVATE void disp_edit_win_bracket_hl_dir_fw(int display_dir, char depth_increase);
 
-PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir,
- char char_under_cursor, char *needle, char depth_increase)
+PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir, char depth_increase)
 {
 	if (display_dir < 0) {
 #ifdef HL_BRACKET_BW
-		disp_edit_win_bracket_hl_dir_bw(display_dir, char_under_cursor, needle, depth_increase);
+		disp_edit_win_bracket_hl_dir_bw(display_dir, depth_increase);
 #endif // HL_BRACKET_BW
 	} else {
 #ifdef HL_BRACKET_FW
-		disp_edit_win_bracket_hl_dir_fw(display_dir, char_under_cursor, needle, depth_increase);
+		disp_edit_win_bracket_hl_dir_fw(display_dir, depth_increase);
 #endif // HL_BRACKET_FW
 	}
 }
 #define MAX_BRACKET_HL		100	// for avoiding infinite loop
 // draw backward [0, yy] from cursor pos
-PRIVATE void disp_edit_win_bracket_hl_dir_bw(int display_dir,
- char char_under_cursor, char *needle, char depth_increase)
+PRIVATE void disp_edit_win_bracket_hl_dir_bw(int display_dir, char depth_increase)
 {
 	UINT8 depth_0_occurances = 0;
 	be_line_t *match_line = EPCBVC_CL;
@@ -582,16 +582,17 @@ PRIVATE void disp_edit_win_bracket_hl_dir_bw(int display_dir,
 	int skip_here = 0;
 	int depth = 0;
 	int prev_depth;
+	char char_under_cursor = *EPCBVC_CL_EPCBVC_CLBI;
 	for (int safe_cnt = 0;
 	 ((-MAX_BRACKET_NESTINGS < depth) && (depth < MAX_BRACKET_NESTINGS))
 	  && (safe_cnt < MAX_BRACKET_HL);
 	 safe_cnt++) {
 		int match_len = search_bracket_within_buffer(&match_line, &match_byte_idx,
-		 char_under_cursor, needle, BACKWARD_SEARCH, skip_here, depth_increase,
+		 char_under_cursor, search_get_needle(&search__), BACKWARD_SEARCH, skip_here, depth_increase,
 		 &depth, &prev_depth);
 		if (match_len == 0)
 			break;
-		skip_here = 1;
+		skip_here = match_len;
 		for ( ; 0 <= yy && yy < edit_win_get_text_lines(); ) {
 			int max_wl_idx = te_tab_expand__max_wl_idx(line->data);
 			int wl_idx = start_wl_idx_of_wrap_line(te_concat_lf_buf, byte_idx, -1);
@@ -625,8 +626,7 @@ PRIVATE void disp_edit_win_bracket_hl_dir_bw(int display_dir,
 	}
 }
 // draw forward [yy, edit_win_get_text_lines()-1] from cursor pos
-PRIVATE void disp_edit_win_bracket_hl_dir_fw(int display_dir,
- char char_under_cursor, char *needle, char depth_increase)
+PRIVATE void disp_edit_win_bracket_hl_dir_fw(int display_dir, char depth_increase)
 {
 	UINT8 depth_0_occurances = 0;
 	be_line_t *match_line = EPCBVC_CL;
@@ -637,16 +637,17 @@ PRIVATE void disp_edit_win_bracket_hl_dir_fw(int display_dir,
 	int skip_here = 0;
 	int depth = 0;
 	int prev_depth;
+	char char_under_cursor = *EPCBVC_CL_EPCBVC_CLBI;
 	for (int safe_cnt = 0;
 	 ((-MAX_BRACKET_NESTINGS < depth) && (depth < MAX_BRACKET_NESTINGS))
 	  && (safe_cnt < MAX_BRACKET_HL);
 	 safe_cnt++) {
 		int match_len = search_bracket_within_buffer(&match_line, &match_byte_idx,
-		 char_under_cursor, needle, FORWARD_SEARCH, skip_here, depth_increase,
+		 char_under_cursor, search_get_needle(&search__), FORWARD_SEARCH, skip_here, depth_increase,
 		 &depth, &prev_depth);
 		if (match_len == 0)
 			break;
-		skip_here = 1;
+		skip_here = match_len;
 		for ( ; 0 <= yy && yy < edit_win_get_text_lines(); ) {
 			int max_wl_idx = te_tab_expand__max_wl_idx(line->data);
 			int wl_idx = start_wl_idx_of_wrap_line(te_concat_lf_buf, byte_idx, -1);

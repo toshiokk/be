@@ -38,7 +38,6 @@ int check_availability_of_script();
 
 char *normalize_file_path(char *full_path);
 
-const char *concat_dir_and_file_s(const char *dir, const char *file);
 const char *concat_dir_and_file_s1(const char *dir, const char *file);
 const char *concat_dir_and_file_s2(const char *dir, const char *file);
 char *concat_dir_and_dir(char *buf, const char *dir, const char *dir2);
@@ -51,11 +50,14 @@ char *get_abs_path(const char *path, char *abs_path);
 char *get_full_path(const char *path, char *buf);
 char *get_real_path(const char *path, char *buf);
 
-char *get_file_name_extension(char *file_name);
-
+void test_separate_path_to_dir_and_file();
+char *separate_last_dir_or_file_from_path(char *path, char *buf_dir, char *buf_file);
 char *separate_path_to_dir_and_file(const char *path, char *buf_dir, char *buf_file);
 
-char *get_last_slash(char *path);
+char *get_file_name_extension(char *file_name);
+
+const char *get_last_slash_const(const char *path);
+char *get_last_slash_mutable(char *path);
 
 int contain_redundant_slash(char *path);
 char *remove_redundant_slash(char *path);
@@ -63,7 +65,7 @@ char *remove_redundant_slash(char *path);
 int compare_dir_path_w_or_wo_trailing_slash(const char *dir1, const char *dir2);
 int compare_file_path_from_tail(const char *full_path, const char *file_path);
 
-char *add_trailing_slash_in_handling(char *dir);
+char *add_trailing_slash_for_handling(char *dir);
 char *add_trailing_slash(const char *dir, char *buf);
 char *remove_trailing_slash(const char *str, char *buf);
 
@@ -75,7 +77,7 @@ int is_path_wildcard(char *path);
 
 // realpath() -------------------------
 #if defined(HAVE_REALPATH)
-char *realpath__(const char *path, char *buf, int buf_len);
+char *realpath__(const char *path, char *buf);
 #endif // HAVE_REALPATH
 
 // readlink() -------------------------
@@ -95,7 +97,6 @@ void test_realpath();
 #endif // HAVE_REALPATH
 
 void test_get_file_name_extension();
-void test_separate_path_to_dir_and_file();
 
 #endif // START_UP_TEST
 

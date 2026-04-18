@@ -115,7 +115,7 @@ int chdir_saving_prev_next_dir(const char *path,
 		if (strcmp(path, ".") == 0) {
 			return 1;	// OK
 		} else if (strcmp(path, "..") == 0) {
-			separate_path_to_dir_and_file(cur_path, dir, next_dir_sel);
+			separate_last_dir_or_file_from_path(cur_path, dir, next_dir_sel);
 		} else if (strcmp(path, "~") == 0) {
 			strcpy__(next_dir_sel, "..");
 			get_abs_dir_path("~", dir);
@@ -155,15 +155,15 @@ int chdir_by_file_path_after_save(char *dir_save, const char *file_path)
 	strip_file_if_path_is_file(file_path, dir);
 	return chdir_after_save(dir_save, dir);
 }
+int chdir_after_save(char *dir_save, const char *dir)
+{
+	get_full_path_of_cur_dir(dir_save);
+	return change_cur_dir(dir);
+}
 int chdir_by_file_path(char *file_path)
 {
 	char dir[MAX_PATH_LEN+1];
 	strip_file_if_path_is_file(file_path, dir);
-	return change_cur_dir(dir);
-}
-int chdir_after_save(char *dir_save, const char *dir)
-{
-	get_full_path_of_cur_dir(dir_save);
 	return change_cur_dir(dir);
 }
 
@@ -178,7 +178,7 @@ int change_cur_dir(const char *dir)
 	}
 	// update "full_path" and "real_path"
 	strlcpy__(full_path_of_cur_dir, dir, MAX_PATH_LEN);
-	add_trailing_slash_in_handling(full_path_of_cur_dir);
+	add_trailing_slash_for_handling(full_path_of_cur_dir);
 	getcwd__(real_path_of_cur_dir);
 	return 1;			// 1: changed
 }
@@ -209,7 +209,7 @@ char *getcwd__(char *cwd)
 	if (getcwd(cwd, MAX_PATH_LEN) == NULL) {
 		strcpy__(cwd, "");
 	}
-	add_trailing_slash_in_handling(cwd);
+	add_trailing_slash_for_handling(cwd);
 	return cwd;
 }
 
@@ -218,7 +218,7 @@ char *getcwd__(char *cwd)
 char *getenv_pwd(char *pwd)
 {
 	strlcpy__(pwd, getenv__("PWD"), MAX_PATH_LEN);
-	add_trailing_slash_in_handling(pwd);
+	add_trailing_slash_for_handling(pwd);
 	return pwd;
 }
 

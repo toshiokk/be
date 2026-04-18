@@ -5,8 +5,7 @@ Running: ./configure
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -85,11 +84,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -110,9 +109,12 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -127,8 +129,8 @@ enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -142,10 +144,10 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  0
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -197,10 +199,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  0
-BE editor version 251127 (compiled at 23:10:58, Dec  4 2025)
- ビルドオプション:
+BE editor version 260104 (compiled at 20:04:56, Apr  3 2026)
+ Build Options:
    --enable-filer
    --enable-nls
    --enable-rc
@@ -217,15 +219,14 @@ BE editor version 251127 (compiled at 23:10:58, Dec  4 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  0 ------------------------------
 Summary - Running: ./configure
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:11 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 380888 Apr  3 20:05 be
 
 ConfigurationNo.: 1, SizeOfExecutableFile ======================
 Running: ./configure --enable-all
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -304,11 +305,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -329,10 +330,14 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
+checking for regcomp in -lpcreposix... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-No ncurses library found. So I turn off --enable-ncurses.
-final configurations ===============================:
+ncurses does not support lighter background color. So turn off --enable-highbgc.
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -342,31 +347,33 @@ enable_rc=yes
 enable_regex=yes
 enable_help=yes
 enable_debug=no
-enable_ncurses=no
-enable_pcre=no
+enable_ncurses=yes
+enable_pcre=yes
 enable_nkf=yes
 enable_busybox=no
-enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+enable_highbgc=no
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
-use_ncurses=0
+use_ncurses=1
 use_ncursesw=0
-library option: LIBS=
+library option: LIBS= -lncurses -lpcreposix
 checking that generated files are newer than configure... done
 configure: creating ./config.status
 config.status: creating Makefile
 config.status: creating config.h
-config.status: config.h is unchanged
 config.status: executing depfiles commands
 test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  1
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:31:2: warning: #warning "Terminal control via ncurses (curses_...)" [-Wcpp]
+   31 | #warning "Terminal control via ncurses (curses_...)"
+      |  ^~~~~~~
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -417,11 +424,11 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  -lncurses -lpcreposix
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  1
-BE editor version 251127 (compiled at 23:11:26, Dec  4 2025)
- ビルドオプション:
+BE editor version 260104 (compiled at 20:05:12, Apr  3 2026)
+ Build Options:
    --enable-filer
    --enable-nls
    --enable-rc
@@ -431,22 +438,21 @@ BE editor version 251127 (compiled at 23:11:26, Dec  4 2025)
    --enable-syntax
    --enable-undo
    --enable-help
-   --enable-highbgc
+   --disable-highbgc
    --disable-debug
-   --disable-ncurses
-   --disable-pcre
+   --enable-ncurses
+   --enable-pcre
    --disable-busybox
 Summary - ConfigurationNo.:  1 ------------------------------
 Summary - Running: ./configure --enable-all
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:11 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 369496 Apr  3 20:05 be
 
 ConfigurationNo.: 2, SizeOfExecutableFile ======================
 Running: ./configure --disable-all
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -525,11 +531,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -550,9 +556,12 @@ enable_help=no
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... no
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=no
 enable_history=no
 enable_undo=no
@@ -567,8 +576,8 @@ enable_pcre=no
 enable_nkf=no
 enable_busybox=no
 enable_highbgc=no
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -582,13 +591,16 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  2
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
+editor.c:328:14: warning: ‘examine_key_code_show’ defined but not used [-Wunused-function]
+  328 | PRIVATE void examine_key_code_show(key_code_t key)
+      |              ^~~~~~~~~~~~~~~~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor2.o editor2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor3.o editor3.c
@@ -637,9 +649,9 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  2
-BE editor version 251127 (compiled at 23:11:54, Dec  4 2025)
+BE editor version 260104 (compiled at 20:05:29, Apr  3 2026)
  Build Options:
    --disable-filer
    --disable-nls
@@ -657,15 +669,14 @@ BE editor version 251127 (compiled at 23:11:54, Dec  4 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  2 ------------------------------
 Summary - Running: ./configure --disable-all
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 250160 12月  4 23:12 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 250096 Apr  3 20:05 be
 
 ConfigurationNo.: 3, SizeOfExecutableFile ======================
-Running: ./configure --disable-nls --disable-nkf --disable-history --disable-rc --disable-syntax --disable-regex --disable-syntax --disable-pcre --disable-undo --disable-busybox --disable-help --disable-debug --enable-filer
+Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-filer
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -744,11 +755,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -764,14 +775,17 @@ enable_ncurses=no
 enable_pcre=no
 enable_nkf=no
 enable_busybox=no
-enable_highbgc=yes
+enable_highbgc=no
 enable_help=no
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... no
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=no
 enable_undo=no
@@ -785,9 +799,9 @@ enable_ncurses=no
 enable_pcre=no
 enable_nkf=no
 enable_busybox=no
-enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+enable_highbgc=no
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -801,13 +815,16 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  3
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
+editor.c:328:14: warning: ‘examine_key_code_show’ defined but not used [-Wunused-function]
+  328 | PRIVATE void examine_key_code_show(key_code_t key)
+      |              ^~~~~~~~~~~~~~~~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor2.o editor2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor3.o editor3.c
@@ -856,35 +873,18 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  3
-BE editor version 251127 (compiled at 23:12:17, Dec  4 2025)
- Build Options:
-   --enable-filer
-   --disable-nls
-   --disable-rc
-   --disable-nkf
-   --disable-history
-   --disable-regex
-   --disable-syntax
-   --disable-undo
-   --disable-help
-   --enable-highbgc
-   --disable-debug
-   --disable-ncurses
-   --disable-pcre
-   --disable-busybox
 Summary - ConfigurationNo.:  3 ------------------------------
-Summary - Running: ./configure --disable-nls --disable-nkf --disable-history --disable-rc --disable-syntax --disable-regex --disable-syntax --disable-pcre --disable-undo --disable-busybox --disable-help --disable-debug --enable-filer
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 312528 12月  4 23:12 be
+Summary - Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-filer
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 317104 Apr  3 20:05 be
 
 ConfigurationNo.: 4, SizeOfExecutableFile ======================
-Running: ./configure --disable-nls --disable-nkf --disable-history --disable-rc --disable-syntax --disable-regex --disable-syntax --disable-pcre --disable-undo --disable-busybox --disable-help --disable-filer --enable-debug
+Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-debug
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -963,11 +963,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -983,14 +983,17 @@ enable_ncurses=no
 enable_pcre=no
 enable_nkf=no
 enable_busybox=no
-enable_highbgc=yes
+enable_highbgc=no
 enable_help=no
 enable_debug=yes
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... no
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=no
 enable_history=no
 enable_undo=no
@@ -1004,9 +1007,9 @@ enable_ncurses=no
 enable_pcre=no
 enable_nkf=no
 enable_busybox=no
-enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+enable_highbgc=no
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -1020,13 +1023,16 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  4
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
+editor.c:328:14: warning: ‘examine_key_code_show’ defined but not used [-Wunused-function]
+  328 | PRIVATE void examine_key_code_show(key_code_t key)
+      |              ^~~~~~~~~~~~~~~~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor2.o editor2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor3.o editor3.c
@@ -1078,16 +1084,16 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  4
-251204-231301 debug.c 168 set_debug_printf_output: debug_printf() enabled
-251204-231301 main.c 66 main: START-BE Dec  4 2025 23:12:42 ==============================
-utilpath.c 37 get_starting_dir: starting_dir: [/home/user/very-very-long-symlink-name-to-tools/be/be/src/]
+260403-200606 debug.c 168 set_debug_printf_output: debug_printf() enabled
+260403-200606 main.c 70 main: START-BE Apr  3 2026 20:05:58 ==============================
+utilpath.c 37 get_starting_dir: starting_dir: [/home/user/tools/be/be/src/]
 utilpath.c 55 get_home_dir: home_dir: [/home/user/]
-utilpath.c 67 get_tty_name: tty_name: [/dev/pts/1]
-main.c 285 parse_options: optind:0: ./be
-main.c 285 parse_options: optind:1: -v
-BE editor version 251127 (compiled at 23:12:42, Dec  4 2025)
+utilpath.c 67 get_tty_name: tty_name: [/dev/pts/6]
+main.c 291 parse_options: optind:0: ./be
+main.c 291 parse_options: optind:1: -v
+BE editor version 260104 (compiled at 20:05:58, Apr  3 2026)
  Build Options:
    --disable-filer
    --disable-nls
@@ -1098,22 +1104,21 @@ BE editor version 251127 (compiled at 23:12:42, Dec  4 2025)
    --disable-syntax
    --disable-undo
    --disable-help
-   --enable-highbgc
+   --disable-highbgc
    --enable-debug
    --disable-ncurses
    --disable-pcre
    --disable-busybox
 Summary - ConfigurationNo.:  4 ------------------------------
-Summary - Running: ./configure --disable-nls --disable-nkf --disable-history --disable-rc --disable-syntax --disable-regex --disable-syntax --disable-pcre --disable-undo --disable-busybox --disable-help --disable-filer --enable-debug
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 336176 12月  4 23:13 be
+Summary - Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-debug
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 336112 Apr  3 20:06 be
 
 ConfigurationNo.: 5, SizeOfExecutableFile ======================
 Running: ./configure --disable-filer
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -1192,11 +1197,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -1217,9 +1222,12 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=no
 enable_history=yes
 enable_undo=yes
@@ -1234,8 +1242,8 @@ enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -1249,10 +1257,10 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  5
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -1304,10 +1312,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  5
-BE editor version 251127 (compiled at 23:13:08, Dec  4 2025)
- ビルドオプション:
+BE editor version 260104 (compiled at 20:06:13, Apr  3 2026)
+ Build Options:
    --disable-filer
    --enable-nls
    --enable-rc
@@ -1324,15 +1332,14 @@ BE editor version 251127 (compiled at 23:13:08, Dec  4 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  5 ------------------------------
 Summary - Running: ./configure --disable-filer
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 309560 12月  4 23:13 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 309560 Apr  3 20:06 be
 
 ConfigurationNo.: 6, SizeOfExecutableFile ======================
 Running: ./configure --disable-history
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -1411,11 +1418,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -1436,9 +1443,12 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=no
 enable_undo=yes
@@ -1453,8 +1463,8 @@ enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -1468,10 +1478,10 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  6
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -1523,10 +1533,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  6
-BE editor version 251127 (compiled at 23:13:34, Dec  4 2025)
- ビルドオプション:
+BE editor version 260104 (compiled at 20:06:29, Apr  3 2026)
+ Build Options:
    --enable-filer
    --enable-nls
    --enable-rc
@@ -1543,15 +1553,14 @@ BE editor version 251127 (compiled at 23:13:34, Dec  4 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  6 ------------------------------
 Summary - Running: ./configure --disable-history
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359832 12月  4 23:13 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 372664 Apr  3 20:06 be
 
 ConfigurationNo.: 7, SizeOfExecutableFile ======================
 Running: ./configure --disable-undo
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -1630,11 +1639,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -1655,9 +1664,12 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=no
@@ -1672,8 +1684,8 @@ enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -1687,10 +1699,10 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  7
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -1742,10 +1754,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  7
-BE editor version 251127 (compiled at 23:14:02, Dec  4 2025)
- ビルドオプション:
+BE editor version 260104 (compiled at 20:06:44, Apr  3 2026)
+ Build Options:
    --enable-filer
    --enable-nls
    --enable-rc
@@ -1762,15 +1774,14 @@ BE editor version 251127 (compiled at 23:14:02, Dec  4 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  7 ------------------------------
 Summary - Running: ./configure --disable-undo
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372056 12月  4 23:14 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 376696 Apr  3 20:06 be
 
 ConfigurationNo.: 8, SizeOfExecutableFile ======================
 Running: ./configure --disable-nls
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -1849,11 +1860,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -1874,9 +1885,12 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -1891,8 +1905,8 @@ enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -1906,10 +1920,10 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  8
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -1961,9 +1975,9 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  8
-BE editor version 251127 (compiled at 23:14:30, Dec  4 2025)
+BE editor version 260104 (compiled at 20:07:00, Apr  3 2026)
  Build Options:
    --enable-filer
    --disable-nls
@@ -1981,15 +1995,14 @@ BE editor version 251127 (compiled at 23:14:30, Dec  4 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  8 ------------------------------
 Summary - Running: ./configure --disable-nls
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 368080 12月  4 23:14 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 372688 Apr  3 20:07 be
 
 ConfigurationNo.: 9, SizeOfExecutableFile ======================
 Running: ./configure --disable-syntax
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -2068,11 +2081,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -2093,9 +2106,12 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -2110,8 +2126,8 @@ enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -2125,10 +2141,10 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  9
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -2180,10 +2196,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  9
-BE editor version 251127 (compiled at 23:14:58, Dec  4 2025)
- ビルドオプション:
+BE editor version 260104 (compiled at 20:07:17, Apr  3 2026)
+ Build Options:
    --enable-filer
    --enable-nls
    --enable-rc
@@ -2200,15 +2216,14 @@ BE editor version 251127 (compiled at 23:14:58, Dec  4 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  9 ------------------------------
 Summary - Running: ./configure --disable-syntax
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 367896 12月  4 23:15 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 372536 Apr  3 20:07 be
 
 ConfigurationNo.: 10, SizeOfExecutableFile ======================
 Running: ./configure --disable-syntax --disable-rc
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -2287,11 +2302,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -2312,9 +2327,12 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -2329,8 +2347,8 @@ enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -2344,10 +2362,10 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  10
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -2399,10 +2417,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  10
-BE editor version 251127 (compiled at 23:15:26, Dec  4 2025)
- ビルドオプション:
+BE editor version 260104 (compiled at 20:07:33, Apr  3 2026)
+ Build Options:
    --enable-filer
    --enable-nls
    --disable-rc
@@ -2419,15 +2437,14 @@ BE editor version 251127 (compiled at 23:15:26, Dec  4 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  10 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-rc
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359032 12月  4 23:15 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 363640 Apr  3 20:07 be
 
 ConfigurationNo.: 11, SizeOfExecutableFile ======================
 Running: ./configure --disable-syntax --disable-regex
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -2506,11 +2523,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -2531,9 +2548,12 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -2548,8 +2568,8 @@ enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -2563,10 +2583,10 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  11
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -2618,10 +2638,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  11
-BE editor version 251127 (compiled at 23:15:54, Dec  4 2025)
- ビルドオプション:
+BE editor version 260104 (compiled at 20:07:48, Apr  3 2026)
+ Build Options:
    --enable-filer
    --enable-nls
    --enable-rc
@@ -2638,15 +2658,14 @@ BE editor version 251127 (compiled at 23:15:54, Dec  4 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  11 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-regex
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 355448 12月  4 23:16 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 364184 Apr  3 20:07 be
 
 ConfigurationNo.: 12, SizeOfExecutableFile ======================
 Running: ./configure --disable-syntax --disable-rc --disable-regex
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -2725,11 +2744,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -2750,9 +2769,12 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -2767,8 +2789,8 @@ enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -2782,10 +2804,10 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  12
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -2837,10 +2859,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  12
-BE editor version 251127 (compiled at 23:16:21, Dec  4 2025)
- ビルドオプション:
+BE editor version 260104 (compiled at 20:08:04, Apr  3 2026)
+ Build Options:
    --enable-filer
    --enable-nls
    --disable-rc
@@ -2857,15 +2879,14 @@ BE editor version 251127 (compiled at 23:16:21, Dec  4 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  12 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-rc --disable-regex
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 350680 12月  4 23:17 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 355288 Apr  3 20:08 be
 
 ConfigurationNo.: 13, SizeOfExecutableFile ======================
 Running: ./configure --enable-ncurses
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -2944,11 +2965,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -2969,10 +2990,13 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-No ncurses library found. So I turn off --enable-ncurses.
-final configurations ===============================:
+ncurses does not support lighter background color. So turn off --enable-highbgc.
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -2982,17 +3006,17 @@ enable_rc=yes
 enable_regex=yes
 enable_help=yes
 enable_debug=no
-enable_ncurses=no
+enable_ncurses=yes
 enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
-enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+enable_highbgc=no
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
-use_ncurses=0
+use_ncurses=1
 use_ncursesw=0
-library option: LIBS=
+library option: LIBS= -lncurses
 checking that generated files are newer than configure... done
 configure: creating ./config.status
 config.status: creating Makefile
@@ -3002,10 +3026,13 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  13
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:31:2: warning: #warning "Terminal control via ncurses (curses_...)" [-Wcpp]
+   31 | #warning "Terminal control via ncurses (curses_...)"
+      |  ^~~~~~~
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -3056,11 +3083,11 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  -lncurses
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  13
-BE editor version 251127 (compiled at 23:17:08, Dec  4 2025)
- ビルドオプション:
+BE editor version 260104 (compiled at 20:08:19, Apr  3 2026)
+ Build Options:
    --enable-filer
    --enable-nls
    --enable-rc
@@ -3070,22 +3097,21 @@ BE editor version 251127 (compiled at 23:17:08, Dec  4 2025)
    --enable-syntax
    --enable-undo
    --enable-help
-   --enable-highbgc
+   --disable-highbgc
    --disable-debug
-   --disable-ncurses
+   --enable-ncurses
    --disable-pcre
    --disable-busybox
 Summary - ConfigurationNo.:  13 ------------------------------
 Summary - Running: ./configure --enable-ncurses
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:17 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 369496 Apr  3 20:08 be
 
 ConfigurationNo.: 14, SizeOfExecutableFile ======================
 Running: ./configure --enable-ncurses --enable-highbgc
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -3164,11 +3190,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -3189,10 +3215,13 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-No ncurses library found. So I turn off --enable-ncurses.
-final configurations ===============================:
+ncurses does not support lighter background color. So turn off --enable-highbgc.
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -3202,17 +3231,17 @@ enable_rc=yes
 enable_regex=yes
 enable_help=yes
 enable_debug=no
-enable_ncurses=no
+enable_ncurses=yes
 enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
-enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+enable_highbgc=no
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
-use_ncurses=0
+use_ncurses=1
 use_ncursesw=0
-library option: LIBS=
+library option: LIBS= -lncurses
 checking that generated files are newer than configure... done
 configure: creating ./config.status
 config.status: creating Makefile
@@ -3223,10 +3252,13 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  14
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:31:2: warning: #warning "Terminal control via ncurses (curses_...)" [-Wcpp]
+   31 | #warning "Terminal control via ncurses (curses_...)"
+      |  ^~~~~~~
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -3277,11 +3309,11 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  -lncurses
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  14
-BE editor version 251127 (compiled at 23:17:36, Dec  4 2025)
- ビルドオプション:
+BE editor version 260104 (compiled at 20:08:35, Apr  3 2026)
+ Build Options:
    --enable-filer
    --enable-nls
    --enable-rc
@@ -3291,22 +3323,21 @@ BE editor version 251127 (compiled at 23:17:36, Dec  4 2025)
    --enable-syntax
    --enable-undo
    --enable-help
-   --enable-highbgc
+   --disable-highbgc
    --disable-debug
-   --disable-ncurses
+   --enable-ncurses
    --disable-pcre
    --disable-busybox
 Summary - ConfigurationNo.:  14 ------------------------------
 Summary - Running: ./configure --enable-ncurses --enable-highbgc
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:17 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 369496 Apr  3 20:08 be
 
 ConfigurationNo.: 15, SizeOfExecutableFile ======================
 Running: ./configure --enable-pcre
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -3385,11 +3416,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -3410,9 +3441,13 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
+checking for regcomp in -lpcreposix... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -3423,30 +3458,29 @@ enable_regex=yes
 enable_help=yes
 enable_debug=no
 enable_ncurses=no
-enable_pcre=no
+enable_pcre=yes
 enable_nkf=yes
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
-library option: LIBS=
+library option: LIBS= -lpcreposix
 checking that generated files are newer than configure... done
 configure: creating ./config.status
 config.status: creating Makefile
 config.status: creating config.h
-config.status: config.h is unchanged
 config.status: executing depfiles commands
 test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  15
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -3497,11 +3531,11 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  -lpcreposix
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  15
-BE editor version 251127 (compiled at 23:18:06, Dec  4 2025)
- ビルドオプション:
+BE editor version 260104 (compiled at 20:08:51, Apr  3 2026)
+ Build Options:
    --enable-filer
    --enable-nls
    --enable-rc
@@ -3514,19 +3548,18 @@ BE editor version 251127 (compiled at 23:18:06, Dec  4 2025)
    --enable-highbgc
    --disable-debug
    --disable-ncurses
-   --disable-pcre
+   --enable-pcre
    --disable-busybox
 Summary - ConfigurationNo.:  15 ------------------------------
 Summary - Running: ./configure --enable-pcre
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:18 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 380888 Apr  3 20:09 be
 
 ConfigurationNo.: 16, SizeOfExecutableFile ======================
 Running: ./configure --disable-nkf
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -3605,11 +3638,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -3630,9 +3663,12 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... no
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -3647,8 +3683,8 @@ enable_pcre=no
 enable_nkf=no
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -3662,10 +3698,10 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  16
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -3717,10 +3753,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  16
-BE editor version 251127 (compiled at 23:18:34, Dec  4 2025)
- ビルドオプション:
+BE editor version 260104 (compiled at 20:09:07, Apr  3 2026)
+ Build Options:
    --enable-filer
    --enable-nls
    --enable-rc
@@ -3737,15 +3773,14 @@ BE editor version 251127 (compiled at 23:18:34, Dec  4 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  16 ------------------------------
 Summary - Running: ./configure --disable-nkf
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 367896 12月  4 23:18 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 376632 Apr  3 20:09 be
 
 ConfigurationNo.: 17, SizeOfExecutableFile ======================
-Running: ./configure --enable-busybox
+Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-filer --enable-busybox
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -3824,50 +3859,53 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
 temporal configurations ============================:
 enable_filer=yes
-enable_history=yes
-enable_undo=yes
-enable_nls=yes
-enable_syntax=yes
-enable_rc=yes
-enable_regex=yes
+enable_history=no
+enable_undo=no
+enable_nls=no
+enable_syntax=no
+enable_rc=no
+enable_regex=no
 enable_ncurses=no
 enable_pcre=no
-enable_nkf=yes
+enable_nkf=no
 enable_busybox=yes
-enable_highbgc=yes
-enable_help=yes
+enable_highbgc=no
+enable_help=no
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
-checking usability of NKF filter ...... yes
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
+checking usability of NKF filter ...... no
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
-enable_history=yes
-enable_undo=yes
-enable_nls=yes
-enable_syntax=yes
-enable_rc=yes
-enable_regex=yes
-enable_help=yes
+enable_history=no
+enable_undo=no
+enable_nls=no
+enable_syntax=no
+enable_rc=no
+enable_regex=no
+enable_help=no
 enable_debug=no
 enable_ncurses=no
 enable_pcre=no
-enable_nkf=yes
+enable_nkf=no
 enable_busybox=yes
-enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+enable_highbgc=no
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -3881,13 +3919,16 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  17
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
+editor.c:328:14: warning: ‘examine_key_code_show’ defined but not used [-Wunused-function]
+  328 | PRIVATE void examine_key_code_show(key_code_t key)
+      |              ^~~~~~~~~~~~~~~~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor2.o editor2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor3.o editor3.c
@@ -3936,35 +3977,18 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  17
-BE editor version 251127 (compiled at 23:19:03, Dec  4 2025)
- ビルドオプション:
-   --enable-filer
-   --enable-nls
-   --enable-rc
-   --enable-nkf
-   --enable-history
-   --enable-regex
-   --enable-syntax
-   --enable-undo
-   --enable-help
-   --enable-highbgc
-   --disable-debug
-   --disable-ncurses
-   --disable-pcre
-   --enable-busybox
 Summary - ConfigurationNo.:  17 ------------------------------
-Summary - Running: ./configure --enable-busybox
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:19 be
+Summary - Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-filer --enable-busybox
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 313008 Apr  3 20:09 be
 
 ConfigurationNo.: 18, SizeOfExecutableFile ======================
 Running: ./configure --enable-highbgc
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -4043,11 +4067,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -4068,9 +4092,12 @@ enable_help=yes
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -4085,8 +4112,8 @@ enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -4100,10 +4127,10 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  18
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -4155,10 +4182,10 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  18
-BE editor version 251127 (compiled at 23:19:31, Dec  4 2025)
- ビルドオプション:
+BE editor version 260104 (compiled at 20:09:38, Apr  3 2026)
+ Build Options:
    --enable-filer
    --enable-nls
    --enable-rc
@@ -4175,15 +4202,14 @@ BE editor version 251127 (compiled at 23:19:31, Dec  4 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  18 ------------------------------
 Summary - Running: ./configure --enable-highbgc
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:19 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 380888 Apr  3 20:09 be
 
 ConfigurationNo.: 19, SizeOfExecutableFile ======================
 Running: ./configure --disable-help
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -4262,11 +4288,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -4287,9 +4313,12 @@ enable_help=no
 enable_debug=no
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -4304,8 +4333,8 @@ enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -4315,20 +4344,20 @@ configure: creating ./config.status
 config.status: creating Makefile
 config.status: creating config.h
 config.status: executing depfiles commands
- cd . && /bin/bash /home/user/very-very-long-symlink-name-to-tools/be/be/src/missing automake-1.16 --gnu Makefile
- cd . && /bin/bash ./config.status Makefile 
-config.status: creating Makefile
 test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  19
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
+editor.c:328:14: warning: ‘examine_key_code_show’ defined but not used [-Wunused-function]
+  328 | PRIVATE void examine_key_code_show(key_code_t key)
+      |              ^~~~~~~~~~~~~~~~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editorfile.o editorfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor2.o editor2.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor3.o editor3.c
@@ -4377,35 +4406,18 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  19
-BE editor version 251127 (compiled at 23:20:01, Dec  4 2025)
- ビルドオプション:
-   --enable-filer
-   --enable-nls
-   --enable-rc
-   --enable-nkf
-   --enable-history
-   --enable-regex
-   --enable-syntax
-   --enable-undo
-   --disable-help
-   --enable-highbgc
-   --disable-debug
-   --disable-ncurses
-   --disable-pcre
-   --disable-busybox
 Summary - ConfigurationNo.:  19 ------------------------------
 Summary - Running: ./configure --disable-help
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 363032 12月  4 23:20 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 367640 Apr  3 20:10 be
 
 ConfigurationNo.: 20, SizeOfExecutableFile ======================
 Running: ./configure --enable-debug
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -4484,11 +4496,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -4509,9 +4521,12 @@ enable_help=yes
 enable_debug=yes
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -4526,8 +4541,8 @@ enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -4541,10 +4556,10 @@ test -z "be" || rm -f be
 rm -f *.o
 ConfigurationNo.:  20
 make  all-am
-make[1]: ディレクトリ '/home/user/tools/be/be/src' に入ります
+make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:410:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
-  410 | #warning "#undef ASK_ON_EXIT"
+main.c:416:2: warning: #warning "#undef ASK_ON_EXIT" [-Wcpp]
+  416 | #warning "#undef ASK_ON_EXIT"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -4599,20 +4614,22 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
 gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
-make[1]: ディレクトリ '/home/user/tools/be/be/src' から出ます
+make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  20
-251204-232055 debug.c 168 set_debug_printf_output: debug_printf() enabled
-251204-232055 main.c 66 main: START-BE Dec  4 2025 23:20:30 ==============================
-utilpath.c 37 get_starting_dir: starting_dir: [/home/user/very-very-long-symlink-name-to-tools/be/be/src/]
+260403-201020 debug.c 168 set_debug_printf_output: debug_printf() enabled
+260403-201020 main.c 70 main: START-BE Apr  3 2026 20:10:10 ==============================
+utilpath.c 37 get_starting_dir: starting_dir: [/home/user/tools/be/be/src/]
 utilpath.c 55 get_home_dir: home_dir: [/home/user/]
-utilpath.c 67 get_tty_name: tty_name: [/dev/pts/1]
-main.c 235 init_locale: LANG: [ja_JP.UTF-8]
-main.c 236 init_locale: cur locale: [ja_JP.UTF-8]
-main.c 237 init_locale: PACKAGE: [be], LOCALEDIR: [/usr/share/locale]
-main.c 285 parse_options: optind:0: ./be
-main.c 285 parse_options: optind:1: -v
-BE editor version 251127 (compiled at 23:20:30, Dec  4 2025)
- ビルドオプション:
+utilpath.c 67 get_tty_name: tty_name: [/dev/pts/6]
+main.c 241 init_locale: LANG: [C.UTF-8]
+main.c 242 init_locale: cur locale: [C.UTF-8]
+main.c 243 init_locale: PACKAGE: [be], LOCALEDIR: [/usr/share/locale]
+main.c 604 load_cwd_into_another_pane: cur_dir-0: [/home/user/tools/be/be/src/]
+main.c 605 load_cwd_into_another_pane: cur_dir-1: []
+main.c 291 parse_options: optind:0: ./be
+main.c 291 parse_options: optind:1: -v
+BE editor version 260104 (compiled at 20:10:10, Apr  3 2026)
+ Build Options:
    --enable-filer
    --enable-nls
    --enable-rc
@@ -4629,12 +4646,11 @@ BE editor version 251127 (compiled at 23:20:30, Dec  4 2025)
    --disable-busybox
 Summary - ConfigurationNo.:  20 ------------------------------
 Summary - Running: ./configure --enable-debug
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 479320 12月  4 23:20 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 488056 Apr  3 20:10 be
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
-checking for gawk... no
-checking for mawk... mawk
+checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 checking whether make supports nested variables... yes
 checking for gcc... gcc
@@ -4713,11 +4729,11 @@ checking for strtol... yes
 checking for wcwidth... yes
 Running manually described check ========================================
 checking for regex.h... yes
-checking for curses.h... no
-checking for ncurses.h... no
+checking for curses.h... yes
+checking for ncurses.h... yes
 checking for ncurses/curses.h... no
-checking for ncursesw/curses.h... no
-checking for pcreposix.h... no
+checking for ncursesw/curses.h... yes
+checking for pcreposix.h... yes
 checking for pcre/pcreposix.h... no
 checking return type of signal handlers... void
 checking for getopt_long... yes
@@ -4738,9 +4754,12 @@ enable_help=yes
 enable_debug=yes
 checking for mblen... (cached) yes
 check dependencies among configurations ============:
+checking availability of ncurses library with UTF8 support:
+checking for initscr in -lncurses... yes
+checking for add_wch in -lncursesw... yes
 checking usability of NKF filter ...... yes
 checking usability of BSD-script ...... checking for script... yes
-final configurations ===============================:
+final configuration ===============================:
 enable_filer=yes
 enable_history=yes
 enable_undo=yes
@@ -4755,8 +4774,8 @@ enable_pcre=no
 enable_nkf=yes
 enable_busybox=no
 enable_highbgc=yes
-have_ncurses=
-have_ncursesw=
+have_ncurses=1
+have_ncursesw=1
 have_mblen=1
 use_ncurses=0
 use_ncursesw=0
@@ -4770,64 +4789,64 @@ config.status: executing depfiles commands
 ----conf_make_all_patterns-complete----
 Summary - ConfigurationNo.:  0 ------------------------------
 Summary - Running: ./configure
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:11 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 380888 Apr  3 20:05 be
 Summary - ConfigurationNo.:  1 ------------------------------
 Summary - Running: ./configure --enable-all
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:11 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 369496 Apr  3 20:05 be
 Summary - ConfigurationNo.:  2 ------------------------------
 Summary - Running: ./configure --disable-all
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 250160 12月  4 23:12 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 250096 Apr  3 20:05 be
 Summary - ConfigurationNo.:  3 ------------------------------
-Summary - Running: ./configure --disable-nls --disable-nkf --disable-history --disable-rc --disable-syntax --disable-regex --disable-syntax --disable-pcre --disable-undo --disable-busybox --disable-help --disable-debug --enable-filer
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 312528 12月  4 23:12 be
+Summary - Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-filer
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 317104 Apr  3 20:05 be
 Summary - ConfigurationNo.:  4 ------------------------------
-Summary - Running: ./configure --disable-nls --disable-nkf --disable-history --disable-rc --disable-syntax --disable-regex --disable-syntax --disable-pcre --disable-undo --disable-busybox --disable-help --disable-filer --enable-debug
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 336176 12月  4 23:13 be
+Summary - Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-debug
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 336112 Apr  3 20:06 be
 Summary - ConfigurationNo.:  5 ------------------------------
 Summary - Running: ./configure --disable-filer
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 309560 12月  4 23:13 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 309560 Apr  3 20:06 be
 Summary - ConfigurationNo.:  6 ------------------------------
 Summary - Running: ./configure --disable-history
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359832 12月  4 23:13 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 372664 Apr  3 20:06 be
 Summary - ConfigurationNo.:  7 ------------------------------
 Summary - Running: ./configure --disable-undo
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372056 12月  4 23:14 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 376696 Apr  3 20:06 be
 Summary - ConfigurationNo.:  8 ------------------------------
 Summary - Running: ./configure --disable-nls
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 368080 12月  4 23:14 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 372688 Apr  3 20:07 be
 Summary - ConfigurationNo.:  9 ------------------------------
 Summary - Running: ./configure --disable-syntax
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 367896 12月  4 23:15 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 372536 Apr  3 20:07 be
 Summary - ConfigurationNo.:  10 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-rc
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 359032 12月  4 23:15 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 363640 Apr  3 20:07 be
 Summary - ConfigurationNo.:  11 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-regex
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 355448 12月  4 23:16 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 364184 Apr  3 20:07 be
 Summary - ConfigurationNo.:  12 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-rc --disable-regex
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 350680 12月  4 23:17 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 355288 Apr  3 20:08 be
 Summary - ConfigurationNo.:  13 ------------------------------
 Summary - Running: ./configure --enable-ncurses
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:17 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 369496 Apr  3 20:08 be
 Summary - ConfigurationNo.:  14 ------------------------------
 Summary - Running: ./configure --enable-ncurses --enable-highbgc
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:17 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 369496 Apr  3 20:08 be
 Summary - ConfigurationNo.:  15 ------------------------------
 Summary - Running: ./configure --enable-pcre
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:18 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 380888 Apr  3 20:09 be
 Summary - ConfigurationNo.:  16 ------------------------------
 Summary - Running: ./configure --disable-nkf
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 367896 12月  4 23:18 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 376632 Apr  3 20:09 be
 Summary - ConfigurationNo.:  17 ------------------------------
-Summary - Running: ./configure --enable-busybox
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:19 be
+Summary - Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-filer --enable-busybox
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 313008 Apr  3 20:09 be
 Summary - ConfigurationNo.:  18 ------------------------------
 Summary - Running: ./configure --enable-highbgc
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 372184 12月  4 23:19 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 380888 Apr  3 20:09 be
 Summary - ConfigurationNo.:  19 ------------------------------
 Summary - Running: ./configure --disable-help
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 363032 12月  4 23:20 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 367640 Apr  3 20:10 be
 Summary - ConfigurationNo.:  20 ------------------------------
 Summary - Running: ./configure --enable-debug
-Summary - SizeOfExecutableFile: -rwxrwxr-x 1 user user 479320 12月  4 23:20 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 488056 Apr  3 20:10 be

@@ -1,0 +1,123 @@
+# test all patterns of ./configure and make
+
+echo_run()
+{
+  echo ""
+  echo "ConfigurationNo.: $conf_num, SizeOfExecutableFile ======================"
+  echo "Running: $cmd_line"
+  $cmd_line
+  make clean
+  echo "ConfigurationNo.: " $conf_num
+  make
+  echo "ConfigurationNo.: " $conf_num
+  strip be
+  ./be -v
+  echo "Summary - ConfigurationNo.: " $conf_num "------------------------------"
+  echo "Summary - Running: $cmd_line"
+  echo -n "Summary - SizeOfExecutableFile: "
+  ls -l be
+  if [ ! -f be ]; then
+    echo "BuildError !!!!"
+    exit -1
+  fi
+##  echo "Summary -----------------------------------------------------"
+} 2>&1
+
+conf_make()
+{
+  conf_num=$1
+
+  disable_all="--disable-filer\
+ --disable-history\
+ --disable-undo\
+ --disable-nls\
+ --disable-syntax\
+ --disable-rc\
+ --disable-regex\
+ --disable-help\
+ --disable-debug\
+ --disable-ncurses\
+ --disable-pcre\
+ --disable-nkf\
+ --disable-busybox\
+ --disable-highbgc"
+
+  cmd_line_0="./configure"
+  cmd_line_1="./configure --enable-all"
+  cmd_line_2="./configure --disable-all"
+  cmd_line_3="./configure $disable_all --enable-filer"
+  cmd_line_4="./configure $disable_all --enable-debug"
+  cmd_line_5="./configure --disable-filer"
+  cmd_line_6="./configure --disable-history"
+  cmd_line_7="./configure --disable-undo"
+  cmd_line_8="./configure --disable-nls"
+  cmd_line_9="./configure --disable-syntax"
+  cmd_line_10="./configure --disable-syntax --disable-rc"
+  cmd_line_11="./configure --disable-syntax --disable-regex"
+  cmd_line_12="./configure --disable-syntax --disable-rc --disable-regex"
+  cmd_line_13="./configure --enable-ncurses"
+  cmd_line_14="./configure --enable-ncurses --enable-highbgc"
+  cmd_line_15="./configure --enable-pcre"
+  cmd_line_16="./configure --disable-nkf"
+  cmd_line_17="./configure --enable-busybox"
+  cmd_line_18="./configure --enable-highbgc"
+  cmd_line_19="./configure --disable-help"
+  cmd_line_20="./configure --enable-debug"
+
+  case $conf_num in
+  "0")	cmd_line=$cmd_line_0	;;
+  "1")	cmd_line=$cmd_line_1	;;
+  "2")	cmd_line=$cmd_line_2	;;
+  "3")	cmd_line=$cmd_line_3	;;
+  "4")	cmd_line=$cmd_line_4	;;
+  "5")	cmd_line=$cmd_line_5	;;
+  "6")	cmd_line=$cmd_line_6	;;
+  "7")	cmd_line=$cmd_line_7	;;
+  "8")	cmd_line=$cmd_line_8	;;
+  "9")	cmd_line=$cmd_line_9	;;
+  "10")	cmd_line=$cmd_line_10	;;
+  "11")	cmd_line=$cmd_line_11	;;
+  "12")	cmd_line=$cmd_line_12	;;
+  "13")	cmd_line=$cmd_line_13	;;
+  "14")	cmd_line=$cmd_line_14	;;
+  "15")	cmd_line=$cmd_line_15	;;
+  "16")	cmd_line=$cmd_line_16	;;
+  "17")	cmd_line=$cmd_line_17	;;
+  "18")	cmd_line=$cmd_line_18	;;
+  "19")	cmd_line=$cmd_line_19	;;
+  "20")	cmd_line=$cmd_line_20	;;
+  esac
+  echo_run $cmd_line
+} 2>&1
+
+if [ "$1" = "-" ]; then
+  while : ; do
+    grep Summary _conf_make_all_patterns.log
+    grep complete _conf_make_all_patterns.log
+    if [ "$?" = 0 ]; then
+      exit
+    fi
+    sleep 5
+  done
+fi
+
+rm -f _conf_make_all_patterns.log
+
+{
+  echo "----conf_make_all_patterns-start----"
+  num=0
+  if [ -n "$1" ]; then
+    num="$1"
+  fi
+  for num in $( seq $num 20 ) ; do
+    conf_make "$num"
+  done
+  if [ -z "$1" ]; then
+    ./_c_debug
+  fi
+  echo "----conf_make_all_patterns-complete----"
+} | tee _conf_make_all_patterns.log
+
+grep "Summary" _conf_make_all_patterns.log >__error
+cat __error | tee -a _conf_make_all_patterns.log
+cp -auv _conf_make_all_patterns.log _conf_make_all_patterns.latest

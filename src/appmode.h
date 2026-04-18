@@ -56,9 +56,8 @@ typedef struct /*app_mode*/ {
 #define EF_FILER				1
 	unsigned char app_EDITOR_FILER:1;		// bit 7
 											// editor------		filer-------
-#define APP_MODE_NORMAL			0			// editable			file manager
-#define APP_MODE_CHOOSER		1			// text chooser		file/dir chooser
-#define APP_MODE_VIEWER			2			// text viewer		----
+#define APP_MODE_NORMAL			0			// text editor		file manager
+#define APP_MODE_VIEWER			1			// text viewer		----
 	unsigned char app_LIST_MODE:2;			// bit 8,9
 	unsigned char app_SILENT:1;				// bit 10
 
@@ -192,14 +191,14 @@ int tog_regexp();
 const char *get_str_regexp();
 #endif // ENABLE_REGEX
 int inc_cursor_positioning();
-const char *get_str_cursor_positioning();
+const char *get_str_curs_pos_mode();
 int get_cursor_positioning();
 
 #ifdef ENABLE_SYNTAX
 int tog_syntax_hl();
 const char *get_str_syntax_hl();
 int tog_tab_eol_notation();
-const char *get_str_tab_eol_notation();
+const char *get_str_tab_eol_notat();
 #endif // ENABLE_SYNTAX
 
 int tog_show_ruler();
@@ -208,9 +207,6 @@ int get_ruler_lines();
 int tog_show_line_num();
 const char *get_str_show_line_num();
 
-int tog_map_key_7f_bs();
-const char *get_str_map_key_7f_bs();
-
 int inc_backup_files();
 const char *get_str_backup_files();
 int get_backup_files();
@@ -218,7 +214,7 @@ int get_backup_files();
 int tog_editor_panes();
 const char *get_str_editor_panes();
 int tog_editor_panex();
-const char *get_str_editor_pane_num();
+const char *get_str_editor_panex();
 
 int tog_show_dot_file();
 const char *get_str_show_dot_file();
@@ -227,43 +223,42 @@ const char *get_str_file_view_mode();
 int clear_file_sort_mode();
 int inc_file_sort_mode();
 const char *get_str_file_sort_mode();
-int tog_show_zebra_striping();
-const char *get_str_show_zebra_striping();
+int tog_zebra_striping();
+const char *get_str_zebra_striping();
 
 #ifdef ENABLE_FILER
 int tog_filer_panes();
 const char *get_str_filer_panes();
 int tog_filer_panex();
-const char *get_str_filer_pane_num();
+const char *get_str_filer_panex();
 #endif // ENABLE_FILER
 
 int inc_key_list_lines();
 const char *get_str_key_list_lines();
 int get_key_list_lines();
 
-const char *get_str_setting_none();
+int tog_map_key_7f_bs();
+const char *get_str_map_key_7f_bs();
 
-// View mode and List mode of editor:
-// |editor mode     |load|save|cursor    |modify|mark  |choose|purpose     |
-// |                |    |    | move     |      | /cut |by tap|            |
-// |                |    |    |          |      | /copy|      |            |
-// |----------------|----|----|----------|------|------|------|------------|
-// |APP_MODE_NORMAL |yes |yes |everywhere|all   |yes   |no    |text editor |
-// |APP_MODE_CHOOSER|auto|auto|vertical  |none  |no    |yes   |text chooser|
-// |APP_MODE_VIEWER |yes |no  |everywhere|none  |yes   |no    |text viewer |
+const char *get_str_none();
+
+// View mode of editor:
+// |editor mode    |load|save|cursor   |can   |mark  |choose|purpose     |
+// |               |    |    | move    |modify| /cut |by tap|            |
+// |               |    |    |         |      | /copy|      |            |
+// |---------------|----|----|---------|------|------|------|------------|
+// |APP_MODE_NORMAL|yes |yes |horz/vert|yes   |yes   |no    |text editor |
+// |APP_MODE_VIEWER|auto|auto|vertical |no    |yes   |yes   |text viewer |
 
 // View mode of filer:
-// |filer mode      |open/copy/move/ren|chdir|search|choose|purpose         |
-// |                |/remove/mkdir/exec|     |      |by tap|                |
-// |----------------|------------------|-----|------|------|----------------|
-// |APP_MODE_NORMAL |yes               |yes  |yes   |no    |file manager    |
-// |APP_MODE_CHOOSER|no                |yes  |yes   |yes   |file/dir chooser|
-// |APP_MODE_VIEWER |--                |--   |--    |--    |--              |
+// |filer mode     |open/copy/move/ren|chdir|search|choose|purpose         |
+// |               |/remove/mkdir/exec|     |      |by tap|                |
+// |---------------|------------------|-----|------|------|----------------|
+// |APP_MODE_NORMAL|yes               |yes  |yes   |no    |file manager    |
+// |APP_MODE_VIEWER|no                |yes  |yes   |yes   |file/dir chooser|
 
 BOOL is_app_normal_mode();
-BOOL is_app_chooser_mode();
 BOOL is_app_viewer_mode();
-BOOL is_app_chooser_viewer_mode();
 
 void doe_inc_app_mode();
 void doe_tog_panes();
@@ -272,31 +267,28 @@ void doe_tog_draw_cursor();
 void doe_tog_dual_scroll();
 void doe_tog_ignore_case();
 void doe_tog_regexp();
-void doe_inc_cursor_positioning();
+void doe_inc_curs_pos_mode();
 void doe_tog_syntax_hl();
-void doe_tog_tab_eol_notation();
+void doe_tog_tab_eol_notat();
 void doe_tog_show_ruler();
 void doe_tog_show_line_num();
 void doe_inc_backup_files();
 int _dof_tog_show_dot_file();
-int _dof_tog_show_zebra_striping();
+int _dof_tog_zebra_striping();
 int _dof_inc_key_list_lines();
+void doe_tog_map_key_7f_bs();
 
 inline char indication_of_app_mode()
 {
 	char separator_char = ':';
-	if (is_app_chooser_mode()) {
+	if (is_app_viewer_mode()) {
 		separator_char = '.';
-	} else if (is_app_viewer_mode()) {
-		separator_char = '!';
 	}
 #ifdef ENABLE_DEBUG
 	if (GET_APPMD(app_DEBUG_PRINTF) == DEBUG_PRINTF) {
 		separator_char = ';';
-		if (is_app_chooser_mode()) {
+		if (is_app_viewer_mode()) {
 			separator_char = ',';
-		} else if (is_app_viewer_mode()) {
-			separator_char = '?';
 		}
 	}
 #endif // ENABLE_DEBUG

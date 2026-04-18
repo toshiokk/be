@@ -24,29 +24,23 @@
 const char *get_ef_name(ef_do_next_t do_next)
 {
 	switch (do_next) {
-	default:						return "EF_UNKNOWN";
-	case EF_NONE:					return "EF_NONE";
-	case FL_UPDATE_AUTO:			return "FL_UPDATE_AUTO";
-	case FL_UPDATE_FORCED:			return "FL_UPDATE_FORCED";
-	case EF_CANCELLED:				return "EF_CANCELLED";
-	case EF_TO_QUIT:				return "EF_TO_QUIT";
-	case EF_CHDIR_RET_TO_FILER:		return "EF_CHDIR_RET_TO_FILER";
-	case EF_LOADED_RET_TO_EDITOR:	return "EF_LOADED_RET_TO_EDITOR";
-	case EF_EXECUTED_RET_TO_CALLER:	return "EF_EXECUTED_RET_TO_CALLER";
-	case FL_ENTER_FILE_NAME:		return "FL_ENTER_FILE_NAME";
-	case FL_ENTER_FILE_NAME_ADD:	return "FL_ENTER_FILE_NAME_ADD";
-	case FL_ENTER_FILE_PATH:		return "FL_ENTER_FILE_PATH";
-	case FL_ENTER_FILE_PATH_ADD:	return "FL_ENTER_FILE_PATH_ADD";
-	case FL_ENTER_DIR_PATH:			return "FL_ENTER_DIR_PATH";
-	case FL_ENTER_DIR_PATH_ADD:		return "FL_ENTER_DIR_PATH_ADD";
-	case EF_ENTER_STRING:			return "EF_ENTER_STRING";
-	case EF_ENTER_STRING_ADD:		return "EF_ENTER_STRING_ADD";
-	case EF_INPUT_PATH_TO_COPY:		return "EF_INPUT_PATH_TO_COPY";
-	case EF_INPUT_PATH_TO_MOVE:		return "EF_INPUT_PATH_TO_MOVE";
+	default:							return "EF_UNKNOWN";
+	case EF_NONE:						return "EF_NONE";
+	case FL_UPDATE_AUTO:				return "FL_UPDATE_AUTO";
+	case FL_UPDATE_FORCE:				return "FL_UPDATE_FORCE";
+	case EF_CANCELLED:					return "EF_CANCELLED";
+	case EF_TO_QUIT:					return "EF_TO_QUIT";
+	case EF_LOADED_GO_TO_ROOT_EDITOR:	return "EF_LOADED_GO_TO_ROOT_EDITOR";
+	case EF_GO_TO_LEVEL_FILER:			return "EF_GO_TO_LEVEL_FILER";
+	case EF_EXECUTED_RET_TO_CALLER:		return "EF_EXECUTED_RET_TO_CALLER";
+	case EF_ENTER_STRING:				return "EF_ENTER_STRING";
+	case EF_ENTER_STRING_ADD:			return "EF_ENTER_STRING_ADD";
+	case EF_INPUT_PATH_TO_COPY:			return "EF_INPUT_PATH_TO_COPY";
+	case EF_INPUT_PATH_TO_MOVE:			return "EF_INPUT_PATH_TO_MOVE";
 	}
 }
 
-int input_string_full_path = 0;
+int input_file_name_0_file_path_1 = 0;
 
 PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, va_list ap);
@@ -58,18 +52,18 @@ PRIVATE void blank_input_box();
 PRIVATE int determine_input_box_y();
 PRIVATE int get_input_box_y();
 
-// input_string:
+// input_string_pos() inputs:
 // - "file-name"
 // - "/absolute/path/to/directory"
 // - "command line to execute"
 // - "keyword"
 // - "keymacro-string"
-// input_full_path:
-// - "/absolute/path/to/file"
-//   _doe_open_file_recursive()
-//   _doe_open_new_file()
-//   input_new_file_name__ask()
-//   _dof_open_new_file()
+// input_full_path() inputs:
+// - "/absolute/path/to/file" being called from:
+//   - _doe_open_file_recursive()
+//   - doe_open_new_file()
+//   - input_new_file_name__ask()
+//   - _dof_open_new_file()
 
 int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, ...)
@@ -80,7 +74,6 @@ int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx
 	int ret = input_str_pos_(default__, input_buf, cursor_byte_idx, hist_type_idx, msg, ap);
 	va_end(ap);
 	disp_status_bar_cwd();
-flf_dprintf("is_epc_buf_modified(): %d\n", is_epc_buf_modified());
 	return ret;
 }
 int input_full_path(const char *default__, char *input_buf, int cursor_byte_idx,
@@ -89,9 +82,9 @@ int input_full_path(const char *default__, char *input_buf, int cursor_byte_idx,
 	disp_status_bar_cwd();
 	va_list ap;
 	va_start(ap, msg);
-	input_string_full_path = 1;
+	input_file_name_0_file_path_1 = 1;
 	int ret = input_str_pos_(default__, input_buf, cursor_byte_idx, hist_type_idx, msg, ap);
-	input_string_full_path = 0;
+	input_file_name_0_file_path_1 = 0;
 	va_end(ap);
 	disp_status_bar_cwd();
 	return ret;
@@ -112,8 +105,6 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 	}
 
 	vsnprintf(msg_buf, MAX_SCRN_LINE_BUF_LEN+1, msg, ap);
-	int byte_idx = byte_idx_from_col_idx(msg_buf, central_win_get_columns(), CHAR_LEFT, NULL);
-	msg_buf[byte_idx] = '\0';		// limit message length
 
 	update_screen_app(S_B_CURS, 1);
 
@@ -150,8 +141,9 @@ PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_b
 	int key_input;
 #if defined(ENABLE_HISTORY) || defined(ENABLE_FILER)
 	char buffer[MAX_PATH_LEN+1];
+	char filer_dir[MAX_PATH_LEN+1];
 #endif
-	char cut_buf[MAX_PATH_LEN+1] = "";
+	char local_cut_buf[MAX_PATH_LEN+1] = "";
 	int ret = EF_NONE;
 
 	strlcpy__(input_buf, default__, MAX_PATH_LEN);
@@ -162,10 +154,10 @@ PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_b
 		ret = EF_NONE;
 		disp_input_box(message, input_buf, cursor_byte_idx);
 		//----------------------------------
-		key_input = input_key_wait_return();
+		key_input = input_key_timeout();
 		//----------------------------------
-		hmflf_dprintf("input%ckey:0x%04x(%s)================\n",
-		 '_', (UINT16)key_input, short_key_name_from_key_code(key_input, NULL));
+		hmflf_dprintf("input%ckey:0x%04x(%s)===================================================\n",
+		 '_', (UINT16)key_input, get_key_name_from_key_code(key_input, NULL));
 
 		if (is_key_print(key_input)) {
 			// character key
@@ -185,13 +177,13 @@ flf_dprintf("func_id: [%s]\n", func_id);
 			strcpy__(input_buf, "");
 			ret = EF_CANCELLED;				// cancelled, return
 		} else
-		if (key_input == K_ENTER) {
+		if (strcmp(func_id, "doe_carriage_return") == 0) {
 			ret = EF_ENTER_STRING;			// confirm a string input
 		} else
-		if (key_input == K_M_ENTER) {
+		if (strcmp(func_id, "doe_carriage_return_indent") == 0) {
 			ret = EF_ENTER_STRING_ADD;		// confirm a string input
 		} else
-		if ((strcmp(func_id, "dof_copy_file") == 0)
+		if ((strcmp(func_id, "dof_copy_file_update") == 0)
 		 || (strcmp(func_id, "dof_drop_files_to_copy") == 0)) {
 			ret = EF_INPUT_PATH_TO_COPY;
 		} else
@@ -243,7 +235,7 @@ flf_dprintf("func_id: [%s]\n", func_id);
 			cursor_byte_idx = strlen_path(input_buf);
 		} else
 		if ((strcmp(func_id, "doe_backspace") == 0)
-		 || (key_input == K_BS)) {
+		 || (key_input == AK_BS)) {
 			// backspace
 			if (cursor_byte_idx > 0) {
 				int bytes = utf8c_prev_bytes(input_buf, &input_buf[cursor_byte_idx]);
@@ -252,7 +244,7 @@ flf_dprintf("func_id: [%s]\n", func_id);
 			}
 		} else
 		if ((strcmp(func_id, "doe_delete_char") == 0)
-		 || (key_input == K_DEL)) {
+		 || (key_input == AK_DEL)) {
 			// delete
 			if (cursor_byte_idx < strlen_path(input_buf)) {
 				int bytes = utf8c_bytes(&input_buf[cursor_byte_idx]);
@@ -261,33 +253,51 @@ flf_dprintf("func_id: [%s]\n", func_id);
 		} else
 		if (strcmp(func_id, "doe_cut_to_head") == 0) {
 			// cut to line head
-			strcut__(cut_buf, MAX_PATH_LEN, input_buf, 0, cursor_byte_idx);
+			strcut__(local_cut_buf, MAX_PATH_LEN, input_buf, 0, cursor_byte_idx);
 			delete_str(input_buf, 0, cursor_byte_idx);
 			cursor_byte_idx = 0;
 		} else
 		if (strcmp(func_id, "doe_cut_text") == 0) {
 			// cut line
-			strlcpy__(cut_buf, input_buf, MAX_PATH_LEN);
+			strlcpy__(local_cut_buf, input_buf, MAX_PATH_LEN);
 			strcpy__(input_buf, "");
 			cursor_byte_idx = 0;
 		} else
 		if (strcmp(func_id, "doe_cut_to_tail") == 0) {
 			// cut to line tail
-			strcut__(cut_buf, MAX_PATH_LEN,
+			strcut__(local_cut_buf, MAX_PATH_LEN,
 			 input_buf, cursor_byte_idx, strlen_path(input_buf));
 			delete_str(input_buf, cursor_byte_idx,
 			 strlen_path(input_buf) - cursor_byte_idx);
 		} else
 		if (strcmp(func_id, "doe_copy_text") == 0) {
 			// copy to the cut buffer
-			strlcpy__(cut_buf, input_buf, MAX_PATH_LEN);
+			strlcpy__(local_cut_buf, input_buf, MAX_PATH_LEN);
 		} else
 		if (strcmp(func_id, "doe_paste_text_with_pop") == 0) {
 			// paste from the cut buffer
-			insert_str(input_buf, MAX_PATH_LEN, cursor_byte_idx, cut_buf, -1);
+			if (strlen_path(local_cut_buf)) {
+				insert_str(input_buf, MAX_PATH_LEN, cursor_byte_idx, local_cut_buf, -1);
+				cursor_byte_idx += strlen_path(local_cut_buf);
+			} else {
+				const char *cut_buf = get_text_from_cut_buffer_with_pop();
+				insert_str(input_buf, MAX_PATH_LEN, cursor_byte_idx, cut_buf, -1);
+				cursor_byte_idx += strlen_path(cut_buf);
+			}
 		} else
-		if ((strcmp(func_id, "doe_search_backward_first") == 0)
-		 || (strcmp(func_id, "doe_search_forward_first") == 0)
+		if (strcmp(func_id, "doe_paste_text_without_pop") == 0) {
+			// paste from the cut buffer
+			if (strlen_path(local_cut_buf)) {
+				insert_str(input_buf, MAX_PATH_LEN, cursor_byte_idx, local_cut_buf, -1);
+				cursor_byte_idx += strlen_path(local_cut_buf);
+			} else {
+				const char *cut_buf = get_text_from_cut_buffer_without_pop();
+				insert_str(input_buf, MAX_PATH_LEN, cursor_byte_idx, cut_buf, -1);
+				cursor_byte_idx += strlen_path(cut_buf);
+			}
+		} else
+		if ((strcmp(func_id, "doe_search_first_backward") == 0)
+		 || (strcmp(func_id, "doe_search_first_forward") == 0)
 		 || (strcmp(func_id, "doe_replace") == 0)) {
 			// get string from edit buffer's current cursor position
 			if (count_edit_bufs()) {
@@ -295,8 +305,8 @@ flf_dprintf("func_id: [%s]\n", func_id);
 				cursor_byte_idx = strlen_path(input_buf);
 				int start_byte_idx = byte_idx_from_byte_idx(line, EPCBVC_CLBI + cursor_byte_idx);
 				int byte_idx = start_byte_idx;
-				if (((strcmp(func_id, "doe_search_backward_first") == 0) && (SEARCH_DIR() > 0))
-				 || ((strcmp(func_id, "doe_search_forward_first") == 0) && (SEARCH_DIR() < 0))) {
+				if (((strcmp(func_id, "doe_search_first_backward") == 0) && (SEARCH_DIR() > 0))
+				 || ((strcmp(func_id, "doe_search_first_forward") == 0) && (SEARCH_DIR() < 0))) {
 					// copy whole line
 					byte_idx = byte_idx_from_byte_idx(line, MAX_PATH_LEN);
 				} else {
@@ -327,14 +337,13 @@ flf_dprintf("func_id: [%s]\n", func_id);
 			cursor_byte_idx = strlen_path(input_buf);
 		} else
 		if ((strcmp(func_id, "doe_up") == 0)
-		 || (strcmp(func_id, "doe_page_up") == 0)
 		 || (strcmp(func_id, "doe_first_line") == 0)) {
 			//----------------------------------------------------
-			ret = select_from_history_list(hist_type_idx, buffer);
+			ret = do_call_editor_history(hist_type_idx, buffer);
 			//----------------------------------------------------
 			hmflf_dprintf("app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_ef_name(ret));
 			if (IS_EF_ENTER_STRING(ret)) {
-				if ((ret == EF_ENTER_STRING) || (strcmp(func_id, "doe_page_up") == 0)) {
+				if (ret == EF_ENTER_STRING) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
@@ -344,21 +353,33 @@ flf_dprintf("func_id: [%s]\n", func_id);
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
 				 cursor_byte_idx, buffer);
 			}
-			if (! IS_EF_DONE(ret)) {
+			if (ret == EF_GO_TO_LEVEL_FILER) {
+				strcpy__(filer_dir, "");
+			} else
+			if (! IS_EF_LOADED_OR_EXECUTED(ret)) {
 				ret = EF_NONE;
 			}
 #endif // ENABLE_HISTORY
 #ifdef ENABLE_FILER
 		} else
 		if ((strcmp(func_id, "doe_down") == 0)
-		 || (strcmp(func_id, "doe_page_down") == 0)
 		 || (strcmp(func_id, "doe_last_line") == 0)) {
+			ret = EF_GO_TO_LEVEL_FILER;
+			strcpy__(filer_dir, "");
+		} else
+		if ((strcmp(func_id, "doe_page_up") == 0)
+		 || (strcmp(func_id, "doe_page_down") == 0)) {
+			ret = EF_GO_TO_LEVEL_FILER;
+			strlcpy__(filer_dir, input_buf, MAX_PATH_LEN);
+		}
+		//---------------------------------------------------
+		if (ret == EF_GO_TO_LEVEL_FILER) {
 			//---------------------------------------------------
-			ret = do_call_filer(1, APP_MODE_CHOOSER, "", "", buffer);
+			ret = do_call_filer(1, APP_MODE_VIEWER, filer_dir, "", buffer);
 			//---------------------------------------------------
 			hmflf_dprintf("app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_ef_name(ret));
 			if (IS_EF_ENTER_STRING(ret)) {
-				if ((ret == EF_ENTER_STRING) || (strcmp(func_id, "doe_page_down") == 0)) {
+				if (ret == EF_ENTER_STRING) {
 					// clear input buffer
 					strcpy__(input_buf, "");
 					cursor_byte_idx = 0;
@@ -368,26 +389,13 @@ flf_dprintf("func_id: [%s]\n", func_id);
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
 				 cursor_byte_idx, buffer);
 			}
-			if (! IS_EF_DONE(ret)) {
-				ret = EF_NONE;
-			}
-		} else
-		if ((strcmp(func_id, "doe_tag_jump_in_cur_curs_pos") == 0)
-		 || (strcmp(func_id, "doe_tag_jump_in_cur_line") == 0)) {
-			//---------------------------------------------------
-			ret = do_call_filer(1, APP_MODE_CHOOSER, input_buf, "", buffer);
-			//---------------------------------------------------
-			hmflf_dprintf("app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_ef_name(ret));
-			if (IS_EF_ENTER_STRING(ret)) {
-				strlcpy__(input_buf, buffer, MAX_PATH_LEN);
-			}
-			if (! IS_EF_DONE(ret)) {
+			if (! IS_EF_LOADED_OR_EXECUTED(ret)) {
 				ret = EF_NONE;
 			}
 #endif // ENABLE_FILER
 		}
 flf_dprintf("func_id: [%s], key_input: %04x, ret__[%s]\n", func_id, key_input, get_ef_name(ret));
-		if ((ret == EF_CANCELLED) || IS_EF_ENTER_STRING(ret) || IS_EF_DONE(ret)) {
+		if ((ret == EF_CANCELLED) || IS_EF_ENTER_STRING(ret) || IS_EF_LOADED_OR_EXECUTED(ret)) {
 			break;
 		}
 		sync_cut_buffers_and_histories(0);
@@ -415,13 +423,25 @@ PRIVATE void disp_input_box(const char *msg, const char *input_buf, int cursor_b
 	blank_input_box();
 	set_item_color_by_idx(ITEM_COLOR_IDX_MENU_FRAME, 0);
 
+	char curs_pos[MAX_SCRN_LINE_BUF_LEN+1];		// " 99/999"
+	snprintf_(curs_pos, MAX_SCRN_LINE_BUF_LEN, " %d/%d", cursor_byte_idx, strlen_path(input_buf));
+	int msg_space = central_win_get_columns()-INPUT_BOX_X_LR_BORDER_WIDTH - strlen_path(curs_pos);
+	int byte_idx = byte_idx_from_col_idx(msg, msg_space, CHAR_LEFT, NULL);
+	char msg_buf[MAX_SCRN_LINE_BUF_LEN+1];		// "Messages... 99/999"
+	strlcpy__(msg_buf, msg, MAX_SCRN_LINE_BUF_LEN);
+	msg_buf[byte_idx] = '\0';					// limit message length
+	strcat_printf(msg_buf, MAX_SCRN_LINE_BUF_LEN, " %s", curs_pos);
+
+	central_win_output_string(get_input_box_y()+INPUT_BOX_Y_PROMPT,
+	 INPUT_BOX_X_L_BORDER_WIDTH, msg_buf, -1);
+
+	central_win_output_string(get_input_box_y()+INPUT_BOX_Y_HELP,
+	 INPUT_BOX_X_L_BORDER_WIDTH, _("UP/PGUP:history, DOWN/PGDN:filer"), -1);
+
 	int input_area_width = central_win_get_columns()-INPUT_BOX_X_LR_BORDER_WIDTH;
 	char buf_cwd[MAX_PATH_LEN+1];
 	snprintf_(buf_cwd, MAX_PATH_LEN, _("CWD: %s"), get_full_path_of_cur_dir(NULL));
-	central_win_output_string(get_input_box_y()+INPUT_BOX_Y_PROMPT,
-	 INPUT_BOX_X_L_BORDER_WIDTH, msg, -1);
-	central_win_output_string(get_input_box_y()+INPUT_BOX_Y_HELP,
-	 INPUT_BOX_X_L_BORDER_WIDTH, _("UP/PGUP:history, DOWN/PGDN:filer"), -1);
+	snprintf_(buf_cwd, MAX_PATH_LEN, _("( %s )"), get_full_path_of_cur_dir(NULL));
 	central_win_output_string(get_input_box_y()+INPUT_BOX_Y_CWD,
 	 INPUT_BOX_X_L_BORDER_WIDTH, shrink_str(buf_cwd, input_area_width, 5), -1);
 	set_item_color_by_idx(ITEM_COLOR_IDX_INPUT, 0);
@@ -511,8 +531,8 @@ PRIVATE const char *chars_no = "Nn";				// No
 PRIVATE const char *chars_all = "Aa";				// All
 PRIVATE const char *chars_backward = "Bb";			// Backward search
 PRIVATE const char *chars_forward = "Ff ";			// Forward search
-PRIVATE const char *chars_cancel = "CcSs" S_ESC;	// Cancel/ESC
-PRIVATE const char *chars_stop = "SsCc" S_ESC;		// Stop
+PRIVATE const char *chars_cancel = "Cc" S_ESC;		// Cancel/ESC
+PRIVATE const char *chars_stop = "Ss";				// Stop
 PRIVATE const char *chars_end = "EeRrQq";			// End/Return
 PRIVATE const char *chars_quit = "Qq" S_C_Q;		// Quit/Ctrl-Q
 PRIVATE const char *chars_undo = "Uu";				// Undo
@@ -550,11 +570,11 @@ int ask_yes_no(int flags, const char *msg, ...)
 		// "Save modified buffer ?"[] <== cursor
 		tio_set_cursor_on(1);
 		//---------------------------------------------
-		key_code_t key_input = input_key_wait_return();
+		key_code_t key_input = input_key_timeout();
 		//---------------------------------------------
 		if (IS_KEY_VALID(key_input)) {
 			hmflf_dprintf("input%ckey:0x%04x(%s)================\n",
-			 '_', (UINT16)key_input, short_key_name_from_key_code(key_input, NULL));
+			 '_', (UINT16)key_input, get_key_name_from_key_code(key_input, NULL));
 			answer = check_ask_yes_no_key(flags, key_input, get_func_id_from_key(key_input));
 		}
 		sync_cut_buffers_and_histories(0);
@@ -573,30 +593,25 @@ PRIVATE int check_ask_yes_no_key(int flags, key_code_t key_input, const char *fu
 {
 	int answer = ANSWER_NONE;
 	// Look for the key_input in yes/no/all ...
-	if (strchr__(chars_yes, key_input) != NULL)
+	if ((flags & ASK_YES) && (strchr__(chars_yes, key_input) != NULL))
 		answer = ANSWER_YES;
-	else if (strchr__(chars_no, key_input) != NULL)
+	else if ((flags & ASK_NO) && (strchr__(chars_no, key_input) != NULL))
 		answer = ANSWER_NO;
-	else if ((flags & ASK_ALL_YES)
-	 && (strchr__(chars_all, key_input) != NULL))
+	else if ((flags & ASK_ALL_YES) && (strchr__(chars_all, key_input) != NULL))
 		answer = ANSWER_ALL;
-	else if ((flags & ASK_BACKWARD)
-	 && ((strchr__(chars_backward, key_input) != NULL)
+	else if ((flags & ASK_BACKWARD) && ((strchr__(chars_backward, key_input) != NULL)
 	  || (strcmp(func_id, "doe_up") == 0) || (strcmp(func_id, "doe_page_up") == 0)
 	  || (strcmp(func_id, "doe_search_backward_next") == 0)))
 		answer = ANSWER_BACKWARD;
-	else if ((flags & ASK_FORWARD)
-	 && ((strchr__(chars_forward, key_input) != NULL)
+	else if ((flags & ASK_FORWARD) && ((strchr__(chars_forward, key_input) != NULL)
 	  || (strcmp(func_id, "doe_down") == 0) || (strcmp(func_id, "doe_page_down") == 0)
 	  || (strcmp(func_id, "doe_search_forward_next") == 0)))
 		answer = ANSWER_FORWARD;
 	else if (strchr__(chars_cancel, key_input) != NULL)
 		answer = ANSWER_CANCEL;
-	else if ((flags & ASK_STOP)
-	 && (strchr__(chars_stop, key_input) != NULL))
+	else if ((flags & ASK_STOP) && (strchr__(chars_stop, key_input) != NULL))
 		answer = ANSWER_CANCEL;
-	else if ((flags & ASK_END)
-	 && (strchr__(chars_end, key_input) != NULL))
+	else if ((flags & ASK_END) && (strchr__(chars_end, key_input) != NULL))
 		answer = ANSWER_END;
 	else if ((flags & ASK_QUIT) && (strchr__(chars_quit, key_input) != NULL))
 		answer = ANSWER_QUIT;
@@ -604,6 +619,9 @@ PRIVATE int check_ask_yes_no_key(int flags, key_code_t key_input, const char *fu
 		answer = ANSWER_UNDO;
 	else if ((flags & ASK_REDO) && (strchr__(chars_redo, key_input) != NULL))
 		answer = ANSWER_REDO;
+	else if (flags & ASK_OTHERS) {
+		answer = ANSWER_CANCEL;
+	}
 	return answer;
 }
 PRIVATE void disp_ask_yes_no_msg(int flags)
@@ -649,7 +667,7 @@ PRIVATE void list_one_key(key_code_t key, const char *desc)
 	char buf[MAX_SCRN_LINE_BUF_LEN+1];
 	char key_name[MAX_KEY_NAME_LEN+1];		// "RIGHT"
 
-	snprintf(buf, MAX_SCRN_LINE_BUF_LEN+1, "%s", short_key_name_from_key_code(key, key_name));
+	snprintf(buf, MAX_SCRN_LINE_BUF_LEN+1, "%s", get_key_name_from_key_code(key, key_name));
 	set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST, 0);
 	central_win_output_string(-1, -1, buf, strnlen(buf, MAX_SCRN_LINE_BUF_LEN));
 	set_item_color_by_idx(ITEM_COLOR_IDX_KEY_LIST2, 0);
@@ -674,7 +692,7 @@ void disp_fkey_list()
 		if (func_keys[key_idx] == K_SP) {
 			strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, " ");	// separator
 		} else {
-			func_key_t *func_key = get_fkey_entry_from_key(NULL, func_keys[key_idx], -1);
+			func_key_t *func_key = get_fkey_entry_from_key(NULL, func_keys[key_idx], EF0M);
 			if (func_key) {
 				strcat_printf(buf, MAX_SCRN_LINE_BUF_LEN+1, "{%s} ", func_key->desc);
 			} else {

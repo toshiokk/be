@@ -55,8 +55,9 @@
 #define BASH_HISTORY_FILE_NAME			".bash_history"
 
 // Maximum number of search/execution/directory history strings saved
+#define MAX_HISTORY_LINES_99	99
 #define MAX_HISTORY_LINES		999
-#define MAX_HISTORY_LINES_10K	9999
+#define MAX_HISTORY_LINES_9999	9999
 
 void init_histories();
 
@@ -80,10 +81,9 @@ const char *history_last_line_str(int hist_type_idx);
 
 //------------------------------------------------------------------------------
 void dir_history_update(const char *dir);
-void dir_history_fix();
 
 //------------------------------------------------------------------------------
-int select_from_history_list(int hist_type_idx, char *buffer);
+int do_call_editor_history(int hist_type_idx, char *buffer);
 
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG

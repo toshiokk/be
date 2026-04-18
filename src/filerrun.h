@@ -22,33 +22,33 @@
 #ifndef filerrun_h
 #define filerrun_h
 
-#define EX_MOD_MASK		0x000f		// EX_MOD: Execution Mode
-#define EX_MOD_0		0x0000		// "./command"
-#define EX_MOD_1		0x0001		// "command"
-#define EX_MOD_2		0x0002		// "/full/path/to/command"
-#define EX_MOD_3		0x0003		// "/full/path/to/command"
-#define EX_MOD_4		0x0004		// "sh command"
-#define EX_MOD_5		0x0005		// "<real file of symlink>
-#define EX_MOD_6		0x0006		// "/path/to/dir-A/file-A /path/to/dir-B/file-A"
-#define EX_MOD_7		0x0007		// "/path/to/dir-A/file-A /path/to/dir-B/file-B"
+#define EX_CL_MASK		0x000f		// EX_MOD: Execution Mode
+#define EX_CL_0			0x0000		// "file"
+#define EX_CL_1			0x0001		// "/full/path/to/file"
+#define EX_CL_2			0x0002		// "<real file of symlink>
+#define EX_CL_3			0x0003		// "./command"
+#define EX_CL_4			0x0004		// "sh command"
+#define EX_CL_5			0x0006		// "/path/to/dir-A/file-A /path/to/dir-B/file-A"
+#define EX_CL_6			0x0007		// "/path/to/dir-A/file-A /path/to/dir-B/file-B"
 #define EX_SETTERM		0x0010		// change terminal settings before executing sub process
 #define EX_SEPARATE		0x0040		// output separator line before executing sub process
 #define EX_LOGGING		0x0100		// append
-#define EX_SOON			0x0400		// run soon without confirmation
+#define EX_IMMEDIATE	0x0400		// run soon without confirmation
 #define EX_PAUSE		0x1000		// pause after execution of sub process
 #define EX_FLAGS_0		EX_LOGGING
 
 #ifdef ENABLE_FILER
 
-void dof_exec_command_with_file();
-void dof_exec_command_with_files();
-void dof_run_command_rel();
-void dof_run_command_abs();
+void dof_exec_for_each_files();
+void dof_exec_for_each_paths();
+void dof_run_for_files();
+void dof_run_for_paths();
+void dof_run_for_symlink();
+void dof_run_command_immediate();
+void dof_run_command_cur_dir();
 void dof_run_command_shell();
-void dof_run_command_symlink();
-void dof_run_command_src_dst_dir();
-void dof_run_command_src_dst_file();
-void dof_run_command_soon();
+void dof_run_for_src_dst_files();
+void dof_run_for_src_dst_paths();
 
 //------------------------------------------------------------------------------
 
@@ -71,7 +71,7 @@ void pause_after_exec(int exit_status);
 int restore_term_for_shell();
 int reinit_term_for_filer();
 
-#define MAX_LOG_FILE_SIZE_KB		1000	// 1000 [KB]
+void reduce_exec_log_file_size();
 int reduce_log_file_size(const char *file_path, int size_in_kb);
 const char *get_exec_log_file_path();
 

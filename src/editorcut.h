@@ -26,26 +26,31 @@ void doe_select_all_lines();
 
 void doe_delete_to_head();
 void doe_cut_to_head();
-void doe_copy_text();
-void doe_cut_text_to_sys_clipboard();
-void doe_copy_text_to_sys_clipboard();
-void save_cut_buf__send_to_sys_clipboard();
-int send_to_sys_clipboard();
 void doe_delete_to_tail();
 void doe_cut_to_tail();
+void doe_pop_one_cut_buffer();
 void doe_clear_all_cut_buffers();
 
 void doe_tog_mark();
 int _doe_set_mark();
-void set_mark();
 int _doe_clear_mark();
+void set_mark();
 void clear_mark();
 
 void doe_delete_text();
 void doe_cut_text();
+void doe_copy_text();
+void doe_cut_text_to_sys_clipboard();
+void doe_copy_text_to_sys_clipboard();
+void save_one_cut_buf__send_to_sys_clipboard();
+int send_to_sys_clipboard();
 void doe_duplicate_text();
 void doe_paste_text_with_pop();
+void doe_paste_text_with_pop_char();
 void doe_paste_text_without_pop();
+
+const char *get_text_from_cut_buffer_with_pop();
+const char *get_text_from_cut_buffer_without_pop();
 
 #endif // editorcut_h
 

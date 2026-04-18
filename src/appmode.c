@@ -176,7 +176,7 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 	case EDMD_SHOW_LINE_NUMBER:
 		return get_str_show_line_num();
 	case EDMD_CURS_POSITIONING:
-		return get_str_cursor_positioning();
+		return get_str_curs_pos_mode();
 	case EDMD_BACKUP_FILES:
 		return get_str_backup_files();
 	case EDMD_IGNORE_CASE:
@@ -189,7 +189,7 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 	case EDMD_SYNTAX_HIGHLIGHT:
 		return get_str_syntax_hl();
 	case EDMD_TAB_EOL_NOTATION:
-		return get_str_tab_eol_notation();
+		return get_str_tab_eol_notat();
 #endif // ENABLE_SYNTAX
 
 #ifdef ENABLE_FILER
@@ -200,7 +200,7 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 	case FLMD_FILE_SORT_BY:
 		return get_str_file_sort_mode();
 	case FLMD_SHOW_ZEBRA_STRIPING:
-		return get_str_show_zebra_striping();
+		return get_str_zebra_striping();
 	case FLMD_FILER_PANES:
 		return get_str_filer_panes();
 #endif // ENABLE_FILER
@@ -212,7 +212,8 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 
 int inc_app_mode()
 {
-	INC_APPMD(app_LIST_MODE, APP_MODE_CHOOSER);
+////
+	INC_APPMD(app_LIST_MODE, APP_MODE_VIEWER);
 	return 0;
 }
 const char *get_str_app_mode()
@@ -220,7 +221,6 @@ const char *get_str_app_mode()
 	switch (GET_APPMD(app_LIST_MODE)) {
 	default:
 	case APP_MODE_NORMAL:	return "[NORMAL]";
-	case APP_MODE_CHOOSER:	return "[CHOOSER]";
 	case APP_MODE_VIEWER:	return "[VIEWER]";
 	}
 }
@@ -269,7 +269,7 @@ int inc_cursor_positioning()
 	INC_APPMD(ed_CURS_POSITIONING, CURS_POSITIONING_BOTTOM);
 	return 0;
 }
-const char *get_str_cursor_positioning()
+const char *get_str_curs_pos_mode()
 {
 	static char buf[10+1];
 
@@ -295,7 +295,7 @@ int tog_tab_eol_notation()
 {
 	return TOGGLE_APPMD(ed_TAB_EOL_NOTATION);
 }
-const char *get_str_tab_eol_notation()
+const char *get_str_tab_eol_notat()
 {
 	return BOOL_TO_ON_OFF(GET_APPMD(ed_TAB_EOL_NOTATION));
 }
@@ -321,11 +321,6 @@ int tog_show_line_num()
 const char *get_str_show_line_num()
 {
 	return BOOL_TO_ON_OFF(GET_APPMD(ed_SHOW_LINE_NUMBER));
-}
-
-const char *get_str_map_key_7f_bs()
-{
-	return BOOL_TO_ON_OFF(GET_APPMD(app_MAP_KEY_7F_BS));
 }
 
 int inc_backup_files()
@@ -356,7 +351,7 @@ int tog_editor_panex()
 {
 	return set_editor_cur_pane_idx(get_editor_another_pane_idx());
 }
-const char *get_str_editor_pane_num()
+const char *get_str_editor_panex()
 {
 	return BOOL_TO_1_2(get_editor_cur_pane_idx());
 }
@@ -420,11 +415,11 @@ const char *get_str_file_sort_mode()
 	}
 }
 
-int tog_show_zebra_striping()
+int tog_zebra_striping()
 {
 	return TOGGLE_APPMD(fl_SHOW_ZEBRA_STRIPE);
 }
-const char *get_str_show_zebra_striping()
+const char *get_str_zebra_striping()
 {
 	return BOOL_TO_ON_OFF(GET_APPMD(fl_SHOW_ZEBRA_STRIPE));
 }
@@ -442,7 +437,7 @@ int tog_filer_panex()
 {
 	return set_filer_cur_pane_idx(get_filer_another_pane_idx());
 }
-const char *get_str_filer_pane_num()
+const char *get_str_filer_panex()
 {
 	return BOOL_TO_1_2(get_filer_cur_pane_idx());
 }
@@ -465,7 +460,16 @@ int get_key_list_lines()
 	return GET_APPMD(app_KEY_LINES);
 }
 
-const char *get_str_setting_none()
+int tog_map_key_7f_bs()
+{
+	return TOGGLE_APPMD(app_MAP_KEY_7F_BS);
+}
+const char *get_str_map_key_7f_bs()
+{
+	return BOOL_TO_ON_OFF(GET_APPMD(app_MAP_KEY_7F_BS));
+}
+
+const char *get_str_none()
 {
 	return "--";
 }
@@ -476,17 +480,9 @@ BOOL is_app_normal_mode()	// in editor: text editor mode, in filer: file manager
 {
 	return GET_APPMD(app_LIST_MODE) == APP_MODE_NORMAL;
 }
-BOOL is_app_chooser_mode()		// in editor: text list mode, in filer: file list mode
-{
-	return GET_APPMD(app_LIST_MODE) == APP_MODE_CHOOSER;
-}
 BOOL is_app_viewer_mode()		// in editor: text viewer, in filer: directory viewer
 {
 	return GET_APPMD(app_LIST_MODE) == APP_MODE_VIEWER;
-}
-BOOL is_app_chooser_viewer_mode()
-{
-	return is_app_chooser_mode() || is_app_viewer_mode();
 }
 
 //=============================================================================
@@ -506,7 +502,7 @@ void doe_tog_panes()
 void doe_tog_panex()
 {
 	tog_editor_panex();
-	SHOW_MODE("Editor pane index", get_str_editor_pane_num());
+	SHOW_MODE("Editor pane index", get_str_editor_panex());
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 
@@ -535,10 +531,10 @@ void doe_tog_regexp()
 }
 #endif // ENABLE_REGEX
 
-void doe_inc_cursor_positioning()
+void doe_inc_curs_pos_mode()
 {
 	inc_cursor_positioning();
-	SHOW_MODE("Cursor center mode", get_str_cursor_positioning());
+	SHOW_MODE("Cursor positioning mode", get_str_curs_pos_mode());
 }
 
 #ifdef ENABLE_SYNTAX
@@ -548,10 +544,10 @@ void doe_tog_syntax_hl()
 	SHOW_MODE("Syntax Highlighting", get_str_syntax_hl());
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
-void doe_tog_tab_eol_notation()
+void doe_tog_tab_eol_notat()
 {
 	tog_tab_eol_notation();
-	SHOW_MODE("Visible TAB/EOL", get_str_tab_eol_notation());
+	SHOW_MODE("Visible TAB/EOL", get_str_tab_eol_notat());
 	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 #endif // ENABLE_SYNTAX
@@ -580,10 +576,10 @@ int _dof_tog_show_dot_file()
 	SHOW_MODE("Show dot file", get_str_show_dot_file());
 	return 0;
 }
-int _dof_tog_show_zebra_striping()
+int _dof_tog_zebra_striping()
 {
-	tog_show_zebra_striping();
-	SHOW_MODE("Show zebra striping", get_str_show_zebra_striping());
+	tog_zebra_striping();
+	SHOW_MODE("Show zebra striping", get_str_zebra_striping());
 	return 0;
 }
 int _dof_inc_key_list_lines()
@@ -592,6 +588,12 @@ int _dof_inc_key_list_lines()
 	SHOW_MODE("Display key list lines", get_str_key_list_lines());
 	win_reinit_win_size();
 	return 0;
+}
+void doe_tog_map_key_7f_bs()
+{
+	tog_map_key_7f_bs();
+	SHOW_MODE("MAP_KEY_7F_BS", get_str_map_key_7f_bs());
+	post_cmd_processing(NULL, CURS_MOVE_NONE, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 //------------------------------------------------------------------------------
 int set_editor_cur_pane_idx(int pane_idx)

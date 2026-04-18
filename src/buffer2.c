@@ -1,5 +1,5 @@
 /**************************************************************************
- *   buffer2.c                                                             *
+ *   buffer2.c                                                            *
  *                                                                        *
  *   Copyright (C) 1999-2003 Chris Allegretta                             *
  *                                                                        *
@@ -111,7 +111,7 @@ void bufs_fix_cur_buf(be_bufs_t *bufs)
 
 int bufs_count_bufs(be_bufs_t *bufs)
 {
-	return buf_count(NODES_TOP_NODE(bufs));
+	return buf_count_bufs(NODES_TOP_NODE(bufs));
 }
 
 int bufs_get_file_stat(be_bufs_t *bufs, const char *file_path)
@@ -182,6 +182,18 @@ int bufs_get_buf_idx(be_bufs_t *bufs, be_buf_t *buf)
 {
 	// -1:not found in the `bufs`
 	return buf_get_buf_idx_from_top_anch(NODES_TOP_ANCH(bufs), buf);
+}
+
+be_buf_t *bufs_get_buf_by_buffer_id(be_bufs_t *bufs, const char *file_path)
+{
+flf_dprintf("buffer_id: [%s]\n", file_path);
+	for ( ; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs)) {
+		be_buf_t *buf = buf_get_buf_by_file_path(NODES_TOP_ANCH(bufs), file_path);
+		if (buf) {			// buf was found in bufs
+			return buf;
+		}
+	}
+	return NULL;			// not found
 }
 
 PRIVATE be_bufs_t *bufs_make_top_anchor(be_bufs_t *bufs)

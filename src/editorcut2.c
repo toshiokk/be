@@ -60,23 +60,23 @@ void setup_cut_region_after_cursor_move(cursor_horiz_vert_move_t cursor_move)
 // |previous mode      |event / cursor movement |next mode       |comments                     |
 // |-------------------|------------------------|----------------|-----------------------------|
 // |CUT_MODE_0_NONE    |start regioning         |CUT_MODE_N_LINE |                             |
-// | CUT_MODE_N_LINE   | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_H_CHAR |enter HV transition group    |
-// | CUT_MODE_N_LINE   | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_V_LINE |enter VH transition group    |
+// | CUT_MODE_N_LINE   | ← → (CURS_MOVE_HORIZ)|CUT_MODE_H_CHAR |enter HV transition group    |
+// | CUT_MODE_N_LINE   | ↑ ↓ (CURS_MOVE_VERT) |CUT_MODE_V_LINE |enter VH transition group    |
 // |HV transition group|------------------------|----------------|-----------------------------|
-// |  CUT_MODE_H_CHAR  | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_H_CHAR |                             |
-// |  CUT_MODE_H_CHAR  | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_HV_LINE|                             |
+// |  CUT_MODE_H_CHAR  | ← → (CURS_MOVE_HORIZ)|CUT_MODE_H_CHAR |                             |
+// |  CUT_MODE_H_CHAR  | ↑ ↓ (CURS_MOVE_VERT) |CUT_MODE_HV_LINE|                             |
 // |  CUT_MODE_H_CHAR  |return to start col/line|CUT_MODE_N_LINE |return to NO transition group|
 // |   CUT_MODE_HV_BOX |return to start col/line|CUT_MODE_N_LINE |return to NO transition group|
-// |   CUT_MODE_HV_LINE| ← → (CURS_MOVE_HORIZ)  |CUT_MODE_H_CHAR |                             |
-// |   CUT_MODE_HV_LINE| ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_HV_LINE|                             |
+// |   CUT_MODE_HV_LINE| ← → (CURS_MOVE_HORIZ)|CUT_MODE_H_CHAR |                             |
+// |   CUT_MODE_HV_LINE| ↑ ↓ (CURS_MOVE_VERT) |CUT_MODE_HV_LINE|                             |
 // |   CUT_MODE_HV_LINE|return to start col/line|CUT_MODE_N_LINE |return to NO transition group|
 // |VH transition group|------------------------|----------------|-----------------------------|
-// |  CUT_MODE_V_LINE  | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_VH_BOX |                             |
-// |  CUT_MODE_V_LINE  | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_V_LINE |                             |
+// |  CUT_MODE_V_LINE  | ← → (CURS_MOVE_HORIZ)|CUT_MODE_VH_BOX |                             |
+// |  CUT_MODE_V_LINE  | ↑ ↓ (CURS_MOVE_VERT) |CUT_MODE_V_LINE |                             |
 // |  CUT_MODE_V_LINE  |return to start col/line|CUT_MODE_N_LINE |return to NO transition group|
 // |   CUT_MODE_VH_CHAR|return to start col/line|CUT_MODE_N_LINE |return to NO transition group|
-// |   CUT_MODE_VH_BOX | ← → (CURS_MOVE_HORIZ)  |CUT_MODE_VH_CHAR|                             |
-// |   CUT_MODE_VH_BOX | ↑ ↓ (CURS_MOVE_VERT)   |CUT_MODE_VH_BOX |                             |
+// |   CUT_MODE_VH_BOX | ← → (CURS_MOVE_HORIZ)|CUT_MODE_VH_CHAR|                             |
+// |   CUT_MODE_VH_BOX | ↑ ↓ (CURS_MOVE_VERT) |CUT_MODE_VH_BOX |                             |
 // |   CUT_MODE_VH_BOX |return to start col/line|CUT_MODE_N_LINE |return to NO transition group|
 
 //
@@ -398,10 +398,14 @@ PRIVATE int limit_cut_buffers_in_size();
 // Note:
 // - older is earlier
 // - newer is later in file and buffer
+#define CUT_BUF_SEPARATOR_N		(const char*)("{Ｎ}")
 #define CUT_BUF_SEPARATOR_L		(const char*)("{Ｌ}")
 #define CUT_BUF_SEPARATOR_C		(const char*)("{Ｃ}")
 #define CUT_BUF_SEPARATOR_B		(const char*)("{Ｂ}")
+// "{Ｎ}<instant line cut string>"
 // "{Ｌ}<line cut string>"
+// "<line cut string>"
+//            :
 // "{Ｃ}<character cut string>"
 // "<character cut string>"
 //            :
@@ -422,11 +426,11 @@ int save_cut_buffers()
 	}
 	int ret = 0;
 	for (be_buf_t* buf = CUT_BUFS_OLDEST_BUF; IS_NODE_INT(buf); buf = CUT_BUF_NEWER(buf)) {
-		const char *buf_sep_str = CUT_BUF_SEPARATOR_L;
-		switch (GET_BUF_STATE(buf, buf_CUT_MODE)) {
+		const char *buf_sep_str = CUT_BUF_SEPARATOR_N;
+		switch (GET_BUF_STATE(buf, buf_CUT_MODE_ON_CUT)) {
 		default:
 		case CUT_MODE_0_NONE:
-		case CUT_MODE_N_LINE:
+		case CUT_MODE_N_LINE:	buf_sep_str = CUT_BUF_SEPARATOR_N;	break;
 		case CUT_MODE_V_LINE:
 		case CUT_MODE_HV_LINE:	buf_sep_str = CUT_BUF_SEPARATOR_L;	break;
 		case CUT_MODE_H_CHAR:
@@ -463,7 +467,6 @@ int load_cut_buffers()
 		return EOF;
 	}
 	clear_cut_bufs();
-	int ret = 0;
 	// at the first loop, do add_one_cut_buf() even though no separator line found
 	int buf_mode = CUT_MODE_N_LINE;
 	for ( ; ; ) {
@@ -472,24 +475,20 @@ int load_cut_buffers()
 			break;
 		}
 		char *buf_ptr = buffer;
-		if ((buf_mode == CUT_MODE_N_LINE) || (buf_mode == CUT_MODE_0_NONE)) {
-			if (strlcmp__(buffer, CUT_BUF_SEPARATOR_L) == 0) { buf_mode = CUT_MODE_V_LINE; }
-			else if (strlcmp__(buffer, CUT_BUF_SEPARATOR_C) == 0) { buf_mode = CUT_MODE_H_CHAR; }
-			else if (strlcmp__(buffer, CUT_BUF_SEPARATOR_B) == 0) { buf_mode = CUT_MODE_HV_BOX; }
-		}
+		if (strlcmp__(buffer, CUT_BUF_SEPARATOR_N) == 0) { buf_mode = CUT_MODE_N_LINE; }
+		else if (strlcmp__(buffer, CUT_BUF_SEPARATOR_L) == 0) { buf_mode = CUT_MODE_V_LINE; }
+		else if (strlcmp__(buffer, CUT_BUF_SEPARATOR_C) == 0) { buf_mode = CUT_MODE_H_CHAR; }
+		else if (strlcmp__(buffer, CUT_BUF_SEPARATOR_B) == 0) { buf_mode = CUT_MODE_HV_BOX; }
 		if (buf_mode != CUT_MODE_0_NONE) {
-			if ((buf_mode == CUT_MODE_V_LINE)
-			 || (buf_mode = CUT_MODE_H_CHAR)
-			 || (buf_mode = CUT_MODE_HV_BOX)) {
-				// skip buffer separation mark
-				buf_ptr += strlen(CUT_BUF_SEPARATOR_L);
-			}
+			// skip buffer separation mark
+			buf_ptr += strlen(CUT_BUF_SEPARATOR_L);
 			add_one_cut_buf();
-			SET_CUR_CBUF_STATE(buf_CUT_MODE, buf_mode);
+			SET_CUR_CBUF_STATE(buf_CUT_MODE_ON_CUT, buf_mode);
 			buf_mode = CUT_MODE_0_NONE;
 		}
 		append_string_to_newest_cut_buf(remove_line_tail_lf(buf_ptr));
 	}
+	int ret = 0;
 	if (fclose(fp)) {
 		ret = EOF;
 	}
@@ -541,7 +540,7 @@ PRIVATE int is_cut_buffers_modified_newer__expired()
 }
 PRIVATE int limit_cut_buffers_in_size()
 {
-#define MAX_CUT_BUFFERS			100
+#define MAX_CUT_BUFFERS			1000
 #define MAX_CUT_BUFFER_LINES	10000
 	int buf_cnt = 0;
 	int line_cnt = 0;

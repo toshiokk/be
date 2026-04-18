@@ -28,8 +28,8 @@ void doe_open_file_ro();
 void doe_open_file_locked();
 void doe_open_new_file();
 void doe_open_proj_file();
-void doe_open_exec_log_file();
 int _doe_open_proj_file();
+void doe_open_exec_log_file();
 int _doe_open_exec_log_file();
 void doe_reopen_file_last_line();
 void doe_reopen_file();
@@ -49,9 +49,9 @@ void doe_close_all_always();
 void doe_read_file_into_cur_buf();
 
 void doe_tag_jump_in_cur_line();
-void doe_tag_jump_in_cur_curs_pos();
-void doe_goto_file_in_cur_line();
-void doe_goto_file_in_cur_curs_pos();
+void doe_tag_jump_in_cur_col();
+int goto_file_in_cur_line();
+int goto_file_in_cur_col();
 
 //------------------------------------------------------------------------------
 typedef enum {

@@ -26,10 +26,6 @@
 
 #define ARRAY_SIZE_OF(array)	(sizeof(array) / sizeof(array[0]))
 
-#define SKIP_SPACE(ptr)			skip_space(&ptr)
-#define IS_WHITE_SPACE(ptr)		(*ptr == ' ' || *ptr == '\t')
-#define IS_EOL(ptr)				(*ptr == '\n' || *ptr == '\0')
-
 #define IDIV(xx, yy)	((xx) / ((yy) != 0 ? (yy) : 1))
 
 #define BOOL_TO_ON_OFF(is_on)		((is_on) ? "ON" : "off")
@@ -146,6 +142,7 @@ const char *cur_hhcmmcsspuuuuuu();
 
 #define IS_IN_RANGE(min, value, max)	((min) <= (value) && (value) < (max))
 #define IS_BETWEEN(min, value, max)		((min) <= (value) && (value) <= (max))
+#define IS_BETWEEN_TWO(aa, nn, bb)		(IS_BETWEEN(aa, nn, bb) || IS_BETWEEN(bb, nn, aa))
 #define IS_OVERWRAP(left, right, min, max)	\
 	(IS_IN_RANGE(left, min, right) || IS_IN_RANGE(left, max-1, right))
 #define MK_IN_RANGE(min, value, max)	MIN_MAX_((min), (value), (max-1))

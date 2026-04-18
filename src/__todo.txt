@@ -1,11 +1,145 @@
 #### BE-editor to do list
  (H: high priority, L: Low priority, e: easy, d: difficult, x/v: done, -: impossible/pending)
-- BUG:  bug
-- IMPR: to be improved issues
-- ISSUE: to be improved or fixed problems
-- CRASH: crash
-- POLICY: things to be kept
+ - BUG:  bug
+ - IMPR: to be improved issues
+ - ISSUE: to be improved or fixed problems
+ - CRASH: crash
+ - POLICY: things to be kept
+- POLICY: fully seamless operations between editor/filer, histories
 
+- [x] backup version (When the fatal bug would be found in the recent release, the backup version can be used.)
+  - the installation of the level 1,2,3 copies executable file into $HOME/mybin
+- [x] paste a text in doe_paste_text_with_pop_char() even though it's cut/copied as lines
+- [x] execute command holding the loaded files
+  - @x ==> execute the current line
+  - @X ==> input a command and execute it
+- [x] deep bracket matching {{{{  }}}} (4 chars long maximum) {{ }}}}
+  - setup_bracket_search, search_bracket_within_buffer
+  - bracket_search    "(\{|\})",     "(\}|\{)"
+  - brackets_search   "(\{\{|\}\})", "(\}\}|\{\{)"
+  - [x] "<<  >>" can not match
+  - [-] supports wide bracket chars such as "＜＞（）［］｛｝"
+- [x] 260411 can not change to the parent when no child dir available
+- [x] 260409 crash on K_T in filer
+- [x] change a desination path of the existing symlink
+  - It needs re-creation of the symlink after deletion.
+    Before: sym-link ==> /destination/path/to/a-file
+    After : sym-link ==> /destination/path/to/another-file
+- [x] shows the string length " 99/999" in input_string()
+- [x] 260404 `pause_after_exec` continues on resizing screen
+- [-x] 260402 does not open a file but open a dir even though it's the complete path to file by S_F11, S_F12.
+- [x] 260408 append magic-line after opening a new file
+- [x] 260403 keep the new-line at the last line
+  - Normal file:
+    file:
+      ```
+      yyyyyyyyyyyyy\n
+      zzzzzzzzzzzzz\n
+      ```
+    buffer:
+      ```
+      yyyyyyyyyyyyy
+      zzzzzzzzzzzzz
+      
+      ```
+  - Trancated file:
+    file:
+      ```
+      yyyyyyyyyyyyy\n
+      zzzzzzzzzzzzz
+      ```
+    buffer:
+      ```
+      yyyyyyyyyyyyy
+      zzzzzzzzzzzzz
+      ```
+  - LF only file:
+    file:
+      ```
+      \n
+      ```
+    buffer:
+      ```
+      
+      
+      ```
+  - 1 byte trancated file:
+    file:
+      ```
+      z
+      ```
+    buffer:
+      ```
+      z
+      ```
+  - 0 byte file:
+    file:
+      ```
+      ```
+    buffer:
+      ```
+      
+      ```
+- [x] do not record keys in menu operation(from opening menu to closing menu)
+  - [x] key_code_t input_key_with_mode(int mode);
+- [x] 260323 start up test for get_key_name_from_key_code()
+- [x] 260323 start up test for get_key_code_from_key_name()
+- [x] 260323 register more xterm key sequences Shift-pgup/pgdn, Shift-home/end ...
+- [x] 260318 per console cur-dir memory
+  - [x] memorize cur-dir for another pane
+- [x] 260317 not selecting: "ii,mmm", when selecting: "nn/mmm"
+- [x] 260317 search file name in the cur-dir by F03/F04 key and select them if found
+- [x] 260316 do not select and count "." and ".." in the number of files
+- [x] 260316 Unlock a file from the state that it's opening with locked @^U(K_MC_u)
+- [x] 260310 change filer to the same function key operation for F05,F07,F08,F11,F12 in editor
+- [x] 260311 add separate_last_dir_or_file_from_path() other than separate_path_to_dir_and_file()
+- [x] 260311 separate_path_to_dir_and_file("/dir/dir2/") ==> XX("/dir", "dir2") ==> OO("/dir/dir2/", "")
+- [x] 260309 support Github tag-jump "/path/to/file#L100" "/path/to/file#l100" "/path/to/file#  100"
+- [x] 260309 warn when file sort mode is changed ==> change title bar color
+- [x] 260309 always file name overraps to file info
+- [x] 260308 avoid screen corruption with binary file
+  WA_VAGUE_CHAR_AS_WIDE, WA_SEND_WIDE_CHR_SEPARATELY
+- [x] 260308 inhibit console output when the console is not initialized for termif.c
+- [x] 260407 magic-line is appended to list mode buffer
+- [x] 260302 status_bar displayed with S_B_DONE
+- [x] 260226 differenciate instant line cut and line cut in the cut buffer
+- [x-] easily copy file name shown in filer to the cut buffer SF07(file name)/SF08(file path)
+  - 251001 implemented
+- [x] screen pops after entering filer with the flag EF_GO_TO_LEVEL_FILER
+- [x] not execute a disabled menu item and warn it with a message "Can not execute "
+- [x] execute in filer
+  - No file, One file ==> give it to input_string
+  - more than two files ==> give '{}' instead of file names as [ {}]
+- [i] sort comparing from the tail of a file name
+- [x] enter destination path of symlink
+- [-] falling back histroy files (xxx_history ==> xxx_history~ ==> xxx_history~~ ...)
+- [x] on other keys do cancel in ask_yes_no()
+- [x] 260120 In editor, select lines and opens several files at once on tag-jump.
+- [x] 260115 In filer, start regioning, cursor up/down and do something.
+- [x] larger file than 4GB is sorted small
+- [x] 260120 cut-mode on cut is shown in cut-buffer view
+- [x] 260108 recent `ncurses` shows only 16 grayscaled colors if "TERM=xterm-256color"
+    ==> set "TERM=linux" before initialize curses
+- [x] 260107 automatic appending magic-line
+- [x] 260107 cursor word boundary movement
+  - [x] /path-x/to-y/file-z ==> |/|path|-|x|/|to|-|y|/|file|-|z|
+  - []  /path-x/to-y/file-z ==> |/|path-x|/|to-y|/|file-z|
+  - []  /path-x/to-y/file-z ==> |/path-x/to-y/file-z|
+- [x] do not open non-edit-buffer at start up but open edit-buffer
+- [x] unhighlight disabled menu items, show app-mode in which a menu item is available
+- [x] input text in 'open_new_file' does not register to history
+  HISTORY_TYPE_IDX_DIR ==> HISTORY_TYPE_IDX_FILE
+- [?] `cur_file_idx` and `cursor_y` in filer_view may be affected from another pane's value
+     and jump arround in the list
+- [] compile for embedded Linux
+- [x?] fix the screen turning to a strange color on the message "no undo info ...."
+- [x] 251221 in doe_goto_line(), "10,20" does not go to column 20
+  ==> post_cmd_processing(..., CURS_MOVE_VERT, ...); XXX
+  ==> post_cmd_processing(..., CURS_MOVE_HORIZ, ...); OOO
+- [x] 251221 make possible to quit from ask_yes_no() by key `q`/`Q`
+- [x] 251220 swap key bindings for dof_copy_force() and dof_copy_update()
+- [x] regioning turned off when you automatically append magic-line on doe_up()
+  ==> not call clear_mark() in _doe_carriage_return()
 - [x] pop dir_history list when selecting from it ==> undefine `RECORD_DIR_ONLY_WHEN_SOMETHING_DONE`
 - [x] K_F12 key in input_str() calls filer with the directory input in the string field
 - [x] after reloading history file, renumbering is performed.
@@ -27,30 +161,28 @@
       after resizing screen in editor
 - [x] 251112 file list updates but status bar does not update
 - [x] 251118 make it clear the next mode depending on the value of .._do_next
-  ==> fully seamless swiching and sharing histories between filer and editor
-  |mode       - action                   |do_next                  |check|
-  |--------------------------------------|-------------------------|-----|
-  |root-filer - load file                |EF_LOADED_RET_TO_EDITOR  | [x] |
-  |           - execute file             |EF_EXECUTED_RET_TO_CALLER| [x] |
-  |root-editor - load file in line       |EF_LOADED_RET_TO_EDITOR  | [x] |
-  |            - goto dir in line        |EF_CHDIR_RET_TO_FILER    | [x] |
-  |            - execute command in line |EF_EXECUTED_RET_TO_CALLER| [x] |
-  |root-filer - input_string -           |--                       | --- |
-  |  sub-filer - load file               |EF_LOADED_RET_TO_EDITOR  | [x] |
-  |            - execute file            |EF_EXECUTED_RET_TO_CALLER| [x] |
-  |root-filer - input_string -           |--                       | --- |
-  |  sub-editor - load file in line      |EF_LOADED_RET_TO_EDITOR  | [x] |
-  |             - goto dir in line       |EF_CHDIR_RET_TO_FILER    | [x] |
-  |             - execute command in line|EF_EXECUTED_RET_TO_CALLER| [x] |
-  |root-filer                            |--                       | --- |
-  |root-editor - input_string -          |--                       | --- |
-  |  sub-filer - load file               |EF_LOADED_RET_TO_EDITOR  | [x] |
-  |            - execute file            |EF_EXECUTED_RET_TO_CALLER| [x] |
-  |root-filer                            |--                       | --- |
-  |root-editor - input_string -          |--                       | --- |
-  |  sub-editor - load file in line      |EF_LOADED_RET_TO_EDITOR  | [x] |
-  |             - goto dir in line       |EF_CHDIR_RET_TO_FILER    | [x] |
-  |             - execute command in line|EF_EXECUTED_RET_TO_CALLER| [x] |
+  ==> fully seamless switching between filer and editor
+  |mode       - action                     |.._do_next                   |check|
+  |----------------------------------------|-----------------------------|-----|
+  |root-filer  - load file                 |EF_LOADED_GO_TO_ROOT_EDITOR  | [zx] |
+  |            - execute file              |EF_EXECUTED_RET_TO_CALLER    | [zx] |
+  |root-editor - load file in line         |EF_LOADED_GO_TO_ROOT_EDITOR  | [zx] |
+  |            - goto dir in line          |EF_GO_TO_LEVEL_FILER         | [zx] |
+  |            - execute command in line   |EF_EXECUTED_RET_TO_CALLER    | [zx] |
+  |root-filer                              |--                           | --- |
+  |- input_string                          |--                           | --- |
+  |  - sub-editor - load file in line      |EF_LOADED_GO_TO_ROOT_EDITOR  | [zx] |
+  |               - goto dir in line       |EF_GO_TO_LEVEL_FILER         | [zx] |
+  |               - execute command in line|EF_EXECUTED_RET_TO_CALLER    | [zx] |
+  |  - sub-filer  - load file              |EF_LOADED_GO_TO_ROOT_EDITOR  | [zx] |
+  |               - execute file           |EF_EXECUTED_RET_TO_CALLER    | [zx] |
+  |root-editor                             |--                           | --- |
+  |- input_string                          |--                           | --- |
+  |  - sub-editor - load file in line      |EF_LOADED_GO_TO_ROOT_EDITOR  | [zx] |
+  |               - goto dir in line       |EF_GO_TO_LEVEL_FILER         | [zx] |
+  |               - execute command in line|EF_EXECUTED_RET_TO_CALLER    | [zx] |
+  |  - sub-filer  - load file              |EF_LOADED_GO_TO_ROOT_EDITOR  | [zx] |
+  |               - execute file           |EF_EXECUTED_RET_TO_CALLER    | [zx] |
 
 - [x] 251115 fill spaces until the column in which previously positioned
 - [x] 251105 add get_ef_name() to get "EF_????"
@@ -63,7 +195,7 @@
   - [xx] switching filer to filer
   - [xx] switching editor to filer
   - [xx] switching editor to editor
-- [] sometimes `dir_history` and `file_history` becomes 0 in file size
+- [-] sometimes `dir_history` and `file_history` becomes 0 in file size
   - It's unknown why and How to reproduce.
 - [x] 250923 "BE_EDITOR{{{{" is not properly output in SSH session
   [Local-PC]                [SSH-server]
@@ -75,7 +207,7 @@
 - [x] add the directory to the dir_history when you stay in a directory very long period(more than one minute)
   - [x] 251018 change removing temporary registration to remove only the latest entry.
 - [x] make it possible to copy a history line to system clip-board in list mode
-- [x] make it possible to copy a file name or a path to system clip-board in filer
+- [x] 251001 make it possible to copy a file name or a path to system clip-board in filer
       ==> K_S_F07: clip file name, K_S_F08: clip file path
 - [x] dir_history: integrate two formats of /path/to/dir and /path/to/dir/ to the later format.
 - [x] Too long prompt
@@ -111,8 +243,8 @@
 //  "/path/to/dir-or-file" ==> "/path/to/dir-or-file"   (as it is)
 //  "/path/to/dir or file" ==> "'/path/to/dir or file'" (in quoted string)
 - [x] append `/` to a directory path `/path/to/dir` ==> `/path/to/dir/`
-  - [ ] when input
-  - [ ] when concatinating
+  - [-] when input
+  - [v] when concatinating
   - [x] when executing `cp` and `mv` command
 - [L] Make easy to use for other people
 - [x] 250805 wrong update timing of dir_history file
@@ -214,7 +346,7 @@
 - [x] 250511 BUG: not copyable of a text in the list mode
 - [x] 250511 CRASH: when it cuts a text from the later line to the former line
 - [x] 250509 BUG: execution-log does not update soon from the point of view of another terminal
-- [x] 250509 re-start BE (M^Q)
+- [x] 250509 re-start BE (@^Q)
 - [x] 2505?? func(void) ==> func()
 - [x] 250425 BUG: not sent to system-clipboard
 - [x] 250424 improve cut-mode transition between character cut and rectangular cut
@@ -228,7 +360,7 @@
 - [x] expand maximum screen size to equivalent to 8K screen
 - [x] make possible to tag-jump in List-mode editor
 - [x] BUG: contents scrolls one line when page up/down
-- [x] CRASH: in 'dof_run_command_src_dst_file()'
+- [x] CRASH: in 'dof_run_for_src_dst_paths()'
 - [x] set_color_for_bracket_hl()
   - [x] not show color of color_idx=0 more than 2 times
   - [x] not show color of color_idx=0 in the out side of the range [-8 ~ 7]
@@ -472,69 +604,61 @@ start as a editor
 
 - [] regression test list
 // Editing functions:
-// | key    | filer function              | editor function           |filer|editor|
-// |--------|-----------------------------|---------------------------|-----|------|
-// | K_e_   | dof_open_file_recursive     | --                        |  v  |      |
-// | K_M_e  | dof_open_file_non_recursive | doe_open_file_recursive   |  v  |      |
-// | K_E_   | dof_open_file_ro            | --                        |  v  |      |
-// | K_M_E  | dof_open_file_from_history  | doe_open_file_ro          |  v  |      |
-// | K_MC_e | dof_open_file_locked        | doe_open_file_locked      |     |      |
-// | K_M_n  | dof_open_new_file           | doe_open_new_file         |     |      |
-// | K_M_N  | dof_open_new_file           | doe_open_new_file         |     |      |
-// | K_MC_n | --                          | doe_tog_show_line_num     |     |      |
+// | key    | filer function              | editor function         |filer|editor|
+// |--------|-----------------------------|-------------------------|-----|------|
+// | K_e_   | dof_open_file_recursive     | --                      |  v  |      |
+// | K_E_   | dof_open_file_ro            | --                      |  v  |      |
+// | K_M_e  | dof_open_file_non_recursive | doe_open_file_recursive |  v  |      |
+// | K_M_E  | dof_open_file_from_history  | doe_open_file_ro        |  v  |      |
+// | K_MC_e | dof_open_file_locked        | doe_open_file_locked    |     |      |
+// | K_M_n  | dof_open_new_file           | doe_open_new_file       |     |      |
+// | K_M_N  | dof_open_new_file           | doe_open_new_file       |     |      |
+// | K_MC_n | --                          | doe_tog_show_line_num   |     |      |
 
 // Execution functions:
-// | key    | filer function              | editor function           |filer|editor|
-// |--------|-----------------------------|---------------------------|-----|------|
-// | K_x_   | dof_exec_command_with_file  | --                        |     |      |
-// | K_X_   | dof_exec_command_with_files | --                        |     |      |
-// | K_M_x  | dof_run_command_soon        | doe_run_line_soon         |     |      |
-// | K_M_X  | --                          | --                        |     |      |
-// | K_MC_x | --                          | doe_tog_regex             |     |      |
-// | K_r_   | dof_run_command_rel         | --                        |     |      |
-// | K_R_   | dof_run_command_abs         | --                        |     |      |
-// | K_M_r  | --                          | doe_start_rec__cancel_rec |     |      |
-// | K_M_R  | --                          | --                        |     |      |
-// | K_MC_r | --                          | doe_tog_show_ruler        |     |      |
-// | K_M_p  | doe_open_proj_file          | doe_end_rec__playback     |     |      |
-// | K_M_P  | doe_open_proj_file          | doe_open_proj_file        |     |      |
-// | K_t_   | dof_run_command_src_dst     | --                        |     |      |
-// | K_T_   | dof_run_command_symlink     | --                        |     |      |
+// | key    | filer function            | editor function           |filer|editor|
+// |--------|---------------------------|---------------------------|-----|------|
+// | K_x_   | dof_exec_for_each_files   | --                        |     |      |
+// | K_X_   | dof_exec_for_each_paths   | --                        |     |      |
+// | K_M_x  | dof_run_command_immediate | doe_run_line_immediate    |     |      |
+// | K_M_X  | dof_run_command_cur_dir   | --                        |     |      |
+// | K_MC_x | --                        | doe_tog_regex             |     |      |
+// | K_r_   | dof_run_for_files         | --                        |     |      |
+// | K_R_   | dof_run_for_paths         | --                        |     |      |
+// | K_M_r  | dof_run_command_shell     | doe_start_rec__cancel_rec |     |      |
+// | K_M_R  | dof_run_for_symlink       | --                        |     |      |
+// | K_MC_r | --                        | doe_tog_show_ruler        |     |      |
+// | K_t_   | dof_run_for_src_dst_files | --                        |     |      |
+// | K_T_   | dof_run_for_src_dst_paths | --                        |     |      |
+// | K_M_p  | doe_open_proj_file        | doe_end_rec__playback     |     |      |
+// | K_M_P  | doe_open_proj_file        | doe_open_proj_file        |     |      |
 
-// Editor file open functions:
-// | key    | filer function              |recursive |read|Use    |Un     |input|Allow   |
-// |        |                             |          |only|history|locking|FN   |non     |
-// |        |                             |          |    |       |       |     |existent|
-// |--------|-----------------------------|----------|----|-------|-------|-----|--------|
-// | K_e_   | dof_open_file_recursive     | Yes      |    | No    |       |     |        |
-// | K_E_   | dof_open_file_ro            | Yes      |Yes | No    |       |     |        |
-// | K_M_e  | dof_open_file_non_recursive | No       |    | No    |       |     |        |
-// | K_M_E  | dof_open_file_from_history  | Yes      |    | Yes   |       |     |        |
-// | K_MC_e | dof_open_file_locked        | Yes      |    | No    | Yes   |     |        |
-// | K_M_n  | dof_open_new_file           | Yes      |    |       |       | Yes | Yes    |
-// |--------|-----------------------------|----------|----|-------|-------|-----|--------|
-// | K_e_   | N/A                         |          |    |       |       | Yes |        |
-// | K_E_   | N/A                         |          |    |       |       | Yes |        |
-// | K_M_e  | doe_open_file_recursive     |          |    |       |       | Yes |        |
-// | K_M_E  | doe_open_file_non_recursive | Yes      |    |       |       | Yes |        |
-// | K_M_n  | doe_open_new_file           |          |    |       |       | Yes | Yes    |
-// | K_M_E  | doe_open_file_ro            |          |Yes |       |       | Yes |        |
-// | K_MC_e | doe_open_file_locked        |          |    |       | Yes   | Yes |        |
+// Functionarity of file open functions:
+// | key    | filer function              |recursive|read|Use    |Un     |input|Allow   |
+// |        |                             |         |only|history|locking|FN   |non     |
+// |        |                             |         |    |       |       |     |existent|
+// |--------|-----------------------------|---------|----|-------|-------|-----|--------|
+// | K_e_   | dof_open_file_recursive     | Yes     |    | No    |       |     |        |
+// | K_E_   | dof_open_file_ro            | Yes     |Yes | No    |       |     |        |
+// | K_M_e  | dof_open_file_non_recursive | No      |    | No    |       |     |        |
+// | K_M_E  | dof_open_file_from_history  | Yes     |    | Yes   |       |     |        |
+// | K_MC_e | dof_open_file_locked        | Yes     |    | No    | Yes   |     |        |
+// | K_M_n  | dof_open_new_file           | Yes     |    |       |       | Yes | Yes    |
+// | K_M_N  | dof_open_new_file           | Yes     |    |       |       | Yes | Yes    |
 
-The seamless text copying:
-| from                          | to               |action to be able to do                           |
-|-------------------------------|------------------|--------------------------------------------------|
-|editor line                    |editor line       |Edit: cut/copy and paste editor line to editor line    |
-|editor line                    |filer command line|Execute: paste editor line to filer command line       |
-|(file/dir) (name/path) in filer|editor line       |Edit:    paste file name in filer to editor line       |
-|(file/dir) (name/path) in filer|filer command line|Execute: paste file name in filer to filer command line|
-|history line                   |editor line       |Edit:    paste history line to editor line             |
-|history line                   |filer command line|Execute: paste history line to filer command line      |
-|Key-word searched/replaced     |search-history    |Available from editor and filer |
-|Command executed               |execution-history |Available from editor and filer |
-|File opened                    |file-history      |Available from editor and filer |
-|Directory browsed              |dir-history       |Available from editor and filer |
-|Keymacro recorded              |keymacro-history  |Available from editor and filer |
+The seamless text copying between filer and editor:
+| from                      | through   | action to be able to do                                |
+|---------------------------|-----------|--------------------------------------------------------|
+|editor line                |editor line|cut/copy and paste text in editor                       |
+|editor line                |input text |filer command line                                      |
+|filer (file/dir)(name/path)|input text |paster from history(editor line) to filer command line  |
+|[] cut/copied text         |input text |paste a text to input-box in input_string() by F08 and F09|
+|history line               |input text |paste a text from history to input-box of input_string()  |
+| Key-word searched/replaced| input text| available from both of editor and filer |
+| Command executed          | input text| available from both of editor and filer |
+| File opened               | input text| available from both of editor and filer |
+| Directory browsed         | input text| available from both of editor and filer |
+| Keymacro recorded         | input text| available from both of editor and filer |
 
 |file-history                   |file Tag-jump     |open file and jump to the line |
 |file-history                   |dir Tag-jump      |change dir and open with filer |
@@ -572,14 +696,14 @@ The seamless text copying:
 - [x] define EDITOR_VERT_SCROLL_MARGIN as 3 and FILER_VERT_SCROLL_MARGIN as 3
 - [x] BUG: line after LF is not cleared on the editor screen in line-wrap mode
   VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- VERY LONG LINE --- 
-- [-] search not moving cursor pos. as possible ==> Cursor center mode
+- [-] search not moving cursor pos. as possible ==> Cursor positioning mode
 - [x] "M_LBRAC" ==> "M-{", "\(M-))" ==> "\{M-)}"
 - [x] 241203 IMPR: does not go to previous cursor x position after undoing "cut-to-head"/"cut-to_tail"
 - [x] keep cut buffers after exiting app.
 - [x] 241202 in editor-list-mode, M-e inserts text to input_str
 - [x] make editor and filer to work more seamless as possible.
   - [x] cut-copy 1 line ==> view cut_buffer
-  - [x] 241201 to be able to paste texts cut from editor into filer (add cut text to search history)
+  - [x] 241201 to be able to paste texts which is cut from editor into filer (add cut text to search history)
 - [x] 241201 move pane_idx(editor/filer) into app_mode_t
 - [x] 241202 locate cursor to the position at which some modification done after doing undo
   - [-] add line-number in be_buf_t for undo to locate cursor to right line on doing
@@ -806,11 +930,11 @@ The seamless text copying:
 //	input_string()		editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
 //						TAG-JUMP(updating root-editor)		RETURN to editor on success(quit/loaded)
 //				filer(LIST)	input file path by selecting file/dir	RETURN to editor(quit/input)
-//	dof_run_command_soon()
+//	dof_run_command_immediate()
 // editor(NORMAL)
 //	input_string()		editor(LIST)	input text by selecting from history	RETURN to editor(quit/input)
 //						TAG-JUMP(updating root-editor)		RETURN to editor on success(quit/loaded)
-//						doe_run_line_soon()		RETURN to editor on success(quit/loaded)
+//						doe_run_line_immediate()		RETURN to editor on success(quit/loaded)
 //				filer(LIST)	input file path by selecting file/dir	RETURN to editor(quit/input)
 //						open file				RETURN to editor on success(quit/loaded)
 //	doe_open_file()		filer(NORMAL)	open file by selecting file		RETURN to editor on success(quit/loaded)
@@ -821,7 +945,7 @@ The seamless text copying:
 //	doe_view_file_list()	editor(HELP)	TAG-JUMP to file(updating root-editor)	RETURN to editor(quit/loaded)
 //	doe_view_key_list()	editor(HELP)	view help text				return to editor when quit(quit)
 //	doe_view_func_list()	editor(HELP)	view help text				return to editor when quit(quit)
-//	doe_run_line_soon()
+//	doe_run_line_immediate()
 
 editor/filer	input_string()
 --------------->

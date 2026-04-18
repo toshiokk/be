@@ -23,28 +23,30 @@
 #define color_h
 
 typedef enum {
-	ITEM_COLOR_IDX_DEFAULT,				// default
-	ITEM_COLOR_IDX_TITLE,				// title bar
-	ITEM_COLOR_IDX_STATUS,				// status bar
-	ITEM_COLOR_IDX_PARENT,				// parent window
-	ITEM_COLOR_IDX_KEY_LIST,			// key list(key)
-	ITEM_COLOR_IDX_KEY_LIST2,			// key list(Description)
-	ITEM_COLOR_IDX_TEXT_NORMAL,			// contents
-	ITEM_COLOR_IDX_TEXT_NORMAL2,		// contents-2
-	ITEM_COLOR_IDX_TEXT_SELECTED1,		// contents selected-1 (primary match text)
-	ITEM_COLOR_IDX_TEXT_SELECTED2,		// contents selected-2 (2nd match text)
-	ITEM_COLOR_IDX_TEXT_SELECTED3,		// contents selected-3 (selected text)
-	ITEM_COLOR_IDX_WARNING1,			// warning-1
-	ITEM_COLOR_IDX_WARNING2,			// warning-2
-	ITEM_COLOR_IDX_WARNING3,			// warning-3
-	ITEM_COLOR_IDX_ERROR,				// error
-	ITEM_COLOR_IDX_CURSOR_CHAR,			// cursor
-	ITEM_COLOR_IDX_CURSOR_LINE,			// cursor line
-	ITEM_COLOR_IDX_LINE_NUMBER,			// line number / ruler
-	ITEM_COLOR_IDX_MENU_FRAME,			// menu - frame
-	ITEM_COLOR_IDX_MENU_ITEM,			// menu - item
-	ITEM_COLOR_IDX_MENU_SELECTED,		// menu - selected item
-	ITEM_COLOR_IDX_INPUT,				// input text
+	ITEM_COLOR_IDX_DEFAULT,					// default
+	ITEM_COLOR_IDX_TITLE,					// title bar
+	ITEM_COLOR_IDX_STATUS,					// status bar
+	ITEM_COLOR_IDX_PARENT,					// parent window
+	ITEM_COLOR_IDX_KEY_LIST,				// key list(key)
+	ITEM_COLOR_IDX_KEY_LIST2,				// key list(Description)
+	ITEM_COLOR_IDX_TEXT_NORMAL,				// contents
+	ITEM_COLOR_IDX_TEXT_NORMAL2,			// contents-2
+	ITEM_COLOR_IDX_TEXT_SELECTED1,			// contents selected-1 (primary match text)
+	ITEM_COLOR_IDX_TEXT_SELECTED2,			// contents selected-2 (2nd match text)
+	ITEM_COLOR_IDX_TEXT_SELECTED3,			// contents selected-3 (selected text)
+	ITEM_COLOR_IDX_WARNING1,				// warning-1
+	ITEM_COLOR_IDX_WARNING2,				// warning-2
+	ITEM_COLOR_IDX_WARNING3,				// warning-3
+	ITEM_COLOR_IDX_ERROR,					// error
+	ITEM_COLOR_IDX_CURSOR_CHAR,				// cursor
+	ITEM_COLOR_IDX_CURSOR_LINE,				// cursor line
+	ITEM_COLOR_IDX_LINE_NUMBER,				// line number / ruler
+	ITEM_COLOR_IDX_MENU_FRAME,				// menu - frame
+	ITEM_COLOR_IDX_MENU_ITEM,				// menu - item
+	ITEM_COLOR_IDX_MENU_ITEM_DISABLED,		// menu - item disabled
+	ITEM_COLOR_IDX_MENU_SELECTED,			// menu - selected item
+	ITEM_COLOR_IDX_MENU_SELECTED_DISABLED,	// menu - selected item
+	ITEM_COLOR_IDX_INPUT,					// input text
 	MAX_ITEM_COLORS,
 } item_color_idx_t;
 

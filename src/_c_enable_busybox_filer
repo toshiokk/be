@@ -1,0 +1,23 @@
+# configure only for filer
+# make, make install
+LANG=C; export LANG
+echo "## ./configure ##" >_conf.log
+./configure \
+ --disable-filer \
+ --disable-history \
+ --disable-undo \
+ --disable-nls \
+ --disable-syntax \
+ --disable-rc \
+ --disable-regex \
+ --disable-help \
+ --disable-debug \
+ --disable-ncurses \
+ --disable-pcre \
+ --disable-nkf \
+ --disable-busybox \
+ --disable-highbgc \
+ --enable-busybox \
+ --enable-filer \
+ 2>&1 | tee -a _conf.log
+echo "#### End of ./configure ####" >>_conf.log

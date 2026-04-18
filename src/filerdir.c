@@ -63,7 +63,7 @@ int chdir_there_or_parent(char *buf_dir)
 	if (is_dir_readable(buf_dir)) {
 		return 1;
 	}
-	strip_file_from_path(buf_dir, buf_dir);
+	separate_last_dir_or_file_from_path(buf_dir, buf_dir, NULL);
 flf_dprintf("buf_dir: [%s]\n", buf_dir);
 	if (is_dir_readable(buf_dir)) {
 		return 1;
@@ -110,8 +110,8 @@ PRIVATE int chdir_from_file_history(const char *dir)
 
 int filer_chdir_to_cur_sel()
 {
-	if (S_ISDIR(get_cur_fv_cur_file_info()->st.st_mode)) {
-		if (filer_chdir(get_cur_fv_cur_file_name())) {
+	if (S_ISDIR(get_cfv_file_info(-1)->st.st_mode)) {
+		if (filer_chdir(get_cfv_file_name(-1))) {
 			return 1;		// OK
 		}
 	}
@@ -139,8 +139,8 @@ int filer_chdir_parent(const char *path)
 {
 	char dir[MAX_PATH_LEN+1];
 	strlcpy__(dir, path, MAX_PATH_LEN);
-	for ( ; ; ) {
-		if (is_strlen_0(dir) || (compare_dir_path_w_or_wo_trailing_slash(dir, "/") == 0)) {
+	for (int loop = 0; loop < 10; loop++) {
+		if (compare_dir_path_w_or_wo_trailing_slash(dir, "/") == 0) {
 			return 0;	// error
 		}
 		if (filer_chdir(dir)) {
@@ -149,7 +149,7 @@ int filer_chdir_parent(const char *path)
 		// If can not change dir, try parent dir
 		// /try/to/change/dir/file ==> /try/to/change/dir
 		// /try/to/change/dir      ==> /try/to/change
-		strip_file_from_path(dir, dir);
+		strip_file_or_dir_from_path(dir, dir);
 	}
 	return 1;	// changed
 }
@@ -163,7 +163,7 @@ int filer_chdir(const char *dir)
 	}
 	disp_status_bar_done(_("Chdir [%s]"),
 	 shrink_str_to_scr_static(get_real_path_of_cur_dir(NULL)));
-	SET_filer_do_next(FL_UPDATE_FORCED);
+	SET_filer_do_next(FL_UPDATE_FORCE);
 	return 1;		// OK
 }
 

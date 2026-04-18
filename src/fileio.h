@@ -29,7 +29,7 @@
 
 int load_file_into_new_buf(const char *full_path, int flags);
 
-int load_file_into_buf(be_buf_t *buf, const char *full_path);
+////int load_file_into_buf(const char *full_path, be_buf_t *buf);
 
 #define BACKUP_FILE_SUFFIX		"~"
 int backup_and_save_cur_buf_ask();

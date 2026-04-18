@@ -107,13 +107,16 @@ char *conv_esc_str(char *string)
 #ifdef START_UP_TEST
 void test_utilstr()
 {
+_FLF_
 	MY_UT_INT(contain_chr("(){}", ' '), 0);
 	MY_UT_INT(contain_chr("(){}", '('), 1);
 	MY_UT_INT(contain_chrs("(){}", "<>"), 0);
 	MY_UT_INT(contain_chrs("(){}", "({"), 1);
+	MY_UT_INT(strncmp("abc", "def", 0), 0);
 }
 void test_replace_str()
 {
+_FLF_
 	char buffer[100+1];
 
 	strcpy__(buffer, "abcdefghijklmnop");
@@ -282,7 +285,7 @@ PRIVATE void test_get_one_file_path__(const char *file_paths,
 const char *get_one_file_path(const char *str, char *buf)
 {
 	const char *ptr = str;
-	skip_space(&ptr);
+	skip_space_ptr(&ptr);
 	char *dest = buf;
 	char quote_chr = ' ';
 	if ((*ptr == '\'') || (*ptr == '\"')) {
@@ -323,13 +326,13 @@ char *strcat_printf(char *buffer, size_t buf_len, const char *format, ...)
 	return buffer;
 }
 // To avoid "warning: '__builtin___snprintf_chk' output may be truncated ...", wrap snprintf()
-int snprintf_(char *buffer, size_t buf_len, const char *format, ...)
+char *snprintf_(char *buffer, size_t buf_len, const char *format, ...)
 {
 	va_list ap;
 	va_start(ap, format);
-	int ret = vsnprintf(buffer, buf_len, format, ap);
+	vsnprintf(buffer, buf_len, format, ap);
 	va_end(ap);
-	return ret;
+	return buffer;
 }
 char *sprintf_s(const char *format, ...)
 {
@@ -559,7 +562,7 @@ int truncate_str_tail_columns(char *utf8s, int columns)
 char *expand_str_columns(char *utf8s, int columns)
 {
 	int cols = utf8s_columns(utf8s, MAX_PATH_LEN);
-	if (columns > cols) {
+	if (cols < columns) {
 		int bytes = strlen(utf8s);
 		strnset__(&utf8s[bytes], ' ', columns - cols);
 	}
@@ -598,24 +601,17 @@ char *utf8s_strnset__(char *buf, const char *utf8c, size_t len)
 }
 
 //------------------------------------------------------------------------------
-int skip_space(const char **ptr)
+int skip_space_ptr(const char **ptr)
 {
-	while (IS_WHITE_SPACE(*ptr))
+	while (is_ptr_char_white_space(*ptr))
 		(*ptr)++;
-	return IS_EOL(*ptr);
+	return is_ptr_char_eol(*ptr);
 }
-int skip_space_mutable(char **ptr)
+int skip_space_ptr_mutable(char **ptr)
 {
-	while (IS_WHITE_SPACE(*ptr))
+	while (is_ptr_char_white_space(*ptr))
 		(*ptr)++;
-	return IS_EOL(*ptr);
-}
-const char *skip_chars(const char *ptr, const char *chars)
-{
-	while (*ptr && strchr__(chars, *ptr)) {
-		ptr++;
-	}
-	return ptr;
+	return is_ptr_char_eol(*ptr);
 }
 
 const char *skip_to_file_path(const char *ptr)
@@ -675,19 +671,18 @@ const char *skip_one_separator_const(const char *ptr)
 	}
 	return ptr;
 }
-const char *skip_two_white_spaces(const char *ptr)
-{
-	return skip_white_space(skip_white_space(ptr));
-}
 const char *skip_white_space(const char *ptr)
 {
-	if (IS_WHITE_SPACE(ptr))
+	if (is_ptr_char_white_space(ptr))
 		ptr++;
 	return ptr;
 }
-const char *skip_to_digit(const char *ptr)
+const char *skip_to_digit(const char *ptr, int max_chrs)
 {
-	for ( ; *ptr && isdigit(*ptr) == 0; ) {
+	if (max_chrs <= 0) {
+		max_chrs = MAX_PATH_LEN;
+	}
+	for (int chrs = 0; (chrs < max_chrs) && *ptr && (isdigit(*ptr) == 0); chrs++) {
 		ptr++;		// skip digits
 	}
 	return ptr;
@@ -733,30 +728,36 @@ char *remove_line_tail_lf(char *line)
 	return line;
 }
 
-// Less flexible spec for file name,
-// some characters are reserved for separator and not usable for file name
+// character: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+// file name: oo oooo   o oo       o    o      
+// file path: oo oooo   o ooo      o    o      
+// separator:        ooo o   oooooo oooo ooooo 
 int is_char_file_path_min(const char *ptr)
 {
 	return is_char_file_name_min(ptr) || (*ptr == '/');
 }
 int is_char_file_name_min(const char *ptr)
 {
-	// non-file-name-chars are 0x01~0x1f," ()*,/:;<=>?[\]^`{|}~"
-	return isalnum(*ptr) || strchr__("!\"#$%&\'+-.=@_~", *ptr) || (utf8c_bytes(ptr) >= 2);
+	// non-file-name-chars are 0x01~0x1f," #()*,/:;<=>?[\]^`{|}~"
+	return isalnum(*ptr) || strchr__("!\"$%&\'+-.=@_~", *ptr) || (utf8c_bytes(ptr) >= 2);
 }
 // The most flexible spec for file name, only '/' is not usable for file name
-int is_char_file_path_max(const char *ptr)
-{
-	return is_char_file_name_max(ptr) || (*ptr == '/');
-}
+///int is_char_file_path_max(const char *ptr)
+///{
+///	return is_char_file_name_max(ptr) || (*ptr == '/');
+///}
 int is_char_file_name_max(const char *ptr)
 {
 	// non-file-name-char is only '/'
 	return (('\0' < *ptr && *ptr < 0x80) && (*ptr != '/')) || (utf8c_bytes(ptr) >= 2);
 }
-int is_char_id(char chr)
+int is_char_id(char chr)		// "abc_def"
 {
 	return isalnum(chr) || (strchr__("_", chr) != NULL);
+}
+int is_char_id2(char chr)		// "abc_def-ghi"
+{
+	return isalnum(chr) || (strchr__("_-", chr) != NULL);
 }
 int is_char_separator(char chr)
 {
@@ -764,11 +765,20 @@ int is_char_separator(char chr)
 }
 int is_char_non_white_space_separator(char chr)
 {
-	return strchr__(" ,:|()", chr) != NULL;
+	return strchr__("#(),:|", chr) != NULL;
+}
+int is_ptr_char_white_space(const char *ptr)
+{
+	return is_char_white_space(*ptr);
 }
 int is_char_white_space(char chr)
 {
 	return strchr__(" \t", chr) != NULL;
+}
+
+int is_ptr_char_eol(const char *ptr)
+{
+	return (*ptr == '\n' || *ptr == '\0');
 }
 
 // 'buffer' and 'string' can be the same address
@@ -845,6 +855,7 @@ char tail_char(const char *str)
 
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
+#ifdef START_UP_TEST
 void test_quote_string()
 {
 	flf_dprintf("-----------------------\n");
@@ -870,9 +881,11 @@ void test_quote_string()
 	MY_UT_STR(quote_file_path_buf(buffer, "abc&def"), "'abc&def'");
 	MY_UT_STR(unquote_string(buffer), "abc&def");
 	// no need of quoting
-	MY_UT_STR(quote_file_path_buf(buffer, "abc@def"), "'abc@def'");
+	MY_UT_STR(quote_file_path_buf(buffer, "abc@def"), "abc@def");
 	MY_UT_STR(unquote_string(buffer), "abc@def");
 }
+#endif // START_UP_TEST
+
 void dump_str_w_caret(const char *string, int byte_idx)
 {
 	char buf1[STR_BUF_LEN+1];

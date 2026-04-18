@@ -38,6 +38,16 @@ struct _key_seq_ {
 	char *sequences;
 } key_seq_table[] = {
 	// linux console
+	{ K_HOME,		"\x1b[1~" },
+	{ K_END,		"\x1b[4~" },
+	{ K_INS,		"\x1b[2~" },
+	{ K_DEL,		"\x1b[3~" },
+	{ K_PPAGE,		"\x1b[5~" },
+	{ K_NPAGE,		"\x1b[6~" },
+	{ K_UP,			"\x1b[A" },
+	{ K_DOWN,		"\x1b[B" },
+	{ K_RIGHT,		"\x1b[C" },
+	{ K_LEFT,		"\x1b[D" },
 	{ K_F01,		"\x1b[[A" },
 	{ K_F02,		"\x1b[[B" },
 	{ K_F03,		"\x1b[[C" },
@@ -58,17 +68,88 @@ struct _key_seq_ {
 	{ K_S_F06,		"\x1b[32~" },
 	{ K_S_F07,		"\x1b[33~" },
 	{ K_S_F08,		"\x1b[34~" },
-	{ K_DEL,		"\x1b[3~" },
-	{ K_INS,		"\x1b[2~" },
-	{ K_HOME,		"\x1b[1~" },
-	{ K_END,		"\x1b[4~" },
-	{ K_PPAGE,		"\x1b[5~" },
-	{ K_NPAGE,		"\x1b[6~" },
-	{ K_UP,			"\x1b[A" },
-	{ K_DOWN,		"\x1b[B" },
-	{ K_RIGHT,		"\x1b[C" },
-	{ K_LEFT,		"\x1b[D" },
-	// xterm
+
+	// xterm ===========================
+	{ K_HOME,		"\x1b[H" },
+	{ K_END,		"\x1b[F" },
+
+	{ K_S___INS,	"\x1b[2;2~" },
+	{ K_S___DEL,	"\x1b[3;2~" },
+	{ K_S___UP,		"\x1b[1;2A" },
+	{ K_S___DOWN,	"\x1b[1;2B" },
+	{ K_S___RIGHT,	"\x1b[1;2C" },
+	{ K_S___LEFT,	"\x1b[1;2D" },
+	{ K_S___PPAGE,	"\x1b[5;2~" },
+	{ K_S___NPAGE,	"\x1b[6;2~" },
+	{ K_S___HOME,	"\x1b[1;2F" },
+	{ K_S___END,	"\x1b[1;2H" },
+
+	{ K___M_INS,	"\x1b[2;3~" },
+	{ K___M_DEL,	"\x1b[3;3~" },
+	{ K___M_UP,		"\x1b[1;3A" },
+	{ K___M_DOWN,	"\x1b[1;3B" },
+	{ K___M_RIGHT,	"\x1b[1;3C" },
+	{ K___M_LEFT,	"\x1b[1;3D" },
+	{ K___M_PPAGE,	"\x1b[5;3~" },
+	{ K___M_NPAGE,	"\x1b[6;3~" },
+	{ K___M_HOME,	"\x1b[1;3F" },
+	{ K___M_END,	"\x1b[1;3H" },
+
+	{ K_S_M_INS,	"\x1b[2;4~" },
+	{ K_S_M_DEL,	"\x1b[3;4~" },
+	{ K_S_M_UP,		"\x1b[1;4A" },
+	{ K_S_M_DOWN,	"\x1b[1;4B" },
+	{ K_S_M_RIGHT,	"\x1b[1;4C" },
+	{ K_S_M_LEFT,	"\x1b[1;4D" },
+	{ K_S_M_PPAGE,	"\x1b[5;4~" },
+	{ K_S_M_NPAGE,	"\x1b[6;4~" },
+	{ K_S_M_HOME,	"\x1b[1;4F" },
+	{ K_S_M_END,	"\x1b[1;4H" },
+
+	{ K__C__INS,	"\x1b[2;5~" },
+	{ K__C__DEL,	"\x1b[3;5~" },
+	{ K__C__UP,		"\x1b[1;5A" },
+	{ K__C__DOWN,	"\x1b[1;5B" },
+	{ K__C__RIGHT,	"\x1b[1;5C" },
+	{ K__C__LEFT,	"\x1b[1;5D" },
+	{ K__C__PPAGE,	"\x1b[5;5~" },
+	{ K__C__NPAGE,	"\x1b[6;5~" },
+	{ K__C__HOME,	"\x1b[1;5F" },
+	{ K__C__END,	"\x1b[1;5H" },
+
+	{ K_SC__UP,		"\x1b[1;6A" },
+	{ K_SC__DOWN,	"\x1b[1;6B" },
+	{ K_SC__RIGHT,	"\x1b[1;6C" },
+	{ K_SC__LEFT,	"\x1b[1;6D" },
+	{ K_SC__INS,	"\x1b[2;6~" },
+	{ K_SC__DEL,	"\x1b[3;6~" },
+	{ K_SC__PPAGE,	"\x1b[5;6~" },
+	{ K_SC__NPAGE,	"\x1b[6;6~" },
+	{ K_SC__HOME,	"\x1b[1;6F" },
+	{ K_SC__END,	"\x1b[1;6H" },
+
+	{ K__CM_UP,		"\x1b[1;7A" },
+	{ K__CM_DOWN,	"\x1b[1;7B" },
+	{ K__CM_RIGHT,	"\x1b[1;7C" },
+	{ K__CM_LEFT,	"\x1b[1;7D" },
+	{ K__CM_INS,	"\x1b[2;7~" },
+	{ K__CM_DEL,	"\x1b[3;7~" },
+	{ K__CM_PPAGE,	"\x1b[5;7~" },
+	{ K__CM_NPAGE,	"\x1b[6;7~" },
+	{ K__CM_HOME,	"\x1b[1;7F" },
+	{ K__CM_END,	"\x1b[1;7H" },
+
+	{ K_SCM_UP,		"\x1b[1;8A" },
+	{ K_SCM_DOWN,	"\x1b[1;8B" },
+	{ K_SCM_RIGHT,	"\x1b[1;8C" },
+	{ K_SCM_LEFT,	"\x1b[1;8D" },
+	{ K_SCM_INS,	"\x1b[2;8~" },
+	{ K_SCM_DEL,	"\x1b[3;8~" },
+	{ K_SCM_PPAGE,	"\x1b[5;8~" },
+	{ K_SCM_NPAGE,	"\x1b[6;8~" },
+	{ K_SCM_HOME,	"\x1b[1;8F" },
+	{ K_SCM_END,	"\x1b[1;8H" },
+
 	{ K_F01,		"\x1bOP" },
 	{ K_F02,		"\x1bOQ" },
 	{ K_F03,		"\x1bOR" },
@@ -165,53 +246,6 @@ struct _key_seq_ {
 	{ K_SCM_F10,	"\x1b[21;8~" },
 	{ K_SCM_F11,	"\x1b[23;8~" },
 	{ K_SCM_F12,	"\x1b[24;8~" },
-
-	{ K_HOME,		"\x1b[H" },
-	{ K_END,		"\x1b[F" },
-
-	{ K_S___UP,		"\x1b[1;2A" },
-	{ K_S___DOWN,	"\x1b[1;2B" },
-	{ K_S___RIGHT,	"\x1b[1;2C" },
-	{ K_S___LEFT,	"\x1b[1;2D" },
-	{ K_S___INS,	"\x1b[2;2~" },
-	{ K_S___DEL,	"\x1b[3;2~" },
-	{ K___M_UP,		"\x1b[1;3A" },
-	{ K___M_DOWN,	"\x1b[1;3B" },
-	{ K___M_RIGHT,	"\x1b[1;3C" },
-	{ K___M_LEFT,	"\x1b[1;3D" },
-	{ K___M_INS,	"\x1b[2;3~" },
-	{ K___M_DEL,	"\x1b[3;3~" },
-	{ K_S_M_UP,		"\x1b[1;4A" },
-	{ K_S_M_DOWN,	"\x1b[1;4B" },
-	{ K_S_M_RIGHT,	"\x1b[1;4C" },
-	{ K_S_M_LEFT,	"\x1b[1;4D" },
-	{ K_S_M_INS,	"\x1b[2;4~" },
-	{ K_S_M_DEL,	"\x1b[3;4~" },
-	{ K__C__UP,		"\x1b[1;5A" },
-	{ K__C__DOWN,	"\x1b[1;5B" },
-	{ K__C__RIGHT,	"\x1b[1;5C" },
-	{ K__C__LEFT,	"\x1b[1;5D" },
-	{ K__C__INS,	"\x1b[2;5~" },
-	{ K__C__DEL,	"\x1b[3;5~" },
-	{ K_SC__UP,		"\x1b[1;6A" },
-	{ K_SC__DOWN,	"\x1b[1;6B" },
-	{ K_SC__RIGHT,	"\x1b[1;6C" },
-	{ K_SC__LEFT,	"\x1b[1;6D" },
-	{ K_SC__INS,	"\x1b[2;6~" },
-	{ K_SC__DEL,	"\x1b[3;6~" },
-	{ K__CM_UP,		"\x1b[1;7A" },
-	{ K__CM_DOWN,	"\x1b[1;7B" },
-	{ K__CM_RIGHT,	"\x1b[1;7C" },
-	{ K__CM_LEFT,	"\x1b[1;7D" },
-	{ K__CM_INS,	"\x1b[2;7~" },
-	{ K__CM_DEL,	"\x1b[3;7~" },
-	{ K_SCM_UP,		"\x1b[1;8A" },
-	{ K_SCM_DOWN,	"\x1b[1;8B" },
-	{ K_SCM_RIGHT,	"\x1b[1;8C" },
-	{ K_SCM_LEFT,	"\x1b[1;8D" },
-	{ K_SCM_INS,	"\x1b[2;8~" },
-	{ K_SCM_DEL,	"\x1b[3;8~" },
-
 };
 #define SIZEOF_KEY_SEQ_TABLE	(sizeof(key_seq_table) / sizeof(key_seq_table[0]))
 
@@ -346,33 +380,38 @@ PRIVATE key_code_t input_key()
 void investigate_key_sequence()
 {
 #if 1
-	key_code_t key;
-	char key_buffer[MAX_KEY_SEQ+1];
-	int key_idx = 0;
-	int keys;
-	long start_msec;
-
 	termif_init();
 	termif_begin();
-	for (key = -1 ; key < 0; ) {
-		key = input_key();
-	}
-	key_buffer[key_idx] = key;
-	key_idx++;
-	key_buffer[key_idx] = '\0';
-	for (start_msec = get_msec(); key_idx < MAX_KEY_SEQ && get_msec() < start_msec + 1000; ) {
-		if ((key = input_key()) >= 0) {
-			key_buffer[key_idx] = key;
-			key_idx++;
-			key_buffer[key_idx] = '\0';
+	printf("\r\n");
+	for ( ; ; ) {
+		key_code_t key;
+		int key_idx = 0;
+		char key_buffer[MAX_KEY_SEQ+1];
+		for (key = KEY_NONE; IS_KEY_INVALID(key); ) {
+			key = input_key();
 		}
+		key_buffer[key_idx] = key;
+		key_idx++;
+		key_buffer[key_idx] = '\0';
+		for (long start_msec = get_msec();
+		 (key_idx < MAX_KEY_SEQ) && (get_msec() < start_msec + 100); ) {
+			if ((key = input_key()) >= 0) {
+				key_buffer[key_idx] = key;
+				key_idx++;
+				key_buffer[key_idx] = '\0';
+			}
+		}
+		int keys = key_idx;
+		if ((keys == 1) && (key_buffer[0] == '\x1b')) {
+			break;
+		}
+		for (key_idx = 0; key_idx < keys; key_idx++) {
+			printf("%02x ", key_buffer[key_idx]);
+		}
+		printf("\r\n");
+		fflush(stdout);
 	}
-	keys = key_idx;
 	termif_end();
-	printf("\n");
-	for (key_idx = 0; key_idx < keys; key_idx++) {
-		printf("%02x ", key_buffer[key_idx]);
-	}
 	printf("\n");
 #else
 	termif_init();

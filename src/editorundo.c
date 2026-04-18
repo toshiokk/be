@@ -88,31 +88,41 @@ int count_redo_bufs()
 PRIVATE be_buf_t *undo_state_prev_epc_buf;
 PRIVATE size_t undo_state_prev_epc_buf_size;
 PRIVATE int undo_state_prev_count_undo_bufs;
-PRIVATE char undo_state_func_id_done[MAX_PATH_LEN+1];
+PRIVATE const char *undo_state_func_id_done = "";
 void memorize_undo_state_before_change(const char *func_id)
 {
-	undo_state_prev_epc_buf = get_epc_buf();
-	undo_state_prev_epc_buf_size = get_epc_buf()->buf_size;
-	undo_state_prev_count_undo_bufs = count_undo_bufs();
-	if (func_id) {
-		strlcpy__(undo_state_func_id_done, func_id, MAX_PATH_LEN);
+	if (is_epc_buf_edit_buf() == 0) {
+		undo_state_prev_epc_buf = NULL;
+	} else {
+		undo_state_prev_epc_buf = get_epc_buf();
+		undo_state_prev_epc_buf_size = get_epc_buf()->buf_size;
+		undo_state_prev_count_undo_bufs = count_undo_bufs();
+		if (func_id == NULL) {
+			undo_state_func_id_done = "";
+		} else {
+			undo_state_func_id_done = func_id;
+		}
 	}
 }
 int check_undo_state_after_change()
 {
 	int error = 0;
-	if (get_epc_buf() != EDIT_BUFS_TOP_ANCH
-	 && get_epc_buf() == undo_state_prev_epc_buf
-	 && get_epc_buf()->buf_size != undo_state_prev_epc_buf_size
+	if ((undo_state_prev_epc_buf != NULL)
+	 && IS_NODE_INT(get_epc_buf())
+	 && (get_epc_buf() == undo_state_prev_epc_buf)
+	 && (get_epc_buf()->buf_size != undo_state_prev_epc_buf_size)
 		// edit buffer has been modified
-	 && count_undo_bufs() == undo_state_prev_count_undo_bufs) {
+	 && (count_undo_bufs() == undo_state_prev_count_undo_bufs)) {
 		// but no undo info pushed
 		// warn it by setting unusual application color
 		disp_status_bar_err(_("!!!! No UNDO info pushed !!!!"));
-		progerr_printf("No UNDO info pushed for [%s]\n", undo_state_func_id_done);
+		progerr_printf("No UNDO info pushed for [%s](%d,%d,%d)\n", undo_state_func_id_done,
+		 (get_epc_buf() != EDIT_BUFS_TOP_ANCH),
+		 (get_epc_buf() == undo_state_prev_epc_buf),
+		 (get_epc_buf()->buf_size != undo_state_prev_epc_buf_size));
 		error = 1;
 	}
-	strcpy__(undo_state_func_id_done, "");
+	undo_state_func_id_done = "";
 	return error;
 }
 #endif // ENABLE_DEBUG
@@ -271,10 +281,10 @@ PRIVATE be_line_t *restore_region_from_buffer(undo0_redo1_t undo0_redo1)
 		push_undo_buf_node(buf_before);
 	}
 
-	// delete modified lines
+	// delete the previously modified region
 	be_line_t *edit_line = delete_region_in_buf(buf_after);
 	be_line_t *top_line = NODE_PREV(edit_line);
-	// insert unmodified lines
+	// restore the region which is previously modified
 	insert_region_from_buf(edit_line, buf_before);
 	return top_line;
 }

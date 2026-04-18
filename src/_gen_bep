@@ -21,3 +21,17 @@ fi
 #echo "Checking max line length ..."
 #for file in *.c *.h; do
 #done
+
+{
+echo "be -s \\"
+for fn in *.h *.c; do
+  echo " $fn \\"
+done
+cat <<EOF
+ berc \\
+ emacs.berc \\
+ wordstar.berc \\
+ po/ja.po \\
+ README.md
+EOF
+} >__edit_be.sh

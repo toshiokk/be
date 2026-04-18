@@ -534,14 +534,15 @@ PRIVATE int test_get_intersection_(int min1, int max1, int min2, int max2,
 	int max;
 	int ret = get_intersection(min1, max1, min2, max2, &min, &max);
 	if ((ret != expected_ret) || (min != expected_min) || (max != expected_max)) {
-warning_printf("get_intersection(min1:%d, max1:%d, min2:%d, max2:%d)\n"
- " ==> %d, min:%d, max:%d ?? %d, %d, %d\n", min1, max1, min2, max2,
- ret, min, max, expected_ret, expected_min, expected_max);
+////warning_printf("get_intersection(min1:%d, max1:%d, min2:%d, max2:%d)\n"
+//// " ==> (%d, min:%d, max:%d) ?? (%d, min:%d, max:%d)\n", min1, max1, min2, max2,
+//// ret, min, max, expected_ret, expected_min, expected_max);
 		return 1;
 	}
 	return 0;
 }
 #endif // START_UP_TEST
+
 int get_intersection(int min1, int max1, int min2, int max2, int *min, int *max)
 {
 	int _min = MAX_(min1, min2);

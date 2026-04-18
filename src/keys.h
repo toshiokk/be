@@ -29,8 +29,9 @@ typedef short key_code_t;		// signed short
 #define KEY_NOT_ASSIGNED	KEY_NONE
 #define KNA					KEY_NOT_ASSIGNED
 #define K_VALID				K_C_AT
-#define IS_KEY_INVALID(key)	((key) == KEY_NONE)
-#define IS_KEY_VALID(key)	(! IS_KEY_INVALID(key))
+#define IS_KEY_VALID(key)	((key) != KEY_NONE)
+#define IS_KEY_INVALID(key)	(! IS_KEY_VALID(key))
+#define IS_KEY_INPUT(key)	(is_key_input(key))
 
 // HP-UX 10 & 11 do not seem to support KEY_HOME and KEY_END
 #if !defined(KEY_HOME) || !defined(KEY_END)
@@ -44,16 +45,19 @@ typedef short key_code_t;		// signed short
 #define KEY_DOWN		0x0102
 #endif // !defined(KEY_UP) || !defined(KEY_DOWN)
 
-#define CTRL_CHAR(chr)		((chr) - '@')				// Ctrl-x
+#define CTRL_CHAR(chr)		((chr) & 0x1f)				// Ctrl-x
+#define CHAR_BS				0x08						// ASCII BS
 #define CHAR_ESC			0x1b						// ASCII ESC
 #define CHAR_DEL			0x7f						// ASCII DEL
-#define TWO_BYTE_KEY_CODE(h, l)	(((key_code_t)(h) << 8) | (l))
+#define TWO_BYTE_KEY_CODE(h, l)	(((key_code_t)((h) << 8)) | (l))
 #define TBKC(h, l)			TWO_BYTE_KEY_CODE((h), (l))
 #define KEY_META(key)		TWO_BYTE_KEY_CODE(CHAR_ESC, key)	// Alt-x
 #define KEY_META_CTRL(chr)	KEY_META(CTRL_CHAR(chr))			// Alt-Ctrl-x
-#define IS_BYTE_KEY(key)	(((key) & 0xff00) == 0x0000)
-#define IS_WORD_KEY(key)	(((key) & 0xff00) != 0x0000)
-#define IS_META_KEY(key)	(((key) & 0xff00) == KEY_META(0x00))
+#define KEY_HIGH_BYTE(key)	((key) & 0xff00)
+#define KEY_LOW_BYTE(key)	((key) & 0x00ff)
+#define IS_BYTE_KEY(key)	(KEY_HIGH_BYTE(key) == 0x0000)
+#define IS_WORD_KEY(key)	(KEY_HIGH_BYTE(key) != 0x0000)
+#define IS_META_KEY(key)	(KEY_HIGH_BYTE(key) == KEY_META(0x00))
 #define IS_LOWER_KEY(key)	((IS_BYTE_KEY(key) || IS_META_KEY(key)) && islower(key & 0xff))
 #define IS_UPPER_KEY(key)	((IS_BYTE_KEY(key) || IS_META_KEY(key)) && isupper(key & 0xff))
 
@@ -71,17 +75,19 @@ typedef short key_code_t;		// signed short
 #define K_MC(chr)			KEY_META_CTRL(chr)			// Alt-Ctrl-x
 
 // Shift, Ctrl, Meta(Alt) modifier
-#define K_S_MOD			0x0100
-#define K_C_MOD			0x0200
-#define K_M_MOD			0x0400
+#define K_S_MOD			0x0200
+#define K_C_MOD			0x0400
+#define K_M_MOD			0x0800
+#define AK_MOD			0x2000
+#define AK_(key)		(AK_MOD | (key))
 
-#define K_MOD_S__(key)		((key) + (K_S_MOD | 0       | 0      ))
-#define K_MOD__C_(key)		((key) + (0       | K_C_MOD | 0      ))
-#define K_MOD_SC_(key)		((key) + (K_S_MOD | K_C_MOD | 0      ))
-#define K_MOD___M(key)		((key) + (0       | 0       | K_M_MOD))
-#define K_MOD_S_M(key)		((key) + (K_S_MOD | 0       | K_M_MOD))
-#define K_MOD__CM(key)		((key) + (0       | K_C_MOD | K_M_MOD))
-#define K_MOD_SCM(key)		((key) + (K_S_MOD | K_C_MOD | K_M_MOD))
+#define K_MOD_S__(key)		((K_S_MOD | 0       | 0      ) + (key))
+#define K_MOD__C_(key)		((0       | K_C_MOD | 0      ) + (key))
+#define K_MOD_SC_(key)		((K_S_MOD | K_C_MOD | 0      ) + (key))
+#define K_MOD___M(key)		((0       | 0       | K_M_MOD) + (key))
+#define K_MOD_S_M(key)		((K_S_MOD | 0       | K_M_MOD) + (key))
+#define K_MOD__CM(key)		((0       | K_C_MOD | K_M_MOD) + (key))
+#define K_MOD_SCM(key)		((K_S_MOD | K_C_MOD | K_M_MOD) + (key))
 
 #define K_C_AT			K_C('@')
 #define K_C_SP			K_C('@')
@@ -94,12 +100,12 @@ typedef short key_code_t;		// signed short
 #define K_C_g			K_C('G')
 #define K_C_h			K_C('H')
 #define K_C_i			K_C('I')
-#define K_TAB			K_C_i		// 0x09
+#define K_TAB			K_C_i		// 0x09(the same as ^I, in Linux)
 #define K_C_j			K_C('J')
 #define K_C_k			K_C('K')
 #define K_C_l			K_C('L')
 #define K_C_m			K_C('M')
-#define K_ENTER			K_C_m		// 0x0d
+#define K_ENTER			K_C_m
 #define K_C_n			K_C('N')
 #define K_C_o			K_C('O')
 #define K_C_p			K_C('P')
@@ -113,14 +119,13 @@ typedef short key_code_t;		// signed short
 #define K_C_x			K_C('X')
 #define K_C_y			K_C('Y')
 #define K_C_z			K_C('Z')
-#define K_C_LBRAK		K_C('[')	// 0x1b
 #define K_ESC			CHAR_ESC	// 0x1b
 #define K_C_BAKSL		K_C('\\')	// 0x1c
 #define K_C_RBRAK		K_C(']')	// 0x1d
 #define K_C_CARET		K_C('^')	// 0x1e
 #define K_C_UNDLN		K_C('_')	// 0x1f
-#define K_SP			' '			// ' '
 
+#define K_SP			' '			// ' '
 #define K_EXCLA			K_('!')		// 0x21
 #define K_QUOTA			K_('"')		// 0x22
 #define K_SHARP			K_('#')		// 0x23
@@ -171,7 +176,6 @@ typedef short key_code_t;		// signed short
 #define K_X_			K_('X')
 #define K_Y_			K_('Y')
 #define K_Z_			K_('Z')
-
 #define K_LBRAK			K_('[')		// 0x5b (Left Bracket)
 #define K_BAKSL			K_('\\')	// 0x5c
 #define K_RBRAK			K_(']')		// 0x5d (Right Bracket)
@@ -205,7 +209,6 @@ typedef short key_code_t;		// signed short
 #define K_x_			K_('x')
 #define K_y_			K_('y')
 #define K_z_			K_('z')
-
 #define K_LBRAC			K_('{')		// 0x7b (Left Brace)
 #define K_VERTB			K_('|')		// 0x7c
 #define K_RBRAC			K_('}')		// 0x7d (Right Brace)
@@ -246,7 +249,7 @@ typedef short key_code_t;		// signed short
 #define K_M_GREAT		K_M(K_GREAT)	// 0x1b3e
 #define K_M_QUEST		K_M(K_QUEST)	// 0x1b3f
 
-#define K_M_AT			K_M(K_AT)		// 0x1b40
+#define K_M_AT			K_M('@')		// 0x1b40
 #define K_M_A			K_M('A')		// 0x1b41
 #define K_M_B			K_M('B')
 #define K_M_C			K_M('C')
@@ -280,7 +283,7 @@ typedef short key_code_t;		// signed short
 #define K_M_CARET		K_M(K_CARET)	// 0x1b5e
 #define K_M_UNDLN		K_M(K_UNDLN)	// 0x1b5f
 
-#define K_M_BAKQT		K_M(K_BAKQT)	// 0x1b60
+#define K_M_BAKQT		K_M('`')		// 0x1b60
 #define K_M_a			K_M('a')		// 0x1b61
 #define K_M_b			K_M('b')
 #define K_M_c			K_M('c')
@@ -311,7 +314,7 @@ typedef short key_code_t;		// signed short
 #define K_M_VERTB		K_M(K_VERTB)	// 0x1b7c
 #define K_M_RBRAC		K_M(K_RBRAC)	// 0x1b7d
 #define K_M_TILDE		K_M(K_TILDE)	// 0x1b7e
-#define K_M_CHAR_DEL	K_M(CHAR_DEL)	// 0x1b7f
+#define K_M_CDEL		K_M(CHAR_DEL)	// 0x1b7f
 
 #define K_MC_AT			K_M(K_C_AT)		// 1b00
 #define K_MC_a			K_M(K_C_a)		// 1b01
@@ -342,13 +345,11 @@ typedef short key_code_t;		// signed short
 #define K_MC_x			K_M(K_C_x)
 #define K_MC_y			K_M(K_C_y)
 #define K_MC_z			K_M(K_C_z)			// 0x1b1a
-#define K_MC_LBRAK		K_M(K_C_LBRAK)		// 0x1b1b
 #define K_M_ESC			K_M(CHAR_ESC)		// 0x1b1b
 #define K_MC_BAKSL		K_M(K_C_BAKSL)		// 0x1b1c
 #define K_MC_RBRAK		K_M(K_C_RBRAK)		// 0x1b1d
 #define K_MC_CARET		K_M(K_C_CARET)		// 0x1b1e
 #define K_MC_UNDLN		K_M(K_C_UNDLN)		// 0x1b1f
-
 #define K_F01			KEY_F(1)
 #define K_F02			KEY_F(2)
 #define K_F03			KEY_F(3)
@@ -361,7 +362,22 @@ typedef short key_code_t;		// signed short
 #define K_F10			KEY_F(10)
 #define K_F11			KEY_F(11)
 #define K_F12			KEY_F(12)
-// Shift, Ctrl, Meta(Alt) modified key
+
+#define K_BS			KEY_BACKSPACE
+#define K_HOME			KEY_HOME
+#define K_END			KEY_END
+#define K_PPAGE			KEY_PPAGE
+#define K_NPAGE			KEY_NPAGE
+#define K_DEL			KEY_DC
+#define K_INS			KEY_IC
+#define K_UP			KEY_UP
+#define K_DOWN			KEY_DOWN
+#define K_RIGHT			KEY_RIGHT
+#define K_LEFT			KEY_LEFT
+/////#define K_ENTER			KEY_ENTER
+#define K_RESIZE		KEY_RESIZE
+
+// Shift key modified Fkey
 #define K_S_F01			K_MOD_S__(K_F01)
 #define K_S_F02			K_MOD_S__(K_F02)
 #define K_S_F03			K_MOD_S__(K_F03)
@@ -370,10 +386,12 @@ typedef short key_code_t;		// signed short
 #define K_S_F06			K_MOD_S__(K_F06)
 #define K_S_F07			K_MOD_S__(K_F07)
 #define K_S_F08			K_MOD_S__(K_F08)
+// Shift, Ctrl, Meta(Alt) key modified Fkey
 #define K_S_F09			K_MOD_S__(K_F09)
 #define K_S_F10			K_MOD_S__(K_F10)
 #define K_S_F11			K_MOD_S__(K_F11)
 #define K_S_F12			K_MOD_S__(K_F12)
+// Shift, Ctrl, Meta(Alt) key modified key
 #define K__C__F01		K_MOD__C_(K_F01)
 #define K__C__F02		K_MOD__C_(K_F02)
 #define K__C__F03		K_MOD__C_(K_F03)
@@ -447,20 +465,6 @@ typedef short key_code_t;		// signed short
 #define K_SCM_F11		K_MOD_SCM(K_F11)
 #define K_SCM_F12		K_MOD_SCM(K_F12)
 
-// Abstract key code
-#define K_BS			0x1008		// abstract Backspace key code
-
-#define K_HOME			KEY_HOME
-#define K_END			KEY_END
-#define K_PPAGE			KEY_PPAGE
-#define K_NPAGE			KEY_NPAGE
-#define K_DEL			KEY_DC
-#define K_INS			KEY_IC
-#define K_UP			KEY_UP
-#define K_DOWN			KEY_DOWN
-#define K_RIGHT			KEY_RIGHT
-#define K_LEFT			KEY_LEFT
-
 #define K_S___DEL		K_MOD_S__(K_DEL)
 #define K_S___INS		K_MOD_S__(K_INS)
 #define K__C__DEL		K_MOD__C_(K_DEL)
@@ -475,36 +479,63 @@ typedef short key_code_t;		// signed short
 #define K__CM_INS		K_MOD__CM(K_INS)
 #define K_SCM_DEL		K_MOD_SCM(K_DEL)
 #define K_SCM_INS		K_MOD_SCM(K_INS)
-
 // WSL Terminal
 #define K_S___UP		K_MOD_S__(K_UP)
 #define K_S___DOWN		K_MOD_S__(K_DOWN)
 #define K_S___RIGHT		K_MOD_S__(K_RIGHT)
 #define K_S___LEFT		K_MOD_S__(K_LEFT)
+#define K_S___PPAGE		K_MOD_S__(K_PPAGE)
+#define K_S___NPAGE		K_MOD_S__(K_NPAGE)
+#define K_S___HOME		K_MOD_S__(K_HOME)
+#define K_S___END		K_MOD_S__(K_END)
 #define K__C__UP		K_MOD__C_(K_UP)
 #define K__C__DOWN		K_MOD__C_(K_DOWN)
 #define K__C__RIGHT		K_MOD__C_(K_RIGHT)
 #define K__C__LEFT		K_MOD__C_(K_LEFT)
+#define K__C__PPAGE		K_MOD__C_(K_PPAGE)
+#define K__C__NPAGE		K_MOD__C_(K_NPAGE)
+#define K__C__HOME		K_MOD__C_(K_HOME)
+#define K__C__END		K_MOD__C_(K_END)
 #define K___M_UP		K_MOD___M(K_UP)
 #define K___M_DOWN		K_MOD___M(K_DOWN)
 #define K___M_RIGHT		K_MOD___M(K_RIGHT)
 #define K___M_LEFT		K_MOD___M(K_LEFT)
+#define K___M_PPAGE		K_MOD___M(K_PPAGE)
+#define K___M_NPAGE		K_MOD___M(K_NPAGE)
+#define K___M_HOME		K_MOD___M(K_HOME)
+#define K___M_END		K_MOD___M(K_END)
 #define K_SC__UP		K_MOD_SC_(K_UP)
 #define K_SC__DOWN		K_MOD_SC_(K_DOWN)
 #define K_SC__RIGHT		K_MOD_SC_(K_RIGHT)
 #define K_SC__LEFT		K_MOD_SC_(K_LEFT)
+#define K_SC__PPAGE		K_MOD_SC_(K_PPAGE)
+#define K_SC__NPAGE		K_MOD_SC_(K_NPAGE)
+#define K_SC__HOME		K_MOD_SC_(K_HOME)
+#define K_SC__END		K_MOD_SC_(K_END)
 #define K_S_M_UP		K_MOD_S_M(K_UP)
 #define K_S_M_DOWN		K_MOD_S_M(K_DOWN)
 #define K_S_M_RIGHT		K_MOD_S_M(K_RIGHT)
 #define K_S_M_LEFT		K_MOD_S_M(K_LEFT)
+#define K_S_M_PPAGE		K_MOD_S_M(K_PPAGE)
+#define K_S_M_NPAGE		K_MOD_S_M(K_NPAGE)
+#define K_S_M_HOME		K_MOD_S_M(K_HOME)
+#define K_S_M_END		K_MOD_S_M(K_END)
 #define K__CM_UP		K_MOD__CM(K_UP)
 #define K__CM_DOWN		K_MOD__CM(K_DOWN)
 #define K__CM_RIGHT		K_MOD__CM(K_RIGHT)
 #define K__CM_LEFT		K_MOD__CM(K_LEFT)
+#define K__CM_PPAGE		K_MOD__CM(K_PPAGE)
+#define K__CM_NPAGE		K_MOD__CM(K_NPAGE)
+#define K__CM_HOME		K_MOD__CM(K_HOME)
+#define K__CM_END		K_MOD__CM(K_END)
 #define K_SCM_UP		K_MOD_SCM(K_UP)
 #define K_SCM_DOWN		K_MOD_SCM(K_DOWN)
 #define K_SCM_RIGHT		K_MOD_SCM(K_RIGHT)
 #define K_SCM_LEFT		K_MOD_SCM(K_LEFT)
+#define K_SCM_PPAGE		K_MOD_SCM(K_PPAGE)
+#define K_SCM_NPAGE		K_MOD_SCM(K_NPAGE)
+#define K_SCM_HOME		K_MOD_SCM(K_HOME)
+#define K_SCM_END		K_MOD_SCM(K_END)
 
 #define S_C_AT		"\x00"
 #define S_C_A		"\x01"
@@ -535,86 +566,41 @@ typedef short key_code_t;		// signed short
 #define S_C_Z		"\x1a"
 #define S_ESC		"\x1b"
 
-#define FUNC_ID(func)	func, #func
-#define F_I(func)		FUNC_ID(func)
+// Abstract key code
+#define AK_BS		AK_(K_BS)		// abstract Backspace key code
+#define AK_DEL		AK_(K_DEL)		// abstract Delete key code
+#define AK_M_BS		K_M(AK_BS)		// abstract Backspace key code
+#define AK_M_DEL	K_M(AK_DEL)		// abstract Delete key code
 
-typedef enum {	// | Normal-mode  | List-mode    |
-				// |--------------|--------------|
-	EFAM,		// | executable   | executable   | executable in All mode
-	EFNM,		// | executable   |not executable| executable only in Normal mode
-	EFLM,		// |not executable| executable   | executable only in List mode
-} list_mode_t;
+void clear_msec_past_after_key_input();
+unsigned long get_msec_past_after_key_input();
 
-typedef struct {
-	list_mode_t list_mode;		// executable in list mode
-	char *desc;					// short description
-	char *explanation;			// explanation
-#define MAX_KEYS_BIND	3
-	key_code_t keys[MAX_KEYS_BIND];
-	void (*func)();
-	char *func_id;
-	const char *(*func_get)();	// function to get assigned value
-} func_key_t;
-
-#define MAX_KEY_NAME_LEN	8		// "MC-UNDLN"
-#define NUM_STR(key)	key, #key
-typedef struct /*key_name_table_t*/ {
-	key_code_t key_code;
-	char *long_key_name;
-	char *key_name;
-} key_name_table_t;
-extern key_name_table_t key_name_table[];
-
-#define KEY_CODE_STR_LEN	(1+MAX_KEY_NAME_LEN+1+1)	// "(MC-UNDLN)"
-
-func_key_t *get_app_func_key_table();
-
-void conv_func_id_to_key_names(char *func_id, int max_keys);
-
-void *get_app_function_for_key(key_code_t key);
-const char *get_func_id_from_key(key_code_t key);
-func_key_t *get_fkey_entry_from_key(func_key_t *func_key, key_code_t key, int list_mode);
-int is_key_assigned_to_func(key_code_t key, func_key_t *func_key);
-key_code_t get_key_for_func_id(const char *func_id);
-func_key_t *get_fkey_entry_from_func_id(const char *func_id, int list_mode);
-
-int is_fkey_entry_executable(func_key_t *func_key, int list_mode);
-
-void clear_fkey_tbl_using_these_keys(key_code_t *keys);
-void clear_key_if_bound_to_func(key_code_t key, func_key_t *func_key);
-void clear_fkey_tbl_keys(func_key_t *func_key);
-void bind_key_to_func(func_key_t *func_key, key_code_t *keys);
-
-void set_menu_key(key_code_t key);
-key_code_t get_menu_key();
-
-void clear_whole_screen_update_timer();
-int check_whole_screen_update_timer();
-
-void update_msec_when_input_key();
-unsigned long msec_past_input_key();
-
+key_code_t input_key_with_mode(int mode);
 key_code_t input_key_loop();
 key_code_t input_unmapped_key_loop();
-key_code_t input_key_wait_return();
-key_code_t input_key_with_macro_playback();
+key_code_t input_key_timeout_no_rec();
+key_code_t input_key_timeout();
+key_code_t input_key_with_key_macro();
 
 void begin_check_break_key();
 void end_check_break_key();
 int check_break_key();
 
+
 key_code_t map_key_code(key_code_t key);
+
+//------------------------------------------------------------------------------
+
+#ifdef START_UP_TEST
+void test_conversion_key_name__key_code();
+#endif // START_UP_TEST
 
 const char *key_str_from_key_code(key_code_t key_code);
 int key_code_from_key_str(const char *str, key_code_t* key_code);
 
-const char *long_key_none_str();
-const char *long_key_name_from_key_code(key_code_t key_code, char *buf);
-const char *long_key_name_from_key_code_null(key_code_t key_code, char *buf);
-const char *short_key_name_from_key_code(key_code_t key_code, char *buf);
-const char *short_key_name_from_key_name(const char *key_name, char *buf);
-key_code_t key_code_from_key_name(char *key_name);
-key_code_t key_code_from_short_key_name(char *short_key_name);
+const char *key_none_str();
+const char *get_key_name_from_key_code(key_code_t key_code, char *buf);
+key_code_t get_key_code_from_key_name(const char *key_name);
 
 int get_key_name_table_entries();
 
@@ -622,7 +608,13 @@ int is_key_ctrl(key_code_t key);
 int is_key_graph(key_code_t key);
 int is_key_utf8_byte(key_code_t key);
 int is_key_print(key_code_t key);
+int is_key_input(key_code_t key);
 
 #endif // keys_h
+
+// Three types of key codes
+// - (1) byte sequence:								"\x1b[[A"		"\x1b[3~"
+// - (2) term lib dependent key code:				KEY_BACKSPACE	KEY_DC
+// - (3) term lib independent(abstract) key code:	AK_BS			AK_DEL
 
 // End of keys.h

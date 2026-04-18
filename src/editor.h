@@ -31,6 +31,7 @@ extern ef_do_next_t editor_do_next;
 #endif // ENABLE_DEBUG
 
 int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf);
+void set_text_to_output_buf_editor(char *text);
 
 int chk_inp_str_ret_val_editor(int ret);
 
@@ -38,23 +39,22 @@ const char *get_clipboard_file_path();
 int save_newest_cut_buf_to_clipboard_file();
 
 //------------------------------------------------------------------------------
-void doe_run_line_soon();
+void doe_run_line_immediate();
 void doe_run_line_input();
 
 //------------------------------------------------------------------------------
 
 #ifdef ENABLE_HELP
-void doe_splash();
-void do_splash();
 void doe_view_file_list();
 void doe_view_func_list();
+void doe_splash();
+void do_splash();
+void display_color_settings(key_code_t key);
 #endif // ENABLE_HELP
 
-void display_color_settings(key_code_t key);
+key_code_t examine_key_code();
 
-key_code_t examine_key_code(key_code_t key);
-
-void doe_quit_editor();
+void doe_quit();
 
 void doe_menu_0();
 

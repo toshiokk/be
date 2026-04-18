@@ -1,5 +1,5 @@
 /**************************************************************************
- *   buffer1.h                                                             *
+ *   buffer1.h                                                            *
  *                                                                        *
  *   Copyright (C) 1999-2003 Chris Allegretta                             *
  *                                                                        *
@@ -48,12 +48,12 @@ typedef struct /*buf_state*/ {
 	unsigned char buf_MODE:2;				// bit 0,1
 	unsigned char buf_LOCKED:1;				// bit 2
 
-	unsigned char buf_MAGIC_LINE_ADDED:1;	// bit 3
+/////	unsigned char buf_MAGIC_LINE_ADDED:1;	// bit 3
 
 	unsigned char buf_MODIFIED:1;			// bit 4
 	unsigned char buf_LINE_WRAP_MODE:1;		// bit 5
 #define CUT_MODE_0_NONE			0	// no mark                                    (one line cut)
-#define CUT_MODE_N_LINE			1	// marking started but cursor not moved           (line cut)
+#define CUT_MODE_N_LINE			1	// marking started but cursor not moved   (instant line cut)
 #define CUT_MODE_H_CHAR			2	//  and cursor moved horizontally                 (char cut)
 #define CUT_MODE_HV_LINE		3	//  and cursor moved horizontally then vertically (line cut)
 #define CUT_MODE_HV_BOX			4	//  and cursor moved horizontally then vertically (box cut)
@@ -62,6 +62,7 @@ typedef struct /*buf_state*/ {
 #define CUT_MODE_VH_BOX			7	//  and cursor moved vertically then horizontally (box cut)
 #define IS_MARK_SET(cut_mode)	((cut_mode) != CUT_MODE_0_NONE)
 	unsigned char buf_CUT_MODE:3;			// bit 6-8
+	unsigned char buf_CUT_MODE_ON_CUT:3;	// bit 6-8 (copied from buf_CUT_MODE on cut)
 #define TAB_SIZE_MIN			1
 #define TAB_SIZE_0				0			// DEFAULT_TAB_SIZE
 #define TAB_SIZE_1				1
@@ -142,6 +143,8 @@ void buf_clear_link(be_buf_t *buf);
 
 void buf_free_lines(be_buf_t *buf);
 
+int buf_append_magic_line_if_necessary(be_buf_t *buf);
+be_line_t *buf_append_string_to_buf(be_buf_t *buf, const char *string);
 be_line_t *buf_append_line_to_bottom(be_buf_t *buf, be_line_t *line);
 
 int buf_compare(be_buf_t *buf1, be_buf_t *buf2);
@@ -154,9 +157,11 @@ int buf_guess_tab_size(be_buf_t *buf);
 int buf_count_lines(be_buf_t *buf, int max_lines);
 
 const char *buf_mode_str(be_buf_t *buf);
+const char *buf_locked_str(be_buf_t *buf);
 const char *buf_eol_str(be_buf_t *buf);
 const char *buf_enc_str(be_buf_t *buf);
 const char *buf_cut_mode_str(be_buf_t *buf);
+const char *buf_cut_mode_on_cut_str(be_buf_t *buf);
 const char *get_cut_mode_str(int buf_CUT_MODE);
 
 //------------------------------------------------------------------------------
@@ -189,7 +194,7 @@ int buf_get_pending_timer_elapsed(be_buf_t *buf);
 void buf_set_pending_timer(be_buf_t *buf, UINT16 abs_dsec);
 UINT16 buf_get_pending_timer(be_buf_t *buf);
 
-int buf_count(be_buf_t *buf);
+int buf_count_bufs(be_buf_t *buf);
 be_buf_t *buf_make_buf_intermediate(be_buf_t *buf);
 be_buf_t *buf_get_another_buf(be_buf_t *buf);
 

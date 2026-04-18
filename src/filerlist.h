@@ -24,16 +24,15 @@
 
 #ifdef ENABLE_FILER
 
-#define _FILE_SEL_NONE_	0x00	// file un-selected
-#define _FILE_SEL_MAN_	0x01	// file selected manually
-#define _FILE_SEL_AUTO_	0x02	// file selected automatically on execution of a command
+#define _FILE_SEL_NONE_		0x00	// file un-selected
+#define _FILE_SEL_MAN_		0x01	// file selected manually
 typedef struct {
 	char *file_name;
-						// | regular file | symlink               |
-						// |--------------|-----------------------|
-	struct stat lst;	// | file itself  | symlink               |
-	struct stat st;		// | file itself  | symlinked file or dir |
-	char *symlink;
+						// | non symlink | symlink                |
+						// |-------------|------------------------|
+	struct stat lst;	// | file or dir | symlink                |
+	struct stat st;		// | file or dir | target file or dir     |
+	char *symlink;		// | NULL        | target path of symlink |
 	char selected;
 } file_info_t;
 
@@ -42,13 +41,13 @@ typedef struct {
 	char cur_dir[MAX_PATH_LEN+1];		// current directory
 	char filter[MAX_PATH_LEN+1];		// e.g. "*.h", "*.c", "*.[hc], "": no filter
 	char listed_dir[MAX_PATH_LEN+1];	// directory from which file list gotten
-	file_info_t *file_info_array;		// array
-	int file_info_entries;				// array size
-	int cur_file_idx;					// current index into array
-	int cursor_y;						// cursor y position in file view
 	char prev_dir[MAX_PATH_LEN+1];		// previous current directory
 	char next_file[MAX_PATH_LEN+1];		// next file to be selected after changing dir
-										//  or after updating file list
+	int selecting_file_idx;				// starting file index into array(-1: not selecting)
+	int cur_file_idx;					// current file index into array
+	int cursor_y;						// cursor y position in file view
+	int file_info_entries;				// array size
+	file_info_t *file_info_array;		// array
 } filer_view_t;
 
 #define FILER_PANES		MAX_APP_PANES_2
@@ -60,31 +59,37 @@ extern filer_panes_t *cur_filer_panes;	// Current Filer Panes (instance is alloc
 
 //------------------------------------------------------------------------------
 
+int read_into_file_info_array(filer_view_t *fv);
+void free_file_info_array(filer_view_t *fv);
+
 #ifdef START_UP_TEST
 void test_get_file_size_str();
 #endif // START_UP_TEST
+
 const char *file_info_str(file_info_t *file_info,
  int show_link, int trunc_file_name, int selected);
 const char *get_file_size_str(char *buf_size, loff_t size);
 
-int read_into_file_info_array(filer_view_t *fv);
-void free_file_info_array(filer_view_t *fv);
-
 void sort_file_info_array(filer_view_t *fv);
 int get_file_type_num(file_info_t *info);
 
-int get_files_selected_cfv();
-int get_files_selected(filer_view_t *fv);
+int get_cfv_files_selected();
+int get_cfv_files_selected_size(size_t *selected, size_t *total);
+int get_fv_files_selected(filer_view_t *fv);
+int get_fv_files_selected_size(filer_view_t *fv, size_t *selected, size_t *total);
 
-int select_and_get_first_file_idx_selected();
 int get_first_file_idx_selected();
 int get_next_file_idx_selected(int file_idx);
-int get_number_of_selected_files();
-void unselect_all_files_auto(char selection_bit);
+#define MY_ISREG		0x01
+#define MY_ISDIR		0x02
+#define MY_ISLNK		0x04
+int is_cfv_file_selectable(int file_idx, mode_t type);
 
 int research_file_name_in_file_info_array(filer_view_t *fv, const char *file_name,
  int cur_dir_changed);
 int search_file_name_in_file_info_array(filer_view_t *fv, const char *file_name);
+
+int search_file_from_list(const char *file_name, int first0_next1, int direction);
 
 void normalize_filer_cur_file_idx(filer_view_t *fv);
 void normalize_filer_cursor_y(filer_view_t *fv);

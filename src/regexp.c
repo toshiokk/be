@@ -23,49 +23,54 @@
 
 void search_clear(search_t *search)
 {
+	search->mode = 0;
 	strcpy__(search->needle, "");
+	search->direction = 0;
+	search->ignore_case = 0;
+}
+void search_set_mode(search_t *search, char mode, char search_dir, char ignore_case)
+{
+	search->mode = mode;
+	search->direction = search_dir;
+	search->ignore_case = ignore_case;
+}
+int search_get_mode(search_t *search)
+{
+	return search->mode;
+}
+int search_get_direction(search_t *search)
+{
+	return search->direction;
+}
+int search_get_ignore_case(search_t *search)
+{
+	return search->ignore_case;
+}
+void search_set_needle(search_t *search, const char *needle)
+{
+	strlcpy__(search->needle, needle, MAX_PATH_LEN);
+}
+const char *search_get_needle(search_t *search)
+{
+	return search->needle;
 }
 int search_is_needle_set(search_t *search)
 {
-	if ((strlen(search->needle) == 4)
-	 && (search->needle[0] == '[') && (search->needle[3] == ']')) {
-		return 2;	// Bracket search "[()]"
-	}
 	if (strlen(search->needle)) {
-		return 1;		// Not bracket search (ordinaly search)
+		if (search->mode) {
+			return 2;		// Bracket search "(\{|\})"
+		}
+		return 1;			// Not bracket search (ordinaly search)
 	}
-	return 0;			// needle not set
+	return 0;				// needle not set
 }
-
-int search_str_in_line(search_t *search, matches_t *matches,
- const char *needle, int search_dir, int ignore_case, const char *haystack, int byte_idx)
+void dump_search(search_t *search)
 {
-	int match_len;
-
-	if (needle) {
-		strlcpy__(search->needle, needle, MAX_PATH_LEN);
-		search->ignore_case = ignore_case;
-	}
-#ifdef ENABLE_REGEX
-	if (GET_APPMD(ed_USE_REGEXP) == 0) {
-#endif // ENABLE_REGEX
-		match_len = search_str_in_line_strstr(search->needle, matches,
-		 search_dir, search->ignore_case, haystack, byte_idx);
-#ifdef ENABLE_REGEX
-	} else {
-		match_len = search_str_in_line_regexp(&search->regexp, &matches->regexp_matches,
-		 needle, search_dir, ignore_case, haystack, byte_idx);
-		matches_set_start_idx(matches,
-		 regexp_matches_start_idx(&matches->regexp_matches, 0));
-		matches_set_end_idx(matches,
-		 regexp_matches_end_idx(&matches->regexp_matches, 0));
-	}
-#endif // ENABLE_REGEX
-	return match_len;	// >0: match
+	flf_dprintf("mode: %d, direction: %d, ignore_case: %d\nneedle: [%s]",
+	 search->mode, search->direction, search->ignore_case, search->needle);
 }
 
 //------------------------------------------------------------------------------
-
 void matches_clear(matches_t *matches)
 {
 	matches->so = 0;
@@ -116,53 +121,28 @@ void matches_dump_matches(matches_t *matches)
 }
 
 //------------------------------------------------------------------------------
-
-#ifdef ENABLE_REGEX
-int search_str_in_line_regexp(regexp_t *regexp, regexp_matches_t *regexp_matches,
+int search_str_in_line(search_t *search, matches_t *matches,
  const char *needle, int search_dir, int ignore_case, const char *haystack, int byte_idx)
 {
-	int cflags = ignore_case ? REG_ICASE : 0;
+	int match_len;
 
-	if (search_dir < 0) {
-		// backward search. The last match is what we need.
-		// First, search from the line head
-		int ret = regexp_search(regexp, regexp_matches, needle,
-		 haystack, 0, cflags, REG_NONE, 1);
-		if (ret == 0 && regexp_matches_start_idx(regexp_matches, 0) <= byte_idx) {
-			// Search forward until there is no more match.
-			int prev_match_byte_idx;
-			for ( ; ; ) {
-				prev_match_byte_idx = regexp_matches_start_idx(regexp_matches, 0);
-				// Second, search from the next byte of previous match pos
-				ret = regexp_search(regexp, regexp_matches, needle,
-				 haystack, regexp_matches_start_idx(regexp_matches, 0) + 1, cflags, REG_NONE, 1);
-				if (ret == 0 && regexp_matches_start_idx(regexp_matches, 0) <= byte_idx) {
-					// continue;
-				} else {
-					break;
-				}
-			}
-			// Finally, put the subexpression matches in regexp_matches.
-			// The REG_NOTBOL flag doesn't matter now.
-			ret = regexp_search(regexp, regexp_matches, needle,
-			 haystack, prev_match_byte_idx, cflags, REG_NONE, MAX_REGEX_MATCHES);
-			if (ret == 0 && regexp_matches_start_idx(regexp_matches, 0) <= byte_idx) {
-				return regexp_matches_match_len(regexp_matches, 0);
-			}
-		}
-	} else {
-		// forward search. The first match is what we need.
-		// if byte_idx == 0, haystack is line top
-		// if byte_idx > 0, haystack is not line top and add REG_NOTBOL eflag
-		if (regexp_search(regexp, regexp_matches, needle,
-		 haystack, byte_idx, cflags, REG_NONE, MAX_REGEX_MATCHES) == 0) {
-			// Put the subexpression matches in regexp_matches.
-			return regexp_matches_match_len(regexp_matches, 0);
-		}
-	}
-	return 0;		// not found
-}
+#ifdef ENABLE_REGEX
+	if (GET_APPMD(ed_USE_REGEXP) == 0) {
 #endif // ENABLE_REGEX
+		match_len = search_str_in_line_strstr(search_get_needle(search), matches,
+		 search_dir, ignore_case, haystack, byte_idx);
+#ifdef ENABLE_REGEX
+	} else {
+		match_len = search_str_in_line_regexp(&search->regexp, &matches->regexp_matches,
+		 needle, search_dir, ignore_case, haystack, byte_idx);
+		matches_set_start_idx(matches,
+		 regexp_matches_start_idx(&matches->regexp_matches, 0));
+		matches_set_end_idx(matches,
+		 regexp_matches_end_idx(&matches->regexp_matches, 0));
+	}
+#endif // ENABLE_REGEX
+	return match_len;	// >0: match
+}
 
 //------------------------------------------------------------------------------
 PRIVATE const char *revstrstr(const char *haystack, const char *tail_of_haystack,
@@ -248,7 +228,52 @@ PRIVATE const char *stristr(const char *haystack, const char *needle)
 	return NULL;
 }
 
+//------------------------------------------------------------------------------
 #ifdef ENABLE_REGEX
+int search_str_in_line_regexp(regexp_t *regexp, regexp_matches_t *regexp_matches,
+ const char *needle, int search_dir, int ignore_case, const char *haystack, int byte_idx)
+{
+	int cflags = ignore_case ? REG_ICASE : 0;
+
+	if (search_dir < 0) {
+		// backward search. The last match is what we need.
+		// First, search from the line head
+		int ret = regexp_search(regexp, regexp_matches, needle,
+		 haystack, 0, cflags, REG_NONE, 1);
+		if (ret == 0 && regexp_matches_start_idx(regexp_matches, 0) <= byte_idx) {
+			// Search forward until there is no more match.
+			int prev_match_byte_idx;
+			for ( ; ; ) {
+				prev_match_byte_idx = regexp_matches_start_idx(regexp_matches, 0);
+				// Second, search from the next byte of previous match pos
+				ret = regexp_search(regexp, regexp_matches, needle,
+				 haystack, regexp_matches_start_idx(regexp_matches, 0) + 1, cflags, REG_NONE, 1);
+				if (ret == 0 && regexp_matches_start_idx(regexp_matches, 0) <= byte_idx) {
+					// continue;
+				} else {
+					break;
+				}
+			}
+			// Finally, put the subexpression matches in regexp_matches.
+			// The REG_NOTBOL flag doesn't matter now.
+			ret = regexp_search(regexp, regexp_matches, needle,
+			 haystack, prev_match_byte_idx, cflags, REG_NONE, MAX_REGEX_MATCHES);
+			if (ret == 0 && regexp_matches_start_idx(regexp_matches, 0) <= byte_idx) {
+				return regexp_matches_match_len(regexp_matches, 0);
+			}
+		}
+	} else {
+		// forward search. The first match is what we need.
+		// if byte_idx == 0, haystack is line top
+		// if byte_idx > 0, haystack is not line top and add REG_NOTBOL eflag
+		if (regexp_search(regexp, regexp_matches, needle,
+		 haystack, byte_idx, cflags, REG_NONE, MAX_REGEX_MATCHES) == 0) {
+			// Put the subexpression matches in regexp_matches.
+			return regexp_matches_match_len(regexp_matches, 0);
+		}
+	}
+	return 0;		// not found
+}
 
 // Regular expression helper functions ----------------------------------------
 
@@ -276,8 +301,8 @@ void test_regexp()
 	needle = "\\t\\n";
 	haystack = "aaa\t\nbbbtnccc";
 	ret = regexp_search(&regexp, &regexp_matches, needle, haystack, 0, REG_NONE, REG_NONE, 3);
-	flf_dprintf("ret: %d\n", ret);
-	regexp_dump_matches(&regexp, &regexp_matches, haystack);
+	////flf_dprintf("ret: %d\n", ret);
+	////regexp_dump_matches(&regexp, &regexp_matches, haystack);
 	MY_UT_INT(ret, 0);
 	MY_UT_INT(regexp.regex_compiled.re_nsub, 0);
 	MY_UT_INT(regexp_matches_start_idx(&regexp_matches, 0), 3);
@@ -286,8 +311,8 @@ void test_regexp()
 	needle = "\\t";
 	haystack = "aaa\t\nbbbtnccc";
 	ret = regexp_search(&regexp, &regexp_matches, needle, haystack, 0, REG_NONE, REG_NONE, 3);
-	flf_dprintf("ret: %d\n", ret);
-	regexp_dump_matches(&regexp, &regexp_matches, haystack);
+	////flf_dprintf("ret: %d\n", ret);
+	////regexp_dump_matches(&regexp, &regexp_matches, haystack);
 	MY_UT_INT(ret, 0);
 	MY_UT_INT(regexp.regex_compiled.re_nsub, 0);
 	MY_UT_INT(regexp_matches_start_idx(&regexp_matches, 0), 3);
@@ -296,8 +321,8 @@ void test_regexp()
 	needle = "\\n";
 	haystack = "aaa\t\nbbbtnccc";
 	ret = regexp_search(&regexp, &regexp_matches, needle, haystack, 0, REG_NONE, REG_NONE, 3);
-	flf_dprintf("ret: %d\n", ret);
-	regexp_dump_matches(&regexp, &regexp_matches, haystack);
+	////flf_dprintf("ret: %d\n", ret);
+	////regexp_dump_matches(&regexp, &regexp_matches, haystack);
 	MY_UT_INT(ret, 0);
 	MY_UT_INT(regexp.regex_compiled.re_nsub, 0);
 	MY_UT_INT(regexp_matches_start_idx(&regexp_matches, 0), 4);
@@ -312,12 +337,12 @@ void test_regexp()
 	replace_to = "123\\2\\1456";
 	ret = regexp_search(&regexp, &regexp_matches, needle, haystack, 0, REG_NONE, REG_NONE, 3);
 	regexp_replace(&regexp, &regexp_matches, output, MAX_EDIT_LINE_LEN, replace_to);
-	flf_dprintf("ret: %d\n", ret);
-	regexp_dump_matches(&regexp, &regexp_matches, haystack);
-	flf_dprintf("needle: [%s]\n", needle);
-	flf_dprintf("replace_to: [%s]\n", replace_to);
-	flf_dprintf("before: [%s]\n", haystack);
-	flf_dprintf("after : [%s]\n", output);
+	////flf_dprintf("ret: %d\n", ret);
+	////regexp_dump_matches(&regexp, &regexp_matches, haystack);
+	////flf_dprintf("needle: [%s]\n", needle);
+	////flf_dprintf("replace_to: [%s]\n", replace_to);
+	////flf_dprintf("before: [%s]\n", haystack);
+	////flf_dprintf("after : [%s]\n", output);
 	MY_UT_INT(ret, 0);
 	MY_UT_INT(regexp.regex_compiled.re_nsub, 2);
 	MY_UT_INT(regexp_matches_start_idx(&regexp_matches, 0), 5);
@@ -327,7 +352,6 @@ void test_regexp()
 	MY_UT_INT(regexp_matches_start_idx(&regexp_matches, 2), 11);
 	MY_UT_INT(regexp_matches_end_idx(&regexp_matches, 2), 14);
 	MY_UT_STR(output, "xxxxx123jklghi456yyyyy");
-	flf_dprintf("---------------------------------------------------------\n");
 }
 #endif // START_UP_TEST
 
@@ -630,6 +654,16 @@ PRIVATE char *conv_regex_pcre_to_posix(const char *regexp, char *regex_buf)
 	return regex_buf;
 }
 #endif // USE_PCRE
+
+const char *regexp_escape_special_char_s(char chr)
+{
+	inline int is_special_char(char chr)
+	{
+		return (strchr__("()[]{}", chr) != NULL);
+	}
+	// '(' ==> "\(", '<' ==> "<"
+	return sprintf_s(is_special_char(chr) ? "\\%c" : "%c", chr);
+}
 
 #endif // ENABLE_REGEX
 

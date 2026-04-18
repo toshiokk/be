@@ -57,12 +57,19 @@ PRIVATE int doe_search_first_();
 PRIVATE int input_search_str(int search0_replace1, char *input_buf);
 PRIVATE int input_replace_str(char *input_buf);
 
-void doe_search_backward_first()
+#define FIRST_ATTEMPT_0		0
+#define LAST_ATTEMPT_1		1
+PRIVATE int search_str_once(const char *needle, int attempt_count);
+PRIVATE int replace_str_loop(const char *replace_from, const char *replace_to, int *num_replaced_);
+PRIVATE int replace_str_in_buffer(search_t *search, matches_t *matches, const char *replace_to);
+PRIVATE void disp_status_bar_not_found_msg(const char *str, int attempt_count);
+
+void doe_search_first_backward()
 {
 	SET_APPMD(ed_REVERSE_SEARCH);
 	doe_search_first_();
 }
-void doe_search_forward_first()
+void doe_search_first_forward()
 {
 	CLR_APPMD(ed_REVERSE_SEARCH);
 	doe_search_first_();
@@ -74,21 +81,21 @@ PRIVATE int doe_search_first_()
 		return 0;
 	}
 	found_in_prev_search = 1;
-	if (search_string_once(needle, 0))
+	if (search_str_once(needle, FIRST_ATTEMPT_0))
 		return 1;
 	// not found in the first direction, search in the reverse direction
 	TOGGLE_APPMD(ed_REVERSE_SEARCH);
-	return search_string_once(needle, 1);
+	return search_str_once(needle, LAST_ATTEMPT_1);
 }
-void doe_search_backward_next()
+void doe_search_next_backward()
 {
 	SET_APPMD(ed_REVERSE_SEARCH);
-	search_string_once(get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH), 0);
+	search_str_once(get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH), LAST_ATTEMPT_1);
 }
-void doe_search_forward_next()
+void doe_search_next_forward()
 {
 	CLR_APPMD(ed_REVERSE_SEARCH);
-	search_string_once(get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH), 0);
+	search_str_once(get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH), LAST_ATTEMPT_1);
 }
 
 //------------------------------------------------------------------------------
@@ -117,7 +124,7 @@ void doe_replace()
 
 	memorize_cur_file_pos_into_str(prev_file_pos);
 
-	int ret = replace_string_loop(replace_from, replace_to, &num_replaced);
+	int ret = replace_str_loop(replace_from, replace_to, &num_replaced);
 
 	if (ret == ANSWER_CANCEL) {
 		// not return to original file pos
@@ -128,14 +135,15 @@ void doe_replace()
 	}
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL);
 
-	if (num_replaced >= 0)
+	if (num_replaced >= 0) {
 		disp_status_bar_done(P_(_("Replaced %d occurrence"),
 								_("Replaced %d occurrences"),
 								_("Replaced %d occurrencess"),
 								_("Replaced %d occurrencesss"),
 		 num_replaced), num_replaced);
-	else
-		disp_status_bar_not_found_msg(replace_from, 0);
+	} else {
+		disp_status_bar_not_found_msg(replace_from, FIRST_ATTEMPT_0);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -212,13 +220,13 @@ matches_t matches__;
 
 #define INNER_BUFFER_SEARCH		0
 #define INTER_BUFFER_SEARCH		1
-PRIVATE int search_needle_among_bufs_not_found_msg(
- const char *needle, int search_dir, int ignore_case, int skip_here, int search_count);
-PRIVATE int search_needle_among_bufs(be_line_t **ptr_line, int *ptr_byte_idx,
+PRIVATE int search_needle_in_bufs_not_found_msg(
+ const char *needle, int search_dir, int ignore_case, int skip_here, int attempt_count);
+PRIVATE int search_needle_in_bufs(be_line_t **ptr_line, int *ptr_byte_idx,
  const char *needle, int search_dir, int ignore_case, int skip_here, int global_search);
 
 // Search for a string
-int search_string_once(const char *needle, int search_count)
+int search_str_once(const char *needle, int attempt_count)
 {
 	const char *last_needle = get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH);
 
@@ -226,15 +234,15 @@ int search_string_once(const char *needle, int search_count)
 	if (found_in_prev_search == 0 && direction_of_prev_search == SEARCH_DIR()
 	 && line_of_prev_search == EPCBVC_CL && byte_idx_of_prev_search == EPCBVC_CLBI
 	 && (strcmp(last_needle, needle) == 0)) {
-		disp_status_bar_not_found_msg(needle, search_count);
+		disp_status_bar_not_found_msg(needle, attempt_count);
 		return 0;
 	}
 
-	int match_len = search_needle_among_bufs_not_found_msg(needle,
-	 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), SKIP_HERE, search_count);
+	int match_len = search_needle_in_bufs_not_found_msg(needle,
+	 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), SKIP_HERE, attempt_count);
 
 	if (match_len > 0) {
-		if (search_count == 0) {
+		if (attempt_count == 0) {
 			// first time
 			if (GET_APPMD(ed_REVERSE_SEARCH)) {
 				post_cmd_processing(NULL, CURS_MOVE_JUMP, LOCATE_CURS_JUMP_BACKWARD,
@@ -261,7 +269,7 @@ int search_string_once(const char *needle, int search_count)
 }
 
 //------------------------------------------------------------------------------
-int replace_string_loop(const char *needle, const char *replace_to, int *num_replaced_)
+int replace_str_loop(const char *needle, const char *replace_to, int *num_replaced_)
 {
 	int num_replaced = 0;
 #ifdef ENABLE_UNDO
@@ -281,8 +289,8 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			skip_here = NO_SKIP_HERE;
 		}
 
-		int match_len = search_needle_among_bufs_not_found_msg(needle,
-		 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), skip_here, 0);
+		int match_len = search_needle_in_bufs_not_found_msg(needle,
+		 SEARCH_DIR(), GET_APPMD(ed_IGNORE_CASE), skip_here, LAST_ATTEMPT_1);
 
 		if (match_len) {
 			// found
@@ -291,10 +299,12 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			update_screen_editor(S_B_CURS, 1);
 			if (ret < ANSWER_ALL) {
 #ifdef ENABLE_UNDO
-				ret = ask_yes_no(ASK_YES_NO | ASK_ALL_YES | ASK_BACKWARD | ASK_FORWARD | ASK_END
+				ret = ask_yes_no(ASK_YES_NO_QUIT | ASK_ALL_YES | ASK_END
+				 | ASK_BACKWARD | ASK_FORWARD
 				 | (num_replaced ? ASK_UNDO : 0) | (num_undone ? ASK_REDO : 0),
 #else // ENABLE_UNDO
-				ret = ask_yes_no(ASK_YES_NO | ASK_ALL_YES | ASK_BACKWARD | ASK_FORWARD | ASK_END,
+				ret = ask_yes_no(ASK_YES_NO_QUIT | ASK_ALL_YES | ASK_END
+				 | ASK_BACKWARD | ASK_FORWARD,
 #endif // ENABLE_UNDO
 				 _("Replace from [%s] to [%s] ?"), needle, replace_to);
 			} else {
@@ -314,10 +324,10 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 			update_screen_editor(S_B_CURS, 1);
 			// not found message has been displayed
 #ifdef ENABLE_UNDO
-			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_FORWARD | ASK_END
+			ret = ask_yes_no(ASK_NO_QUIT | ASK_END | ASK_BACKWARD | ASK_FORWARD
 			 | (num_replaced ? ASK_UNDO : 0) | (num_undone ? ASK_REDO : 0),
 #else // ENABLE_UNDO
-			ret = ask_yes_no(ASK_NO | ASK_BACKWARD | ASK_FORWARD | ASK_END,
+			ret = ask_yes_no(ASK_NO_QUIT | ASK_END | ASK_BACKWARD | ASK_FORWARD,
 #endif // ENABLE_UNDO
 			 _("Keyword [%s] NOT found in %s search"), needle,
 			 (SEARCH_DIR() < 0) ? _("Backward") : _("Forward"));
@@ -350,7 +360,7 @@ int replace_string_loop(const char *needle, const char *replace_to, int *num_rep
 #ifdef ENABLE_UNDO
 				undo_save_after_change();
 #ifdef ENABLE_DEBUG
-				if (check_undo_state_after_change()) { _WARNING_ }
+				if (check_undo_state_after_change()) { progerr_printf("\n"); }
 #endif // ENABLE_DEBUG
 #endif // ENABLE_UNDO
 				// Set the cursor at the last character of the replacement
@@ -422,79 +432,78 @@ int replace_str_in_buffer(search_t *search, matches_t *matches, const char *repl
 //------------------------------------------------------------------------------
 
 #ifdef ENABLE_REGEX
-PRIVATE int _doe_find_bracket(int search1_hilight0, int reverse_pair);
+PRIVATE int _doe_find_bracket(int single1_multi2, int rev_pairing, int jump);
+PRIVATE void get_color_for_bracket_hl_by_idx(int color_idx, char *bgc, char *fgc);
 
-// [test string for bracket search]--------------------------------------------
-// 12345678901234567890123456789012345678901234567890
-// {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
-//  }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
-//  {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
-// }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
-// (((((((((((((((((((((((((((((((((((((((((((((((((((
-//  ))))))))))))))))))))))))))))))))))))))))))))))))))
-//  ((((((((((((((((((((((((((((((((((((((((((((((((((
-// )))))))))))))))))))))))))))))))))))))))))))))))))))
-// {{}}} <<>>> {{{}} <<<>>
-// }}{{{ }}}{{ >><<< >>><<
+#define BRAC_SRCH_SINGLE1	1	// jump '{' ==> '}'
+#define BRAC_SRCH_MULTI2	2	// jump "{{{{" ==> "}}}}"
+#define NORMAL_PAIRING		FORWARD_DIR		// { }
+#define REVERSE_PAIRING		BACKWARD_DIR	// } {
+
 void doe_find_bracket()
 {
-	_doe_find_bracket(1, FORWARD_SEARCH);
+	_doe_find_bracket(BRAC_SRCH_SINGLE1, NORMAL_PAIRING, 1);
 }
 void doe_find_bracket_reverse()
 {
-	_doe_find_bracket(1, BACKWARD_SEARCH);
+	_doe_find_bracket(BRAC_SRCH_SINGLE1, REVERSE_PAIRING, 1);
 }
-void doe_highlight_bracket()
+void doe_find_brackets()
 {
-	_doe_find_bracket(0, FORWARD_DIR);
+	_doe_find_bracket(BRAC_SRCH_MULTI2, NORMAL_PAIRING, 1);
 }
-void doe_highlight_bracket_reverse()
+void doe_find_brackets_reverse()
 {
-	_doe_find_bracket(0, BACKWARD_DIR);
+	_doe_find_bracket(BRAC_SRCH_MULTI2, REVERSE_PAIRING, 1);
 }
-PRIVATE int _doe_find_bracket(int search1_hilight0, int reverse_pair)
+PRIVATE int _doe_find_bracket(int single1_multi2, int rev_pairing, int jump)
 {
-	char char_under_cursor;
-	char needle[BRACKET_SEARCH_REGEXP_STR_LEN+1];
-	int search_dir;			// search direction (FORWARD_SEARCH / BACKWARD_SEARCH)
-	be_line_t *line;
-	int byte_idx;
-	int depth;
-	int skip_here;
-	int safe_cnt = 0;
+	search_clear(&search__);
 
-	char_under_cursor = *EPCBVC_CL_EPCBVC_CLBI;
-	search_dir = setup_bracket_search(char_under_cursor, reverse_pair, needle);
+	// 1. setup bracket search =========
+	char needle[BRACKET_SEARCH_REGEXP_STR_LEN+1];
+	// search direction (FORWARD_SEARCH / BACKWARD_SEARCH)
+	int search_dir = setup_bracket_search(single1_multi2, EPCBVC_CL_DATA, EPCBVC_CLBI,
+	 rev_pairing, needle);
 	if (search_dir == 0) {
 		disp_status_bar_err(_("Not a bracket"));
 		return 1;
 	}
-	search__.direction = reverse_pair;
+	search_set_mode(&search__, single1_multi2, search_dir, 0);
+	search_set_needle(&search__, needle);
+
+	// 2. jump to the peer bracket =========
 	SET_APPMD(ed_USE_REGEXP);
 
 	set_item_color_by_idx(ITEM_COLOR_IDX_STATUS, 0);
 	blank_status_bar();
 
-	line = EPCBVC_CL;
-	byte_idx = EPCBVC_CLBI;
+	be_line_t *line = EPCBVC_CL;
+	int byte_idx = EPCBVC_CLBI;
 
 	memorize_cursor_pos_before_move();
 
-	skip_here = 0;
-	int match_len;
-	for (match_len = 0, depth = 0, safe_cnt = 0; safe_cnt < MAX_BRACKETS_SEARCH; safe_cnt++) {
-		match_len = search_bracket_within_buffer(&line, &byte_idx,
-		 char_under_cursor, needle, search_dir, skip_here, FORWARD_DIR, &depth, NULL);
+	int skip_chars = 0;
+	int match_len = 0;
+	int depth = 0;
+	int safe_cnt = 0;
+_HMFLF_
+	char char_under_cursor = *EPCBVC_CL_EPCBVC_CLBI;
+	for ( ; safe_cnt < MAX_BRACKETS_SEARCH; safe_cnt++) {
+		match_len = search_bracket_within_buffer(&line, &byte_idx, char_under_cursor,
+		 needle, search_dir, skip_chars, FORWARD_DIR, &depth, NULL);
 		// repeat until the counterpart bracket found
 		if ((depth <= 0) || (MAX_BRACKET_NESTINGS <= depth) || (match_len == 0)) {
 			// counterpart bracket found, nesting too deep or no bracket found
 			break;
 		}
-		skip_here = 1;
+		skip_chars = match_len;
 	}
+_HMFLF_
 	if ((match_len > 0) && (depth == 0)) {
 		// found peer bracket
 		disp_status_bar_done(_("Counterpart bracket found"));
+		modify_history_w_reloading(HISTORY_TYPE_IDX_SEARCH, needle);
 	} else if (depth < MAX_BRACKET_NESTINGS) {
 		// didn't find peer bracket
 		if (safe_cnt < MAX_BRACKETS_SEARCH) {
@@ -508,9 +517,11 @@ PRIVATE int _doe_find_bracket(int search1_hilight0, int reverse_pair)
 	}
 	if (depth == 0) {
 		// found peer bracket
-		if (search1_hilight0) {
+		if (jump) {
 			EPCBVC_CL = line;
 			EPCBVC_CLBI = byte_idx;
+			// cursor jumped to the peer bracket and the search direction needs reversed
+			search_set_mode(&search__, single1_multi2, - search_dir, 0);
 		}
 		if (search_dir < 0) {
 			post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_JUMP_BACKWARD,
@@ -523,61 +534,85 @@ PRIVATE int _doe_find_bracket(int search1_hilight0, int reverse_pair)
 	return 0;
 }
 
-int setup_bracket_search(char char_under_cursor, int reverse_pair, char *needle)
+// 1 character            : '{' or '}"   ==> "[\{\}]"
+// more than 2 characters : '{{' or '}}' ==> "(\{\{|\}\})"
+
+// [test string for bracket search]
+// 12345678901234567890123456789012345678901234567890
+// {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
+//  }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+//  {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
+// }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+// (((((((((((((((((((((((((((((((((((((((((((((((((((
+//  ))))))))))))))))))))))))))))))))))))))))))))))))))
+//  ((((((((((((((((((((((((((((((((((((((((((((((((((
+// )))))))))))))))))))))))))))))))))))))))))))))))))))
+// {{}}} <<>>> {{{}} <<<>>
+// }}{{{ }}}{{ >><<< >>><<
+// {{{{ {{{ {{ { } << > { } }} }}} }}}} < >>
+// }}{{{ }}}{{ >><<< >>><<
+// ＜＞｛｝（）［］    「」
+// (([[{{<< >>}}]]))
+
+int setup_bracket_search(int single1_multi2, char *str, int off, int rev_pairing, char *needle)
 {
-	const char *brackets = "([{<>}])";
+	const char *counterparts = "([{<>}])";
 	const char *ptr;
-	char char_counterpart;
-	char regexp_str[] = "[xy]";
-	int offset;
+	const char regexp_templ_str[] = "(%s|%s)";	// "(\{\{|\}\})" or "(<<|>>)"
+
+	char char_under_cursor = str[off];
+	if ((ptr = strchr__(counterparts, char_under_cursor)) == NULL) {
+		return 0;			// not a bracket
+	}
+	int offset = ptr - counterparts;
+	char char_counterpart = counterparts[strlen(counterparts) - (offset + 1)];
+
+	char buf1[BRACKET_SEARCH_REGEXP_STR_LEN + 1] = "";
+	char buf2[BRACKET_SEARCH_REGEXP_STR_LEN + 1] = "";
+	int max_chars = 1;
+	if (single1_multi2 >= 2) {
+		max_chars = MAX_NUM_OF_BRACKET_CHAR;
+	}
+	int chars = 0;
+	for ( ; chars < max_chars; chars++) {
+		if (str[off + chars] != char_under_cursor) {
+			break;
+		}
+	}
+	for (int chrs = 0; chrs < chars; chrs++) {
+		strlcat__(buf1, BRACKET_SEARCH_REGEXP_STR_LEN,
+		 regexp_escape_special_char_s(char_under_cursor));
+	}
+	for (int chrs = 0; chrs < chars; chrs++) {
+		strlcat__(buf2, BRACKET_SEARCH_REGEXP_STR_LEN,
+		 regexp_escape_special_char_s(char_counterpart));
+	}
+	snprintf_(needle, BRACKET_SEARCH_REGEXP_STR_LEN+1, regexp_templ_str, buf1, buf2);
+/////
+flf_dprintf("needle: [%s]\n", needle);
 	int search_dir;			// search direction (FORWARD_SEARCH / BACKWARD_SEARCH)
-
-	if ((ptr = strchr__(brackets, char_under_cursor)) == NULL) {
-		return 0;
-	}
-	offset = ptr - brackets;
-	char_counterpart = brackets[strlen(brackets) - (offset + 1)];
-
-	// apparent near redundancy with regexp_str[] here is needed,
-	// "[][]" works, "[[]]" doesn't
-	if (offset < (strlen(brackets) / 2)) {	// on a left bracket
-		regexp_str[1] = char_counterpart;	// ']'
-		regexp_str[2] = char_under_cursor;	// '['
-		if (reverse_pair >= 0) {
-			// (0)
-			// ^
-			search_dir = FORWARD_SEARCH;	// forward
-		} else {
-			// )0(
-			//   ^
-			search_dir = BACKWARD_SEARCH;	// backward
+	if (offset < (strlen(counterparts) / 2)) {	// char_under_cursor is one of left brackets "([<{"
+		if (rev_pairing > 0) {
+			search_dir = FORWARD_SEARCH;		// forward
+		} else {								// on a right bracket
+			search_dir = BACKWARD_SEARCH;		// backward
 		}
-	} else {								// on a right bracket
-		regexp_str[1] = char_under_cursor;	// ']'
-		regexp_str[2] = char_counterpart;	// '['
-		if (reverse_pair >= 0) {
-			// (0)
-			//   ^
-			search_dir = BACKWARD_SEARCH;	// backward
-		} else {
-			// )0(
-			// ^
-			search_dir = FORWARD_SEARCH;	// forward
+	} else {									// on a right bracket
+		if (rev_pairing > 0) {
+			search_dir = BACKWARD_SEARCH;		// backward
+		} else {								// on a right bracket
+			search_dir = FORWARD_SEARCH;		// forward
 		}
-	}
-
-	if (needle) {
-		strlcpy__(needle, regexp_str, BRACKET_SEARCH_REGEXP_STR_LEN);
 	}
 	return search_dir;
 }
 
-int search_bracket_within_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
- char char_under_cursor, const char *needle, int search_dir, int skip_here, char depth_increase,
+int search_bracket_within_buffer(be_line_t **ptr_line, int *ptr_byte_idx, char char_under_cursor,
+ const char *needle, int search_dir, int skip_chars, char depth_increase,
  int *ptr_depth, int *prev_depth)
 {
-	int match_len = search_needle_among_bufs(ptr_line, ptr_byte_idx,
-	 needle, search_dir, CASE_SENSITIVE, skip_here, INNER_BUFFER_SEARCH);
+	int match_len = search_needle_in_bufs(ptr_line, ptr_byte_idx,
+	 needle, search_dir, CASE_SENSITIVE, skip_chars, INNER_BUFFER_SEARCH);
 	if (match_len > 0) {
 		// found bracket
 		if ((*ptr_line)->data[*ptr_byte_idx] == char_under_cursor) {
@@ -599,12 +634,12 @@ int search_bracket_within_buffer(be_line_t **ptr_line, int *ptr_byte_idx,
 
 // color management for bracket highlighting
 #define COLORS_FOR_BRACKET_HL	((COLORS8)+1)	// color pairs for bracket highlighting
-PRIVATE int num_colors_for_bracket_hl = 0;	// [0, COLORS_FOR_BRACKET_HL]
+PRIVATE int colors_for_bracket_hl_prepared = 0;		// COLORS_FOR_BRACKET_HL
 PRIVATE item_color_t colors_for_bracket_hl[COLORS_FOR_BRACKET_HL];
 
 void prepare_colors_for_bracket_hl()
 {
-	if (num_colors_for_bracket_hl) {
+	if (colors_for_bracket_hl_prepared) {
 		// already prepared
 		return;
 	}
@@ -619,36 +654,37 @@ void prepare_colors_for_bracket_hl()
 	colors_for_bracket_hl[color_idx].fgc = fgc_sel;
 	color_idx++;
 	for (fgc = fgc_sel+1; color_idx < COLORS_FOR_BRACKET_HL; fgc++) {
-		fgc = CL_HI | (fgc % COLORS8);
+		fgc = CL_HI | (fgc % COLORS8);		// use hi color for foreground
 		if (fgc != (bgc_sel2 % COLORS8)) {	// Because there is no light color in BGC
 			colors_for_bracket_hl[color_idx].bgc = bgc_sel2;
 			colors_for_bracket_hl[color_idx].fgc = fgc;
 			color_idx++;
 		}
 	}
-	num_colors_for_bracket_hl = color_idx;
+	colors_for_bracket_hl_prepared = 1;
 }
 int get_colors_for_bracket_hl()
 {
-	prepare_colors_for_bracket_hl();
-	return num_colors_for_bracket_hl;
+	return COLORS_FOR_BRACKET_HL;
 }
-// depth_increase > 0, depth_0_occurances < 2
-//   *               *
-//   0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 ...
-//   <-------------> <-------------> <------------->
-//
-// depth_increase > 0, depth_0_occurances >= 2
-//   8 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 ...
-//   <-------------> <-------------> <------------->
-//
-// depth_increase > 0
-//   8 7 6 5 4 3 2 1 8 7 6 5 4 3 2 1 8 7 6 5 4 3 2 1 ...
-//   <-------------> <-------------> <------------->
+
+//             color index ------------------------
+// Example-1: searching to forward direction
+//  depth      0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 ...
+//  color_idx  0  1  2  3  4  5  6  7  0  1  2  3  4  5  6  7  8  1  2  3  4
+// Example-2:
+//  depth      0 -1 -2 -3 -4 -5 -6 -7 -8 -9-10 ...
+//  color_idx  0  7  6  5  4  3  2  1  8  7  6 ...
+// Example-3: searching to backward direction
+//  depth      0 -1  0  1  2  3 ...
+//  color_idx  0  7  8  1  2  3 ...
+
 int get_color_idx_for_bracket_hl(char depth_increase, UINT8 *depth_0_occurances, int depth)
 {
-	int num_colors_m1 = get_colors_for_bracket_hl() - 1;	// 8
-	int color_idx = depth % num_colors_m1;	// [-8, 8-1]
+	prepare_colors_for_bracket_hl();
+
+	int num_colors_m1 = get_colors_for_bracket_hl() - 1;	// 8 = 9 - 1
+	int color_idx = depth % num_colors_m1;	// [-(8-1), 8-1]
 	color_idx += num_colors_m1;				// [0, 8*2-1]
 	color_idx %= num_colors_m1;				// [0, 8-1]
 	if ((depth_increase < 0) || (*depth_0_occurances >= 2)) {
@@ -687,12 +723,15 @@ void get_color_for_bracket_hl_by_idx(int color_idx, char *bgc, char *fgc)
 
 //------------------------------------------------------------------------------
 
-PRIVATE int search_needle_among_bufs_not_found_msg(
- const char *needle, int search_dir, int ignore_case, int skip_here, int search_count)
+PRIVATE int search_needle_in_bufs_not_found_msg(
+ const char *needle, int search_dir, int ignore_case, int skip_here, int attempt_count)
 {
 	disp_status_bar_ing(_("Searching word: [%s]..."), needle);
 
-	int match_len = search_needle_among_bufs(&(EPCBVC_CL), &(EPCBVC_CLBI),
+	search_set_mode(&search__, 0, search_dir, ignore_case);
+	search_set_needle(&search__, needle);
+
+	int match_len = search_needle_in_bufs(&(EPCBVC_CL), &(EPCBVC_CLBI),
 	 needle, search_dir, ignore_case, skip_here, INTER_BUFFER_SEARCH);
 
 	if (match_len > 0) {
@@ -700,7 +739,7 @@ PRIVATE int search_needle_among_bufs_not_found_msg(
 		return match_len;
 	}
 	tio_beep();
-	disp_status_bar_not_found_msg(needle, search_count);
+	disp_status_bar_not_found_msg(needle, attempt_count);
 	return 0;
 }
 
@@ -710,8 +749,8 @@ PRIVATE int search_needle_among_bufs_not_found_msg(
 // search keyword in buffer (when global_search is false) or buffers (when true).
 // when keyword not found, return to original cursor position.
 // WARNING: When "global_search" is true, epc_buf may be changed.
-PRIVATE int search_needle_among_bufs(be_line_t **ptr_line, int *ptr_byte_idx,
- const char *needle, int search_dir, int ignore_case, int skip_here, int global_search)
+PRIVATE int search_needle_in_bufs(be_line_t **ptr_line, int *ptr_byte_idx,
+ const char *needle, int search_dir, int ignore_case, int skip_chars, int global_search)
 {
 	be_line_t *line;
 	int byte_idx;
@@ -726,8 +765,9 @@ PRIVATE int search_needle_among_bufs(be_line_t **ptr_line, int *ptr_byte_idx,
 
 	if (search_dir <= BACKWARD_SEARCH) {
 		// search backward -----------------------------------------------------
+		int end_of_buf = 0;
 		for ( ; ; ) {
-			if (skip_here) {
+			for (int skipped_chars = 0 ; skipped_chars < skip_chars; skipped_chars++) {
 				// move cur-pos left at least one char
 				// if cur-pos is left most, move cur-pos up at least one line
 				if (byte_idx > 0) {
@@ -742,9 +782,14 @@ PRIVATE int search_needle_among_bufs(be_line_t **ptr_line, int *ptr_byte_idx,
 					ptr_byte_idx = &(EPCBVC_CLBI);
 					line = CUR_EDIT_BUF_BOT_LINE;
 					byte_idx = line_strlen(line);
+					break;
 				} else {
+					end_of_buf = 1;
 					break;
 				}
+			}
+			if (end_of_buf) {
+				break;
 			}
 			// look for needle backward in haystack
 			if ((match_len = search_str_in_line(&search__, &matches__,
@@ -753,12 +798,13 @@ PRIVATE int search_needle_among_bufs(be_line_t **ptr_line, int *ptr_byte_idx,
 				break;
 			}
 			byte_idx = 0;
-			skip_here = 1;
+			skip_chars = 1;
 		}
 	} else {
 		// search forward ------------------------------------------------------
+		int end_of_buf = 0;
 		for ( ; ; ) {
-			if (skip_here) {
+			for (int skipped_chars = 0 ; skipped_chars < skip_chars; skipped_chars++) {
 				// move cur-pos right at least one char
 				// if cur-pos is right most, move cur-pos down at least one line
 				if (byte_idx < line_strlen(line)) {
@@ -773,9 +819,14 @@ PRIVATE int search_needle_among_bufs(be_line_t **ptr_line, int *ptr_byte_idx,
 					ptr_byte_idx = &(EPCBVC_CLBI);
 					line = CUR_EDIT_BUF_TOP_LINE;
 					byte_idx = 0;
+					break;
 				} else {
+					end_of_buf = 1;
 					break;
 				}
+			}
+			if (end_of_buf) {
+				break;
 			}
 			// look for needle forward in haystack
 			if ((match_len = search_str_in_line(&search__, &matches__,
@@ -784,7 +835,7 @@ PRIVATE int search_needle_among_bufs(be_line_t **ptr_line, int *ptr_byte_idx,
 				break;
 			}
 			byte_idx = line_strlen(line);
-			skip_here = 1;
+			skip_chars = 1;
 		}
 	}
 
@@ -799,13 +850,13 @@ PRIVATE int search_needle_among_bufs(be_line_t **ptr_line, int *ptr_byte_idx,
 	return match_len;
 }
 
-// search_count = 0: first uni-directional search
-// search_count = 1: second uni-directional search (bi-directional search done)
-void disp_status_bar_not_found_msg(const char *str, int search_count)
+// attempt_count = 0: first uni-directional search
+// attempt_count = 1: second uni-directional search (bi-directional search done)
+void disp_status_bar_not_found_msg(const char *str, int attempt_count)
 {
-	disp_status_bar_warn(_("Keyword [%s] NOT found in %s search"),
-	 shrink_str_to_scr_static(str), (search_count == 0)
-	  ? ((SEARCH_DIR() < 0) ? _("Backward") : _("Forward")) : _("Bi-directional"));
+	disp_status_bar_type((attempt_count == FIRST_ATTEMPT_0) ? S_B_WARN : S_B_ERR,
+	 _("Keyword [%s] NOT found in %s search"),
+	 shrink_str_to_scr_static(str), (SEARCH_DIR() < 0) ? _("Backward") : _("Forward"));
 	set_edit_win_update_needed(UPDATE_SCRN_ALL);
 }
 

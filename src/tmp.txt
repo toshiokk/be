@@ -1,0 +1,82 @@
+[768;1536H[6n[768;1536H[6n[768;1536H[6nc[?25l[0m[43m[37m[1m[1;1H1:/home/user/tools/be/be/src/                                   0/279 n 25/09/13[0m[40m[37m[1m[2;1H ../                                                         12288 250730-221506[0m[47m[30m[3;1H ABOUT-NLS -> /usr/share/gettext/ABOUT-NLS                      28 250201-091649[4;1H config.rpath -> /usr/share/gettext/config.rpath*               31 250201-091649[5;1H autom4te.cache/                                              4096 250912-201436[6;1H po/                                                          4096 250913-084037[7;1H __be.bep                                                     6851 250912-201042[8;1H __be.doxygen                                               106230 250201-091649[9;1H __be_test*                                                    731 250704-175446[10;1H __be_test.log                                               16302 250913-114250[11;1H __be_test.log~                                              15526 250913-114202[12;1H __be_test.log~~                                             23705 250913-113807[13;1H __be_test.log~~~                                            17723 250913-113724[14;1H __be_test.log~~~~                                           16588 250913-113628[15;1H __be_test.log~~~~~                                          12529 250913-113506[16;1H __be_test.log~~~~~~                                         11253 250913-000611[17;1H __be_test.log~~~~~~~                                        13551 250912-235520[18;1H __be_test.log~~~~~~~~                                          20 250912-235117[19;1H __be_test.log~~~~~~~~~                                         20 250912-235033[20;1H __be_test.log~~~~~~~~~~                                     34118 250912-201025[21;1H __edit_be.sh*                                                1262 250201-091649[22;1H __error                                                       126 250913-124345[23;1H __error~                                                     7776 250913-114149[24;1H __error~~                                                     808 250913-113742[0m[47m[33m[25;1H [0m[43m[37m[1m[25;2H../  [@t-koike-note|/dev/pts/7]                             12288 250730-221506[2;2H[?25h[?25l[0m[43m[33m[1m[25;1HC[0m[43m[33m[1m[25;2HWD: /home/user/tools/be/be/src/  |   ../  [@t-koike-note|/dev/pts/7]           [2;2H[?25h[?25l[0m[46m[34m[13;1H Execute({} will be replaced with file-name):                                   [14;1H [0m[47m[30m[14;2H                 [14;62H     [14;68H            [0m[46m[34m[14;80H [15;1H UP/PGUP:history, DOWN/PGDN:filer                                               [14;2H[?25h[?25l[0m[47m[30m[14;2Hl[14;3H[?25h[?25l[14;3Hs[14;4H[?25h[?25l[13;1H __be_test.log~~~                                            17723 250913-113724[14;1H __be_test.log~~~~[14;62H16588[14;68H250913-113628[15;1H __be_test.log~~~~~                                          12529 250913-113506[0m[47m[33m[25;1H [0m[43m[37m[1m[25;2H../  [@t-koike-note|/dev/pts/7]                             12288 250730-221506[2;2H[?25h[0mc
+BE_EDITOR{{{{
+
+BE_EDITOR}}}}
+
+</home/user/tools/be/be/src/>
+$ ls
+ABOUT-NLS			_mv_libs		  editorcut2.c	 main.c~
+AUTHORS				_proc_one		  editorcut2.h	 main.c~~
+BE-FunctionKey.ods		_rm_i18n		  editorcut2.o	 main.h
+BE-FunctionKey.xls		_run_autotools		  editorfile.c	 main.o
+COPYING				_run_autotools_configure  editorfile.h	 menu.c
+ChangeLog			_sdiff.txt		  editorfile.o	 menu.h
+INSTALL				_sdiff_old		  editorgoto.c	 menu.o
+Makefile			_sed.scr		  editorgoto.h	 missing
+Makefile.am			_sed_all		  editorgoto.o	 mkinstalldirs
+Makefile.in			_sed_ch			  editorkeys.c	 myutf8.c
+NEWS				_sed_ch_scr		  editorkeys.h	 myutf8.h
+README				_sort_two_test_logs	  editorkeys.o	 myutf8.o
+README.md			_symlink_libgcc_s.sh	  editormove.c	 po
+README.md~			_xi18n			  editormove.h	 rcfile.c
+README.md~~			aclocal.m4		  editormove.o	 rcfile.h
+README.sh			appdefs.h		  editormove2.c  rcfile.o
+__be.bep			applvl.h		  editormove2.h  regexp.c
+__be.doxygen			applvl.h0		  editormove2.o  regexp.h
+__be_test			applvl.h~		  editorundo.c	 regexp.o
+__be_test.log			appmode.c		  editorundo.h	 search.c
+__be_test.log~			appmode.h		  editorundo.o	 search.h
+__be_test.log~~			appmode.o		  fileio.c	 search.o
+__be_test.log~~~		autom4te.cache		  fileio.h	 sig.c
+__be_test.log~~~~		be			  fileio.o	 sig.h
+__be_test.log~~~~~		be.dep			  filer.c	 sig.o
+__be_test.log~~~~~~		be.texi			  filer.h	 stamp-h1
+__be_test.log~~~~~~~		berc			  filer.o	 stdincs.h
+__be_test.log~~~~~~~~		buffer.c		  filercmd.c	 termif.c
+__be_test.log~~~~~~~~~		buffer.h		  filercmd.c~	 termif.h
+__be_test.log~~~~~~~~~~		buffer.o		  filercmd.h	 termif.o
+__edit_be.sh			buffers.c		  filercmd.h~	 termifkey.c
+__error				buffers.h		  filercmd.o	 termifkey.h
+__error~			buffers.o		  filerdir.c	 termifkey.o
+__error~~			color.c			  filerdir.c~	 texinfo.tex
+__m				color.h			  filerdir.h	 tio.c
+__ma				color.o			  filerdir.h~	 tio.c~
+__mi				compile			  filerdir.o	 tio.c~~
+__set_app_rel_lvl.sh		config.guess		  filerkeys.c	 tio.c~~~
+__todo.txt			config.h		  filerkeys.h	 tio.c~~~~
+_ac				config.h.in		  filerkeys.o	 tio.c~~~~~
+_acm				config.log		  filerlist.c	 tio.c~~~~~~
+_autotools			config.rpath		  filerlist.h	 tio.h
+_be_loop			config.status		  filerlist.o	 tio.h~
+_c_debug			config.sub		  filerrun.c	 tio.o
+_c_disable_all			configure		  filerrun.c~	 tmp.txt
+_c_disable_nkf			configure.ac		  filerrun.h	 utf8.c
+_c_enable_ncurses		configure.scan		  filerrun.o	 utf8.h
+_c_enable_pcre_debug		configure_make_install	  github.css	 utf8.o
+_c_release			cursesif.c		  headers.h	 utilfile.c
+_cm				cursesif.h		  help.c	 utilfile.h
+_cmi				cursesif.o		  help.h	 utilfile.o
+_conf.log			debug.c			  help.o	 utilincs.h
+_conf_make_all_patterns		debug.h			  history.c	 utilpath.c
+_conf_make_all_patterns.latest	debug.o			  history.h	 utilpath.c1
+_conf_make_all_patterns.log	depcomp-		  history.o	 utilpath.h
+_cp_be_scripts			disp.c			  index.html	 utilpath.o
+_cp_berc			disp.h			  install-sh	 utils.c
+_cppcheck			disp.o			  keymacro.c	 utils.h
+_cppcheck.inc			editor.c		  keymacro.h	 utils.o
+_dif_all_last			editor.h		  keymacro.o	 utilstr.c
+_diff.txt			editor.o		  keys.c	 utilstr.h
+_diff_bak			editor2.c		  keys.h	 utilstr.o
+_diff_from_old			editor2.h		  keys.o	 winin.c
+_diff_old			editor2.o		  line.c	 winin.h
+_distclean			editor3.c		  line.h	 winin.o
+_doxygen			editor3.h		  line.o	 winout.c
+_gen_bep			editor3.o		  linewrap.c	 winout.h
+_investigate_key_seq		editorcut.c		  linewrap.h	 winout.o
+_make_dep			editorcut.h		  linewrap.o
+_move-semantics.md		editorcut.o		  main.c
+======== Hit any key to return to BE ======== [768;1536H[6n[768;1536H[6n[768;1536H[6nc[?25l[1;1H                                                                                [2;1H                                                                                [3;1H                                                                                [4;1H                                                                                [5;1H                                                                                [6;1H                                                                                [7;1H                                                                                [8;1H                                                                                [9;1H                                                                                [10;1H                                                                                [11;1H                                                                                [12;1H                                                                                [13;1H                                                                                [14;1H                                                                                [15;1H                                                                                [16;1H                                                                                [17;1H                                                                                [18;1H                                                                                [19;1H                                                                                [20;1H                                                                                [21;1H                                                                                [22;1H                                                                                [23;1H                                                                                [24;1H                                                                                [25;1H                                                                                [?25h[?25l[0m[43m[37m[1m[1;1H1:/home/user/tools/be/be/src/                                   0/279 n 25/09/13[0m[40m[37m[1m[2;1H ../                                                         12288 250730-221506[0m[47m[30m[3;1H ABOUT-NLS -> /usr/share/gettext/ABOUT-NLS                      28 250201-091649[4;1H config.rpath -> /usr/share/gettext/config.rpath*               31 250201-091649[5;1H autom4te.cache/                                              4096 250912-201436[6;1H po/                                                          4096 250913-084037[7;1H __be.bep                                                     6851 250912-201042[8;1H __be.doxygen                                               106230 250201-091649[9;1H __be_test*                                                    731 250704-175446[10;1H __be_test.log                                               16302 250913-114250[11;1H __be_test.log~                                              15526 250913-114202[12;1H __be_test.log~~                                             23705 250913-113807[13;1H __be_test.log~~~                                            17723 250913-113724[14;1H __be_test.log~~~~                                           16588 250913-113628[15;1H __be_test.log~~~~~                                          12529 250913-113506[16;1H __be_test.log~~~~~~                                         11253 250913-000611[17;1H __be_test.log~~~~~~~                                        13551 250912-235520[18;1H __be_test.log~~~~~~~~                                          20 250912-235117[19;1H __be_test.log~~~~~~~~~                                         20 250912-235033[20;1H __be_test.log~~~~~~~~~~                                     34118 250912-201025[21;1H __edit_be.sh*                                                1262 250201-091649[22;1H __error                                                       126 250913-124345[23;1H __error~                                                     7776 250913-114149[24;1H __error~~                                                     808 250913-113742[0m[43m[33m[1m[25;1HC[0m[43m[33m[1m[25;2HWD: /home/user/tools/be/be/src/  |   ../  [@t-koike-note|/dev/pts/7]           [2;2H[?25h[?25l[0m[43m[37m[1m[1;26H    [1;65H 6/10[0m[47m[30m[2;1H ../                                                          4096 250912-200043[3;2Hdemo/    [3;12H  [3;15H                            [3;63H4096[3;71H730[3;75H220730[4;2Hd[4;4Hc/        [4;15H  [4;18H                                [4;63H4096[4;71H730[4;75H215901[5;2Hinstall/       [5;71H730[5;76H2[5;78H1[5;80H1[6;2Hkeycodes/[6;71H227[6;76H71506[7;2Hscripts/[7;63H4096[7;75H195905[0m[40m[37m[1m[8;1H src/                                                        12288 250913-124353[0m[47m[30m[9;2Htestfiles/[9;63H4096[9;71H819[9;75H093728[10;3Harc*        [10;62H  160[10;71H6[10;73H1[10;76H8[10;78H544[11;3Hbackup_[11;11Ho_[11;14Hld*[11;62H  167[11;71H6[11;73H1[11;75H220[11;79H18[12;2H               [12;62H     [12;68H             [13;2H                [13;62H     [13;68H             [14;2H                 [14;62H     [14;68H             [15;2H                  [15;62H     [15;68H             [16;2H                   [16;62H     [16;68H             [17;2H                    [17;62H     [17;68H             [18;2H                     [18;65H  [18;68H             [19;2H                      [19;65H  [19;68H             [20;2H                       [20;62H     [20;68H             [21;2H             [21;63H    [21;68H             [22;2H       [22;64H   [22;68H             [23;2H        [23;63H    [23;68H             [24;2H         [24;64H   [24;68H             [0m[43m[37m[1m[25;1HChdir to [/home/user/tools/be/be/]  |   src/   [0m[47m[33m[25;48H [0m[43m[37m[1m[25;49H                                [8;2H[?25h[0mc
+
+BE_EDITOR{{{{
+
+BE_EDITOR}}}}

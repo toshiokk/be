@@ -1,5 +1,5 @@
 /**************************************************************************
- *   buffer1.c                                                             *
+ *   buffer1.c                                                            *
  *                                                                        *
  *   Copyright (C) 1999-2003 Chris Allegretta                             *
  *                                                                        *
@@ -265,6 +265,23 @@ void buf_free_lines(be_buf_t *buf)
 	for (be_line_t *line = NODES_TOP_NODE(buf); IS_NODE_INT(line); ) {
 		line = line_unlink_free(line);
 	}
+	buf_set_cur_line(buf, NODES_BOT_ANCH(buf));
+}
+
+int buf_append_magic_line_if_necessary(be_buf_t *buf)
+{
+	if (IS_NODE_INT(buf) && buf_is_empty(buf)) {
+		buf_append_string_to_buf(buf, "");
+		return 1;
+	}
+	return 0;
+}
+be_line_t *buf_append_string_to_buf(be_buf_t *buf, const char *string)
+{
+	BVX_CL(buf, 0) = BVX_CL(buf, 1) = line_insert_with_string(NODES_BOT_ANCH(buf), INSERT_BEFORE,
+	 string);
+	BVX_CLBI(buf, 0) = BVX_CLBI(buf, 1) = 0;
+	return EPCBVC_CL;
 }
 
 be_line_t *buf_append_line_to_bottom(be_buf_t *buf, be_line_t *line)
@@ -337,6 +354,14 @@ const char *buf_mode_str(be_buf_t *buf)
 	case BUF_MODE_LIST:		return _("[LIST]");
 	}
 }
+const char *buf_locked_str(be_buf_t *buf)
+{
+	if (GET_BUF_STATE(buf, buf_LOCKED) == 0) {
+		return _("[UNLOCKED]");
+	} else {
+		return _("[LOCKED]");
+	}
+}
 const char *buf_eol_str(be_buf_t *buf)
 {
 	switch (GET_BUF_STATE(buf, buf_EOL)) {
@@ -363,6 +388,10 @@ const char *buf_enc_str(be_buf_t *buf)
 const char *buf_cut_mode_str(be_buf_t *buf)
 {
 	return get_cut_mode_str(GET_BUF_STATE(buf, buf_CUT_MODE));
+}
+const char *buf_cut_mode_on_cut_str(be_buf_t *buf)
+{
+	return get_cut_mode_str(GET_BUF_STATE(buf, buf_CUT_MODE_ON_CUT));
 }
 const char *get_cut_mode_str(int buf_CUT_MODE)
 {
@@ -493,7 +522,6 @@ void buf_set_modified__pending_timer(be_buf_t *buf)
 		buf_set_modified(buf);
 		buf_update_mtime(buf);
 		buf_start_pending_timer(buf);
-/////hmtflf_dprintf("ZZZZUUUU[%s]\n", buf_get_abs_path(buf, NULL));
 	}
 }
 
@@ -562,7 +590,7 @@ UINT16 buf_get_pending_timer(be_buf_t *buf)
 	return buf->orig_file_crc16;
 }
 
-int buf_count(be_buf_t *buf)
+int buf_count_bufs(be_buf_t *buf)
 {
 	int cnt = 0;
 	for (buf = buf_make_top_buf(buf); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
@@ -643,6 +671,7 @@ be_buf_t *buf_get_buf_by_full_path(be_buf_t *buf, const char *file_path)
 }
 be_buf_t *buf_get_buf_by_file_path(be_buf_t *buf, const char *file_path)
 {
+flf_dprintf("file_path: [%s]\n", file_path);
 	for (buf = buf_make_top_buf(buf); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
 		if (compare_file_path_from_tail(buf_get_file_path(buf, NULL), file_path) == 0) {
 			return buf;	// found by file_path

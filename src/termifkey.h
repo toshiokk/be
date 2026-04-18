@@ -23,7 +23,6 @@
 #define termifkey_h
 
 // These keywords are defined in curses.h
-#define KEY_RESIZE		0x019a
 #define KEY_HOME		0x0106
 #define KEY_END			0x0168
 #define KEY_UP			0x0103
@@ -36,7 +35,8 @@
 #define KEY_DC			0x014a
 #define KEY_BACKSPACE	0x0107
 #define KEY_ENTER		0x0157
-#define KEY_F(fknum)	(0x0108 + fknum)
+#define KEY_F(fknum)	(0x0108 + fknum)	// 0x0109 ~ 0x0114
+#define KEY_RESIZE		0x019a
 
 key_code_t termif_input_key();
 

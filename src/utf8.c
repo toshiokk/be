@@ -48,16 +48,6 @@ const char *dump_utf8c(const char *utf8c, char *buf)
 	return buf;
 }
 
-void test_utf8c_bytes()
-{
-	const char str[] = "\xed\xa0\x80\xed\xa0\x81 \xed\xa0\xa0\xed\xa0\xa1";
-	const char *ptr = str;
-	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 3);
-	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 6);
-	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 7);
-	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 10);
-	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 13);
-}
 void test_wcwidth()
 {
 	wchar_t wc;
@@ -76,6 +66,16 @@ void test_wcwidth()
 		}
 	}
 	d_printf("\n");
+}
+void test_utf8c_bytes()
+{
+	const char str[] = "\xed\xa0\x80\xed\xa0\x81 \xed\xa0\xa0\xed\xa0\xa1";
+	const char *ptr = str;
+	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 3);
+	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 6);
+	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 7);
+	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 10);
+	ptr += utf8c_bytes(ptr);	MY_UT_INT(ptr - str, 13);
 }
 #endif // START_UP_TEST
 
@@ -170,7 +170,16 @@ wchar_t utf8c_decode(const char *utf8c)
 	return wc;
 }
 
-int utf8c_encode(wchar_t wc, char *utf8c)
+char *utf8c_encode(wchar_t wc, char *utf8c)
+{
+	static char utf8c_s[MAX_UTF8C_BYTES+1];
+	if (utf8c == NULL) {
+		utf8c = utf8c_s;
+	}
+	utf8c_encode_bytes(wc, utf8c);
+	return utf8c;
+}
+int utf8c_encode_bytes(wchar_t wc, char *utf8c)
 {
 	int bytes = wctomb(utf8c, wc);
 	utf8c[bytes] = '\0';

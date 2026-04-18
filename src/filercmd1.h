@@ -1,5 +1,5 @@
 /**************************************************************************
- *   filercmd1.h                                                           *
+ *   filercmd1.h                                                          *
  *                                                                        *
  *   Copyright (C) 1999-2003 Chris Allegretta                             *
  *                                                                        *
@@ -41,17 +41,24 @@ void dof_select_file();
 void dof_select_no_file();
 void dof_select_all_files();
 void dof_select_all_regular_files();
-void disp_files_selected();
-void dof_find_file();
+void dof_toggle_selecting_files();
+void stop_selecting_files();
+int is_selecting_files();
+
+void dof_find_file_first_backw();
+void dof_find_file_first_forw();
+void dof_find_file_next_backw();
+void dof_find_file_next_forw();
 
 void dof_tog_show_dot_file();
 void dof_inc_file_view_mode();
 void dof_clear_file_sort_mode();
 void dof_inc_file_sort_mode();
-void dof_tog_show_zebra_striping();
+void dof_tog_zebra_striping();
 void dof_tog_panes();
 void dof_tog_panex();
 void dof_inc_key_list_lines();
+void dof_tog_map_key_7f_bs();
 #ifdef ENABLE_HELP
 void dof_splash();
 void dof_view_file_list();

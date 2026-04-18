@@ -33,7 +33,8 @@
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 
-#define DT0			0	// DT...: Debug Time, no Time in Debug log
+						// DT...: Debug Time in Debug log
+#define DT0			0	// no Time
 #define DTSM		1	// SSSSSS.mmm
 #define DTSU		2	// SSS.uuuuuu
 #define DTHM		3	// HH:MM:SS.mmm
@@ -147,8 +148,8 @@ void e_vprintf(const char *format, va_list ap);
   warning_printf("[%s] != [%s]\n", actual, expected); assert(1);			\
 }
 #define MY_UT_BIN(actual, actual_len, expected, expected_len)				\
- if ((memcmp((actual), (expected), MIN_(actual_len, expected_len)) == 0)	\
-  && (actual_len != expected_len)) {										\
+ if ((memcmp((actual), (expected), MIN_(actual_len, expected_len)) != 0)	\
+  || (actual_len != expected_len)) {										\
   warning_printf("binary data different\n");								\
     dump_memory("actual:", actual, actual_len);								\
     dump_memory("expected:", expected, expected_len);						\

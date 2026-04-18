@@ -57,7 +57,7 @@ void doe_open_new_file()
 {
 	char file_path[MAX_PATH_LEN+1];
 	if (chk_inp_str_ret_val_editor(input_full_path("", file_path, MAX_PATH_LEN,
-	 HISTORY_TYPE_IDX_DIR,
+	 HISTORY_TYPE_IDX_FILE,
 	 _("Open new file:")))) {
 		return;
 	}
@@ -73,11 +73,6 @@ void doe_open_new_file()
 void doe_open_proj_file()
 {
 	_doe_open_proj_file();
-	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
-}
-void doe_open_exec_log_file()
-{
-	_doe_open_exec_log_file();
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 
@@ -125,6 +120,12 @@ int _doe_open_proj_file()
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 	return 1;
 }
+
+void doe_open_exec_log_file()
+{
+	_doe_open_exec_log_file();
+	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+}
 int _doe_open_exec_log_file()
 {
 	// CURDIR: changed in editor
@@ -156,7 +157,7 @@ PRIVATE int _doe_reopen_file()
 	int ret;
 
 	if (check_cur_ebuf_modified()) {
-		ret = ask_yes_no(ASK_YES_NO,
+		ret = ask_yes_no(ASK_YES_NO_QUIT,
 		 _("Buffer is modified, Are you OK to reopen file ?"));
 		if (ret <= 0)
 			return 0;
@@ -213,7 +214,7 @@ void doe_write_file_to()
 
 	if (compare_file_path_in_abs_path(cur_file_path, next_file_path) == 0) {
 		// writing to the same file
-		if (is_epc_buf_file_locked()) {
+		if (is_epc_buf_locked()) {
 			disp_status_bar_err(_("Buffer [%s] is locked"), cur_file_path);
 			return;
 		}
@@ -280,7 +281,7 @@ PRIVATE int input_new_file_name__ask(char *file_path)
 		}
 		if (is_path_regular_file(file_path) <= 0) {
 			// ask non regular file
-			int ret = ask_yes_no(ASK_YES_NO,
+			int ret = ask_yes_no(ASK_YES_NO_QUIT,
 			 _("Path is not file, can not WRITE it"));
 			if (ret < 0) {
 				return 0;		// cancelled
@@ -288,7 +289,7 @@ PRIVATE int input_new_file_name__ask(char *file_path)
 			continue;
 		}
 		// ask overwrite
-		int ret = ask_yes_no(ASK_YES_NO,
+		int ret = ask_yes_no(ASK_YES_NO_QUIT,
 		 _("File exists, OVERWRITE it ?"));
 		if (ret < 0) {
 			return 0;		// cancelled
@@ -391,17 +392,19 @@ void doe_read_file_into_cur_buf()
 	doe_paste_text_with_pop();
 }
 
-// |function name               |difference                                          |
-// |----------------------------|----------------------------------------------------|
-// |doe_tag_jump_in_cur_line    |jump to the file or directory gotten from line top  |
-// |doe_tag_jump_in_cur_curs_pos|jump to the file or directory gotten from cursor pos|
+// |function name           |difference                                          |
+// |------------------------|----------------------------------------------------|
+// |doe_tag_jump_in_cur_line|jump to the file or directory gotten from line top  |
+// |doe_tag_jump_in_cur_col |jump to the file or directory gotten from cursor pos|
 
 // TAG JUMP (file_path is taken from the head of current line)
 void doe_tag_jump_in_cur_line()
 {
-	doe_goto_file_in_cur_line();
-	if (editor_do_next == EF_LOADED_RET_TO_EDITOR) {
-		// files opened
+	if (load_files_in_selection()) {
+		return;
+	}
+	if (goto_file_in_cur_line() >= 0) {
+		// files opened or switched
 		return;
 	}
 #ifdef ENABLE_FILER
@@ -410,28 +413,30 @@ void doe_tag_jump_in_cur_line()
 #endif // ENABLE_FILER
 }
 // TAG JUMP (file_path is taken from the current cursor position)
-void doe_tag_jump_in_cur_curs_pos()
+void doe_tag_jump_in_cur_col()
 {
-	doe_goto_file_in_cur_curs_pos();
-	if (editor_do_next == EF_LOADED_RET_TO_EDITOR) {
-		// files opened
+	if (load_files_in_selection()) {
+		return;
+	}
+	if (goto_file_in_cur_col() >= 0) {
+		// files opened or switched
 		return;
 	}
 #ifdef ENABLE_FILER
 	// going to change directory
-	doe_goto_dir_in_cur_curs_pos();
+	doe_goto_dir_in_cur_col();
 #endif // ENABLE_FILER
 }
 
 PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx);
 PRIVATE int goto_file_in_string(const char *string);
-void doe_goto_file_in_cur_line()
+int goto_file_in_cur_line()
 {
-	goto_file_in_cur_line_byte_idx(0);
+	return goto_file_in_cur_line_byte_idx(0);
 }
-void doe_goto_file_in_cur_curs_pos()
+int goto_file_in_cur_col()
 {
-	goto_file_in_cur_line_byte_idx(EPCBVC_CLBI);
+	return goto_file_in_cur_line_byte_idx(EPCBVC_CLBI);
 }
 PRIVATE int goto_file_in_cur_line_byte_idx(int line_byte_idx)
 {
@@ -457,7 +462,7 @@ PRIVATE int goto_file_in_string(const char *string)
 	} else {
 		memorize_prev_file_pos_if_changed();
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
-		SET_editor_do_next(EF_LOADED_RET_TO_EDITOR);
+		SET_editor_do_next(EF_LOADED_GO_TO_ROOT_EDITOR);
 	}
 	return files;
 }
@@ -538,7 +543,7 @@ int write_file_ask(int yes_no, close_after_save_t close)
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	update_screen_editor(S_B_CURS, 1);
 	if (ret < ANSWER_ALL) {
-		ret = ask_yes_no(ASK_YES_NO | ASK_ALL_YES,
+		ret = ask_yes_no(ASK_YES_NO_QUIT | ASK_ALL_YES,
 		 close == 0
 		  ? _("Save modified buffer ?")
 		  : _("Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"));
@@ -575,7 +580,7 @@ void lock_epc_buf_if_file_already_locked(BOOL lock_buffer_if_already_locked)
 }
 void unlock_epc_buf_if_file_had_locked_by_myself()
 {
-	if (is_epc_buf_file_locked() == 0) {
+	if (is_epc_buf_locked() == 0) {
 		// this buffer has NOT been locked:
 		// - this file must had been locked by myself
 		// - unlock by myself

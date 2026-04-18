@@ -33,7 +33,7 @@ const char *get_starting_dir()
 		if (is_strlen_0(getenv_pwd(starting_dir))) {
 			getcwd__(starting_dir);
 		}
-		add_trailing_slash_in_handling(starting_dir);
+		add_trailing_slash_for_handling(starting_dir);
 flf_dprintf("starting_dir: [%s]\n", starting_dir);
 	}
 	return starting_dir;
@@ -51,7 +51,7 @@ const char *get_home_dir()
 		} else {
 			strcpy__(home_dir, "/");
 		}
-		add_trailing_slash_in_handling(home_dir);
+		add_trailing_slash_for_handling(home_dir);
 flf_dprintf("home_dir: [%s]\n", home_dir);
 	}
 	return home_dir;
@@ -103,6 +103,10 @@ int check_availability_of_script()
 	return checked > 0;
 }
 
+// /dir1/dir2/file ==> /dir1/dir2/
+// /dir1/dir2/     ==> /dir1/dir2/
+// /dir1/dir2      ==> /dir1/dir2
+// ""              ==> /
 char *strip_file_if_path_is_file(const char *path, char *dir)
 {
 	if (is_path_regular_file(path) > 0) {
@@ -112,21 +116,156 @@ char *strip_file_if_path_is_file(const char *path, char *dir)
 	}
 	return dir;
 }
-
 /* Strip one dir from the end of the string */
-// /dir1/dir2/file ==> /dir1/dir2
-// /dir1/dir2/     ==> /dir1/dir2
+// /dir1/dir2/file ==> /dir1/dir2/
+// /dir1/dir2/     ==> /dir1/
 // /dir1           ==> /
 // ""              ==> /
-// path and dir can be the same address
+// - path and dir can be the same address
 char *strip_file_from_path(const char *path, char *dir)
 {
 	static char dir_[MAX_PATH_LEN+1];
 	if (dir == NULL) {
 		dir = dir_;
 	}
-	separate_path_to_dir_and_file(path, dir, NULL);
+	strlcpy__(dir, path, MAX_PATH_LEN);
+	separate_path_to_dir_and_file(dir, dir, NULL);
 	return dir;
+}
+/* Strip one dir from the end of the string */
+// /dir1/dir2/file ==> /dir1/dir2/
+// /dir1/dir2/     ==> /dir1/
+// /dir1           ==> /
+// ""              ==> /
+// - path and dir can be the same address
+char *strip_file_or_dir_from_path(const char *path, char *dir)
+{
+	static char dir_[MAX_PATH_LEN+1];
+	if (dir == NULL) {
+		dir = dir_;
+	}
+	strlcpy__(dir, path, MAX_PATH_LEN);
+	separate_last_dir_or_file_from_path(dir, dir, NULL);
+	return dir;
+}
+
+PRIVATE void test_separate_path_to_dir_and_file__(char *path,
+ const char *exp_dir, const char *exp_file);
+void test_separate_path_to_dir_and_file()
+{
+	flf_dprintf("-----------------------\n");
+	test_separate_path_to_dir_and_file__("", "", "");
+	test_separate_path_to_dir_and_file__(".", "./", "");
+	test_separate_path_to_dir_and_file__("..", "../", "");
+	test_separate_path_to_dir_and_file__("...", "", "...");
+	test_separate_path_to_dir_and_file__(".../", ".../", "");
+	test_separate_path_to_dir_and_file__("/", "/", "");
+	test_separate_path_to_dir_and_file__("/path/to/file", "/path/to/", "file");
+	test_separate_path_to_dir_and_file__("path/to/file", "path/to/", "file");
+	test_separate_path_to_dir_and_file__("/path/to/dir/", "/path/to/dir/", "");
+	test_separate_path_to_dir_and_file__("path/to/dir/", "path/to/dir/", "");
+	test_separate_path_to_dir_and_file__("file", "", "file");
+	test_separate_path_to_dir_and_file__("/file", "/", "file");
+	test_separate_path_to_dir_and_file__("./file", "./", "file");
+	test_separate_path_to_dir_and_file__("../file", "../", "file");
+	test_separate_path_to_dir_and_file__(".../file", ".../", "file");
+	test_separate_path_to_dir_and_file__("dir/", "dir/", "");
+	test_separate_path_to_dir_and_file__("/dir/", "/dir/", "");
+	test_separate_path_to_dir_and_file__("./dir/", "./dir/", "");
+	test_separate_path_to_dir_and_file__("../dir/", "../dir/", "");
+	test_separate_path_to_dir_and_file__(".../dir/", ".../dir/", "");
+}
+PRIVATE void test_separate_path_to_dir_and_file__(char *path,
+ const char *exp_dir, const char *exp_file)
+{
+	char buf_dir[MAX_PATH_LEN+1];
+	char buf_file[MAX_PATH_LEN+1];
+	char buf_exp_dir[MAX_PATH_LEN+1];
+	separate_path_to_dir_and_file(path, buf_dir, buf_file);
+	strlcpy__(buf_exp_dir, exp_dir, MAX_PATH_LEN);
+	add_trailing_slash_for_handling(buf_exp_dir);
+	if ((! IS_EQ_STR(buf_dir, buf_exp_dir)) || (! IS_EQ_STR(buf_file, exp_file))) {
+		flf_dprintf("path[%s]\n", path);
+		flf_dprintf("  dir[%s]%s[%s], file[%s]%s[%s]\n",
+		 buf_dir, EQU_STR(buf_dir, buf_exp_dir), buf_exp_dir,
+		 buf_file, EQU_STR(buf_file, exp_file), exp_file);
+	}
+}
+
+// | function                            | /path/to/file  | /path/to/dir/ |
+// |-------------------------------------|----------------|---------------|
+// | strip_file_if_path_is_file          | /path/to/      | /path/to/dir/ |
+// | strip_file_from_path                | /path/to/      | /path/to/dir/ |
+// | strip_file_or_dir_from_path         | /path/to/      | /path/to/     |
+// | separate_last_dir_or_file_from_path | /path/to/ file | /path/to/ dir |
+// | separate_path_to_dir_and_file       | /path/to/ file | /path/to/dir/ |
+
+// path                buf_dir      buf_file
+// /dir1/file      ==> /dir1/       file
+// /dir1/dir2     ==>  /dir1/       dir2
+// - path and buf_dir can be the same address
+// - buf_file can be NULL
+char *separate_last_dir_or_file_from_path(char *path, char *buf_dir, char *buf_file)
+{
+	return separate_path_to_dir_and_file(remove_trailing_slash(path, path), buf_dir, buf_file);
+}
+// path                buf_dir      buf_file
+// /dir1/file      ==> /dir1/       file
+// /dir1/dir2/file ==> /dir1/dir2/  file
+// /dir1/dir2/     ==> /dir1/dir2/  ""
+// dir/file        ==> dir/         file
+// /file           ==> /            file
+// file            ==> ""           file
+// /               ==> /            ""
+// ""              ==> ""           ""
+// "."             ==> .            ""
+// ".."            ==> ..           ""
+// "..."           ==> ""           "..."
+// - path and buf_dir can be the same address
+// - buf_file can be NULL
+char *separate_path_to_dir_and_file(const char *path, char *buf_dir, char *buf_file)
+{
+	const char *ptr = get_last_slash_const(path);
+	if (*ptr != '/') {
+		// '/' not found
+		if ((strcmp(path, ".") == 0) || (strcmp(path, "..") == 0)) {
+			// "." ==> ".", ""
+			//   ^
+			// ".." ==> "..", ""
+			//    ^
+			ptr = skip_string_const(ptr);
+			strlcpy__(buf_dir, path, ptr - path);	// "." or ".."
+		} else {
+			// "file" ==> "", "file"
+			//  ^
+			// ".file" ==> "", ".file"
+			//  ^
+			strcpy__(buf_dir, "");						// "."
+		}
+	} else {
+		// '/' found
+		if (ptr == path) {
+			ptr++;
+			// "/"     ==> "/", ""
+			//   ^
+			// "/file" ==> "/", "file"
+			//   ^
+			strlcpy__(buf_dir, path, ptr - path);	// "/"
+		} else {
+			ptr++;
+			// "...dir/dir2/" ==> "...dir/dir2/", ""
+			//              ^
+			// "...dir/file" ==> "...dir/", "file"
+			//         ^
+			strlcpy__(buf_dir, path, ptr - path);	// "...dir/"
+		}
+	}
+	add_trailing_slash_for_handling(buf_dir);		// "." ==> "./", ".." ==> "../"
+	remove_redundant_slash(buf_dir);
+	if (buf_file) {
+		strlcpy__(buf_file, ptr, MAX_PATH_LEN);		// "" or "file"
+	}
+	return buf_dir;		// return file_name
 }
 
 // "filename.ext" ==> "ext"
@@ -158,73 +297,21 @@ char *get_file_name_extension(char *file_name)
 	return last_period;
 }
 
-// path                buf_dir     buf_file
-// /dir1/dir2/file ==> /dir1/dir2  file
-// /dir1/dir2      ==> /dir1       dir2
-// dir/file        ==> dir         file
-// /file           ==> /           file
-// file            ==> ""          file
-// /               ==> /           ""
-// ""              ==> ""          ""
-// "."             ==> .           ""
-// ".."            ==> ..          ""
-// "..."           ==> ""          "..."
-// path and buf_dir can be the same address
-// buf_file can be a NULL
-char *separate_path_to_dir_and_file(const char *path, char *buf_dir, char *buf_file)
-{
-	char buf_path[MAX_PATH_LEN+1];
-	remove_trailing_slash(path, buf_path);
-	const char *ptr = get_last_slash(buf_path);
-	if (*ptr != '/') {	// '/' not found
-		if ((strcmp(buf_path, ".") == 0) || (strcmp(buf_path, "..") == 0)) {
-			// "." ==> ".", ""
-			//   ^
-			// ".." ==> "..", ""
-			//    ^
-			ptr = skip_string_const(ptr);
-			strlcpy__(buf_dir, buf_path, ptr - buf_path);	// "." or ".."
-		} else {
-			// "file" ==> ".", "file"
-			//  ^
-			// ".file" ==> ".", ".file"
-			//  ^
-			strcpy__(buf_dir, "");						// "."
-		}
-	} else {
-		// '/' found
-		if (ptr == buf_path) {
-			ptr++;
-			// "/"     ==> "/", ""
-			//   ^
-			// "/file" ==> "/", "file"
-			//   ^
-			strlcpy__(buf_dir, buf_path, ptr - buf_path);	// "/"
-		} else {
-			ptr++;
-			// "...dir/dir2" ==> "...dir/", "dir2"
-			//         ^
-			// "...dir/file" ==> "...dir/", "file"
-			//         ^
-			strlcpy__(buf_dir, buf_path, ptr - buf_path);	// "...dir/"
-		}
-	}
-	add_trailing_slash_in_handling(buf_dir);		// "." ==> "./", ".." ==> "../"
-	remove_redundant_slash(buf_dir);
-	if (buf_file) {
-		strlcpy__(buf_file, ptr, MAX_PATH_LEN);		// "" or "file"
-	}
-	return buf_file;		// return file_name
-}
-
 // point to the last '/'
 // /dir1/dir2/file    /dir1/dir2/    file
-//           ^                  ^        ^
-char *get_last_slash(char *path)
+//           ^                  ^    ^
+const char *get_last_slash_const(const char *path)
+{
+	const char *ptr = strrchr(path, '/');
+	if (ptr == NULL)
+		ptr = path;
+	return ptr;
+}
+char *get_last_slash_mutable(char *path)
 {
 	char *ptr = strrchr(path, '/');
 	if (ptr == NULL)
-		ptr = &path[strlen_path(path)];
+		ptr = path;
 	return ptr;
 }
 
@@ -271,15 +358,20 @@ int compare_dir_path_w_or_wo_trailing_slash(const char *dir1, const char *dir2)
 // file_path:                              ".ext" --> not match
 int compare_file_path_from_tail(const char *full_path, const char *file_path)
 {
-	if ((strcmp_from_tail(full_path, file_path) == 0)
-	 && (strlen_path(full_path) > strlen_path(file_path))
-	 && (full_path[strlen_path(full_path) - strlen_path(file_path) - 1] == '/')) {
+	if (strcmp_from_tail(full_path, file_path) == 0) {
+		if (strlen_path(full_path) > strlen_path(file_path)) {
+			if (full_path[strlen_path(full_path) - strlen_path(file_path) - 1] == '/') {
+				return 0;	// match
+			} else {
+				return -1;	// not match
+			}
+		}
 		return 0;	// match
 	}
 	return -1;		// not match
 }
 
-char *add_trailing_slash_in_handling(char *dir)
+char *add_trailing_slash_for_handling(char *dir)
 {
 #ifdef HANDLE_DIR_PATH_WITH_TRAINLING_SLASH
 	add_trailing_slash(dir, dir);
@@ -315,8 +407,8 @@ char *remove_trailing_slash(const char *str, char *buf)
 	if (buf && (buf != str)) {
 		strlcpy__(buf, str, MAX_PATH_LEN);
 	}
-	char *ptr = get_last_slash(buf);
-	if (buf < ptr && ptr[0] == '/' && ptr[1] == '\0') {
+	char *ptr = get_last_slash_mutable(buf);
+	if ((buf < ptr) && (ptr[0] == '/') && (ptr[1] == '\0')) {
 		*ptr = '\0';
 	}
 	return buf;
@@ -354,10 +446,6 @@ int is_path_wildcard(char *path)
 }
 #endif // ENABLE_FILER
 
-const char *concat_dir_and_file_s(const char *dir, const char *file)
-{
-	return concat_dir_and_file(NULL, dir, file);
-}
 const char *concat_dir_and_file_s1(const char *dir, const char *file)
 {
 	static char file_path[MAX_PATH_LEN+1];
@@ -371,7 +459,7 @@ const char *concat_dir_and_file_s2(const char *dir, const char *file)
 char *concat_dir_and_dir(char *buf, const char *dir, const char *dir2)
 {
 	concat_dir_and_file(buf, dir, dir2);
-	add_trailing_slash_in_handling(buf);
+	add_trailing_slash_for_handling(buf);
 	return buf;
 }
 // Concatenate path and file
@@ -515,7 +603,7 @@ int compare_file_path_in_abs_path(const char *file_path_a, const char *file_path
 char *get_abs_dir_path(const char *path, char *abs_path)
 {
 	get_abs_path(path, abs_path);
-	add_trailing_slash_in_handling(abs_path);
+	add_trailing_slash_for_handling(abs_path);
 	return abs_path;
 }
 // get absolute path (not include symlinks)
@@ -535,8 +623,13 @@ char *get_abs_path(const char *path, char *abs_path)
 // ~/tools/src/filename.ext     ==> /home/user/tools/src/filename.ext
 // ~user/tools/src/filename.ext ==> /home/user/tools/src/filename.ext
 // ./filename.ext               ==> /home/user/tools/src/filename.ext
+// 'buf' can be NULL
 char *get_full_path(const char *path, char *buf)
 {
+	static char buf_s[MAX_PATH_LEN+1];
+	if (buf == NULL) {
+		buf = buf_s;
+	}
 	if (is_abs_path(path)) {
 		// "/???" already full path
 		strlcpy__(buf, path, MAX_PATH_LEN);
@@ -580,7 +673,7 @@ char *get_real_path(const char *path, char *buf)
 #endif // HAVE_REALPATH
 	if (is_path_exist(path)) {
 		// `path` actually exists.
-		realpath__(path, buf, MAX_PATH_LEN);
+		realpath__(path, buf);
 	} else {
 		// `path` does not actually exist.
 		// `/path/to/file` does not exist but `/path/to` may exist.
@@ -589,7 +682,7 @@ char *get_real_path(const char *path, char *buf)
 		char dir[MAX_PATH_LEN+1];
 		char file[MAX_PATH_LEN+1];
 		separate_path_to_dir_and_file(path, dir, file);
-		realpath__(dir, buf, MAX_PATH_LEN);
+		realpath__(dir, buf);
 		concat_dir_and_file(buf, buf, file);
 	}
 	return buf;
@@ -597,16 +690,16 @@ char *get_real_path(const char *path, char *buf)
 
 #if defined(HAVE_REALPATH)
 // return normalized(canonicalized) absolute file path
-// NOTE: `realpath()` needs a path actually exists.
+// NOTE: `realpath()` needs a path to be actually exists.
 //       otherwise conversion fails.
-char *realpath__(const char *path, char *buf, int buf_len)
+char *realpath__(const char *path, char *buf)
 {
 	char buffer[MAX_PATH_LEN+1];
-	// `path` actually exists.
+	// `path` must actually exist.
 	if (realpath(path, buffer) == NULL) {
 		strlcpy__(buffer, path, MAX_PATH_LEN);	// error, return original path
 	}
-	strlcpy__(buf, buffer, buf_len);
+	strlcpy__(buf, buffer, MAX_PATH_LEN);
 	return buf;
 }
 #endif // HAVE_REALPATH
@@ -741,42 +834,44 @@ PRIVATE const char *test_normalize_file_path_(const char *templ, const char *pat
 	return buffer;
 }
 
-PRIVATE void test_get_full_path_(const char *path);
 void test_get_full_path()
 {
+	char cwd[MAX_PATH_LEN+1];
+///	getcwd__(cwd);
+	get_full_path_of_cur_dir(cwd);
+
 	flf_dprintf("-----------------------\n");
-	test_get_full_path_("~");
-	test_get_full_path_("~user");
-	test_get_full_path_("~root");
-	test_get_full_path_("~hoge");
-	test_get_full_path_("~hoge/abc");
+	MY_UT_STR(get_full_path("~", NULL), sprintf_s("%s", get_home_dir()));
+	MY_UT_STR(get_full_path("~user", NULL), "/home/user/");
+	MY_UT_STR(get_full_path("~root", NULL), "/root/");
+	MY_UT_STR(get_full_path("~hoge", NULL), "hoge/");
+	MY_UT_STR(get_full_path("~hoge/abc", NULL), "hoge/abc");
 
-	test_get_full_path_("~/abc");
-	test_get_full_path_("~user/abc");
-	test_get_full_path_("~root/abc");
+	MY_UT_STR(get_full_path("~/abc", NULL), sprintf_s("%sabc", get_home_dir()));
+	MY_UT_STR(get_full_path("~user/abc", NULL), sprintf_s("%sabc", get_home_dir()));
+	MY_UT_STR(get_full_path("~root/abc", NULL), "/root/abc");
 
-	test_get_full_path_("abc");
-	test_get_full_path_("./abc");
-	test_get_full_path_("../abc");
+	MY_UT_STR(get_full_path("abc", NULL), sprintf_s("%sabc", cwd));
+	MY_UT_STR(get_full_path("./abc", NULL), sprintf_s("%sabc", cwd));
+	MY_UT_STR(get_full_path("../abc", NULL), normalize_file_path(sprintf_s("%s../abc", cwd)));
 
-	test_get_full_path_("aaa/./bbb");
-	test_get_full_path_("./aaa/./bbb");
-	test_get_full_path_("../aaa/./bbb");
+	MY_UT_STR(get_full_path("aaa/./bbb", NULL), sprintf_s("%saaa/bbb", cwd));
+	MY_UT_STR(get_full_path("./aaa/./bbb", NULL), sprintf_s("%saaa/bbb", cwd));
+	MY_UT_STR(get_full_path("../aaa/./bbb", NULL),
+	 normalize_file_path(sprintf_s("%s../aaa/bbb", cwd)));
 
-	test_get_full_path_("aaa/../bbb");
-	test_get_full_path_("./aaa/../bbb");
-	test_get_full_path_("../aaa/../bbb");
+	MY_UT_STR(get_full_path("aaa/../bbb", NULL), normalize_file_path(sprintf_s("%sbbb", cwd)));
+	MY_UT_STR(get_full_path("./aaa/../bbb", NULL), normalize_file_path(sprintf_s("%sbbb", cwd)));
+	MY_UT_STR(get_full_path("../aaa/../bbb", NULL),
+	 normalize_file_path(sprintf_s("%s../aaa/../bbb", cwd)));
 
-	test_get_full_path_(" abc ");	// filename includes space in head or tail
+	// filename includes space in head or tail
+	MY_UT_STR(get_full_path(" abc ", NULL), sprintf_s("%s abc ", cwd));
 
-	test_get_full_path_("#dir_history");	// internal buffer
-	test_get_full_path_("#/dir_history");	// internal buffer
-}
-PRIVATE void test_get_full_path_(const char *path)
-{
-	char full_path[MAX_PATH_LEN+1];
-	get_full_path(path, full_path);
-	flf_dprintf("[%s] ==> [%s]\n", path, full_path);
+	// internal buffer
+	MY_UT_STR(get_full_path("#dir_history", NULL), sprintf_s("%s#dir_history", cwd));
+	// internal buffer
+	MY_UT_STR(get_full_path("#/dir_history", NULL), sprintf_s("%s#/dir_history", cwd));
 }
 
 #if defined(HAVE_REALPATH)
@@ -802,7 +897,7 @@ PRIVATE const char *test_realpath_(const char *path)
 {
 	static char buf[MAX_PATH_LEN+1];
 
-	realpath__(path, buf, MAX_PATH_LEN);
+	realpath__(path, buf);
 	return buf;
 }
 #endif // HAVE_REALPATH
@@ -821,47 +916,6 @@ void test_get_file_name_extension()
 PRIVATE const char *get_file_name_extension_(char *file_name)
 {
 	return get_file_name_extension(file_name);
-}
-
-PRIVATE void test_separate_path_to_dir_and_file__(char *path,
- const char *exp_dir, const char *exp_file);
-void test_separate_path_to_dir_and_file()
-{
-	flf_dprintf("-----------------------\n");
-	test_separate_path_to_dir_and_file__("", "", "");
-	test_separate_path_to_dir_and_file__(".", "./", "");
-	test_separate_path_to_dir_and_file__("..", "../", "");
-	test_separate_path_to_dir_and_file__("...", "", "...");
-	test_separate_path_to_dir_and_file__("/", "/", "");
-	test_separate_path_to_dir_and_file__("/path/to/file", "/path/to/", "file");
-	test_separate_path_to_dir_and_file__("/path/to/file", "/path/to/", "file");
-	test_separate_path_to_dir_and_file__("path/to/file", "path/to/", "file");
-	test_separate_path_to_dir_and_file__("/path/to/dir/", "/path/to/", "dir");
-	test_separate_path_to_dir_and_file__("/path/to/dir/", "/path/to/", "dir");
-	test_separate_path_to_dir_and_file__("path/to/dir/", "path/to/", "dir");
-	test_separate_path_to_dir_and_file__("file", "", "file");
-	test_separate_path_to_dir_and_file__("/file", "/", "file");
-	test_separate_path_to_dir_and_file__("./file", "./", "file");
-	test_separate_path_to_dir_and_file__("../file", "../", "file");
-	test_separate_path_to_dir_and_file__(".../file", ".../", "file");
-	test_separate_path_to_dir_and_file__("dir/", "", "dir");
-	test_separate_path_to_dir_and_file__("/dir/", "/", "dir");
-	test_separate_path_to_dir_and_file__("./dir/", "./", "dir");
-	test_separate_path_to_dir_and_file__("../dir/", "../", "dir");
-	test_separate_path_to_dir_and_file__(".../dir/", ".../", "dir");
-}
-PRIVATE void test_separate_path_to_dir_and_file__(char *path,
- const char *exp_dir, const char *exp_file)
-{
-	char buf_dir[MAX_PATH_LEN+1];
-	char buf_file[MAX_PATH_LEN+1];
-	separate_path_to_dir_and_file(path, buf_dir, buf_file);
-	if ((! IS_EQ_STR(buf_dir, exp_dir)) || (! IS_EQ_STR(buf_file, exp_file))) {
-		flf_dprintf("path[%s]\n", path);
-		flf_dprintf("  dir[%s]%s[%s], file[%s]%s[%s]\n",
-		 buf_dir, EQU_STR(buf_dir, exp_dir), exp_dir,
-		 buf_file, EQU_STR(buf_file, exp_file), exp_file);
-	}
 }
 #endif // START_UP_TEST
 

@@ -43,40 +43,42 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 #endif
 #if APP_REL_LVL == APP_REL_LVL_TEST2
 	// test release-2
-	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
-	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
-	{ CL_LB, CL_BK, S(ITEM_COLOR_IDX_PARENT)			},
+	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_TITLE)					},
+	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_STATUS)				},
+	{ CL_LB, CL_BK, S(ITEM_COLOR_IDX_PARENT)				},
 #endif
 #if APP_REL_LVL == APP_REL_LVL_TEST1
 	// test release-1
-	{ CL_MG, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
-	{ CL_MG, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
-	{ CL_GR, CL_BK, S(ITEM_COLOR_IDX_PARENT)			},
+	{ CL_MG, CL_WH, S(ITEM_COLOR_IDX_TITLE)					},
+	{ CL_MG, CL_WH, S(ITEM_COLOR_IDX_STATUS)				},
+	{ CL_GR, CL_BK, S(ITEM_COLOR_IDX_PARENT)				},
 #endif
 #if APP_REL_LVL == APP_REL_LVL_EXPERIMENTAL
 	// experimental release
-	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_TITLE)				},
-	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_STATUS)			},
-	{ CL_GR, CL_BK, S(ITEM_COLOR_IDX_PARENT)			},
+	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_TITLE)					},
+	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_STATUS)				},
+	{ CL_GR, CL_BK, S(ITEM_COLOR_IDX_PARENT)				},
 #endif
-	{ CL_WH, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)			},
-	{ CL_BK, CL_YL, S(ITEM_COLOR_IDX_KEY_LIST2)			},
-	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL)		},
-	{ CL_LC, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL2)		},
-	{ CL_MG, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED1)	},
-	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED2)	},
-	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED3)	},
-	{ CL_RD, CL_WH, S(ITEM_COLOR_IDX_WARNING1)			},	// high
-	{ CL_MG, CL_WH, S(ITEM_COLOR_IDX_WARNING2)			},	// medium
-	{ CL_BR, CL_YL, S(ITEM_COLOR_IDX_WARNING3)			},	// low
-	{ CL_LR, CL_YL, S(ITEM_COLOR_IDX_ERROR)				},
-	{ CL_BK, CL_WH, S(ITEM_COLOR_IDX_CURSOR_CHAR)		},
-	{ CL_LC, CL_D2, S(ITEM_COLOR_IDX_CURSOR_LINE)		},
-	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_LINE_NUMBER)		},
-	{ CL_LC, CL_BL, S(ITEM_COLOR_IDX_MENU_FRAME)		},
-	{ CL_LB, CL_LC, S(ITEM_COLOR_IDX_MENU_ITEM)			},
-	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_MENU_SELECTED)		},
-	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_INPUT)				},
+	{ CL_WH, CL_BL, S(ITEM_COLOR_IDX_KEY_LIST)				},
+	{ CL_BK, CL_YL, S(ITEM_COLOR_IDX_KEY_LIST2)				},
+	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL)			},
+	{ CL_LC, CL_BK, S(ITEM_COLOR_IDX_TEXT_NORMAL2)			},
+	{ CL_MG, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED1)		},
+	{ CL_GR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED2)		},
+	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_TEXT_SELECTED3)		},
+	{ CL_RD, CL_WH, S(ITEM_COLOR_IDX_WARNING1)				},	// high
+	{ CL_MG, CL_WH, S(ITEM_COLOR_IDX_WARNING2)				},	// medium
+	{ CL_BR, CL_YL, S(ITEM_COLOR_IDX_WARNING3)				},	// low
+	{ CL_LR, CL_YL, S(ITEM_COLOR_IDX_ERROR)					},
+	{ CL_BK, CL_WH, S(ITEM_COLOR_IDX_CURSOR_CHAR)			},
+	{ CL_LC, CL_D2, S(ITEM_COLOR_IDX_CURSOR_LINE)			},
+	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_LINE_NUMBER)			},
+	{ CL_LC, CL_BL, S(ITEM_COLOR_IDX_MENU_FRAME)			},
+	{ CL_LB, CL_LC, S(ITEM_COLOR_IDX_MENU_ITEM)				},
+	{ CL_BL, CL_LB, S(ITEM_COLOR_IDX_MENU_ITEM_DISABLED)	},
+	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_MENU_SELECTED)			},
+	{ CL_WH, CL_YL, S(ITEM_COLOR_IDX_MENU_SELECTED_DISABLED)},
+	{ CL_WH, CL_BK, S(ITEM_COLOR_IDX_INPUT)					},
 };
 
 // Initialize with default application color set.
@@ -141,12 +143,15 @@ void get_item_color_by_idx(item_color_idx_t color_idx, char *bgc, char *fgc)
 void set_item_color_by_idx(item_color_idx_t color_idx, int reverse)
 {
 	if (0 <= color_idx && color_idx < MAX_ITEM_COLORS) {
-		if (color_idx == ITEM_COLOR_IDX_TEXT_NORMAL) {
-			if (is_work_space_color_warn()) {
-				color_idx = ITEM_COLOR_IDX_TEXT_SELECTED2;
-			} else if (is_work_space_color_dark()) {
-				color_idx = ITEM_COLOR_IDX_DEFAULT;
-			}
+///		if (color_idx == ITEM_COLOR_IDX_TEXT_NORMAL) {
+///			if (is_work_space_color_warn()) {
+///				color_idx = ITEM_COLOR_IDX_TEXT_SELECTED2;
+///			} else if (is_work_space_color_dark()) {
+///				color_idx = ITEM_COLOR_IDX_DEFAULT;
+///			}
+///		}
+		if (is_work_space_color_dark()) {
+			reverse = ! reverse;
 		}
 		if ((item_colors[color_idx].bgc == CL_D0)
 		 || (item_colors[color_idx].fgc == CL_D0)) {
@@ -288,21 +293,23 @@ int display_bracket_hl_colors(int yy, int xx)
 {
 	set_item_color_by_idx(ITEM_COLOR_IDX_DEFAULT, 0);
 	tio_fill_screen();
-	prepare_colors_for_bracket_hl();
+
 	UINT8 depth_0_occurances = 0;
-	for (int yy = 0; yy < get_colors_for_bracket_hl() * 2; yy++) {
+	for (int yy = 0; yy <= get_colors_for_bracket_hl() * 2; yy++) {
 		char buffer[MAX_PATH_LEN+1];
-		int color_idx = get_color_idx_for_bracket_hl(-1, &depth_0_occurances, -yy);
+		int depth = (yy < get_colors_for_bracket_hl() * 2) ? -yy : 0;
+		int color_idx = get_color_idx_for_bracket_hl(-1, &depth_0_occurances, depth);
 		set_color_for_bracket_hl_by_idx(color_idx);
-		snprintf(buffer, MAX_PATH_LEN, "%3d: %d %d ", -yy, depth_0_occurances, color_idx);
+		snprintf(buffer, MAX_PATH_LEN, "%3d: %d %d ", depth, depth_0_occurances, color_idx);
 		tio_output_string(central_win_get_mid_win_y() + yy, xx + 0, buffer, -1);
 	}
 	depth_0_occurances = 0;
-	for (int yy = 0; yy < get_colors_for_bracket_hl() * 2; yy++) {
+	for (int yy = 0; yy <= get_colors_for_bracket_hl() * 2; yy++) {
 		char buffer[MAX_PATH_LEN+1];
-		int color_idx = get_color_idx_for_bracket_hl(+1, &depth_0_occurances, yy);
+		int depth = (yy < get_colors_for_bracket_hl() * 2) ? yy : 0;
+		int color_idx = get_color_idx_for_bracket_hl(+1, &depth_0_occurances, depth);
 		set_color_for_bracket_hl_by_idx(color_idx);
-		snprintf(buffer, MAX_PATH_LEN, "%3d: %d %d ", yy, depth_0_occurances, color_idx);
+		snprintf(buffer, MAX_PATH_LEN, "%3d: %d %d ", depth, depth_0_occurances, color_idx);
 		tio_output_string(central_win_get_mid_win_y() + yy, xx + 10, buffer, -1);
 	}
 	tio_refresh();

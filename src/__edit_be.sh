@@ -1,7 +1,9 @@
-./be -s \
+be -s \
  appdefs.h \
+ applvl.h \
  appmode.h \
- buffer.h \
+ buffer1.h \
+ buffer2.h \
  buffers.h \
  color.h \
  config.h \
@@ -16,24 +18,26 @@
  editorfile.h \
  editorgoto.h \
  editorkeys.h \
- editorlist.h \
  editormove.h \
  editormove2.h \
  editorundo.h \
  fileio.h \
  filer.h \
- filer2.h \
  filercmd1.h \
  filercmd2.h \
+ filerdir.h \
  filerkeys.h \
+ filerlist.h \
  filerrun.h \
  headers.h \
+ help.h \
  history.h \
  keymacro.h \
  keys.h \
  line.h \
  linewrap.h \
  main.h \
+ menu.h \
  myutf8.h \
  rcfile.h \
  regexp.h \
@@ -41,8 +45,10 @@
  sig.h \
  stdincs.h \
  termif.h \
+ termifkey.h \
  tio.h \
  utf8.h \
+ utilfile.h \
  utilincs.h \
  utilpath.h \
  utils.h \
@@ -50,7 +56,8 @@
  winin.h \
  winout.h \
  appmode.c \
- buffer.c \
+ buffer1.c \
+ buffer2.c \
  buffers.c \
  color.c \
  cursesif.c \
@@ -64,31 +71,35 @@
  editorfile.c \
  editorgoto.c \
  editorkeys.c \
- editorlist.c \
  editormove.c \
  editormove2.c \
  editorundo.c \
  fileio.c \
  filer.c \
- filer2.c \
  filercmd1.c \
  filercmd2.c \
+ filerdir.c \
  filerkeys.c \
+ filerlist.c \
  filerrun.c \
+ help.c \
  history.c \
  keymacro.c \
  keys.c \
  line.c \
  linewrap.c \
  main.c \
+ menu.c \
  myutf8.c \
  rcfile.c \
  regexp.c \
  search.c \
  sig.c \
  termif.c \
+ termifkey.c \
  tio.c \
  utf8.c \
+ utilfile.c \
  utilpath.c \
  utils.c \
  utilstr.c \

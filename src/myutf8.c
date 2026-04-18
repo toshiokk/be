@@ -5,74 +5,86 @@
 #include "utilincs.h"
 #include "tio.h"
 
+#if defined(WA_VAGUE_CHAR_AS_WIDE) || defined(ON_DEMAND_WCWIDTH)
+PRIVATE int is_vague_chr(wchar_t wc);
+#endif // defined(WA_VAGUE_CHAR_AS_WIDE) || defined(ON_DEMAND_WCWIDTH)
+#ifdef ON_DEMAND_WCWIDTH
+PRIVATE void init_wcwidth_cache();
+PRIVATE char get_wcwidth_on_demand(wchar_t wc);
+#endif // ON_DEMAND_WCWIDTH
+
 PRIVATE int my_mbtowc__(wchar_t *pwc, const char *utf8c, int max_len);
+PRIVATE int is_wide_chr(wchar_t wc);
 
 int my_mbwidth(const char *utf8c, int max_len)
 {
-#ifndef VAGUE_WIDTH_CHAR
 	return my_wcwidth(my_mbtowc(utf8c, max_len));
-#else // VAGUE_WIDTH_CHAR
-	wchar_t wc = my_mbtowc(utf8c, max_len);
-	return my_wcwidth(wc);
-#endif // VAGUE_WIDTH_CHAR
 }
 int my_wcwidth(wchar_t wc)
 {
-	int columns;
 	if (is_wide_chr(wc)) {
 		return 2;
 	}
-	if (is_vague_width_chr(wc)) {
-#ifndef ON_DEMAND_WCWIDTH
+	int columns;
+#ifdef WA_VAGUE_CHAR_AS_WIDE
+	if (is_vague_chr(wc)) {
 		return 2;
-#else // ON_DEMAND_WCWIDTH
-		columns = get_wcwidth_cache(wc);
+	}
+#endif // WA_VAGUE_CHAR_AS_WIDE
+#ifdef ON_DEMAND_WCWIDTH
+	if (is_vague_chr(wc)) {
+		columns = get_wcwidth_on_demand(wc);
 		if (columns) {
 			return columns;
 		}
-#endif // ON_DEMAND_WCWIDTH
 	}
+#endif // ON_DEMAND_WCWIDTH
 	columns = wcwidth(wc);
 	if (columns < 1)
 		columns = 1;		// narrow char.
 	return columns;
 }
 
-#ifdef VAGUE_WIDTH_CHAR
-int is_wide_chr(wchar_t wc)
+PRIVATE int is_wide_chr(wchar_t wc)
 {
 	return 0
 	// WIDE_CHAR_LIST
 	 || (0x3000 <= wc && wc < 0xa000)
 	;
 }
-int is_vague_width_chr(wchar_t wc)
+#if defined(WA_VAGUE_CHAR_AS_WIDE) || defined(ON_DEMAND_WCWIDTH)
+PRIVATE int is_vague_chr(wchar_t wc)
 {
 	return 0
-	// VAGUE_WIDTH_CHAR_LIST
+	// WA_VAGUE_CHAR_AS_WIDE
 	 || (0x02c0 <= wc && wc < 0x03a0)
+	 || (0x03a0 <= wc && wc < 0x1100)
+	 || (0x1100 <= wc && wc < 0x1e00)
 	 || (0x2000 <= wc && wc < 0x2800)
+	//   0x2800       ~~      0x2900 : These are narrow
 	 || (0x2900 <= wc && wc < 0x2e80)
 	 || (0x2fc0 <= wc && wc < 0x3400)
 	 || (0xa000 <= wc && wc < 0xac00)
+	 || (0xd7a0 <= wc && wc < 0xe000)
 	 || (0xe000 <= wc && wc < 0xf900)
 	;
 }
+#endif // defined(WA_VAGUE_CHAR_AS_WIDE) || defined(ON_DEMAND_WCWIDTH)
 #ifdef ON_DEMAND_WCWIDTH
 // -1: not investigated yet
 //  0: investigation failed
 //  1: narrow character
 //  2: wide character
-char wcwidth_cache[65536] = { 0 };	// 0x0000 -- 0xffff
-void clear_wcwidth_cache()
+PRIVATE char wcwidth_cache[65536] = { 0 };	// 0x0000 -- 0xffff
+PRIVATE void init_wcwidth_cache()
 {
 	if (wcwidth_cache[0] == 0) {
 		memset(wcwidth_cache, -1, sizeof(wcwidth_cache));
 	}
 }
-char get_wcwidth_cache(wchar_t wc)
+PRIVATE char get_wcwidth_on_demand(wchar_t wc)
 {
-	clear_wcwidth_cache();
+	init_wcwidth_cache();
 	wc = MIN_MAX_(0, wc, 65535);
 	if (wcwidth_cache[wc] < 0) {
 		char width = investigate_wcwidth(wc);
@@ -84,7 +96,6 @@ char get_wcwidth_cache(wchar_t wc)
 	return wcwidth_cache[wc];	// 0, 1, 2
 }
 #endif // ON_DEMAND_WCWIDTH
-#endif // VAGUE_WIDTH_CHAR
 
 // UTF8 character byte length
 int my_mblen(const char *utf8c, int max_len)

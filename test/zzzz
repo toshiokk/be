@@ -1,0 +1,11 @@
+
+for : ; do
+  for i in seq 1 10 ; do
+    fn=file$i
+    touch $fn
+  done
+  for i in seq 1 10 ; do
+    fn=file$i
+    rm $fn
+  done
+done

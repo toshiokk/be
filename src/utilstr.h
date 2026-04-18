@@ -59,6 +59,7 @@ char *quote_file_path_if_necessary(char *buf, const char *string);
 #ifdef START_UP_TEST
 void test_get_one_file_path();
 #endif // START_UP_TEST
+
 const char *get_one_file_path(const char *ptr, char *buf);
 
 int is_strlen_0(const char *str);
@@ -66,7 +67,7 @@ int is_strlen_not_0(const char *str);
 size_t strlen_path(const char *str);
 
 char *strcat_printf(char *buffer, size_t buf_len, const char *format, ...);
-int snprintf_(char *buffer, size_t buf_len, const char *format, ...);
+char *snprintf_(char *buffer, size_t buf_len, const char *format, ...);
 char *sprintf_s(const char *format, ...);
 char *sprintf_s1(const char *format, ...);
 char *sprintf_s2(const char *format, ...);
@@ -107,17 +108,15 @@ int get_byte_idx_from_col_idx(const char *utf8s, int columns, int left_right, in
 char *utf8s_strnset__(char *buf, const char *utf8c, size_t len);
 
 //------------------------------------------------------------------------------
-int skip_space(const char **ptr);
-int skip_space_mutable(char **ptr);
-const char *skip_chars(const char *ptr, const char *chars);
+int skip_space_ptr(const char **ptr);
+int skip_space_ptr_mutable(char **ptr);
 const char *skip_to_file_path(const char *ptr);
 const char *skip_file_path(const char *ptr);
 char *skip_file_name_min(char *ptr);
 char *skip_file_name_max(char *ptr);
 const char *skip_one_separator_const(const char *ptr);
-const char *skip_two_white_spaces(const char *ptr);
 const char *skip_white_space(const char *ptr);
-const char *skip_to_digit(const char *ptr);
+const char *skip_to_digit(const char *ptr, int max_chrs);
 const char *skip_digits(const char *ptr);
 const char *skip_string_const(const char *ptr);
 char *skip_string_mutable(char *ptr);
@@ -128,13 +127,16 @@ char *remove_line_tail_lf(char *line);
 
 int is_char_file_path_min(const char *ptr);
 int is_char_file_name_min(const char *ptr);
-int is_char_file_path_max(const char *ptr);
+///int is_char_file_path_max(const char *ptr);
 int is_char_file_name_max(const char *ptr);
 
-int is_char_id(char chr);
+int is_char_id(char chr);		// "type_id"
+int is_char_id2(char chr);		// "copy-type_id"
 int is_char_separator(char chr);
 int is_char_non_white_space_separator(char chr);
+int is_ptr_char_white_space(const char *ptr);
 int is_char_white_space(char chr);
+int is_ptr_char_eol(const char *chr);
 
 char *quote_string(char *buf, const char *string, char quote_chr);
 char *escape_quote_chr(char *buffer, const char *string, char quote_chr);

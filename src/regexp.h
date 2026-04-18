@@ -55,6 +55,7 @@ typedef struct {
 #endif // ENABLE_REGEX
 
 typedef struct {
+	int mode;						// 0: text, 1: bracket
 	char needle[MAX_PATH_LEN+1];	// compiled regexp string
 	int direction;
 	int ignore_case;
@@ -72,16 +73,14 @@ typedef struct {
 } matches_t;
 
 void search_clear(search_t *search);
+void search_set_mode(search_t *search, char single1_multi2, char search_dir, char ignore_case);
+int search_get_mode(search_t *search);
+int search_get_direction(search_t *search);
+int search_get_ignore_case(search_t *search);
+void search_set_needle(search_t *search, const char *needle);
+const char *search_get_needle(search_t *search);
 int search_is_needle_set(search_t *search);
-int search_str_in_line(search_t *search, matches_t *matches,
- const char *needle, int search_dir, int ignore_case, const char *haystack, int byte_idx);
-int search_str_in_line_strstr(const char *needle, matches_t *matches,
- int search_dir, int ignore_case, const char *haystack, int byte_idx);
-#ifdef ENABLE_REGEX
-int search_str_in_line_regexp(regexp_t *regexp, regexp_matches_t *regexp_matches,
- const char *needle, int search_dir, int ignore_case,
- const char *haystack, int byte_idx);
-#endif // ENABLE_REGEX
+void dump_search(search_t *search);
 
 void matches_clear(matches_t *matches);
 void matches_set_start_idx(matches_t *matches, int byte_idx);
@@ -90,14 +89,22 @@ void matches_set_match_len(matches_t *matches, int match_len);
 int matches_start_idx(matches_t *matches);
 int matches_end_idx(matches_t *matches);
 int matches_match_len(matches_t *matches);
-
 void matches_dump_matches(matches_t *matches);
 
+int search_str_in_line(search_t *search, matches_t *matches,
+ const char *needle, int search_dir, int ignore_case, const char *haystack, int byte_idx);
+int search_str_in_line_strstr(const char *needle, matches_t *matches,
+ int search_dir, int ignore_case, const char *haystack, int byte_idx);
+
 #ifdef ENABLE_REGEX
+int search_str_in_line_regexp(regexp_t *regexp, regexp_matches_t *regexp_matches,
+ const char *needle, int search_dir, int ignore_case,
+ const char *haystack, int byte_idx);
 
 #ifdef START_UP_TEST
 void test_regexp();
 #endif // START_UP_TEST
+
 regexp_t *regexp_alloc();
 regexp_t *regexp_init(regexp_t *regexp);
 void regexp_free_regex_compiled(regexp_t *regexp);
@@ -134,6 +141,8 @@ int regexec_1(const regex_t *preg, const char *haystack,
 int regexec_n(const regex_t *preg, const char *haystack,
  size_t nmatch, regmatch_t pmatch[], int eflags);
 void regfree__(regex_t *preg);
+
+const char *regexp_escape_special_char_s(char chr);
 
 #endif // ENABLE_REGEX
 

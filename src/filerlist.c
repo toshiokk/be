@@ -26,7 +26,132 @@
 filer_panes_t *cur_filer_panes = NULL;		// Current Filer Panes
 
 //------------------------------------------------------------------------------
+int read_into_file_info_array(filer_view_t *fv)
+{
+	char dir_save[MAX_PATH_LEN+1];
+	struct dirent *dirent;
+	int file_idx;
 
+	const char *filter = fv->filter;
+	if (is_strlen_0(filter)) {
+		filter = "*";
+	}
+	chdir_after_save(dir_save, fv->cur_dir);
+
+	free_file_info_array(fv);
+
+	DIR *dir;
+	if ((dir = opendir(fv->cur_dir)) == NULL) {
+		strcpy__(fv->listed_dir, "");
+		goto read_into_file_info_array_ret;
+	}
+	for (file_idx = 0; (dirent = readdir(dir)) != NULL; file_idx++) {
+		// count files
+	}
+	int entries = file_idx;
+	_mlc_set_caller
+	fv->file_info_array = (file_info_t *)malloc__(sizeof(file_info_t) * entries);
+
+	rewinddir(dir);
+	for (file_idx = 0; file_idx < entries && (dirent = readdir(dir)) != NULL; ) {
+		struct stat lst;
+		struct stat st;
+		lstat(dirent->d_name, &lst);	// stat link itself if it's a link
+		if (S_ISLNK(lst.st_mode)) {
+			// d_name is a symlink, stat a target file
+			if (stat(dirent->d_name, &st) < 0) {	// stat a target file
+				// symlink is broken, copy symlink itself
+				memcpy__(&st, &lst, sizeof(lst));
+			}
+		} else {
+			// d_name is not a symlink
+			memcpy__(&st, &lst, sizeof(lst));
+		}
+		// Total Condition:
+		// | condition-1 | condition-2 || total show or not |
+		// |-------------|-------------||-------------------|
+		// |    0        | --          || not show          |
+		// |    --       | 0           || not show          |
+		// |    1        | 1           || show              |
+		// - Condition-1:
+		//   | ISDIR() | criteria                || show or not |
+		//   |---------|-------------------------||-------------|
+		//   |    1    | --                      || 1           |
+		//   |    0    | match with 'filter'     || 1           |
+		//   |    0    | not match with 'filter' || 0           |
+		// - Condition-2:
+		//   | fl_SHOW_DOT_FILE | condition-2-1 | condition-2-2 || show or not |
+		//   |------------------|---------------|---------------||-------------|
+		//   |    1             | --            | --            || 1           |
+		//   |    0             | 0             | --            || 0           |
+		//   |    0             | --            | 0             || 0           |
+		//   |    0             | 1             | 1             || 1           |
+		//   - Condition-2-1:
+		//     | file/dir name  || show or not |
+		//     |----------------||-------------|
+		//     | ".."           || 1           |
+		//     | "." or ".????" || 0           |
+		//   - Condition-2-2:
+		//     | file attribute || show or not |
+		//     |----------------||-------------|
+		//     | ---------      || 0           |
+		//     | rw?---rw?      || 0           |
+		//     | (others)       || 1           |
+		if ((S_ISDIR(st.st_mode) ? 1					// all dir
+		  : (fnmatch(filter, dirent->d_name, 0) == 0))	// files which match with 'filter'
+		 && (GET_APPMD(fl_SHOW_DOT_FILE) ? 1			// all files
+														// ("." or ".???") but not ".."
+		  : (((strcmp(dirent->d_name, "..") == 0) || (strlcmp__(dirent->d_name, ".") != 0))
+														// Not have a "hidden" attribute
+		   && ((st.st_mode & RW0RW0RW0) != 0) && ((st.st_mode & RW0RW0RW0) != RW0000RW0)))) {
+			file_info_t *ent_ptr = &fv->file_info_array[file_idx];
+			// fill file_info_t
+			_mlc_set_caller
+			ent_ptr->file_name = malloc_strcpy(dirent->d_name);
+			memcpy__(&ent_ptr->st, &st, sizeof(st));
+			memcpy__(&ent_ptr->lst, &lst, sizeof(lst));
+			ent_ptr->symlink = NULL;
+			if (S_ISLNK(lst.st_mode)) {
+				char symlink[MAX_PATH_LEN+1];
+				if (readlink__(dirent->d_name, symlink, MAX_PATH_LEN) > 0) {
+					_mlc_set_caller
+					ent_ptr->symlink = malloc_strcpy(symlink);
+				} else {
+					// WARN: ent_ptr->symlink == NULL !!
+				}
+			}
+			ent_ptr->selected = 0;
+			file_idx++;
+		}
+	}
+	closedir(dir);
+	fv->file_info_entries = file_idx;
+	FV_SEL_F_IDX(fv) = -1;
+	FV_CUR_F_IDX(fv) = MIN_MAX_(0, FV_CUR_F_IDX(fv), fv->file_info_entries-1);
+	strcpy__(fv->listed_dir, fv->cur_dir);
+
+read_into_file_info_array_ret:;
+	change_cur_dir(dir_save);
+	return fv->file_info_entries;
+}
+// Free malloc()ed memory
+void free_file_info_array(filer_view_t *fv)
+{
+	if (fv->file_info_array) {
+		for (int file_idx = 0; file_idx < fv->file_info_entries; file_idx++) {
+			if (fv->file_info_array[file_idx].file_name) {
+				FREE_CLR_PTR(fv->file_info_array[file_idx].file_name);
+			}
+			if (fv->file_info_array[file_idx].symlink) {
+				FREE_CLR_PTR(fv->file_info_array[file_idx].symlink);
+			}
+		}
+		FREE_CLR_PTR(fv->file_info_array);
+		strcpy__(fv->listed_dir, "");
+	}
+	fv->file_info_entries = 0;
+}
+//------------------------------------------------------------------------------
 PRIVATE char *safe_file_name_str(const char *file_name);
 PRIVATE const char *get_1k_to_999k_str(long size);
 #ifdef START_UP_TEST
@@ -154,8 +279,8 @@ const char *file_info_str(file_info_t *file_info,
 	// 999C999 070113-125959 srwxrwxrwx user---- group---
 	char buf_info[FILE_INFO_BUF_LEN+1];
 #define SELECTED_MARK_LEN				1		// strlen("*") (*filename.ext)
-#define FNAME_FINFO_SEPARATOR_LEN		1		// " "
-	char buf_separator[FNAME_FINFO_SEPARATOR_LEN+1] = " ";
+#define MAX_NAME_INFO_SEPARATOR_LEN		3		// "   "
+	char buf_separator[MAX_NAME_INFO_SEPARATOR_LEN+1] = " ";	// at least one space
 #define FILE_NAME_INFO_BUF_LEN		(SELECTED_MARK_LEN + MAX_PATH_LEN*MAX_UTF8C_BYTES)
 	static char buffer[FILE_NAME_INFO_BUF_LEN+1];
 #define MIN_FILE_NAME_SPACE		12		// "filename.ext"(DOS8.3) (available at least)
@@ -166,6 +291,7 @@ const char *file_info_str(file_info_t *file_info,
 	int is_link_broken = (is_link == 0) ? 0 : (memcmp(st_ptr, lst_ptr, sizeof(*lst_ptr)) == 0);
 	if (is_link) {
 		if (show_link) {
+			// link -> target!
 			strlcat__(buf_name, MAX_PATH_LEN, safe_file_name_str(file_info->file_name));
 #define LINK_ARROW		" -> "
 			strlcat__(buf_name, MAX_PATH_LEN, LINK_ARROW);
@@ -174,10 +300,12 @@ const char *file_info_str(file_info_t *file_info,
 			if (is_link_broken)
 				strlcat__(buf_name, MAX_PATH_LEN, "!");
 		} else {
+			// target
 			if (file_info->symlink)
 				strlcat__(buf_name, MAX_PATH_LEN, safe_file_name_str(file_info->symlink));
 		}
 	} else {
+		// file-name
 		strlcat__(buf_name, MAX_PATH_LEN, safe_file_name_str(file_info->file_name));
 	}
 	if (S_ISDIR(st_ptr->st_mode)) {
@@ -200,7 +328,7 @@ const char *file_info_str(file_info_t *file_info,
 
 	loff_t size = show_link ? lst_ptr->st_size : st_ptr->st_size;
 ////#define TEST_HUGE_SIZE
-#ifdef	TEST_HUGE_SIZE
+#ifdef TEST_HUGE_SIZE
 	size *= 1000000000000;
 #endif // TEST_HUGE_SIZE
 	// 2^32 = 4294967296 = 4e9 = 4Giga, 2^64 = 1844674407000000000 = 18e18 = 18Exa = 18446Peta
@@ -292,16 +420,16 @@ const char *file_info_str(file_info_t *file_info,
 		break;
 	}
 	char *info_str = buf_info;
-	skip_space_mutable(&info_str);	// "  123" ==> "123"
+	skip_space_ptr_mutable(&info_str);	// "  123" ==> "123"
 	int info_str_cols = strnlen(info_str, FILE_INFO_BUF_LEN);
 
 	//   <--      --> MIN_FILE_NAME_SPACE
 	//   <--normal_file_name_space      --> <--info_str_cols  -->
 	//   <--max_file_name_space                               -->
 	// "*filename.ext                      _999C999 250607-073633"
-	int file_name_cols = utf8s_columns(buf_name, central_win_get_columns());
+	int file_name_cols = utf8s_columns(buf_name, MAX_PATH_LEN);
 	int normal_file_name_space = LIM_MIN(MIN_FILE_NAME_SPACE,
-	 sub_win_get_columns() - (SELECTED_MARK_LEN + FNAME_FINFO_SEPARATOR_LEN + info_str_cols));
+	 sub_win_get_columns() - (SELECTED_MARK_LEN + strlen(buf_separator) + info_str_cols));
 	int max_file_name_space = sub_win_get_columns() - SELECTED_MARK_LEN;
 	int file_name_space = 0;
 	if (trunc_file_name == 0) {
@@ -315,17 +443,16 @@ const char *file_info_str(file_info_t *file_info,
 		file_name_space = normal_file_name_space;
 	}
 
-	// adjust file name length if no space for file name
+	// adjust file name length if enough space for file name
 	if (file_name_cols > file_name_space) {
 		truncate_str_tail_columns(buf_name, file_name_space-1);
 		strlcat__(buf_name, MAX_PATH_LEN, "~");	// add truncation-mark
-		file_name_cols = utf8s_columns(buf_name, MAX_PATH_LEN);	// update with truncated len
 	}
 	expand_str_columns(buf_name, file_name_space);
 
-	// adjust file infomation length if no space for information
+	// adjust file infomation length if enough space for information
 	int info_space = LIM_MIN(0, sub_win_get_columns()
-	 - (SELECTED_MARK_LEN + file_name_space + FNAME_FINFO_SEPARATOR_LEN));
+	 - (SELECTED_MARK_LEN + file_name_space + strlen(buf_separator)));
 	if (info_str_cols > info_space) {
 		// truncate head
 		info_str = &info_str[info_str_cols - info_space];
@@ -336,7 +463,12 @@ const char *file_info_str(file_info_t *file_info,
 		if (info_space == 0) {
 			strcpy__(buf_separator, "");	// " " ==> ""
 		} else if (info_space >= 1) {
-			info_str[0] = '~';	// add truncate-head mark
+			info_str[0] = '~';				// add truncate-head mark
+			while (info_str[1] == ' ') {
+				strlcat__(buf_separator, MAX_NAME_INFO_SEPARATOR_LEN, " ");
+				info_str[1] = '~';
+				info_str++;
+			}
 		}
 	}
 
@@ -412,129 +544,6 @@ PRIVATE const char *get_1k_to_999k_str(long size)
 // 1.00G - 9.99G
 // 10.0G - 99.9G
 //  100G -  999G
-
-//------------------------------------------------------------------------------
-int read_into_file_info_array(filer_view_t *fv)
-{
-	char dir_save[MAX_PATH_LEN+1];
-	struct dirent *dirent;
-	struct stat lst;
-	struct stat st;
-	int file_idx;
-
-	const char *filter = fv->filter;
-	if (is_strlen_0(filter)) {
-		filter = "*";
-	}
-	chdir_after_save(dir_save, fv->cur_dir);
-
-	free_file_info_array(fv);
-
-	DIR *dir;
-	if ((dir = opendir(fv->cur_dir)) == NULL) {
-		strcpy__(fv->listed_dir, "");
-		goto read_into_file_info_array_ret;
-	}
-	for (file_idx = 0; (dirent = readdir(dir)) != NULL; file_idx++) {
-		// count files
-	}
-	int entries = file_idx;
-	_mlc_set_caller
-	fv->file_info_array = (file_info_t *)malloc__(sizeof(file_info_t) * entries);
-
-	rewinddir(dir);
-	for (file_idx = 0; file_idx < entries && (dirent = readdir(dir)) != NULL; ) {
-		lstat(dirent->d_name, &lst);	// stat link itself if it's a link
-		if (S_ISLNK(lst.st_mode)
-		 && stat(dirent->d_name, &st) >= 0) {	// stat linked file
-			// statting file succeeded
-		} else {
-			// statting file succeeded, copy from lst to st
-			memcpy__(&st, &lst, sizeof(lst));
-		}
-		// Total Condition:
-		// | condition-1 | condition-2 || total show or not |
-		// |-------------|-------------||-------------------|
-		// |    0        | --          || not show          |
-		// |    --       | 0           || not show          |
-		// |    1        | 1           || show              |
-		// - Condition-1:
-		//   | ISDIR() | criteria                || show or not |
-		//   |---------|-------------------------||-------------|
-		//   |    1    | --                      || 1           |
-		//   |    0    | match with 'filter'     || 1           |
-		//   |    0    | not match with 'filter' || 0           |
-		// - Condition-2:
-		//   | fl_SHOW_DOT_FILE | condition-2-1 | condition-2-2 || show or not |
-		//   |------------------|---------------|---------------||-------------|
-		//   |    1             | --            | --            || 1           |
-		//   |    0             | 0             | --            || 0           |
-		//   |    0             | --            | 0             || 0           |
-		//   |    0             | 1             | 1             || 1           |
-		//   - Condition-2-1:
-		//     | file/dir name  || show or not |
-		//     |----------------||-------------|
-		//     | ".."           || 1           |
-		//     | "." or ".????" || 0           |
-		//   - Condition-2-2:
-		//     | file attribute || show or not |
-		//     |----------------||-------------|
-		//     | ---------      || 0           |
-		//     | rw?---rw?      || 0           |
-		//     | (others)       || 1           |
-		if ((S_ISDIR(st.st_mode) ? 1					// all dir
-		  : (fnmatch(filter, dirent->d_name, 0) == 0))	// files which match with 'filter'
-		 && (GET_APPMD(fl_SHOW_DOT_FILE) ? 1			// all files
-														// ("." or ".???") but not ".."
-		  : (((strcmp(dirent->d_name, "..") == 0) || (strlcmp__(dirent->d_name, ".") != 0))
-														// Not have a "hidden" attribute
-		   && ((st.st_mode & RW0RW0RW0) != 0) && ((st.st_mode & RW0RW0RW0) != RW0000RW0)))) {
-			file_info_t *ent_ptr = &fv->file_info_array[file_idx];
-			// fill file_info_t
-			_mlc_set_caller
-			ent_ptr->file_name = malloc_strcpy(dirent->d_name);
-			memcpy__(&ent_ptr->st, &st, sizeof(st));
-			memcpy__(&ent_ptr->lst, &lst, sizeof(lst));
-			ent_ptr->symlink = NULL;
-			if (S_ISLNK(lst.st_mode)) {
-				char symlink[MAX_PATH_LEN+1];
-				if (readlink__(dirent->d_name, symlink, MAX_PATH_LEN) > 0) {
-					_mlc_set_caller
-					ent_ptr->symlink = malloc_strcpy(symlink);
-				} else {
-					// WARN: ent_ptr->symlink == NULL !!
-				}
-			}
-			ent_ptr->selected = 0;
-			file_idx++;
-		}
-	}
-	closedir(dir);
-	fv->file_info_entries = file_idx;
-	FV_CUR_F_IDX(fv) = MIN_MAX_(0, FV_CUR_F_IDX(fv), fv->file_info_entries-1);
-	strcpy__(fv->listed_dir, fv->cur_dir);
-
-read_into_file_info_array_ret:;
-	change_cur_dir(dir_save);
-	return fv->file_info_entries;
-}
-// Free malloc()ed memory
-void free_file_info_array(filer_view_t *fv)
-{
-	if (fv->file_info_array) {
-		for (int file_idx = 0; file_idx < fv->file_info_entries; file_idx++) {
-			if (fv->file_info_array[file_idx].file_name) {
-				FREE_CLR_PTR(fv->file_info_array[file_idx].file_name);
-			}
-			if (fv->file_info_array[file_idx].symlink) {
-				FREE_CLR_PTR(fv->file_info_array[file_idx].symlink);
-			}
-		}
-		FREE_CLR_PTR(fv->file_info_array);
-		strcpy__(fv->listed_dir, "");
-	}
-	fv->file_info_entries = 0;
-}
 
 //------------------------------------------------------------------------------
 // sort file list
@@ -628,7 +637,8 @@ PRIVATE int comp_file_time(const void *aa, const void *bb)
 // sort directories before files and then by file size.
 PRIVATE int comp_file_size(const void *aa, const void *bb)
 {
-	return ((file_info_t *)aa)->st.st_size - ((file_info_t *)bb)->st.st_size;
+	ssize_t diff = ((file_info_t *)aa)->st.st_size - ((file_info_t *)bb)->st.st_size;
+	return (diff == 0) ? 0 : ((diff < 0) ? -1 : +1);
 }
 // sort executable files before non-executables
 PRIVATE int comp_file_executable(file_info_t *aa, file_info_t *bb)
@@ -728,71 +738,77 @@ PRIVATE int strtypecasecmp(const char *s1, const char *s2)
 }
 
 //------------------------------------------------------------------------------
-int get_files_selected_cfv()
+int get_cfv_files_selected()
 {
-	return get_files_selected(get_fv_from_cur_pane());
+	return get_fv_files_selected_size(get_fv_from_cur_pane(), NULL, NULL);
 }
-int get_files_selected(filer_view_t *fv)
+int get_cfv_files_selected_size(size_t *selected, size_t *total)
+{
+	return get_fv_files_selected_size(get_fv_from_cur_pane(), selected, total);
+}
+int get_fv_files_selected(filer_view_t *fv)
+{
+	return get_fv_files_selected_size(fv, NULL, NULL);
+}
+int get_fv_files_selected_size(filer_view_t *fv, size_t *selected, size_t *total)
 {
 	int files_selected = 0;
-	for (int idx = 0; idx < fv->file_info_entries; idx++) {
-		if (fv->file_info_array[idx].selected) {
-			files_selected++;
+	size_t size_selected = 0;
+	size_t size_total = 0;
+	for (int file_idx = 0; file_idx < get_fv_file_info_entries(fv); file_idx++) {
+		if (is_cfv_file_selectable(file_idx, MY_ISREG | MY_ISDIR | MY_ISLNK)) {
+			if (get_cfv_file_selected(file_idx)) {
+				files_selected++;
+				size_selected += get_fv_file_info(fv, file_idx)->lst.st_size;
+			}
+			size_total += get_fv_file_info(fv, file_idx)->lst.st_size;
 		}
+	}
+	if (selected) {
+		*selected = size_selected;
+	}
+	if (total) {
+		*total = size_total;
 	}
 	return files_selected;
 }
 
-PRIVATE void select_file_if_none_selected();
-int select_and_get_first_file_idx_selected()
-{
-	select_file_if_none_selected();
-	return get_first_file_idx_selected();
-}
-PRIVATE void select_file_if_none_selected()
-{
-	if (get_files_selected_cfv() == 0) {
-		get_cur_fv_cur_file_info()->selected = _FILE_SEL_AUTO_;
-	}
-}
 int get_first_file_idx_selected()
 {
 	int file_idx;
-	for (file_idx = 0; file_idx < get_cur_fv_file_info_entries(); file_idx++) {
-		if (get_cur_fv_file_info(file_idx)->selected)
+	for (file_idx = 0; file_idx < get_cfv_file_info_entries(); file_idx++) {
+		if (get_cfv_file_selected(file_idx))
 			break;
 	}
-	if (file_idx < get_cur_fv_file_info_entries())
+	if (file_idx < get_cfv_file_info_entries())
 		return file_idx;
 	// no file selected, return current file
-	return get_cur_fv_file_idx();
+	return get_cfv_file_idx();
 }
 int get_next_file_idx_selected(int file_idx)
 {
 	file_idx = file_idx < 0 ? 0 : file_idx+1;
-	for ( ; file_idx < get_cur_fv_file_info_entries(); file_idx++) {
-		if (get_cur_fv_file_info(file_idx)->selected)
+	for ( ; file_idx < get_cfv_file_info_entries(); file_idx++) {
+		if (get_cfv_file_selected(file_idx))
 			break;
 	}
-	if (file_idx < get_cur_fv_file_info_entries())
+	if (file_idx < get_cfv_file_info_entries())
 		return file_idx;
 	return -1;	// no selected file found
 }
-int get_number_of_selected_files()
+int is_cfv_file_selectable(int file_idx, mode_t type)
 {
-	int files = 0;
-	for (int file_idx = 0; file_idx < get_cur_fv_file_info_entries(); file_idx++) {
-		if (get_cur_fv_file_info(file_idx)->selected) {
-				files++;
-		}
-	}
-	return files;
-}
-void unselect_all_files_auto(char selection_bit)
-{
-	for (int file_idx = 0 ; file_idx < get_cur_fv_file_info_entries(); file_idx++) {
-		get_cur_fv_file_info(file_idx)->selected
-		 = get_cur_fv_file_info(file_idx)->selected & ~selection_bit;
+	if ((type == 0)
+	 || (strcmp(get_cfv_file_name(file_idx), ".") == 0)
+	 || (strcmp(get_cfv_file_name(file_idx), "..") == 0)) {
+		return 0;
+	} else {
+		mode_t ftype = 0;	// (S_IFREG or S_IFDIR) and S_IFLNK are exclusive
+		mode_t mode = get_cfv_file_info(file_idx)->lst.st_mode;
+		if (S_ISLNK(mode))		ftype |= MY_ISLNK;
+		if (S_ISREG(mode))		ftype |= MY_ISREG;
+		if (S_ISDIR(mode))		ftype |= MY_ISDIR;
+		return ftype & type;
 	}
 }
 
@@ -820,7 +836,6 @@ int research_file_name_in_file_info_array(filer_view_t *fv, const char *file_nam
 	normalize_filer_cursor_y(fv);
 	return 0;
 }
-
 int search_file_name_in_file_info_array(filer_view_t *fv, const char *file_name)
 {
 	// exact match
@@ -872,18 +887,38 @@ int search_file_name_in_file_info_array(filer_view_t *fv, const char *file_name)
 	return -1;
 }
 
+int search_file_from_list(const char *file_name, int first0_next1, int direction)
+{
+	dof_select_no_file();
+
+	int file_idx = get_cfv_file_idx();
+	if (first0_next1) {
+		file_idx += direction;
+	}
+	for ( ; 0 <= file_idx && file_idx < get_cfv_file_info_entries();
+	 file_idx += (direction < 0 ? -1 : +1)) {
+		if (strstr(get_cfv_file_name(file_idx), file_name)) {
+			set_cur_fv_file_idx(file_idx);
+			set_cfv_file_selected(file_idx, _FILE_SEL_MAN_);
+			return file_idx;
+		}
+	}
+	return -1;
+}
+
 // call this:
 // - when current directory changed
 // - after automatic refreshing of file list
 void normalize_filer_cur_file_idx(filer_view_t *fv)
 {
-	FV_CUR_F_IDX(fv) = MIN_MAX_(0, FV_CUR_F_IDX(fv), get_cur_fv_file_info_entries()-1);
+	FV_CUR_F_IDX(fv) = MIN_MAX_(0, FV_CUR_F_IDX(fv), get_cfv_file_info_entries()-1);
 }
 // - call this when current directory changed
 // - do not call this in automatic refreshing of file list
 void normalize_filer_cursor_y(filer_view_t *fv)
 {
-	FV_CURS_Y(fv) = MIN_MAX_(MIN_(FV_CUR_F_IDX(fv), filer_vert_scroll_margin_lines()),
+	FV_CURS_Y(fv) = MIN_MAX_(
+	 MIN_(FV_CUR_F_IDX(fv), filer_vert_scroll_margin_lines()),
 	 FV_CURS_Y(fv),
 	 MIN_(FV_CUR_F_IDX(fv), filer_win_get_file_list_lines()-1 - filer_vert_scroll_margin_lines()));
 }
