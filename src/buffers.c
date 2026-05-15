@@ -315,13 +315,13 @@ int is_epc_buf_mode_edit()
 {
 	return GET_CUR_EBUF_STATE(buf_MODE) == BUF_MODE_EDIT;
 }
-int is_epc_buf_mode_list()
-{
-	return GET_CUR_EBUF_STATE(buf_MODE) == BUF_MODE_LIST;
-}
 int is_epc_buf_mode_ro()
 {
 	return GET_CUR_EBUF_STATE(buf_MODE) == BUF_MODE_RO;
+}
+int is_epc_buf_mode_list()
+{
+	return GET_CUR_EBUF_STATE(buf_MODE) == BUF_MODE_LIST;
 }
 
 int is_epc_buf_locked()

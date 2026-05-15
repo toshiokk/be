@@ -212,7 +212,6 @@ const char *get_str_mode_idx_val(mode_idx_t mode_idx)
 
 int inc_app_mode()
 {
-////
 	INC_APPMD(app_LIST_MODE, APP_MODE_VIEWER);
 	return 0;
 }
@@ -483,6 +482,10 @@ BOOL is_app_normal_mode()	// in editor: text editor mode, in filer: file manager
 BOOL is_app_viewer_mode()		// in editor: text viewer, in filer: directory viewer
 {
 	return GET_APPMD(app_LIST_MODE) == APP_MODE_VIEWER;
+}
+void set_editor_app_mode_based_on_buf_mode()
+{
+	SET_APPMD_VAL(app_LIST_MODE, is_epc_buf_mode_list() ? APP_MODE_VIEWER : APP_MODE_NORMAL);
 }
 
 //=============================================================================

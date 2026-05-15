@@ -21,6 +21,7 @@ be -s \
  editormove.h \
  editormove2.h \
  editorundo.h \
+ encdet.h \
  fileio.h \
  filer.h \
  filercmd1.h \
@@ -74,6 +75,7 @@ be -s \
  editormove.c \
  editormove2.c \
  editorundo.c \
+ encdet.c \
  fileio.c \
  filer.c \
  filercmd1.c \

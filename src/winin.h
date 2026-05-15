@@ -22,7 +22,7 @@
 #ifndef winin_h
 #define winin_h
 
-// editor_do_next, filer_do_next, ret__
+// app_do_next, ret__
 typedef enum {
 	EF_NONE						= 0,	// nothing done yet and nothing to do next
 										// in filer loop:
@@ -43,19 +43,24 @@ typedef enum {
 										// to enter text into input_string() from editor/filer:
 	EF_ENTER_STRING				= 8,	//   enter string(file/dir name or path) to replace
 	EF_ENTER_STRING_ADD			= 9,	//   enter string(file/dir name or path) to add
-										// file path has input in input_string():
-	EF_INPUT_PATH_TO_COPY		= 10,	//   input string(by Alt-c key)
-	EF_INPUT_PATH_TO_MOVE		= 11,	//   input string(by Alt-m key)
-} ef_do_next_t;
+										// to enter file path to copy or move in input_string():
+	EF_INPUT_PATH_TO_COPY		= 10,	//   input file path to copy
+	EF_INPUT_PATH_TO_MOVE		= 11,	//   input file path to move
+} do_next_t;
 
 #define IS_EF_ENTER_STRING(ret)			\
 	((EF_ENTER_STRING <= (ret)) && ((ret) <= EF_INPUT_PATH_TO_MOVE))
 #define IS_EF_LOADED_OR_EXECUTED(ret)	\
 	(((ret) == EF_LOADED_GO_TO_ROOT_EDITOR) || ((ret) == EF_EXECUTED_RET_TO_CALLER))
 
-const char *get_ef_name(ef_do_next_t do_next);
+const char *get_do_next_name(do_next_t do_next);
 
-extern int input_file_name_0_file_path_1;
+typedef enum {
+	ENTER_FILE_NAME	= 0,
+	ENTER_FILE_PATH	= 1,
+	ENTER_DIR_PATH	= 2,
+} fname_0_fpath_1_dpath_2_t;
+extern fname_0_fpath_1_dpath_2_t input_fname_0_fpath_1;
 
 int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, ...);
@@ -75,23 +80,24 @@ int input_full_path(const char *default__, char *input_buf, int cursor_byte_idx,
 #define ASK_YES_NO		(ASK_YES | ASK_NO)
 #define ASK_YES_NO_QUIT	(ASK_YES | ASK_NO | ASK_QUIT)
 #define ASK_NO_QUIT		(ASK_NO | ASK_QUIT)
-#define ASK_OTHERS		0x800	// other answers than expected
+#define ASK_OTHERS		0x800	// other answers are to be mapped to CANCEL
 
-						// positive answers ----------------------
-#define ANSWER_FORCE	9	// force saving even if not-modified
-#define ANSWER_ALL		8	// save all if modified or replace all
-#define ANSWER_REDO		5	// Redo replace
-#define ANSWER_UNDO		4	// Undo replace
-#define ANSWER_FORWARD	3	// search Forward
-#define ANSWER_BACKWARD	2	// search Backward
-#define ANSWER_YES		1	// Yes (save or replace)
-						// negative answers ----------------------
-#define ANSWER_NO		0	// No (save or replace)
-						// not valid answers ---------------------
-#define ANSWER_NONE		-1	// Not yet answered
-#define ANSWER_CANCEL	-2	// cancel string-replacing and NOT-return to the beginning pos
-#define ANSWER_END		-3	// cancel string-replacing and return to the beginning pos
-#define ANSWER_QUIT		-4	// quit from application / cancel execution
+							// positive answers ------------------------------
+#define ANSWER_FORCE	9	//  force saving even if not-modified
+#define ANSWER_ALL		8	//  save all if modified or replace all
+#define ANSWER_REDO		5	//  Redo replace
+#define ANSWER_UNDO		4	//  Undo replace
+#define ANSWER_FORWARD	3	//  search Forward
+#define ANSWER_BACKWARD	2	//  search Backward
+#define ANSWER_YES		1	//  Yes (save or replace)
+							// negative answers ------------------------------
+#define ANSWER_NO		0	//  No (save or replace)
+							// invalid answers -------------------------------
+#define ANSWER_NONE		-1	//  Not yet answered
+							// canceling process answers ---------------------
+#define ANSWER_CANCEL	-2	//  cancel replacing and NOT-return to the beginning pos
+#define ANSWER_END		-3	//  cancel replacing and return to the beginning pos
+#define ANSWER_QUIT		-4	//  quit from application / cancel execution
 int ask_yes_no(int flags, const char *msg, ...);
 
 void disp_fkey_list();

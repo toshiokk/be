@@ -212,11 +212,9 @@ func_key_t filer_func_key_table[] = {
  {EFLM, "EntFP",                 "Enter cur file path",
   {K_M_N    ,KNA      ,KNA      ,KNA      },F_I(dof_enter_file_path_add), get_str_none },
  {EFLM, "EntDi",                 "Enter current dir path",
-  {K_c_     ,K_m_     ,KNA      ,KNA      },F_I(dof_enter_dir_path),      get_str_none },
+  {K_c_     ,K_m_     ,K_C_     ,K_M_     },F_I(dof_enter_dir_path),      get_str_none },
  {EFLM, "EntDi",                 "Enter current dir path",
-  {K_C_     ,K_M_     ,KNA      ,KNA      },F_I(dof_enter_dir_path_add),  get_str_none },
- {EFLM, "EntDi",                 "Enter current dir path",
-  {K_M_c    ,K_M_m    ,KNA      ,KNA      },F_I(dof_enter_dir_path_add),  get_str_none },
+  {K_M_c    ,K_M_m    ,K_M_C    ,K_M_M    },F_I(dof_enter_dir_path_add),  get_str_none },
 
  {EFAM, "",                      "7: Filer - Mode Menu",
   {KNA      ,KNA      ,KNA      ,KNA      },F_I(dof_menu_0),              get_str_none },

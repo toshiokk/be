@@ -24,14 +24,6 @@
 
 #ifdef ENABLE_FILER
 
-extern ef_do_next_t filer_do_next;
-#ifndef ENABLE_DEBUG
-#define SET_filer_do_next(do_next)		filer_do_next = do_next
-#else // ENABLE_DEBUG
-#define SET_filer_do_next(do_next)		filer_do_next = do_next \
-  , hmflf_dprintf("set-filer_do_next(%s)\n", get_ef_name(filer_do_next))
-#endif // ENABLE_DEBUG
-
 void set_cur_filer_panes(filer_panes_t *fps);
 filer_panes_t* get_cur_filer_panes();
 void init_filer_panes(filer_panes_t *fps, const char *cur_dir);

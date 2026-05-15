@@ -61,6 +61,10 @@ void termif_send_clear();
 void termif_beep();
 void termif_refresh();
 
+#ifdef ENABLE_DEBUG
+void show_terminal_traffic();
+#endif // ENABLE_DEBUG
+
 #endif // termif_h
 
 // End of termif.h

@@ -54,7 +54,7 @@ int editor_vert_scroll_lines()
 void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_move,
  locate_cursor_to_t locate_cursor, int update_needed)
 {
-flf_dprintf("curs_horiz_vert: %d, locate_cursor: %d\n", cursor_move, locate_cursor);
+/////flf_dprintf("curs_horiz_vert: %d, locate_cursor: %d\n", cursor_move, locate_cursor);
 	switch (GET_APPMD(ed_CURS_POSITIONING)) {
 	default:
 	case CURS_POSITIONING_NONE:		break;		// not change

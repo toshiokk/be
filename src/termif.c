@@ -21,6 +21,8 @@
 
 #include "headers.h"
 
+#include "applvl.h"
+
 #ifndef ENABLE_NCURSES
 
 PRIVATE char termif_enabled = 0;
@@ -404,12 +406,20 @@ void termif_beep()
 	 : ((vscreen_painted[yy][xx] - vscreen_to_paint[yy][xx])		\
 	  || (vscreen_painted[yy][xx+1] - vscreen_to_paint[yy][xx+1])))
 
+#define WA_FOR_WIDE_CHAR
+#if APP_REL_LVL == APP_REL_LVL_TEST1
+// disable this for speed to use in a slower(SSH) connection
+#undef WA_FOR_WIDE_CHAR
+#endif
+
+#ifdef WA_FOR_WIDE_CHAR
 ///
 #define WA_SEND_WIDE_CHR_SEPARATELY
 ///
 #define WA_CLEAR_SPACE_BEFORE_PUTTING_WIDE_CHAR
 ///
 #define WA_ADD_SPACE_AFTER_WIDE_CHAR
+#endif // WA_FOR_WIDE_CHAR
 
 // refresh screen by sending pending data stored in vscreen_to_paint to the screen.
 void termif_refresh()
@@ -638,6 +648,9 @@ PRIVATE void send_string_to_term(const char *string, int bytes)
 {
 	send_string_to_term__(string, bytes);
 }
+#ifdef ENABLE_DEBUG
+PRIVATE void add_terminal_traffic(int bytes);
+#endif // ENABLE_DEBUG
 PRIVATE void send_string_to_term__(const char *string, int bytes)
 {
 	if (! termif_enabled) {
@@ -656,7 +669,22 @@ PRIVATE void send_string_to_term__(const char *string, int bytes)
 ///		e_printf("[%s]\n", string);
 	}
 	fsync(STDOUT_FILENO);
+#ifdef ENABLE_DEBUG
+	add_terminal_traffic(bytes);
+#endif // ENABLE_DEBUG
 }
+
+#ifdef ENABLE_DEBUG
+size_t terminal_trafic_in_bytes = 0;
+PRIVATE void add_terminal_traffic(int bytes)
+{
+	terminal_trafic_in_bytes += bytes;
+}
+void show_terminal_traffic()
+{
+	hmflf_dprintf("%ld bytes\n", terminal_trafic_in_bytes);
+}
+#endif // ENABLE_DEBUG
 
 #endif // ENABLE_NCURSES
 

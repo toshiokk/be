@@ -38,7 +38,23 @@ void test_utf8c_bytes();
 int utf8s_chars(const char *utf8s);
 int utf8s_columns(const char *utf8s, int bytes);
 int utf8c_bytes(const char *utf8s);
-#define IS_UTF8_1ST_BYTE(chr)		((chr & 0xc0) == 0xc0)	// 11xxxxxx
+#define UTF8_BYTES(chr)		\
+	(((unsigned char)chr < 0x80) ? 1	\
+	 : IS_UTF8_1ST_BYTE_2(chr) ? 2		\
+	  : IS_UTF8_1ST_BYTE_3(chr) ? 3		\
+	   : IS_UTF8_1ST_BYTE_4(chr) ? 4	\
+		: IS_UTF8_1ST_BYTE_5(chr) ? 5	\
+		 : IS_UTF8_1ST_BYTE_6(chr) ? 6	\
+		  : 1)
+#define UTF8_REMAINING_BYTES(chr)	(UTF8_BYTES(chr) - 1)
+#define IS_UTF8_1ST_BYTE(chr)		(UTF8_REMAINING_BYTES(chr) >= 1)
+#define IS_UTF8_1ST_BYTE_2(chr)		((chr & 0xe0) == 0xc0)
+#define IS_UTF8_1ST_BYTE_3(chr)		((chr & 0xf0) == 0xe0)
+#define IS_UTF8_1ST_BYTE_4(chr)		((chr & 0xf8) == 0xf0)
+#define IS_UTF8_1ST_BYTE_5(chr)		((chr & 0xfc) == 0xf8)
+#define IS_UTF8_1ST_BYTE_6(chr)		((chr & 0xfe) == 0xfc)
+#define IS_UTF8_NEXT_BYTE(chr)		((chr & 0xc0) == 0x80)
+
 int utf8c_len(char utf8c_state, char utf8c);
 int utf8c_prev_bytes(const char *utf8s_min, const char *utf8s);
 int utf8c_columns(const char *utf8s);

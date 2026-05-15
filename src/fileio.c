@@ -22,7 +22,10 @@
 #include "headers.h"
 
 #ifdef USE_NKF
-PRIVATE int nkf_avalability = -1;	// -1: Unkown, 0: unavailable, 1: available
+/////#define USE_NKF_GUESS
+#ifdef USE_NKF_GUESS
+#warning "'nkf -g' is very slow. Refrain from using it as much as possible."
+#endif // USE_NKF_GUESS
 #endif // USE_NKF
 
 PRIVATE char *make_backup_file_path(const char *orig_path, char *backup_path, int depth);
@@ -30,12 +33,20 @@ PRIVATE char *make_backup_file_path(const char *orig_path, char *backup_path, in
 PRIVATE int load_file_into_new_buf__(const char *full_path, int flags);
 PRIVATE int load_file_into_cur_buf__(const char *full_path, int flags);
 
+#ifndef USE_NKF_GUESS
+PRIVATE int guess_encoding_by_myself(const char *full_path);
+#endif // USE_NKF_GUESS
+
 #ifdef USE_NKF
+PRIVATE int check_nkf_availability();
+#ifdef USE_NKF_GUESS
 PRIVATE int guess_encoding_by_nkf(const char *full_path);
 PRIVATE int my_guess_bin_file(const char *full_path);
 PRIVATE int my_guess_utf8_file(const char *full_path);
+#endif // USE_NKF_GUESS
 PRIVATE int load_file_into_cur_buf_nkf(const char *full_path, const char *nkf_options);
 #endif // USE_NKF
+
 PRIVATE int load_file_into_cur_buf_ascii(const char *file_name);
 PRIVATE int load_file_into_cur_buf_binary(const char *full_path);
 PRIVATE int load_into_cur_buf_fp(FILE *fp);
@@ -120,13 +131,17 @@ PRIVATE int load_file_into_new_buf__(const char *full_path, int flags)
 	// regular file
 	disp_status_bar_ing(_("Reading File %s ..."), shrink_str_to_scr_static(full_path));
 	create_edit_buf(full_path);
+/////_UFLF_
 	lock_epc_buf_if_file_already_locked((flags & FOLF1) == 0);
+/////_UFLF_
 	// set a edit-buffer not saveable if requested
 	SET_CUR_EBUF_STATE(buf_MODE, (flags & RDOL1) ? BUF_MODE_RO : 0);
 	// memorize orginal file stat
 	buf_get_file_stat(get_epc_buf(), full_path);
+/////_UFLF_
 
 	ret = load_file_into_cur_buf__(full_path, flags & MOE1);
+/////_UFLF_
 
 	if (ret < 0) {
 		free_cur_edit_buf();
@@ -248,59 +263,62 @@ PRIVATE int load_file_into_cur_buf__(const char *full_path, int flags)
 	const char *nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
 #endif // USE_NKF
 
+_UFLF_
+	if (GET_CUR_EBUF_STATE(buf_ENCODE) == ENCODE_ASCII) {
+		// encoding is not specified on the command line
+#ifdef USE_NKF_GUESS
+		if (GET_APPMD(ed_USE_NKF) && check_nkf_availability()) {
+			GET_CUR_EBUF_STATE(buf_ENCODE) = guess_encoding_by_nkf(full_path);
+		} else {
+#endif // USE_NKF_GUESS
+			GET_CUR_EBUF_STATE(buf_ENCODE) = guess_encoding_by_myself(full_path);
+#ifdef USE_NKF_GUESS
+		}
+#endif // USE_NKF_GUESS
+_UFLF_
+_UFLF_
+		if (GET_CUR_EBUF_STATE(buf_ENCODE) == ENCODE_BINARY) {
+			disp_status_bar_warn(_("BINARY file !! [%s]"),
+			 shrink_str_to_scr_static(full_path));
+		}
+	}
 #ifdef USE_NKF
-	if (GET_APPMD(ed_USE_NKF)) {
-		if (GET_CUR_EBUF_STATE(buf_ENCODE) == ENCODE_ASCII) {
-			// encoding is not specified on command line
-			guess_encoding_by_nkf(full_path);
-			if (GET_CUR_EBUF_STATE(buf_ENCODE) == ENCODE_BINARY) {
-				disp_status_bar_warn(_("BINARY file !! [%s]"),
-				 shrink_str_to_scr_static(full_path));
-			}
-		}
-		switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
-		default:
-		case ENCODE_ASCII:
-		case ENCODE_UTF8:
-			////nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
-			break;
-		case ENCODE_EUCJP:
-			nkf_options = "-Ewx";	// input EUCJP, output UTF8, preserve HankakuKana
-			break;
-		case ENCODE_SJIS:
-			nkf_options = "-Swx";	// input SJIS, output UTF8, preserve HankakuKana
-			break;
-		case ENCODE_JIS:
-			nkf_options = "-Jwx";	// input JIS, output UTF8, preserve HankakuKana
-			break;
-		case ENCODE_BINARY:
-/////			nkf_options = "-w";		// output UTF8
-			break;
-		}
-		switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
-		default:
-		case ENCODE_ASCII:
-		case ENCODE_UTF8:
-			break;
-		case ENCODE_EUCJP:
-		case ENCODE_SJIS:
-		case ENCODE_JIS:
-			return load_file_into_cur_buf_nkf(full_path, nkf_options);
-		case ENCODE_BINARY:
-			return load_file_into_cur_buf_binary(full_path);
-		}
-	} // if (GET_APPMD(ed_USE_NKF))
-#endif // USE_NKF
 	switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
 	default:
 	case ENCODE_ASCII:
 	case ENCODE_UTF8:
+		// no use of nkf
+		break;
+	case ENCODE_EUCJP:
+		nkf_options = "-Ewx";	// input EUCJP, output UTF8, preserve HankakuKana
+		break;
+	case ENCODE_SJIS:
+		nkf_options = "-Swx";	// input SJIS, output UTF8, preserve HankakuKana
+		break;
+	case ENCODE_JIS:
+		nkf_options = "-Jwx";	// input JIS, output UTF8, preserve HankakuKana
+		break;
+	case ENCODE_BINARY:
+		// no use of nkf
+		break;
+	}
+#endif // USE_NKF
+_UFLF_
+	switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
+	default:
+	case ENCODE_ASCII:
+	case ENCODE_UTF8:
+		return load_file_into_cur_buf_ascii(full_path);
 #ifdef USE_NKF
 	case ENCODE_EUCJP:
 	case ENCODE_SJIS:
 	case ENCODE_JIS:
+		if (GET_APPMD(ed_USE_NKF) && check_nkf_availability()) {
+			return load_file_into_cur_buf_nkf(full_path, nkf_options);
+		} else {
+			return load_file_into_cur_buf_ascii(full_path);
+		}
 #endif // USE_NKF
-		return load_file_into_cur_buf_ascii(full_path);
 	case ENCODE_BINARY:
 		return load_file_into_cur_buf_binary(full_path);
 	}
@@ -327,64 +345,98 @@ int save_cur_buf_to_file(const char *file_path)
 #endif // USE_NKF
 
 #ifdef USE_NKF
-	if (GET_APPMD(ed_USE_NKF)) {
-		switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
-		default:
-		case ENCODE_ASCII:
-		case ENCODE_UTF8:
-			////nkf_options = "-Wwx";	// input UTF8, output UTF8, preserve HankakuKana
-			break;
-		case ENCODE_EUCJP:
-			nkf_options = "-Wex";	// input UTF8, output EUCJP, preserve HankakuKana
-			break;
-		case ENCODE_SJIS:
-			nkf_options = "-Wsx";	// input UTF8, output SJIS, preserve HankakuKana
-			break;
-		case ENCODE_JIS:
-			nkf_options = "-Wjx";	// input UTF8, output JIS, preserve HankakuKana
-			break;
-		case ENCODE_BINARY:
-/////			nkf_options = "-W";		// input UTF8
-			break;
-		}
-		switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
-		default:
-		case ENCODE_ASCII:
-		case ENCODE_UTF8:
-			break;
-		case ENCODE_EUCJP:
-		case ENCODE_SJIS:
-		case ENCODE_JIS:
-			if (nkf_avalability > 0) {
-				return save_cur_buf_to_file_nkf(file_path, nkf_options);
-			}
-			break;
-		case ENCODE_BINARY:
-			return save_cur_buf_to_file_binary(file_path);
-		}
+	switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
+	default:
+	case ENCODE_ASCII:
+	case ENCODE_UTF8:
+		// no use of nkf
+		break;
+	case ENCODE_EUCJP:
+		nkf_options = "-Wex";	// input UTF8, output EUCJP, preserve HankakuKana
+		break;
+	case ENCODE_SJIS:
+		nkf_options = "-Wsx";	// input UTF8, output SJIS, preserve HankakuKana
+		break;
+	case ENCODE_JIS:
+		nkf_options = "-Wjx";	// input UTF8, output JIS, preserve HankakuKana
+		break;
+	case ENCODE_BINARY:
+		// no use of nkf
+		break;
 	}
 #endif // USE_NKF
 	switch (GET_CUR_EBUF_STATE(buf_ENCODE)) {
 	default:
 	case ENCODE_ASCII:
 	case ENCODE_UTF8:
+		return save_cur_buf_to_file_ascii(file_path);
 #ifdef USE_NKF
 	case ENCODE_EUCJP:
 	case ENCODE_SJIS:
 	case ENCODE_JIS:
+		if (GET_APPMD(ed_USE_NKF) && check_nkf_availability()) {
+			return save_cur_buf_to_file_nkf(file_path, nkf_options);
+		} else {
+			return save_cur_buf_to_file_ascii(file_path);
+		}
 #endif // USE_NKF
-		return save_cur_buf_to_file_ascii(file_path);
 	case ENCODE_BINARY:
 		return save_cur_buf_to_file_binary(file_path);
 	}
 }
 
-//------------------------------------------------------------------------------
+#ifndef USE_NKF_GUESS
+PRIVATE int guess_encoding_by_myself(const char *full_path)
+{
+	switch (determine_encoding_file_path(full_path)) {
+	default:
+	case ENCDET_ASCII:
+		return ENCODE_ASCII;
+	case ENCDET_BINARY:
+		return ENCODE_BINARY;
+#ifdef USE_NKF
+	case ENCDET_JIS:
+		return ENCODE_JIS;
+	case ENCDET_EUCJP:
+		return ENCODE_EUCJP;
+	case ENCDET_SJIS:
+		return ENCODE_SJIS;
+#endif // USE_NKF
+	case ENCDET_UTF8:
+		return ENCODE_UTF8;
+	}
+}
+#endif // USE_NKF_GUESS
 
 #ifdef USE_NKF
+PRIVATE int nkf_availability = -1;	// -1: Unkown, 0: unavailable, 1: available
+PRIVATE int check_nkf_availability()
+{
+	if (nkf_availability >= 0)
+		return nkf_availability;	// 0: unavailable, 1: available
+
+	GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
+	// No encoding specified in the command line
+	char buffer[MAX_PATH_LEN+1];
+	snprintf_(buffer, MAX_PATH_LEN+1, "nkf --help");
+	FILE *fp;
+	if ((fp = popen(buffer, "r")) <= 0) {
+		nkf_availability = 0;	// set unavailable (0)
+	} else {
+		if (fgets(buffer, MAX_PATH_LEN, fp) == NULL) {
+			// have read nothing, clear buffer
+			nkf_availability = 0;	// set unavailable (0)
+		} else {
+			nkf_availability = 1;	// set available (1)
+		}
+		pclose(fp);
+	}
+	return nkf_availability;
+}
+#ifdef USE_NKF_GUESS
 PRIVATE int guess_encoding_by_nkf(const char *full_path)
 {
-	GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
+	int enc = ENCODE_ASCII;
 	// No encoding specified in the command line
 	char buffer[MAX_PATH_LEN+1];
 	snprintf_(buffer, MAX_PATH_LEN+1, "nkf -g \"%s\"", full_path);
@@ -392,43 +444,48 @@ PRIVATE int guess_encoding_by_nkf(const char *full_path)
 	if ((fp = popen(buffer, "r")) <= 0) {
 		disp_status_bar_err(_("Can not read-open file [%s]: %s"),
 		 shrink_str_to_scr_static(full_path), strerror(errno));
-		return -1;
+		return enc;
 	}
 	if (fgets(buffer, MAX_PATH_LEN, fp) == NULL) {
 		// have read nothing, clear buffer
 		buffer[0] = '\0';
-		nkf_avalability = 0;	// set unavailable (0)
+		nkf_availability = 0;	// set unavailable (0)
 	} else {
-		nkf_avalability = 1;	// set available (1)
+		nkf_availability = 1;	// set available (1)
 	}
-	if (pclose(fp) == -1) {
-		return -1;
-	}
+	pclose(fp);
 	if (strlcmp__(buffer, "ASCII") == 0) {
-		GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
+		enc = ENCODE_ASCII;
 	} else if (strlcmp__(buffer, "UTF-8") == 0) {
-		GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_UTF8;
+		enc = ENCODE_UTF8;
 	} else if (strlcmp__(buffer, "EUC-JP") == 0) {
 		int guess_utf8 = my_guess_utf8_file(full_path);
 		if (guess_utf8 < 0) {
-			GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_EUCJP;
+			enc = ENCODE_EUCJP;
 		} else {
-			GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_UTF8;
+			enc = ENCODE_UTF8;
 		}
 	} else if (strlcmp__(buffer, "Shift_JIS") == 0) {
-		GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_SJIS;
+		enc = ENCODE_SJIS;
 	} else if (strlcmp__(buffer, "ISO-2022-JP") == 0) {
-		GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_JIS;
+		enc = ENCODE_JIS;
 	} else if (strlcmp__(buffer, "BINARY") == 0
 	 && my_guess_bin_file(full_path)) {
-		GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_BINARY;
+		enc = ENCODE_BINARY;
 	} else {
 		// maybe, no nkf is available
-		GET_CUR_EBUF_STATE(buf_ENCODE) = ENCODE_ASCII;
+		enc = ENCODE_ASCII;
 	}
-	return 0;
+	return enc;
 }
-// nkf's guessing of binary file is too strict.
+
+// | my_guess_bin_file() | my_guess_utf8_file() | judge               |
+// |---------------------|----------------------|---------------------|
+// |         0           |          0           | ASCII(JIS/EUC/SJIS) |
+// |         0           |          1           | UTF8                |
+// |         1           |         ---          | BINARY              |
+
+// 'nkf -g' sometimes guesses a text file as BINARY file.
 // use my own guessing of binary file.
 PRIVATE int my_guess_bin_file(const char *full_path)
 {
@@ -447,15 +504,12 @@ PRIVATE int my_guess_bin_file(const char *full_path)
 			break;
 		}
 		for (int off = 0; off < bytes; off++) {
-			switch (bin_buf[off]) {
-			// 07:BEL, 09:TAB, 0a:LF, 0c:FF, 0d:CR, 1b:ESC
-			case 0x07: case 0x09: case 0x0a: case 0x0c: case 0x0d: case 0x1b:
-				break;
-			default:
-				if ((bin_buf[off] < 0x20) || (bin_buf[off] == 0x7f)) {
-					bin_bytes_found++;
-				}
-				break;
+			if (((0x00 <= byte) && (byte <= 0x06))
+			 || (byte == 0x08) || (byte == 0x0b)
+			 || ((0x0e <= byte) && (byte <= 0x1a))
+			 || ((0x1c <= byte) && (byte <= 0x1f))
+			 || (byte == 0x7f)) {	// (32 - 6) + 1 = 27
+				bin_bytes_found++;
 			}
 		}
 		if (bin_bytes_found >= BYTES_TO_BE_GUESSED_BIN) {
@@ -469,6 +523,8 @@ PRIVATE int my_guess_bin_file(const char *full_path)
 	}
 	return may_be_bin;
 }
+// 'nkf -g' often miss-guesses UTF8 file as EUCJP.
+// use my own guessing of UTF8 file.
 PRIVATE int my_guess_utf8_file(const char *full_path)
 {
 #define BYTES_TO_BE_CHKED_UTF8			65536
@@ -509,6 +565,7 @@ PRIVATE int my_guess_utf8_file(const char *full_path)
 	}
 	return utf8_bytes_found;	// 0: ASCII, >0: UTF8
 }
+#endif // USE_NKF_GUESS
 PRIVATE int load_file_into_cur_buf_nkf(const char *full_path, const char *nkf_options)
 {
 	char buffer[MAX_PATH_LEN+1];

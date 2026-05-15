@@ -859,30 +859,30 @@ char tail_char(const char *str)
 void test_quote_string()
 {
 	flf_dprintf("-----------------------\n");
-	char buffer[MAX_PATH_LEN+1];
-	MY_UT_STR(quote_file_path_buf(buffer, "abc\"def"), "'abc\"def'");
-	MY_UT_STR(unquote_string(buffer), "abc\"def");
-	MY_UT_STR(quote_file_path_buf(buffer, "abc'def"), "'abc\\'def'");
-	MY_UT_STR(unquote_string(buffer), "abc'def");
-	MY_UT_STR(quote_file_path_buf(buffer, "abc#def"), "'abc#def'");
-	MY_UT_STR(unquote_string(buffer), "abc#def");
-	MY_UT_STR(quote_file_path_buf(buffer, "abc$def"), "'abc$def'");
-	MY_UT_STR(unquote_string(buffer), "abc$def");
-	MY_UT_STR(quote_file_path_buf(buffer, "abc<def"), "'abc<def'");
-	MY_UT_STR(unquote_string(buffer), "abc<def");
-	MY_UT_STR(quote_file_path_buf(buffer, "abc>def"), "'abc>def'");
-	MY_UT_STR(unquote_string(buffer), "abc>def");
-	MY_UT_STR(quote_file_path_buf(buffer, "abc(def"), "'abc(def'");
-	MY_UT_STR(unquote_string(buffer), "abc(def");
-	MY_UT_STR(quote_file_path_buf(buffer, "abc)def"), "'abc)def'");
-	MY_UT_STR(unquote_string(buffer), "abc)def");
-	MY_UT_STR(quote_file_path_buf(buffer, "abc|def"), "'abc|def'");
-	MY_UT_STR(unquote_string(buffer), "abc|def");
-	MY_UT_STR(quote_file_path_buf(buffer, "abc&def"), "'abc&def'");
-	MY_UT_STR(unquote_string(buffer), "abc&def");
+	char str_buf[MAX_PATH_LEN+1];
+	MY_UT_STR(quote_file_path_buf(str_buf, "abc\"def"), "'abc\"def'");
+	MY_UT_STR(unquote_string(str_buf), "abc\"def");
+	MY_UT_STR(quote_file_path_buf(str_buf, "abc'def"), "'abc\\'def'");
+	MY_UT_STR(unquote_string(str_buf), "abc'def");
+	MY_UT_STR(quote_file_path_buf(str_buf, "abc#def"), "'abc#def'");
+	MY_UT_STR(unquote_string(str_buf), "abc#def");
+	MY_UT_STR(quote_file_path_buf(str_buf, "abc$def"), "'abc$def'");
+	MY_UT_STR(unquote_string(str_buf), "abc$def");
+	MY_UT_STR(quote_file_path_buf(str_buf, "abc<def"), "'abc<def'");
+	MY_UT_STR(unquote_string(str_buf), "abc<def");
+	MY_UT_STR(quote_file_path_buf(str_buf, "abc>def"), "'abc>def'");
+	MY_UT_STR(unquote_string(str_buf), "abc>def");
+	MY_UT_STR(quote_file_path_buf(str_buf, "abc(def"), "'abc(def'");
+	MY_UT_STR(unquote_string(str_buf), "abc(def");
+	MY_UT_STR(quote_file_path_buf(str_buf, "abc)def"), "'abc)def'");
+	MY_UT_STR(unquote_string(str_buf), "abc)def");
+	MY_UT_STR(quote_file_path_buf(str_buf, "abc|def"), "'abc|def'");
+	MY_UT_STR(unquote_string(str_buf), "abc|def");
+	MY_UT_STR(quote_file_path_buf(str_buf, "abc&def"), "'abc&def'");
+	MY_UT_STR(unquote_string(str_buf), "abc&def");
 	// no need of quoting
-	MY_UT_STR(quote_file_path_buf(buffer, "abc@def"), "abc@def");
-	MY_UT_STR(unquote_string(buffer), "abc@def");
+	MY_UT_STR(quote_file_path_buf(str_buf, "abc@def"), "abc@def");
+	MY_UT_STR(unquote_string(str_buf), "abc@def");
 }
 #endif // START_UP_TEST
 

@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 	init_app_mode();
 dtflf_dprintf("START-%s ==============================\n", APP_NAME " " __DATE__ " " __TIME__);
 	_mlc_init
-	change_cur_dir(get_starting_dir());
+	chdir__(get_starting_dir());
 	get_home_dir();
 	get_tty_name();
 	signal_init();
@@ -223,6 +223,9 @@ flf_dprintf("optind:%d: %s\n", optind, argv[optind]);
 #ifdef ENABLE_DEBUG
 	set_progerr_callback(NULL);
 #endif // ENABLE_DEBUG
+#ifdef ENABLE_DEBUG
+	show_terminal_traffic();
+#endif // ENABLE_DEBUG
 
 exit_app:
 	_mlc_check_count
@@ -259,7 +262,7 @@ const struct option long_options[] = {
 	{ "norcfile",      no_argument,       0, 'c' },
 #endif // ENABLE_RC
 #ifdef USE_NKF
-	{ "nonkf",         no_argument,       0, 'n' },
+	{ "nkf",           no_argument,       0, 'n' },
 	{ "encoding",      required_argument, 0, 'e' },
 	{ "binary",        no_argument,       0, 'b' },
 	{ "text",          no_argument,       0, 'x' },
@@ -409,12 +412,26 @@ PRIVATE int parse_options(int argc, char *argv[])
 	return 0;
 }
 //------------------------------------------------------------------------------
+PRIVATE int call_depth = 0;
+void inc_call_depth()
+{
+	call_depth++;
+}
+void dec_call_depth()
+{
+	call_depth--;
+}
+int get_call_depth()
+{
+	return call_depth;
+}
+
 #if APP_REL_LVL == APP_REL_LVL_STABLE
 #define ASK_ON_EXIT
 #warning "#define ASK_ON_EXIT"
 #else
 #undef ASK_ON_EXIT
-#warning "#undef ASK_ON_EXIT"
+////#warning "#undef ASK_ON_EXIT"
 #endif
 #define ASK_ON_EXIT
 // do_call_editor() : pass a edit-buffer to be edited or browsed by the editor
@@ -697,15 +714,15 @@ void show_usage()
 	show_one_option("-c",                "--norcfile",        _("Don't look at berc files"));
 #endif // ENABLE_RC
 #ifdef USE_NKF
-	show_one_option("-n",                "--nonkf",           _("Don't use nkf"));
+	show_one_option("-n",                "--nkf",             _("Use nkf"));
 	show_one_option("-e a",              "--encoding=a",      _("ASCII character encoding"));
-	show_one_option("-e j",              "--encoding=j",      _("JIS character encoding"));
-	show_one_option("-e e",              "--encoding=e",      _("EUCJP character encoding"));
-	show_one_option("-e s",              "--encoding=s",      _("SJIS character encoding"));
 	show_one_option("-e u",              "--encoding=u",      _("UTF8 character encoding"));
 	show_one_option("-e b",              "--encoding=b",      _("BINARY file"));
 	show_one_option("-b",                "--binary",          _("BINARY file (same as '-e b')"));
 	show_one_option("-x",                "--text",            _("TEXT file (same as '-e u')"));
+	show_one_option("-e j",              "--encoding=j",      _("JIS character encoding"));
+	show_one_option("-e e",              "--encoding=e",      _("EUCJP character encoding"));
+	show_one_option("-e s",              "--encoding=s",      _("SJIS character encoding"));
 #endif // USE_NKF
 #ifdef ENABLE_FILER
 	show_one_option("-w",                "--twopane",         _("Two pane mode"));

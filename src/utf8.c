@@ -108,34 +108,24 @@ int utf8c_bytes(const char *utf8s)
 	return my_mblen(utf8s, MAX_UTF8C_BYTES);
 }
 
+// UTF8 byte sequences:
+// (utf8c < 0x80)			// 0xxxxxxx
+// (utf8c & 0xe0) == 0xc0	// 110xxxxx,10xxxxxx
+// (utf8c & 0xf0) == 0xe0	// 1110xxxx,10xxxxxx,10xxxxxx
+// (utf8c & 0xf8) == 0xf0	// 11110xxx,10xxxxxx,10xxxxxx,10xxxxxx
+// (utf8c & 0xfc) == 0xf8	// 111110xx,10xxxxxx,10xxxxxx,10xxxxxx,10xxxxxx
+// (utf8c & 0xfe) == 0xfc	// 1111110x,10xxxxxx,10xxxxxx,10xxxxxx,10xxxxxx,10xxxxxx
+// (utf8c & 0xfe) == 0xfe	// 1111111x
+
 int utf8c_len(char utf8c_state, char utf8c)
 {
 	if (utf8c_state <= 0) {
-		if ((unsigned char)utf8c < 0x80) {	// 0xxxxxxx
-			utf8c_state = 0;
-		} else
-		if ((utf8c & 0xe0) == 0xc0) {	// 110xxxxx-10xxxxxx
-			utf8c_state = 1;
-		} else
-		if ((utf8c & 0xf0) == 0xe0) {	// 1110xxxx-10xxxxxx-10xxxxxx
-			utf8c_state = 2;
-		} else
-		if ((utf8c & 0xf8) == 0xf0) {	// 11110xxx-10xxxxxx-10xxxxxx-10xxxxxx
-			utf8c_state = 3;
-		} else
-		if ((utf8c & 0xfc) == 0xf8) {	// 111110xx-10xxxxxx-10xxxxxx-10xxxxxx-10xxxxxx
-			utf8c_state = 4;
-		} else
-		if ((utf8c & 0xfe) == 0xfc) {	// 1111110x-10xxxxxx-10xxxxxx-10xxxxxx-10xxxxxx-10xxxxxx
-			utf8c_state = 5;
-		} else {						// 1111111x
-			utf8c_state = 0;
-		}
+		utf8c_state = UTF8_REMAINING_BYTES(utf8c);
 	} else {
 		if ((unsigned char)utf8c < 0x80) {	// 0xxxxxxx (illegal sequence)
 			utf8c_state = -1;
 		} else
-		if ((utf8c & 0xc0) == 0x80) {		// 10xxxxxx
+		if (IS_UTF8_NEXT_BYTE(utf8c)) {		// 10xxxxxx
 			utf8c_state--;
 		} else {							// 11xxxxxx (illegal sequence)
 			utf8c_state = -1;

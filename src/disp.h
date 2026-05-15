@@ -34,7 +34,7 @@ typedef enum /*S_B*/ {	// Status Bar Displayed
 	S_B_WARN,				//! 4 warning (overwritable by ERR and DONE)
 	S_B_ERR,				//! 5 error (overwritable by DONE)
 	S_B_DONE,				//! 6 done  (this message outputs on completion of a command)
-	S_B_ASYN,				//! 7 asynchronous event (such as history file update by other inst.)
+	S_B_ASYN,				//! 7 asynchronous event (such as history updates by another instances)
 	S_B_TYPES,				//! 8 Number from S_B_NONE to S_B_ASYN
 } s_b_d_t;
 

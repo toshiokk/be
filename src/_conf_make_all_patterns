@@ -15,27 +15,27 @@ disable_all="--disable-filer\
  --disable-busybox\
  --disable-highbgc"
 
-cmd_line_0="./configure"
-cmd_line_1="./configure --enable-all"
-cmd_line_2="./configure --disable-all"
-cmd_line_3="./configure $disable_all --enable-filer"
-cmd_line_4="./configure $disable_all --enable-debug"
-cmd_line_5="./configure --disable-filer"
-cmd_line_6="./configure --disable-history"
-cmd_line_7="./configure --disable-undo"
-cmd_line_8="./configure --disable-nls"
-cmd_line_9="./configure --disable-syntax"
-cmd_line_10="./configure --disable-syntax --disable-rc"
-cmd_line_11="./configure --disable-syntax --disable-regex"
-cmd_line_12="./configure --disable-syntax --disable-rc --disable-regex"
-cmd_line_13="./configure --enable-ncurses"
-cmd_line_14="./configure --enable-ncurses --enable-highbgc"
-cmd_line_15="./configure --enable-pcre"
-cmd_line_16="./configure --disable-nkf"
-cmd_line_17="./configure $disable_all --enable-filer --enable-busybox"
-cmd_line_18="./configure --enable-highbgc"
-cmd_line_19="./configure --disable-help"
-cmd_line_20="./configure --enable-debug"
+cmd_line_00="./configure"
+cmd_line_01="./configure --enable-all"
+cmd_line_02="./configure --disable-all"
+cmd_line_03="./configure --disable-filer"
+cmd_line_04="./configure --disable-history"
+cmd_line_05="./configure --disable-undo"
+cmd_line_06="./configure --disable-nls"
+cmd_line_07="./configure --disable-syntax"
+cmd_line_08="./configure --disable-syntax --disable-rc"
+cmd_line_09="./configure --disable-syntax --disable-regex"
+cmd_line_10="./configure --disable-syntax --disable-rc --disable-regex"
+cmd_line_11="./configure --disable-nkf"
+cmd_line_12="./configure --disable-highbgc"
+cmd_line_13="./configure --disable-help"
+cmd_line_14="./configure --enable-ncurses"
+cmd_line_15="./configure --enable-ncurses --enable-highbgc"
+cmd_line_16="./configure --enable-pcre"
+cmd_line_17="./configure --enable-debug"
+cmd_line_18="./configure $disable_all --enable-filer"
+cmd_line_19="./configure $disable_all --enable-debug"
+cmd_line_20="./configure $disable_all --enable-filer --enable-busybox"
 
 echo_run()
 {
@@ -58,37 +58,7 @@ echo_run()
     exit -1
   fi
 ##  echo "Summary -----------------------------------------------------"
-} 2>&1
-
-conf_make()
-{
-  conf_num=$1
-
-  case $conf_num in
-  "0")	cmd_line=$cmd_line_0	;;
-  "1")	cmd_line=$cmd_line_1	;;
-  "2")	cmd_line=$cmd_line_2	;;
-  "3")	cmd_line=$cmd_line_3	;;
-  "4")	cmd_line=$cmd_line_4	;;
-  "5")	cmd_line=$cmd_line_5	;;
-  "6")	cmd_line=$cmd_line_6	;;
-  "7")	cmd_line=$cmd_line_7	;;
-  "8")	cmd_line=$cmd_line_8	;;
-  "9")	cmd_line=$cmd_line_9	;;
-  "10")	cmd_line=$cmd_line_10	;;
-  "11")	cmd_line=$cmd_line_11	;;
-  "12")	cmd_line=$cmd_line_12	;;
-  "13")	cmd_line=$cmd_line_13	;;
-  "14")	cmd_line=$cmd_line_14	;;
-  "15")	cmd_line=$cmd_line_15	;;
-  "16")	cmd_line=$cmd_line_16	;;
-  "17")	cmd_line=$cmd_line_17	;;
-  "18")	cmd_line=$cmd_line_18	;;
-  "19")	cmd_line=$cmd_line_19	;;
-  "20")	cmd_line=$cmd_line_20	;;
-  esac
-  echo_run $cmd_line
-} 2>&1
+}
 
 if [ "$1" = "-" ]; then
   while : ; do
@@ -101,22 +71,27 @@ if [ "$1" = "-" ]; then
   done
 fi
 
-for num in $( seq 0 20 ) ; do
-  cmd_line_num="cmd_line_$num"
-  echo "cmd_line=$cmd_line_num"
-  eval "echo \$cmd_line"
+start_num=0
+if [ -n "$1" ]; then
+  start_num="$1"
+fi
+
+for conf_num in $( seq -f %02.0f $start_num 20 ) ; do
+  cmd_line_xx="cmd_line_$conf_num"
+  echo "cmd_line_xx:[$cmd_line_xx]"
+  eval "cmd_line=\$$cmd_line_xx"
+  echo "cmd_line:[$cmd_line]"
 done
+##exit
 
 rm -f _conf_make_all_patterns.log
 
 {
   echo "----conf_make_all_patterns-start----"
-  num=0
-  if [ -n "$1" ]; then
-    num="$1"
-  fi
-  for num in $( seq $num 20 ) ; do
-    conf_make "$num"
+  for conf_num in $( seq -f %02.0f $start_num 20 ) ; do
+    cmd_line_xx="cmd_line_$conf_num"
+    eval "cmd_line=\$$cmd_line_xx" 2>&1
+    echo_run $cmd_line 2>&1
   done
   if [ -z "$1" ]; then
     ./_c_debug

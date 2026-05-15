@@ -530,16 +530,21 @@ PRIVATE int compare_file_path_str(const char *str, const char *file_path)
 //------------------------------------------------------------------------------
 // Record all directories entered even when nothing done there.
 PRIVATE char prev_dir_history[MAX_PATH_LEN+1] = "";
-void dir_history_update(const char *dir)
+void update_dir_history(const char *dir, char force_update)
 {
 	if (strcmp(prev_dir_history, dir) != 0) {
+		// save a directory before change
+		modify_history_w_reloading(HISTORY_TYPE_IDX_DIR, prev_dir_history);
 		strlcpy__(prev_dir_history, dir, MAX_PATH_LEN);
+		// save a directory after change
+		modify_history_w_reloading(HISTORY_TYPE_IDX_DIR, dir);
+	} else if (force_update) {
 		modify_history_w_reloading(HISTORY_TYPE_IDX_DIR, dir);
 	}
 }
 
 //------------------------------------------------------------------------------
-int do_call_editor_history(int hist_type_idx, char *buffer)
+int do_call_editor_w_history_buf(int hist_type_idx, char *buffer)
 {
 	load_histories_if_file_newer();
 	load_cut_buffers_if_file_newer();

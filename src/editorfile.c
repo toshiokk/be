@@ -454,7 +454,7 @@ PRIVATE int goto_file_in_string(const char *string)
 	// file_path is taken from the line_byte_idx of current line
 	int files = load_files_in_string(string, TUL0 | OOE0 | MOE1 | LFH1 | RDOL0 | FOLF0
 	 | RECURS1 | MFPL1);
-	change_cur_dir(dir_save);
+	chdir__(dir_save);
 
 	disp_files_loaded_if_ge_0();
 	if (files < 0) {
@@ -462,7 +462,7 @@ PRIVATE int goto_file_in_string(const char *string)
 	} else {
 		memorize_prev_file_pos_if_changed();
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_CENTER, UPDATE_SCRN_ALL);
-		SET_editor_do_next(EF_LOADED_GO_TO_ROOT_EDITOR);
+		SET_app_do_next(EF_LOADED_GO_TO_ROOT_EDITOR);
 	}
 	return files;
 }
@@ -543,7 +543,7 @@ int write_file_ask(int yes_no, close_after_save_t close)
 	set_edit_win_update_needed(UPDATE_SCRN_ALL_SOON);
 	update_screen_editor(S_B_CURS, 1);
 	if (ret < ANSWER_ALL) {
-		ret = ask_yes_no(ASK_YES_NO_QUIT | ASK_ALL_YES,
+		ret = ask_yes_no(ASK_YES_NO_QUIT | ASK_ALL_YES | ASK_OTHERS,
 		 close == 0
 		  ? _("Save modified buffer ?")
 		  : _("Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"));

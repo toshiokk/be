@@ -194,7 +194,7 @@ int input_search_str(int search0_replace1, char *input_buf)
 	}
 #endif // ENABLE_REGEX
 	set_last_searched_needle(input_buf);
-	SET_editor_do_next(EF_NONE);
+	SET_app_do_next(EF_NONE);
 	return 1;							// input normally
 }
 
@@ -207,7 +207,7 @@ int input_replace_str(char *input_buf)
 		return 0;
 	}
 	set_last_searched_needle(input_buf);
-	SET_editor_do_next(EF_NONE);
+	SET_app_do_next(EF_NONE);
 	return 1;
 }
 
@@ -434,27 +434,24 @@ int replace_str_in_buffer(search_t *search, matches_t *matches, const char *repl
 #ifdef ENABLE_REGEX
 PRIVATE int _doe_find_bracket(int single1_multi2, int rev_pairing, int jump);
 PRIVATE void get_color_for_bracket_hl_by_idx(int color_idx, char *bgc, char *fgc);
-
-#define BRAC_SRCH_SINGLE1	1	// jump '{' ==> '}'
-#define BRAC_SRCH_MULTI2	2	// jump "{{{{" ==> "}}}}"
 #define NORMAL_PAIRING		FORWARD_DIR		// { }
 #define REVERSE_PAIRING		BACKWARD_DIR	// } {
 
 void doe_find_bracket()
 {
-	_doe_find_bracket(BRAC_SRCH_SINGLE1, NORMAL_PAIRING, 1);
+	_doe_find_bracket(SRCH_MODE_SINGLE_BRAC_1, NORMAL_PAIRING, 1);
 }
 void doe_find_bracket_reverse()
 {
-	_doe_find_bracket(BRAC_SRCH_SINGLE1, REVERSE_PAIRING, 1);
+	_doe_find_bracket(SRCH_MODE_SINGLE_BRAC_1, REVERSE_PAIRING, 1);
 }
 void doe_find_brackets()
 {
-	_doe_find_bracket(BRAC_SRCH_MULTI2, NORMAL_PAIRING, 1);
+	_doe_find_bracket(SRCH_MODE_MULTI_BRAC_2, NORMAL_PAIRING, 1);
 }
 void doe_find_brackets_reverse()
 {
-	_doe_find_bracket(BRAC_SRCH_MULTI2, REVERSE_PAIRING, 1);
+	_doe_find_bracket(SRCH_MODE_MULTI_BRAC_2, REVERSE_PAIRING, 1);
 }
 PRIVATE int _doe_find_bracket(int single1_multi2, int rev_pairing, int jump)
 {
@@ -487,7 +484,6 @@ PRIVATE int _doe_find_bracket(int single1_multi2, int rev_pairing, int jump)
 	int match_len = 0;
 	int depth = 0;
 	int safe_cnt = 0;
-_HMFLF_
 	char char_under_cursor = *EPCBVC_CL_EPCBVC_CLBI;
 	for ( ; safe_cnt < MAX_BRACKETS_SEARCH; safe_cnt++) {
 		match_len = search_bracket_within_buffer(&line, &byte_idx, char_under_cursor,
@@ -499,11 +495,12 @@ _HMFLF_
 		}
 		skip_chars = match_len;
 	}
-_HMFLF_
 	if ((match_len > 0) && (depth == 0)) {
 		// found peer bracket
 		disp_status_bar_done(_("Counterpart bracket found"));
+#ifdef ENABLE_HISTORY
 		modify_history_w_reloading(HISTORY_TYPE_IDX_SEARCH, needle);
+#endif // ENABLE_HISTORY
 	} else if (depth < MAX_BRACKET_NESTINGS) {
 		// didn't find peer bracket
 		if (safe_cnt < MAX_BRACKETS_SEARCH) {
@@ -588,8 +585,6 @@ int setup_bracket_search(int single1_multi2, char *str, int off, int rev_pairing
 		 regexp_escape_special_char_s(char_counterpart));
 	}
 	snprintf_(needle, BRACKET_SEARCH_REGEXP_STR_LEN+1, regexp_templ_str, buf1, buf2);
-/////
-flf_dprintf("needle: [%s]\n", needle);
 	int search_dir;			// search direction (FORWARD_SEARCH / BACKWARD_SEARCH)
 	if (offset < (strlen(counterparts) / 2)) {	// char_under_cursor is one of left brackets "([<{"
 		if (rev_pairing > 0) {
@@ -728,7 +723,7 @@ PRIVATE int search_needle_in_bufs_not_found_msg(
 {
 	disp_status_bar_ing(_("Searching word: [%s]..."), needle);
 
-	search_set_mode(&search__, 0, search_dir, ignore_case);
+	search_set_mode(&search__, SRCH_MODE_STRING_0, search_dir, ignore_case);
 	search_set_needle(&search__, needle);
 
 	int match_len = search_needle_in_bufs(&(EPCBVC_CL), &(EPCBVC_CLBI),

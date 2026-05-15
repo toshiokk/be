@@ -131,7 +131,7 @@ int read_into_file_info_array(filer_view_t *fv)
 	strcpy__(fv->listed_dir, fv->cur_dir);
 
 read_into_file_info_array_ret:;
-	change_cur_dir(dir_save);
+	chdir__(dir_save);
 	return fv->file_info_entries;
 }
 // Free malloc()ed memory

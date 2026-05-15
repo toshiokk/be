@@ -671,7 +671,7 @@ be_buf_t *buf_get_buf_by_full_path(be_buf_t *buf, const char *file_path)
 }
 be_buf_t *buf_get_buf_by_file_path(be_buf_t *buf, const char *file_path)
 {
-flf_dprintf("file_path: [%s]\n", file_path);
+/////flf_dprintf("file_path: [%s]\n", file_path);
 	for (buf = buf_make_top_buf(buf); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
 		if (compare_file_path_from_tail(buf_get_file_path(buf, NULL), file_path) == 0) {
 			return buf;	// found by file_path

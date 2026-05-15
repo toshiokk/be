@@ -1,5 +1,5 @@
 echo "make and install"
-echo "Usage: %0            ... build on the currently assigned Release level"
+echo "Usage: %0              ... build on the currently assigned Release level"
 echo "Usage: %0 [0|1|2|3|4]  ... build on Release level 0--4"
 
 rel_lvl="$1"
@@ -39,7 +39,7 @@ sh _cp_berc
 if [ -n "$rel_lvl" ]; then
   ./__set_app_rel_lvl.sh -
 fi
-if [ "$rel_lvl" -gt 0 ] && [ "$rel_lvl" -lt 4 ]; then
+if [ "$rel_lvl" = 1 ]; then
   echo "copying to $HOME/mybin ========="
   cp -av be $HOME/mybin/
 fi

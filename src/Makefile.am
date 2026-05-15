@@ -39,6 +39,7 @@ be_SOURCES = \
 	color.c \
 	debug.c \
 	disp.c \
+	encdet.c \
 	fileio.c \
 	filer.c \
 	filerlist.c \
@@ -86,6 +87,7 @@ be_SOURCES = \
 	help.h \
 	editorkeys.h \
 	editorundo.h \
+	encdet.h \
 	fileio.h \
 	filer.h \
 	filerlist.h \

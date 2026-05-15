@@ -124,7 +124,7 @@ void doe_playback_string()
 	}
 	key_strokes_recorded = get_key_macro_from_string(key_macro_loaded, key_codes_recorded);
 	key_macro_start_playback();
-	SET_editor_do_next(EF_NONE);	// return to editor and playback key_macro
+	SET_app_do_next(EF_NONE);	// return to editor and playback key_macro
 }
 #endif // ENABLE_HISTORY
 void key_macro_start_recording()

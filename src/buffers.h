@@ -203,8 +203,8 @@ int is_epc_buf_saveable();
 int is_epc_buf_closeable();
 
 int is_epc_buf_mode_edit();
-int is_epc_buf_mode_list();
 int is_epc_buf_mode_ro();
+int is_epc_buf_mode_list();
 
 int is_epc_buf_locked();
 

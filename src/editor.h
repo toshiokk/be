@@ -22,12 +22,15 @@
 #ifndef editor_h
 #define editor_h
 
-extern ef_do_next_t editor_do_next;
+extern do_next_t app_do_next;
+
 #ifndef ENABLE_DEBUG
-#define SET_editor_do_next(do_next)		editor_do_next = (do_next)
+#define SET_app_do_next(do_next)		app_do_next = (do_next)
 #else // ENABLE_DEBUG
-#define SET_editor_do_next(do_next)		editor_do_next = (do_next) \
-  , hmflf_dprintf("set-editor_do_next(%s)\n", get_ef_name(editor_do_next))
+#define SET_app_do_next(do_next)		if (app_do_next != (do_next)) {			\
+    app_do_next = (do_next);													\
+    hmflf_dprintf("set-app_do_next(%s)\n", get_do_next_name(app_do_next));		\
+  }
 #endif // ENABLE_DEBUG
 
 int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf);

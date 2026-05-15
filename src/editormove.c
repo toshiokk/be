@@ -371,7 +371,7 @@ flf_dprintf("is_epc_buf_modified(): %d\n", is_epc_buf_modified());
 flf_dprintf("is_epc_buf_modified(): %d\n", is_epc_buf_modified());
 	_doe_enter_utf8s(string);
 flf_dprintf("is_epc_buf_modified(): %d\n", is_epc_buf_modified());
-	SET_editor_do_next(EF_NONE);
+	SET_app_do_next(EF_NONE);
 }
 
 void doe_tab()
@@ -748,12 +748,12 @@ void doe_fill_spaces_to_columns()
 void doe_enter_text()
 {
 	set_text_to_output_buf_editor(EPCBVC_CL->data);
-	SET_editor_do_next(EF_ENTER_STRING);
+	SET_app_do_next(EF_ENTER_STRING);
 }
 void doe_enter_text_add()
 {
 	set_text_to_output_buf_editor(EPCBVC_CL->data);
-	SET_editor_do_next(EF_ENTER_STRING_ADD);
+	SET_app_do_next(EF_ENTER_STRING_ADD);
 }
 //------------------------------------------------------------------------------
 void doe_refresh_editor()

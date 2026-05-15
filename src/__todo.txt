@@ -7,7 +7,40 @@
  - POLICY: things to be kept
 - POLICY: fully seamless operations between editor/filer, histories
 
-- [x] backup version (When the fatal bug would be found in the recent release, the backup version can be used.)
+- [x] 'nkf -g' is very slow and it takes almost all the time of the reading file
+  - With no 'nkf -g', the reading file is super fast !!
+  - It's worth to try to guess file encoding by myself.
+- [] LIST and VIEW mode
+  - LIST: no cursor vertical move, not modifiable
+  - VIEW: --                     , not modifiable
+- [x]
+  - editor
+    - enter filer to open file
+      - enter editor to select from directory history
+  <===== control returns to editor !!!!
+    <=== ideally it should return to filer
+- [x] 260422 output the leaving directory path to the dir-history
+- [x] reduce terminal traffic as fewer as possible
+  - Page down top to bottom in ../testfiles/_utf8.txt
+    - WA_FOR_WIDE_CHAR defined  : [1800KB] bytes
+    - WA_FOR_WIDE_CHAR undefined: [ 400KB] bytes
+ |APP_REL_LVL                 |release     |comments                   |
+ |----------------------------|------------|---------------------------|
+ |APP_REL_LVL_EXPERIMENTAL (0)|experimental|no installation            |
+ |APP_REL_LVL_TEST1        (1)|test-1      |reduced terminal traffic, additionally copied to $HOME/mybin|
+ |APP_REL_LVL_TEST2        (2)|test-2      |installed to /usr/local/bin|
+ |APP_REL_LVL_TEST3        (3)|test-3      |installed to /usr/local/bin|
+ |APP_REL_LVL_STABLE       (4)|stable      |installed to /usr/local/bin|
+
+- [x] history update policy for HISTORY_TYPE_IDX_DIR
+  - some activity
+    - on start browsing dir
+      - current dir
+    - on chdir
+      - previous and the next dir
+    - on end browsing dir
+      - current dir
+- [x] backup version (When the fatal bug would be found in the latest release, the backup version can be used.)
   - the installation of the level 1,2,3 copies executable file into $HOME/mybin
 - [x] paste a text in doe_paste_text_with_pop_char() even though it's cut/copied as lines
 - [x] execute command holding the loaded files
@@ -27,7 +60,7 @@
     After : sym-link ==> /destination/path/to/another-file
 - [x] shows the string length " 99/999" in input_string()
 - [x] 260404 `pause_after_exec` continues on resizing screen
-- [-x] 260402 does not open a file but open a dir even though it's the complete path to file by S_F11, S_F12.
+- [-x] 260402 does not open a file but open a dir even though it's the complete path to a file by S_F11, S_F12.
 - [x] 260408 append magic-line after opening a new file
 - [x] 260403 keep the new-line at the last line
   - Normal file:
@@ -185,7 +218,7 @@
   |               - execute file           |EF_EXECUTED_RET_TO_CALLER    | [zx] |
 
 - [x] 251115 fill spaces until the column in which previously positioned
-- [x] 251105 add get_ef_name() to get "EF_????"
+- [x] 251105 add get_do_next_name() to get "EF_????"
 - [x] 251101 dof_select_all_regular_files() does select only regular files
 - [x] 251026 incorrect title bar color when screen resizing
 - [x] 251026 split "*.c" file into two files to make it's size less than 900 lines
@@ -470,23 +503,25 @@
   |------|-----------------------|----------------------------------------------------------------|
   |normal|R/W, saveable/closeable| normal edit buffer                                             |
   |RO    |RO, closeable          | read-only: file is loaded as read-only by a user's intention   |
-  |locked|RO, closeable          | locked   : file is not writable because other program open it  |
+  |locked|RO, closeable          | locked   : file is not writable because other program is opening it  |
   |WP    |RO, closeable          | write-protected: file is write protected by the file system    |
-  |LIST  |RO, not-closeable by user's intention | list  : help/file-list/history/cut-buf/undo-buf |
+  |VIEW  |RO, not-closeable by user's intention | view  : help/file-list           |
+  |LIST  |RO, not-closeable by user's intention | list  : history/cut-buf/undo-buf |
   |anchor|RO, not-closeable by user's intention | anchor: buffer is an anchor                     |
   |empty |RO, not-closeable by user's intention | empty : buffer is empty                         |
 
-  |anchor|empty|list| RO |locked| WP ||modifiable|saveable|closeable|
-  |------|-----|----|----|------|----||----------|--------|---------|
-  |  0   |  0  | 0  | 0  |  0   | 0  ||    1     |    1   |    1    | edit-buf
-  |  0   |  0  | 0  | 1  |  0   | 0  ||    0     |    0   |    1    | edit-buf(read-only open)
-  |  0   |  0  | 0  | 0  |  1   | 0  ||    0     |    0   |    1    | edit-buf(locked file)
-  |  0   |  0  | 0  | 0  |  0   | 1  ||    0     |    0   |    1    | edit-buf(write-protected file)
-  |  0   |  0  | 1  | 0  |  0   | 0  ||    0     |    0   |    0    | help/history/cut/undo/redo-buf
-  |  1   |  0  | 0  | 0  |  0   | 0  ||    0     |    0   |    0    | an anchor (not a valid buffer)
-  |  0   |  1  | 0  | 0  |  0   | 0  ||    0     |    0   |    0    | empty  (not a valid buffer)
+  |state |anchor|empty|LIST|RO |locked|WP ||modifiable|saveable|closeable|
+  |------|------|-----|----|---|------|---||----------|--------|---------|
+  |normal|  0   |  0  |  0 | 0 |   0  | 0 ||     1    |    1   |    1    | edit-buf
+  |RO    |  0   |  0  |  0 | 1 |   0  | 0 ||     0    |    0   |    1    | edit-buf(read-only open)
+  |locked|  0   |  0  |  0 | 0 |   1  | 0 ||     0    |    0   |    1    | edit-buf(locked file)
+  |WP    |  0   |  0  |  0 | 0 |   0  | 1 ||     0    |    0   |    1    | edit-buf(write-protected file)
+  |VIEW  |  0   |  0  |  0 | 1 |   0  | 0 ||     0    |    0   |    0    | help/file-list
+  |LIST  |  0   |  0  |  1 | 0 |   0  | 0 ||     0    |    0   |    0    | history/cut-buf/undo/redo-buf
+  |anchor|  1   |  0  |  0 | 0 |   0  | 0 ||     0    |    0   |    0    | an anchor (not a valid buffer)
+  |empty |  0   |  1  |  0 | 0 |   0  | 0 ||     0    |    0   |    0    | empty     (not a valid buffer)
 
-- [x] an anchor of undo/redo buffer being open when swithed
+- [x] an anchor of undo/redo buffer being opened when switched
 - [x] It is not proper that undo/redo buffer have the same `abs_path` to the original edit-buffer
   ==> "/path/to/the/file" --> "#/path/to/the/file" (prepend '#')
 
@@ -531,7 +566,7 @@
 - [-] 250301 "File not found" message on loading `.bep` file
       ==> error message should be shown when no file could be loaded within one line
 
-- [x] 250301 change_cur_dir() returns "0: on success" ==> "1: on success"
+- [x] 250301 chdir__() returns "0: on success" ==> "1: on success"
 
 - [x] 250301 BUG: infinite loop at changing to non existent dir
 
@@ -1143,8 +1178,8 @@ v F: Input keyword to search
 [v] Repaint whole of screen after wake up from sleep
 [v] Stop loading large or many files. (by Ctrl-C)
 [v] Show date in space for Time just after key press
-[v] sofisticate filer_do_next mechanism
-[v] sofisticate editor_quit mechanism
+[v] sophisticate filer_do_next mechanism
+[v] sophisticate editor_quit mechanism
 
 [v] easy goto prev/next buffer
 	- UP then PAGEUP ==> prev.buf, DOWN then PAGEDOWN ==> next.buf)
@@ -1501,7 +1536,7 @@ Function	command-line	   config-file	    command
 rcfile			O		-		-
 norcfile		O		-		-
 nohistory		O		-		-
-nonkf			O		-		-
+nkf			O		-		-
 debug			O		-		-
 encoding		O		-		-
 tabsize			O		O		O

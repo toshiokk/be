@@ -723,15 +723,15 @@ void test_cwd_PWD()
 	flf_dprintf("getcwd: [%s]\n", getcwd__(buf));
 	flf_dprintf("getenv(PWD): [%s]\n", getenv_pwd(buf));
 
-	change_cur_dir("..");
+	chdir__("..");
 	flf_dprintf("getcwd: [%s]\n", getcwd__(buf));
 	flf_dprintf("getenv(PWD): [%s]\n", getenv_pwd(buf));
 
-	change_cur_dir("/home/user/tools/be/be/testfiles/symlinkd");
+	chdir__("/home/user/tools/be/be/testfiles/symlinkd");
 	flf_dprintf("getcwd: [%s]\n", getcwd__(buf));
 	flf_dprintf("getenv(PWD): [%s]\n", getenv_pwd(buf));
 
-	change_cur_dir(get_starting_dir());
+	chdir__(get_starting_dir());
 	flf_dprintf("getcwd: [%s]\n", getcwd__(buf));
 	flf_dprintf("getenv(PWD): [%s]\n", getenv_pwd(buf));
 }

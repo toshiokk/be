@@ -72,6 +72,10 @@ typedef struct {
 #endif // ENABLE_REGEX
 } matches_t;
 
+#define SRCH_MODE_STRING_0			0	// string
+#define SRCH_MODE_SINGLE_BRAC_1		1	// '{' <==> '}'
+#define SRCH_MODE_MULTI_BRAC_2		2	// "{{{{" <==> "}}}}"
+
 void search_clear(search_t *search);
 void search_set_mode(search_t *search, char single1_multi2, char search_dir, char ignore_case);
 int search_get_mode(search_t *search);

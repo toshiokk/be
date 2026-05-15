@@ -136,7 +136,7 @@ int chdir_saving_prev_next_dir(const char *path,
 		return 0;	// Error
 	}
 	strlcpy__(prev_path, cur_path, MAX_PATH_LEN);
-	change_cur_dir(dir);
+	chdir__(dir);
 	get_full_path_of_cur_dir(cur_path);
 	return 1;	// OK
 }
@@ -158,20 +158,21 @@ int chdir_by_file_path_after_save(char *dir_save, const char *file_path)
 int chdir_after_save(char *dir_save, const char *dir)
 {
 	get_full_path_of_cur_dir(dir_save);
-	return change_cur_dir(dir);
+	return chdir__(dir);
 }
+
 int chdir_by_file_path(char *file_path)
 {
 	char dir[MAX_PATH_LEN+1];
 	strip_file_if_path_is_file(file_path, dir);
-	return change_cur_dir(dir);
+	return chdir__(dir);
 }
 
 //------------------------------------------------------------------------------
 // change process's current directory
 PRIVATE char full_path_of_cur_dir[MAX_PATH_LEN+1] = "";
 PRIVATE char real_path_of_cur_dir[MAX_PATH_LEN+1] = "";
-int change_cur_dir(const char *dir)
+int chdir__(const char *dir)
 {
 	if (chdir(dir) < 0) {
 		return 0;		// 0: error

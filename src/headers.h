@@ -38,6 +38,7 @@
 #include "sig.h"
 #include "menu.h"
 #include "tio.h"
+#include "encdet.h"
 #include "fileio.h"
 #include "history.h"
 #include "keymacro.h"

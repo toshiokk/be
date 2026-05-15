@@ -79,7 +79,7 @@ PRIVATE void _dof_exec_for_each_files(int flags)
 		return;
 	}
 	flags |= EX_FLAGS_0;
-	if (filer_do_next == EF_ENTER_STRING_ADD) {
+	if (app_do_next == EF_ENTER_STRING_ADD) {
 		flags ^= EX_LOGGING;	// invert logging
 	}
 	if (is_path_dir(command_str) > 0) {
@@ -90,7 +90,7 @@ PRIVATE void _dof_exec_for_each_files(int flags)
 	begin_fork_exec_repeat();
 	for (int file_idx = get_first_file_idx_selected(); file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
-		if (is_sigint_signaled())
+		if (check_break_key())
 			break;
 
 		// replace "{}" with filename
@@ -121,7 +121,7 @@ PRIVATE void _dof_exec_for_each_files(int flags)
 
 	}
 	end_fork_exec_repeat(exit_status);
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_app_do_next(FL_UPDATE_FORCE);
 }
 
 // If two or more files selected, pass all to command line at once.
@@ -272,7 +272,7 @@ PRIVATE int input_command_line_and_execute(const char *prompt, char *command_str
 		 prompt))) {
 			return 0;
 		}
-		if (filer_do_next == EF_ENTER_STRING_ADD) {
+		if (app_do_next == EF_ENTER_STRING_ADD) {
 			flags ^= EX_LOGGING;	// invert logging
 		}
 	}
@@ -284,9 +284,9 @@ PRIVATE int input_command_line_and_execute(const char *prompt, char *command_str
 	fork_exec_sh_c_once(flags | EX_PAUSE, command_str);
 
 	if (is_app_viewer_mode()) {
-		SET_filer_do_next(EF_EXECUTED_RET_TO_CALLER);
+		SET_app_do_next(EF_EXECUTED_RET_TO_CALLER);
 	} else {
-		SET_filer_do_next(FL_UPDATE_FORCE);
+		SET_app_do_next(FL_UPDATE_FORCE);
 	}
 	return 0;
 }

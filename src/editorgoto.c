@@ -81,7 +81,7 @@ void doe_filer_with_dir()
 	if (goto_dir_in_cur_line_byte_idx(0)) {
 		return;
 	}
-	SET_editor_do_next(EF_GO_TO_LEVEL_FILER);
+	SET_app_do_next(EF_GO_TO_LEVEL_FILER);
 }
 
 void doe_goto_dir_in_cur_line()
@@ -105,7 +105,7 @@ PRIVATE int goto_dir_in_string(const char *string)
 		return 0;
 	}
 	filer_chdir(buf_dir);
-	SET_editor_do_next(EF_GO_TO_LEVEL_FILER);
+	SET_app_do_next(EF_GO_TO_LEVEL_FILER);
 	return 1;
 }
 #endif // ENABLE_FILER
@@ -394,11 +394,11 @@ PRIVATE int load_files_in_cur_buf_(int flags)
 			char file_pos_str2[MAX_PATH_LEN+1];
 			memorize_cur_file_pos_into_str(file_pos_str2);
 			// CURDIR: changed to cur-file's abs-dir
-			change_cur_dir(buf_get_file_path(get_epc_buf(), NULL));
+			chdir__(buf_get_file_path(get_epc_buf(), NULL));
 
 			int ret = load_files_in_string_(EPCBVC_CL->data, flags);
 
-			change_cur_dir(dir_save);
+			chdir__(dir_save);
 			if (ret >= 0) {
 				files += ret;
 				disp_title_bar_editor();
@@ -827,7 +827,7 @@ int switch_epc_buf_by_rel_path(const char *file_path)
 // select from: all(#EDIT, #HIST, #HELP, #CUT, #UNDO, #REDO) buffers
 int switch_epc_buf_by_buffer_id(const char *file_path)
 {
-flf_dprintf("buffer_id: [%s]\n", file_path);
+/////flf_dprintf("buffer_id: [%s]\n", file_path);
 	be_buf_t *buf = bufs_get_buf_by_buffer_id(NODES_TOP_ANCH(&all_bufferss), file_path);
 	if (buf) {
 		set_epc_buf(buf);

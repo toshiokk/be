@@ -364,7 +364,7 @@ PRIVATE int exec_menu_func(int group_idx, int entry_idx)
 		//=========================
 		call_func_key_func(func_key);	// call function "do?_...()"
 		//=========================
-		flf_dprintf(">>\n");
+		flf_dprintf(">> CALL_FUNC_MENU [%s]\n", func_key->func_id);
 	}
 	return 1;
 }

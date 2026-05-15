@@ -26,8 +26,6 @@
 PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir);
 PRIVATE int get_another_filer_pane_idx(int filer_pane_idx);
 
-ef_do_next_t filer_do_next = EF_NONE;
-
 PRIVATE int filer_main_loop(const char *dir, const char *filter, char *path_buf);
 PRIVATE int check_filer_cur_dir();
 PRIVATE void update_file_info_all_panes(int update_request);
@@ -234,13 +232,17 @@ flf_dprintf("push: %d, list: %d, dir: %s, filter: [%s]\n", push_win, list_mode, 
 	SET_APPMD_VAL(app_EDITOR_FILER, EF_FILER);
 	SET_APPMD_VAL(app_LIST_MODE, list_mode);
 
+	inc_call_depth();
 	flf_dprintf("GET_APPMD(app_EDITOR_FILER): %d\n", GET_APPMD(app_EDITOR_FILER));
-	flf_dprintf("[[[[ push_win:%d, list_mode:%d\n", push_win, list_mode);
+	flf_dprintf("[[[[ CALL_FILER_MAIN_LOOP:%d push_win:%d, list_mode:%d\n",
+	 get_call_depth(), push_win, list_mode);
 
 	int ret = filer_main_loop(dir, filter, path_buf);
 
-	flf_dprintf("]]]] push_win:%d, list_mode:%d --> app_stk: %d, ret__[%s]\n",
-	 push_win, list_mode, get_app_stack_depth(), get_ef_name(ret));
+	flf_dprintf("]]]] CALL_FILER_MAIN_LOOP:%d push_win:%d, list_mode:%d\n",
+	 get_call_depth(), push_win, list_mode);
+	flf_dprintf(" --> app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_do_next_name(ret));
+	dec_call_depth();
 
 	if (push_win) {
 		// editor: refrect from the callee's cur-buf to the caller's cur-buf if file loaded
@@ -287,22 +289,22 @@ flf_dprintf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 	}
 
 #ifdef ENABLE_HISTORY
-	dir_history_update(get_fv_from_cur_pane()->cur_dir);
+	update_dir_history(get_fv_from_cur_pane()->cur_dir, 1);
 #endif // ENABLE_HISTORY
 
-	SET_filer_do_next(FL_UPDATE_FORCE);		// update file list soon
+	SET_app_do_next(FL_UPDATE_FORCE);		// update file list soon
 	clear_status_bar_displayed();			// allow updating status bar
 	key_code_t key_input = K_VALID;			// update status bar soon
 
 	// Main input loop
 	for ( ; ; ) {
 		check_filer_cur_dir();
-		update_file_info_all_panes(filer_do_next);
+		update_file_info_all_panes(app_do_next);
 		update_screen_app(IS_KEY_INPUT(key_input) ? S_B_AUTO : S_B_NONE, 1);
 		//----------------------------------
 		key_input = input_key_timeout();
 		//----------------------------------
-		SET_filer_do_next(FL_UPDATE_AUTO);
+		SET_app_do_next(FL_UPDATE_AUTO);
 		strcpy__(get_fv_from_cur_pane()->next_file, "");
 		if (IS_KEY_VALID(key_input)) {
 			clear_status_bar_displayed();
@@ -310,7 +312,7 @@ flf_dprintf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 			hmflf_dprintf("input%ckey:0x%04x([%s])========================================\n",
 			 '_', (UINT16)key_input,
 			 get_key_name_from_key_code(key_input, NULL));
-			SET_filer_do_next(EF_NONE);
+			SET_app_do_next(EF_NONE);
 			func_key_t *func_key;
 			if ((func_key = get_fkey_entry_from_key(filer_func_key_table, key_input, EF0M))
 			 == NULL) {
@@ -330,37 +332,42 @@ flf_dprintf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 					disp_status_bar_err(
 					 _("Can not execute this function in filer List mode: [%s]"),
 					 func_key->func_id);
-					SET_filer_do_next(EF_CANCELLED);	// execution cancelled
+					SET_app_do_next(EF_CANCELLED);	// execution cancelled
 				}
-				if (filer_do_next == EF_NONE) {
-					flf_dprintf("[[ CALL_FUNC_FILER [%s]\n", func_key->func_id);
+				if (app_do_next == EF_NONE) {
+					flf_dprintf("[[ CALL_FUNC_FILER:%d [%s]\n",
+					 get_call_depth(), func_key->func_id);
 					//=========================
-					call_func_key_func(func_key);	// call function "dof_...()"
+					call_func_key_func(func_key);		// call function "dof_...()"
 					//=========================
-					flf_dprintf("]] filer_do_next_[%s]\n", get_ef_name(filer_do_next));
+					flf_dprintf("]] CALL_FUNC_FILER:%d [%s]\n",
+					 get_call_depth(), func_key->func_id);
+					flf_dprintf("app_do_next_[%s]\n", get_do_next_name(app_do_next));
 				}
 			}
 		}
 		// check the conditions for exiting filer
-		switch (filer_do_next) {
+		switch (app_do_next) {
 		case EF_GO_TO_LEVEL_FILER:
+			SET_app_do_next(EF_NONE);		// not exit
+			break;
 		case EF_EXECUTED_RET_TO_CALLER:
 			// return to the root editor/caller
 			if (get_app_stack_depth()) {
 				break;						// exit from filer
 			}
-			SET_filer_do_next(EF_NONE);		// not exit
+			SET_app_do_next(EF_NONE);		// not exit
 			break;
 		case EF_LOADED_GO_TO_ROOT_EDITOR:
 			// always return to editor since it's filer
 		default:
 			break;							// exit from filer
 		}
-		if (filer_do_next >= EF_TO_QUIT) {
+		if (app_do_next >= EF_TO_QUIT) {
 			break;
 		}
 #ifdef ENABLE_HISTORY
-		dir_history_update(get_fv_from_cur_pane()->cur_dir);
+		update_dir_history(get_fv_from_cur_pane()->cur_dir, 0);
 #endif // ENABLE_HISTORY
 		sync_cut_buffers_and_histories(0);
 	}
@@ -368,17 +375,20 @@ flf_dprintf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 	// |----------------------|-------------------------------|---------------------|
 	// | none                 | replacing input file/dir name | EF_ENTER_STRING     |
 	// | ALT                  | adding    input file/dir name | EF_ENTER_STRING_ADD |
-	if (filer_do_next == EF_ENTER_STRING) {
-		SET_filer_do_next((IS_META_KEY(key_input) == 0)
+	if (app_do_next == EF_ENTER_STRING) {
+		SET_app_do_next((IS_META_KEY(key_input) == 0)
 		 ? EF_ENTER_STRING			// Replace input file/dir name
 		 : EF_ENTER_STRING_ADD);	// Append input file/dir name
 	}
 
-	int ret = filer_do_next;
-	if ((filer_do_next == EF_TO_QUIT) || (filer_do_next == EF_EXECUTED_RET_TO_CALLER)) {
-		SET_filer_do_next(EF_NONE);
+	int ret = app_do_next;
+	if ((app_do_next == EF_TO_QUIT) || (app_do_next == EF_EXECUTED_RET_TO_CALLER)) {
+		SET_app_do_next(EF_NONE);
 	}
 	set_output_buf_filer(NULL);
+#ifdef ENABLE_HISTORY
+	update_dir_history(get_fv_from_cur_pane()->cur_dir, 1);
+#endif // ENABLE_HISTORY
 	return ret;
 } // filer_main_loop
 
@@ -395,7 +405,7 @@ PRIVATE int check_filer_cur_dir()
 	if (is_dir_readable(get_fv_from_cur_pane()->cur_dir) == 0) {
 		get_full_path_of_cur_dir(get_fv_from_cur_pane()->cur_dir);
 	}
-	change_cur_dir(get_fv_from_cur_pane()->cur_dir);
+	chdir__(get_fv_from_cur_pane()->cur_dir);
 	return 0;
 }
 

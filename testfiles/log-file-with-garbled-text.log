@@ -1,0 +1,2544 @@
+**********************************************************************
+***** log file output to 260513-133509-1-17.log Started ****
+**********************************************************************
+sshing [obcdev17.stars.axelspace.com] with port forwarding ...
++ ssh -p 22 -L 3121:localhost:3121 t_koike@obcdev17.stars.axelspace.com -o ServerAliveInterval=30
+Linux obcdev17 6.1.0-43-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.162-1 (2026-02-08) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Tue May 12 05:40:27 2026 from 192.168.8.54
+.bash_aliases {
+.bash_aliases }
+t_koike@obcdev17:~$ sh 10obcdev-ctrl.sh I
+Wed May 13 01:35:18 PM JST 2026
+action : [I]
+checkout   : [Y]
+psu_on     : [Y]
+start_srv  : [Y]
+obc_on     : [D]
+boot_source: [pic]
+picocom    : [Y]
+obc_off    : [Y]
+stop_srv   : [Y]
+psu_off    : [Y]
+release    : [Y]
+Check TEXIO-1 status ==============
+TEXTIO-1 volt/current settings: ####        voltage_set 28, current_limit 7        ####
++ texio status
+Cannot open device: No such file or directory
++ ls -l /dev/serial/by-id
+total 0
+lrwxrwxrwx 1 root root 13 Feb 12 22:48 usb-Century_USB_Virtual_COM_001A0388046C-if00 -> ../../ttyACM0
+lrwxrwxrwx 1 root root 13 Apr  3 15:17 usb-FTDI_FT230X_Basic_UART_DK0FJCSX-if00-port0 -> ../../ttyUSB2
+lrwxrwxrwx 1 root root 13 Apr  3 15:17 usb-FTDI_FT230X_Basic_UART_DK0FJQQ1-if00-port0 -> ../../ttyUSB0
++ lsusb
+Bus 002 Device 016: ID 04b4:00f1 Cypress Semiconductor Corp. AM2Re
+Bus 002 Device 002: ID 05e3:0620 Genesys Logic, Inc. GL3523 Hub
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 007: ID 06cb:00be Synaptics, Inc. 
+Bus 001 Device 005: ID 174f:2426 Syntek Integrated Camera
+Bus 001 Device 026: ID 0403:6015 Future Technology Devices International, Ltd Bridge(I2C/SPI/UART/FIFO)
+Bus 001 Device 025: ID 0403:6015 Future Technology Devices International, Ltd Bridge(I2C/SPI/UART/FIFO)
+Bus 001 Device 023: ID 0403:6014 Future Technology Devices International, Ltd FT232H Single HS USB-UART/FIFO IC
+Bus 001 Device 021: ID 05e3:0610 Genesys Logic, Inc. Hub
+Bus 001 Device 020: ID 1a40:0101 Terminus Technology Inc. Hub
+Bus 001 Device 010: ID 8087:0aaa Intel Corp. Bluetooth 9460/9560 Jefferson Peak (JfP)
+Bus 001 Device 004: ID 07f7:0032 Century Corp. USB Virtual COM
+Bus 001 Device 002: ID 05e3:0610 Genesys Logic, Inc. Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+systemd+     678  0.0  0.0  90104  6564 ?        Ssl  Feb12   0:59 /lib/systemd/systemd-timesyncd
+message+     726  0.3  0.0   9512  5272 ?        Ss   Feb12 442:57 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+Debian-+    1371  0.0  0.0  30948 18244 ?        Ss   Feb12  10:04 /usr/sbin/exim4 -bd -q30m
+t_koike  3605552  0.9  0.0  19036 10708 ?        Ss   13:35   0:00 /lib/systemd/systemd --user
+t_koike  3605553  0.0  0.0 169644  3916 ?        S    13:35   0:00 (sd-pam)
+t_koike  3605565  0.1  0.0  18104  7064 ?        S    13:35   0:00 sshd: t_koike@pts/0
+t_koike  3605566  0.4  0.0   9660  5960 pts/0    Ss   13:35   0:00 -bash
+t_koike  3605573  0.0  0.0   2584   960 pts/0    S+   13:35   0:00 sh 10obcdev-ctrl.sh I
+t_koike  3605585  0.0  0.0   2584   880 pts/0    S+   13:35   0:00 /bin/sh ./12is-someone-running-server.sh
+t_koike  3605586  0.0  0.0  11092  4400 pts/0    R+   13:35   0:00 ps aux
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+You have checked out the hardware. `release' it when you are done.
+You have checked out the hardware. `release' it when you are done.
+======================================
+    The hardware is not in use.
+======================================
+Are you OK to checkout the OBC ? 
+
+You have checked out the hardware. `release' it when you are done.
+======================================
+        You CHECKED out OBC           
+======================================
+You have already checked out the hardware. `release' to release it.
+Turning ON TEXIO-1 ==============
+Check TEXIO-1 status ==============
++ texio status
+Cannot open device: No such file or directory
++ texio on
+Cannot open device: No such file or directory
+Turning ON TEXIO-2 ==============
+Check TEXIO-1 status ==============
++ texio status
+Cannot open device: No such file or directory
+-------------------------------------------------------------------------
+Starting HWSRVR ...
+/opt/xilinx/HWSRVR/2023.2/bin/hw_server -s tcp:127.0.0.1:3121
+
+****** Xilinx hw_server v2023.2
+  **** Build date : Oct 13 2023 at 20:26:23
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
+
+INFO: hw_server application started
+INFO: Use Ctrl-C to exit hw_server application
+
+INFO: To connect to this hw_server instance use url: TCP:127.0.0.1:3121
+
+-------------------------------------------------------------------------
+Starting the first obc-gateway ...
+PYTHONPATH=. ./gateway/obc-gateway.py -r -f
+INFO:adapters.fx3:connected to: 'AM2Re : 3add2da - 2024-08-08T07:42:34+00:00'
+INFO:adapters.tcp:listening IoForwarder on port 50000
+INFO:adapters.tcp:listening MpxForwarder on port 50001
+INFO:adapters.tcp:listening MpxForwarder on port 50002
+INFO:adapters.tcp:listening MpxForwarder on port 50003
+INFO:adapters.tcp:listening MpxForwarder on port 50004
+INFO:adapters.tcp:listening MpxForwarder on port 50005
+INFO:adapters.tcp:listening MpxForwarder on port 50006
+INFO:adapters.tcp:listening MpxForwarder on port 50007
+INFO:adapters.tcp:listening MpxForwarder on port 50008
+INFO:adapters.tcp:listening MpxForwarder on port 50009
+INFO:adapters.tcp:listening MpxForwarder on port 50010
+INFO:adapters.tcp:listening MpxForwarder on port 50011
+INFO:adapters.tcp:listening MpxForwarder on port 50012
+INFO:adapters.tcp:listening MpxForwarder on port 50013
+INFO:adapters.tcp:listening MpxForwarder on port 50014
+INFO:adapters.tcp:listening MpxForwarder on port 50015
+INFO:adapters.tcp:listening MpxForwarder on port 50016
+INFO:adapters.tcp:listening UartxForwarder on port 50019
+-------------------------------------------------------------------------
+hostname: obcdev17, use: debug_uart
+USB serial device list:
+total 0
+lrwxrwxrwx 1 root root 13 Feb 12 22:48 usb-Century_USB_Virtual_COM_001A0388046C-if00 -> ../../ttyACM0
+lrwxrwxrwx 1 root root 13 Apr  3 15:17 usb-FTDI_FT230X_Basic_UART_DK0FJCSX-if00-port0 -> ../../ttyUSB2
+lrwxrwxrwx 1 root root 13 Apr  3 15:17 usb-FTDI_FT230X_Basic_UART_DK0FJQQ1-if00-port0 -> ../../ttyUSB0
+--> device: /dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0FJCSX-if00-port0
++ socat -r log/260513-133525-U.log -R log/260513-133525-D.log tcp-listen:60000,bind=0,reuseaddr,fork,max-children=1 /dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0FJCSX-if00-port0,cfmakeraw,sync=1,b115200
+-------------------------------------------------------------------------
+hostname: obcdev17, use: terminal_uart
+USB serial device list:
+total 0
+lrwxrwxrwx 1 root root 13 Feb 12 22:48 usb-Century_USB_Virtual_COM_001A0388046C-if00 -> ../../ttyACM0
+lrwxrwxrwx 1 root root 13 Apr  3 15:17 usb-FTDI_FT230X_Basic_UART_DK0FJCSX-if00-port0 -> ../../ttyUSB2
+lrwxrwxrwx 1 root root 13 Apr  3 15:17 usb-FTDI_FT230X_Basic_UART_DK0FJQQ1-if00-port0 -> ../../ttyUSB0
+--> device: /dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0FJQQ1-if00-port0
+Start picocom on [/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0FJQQ1-if00-port0]
+Wed May 13 01:35:28 PM JST 2026
+To exit picocom, type Ctrl-Q then Ctrl-X
+$ picocom -q -b 115200 /dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0FJQQ1-if00-port0 -e q -r -g picocom.log
+=========================================================================
+sleeping 1s ... 
++ PYTHONPATH=. ./cli/obc-ctrl.py -f
+Turn OBC off, Kill Switch disabled: FALSE
+INFO:adapters.tcp:+ new client ('127.0.0.1', 37904) on port 50000
+hostname: obcdev17
+hostname: obcdev17
+host is OBCDEV4/8 with kill-switch
++ PYTHONPATH=. ./cli/obc-ctrl.py -A
+INFO:adapters.tcp:- client quit
+INFO:adapters.tcp:+ new client ('127.0.0.1', 37916) on port 50000
+Turn OBC off, Kill Switch disabled: FALSE
+PIC powered on, FPGA boot source selected by PIC
+ERROR:adapters.tcp:sendall: [Errno 104] Connection reset by peer
+INFO:adapters.tcp:- client quit
++ PYTHONPATH=. ./cli/obc-ctrl.py -k
+Kill Switch disabled: TRUE
+INFO:adapters.tcp:+ new client ('127.0.0.1', 37932) on port 50000
+Check TEXIO-1 status ==============
++ texio status
+Cannot open device: No such file or directory
+INFO:adapters.tcp:- client quit
+Zynq MP First Stage Boot Loader 
+Release 2023.2   Apr  7 2026  -  09:25:13
+MultiBootOffset: 0x0
+Reset Mode	:	System Reset
+Platform: Silicon (4.0), Cluster ID 0x80000000
+Running on A53-0 (64-bit) Processor, Device Name: XCZU6EG
+Initializing DDR ECC
+Address 0x000000000, Length 0x080000000, ECC initialized 
+Address 0x800000000, Length 0x380000000, ECC initialized 
+Processor Initialization Done 
+================= In Stage 2 ============ 
+QSPI 32 bit Boot Mode 
+QSPI is in single flash connection
+QSPI is using 4 bit bus
+FlashID=0x20 0xBA 0x20
+MICRON 512M Bits
+Multiboot Reg : 0x0 
+QSPI Reading Src 0x0, Dest FFFF0040, Length EC0
+.QSPI Read Src 0x0, Dest FFFF0040, Length EC0
+Image Header Table Offset 0x8C0 
+QSPI Reading Src 0x8C0, Dest FFFD9118, Length 40
+.QSPI Read Src 0x8C0, Dest FFFDD840, Length 28
+.QSPI Read Src 0x8E8, Dest FFFD9140, Length 18
+*****Image Header Table Details******** 
+Boot Gen Ver: 0x1020000 
+No of Partitions: 0xA 
+Partition Header Address: 0x440 
+Partition Present Device: 0x0 
+QSPI Reading Src 0x1100, Dest FFFD9158, Length 40
+.QSPI Read Src 0x1100, Dest FFFDD840, Length 28
+.QSPI Read Src 0x1128, Dest FFFD9180, Length 18
+QSPI Reading Src 0x1140, Dest FFFD9198, Length 40
+.QSPI Read Src 0x1140, Dest FFFDD840, Length 28
+.QSPI Read Src 0x1168, Dest FFFD91C0, Length 18
+QSPI Reading Src 0x1180, Dest FFFD91D8, Length 40
+.QSPI Read Src 0x1180, Dest FFFDD840, Length 28
+.QSPI Read Src 0x11A8, Dest FFFD9200, Length 18
+QSPI Reading Src 0x11C0, Dest FFFD9218, Length 40
+.QSPI Read Src 0x11C0, Dest FFFDD840, Length 28
+.QSPI Read Src 0x11E8, Dest FFFD9240, Length 18
+QSPI Reading Src 0x1200, Dest FFFD9258, Length 40
+.QSPI Read Src 0x1200, Dest FFFDD840, Length 28
+.QSPI Read Src 0x1228, Dest FFFD9280, Length 18
+QSPI Reading Src 0x1240, Dest FFFD9298, Length 40
+.QSPI Read Src 0x1240, Dest FFFDD840, Length 28
+.QSPI Read Src 0x1268, Dest FFFD92C0, Length 18
+QSPI Reading Src 0x1280, Dest FFFD92D8, Length 40
+.QSPI Read Src 0x1280, Dest FFFDD840, Length 28
+.QSPI Read Src 0x12A8, Dest FFFD9300, Length 18
+QSPI Reading Src 0x12C0, Dest FFFD9318, Length 40
+.QSPI Read Src 0x12C0, Dest FFFDD840, Length 28
+.QSPI Read Src 0x12E8, Dest FFFD9340, Length 18
+QSPI Reading Src 0x1300, Dest FFFD9358, Length 40
+.QSPI Read Src 0x1300, Dest FFFDD840, Length 28
+.QSPI Read Src 0x1328, Dest FFFD9380, Length 18
+QSPI Reading Src 0x1340, Dest FFFD9398, Length 40
+.QSPI Read Src 0x1340, Dest FFFDD840, Length 28
+.QSPI Read Src 0x1368, Dest FFFD93C0, Length 18
+Initialization Success 
+======= In Stage 3, Partition No:1 ======= 
+UnEncrypted data Length: 0x3563E0 
+Data word offset: 0x3563E0 
+Total Data word length: 0x3563E0 
+Destination Load Address: 0xFFFFFFFF 
+Execution Address: 0x0 
+Data word offset: 0xF190 
+Partition Attributes: 0x26 
+QSPI Reading Src 0x3C640, Dest 100000, Length D58F80
+.QSPI Read Src 0x3C640, Dest 100000, Length D58F80
+Destination Device is PL, changing LoadAddress
+Non authenticated Bitstream download to start now
+DMA transfer done 
+PL Configuration done successfully 
+Partition 1 Load Success 
+======= In Stage 3, Partition No:2 ======= 
+UnEncrypted data Length: 0xDC1 
+Data word offset: 0xDC1 
+Total Data word length: 0xDC1 
+Destination Load Address: 0x0 
+Execution Address: 0x0 
+Data word offset: 0x365570 
+Partition Attributes: 0x71E 
+Initializing TCM ECC
+Address 0x0FFE00000, Length 0x000040000, ECC initialized 
+QSPI Reading Src 0xD955C0, Dest FFE00000, Length 3704
+.QSPI Read Src 0xD955C0, Dest FFE00000, Length 3704
+Partition 2 Load Success 
+======= In Stage 3, Partition No:3 ======= 
+UnEncrypted data Length: 0x40 
+Data word offset: 0x40 
+Total Data word length: 0x40 
+Destination Load Address: 0x30000000 
+Execution Address: 0x0 
+Data word offset: 0x366340 
+Partition Attributes: 0x71E 
+QSPI Reading Src 0xD98D00, Dest 30000000, Length 100
+.QSPI Read Src 0xD98D00, Dest 30000000, Length 100
+Partition 3 Load Success 
+======= In Stage 3, Partition No:4 ======= 
+UnEncrypted data Length: 0x19D54 
+Data word offset: 0x19D54 
+Total Data word length: 0x19D54 
+Destination Load Address: 0x30800000 
+Execution Address: 0x0 
+Data word offset: 0x366380 
+Partition Attributes: 0x71E 
+QSPI Reading Src 0xD98E00, Dest 30800000, Length 67550
+.QSPI Read Src 0xD98E00, Dest 30800000, Length 67550
+Partition 4 Load Success 
+======= In Stage 3, Partition No:5 ======= 
+UnEncrypted data Length: 0x2E4 
+Data word offset: 0x2E4 
+Total Data word length: 0x2E4 
+Destination Load Address: 0x7F000000 
+Execution Address: 0x0 
+Data word offset: 0x3800E0 
+Partition Attributes: 0x71E 
+QSPI Reading Src 0xE00380, Dest 7F000000, Length B90
+.QSPI Read Src 0xE00380, Dest 7F000000, Length B90
+Partition 5 Load Success 
+======= In Stage 3, Partition No:6 ======= 
+UnEncrypted data Length: 0x3024 
+Data word offset: 0x3024 
+Total Data word length: 0x3024 
+Destination Load Address: 0xFFFEA000 
+Execution Address: 0xFFFEA000 
+Data word offset: 0x3803D0 
+Partition Attributes: 0x117 
+QSPI Reading Src 0xE00F40, Dest FFFEA000, Length C090
+.QSPI Read Src 0xE00F40, Dest FFFEA000, Length C090
+Partition 6 Load Success 
+======= In Stage 3, Partition No:7 ======= 
+UnEncrypted data Length: 0x3FA9 
+Data word offset: 0x3FA9 
+Total Data word length: 0x3FA9 
+Destination Load Address: 0x100000 
+Execution Address: 0x0 
+Data word offset: 0x383400 
+Partition Attributes: 0x116 
+QSPI Reading Src 0xE0D000, Dest 100000, Length FEA4
+.QSPI Read Src 0xE0D000, Dest 100000, Length FEA4
+Partition 7 Load Success 
+======= In Stage 3, Partition No:8 ======= 
+UnEncrypted data Length: 0x23EBA 
+Data word offset: 0x23EBA 
+Total Data word length: 0x23EBA 
+Destination Load Address: 0x8000000 
+Execution Address: 0x8000000 
+Data word offset: 0x3873B0 
+Partition Attributes: 0x114 
+QSPI Reading Src 0xE1CEC0, Dest 8000000, Length 8FAE8
+.QSPI Read Src 0xE1CEC0, Dest 8000000, Length 8FAE8
+Partition 8 Load Success 
+======= In Stage 3, Partition No:9 ======= 
+UnEncrypted data Length: 0x39 
+Data word offset: 0x39 
+Total Data word length: 0x39 
+Destination Load Address: 0x3E000 
+Execution Address: 0x0 
+Data word offset: 0x7FB800 
+Partition Attributes: 0x716 
+QSPI Reading Src 0x1FEE000, Dest FFE3E000, Length E4
+.QSPI Read Src 0x1FEE000, Dest FFE3E000, Length E4
+Partition 9 Load Success 
+All Partitions Loaded 
+================= In Stage 4 ============ 
+PM Init Success
+CPU 0x700 reset release, Exec State 0x8, HandoffAddƒ≤ö¬™bö—Ö—’ÕÈäj§4K•—}¡Ö…ÖµÈ*IIÈíΩ›ÅrΩ—Å2Ω’πë5R…•—}¡Ö…ÖµÈ*IIÈíΩ›ÅrΩ—Å2Ω’πë5R…•—}¡Ö…ÖµÈ*IIÈíΩ›ÅrΩ—Å2Ω’πë5R…•—}¡Ö…ÖµÈ*IIÈíΩ›ÅrΩ—Å2Ω’πë5Röâ¡ÈJ9Èö’¡Å ù
+±±ÖJujÅ"Y5R*πççÈ*IIÈíïÖë}µ…Öµ}ô•±ï}•π—Ω}â’ôôï…Èj…Öµ}ï……Ω…Åjöíj§4KÂ¡—È*IIÈ™πÖâ±ïÅ¢ΩÅbΩÖëÅö—Ö—ïÌ™Õ•πùÅ"ïôÖ’±—Å≤Ö±’ïÕÖjRTπççÈ*IIÈöÖŸï}çΩπô•ù}—Ω}πŸµÈj…Öµ}ï……Ω…Åjöíj§4KÂ¡—È*IIÈ™πÖâ±ïÅ¢ΩÅöÖŸïÅö—Ö—ïÅ¢ΩÅjI55RçπÈ*IIÈ
+ÅΩπô•ùÅ≤Ö±’ïÅJÕÅz’—ÅzôÅΩ’πëÕ±™Õ•πùÅ"ïôÖ’±—ÅzπïπíUÖëÅΩπô•ùÈjR$çπÈ*IIÈjI5Åj’—ïÈÇj§$kÀK*%%•j%™
+ó.'HLCÖ±cn:ERR:MRAM per: 0
+bcn:ERR:MRAM ut: 0
+bcn:ERR:MRAM ad: 0
+bcn:ERR:MRAM mbc: 0
+bcn:ERR:MRAM ngs: 0
+C3M [Debug]
+ups2:ERR:RECV ERR
+critical_data: active=0 at 6123903 sec current/reserved = 111621 / 491520
+
+
+U-Boot 2023.01 (Oct 21 2024 - 09:05:58 +0000)
+
+CPU:   ZynqMP
+Silicon: v3
+Chip:  zu6eg
+Model: AM2Re (GRUS-3)
+Board: Xilinx ZynqMP
+DRAM:  2 GiB (effective 16 GiB)
+PMUFW:	v1.1
+PMUFW:  No permission to change config object
+EL Level:	EL2
+Secure Boot:	not authenticated, not encrypted
+Core:  38 devices, 18 uclasses, devicetree: board
+WDT:   Started watchdog@fd4d0000 with servicing every 1000ms (60s timeout)
+MMC:   mmc@ff160000: 0, mmc@ff170000: 1
+Loading Environment from nowhere... OK
+In:    serial
+Out:   serial
+Err:   serial
+Bootmode: QSPI_MODE
+Reset reason:	EXTERNAL 
+pcu:ERR:EPS UART library error: BYWD_EHit aAy kOy to EtopMautToot:  0 
+SF: Detected n25q512ax3 with page size 256 Bytes, erase size 64 KiB, total 64 MiB
+device 0 offset 0x1ff0000, size 0x80000
+SF: 524288 bytes @ 0x1ff0000 Read: OK
+QSPI: Trying to boot script at 20000000
+## Executing script at 20000000
+device 0 offset 0x2000000, size 0x2000000
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.25
+separation_timer:ERR:Boot 229 at 23140887
+separation_timer:ERR:Last ten:  -431734 -416166 -153693 -114884 -114695 -114646 -80511 -80172 -68924 -67763
+separation_timer:ERR:Separation Timer elapsed at 6123908s
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.25
+SF: 33554432 bytes @ 0x2000000 Read: OK
+## Loading kernel from FIT Image at 10000000 ...
+   Using 'conf' configuration
+   Trying 'kernel' kernel subimage
+     Description:  Linux Kernel
+     Type:         Kernel Image
+     Compression:  zstd compressed
+     Data Start:   0x100000d4
+     Data Size:    3287421 Bytes = 3.1 MiB
+     Architecture: AArch64
+     OS:           Linux
+     Load Address: 0x00200000
+     Entry Point:  0x00200000
+     Hash algo:    sha1
+     Hash value:   129cdc07be0c201aadd5e4ad968f9ef7ab75b2ed
+   Verifying Hash Integrity ... sha1+ OK
+## Loading ramdisk from FIT Image at 10000000 ...
+   Using 'conf' configuration
+   Trying 'ramdisk' ramdisk subimage
+     Description:  ramdisk
+     Type:         RAMDisk Image
+     Compression:  uncompressed
+     Data Start:   0x10332a9c
+     Data Size:    13991770 Bytes = 13.3 MiB
+     Architecture: AArch64
+     OS:           Linux
+     Load Address: unavailable
+     Entry Point:  unavailable
+     Hash algo:    sha1
+     Hash value:   77b8749de44389a0718f830d0f88a7f71f7f9219
+   Verifying Hash Integrity ... sha1+ OK
+## Loading fdt from FIT Image at 10000000 ...
+   Using 'conf' configuration
+   Trying 'fdt' fdt subimage
+     Description:  Flattened Device Tree blob
+     Type:         Flat Device Tree
+     Compression:  uncompressed
+     Data Start:   0x10322b48
+     Data Size:    65186 Bytes = 63.7 KiB
+     Architecture: AArch64
+     Hash algo:    sha1
+     Hash value:   64ffe87dd6f982b2df47186bef478c2adc98df52
+   Verifying Hash Integrity ... sha1+ OK
+   Booting using the fdt blob at 0x10322b48
+Working FDT set to 10322b48
+   Uncompressing Kernel Image
+   Loading Ramdisk to 7a154000, end 7aeabf5a ... OK
+   Loading Device Tree to 000000007a141000, end 000000007a153ea1 ... OK
+Working FDT set to 7a141000
+
+Starting kernel ...
+
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+[    0.000000] Linux version 6.1.70 (root@buildkitsandbox) (aarch64-linux-gnu-gcc (GCC) 12.4.0, GNU ld (GNU Binutils) 2.38) #1 SMP PREEMPT Mon Oct 21 09:08:40 UTC 2024
+[    0.000000] Machine model: AM2Re (GRUS-3)
+[    0.000000] earlycon: cdns0 at MMIO 0x00000000ff010000 (options '115200n8')
+[    0.000000] printk: bootconsole [cdns0] enabled
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000000000000-0x00000000ffffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   [mem 0x0000000100000000-0x0000000b7fffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000000000000-0x000000002fffffff]
+[    0.000000]   node   0: [mem 0x0000000030000000-0x0000000033ffffff]
+[    0.000000]   node   0: [mem 0x0000000034000000-0x000000007effffff]
+[    0.000000]   node   0: [mem 0x0000000800000000-0x0000000b7fffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000000000000-0x0000000b7fffffff]
+[    0.000000] On node 0, zone Normal: 4096 pages in unavailable ranges
+[    0.000000] cma: Reserved 256 MiB at 0x000000006a000000
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: PSCIv1.1 detected in firmware.
+[    0.000000] psci: Using standard PSCI v0.2 function IDs
+[    0.000000] psci: MIGRATE_INFO_TYPE not supported.
+[    0.000000] psci: SMC Calling Convention v1.2
+[    0.000000] percpu: Embedded 16 pages/cpu s27048 r8192 d30296 u65536
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] alternatives: applying boot alternatives
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 4124736
+[    0.000000] Kernel command line: earlycon console=ttyPS0,115200 clk_ignore_unused uio_pdrv_genirq.of_id=generic-uio ubi.mtd=1,0,0,1 rdinit=/sbin/init
+[    0.000000] Dentry cache hash table entries: 2097152 (order: 12, 16777216 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 1048576 (order: 11, 8388608 bytes, linear)
+[    0.000000] mem auto-init: stack:off, heap alloc:off, heap free:off
+[    0.000000] software IO TLB: area num 4.
+[    0.000000] software IO TLB: mapped [mem 0x000000007b000000-0x000000007f000000] (64MB)
+[    0.000000] Memory: 16024124K/16760832K available (5248K kernel code, 564K rwdata, 1808K rodata, 1024K init, 254K bss, 474564K reserved, 262144K cma-reserved)
+[    0.000000] rcu: Preemptible hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU event tracing is enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] GIC: Adjusting CPU interface base to 0x00000000f902f000
+[    0.000000] Root IRQ handler: gic_handle_irq
+[    0.000000] GIC: Using split EOI/Deactivate mode
+[    0.000000] irq-xilinx: /amba_pl@0/interrupt-controller@a0000000: num_irq=31, sw_irq=0, edge=0x7fffffff
+[    0.000000] irq-xilinx: /amba_pl@0/interrupt-controller@a02a0000: num_irq=10, sw_irq=0, edge=0x100
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] arch_timer: cp15 timer(s) running at 100.00MHz (phys).
+[    0.000000] clocksource: arch_sys_counter: mask: 0x1ffffffffffffff max_cycles: 0x171024e7e0, max_idle_ns: 440795205315 ns
+[    0.000001] sched_clock: 57 bits at 100MHz, resolution 10ns, wraps every 4398046511100ns
+[    0.008559] Calibrating delay loop (skipped), value calculated using timer frequency.. 200.00 BogoMIPS (lpj=400000)
+[    0.018537] pid_max: default: 32768 minimum: 301
+[    0.023417] Mount-cache hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.030758] Mountpoint-cache hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.040170] rcu: Hierarchical SRCU implementation.
+[    0.043517] rcu: 	Max phase no-delay instances is 1000.
+[    0.049168] smp: Bringing up secondary CPUs ...
+[    0.053799] Detected VIPT I-cache on CPU1
+[    0.053898] CPU1: Booted secondary processor 0x0000000001 [0x410fd034]
+[    0.054464] Detected VIPT I-cache on CPU2
+[    0.054548] CPU2: Booted secondary processor 0x0000000002 [0x410fd034]
+[    0.055086] Detected VIPT I-cache on CPU3
+[    0.055169] CPU3: Booted secondary processor 0x0000000003 [0x410fd034]
+[    0.055224] smp: Brought up 1 node, 4 CPUs
+[    0.088930] SMP: Total of 4 processors activated.
+[    0.093620] CPU features: detected: 32-bit EL0 Support
+[    0.098767] CPU features: detected: CRC32 instructions
+[    0.103939] CPU: All CPU(s) started at EL2
+[    0.107984] alternatives: applying system-wide alternatives
+[    0.114518] devtmpfs: initialized
+[    0.132089] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.136225] futex hash table entries: 1024 (order: 4, 65536 bytes, linear)
+[    0.150271] pinctrl core: initialized pinctrl subsystem
+[    0.151002] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.156803] DMA: preallocated 2048 KiB GFP_KERNEL pool for atomic allocations
+[    0.163251] DMA: preallocated 2048 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.171007] DMA: preallocated 2048 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.179080] hw-breakpoint: found 6 breakpoint and 4 watchpoint registers.
+[    0.185609] ASID allocator initialised with 65536 entries
+[    0.211588] HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
+[    0.212740] HugeTLB: 0 KiB vmemmap can be freed for a 1.00 GiB page
+[    0.219017] HugeTLB: registered 32.0 MiB page size, pre-allocated 0 pages
+[    0.225795] HugeTLB: 0 KiB vmemmap can be freed for a 32.0 MiB page
+[    0.232060] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.238845] HugeTLB: 0 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.245110] HugeTLB: registered 64.0 KiB page size, pre-allocated 0 pages
+[    0.251894] HugeTLB: 0 KiB vmemmap can be freed for a 64.0 KiB page
+[    0.259770] iommu: Default domain type: Translated 
+[    0.263061] iommu: DMA domain TLB invalidation policy: strict mode 
+[    0.269578] SCSI subsystem initialized
+[    0.273054] pps_core: LinuxPPS API ver. 1 registered
+[    0.277997] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    0.287144] PTP clock support registered
+[    0.291247] zynqmp-ipi-mbox mailbox@ff9905c0: Registered ZynqMP IPI mbox with TX/RX channels.
+[    0.300585] clocksource: Switched to clocksource arch_sys_counter
+[    0.305874] VFS: Disk quotas dquot_6.6.0
+[    0.309616] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+[    0.317428] NET: Registered PF_INET protocol family
+[    0.321775] IP idents hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.341839] tcp_listen_portaddr_hash hash table entries: 8192 (order: 5, 131072 bytes, linear)
+[    0.344924] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.352588] TCP established hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+[    0.361453] TCP bind hash table entries: 65536 (order: 9, 2097152 bytes, linear)
+[    0.369623] TCP: Hash tables configured (established 131072 bind 65536)
+[    0.374789] UDP hash table entries: 8192 (order: 6, 262144 bytes, linear)
+[    0.381725] UDP-Lite hash table entries: 8192 (order: 6, 262144 bytes, linear)
+[    0.389083] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.394759] Trying to unpack rootfs image as initramfs...
+[    0.405376] hw perfevents: enabled with armv8_pmuv3 PMU driver, 7 counters available
+[    0.409306] workingset: timestamp_bits=46 max_order=22 bucket_order=0
+[    0.449783] NET: Registered PF_ALG protocol family
+[    0.449937] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 249)
+[    0.456371] io scheduler mq-deadline registered
+[    0.460877] io scheduler kyber registered
+[    0.471854] Serial: 8250/16550 driver, 32 ports, IRQ sharing disabled
+[    0.479102] a00a0000.serial: ttyS0 at MMIO 0xa00a1000 (irq = 21, base_baud = 2764797) is a 16550A
+[    0.483114] a00e0000.serial: ttyS1 at MMIO 0xa00e1000 (irq = 22, base_baud = 2764797) is a 16550A
+[    0.492057] a00f0000.serial: ttyS2 at MMIO 0xa00f1000 (irq = 23, base_baud = 2764797) is a 16550A
+[    0.500899] a0100000.serial: ttyS3 at MMIO 0xa0101000 (irq = 24, base_baud = 2764797) is a 16550A
+[    0.509841] a0110000.serial: ttyS4 at MMIO 0xa0111000 (irq = 25, base_baud = 2764797) is a 16550A
+[    0.518613] a0120000.serial: ttyS5 at MMIO 0xa0121000 (irq = 26, base_baud = 2764797) is a 16550A
+[    0.527501] a0170000.serial: ttyS6 at MMIO 0xa0171000 (irq = 27, base_baud = 2764797) is a 16550A
+[    0.536450] a0130000.serial: ttyS7 at MMIO 0xa0131000 (irq = 28, base_baud = 2764797) is a 16550A
+[    0.545359] a0160000.serial: ttyS14 at MMIO 0xa0161000 (irq = 29, base_baud = 2764797) is a 16550A
+[    0.554313] a01e0000.serial: ttyS8 at MMIO 0xa01e1000 (irq = 30, base_baud = 2764797) is a 16550A
+[    0.563145] a0140000.serial: ttyS13 at MMIO 0xa0141000 (irq = 31, base_baud = 2764797) is a 16550A
+[    0.572106] a0210000.serial: ttyS9 at MMIO 0xa0211000 (irq = 32, base_baud = 2764797) is a 16550A
+[    0.581007] a0230000.serial: ttyS10 at MMIO 0xa0231000 (irq = 33, base_baud = 2764797) is a 16550A
+[    0.589929] a0240000.serial: ttyS11 at MMIO 0xa0241000 (irq = 34, base_baud = 2764797) is a 16550A
+[    0.598909] a0250000.serial: ttyS12 at MMIO 0xa0251000 (irq = 35, base_baud = 2000000) is a 16550A
+[    0.608632] mtdoops: mtd device (mtddev=name/number) must be supplied
+[    0.615409] spi-nor spi1.0: mt25ql512a (65536 Kbytes)
+[    0.626121] sdhci: Secure Digital Host Controller Interface driver
+[    0.626669] sdhci: Copyright(c) Pierre Ossman
+[    0.631052] sdhci-pltfm: SDHCI platform and OF driver helper
+[    0.637547] SMCCC: SOC_ID: ARCH_SOC_ID not implemented, skipping ....
+[    0.643301] zynqmp_firmware_probe Platform Management API v1.1
+[    0.649009] zynqmp_firmware_probe Trustzone version v1.0
+[    0.689316] NET: Registered PF_INET6 protocol family
+[    0.690303] Segment Routing with IPv6
+[    0.692341] In-situ OAM (IOAM) with IPv6
+[    0.696360] NET: Registered PF_PACKET protocol family
+[    0.701516] registered taskstats version 1
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.25
+[    1.429145] Freeing initrd memory: 13660K
+[    1.475554] ff010000.serial: ttyPS0 at MMIO 0xff010000 (irq = 42, base_baud = 6250000) is a xuartps
+[    1.484655] printk: console [ttyPS0] enabled
+[    1.484655] printk: console [ttyPS0] enabled
+[    1.488965] printk: bootconsole [cdns0] disabled
+[    1.488965] printk: bootconsole [cdns0] disabled
+[    1.505938] spi-nor spi0.0: mt25ql512a (65536 Kbytes)
+[    1.512545] pps pps0: new PPS source pps.-1
+[    1.516755] pps pps0: Registered IRQ 61 as PPS source
+[    1.522190] cdns-wdt fd4d0000.watchdog: Xilinx Watchdog Timer with timeout 60s
+[    1.533596] ubi1: attaching mtd1
+[    1.560611] mmc0: SDHCI controller on ff160000.mmc [ff160000.mmc] using ADMA 64-bit
+[    1.563652] mmc1: SDHCI controller on ff170000.mmc [ff170000.mmc] using ADMA 64-bit
+[    1.676845] ubi1 error: ubi_add_to_av: two LEBs with same sequence number 11
+[    1.683905] eraseblock attaching information dump:
+[    1.688693] 	ec       13
+[    1.691213] 	pnum     24
+[    1.693736] 	lnum     0
+[    1.696169] 	scrub    0
+[    1.698605] 	sqnum    11
+[    1.701131] Volume identifier header dump:
+[    1.705219] 	magic     55424921
+[    1.708347] 	version   1
+[    1.710870] 	vol_type  1
+[    1.713395] 	copy_flag 1
+[    1.715916] 	compat    5
+[    1.718439] 	vol_id    2147479551
+[    1.721746] 	lnum      0
+[    1.724266] 	data_size 22016
+[    1.727136] 	used_ebs  0
+[    1.729662] 	data_pad  0
+[    1.732183] 	sqnum     11
+[    1.734792] 	hdr_crc   d2f02b10
+[    1.737925] Volume identifier header hexdump:
+[    1.742351] ubi1 error: ubi_attach_mtd_dev: failed to attach mtd1, error -22
+[    1.749417] UBI error: cannot attach mtd1
+[    1.753430] of_cfs_init
+[    1.755929] of_cfs_init: OK
+[    1.758787] clk: Not disabling unused clocks
+[    1.763527] Freeing unused kernel memory: 1024K
+[    1.768125] Run /sbin/init as init process
+[    1.946375] mmc1: new high speed SDHC card at address 0260
+[    1.952949] mmcblk1: mmc1:0260 SD    7.55 GiB 
+[    1.960415]  mmcblk1: p1 p2 p3
+[    1.974431] mmc0: new high speed SDHC card at address 0260
+[    1.989274] mmcblk0: mmc0:0260 SD    7.55 GiB 
+[    1.996062]  mmcblk0: p1 p2 p3
+Starting LXC network bridge:
+[    3.032596] random: crng init done
+[    3.065497] ubi1: attaching mtd1
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+[    3.551160] ubi1: scanning is finished
+[    3.582636] ubi1: attached mtd1 (name "spi1.0", size 64 MiB)
+[    3.588297] ubi1: PEB size: 65536 bytes (64 KiB), LEB size: 65408 bytes
+[    3.594906] ubi1: min./max. I/O unit sizes: 1/256, sub-page size 1
+[    3.601086] ubi1: VID header offset: 64 (aligned 64), data offset: 128
+[    3.607613] ubi1: good PEBs: 1024, bad PEBs: 0, corrupted PEBs: 0
+[    3.613706] ubi1: user volume: 2, internal volumes: 1, max. volumes count: 128
+[    3.620928] ubi1: max/mean erase counter: 25/13, WL threshold: 4096, image sequence number: 1283895027
+[    3.630233] ubi1: available PEBs: 0, total reserved PEBs: 1024, PEBs reserved for bad PEB handling: 0
+[    3.639459] ubi1: background thread "ubi_bgt1d" started, PID 299
+UBI device number 1, total 1024 LEBs (66977792 bytes, 63.8 MiB), available 0 LEBs (0 bytes), LEB size 65408 bytes (63.8 KiB)
+[    3.656283] UBIFS (ubi1:0): Mounting in unauthenticated mode
+[    3.662166] UBIFS (ubi1:0): background thread "ubifs_bgt1_0" started, PID 302
+[    3.745553] UBIFS (ubi1:0): recovery needed
+pcu:ERR:No communication for too long with PCTRL. Is it connected and PIC ON?
+[    4.356991] UBIFS (ubi1:0): recovery completed
+[    4.361520] UBIFS (ubi1:0): UBIFS: mounted UBI device 1, volume 0, name "p1"
+[    4.368575] UBIFS (ubi1:0): LEB size: 65408 bytes (63 KiB), min./max. I/O unit sizes: 8 bytes/256 bytes
+[    4.377971] UBIFS (ubi1:0): FS size: 53896192 bytes (51 MiB, 824 LEBs), max 834 LEBs, journal size 2681728 bytes (2 MiB, 41 LEBs)
+[    4.389620] UBIFS (ubi1:0): reserved for root: 2545649 bytes (2485 KiB)
+[    4.396235] UBIFS (ubi1:0): media format: w5/r0 (latest is w5/r0), UUID 2B4982EF-62BD-440A-B7F9-794A1F8D35F1, small LPT model
+[    4.470122] UBIFS (ubi1:0): full atime support is enabled.
+[    4.480887] UBIFS (ubi1:1): Mounting in unauthenticated mode
+[    4.486663] UBIFS (ubi1:1): background thread "ubifs_bgt1_1" started, PID 304
+[    4.562800] UBIFS (ubi1:1): recovery needed
+[    4.611163] UBIFS (ubi1:1): recovery completed
+[    4.615668] UBIFS (ubi1:1): UBIFS: mounted UBI device 1, volume 1, name "p2"
+[    4.622717] UBIFS (ubi1:1): LEB size: 65408 bytes (63 KiB), min./max. I/O unit sizes: 8 bytes/256 bytes
+[    4.632105] UBIFS (ubi1:1): FS size: 11511808 bytes (10 MiB, 176 LEBs), max 186 LEBs, journal size 588672 bytes (0 MiB, 9 LEBs)
+[    4.643580] UBIFS (ubi1:1): reserved for root: 543730 bytes (530 KiB)
+[    4.650020] UBIFS (ubi1:1): media format: w5/r0 (latest is w5/r0), UUID 7EFA1190-62D5-49E6-A15B-9397F36655C6, small LPT model
+[    4.727503] UBIFS (ubi1:1): full atime support is enabled.
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+[    8.633801] F2FS-fs (mmcblk0p2): Mounted with checkpoint version = 547d6c2b
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+[    9.115445] F2FS-fs (mmcblk0p3): Mounted with checkpoint version = 4eb6d8d2
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.25
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+[   12.275886] F2FS-fs (mmcblk1p2): Mounted with checkpoint version = 7093ffc0
+[   12.590863] F2FS-fs (mmcblk1p3): Mounted with checkpoint version = 7c55cd5c
+
+   ____    ____     _____ 
+  / __ \  |  _ \   / ____|
+ | |  | | | |_) | | |     
+ | |  | | |  _ <  | |     
+ | |__| | | |_) | | |____ 
+  \____/  |____/   \_____|
+
+Press any key to cancel the automatic start of the agent...
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+No user input detected. Starting the application...
+
+Please press Enter to activate this console. metal: info:      metal_uio_dev_open: No IRQ for device 30000000.shm.
+        timesync |      0.000247 INF  166:main.cpp             updated timex.status (time: 1970-01-01T00:00:17.692091, status: 0x000040 -> 0x000040)
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+TCP endpoint for 'aocs' on 0.0.0.0:31339
+      compo_ctrl |      0.000668 INF  120:main.cpp             config dir: /mnt/dataflash/config/compo_ctrl
+      compo_ctrl |      0.020904 INF  124:main.cpp             using default application config
+      compo_ctrl |      0.021028 INF  177:builder_set.cpp      GNSS_RX_A: dummy
+      compo_ctrl |      0.021065 INF  177:builder_set.cpp      GNSS_RX_B: dummy
+      compo_ctrl |      0.021135 INF  177:builder_set.cpp      GYRO_A: m_g370s
+      compo_ctrl |      0.021172 INF  177:builder_set.cpp      GYRO_B: dmu30
+      compo_ctrl |      0.021214 INF  177:builder_set.cpp      MGM_A: axelmgm
+      compo_ctrl |      0.021250 INF  177:builder_set.cpp      MGM_B: axelmgm
+      compo_ctrl |      0.021294 INF  177:builder_set.cpp      MTQ_A: mt_15am
+      compo_ctrl |      0.021330 INF  177:builder_set.cpp      MTQ_B: mt_15am
+      compo_ctrl |      0.021365 INF  177:builder_set.cpp      MTQ_C: mt_15am
+      compo_ctrl |      0.021409 INF  177:builder_set.cpp      PROP_A: vesper
+      compo_ctrl |      0.021457 INF  177:builder_set.cpp      RW_A: rw100
+      compo_ctrl |      0.021492 INF  177:builder_set.cpp      RW_B: rw100
+      compo_ctrl |      0.021526 INF  177:builder_set.cpp      RW_C: rw100
+      compo_ctrl |      0.021558 INF  177:builder_set.cpp      RW_D: rw100
+      compo_ctrl |      0.021603 INF  177:builder_set.cpp      STT_A: pst3s
+      compo_ctrl |      0.021640 INF  177:builder_set.cpp      STT_B: sagitta
+      compo_ctrl |      0.021681 INF  177:builder_set.cpp      STT_C: astro_cl
+      compo_ctrl |      0.024622 INF  174:main.cpp             listen for an incoming connection on tcp://0.0.0.0:31337
+ c3m_satlog_jump | Starting C3M<->Satlog Jump application
+ c3m_satlog_jump | 
+  uplink_manager | Starting Uplink Manager
+  uplink_manager | 
+  uplink_manager | Configuration updated
+  uplink_manager | Configuration updated
+  uplink_manager | File handles recieved, folders created
+  uplink_manager | 
+  uplink_manager | Waiting for messages
+  uplink_manager | 
+downlink_manager | Starting Downlink Manager
+downlink_manager | 
+      fs_manager | [01/01/00 00:00:00.421] [inf] root:/am2re/src/fs_manager/src/main.cpp:206: fs_manager started
+ c3m_satlog_jump | [SatlogWriter] could not connect, retry after 1sec: Connection refused
+reprogramming_ma | [SatlogWriter] could not connect, retry after 1sec: Connection refused
+      mqtt_relay | [SatlogWriter] could not connect, retry after 1sec: Connection refused
+downlink_manager | Error: 
+downlink_manager | bad file: /mnt/east/common/downlink_manager/config.yaml
+downlink_manager |  
+downlink_manager | bad file: /mnt/east/common/downlink_manager/config.yaml
+downlink_manager | 
+adc_provider_nw_ | [SatlogWriter] could not connect, retry after 1sec: Connection refused
+    aocs_monitor |      0.000412 INF  124:main.cpp             config dir: /mnt/dataflash/config/aocs_monitor
+    aocs_monitor |      0.000805 INF  116:container_runner.cpp starting a container: default
+      ttc_runner | [SatlogWriter] could not connect, retry after 1sec: Connection refused
+    aocs_monitor |      0.013242 INF   36:config_storage.cpp   config: /mnt/dataflash/config/aocs_monitor/default.yaml
+    gpio_manager | [SatlogWriter] could not connect, retry after 1sec: Connection refused
+          satlog | Loaded config file : /mnt/dataflash/config/satlog/0000_launch_config.yaml
+    aocs_monitor |      0.024419 INF  183:container_runner.cpp executing the command (pid: 358, argv=["/usr/libexec/aocs_monitor/setup_container", "aocs", "/mnt/east/common/aocs/persistent", "/mnt/east/common/aocs/base/base.tar.bz2", "/mnt/east/common/aocs/apps/apps.tar.bz2"])
+          satlog | Loaded config file : /mnt/dataflash/config/satlog/0001_lifetime_30years.yaml
+          satlog | Loaded config file : /mnt/dataflash/config/satlog/0002_lifetime_30years_c3m_satlog_jump.yaml
+          satlog | Loaded config file : /mnt/dataflash/config/satlog/0003_lifetime_30days_c3m_satlog_jump_3.yaml
+telescope_heater | [SatlogWriter] could not connect, retry after 1sec: Connection refused
+adc_provider_nw_ | [SatlogWriter] could not connect, retry after 1sec: Connection refused
+          satlog | Loaded config file : /mnt/dataflash/config/satlog/0004_satlog_self_logging.yaml
+          satlog | [SATLOG] Satlog Server started
+          satlog | [SATLOG] start main loop
+          satlog | [SATLOG] Cleanup thread started
+          satlog | [SATLOG] _fd_read=0
+          satlog | [SATLOG] EPOLL_CTL_ADD, ret=0
+          satlog | [SATLOG] _fd_signal=7
+          satlog | [SATLOG] EPOLL_CTL_ADD, ret=0
+          satlog | [SATLOG] Cleaning up....
+          satlog | [SATLOG] Cleaning up finished !
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ c3m_satlog_jump | [SatlogWriter] could not connect, retry after 1sec: Software caused connection abort
+      mqtt_relay | [SatlogWriter] could not connect, retry after 1sec: Software caused connection abort
+reprogramming_ma | [SatlogWriter] could not connect, retry after 1sec: Software caused connection abort
+adc_provider_nw_ | [SatlogWriter] could not connect, retry after 1sec: Software caused connection abort
+      ttc_runner | [SatlogWriter] could not connect, retry after 1sec: Software caused connection abort
+    gpio_manager | [SatlogWriter] could not connect, retry after 1sec: Software caused connection abort
+telescope_heater | [SatlogWriter] could not connect, retry after 1sec: Software caused connection abort
+adc_provider_nw_ | [SatlogWriter] could not connect, retry after 1sec: Software caused connection abort
+reprogramming_ma | Managed to connect to satlog
+reprogramming_ma | DBG: MTD Type:  MTD total size: 67108864 MTD erase size: 65536 MTD write size: 1
+reprogramming_ma | DBG: MTD Type:  MTD total size: 67108864 MTD erase size: 65536 MTD write size: 1
+reprogramming_ma | Flash number: 1
+          satlog | [SATLOG] accepted connection fd 10
+          satlog | [SATLOG] accepted connection fd 11
+          satlog | [SATLOG] accepted connection fd 12
+          satlog | [SATLOG] accepted connection fd 13
+          satlog | [SQLITE] open(): /mnt/east/satlog/c3m_satlog_jump/00005/2000_01/01/00_0001.db
+          satlog | [SATLOG] accepted connection fd 16
+      ttc_runner | [01/01/00 00:00:02.442] [inf] root:/am2re/src/ttc_runner/src/main.cpp:273: Starting ttc_runner
+      ttc_runner | [01/01/00 00:00:02.445] [inf] root:/am2re/src/ttc_runner/src/StdoutForwarder.cpp:26: Starting forwarder loop
+      ttc_runner | [01/01/00 00:00:02.449] [inf] root:/am2re/src/ttc_runner/src/main.cpp:312: Next ttc in 863068769 seconds
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.563
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+          satlog | [SQLITE] open(): /mnt/east/satlog/adcp/00013/2000_01/01/00_0001.db
+          satlog | [SATLOG] accepted connection fd 19
+          satlog | [SATLOG] accepted connection fd 15
+          satlog | [SATLOG] accepted connection fd 23
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+          satlog | [SQLITE] open(): /mnt/east/satlog/mqtt_relay/00001/2000_01/01/00_0001.db
+          satlog | [SQLITE] open(): /mnt/east/satlog/gpio_mgr/00001/2000_01/01/00_0001.db
+          satlog | [SQLITE] open(): /mnt/east/satlog/c3m_satlog_jump/00003/2000_01/01/00_0001.db
+          satlog | [SQLITE] open(): /mnt/east/satlog/heater_ctrl/00011/2000_01/01/00_0001.db
+          satlog | [SQLITE] open(): /mnt/east/satlog/adcp/00012/2000_01/01/00_0001.db
+          satlog | [SQLITE] open(): /mnt/east/satlog/c3m_satlog_jump/00006/2000_01/01/00_0001.db
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+          satlog | [SATLOG] Checkpoint thread started
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.563
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.563
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.563
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.375
+
+~ # 
+~ # navA:INF:ZDA: 00-01-06 00:02:02
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:03
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:04
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:05
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:06
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:07
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:08
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:09
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:10
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:11
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:12
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:13
+navB:INF:ZDA: 00-01-06 00:02:13
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:14
+navB:INF:ZDA: 00-01-06 00:02:14
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:ZDA: 00-01-06 00:02:15
+navA:INF:ZDA: 00-01-06 00:02:15
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:16
+navB:INF:ZDA: 00-01-06 00:02:16
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:17
+navB:INF:ZDA: 00-01-06 00:02:17
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+[  126.579451] lxcbr0: port 1(vethvZs9oZ) entered blocking state
+[  126.585406] lxcbr0: port 1(vethvZs9oZ) entered disabled state
+[  126.591305] device vethvZs9oZ entered promiscuous mode
+[  126.598291] eth0: renamed from veth9aRzsZ
+[  126.621121] IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+[  126.627541] lxcbr0: port 1(vethvZs9oZ) entered blocking state
+[  126.633285] lxcbr0: port 1(vethvZs9oZ) entered forwarding state
+[  126.639800] IPv6: ADDRCONF(NETDEV_CHANGE): lxcbr0: link becomes ready
+navB:INF:ZDA: 00-01-06 00:02:18
+navA:INF:ZDA: 00-01-06 00:02:18
+    naaovcBs:_ImNoFn:iGtGoAr:  |0 .  0 0100,2 .02.9050504,1  0I.N000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+F  204:container_runner.cpp subprocess has finished (pid: 358, status: 0, signo = 17)
+navA:INF:ZDA: 00-01-06 00:02:19
+navB:INF:ZDA: 00-01-06 00:02:19
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:20
+navB:INF:ZDA: 00-01-06 00:02:20
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:21
+navB:INF:ZDA: 00-01-06 00:02:21
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:22
+navB:INF:ZDA: 00-01-06 00:02:22
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:ZDA: 00-01-06 00:02:23
+navA:INF:ZDA: 00-01-06 00:02:23
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+          satlog | [SATLOG] accepted connection fd 42
+navB:INF:ZDA: 00-01-06 00:02:24
+navA:INF:ZDA: 00-01-06 00:02:24
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+          satlog | [SQLITE] open(): /mnt/east/satlog/metrics_monitor/00001/2000_01/01/00_0001.db
+navB:INF:ZDA: 00-01-06 00:02:25
+navA:INF:ZDA: 00-01-06 00:02:25
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:ZDA: 00-01-06 00:02:26
+navA:INF:ZDA: 00-01-06 00:02:26
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:27
+navB:INF:ZDA: 00-01-06 00:02:27
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:28
+navB:INF:ZDA: 00-01-06 00:02:28
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:29
+navB:INF:ZDA: 00-01-06 00:02:29
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:30
+navB:INF:ZDA: 00-01-06 00:02:30
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:31
+navB:INF:ZDA: 00-01-06 00:02:31
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:32
+navB:INF:ZDA: 00-01-06 00:02:32
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:ZDA: 00-01-06 00:02:33
+navA:INF:ZDA: 00-01-06 00:02:33
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:34
+navB:INF:ZDA: 00-01-06 00:02:34
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:35
+navB:INF:ZDA: 00-01-06 00:02:35
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:36
+navB:INF:ZDA: 00-01-06 00:02:36
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:37
+navB:INF:ZDA: 00-01-06 00:02:37
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:ZDA: 00-01-06 00:02:38
+navA:INF:ZDA: 00-01-06 00:02:38
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:39
+navB:INF:ZDA: 00-01-06 00:02:39
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:40
+navB:INF:ZDA: 00-01-06 00:02:40
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:41
+navB:INF:ZDA: 00-01-06 00:02:41
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:ZDA: 00-01-06 00:02:42
+navA:INF:ZDA: 00-01-06 00:02:42
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:43
+navB:INF:ZDA: 00-01-06 00:02:43
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:44
+navB:INF:ZDA: 00-01-06 00:02:44
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:45
+navB:INF:ZDA: 00-01-06 00:02:45
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:46
+navB:INF:ZDA: 00-01-06 00:02:46
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:47
+navB:INF:ZDA: 00-01-06 00:02:47
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:48
+navB:INF:ZDA: 00-01-06 00:02:48
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:49
+navB:INF:ZDA: 00-01-06 00:02:49
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:50
+navB:INF:ZDA: 00-01-06 00:02:50
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:51
+navB:INF:ZDA: 00-01-06 00:02:51
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:52
+navB:INF:ZDA: 00-01-06 00:02:52
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:ZDA: 00-01-06 00:02:53
+navA:INF:ZDA: 00-01-06 00:02:53
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:54
+navB:INF:ZDA: 00-01-06 00:02:54
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:55
+navB:INF:ZDA: 00-01-06 00:02:55
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:56
+navB:INF:ZDA: 00-01-06 00:02:56
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:57
+navB:INF:ZDA: 00-01-06 00:02:57
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:58
+navB:INF:ZDA: 00-01-06 00:02:58
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:02:59
+navB:INF:ZDA: 00-01-06 00:02:59
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:03:00
+navB:INF:ZDA: 00-01-06 00:03:00
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:03:01
+navB:INF:ZDA: 00-01-06 00:03:01
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:03:02
+navB:INF:ZDA: 00-01-06 00:03:02
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:03:03
+navB:INF:ZDA: 00-01-06 00:03:03
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:03:04
+navB:INF:ZDA: 00-01-06 00:03:04
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:03:05
+navB:INF:ZDA: 00-01-06 00:03:05
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:03:06
+navB:INF:ZDA: 00-01-06 00:03:06
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:03:07
+navB:INF:ZDA: 00-01-06 00:03:07
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:03:08
+navB:INF:ZDA: 00-01-06 00:03:08
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+=== Commanding 'sync' and 'poweroff' to OBC ... ===
+=== Please wait UNTIL OBC shutdown gracefully ... ===
+After OBC shutdown, type Ctrl-Q then Ctrl-X to exit picocom
+=========================================================================
+navA:INF:ZDA: 00-01-06 00:03:10
+navB:INF:ZDA: 00-01-06 00:03:10
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:ZDA: 00-01-06 00:03:11
+navA:INF:ZDA: 00-01-06 00:03:11
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:ZDA: 00-01-06 00:03:12
+navA:INF:ZDA: 00-01-06 00:03:12
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+~ # poweroff
+navA:INF:ZDA: 00-01-06 00:03:13
+navB:INF:ZDA: 00-01-06 00:03:13
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:03:14
+navB:INF:ZDA: 00-01-06 00:03:14
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+~ # [+] stop aocs container...
+          satlog | [SATLOG] read_buffer fd 42 connection closed
+          satlog | [SATLOG] proc_cmd_from_socket_() error, cmd_status = 4
+          satlog | [SATLOG] closing fd 42
+navB:INF:ZDA: 00-01-06 00:03:15
+navA:INF:ZDA: 00-01-06 00:03:15
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:03:16
+navB:INF:ZDA: 00-01-06 00:03:16
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:ZDA: 00-01-06 00:03:17
+navB:INF:ZDA: 00-01-06 00:03:17
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:ZDA: 00-01-06 00:03:18
+navA:INF:ZDA: 00-01-06 00:03:18
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:ZDA: 00-01-06 00:03:19
+navA:INF:ZDA: 00-01-06 00:03:19
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:ZDA: 00-01-06 00:03:20
+navA:INF:ZDA: 00-01-06 00:03:20
+navB:INF:GGA: 0.000, 0.000, 0.000, 0
+navA:INF:GGA: 0.000, 0.000, 0.000, 0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navB:INF:GSA: fix=1, pdop=0.0
+navA:INF:GSA: fix=1, pdop=0.0
+
+=========================================================================
+Wed May 13 01:39:00 PM JST 2026
+picocom exited without resetting com port.
+Hit ENTER key to power OFF OBC: 
++ PYTHONPATH=. ./cli/obc-ctrl.py -f
+Turn OBC off, Kill Switch disabled: FALSE
+INFO:adapters.tcp:+ new client ('127.0.0.1', 55320) on port 50000
+Check TEXIO-1 status ==============
++ texio status
+Cannot open device: No such file or directory
+Stopping running servers ...
+ERROR:adapters.tcp:sendall: [Errno 32] Broken pipe
+INFO:adapters.tcp:- client quit
+root     3605549  0.0  0.0  17844 11216 ?        Ss   13:35   0:00 sshd: t_koike [priv]
+t_koike  3605552  0.0  0.0  19036 10708 ?        Ss   13:35   0:00 /lib/systemd/systemd --user
+t_koike  3605553  0.0  0.0 169644  3916 ?        S    13:35   0:00 (sd-pam)
+t_koike  3605565  0.0  0.0  18104  7064 ?        S    13:35   0:00 sshd: t_koike@pts/0
+t_koike  3605566  0.0  0.0   9660  5960 pts/0    Ss   13:35   0:00 -bash
+t_koike  3605573  0.0  0.0   2584   960 pts/0    S+   13:35   0:00 sh 10obcdev-ctrl.sh I
+t_koike  3605661  0.0  0.0   2584   900 pts/0    S+   13:35   0:00 /bin/sh ./21hwsrvr.sh
+t_koike  3605663  0.0  0.0   7072  3456 pts/0    S+   13:35   0:00 /bin/bash /opt/xilinx/HWSRVR/2023.2/bin/hw_server -s tcp:127.0.0.1:3121
+t_koike  3605691  0.0  0.0   7072  3452 pts/0    S+   13:35   0:00 /bin/bash /opt/xilinx/HWSRVR/2023.2/bin/loader -exec hw_server -s tcp:127.0.0.1:3121
+t_koike  3605753  0.2  0.0 131524 10408 pts/0    Sl+  13:35   0:00 /opt/xilinx/HWSRVR/2023.2/bin/unwrapped/lnx64.o/hw_server -s tcp:127.0.0.1:3121
+t_koike  3605762  0.0  0.0   2584   944 pts/0    S+   13:35   0:00 /bin/sh ./22obc-gateway-1st.sh
+t_koike  3605764  0.0  0.0   2584   108 pts/0    S+   13:35   0:00 /bin/sh ./22obc-gateway-1st.sh
+t_koike  3605765  0.0  0.0   6420  1036 pts/0    S+   13:35   0:00 sed s/$/\r/
+t_koike  3605766 15.1  0.0 324208 16396 pts/0    Sl+  13:35   0:32 python3 ./gateway/obc-gateway.py -r -f
+t_koike  3605773  0.0  0.0   2584   936 pts/0    S+   13:35   0:00 /bin/sh ./24start-socat.sh log/260513-133525-U.log log/260513-133525-D.log
+t_koike  3605777  0.0  0.0   2584   932 pts/0    S+   13:35   0:00 sh -x -c socat -r log/260513-133525-U.log -R log/260513-133525-D.log    tcp-listen:60000,bind=0,reuseaddr,fork,max-children=1 /dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0FJCSX-if00-port0,cfmakeraw,sync=1,b115200
+t_koike  3605778  0.0  0.0  10336  4656 pts/0    S+   13:35   0:00 socat -r log/260513-133525-U.log -R log/260513-133525-D.log tcp-listen:60000,bind=0,reuseaddr,fork,max-children=1 /dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0FJCSX-if00-port0,cfmakeraw,sync=1,b115200
+t_koike  3605825  0.0  0.0   2584   952 pts/0    S+   13:39   0:00 /bin/sh ./60killall-servers.sh
+t_koike  3605826  0.0  0.0  11224  4884 pts/0    R+   13:39   0:00 ps aux
+-------------------------------------------------------------------------
+Terminated
+pkill: killing pid 818 failed: Operation not permitted
+Terminated
+Check if all running servers killed.
+root     3605549  0.0  0.0  17844 11216 ?        Ss   13:35   0:00 sshd: t_koike [priv]
+t_koike  3605552  0.0  0.0  19036 10708 ?        Ss   13:35   0:00 /lib/systemd/systemd --user
+t_koike  3605553  0.0  0.0 169644  3916 ?        S    13:35   0:00 (sd-pam)
+t_koike  3605565  0.0  0.0  18104  7064 ?        S    13:35   0:00 sshd: t_koike@pts/0
+t_koike  3605566  0.0  0.0   9660  5960 pts/0    Ss   13:35   0:00 -bash
+t_koike  3605573  0.0  0.0   2584   960 pts/0    S+   13:35   0:00 sh 10obcdev-ctrl.sh I
+t_koike  3605825  0.0  0.0   2584   952 pts/0    S+   13:39   0:00 /bin/sh ./60killall-servers.sh
+t_koike  3605833  0.0  0.0  11092  4428 pts/0    R+   13:39   0:00 ps aux
+-------------------------------------------------------------------------
+-rw-r--r-- 1 t_koike t_koike 2043 May 13 13:37 log/260513-133525-D.log
+-rw-r--r-- 1 t_koike t_koike 2992 May 13 13:37 log/260513-133525-U.log
+Turning OFF TEXIO-2 =============
+Turning OFF TEXIO-1 =============
++ texio off
+Cannot open device: No such file or directory
+Check TEXIO-1 status ==============
++ texio status
+Cannot open device: No such file or directory
+Hardware released.
+You have checked out the hardware. `release' it when you are done.
+================================================
+    You RELEASED OBC. You can SAFELY Logout.    
+================================================
+Stopping all running scripts ...
+Check if all running servers killed.
+root     3605549  0.0  0.0  17844 11216 ?        Ss   13:35   0:00 sshd: t_koike [priv]
+t_koike  3605552  0.0  0.0  19036 10708 ?        Ss   13:35   0:00 /lib/systemd/systemd --user
+t_koike  3605553  0.0  0.0 169644  3916 ?        S    13:35   0:00 (sd-pam)
+t_koike  3605565  0.0  0.0  18104  7064 ?        S    13:35   0:00 sshd: t_koike@pts/0
+t_koike  3605566  0.0  0.0   9660  5960 pts/0    Ss   13:35   0:00 -bash
+t_koike  3605573  0.0  0.0   2584   952 pts/0    S+   13:35   0:00 /bin/sh ./99ps_aux.sh
+t_koike  3605874  0.0  0.0  11092  4448 pts/0    R+   13:39   0:00 ps aux
+t_koike  3605875  0.0  0.0   6340  2112 pts/0    S+   13:39   0:00 grep t_koike
+-------------------------------------------------------------------------
+t_koike@obcdev17:~$ sh 10obcdev-ctrl.sh I
+Wed May 13 01:42:59 PM JST 2026
+action : [I]
+checkout   : [Y]
+psu_on     : [Y]
+start_srv  : [Y]
+obc_on     : [D]
+boot_source: [pic]
+picocom    : [Y]
+obc_off    : [Y]
+stop_srv   : [Y]
+psu_off    : [Y]
+release    : [Y]
+Check TEXIO-1 status ==============
+TEXTIO-1 volt/current settings: ####        voltage_set 28, current_limit 7        ####
++ texio status
+Cannot open device: No such file or directory
++ ls -l /dev/serial/by-id
+total 0
+lrwxrwxrwx 1 root root 13 Feb 12 22:48 usb-Century_USB_Virtual_COM_001A0388046C-if00 -> ../../ttyACM0
+lrwxrwxrwx 1 root root 13 Apr  3 15:17 usb-FTDI_FT230X_Basic_UART_DK0FJCSX-if00-port0 -> ../../ttyUSB2
+lrwxrwxrwx 1 root root 13 Apr  3 15:17 usb-FTDI_FT230X_Basic_UART_DK0FJQQ1-if00-port0 -> ../../ttyUSB0
++ lsusb
+Bus 002 Device 016: ID 04b4:00f1 Cypress Semiconductor Corp. AM2Re
+Bus 002 Device 002: ID 05e3:0620 Genesys Logic, Inc. GL3523 Hub
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 007: ID 06cb:00be Synaptics, Inc. 
+Bus 001 Device 005: ID 174f:2426 Syntek Integrated Camera
+Bus 001 Device 026: ID 0403:6015 Future Technology Devices International, Ltd Bridge(I2C/SPI/UART/FIFO)
+Bus 001 Device 025: ID 0403:6015 Future Technology Devices International, Ltd Bridge(I2C/SPI/UART/FIFO)
+Bus 001 Device 023: ID 0403:6014 Future Technology Devices International, Ltd FT232H Single HS USB-UART/FIFO IC
+Bus 001 Device 021: ID 05e3:0610 Genesys Logic, Inc. Hub
+Bus 001 Device 020: ID 1a40:0101 Terminus Technology Inc. Hub
+Bus 001 Device 010: ID 8087:0aaa Intel Corp. Bluetooth 9460/9560 Jefferson Peak (JfP)
+Bus 001 Device 004: ID 07f7:0032 Century Corp. USB Virtual COM
+Bus 001 Device 002: ID 05e3:0610 Genesys Logic, Inc. Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+systemd+     678  0.0  0.0  90104  6564 ?        Ssl  Feb12   0:59 /lib/systemd/systemd-timesyncd
+message+     726  0.3  0.0   9512  5272 ?        Ss   Feb12 442:58 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+Debian-+    1371  0.0  0.0  30948 18244 ?        Ss   Feb12  10:04 /usr/sbin/exim4 -bd -q30m
+t_koike  3605552  0.0  0.0  19036 10708 ?        Ss   13:35   0:00 /lib/systemd/systemd --user
+t_koike  3605553  0.0  0.0 169644  3916 ?        S    13:35   0:00 (sd-pam)
+t_koike  3605565  0.0  0.0  18104  7064 ?        S    13:35   0:00 sshd: t_koike@pts/0
+t_koike  3605566  0.0  0.0   9660  5960 pts/0    Ss   13:35   0:00 -bash
+t_koike  3605899  0.3  0.0  18116  7080 ?        S    13:42   0:00 sshd: t_koike@notty
+t_koike  3605900  0.3  0.0   5704  1036 ?        Ss   13:42   0:00 scp -d -t /home/t_koike/
+t_koike  3605901  0.0  0.0   2584   956 pts/0    S+   13:42   0:00 sh 10obcdev-ctrl.sh I
+t_koike  3605913  0.0  0.0   2584   940 pts/0    S+   13:42   0:00 /bin/sh ./12is-someone-running-server.sh
+t_koike  3605914  100  0.0  11092  4408 pts/0    R+   13:42   0:00 ps aux
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+You have checked out the hardware. `release' it when you are done.
+You have checked out the hardware. `release' it when you are done.
+================================================
+[obcdev17]  The hardware is not in use.
+================================================
+Are you OK to checkout the OBC ? 
+
+You have checked out the hardware. `release' it when you are done.
+================================================
+[obcdev17]  You CHECKED out OBC           
+================================================
+You have already checked out the hardware. `release' to release it.
+Turning ON TEXIO-1 ==============
+Check TEXIO-1 status ==============
++ texio status
+Cannot open device: No such file or directory
++ texio on
+Cannot open device: No such file or directory
+Turning ON TEXIO-2 ==============
+Check TEXIO-1 status ==============
++ texio status
+Cannot open device: No such file or directory
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+Starting HWSRVR ...
+/opt/xilinx/HWSRVR/2023.2/bin/hw_server -s tcp:127.0.0.1:3121
+hostname: obcdev17, use: debug_uart
+USB serial device list:
+Starting the first obc-gateway ...
+PYTHONPATH=. ./gateway/obc-gateway.py -r -f
+hostname: obcdev17, use: terminal_uart
+USB serial device list:
+total 0
+total 0
+lrwxrwxrwx 1 root root 13 Feb 12 22:48 usb-Century_USB_Virtual_COM_001A0388046C-if00 -> ../../ttyACM0
+lrwxrwxrwx 1 root root 13 Feb 12 22:48 usb-Century_USB_Virtual_COM_001A0388046C-if00 -> ../../ttyACM0
+lrwxrwxrwx 1 root root 13 Apr  3 15:17 usb-FTDI_FT230X_Basic_UART_DK0FJCSX-if00-port0 -> ../../ttyUSB2
+lrwxrwxrwx 1 root root 13 Apr  3 15:17 usb-FTDI_FT230X_Basic_UART_DK0FJCSX-if00-port0 -> ../../ttyUSB2
+lrwxrwxrwx 1 root root 13 Apr  3 15:17 usb-FTDI_FT230X_Basic_UART_DK0FJQQ1-if00-port0 -> ../../ttyUSB0
+lrwxrwxrwx 1 root root 13 Apr  3 15:17 usb-FTDI_FT230X_Basic_UART_DK0FJQQ1-if00-port0 -> ../../ttyUSB0
+--> device: /dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0FJQQ1-if00-port0
+Start picocom on [/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0FJQQ1-if00-port0]
+To exit picocom, type Ctrl-Q then Ctrl-X
+$ picocom -q -b 115200 /dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0FJQQ1-if00-port0 -e q -r -g picocom.log
+--> device: /dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0FJCSX-if00-port0
++ socat -r log/260513-134303-U.logWed May 13 01:43:03 PM JST 2026
+ -R log/260513-134303-D.log tcp-listen:60000,bind=0,reuseaddr,fork,max-children=1 /dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0FJCSX-if00-port0,cfmakeraw,sync=1,b115200
+=========================================================================
+
+****** Xilinx hw_server v2023.2
+  **** Build date : Oct 13 2023 at 20:26:23
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
+
+INFO: hw_server application started
+INFO: Use Ctrl-C to exit hw_server application
+
+INFO: To connect to this hw_server instance use url: TCP:127.0.0.1:3121
+
+INFO:adapters.fx3:connected to: 'AM2Re : 3add2da - 2024-08-08T07:42:34+00:00'
+INFO:adapters.tcp:listening IoForwarder on port 50000
+INFO:adapters.tcp:listening MpxForwarder on port 50001
+INFO:adapters.tcp:listening MpxForwarder on port 50002
+INFO:adapters.tcp:listening MpxForwarder on port 50003
+INFO:adapters.tcp:listening MpxForwarder on port 50004
+INFO:adapters.tcp:listening MpxForwarder on port 50005
+INFO:adapters.tcp:listening MpxForwarder on port 50006
+INFO:adapters.tcp:listening MpxForwarder on port 50007
+INFO:adapters.tcp:listening MpxForwarder on port 50008
+INFO:adapters.tcp:listening MpxForwarder on port 50009
+INFO:adapters.tcp:listening MpxForwarder on port 50010
+INFO:adapters.tcp:listening MpxForwarder on port 50011
+INFO:adapters.tcp:listening MpxForwarder on port 50012
+INFO:adapters.tcp:listening MpxForwarder on port 50013
+INFO:adapters.tcp:listening MpxForwarder on port 50014
+INFO:adapters.tcp:listening MpxForwarder on port 50015
+INFO:adapters.tcp:listening MpxForwarder on port 50016
+INFO:adapters.tcp:listening UartxForwarder on port 50019
+sleeping 1s ... 
++ PYTHONPATH=. ./cli/obc-ctrl.py -f
+INFO:adapters.tcp:+ new client ('127.0.0.1', 48282) on port 50000
+Turn OBC off, Kill Switch disabled: FALSE
+hostname: obcdev17
+hostname: obcdev17
+host is OBCDEV4/8 with kill-switch
+INFO:adapters.tcp:- client quit
++ PYTHONPATH=. ./cli/obc-ctrl.py -A
+INFO:adapters.tcp:+ new client ('127.0.0.1', 48296) on port 50000
+Turn OBC off, Kill Switch disabled: FALSE
+PIC powered on, FPGA boot source selected by PIC
+ERROR:adapters.tcp:sendall: [Errno 32] Broken pipe
+INFO:adapters.tcp:- client quit
++ PYTHONPATH=. ./cli/obc-ctrl.py -k
+INFO:adapters.tcp:+ new client ('127.0.0.1', 48304) on port 50000
+Kill Switch disabled: TRUE
+Check TEXIO-1 status ==============
++ texio status
+Cannot open device: No such file or directory
+ERROR:adapters.tcp:sendall: [Errno 32] Broken pipe
+INFO:adapters.tcp:- client quit
+Zynq MP First Stage Boot Loader 
+Release 2023.2   Apr  7 2026  -  09:25:13
+MultiBootOffset: 0x0
+Reset Mode	:	System Reset
+Platform: Silicon (4.0), Cluster ID 0x80000000
+Running on A53-0 (64-bit) Processor, Device Name: XCZU6EG
+Initializing DDR ECC
+Address 0x000000000, Length 0x080000000, ECC initialized 
+=========================================================================
+Wed May 13 01:43:10 PM JST 2026
+picocom exited without resetting com port.
+=== Commanding 'sync' and 'poweroff' to OBC ... ===, Are you OK to continue ? : 
+
+=== Please wait UNTIL OBC shutdown gracefully ... ===
+After OBC shutdown, type Ctrl-Q then Ctrl-X to exit picocom
+=========================================================================
+Destination Device is PL, changing LoadAddress
+Non authenticated Bitstream download to start now
+DMA transfer done 
+PL Configuration done successfully 
+Partition 1 Load Success 
+======= In Stage 3, Partition No:2 ======= 
+UnEncrypted data Length: 0xDC1 
+Data word offset: 0xDC1 
+Total Data word length: 0xDC1 
+Destination Load Address: 0x0 
+Execution Address: 0x0 
+Data word offset: 0x365570 
+Partition Attributes: 0x71E 
+Initializing TCM ECC
+Address 0x0FFE00000, Length 0x000040000, ECC initialized 
+QSPI Reading Src 0xD955C0, Dest FFE00000, Length 3704
+.QSPI Read Src 0xD955C0, Dest FFE00000, Length 3704
+Partition 2 Load Success 
+======= In Stage 3, Partition No:3 ======= 
+UnEncrypted data Length: 0x40 
+Data word offset: 0x40 
+Total Data word length: 0x40 
+Destination Load Address: 0x30000000 
+Execution Address: 0x0 
+Data word offset: 0x366340 
+Partition Attributes: 0x71E 
+QSPI Reading Src 0xD98D00, Dest 30000000, Length 100
+.QSPI Read Src 0xD98D00, Dest 30000000, Length 100
+Partition 3 Load Success 
+======= In Stage 3, Partition No:4 ======= 
+UnEncrypted data Length: 0x19D54 
+Data word offset: 0x19D54 
+Total Data word length: 0x19D54 
+Destination Load Address: 0x30800000 
+Execution Address: 0x0 
+Data word offset: 0x366380 
+Partition Attributes: 0x71E 
+QSPI Reading Src 0xD98E00, Dest 30800000, Length 67550
+.QSPI Read Src 0xD98E00, Dest 30800000, Length 67550
+Partition 4 Load Success 
+======= In Stage 3, Partition No:5 ======= 
+UnEncrypted data Length: 0x2E4 
+Data word offset: 0x2E4 
+Total Data word length: 0x2E4 
+Destination Load Address: 0x7F000000 
+Execution Address: 0x0 
+Data word offset: 0x3800E0 
+Partition Attributes: 0x71E 
+QSPI Reading Src 0xE00380, Dest 7F000000, Length B90
+.QSPI Read Src 0xE00380, Dest 7F000000, Length B90
+Partition 5 Load Success 
+======= In Stage 3, Partition No:6 ======= 
+UnEncrypted data Length: 0x3024 
+Data word offset: 0x3024 
+Total Data word length: 0x3024 
+Destination Load Address: 0xFFFEA000 
+Execution Address: 0xFFFEA000 
+Data word offset: 0x3803D0 
+Partition Attributes: 0x117 
+QSPI Reading Src 0xE00F40, Dest FFFEA000, Length C090
+.QSPI Read Src 0xE00F40, Dest FFFEA000, Length C090
+Partition 6 Load Success 
+======= In Stage 3, Partition No:7 ======= 
+UnEncrypted data Length: 0x3FA9 
+Data word offset: 0x3FA9 
+Total Data word length: 0x3FA9 
+Destination Load Address: 0x100000 
+Execution Address: 0x0 
+Data word offset: 0x383400 
+Partition Attributes: 0x116 
+QSPI Reading Src 0xE0D000, Dest 100000, Length FEA4
+.QSPI Read Src 0xE0D000, Dest 100000, Length FEA4
+Partition 7 Load Success 
+======= In Stage 3, Partition No:8 ======= 
+UnEncrypted data Length: 0x23EBA 
+Data word offset: 0x23EBA 
+Total Data word length: 0x23EBA 
+Destination Load Address: 0x8000000 
+Execution Address: 0x8000000 
+Data word offset: 0x3873B0 
+Partition Attributes: 0x114 
+QSPI Reading Src 0xE1CEC0, Dest 8000000, Length 8FAE8
+.QSPI Read Src 0xE1CEC0, Dest 8000000, Length 8FAE8
+Partition 8 Load Success 
+======= In Stage 3, Partition No:9 ======= 
+UnEncrypted data Length: 0x39 
+Data word offset: 0x39 
+Total Data word length: 0x39 
+Destination Load Address: 0x3E000 
+Execution Address: 0x0 
+Data word offset: 0x7FB800 
+Partition Attributes: 0x716 
+QSPI Reading Src 0x1FEE000, Dest FFE3E000, Length E4
+.QSPI Read Src 0x1FEE000, Dest FFE3E000, Length E4
+Partition 9 Load Success 
+All Partitions Loaded 
+================= In Stage 4 ============ 
+PM Init Success
+CPU 0x700 reset release, Exec State 0x8, HandoffAddƒ≤ö¬™bö—Ö—’ÕÈäj§4K•—}¡Ö…ÖµÈ*IIÈíΩ›ÅrΩ—Å2Ω’πë5R…•—}¡Ö…ÖµÈ*IIÈíΩ›ÅrΩ—Å2Ω’πë5R…•—}¡Ö…ÖµÈ*IIÈíΩ›ÅrΩ—Å2Ω’πë5R…•—}¡Ö…ÖµÈ*IIÈíΩ›ÅrΩ—Å2Ω’πë5Röâ¡ÈJ9Èö’¡Å ù
+±±ÖJujÅ"Y5R*πççÈ*IIÈíïÖë}µ…Öµ}ô•±ï}•π—Ω}â’ôôï…Èj…Öµ}ï……Ω…Åjöíj§4KÂ¡—È*IIÈ™πÖâ±ïÅ¢ΩÅbΩÖëÅö—Ö—ïÌ™Õ•πùÅ"ïôÖ’±—Å≤Ö±’ïÕÖjRTπççÈ*IIÈöÖŸï}çΩπô•ù}—Ω}πŸµÈj…Öµ}ï……Ω…Åjöíj§4KÂ¡—È*IIÈ™πÖâ±ïÅ¢ΩÅöÖŸïÅö—Ö—ïÅ¢ΩÅjI55RçπÈ*IIÈ
+ÅΩπô•ùÅ≤Ö±’ïÅJÕÅz’—ÅzôÅΩ’πëÕ±™Õ•πùÅ"ïôÖ’±—ÅzπïπíUÖëÅΩπô•ùÈjR$çπÈ*IIÈjI5Åj’—ïÈÇj§$kÀK*%%•j%™
+ó.'HLCÖ±cn:ERR:MRAM per: 0
+bcn:ERR:MRAM ut: 0
+bcn:ERR:MRAM ad: 0
+bcn:ERR:MRAM mbc: 0
+bcn:ERR:MRAM ngs: 0
+C3M [Debug]
+ups2:ERR:RECV ERR
+critical_data: active=0 at 6124358 sec current/reserved = 111621 / 491520
+
+
+U-Boot 2023.01 (Oct 21 2024 - 09:05:58 +0000)
+
+CPU:   ZynqMP
+Silicon: v3
+Chip:  zu6eg
+Model: AM2Re (GRUS-3)
+Board: Xilinx ZynqMP
+DRAM:  2 GiB (effective 16 GiB)
+PMUFW:	v1.1
+PMUFW:  No permission to change config object
+EL Level:	EL2
+Secure Boot:	not authenticated, not encrypted
+Core:  38 devices, 18 uclasses, devicetree: board
+WDT:   Started watchdog@fd4d0000 with servicing every 1000ms (60s timeout)
+MMC:   mmc@ff160000: 0, mmc@ff170000: 1
+Loading Environment from nowhere... OK
+In:    serial
+Out:   serial
+Err:   serial
+Bootmode: QSPI_MODE
+Reset reason:	EXTERNAL 
+pcu:ERR:EPS UART library error: BYWD_EHRtR_ny key toGEtop autoboot:  0 
+SF: Detected n25q512ax3 with page size 256 Bytes, erase size 64 KiB, total 64 MiB
+device 0 offset 0x1ff0000, size 0x80000
+SF: 524288 bytes @ 0x1ff0000 Read: OK
+QSPI: Trying to boot script at 20000000
+## Executing script at 20000000
+device 0 offset 0x2000000, size 0x2000000
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.625
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.563
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.438
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.438
+separation_timer:ERR:Boot 230 at 23141342
+separation_timer:ERR:Last ten:  -416621 -154148 -115339 -115150 -115101 -80966 -80627 -69379 -68218 -455
+separation_timer:ERR:Separation Timer elapsed at 6124363s
+ds1wiretemp:ERR:1-wire sensor 28:40:A1:F2:10:00:00:A9 reading 24.625
+ds1wiretemp:ERR:1-wire sensor 28:60:9F:F2:10:00:00:39 reading 24.375
+ds1wiretemp:ERR:1-wire sensor 28:B0:A5:F2:10:00:00:C4 reading 24.563
+ds1wiretemp:ERR:1-wire sensor 28:7C:BA:F2:10:00:00:35 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:FA:B0:F2:10:00:00:D0 reading 24.5
+ds1wiretemp:ERR:1-wire sensor 28:F5:95:F2:10:00:00:DE reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:B8:F2:10:00:00:77 reading 24.313
+ds1wiretemp:ERR:1-wire sensor 28:0F:AB:F2:10:00:00:45 reading 24.438
+
+=========================================================================
+Wed May 13 01:43:20 PM JST 2026
+picocom exited without resetting com port.
+Hit ENTER key to power OFF OBC: 
++ PYTHONPATH=. ./cli/obc-ctrl.py -f
+Turn OBC off, Kill Switch disabled: FALSE
+INFO:adapters.tcp:+ new client ('127.0.0.1', 47282) on port 50000
+Check TEXIO-1 status ==============
++ texio status
+Cannot open device: No such file or directory
+Stopping running servers ...
+root     3605549  0.0  0.0  17844 11216 ?        Ss   13:35   0:00 sshd: t_koike [priv]
+t_koike  3605552  0.0  0.0  19036 10708 ?        Ss   13:35   0:00 /lib/systemd/systemd --user
+t_koike  3605553  0.0  0.0 169644  3916 ?        S    13:35   0:00 (sd-pam)
+t_koike  3605565  0.0  0.0  18104  7064 ?        S    13:35   0:00 sshd: t_koike@pts/0
+t_koike  3605566  0.0  0.0   9660  5960 pts/0    Ss   13:35   0:00 -bash
+t_koike  3605901  0.0  0.0   2584   956 pts/0    S+   13:42   0:00 sh 10obcdev-ctrl.sh I
+t_koike  3605990  0.0  0.0   2584   904 pts/0    S+   13:43   0:00 /bin/sh ./21hwsrvr.sh
+t_koike  3605991  0.0  0.0   2584   880 pts/0    S+   13:43   0:00 /bin/sh ./22obc-gateway-1st.sh
+t_koike  3605992  0.0  0.0   2584   944 pts/0    S+   13:43   0:00 /bin/sh ./24start-socat.sh log/260513-134303-U.log log/260513-134303-D.log
+t_koike  3605997  0.0  0.0   7072  3416 pts/0    S+   13:43   0:00 /bin/bash /opt/xilinx/HWSRVR/2023.2/bin/hw_server -s tcp:127.0.0.1:3121
+t_koike  3605999  0.0  0.0   2584   104 pts/0    S+   13:43   0:00 /bin/sh ./22obc-gateway-1st.sh
+t_koike  3606001  0.0  0.0   6420  1048 pts/0    S+   13:43   0:00 sed s/$/\r/
+t_koike  3606004 14.5  0.0 324208 14228 pts/0    Sl+  13:43   0:02 python3 ./gateway/obc-gateway.py -r -f
+t_koike  3606008  0.0  0.0   2584   940 pts/0    S+   13:43   0:00 sh -x -c socat -r log/260513-134303-U.log -R log/260513-134303-D.log    tcp-listen:60000,bind=0,reuseaddr,fork,max-children=1 /dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0FJCSX-if00-port0,cfmakeraw,sync=1,b115200
+t_koike  3606009  0.0  0.0  10336  3108 pts/0    S+   13:43   0:00 socat -r log/260513-134303-U.log -R log/260513-134303-D.log tcp-listen:60000,bind=0,reuseaddr,fork,max-children=1 /dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0FJCSX-if00-port0,cfmakeraw,sync=1,b115200
+t_koike  3606037  0.0  0.0   7072  3484 pts/0    S+   13:43   0:00 /bin/bash /opt/xilinx/HWSRVR/2023.2/bin/loader -exec hw_server -s tcp:127.0.0.1:3121
+t_koike  3606100  0.2  0.0 131524 10460 pts/0    Sl+  13:43   0:00 /opt/xilinx/HWSRVR/2023.2/bin/unwrapped/lnx64.o/hw_server -s tcp:127.0.0.1:3121
+t_koike  3606149  0.0  0.0   2584   952 pts/0    S+   13:43   0:00 /bin/sh ./60killall-servers.sh
+t_koike  3606150  0.0  0.0  11224  4408 pts/0    R+   13:43   0:00 ps aux
+INFO:adapters.tcp:- client quit
+-------------------------------------------------------------------------
+Terminated
+pkill: killing pid 818 failed: Operation not permitted
+Terminated
+Check if all running servers killed.
+root     3605549  0.0  0.0  17844 11216 ?        Ss   13:35   0:00 sshd: t_koike [priv]
+t_koike  3605552  0.0  0.0  19036 10708 ?        Ss   13:35   0:00 /lib/systemd/systemd --user
+t_koike  3605553  0.0  0.0 169644  3916 ?        S    13:35   0:00 (sd-pam)
+t_koike  3605565  0.0  0.0  18104  7064 ?        S    13:35   0:00 sshd: t_koike@pts/0
+t_koike  3605566  0.0  0.0   9660  5960 pts/0    Ss   13:35   0:00 -bash
+t_koike  3605901  0.0  0.0   2584   956 pts/0    S+   13:42   0:00 sh 10obcdev-ctrl.sh I
+t_koike  3606149  0.0  0.0   2584   952 pts/0    S+   13:43   0:00 /bin/sh ./60killall-servers.sh
+t_koike  3606157  0.0  0.0  11092  4508 pts/0    R+   13:43   0:00 ps aux
+-------------------------------------------------------------------------
+-rw-r--r-- 1 t_koike t_koike 0 May 13 13:43 log/260513-134303-D.log
+-rw-r--r-- 1 t_koike t_koike 0 May 13 13:43 log/260513-134303-U.log
+Turning OFF TEXIO-2 =============
+Turning OFF TEXIO-1 =============
++ texio off
+Cannot open device: No such file or directory
+Check TEXIO-1 status ==============
++ texio status
+Cannot open device: No such file or directory
+Hardware released.
+You have checked out the hardware. `release' it when you are done.
+=========================================================
+[obcdev17]  You RELEASED OBC. You can SAFELY Logout.
+=========================================================
+Stopping all running scripts ...
+Check if all running servers killed.
+root     3605549  0.0  0.0  17844 11216 ?        Ss   13:35   0:00 sshd: t_koike [priv]
+t_koike  3605552  0.0  0.0  19036 10708 ?        Ss   13:35   0:00 /lib/systemd/systemd --user
+t_koike  3605553  0.0  0.0 169644  3916 ?        S    13:35   0:00 (sd-pam)
+t_koike  3605565  0.0  0.0  18104  7064 ?        S    13:35   0:00 sshd: t_koike@pts/0
+t_koike  3605566  0.0  0.0   9660  5960 pts/0    Ss   13:35   0:00 -bash
+t_koike  3605901  0.0  0.0   2584   944 pts/0    S+   13:42   0:00 /bin/sh ./99ps_aux.sh
+t_koike  3606199  0.0  0.0  11092  4452 pts/0    R+   13:43   0:00 ps aux
+t_koike  3606200  0.0  0.0   6340  2096 pts/0    S+   13:43   0:00 grep t_koike
+-------------------------------------------------------------------------
+t_koike@obcdev17:~$ 
+logout
+Connection to obcdev17.stars.axelspace.com closed.
+**********************************************************************
+***** log file output to 260513-133509-1-17.log Stopped ****
+**********************************************************************
+Wed May 13 13:44:31 JST 2026

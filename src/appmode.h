@@ -242,7 +242,18 @@ const char *get_str_map_key_7f_bs();
 
 const char *get_str_none();
 
-// View mode of editor:
+// mode of editor depends mainly on the buffer-mode:
+// |buffer state |app-mode       |
+// |-------------|---------------|
+// |normal       |APP_MODE_NORMAL|
+// |RO           |APP_MODE_VIEWER|
+// |locked       |APP_MODE_VIEWER|
+// |WP           |APP_MODE_VIEWER|
+// |VIEW         |APP_MODE_VIEWER|
+// |LIST         |APP_MODE_VIEWER|
+// |anchor       |APP_MODE_VIEWER|
+// |empty        |APP_MODE_VIEWER|
+
 // |editor mode    |load|save|cursor   |can   |mark  |choose|purpose     |
 // |               |    |    | move    |modify| /cut |by tap|            |
 // |               |    |    |         |      | /copy|      |            |
@@ -250,7 +261,7 @@ const char *get_str_none();
 // |APP_MODE_NORMAL|yes |yes |horz/vert|yes   |yes   |no    |text editor |
 // |APP_MODE_VIEWER|auto|auto|vertical |no    |yes   |yes   |text viewer |
 
-// View mode of filer:
+// mode of filer depends only on the application-mode:
 // |filer mode     |open/copy/move/ren|chdir|search|choose|purpose         |
 // |               |/remove/mkdir/exec|     |      |by tap|                |
 // |---------------|------------------|-----|------|------|----------------|
@@ -259,6 +270,7 @@ const char *get_str_none();
 
 BOOL is_app_normal_mode();
 BOOL is_app_viewer_mode();
+void set_editor_app_mode_based_on_buf_mode();
 
 void doe_inc_app_mode();
 void doe_tog_panes();

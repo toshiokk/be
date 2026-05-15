@@ -36,6 +36,7 @@ tab_size		8
 file_type "shell" "\.(sh|SH)$"
 color_syntax ="\b(if|then|else|elif|fi|for|while|break|do|done)\b" +red
 color_syntax ="\b(case|esac|function|trap|echo|wire|reg)\b"        +red
+color_syntax ="#.*"                                                +blue
 color_syntax ="##.*"                                               +brown
 color_syntax ="###.*"                                              +magenta
 tab_size	4

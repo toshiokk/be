@@ -1,7 +1,7 @@
 /**************************************************************************
- *   main.h                                                               *
+ *   encdet.h - character encoding determination                          *
  *                                                                        *
- *   Copyright (C) 1999-2003 Chris Allegretta                             *
+ *   Copyright (C) 2026-2026 PCR                                          *
  *                                                                        *
  *   This program is free software; you can redistribute it and/or modify *
  *   it under the terms of the GNU General Public License as published by *
@@ -19,24 +19,21 @@
  *                                                                        *
  **************************************************************************/
 
-#ifndef main_h
-#define main_h
+#ifndef encdet_h
+#define encdet_h
 
-extern int quit_immediate;
-extern int restart_be;
+typedef enum {
+	ENCDET_ASCII	= 0,	// 8 bits ASCII
+	ENCDET_BINARY	= 1,
+	ENCDET_JIS		= 2,
+	ENCDET_EUCJP	= 3,
+	ENCDET_SJIS		= 4,
+	ENCDET_UTF8		= 5,
+	ENCDET_SUPPORTED_ENCODINGS	= 6,	// ASCII, UTF8, BINARY, JIS, EUCJP, SJIS
+} encoding_t;
 
-void inc_call_depth();
-void dec_call_depth();
-int get_call_depth();
+int determine_encoding_file_path(const char *full_path);
 
-int progerr_cb_func(const char *warning);
-int write_to_warning_file(const char *warning);
-void app_die_on(const char *msg);
-void free_all_allocated_memory();
+#endif // encdet_h
 
-void show_usage();
-void show_version();
-
-#endif // main_h
-
-// End of main.h
+// End of encdet.h

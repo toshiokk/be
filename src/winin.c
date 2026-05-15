@@ -21,7 +21,7 @@
 
 #include "headers.h"
 
-const char *get_ef_name(ef_do_next_t do_next)
+const char *get_do_next_name(do_next_t do_next)
 {
 	switch (do_next) {
 	default:							return "EF_UNKNOWN";
@@ -40,7 +40,7 @@ const char *get_ef_name(ef_do_next_t do_next)
 	}
 }
 
-int input_file_name_0_file_path_1 = 0;
+fname_0_fpath_1_dpath_2_t input_fname_0_fpath_1 = ENTER_FILE_NAME;
 
 PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, va_list ap);
@@ -82,9 +82,9 @@ int input_full_path(const char *default__, char *input_buf, int cursor_byte_idx,
 	disp_status_bar_cwd();
 	va_list ap;
 	va_start(ap, msg);
-	input_file_name_0_file_path_1 = 1;
+	input_fname_0_fpath_1 = ENTER_FILE_PATH;
 	int ret = input_str_pos_(default__, input_buf, cursor_byte_idx, hist_type_idx, msg, ap);
-	input_file_name_0_file_path_1 = 0;
+	input_fname_0_fpath_1 = ENTER_FILE_NAME;
 	va_end(ap);
 	disp_status_bar_cwd();
 	return ret;
@@ -113,11 +113,11 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 	recursively_called++;
 	//--------------------------------------------------------------------------
 	int ret = input_str_pos__(default__, input_buf, cursor_byte_idx, hist_type_idx, msg_buf);
-	flf_dprintf("app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_ef_name(ret));
+	flf_dprintf("app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_do_next_name(ret));
 	//--------------------------------------------------------------------------
 	recursively_called--;
 	tio_set_cursor_on(0);
-	change_cur_dir(dir_save);
+	chdir__(dir_save);
 
 	update_screen_app(S_B_CURS, 1);
 
@@ -130,7 +130,7 @@ PRIVATE int input_str_pos_(const char *default__, char *input_buf, int cursor_by
 		modify_history_w_reloading(hist_type_idx, input_buf);
 	}
 #endif
-flf_dprintf("ret__[%s]\n", get_ef_name(ret));
+flf_dprintf("ret__[%s]\n", get_do_next_name(ret));
 	return ret;
 }
 
@@ -140,7 +140,7 @@ PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_b
 {
 	int key_input;
 #if defined(ENABLE_HISTORY) || defined(ENABLE_FILER)
-	char buffer[MAX_PATH_LEN+1];
+	char str_buf[MAX_PATH_LEN+1];
 	char filer_dir[MAX_PATH_LEN+1];
 #endif
 	char local_cut_buf[MAX_PATH_LEN+1] = "";
@@ -169,7 +169,7 @@ PRIVATE int input_str_pos__(const char *default__, char *input_buf, int cursor_b
 		}
 		// function key
 		const char *func_id = get_func_id_from_key(key_input);
-flf_dprintf("func_id: [%s]\n", func_id);
+/////flf_dprintf("func_id: [%s]\n", func_id);
 		if ((key_input == K_ESC) || (key_input == K_M_ESC)
 		 || (strcmp(func_id, "doe_close_file_ask") == 0)
 		 || (strcmp(func_id, "doe_close_all_ask") == 0)
@@ -339,9 +339,9 @@ flf_dprintf("func_id: [%s]\n", func_id);
 		if ((strcmp(func_id, "doe_up") == 0)
 		 || (strcmp(func_id, "doe_first_line") == 0)) {
 			//----------------------------------------------------
-			ret = do_call_editor_history(hist_type_idx, buffer);
+			ret = do_call_editor_w_history_buf(hist_type_idx, str_buf);
 			//----------------------------------------------------
-			hmflf_dprintf("app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_ef_name(ret));
+			hmflf_dprintf("app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_do_next_name(ret));
 			if (IS_EF_ENTER_STRING(ret)) {
 				if (ret == EF_ENTER_STRING) {
 					// clear input buffer
@@ -351,7 +351,7 @@ flf_dprintf("func_id: [%s]\n", func_id);
 					// insert string into buffer without clearing buffer
 				}
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
-				 cursor_byte_idx, buffer);
+				 cursor_byte_idx, str_buf);
 			}
 			if (ret == EF_GO_TO_LEVEL_FILER) {
 				strcpy__(filer_dir, "");
@@ -375,9 +375,9 @@ flf_dprintf("func_id: [%s]\n", func_id);
 		//---------------------------------------------------
 		if (ret == EF_GO_TO_LEVEL_FILER) {
 			//---------------------------------------------------
-			ret = do_call_filer(1, APP_MODE_VIEWER, filer_dir, "", buffer);
+			ret = do_call_filer(1, APP_MODE_VIEWER, filer_dir, "", str_buf);
 			//---------------------------------------------------
-			hmflf_dprintf("app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_ef_name(ret));
+			hmflf_dprintf("app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_do_next_name(ret));
 			if (IS_EF_ENTER_STRING(ret)) {
 				if (ret == EF_ENTER_STRING) {
 					// clear input buffer
@@ -387,20 +387,21 @@ flf_dprintf("func_id: [%s]\n", func_id);
 					// insert string into buffer without clearing buffer
 				}
 				cursor_byte_idx = insert_str_separating_by_space(input_buf, MAX_PATH_LEN,
-				 cursor_byte_idx, buffer);
+				 cursor_byte_idx, str_buf);
 			}
 			if (! IS_EF_LOADED_OR_EXECUTED(ret)) {
 				ret = EF_NONE;
 			}
 #endif // ENABLE_FILER
 		}
-flf_dprintf("func_id: [%s], key_input: %04x, ret__[%s]\n", func_id, key_input, get_ef_name(ret));
+/////flf_dprintf("func_id: [%s], key: %04x, ret__[%s]\n", func_id, key_input, get_do_next_name(ret));
 		if ((ret == EF_CANCELLED) || IS_EF_ENTER_STRING(ret) || IS_EF_LOADED_OR_EXECUTED(ret)) {
 			break;
 		}
 		sync_cut_buffers_and_histories(0);
 	}
-flf_dprintf("key_input: %04x, ret__[%s]\n", key_input, get_ef_name(ret));
+flf_dprintf("input_buf:[%s]\n", input_buf);
+flf_dprintf("key_input: %04x, ret__[%s]\n", key_input, get_do_next_name(ret));
 	return ret;
 } // input_str_pos__
 

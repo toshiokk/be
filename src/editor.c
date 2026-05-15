@@ -21,7 +21,7 @@
 
 #include "headers.h"
 
-ef_do_next_t editor_do_next = EF_NONE;
+do_next_t app_do_next = EF_NONE;
 
 PRIVATE int editor_main_loop(char *str_buf);
 
@@ -45,15 +45,18 @@ int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf)
 #endif // ENABLE_FILER
 
 	SET_APPMD_VAL(app_EDITOR_FILER, EF_EDITOR);
-	SET_APPMD_VAL(app_LIST_MODE, list_mode);
 
+	inc_call_depth();
 	flf_dprintf("GET_APPMD(app_EDITOR_FILER): %d\n", GET_APPMD(app_EDITOR_FILER));
-	hmflf_dprintf("{{{{ push_win:%d, list_mode:%d\n", push_win, list_mode);
+	hmflf_dprintf("{{{{ CALL_EDITOR_MAIN_LOOP:%d push_win:%d, list_mode:%d\n",
+	 get_call_depth(), push_win, list_mode);
 
 	int ret = editor_main_loop(str_buf);
 
-	hmflf_dprintf("}}}} push_win:%d, list_mode:%d --> app_stk: %d, ret__[%s]\n",
-	 push_win, list_mode, get_app_stack_depth(), get_ef_name(ret));
+	hmflf_dprintf("}}}} CALL_EDITOR_MAIN_LOOP:%d push_win:%d, list_mode:%d\n",
+	 get_call_depth(), push_win, list_mode);
+	hmflf_dprintf(" --> app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_do_next_name(ret));
+	dec_call_depth();
 	_mlc_check_count
 
 	if (push_win) {
@@ -101,22 +104,16 @@ PRIVATE int editor_main_loop(char *output_buf)
 
 	// Main input loop
 	for ( ; ; ) {
-#ifdef ENABLE_HISTORY
-#ifdef ENABLE_FILER
-		dir_history_update(get_fv_from_cur_pane()->cur_dir);
-#endif // ENABLE_FILER
-#endif // ENABLE_HISTORY
+		set_editor_app_mode_based_on_buf_mode();
 		if (key_macro_is_playing_back()) {
 			// During playing back key-macro, do not update screen for speed up.
 		} else {
-_HMFLF_
 			update_screen_app(IS_KEY_INPUT(key_input) ? S_B_AUTO : S_B_NONE, 1);
 		}
-_HMFLF_
 		//----------------------------------
 		key_input = input_key_timeout();
 		//----------------------------------
-		SET_editor_do_next(EF_NONE);
+		SET_app_do_next(EF_NONE);
 		if (IS_KEY_VALID(key_input)) {
 			clear_status_bar_displayed();
 			hmflf_dprintf("input%ckey:0x%04x([%s])========================================\n",
@@ -146,9 +143,9 @@ _HMFLF_
 					disp_status_bar_err(
 					 _("Can not execute this function in editor List mode: [%s]"),
 					 func_key->func_id);
-					SET_editor_do_next(EF_CANCELLED);	// execution cancelled
+					SET_app_do_next(EF_CANCELLED);	// execution cancelled
 				}
-				if (editor_do_next == EF_NONE) {
+				if (app_do_next == EF_NONE) {
 #ifdef ENABLE_HISTORY
 					memorize_cur_file_pos_into_str(last_viewed_file_pos_str);
 #endif // ENABLE_HISTORY
@@ -156,11 +153,14 @@ _HMFLF_
 					memorize_undo_state_before_change(func_key->func_id);
 #endif // defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
 					search_clear(&search__);
-					hmflf_dprintf("{{ CALL_FUNC_EDITOR [%s]\n", func_key->func_id);
+					hmflf_dprintf("{{ CALL_FUNC_EDITOR:%d [%s]\n",
+					 get_call_depth(), func_key->func_id);
 					//=========================
 					call_func_key_func(func_key);	// call function "doe_...()"
 					//=========================
-					hmflf_dprintf("}} editor_do_next_[%s]\n", get_ef_name(editor_do_next));
+					hmflf_dprintf("}} CALL_FUNC_EDITOR:%d [%s]\n",
+					 get_call_depth(), func_key->func_id);
+					hmflf_dprintf("app_do_next_[%s]\n", get_do_next_name(app_do_next));
 					easy_buffer_switching_count();
 #if defined(ENABLE_UNDO) && defined(ENABLE_DEBUG)
 					if (check_undo_state_after_change()) { progerr_printf("\n"); }
@@ -178,21 +178,21 @@ _HMFLF_
 			// all files closed and no file to edit, exit editor.
 			break;
 		}
-		switch (editor_do_next) {
+		switch (app_do_next) {
 		case EF_LOADED_GO_TO_ROOT_EDITOR:
 		case EF_EXECUTED_RET_TO_CALLER:
 			// return to the root editor/caller
 			if (get_app_stack_depth()) {
 				break;						// exit from editor
 			}
-			SET_editor_do_next(EF_NONE);	// not exit
+			SET_app_do_next(EF_NONE);	// not exit
 			break;
 		case EF_GO_TO_LEVEL_FILER:
 			// always return to filer since it's editor
 		default:
 			break;							// exit from editor
 		}
-		if (editor_do_next >= EF_TO_QUIT) {
+		if (app_do_next >= EF_TO_QUIT) {
 			break;
 		}
 		sync_cut_buffers_and_histories(0);
@@ -200,9 +200,9 @@ _HMFLF_
 #ifdef ENABLE_HISTORY
 	key_macro_cancel_recording();
 #endif // ENABLE_HISTORY
-	int ret = editor_do_next;
-	if ((editor_do_next == EF_TO_QUIT) || (editor_do_next == EF_EXECUTED_RET_TO_CALLER)) {
-		SET_editor_do_next(EF_NONE);
+	int ret = app_do_next;
+	if ((app_do_next == EF_TO_QUIT) || (app_do_next == EF_EXECUTED_RET_TO_CALLER)) {
+		SET_app_do_next(EF_NONE);
 	}
 	set_output_buf_editor(NULL);
 	return ret;
@@ -262,7 +262,7 @@ PRIVATE int _doe_run_line(int flags, int clbi, int input)
 	clear_fork_exec_counter();
 	fork_exec_sh_c(EX_SETTERM | EX_SEPARATE | EX_PAUSE | flags, buffer);
 
-	SET_editor_do_next(EF_EXECUTED_RET_TO_CALLER);
+	SET_app_do_next(EF_EXECUTED_RET_TO_CALLER);
 	doe_refresh_editor();
 	return 0;
 }
@@ -325,7 +325,6 @@ void display_color_settings(key_code_t key)
 #endif // ENABLE_DEBUG
 	return;
 }
-#endif // ENABLE_HELP
 
 PRIVATE void examine_key_code_show(key_code_t key)
 {
@@ -342,11 +341,12 @@ PRIVATE void examine_key_code_show(key_code_t key)
 	}
 	tio_refresh();
 }
+#endif // ENABLE_HELP
 
 //------------------------------------------------------------------------------
 void doe_quit()
 {
-	SET_editor_do_next(EF_TO_QUIT);
+	SET_app_do_next(EF_TO_QUIT);
 }
 
 void doe_menu_0()

@@ -32,17 +32,17 @@ PRIVATE void make_help_key_list();
 void init_help_bufs()
 {
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create(make_internal_buf_file_path("Editor-Files-loaded"), BUF_MODE_LIST));
+	 buf_create(make_internal_buf_file_path("Editor-Files-loaded"), BUF_MODE_RO));
 #ifdef ENABLE_HELP
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create(make_internal_buf_file_path("Editor-Functions"), BUF_MODE_LIST));
+	 buf_create(make_internal_buf_file_path("Editor-Functions"), BUF_MODE_RO));
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create(make_internal_buf_file_path("Editor-Key-Bindings"), BUF_MODE_LIST));
+	 buf_create(make_internal_buf_file_path("Editor-Key-Bindings"), BUF_MODE_RO));
 #ifdef ENABLE_FILER
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create(make_internal_buf_file_path("Filer-Functions"), BUF_MODE_LIST));
+	 buf_create(make_internal_buf_file_path("Filer-Functions"), BUF_MODE_RO));
 	bufs_insert_buf_to_bottom(&help_buffers,
-	 buf_create(make_internal_buf_file_path("Filer-Key-Bindings"), BUF_MODE_LIST));
+	 buf_create(make_internal_buf_file_path("Filer-Key-Bindings"), BUF_MODE_RO));
 #endif // ENABLE_FILER
 #endif // ENABLE_HELP
 }

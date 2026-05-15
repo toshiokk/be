@@ -51,7 +51,7 @@ char *strip_file_if_path_is_file(const char *path, char *dir);
 char *strip_file_from_path(const char *path, char *dir);
 char *strip_file_or_dir_from_path(const char *path, char *dir);
 
-int change_cur_dir(const char *dir);
+int chdir__(const char *dir);
 const char *get_full_path_of_cur_dir(char *dir);
 const char *get_real_path_of_cur_dir(char *dir);
 

@@ -80,10 +80,10 @@ const char *get_history_older(int hist_type_idx);
 const char *history_last_line_str(int hist_type_idx);
 
 //------------------------------------------------------------------------------
-void dir_history_update(const char *dir);
+void update_dir_history(const char *dir, char force_update);
 
 //------------------------------------------------------------------------------
-int do_call_editor_history(int hist_type_idx, char *buffer);
+int do_call_editor_w_history_buf(int hist_type_idx, char *buffer);
 
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG

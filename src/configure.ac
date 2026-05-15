@@ -74,7 +74,7 @@ yes)
 	enable_regex=yes
 	enable_help=yes
 	enable_debug=no
-	enable_nkf=yes
+	enable_nkf=no
 	enable_ncurses=yes
 	enable_pcre=yes
 	enable_busybox=no
@@ -253,9 +253,10 @@ yes)
 	have_nkf=0
 	if nkf -g main.c >/dev/null 2>/dev/null ; then
 		have_nkf=1
-	fi
-	if test "$have_nkf" = "1" ; then
 		AC_DEFINE(HAVE_NKF, 1, [Define to 1 if you have nkf.])
+	else
+		AC_DEFINE(HAVE_NKF, 0, [Define to 1 if you have nkf.])
+		enable_nkf=no
 	fi
 	;;
 esac

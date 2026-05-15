@@ -163,7 +163,7 @@ int filer_chdir(const char *dir)
 	}
 	disp_status_bar_done(_("Chdir [%s]"),
 	 shrink_str_to_scr_static(get_real_path_of_cur_dir(NULL)));
-	SET_filer_do_next(FL_UPDATE_FORCE);
+	SET_app_do_next(FL_UPDATE_FORCE);
 	return 1;		// OK
 }
 
