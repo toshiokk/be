@@ -2,6 +2,7 @@ be -s \
  appdefs.h \
  applvl.h \
  appmode.h \
+ bincode.h \
  buffer1.h \
  buffer2.h \
  buffers.h \
@@ -39,7 +40,6 @@ be -s \
  linewrap.h \
  main.h \
  menu.h \
- myutf8.h \
  rcfile.h \
  regexp.h \
  search.h \
@@ -57,6 +57,7 @@ be -s \
  winin.h \
  winout.h \
  appmode.c \
+ bincode.c \
  buffer1.c \
  buffer2.c \
  buffers.c \
@@ -92,7 +93,6 @@ be -s \
  linewrap.c \
  main.c \
  menu.c \
- myutf8.c \
  rcfile.c \
  regexp.c \
  search.c \

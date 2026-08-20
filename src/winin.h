@@ -22,49 +22,54 @@
 #ifndef winin_h
 #define winin_h
 
-// app_do_next, ret__
+// app_do_next
 typedef enum {
 	EF_NONE						= 0,	// nothing done yet and nothing to do next
-										// in filer loop:
-	FL_UPDATE_AUTO				= 1,	//   automatic periodic file list update
-	FL_UPDATE_FORCE				= 2,	//   force immediate file list update
-										// input string:
-	EF_CANCELLED				= 3,	//   input cancelled
-										// quit from editor/filer:
-	EF_TO_QUIT					= 4,	//   quit editor/filer
-										// action done and next action to do:
-	EF_LOADED_GO_TO_ROOT_EDITOR	= 5,	//   file was loaded and return from editor/filer
-										//    ==> go to the root editor
-	EF_GO_TO_LEVEL_FILER		= 6,	//   current directory changed in editor
-										//   or requested to open filer
-										//    ==> go to the filer of the same level
-	EF_EXECUTED_RET_TO_CALLER	= 7,	//   command was executed and return from editor/filer
-										//    ==> return to the root caller(filer/editor)
-										// to enter text into input_string() from editor/filer:
-	EF_ENTER_STRING				= 8,	//   enter string(file/dir name or path) to replace
-	EF_ENTER_STRING_ADD			= 9,	//   enter string(file/dir name or path) to add
-										// to enter file path to copy or move in input_string():
-	EF_INPUT_PATH_TO_COPY		= 10,	//   input file path to copy
-	EF_INPUT_PATH_TO_MOVE		= 11,	//   input file path to move
+	// To update file list in the filer loop:
+	FL_UPDATE_AUTO				= 2+0,	// automatic periodic file list update
+	FL_UPDATE_FORCE				= 2+1,	// force immediate file list update
+	EF_CANCELLED				= 4+0,	// input cancelled
+	EF_TO_QUIT					= 4+1,	// quit editor/filer
+	// Action done and next action to do:
+	EF_LOADED_GO_TO_ROOT_EDITOR	= 6+0,	// file was loaded and return from editor/filer
+										//  to the root editor
+	EF_EXECUTED_RET_TO_CALLER	= 6+1,	// external command was executed
+										// and return from editor/filer
+										//  to the root caller(filer/editor)
+#ifdef ENABLE_FILER
+	EF_GO_TO_LEVEL_FILER		= 8,	// current directory changed in editor
+										// or requested to open filer
+										//  go to the filer of the same level
+#endif // ENABLE_FILER
+	// To enter text into input_string() from editor/filer:
+	EF_ENTER_STRING				= 10+0,	// enter string(file/dir name or path) to replace
+	EF_ENTER_STRING_ADD			= 10+1,	// enter string(file/dir name or path) to add
+	// To enter file path to copy or move in input_string():
+	EF_INPUT_PATH_TO_COPY		= 12+0,	// input file path to copy
+	EF_INPUT_PATH_TO_MOVE		= 12+1,	// input file path to move
 } do_next_t;
 
-#define IS_EF_ENTER_STRING(ret)			\
-	((EF_ENTER_STRING <= (ret)) && ((ret) <= EF_INPUT_PATH_TO_MOVE))
-#define IS_EF_LOADED_OR_EXECUTED(ret)	\
-	(((ret) == EF_LOADED_GO_TO_ROOT_EDITOR) || ((ret) == EF_EXECUTED_RET_TO_CALLER))
+#define IS_EF_ENTER_STRING(do_next)				\
+	(((do_next) == EF_ENTER_STRING)				\
+	 || ((do_next) == EF_ENTER_STRING_ADD)		\
+	 || ((do_next) == EF_INPUT_PATH_TO_COPY)	\
+	 || ((do_next) == EF_INPUT_PATH_TO_MOVE))
+#define IS_EF_LOADED_OR_EXECUTED(do_next)			\
+	(((do_next) == EF_LOADED_GO_TO_ROOT_EDITOR)		\
+	 || ((do_next) == EF_EXECUTED_RET_TO_CALLER))
 
 const char *get_do_next_name(do_next_t do_next);
 
 typedef enum {
-	ENTER_FILE_NAME	= 0,
-	ENTER_FILE_PATH	= 1,
-	ENTER_DIR_PATH	= 2,
+	ENTER_FILE_NAME	= 0,		// filename
+	ENTER_FILE_PATH	= 1,		// /path/to/file
+	ENTER_DIR_PATH	= 2,		// /path/to/directory
 } fname_0_fpath_1_dpath_2_t;
 extern fname_0_fpath_1_dpath_2_t input_fname_0_fpath_1;
 
-int input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx,
+do_next_t input_string_pos(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, ...);
-int input_full_path(const char *default__, char *input_buf, int cursor_byte_idx,
+do_next_t input_full_path(const char *default__, char *input_buf, int cursor_byte_idx,
  int hist_type_idx, const char *msg, ...);
 
 #define ASK_YES			0x001

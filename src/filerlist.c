@@ -490,7 +490,7 @@ PRIVATE char *safe_file_name_str(const char *file_name)
 	size_t len = strlen_path(file_name);
 	file_name_safe[0] = '\0';
 	for (const char *ptr = file_name; ((ptr - file_name) < len) && *ptr; ) {
-		if (is_graph_char(*ptr) == 0) {		// ((UINT8)*ptr) < 0x80
+		if (is_graph_char(*ptr) == 0) {		// ((UCHAR)*ptr) < 0x80
 			strcat_printf(file_name_safe, MAX_PATH_LEN, "%%%02X", *ptr);	// "%xx"
 		} else
 		if (*ptr == '%') {
@@ -756,8 +756,8 @@ int get_fv_files_selected_size(filer_view_t *fv, size_t *selected, size_t *total
 	size_t size_selected = 0;
 	size_t size_total = 0;
 	for (int file_idx = 0; file_idx < get_fv_file_info_entries(fv); file_idx++) {
-		if (is_cfv_file_selectable(file_idx, MY_ISREG | MY_ISDIR | MY_ISLNK)) {
-			if (get_cfv_file_selected(file_idx)) {
+		if (is_fv_file_selectable(fv, file_idx, MY_ISREG | MY_ISDIR | MY_ISLNK)) {
+			if (get_fv_file_selected(fv, file_idx)) {
 				files_selected++;
 				size_selected += get_fv_file_info(fv, file_idx)->lst.st_size;
 			}
@@ -798,13 +798,17 @@ int get_next_file_idx_selected(int file_idx)
 }
 int is_cfv_file_selectable(int file_idx, mode_t type)
 {
+	return is_fv_file_selectable(get_fv_from_cur_pane(), file_idx, type);
+}
+int is_fv_file_selectable(filer_view_t *fv, int file_idx, mode_t type)
+{
 	if ((type == 0)
-	 || (strcmp(get_cfv_file_name(file_idx), ".") == 0)
-	 || (strcmp(get_cfv_file_name(file_idx), "..") == 0)) {
+	 || (strcmp(get_fv_file_name(fv, file_idx), ".") == 0)
+	 || (strcmp(get_fv_file_name(fv, file_idx), "..") == 0)) {
 		return 0;
 	} else {
 		mode_t ftype = 0;	// (S_IFREG or S_IFDIR) and S_IFLNK are exclusive
-		mode_t mode = get_cfv_file_info(file_idx)->lst.st_mode;
+		mode_t mode = get_fv_file_info(fv, file_idx)->lst.st_mode;
 		if (S_ISLNK(mode))		ftype |= MY_ISLNK;
 		if (S_ISREG(mode))		ftype |= MY_ISREG;
 		if (S_ISDIR(mode))		ftype |= MY_ISDIR;
@@ -898,7 +902,7 @@ int search_file_from_list(const char *file_name, int first0_next1, int direction
 	for ( ; 0 <= file_idx && file_idx < get_cfv_file_info_entries();
 	 file_idx += (direction < 0 ? -1 : +1)) {
 		if (strstr(get_cfv_file_name(file_idx), file_name)) {
-			set_cur_fv_file_idx(file_idx);
+			set_cfv_file_idx(file_idx);
 			set_cfv_file_selected(file_idx, _FILE_SEL_MAN_);
 			return file_idx;
 		}

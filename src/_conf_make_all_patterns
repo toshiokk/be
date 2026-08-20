@@ -51,8 +51,7 @@ echo_run()
   ./be -v
   echo "Summary - ConfigurationNo.: " $conf_num "------------------------------"
   echo "Summary - Running: $cmd_line"
-  echo -n "Summary - SizeOfExecutableFile: "
-  ls -l be
+  echo -n "Summary - SizeOfExecutableFile: "; ls -l be
   if [ ! -f be ]; then
     echo "BuildError !!!!"
     exit -1
@@ -76,14 +75,6 @@ if [ -n "$1" ]; then
   start_num="$1"
 fi
 
-for conf_num in $( seq -f %02.0f $start_num 20 ) ; do
-  cmd_line_xx="cmd_line_$conf_num"
-  echo "cmd_line_xx:[$cmd_line_xx]"
-  eval "cmd_line=\$$cmd_line_xx"
-  echo "cmd_line:[$cmd_line]"
-done
-##exit
-
 rm -f _conf_make_all_patterns.log
 
 {
@@ -93,6 +84,7 @@ rm -f _conf_make_all_patterns.log
     eval "cmd_line=\$$cmd_line_xx" 2>&1
     echo_run $cmd_line 2>&1
   done
+  echo "======================"
   if [ -z "$1" ]; then
     ./_c_debug
   fi

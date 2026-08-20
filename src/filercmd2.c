@@ -37,7 +37,7 @@ void dof_tap_file()
 }
 void dof_tap_file_to_enter()
 {
-	if (filer_chdir_to_cur_sel()) {		// chdir if it's directory
+	if (filer_chdir_to_cur_sel()) {		// chdir if it's a directory
 		return;
 	}
 	dof_enter_file_name();				// enter file name if it's file
@@ -71,34 +71,36 @@ void dof_tail_file()	// view file with "tail" command
 	}
 }
 
-PRIVATE int dof_open_file_(int flags);
+PRIVATE int dof_open_files_(int flags);
 
-void dof_open_file_recursive()
+void dof_open_files_recursive()
 {
-	dof_open_file_(RDOL0 | FOLF0 | LFH0 | RECURS1 | MFPL0);
+	dof_open_files_(RDOL0 | FOLF0 | LFH0 | RECURS1 | MFPL0);
 }
-void dof_open_file_ro()
+void dof_open_files_non_recursive()
 {
-	dof_open_file_(RDOL1 | FOLF0 | LFH0 | RECURS1 | MFPL0);
+	dof_open_files_(RDOL0 | FOLF0 | LFH0 | RECURS0 | MFPL0);
 }
-void dof_open_file_locked()
+void dof_open_files_ro()
+{
+	dof_open_files_(RDOL1 | FOLF0 | LFH0 | RECURS1 | MFPL0);
+}
+void dof_open_files_locked()
 {
 	delete_all_lock_files();
-	dof_open_file_(RDOL0 | FOLF1 | LFH0 | RECURS1 | MFPL0);
+	dof_open_files_(RDOL0 | FOLF1 | LFH0 | RECURS1 | MFPL0);
 }
-void dof_open_file_non_recursive()
+void dof_open_files_from_history()
 {
-	dof_open_file_(RDOL0 | FOLF0 | LFH0 | RECURS0 | MFPL0);
-}
-void dof_open_file_from_history()
-{
-	dof_open_file_(RDOL0 | FOLF0 | LFH1 | RECURS1 | MFPL0);
+	dof_open_files_(RDOL0 | FOLF0 | LFH1 | RECURS1 | MFPL0);
 }
 
-PRIVATE int dof_open_file_(int flags)
+PRIVATE int dof_open_files_(int flags)
 {
-	if (filer_chdir_to_cur_sel()) {
-		return 0;
+	if (get_cfv_files_selected() == 0) {
+		if (filer_chdir_to_cur_sel()) {
+			return 0;
+		}
 	}
 
 #ifdef ENABLE_HISTORY
@@ -115,7 +117,7 @@ PRIVATE int dof_open_file_(int flags)
 				tio_beep();
 			}
 		}
-		if (check_break_key()) {
+		if (do_check_break_key()) {
 			break;
 		}
 	}
@@ -189,19 +191,18 @@ PRIVATE int _dof_open_new_file(const char *str)
 	return 0;
 }
 
-#define ACTION_SEL		0	// choose from 'open', 'copy' or 'move'
-#define ACTION_INPUT	1	// input file path to open
-#define ACTION_OPEN		2
-#define ACTION_COPY		3
-#define ACTION_MOVE		4
+#define ACTION_OPEN_BY_DROP		0	// choose from 'open', 'copy' or 'move'
+#define ACTION_OPEN_BY_INPUT	1	// input file path to open
+#define ACTION_COPY_BY_DROP		2
+#define ACTION_MOVE_BY_DROP		3
 PRIVATE int _dof_drop_files_to_do_action(int action);
 void dof_input_files_to_open()
 {
-	_dof_drop_files_to_do_action(ACTION_INPUT);
+	_dof_drop_files_to_do_action(ACTION_OPEN_BY_INPUT);
 }
 void dof_drop_files_to_open()
 {
-	_dof_drop_files_to_do_action(ACTION_SEL);
+	_dof_drop_files_to_do_action(ACTION_OPEN_BY_DROP);
 }
 
 PRIVATE int dof_copy_file_(int update1);
@@ -229,9 +230,6 @@ PRIVATE int dof_copy_file_(int update1)
 	begin_fork_exec_repeat();
 	for (int file_idx = get_first_file_idx_selected(); file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
-		if (check_break_key())
-			break;
-
 #ifndef USE_BUSYBOX
 		// `cp` command options:
 		// * `-a`: (Archive) preserve file time stamp
@@ -239,13 +237,13 @@ PRIVATE int dof_copy_file_(int update1)
 		// * `-f`: (Force) retry after deleting destination file
 		// * `-v`: (Verbose) output messages
 		if (use_target_dir == 0) {
-			exit_status = fork_exec_args_repeat(EX_SEPARATE, "cp",
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE, "cp",
 			 (update1 == 0) ? "-auv"
 			  : ((update1 == 1) ? "-afv"
 			   : ((update1 == 2) ? "-uv" : "-fv")),
 			 get_cfv_file_name(file_idx), file_path, 0);
 		} else {
-			exit_status = fork_exec_args_repeat(EX_SEPARATE, "cp",
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE, "cp",
 			 (update1 == 0) ? "-auv"
 			  : ((update1 == 1) ? "-afv"
 			   : ((update1 == 2) ? "-uv" : "-fv")),
@@ -253,22 +251,20 @@ PRIVATE int dof_copy_file_(int update1)
 		}
 #else
 		if (use_target_dir == 0) {
-			exit_status = fork_exec_args_repeat(EX_SEPARATE, "cp", "-a",
-			 get_cfv_file_name(file_idx), file_path, 0);
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE,
+			 "cp", "-a", get_cfv_file_name(file_idx), file_path, 0);
 		} else {
-			exit_status = fork_exec_args_repeat(EX_SEPARATE, "cp", "-a",
-			 get_cfv_file_name(file_idx), "-t", file_path, 0);
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE,
+			 "cp", "-a", get_cfv_file_name(file_idx), "-t", file_path, 0);
 		}
 #endif
-
+		if (do_check_break_key()) {
+			break;
+		}
 	}
 	end_fork_exec_repeat(exit_status);
 	SET_app_do_next(FL_UPDATE_FORCE);
 	return 1;					// executed
-}
-void dof_drop_files_to_copy()
-{
-	_dof_drop_files_to_do_action(ACTION_COPY);
 }
 
 PRIVATE int dof_move_file_(int update1);
@@ -296,39 +292,45 @@ PRIVATE int dof_move_file_(int update1)
 	begin_fork_exec_repeat();
 	for (int file_idx = get_first_file_idx_selected(); file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
-		if (check_break_key())
-			break;
-
 #ifndef USE_BUSYBOX
 		// `mv` command options:
 		// * `-u`: (Update) copy only if the destination file is older than the source file
 		// * `-f`: (Force) retry after deleting destination file
 		// * `-v`: (Verbose) output messages
 		if (use_target_dir == 0) {
-			exit_status = fork_exec_args_repeat(EX_SEPARATE, "mv", (update1 == 0) ? "-fv" : "-uv",
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE,
+			 "mv", (update1 == 0) ? "-fv" : "-uv",
 			 get_cfv_file_name(file_idx), file_path, 0);
 		} else {
-			exit_status = fork_exec_args_repeat(EX_SEPARATE, "mv", (update1 == 0) ? "-fv" : "-uv",
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE,
+			 "mv", (update1 == 0) ? "-fv" : "-uv",
 			 get_cfv_file_name(file_idx), "-t", file_path, 0);
 		}
 #else
 		if (use_target_dir == 0) {
-			exit_status = fork_exec_args_repeat(EX_SEPARATE, "mv",
-			 get_cfv_file_name(file_idx), file_path, 0);
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE,
+			 "mv", get_cfv_file_name(file_idx), file_path, 0);
 		} else {
-			exit_status = fork_exec_args_repeat(EX_SEPARATE, "mv",
-			 get_cfv_file_name(file_idx), "-t", file_path, 0);
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE,
+			 "mv", get_cfv_file_name(file_idx), "-t", file_path, 0);
 		}
 #endif
-
+		if (do_check_break_key()) {
+			break;
+		}
 	}
 	end_fork_exec_repeat(exit_status);
 	SET_app_do_next(FL_UPDATE_FORCE);
 	return 1;					// executed
 }
+
+void dof_drop_files_to_copy()
+{
+	_dof_drop_files_to_do_action(ACTION_COPY_BY_DROP);
+}
 void dof_drop_files_to_move()
 {
-	_dof_drop_files_to_do_action(ACTION_MOVE);
+	_dof_drop_files_to_do_action(ACTION_MOVE_BY_DROP);
 }
 
 // files dropped by Window manager "'file-1' 'file-2' ..."
@@ -338,25 +340,19 @@ PRIVATE int _dof_drop_files_to_do_action(int action)
 	const char *initial_str = "";
 	switch(action) {
 	default:
-	case ACTION_SEL:
+	case ACTION_OPEN_BY_DROP:
 		request = _("Drop files to Open(Enter)/Copy(M-c)/Move(M-m):");
 		initial_str = "'";
-		action = ACTION_OPEN;	// default action of ACTION_SEL is ACTION_OPEN
 		break;
-	case ACTION_INPUT:
+	case ACTION_OPEN_BY_INPUT:
 		request = _("Input files to Open(Enter)/Copy(M-c)/Move(M-m):");
 		initial_str = "";
-		action = ACTION_OPEN;	// default action of ACTION_SEL is ACTION_OPEN
 		break;
-	case ACTION_OPEN:
-		request = _("Drop files to Open:");
-		initial_str = "'";
+	case ACTION_COPY_BY_DROP:
+		request = _("Drop files to Copy(Enter/M-c)/Move(M-m) here:");
 		break;
-	case ACTION_COPY:
-		request = _("Drop files to Copy here (current directory):");
-		break;
-	case ACTION_MOVE:
-		request = _("Drop files to Move here (current directory):");
+	case ACTION_MOVE_BY_DROP:
+		request = _("Drop files to Copy(M-c)/Move(Enter/M-m) here:");
 		break;
 	}
 
@@ -367,22 +363,20 @@ PRIVATE int _dof_drop_files_to_do_action(int action)
 		return 0;
 	}
 	if (app_do_next == EF_INPUT_PATH_TO_COPY) {
-		action = ACTION_COPY;
+		action = ACTION_COPY_BY_DROP;
 	} else
 	if (app_do_next == EF_INPUT_PATH_TO_MOVE) {
-		action = ACTION_MOVE;
+		action = ACTION_MOVE_BY_DROP;
 	}
 
 	switch(action) {
 	default:
-	case ACTION_SEL:
-		break;
-	case ACTION_INPUT:
-	case ACTION_OPEN:
+	case ACTION_OPEN_BY_DROP:
+	case ACTION_OPEN_BY_INPUT:
 		clear_files_loaded();
 		break;
-	case ACTION_COPY:
-	case ACTION_MOVE:
+	case ACTION_COPY_BY_DROP:
+	case ACTION_MOVE_BY_DROP:
 		begin_fork_exec_repeat();
 		break;
 	}
@@ -390,13 +384,12 @@ PRIVATE int _dof_drop_files_to_do_action(int action)
 	for (const char *ptr = file_path; ; ) {
 		char path[MAX_PATH_LEN+1];
 		ptr = get_one_file_path(ptr, path);
-		if (check_break_key())
-			break;
 		if (is_strlen_0(path)) {
 			break;
 		}
 		switch(action) {
-		case ACTION_OPEN:
+		case ACTION_OPEN_BY_DROP:
+		case ACTION_OPEN_BY_INPUT:
 			if (load_files_in_string(path,
 			 TUL0 | OOE1 | MOE0 | RDOL0 | FOLF0 | LFH1 | RECURS0 | MFPL0) >= 0) {
 				disp_files_loaded_if_ge_0();
@@ -405,34 +398,40 @@ PRIVATE int _dof_drop_files_to_do_action(int action)
 				SET_app_do_next(FL_UPDATE_FORCE);
 			}
 			break;
-		case ACTION_COPY:
+		case ACTION_COPY_BY_DROP:
 #ifndef USE_BUSYBOX
 			// "cp -afv <file/path/be/copied> ."
-			exit_status = fork_exec_args_repeat(EX_SEPARATE, "cp", "-afv", path, ".", 0);
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE,
+			 "cp", "-afv", path, ".", 0);
 #else
 			// "cp -af <file/path/be/copied> ."
-			exit_status = fork_exec_args_repeat(EX_SEPARATE, "cp", "-af", path, ".", 0);
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE,
+			 "cp", "-af", path, ".", 0);
 #endif
 			break;
-		case ACTION_MOVE:
+		case ACTION_MOVE_BY_DROP:
 #ifndef USE_BUSYBOX
 			// "mv -fv <file/path/be/copied> ."
-			exit_status = fork_exec_args_repeat(EX_SEPARATE, "mv", "-fv", path, ".", 0);
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE,
+			 "mv", "-fv", path, ".", 0);
 #else
 			// "mv -f <file/path/be/copied> ."
-			exit_status = fork_exec_args_repeat(EX_SEPARATE, "mv", "-f", path, ".", 0);
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE,
+			 "mv", "-f", path, ".", 0);
 #endif
+			break;
+		}
+		if (do_check_break_key()) {
 			break;
 		}
 	}
 	switch(action) {
 	default:
-	case ACTION_SEL:
-	case ACTION_INPUT:
-	case ACTION_OPEN:
+	case ACTION_OPEN_BY_DROP:
+	case ACTION_OPEN_BY_INPUT:
 		break;
-	case ACTION_COPY:
-	case ACTION_MOVE:
+	case ACTION_COPY_BY_DROP:
+	case ACTION_MOVE_BY_DROP:
 		end_fork_exec_repeat(exit_status);
 		SET_app_do_next(FL_UPDATE_FORCE);
 		break;
@@ -450,8 +449,8 @@ void dof_rename_file()
 		return;
 	}
 	SET_app_do_next(EF_NONE);
-	if (fork_exec_args_once(EX_PAUSE, "mv", "-iv",
-	 get_cfv_file_name(-1), file_name, 0) == 0) {
+	if (fork_exec_args_once(EX_FLAGS_0 | EX_PAUSE,
+	 "mv", "-iv", get_cfv_file_name(-1), file_name, 0) == 0) {
 		strlcpy__(get_fv_from_cur_pane()->next_file, file_name, MAX_PATH_LEN);
 		SET_app_do_next(FL_UPDATE_FORCE);
 	}
@@ -472,19 +471,19 @@ void dof_trash_file()
 	begin_fork_exec_repeat();
 	for (int file_idx = get_first_file_idx_selected(); file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
-		if (check_break_key())
-			break;
-
-		if (fork_exec_args_repeat(EX_SEPARATE, BETRASH, get_cfv_file_name(file_idx), 0)) {
+		if (fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE, BETRASH,
+		 get_cfv_file_name(file_idx), 0)) {
 #ifndef USE_BUSYBOX
-			exit_status = fork_exec_args_repeat(EX_SEPARATE, "rm", "-rv",
-			 get_cfv_file_name(file_idx), 0);
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE,
+			 "rm", "-rv", get_cfv_file_name(file_idx), 0);
 #else
-			exit_status = fork_exec_args_repeat(EX_SEPARATE, "rm", "-r",
-			 get_cfv_file_name(file_idx), 0);
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE,
+			 "rm", "-r", get_cfv_file_name(file_idx), 0);
 #endif
 		}
-
+		if (do_check_break_key()) {
+			break;
+		}
 	}
 	end_fork_exec_repeat(exit_status);
 	SET_app_do_next(FL_UPDATE_FORCE);
@@ -505,17 +504,16 @@ void dof_delete_file()
 	begin_fork_exec_repeat();
 	for (int file_idx = get_first_file_idx_selected(); file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
-		if (check_break_key())
-			break;
-
 #ifndef USE_BUSYBOX
-		exit_status = fork_exec_args_repeat(EX_SEPARATE, "rm", "-rvf",
-		 get_cfv_file_name(file_idx), 0);
+		exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE,
+		 "rm", "-rvf", get_cfv_file_name(file_idx), 0);
 #else
-		exit_status = fork_exec_args_repeat(EX_SEPARATE, "rm", "-rf",
-		 get_cfv_file_name(file_idx), 0);
+		exit_status = fork_exec_args_repeat(EX_FLAGS_0 | EX_SEPARATE,
+		 "rm", "-rf", get_cfv_file_name(file_idx), 0);
 #endif
-
+		if (do_check_break_key()) {
+			break;
+		}
 	}
 	end_fork_exec_repeat(exit_status);
 	SET_app_do_next(FL_UPDATE_FORCE);
@@ -538,19 +536,18 @@ void dof_mark_to_delete_file()
 	begin_fork_exec_repeat();
 	for (int file_idx = get_first_file_idx_selected(); file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
-		if (check_break_key())
-			break;
-
 		if (fork_exec_args_repeat(EX_FLAGS_0, BEMARKDEL, get_cfv_file_name(file_idx), 0)) {
 #ifndef USE_BUSYBOX
-			exit_status = fork_exec_args_repeat(EX_FLAGS_0, "chmod", "-v", "606",
-			 get_cfv_file_name(file_idx), 0);
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0,
+			 "chmod", "-v", "606", get_cfv_file_name(file_idx), 0);
 #else
-			exit_status = fork_exec_args_repeat(EX_FLAGS_0, "chmod", "606",
-			 get_cfv_file_name(file_idx), 0);
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0,
+			 "chmod", "606", get_cfv_file_name(file_idx), 0);
 #endif
 		}
-
+		if (do_check_break_key()) {
+			break;
+		}
 	}
 	end_fork_exec_repeat(exit_status);
 	SET_app_do_next(FL_UPDATE_FORCE);
@@ -574,43 +571,45 @@ void dof_size_zero_file()
 	begin_fork_exec_repeat();
 	for (int file_idx = get_first_file_idx_selected(); file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
-		if (check_break_key())
-			break;
-
 		if (fork_exec_args_repeat(EX_FLAGS_0, BESIZE0, get_cfv_file_name(file_idx), 0)) {
 #ifndef USE_BUSYBOX
-			exit_status = fork_exec_args_repeat(EX_FLAGS_0, "chmod", "-v", "000",
-			 get_cfv_file_name(file_idx), 0);
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0,
+			 "chmod", "-v", "000", get_cfv_file_name(file_idx), 0);
 #else
-			exit_status = fork_exec_args_repeat(EX_FLAGS_0, "chmod", "000",
-			 get_cfv_file_name(file_idx), 0);
+			exit_status = fork_exec_args_repeat(EX_FLAGS_0,
+			 "chmod", "000", get_cfv_file_name(file_idx), 0);
 #endif
 		}
-
+		if (do_check_break_key()) {
+			break;
+		}
 	}
 	end_fork_exec_repeat(exit_status);
 	SET_app_do_next(FL_UPDATE_FORCE);
 }
 
-// BEUNZIP file1.tgz file2.tgz ...
-void dof_unzip_file()
+PRIVATE void concat_file_names_selected(char *command_str)
 {
-	char command_str[MAX_PATH_LEN+1] = "";
-	snprintf_(command_str, MAX_PATH_LEN, "%s", BEUNZIP);
-	// "BEZIP file1 file2 ..."
 	for (int file_idx = get_first_file_idx_selected(); file_idx >= 0;
 	 file_idx = get_next_file_idx_selected(file_idx)) {
 		concat_file_path_separating_by_space(command_str, MAX_PATH_LEN,
 		 get_cfv_file_name(file_idx));
 	}
-
+}
+// BEUNZIP file1.tgz file2.tgz ...
+void dof_unzip_file()
+{
+	char command_str[MAX_PATH_LEN+1] = "";
+	snprintf_(command_str, MAX_PATH_LEN, "%s", BEUNZIP);
+	// "BEUNZIP file1 file2 ..."
+	concat_file_names_selected(command_str);
 	if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str, 0,
 	 HISTORY_TYPE_IDX_EXEC,
 	 _("Unzip files:")))) {
 		return;
 	}
 
-	fork_exec_sh_c_once(EX_PAUSE, command_str);
+	fork_exec_sh_c_once(EX_FLAGS_0 | EX_PAUSE, command_str);
 	SET_app_do_next(FL_UPDATE_FORCE);
 }
 // BEZIP file.tgz file1 file2 file3 ...
@@ -619,19 +618,14 @@ void dof_zip_file()
 	char command_str[MAX_PATH_LEN+1] = "";
 	snprintf_(command_str, MAX_PATH_LEN, "%s {}", BEZIP);
 	// "BEZIP file1 file2 ..."
-	for (int file_idx = get_first_file_idx_selected(); file_idx >= 0;
-	 file_idx = get_next_file_idx_selected(file_idx)) {
-		concat_file_path_separating_by_space(command_str, MAX_PATH_LEN,
-		 get_cfv_file_name(file_idx));
-	}
-
+	concat_file_names_selected(command_str);
 	if (chk_inp_str_ret_val_filer(input_string_pos(command_str, command_str, 0,
 	 HISTORY_TYPE_IDX_EXEC,
 	 _("Zip files:")))) {
 		return;
 	}
 
-	fork_exec_sh_c_once(EX_PAUSE, command_str);
+	fork_exec_sh_c_once(EX_FLAGS_0 | EX_PAUSE, command_str);
 	SET_app_do_next(FL_UPDATE_FORCE);
 }
 
@@ -668,7 +662,7 @@ void dof_make_directory()
 	 _("Mkdir:")))) {
 		return;
 	}
-	fork_exec_args_once(EX_PAUSE, "mkdir", "-p", file_path, 0);
+	fork_exec_args_once(EX_FLAGS_0 | EX_PAUSE, "mkdir", "-p", file_path, 0);
 	SET_app_do_next(FL_UPDATE_FORCE);
 }
 void dof_change_directory()

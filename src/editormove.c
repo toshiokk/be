@@ -97,7 +97,7 @@ PRIVATE int get_char_type(char chr)
 						 (is_char_white_space(chr) ? 1 :				\
 						  (is_char_id(chr) ? 2 :						\
 						    (ispunct(chr) ? (chr) :						\
-						     (((unsigned char)(chr)) < 0x80 ? 3 : 4)	\
+						     (((UCHAR)(chr)) < 0x80 ? 3 : 4)	\
 						    )											\
 						  )												\
 						 )												\
@@ -106,7 +106,7 @@ PRIVATE int get_char_type(char chr)
 						 (is_char_white_space(chr) ? 1 :				\
 						  (is_char_id2(chr) ? 2 :						\
 						    (ispunct(chr) ? (chr) :						\
-						     (((unsigned char)(chr)) < 0x80 ? 3 : 4)	\
+						     (((UCHAR)(chr)) < 0x80 ? 3 : 4)	\
 						    )											\
 						  )												\
 						 )												\
@@ -194,24 +194,7 @@ void doe_up()
 		doe_up_();
 	}
 }
-PRIVATE void doe_up_()
-{
-	set_column_idx_at_which_curs_vert_moved(
-	 start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1));
-	if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI)) {
-		EPCBVC_CURS_Y--;
-	} else {
-		if (easy_buffer_switching_check(EBS_UP_AT_TOP) == 0) {
-			disp_status_bar_warn(_("No previous lines"));
-		} else {
-			// already top of buffer, go to the previous buffer's last line
-			doe_switch_to_prev_buffer();
-		}
-	}
-	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
-}
 PRIVATE void doe_down_();
-PRIVATE int _doe_carriage_return();
 void doe_down()
 {
 	if (GET_APPMD(ed_DUAL_SCROLL) == 0) {
@@ -223,46 +206,63 @@ void doe_down()
 		doe_down_();
 	}
 }
+PRIVATE void doe_up_()
+{
+	set_column_idx_at_which_curs_vert_moved(
+	 start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1));
+	if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI)) {
+////		EPCBVC_CURS_Y--;
+	} else {
+		if (easy_buffer_switching_check(EBS_UP_AT_TOP) == 0) {
+			disp_status_bar_warn(_("No previous lines"));
+		} else {
+			// already top of buffer, go to the previous buffer's last line
+			doe_switch_to_prev_buffer();
+		}
+	}
+	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+}
 PRIVATE void doe_down_()
 {
 	set_column_idx_at_which_curs_vert_moved(
 	 start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1));
 	if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI)) {
-		EPCBVC_CURS_Y++;
+////		EPCBVC_CURS_Y++;
 	} else {
-		if (line_strlen(EPCBVC_CL) == 0) {
-			if (easy_buffer_switching_check(EBS_DOWN_AT_BOTTOM) == 0) {
-				disp_status_bar_warn(_("No next lines"));
-			} else {
-				// already bottom of buffer, go to the next buffer's top line
-				doe_switch_to_next_buffer();
-			}
+		if (easy_buffer_switching_check(EBS_DOWN_AT_BOTTOM) == 0) {
+			disp_status_bar_warn(_("No next lines"));
 		} else {
-			if (is_editor_unmodifiable_then_warn_it() == 0) {
-				doe_end_of_line();
-				_doe_carriage_return();
-			}
+			// already bottom of buffer, go to the next buffer's top line
+			doe_switch_to_next_buffer();
 		}
 	}
 	post_cmd_processing(NULL, CURS_MOVE_VERT, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 
-PRIVATE void doe_page_up_();
+PRIVATE void doe_page_up_dual(int lines);
+PRIVATE void doe_page_up_(int lines);
 void doe_page_up()
 {
+	doe_page_up_dual(editor_vert_scroll_lines());
+}
+void doe_half_page_up()
+{
+	doe_page_up_dual(editor_vert_scroll_lines() / 2);
+}
+PRIVATE void doe_page_up_dual(int lines)
+{
 	if (GET_APPMD(ed_DUAL_SCROLL) == 0) {
-		doe_page_up_();
+		doe_page_up_(lines);
 	} else {
 		tog_editor_panex();
-		doe_page_up_();
+		doe_page_up_(lines);
 		tog_editor_panex();
-		doe_page_up_();
+		doe_page_up_(lines);
 	}
 }
-PRIVATE void doe_page_up_()
+PRIVATE void doe_page_up_(int lines)
 {
 	if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI)) {
-		int lines = editor_vert_scroll_lines() - 1;
 		for (int cnt = 0; cnt < lines; cnt++) {
 			if (cur_line_up(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 				break;
@@ -279,22 +279,30 @@ PRIVATE void doe_page_up_()
 	}
 }
 
-PRIVATE void doe_page_down_();
+PRIVATE void doe_page_down_dual(int lines);
+PRIVATE void doe_page_down_(int lines);
 void doe_page_down()
 {
+	doe_page_down_dual(editor_vert_scroll_lines());
+}
+void doe_half_page_down()
+{
+	doe_page_down_dual(editor_vert_scroll_lines() / 2);
+}
+PRIVATE void doe_page_down_dual(int lines)
+{
 	if (GET_APPMD(ed_DUAL_SCROLL) == 0) {
-		doe_page_down_();
+		doe_page_down_(lines);
 	} else {
 		tog_editor_panex();
-		doe_page_down_();
+		doe_page_down_(lines);
 		tog_editor_panex();
-		doe_page_down_();
+		doe_page_down_(lines);
 	}
 }
-PRIVATE void doe_page_down_()
+PRIVATE void doe_page_down_(int lines)
 {
 	if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI)) {
-		int lines = editor_vert_scroll_lines() - 1;
 		for (int cnt = 0; cnt < lines; cnt++) {
 			if (cur_line_down(&EPCBVC_CL, &EPCBVC_CLBI) == 0) {
 				break;
@@ -383,11 +391,11 @@ void doe_tab()
 #define UTF8S_SEND_BUF_LEN			(UTF8S_SEND_LEN + MAX_UTF8C_BYTES * 1)
 PRIVATE int utf8s_send_buf_bytes = 0;
 PRIVATE char utf8s_send_buf[UTF8S_SEND_BUF_LEN+1] = "";
-void doe_buffer_utf8c_bytes(char chr)
+void doe_put_utf8c_byte(char chr)
 {
 	static char utf8c_state = 0;
 
-	utf8c_state = utf8c_len(utf8c_state, chr);
+	utf8c_state = utf8c_remaining_bytes(utf8c_state, chr);
 	// put to send buffer
 	utf8s_send_buf[utf8s_send_buf_bytes++] = chr;
 	utf8s_send_buf[utf8s_send_buf_bytes] = '\0';
@@ -415,7 +423,6 @@ PRIVATE int _doe_enter_char(char chr)
 PRIVATE int _doe_enter_utf8s(const char *utf8s)
 {
 	int bytes_str;
-	int bytes_chr;
 	char utf8c[MAX_UTF8C_BYTES+1];
 
 	if (is_editor_unmodifiable_then_warn_it()) {
@@ -429,9 +436,11 @@ PRIVATE int _doe_enter_utf8s(const char *utf8s)
 #endif // ENABLE_UNDO
 
 	bytes_str = strlen_path(utf8s);
+	int bytes_chr;
 	for (int byte_idx = 0; byte_idx < bytes_str; byte_idx += bytes_chr) {
 		bytes_chr = utf8c_bytes(&utf8s[byte_idx]);
 		strlcpy__(utf8c, &utf8s[byte_idx], bytes_chr);
+hmflf_dprintf("[%s]\n", dump_utf8c(utf8c, NULL));
 		_doe_enter_utf8c(utf8c);
 	}
 
@@ -452,6 +461,7 @@ PRIVATE int _doe_enter_utf8c(const char *utf8c)
 	return 1;
 }
 
+PRIVATE int _doe_carriage_return();
 void doe_carriage_return()
 {
 	_doe_carriage_return();
@@ -814,44 +824,46 @@ int move_cursor_right()
 int cur_line_up(be_line_t **line, int *byte_idx)
 {
 	int line_byte_idx = *byte_idx;
-	te_concat_linefeed((*line)->data);
-	int wl_idx = start_wl_idx_of_wrap_line(te_concat_lf_buf, line_byte_idx, -1);
-	int col_idx = start_col_idx_of_wrap_line(te_concat_lf_buf, line_byte_idx, -1);
+	int wl_idx = start_wl_idx_of_wrap_line(get_tab_expanded((*line)->data), line_byte_idx, -1);
+	int col_idx = start_col_idx_of_wrap_line(get_tab_expanded((*line)->data), line_byte_idx, -1);
 	if (wl_idx > 0) {
 		wl_idx--;
-		line_byte_idx = end_byte_idx_of_wrap_line_le(te_concat_lf_buf, wl_idx, col_idx, -1);
+		line_byte_idx = end_byte_idx_of_wrap_line_le(get_tab_expanded((*line)->data),
+		 wl_idx, col_idx, -1);
 	} else {
 		if (IS_PREV_NODE_INT(*line) == 0) {
 			// already the first line
 			return 0;	// no move
 		}
 		*line = NODE_PREV(*line);
-		te_concat_linefeed((*line)->data);
-		wl_idx = max_wrap_line_idx(te_concat_lf_buf, -1);
-		line_byte_idx = start_byte_idx_of_wrap_line(te_concat_lf_buf, wl_idx, col_idx, -1);
+		wl_idx = max_wrap_line_idx(get_tab_expanded((*line)->data), -1);
+		line_byte_idx = start_byte_idx_of_wrap_line(get_tab_expanded((*line)->data),
+		 wl_idx, col_idx, -1);
 	}
+	EPCBVC_CURS_Y--;
 	*byte_idx = line_byte_idx;
 	return 1;
 }
 int cur_line_down(be_line_t **line, int *byte_idx)
 {
 	int line_byte_idx = *byte_idx;
-	te_concat_linefeed((*line)->data);
-	int wl_idx = start_wl_idx_of_wrap_line(te_concat_lf_buf, line_byte_idx, -1);
-	int col_idx = start_col_idx_of_wrap_line(te_concat_lf_buf, line_byte_idx, -1);
-	if (wl_idx < max_wrap_line_idx(te_concat_lf_buf, -1)) {
+	int wl_idx = start_wl_idx_of_wrap_line(get_tab_expanded((*line)->data), line_byte_idx, -1);
+	int col_idx = start_col_idx_of_wrap_line(get_tab_expanded((*line)->data), line_byte_idx, -1);
+	if (wl_idx < max_wrap_line_idx(get_tab_expanded((*line)->data), -1)) {
 		wl_idx++;
-		line_byte_idx = end_byte_idx_of_wrap_line_le(te_concat_lf_buf, wl_idx, col_idx, -1);
+		line_byte_idx = end_byte_idx_of_wrap_line_le(get_tab_expanded((*line)->data),
+		 wl_idx, col_idx, -1);
 	} else {
 		if (IS_NEXT_NODE_INT(*line) == 0) {
 			// already the last line
 			return 0;	// no move
 		}
 		*line = NODE_NEXT(*line);
-		te_concat_linefeed((*line)->data);
 		wl_idx = 0;
-		line_byte_idx = end_byte_idx_of_wrap_line_ge(te_concat_lf_buf, wl_idx, col_idx, -1);
+		line_byte_idx = end_byte_idx_of_wrap_line_ge(get_tab_expanded((*line)->data),
+		 wl_idx, col_idx, -1);
 	}
+	EPCBVC_CURS_Y++;
 	*byte_idx = line_byte_idx;
 	return 1;
 }

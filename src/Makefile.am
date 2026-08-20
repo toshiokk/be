@@ -40,6 +40,7 @@ be_SOURCES = \
 	debug.c \
 	disp.c \
 	encdet.c \
+	bincode.c \
 	fileio.c \
 	filer.c \
 	filerlist.c \
@@ -63,7 +64,6 @@ be_SOURCES = \
 	utf8.c \
 	utils.c \
 	utilstr.c \
-	myutf8.c \
 	utilpath.c \
 	utilfile.c \
 	winin.c \
@@ -88,6 +88,7 @@ be_SOURCES = \
 	editorkeys.h \
 	editorundo.h \
 	encdet.h \
+	bincode.h \
 	fileio.h \
 	filer.h \
 	filerlist.h \
@@ -115,7 +116,6 @@ be_SOURCES = \
 	utf8.h \
 	utils.h \
 	utilstr.h \
-	myutf8.h \
 	utilpath.h \
 	utilfile.h \
 	disp.h \

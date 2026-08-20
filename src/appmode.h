@@ -35,54 +35,54 @@ typedef struct /*app_mode*/ {
 #ifdef ENABLE_DEBUG
 #define DEBUG_NONE				0
 #define DEBUG_PRINTF			1
-	unsigned char app_DEBUG_PRINTF:1;		// bit 0
+	UINT8 app_DEBUG_PRINTF:1;		// bit 0
 #endif // ENABLE_DEBUG
 #ifdef ENABLE_RC
-	unsigned char app_RCFILE:1;				// bit 1
+	UINT8 app_RCFILE:1;				// bit 1
 #endif // ENABLE_RC
-	unsigned char app_DRAW_CURSOR:1;		// bit 2
+	UINT8 app_DRAW_CURSOR:1;		// bit 2
 #ifdef ENABLE_HIGH_BGC
-	unsigned char app_HIGH_BGC:1;			// bit 3
+	UINT8 app_HIGH_BGC:1;			// bit 3
 #endif // ENABLE_HIGH_BGC
-	unsigned char app_MAP_KEY_7F_BS:1;		// bit 4
+	UINT8 app_MAP_KEY_7F_BS:1;		// bit 4
 #define MAX_KEY_LINES			3
 #define KEY_LINES_0				0
 #define KEY_LINES_1				1
 #define KEY_LINES_2				2
 #define KEY_LINES_3				3
 #define KEY_LINES_MAX			KEY_LINES_3
-	unsigned char app_KEY_LINES:2;			// bit 5,6
+	UINT8 app_KEY_LINES:2;			// bit 5,6
 #define EF_EDITOR				0
 #define EF_FILER				1
-	unsigned char app_EDITOR_FILER:1;		// bit 7
+	UINT8 app_EDITOR_FILER:1;		// bit 7
 											// editor------		filer-------
 #define APP_MODE_NORMAL			0			// text editor		file manager
 #define APP_MODE_VIEWER			1			// text viewer		----
-	unsigned char app_LIST_MODE:2;			// bit 8,9
-	unsigned char app_SILENT:1;				// bit 10
+	UINT8 app_LIST_MODE:2;			// bit 8,9
+	UINT8 app_SPLASH:1;				// bit 10
 
 	// editor settings
-	unsigned char ed_EDITOR_PANES:1;		// bit 11 (0: 1 pane / 1: 2 panes)
-	unsigned char ed_EDITOR_PANEX:1;		// bit 12 (0: pane-0 / 1: pane-1)
-	unsigned char ed_DUAL_SCROLL:1;			// bit 13
-	unsigned char ed_SHOW_RULER:1;			// bit 14
-	unsigned char ed_SHOW_LINE_NUMBER:1;	// bit 15
+	UINT8 ed_EDITOR_PANES:1;		// bit 11 (0: 1 pane / 1: 2 panes)
+	UINT8 ed_EDITOR_PANEX:1;		// bit 12 (0: pane-0 / 1: pane-1)
+	UINT8 ed_DUAL_SCROLL:1;			// bit 13
+	UINT8 ed_SHOW_RULER:1;			// bit 14
+	UINT8 ed_SHOW_LINE_NUMBER:1;	// bit 15
 #define CURS_POSITIONING_NONE		0
 #define CURS_POSITIONING_TOP		1
 #define CURS_POSITIONING_CENTER		2
 #define CURS_POSITIONING_BOTTOM		3
-	unsigned char ed_CURS_POSITIONING:2;	// bit 16,17
+	UINT8 ed_CURS_POSITIONING:2;	// bit 16,17
 #ifdef ENABLE_SYNTAX
-	unsigned char ed_SYNTAX_HIGHLIGHT:1;	// bit 18
-	unsigned char ed_TAB_EOL_NOTATION:1;	// bit 19
+	UINT8 ed_SYNTAX_HIGHLIGHT:1;	// bit 18
+	UINT8 ed_TAB_EOL_NOTATION:1;	// bit 19
 #endif // ENABLE_SYNTAX
-	unsigned char ed_REVERSE_SEARCH:1;		// bit 20
-	unsigned char ed_IGNORE_CASE:1;			// bit 21
+	UINT8 ed_REVERSE_SEARCH:1;		// bit 20
+	UINT8 ed_IGNORE_CASE:1;			// bit 21
 #ifdef ENABLE_REGEX
-	unsigned char ed_USE_REGEXP:1;			// bit 22
+	UINT8 ed_USE_REGEXP:1;			// bit 22
 #endif // ENABLE_REGEX
 #ifdef USE_NKF
-	unsigned char ed_USE_NKF:1;				// bit 23
+	UINT8 ed_USE_NKF:1;				// bit 23
 #endif // USE_NKF
 #define BACKUP_FILES_0			0
 #define BACKUP_FILES_1			1
@@ -91,12 +91,12 @@ typedef struct /*app_mode*/ {
 #define BACKUP_FILES_10			10
 #define BACKUP_FILES_15			15
 #define BACKUP_FILES_MAX		BACKUP_FILES_15
-	unsigned char ed_BACKUP_FILES:4;		// bit 24-27
+	UINT8 ed_BACKUP_FILES:4;		// bit 24-27
 
 	// filer settings
-	unsigned char fl_FILER_PANES:1;			// bit 28 (0: 1 pane / 1: 2 panes)
-	unsigned char fl_FILER_PANEX:1;			// bit 29 (0: pane-0 / 1: panes-1)
-	unsigned char fl_SHOW_DOT_FILE:1;		// bit 30 (1: show hidden files)
+	UINT8 fl_FILER_PANES:1;			// bit 28 (0: 1 pane / 1: 2 panes)
+	UINT8 fl_FILER_PANEX:1;			// bit 29 (0: pane-0 / 1: panes-1)
+	UINT8 fl_SHOW_DOT_FILE:1;		// bit 30 (1: show hidden files)
 #define FILE_SORT_BY_NAME		0
 #define FILE_SORT_BY_EXT		1
 #define FILE_SORT_BY_TIME		2
@@ -106,17 +106,17 @@ typedef struct /*app_mode*/ {
 #define FILE_SORT_BY_TIME_REV	6
 #define FILE_SORT_BY_SIZE_REV	7
 #define FILE_SORT_BY_MAX		FILE_SORT_BY_SIZE_REV
-	unsigned char fl_FILE_SORT_BY:3;		// bit 31-33
+	UINT8 fl_FILE_SORT_BY:3;		// bit 31-33
 #define SHOW_FILE_INFO_0				0	// None
 #define SHOW_FILE_INFO_1				1	// Size
 #define SHOW_FILE_INFO_2				2	// Size Time
 #define SHOW_FILE_INFO_3				3	// Size Time 1777 User
 #define SHOW_FILE_INFO_4				4	// Size Time lrwxrwxrwx User:group
 #define SHOW_FILE_INFO_MAX				SHOW_FILE_INFO_4
-	unsigned char fl_SHOW_FILE_INFO:3;		// bit 34-36
+	UINT8 fl_SHOW_FILE_INFO:3;		// bit 34-36
 #define SHOW_ZEBRA_STRIPING_OFF			0	// off
 #define SHOW_ZEBRA_STRIPING_ON			1	// ON
-	unsigned char fl_SHOW_ZEBRA_STRIPE:1;	// bit 37
+	UINT8 fl_SHOW_ZEBRA_STRIPE:1;	// bit 37
 } app_mode_t;
 
 typedef enum /*mode_idx*/ {

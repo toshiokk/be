@@ -21,19 +21,17 @@
 
 #include "headers.h"
 
-PRIVATE void make_help_buf(int help_idx);
-
-PRIVATE void make_help_file_list(be_buf_t *cur_buf);
 #ifdef ENABLE_HELP
+
+PRIVATE void make_help_buf(int help_idx);
+PRIVATE void make_help_file_list(be_buf_t *cur_buf);
 PRIVATE void make_help_func_list();
 PRIVATE void make_help_key_list();
-#endif // ENABLE_HELP
 
 void init_help_bufs()
 {
 	bufs_insert_buf_to_bottom(&help_buffers,
 	 buf_create(make_internal_buf_file_path("Editor-Files-loaded"), BUF_MODE_RO));
-#ifdef ENABLE_HELP
 	bufs_insert_buf_to_bottom(&help_buffers,
 	 buf_create(make_internal_buf_file_path("Editor-Functions"), BUF_MODE_RO));
 	bufs_insert_buf_to_bottom(&help_buffers,
@@ -44,7 +42,6 @@ void init_help_bufs()
 	bufs_insert_buf_to_bottom(&help_buffers,
 	 buf_create(make_internal_buf_file_path("Filer-Key-Bindings"), BUF_MODE_RO));
 #endif // ENABLE_FILER
-#endif // ENABLE_HELP
 }
 be_buf_t *get_help_buf(int help_buf_idx)
 {
@@ -53,7 +50,7 @@ be_buf_t *get_help_buf(int help_buf_idx)
 
 //------------------------------------------------------------------------------
 // make help text in help-buffer and view by editor
-int view_list(int help_idx)
+void view_list(int help_idx)
 {
 #ifdef ENABLE_HISTORY
 	load_histories_if_file_newer();
@@ -61,21 +58,18 @@ int view_list(int help_idx)
 	load_cut_buffers_if_file_newer();
 
 	make_help_buf(HELP_BUF_IDX_EDITOR_FILE_LIST);
-#ifdef ENABLE_HELP
 	make_help_buf(HELP_BUF_IDX_EDITOR_FUNC_LIST);
 	make_help_buf(HELP_BUF_IDX_EDITOR_KEY_LIST);
 #ifdef ENABLE_FILER
 	make_help_buf(HELP_BUF_IDX_FILER_FUNC_LIST);
 	make_help_buf(HELP_BUF_IDX_FILER_KEY_LIST);
 #endif // ENABLE_FILER
-#endif // ENABLE_HELP
 
 	switch (help_idx) {
 	default:
 	case HELP_BUF_IDX_EDITOR_FILE_LIST:
 		disp_status_bar_done(_("Editor File List"));
 		break;
-#ifdef ENABLE_HELP
 	case HELP_BUF_IDX_EDITOR_FUNC_LIST:
 		disp_status_bar_done(_("Editor Function List"));
 		break;
@@ -90,10 +84,9 @@ int view_list(int help_idx)
 		disp_status_bar_done(_("Filer Key List"));
 		break;
 #endif // ENABLE_FILER
-#endif // ENABLE_HELP
 	}
 
-	return do_call_editor(1, APP_MODE_VIEWER, get_help_buf(help_idx), NULL);
+	set_epc_buf(get_help_buf(help_idx));
 }
 PRIVATE void make_help_buf(int help_idx)
 {
@@ -110,7 +103,6 @@ PRIVATE void make_help_buf(int help_idx)
 	case HELP_BUF_IDX_EDITOR_FILE_LIST:
 		make_help_file_list(cur_edit_buf);
 		break;
-#ifdef ENABLE_HELP
 	case HELP_BUF_IDX_EDITOR_FUNC_LIST:
 		SET_APPMD_VAL(app_EDITOR_FILER, EF_EDITOR);
 		make_help_func_list();
@@ -129,7 +121,6 @@ PRIVATE void make_help_buf(int help_idx)
 		make_help_key_list();
 		break;
 #endif // ENABLE_FILER
-#endif // ENABLE_HELP
 	}
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 
@@ -167,7 +158,6 @@ PRIVATE void make_help_file_list(be_buf_t *cur_buf)
 	}
 }
 
-#ifdef ENABLE_HELP
 PRIVATE void make_help_func_list()
 {
 	char *template_ = "%-32s %-4s %-*s %-*s %-*s %-*s  %-32s";
@@ -311,10 +301,8 @@ PRIVATE void make_help_key_list()
 		}
 	}
 }
-#endif // ENABLE_HELP
 
 //------------------------------------------------------------------------------
-#ifdef ENABLE_HELP
 const char *splash_text_b[] = {
 //012345678901234567890123456789
  "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -506,6 +494,7 @@ void disp_splash(int delay)
 	}
 	tio_refresh();
 }
+
 #endif // ENABLE_HELP
 
 // End of help.c

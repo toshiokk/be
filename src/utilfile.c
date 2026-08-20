@@ -245,6 +245,30 @@ int write_text_to_file(const char *file_path, char append, const char *text)
 	}
 	return 0;
 }
+ssize_t write_bin_data_to_file(const char *file_path, const char *binary, size_t size)
+{
+	FILE *fp = fopen(file_path, "w");
+	if (fp == NULL) {
+		return -1;
+	}
+	ssize_t bytes = fwrite(binary, 1, size, fp);
+	if (fclose(fp) != 0) {
+		return -1;
+	}
+	return bytes;
+}
+ssize_t read_bin_data_from_file(const char *file_path, char *binary, size_t size)
+{
+	FILE *fp = fopen(file_path, "r");
+	if (fp == NULL) {
+		return -1;
+	}
+	ssize_t bytes = fread(binary, 1, size, fp);
+	if (fclose(fp) != 0) {
+		return -1;
+	}
+	return bytes;
+}
 
 int remove_file(const char *file_path)
 {

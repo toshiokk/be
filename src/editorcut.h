@@ -48,6 +48,7 @@ void doe_duplicate_text();
 void doe_paste_text_with_pop();
 void doe_paste_text_with_pop_char();
 void doe_paste_text_without_pop();
+void doe_paste_text_without_pop_char();
 
 const char *get_text_from_cut_buffer_with_pop();
 const char *get_text_from_cut_buffer_without_pop();

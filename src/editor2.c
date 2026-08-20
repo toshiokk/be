@@ -31,11 +31,8 @@ PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
  int byte_idx_1, int byte_idx_2, const color_syntax_t *clr_syntax);
 #endif // ENABLE_SYNTAX
 
-PRIVATE int output_edit_line_text(int yy, const char *raw_code,
- int byte_idx_1, int byte_idx_2);
 PRIVATE int output_edit_line_num(int yy, const be_line_t *line);
-PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
- int byte_idx_1, int byte_idx_2, const char *vis_code);
+PRIVATE int output_edit_line_text(int yy, const char *line_data, int byte_idx_1, int byte_idx_2);
 
 PRIVATE int get_edit_win_x_of_cursor_x();
 PRIVATE int get_cursor_text_x();
@@ -137,16 +134,16 @@ void disp_edit_win(int cur_pane)
 			}
 			break;
 		}
-		int max_wl_idx = te_tab_expand__max_wl_idx(line->data);
-		wl_idx = start_wl_idx_of_wrap_line(te_concat_lf_buf, byte_idx, -1);
+		int max_wl_idx = tab_expand__get_max_wl_idx(line->data);
+		wl_idx = start_wl_idx_of_wrap_line(get_tab_expanded(line->data), byte_idx, -1);
 		for ( ; wl_idx <= max_wl_idx; wl_idx++) {
-			byte_idx_1 = start_byte_idx_of_wrap_line(te_concat_lf_buf, wl_idx, 0, -1);
-			byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_concat_lf_buf, wl_idx,
-			 INT_MAX, -1);
+			byte_idx_1 = start_byte_idx_of_wrap_line(get_tab_expanded(line->data), wl_idx, 0, -1);
+			byte_idx_2 = end_byte_idx_of_wrap_line_ge(get_tab_expanded(line->data),
+			 wl_idx, INT_MAX, -1);
 			disp_edit_line__(cur_pane, yy, line, byte_idx_1, byte_idx_2);
 			if (yy == EPCBVC_CURS_Y) {
-				cursor_line_right_text_x = end_col_idx_of_wrap_line(
-				 te_concat_lf_buf, wl_idx, byte_idx_2, -1);
+				cursor_line_right_text_x = end_col_idx_of_wrap_line(get_tab_expanded(line->data),
+				 wl_idx, byte_idx_2, -1);
 			}
 			yy++;
 			if (yy >= edit_win_get_text_lines())
@@ -220,7 +217,6 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 	int syntax_idx;
 #endif // ENABLE_SYNTAX
 	int left_byte_idx = 0, right_byte_idx = 0;
-	int vis_idx;
 #ifdef ENABLE_REGEX
 	matches_t matches;
 #endif // ENABLE_REGEX
@@ -318,7 +314,7 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 		if (get_intersection(byte_idx_1, byte_idx_2,
 		 left_byte_idx, right_byte_idx, &left_byte_idx, &right_byte_idx) > 0) {
 			set_item_color_by_idx(ITEM_COLOR_IDX_TEXT_SELECTED3, 0);
-			output_edit_line_text(yy, te_concat_lf_buf, left_byte_idx, right_byte_idx);
+			output_edit_line_text(yy, line->data, left_byte_idx, right_byte_idx);
 		}
 	}
 #endif // HL_MARKED_REGION
@@ -364,9 +360,8 @@ PRIVATE void disp_edit_line__(int cur_pane, int yy, const be_line_t *line,
 		if (GET_APPMD(app_DRAW_CURSOR) && (yy == EPCBVC_CURS_Y)) {
 			// display character at cursor in reverse video
 			set_item_color_by_idx(ITEM_COLOR_IDX_CURSOR_CHAR, 1);
-			vis_idx = vis_idx_from_byte_idx(EPCBVC_CL->data, EPCBVC_CLBI);
-			output_edit_line_text(EPCBVC_CURS_Y, te_vis_code_buf,
-			 vis_idx, vis_idx+utf8c_bytes(&te_vis_code_buf[vis_idx]));
+			output_edit_line_text(EPCBVC_CURS_Y, EPCBVC_CL->data,
+			 EPCBVC_CLBI, EPCBVC_CLBI + utf8c_bytes(&EPCBVC_CL->data[EPCBVC_CLBI]));
 		}
 	}
 }
@@ -380,8 +375,8 @@ PRIVATE void disp_edit_line_single_line_regexp(int yy, const be_line_t *line,
 	int min_byte_idx, max_byte_idx;
 
 	for (byte_idx = 0; byte_idx < byte_idx_2; ) {
-		if (regexp_search_compiled(clr_syntax->regexp_start, te_concat_lf_buf, byte_idx,
-		 REG_NONE, &regexp_matches, 1) != 0) {
+		if (regexp_search_compiled(clr_syntax->regexp_start, get_lf_concatenated(line->data),
+		 byte_idx, REG_NONE, &regexp_matches, 1) != 0) {
 			// not found
 			break;
 		}
@@ -390,7 +385,7 @@ PRIVATE void disp_edit_line_single_line_regexp(int yy, const be_line_t *line,
 		 regexp_matches_end_idx(&regexp_matches, 0),
 		 &min_byte_idx, &max_byte_idx) > 0) {
 			set_item_color_ptr(&clr_syntax->color, 0);
-			output_edit_line_text(yy, te_concat_lf_buf, min_byte_idx, max_byte_idx);
+			output_edit_line_text(yy, line->data, min_byte_idx, max_byte_idx);
 		}
 		byte_idx = regexp_matches_end_idx(&regexp_matches, 0);
 	}
@@ -484,7 +479,7 @@ PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
 		//		/*
 		//		  comment .....				<== current line
 		//		*/
-		byte_idx = te_concat_lf_bytes;
+		byte_idx = get_lf_concatenated_bytes(line->data);
 	}
 	if (get_intersection(byte_idx_1, byte_idx_2, 0, byte_idx,
 	 &min_byte_idx, &max_byte_idx) > 0) {
@@ -494,7 +489,7 @@ PRIVATE void disp_edit_line_multi_line_regexp(int yy, const be_line_t *line,
 
 step_two:
 	// [Second step] We look for start in the current line.
-	for (byte_idx = 0; byte_idx < te_concat_lf_bytes; ) {
+	for (byte_idx = 0; byte_idx < get_lf_concatenated_bytes(line->data); ) {
 		if (regexp_search_compiled(clr_syntax->regexp_start, line->data, byte_idx,
 		 REG_NONE, &matches_begin, 1) != 0)
 			// No more start in the current line.
@@ -508,14 +503,14 @@ step_two:
 		} else {
 			//		... /* comment ...				<== current line
 			//		*/
-			byte_idx = te_concat_lf_bytes;
+			byte_idx = get_lf_concatenated_bytes(line->data);
 		}
 		if (get_intersection(byte_idx_1, byte_idx_2,
 		 regexp_matches_start_idx(&matches_begin, 0), byte_idx,
 		 &min_byte_idx, &max_byte_idx) > 0) {
 			output_edit_line_text(yy, line->data, min_byte_idx, max_byte_idx);
 		}
-		if (byte_idx == te_concat_lf_bytes) {
+		if (byte_idx == get_lf_concatenated_bytes(line->data)) {
 			// We painted to the end of the line, so
 			// don't bother checking any more starts.
 			break;
@@ -576,13 +571,13 @@ PRIVATE void disp_edit_win_bracket_hl_dir(int display_dir, char depth_increase)
 			break;
 		skip_here = match_len;
 		for ( ; 0 <= yy && yy < edit_win_get_text_lines(); ) {
-			int max_wl_idx = te_tab_expand__max_wl_idx(line->data);
-			int wl_idx = start_wl_idx_of_wrap_line(te_concat_lf_buf, byte_idx, -1);
+			int max_wl_idx = tab_expand__get_max_wl_idx(line->data);
+			int wl_idx = start_wl_idx_of_wrap_line(get_lf_concatenated(line->data), byte_idx, -1);
 			for ( ; 0 <= wl_idx && wl_idx <= max_wl_idx; wl_idx--) {
-				int byte_idx_1 = start_byte_idx_of_wrap_line(te_concat_lf_buf, wl_idx,
-				 0, -1);
-				int byte_idx_2 = end_byte_idx_of_wrap_line_ge(te_concat_lf_buf, wl_idx,
-				 INT_MAX, -1);
+				int byte_idx_1 = start_byte_idx_of_wrap_line(get_lf_concatenated(line->data),
+				 wl_idx, 0, -1);
+				int byte_idx_2 = end_byte_idx_of_wrap_line_ge(get_lf_concatenated(line->data),
+				 wl_idx, INT_MAX, -1);
 				int left_byte_idx;
 				int right_byte_idx;
 				if (match_line == line && get_intersection(byte_idx_1, byte_idx_2,
@@ -665,38 +660,28 @@ void set_edit_cursor_pos()
 	win_save_cursor_y();
 }
 
-PRIVATE int output_edit_line_text(int yy, const char *raw_code, int byte_idx_1, int byte_idx_2)
+PRIVATE int output_edit_line_text(int yy, const char *line_data, int byte_idx_1, int byte_idx_2)
 {
-	return output_edit_line_text__(yy, raw_code, byte_idx_1, byte_idx_2, te_vis_code_buf);
+	const char *lf_concatenated = get_lf_concatenated(line_data);
+	const char *tab_expanded = get_tab_expanded(line_data);
+if (strlcmp__(lf_concatenated, "0000: ") == 0) {
+  _D(dump_memory("tab_expanded:", &lf_concatenated[byte_idx_1], byte_idx_2 - byte_idx_1))
 }
-PRIVATE int output_edit_line_text__(int yy, const char *raw_code,
- int byte_idx_1, int byte_idx_2, const char *vis_code)
-{
-	int wl_idx;
-	int left_x;
-	int right_x;
-	int left_byte_idx;
-	int right_byte_idx;
-	int left_vis_idx;
-	int right_vis_idx;
-	int bytes;
+	int wl_idx = start_wl_idx_of_wrap_line(lf_concatenated, byte_idx_1, -1);
+	int left_col_idx = start_col_idx_of_wrap_line(lf_concatenated, byte_idx_1, -1);
+	int right_col_idx = end_col_idx_of_wrap_line(lf_concatenated, wl_idx, byte_idx_2, -1);
+	left_col_idx = LIM_MIN(left_col_idx, EPCBVC_MIN_TEXT_X_TO_KEEP);
+	right_col_idx = LIM_MAX(right_col_idx, get_max_text_x_to_keep());
+	int left_byte_idx = end_byte_idx_of_wrap_line_ge(tab_expanded, wl_idx, left_col_idx, -1);
+	int right_byte_idx = end_byte_idx_of_wrap_line_le(tab_expanded, wl_idx, right_col_idx, -1);
 
-	wl_idx = start_wl_idx_of_wrap_line(raw_code, byte_idx_1, -1);
-	left_x = start_col_idx_of_wrap_line(raw_code, byte_idx_1, -1);
-	right_x = end_col_idx_of_wrap_line(raw_code, wl_idx, byte_idx_2, -1);
-	left_x = LIM_MIN(left_x, EPCBVC_MIN_TEXT_X_TO_KEEP);
-	right_x = LIM_MAX(right_x, get_max_text_x_to_keep());
-	left_byte_idx = end_byte_idx_of_wrap_line_ge(raw_code, wl_idx, left_x, -1);
-	right_byte_idx = end_byte_idx_of_wrap_line_le(raw_code, wl_idx, right_x, -1);
-
-	left_x = start_col_idx_of_wrap_line(raw_code, left_byte_idx, -1);
-	right_x = end_col_idx_of_wrap_line(raw_code, wl_idx, right_byte_idx, -1);
-	left_vis_idx = vis_idx_from_byte_idx(raw_code, left_byte_idx);
-	right_vis_idx = vis_idx_from_byte_idx(raw_code, right_byte_idx);
-	bytes = right_vis_idx - left_vis_idx;
+	int bytes = right_byte_idx - left_byte_idx;
+if (strlcmp__(lf_concatenated, "0000: ") == 0) {
+  flf_dprintf("tab_expanded: (%d:%d)[%s]\n", left_byte_idx, right_byte_idx, tab_expanded);
+}
 	if (bytes > 0) {	// if (bytes <= 0), no output neccesary
 		sub_win_output_string(edit_win_get_text_y() + yy,
-		 get_edit_win_x_of_text_x(left_x), &vis_code[left_vis_idx], bytes);
+		 get_edit_win_x_of_text_x(left_col_idx), &tab_expanded[left_byte_idx], bytes);
 	}
 	return bytes;
 }

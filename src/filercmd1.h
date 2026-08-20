@@ -30,7 +30,9 @@ int chk_inp_str_ret_val_filer(int ret);
 void dof_up();
 void dof_down();
 void dof_page_up();
+void dof_half_page_up();
 void dof_page_down();
+void dof_half_page_down();
 void dof_top_of_list();
 void dof_bottom_of_list();
 

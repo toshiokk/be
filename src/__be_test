@@ -22,14 +22,14 @@ if [ -f ./be ]; then
       shift
       LANG=C ./be -d -l "$@"
     else
-      ./be -d -s -l "$@"
+      ./be -d -l "$@"
     fi
   else
     if [ "$1" = c ]; then
       shift
       LANG=C ./be -d "$@"
     else
-      ./be -d -s "$@"
+      ./be -d "$@"
     fi
   fi
   ##LANG=C.UTF-8 ./be -d "$@"

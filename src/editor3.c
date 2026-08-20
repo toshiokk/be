@@ -174,89 +174,146 @@ int edit_win_get_text_y()
 	return edit_win_get_path_y() + edit_win_get_path_lines() + get_ruler_lines();
 }
 //------------------------------------------------------------------------------
-int te_tab_expand__max_wl_idx(const char *original)
-{
-	te_tab_expand(original);
-	return max_wrap_line_idx(te_concat_lf_buf, -1);
-}
 
 #define TAB_NOTATION	'>'
 #define EOL_NOTATION	'<'
 
-// string that is tab('\t')-expanded and linefeed('\n')-concatenated
-int te_concat_lf_bytes = 0;								// bytes of (raw_byte + line-feed)
-char te_concat_lf_buf[MAX_EDIT_LINE_LEN * 2 +1];		// raw_byte + line-feed
+// LF concatenated string ======================================================
+// - a linefeed('\n') is concatenated to the line tail
+// purpose:
+// - determine the position of the character to be drawn on the screen
+// - keyword search
+PRIVATE char lf_concatenated_buf[MAX_EDIT_LINE_LEN + 1 +1];		// raw_byte + line-feed
+PRIVATE int lf_concatenated_bytes = 0;							// bytes of (raw_byte + line-feed)
+PRIVATE const char *lf_concatenated_str_ptr = NULL;
+PRIVATE int lf_concatenated_str_len = 0;
 
-// string invisible code(TAB, Zenkaku-space, EOL) converted to character('>', '__', '<')
-int te_vis_code_columns;										// length of tab-expanded line
-char te_vis_code_buf[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];		// tab-expanded-visible-code
+// TAB expanded string =========================================================
+// - TAB code are expended to spaces
+// - invisible codes(TAB, Zenkaku-space, EOL) are converted to characters('>', '__', '<')
+// - binary codes are converted to the visible code such as "␀", "␡"
+// purpose:
+// - displaying on the screen
+// - TAB/EOL(/Zenkaku-space) notation
+PRIVATE char tab_expanded_buf[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];	// tab-expanded-visible-text
+PRIVATE int tab_expanded_bytes = 0;							// bytes of tab-expanded-visible-text
+PRIVATE const char *tab_expanded_str_ptr = NULL;
+PRIVATE int tab_expanded_str_len = 0;
+
+int tab_expand__get_max_wl_idx(const char *original)
+{
+	get_tab_expanded(original);
+	return max_wrap_line_idx(lf_concatenated_buf, -1);
+}
+
+PRIVATE const char *get_tab_expanded__(const char *original);
+const char *get_tab_expanded(const char *original)
+{
+	if (original == tab_expanded_str_ptr) {
+		if (original[tab_expanded_str_len] != '\0') {
+			tab_expanded_str_ptr = NULL;
+		}
+	} else {
+		tab_expanded_str_ptr = NULL;
+	}
+	if (original != tab_expanded_str_ptr) {
+		get_tab_expanded__(original);
+	}
+	return tab_expanded_buf;
+}
+int get_tab_expanded_bytes(const char *original)
+{
+	get_tab_expanded(original);
+	return tab_expanded_bytes;
+}
+
+const char *get_lf_concatenated(const char *original)
+{
+	if (original == lf_concatenated_str_ptr) {
+		if (original[lf_concatenated_str_len] != '\0') {
+			lf_concatenated_str_ptr = NULL;
+		}
+	} else {
+		lf_concatenated_str_ptr = NULL;
+	}
+	if (original != lf_concatenated_str_ptr) {
+		lf_concatenated_str_len = line_data_strlen(original);
+		strlcpy__(lf_concatenated_buf, original, MAX_EDIT_LINE_LEN);
+		strlcat__(&lf_concatenated_buf[lf_concatenated_str_len], 1, "\n");
+		lf_concatenated_bytes = lf_concatenated_str_len + 1;
+		lf_concatenated_str_ptr = original;
+	}
+	return lf_concatenated_buf;
+}
+int get_lf_concatenated_bytes(const char *original)
+{
+	get_lf_concatenated(original);
+	return lf_concatenated_bytes;
+}
 
 // tab-expansion
 /* T:TAB, C:control-code ZZ:Zenkaku-space, L:'\n' */
 /* original:     "TabcdCefghZZijkl" */
 /* control_code: "TabcdCefghZZijklL" */
 /* visible_code: ">   abcd^?efgh[]ijkl<" */
-const char *te_tab_expand(const char *original)
+PRIVATE const char *get_tab_expanded__(const char *original)
 {
-	int col_idx;
 #ifdef ENABLE_SYNTAX
 	// is visible Tab/EOL/Zenkaku-space notation
 	int notation = (GET_APPMD(ed_SYNTAX_HIGHLIGHT) && GET_APPMD(ed_TAB_EOL_NOTATION));
 #endif // ENABLE_SYNTAX
 
-	te_concat_linefeed(original);
-	const char *orig_ptr = original;
-	char *vis_ptr = te_vis_code_buf;
-	for (col_idx = 0; *orig_ptr; ) {
-		if (*orig_ptr == '\t') {
+	internal_to_display_conv_init();
+
+	get_lf_concatenated(original);
+	const char *org_ptr = original;
+	char *teb_ptr = tab_expanded_buf;
+	for (int col_idx = 0; *org_ptr; ) {
+		if (*org_ptr == '\t') {
+			// fill spaces until the next tab stop
 #ifdef ENABLE_SYNTAX
-			*vis_ptr++ = notation ? TAB_NOTATION : ' ';
+			*teb_ptr++ = notation ? TAB_NOTATION : ' ';
 #else // ENABLE_SYNTAX
-			*vis_ptr++ = ' ';
+			*teb_ptr++ = ' ';
 #endif // ENABLE_SYNTAX
 			while (++col_idx % linewrap_tab_size) {
-				*vis_ptr++ = ' ';
+				*teb_ptr++ = ' ';
 			}
-			orig_ptr++;
-		} else if (is_ctrl_char((unsigned char)*orig_ptr)) {
-			*vis_ptr++ = '^';
-			*vis_ptr++ = (*orig_ptr == CHAR_DEL) ? '?' : (*orig_ptr + '@');
+			org_ptr++;
+///#define CTRL_CHAR_UTF8		// display control characters using UTF8 glyphs
+#ifdef CTRL_CHAR_UTF8
+		} else if (is_ctrl_char((UCHAR)*org_ptr)) {
+			*teb_ptr++ = '^';		// 0x01 ==> "^A"
+			*teb_ptr++ = (*org_ptr == CHAR_DEL) ? '?' : (*org_ptr + '@');
 			col_idx += 2;
-			orig_ptr++;
-		} else if ((unsigned char)*orig_ptr < 0x80) {	// ASCII
-			*vis_ptr++ = *orig_ptr++;
-			col_idx++;
-		} else {
+			org_ptr++;
+#endif // CTRL_CHAR_UTF8
 #ifdef ENABLE_SYNTAX
-			if (notation && strlcmp__(orig_ptr, UTF8_ZEN_SPACE) == 0)
-				strcpy__(vis_ptr, UTF8_ZEN_SPACE_NOTATION);
-			else
-				strlcpy__(vis_ptr, orig_ptr, utf8c_bytes(orig_ptr));
-#else // ENABLE_SYNTAX
-			strlcpy__(vis_ptr, orig_ptr, utf8c_bytes(orig_ptr));
+		} else if (notation && strlcmp__(org_ptr, UTF8_ZEN_SPACE) == 0) {
+			strcpy__(teb_ptr, UTF8_ZEN_SPACE_NOTATION);
+			col_idx += utf8c_columns(teb_ptr);
+			teb_ptr += utf8c_bytes(teb_ptr);
+			org_ptr += utf8c_bytes(org_ptr);
 #endif // ENABLE_SYNTAX
-			col_idx += utf8c_columns(orig_ptr);
-			int bytes = utf8c_bytes(orig_ptr);
-			vis_ptr += bytes;
-			orig_ptr += bytes;
+		} else {
+			const char *conv_ptr = internal_to_display_conv(org_ptr);
+			int vis_bytes = utf8c_bytes(conv_ptr);
+			strlcpy__(teb_ptr, conv_ptr, vis_bytes);
+			col_idx += utf8c_columns(teb_ptr);
+			teb_ptr += vis_bytes;
+			org_ptr += utf8c_bytes(org_ptr);
 		}
 	}
 #ifdef ENABLE_SYNTAX
-	*vis_ptr++ = notation ? EOL_NOTATION : ' ';
+	*teb_ptr++ = notation ? EOL_NOTATION : ' ';
 #else // ENABLE_SYNTAX
-	*vis_ptr++ = ' ';
+	*teb_ptr++ = ' ';
 #endif // ENABLE_SYNTAX
-	*vis_ptr = '\0';
-	te_vis_code_columns = col_idx + 1;
-	return te_vis_code_buf;
-}
-const char *te_concat_linefeed(const char *original)
-{
-	te_vis_code_buf[0] = '\0';	// clear te_vis_code_buf
-	strlcpy__(te_concat_lf_buf, original, MAX_EDIT_LINE_LEN * 2);
-	strlcat__(te_concat_lf_buf, MAX_EDIT_LINE_LEN * 2, "\n");
-	te_concat_lf_bytes = strnlen(te_concat_lf_buf, MAX_EDIT_LINE_LEN * 2);
-	return te_concat_lf_buf;
+	*teb_ptr = '\0';
+	tab_expanded_str_ptr = original;
+	tab_expanded_str_len = org_ptr - original;
+	tab_expanded_bytes = teb_ptr - tab_expanded_buf;
+	return tab_expanded_buf;
 }
 
 // End of editor3.c

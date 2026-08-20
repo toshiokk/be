@@ -33,7 +33,7 @@ extern do_next_t app_do_next;
   }
 #endif // ENABLE_DEBUG
 
-int do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf);
+do_next_t do_call_editor(int push_win, int list_mode, be_buf_t *buf, char *str_buf);
 void set_text_to_output_buf_editor(char *text);
 
 int chk_inp_str_ret_val_editor(int ret);
@@ -64,11 +64,6 @@ void doe_menu_0();
 void doe_inc_key_list_lines();
 
 typedef struct /*app_stack_entry*/ {
-	app_mode_t appmode_save;
-	editor_panes_t *editor_panes_save;
-#ifdef ENABLE_FILER
-	filer_panes_t *filer_panes_save;
-#endif // ENABLE_FILER
 	char status_bar_displayed;
 	char status_bar_prev_msg[MAX_SCRN_LINE_BUF_LEN+1];
 	char status_bar_color_idx;
@@ -77,7 +72,6 @@ typedef struct /*app_stack_entry*/ {
 } app_stack_entry;
 
 void clear_app_stack_depth();
-void set_app_stack_depth(int depth);
 int inc_app_stack_depth();
 int dec_app_stack_depth();
 int get_app_stack_depth();
@@ -85,13 +79,20 @@ app_stack_entry *get_app_stack_ptr(int depth);
 void clear_app_stack_entry(int depth);
 
 #ifdef ENABLE_FILER
-void push_app_stack(editor_panes_t *next_eps, be_buf_t *buf, filer_panes_t *next_fps);
+void push_app_stack(editor_panes_t *next_eps, be_buf_t *buf, filer_panes_t *next_fps,
+ editor_panes_t **prev_editor_panes, filer_panes_t **prev_filer_panes, app_mode_t *app_mode__);
 #else // ENABLE_FILER
-void push_app_stack(editor_panes_t *next_eps, be_buf_t *buf);
+void push_app_stack(editor_panes_t *next_eps, be_buf_t *buf,
+ editor_panes_t **prev_editor_panes, app_mode_t *app_mode__);
 #endif // ENABLE_FILER
-void pop_app_stack(BOOL change_parent_editor, BOOL change_parent_filer);
-void save_cur_app_state(int depth);
-void load_cur_app_state(int depth);
+
+#ifdef ENABLE_FILER
+void pop_app_stack(editor_panes_t* prev_editor_panes, filer_panes_t* prev_filer_panes,
+ app_mode_t prev_app_mode, BOOL change_parent_editor, BOOL change_parent_filer);
+#else // ENABLE_FILER
+void pop_app_stack(editor_panes_t* prev_editor_panes,
+ app_mode_t prev_app_mode, BOOL change_parent_editor);
+#endif // ENABLE_FILER
 
 void update_screen_app(s_b_d_t status_bar, int refresh);
 

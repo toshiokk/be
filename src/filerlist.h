@@ -40,14 +40,14 @@ typedef struct {
 	char org_cur_dir[MAX_PATH_LEN+1];	// original current directory
 	char cur_dir[MAX_PATH_LEN+1];		// current directory
 	char filter[MAX_PATH_LEN+1];		// e.g. "*.h", "*.c", "*.[hc], "": no filter
-	char listed_dir[MAX_PATH_LEN+1];	// directory from which file list gotten
 	char prev_dir[MAX_PATH_LEN+1];		// previous current directory
 	char next_file[MAX_PATH_LEN+1];		// next file to be selected after changing dir
+	char listed_dir[MAX_PATH_LEN+1];	// directory from which file list gotten
+	int file_info_entries;				// array size
+	file_info_t *file_info_array;		// array
 	int selecting_file_idx;				// starting file index into array(-1: not selecting)
 	int cur_file_idx;					// current file index into array
 	int cursor_y;						// cursor y position in file view
-	int file_info_entries;				// array size
-	file_info_t *file_info_array;		// array
 } filer_view_t;
 
 #define FILER_PANES		MAX_APP_PANES_2
@@ -84,6 +84,7 @@ int get_next_file_idx_selected(int file_idx);
 #define MY_ISDIR		0x02
 #define MY_ISLNK		0x04
 int is_cfv_file_selectable(int file_idx, mode_t type);
+int is_fv_file_selectable(filer_view_t *fv, int file_idx, mode_t type);
 
 int research_file_name_in_file_info_array(filer_view_t *fv, const char *file_name,
  int cur_dir_changed);

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-16 01:44+0900\n"
+"POT-Creation-Date: 2026-08-19 19:15+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,53 +70,58 @@ msgstr ""
 msgid "Tab size"
 msgstr ""
 
-#: ../disp.c:231 ../winin.c:444
+#: ../disp.c:244 ../winin.c:458
 #, c-format
 msgid "CWD: %s"
 msgstr ""
 
-#: ../editor.c:137 ../filer.c:324
+#: ../editor.c:119 ../filer.c:349
 #, c-format
 msgid "No command assigned for the key: 0x%04x([%s])"
 msgstr ""
 
-#: ../editor.c:144
+#: ../editor.c:126
 #, c-format
 msgid "Can not execute this function in editor List mode: [%s]"
 msgstr ""
 
-#: ../editor.c:257
+#: ../editor.c:243
 msgid "Edit command line:"
 msgstr ""
 
-#: ../editor.c:332
+#: ../editor.c:327
 msgid "Input key to show key code"
 msgstr ""
 
-#: ../editor.c:336
+#: ../editor.c:331
 #, c-format
 msgid "Key code input: %04x:[%s], mapped: %04x:[%s]"
 msgstr ""
 
-#: ../editor.c:616 ../fileio.c:112
+#: ../editor.c:570 ../fileio.c:111
 msgid "New File"
 msgstr ""
 
-#: ../editor.c:711
+#: ../editor.c:669
 #, c-format
-msgid "LINE:%4lu/%-4lu COLUMN:%3lu/%-3lu SIZE:%6lu%s CHR:%s ENC:%s EOL:%s"
+msgid "LINE:%4u/%-4u COLUMN:%3lu/%-3lu SIZE:%6lu%s CHR:%s"
 msgstr ""
 
-#: ../editor.c:762
+#: ../editor.c:673
+#, c-format
+msgid "ENC:%s EOL:%s"
+msgstr ""
+
+#: ../editor.c:731
 msgid "Modification not allowed in VIEW mode application"
 msgstr ""
 
-#: ../editor.c:767
+#: ../editor.c:736
 #, c-format
 msgid "Modification not allowed to %s file"
 msgstr ""
 
-#: ../editor2.c:135
+#: ../editor2.c:132
 msgid "---- No lines in this buffer ----"
 msgstr ""
 
@@ -176,7 +181,7 @@ msgstr ""
 msgid "Text Duplicated"
 msgstr ""
 
-#: ../editorcut.c:252 ../editorcut.c:745
+#: ../editorcut.c:252 ../editorcut.c:753
 msgid "Text Pasted with popping Cut-buffer"
 msgstr ""
 
@@ -184,11 +189,11 @@ msgstr ""
 msgid "Text Pasted as a stream with popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:268 ../editorcut.c:747
+#: ../editorcut.c:268 ../editorcut.c:276 ../editorcut.c:755
 msgid "Text Pasted without popping Cut-buffer"
 msgstr ""
 
-#: ../editorcut.c:288 ../editorcut.c:321 ../editorcut.c:740
+#: ../editorcut.c:296 ../editorcut.c:329 ../editorcut.c:748
 msgid "Cut-buffer empty !!"
 msgstr ""
 
@@ -201,90 +206,90 @@ msgstr ""
 msgid "Open existing file:"
 msgstr ""
 
-#: ../editorfile.c:61 ../filercmd2.c:174
+#: ../editorfile.c:61 ../filercmd2.c:176
 msgid "Open new file:"
 msgstr ""
 
-#: ../editorfile.c:110
+#: ../editorfile.c:111
 msgid "No project file found"
 msgstr ""
 
-#: ../editorfile.c:161
+#: ../editorfile.c:162
 msgid "Buffer is modified, Are you OK to reopen file ?"
 msgstr ""
 
-#: ../editorfile.c:183
+#: ../editorfile.c:184
 msgid "File re-loaded"
 msgstr ""
 
-#: ../editorfile.c:211
+#: ../editorfile.c:212
 msgid "Writing to specified file cancelled"
 msgstr ""
 
-#: ../editorfile.c:218
+#: ../editorfile.c:219
 #, c-format
 msgid "Buffer [%s] is locked"
 msgstr ""
 
-#: ../editorfile.c:224
+#: ../editorfile.c:225
 #, c-format
 msgid "File [%s] is locked"
 msgstr ""
 
-#: ../editorfile.c:252
+#: ../editorfile.c:253
 #, c-format
 msgid "Written to the file: %s"
 msgstr ""
 
-#: ../editorfile.c:270
+#: ../editorfile.c:271
 msgid "File Name to Write:"
 msgstr ""
 
-#: ../editorfile.c:285
+#: ../editorfile.c:286
 msgid "Path is not file, can not WRITE it"
 msgstr ""
 
-#: ../editorfile.c:293
+#: ../editorfile.c:294
 msgid "File exists, OVERWRITE it ?"
 msgstr ""
 
-#: ../editorfile.c:341
+#: ../editorfile.c:342
 msgid "Switched from not closeable buffer"
 msgstr ""
 
-#: ../editorfile.c:353
+#: ../editorfile.c:354
 msgid "One buffer closed"
 msgstr ""
 
-#: ../editorfile.c:490
+#: ../editorfile.c:491
 msgid "All buffers are saved"
 msgstr ""
 
-#: ../editorfile.c:513
+#: ../editorfile.c:514
 msgid "This buffer is NOT closeable"
 msgstr ""
 
-#: ../editorfile.c:535
+#: ../editorfile.c:536
 msgid "This buffer is NOT modified"
 msgstr ""
 
-#: ../editorfile.c:539
+#: ../editorfile.c:540
 msgid "This buffer is NOT saveable"
 msgstr ""
 
-#: ../editorfile.c:548
+#: ../editorfile.c:549
 msgid "Save modified buffer ?"
 msgstr ""
 
-#: ../editorfile.c:549
+#: ../editorfile.c:550
 msgid "Save modified buffer (ANSWERING \"No\" WILL DISCARD CHANGES) ?"
 msgstr ""
 
-#: ../editorfile.c:551
+#: ../editorfile.c:552
 msgid "Saving modified buffer cancelled"
 msgstr ""
 
-#: ../editorfile.c:559
+#: ../editorfile.c:560
 msgid "Buffer saved to file"
 msgstr ""
 
@@ -358,363 +363,357 @@ msgstr ""
 msgid "going to line-%d, byte-%d in file[%s]"
 msgstr ""
 
-#: ../editormove.c:205 ../editormove.c:274
+#: ../editormove.c:217 ../editormove.c:274
 msgid "No previous lines"
 msgstr ""
 
-#: ../editormove.c:235 ../editormove.c:306
+#: ../editormove.c:233 ../editormove.c:314
 msgid "No next lines"
 msgstr ""
 
-#: ../editormove.c:334
+#: ../editormove.c:342
 msgid "Input control character [^A-^Z,^[,^\\,^],^^,^_,DEL]"
 msgstr ""
 
-#: ../editormove.c:336
+#: ../editormove.c:344
 #, c-format
 msgid "Key code: %04x"
 msgstr ""
 
-#: ../editormove.c:348
+#: ../editormove.c:356
 msgid "Enter Unicode number in hex:"
 msgstr ""
 
-#: ../editormove.c:367
+#: ../editormove.c:375
 msgid "Select history string to paste:"
 msgstr ""
 
-#: ../editormove.c:744
+#: ../editormove.c:754
 #, c-format
 msgid "Space characters are filled from column %d to %d"
 msgstr ""
 
-#. but no undo info pushed
-#. warn it by setting unusual application color
-#: ../editorundo.c:118
+#: ../editorundo.c:119
 msgid "!!!! No UNDO info pushed !!!!"
 msgstr ""
 
-#: ../editorundo.c:225
+#: ../editorundo.c:226
 msgid "Undo-buffer empty !!"
 msgstr ""
 
-#: ../editorundo.c:234
+#: ../editorundo.c:235
 msgid "Redo-buffer empty !!"
 msgstr ""
 
-#: ../fileio.c:83
+#: ../fileio.c:82
 msgid "New file"
 msgstr ""
 
-#: ../fileio.c:85
+#: ../fileio.c:84
 #, c-format
 msgid "%d line read"
 msgstr ""
 
-#: ../fileio.c:86
+#: ../fileio.c:85
 #, c-format
 msgid "%d lines read"
 msgstr ""
 
-#: ../fileio.c:87
+#: ../fileio.c:86
 #, c-format
 msgid "%d liness read"
 msgstr ""
 
-#: ../fileio.c:88
+#: ../fileio.c:87
 #, c-format
 msgid "%d linesss read"
 msgstr ""
 
-#: ../fileio.c:105
+#: ../fileio.c:104
 #, c-format
 msgid "File [%s] not found"
 msgstr ""
 
-#: ../fileio.c:119
+#: ../fileio.c:118
 #, c-format
 msgid "[%s] is a directory"
 msgstr ""
 
-#: ../fileio.c:119
+#: ../fileio.c:118
 #, c-format
 msgid "[%s] is a special file"
 msgstr ""
 
 #. file size too large
-#: ../fileio.c:127
+#: ../fileio.c:126
 #, c-format
 msgid "[%s] is too large to read into buffer"
 msgstr ""
 
 #. regular file
-#: ../fileio.c:132
+#: ../fileio.c:131
 #, c-format
 msgid "Reading File %s ..."
 msgstr ""
 
-#: ../fileio.c:162
+#: ../fileio.c:157
 msgid "File name is invalid"
 msgstr ""
 
-#: ../fileio.c:168
+#: ../fileio.c:163
 msgid "File has modified by another program, OVERWRITE ?"
 msgstr ""
 
-#: ../fileio.c:170
+#: ../fileio.c:165
 msgid "Overwriting file cancelled"
 msgstr ""
 
 #. directory or special file
-#: ../fileio.c:184
+#: ../fileio.c:179
 #, c-format
 msgid "File [%s] is NOT a regular file !!"
 msgstr ""
 
 #. abs_path is exist as a regular file or not exist
-#: ../fileio.c:189
+#: ../fileio.c:184
 #, c-format
 msgid "Writing File %s ..."
 msgstr ""
 
-#: ../fileio.c:193
+#: ../fileio.c:188
 #, c-format
 msgid "Error in backing up File [%s] !!"
 msgstr ""
 
-#: ../fileio.c:204
+#: ../fileio.c:199
 #, c-format
 msgid "Can not set permissions %1$o on [%2$s]: %3$s"
 msgstr ""
 
-#: ../fileio.c:213
+#: ../fileio.c:208
 #, c-format
 msgid "%d line written"
 msgstr ""
 
-#: ../fileio.c:214
+#: ../fileio.c:209
 #, c-format
 msgid "%d lines written"
 msgstr ""
 
-#: ../fileio.c:215
+#: ../fileio.c:210
 #, c-format
 msgid "%d liness written"
 msgstr ""
 
-#: ../fileio.c:216
+#: ../fileio.c:211
 #, c-format
 msgid "%d linesss written"
 msgstr ""
 
-#: ../fileio.c:281
+#: ../fileio.c:274
 #, c-format
 msgid "BINARY file !! [%s]"
 msgstr ""
 
-#: ../fileio.c:445 ../fileio.c:575 ../fileio.c:591 ../fileio.c:608
+#: ../fileio.c:386 ../fileio.c:570 ../fileio.c:716
 #, c-format
 msgid "Can not read-open file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:759 ../fileio.c:780 ../fileio.c:800
+#: ../fileio.c:764 ../fileio.c:785 ../fileio.c:842
 #, c-format
 msgid "Can not write-open file [%s]: %s"
 msgstr ""
 
 #. -1: error
-#: ../fileio.c:768 ../fileio.c:789 ../fileio.c:827
+#: ../fileio.c:773 ../fileio.c:794 ../fileio.c:869
 #, c-format
 msgid "Can not close file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:816 ../fileio.c:843
+#: ../fileio.c:813 ../fileio.c:858
 #, c-format
 msgid "Can not write file [%s]: %s"
 msgstr ""
 
-#: ../fileio.c:893
+#: ../fileio.c:901
 #, c-format
 msgid "%d file loaded"
 msgstr ""
 
-#: ../fileio.c:894
+#: ../fileio.c:902
 #, c-format
 msgid "%d files loaded"
 msgstr ""
 
-#: ../fileio.c:895
+#: ../fileio.c:903
 #, c-format
 msgid "%d filess loaded"
 msgstr ""
 
-#: ../fileio.c:896
+#: ../fileio.c:904
 #, c-format
 msgid "%d filesss loaded"
 msgstr ""
 
-#: ../filer.c:333
+#: ../filer.c:358
 #, c-format
 msgid "Can not execute this function in filer List mode: [%s]"
 msgstr ""
 
-#: ../filercmd1.c:109
+#: ../filercmd1.c:126
 msgid "File view refreshed"
 msgstr ""
 
-#: ../filercmd1.c:187
+#: ../filercmd1.c:204
 msgid "Set file name filter:"
 msgstr ""
 
-#: ../filercmd1.c:225
+#: ../filercmd1.c:239
 msgid "File selection cleared"
 msgstr ""
 
-#: ../filercmd1.c:277
+#: ../filercmd1.c:291
 #, c-format
 msgid "%d file selected, size: %s, total size: %s"
 msgstr ""
 
-#: ../filercmd1.c:278
+#: ../filercmd1.c:292
 #, c-format
 msgid "%d files selected, size: %s, total size: %s"
 msgstr ""
 
-#: ../filercmd1.c:279
+#: ../filercmd1.c:293
 #, c-format
 msgid "%d filess selected, size: %s, total size: %s"
 msgstr ""
 
-#: ../filercmd1.c:280
+#: ../filercmd1.c:294
 #, c-format
 msgid "%d filesss selected, size: %s, total size: %s"
 msgstr ""
 
-#: ../filercmd1.c:307
+#: ../filercmd1.c:321
 msgid "Find file backward:"
 msgstr ""
 
-#: ../filercmd1.c:307
+#: ../filercmd1.c:321
 msgid "Find file forward:"
 msgstr ""
 
-#: ../filercmd1.c:314
+#: ../filercmd1.c:328
 #, c-format
 msgid "Searching file name [%s] forward"
 msgstr ""
 
-#: ../filercmd1.c:315
+#: ../filercmd1.c:329
 #, c-format
 msgid "Searching file name [%s] backward"
 msgstr ""
 
-#: ../filercmd1.c:321
+#: ../filercmd1.c:335
 #, c-format
 msgid "No such file name:[%s] found"
 msgstr ""
 
-#: ../filercmd1.c:323
+#: ../filercmd1.c:337
 #, c-format
 msgid "Such file name:[%s] found"
 msgstr ""
 
-#: ../filercmd2.c:221
+#: ../filercmd2.c:222
 msgid "Copy to (update):"
 msgstr ""
 
-#: ../filercmd2.c:221
+#: ../filercmd2.c:222
 msgid "Copy to (force):"
 msgstr ""
 
-#: ../filercmd2.c:288
+#: ../filercmd2.c:284
 msgid "Move to:"
 msgstr ""
 
-#: ../filercmd2.c:288
+#: ../filercmd2.c:284
 msgid "Move to (Update):"
 msgstr ""
 
-#: ../filercmd2.c:342
+#: ../filercmd2.c:344
 msgid "Drop files to Open(Enter)/Copy(M-c)/Move(M-m):"
 msgstr ""
 
-#: ../filercmd2.c:347
+#: ../filercmd2.c:348
 msgid "Input files to Open(Enter)/Copy(M-c)/Move(M-m):"
 msgstr ""
 
 #: ../filercmd2.c:352
-msgid "Drop files to Open:"
+msgid "Drop files to Copy(Enter/M-c)/Move(M-m) here:"
 msgstr ""
 
-#: ../filercmd2.c:356
-msgid "Drop files to Copy here (current directory):"
+#: ../filercmd2.c:355
+msgid "Drop files to Copy(M-c)/Move(Enter/M-m) here:"
 msgstr ""
 
-#: ../filercmd2.c:359
-msgid "Drop files to Move here (current directory):"
-msgstr ""
-
-#: ../filercmd2.c:449
+#: ../filercmd2.c:448
 msgid "Rename to:"
 msgstr ""
 
-#: ../filercmd2.c:465
+#: ../filercmd2.c:464
 #, c-format
 msgid "Trash file %s ?"
 msgstr ""
 
-#: ../filercmd2.c:467
+#: ../filercmd2.c:466
 #, c-format
 msgid "Trash %d files ?"
 msgstr ""
 
-#: ../filercmd2.c:498
+#: ../filercmd2.c:497
 #, c-format
 msgid "Delete file %s ?"
 msgstr ""
 
-#: ../filercmd2.c:500
+#: ../filercmd2.c:499
 #, c-format
 msgid "Delete %d files ?"
 msgstr ""
 
-#: ../filercmd2.c:529
+#: ../filercmd2.c:527
 #, c-format
 msgid "Mark file %s to be Deleted later ?"
 msgstr ""
 
-#: ../filercmd2.c:532
+#: ../filercmd2.c:530
 #, c-format
 msgid "Mark %d files to be Deleted later ?"
 msgstr ""
 
-#: ../filercmd2.c:565
+#: ../filercmd2.c:562
 #, c-format
 msgid "Make size of file %s 0 ?"
 msgstr ""
 
-#: ../filercmd2.c:568
+#: ../filercmd2.c:565
 #, c-format
 msgid "Make size of %d files 0 ?"
 msgstr ""
 
-#: ../filercmd2.c:609
+#: ../filercmd2.c:608
 msgid "Unzip files:"
 msgstr ""
 
-#: ../filercmd2.c:630
+#: ../filercmd2.c:624
 msgid "Zip files:"
 msgstr ""
 
-#: ../filercmd2.c:668
+#: ../filercmd2.c:662
 msgid "Mkdir:"
 msgstr ""
 
-#: ../filercmd2.c:679
+#: ../filercmd2.c:673
 msgid "Chdir to:"
 msgstr ""
 
-#: ../filercmd2.c:772
+#: ../filercmd2.c:766
 msgid "Quit filer"
 msgstr ""
 
@@ -742,60 +741,60 @@ msgstr ""
 msgid "Execute: ({} will be replaced with file-name)"
 msgstr ""
 
-#: ../filerrun.c:252
+#: ../filerrun.c:250
 msgid "Run: (with file)"
 msgstr ""
 
-#: ../filerrun.c:253
+#: ../filerrun.c:251
 msgid "Run: (with abs-path)"
 msgstr ""
 
-#: ../filerrun.c:254
+#: ../filerrun.c:252
 msgid "Run: (symlink)"
 msgstr ""
 
-#: ../filerrun.c:255
+#: ../filerrun.c:253
 msgid "Run: (current-directory-file)"
 msgstr ""
 
-#: ../filerrun.c:256
+#: ../filerrun.c:254
 msgid "Run: (script)"
 msgstr ""
 
-#: ../filerrun.c:257
+#: ../filerrun.c:255
 msgid "Run: (with SRC-dir and DEST-dir)"
 msgstr ""
 
-#: ../filerrun.c:258
+#: ../filerrun.c:256
 msgid "Run: (with SRC-file and DEST-file)"
 msgstr ""
 
-#: ../help.c:76
+#: ../help.c:71
 msgid "Editor File List"
 msgstr ""
 
-#: ../help.c:80
+#: ../help.c:74
 msgid "Editor Function List"
 msgstr ""
 
-#: ../help.c:83
+#: ../help.c:77
 msgid "Editor Key List"
 msgstr ""
 
-#: ../help.c:87
+#: ../help.c:81
 msgid "Filer Function List"
 msgstr ""
 
-#: ../help.c:90
+#: ../help.c:84
 msgid "Filer Key List"
 msgstr ""
 
-#: ../help.c:499
+#: ../help.c:487
 #, c-format
 msgid "Screen size: %dx%d"
 msgstr ""
 
-#: ../help.c:505
+#: ../help.c:493
 msgid "We're invincible with this !!"
 msgstr ""
 
@@ -829,21 +828,21 @@ msgstr ""
 msgid "Input key macro to run:"
 msgstr ""
 
-#: ../keys.c:323
+#: ../keys.c:325
 #, c-format
 msgid "Screen resized to (%d, %d)"
 msgstr ""
 
-#: ../main.c:483
+#: ../main.c:512
 #, c-format
 msgid "Are you OK to quit %s ?"
 msgstr ""
 
-#: ../main.c:487
+#: ../main.c:516
 msgid "Quiting program cancelled"
 msgstr ""
 
-#: ../main.c:707
+#: ../main.c:642
 #, c-format
 msgid ""
 "\n"
@@ -851,104 +850,108 @@ msgid ""
 msgstr ""
 
 #. 12345678901234567890 12345678901234567890 12345678901234567890
-#: ../main.c:709
+#: ../main.c:644
 msgid "Option"
 msgstr ""
 
-#: ../main.c:709
+#: ../main.c:644
 msgid "Long option"
 msgstr ""
 
-#: ../main.c:709
+#: ../main.c:644
 msgid "Meaning"
 msgstr ""
 
-#: ../main.c:710
+#: ../main.c:645
 msgid "Set tab-size to NUM[1-15]"
 msgstr ""
 
-#: ../main.c:711
+#: ../main.c:646
 msgid "View mode(Read only mode)"
 msgstr ""
 
-#: ../main.c:713
+#: ../main.c:648
 msgid "Read RCFILE"
 msgstr ""
 
-#: ../main.c:714
+#: ../main.c:649
 msgid "Don't look at berc files"
 msgstr ""
 
-#: ../main.c:717
-msgid "Use nkf"
+#: ../main.c:652
+msgid "Use no nkf"
 msgstr ""
 
-#: ../main.c:718
+#: ../main.c:653
 msgid "ASCII character encoding"
 msgstr ""
 
-#: ../main.c:719
+#: ../main.c:654
 msgid "UTF8 character encoding"
 msgstr ""
 
-#: ../main.c:720
+#: ../main.c:655
 msgid "BINARY file"
 msgstr ""
 
-#: ../main.c:721
+#: ../main.c:656
 msgid "BINARY file (same as '-e b')"
 msgstr ""
 
-#: ../main.c:722
+#: ../main.c:657
 msgid "TEXT file (same as '-e u')"
 msgstr ""
 
-#: ../main.c:723
+#: ../main.c:658
 msgid "JIS character encoding"
 msgstr ""
 
-#: ../main.c:724
+#: ../main.c:659
 msgid "EUCJP character encoding"
 msgstr ""
 
-#: ../main.c:725
+#: ../main.c:660
 msgid "SJIS character encoding"
 msgstr ""
 
-#: ../main.c:728
+#: ../main.c:663
 msgid "Two pane mode"
 msgstr ""
 
-#: ../main.c:731
+#: ../main.c:666
 msgid "Use High Background Color"
 msgstr ""
 
-#: ../main.c:734
+#: ../main.c:669
 msgid "Output debug log to stderr"
 msgstr ""
 
-#: ../main.c:736
+#: ../main.c:671
 msgid "Show version information"
 msgstr ""
 
-#: ../main.c:737
+#: ../main.c:672
 msgid "Show this message"
 msgstr ""
 
-#: ../main.c:738
+#: ../main.c:673
 msgid "Start at line number NUM"
 msgstr ""
 
-#: ../main.c:740
+#: ../main.c:674
+msgid "Show splash screen"
+msgstr ""
+
+#: ../main.c:676
 msgid "Investigate key sequence"
 msgstr ""
 
-#: ../main.c:755
+#: ../main.c:691
 #, c-format
 msgid "%s version %s (compiled at %s, %s)\n"
 msgstr ""
 
-#: ../main.c:757
+#: ../main.c:693
 #, c-format
 msgid " Build Options:\n"
 msgstr ""
@@ -1045,11 +1048,11 @@ msgstr ""
 msgid "Keyword [%s] found in %s search"
 msgstr ""
 
-#: ../search.c:261 ../search.c:333 ../search.c:854 ../winin.c:643
+#: ../search.c:261 ../search.c:333 ../search.c:854 ../winin.c:657
 msgid "Backward"
 msgstr ""
 
-#: ../search.c:261 ../search.c:333 ../search.c:854 ../winin.c:646
+#: ../search.c:261 ../search.c:333 ../search.c:854 ../winin.c:660
 msgid "Forward"
 msgstr ""
 
@@ -1096,51 +1099,51 @@ msgstr ""
 msgid "Out of memory!"
 msgstr ""
 
-#: ../winin.c:125
-msgid "Input string cancelled"
+#: ../winin.c:149
+msgid "Inputting a string cancelled"
 msgstr ""
 
-#: ../winin.c:440
+#: ../winin.c:454
 msgid "UP/PGUP:history, DOWN/PGDN:filer"
 msgstr ""
 
-#: ../winin.c:445
+#: ../winin.c:459
 #, c-format
 msgid "( %s )"
 msgstr ""
 
-#: ../winin.c:634
+#: ../winin.c:648
 msgid "Yes"
 msgstr ""
 
-#: ../winin.c:637
+#: ../winin.c:651
 msgid "No"
 msgstr ""
 
-#: ../winin.c:640
+#: ../winin.c:654
 msgid "All"
 msgstr ""
 
-#: ../winin.c:648
+#: ../winin.c:662
 msgid "Cancel"
 msgstr ""
 
-#: ../winin.c:650
+#: ../winin.c:664
 msgid "Stop"
 msgstr ""
 
-#: ../winin.c:653
+#: ../winin.c:667
 msgid "End"
 msgstr ""
 
-#: ../winin.c:656
+#: ../winin.c:670
 msgid "Quit"
 msgstr ""
 
-#: ../winin.c:659
+#: ../winin.c:673
 msgid "Undo"
 msgstr ""
 
-#: ../winin.c:662
+#: ../winin.c:676
 msgid "Redo"
 msgstr ""

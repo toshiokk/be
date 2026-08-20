@@ -602,7 +602,7 @@ PRIVATE int parse_keyword(const char **rc_line_ptr, const char *keyword)
 
 int register_default_color_syntax()
 {
-#define CL_TAB_EOL	CL_LG	// color for TAB/EOL/"　" notation
+#define CL_TAB_EOL	CL_DG	// color for TAB/EOL/"　" notation
 	add_file_type("*", ".*");
 	cur_file_type->tab_size = DEFAULT_TAB_SIZE;			// set default tab size
 	add_color_syntax(UTF8_ZEN_SPACE, "", -1, CL_TAB_EOL);	// Full width space

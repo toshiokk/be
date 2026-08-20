@@ -49,7 +49,6 @@ int byte_idx_from_byte_idx(const char *utf8s, int bytes);
 int byte_idx_from_col_idx(const char *utf8s, int columns, char_left_right_t left_right,
  int *col_idx__);
 int col_idx_from_byte_idx(const char *utf8s, int bytes);
-int vis_idx_from_byte_idx(const char *utf8s, int bytes);
 
 #ifdef START_UP_TEST
 void test_get_intersection();

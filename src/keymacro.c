@@ -250,7 +250,6 @@ _FLF_
 // ==> "1b00", ...
 char *get_string_from_key_macro(key_code_t *key_codes, int keys)
 {
-/////_D_(dump_memory("key_macro__:", key_codes, keys * 2))
 	static char str_buf[MAX_KEY_MACRO_STR_LEN + 1];
 	strcpy__(str_buf, "");
 	for (int key_idx = 0; key_idx < keys; key_idx++) {

@@ -139,7 +139,6 @@ checking that generated files are newer than configure... done
 configure: creating ./config.status
 config.status: creating Makefile
 config.status: creating config.h
-config.status: config.h is unchanged
 config.status: executing depfiles commands
 test -z "be" || rm -f be
 rm -f *.o
@@ -169,6 +168,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -192,15 +192,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  00
-BE editor version 260104 (compiled at 00:53:43, May 16 2026)
+BE editor version 260711 (compiled at 05:04:57, Jul 16 2026)
  Build Options:
    --enable-filer
    --enable-nls
@@ -218,7 +217,7 @@ BE editor version 260104 (compiled at 00:53:43, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  00 ------------------------------
 Summary - Running: ./configure
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 385400 May 16 00:53 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 460064 Jul 16 05:05 be
 
 ConfigurationNo.: 01, SizeOfExecutableFile ======================
 Running: ./configure --enable-all
@@ -368,8 +367,8 @@ ConfigurationNo.:  01
 make  all-am
 make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:31:2: warning: #warning "Terminal control via ncurses (curses_...)" [-Wcpp]
-   31 | #warning "Terminal control via ncurses (curses_...)"
+main.c:31:2: warning: #warning "ENABLE_NCURSES defined. Terminal control via ncurses (curses_...)" [-Wcpp]
+   31 | #warning "ENABLE_NCURSES defined. Terminal control via ncurses (curses_...)"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -393,6 +392,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -416,15 +416,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  -lncurses -lpcreposix
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  -lncurses -lpcreposix
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  01
-BE editor version 260104 (compiled at 00:53:57, May 16 2026)
+BE editor version 260711 (compiled at 05:05:08, Jul 16 2026)
  Build Options:
    --enable-filer
    --enable-nls
@@ -442,7 +441,7 @@ BE editor version 260104 (compiled at 00:53:57, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  01 ------------------------------
 Summary - Running: ./configure --enable-all
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 365656 May 16 00:54 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 374776 Jul 16 05:05 be
 
 ConfigurationNo.: 02, SizeOfExecutableFile ======================
 Running: ./configure --disable-all
@@ -612,6 +611,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -635,15 +635,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  02
-BE editor version 260104 (compiled at 00:54:12, May 16 2026)
+BE editor version 260711 (compiled at 05:05:20, Jul 16 2026)
  Build Options:
    --disable-filer
    --disable-nls
@@ -661,7 +660,7 @@ BE editor version 260104 (compiled at 00:54:12, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  02 ------------------------------
 Summary - Running: ./configure --disable-all
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 258640 May 16 00:54 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 329112 Jul 16 05:05 be
 
 ConfigurationNo.: 03, SizeOfExecutableFile ======================
 Running: ./configure --disable-filer
@@ -831,6 +830,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -854,15 +854,18 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
+winin.c: In function ‘input_str_main_loop’:
+winin.c:168:14: warning: unused variable ‘filer_dir’ [-Wunused-variable]
+  168 |         char filer_dir[MAX_PATH_LEN+1];
+      |              ^~~~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  03
-BE editor version 260104 (compiled at 00:54:24, May 16 2026)
+BE editor version 260711 (compiled at 05:05:30, Jul 16 2026)
  Build Options:
    --disable-filer
    --enable-nls
@@ -880,7 +883,7 @@ BE editor version 260104 (compiled at 00:54:24, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  03 ------------------------------
 Summary - Running: ./configure --disable-filer
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 318232 May 16 00:54 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 392800 Jul 16 05:05 be
 
 ConfigurationNo.: 04, SizeOfExecutableFile ======================
 Running: ./configure --disable-history
@@ -1050,6 +1053,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -1073,15 +1077,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  04
-BE editor version 260104 (compiled at 00:54:36, May 16 2026)
+BE editor version 260711 (compiled at 05:05:40, Jul 16 2026)
  Build Options:
    --enable-filer
    --enable-nls
@@ -1099,7 +1102,7 @@ BE editor version 260104 (compiled at 00:54:36, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  04 ------------------------------
 Summary - Running: ./configure --disable-history
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 377144 May 16 00:54 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 447712 Jul 16 05:05 be
 
 ConfigurationNo.: 05, SizeOfExecutableFile ======================
 Running: ./configure --disable-undo
@@ -1269,6 +1272,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -1292,15 +1296,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  05
-BE editor version 260104 (compiled at 00:54:49, May 16 2026)
+BE editor version 260711 (compiled at 05:05:51, Jul 16 2026)
  Build Options:
    --enable-filer
    --enable-nls
@@ -1318,7 +1321,7 @@ BE editor version 260104 (compiled at 00:54:49, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  05 ------------------------------
 Summary - Running: ./configure --disable-undo
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 381176 May 16 00:54 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 455872 Jul 16 05:05 be
 
 ConfigurationNo.: 06, SizeOfExecutableFile ======================
 Running: ./configure --disable-nls
@@ -1488,6 +1491,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -1511,15 +1515,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  06
-BE editor version 260104 (compiled at 00:55:03, May 16 2026)
+BE editor version 260711 (compiled at 05:06:02, Jul 16 2026)
  Build Options:
    --enable-filer
    --disable-nls
@@ -1537,7 +1540,7 @@ BE editor version 260104 (compiled at 00:55:03, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  06 ------------------------------
 Summary - Running: ./configure --disable-nls
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 377200 May 16 00:55 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 455960 Jul 16 05:06 be
 
 ConfigurationNo.: 07, SizeOfExecutableFile ======================
 Running: ./configure --disable-syntax
@@ -1707,6 +1710,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -1730,15 +1734,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  07
-BE editor version 260104 (compiled at 00:55:16, May 16 2026)
+BE editor version 260711 (compiled at 05:06:14, Jul 16 2026)
  Build Options:
    --enable-filer
    --enable-nls
@@ -1756,7 +1759,7 @@ BE editor version 260104 (compiled at 00:55:16, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  07 ------------------------------
 Summary - Running: ./configure --disable-syntax
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 377016 May 16 00:55 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 455808 Jul 16 05:06 be
 
 ConfigurationNo.: 08, SizeOfExecutableFile ======================
 Running: ./configure --disable-syntax --disable-rc
@@ -1926,6 +1929,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -1949,15 +1953,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  08
-BE editor version 260104 (compiled at 00:55:29, May 16 2026)
+BE editor version 260711 (compiled at 05:06:25, Jul 16 2026)
  Build Options:
    --enable-filer
    --enable-nls
@@ -1975,7 +1978,7 @@ BE editor version 260104 (compiled at 00:55:29, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  08 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-rc
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 372216 May 16 00:55 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 442816 Jul 16 05:06 be
 
 ConfigurationNo.: 09, SizeOfExecutableFile ======================
 Running: ./configure --disable-syntax --disable-regex
@@ -2145,6 +2148,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -2168,15 +2172,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  09
-BE editor version 260104 (compiled at 00:55:42, May 16 2026)
+BE editor version 260711 (compiled at 05:06:36, Jul 16 2026)
  Build Options:
    --enable-filer
    --enable-nls
@@ -2194,7 +2197,7 @@ BE editor version 260104 (compiled at 00:55:42, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  09 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-regex
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 368568 May 16 00:55 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 439136 Jul 16 05:06 be
 
 ConfigurationNo.: 10, SizeOfExecutableFile ======================
 Running: ./configure --disable-syntax --disable-rc --disable-regex
@@ -2364,6 +2367,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -2387,15 +2391,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  10
-BE editor version 260104 (compiled at 00:55:55, May 16 2026)
+BE editor version 260711 (compiled at 05:06:47, Jul 16 2026)
  Build Options:
    --enable-filer
    --enable-nls
@@ -2413,7 +2416,7 @@ BE editor version 260104 (compiled at 00:55:55, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  10 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-rc --disable-regex
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 359672 May 16 00:56 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 430240 Jul 16 05:06 be
 
 ConfigurationNo.: 11, SizeOfExecutableFile ======================
 Running: ./configure --disable-nkf
@@ -2583,6 +2586,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -2606,15 +2610,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  11
-BE editor version 260104 (compiled at 00:56:07, May 16 2026)
+BE editor version 260711 (compiled at 05:06:58, Jul 16 2026)
  Build Options:
    --enable-filer
    --enable-nls
@@ -2632,7 +2635,7 @@ BE editor version 260104 (compiled at 00:56:07, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  11 ------------------------------
 Summary - Running: ./configure --disable-nkf
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 381144 May 16 00:56 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 455808 Jul 16 05:07 be
 
 ConfigurationNo.: 12, SizeOfExecutableFile ======================
 Running: ./configure --disable-highbgc
@@ -2802,6 +2805,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -2825,15 +2829,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  12
-BE editor version 260104 (compiled at 00:56:20, May 16 2026)
+BE editor version 260711 (compiled at 05:07:09, Jul 16 2026)
  Build Options:
    --enable-filer
    --enable-nls
@@ -2851,7 +2854,7 @@ BE editor version 260104 (compiled at 00:56:20, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  12 ------------------------------
 Summary - Running: ./configure --disable-highbgc
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 381304 May 16 00:56 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 460064 Jul 16 05:07 be
 
 ConfigurationNo.: 13, SizeOfExecutableFile ======================
 Running: ./configure --disable-help
@@ -3021,6 +3024,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -3044,17 +3048,32 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  13
+BE editor version 260711 (compiled at 05:07:20, Jul 16 2026)
+ Build Options:
+   --enable-filer
+   --enable-nls
+   --enable-rc
+   --enable-nkf
+   --enable-history
+   --enable-regex
+   --enable-syntax
+   --enable-undo
+   --disable-help
+   --enable-highbgc
+   --disable-debug
+   --disable-ncurses
+   --disable-pcre
+   --disable-busybox
 Summary - ConfigurationNo.:  13 ------------------------------
 Summary - Running: ./configure --disable-help
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 372120 May 16 00:56 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 446816 Jul 16 05:07 be
 
 ConfigurationNo.: 14, SizeOfExecutableFile ======================
 Running: ./configure --enable-ncurses
@@ -3203,8 +3222,8 @@ ConfigurationNo.:  14
 make  all-am
 make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:31:2: warning: #warning "Terminal control via ncurses (curses_...)" [-Wcpp]
-   31 | #warning "Terminal control via ncurses (curses_...)"
+main.c:31:2: warning: #warning "ENABLE_NCURSES defined. Terminal control via ncurses (curses_...)" [-Wcpp]
+   31 | #warning "ENABLE_NCURSES defined. Terminal control via ncurses (curses_...)"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -3228,6 +3247,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -3251,15 +3271,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  -lncurses
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  -lncurses
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  14
-BE editor version 260104 (compiled at 00:56:47, May 16 2026)
+BE editor version 260711 (compiled at 05:07:32, Jul 16 2026)
  Build Options:
    --enable-filer
    --enable-nls
@@ -3277,7 +3296,7 @@ BE editor version 260104 (compiled at 00:56:47, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  14 ------------------------------
 Summary - Running: ./configure --enable-ncurses
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 369912 May 16 00:56 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 379032 Jul 16 05:07 be
 
 ConfigurationNo.: 15, SizeOfExecutableFile ======================
 Running: ./configure --enable-ncurses --enable-highbgc
@@ -3427,8 +3446,8 @@ ConfigurationNo.:  15
 make  all-am
 make[1]: Entering directory '/home/user/tools/be/be/src'
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o main.o main.c
-main.c:31:2: warning: #warning "Terminal control via ncurses (curses_...)" [-Wcpp]
-   31 | #warning "Terminal control via ncurses (curses_...)"
+main.c:31:2: warning: #warning "ENABLE_NCURSES defined. Terminal control via ncurses (curses_...)" [-Wcpp]
+   31 | #warning "ENABLE_NCURSES defined. Terminal control via ncurses (curses_...)"
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o appmode.o appmode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o editor.o editor.c
@@ -3452,6 +3471,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -3475,15 +3495,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  -lncurses
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  -lncurses
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  15
-BE editor version 260104 (compiled at 00:57:00, May 16 2026)
+BE editor version 260711 (compiled at 05:07:43, Jul 16 2026)
  Build Options:
    --enable-filer
    --enable-nls
@@ -3501,7 +3520,7 @@ BE editor version 260104 (compiled at 00:57:00, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  15 ------------------------------
 Summary - Running: ./configure --enable-ncurses --enable-highbgc
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 369912 May 16 00:57 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 379032 Jul 16 05:07 be
 
 ConfigurationNo.: 16, SizeOfExecutableFile ======================
 Running: ./configure --enable-pcre
@@ -3672,6 +3691,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -3695,15 +3715,14 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  -lpcreposix
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  -lpcreposix
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  16
-BE editor version 260104 (compiled at 00:57:13, May 16 2026)
+BE editor version 260711 (compiled at 05:07:54, Jul 16 2026)
  Build Options:
    --enable-filer
    --enable-nls
@@ -3721,7 +3740,7 @@ BE editor version 260104 (compiled at 00:57:13, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  16 ------------------------------
 Summary - Running: ./configure --enable-pcre
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 385400 May 16 00:57 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 460064 Jul 16 05:08 be
 
 ConfigurationNo.: 17, SizeOfExecutableFile ======================
 Running: ./configure --enable-debug
@@ -3894,6 +3913,7 @@ debug.c:25:2: warning: #warning "**** ENABLE_DEBUG defined (debug output is ENAB
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -3917,27 +3937,26 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  17
-260516-005735 debug.c 168 set_debug_printf_output: debug_printf() enabled
-260516-005735 main.c 71 main: START-BE May 16 2026 00:57:26 ==============================
-utilpath.c 37 get_starting_dir: starting_dir: [/home/user/tools/be/be/src/]
-utilpath.c 55 get_home_dir: home_dir: [/home/user/]
-utilpath.c 67 get_tty_name: tty_name: [/dev/pts/10]
-main.c 245 init_locale: LANG: [C.UTF-8]
-main.c 246 init_locale: cur locale: [C.UTF-8]
-main.c 247 init_locale: PACKAGE: [be], LOCALEDIR: [/usr/share/locale]
-main.c 626 load_cwd_into_another_pane: cur_dir-0: [/home/user/tools/be/be/src/]
-main.c 627 load_cwd_into_another_pane: cur_dir-1: [/home/user/tools/be/be/src/]
-main.c 295 parse_options: optind:0: ./be
-main.c 295 parse_options: optind:1: -v
-BE editor version 260104 (compiled at 00:57:26, May 16 2026)
+260716-050814 debug.c 168 set_debug_printf_output: debug_printf() enabled
+260716-050814 main.c 82 main: START-BE Jul 16 2026 05:08:06 ==============================
+utilpath.c 38 get_starting_dir: starting_dir: [/home/user/tools/be/be/src/]
+utilpath.c 69 get_home_dir: home_dir: [/home/user/]
+utilpath.c 81 get_tty_name: tty_name: [/dev/pts/7]
+main.c 221 init_locale: LANG: [C.UTF-8]
+main.c 222 init_locale: cur locale: [C.UTF-8]
+main.c 223 init_locale: PACKAGE: [be], LOCALEDIR: [/usr/share/locale]
+main.c 551 load_cwd_into_another_pane: cur_dir-0: [/home/user/tools/be/be/src/]
+main.c 552 load_cwd_into_another_pane: cur_dir-1: [/home/user/git/KOIKE/@@remote-debug-on-OBCDEV/]
+main.c 271 parse_options: optind:0: ./be
+main.c 271 parse_options: optind:1: -v
+BE editor version 260711 (compiled at 05:08:06, Jul 16 2026)
  Build Options:
    --enable-filer
    --enable-nls
@@ -3955,7 +3974,7 @@ BE editor version 260104 (compiled at 00:57:26, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  17 ------------------------------
 Summary - Running: ./configure --enable-debug
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 500728 May 16 00:57 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 571296 Jul 16 05:08 be
 
 ConfigurationNo.: 18, SizeOfExecutableFile ======================
 Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-filer
@@ -4125,6 +4144,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -4148,17 +4168,32 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  18
+BE editor version 260711 (compiled at 05:08:19, Jul 16 2026)
+ Build Options:
+   --enable-filer
+   --disable-nls
+   --disable-rc
+   --disable-nkf
+   --disable-history
+   --disable-regex
+   --disable-syntax
+   --disable-undo
+   --disable-help
+   --disable-highbgc
+   --disable-debug
+   --disable-ncurses
+   --disable-pcre
+   --disable-busybox
 Summary - ConfigurationNo.:  18 ------------------------------
 Summary - Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-filer
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 321456 May 16 00:57 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 396152 Jul 16 05:08 be
 
 ConfigurationNo.: 19, SizeOfExecutableFile ======================
 Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-debug
@@ -4331,6 +4366,7 @@ debug.c:25:2: warning: #warning "**** ENABLE_DEBUG defined (debug output is ENAB
       |  ^~~~~~~
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -4354,22 +4390,21 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  19
-260516-005801 debug.c 168 set_debug_printf_output: debug_printf() enabled
-260516-005801 main.c 71 main: START-BE May 16 2026 00:57:53 ==============================
-utilpath.c 37 get_starting_dir: starting_dir: [/home/user/tools/be/be/src/]
-utilpath.c 55 get_home_dir: home_dir: [/home/user/]
-utilpath.c 67 get_tty_name: tty_name: [/dev/pts/10]
-main.c 295 parse_options: optind:0: ./be
-main.c 295 parse_options: optind:1: -v
-BE editor version 260104 (compiled at 00:57:53, May 16 2026)
+260716-050836 debug.c 168 set_debug_printf_output: debug_printf() enabled
+260716-050836 main.c 82 main: START-BE Jul 16 2026 05:08:29 ==============================
+utilpath.c 38 get_starting_dir: starting_dir: [/home/user/tools/be/be/src/]
+utilpath.c 69 get_home_dir: home_dir: [/home/user/]
+utilpath.c 81 get_tty_name: tty_name: [/dev/pts/7]
+main.c 271 parse_options: optind:0: ./be
+main.c 271 parse_options: optind:1: -v
+BE editor version 260711 (compiled at 05:08:29, Jul 16 2026)
  Build Options:
    --disable-filer
    --disable-nls
@@ -4387,7 +4422,7 @@ BE editor version 260104 (compiled at 00:57:53, May 16 2026)
    --disable-busybox
 Summary - ConfigurationNo.:  19 ------------------------------
 Summary - Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-debug
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 344656 May 16 00:58 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 419224 Jul 16 05:08 be
 
 ConfigurationNo.: 20, SizeOfExecutableFile ======================
 Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-filer --enable-busybox
@@ -4557,6 +4592,7 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o debug.o debug.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o disp.o disp.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o encdet.o encdet.c
+gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o bincode.o bincode.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o fileio.o fileio.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filer.o filer.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o filerlist.o filerlist.c
@@ -4580,17 +4616,33 @@ gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/loc
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utf8.o utf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utils.o utils.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilstr.o utilstr.c
-gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o myutf8.o myutf8.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilpath.o utilpath.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o utilfile.o utilfile.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winin.o winin.c
 gcc -DSYSCONFDIR=\"/usr/local/etc\" -I.  -O2 -Iintl -DLOCALEDIR=\"/usr/share/locale\" -I/usr/local/include  -Wall -D_FILE_OFFSET_BITS=64 -g -O2 -c -o winout.o winout.c
-gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o myutf8.o utilpath.o utilfile.o winin.o winout.o  
+gcc -Wall -D_FILE_OFFSET_BITS=64 -g -O2   -o be main.o appmode.o editor.o editorfile.o editor2.o editor3.o editormove.o editormove2.o editorgoto.o editorcut.o editorcut2.o help.o editorkeys.o editorundo.o line.o linewrap.o buffer1.o buffer2.o buffers.o color.o debug.o disp.o encdet.o bincode.o fileio.o filer.o filerlist.o filercmd1.o filercmd2.o filerdir.o filerrun.o filerkeys.o history.o keymacro.o keys.o menu.o rcfile.o regexp.o search.o sig.o termifkey.o termif.o cursesif.o tio.o utf8.o utils.o utilstr.o utilpath.o utilfile.o winin.o winout.o  
 make[1]: Leaving directory '/home/user/tools/be/be/src'
 ConfigurationNo.:  20
+BE editor version 260711 (compiled at 05:08:40, Jul 16 2026)
+ Build Options:
+   --enable-filer
+   --disable-nls
+   --disable-rc
+   --disable-nkf
+   --disable-history
+   --disable-regex
+   --disable-syntax
+   --disable-undo
+   --disable-help
+   --disable-highbgc
+   --disable-debug
+   --disable-ncurses
+   --disable-pcre
+   --enable-busybox
 Summary - ConfigurationNo.:  20 ------------------------------
 Summary - Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-filer --enable-busybox
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 321456 May 16 00:58 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 396152 Jul 16 05:08 be
+======================
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a race-free mkdir -p... /usr/bin/mkdir -p
@@ -4732,64 +4784,64 @@ config.status: executing depfiles commands
 ----conf_make_all_patterns-complete----
 Summary - ConfigurationNo.:  00 ------------------------------
 Summary - Running: ./configure
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 385400 May 16 00:53 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 460064 Jul 16 05:05 be
 Summary - ConfigurationNo.:  01 ------------------------------
 Summary - Running: ./configure --enable-all
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 365656 May 16 00:54 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 374776 Jul 16 05:05 be
 Summary - ConfigurationNo.:  02 ------------------------------
 Summary - Running: ./configure --disable-all
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 258640 May 16 00:54 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 329112 Jul 16 05:05 be
 Summary - ConfigurationNo.:  03 ------------------------------
 Summary - Running: ./configure --disable-filer
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 318232 May 16 00:54 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 392800 Jul 16 05:05 be
 Summary - ConfigurationNo.:  04 ------------------------------
 Summary - Running: ./configure --disable-history
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 377144 May 16 00:54 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 447712 Jul 16 05:05 be
 Summary - ConfigurationNo.:  05 ------------------------------
 Summary - Running: ./configure --disable-undo
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 381176 May 16 00:54 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 455872 Jul 16 05:05 be
 Summary - ConfigurationNo.:  06 ------------------------------
 Summary - Running: ./configure --disable-nls
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 377200 May 16 00:55 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 455960 Jul 16 05:06 be
 Summary - ConfigurationNo.:  07 ------------------------------
 Summary - Running: ./configure --disable-syntax
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 377016 May 16 00:55 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 455808 Jul 16 05:06 be
 Summary - ConfigurationNo.:  08 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-rc
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 372216 May 16 00:55 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 442816 Jul 16 05:06 be
 Summary - ConfigurationNo.:  09 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-regex
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 368568 May 16 00:55 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 439136 Jul 16 05:06 be
 Summary - ConfigurationNo.:  10 ------------------------------
 Summary - Running: ./configure --disable-syntax --disable-rc --disable-regex
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 359672 May 16 00:56 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 430240 Jul 16 05:06 be
 Summary - ConfigurationNo.:  11 ------------------------------
 Summary - Running: ./configure --disable-nkf
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 381144 May 16 00:56 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 455808 Jul 16 05:07 be
 Summary - ConfigurationNo.:  12 ------------------------------
 Summary - Running: ./configure --disable-highbgc
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 381304 May 16 00:56 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 460064 Jul 16 05:07 be
 Summary - ConfigurationNo.:  13 ------------------------------
 Summary - Running: ./configure --disable-help
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 372120 May 16 00:56 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 446816 Jul 16 05:07 be
 Summary - ConfigurationNo.:  14 ------------------------------
 Summary - Running: ./configure --enable-ncurses
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 369912 May 16 00:56 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 379032 Jul 16 05:07 be
 Summary - ConfigurationNo.:  15 ------------------------------
 Summary - Running: ./configure --enable-ncurses --enable-highbgc
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 369912 May 16 00:57 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 379032 Jul 16 05:07 be
 Summary - ConfigurationNo.:  16 ------------------------------
 Summary - Running: ./configure --enable-pcre
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 385400 May 16 00:57 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 460064 Jul 16 05:08 be
 Summary - ConfigurationNo.:  17 ------------------------------
 Summary - Running: ./configure --enable-debug
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 500728 May 16 00:57 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 571296 Jul 16 05:08 be
 Summary - ConfigurationNo.:  18 ------------------------------
 Summary - Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-filer
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 321456 May 16 00:57 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 396152 Jul 16 05:08 be
 Summary - ConfigurationNo.:  19 ------------------------------
 Summary - Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-debug
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 344656 May 16 00:58 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 419224 Jul 16 05:08 be
 Summary - ConfigurationNo.:  20 ------------------------------
 Summary - Running: ./configure --disable-filer --disable-history --disable-undo --disable-nls --disable-syntax --disable-rc --disable-regex --disable-help --disable-debug --disable-ncurses --disable-pcre --disable-nkf --disable-busybox --disable-highbgc --enable-filer --enable-busybox
-Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 321456 May 16 00:58 be
+Summary - SizeOfExecutableFile: -rwxr-xr-x 1 user user 396152 Jul 16 05:08 be

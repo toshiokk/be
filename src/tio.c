@@ -327,7 +327,9 @@ int tio_differentiate_fgc_from_bgc(int bgc, int fgc)
 		}
 	}
 #if 1 // Avoid similar fgc/bgc
-	if (((bgc == CL_RD) && (fgc == CL_MG))
+	if (((bgc == CL_BK) && (fgc == CL_BL))
+	 || ((bgc == CL_BL) && (fgc == CL_BK))
+	 || ((bgc == CL_RD) && (fgc == CL_MG))
 	 || ((bgc == CL_MG) && (fgc == CL_RD))
 	 || ((bgc == CL_CY) && (fgc == CL_GR))
 	 || ((bgc == CL_GR) && (fgc == CL_CY))
@@ -404,7 +406,7 @@ void tio_fill_lines(int line_1, int line_2)
 		tio_output_string(yy, 0, tio_blank_line(), tio_get_columns());
 	}
 }
-const char *tio_blank_line(int type)
+const char *tio_blank_line()
 {
 	return tio_blank_line_buf;
 }
@@ -429,7 +431,29 @@ void tio_beep()
 //PPP	termif_beep();
 #endif // ENABLE_NCURSES
 }
-
+// redraw screen after clearing screen
+// - screen may flicker
+void tio_repaint()
+{
+#ifdef ENABLE_NCURSES
+	// no such function in curses
+#else // ENABLE_NCURSES
+	termif_send_clear();
+#endif // ENABLE_NCURSES
+	tio_redraw();
+}
+// redraw screen by sending whole data
+// - screen disruption will be fixed
+void tio_redraw()
+{
+#ifdef ENABLE_NCURSES
+	// no such function in curses
+#else // ENABLE_NCURSES
+	termif_clear_vscreen_painted();
+#endif // ENABLE_NCURSES
+	tio_refresh();
+}
+// update screen by sending recent changes
 void tio_refresh()
 {
 #ifdef ENABLE_NCURSES
@@ -437,24 +461,6 @@ void tio_refresh()
 #else // ENABLE_NCURSES
 	termif_refresh();
 #endif // ENABLE_NCURSES
-}
-void tio_repaint()
-{
-#ifdef ENABLE_NCURSES
-	// no function
-#else // ENABLE_NCURSES
-	termif_send_clear();
-#endif // ENABLE_NCURSES
-	tio_redraw();
-}
-void tio_redraw()
-{
-#ifdef ENABLE_NCURSES
-	// no function
-#else // ENABLE_NCURSES
-	termif_clear_vscreen_painted();
-#endif // ENABLE_NCURSES
-	tio_refresh();
 }
 
 key_code_t tio_input_key()

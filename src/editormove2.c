@@ -54,7 +54,6 @@ int editor_vert_scroll_lines()
 void post_cmd_processing(be_line_t *renum_from, cursor_horiz_vert_move_t cursor_move,
  locate_cursor_to_t locate_cursor, int update_needed)
 {
-/////flf_dprintf("curs_horiz_vert: %d, locate_cursor: %d\n", cursor_move, locate_cursor);
 	switch (GET_APPMD(ed_CURS_POSITIONING)) {
 	default:
 	case CURS_POSITIONING_NONE:		break;		// not change
@@ -224,8 +223,7 @@ int get_edit_win_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **lin
 		*byte_idx = _clbi_;
 		return 0;
 	}
-	te_concat_linefeed(_cl_->data);
-	int wl_idx = start_wl_idx_of_wrap_line(te_concat_lf_buf, _clbi_, -1);
+	int wl_idx = start_wl_idx_of_wrap_line(get_tab_expanded(_cl_->data), _clbi_, -1);
 	int line_cnt = 0;
 	for ( ; ; ) {
 		if (yy <= 0) {
@@ -236,8 +234,7 @@ int get_edit_win_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **lin
 				break;		// no previous line
 			}
 			_cl_ = NODE_PREV(_cl_);
-			te_concat_linefeed(_cl_->data);
-			wl_idx = max_wrap_line_idx(te_concat_lf_buf, -1);
+			wl_idx = max_wrap_line_idx(get_tab_expanded(_cl_->data), -1);
 		} else {
 			wl_idx--;
 		}
@@ -245,7 +242,7 @@ int get_edit_win_screen_top(be_line_t *_cl_, int _clbi_, int yy, be_line_t **lin
 		line_cnt++;
 	}
 	*line = _cl_;
-	*byte_idx = start_byte_idx_of_wrap_line(te_concat_lf_buf, wl_idx, 0, -1);
+	*byte_idx = start_byte_idx_of_wrap_line(get_tab_expanded(_cl_->data), wl_idx, 0, -1);
 	return line_cnt;
 }
 //------------------------------------------------------------------------------
@@ -286,7 +283,7 @@ PRIVATE int recalc_min_text_x_to_keep(int disp_width, int text_width, int margin
 
 void update_min_text_x_to_keep(int text_x)
 {
-	int min_text_x_to_keep = calc_min_text_x_to_keep(text_x);
+	int min_text_x_to_keep = calc_min_text_x_to_keep();
 	if (min_text_x_to_keep != EPCBVC_MIN_TEXT_X_TO_KEEP) {
 		EPCBVC_MIN_TEXT_X_TO_KEEP = min_text_x_to_keep;
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
@@ -296,9 +293,8 @@ void update_min_text_x_to_keep(int text_x)
 // because in the line wrapping mode, the contents width never beyond the display width.
 PRIVATE int calc_min_text_x_to_keep()
 {
-	te_concat_linefeed(EPCBVC_CL->data);
 	return recalc_min_text_x_to_keep(get_edit_win_columns_for_text(),
-	 end_col_idx_of_wrap_line(te_concat_lf_buf, 0, INT_MAX, -1),
+	 end_col_idx_of_wrap_line(get_tab_expanded(EPCBVC_CL->data), 0, INT_MAX, -1),
 	 HORIZ_SCROLL_MARGIN,
 	 start_col_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1),
 	 EPCBVC_MIN_TEXT_X_TO_KEEP);

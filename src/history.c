@@ -250,7 +250,7 @@ PRIVATE int save_history_if_modified_newer__expired(int hist_type_idx)
 PRIVATE int save_history_idx(int hist_type_idx)
 {
 	const char *file_path = get_history_file_path(hist_type_idx);
-/////
+////
 hmtflf_dprintf("ZZZZSSSS[%s]\n", file_path);
 	make_backup_files(file_path, get_backup_files());
 	int error = 0;
@@ -294,7 +294,7 @@ save_history_2:;
 
 PRIVATE int load_history_idx(int hist_type_idx)
 {
-	return read_file_into_buf_max_lines(get_history_file_path(hist_type_idx),
+	return read_file_into_buf_last_lines(get_history_file_path(hist_type_idx),
 	 get_history_buf(hist_type_idx), get_history_max_lines(hist_type_idx));
 }
 //------------------------------------------------------------------------------
@@ -541,18 +541,6 @@ void update_dir_history(const char *dir, char force_update)
 	} else if (force_update) {
 		modify_history_w_reloading(HISTORY_TYPE_IDX_DIR, dir);
 	}
-}
-
-//------------------------------------------------------------------------------
-int do_call_editor_w_history_buf(int hist_type_idx, char *buffer)
-{
-	load_histories_if_file_newer();
-	load_cut_buffers_if_file_newer();
-
-	//----------------------------------------------------
-	int ret = do_call_editor(1, APP_MODE_VIEWER, get_history_buf(hist_type_idx), buffer);
-	//----------------------------------------------------
-	return ret;
 }
 
 //------------------------------------------------------------------------------

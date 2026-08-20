@@ -22,6 +22,8 @@
 #ifndef disp_h
 #define disp_h
 
+void set_application_warning_state();
+char get_application_warning_state();
 void set_title_bar_color_by_state(int color_idx, char invert);
 const char *root_notation();
 

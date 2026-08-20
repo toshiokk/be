@@ -41,13 +41,11 @@ int edit_win_get_path_y();
 int edit_win_get_ruler_y();
 int edit_win_get_text_y();
 
-int te_tab_expand__max_wl_idx(const char *original);
-extern int te_concat_lf_bytes;
-extern char te_concat_lf_buf[MAX_EDIT_LINE_LEN * 2 +1];
-extern int te_vis_code_columns;
-extern char te_vis_code_buf[MAX_EDIT_LINE_LEN * MAX_TAB_SIZE +1];
-const char *te_tab_expand(const char *original);
-const char *te_concat_linefeed(const char *original);
+int tab_expand__get_max_wl_idx(const char *original);
+const char *get_tab_expanded(const char *original);
+int get_tab_expanded_bytes(const char *original);
+const char *get_lf_concatenated(const char *original);
+int get_lf_concatenated_bytes(const char *original);
 
 #endif // editor3_h
 

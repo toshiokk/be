@@ -186,7 +186,6 @@ int bufs_get_buf_idx(be_bufs_t *bufs, be_buf_t *buf)
 
 be_buf_t *bufs_get_buf_by_buffer_id(be_bufs_t *bufs, const char *file_path)
 {
-/////flf_dprintf("buffer_id: [%s]\n", file_path);
 	for ( ; IS_PTR_VALID(bufs); bufs = NODE_NEXT(bufs)) {
 		be_buf_t *buf = buf_get_buf_by_file_path(NODES_TOP_ANCH(bufs), file_path);
 		if (buf) {			// buf was found in bufs

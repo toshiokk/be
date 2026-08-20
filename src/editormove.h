@@ -45,7 +45,9 @@ int get_column_idx_at_which_curs_vert_moved();
 void doe_up();
 void doe_down();
 void doe_page_up();
+void doe_half_page_up();
 void doe_page_down();
+void doe_half_page_down();
 
 void doe_prev_word();
 void doe_next_word();
@@ -56,7 +58,7 @@ void doe_charcode();
 void doe_paste_from_history();
 
 void doe_tab();
-void doe_buffer_utf8c_bytes(char chr);
+void doe_put_utf8c_byte(char chr);
 void doe_enter_buffered_utf8c_bytes();
 void doe_carriage_return();
 void doe_carriage_return_indent();

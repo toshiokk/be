@@ -3,8 +3,6 @@
 #ifndef stdincs_h
 #define stdincs_h
 
-#include "config.h"
-
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
 #endif // HAVE_LIMITS_H
@@ -100,12 +98,17 @@
 #endif
 #define INT2BOOL(integer)	((integer) != 0)
 
+#define UCHAR	unsigned char
 #define UINT8	unsigned char
 #define INT8	char
 #define UINT16	unsigned short
 #define INT16	short
+
 #define UINT32	unsigned long
+#define UINT32_MAX		ULONG_MAX
 #define INT32	long
+#define INT32_MAX		LONG_MAX
+#define INT32_MIN		LONG_MIN
 
 #ifndef TRUE
 #define TRUE	1

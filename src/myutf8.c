@@ -5,16 +5,19 @@
 #include "utilincs.h"
 #include "tio.h"
 
-#if defined(WA_VAGUE_CHAR_AS_WIDE) || defined(ON_DEMAND_WCWIDTH)
-PRIVATE int is_vague_chr(wchar_t wc);
-#endif // defined(WA_VAGUE_CHAR_AS_WIDE) || defined(ON_DEMAND_WCWIDTH)
+PRIVATE int is_wide_chr(wchar_t wc);
+
+#if defined(WA_VAGUE_CHAR_WIDTH) || defined(ON_DEMAND_WCWIDTH)
+PRIVATE int is_vague_narrow_chr(wchar_t wc);
+PRIVATE int is_vague_wide_chr(wchar_t wc);
+#endif // defined(WA_VAGUE_CHAR_WIDTH) || defined(ON_DEMAND_WCWIDTH)
+
 #ifdef ON_DEMAND_WCWIDTH
 PRIVATE void init_wcwidth_cache();
 PRIVATE char get_wcwidth_on_demand(wchar_t wc);
 #endif // ON_DEMAND_WCWIDTH
 
 PRIVATE int my_mbtowc__(wchar_t *pwc, const char *utf8c, int max_len);
-PRIVATE int is_wide_chr(wchar_t wc);
 
 int my_mbwidth(const char *utf8c, int max_len)
 {
@@ -26,13 +29,16 @@ int my_wcwidth(wchar_t wc)
 		return 2;
 	}
 	int columns;
-#ifdef WA_VAGUE_CHAR_AS_WIDE
-	if (is_vague_chr(wc)) {
+#ifdef WA_VAGUE_CHAR_WIDTH
+	if (is_vague_narrow_chr(wc)) {
+		return 1;
+	}
+	if (is_vague_wide_chr(wc)) {
 		return 2;
 	}
-#endif // WA_VAGUE_CHAR_AS_WIDE
+#endif // WA_VAGUE_CHAR_WIDTH
 #ifdef ON_DEMAND_WCWIDTH
-	if (is_vague_chr(wc)) {
+	if (is_vague_narrow_chr(wc) || is_vague_wide_chr(wc)) {
 		columns = get_wcwidth_on_demand(wc);
 		if (columns) {
 			return columns;
@@ -52,24 +58,32 @@ PRIVATE int is_wide_chr(wchar_t wc)
 	 || (0x3000 <= wc && wc < 0xa000)
 	;
 }
-#if defined(WA_VAGUE_CHAR_AS_WIDE) || defined(ON_DEMAND_WCWIDTH)
-PRIVATE int is_vague_chr(wchar_t wc)
+#if defined(WA_VAGUE_CHAR_WIDTH) || defined(ON_DEMAND_WCWIDTH)
+PRIVATE int is_vague_narrow_chr(wchar_t wc)
 {
 	return 0
-	// WA_VAGUE_CHAR_AS_WIDE
-	 || (0x02c0 <= wc && wc < 0x03a0)
-	 || (0x03a0 <= wc && wc < 0x1100)
-	 || (0x1100 <= wc && wc < 0x1e00)
-	 || (0x2000 <= wc && wc < 0x2800)
-	//   0x2800       ~~      0x2900 : These are narrow
-	 || (0x2900 <= wc && wc < 0x2e80)
-	 || (0x2fc0 <= wc && wc < 0x3400)
-	 || (0xa000 <= wc && wc < 0xac00)
-	 || (0xd7a0 <= wc && wc < 0xe000)
-	 || (0xe000 <= wc && wc < 0xf900)
+	 || ((0x0080 <= wc) && (wc < 0x0100))	// Upper area of ASCII8
+	 || ((0x2400 <= wc) && (wc < 0x2422))	// "␀" ~ "␡"
+	 || ((0x2800 <= wc) && (wc < 0x2900))	// "⢀", "⢁" ...
+	 || ((0xd800 <= wc) && (wc < 0xe000))	// Surrogate pairs are displayed in narrow by my own rule
 	;
 }
-#endif // defined(WA_VAGUE_CHAR_AS_WIDE) || defined(ON_DEMAND_WCWIDTH)
+PRIVATE int is_vague_wide_chr(wchar_t wc)
+{
+	return 0
+	 || ((0x02c0 <= wc) && (wc < 0x03a0))
+	 || ((0x03a0 <= wc) && (wc < 0x1100))
+	 || ((0x1100 <= wc) && (wc < 0x1e00))
+	 || ((0x2000 <= wc) && (wc < 0x2800))
+	 || ((0x2100 <= wc) && (wc < 0x2400))
+	 || ((0x2900 <= wc) && (wc < 0x2e80))
+	 || ((0x2fc0 <= wc) && (wc < 0x3400))
+	 || ((0xa000 <= wc) && (wc < 0xac00))
+	 || ((0xd7a0 <= wc) && (wc < 0xd800))
+	 || ((0xe000 <= wc) && (wc < 0xf900))
+	;
+}
+#endif // defined(WA_VAGUE_CHAR_WIDTH) || defined(ON_DEMAND_WCWIDTH)
 #ifdef ON_DEMAND_WCWIDTH
 // -1: not investigated yet
 //  0: investigation failed
@@ -97,6 +111,61 @@ PRIVATE char get_wcwidth_on_demand(wchar_t wc)
 }
 #endif // ON_DEMAND_WCWIDTH
 
+// wctomb() in standard C library can not convert surrogate pair word from 0xd800 ~ 0xdfff.
+// So I provide my_wctomb() which can do it.
+int my_wctomb(char *utf8c, wchar_t wc)
+{
+	if (wc < 0x80) {		// 0xxxxxxx
+		utf8c[0] = WC_TO_UTF8_BYTE0_1(wc);
+		utf8c[1] = '\0';
+		return 1;
+	} else
+	if (wc < 0x0800) {		// 00000yyy yyxxxxxx
+		// 110yyyyy 10xxxxxx
+		utf8c[0] = WC_TO_UTF8_BYTE0_2(wc);
+		utf8c[1] = WC_TO_UTF8_BYTE1_2(wc);
+		utf8c[2] = '\0';
+		return 2;
+	} else
+	if (wc < 0x010000) {	// zzzzyyyy yyxxxxxx
+		// 1110zzzz 10yyyyyy 10xxxxxx
+		utf8c[0] = WC_TO_UTF8_BYTE0_3(wc);
+		utf8c[1] = WC_TO_UTF8_BYTE1_3(wc);
+		utf8c[2] = WC_TO_UTF8_BYTE2_3(wc);
+		utf8c[3] = '\0';
+		return 3;
+	} else
+	if (wc < 0x0200000) {	// 00000000 000wwwzz zzzzyyyy yyxxxxxx
+		// 11110www 10zzzzzz 10yyyyyy 10xxxxxx
+		utf8c[0] = WC_TO_UTF8_BYTE0_4(wc);
+		utf8c[1] = WC_TO_UTF8_BYTE1_4(wc);
+		utf8c[2] = WC_TO_UTF8_BYTE2_4(wc);
+		utf8c[3] = WC_TO_UTF8_BYTE3_4(wc);
+		utf8c[4] = '\0';
+		return 4;
+	} else
+	if (wc < 0x04000000) {	// 000000vv wwwwwwzz zzzzyyyy yyxxxxxx
+		// 111110vv 10wwwwww 10yyyyyy 10xxxxxx 10xxxxxx
+		utf8c[0] = WC_TO_UTF8_BYTE0_5(wc);
+		utf8c[1] = WC_TO_UTF8_BYTE1_5(wc);
+		utf8c[2] = WC_TO_UTF8_BYTE2_5(wc);
+		utf8c[3] = WC_TO_UTF8_BYTE3_5(wc);
+		utf8c[4] = WC_TO_UTF8_BYTE4_5(wc);
+		utf8c[5] = '\0';
+		return 5;
+	} else /* if (wc < 0x80000000) */ {	// 0uvvvvvv wwwwwwzz zzzzyyyy yyxxxxxx
+		// 1111110u 10vvvvvv 10wwwwww 10zzzzzz 10yyyyyy 10xxxxxx
+		utf8c[0] = WC_TO_UTF8_BYTE0_6(wc);
+		utf8c[1] = WC_TO_UTF8_BYTE1_6(wc);
+		utf8c[2] = WC_TO_UTF8_BYTE2_6(wc);
+		utf8c[3] = WC_TO_UTF8_BYTE3_6(wc);
+		utf8c[4] = WC_TO_UTF8_BYTE4_6(wc);
+		utf8c[5] = WC_TO_UTF8_BYTE5_6(wc);
+		utf8c[6] = '\0';
+		return 6;
+	}
+}
+
 // UTF8 character byte length
 int my_mblen(const char *utf8c, int max_len)
 {
@@ -109,7 +178,6 @@ int my_mbtowc(const char *utf8c, int max_len)
 	my_mbtowc__(&wc, utf8c, max_len);
 	return wc;
 }
-#define IS_UTF8_2ND_BYTE(byte)		(((byte) & 0xc0) == 0x80)	// 10xxxxxx
 PRIVATE int my_mbtowc__(wchar_t *pwc, const char *utf8c, int max_len)
 {
 	wchar_t wc = 0;
@@ -148,7 +216,7 @@ PRIVATE int my_mbtowc__(wchar_t *pwc, const char *utf8c, int max_len)
 	for (idx = 1; idx < max_len; idx++) {
 		if (idx >= len)
 			break;
-		if (IS_UTF8_2ND_BYTE(utf8c[idx]) == 0)
+		if (IS_UTF8_TRAILING_BYTE(utf8c[idx]) == 0)
 			break;		// UTF8 sequence trancated !!
 		wc = (wc << 6) | (utf8c[idx] & 0x3f);
 	}
@@ -156,5 +224,29 @@ PRIVATE int my_mbtowc__(wchar_t *pwc, const char *utf8c, int max_len)
 	*pwc = wc;
 	return len;		// return length
 }
+
+#ifdef START_UP_TEST
+PRIVATE char *test_my_wctomb(wchar_t wc);
+void test_my_utf8()
+{
+_FLF_
+	MY_UT_STR(test_my_wctomb(0x000000a0), "\xc2\xa0");
+	MY_UT_STR(test_my_wctomb(0x000007ff), "\xdf\xbf");
+	MY_UT_STR(test_my_wctomb(0x00000800), "\xe0\xa0\x80");
+	MY_UT_STR(test_my_wctomb(0x0000ffff), "\xef\xbf\xbf");
+	MY_UT_STR(test_my_wctomb(0x00010000), "\xf0\x90\x80\x80");
+	MY_UT_STR(test_my_wctomb(0x001fffff), "\xf7\xbf\xbf\xbf");
+	MY_UT_STR(test_my_wctomb(0x00200000), "\xf8\x88\x80\x80\x80");
+	MY_UT_STR(test_my_wctomb(0x03ffffff), "\xfb\xbf\xbf\xbf\xbf");
+	MY_UT_STR(test_my_wctomb(0x04000000), "\xfc\x84\x80\x80\x80\x80");
+	MY_UT_STR(test_my_wctomb(0x7fffffff), "\xfd\xbf\xbf\xbf\xbf\xbf");
+}
+PRIVATE char *test_my_wctomb(wchar_t wc)
+{
+	static char utf8_buf[MAX_UTF8C_BYTES + 1];
+	my_wctomb(utf8_buf, wc);
+	return utf8_buf;
+}
+#endif // START_UP_TEST
 
 // End of myutf8.c

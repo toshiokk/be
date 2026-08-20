@@ -25,11 +25,11 @@
 //       'MAX_PATH_LEN' would be expected to the buffer size.
 
 #define STR_BUF_LEN		4096
-int is_ctrl_char(unsigned char uchar)
+int is_ctrl_char(UCHAR uchar)
 {
 	return (uchar < 0x20) || (uchar == 0x7f);
 }
-int is_graph_char(unsigned char uchar)
+int is_graph_char(UCHAR uchar)
 {
 	return is_ctrl_char(uchar) == 0;
 }

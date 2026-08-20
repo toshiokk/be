@@ -374,7 +374,7 @@ typedef short key_code_t;		// signed short
 #define K_DOWN			KEY_DOWN
 #define K_RIGHT			KEY_RIGHT
 #define K_LEFT			KEY_LEFT
-/////#define K_ENTER			KEY_ENTER
+////#define K_ENTER			KEY_ENTER
 #define K_RESIZE		KEY_RESIZE
 
 // Shift key modified Fkey
@@ -584,7 +584,7 @@ key_code_t input_key_with_key_macro();
 
 void begin_check_break_key();
 void end_check_break_key();
-int check_break_key();
+int do_check_break_key();
 
 
 key_code_t map_key_code(key_code_t key);

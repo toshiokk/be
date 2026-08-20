@@ -35,8 +35,7 @@ void test_wrap_line()
 {
 flf_dprintf("----------------------------------------------------------------------\n");
 flf_dprintf("linewrap_tab_size: %d\n", linewrap_tab_size);
-#define CMP_RET(func_call, ret)		_FLF_; if (func_call != ret) { _WARNING_ }
-#define C_R(func_call, ret)			CMP_RET(func_call, ret)
+#define C_R(actual, expected)			MY_UT_INT((actual), (expected))
 	C_R(max_wrap_line_idx("1234567890", 10), 0)
 	C_R(max_wrap_line_idx("123456789012", 10), 1)
 	C_R(max_wrap_line_idx("1234567890123456789012", 10), 2)
@@ -187,15 +186,11 @@ flf_dprintf("linewrap_tab_size: %d\n", linewrap_tab_size);
 	int col_idx = 0;			\
 	int total_col_idx = 0;		\
 	int chr_cols;
-#define CHAR_COLUMNS(ptr)													\
-	((*ptr == '\0') ? 0 :													\
+#define CHAR_COLUMNS(ptr)															\
+	((*ptr == '\0') ? 0 :															\
 	 ((*ptr == '\t') ? (linewrap_tab_size - (total_col_idx % linewrap_tab_size)) :	\
-	  ((*ptr == '\n') ? 1 :													\
-	   ((is_ctrl_char((unsigned char)*ptr)) ? 2 :							\
-	    (((unsigned char)*ptr < 0x80) ? 1 : utf8c_columns(ptr))				\
-	   )																	\
-	  )																		\
-	 )																		\
+	  ((*ptr == '\n') ? 1 : utf8c_columns(ptr))										\
+	 )																				\
 	)
 #define FORWARD_WRAP_LINE_COL_IDX()		\
 	chr_cols = CHAR_COLUMNS(ptr);		\
@@ -391,44 +386,16 @@ int wrap_line_length(int width)
 }
 
 //------------------------------------------------------------------------------
-#define FORWARD_COL_IDX()										\
-	if (*ptr == '\t') {											\
+#define FORWARD_COL_IDX()												\
+	if (*ptr == '\t') {													\
 		col_idx += (linewrap_tab_size - (col_idx % linewrap_tab_size));	\
-		ptr++;													\
-	} else if (*ptr == '\n') {									\
-		col_idx++;												\
-		ptr++;													\
-	} else if (is_ctrl_char((unsigned char)*ptr)) {				\
-		col_idx += 2;											\
-		ptr++;													\
-	} else if ((unsigned char)*ptr < 0x80) {					\
-		col_idx++;												\
-		ptr++;													\
-	} else {													\
-		col_idx += utf8c_columns(ptr);							\
-		ptr += utf8c_bytes(ptr);								\
-	}
-#define FORWARD_VIS_IDX()										\
-	if (*ptr == '\t') {											\
-		vis_idx += (linewrap_tab_size - (col_idx % linewrap_tab_size));	\
-		col_idx += (linewrap_tab_size - (col_idx % linewrap_tab_size));	\
-		ptr++;													\
-	} else if (*ptr == '\n') {									\
-		vis_idx++;												\
-		col_idx++;												\
-		ptr++;													\
-	} else if (is_ctrl_char((unsigned char)*ptr)) {				\
-		vis_idx += 2;											\
-		col_idx += 2;											\
-		ptr++;													\
-	} else if ((unsigned char)*ptr < 0x80) {					\
-		vis_idx++;												\
-		col_idx++;												\
-		ptr++;													\
-	} else {													\
-		vis_idx += utf8c_bytes(ptr);							\
-		col_idx += utf8c_columns(ptr);							\
-		ptr += utf8c_bytes(ptr);								\
+		ptr++;															\
+	} else if (*ptr == '\n') {											\
+		col_idx++;														\
+		ptr++;															\
+	} else {															\
+		col_idx += utf8c_columns(ptr);									\
+		ptr += utf8c_bytes(ptr);										\
 	}
 
 // return byte_idx not exceed bytes
@@ -473,17 +440,6 @@ int col_idx_from_byte_idx(const char *utf8s, int bytes)
 		FORWARD_COL_IDX()
 	}
 	return col_idx;
-}
-
-int vis_idx_from_byte_idx(const char *utf8s, int bytes)
-{
-	int vis_idx = 0;
-	int col_idx = 0;
-	const char *ptr;
-	for (ptr = utf8s; *ptr && ptr - utf8s < bytes; ) {
-		FORWARD_VIS_IDX()
-	}
-	return vis_idx;
 }
 
 //------------------------------------------------------------------------------

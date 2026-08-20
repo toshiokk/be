@@ -40,7 +40,7 @@ int termif_end();
 
 #ifdef ON_DEMAND_WCWIDTH
 char investigate_wcwidth(wchar_t wc);
-char investigate_utf8c_width(const char *utf8c);
+char investigate_utf8c_columns(const char *utf8c);
 #endif // ON_DEMAND_WCWIDTH
 
 int termif_get_screen_size_from_term();

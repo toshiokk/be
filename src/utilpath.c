@@ -19,6 +19,7 @@
  *                                                                        *
  **************************************************************************/
 
+#include "appdefs.h"
 #include "utilincs.h"
 
 #define IS_EQ_STR(gotten, expected)		(strcmp(gotten, expected) == 0)
@@ -37,6 +38,19 @@ const char *get_starting_dir()
 flf_dprintf("starting_dir: [%s]\n", starting_dir);
 	}
 	return starting_dir;
+}
+const char *get_app_dir()
+{
+#if defined(APP_DIR)
+	static char app_dir[MAX_PATH_LEN+1] = "";
+	if (is_strlen_0(app_dir)) {		// prepare on-demand
+		concat_dir_and_dir(app_dir, get_home_dir(), APP_DIR);
+	}
+	return app_dir;
+#else // APP_DIR
+#warning "APP_DIR is not defined"
+	return get_home_dir();
+#endif // APP_DIR
 }
 const char *get_home_dir()
 {
@@ -67,6 +81,15 @@ const char *get_tty_name()
 flf_dprintf("tty_name: [%s]\n", tty_name);
 	}
 	return tty_name;
+}
+const char *get_tty_name_file_part_2_digits()
+{
+	static char file[MAX_PATH_LEN+1];
+	strlcpy__(file, get_tty_name_file_part(), MAX_PATH_LEN);
+	if (strlen_path(file) <= 1) {
+		insert_str(file, MAX_PATH_LEN, 0, "0", strlen("0"));	// "1" ==> "01"
+	}
+	return file;
 }
 const char *get_tty_name_file_part()
 {
@@ -415,10 +438,11 @@ char *remove_trailing_slash(const char *str, char *buf)
 }
 PRIVATE const char *get_trailing_slash_in_dir_path(const char *path)
 {
-	if (strlen_path(path) == 0) {
+	int len = strlen_path(path);
+	if (len == 0) {
 		return path;
 	}
-	const char *ptr = &path[strlen_path(path) - 1];
+	const char *ptr = &path[len - 1];
 	if (*ptr != '/') {
 		ptr++;
 	}

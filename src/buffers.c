@@ -37,8 +37,10 @@ be_bufs_t cut_buffers;
 be_bufs_t history_buffers;
 #endif // ENABLE_HISTORY
 
+#ifdef ENABLE_HELP
 // help buffers ---------------------------------------------------------------
 be_bufs_t help_buffers;
+#endif // ENABLE_HELP
 
 #ifdef ENABLE_UNDO
 // undo buffers ---------------------------------------------------------------
@@ -85,8 +87,6 @@ void init_bufferss()
 
 	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&edit_buffers,
 	 "#EDIT", "#edit_bufs_top_anch", "#edit_bufs_bot_anch"));
-///	bufss_insert_bufs_to_bottom(&all_bufferss, bufs_init(&edit_buffers,
-///	 "#EDIT", "#edit_bufs_top_anch", "#edit_bufs_bot_anch"));
 #ifdef ENABLE_HISTORY
 	bufs_insert_before(NODES_BOT_ANCH(&all_bufferss), bufs_init(&history_buffers,
 	 "#HIST", "#hist_bufs_top_anch", "#hist_bufs_bot_anch"));
@@ -402,7 +402,7 @@ const char *get_str_buf_cut_mode_on_cut_if_set()
 	return "";
 }
 //------------------------------------------------------------------------------
-int read_file_into_buf_max_lines(const char *file_path, be_buf_t *buf, int max_lines)
+int read_file_into_buf_last_lines(const char *file_path, be_buf_t *buf, int max_lines)
 {
 	buf_free_lines(buf);
 	int error = 0;

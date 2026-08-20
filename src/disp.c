@@ -21,11 +21,24 @@
 
 #include "headers.h"
 
+PRIVATE char application_warning_state = 0;
+void set_application_warning_state()
+{
+	application_warning_state = 1;
+}
+char get_application_warning_state()
+{
+	return application_warning_state;
+}
+
 void set_title_bar_color_by_state(int color_idx, char invert)
 {
 	if (geteuid() == 0) {
 		// If you are super user, you see strange color on title bar.
 		set_item_color_by_idx(ITEM_COLOR_IDX_ERROR, invert);
+	} else if (get_application_warning_state()) {
+		// some warning event happened, show title bar in the strange color
+		set_item_color_by_idx(ITEM_COLOR_IDX_WARNING3, invert);
 	} else {
 		// Normal color
 		set_item_color_by_idx(color_idx, invert);
@@ -90,8 +103,8 @@ PRIVATE char sb_overwrite_policy_table[S_B_TYPES][S_B_TYPES] = {
 // Examples:
 //  Reading File filename.ext ...
 //  Writing File filename.ext ...
-//  "abc" not found  |  LINE:  12/1234 COLUMN:40/80 SIZE:  1000 CHR:2f ENC:ASCII EOL:LF(NIX)
-//  12 files loaded  |  LINE:  12/1234 COLUMN:40/80 SIZE:  1000 CHR:2f ENC:ASCII EOL:LF(NIX)
+//  "abc" not found  |  LINE:  12/1234 COLUMN:40/80 SIZE:  1000 CHR:2f        ENC:ASCII EOL:LF(NIX)
+//  12 files loaded  |  LINE:  12/1234 COLUMN:40/80 SIZE:  1000 CHR:2f        ENC:ASCII EOL:LF(NIX)
 PRIVATE void disp_status_bar_percent_va(s_b_d_t status_bar_to_display,
  const char *msg, va_list ap)
 {

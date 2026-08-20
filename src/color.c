@@ -21,8 +21,6 @@
 
 #include "headers.h"
 
-#include "applvl.h"
-
 // Color table for the various items
 item_color_t item_colors[MAX_ITEM_COLORS];
 
@@ -72,6 +70,7 @@ item_color_t default_item_colors[MAX_ITEM_COLORS] = {
 	{ CL_LR, CL_YL, S(ITEM_COLOR_IDX_ERROR)					},
 	{ CL_BK, CL_WH, S(ITEM_COLOR_IDX_CURSOR_CHAR)			},
 	{ CL_LC, CL_D2, S(ITEM_COLOR_IDX_CURSOR_LINE)			},
+///	{ CL_BK, CL_D2, S(ITEM_COLOR_IDX_CURSOR_LINE)			},
 	{ CL_BR, CL_WH, S(ITEM_COLOR_IDX_LINE_NUMBER)			},
 	{ CL_LC, CL_BL, S(ITEM_COLOR_IDX_MENU_FRAME)			},
 	{ CL_LB, CL_LC, S(ITEM_COLOR_IDX_MENU_ITEM)				},
@@ -110,16 +109,6 @@ int is_work_space_color_dark()
 	return work_space_color_dark;
 }
 
-PRIVATE char work_space_color_warn = 0;
-void set_work_space_color_warn()
-{
-	work_space_color_warn = 1;
-}
-int is_work_space_color_warn()
-{
-	return work_space_color_warn;
-}
-
 //------------------------------------------------------------------------------
 
 // register item color
@@ -143,13 +132,6 @@ void get_item_color_by_idx(item_color_idx_t color_idx, char *bgc, char *fgc)
 void set_item_color_by_idx(item_color_idx_t color_idx, int reverse)
 {
 	if (0 <= color_idx && color_idx < MAX_ITEM_COLORS) {
-///		if (color_idx == ITEM_COLOR_IDX_TEXT_NORMAL) {
-///			if (is_work_space_color_warn()) {
-///				color_idx = ITEM_COLOR_IDX_TEXT_SELECTED2;
-///			} else if (is_work_space_color_dark()) {
-///				color_idx = ITEM_COLOR_IDX_DEFAULT;
-///			}
-///		}
 		if (is_work_space_color_dark()) {
 			reverse = ! reverse;
 		}

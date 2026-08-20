@@ -138,12 +138,14 @@ extern be_bufs_t history_buffers;
 #define HIST_BUFS_BOT_ANCH		NODES_BOT_ANCH(&history_buffers)
 #endif // ENABLE_HISTORY
 
+#ifdef ENABLE_HELP
 // Help buffers ---------------------------------------------------------------
 extern be_bufs_t help_buffers;
 #define HELP_BUFS_TOP_ANCH		NODES_TOP_ANCH(&help_buffers)
 #define HELP_BUFS_TOP_BUF		NODES_TOP_NODE(&help_buffers)
 #define HELP_BUFS_BOT_BUF		NODES_BOT_NODE(&help_buffers)
 #define HELP_BUFS_BOT_ANCH		NODES_BOT_ANCH(&help_buffers)
+#endif // ENABLE_HELP
 
 #ifdef ENABLE_UNDO
 // Undo buffers ---------------------------------------------------------------
@@ -220,7 +222,7 @@ const char *get_str_buf_mode_if_set();
 const char *get_str_buf_locked_if_set();
 const char *get_str_buf_cut_mode_on_cut_if_set();
 
-int read_file_into_buf_max_lines(const char *file_path, be_buf_t *buf, int max_lines);
+int read_file_into_buf_last_lines(const char *file_path, be_buf_t *buf, int max_lines);
 
 //------------------------------------------------------------------------------
 // Some compiler needs "inline static" for inline functions

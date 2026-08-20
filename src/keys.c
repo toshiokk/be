@@ -271,7 +271,7 @@ void end_check_break_key()
 		key_codes_restored = -1;	// stop restoration
 	}
 }
-int check_break_key()
+int do_check_break_key()
 {
 	if (is_saving_check_break_key()) {
 		if (input_key_check_break_key() == K_C_c) {	// Ctrl-C key is the break key
@@ -287,6 +287,7 @@ PRIVATE void redraw_1s_after_key_input(key_code_t key)
 {
 	static key_code_t prev_key = KEY_NONE;
 	if (key < 0 && prev_key >= 0) {
+_HMFLF_
 		tio_redraw();
 	}
 	prev_key = key;
@@ -309,6 +310,7 @@ PRIVATE void repaint_screen_after_60s(key_code_t key)
 {
 	if (key >= 0) {
 		if (get_msec_past_after_key_input() >= WHOLE_UPDATE_INTERVAL_MSEC) {
+_HMFLF_
 			tio_repaint();
 		}
 		clear_msec_past_after_key_input();
@@ -738,11 +740,11 @@ int key_code_from_key_str(const char *str, key_code_t* key_code)
 		}
 		return 1;		// No end mark found
 	} else
-	if (is_key_print((UINT8)str[0])) {
-		*key_code = (UINT8)str[0];		// "A", "\x80" ~ "\xff"
+	if (is_key_print((UCHAR)str[0])) {
+		*key_code = (UCHAR)str[0];		// "A", "\x80" ~ "\xff"
 		return 1;
 	}
-	*key_code = (UINT8)str[0];
+	*key_code = (UCHAR)str[0];
 	return 1;
 }
 
@@ -756,7 +758,6 @@ const char *get_key_name_from_key_code__(key_code_t key_code, char *buf);
 const char *get_key_name_from_key_code(key_code_t key_code, char *buf)
 {
 	const char *str = get_key_name_from_key_code__(key_code, buf);
-/////flf_dprintf("%04x ==> [%s]\n", key_code, str);
 	return str;
 }
 const char *get_key_name_from_key_code__(key_code_t key_code, char *buf)
@@ -777,7 +778,7 @@ const char *get_key_name_from_key_code__(key_code_t key_code, char *buf)
 		snprintf(buf, MAX_KEY_NAME_LEN+1, "%c", key_code);
 	} else
 	if (IS_META_KEY(key_code)) {	// 0x1bxx
-		unsigned char chr = KEY_LOW_BYTE(key_code);
+		UCHAR chr = KEY_LOW_BYTE(key_code);
 		if (isgraph(chr)) {
 			snprintf(buf, MAX_KEY_NAME_LEN+1, "@%c", chr);
 		} else if (0 <= chr && chr < 0x20) {
@@ -840,7 +841,7 @@ int is_key_print(key_code_t key)
 }
 int is_key_input(key_code_t key)
 {
-	return ((key) != K_RESIZE) && ((key) != K_NONE);
+	return (key != K_RESIZE) && (key != K_NONE);
 }
 
 #ifdef START_UP_TEST

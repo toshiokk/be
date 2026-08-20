@@ -33,15 +33,16 @@
 //------------------------------------------------------------------------------
 #ifdef ENABLE_DEBUG
 
-						// DT...: Debug Time in Debug log
-#define DT0			0	// no Time
-#define DTSM		1	// SSSSSS.mmm
-#define DTSU		2	// SSS.uuuuuu
-#define DTHM		3	// HH:MM:SS.mmm
-#define DTHMT		4	// HH:MM:SS.mmm:tty
-#define DTHU		6	// HH:MM:SS.uuuuuu
-#define DTYH		9	// YYMMDD-HHMMSS
-#define DTYHM		12	// YYMMDD-HHMMSS.mmm
+							// DT...: Debug Time in Debug log
+#define DT0			0		// no Time
+#define DTSM		1		// SSSSSS.mmm
+#define DTSU		2		// SSS.uuuuuu
+#define DTHM		3		// HH:MM:SS.mmm
+#define DTHMT		4		// HH:MM:SS.mmm:tty
+#define DTHU		6		// HH:MM:SS.uuuuuu
+#define DTYH		9		// YYMMDD-HHMMSS
+#define DTYHM		12		// YYMMDD-HHMMSS.mmm
+#define DT_PROGERR	0x10	// programming error
 
 #define _FL_		__FILE__
 #define _LN_		__LINE__
@@ -66,7 +67,8 @@
 #define debug_e_vprintf(args...)			debug_e_vprintf_(args)
 #define debug_b_printf(args...)				debug_b_printf_(args)
 #define debug_b_vprintf(args...)			debug_b_vprintf_(args)
-#define progerr_printf(args...)		tflfl_dprintf_(0x10 | DTYH, _FL_, _LN_, _FN_, "PROGERR", args)
+#define progerr_printf(args...)				\
+  tflfl_dprintf_(DT_PROGERR | DTYH, _FL_, _LN_, _FN_, "PROGERR", args)
 
 #else // ENABLE_DEBUG
 
@@ -100,13 +102,13 @@
 #define _UFLF_						huflf_dprintf("\n");
 #define _FLF_						flf_dprintf("\n");
 #define _FLF						flf_dprintf("");
-#define _PROGERR_					flf_dprintf("PROGERR\n");
-#define _FATALERR_					flf_dprintf("FATALERR\n");
-#define _WARNING_					flf_dprintf("WARNING\n");
+#define _PROGERR_					flf_dprintf("_PROGERR_\n");
+#define _FATALERR_					flf_dprintf("_FATALERR_\n");
+#define _WARNING_					flf_dprintf("_WARNING_\n");
 
 #ifdef ENABLE_DEBUG
 
-void dump_memory(char *message, void *memory, int bytes);
+void dump_memory(char *message, const void *memory, int bytes);
 void dump_string(char *message, const char *string);
 
 void tflfl_dprintf_(int time, const char *file, int line,

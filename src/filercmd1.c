@@ -38,14 +38,13 @@ PRIVATE void disp_files_selected();
 
 int chk_inp_str_ret_val_filer(int ret)
 {
-flf_dprintf("ret__[%s]\n", get_do_next_name(ret));
+flf_dprintf("do_next__[%s]\n", get_do_next_name(ret));
 	if (ret <= EF_TO_QUIT) {
 		// EF_CANCELLED/EF_TO_QUIT ==> EF_NONE so that filer does not quit
 		SET_app_do_next(EF_NONE);
-		return 1;
-	} else {
-		SET_app_do_next(ret);
+		return 1;							// 1: nothing input
 	}
+	SET_app_do_next(ret);
 	return IS_EF_ENTER_STRING(ret) ? 0 : 1;	// 0: something input
 }
 
@@ -72,7 +71,16 @@ void dof_page_up()
 	filer_view_t *fv = get_fv_from_cur_pane();
 	FV_CUR_F_IDX(fv) -= filer_vert_scroll_lines(),
 	normalize_filer_cur_file_idx(fv);
-///	FV_CURS_Y(fv) -= filer_vert_scroll_lines(),
+	FV_CURS_Y(fv) -= filer_vert_scroll_lines(),
+	normalize_filer_cursor_y(fv);
+	select_from_start_to_cur();
+}
+void dof_half_page_up()
+{
+	filer_view_t *fv = get_fv_from_cur_pane();
+	FV_CUR_F_IDX(fv) -= filer_vert_scroll_lines() / 2,
+	normalize_filer_cur_file_idx(fv);
+	FV_CURS_Y(fv) -= filer_vert_scroll_lines() / 2,
 	normalize_filer_cursor_y(fv);
 	select_from_start_to_cur();
 }
@@ -81,7 +89,16 @@ void dof_page_down()
 	filer_view_t *fv = get_fv_from_cur_pane();
 	FV_CUR_F_IDX(fv) += filer_vert_scroll_lines(),
 	normalize_filer_cur_file_idx(fv);
-///	FV_CURS_Y(fv) += filer_vert_scroll_lines(),
+	FV_CURS_Y(fv) += filer_vert_scroll_lines(),
+	normalize_filer_cursor_y(fv);
+	select_from_start_to_cur();
+}
+void dof_half_page_down()
+{
+	filer_view_t *fv = get_fv_from_cur_pane();
+	FV_CUR_F_IDX(fv) += filer_vert_scroll_lines() / 2,
+	normalize_filer_cur_file_idx(fv);
+	FV_CURS_Y(fv) += filer_vert_scroll_lines() / 2,
 	normalize_filer_cursor_y(fv);
 	select_from_start_to_cur();
 }
@@ -192,12 +209,9 @@ void dof_set_filter()
 }
 void dof_select_file()
 {
-flf_dprintf("get_cfv_files_selected() %d\n", get_cfv_files_selected());
 	set_cfv_file_selected(-1, get_cfv_file_selected(-1) ^ _FILE_SEL_MAN_);
-flf_dprintf("get_cfv_files_selected() %d\n", get_cfv_files_selected());
 	dof_down();
 	disp_files_selected();
-flf_dprintf("get_cfv_files_selected() %d\n", get_cfv_files_selected());
 }
 void dof_select_no_file()
 {

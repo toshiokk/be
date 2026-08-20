@@ -60,7 +60,8 @@ char *getenv_pwd(char *pwd);
 char *getenv__(char *env);
 
 int write_text_to_file(const char *file_path, char append, const char *text);
-int read_file_tail_into_buf(const char *file_path, int line_from_tail, const char *buf);
+ssize_t write_bin_data_to_file(const char *file_path, const char *binary, size_t size);
+ssize_t read_bin_data_from_file(const char *file_path, char *binary, size_t size);
 
 int remove_file(const char *file_path);
 

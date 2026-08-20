@@ -19,6 +19,6 @@ if [ ! -d /mnt/c ]; then
   done
 else
   # WSL: send text in file $HOME/.be/clipboard to system clipboard
-  clip.exe <$HOME/.be/clipboard
+  iconv -f utf-8 -t cp932 $HOME/.be/clipboard | clip.exe
   echo -n "Text in the 'BE clipboard file' was copied to the 'system clipboard'"
 fi

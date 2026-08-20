@@ -90,12 +90,12 @@ PRIVATE int doe_search_first_()
 void doe_search_next_backward()
 {
 	SET_APPMD(ed_REVERSE_SEARCH);
-	search_str_once(get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH), LAST_ATTEMPT_1);
+	search_str_once(get_last_searched_needle(), LAST_ATTEMPT_1);
 }
 void doe_search_next_forward()
 {
 	CLR_APPMD(ed_REVERSE_SEARCH);
-	search_str_once(get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH), LAST_ATTEMPT_1);
+	search_str_once(get_last_searched_needle(), LAST_ATTEMPT_1);
 }
 
 //------------------------------------------------------------------------------
@@ -151,7 +151,7 @@ void doe_replace()
 // search0_replace1 = 0: search, 1: replace
 int input_search_str(int search0_replace1, char *input_buf)
 {
-	const char *last_needle = get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH);
+	const char *last_needle = get_last_searched_needle();
 	char default_needle[MAX_PATH_LEN+1];
 
 	if (strlen(last_needle)) {
@@ -228,7 +228,7 @@ PRIVATE int search_needle_in_bufs(be_line_t **ptr_line, int *ptr_byte_idx,
 // Search for a string
 int search_str_once(const char *needle, int attempt_count)
 {
-	const char *last_needle = get_last_searched_needle(HISTORY_TYPE_IDX_SEARCH);
+	const char *last_needle = get_last_searched_needle();
 
 	memorize_cur_file_pos_before_jump();
 	if (found_in_prev_search == 0 && direction_of_prev_search == SEARCH_DIR()

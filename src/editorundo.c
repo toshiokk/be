@@ -115,6 +115,7 @@ int check_undo_state_after_change()
 	 && (count_undo_bufs() == undo_state_prev_count_undo_bufs)) {
 		// but no undo info pushed
 		// warn it by setting unusual application color
+		set_application_warning_state();
 		disp_status_bar_err(_("!!!! No UNDO info pushed !!!!"));
 		progerr_printf("No UNDO info pushed for [%s](%d,%d,%d)\n", undo_state_func_id_done,
 		 (get_epc_buf() != EDIT_BUFS_TOP_ANCH),

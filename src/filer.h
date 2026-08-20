@@ -42,10 +42,10 @@ filer_view_t *get_fv_from_another_pane();
 #define FV_ORG_CUR_DIR(fv)				((fv)->org_cur_dir)
 #define FV_CUR_DIR(fv)					((fv)->cur_dir)
 #define FV_FILTER(fv)					((fv)->filter)
-#define FV_LISTED_DIR(fv)				((fv)->listed_dir)
 #define FV_SEL_F_IDX(fv)				((fv)->selecting_file_idx)
 #define FV_CUR_F_IDX(fv)				((fv)->cur_file_idx)
 #define FV_CURS_Y(fv)					((fv)->cursor_y)
+#define FV_LISTED_DIR(fv)				((fv)->listed_dir)
 #define FV_F_INFO_ENTRIES(fv)			((fv)->file_info_entries)
 #define FV_F_INFO_ARRAY(fv)				((fv)->file_info_array)
 #define FV_F_INFO(fv, idx)				(FV_F_INFO_ARRAY(fv)[idx])
@@ -56,6 +56,7 @@ filer_view_t *get_fv_from_another_pane();
 #define FV_F_INFO_SELECTED(fv, idx)		(FV_F_INFO(fv, idx).selected)
 file_info_t *get_cfv_file_info_array();
 int get_cfv_file_info_entries();
+file_info_t *get_fv_file_info_array(filer_view_t *fv);
 int get_fv_file_info_entries(filer_view_t *fv);
 file_info_t *get_fv_file_info(filer_view_t *fv, int file_idx);
 
@@ -67,11 +68,19 @@ __mode_t get_cfv_file_st_mode(int file_idx);
 void set_cfv_file_selected(int file_idx, char selected);
 char get_cfv_file_selected(int file_idx);
 
-file_info_t *get_cfv_file_ptr_from_pane(int pane_idx);
-void set_cur_fv_file_idx(int file_idx);
-int get_cfv_file_idx();
+const char *get_fv_file_name(filer_view_t *fv, int file_idx);
+const char *get_fv_symlink(filer_view_t *fv, int file_idx);
+struct stat get_fv_file_st(filer_view_t *fv, int file_idx);
+__mode_t get_fv_file_st_mode(filer_view_t *fv, int file_idx);
+void set_fv_file_selected(filer_view_t *fv, int file_idx, char selected);
+char get_fv_file_selected(filer_view_t *fv, int file_idx);
 
-int do_call_filer(int push_win, int list_mode, const char *dir, const char *filter,
+file_info_t *get_cfv_file_ptr_from_pane(int pane_idx);
+void set_cfv_file_idx(int file_idx);
+int get_cfv_file_idx();
+int get_fv_file_idx(filer_view_t *fv);
+
+do_next_t do_call_filer(int push_win, int list_mode, const char *dir, const char *filter,
  char *path_buf);
 void set_text_to_output_buf_filer(char *text);
 

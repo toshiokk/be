@@ -32,7 +32,7 @@ app_mode_t app_mode__;
 
 void init_app_mode()
 {
-	// setup application settings
+	// setup application mode flags
 	memset(&app_mode__, 0x00, sizeof(app_mode__));
 
 #ifdef ENABLE_DEBUG

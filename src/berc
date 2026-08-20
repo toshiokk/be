@@ -34,8 +34,8 @@ tab_size		8
 
 # sh/bash
 file_type "shell" "\.(sh|SH)$"
-color_syntax ="\b(if|then|else|elif|fi|for|while|break|do|done)\b" +red
-color_syntax ="\b(case|esac|function|trap|echo|wire|reg)\b"        +red
+color_syntax ="\b(if|then|else|elif|fi|for|while|break|do|done|exit)\b" +red
+color_syntax ="\b(case|esac|function|return|trap|echo)\b"               +red
 color_syntax ="#.*"                                                +blue
 color_syntax ="##.*"                                               +brown
 color_syntax ="###.*"                                              +magenta
@@ -130,6 +130,7 @@ color_syntax ="\b(set|setattr|slice|sorted|staticmethod|str|sum|super)\b"    +ma
 color_syntax ="\b(tuple|type|vars|zip)\b"                        +magenta
 color_syntax ="\"\"\".*"              +brown
 color_syntax ="'''.*"                 +brown
+color_syntax ="  #.*"                 +brown
 tab_size	4
 
 #Java

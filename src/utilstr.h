@@ -22,8 +22,8 @@
 #ifndef utilstr_h
 #define utilstr_h
 
-int is_ctrl_char(unsigned char uchar);
-int is_graph_char(unsigned char uchar);
+int is_ctrl_char(UCHAR uchar);
+int is_graph_char(UCHAR uchar);
 
 #ifndef HAVE_STRCASECMP
 #define strcasecmp my_stricmp

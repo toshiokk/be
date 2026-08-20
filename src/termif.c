@@ -26,15 +26,19 @@
 #ifndef ENABLE_NCURSES
 
 PRIVATE char termif_enabled = 0;
-PRIVATE struct termios term_settings_saved;	// The user's original term settings
+PRIVATE struct termios term_settings_saved;	// The user's original terminal settings
 
 //---------------------------------------------------------------------------------------------
 // word    | meaning in the code
 // --------|-----------------------------------------------------------------------------------
-// repaint | paint whole of screen again after clearing it
-// redraw  | paint whole of screen again without clearing by sending whole data to the terminal
-// update  | paint only a portion of the screen which has changed after the previous paint
-// refresh | the same as 'update'
+// repaint | - paint all of the screen again after clearing it
+//         | - this makes sure that all of the screen to be redrawn
+// redraw  | - paint all of the screen again without clearing it
+//         |   just by sending all data to the terminal
+//         | - this may not repaint all of the screen because of the caching machanism
+//         |   in the terminal
+// update  | - paint only a portion of the screen which has changed
+// refresh | - the same as 'update'
 //---------------------------------------------------------------------------------------------
 
 // Escape sequences used:
@@ -74,6 +78,7 @@ PRIVATE struct termios term_settings_saved;	// The user's original term settings
 #define VSCR_CHAR_WIDTH1	0x00000000UL	// narrow char. or 2nd place of wide char.
 #define VSCR_CHAR_WIDTH2	0x00200000UL	// 1st place of wide char.
 #define VSCR_IS_COL1_WIDE_CHAR(vscr_char)	INT2BOOL((vscr_char) & VSCR_CHAR_WIDTH2)
+#define VSCR_IS_UCS2(vscr_char)			(((vscr_char) & VSCR_CHAR_UCS21) >= 0x0080)
 #define VSCR_CHAR_UCS21		0x001fffffUL	// 21 bits
 #define VSCR_CHAR_UCS21_SPACE		' '		// space
 #define VSCR_CHAR_ATTRS		(VSCR_CHAR_BGC | VSCR_CHAR_FGC | VSCR_CHAR_REV | VSCR_CHAR_BOLD)
@@ -128,7 +133,6 @@ PRIVATE void send_fgc_to_term(int fgc);
 
 PRIVATE void send_printf_to_term(const char *format, ...);
 PRIVATE void send_string_to_term(const char *string, int bytes);
-PRIVATE void send_string_to_term__(const char *string, int bytes);
 
 //------------------------------------------------------------------------------
 
@@ -159,20 +163,23 @@ int termif_end()
 	return 0;
 }
 //------------------------------------------------------------------------------
+#define MAX_REPORT_TRIES		3
 
 #ifdef ON_DEMAND_WCWIDTH
 char investigate_wcwidth(wchar_t wc)
 {
-	return investigate_utf8c_width(utf8c_encode(wc, NULL));
+	char columns = investigate_utf8c_columns(utf8c_encode(wc, NULL));
+	return MIN_MAX_(1, columns, 2);	// 1 / 2
 }
-char investigate_utf8c_width(const char *utf8c)
+char investigate_utf8c_columns(const char *utf8c)
 {
-	send_cursor_pos_to_term(0, 0);
-	send_string_to_term(utf8c, -1);
-	int yy;
-	int xx;
-	if (receive_cursor_pos_from_term(&yy, &xx)) {
-		return MIN_MAX_(1, xx, 2);	// 1 / 2
+	for (int tries = 0; tries < MAX_REPORT_TRIES; tries++) {
+		send_cursor_pos__string_to_term(0, 0, utf8c, -1);
+		int yy;
+		int xx;
+		if (receive_cursor_pos_from_term(&yy, &xx)) {
+			return xx;
+		}
 	}
 	return -1;	// not gotten
 }
@@ -182,7 +189,6 @@ char investigate_utf8c_width(const char *utf8c)
 // get screen size from terminal
 int termif_get_screen_size_from_term()
 {
-#define MAX_REPORT_TRIES		3
 	int termif_lines_save = termif_get_lines();
 	int termif_columns_save = termif_get_columns();
 	termif_set_screen_size(TERMIF_MAX_SCRN_LINES, TERMIF_MAX_SCRN_COLS);
@@ -296,10 +302,10 @@ PRIVATE void set_string_to_vscreen(const char *string, int bytes)
 {
 	for (const char *str = string; (str - string) < bytes; str += utf8c_bytes(str)) {
 		vscreen_char_t ucs21 = utf8c_decode(str);
-		int width = utf8c_columns(str);
-		if (width == 1) {			// narrow char.
+		int columns = utf8c_columns(str);
+		if (columns == 1) {			// narrow char.
 			put_narrow_char_to_vscreen(ucs21);
-		} else if (width == 2) {	// wide char.
+		} else if (columns == 2) {	// wide char.
 			put_wide_char_to_vscreen(ucs21);
 		}
 	}
@@ -408,17 +414,19 @@ void termif_beep()
 
 #define WA_FOR_WIDE_CHAR
 #if APP_REL_LVL == APP_REL_LVL_TEST1
-// disable this for speed to use in a slower(SSH) connection
+// disable this for speed up to use in a slower(SSH) connection
 #undef WA_FOR_WIDE_CHAR
-#endif
+#endif // APP_REL_LVL == APP_REL_LVL_TEST1
 
 #ifdef WA_FOR_WIDE_CHAR
-///
-#define WA_SEND_WIDE_CHR_SEPARATELY
-///
-#define WA_CLEAR_SPACE_BEFORE_PUTTING_WIDE_CHAR
-///
-#define WA_ADD_SPACE_AFTER_WIDE_CHAR
+#define WA_SEND_UCS2_CHR_SEPARATELY
+#ifdef WA_SEND_UCS2_CHR_SEPARATELY
+// | WA_CLR_SPC_BEF_PUT_UCS2 | avoid garbled output |
+// |-------------------------|----------------------|
+// | ----                    | no  |
+// | defined                 | yes |
+#define WA_CLR_SPC_BEF_PUT_UCS2		// clear spaces before putting UCS2
+#endif // WA_SEND_UCS2_CHR_SEPARATELY
 #endif // WA_FOR_WIDE_CHAR
 
 // refresh screen by sending pending data stored in vscreen_to_paint to the screen.
@@ -431,18 +439,18 @@ void termif_refresh()
 				char line_buf[TERMIF_LINE_BUF_LEN + 1] = "";
 				int xx0 = xx;
 				vscreen_char_t attrs0 = (vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS);
-#ifdef WA_SEND_WIDE_CHR_SEPARATELY
-				char wide_chr0 = VSCR_IS_COL1_WIDE_CHAR(vscreen_to_paint[yy][xx]);
-#endif // WA_SEND_WIDE_CHR_SEPARATELY
+#ifdef WA_SEND_UCS2_CHR_SEPARATELY
+				char ucs2 = VSCR_IS_UCS2(vscreen_to_paint[yy][xx]);
+#endif // WA_SEND_UCS2_CHR_SEPARATELY
 				for ( ; xx < termif_columns; ) {
 					if ((vscreen_to_paint[yy][xx] & VSCR_CHAR_ATTRS) != attrs0) {
 						break;
 					}
-#ifdef WA_SEND_WIDE_CHR_SEPARATELY
-					if (VSCR_IS_COL1_WIDE_CHAR(vscreen_to_paint[yy][xx]) != wide_chr0) {
+#ifdef WA_SEND_UCS2_CHR_SEPARATELY
+					if (VSCR_IS_UCS2(vscreen_to_paint[yy][xx]) != ucs2) {
 						break;
 					}
-#endif // WA_SEND_WIDE_CHR_SEPARATELY
+#endif // WA_SEND_UCS2_CHR_SEPARATELY
 					strlcat__(line_buf, TERMIF_LINE_BUF_LEN,
 					 utf8c_encode(vscreen_to_paint[yy][xx] & VSCR_CHAR_UCS21, NULL));
 					if (VSCR_IS_COL1_WIDE_CHAR(vscreen_to_paint[yy][xx])
@@ -454,27 +462,24 @@ void termif_refresh()
 					}
 					vscreen_painted[yy][xx] = vscreen_to_paint[yy][xx];
 					xx++;
-#ifdef WA_SEND_WIDE_CHR_SEPARATELY
-					if (wide_chr0) {
+#ifdef WA_SEND_UCS2_CHR_SEPARATELY
+					if (ucs2) {
 						break;
 					}
-#endif // WA_SEND_WIDE_CHR_SEPARATELY
+#endif // WA_SEND_UCS2_CHR_SEPARATELY
 				}
 				if (termif_cursor_on_sent) {
 					// erase cursor before painting
 					send_cursor_on_to_term(0);
 				}
 				send_attrs_to_term(attrs0);
-#ifdef WA_SEND_WIDE_CHR_SEPARATELY
-				if (wide_chr0) {
-#ifdef WA_CLEAR_SPACE_BEFORE_PUTTING_WIDE_CHAR
-					send_cursor_pos__string_to_term(yy, xx0, "  ", sizeof("  "));
-#endif // WA_CLEAR_SPACE_BEFORE_PUTTING_WIDE_CHAR
-#ifdef WA_ADD_SPACE_AFTER_WIDE_CHAR
-					strlcat__(line_buf, TERMIF_LINE_BUF_LEN, " ");
-#endif // WA_ADD_SPACE_AFTER_WIDE_CHAR
+#ifdef WA_SEND_UCS2_CHR_SEPARATELY
+				if (ucs2) {
+#ifdef WA_CLR_SPC_BEF_PUT_UCS2
+					send_cursor_pos__string_to_term(yy, xx0, " ", sizeof(" "));
+#endif // WA_CLR_SPC_BEF_PUT_UCS2
 				}
-#endif // WA_SEND_WIDE_CHR_SEPARATELY
+#endif // WA_SEND_UCS2_CHR_SEPARATELY
 				send_cursor_pos__string_to_term(yy, xx0, line_buf, -1);
 			} else {
 				xx++;
@@ -519,6 +524,11 @@ PRIVATE void send_cursor_pos_to_term(short yy, short xx)
 }
 PRIVATE int receive_cursor_pos_from_term(int *yy, int *xx)
 {
+	*yy = 0;
+	*xx = 0;
+	if (! termif_enabled) {
+		return 0;
+	}
 #define MAX_REPORT_LEN		(11+11)		// "e[9;9R" -- "e[999;9999R"
 	char buf[MAX_REPORT_LEN+1] = "";	// "e[999;9999R"
 	char bufr[MAX_REPORT_LEN+1];		// "e[999;9999R"
@@ -642,16 +652,12 @@ PRIVATE void send_printf_to_term(const char *format, ...)
 	va_start(ap, format);
 	int len = vsnprintf(buffer, MAX_ESC_SEQ_LEN+1, format, ap);
 	va_end(ap);
-	send_string_to_term__(buffer, len);
-}
-PRIVATE void send_string_to_term(const char *string, int bytes)
-{
-	send_string_to_term__(string, bytes);
+	send_string_to_term(buffer, len);
 }
 #ifdef ENABLE_DEBUG
-PRIVATE void add_terminal_traffic(int bytes);
+PRIVATE void sum_terminal_traffic(int bytes);
 #endif // ENABLE_DEBUG
-PRIVATE void send_string_to_term__(const char *string, int bytes)
+PRIVATE void send_string_to_term(const char *string, int bytes)
 {
 	if (! termif_enabled) {
 		return;
@@ -666,17 +672,17 @@ PRIVATE void send_string_to_term__(const char *string, int bytes)
 		 strerror(errno), written, bytes);
 		hmflf_dprintf("[%s]\n", string);
 	} else {
-///		e_printf("[%s]\n", string);
+////		e_printf("[%s]\n", string);
 	}
 	fsync(STDOUT_FILENO);
 #ifdef ENABLE_DEBUG
-	add_terminal_traffic(bytes);
+	sum_terminal_traffic(bytes);
 #endif // ENABLE_DEBUG
 }
 
 #ifdef ENABLE_DEBUG
 size_t terminal_trafic_in_bytes = 0;
-PRIVATE void add_terminal_traffic(int bytes)
+PRIVATE void sum_terminal_traffic(int bytes)
 {
 	terminal_trafic_in_bytes += bytes;
 }

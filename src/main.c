@@ -28,7 +28,7 @@
 #endif // HAVE_GETOPT_H
 
 #ifdef ENABLE_NCURSES
-#warning "Terminal control via ncurses (curses_...)"
+#warning "ENABLE_NCURSES defined. Terminal control via ncurses (curses_...)"
 #else // ENABLE_NCURSES
 ////#warning "Terminal control via own terminal interface library (termif_...)"
 #endif // ENABLE_NCURSES
@@ -36,20 +36,31 @@
 PRIVATE int init_locale();
 PRIVATE int parse_options(int argc, char *argv[]);
 
+PRIVATE void load_files_at_startup(int argc, char *argv[]);
+
+PRIVATE void app_main_loop();
+
+PRIVATE int write_exit_file(int restart);
+#ifdef ENABLE_FILER
+PRIVATE void load_cwd_into_another_pane();
+PRIVATE void save_cwd_from_another_pane();
+#endif // ENABLE_FILER
+
+PRIVATE void die_save_file(const char *die_file_path);
+
+PRIVATE void free_all_allocated_memory();
+
+#ifdef ENABLE_DEBUG
+PRIVATE int progerr_cb_func(const char *warning);
+PRIVATE int write_to_warning_file(const char *warning);
+#endif // ENABLE_DEBUG
+
 #ifdef START_UP_TEST
 PRIVATE void start_up_test();
 PRIVATE void start_up_test2();
 #endif // START_UP_TEST
 
-PRIVATE int write_exit_file(int restart);
-#ifdef ENABLE_FILER
-PRIVATE void save_cwd_from_another_pane();
-PRIVATE void load_cwd_into_another_pane();
-#endif // ENABLE_FILER
-
-PRIVATE void die_save_file(const char *die_file_path);
-
-PRIVATE void app_main_loop();
+//------------------------------------------------------------------------------
 
 PRIVATE editor_panes_t root_editor_panes;
 #ifdef ENABLE_FILER
@@ -83,6 +94,7 @@ dtflf_dprintf("START-%s ==============================\n", APP_NAME " " __DATE__
 
 	_mlc_memorize_count
 	init_bufferss();		// parse_options() needs epc_buf. So create here.
+
 	init_editor_panes(&root_editor_panes);
 #ifdef ENABLE_FILER
 	init_filer_panes(&root_filer_panes, get_starting_dir());
@@ -144,61 +156,27 @@ dtflf_dprintf("START-%s ==============================\n", APP_NAME " " __DATE__
 	set_die_on_callback(app_die_on);
 
 #ifdef ENABLE_HELP
+#if APP_REL_LVL != APP_REL_LVL_TEST1
 #define SPLASH_ON_START_UP__EXIT
+#endif // APP_REL_LVL != APP_REL_LVL_TEST1
 #endif // ENABLE_HELP
 #ifdef SPLASH_ON_START_UP__EXIT
-	if (GET_APPMD(app_SILENT) == 0) {
+	if (GET_APPMD(app_SPLASH)) {
 		disp_splash(0);
-		MSLEEP(1000);
+		MSLEEP(100);
 	}
 #endif // SPLASH_ON_START_UP__EXIT
-flf_dprintf("opening files --------------------------------------------\n");
-	// If there's a +LINE flag, it is the first non-option argument
-	int start_line_num = 0;			// Line to start at
-	if (0 < optind && optind < argc && argv[optind][0] == '+') {
-flf_dprintf("optind:%d: %s\n", optind, argv[optind]);
-		sscanf(&argv[optind][1], "%d", &start_line_num);
-		optind++;
-	}
-	// More than one file is specified on the command line,
-	// load them all and switch to the first one afterward.
-	if (optind < argc) {
-		clear_files_loaded();
-		begin_check_break_key();
-		for ( ; optind < argc; optind++) {
-flf_dprintf("optind:%d: %s\n", optind, argv[optind]);
-			// CURDIR: changed in editor
-			if (load_file_name_upp_low_(argv[optind],
-			 TUL0 | OOE1 | MOE0 | RDOL0 | FOLF0 | LFH0 | RECURS1 | MFPL0) <= 0) {
-				tio_beep();
-			}
-			tio_refresh();
-			if (check_break_key()) {
-				break;
-			}
-		}
-		end_check_break_key();
-	}
-	if (count_edit_bufs()) {
-#ifdef ENABLE_HISTORY
-		if (goto_last_file_line_col_in_history() == 0) {
-			doe_switch_to_top_buffer();
-		}
-#endif // ENABLE_HISTORY
-		if (start_line_num > 0) {
-			goto_line_col_in_cur_buf(start_line_num, -1);
-		}
-		disp_files_loaded_if_ge_0();
-	}
+
+	load_files_at_startup(argc, argv);
 
 	//--------------
 	app_main_loop();
 	//--------------
 
 #ifdef SPLASH_ON_START_UP__EXIT
-	if (GET_APPMD(app_SILENT) == 0) {
-		disp_splash(-1);
-		MSLEEP(1000);
+	if (GET_APPMD(app_SPLASH)) {
+		disp_splash(0);
+		MSLEEP(100);
 	}
 #endif // SPLASH_ON_START_UP__EXIT
 
@@ -262,7 +240,7 @@ const struct option long_options[] = {
 	{ "norcfile",      no_argument,       0, 'c' },
 #endif // ENABLE_RC
 #ifdef USE_NKF
-	{ "nkf",           no_argument,       0, 'n' },
+	{ "nonkf",         no_argument,       0, 'n' },
 	{ "encoding",      required_argument, 0, 'e' },
 	{ "binary",        no_argument,       0, 'b' },
 	{ "text",          no_argument,       0, 'x' },
@@ -278,7 +256,7 @@ const struct option long_options[] = {
 #endif // ENABLE_DEBUG
 	{ "version",       no_argument,       0, 'v' },		// show version
 	{ "help",          no_argument,       0, '?' },		// show help text
-	{ "silent",        no_argument,       0, 's' },		// not show splash screen
+	{ "splash",        no_argument,       0, 's' },		// show splash screen
 #ifndef ENABLE_NCURSES
 	{ "keyseq",        no_argument,       0, 'k' },		// investigate key sequence
 #endif // ENABLE_NCURSES
@@ -397,7 +375,7 @@ PRIVATE int parse_options(int argc, char *argv[])
 			show_usage();
 			exit(0);
 		case 's':
-			SET_APPMD_VAL(app_SILENT, 1);
+			SET_APPMD_VAL(app_SPLASH, 1);
 			break;
 #ifndef ENABLE_NCURSES
 		case 'k':
@@ -412,23 +390,66 @@ PRIVATE int parse_options(int argc, char *argv[])
 	return 0;
 }
 //------------------------------------------------------------------------------
-PRIVATE int call_depth = 0;
-void inc_call_depth()
+// count the sub window nesting depth (only for debugging)
+PRIVATE int sub_win_depth = 0;
+void inc_sub_win_depth()
 {
-	call_depth++;
+	sub_win_depth++;
 }
-void dec_call_depth()
+void dec_sub_win_depth()
 {
-	call_depth--;
+	sub_win_depth--;
 }
-int get_call_depth()
+int get_sub_win_depth()
 {
-	return call_depth;
+	return sub_win_depth;
+}
+
+PRIVATE void load_files_at_startup(int argc, char *argv[])
+{
+	// More than one file is specified on the command line,
+	// load them all and switch to the first one afterward.
+	if (optind < argc) {
+flf_dprintf("opening files --------------------------------------------\n");
+		// If there's a +LINE flag, it is the first non-option argument
+		int start_line_num = 0;			// Line to start at
+		if (0 < optind && optind < argc && argv[optind][0] == '+') {
+flf_dprintf("optind:%d: %s\n", optind, argv[optind]);
+			sscanf(&argv[optind][1], "%d", &start_line_num);
+			optind++;
+		}
+		clear_files_loaded();
+		begin_check_break_key();
+		for ( ; optind < argc; optind++) {
+flf_dprintf("optind:%d: %s\n", optind, argv[optind]);
+			// CURDIR: changed in editor
+			if (load_file_name_upp_low_(argv[optind],
+			 TUL0 | OOE1 | MOE0 | RDOL0 | FOLF0 | LFH0 | RECURS1 | MFPL0) <= 0) {
+				tio_beep();
+			}
+			tio_refresh();
+			if (do_check_break_key()) {
+				break;
+			}
+		}
+		end_check_break_key();
+		if (count_edit_bufs()) {
+#ifdef ENABLE_HISTORY
+			if (goto_last_file_line_col_in_history() == 0) {
+				doe_switch_to_top_buffer();
+			}
+#endif // ENABLE_HISTORY
+			if (start_line_num > 0) {
+				goto_line_col_in_cur_buf(start_line_num, -1);
+			}
+			disp_files_loaded_if_ge_0();
+		}
+	}
 }
 
 #if APP_REL_LVL == APP_REL_LVL_STABLE
 #define ASK_ON_EXIT
-#warning "#define ASK_ON_EXIT"
+#warning "ASK_ON_EXIT defined"
 #else
 #undef ASK_ON_EXIT
 ////#warning "#undef ASK_ON_EXIT"
@@ -452,11 +473,15 @@ PRIVATE void app_main_loop()
 		// application was started as a EDITOR
 		for ( ; ; ) {
 			if (has_bufs_to_edit()) {
+				//---------------------------------------------
 				do_call_editor(0, APP_MODE_NORMAL, NULL, NULL);
+				//---------------------------------------------
 			}
 			if (has_bufs_to_edit()) {
 				char file_path[MAX_PATH_LEN+1];
+				//---------------------------------------------------
 				do_call_filer(0, APP_MODE_NORMAL, "", "", file_path);
+				//---------------------------------------------------
 			} else {
 				// no file loaded in filer
 				break;
@@ -467,9 +492,13 @@ PRIVATE void app_main_loop()
 		for ( ; ; ) {
 			for ( ; ; ) {
 				char file_path[MAX_PATH_LEN+1];
+				//---------------------------------------------------
 				do_call_filer(0, APP_MODE_NORMAL, "", "", file_path);
+				//---------------------------------------------------
 				if (has_bufs_to_edit()) {
+					//---------------------------------------------
 					do_call_editor(0, APP_MODE_NORMAL, NULL, NULL);
+					//---------------------------------------------
 				} else {
 					// no file loaded in filer
 					break;
@@ -492,107 +521,6 @@ PRIVATE void app_main_loop()
 	}
 #endif // ENABLE_FILER
 }
-//------------------------------------------------------------------------------
-#ifdef START_UP_TEST
-PRIVATE void start_up_test()
-{
-	flf_dprintf("{{{{---------------------------------------------------------\n");
-	test_flock();
-	////tio_test();
-	flf_dprintf("getenv(USER): [%s]\n", getenv__("USER"));
-	flf_dprintf("getenv(HOSTNAME): [%s]\n", getenv__("HOSTNAME"));
-	flf_dprintf("getenv(LANG): [%s]\n", getenv__("LANG"));
-	flf_dprintf("get_tty_name(): [%s]\n", get_tty_name());
-	flf_dprintf("get_tty_name_file_part(): [%s]\n", get_tty_name_file_part());
-	flf_dprintf("exec_log_file_path: [%s]\n", get_exec_log_file_path());
-	flf_dprintf("getenv(HOME): [%s]\n", get_home_dir());
-
-	flf_dprintf("sizeof(int): %d\n", sizeof(int));
-	flf_dprintf("sizeof(long): %d\n", sizeof(long));
-	flf_dprintf("sizeof(int *): %d\n", sizeof(int *));
-	flf_dprintf("sizeof(app_mode_t): %d\n", sizeof(app_mode_t));
-	flf_dprintf("sizeof(buf_state_t): %d\n", sizeof(buf_state_t));
-	flf_dprintf("MAX_UTF8C_BYTES: %d\n", MAX_UTF8C_BYTES);
-	flf_dprintf("PATH_MAX: %d\n", PATH_MAX);
-	flf_dprintf("MAX_PATH_LEN: %d\n", MAX_PATH_LEN);
-	flf_dprintf("MAX_SCRN_LINE_BUF_LEN: %d\n", MAX_SCRN_LINE_BUF_LEN);
-	flf_dprintf("MAX_EDIT_LINE_LEN: %d\n", MAX_EDIT_LINE_LEN);
-	flf_dprintf("EOF: %d\n", EOF);
-
-	// memory address of various object
-	flf_dprintf("mem adrs: 0x1234567890123456\n");
-	char buf[MAX_PATH_LEN+1];
-	flf_dprintf("auto buf: %p\n", buf);
-	flf_dprintf("\"string\": %p\n", "string");
-	void *allocated = malloc__(100);
-	flf_dprintf("malloc  : %p\n", allocated);
-	free__(allocated);
-
-	flf_dprintf("#define KEY_HOME       0x%04x\n", KEY_HOME);
-	flf_dprintf("#define KEY_END        0x%04x\n", KEY_END);
-	flf_dprintf("#define KEY_UP         0x%04x\n", KEY_UP);
-	flf_dprintf("#define KEY_DOWN       0x%04x\n", KEY_DOWN);
-	flf_dprintf("#define KEY_LEFT       0x%04x\n", KEY_LEFT);
-	flf_dprintf("#define KEY_RIGHT      0x%04x\n", KEY_RIGHT);
-	flf_dprintf("#define KEY_PPAGE      0x%04x\n", KEY_PPAGE);
-	flf_dprintf("#define KEY_NPAGE      0x%04x\n", KEY_NPAGE);
-	flf_dprintf("#define KEY_IC         0x%04x\n", KEY_IC);
-	flf_dprintf("#define KEY_DC         0x%04x\n", KEY_DC);
-	flf_dprintf("#define KEY_BACKSPACE  0x%04x\n", KEY_BACKSPACE);
-	flf_dprintf("#define KEY_ENTER      0x%04x\n", KEY_ENTER);
-	flf_dprintf("#define KEY_F(0)       0x%04x\n", KEY_F(0));
-	flf_dprintf("#define KEY_RESIZE     0x%04x\n", KEY_RESIZE);
-	flf_dprintf("#define AK_BS          0x%04x\n", AK_BS);
-	flf_dprintf("#define AK_DEL         0x%04x\n", AK_DEL);
-	flf_dprintf("#define AK_M_BS        0x%04x\n", AK_M_BS);
-	flf_dprintf("#define AK_M_DEL       0x%04x\n", AK_M_DEL);
-
-	////test_wrap_line();
-	test_cwd_PWD();
-	test_normalize_file_path();
-	test_get_full_path();
-#if defined(HAVE_REALPATH)
-	test_realpath();
-#endif // HAVE_REALPATH
-
-	test_get_file_name_extension();
-	test_cat_dir_and_file();
-	test_separate_path_to_dir_and_file();
-
-	test_utilstr();
-	test_get_one_file_path();
-
-	test_get_intersection();
-	get_mem_free_in_kb(1);
-	////test_zz_from_num();
-	test_modulo();
-	////test_utf8c_encode();
-	////test_wcwidth();
-	test_utf8c_bytes();
-#ifdef ENABLE_REGEX
-	test_regexp();
-#endif // ENABLE_REGEX
-	test_make_ruler_text();
-#ifdef ENABLE_FILER
-	test_get_file_size_str();
-	test_get_n_th_file();
-#endif // ENABLE_FILER
-	test_replace_str();
-	test_quote_string();
-
-	test_conversion_key_name__key_code();
-	test_key_code_from_to_key_name();
-
-	flf_dprintf("}}}}---------------------------------------------------------\n");
-}
-PRIVATE void start_up_test2()
-{
-	flf_dprintf("{{{{---------------------------------------------------------\n");
-	check_multiple_assignment_of_key();
-	check_all_functions_accessible_without_function_key();
-	flf_dprintf("}}}}---------------------------------------------------------\n");
-}
-#endif // START_UP_TEST
 
 //------------------------------------------------------------------------------
 
@@ -607,18 +535,17 @@ PRIVATE int write_exit_file(int restart)
 	concat_dir_and_file(file_path, get_home_dir(), EXIT_FILE_NAME);
 	return write_text_to_file(file_path, 0, script);
 }
+
 #ifdef ENABLE_FILER
-PRIVATE void save_cwd_from_another_pane()
-{
-	write_text_to_file(get_exec_log_file_path(), 1,
-	 sprintf_s("%s\n", root_filer_panes.filer_views[get_filer_another_pane_idx()].cur_dir));
-}
 PRIVATE void load_cwd_into_another_pane()
 {
-	read_file_into_buf_max_lines(get_exec_log_file_path(),
-	 get_help_buf(HELP_BUF_IDX_EDITOR_FILE_LIST), 1);
+	read_file_into_buf_last_lines(get_exec_log_file_path(),
+	 NODES_TOP_NODE(&cut_buffers), 1);
+///	 get_history_buf(HISTORY_TYPE_IDX_DIR), 1);
 	strlcpy__(root_filer_panes.filer_views[1].cur_dir,
-	 NODES_TOP_NODE(get_help_buf(HELP_BUF_IDX_EDITOR_FILE_LIST))->data, MAX_EDIT_LINE_LEN);
+	 NODES_TOP_NODE(NODES_TOP_NODE(&cut_buffers))->data, MAX_EDIT_LINE_LEN);
+///	 NODES_TOP_NODE(get_history_buf(HISTORY_TYPE_IDX_DIR))->data, MAX_EDIT_LINE_LEN);
+	buf_unlink_free(NODES_TOP_NODE(&cut_buffers));
 	if (is_strlen_0(root_filer_panes.filer_views[1].cur_dir)) {
 		strlcpy__(root_filer_panes.filer_views[1].cur_dir, root_filer_panes.filer_views[0].cur_dir,
 		 MAX_PATH_LEN);
@@ -626,22 +553,30 @@ PRIVATE void load_cwd_into_another_pane()
 flf_dprintf("cur_dir-0: [%s]\n", root_filer_panes.filer_views[0].cur_dir);
 flf_dprintf("cur_dir-1: [%s]\n", root_filer_panes.filer_views[1].cur_dir);
 }
+PRIVATE void save_cwd_from_another_pane()
+{
+flf_dprintf("cur_dir-%d: [%s]\n", get_filer_another_pane_idx(),
+ root_filer_panes.filer_views[get_filer_another_pane_idx()].cur_dir);
+	write_text_to_file(get_exec_log_file_path(), 1,
+	 sprintf_s("%s\n", root_filer_panes.filer_views[get_filer_another_pane_idx()].cur_dir));
+}
 #endif // ENABLE_FILER
 
-int progerr_cb_func(const char *warning)
+//------------------------------------------------------------------------------
+
+#ifdef ENABLE_DEBUG
+PRIVATE int progerr_cb_func(const char *warning)
 {
-	set_work_space_color_warn();
 	return write_to_warning_file(warning);
 }
-int write_to_warning_file(const char *warning)
+PRIVATE int write_to_warning_file(const char *warning)
 {
 	char file_path[MAX_PATH_LEN+1];
 	// record a warning message even when no debug logging enabled
 	concat_dir_and_file(file_path, get_app_dir(), WARNING_FILE_NAME);
 	return write_text_to_file(file_path, 1, warning);
 }
-
-//------------------------------------------------------------------------------
+#endif // ENABLE_DEBUG
 
 // Die (gracefully?)
 void app_die_on(const char *msg)
@@ -685,7 +620,7 @@ PRIVATE void die_save_file(const char *die_file_path)
 
 //------------------------------------------------------------------------------
 
-void free_all_allocated_memory()
+PRIVATE void free_all_allocated_memory()
 {
 #ifdef ENABLE_HISTORY
 	save_histories_if_modified_newer();
@@ -714,7 +649,7 @@ void show_usage()
 	show_one_option("-c",                "--norcfile",        _("Don't look at berc files"));
 #endif // ENABLE_RC
 #ifdef USE_NKF
-	show_one_option("-n",                "--nkf",             _("Use nkf"));
+	show_one_option("-n",                "--nonkf",           _("Use no nkf"));
 	show_one_option("-e a",              "--encoding=a",      _("ASCII character encoding"));
 	show_one_option("-e u",              "--encoding=u",      _("UTF8 character encoding"));
 	show_one_option("-e b",              "--encoding=b",      _("BINARY file"));
@@ -736,6 +671,7 @@ void show_usage()
 	show_one_option("-v",                "--version",         _("Show version information"));
 	show_one_option("-?",                "--help",            _("Show this message"));
 	show_one_option("+NUM",              "",                  _("Start at line number NUM"));
+	show_one_option("-s",                "--splash",          _("Show splash screen"));
 #ifndef ENABLE_NCURSES
 	show_one_option("-k",                "--keyseq",          _("Investigate key sequence"));
 #endif // ENABLE_NCURSES
@@ -826,5 +762,108 @@ void show_version()
 	printf("   --disable-busybox\n");
 #endif
 }
+
+//------------------------------------------------------------------------------
+#ifdef START_UP_TEST
+PRIVATE void start_up_test()
+{
+	flf_dprintf("{{{{---------------------------------------------------------\n");
+	test_flock();
+	////tio_test();
+	flf_dprintf("getenv(USER): [%s]\n", getenv__("USER"));
+	flf_dprintf("getenv(HOSTNAME): [%s]\n", getenv__("HOSTNAME"));
+	flf_dprintf("getenv(LANG): [%s]\n", getenv__("LANG"));
+	flf_dprintf("get_tty_name(): [%s]\n", get_tty_name());
+	flf_dprintf("get_tty_name_file_part(): [%s]\n", get_tty_name_file_part());
+	flf_dprintf("exec_log_file_path: [%s]\n", get_exec_log_file_path());
+	flf_dprintf("getenv(HOME): [%s]\n", get_home_dir());
+
+	flf_dprintf("sizeof(int): %d\n", sizeof(int));
+	flf_dprintf("sizeof(long): %d\n", sizeof(long));
+	flf_dprintf("sizeof(int *): %d\n", sizeof(int *));
+	flf_dprintf("sizeof(app_mode_t): %d\n", sizeof(app_mode_t));
+	flf_dprintf("sizeof(buf_state_t): %d\n", sizeof(buf_state_t));
+	flf_dprintf("MAX_UTF8C_BYTES: %d\n", MAX_UTF8C_BYTES);
+	flf_dprintf("PATH_MAX: %d\n", PATH_MAX);
+	flf_dprintf("MAX_PATH_LEN: %d\n", MAX_PATH_LEN);
+	flf_dprintf("MAX_SCRN_LINE_BUF_LEN: %d\n", MAX_SCRN_LINE_BUF_LEN);
+	flf_dprintf("MAX_EDIT_LINE_LEN: %d\n", MAX_EDIT_LINE_LEN);
+	flf_dprintf("EOF: %d\n", EOF);
+
+	// memory address of various object
+	flf_dprintf("mem adrs: 0x1234567890123456\n");
+	char buf[MAX_PATH_LEN+1];
+	flf_dprintf("auto buf: %p\n", buf);
+	flf_dprintf("\"string\": %p\n", "string");
+	void *allocated = malloc__(100);
+	flf_dprintf("malloc  : %p\n", allocated);
+	free__(allocated);
+
+	flf_dprintf("#define KEY_HOME       0x%04x\n", KEY_HOME);
+	flf_dprintf("#define KEY_END        0x%04x\n", KEY_END);
+	flf_dprintf("#define KEY_UP         0x%04x\n", KEY_UP);
+	flf_dprintf("#define KEY_DOWN       0x%04x\n", KEY_DOWN);
+	flf_dprintf("#define KEY_LEFT       0x%04x\n", KEY_LEFT);
+	flf_dprintf("#define KEY_RIGHT      0x%04x\n", KEY_RIGHT);
+	flf_dprintf("#define KEY_PPAGE      0x%04x\n", KEY_PPAGE);
+	flf_dprintf("#define KEY_NPAGE      0x%04x\n", KEY_NPAGE);
+	flf_dprintf("#define KEY_IC         0x%04x\n", KEY_IC);
+	flf_dprintf("#define KEY_DC         0x%04x\n", KEY_DC);
+	flf_dprintf("#define KEY_BACKSPACE  0x%04x\n", KEY_BACKSPACE);
+	flf_dprintf("#define KEY_ENTER      0x%04x\n", KEY_ENTER);
+	flf_dprintf("#define KEY_F(0)       0x%04x\n", KEY_F(0));
+	flf_dprintf("#define KEY_RESIZE     0x%04x\n", KEY_RESIZE);
+	flf_dprintf("#define AK_BS          0x%04x\n", AK_BS);
+	flf_dprintf("#define AK_DEL         0x%04x\n", AK_DEL);
+	flf_dprintf("#define AK_M_BS        0x%04x\n", AK_M_BS);
+	flf_dprintf("#define AK_M_DEL       0x%04x\n", AK_M_DEL);
+
+	test_cwd_PWD();
+	test_normalize_file_path();
+	test_get_full_path();
+#if defined(HAVE_REALPATH)
+	test_realpath();
+#endif // HAVE_REALPATH
+
+	test_get_file_name_extension();
+	test_cat_dir_and_file();
+	test_separate_path_to_dir_and_file();
+
+	test_utilstr();
+	test_get_one_file_path();
+
+	test_get_intersection();
+	get_mem_free_in_kb(1);
+	////test_zz_from_num();
+	////test_modulo();
+	////test_utf8c_encode();
+	////test_wcwidth();
+	test_my_utf8();
+	test_utf8c_bytes();
+#ifdef ENABLE_REGEX
+	test_regexp();
+#endif // ENABLE_REGEX
+	test_make_ruler_text();
+#ifdef ENABLE_FILER
+	test_get_file_size_str();
+	test_get_n_th_file();
+#endif // ENABLE_FILER
+	test_replace_str();
+	test_quote_string();
+
+	test_conversion_key_name__key_code();
+	test_key_code_from_to_key_name();
+
+	flf_dprintf("}}}}---------------------------------------------------------\n");
+}
+PRIVATE void start_up_test2()
+{
+	flf_dprintf("{{{{---------------------------------------------------------\n");
+	test_wrap_line();		// this needs "termif_enabled = 1"
+	check_multiple_assignment_of_key();
+	check_all_functions_accessible_without_function_key();
+	flf_dprintf("}}}}---------------------------------------------------------\n");
+}
+#endif // START_UP_TEST
 
 // End of main.c

@@ -22,7 +22,7 @@
 #ifndef filerrun_h
 #define filerrun_h
 
-#define EX_CL_MASK		0x000f		// EX_MOD: Execution Mode
+#define EX_CL_MASK		0x000f		// EX_CL_: Execution Command Line
 #define EX_CL_0			0x0000		// "file"
 #define EX_CL_1			0x0001		// "/full/path/to/file"
 #define EX_CL_2			0x0002		// "<real file of symlink>

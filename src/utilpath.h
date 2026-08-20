@@ -28,8 +28,10 @@
 // directory
 
 const char *get_starting_dir();
+const char *get_app_dir();
 const char *get_home_dir();
 const char *get_tty_name();
+const char *get_tty_name_file_part_2_digits();
 const char *get_tty_name_file_part();
 int check_wsl();
 int check_availability_of_script();

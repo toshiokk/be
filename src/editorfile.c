@@ -66,6 +66,7 @@ void doe_open_new_file()
 	 TUL0 | OOE1 | MOE0 | LFH1 | RDOL0 | FOLF0 | RECURS0 | MFPL1) >= 0) {
 		disp_files_loaded_if_ge_0();
 		post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
+		SET_app_do_next(EF_LOADED_GO_TO_ROOT_EDITOR);
 		return;
 	}
 }
@@ -672,17 +673,6 @@ int delete_all_lock_files()
 	snprintf_(command_str, MAX_PATH_LEN, "rm -v %s >/dev/null 2>&1", lock_file_path);
 
 	return fork_exec_sh_c(EX_FLAGS_0, command_str);
-}
-
-//------------------------------------------------------------------------------
-const char *get_app_dir()
-{
-#if defined(APP_DIR)
-	static char dir[MAX_PATH_LEN+1];
-	return concat_dir_and_dir(dir, get_home_dir(), APP_DIR);
-#else // APP_DIR
-	return get_home_dir();
-#endif // APP_DIR
 }
 
 // End of editorfile.c

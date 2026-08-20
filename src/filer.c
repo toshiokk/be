@@ -26,7 +26,7 @@
 PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir);
 PRIVATE int get_another_filer_pane_idx(int filer_pane_idx);
 
-PRIVATE int filer_main_loop(const char *dir, const char *filter, char *path_buf);
+PRIVATE do_next_t filer_main_loop(const char *dir, const char *filter, char *path_buf);
 PRIVATE int check_filer_cur_dir();
 PRIVATE void update_file_info_all_panes(int update_request);
 PRIVATE void update_file_info(filer_view_t *fv, int update_request);
@@ -89,14 +89,14 @@ PRIVATE void init_filer_view(filer_view_t *fv, const char *cur_dir)
 	strlcpy__(fv->org_cur_dir, cur_dir, MAX_PATH_LEN);
 	strlcpy__(fv->cur_dir, cur_dir, MAX_PATH_LEN);
 	strcpy__(fv->filter, "");
+	strcpy__(fv->prev_dir, "");
+	strcpy__(fv->next_file, "");
 	strcpy__(fv->listed_dir, "");
-	fv->file_info_array = NULL;
 	fv->file_info_entries = 0;
+	fv->file_info_array = NULL;
 	FV_SEL_F_IDX(fv) = -1;
 	FV_CUR_F_IDX(fv) = -1;
 	FV_CURS_Y(fv) = 0;
-	strcpy__(fv->prev_dir, "");
-	strcpy__(fv->next_file, "");
 }
 
 #ifdef ENABLE_DEBUG
@@ -105,13 +105,13 @@ void dump_filer_view(filer_view_t *fv)
 	flf_dprintf("org_cur_dir: [%s]\n", fv->org_cur_dir);
 	flf_dprintf("cur_dir    : [%s]\n", fv->cur_dir);
 	flf_dprintf("filter     : [%s]\n", fv->filter);
+	flf_dprintf("prev_dir : [%s]\n", fv->prev_dir);
+	flf_dprintf("next_file: [%s]\n", fv->next_file);
 	flf_dprintf("listed_dir : [%s]\n", fv->listed_dir);
 	flf_dprintf("file_info_entries: %d\n", fv->file_info_entries);
 	flf_dprintf("FV_SEL_F_IDX: %d\n", FV_SEL_F_IDX(fv));
 	flf_dprintf("FV_CUR_F_IDX: %d\n", FV_CUR_F_IDX(fv));
 	flf_dprintf("FV_CURS_Y   : %d\n", FV_CURS_Y(fv));
-	flf_dprintf("prev_dir : [%s]\n", fv->prev_dir);
-	flf_dprintf("next_file: [%s]\n", fv->next_file);
 }
 void dump_filer_view_cur_dir(filer_view_t *fv)
 {
@@ -147,54 +147,92 @@ int get_cfv_file_info_entries()
 {
 	return get_fv_from_cur_pane()->file_info_entries;
 }
+file_info_t *get_fv_file_info_array(filer_view_t *fv)
+{
+	return FV_F_INFO_ARRAY(fv);
+}
 int get_fv_file_info_entries(filer_view_t *fv)
 {
 	return FV_F_INFO_ENTRIES(fv);
 }
-file_info_t *get_fv_file_info(filer_view_t *fv, int file_idx)
-{
-	return &FV_F_INFO(fv, file_idx);
-}
+
 
 #define GET_CFV_FILE_IDX()				\
 	if (file_idx < 0) {						\
 		file_idx = get_cfv_file_idx();	\
 	}
+#define GET_FV_FILE_IDX(fv)				\
+	if (file_idx < 0) {					\
+		file_idx = get_fv_file_idx(fv);	\
+	}
+
+file_info_t *get_fv_file_info(filer_view_t *fv, int file_idx)
+{
+	GET_FV_FILE_IDX(fv)
+	if ((file_idx < 0) || (get_fv_file_info_entries(fv) < file_idx)) {
+		_PROGERR_
+		file_idx = 0;
+	}
+	return &FV_F_INFO(fv, file_idx);
+}
 
 file_info_t *get_cfv_file_info(int file_idx)
 {
 	GET_CFV_FILE_IDX()
+	if (file_idx < 0 || get_cfv_file_info_entries() < file_idx) {
+		_PROGERR_
+		file_idx = 0;
+	}
 	return &(get_cfv_file_info_array()[file_idx]);
 }
 const char *get_cfv_file_name(int file_idx)
 {
-	GET_CFV_FILE_IDX()
 	return get_cfv_file_info(file_idx)->file_name;
 }
 const char *get_cfv_symlink(int file_idx)
 {
-	GET_CFV_FILE_IDX()
 	return get_cfv_file_info(file_idx)->symlink;
 }
 struct stat get_cfv_file_st(int file_idx)
 {
-	GET_CFV_FILE_IDX()
 	return get_cfv_file_info(file_idx)->st;
 }
 __mode_t get_cfv_file_st_mode(int file_idx)
 {
-	GET_CFV_FILE_IDX()
 	return get_cfv_file_info(file_idx)->st.st_mode;
 }
 void set_cfv_file_selected(int file_idx, char selected)
 {
-	GET_CFV_FILE_IDX()
 	get_cfv_file_info(file_idx)->selected = selected;
 }
 char get_cfv_file_selected(int file_idx)
 {
-	GET_CFV_FILE_IDX()
 	return get_cfv_file_info(file_idx)->selected;
+}
+
+const char *get_fv_file_name(filer_view_t *fv, int file_idx)
+{
+	return get_fv_file_info(fv, file_idx)->file_name;
+}
+const char *get_fv_symlink(filer_view_t *fv, int file_idx)
+{
+	return get_fv_file_info(fv, file_idx)->symlink;
+}
+struct stat get_fv_file_st(filer_view_t *fv, int file_idx)
+{
+	return get_fv_file_info(fv, file_idx)->st;
+}
+__mode_t get_fv_file_st_mode(filer_view_t *fv, int file_idx)
+{
+	return get_fv_file_info(fv, file_idx)->st.st_mode;
+}
+void set_fv_file_selected(filer_view_t *fv, int file_idx, char selected)
+{
+	get_fv_file_info(fv, file_idx)->selected = selected;
+}
+char get_fv_file_selected(filer_view_t *fv, int file_idx)
+{
+	return get_fv_file_info(fv, file_idx)->selected;
 }
 
 file_info_t *get_cfv_file_ptr_from_pane(int pane_idx)
@@ -202,7 +240,7 @@ file_info_t *get_cfv_file_ptr_from_pane(int pane_idx)
 	return &(get_fv_from_pane(pane_idx)->file_info_array[
 	 FV_CUR_F_IDX(get_fv_from_pane(pane_idx))]);
 }
-void set_cur_fv_file_idx(int file_idx)
+void set_cfv_file_idx(int file_idx)
 {
 	FV_CUR_F_IDX(get_fv_from_cur_pane()) = MIN_MAX_(0, file_idx, get_cfv_file_info_entries());
 }
@@ -210,10 +248,14 @@ int get_cfv_file_idx()
 {
 	return FV_CUR_F_IDX(get_fv_from_cur_pane());
 }
+int get_fv_file_idx(filer_view_t *fv)
+{
+	return FV_CUR_F_IDX(fv);
+}
 
 //------------------------------------------------------------------------------
 
-int do_call_filer(int push_win, int list_mode, const char *dir, const char *filter,
+do_next_t do_call_filer(int push_win, int list_mode, const char *dir, const char *filter,
  char *path_buf)
 {
 flf_dprintf("push: %d, list: %d, dir: %s, filter: [%s]\n", push_win, list_mode, dir, filter);
@@ -223,39 +265,21 @@ flf_dprintf("push: %d, list: %d, dir: %s, filter: [%s]\n", push_win, list_mode, 
 	save_histories_if_modified_newer();
 #endif // ENABLE_HISTORY
 
-	editor_panes_t next_eps;
-	filer_panes_t next_fps;
-	if (push_win) {
-		push_app_stack(&next_eps, NULL, &next_fps);
-	}
-
 	SET_APPMD_VAL(app_EDITOR_FILER, EF_FILER);
 	SET_APPMD_VAL(app_LIST_MODE, list_mode);
 
-	inc_call_depth();
 	flf_dprintf("GET_APPMD(app_EDITOR_FILER): %d\n", GET_APPMD(app_EDITOR_FILER));
 	flf_dprintf("[[[[ CALL_FILER_MAIN_LOOP:%d push_win:%d, list_mode:%d\n",
-	 get_call_depth(), push_win, list_mode);
+	 get_sub_win_depth(), push_win, list_mode);
 
-	int ret = filer_main_loop(dir, filter, path_buf);
+	filer_main_loop(dir, filter, path_buf);
 
 	flf_dprintf("]]]] CALL_FILER_MAIN_LOOP:%d push_win:%d, list_mode:%d\n",
-	 get_call_depth(), push_win, list_mode);
-	flf_dprintf(" --> app_stk: %d, ret__[%s]\n", get_app_stack_depth(), get_do_next_name(ret));
-	dec_call_depth();
+	 get_sub_win_depth(), push_win, list_mode);
+	flf_dprintf(" --> app_stk: %d, do_next__[%s]\n",
+	 get_app_stack_depth(), get_do_next_name(app_do_next));
 
-	if (push_win) {
-		// editor: refrect from the callee's cur-buf to the caller's cur-buf if file loaded
-		// filer : propagate the current directory only when called as a normal-mode
-		pop_app_stack(ret == EF_LOADED_GO_TO_ROOT_EDITOR,
-		 (list_mode == 0) || (ret == EF_GO_TO_LEVEL_FILER));
-flf_dprintf("cur-dir: [%s]\n", get_full_path_of_cur_dir(NULL));
-flf_dprintf("[0].cur_dir: [%s]\n", get_fv_from_pane(0)->cur_dir);
-flf_dprintf("[1].cur_dir: [%s]\n", get_fv_from_pane(1)->cur_dir);
-		update_screen_app(S_B_CURS, 1);
-	}
-
-	return ret;		// EF_...
+	return app_do_next;		// EF_...
 }
 
 //------------------------------------------------------------------------------
@@ -274,7 +298,8 @@ void set_text_to_output_buf_filer(char *text)
 		strlcpy__(output_buf_filer, text, MAX_PATH_LEN);
 	}
 }
-PRIVATE int filer_main_loop(const char *dir, const char *filter, char *path_buf)
+
+PRIVATE do_next_t filer_main_loop(const char *dir, const char *filter, char *path_buf)
 {
 flf_dprintf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 	set_output_buf_filer(path_buf);
@@ -336,20 +361,20 @@ flf_dprintf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 				}
 				if (app_do_next == EF_NONE) {
 					flf_dprintf("[[ CALL_FUNC_FILER:%d [%s]\n",
-					 get_call_depth(), func_key->func_id);
+					 get_sub_win_depth(), func_key->func_id);
 					//=========================
 					call_func_key_func(func_key);		// call function "dof_...()"
 					//=========================
 					flf_dprintf("]] CALL_FUNC_FILER:%d [%s]\n",
-					 get_call_depth(), func_key->func_id);
+					 get_sub_win_depth(), func_key->func_id);
 					flf_dprintf("app_do_next_[%s]\n", get_do_next_name(app_do_next));
 				}
 			}
 		}
 		// check the conditions for exiting filer
 		switch (app_do_next) {
-		case EF_GO_TO_LEVEL_FILER:
-			SET_app_do_next(EF_NONE);		// not exit
+		case EF_LOADED_GO_TO_ROOT_EDITOR:
+			// always return to editor since it's filer
 			break;
 		case EF_EXECUTED_RET_TO_CALLER:
 			// return to the root editor/caller
@@ -358,8 +383,11 @@ flf_dprintf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 			}
 			SET_app_do_next(EF_NONE);		// not exit
 			break;
-		case EF_LOADED_GO_TO_ROOT_EDITOR:
-			// always return to editor since it's filer
+#ifdef ENABLE_FILER
+		case EF_GO_TO_LEVEL_FILER:			// already in filer
+			SET_app_do_next(EF_NONE);		// not exit
+			break;
+#endif // ENABLE_FILER
 		default:
 			break;							// exit from filer
 		}
@@ -371,25 +399,11 @@ flf_dprintf("dir: [%s], filter: [%s], path: [%s]\n", dir, filter, path_buf);
 #endif // ENABLE_HISTORY
 		sync_cut_buffers_and_histories(0);
 	}
-	// | command modifier key | replace/add string            | return value        |
-	// |----------------------|-------------------------------|---------------------|
-	// | none                 | replacing input file/dir name | EF_ENTER_STRING     |
-	// | ALT                  | adding    input file/dir name | EF_ENTER_STRING_ADD |
-	if (app_do_next == EF_ENTER_STRING) {
-		SET_app_do_next((IS_META_KEY(key_input) == 0)
-		 ? EF_ENTER_STRING			// Replace input file/dir name
-		 : EF_ENTER_STRING_ADD);	// Append input file/dir name
-	}
-
-	int ret = app_do_next;
-	if ((app_do_next == EF_TO_QUIT) || (app_do_next == EF_EXECUTED_RET_TO_CALLER)) {
-		SET_app_do_next(EF_NONE);
-	}
 	set_output_buf_filer(NULL);
 #ifdef ENABLE_HISTORY
 	update_dir_history(get_fv_from_cur_pane()->cur_dir, 1);
 #endif // ENABLE_HISTORY
-	return ret;
+	return app_do_next;
 } // filer_main_loop
 
 PRIVATE int check_filer_cur_dir()
@@ -647,7 +661,7 @@ PRIVATE void disp_key_list_filer()
 
 	const char *filer_keys_normal_mode[] = {
 	 "<dof_quit>Quit "
-	 "<dof_open_file_recursive>Edit "
+	 "<dof_open_files_recursive>Edit "
 	 "<dof_open_new_file>NewFile "
 	 "<dof_copy_file_update>CopyUpdate "
 	 "<dof_copy_file_force>Copy "

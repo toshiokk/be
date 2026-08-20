@@ -22,12 +22,14 @@
 #ifndef headers_h
 #define headers_h
 
-#include "stdincs.h"
+#include "config.h"
+#include "applvl.h"
+#include "appdefs.h"
 
+#include "stdincs.h"
 #include "utilincs.h"
 
 #include "keys.h"
-#include "appdefs.h"
 #include "appmode.h"
 #include "line.h"
 #include "buffer1.h"
@@ -39,6 +41,7 @@
 #include "menu.h"
 #include "tio.h"
 #include "encdet.h"
+#include "bincode.h"
 #include "fileio.h"
 #include "history.h"
 #include "keymacro.h"

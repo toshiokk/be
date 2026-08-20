@@ -25,14 +25,11 @@
 extern int quit_immediate;
 extern int restart_be;
 
-void inc_call_depth();
-void dec_call_depth();
-int get_call_depth();
+void inc_sub_win_depth();
+void dec_sub_win_depth();
+int get_sub_win_depth();
 
-int progerr_cb_func(const char *warning);
-int write_to_warning_file(const char *warning);
 void app_die_on(const char *msg);
-void free_all_allocated_memory();
 
 void show_usage();
 void show_version();

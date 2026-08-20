@@ -93,9 +93,6 @@ void set_work_space_color_dark();
 void clear_work_space_color_dark();
 int is_work_space_color_dark();
 
-void set_work_space_color_warn();
-int is_work_space_color_warn();
-
 void register_item_color(item_color_idx_t color_idx, int bgc, int fgc);
 void get_item_color_by_idx(item_color_idx_t color_idx, char *bgc, char *fgc);
 void set_item_color_by_idx(item_color_idx_t color_idx, int reverse);

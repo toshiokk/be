@@ -115,9 +115,10 @@ const char *tio_blank_line();
 
 void tio_output_string(int yy, int xx, const char *string, int bytes);
 void tio_beep();
-void tio_refresh();
+
 void tio_repaint();
 void tio_redraw();
+void tio_refresh();
 
 key_code_t tio_input_key();
 

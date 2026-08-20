@@ -22,12 +22,7 @@
 #ifndef help_h
 #define help_h
 
-#ifndef ENABLE_HELP
-
-#define HELP_BUF_IDX_EDITOR_FILE_LIST		0
-#define HELP_BUFS							1
-
-#else // ENABLE_HELP
+#ifdef ENABLE_HELP
 
 #ifndef ENABLE_FILER
 
@@ -47,15 +42,13 @@
 
 #endif // ENABLE_FILER
 
-#endif // ENABLE_HELP
-
 void init_help_bufs();
 be_buf_t *get_help_buf(int help_buf_idx);
 
-int view_list(int help_idx);
+void view_list(int help_idx);
 
-#ifdef ENABLE_HELP
 void disp_splash(int delay);
+
 #endif // ENABLE_HELP
 
 #endif // help_h

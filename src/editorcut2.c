@@ -418,7 +418,7 @@ PRIVATE const char *get_cut_buffer_file_path();
 int save_cut_buffers()
 {
 	const char *file_path = get_cut_buffer_file_path();
-/////hmtflf_dprintf("ZZZZSSSS[%s]\n", file_path);
+////hmtflf_dprintf("ZZZZSSSS[%s]\n", file_path);
 	make_backup_files(file_path, get_backup_files());
 	FILE *fp = fopen(file_path, "w");
 	if (fp == NULL) {
@@ -461,7 +461,7 @@ int save_cut_buffers()
 int load_cut_buffers()
 {
 	const char *file_path = get_cut_buffer_file_path();
-/////hmtflf_dprintf("ZZZZLLLL[%s]\n", file_path);
+////hmtflf_dprintf("ZZZZLLLL[%s]\n", file_path);
 	FILE *fp = fopen(file_path, "r");
 	if (fp == NULL) {
 		return EOF;

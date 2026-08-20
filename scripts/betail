@@ -1,1 +1,1 @@
-tail -f "$1"
+sh -x -c "tail -F $1"

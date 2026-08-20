@@ -24,17 +24,18 @@
 
 #ifdef ENABLE_FILER
 
-// current : subject currently selected file to command
-// marked  : subject marked files to command
+// current : subject the currently selected files to a command
+// marked  : subject the marked files to a command
 //|function                    | current | marked | logging |
 //|----------------------------|---------|--------|---------|
 //|dof_tap_file                | v       | -      | --  |
 //|dof_view_file               | v       | -      | --  |
 //|dof_tail_file               | v       | -      | --  |
-//|dof_open_file               | -       | v      | --  |
-//|dof_open_file_ro            | -       | v      | --  |
-//|dof_open_file_non_recursive | -       | v      | --  |
-//|dof_open_file_from_history  | -       | v      | --  |
+//|dof_open_files_recursive    | -       | v      | --  |
+//|dof_open_files_non_recursive| -       | v      | --  |
+//|dof_open_files_ro           | -       | v      | --  |
+//|dof_open_files_locked()     | -       | v      | --  |
+//|dof_open_files_from_history | -       | v      | --  |
 //|dof_open_proj_file          | -       | -      | --  |
 //|dof_open_exec_log_file      | -       | -      | --  |
 //|dof_open_new_file           | v       | -      | --  |
@@ -64,11 +65,11 @@ void dof_tap_file_to_enter_add();
 void dof_view_file();
 void dof_tail_file();
 
-void dof_open_file_recursive();
-void dof_open_file_non_recursive();
-void dof_open_file_ro();
-void dof_open_file_locked();
-void dof_open_file_from_history();
+void dof_open_files_recursive();
+void dof_open_files_non_recursive();
+void dof_open_files_ro();
+void dof_open_files_locked();
+void dof_open_files_from_history();
 void dof_open_proj_file();
 void dof_open_exec_log_file();
 void dof_open_new_file();
@@ -77,10 +78,11 @@ void dof_drop_files_to_open();
 
 void dof_copy_file_update();
 void dof_copy_file_force();
-void dof_drop_files_to_copy();
 
 void dof_move_file();
 void dof_move_file_update();
+
+void dof_drop_files_to_copy();
 void dof_drop_files_to_move();
 
 void dof_rename_file();

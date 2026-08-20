@@ -352,7 +352,7 @@ int load_file_name_upp_low_(const char *file_name, int flags)
 				return files;
 			}
 		}
-		if (check_break_key()) {
+		if (do_check_break_key()) {
 			break;
 		}
 		strlcpy__(file_name_prev, file_name_buf, MAX_PATH_LEN);
@@ -415,7 +415,7 @@ PRIVATE int load_files_in_cur_buf_(int flags)
 		if (get_mem_free_in_kb(1) <= MIN_FREE_MEM_KB) {
 			break;
 		}
-		if (check_break_key()) {
+		if (do_check_break_key()) {
 			break;
 		}
 	}
@@ -745,10 +745,11 @@ int get_file_line_col_from_str(const char *str, char *file_path,
 //  diff fileio.h fileio.h~	// command line
 //  SOURCES += fileio.h		// Qt project file
 //  /home/user/tools/be/be/src/editorgoto.c|400:10 // BE file pos format
-//	  => "/home/user/tools/be/src/editorgoto.c", 400, 10
+//	  => "/home/user/tools/be/be/src/editorgoto.c", 400, 10
 //  '/home/user/tools/be/src/ file name.txt '|400:10 // BE file pos format (quoted)
 //	  => "/home/user/tools/be/src/ file name.txt ", 400, 10
 //  /home/user/tools/be/be/src/editorgoto.c#L100 // Github like format (line-100)
+//  File: "/home/user/tools/be/be/src/editorgoto.c", line 123  // Python error message
 // un-supported or avoided formats:
 //  fileio.h    20 10		// (separate by more than 4 spaces -> does not goto line-N)
 
@@ -771,7 +772,6 @@ PRIVATE int get_file_line_col_from_str__(const char *str, char *file_path,
 		strlcpy__(file_path, fn_begin, LIM_MAX(MAX_PATH_LEN, fn_end - fn_begin));
 		unquote_string(file_path);
 	}
-	// skip to the beginning of the line number
 no_file_path:;
 	get_line_col_from_str(ptr, line_num_, col_num_);
 	if (file_path) {
@@ -784,11 +784,20 @@ void get_line_col_from_str(const char *str, int *line_num_, int *col_num_)
 	int line_num = 0;
 	int col_num = 0;
 
-	// skip to the beginning of a line number
-	const char *ptr = skip_to_digit(str, 2);
-	if (! isdigit(*ptr)) {
-		goto none;
+	const char *ptr = str;
+#define PYTHON_LINE_NUMBER_PREFIX		", line "
+	if (strlcmp__(ptr, PYTHON_LINE_NUMBER_PREFIX) == 0) {
+		ptr += strlen(PYTHON_LINE_NUMBER_PREFIX);
+		if (! isdigit(*ptr)) {
+			goto none;
+		}
 	}
+	// skip to the beginning of a line number
+	ptr = skip_to_digit(ptr, 2);
+	if (isdigit(*ptr)) {
+		goto digit;
+	}
+digit:;
 	line_num = atoi(ptr);
 	ptr = skip_digits(ptr);
 	// skip to the beginning of a column number
@@ -827,7 +836,6 @@ int switch_epc_buf_by_rel_path(const char *file_path)
 // select from: all(#EDIT, #HIST, #HELP, #CUT, #UNDO, #REDO) buffers
 int switch_epc_buf_by_buffer_id(const char *file_path)
 {
-/////flf_dprintf("buffer_id: [%s]\n", file_path);
 	be_buf_t *buf = bufs_get_buf_by_buffer_id(NODES_TOP_ANCH(&all_bufferss), file_path);
 	if (buf) {
 		set_epc_buf(buf);

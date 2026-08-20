@@ -28,7 +28,7 @@ PRIVATE be_buf_t *buf_make_top_buf(be_buf_t *buf);
 // (common to edit-buffer, cut-buffer, undo-redo-buffer and history)
 
 // Create a new buffer be_buf_t
-be_buf_t *buf_create(const char *full_path, unsigned char buf_mode_)
+be_buf_t *buf_create(const char *full_path, UINT8 buf_mode_)
 {
 	_mlc_set_caller
 	be_buf_t *buf = (be_buf_t *)malloc__(sizeof(be_buf_t));
@@ -44,7 +44,7 @@ be_buf_t *buf_free(be_buf_t *buf)
 }
 
 // initialize be_buf_t members
-be_buf_t *buf_init(be_buf_t *buf, const char *full_path, unsigned char buf_mode_)
+be_buf_t *buf_init(be_buf_t *buf, const char *full_path, UINT8 buf_mode_)
 {
 	memset(buf, 0x00, sizeof(*buf));
 
@@ -375,6 +375,7 @@ const char *buf_enc_str(be_buf_t *buf)
 {
 	switch (GET_BUF_STATE(buf, buf_ENCODE)) {
 	default:
+	case ENCODE_NONE:		return "NONE";
 	case ENCODE_ASCII:		return "ASCII";
 	case ENCODE_UTF8:		return "UTF8";
 #ifdef USE_NKF
@@ -671,7 +672,6 @@ be_buf_t *buf_get_buf_by_full_path(be_buf_t *buf, const char *file_path)
 }
 be_buf_t *buf_get_buf_by_file_path(be_buf_t *buf, const char *file_path)
 {
-/////flf_dprintf("file_path: [%s]\n", file_path);
 	for (buf = buf_make_top_buf(buf); IS_NODE_INT(buf); buf = NODE_NEXT(buf)) {
 		if (compare_file_path_from_tail(buf_get_file_path(buf, NULL), file_path) == 0) {
 			return buf;	// found by file_path

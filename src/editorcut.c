@@ -261,8 +261,16 @@ void doe_paste_text_with_pop_char()
 }
 void doe_paste_text_without_pop()
 {
-	if (copy_delete_paste_pop(IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0
+	if (copy_delete_paste_pop((IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0)
 	 ? (CDPP_PASTE | CDPP_NOPOP) : (CDPP_REPLACE | CDPP_NOPOP)) <= 0) {
+		return;
+	}
+	disp_status_bar_done(_("Text Pasted without popping Cut-buffer"));
+}
+void doe_paste_text_without_pop_char()
+{
+	if (copy_delete_paste_pop(((IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE)) == 0)
+	 ? (CDPP_PASTE | CDPP_NOPOP) : (CDPP_REPLACE | CDPP_NOPOP)) | CDPP_FORCE_CHAR_PASTE) <= 0) {
 		return;
 	}
 	disp_status_bar_done(_("Text Pasted without popping Cut-buffer"));
