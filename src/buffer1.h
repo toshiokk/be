@@ -22,25 +22,6 @@
 #ifndef buffer1_h
 #define buffer1_h
 
-#define RW0RW0RW0		\
- (S_IRUSR | S_IWUSR | 0 | S_IRGRP | S_IWGRP | 0 | S_IROTH | S_IWOTH | 0)
-#define RW0000RW0		\
- (S_IRUSR | S_IWUSR | 0 | 0 | 0 | 0 | S_IROTH | S_IWOTH | 0)
-#define RW0RW0R00		\
- (S_IRUSR | S_IWUSR | 0 | S_IRGRP | S_IWGRP | 0 | S_IROTH | 0 | 0)
-#define RWXRWXRWX		\
- (S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH)
-
-typedef struct be_buf_view_t {
-	be_line_t *cur_line;		// current line (be_line_t)
-	int cur_line_byte_idx;		// current line byte index
-	int cursor_y;				// display Y in screen to which cur-line displayed
-	int cursor_x_to_keep;		// cursor X in text to keep when moving cursor vertically
-	int min_text_x_to_keep;		// text X to be displayed on the left edge of the screen
-} be_buf_view_t;
-
-//------------------------------------------------------------------------------
-
 typedef struct /*buf_state*/ {
 #define BUF_MODE_EDIT		0				// Normal buffer (modifiable)
 #define BUF_MODE_RO			1				// Read Only open file (unmodifiable)
@@ -91,7 +72,29 @@ typedef struct /*buf_state*/ {
 	UINT8 buf_ENCODE:3;				// bit 17-19
 } buf_state_t;
 
+//------------------------------------------------------------------------------
+
+typedef struct be_buf_view_t {
+	be_line_t *cur_line;		// current line (be_line_t)
+	int cur_line_byte_idx;		// current line byte index
+	int cursor_y;				// display Y in screen to which cur-line displayed
+	int cursor_x_to_keep;		// cursor X in text to keep when moving cursor vertically
+	int min_text_x_to_keep;		// text X to be displayed on the left edge of the screen
+} be_buf_view_t;
+
+//------------------------------------------------------------------------------
+
 #define EDITOR_PANES		MAX_APP_PANES_2
+
+// (struct stat).st_mode
+#define RW0RW0RW0		\
+ (S_IRUSR | S_IWUSR | 0 | S_IRGRP | S_IWGRP | 0 | S_IROTH | S_IWOTH | 0)
+#define RW0000RW0		\
+ (S_IRUSR | S_IWUSR | 0 | 0 | 0 | 0 | S_IROTH | S_IWOTH | 0)
+#define RW0RW0R00		\
+ (S_IRUSR | S_IWUSR | 0 | S_IRGRP | S_IWGRP | 0 | S_IROTH | 0 | 0)
+#define RWXRWXRWX		\
+ (S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH)
 
 //! buffer, collection of lines
 typedef struct be_buf_t {
@@ -117,10 +120,10 @@ be_buf_t *buf_create(const char *full_path, UINT8 buf_mode_);
 be_buf_t *buf_free(be_buf_t *buf);
 
 be_buf_t *buf_init(be_buf_t *buf, const char *full_path, UINT8 buf_mode_);
-void buf_views_init(be_buf_t *buf);
-void buf_views_set_cur_line(be_buf_t *buf);
+void buf_init_views(be_buf_t *buf);
+void buf_init_views_cur_line(be_buf_t *buf);
 void buf_view_copy(be_buf_view_t *dest, be_buf_view_t *src);
-void buf_set_view_x_cur_line(be_buf_t *buf, int pane_idx, be_line_t *line);
+void buf_set_views_cur_line(be_buf_t *buf, be_line_t *line, int line_byte_idx);
 be_buf_t *buf_init_anchors(be_buf_t *buf, char *initial_data);
 void buf_set_file_path(be_buf_t *buf, const char *file_path);
 const char *buf_get_file_path(be_buf_t *buf, char *file_path);
@@ -179,7 +182,7 @@ void buf_update_crc(be_buf_t *buf);
 int buf_check_crc(be_buf_t *buf);
 UINT16 buf_calc_crc(be_buf_t *buf);
 
-#define BUFFER_EXPIRATION_DSEC		10			// 100 * 10 = 1000 msec (32767 * 0.1 = 3276 secs)
+#define BUFFER_EXPIRATION_DSEC		100			// 100 * 100 = 10 secs (32767 * 0.1 = 3276 secs)
 void buf_set_modified__pending_timer(be_buf_t *buf);
 int buf_is_modified_newer(be_buf_t *buf, const char *file_path);
 int buf_is_modified_newer__expired(be_buf_t *buf, const char *file_path, UINT16 msec);

@@ -72,7 +72,8 @@ void dof_open_files_locked();
 void dof_open_files_from_history();
 void dof_open_proj_file();
 void dof_open_exec_log_file();
-void dof_open_new_file();
+void dof_open_new_file_name();
+void dof_open_new_file_path();
 void dof_input_files_to_open();
 void dof_drop_files_to_open();
 

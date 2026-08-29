@@ -1,0 +1,14 @@
+# update version date in the configure.ac
+# before: AC_INIT([BE],[260711],[BUG-REPORT-ADDRESS])
+# after : AC_INIT([BE],[280825],[BUG-REPORT-ADDRESS])
+
+yymmdd=$( date +%y%m%d )
+echo "YYMMDD: [$yymmdd]"
+##cat configure.ac | sed "s/\[BE\]/[be]/" | grep "\[be\]"
+##echo "--"
+echo -n "before: "; cat configure.ac | grep "AC_INIT"
+cat configure.ac | sed "s/AC_INIT(\[BE\],\[[0-9]\{6\}\]/AC_INIT([BE],[$yymmdd]/" >configure.ac~~~~~
+if diff configure.ac configure.ac~~~~~ >/dev/null; then
+  cp -auv configure.ac~~~~~ configure.ac
+fi
+echo -n "after : "; cat configure.ac | grep "AC_INIT"

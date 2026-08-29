@@ -290,19 +290,7 @@ PRIVATE int check_byte_utf8(encoding_stats_t *enc_stats, UCHAR byte)
 #define BYTES_NON_BINARY	(BYTES_WHOLE - BYTES_BINARY)
 #define DIV_AVOIDING_DIV_BY_0(dividend, divisor)		((dividend) / LIM_MIN(1, (divisor)))
 #define DIV_(dividend, divisor)							DIV_AVOIDING_DIV_BY_0(dividend, divisor)
-PRIVATE likeliness_t likeliness_index_ascii(encoding_stats_t *enc_stats)
-{
-	likeliness_t likeliness = DIV_((long)enc_stats->bytes_matched * enc_stats->match_weight,
-	 enc_stats->bytes_unmatched * enc_stats->unmatch_weight);
-	return (likeliness_t)MIN_MAX_(0, likeliness, MAX_LIKELINESS_INDEX);
-}
-PRIVATE likeliness_t likeliness_index_binary(encoding_stats_t *enc_stats)
-{
-	likeliness_t likeliness = DIV_((long)enc_stats->bytes_matched * enc_stats->match_weight,
-	 enc_stats->bytes_unmatched * enc_stats->unmatch_weight);
-	return (likeliness_t)MIN_MAX_(0, likeliness, MAX_LIKELINESS_INDEX);
-}
-PRIVATE likeliness_t likeliness_index_jesu(encoding_stats_t *enc_stats)
+PRIVATE likeliness_t likeliness_index_aubjes(encoding_stats_t *enc_stats)
 {
 	likeliness_t likeliness = DIV_((long)enc_stats->bytes_matched * enc_stats->match_weight,
 	 enc_stats->bytes_unmatched * enc_stats->unmatch_weight);
@@ -310,12 +298,12 @@ PRIVATE likeliness_t likeliness_index_jesu(encoding_stats_t *enc_stats)
 }
 
 PRIVATE encoding_stats_t encoding_stats[ENCDET_SUPPORTED_ENCODINGS] = {
-	{ 0, 0, 0, 0, 0,    10, 10, check_byte_ascii , likeliness_index_ascii , "ENCDET_ASCII"  },
-	{ 0, 0, 0, 0, 0,   100, 10, check_byte_utf8  , likeliness_index_jesu  , "ENCDET_UTF8"   },
-	{ 0, 0, 0, 0, 0, 10000, 10, check_byte_binary, likeliness_index_binary, "ENCDET_BINARY" },
-	{ 0, 0, 0, 0, 0, 30000,  1, check_byte_jis   , likeliness_index_jesu  , "ENCDET_JIS"    },
-	{ 0, 0, 0, 0, 0,   100, 10, check_byte_eucjp , likeliness_index_jesu  , "ENCDET_EUCJP"  },
-	{ 0, 0, 0, 0, 0,   100, 10, check_byte_sjis  , likeliness_index_jesu  , "ENCDET_SJIS"   },
+	{ 0, 0, 0, 0, 0,    10, 10, check_byte_ascii , likeliness_index_aubjes, "ENCDET_ASCII"  },
+	{ 0, 0, 0, 0, 0,   100, 10, check_byte_utf8  , likeliness_index_aubjes, "ENCDET_UTF8"   },
+	{ 0, 0, 0, 0, 0, 10000, 10, check_byte_binary, likeliness_index_aubjes, "ENCDET_BINARY" },
+	{ 0, 0, 0, 0, 0, 30000,  1, check_byte_jis   , likeliness_index_aubjes, "ENCDET_JIS"    },
+	{ 0, 0, 0, 0, 0,   100, 10, check_byte_eucjp , likeliness_index_aubjes, "ENCDET_EUCJP"  },
+	{ 0, 0, 0, 0, 0,   100, 10, check_byte_sjis  , likeliness_index_aubjes, "ENCDET_SJIS"   },
 };
 
 PRIVATE void clear_encoding_stats()
@@ -349,6 +337,7 @@ flf_dprintf("encoding guessed: %d:[%s]\n", enc, encoding_stats[enc].name);
 #ifdef ENABLE_DEBUG
 PRIVATE void dump_encoding_stats()
 {
+	d_printf(    "ix:enc-name        :checked,match,unmatch,match-idx,unmatch-idx,likeliness-idx\n");
 	for (int enc_idx = 0; enc_idx < ENCDET_SUPPORTED_ENCODINGS; enc_idx++) {
 		encoding_stats_t *enc_stats = &encoding_stats[enc_idx];
 		d_printf("%2d:%-16s: %6d,%5d,%5d, %10d,%10d, %10d\n",
@@ -378,7 +367,33 @@ int determine_encoding_file_path(const char *full_path)
 		}
 		for (int enc_idx = 0; enc_idx < ENCDET_SUPPORTED_ENCODINGS; enc_idx++) {
 			for (int off = 0; off < bytes; off++) {
-				encoding_stats[enc_idx].check_byte(&(encoding_stats[enc_idx]), bin_buf[off]);
+				char unmatched_bytes =
+				 encoding_stats[enc_idx].check_byte(&(encoding_stats[enc_idx]), bin_buf[off]);
+				if (unmatched_bytes < 0) {
+					unmatched_bytes = - unmatched_bytes;
+					switch(unmatched_bytes) {
+					case 1:
+						flf_dprintf("%-16s: %02x\n",
+						 encoding_stats[enc_idx].name,
+						 bin_buf[off]);
+						break;
+					case 2:
+						flf_dprintf("%-16s: %02x %02x\n",
+						 encoding_stats[enc_idx].name,
+						 bin_buf[off-1], bin_buf[off]);
+						break;
+					case 3:
+						flf_dprintf("%-16s: %02x %02x %02x\n",
+						 encoding_stats[enc_idx].name,
+						 bin_buf[off-2], bin_buf[off-1], bin_buf[off]);
+						break;
+					case 4:
+						flf_dprintf("%-16s: %02x %02x %02x %02x\n",
+						 encoding_stats[enc_idx].name,
+						 bin_buf[off-3], bin_buf[off-2], bin_buf[off-1], bin_buf[off]);
+						break;
+					}
+				}
 			}
 		}
 		bytes_chked += bytes;

@@ -7,6 +7,15 @@
  - POLICY: things to be kept
 - POLICY: fully seamless operations between editor/filer, histories
 
+- [-] editor view corrupts in the line wrap mode
+- [] does not jump to the corresponding line when it pressed K_M_SEMCO(dof_view_file_list)
+- [] sometimes history files in the directory $HOME/.be disappears. It's vital. Some recoveries necessary.
+  - backup at every morning(on the first startup) into $HOME/.be/backup
+- [] Unexpectedly return to filer after loading file
+- [] How can I change or reset the application's current directory easily
+  - current directories managed in the application
+    - filer current dir (already managed)
+    - editor base dir (not managed) ==> add into the `editor_panes_t` and manage it
 - [x] easily paste cut-buffer contents to input-line ==> [F08] paste the top of the cut buffer
 - [x] make console.log files sortable "1.log" ==> "01.log"
 - [-] more easy file search in filer ==> ^\ ^]
@@ -773,8 +782,8 @@ start as a editor
 // | K_M_e  | dof_open_files_non_recursive| doe_open_file_recursive |  v  |      |
 // | K_M_E  | dof_open_files_from_history | doe_open_file_ro        |  v  |      |
 // | K_MC_e | dof_open_files_locked       | doe_open_file_locked    |     |      |
-// | K_M_n  | dof_open_new_file           | doe_open_new_file       |     |      |
-// | K_M_N  | dof_open_new_file           | doe_open_new_file       |     |      |
+// | K_M_n  | dof_open_new_file_name      | doe_open_new_file       |     |      |
+// | K_M_N  | dof_open_new_file_path      | doe_open_new_file       |     |      |
 // | K_MC_n | --                          | doe_tog_show_line_num   |     |      |
 
 // Execution functions:
@@ -805,8 +814,8 @@ start as a editor
 // | K_M_e  | dof_open_files_non_recursive| No      |    | No    |       |     |        |
 // | K_M_E  | dof_open_files_from_history | Yes     |    | Yes   |       |     |        |
 // | K_MC_e | dof_open_files_locked       | Yes     |    | No    | Yes   |     |        |
-// | K_M_n  | dof_open_new_file           | Yes     |    |       |       | Yes | Yes    |
-// | K_M_N  | dof_open_new_file           | Yes     |    |       |       | Yes | Yes    |
+// | K_M_n  | dof_open_new_file_name      | Yes     |    |       |       | Yes | Yes    |
+// | K_M_N  | dof_open_new_file_path      | Yes     |    |       |       | Yes | Yes    |
 
 The seamless text copying between filer and editor:
 | from                      | through   | action to be able to do                                |

@@ -67,10 +67,7 @@ int load_file_into_new_buf(const char *full_path, int flags)
 
 	buf_append_magic_line_if_necessary(get_epc_buf());
 
-	buf_set_view_x_cur_line(get_epc_buf(), 0, CUR_EDIT_BUF_TOP_LINE);
-	EPCBV0_CLBI = 0;
-	buf_set_view_x_cur_line(get_epc_buf(), 1, CUR_EDIT_BUF_TOP_LINE);
-	EPCBV1_CLBI = 0;
+	buf_set_views_cur_line(get_epc_buf(), CUR_EDIT_BUF_TOP_LINE, 0);
 	renumber_cur_buf_from_top();
 	update_cur_ebuf_crc();
 

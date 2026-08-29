@@ -34,14 +34,14 @@ int mark_max_col_idx;				// col_idx right most in the marked area
 //------------------------------------------------------------------------------
 void clear_mark_pos()
 {
-	EPCB_ML = NODES_TOP_ANCH(get_epc_buf());
-	EPCB_MLBI = 0;
+	set_EPCB_ML(NODES_TOP_ANCH(get_epc_buf()));
+	set_EPCB_MLBI(0);
 	clear_cut_region();
 }
 void set_mark_pos()
 {
-	EPCB_ML = EPCBVC_CL;
-	EPCB_MLBI = EPCBVC_CLBI;
+	set_EPCB_ML(EPCBVC_CL);
+	set_EPCB_MLBI(EPCBVC_CLBI);
 	setup_cut_region();
 }
 

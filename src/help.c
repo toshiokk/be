@@ -90,18 +90,19 @@ void view_list(int help_idx)
 }
 PRIVATE void make_help_buf(int help_idx)
 {
-	be_buf_t *cur_edit_buf = get_epc_buf();
+	be_buf_t *cur_buf = get_epc_buf();
 	be_buf_t *buf = get_help_buf(help_idx);
 	set_epc_buf(buf);
 	buf_free_lines(buf);
-	EPCBVC_CL = NULL;
+	set_EPCBVC_CL(NULL);
+	set_EPCBVC_CLBI(0);
 
 	app_mode_t appmode_save;
 	appmode_save = app_mode__;
 	switch (help_idx) {
 	default:
 	case HELP_BUF_IDX_EDITOR_FILE_LIST:
-		make_help_file_list(cur_edit_buf);
+		make_help_file_list(cur_buf);
 		break;
 	case HELP_BUF_IDX_EDITOR_FUNC_LIST:
 		SET_APPMD_VAL(app_EDITOR_FILER, EF_EDITOR);
@@ -125,12 +126,14 @@ PRIVATE void make_help_buf(int help_idx)
 	SET_APPMD_VAL(app_EDITOR_FILER, GET_APPMD_PTR(&appmode_save, app_EDITOR_FILER));
 
 	append_string_to_cur_edit_buf("");
-	first_line();
+	if (help_idx != HELP_BUF_IDX_EDITOR_FILE_LIST)
+		first_line();
 	renumber_cur_buf_from_top();
 }
 
 PRIVATE void make_help_file_list(be_buf_t *cur_buf)
 {
+flf_dprintf("%p: [%s]\n", cur_buf, buf_get_file_path(cur_buf, NULL));
 	be_line_t *line_to_go = NULL;
 	for (be_bufs_t *bufs = NODES_TOP_NODE(&all_bufferss); IS_NODE_INT(bufs);
 	 bufs = NODE_NEXT(bufs)) {
@@ -146,16 +149,20 @@ PRIVATE void make_help_file_list(be_buf_t *cur_buf)
 			   central_win_get_columns() - win_size_shrink_columns() - (4 + 2 + 20)),
 			  buf_enc_str(buf), buf_eol_str(buf),
 			  GET_BUF_STATE(buf, buf_MODIFIED) ? "Mo" : "--"));
+flf_dprintf("%p: [%s]\n", buf, buf_get_file_path(buf, NULL));
 			if (buf == cur_buf) {
+_FLF_
 				line_to_go = EPCBVC_CL;
 			}
 		}
 	}
 	if (line_to_go) {
-		EPCBVC_CL = line_to_go;
+_FLF_
+		set_EPCBVC_CL(line_to_go);
 	} else {
-		EPCBVC_CL = NODES_TOP_NODE(get_epc_buf());
+		set_EPCBVC_CL(NODES_TOP_NODE(get_epc_buf()));
 	}
+	set_EPCBVC_CLBI(0);
 }
 
 PRIVATE void make_help_func_list()

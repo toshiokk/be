@@ -70,7 +70,7 @@ void doe_goto_column()
 		disp_status_bar_warn(_("Going to the column cancelled"));
 		return;
 	}
-	EPCBVC_CLBI = byte_idx_from_col_idx(EPCBVC_CL->data, col_num - 1, CHAR_LEFT, NULL);
+	set_EPCBVC_CLBI(byte_idx_from_col_idx(EPCBVC_CL->data, col_num - 1, CHAR_LEFT, NULL));
 }
 
 #ifdef ENABLE_FILER
@@ -667,23 +667,20 @@ int goto_line_col_in_cur_buf(int line_num, int col_num)
 {
 	int ret = 0;
 	if (line_num > 0) {
-		EPCBVC_CL = get_line_ptr_in_cur_buf_by_line_num(line_num);
-		EPCBVC_CLBI = 0;
+		set_EPCBVC_CL(get_line_ptr_in_cur_buf_by_line_num(line_num));
+		set_EPCBVC_CLBI(0);
 		ret++;
 	}
 	if (col_num < 0) {	// if colnum == -1, updata both pane
-		buf_set_view_x_cur_line(get_epc_buf(), 0, EPCBVC_CL);
-		EPCBV0_CLBI = EPCBVC_CLBI;
-		buf_set_view_x_cur_line(get_epc_buf(), 1, EPCBVC_CL);
-		EPCBV1_CLBI = EPCBVC_CLBI;
+		buf_set_views_cur_line(get_epc_buf(), EPCBVC_CL, EPCBVC_CLBI);
 	}
 	if (col_num > 0) {
 #if 1
 		// col_num is byte count
-		EPCBVC_CLBI = byte_idx_from_byte_idx(EPCBVC_CL->data, col_num-1);
+		set_EPCBVC_CLBI(byte_idx_from_byte_idx(EPCBVC_CL->data, col_num-1));
 #else
 		// col_num is column position
-		EPCBVC_CLBI = byte_idx_from_col_idx(EPCBVC_CL->data, col_num - 1, CHAR_LEFT, NULL);
+		set_EPCBVC_CLBI(byte_idx_from_col_idx(EPCBVC_CL->data, col_num - 1, CHAR_LEFT, NULL));
 #endif
 		ret++;
 	}

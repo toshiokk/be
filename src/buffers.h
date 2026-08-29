@@ -25,7 +25,7 @@
 typedef struct {
 	be_buf_t *bufs[EDITOR_PANES];	// edit-buffers shown in the left and the right pane
 } editor_panes_t;
-extern editor_panes_t *cur_editor_panes;	// Current Editor Panes
+/////extern editor_panes_t *cur_editor_panes;	// Current Editor Panes
 
 // two panes of editor(editor_panes)
 // - each pane reference a `buffer`
@@ -191,6 +191,34 @@ be_buf_view_t *get_epc_buf_view();
 
 void set_epx_buf(int pane_idx, be_buf_t *buf);
 be_buf_t *get_epx_buf(int pane_idx);
+be_buf_t **get_ptr_epx_buf(int pane_idx);
+
+void set_EPCBVC_CL(be_line_t *line);
+void set_EPCBVC_CL_DATA(char *data);
+void set_EPCBVC_CLBI(int line_byte_idx);
+void set_EPCBVC_CURS_Y(int line_y);
+void set_EPCBVC_CURS_X_TO_KEEP(int cursor_x);
+void set_EPCBVC_MIN_TEXT_X_TO_KEEP(int text_x);
+void set_EPCB_ML(be_line_t *line);
+void set_EPCB_MLBI(int line_byte_idx);
+void set_EPCBVX_CL(int pane_idx, be_line_t *line);
+void set_EPCBVX_CLBI(int pane_idx, int line_byte_idx);
+void set_EPCBV0_CLBI(int line_byte_idx);
+void set_EPCBV1_CLBI(int line_byte_idx);
+
+void set_BV_CL(be_buf_view_t *bv, be_line_t *line);
+void set_BV_CLBI(be_buf_view_t *bv, int byte_idx);
+void set_BV_CURS_Y(be_buf_view_t *bv, int line_y);
+void set_BV_CURS_X_TO_KEEP(be_buf_view_t *bv, int cursor_x);
+void set_BV_MIN_TEXT_X_TO_KEEP(be_buf_view_t *bv, int text_x);
+
+void set_BV0_CL(be_buf_t *buf, be_line_t *line);
+void set_BV1_CL(be_buf_t *buf, be_line_t *line);
+void set_BV0_CLBI(be_buf_t *buf, int byte_idx);
+void set_BV1_CLBI(be_buf_t *buf, int byte_idx);
+
+void set_BVX_CL(be_buf_t *buf, int pane_idx, be_line_t *line);
+void set_BVX_CLBI(be_buf_t *buf, int pane_idx, int byte_idx);
 
 void clear_cur_ebuf_modified();
 void set_cur_ebuf_modified();

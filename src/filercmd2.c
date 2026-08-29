@@ -161,11 +161,18 @@ void dof_open_exec_log_file()
 }
 
 PRIVATE int _dof_open_new_file(const char *str);
-void dof_open_new_file()
+void dof_open_new_file_name()
 {
 	char file_path[MAX_PATH_LEN+1] = "";
 	concat_file_path_separating_by_space(file_path, MAX_PATH_LEN,
 	 get_cfv_file_name(-1));
+	_dof_open_new_file(file_path);
+}
+void dof_open_new_file_path()
+{
+	char file_path[MAX_PATH_LEN+1] = "";
+	concat_file_path_separating_by_space(file_path, MAX_PATH_LEN,
+	 concat_dir_and_file(NULL, get_fv_from_cur_pane()->cur_dir, get_cfv_file_name(-1)));
 	_dof_open_new_file(file_path);
 }
 PRIVATE int _dof_open_new_file(const char *str)

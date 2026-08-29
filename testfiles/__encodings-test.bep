@@ -1,0 +1,27 @@
+huge-jis.c
+huge-eucjp.c
+huge-sjis.c
+huge-utf8.c
+sample.asm
+sample.html
+_binary.bin
+'Screenshot_from_2016-12-03 08:52:12.png'
+'Screenshot from 2018-10-20 17-39-43.png'
+'Screenshot from 2018-10-20 17-39-59.png'
+utf8-copyright.txt
+utf8-reserved.txt
+低EMI基板作成の秘訣jis-lf.txt
+低EMI基板作成の秘訣eucjp-lf.txt
+低EMI基板作成の秘訣sjis-crlf.txt
+低EMI基板作成の秘訣sjis-lf.txt
+低EMI基板作成の秘訣utf8-cr.txt
+低EMI基板作成の秘訣utf8-lf.txt
+杜子春jis.txt
+杜子春eucjp.txt
+杜子春sjis.txt
+杜子春utf8.txt
+be.pot
+ja-jis.po
+ja-eucjp.po
+ja-sjis.po
+ja-utf8.po

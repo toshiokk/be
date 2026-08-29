@@ -87,7 +87,7 @@ PRIVATE int doe_cut_to_head_(int delete0_cut1)
 	int prev_byte_idx = EPCBVC_CLBI;
 	doe_start_of_line();
 	_doe_set_mark();
-	EPCBVC_CLBI = prev_byte_idx;
+	set_EPCBVC_CLBI(prev_byte_idx);
 	setup_cut_region_after_cursor_move(CURS_MOVE_HORIZ);
 
 	if (delete0_cut1 == 0) {
@@ -118,10 +118,10 @@ PRIVATE int doe_cut_to_tail_(int delete0_cut1)
 
 	// To restore horizontal cursor pos. after undoing
 	int prev_byte_idx = EPCBVC_CLBI;
-	EPCBVC_CLBI = line_strlen(EPCBVC_CL);
+	set_EPCBVC_CLBI(line_strlen(EPCBVC_CL));
 	doe_end_of_line();
 	_doe_set_mark();
-	EPCBVC_CLBI = prev_byte_idx;
+	set_EPCBVC_CLBI(prev_byte_idx);
 	setup_cut_region_after_cursor_move(CURS_MOVE_HORIZ);
 
 	if (delete0_cut1 == 0) {
@@ -521,8 +521,8 @@ PRIVATE void delete_region(
 		return;
 
 	// adjust current line
-	EPCBVC_CL = min_line;
-	EPCBVC_CLBI = min_byte_idx;
+	set_EPCBVC_CL(min_line);
+	set_EPCBVC_CLBI(min_byte_idx);
 	for (line = min_line; ; line = next) {
 		next = NODE_NEXT(line);
 		if (line == min_line) {
@@ -603,7 +603,7 @@ PRIVATE void delete_rect_region(
 		min_byte_idx = byte_idx_from_col_idx(line->data, min_col_idx, CHAR_RIGHT, NULL);
 		max_byte_idx = byte_idx_from_col_idx(line->data, max_col_idx, CHAR_LEFT, NULL);
 		if (EPCBVC_CL == line) {
-			EPCBVC_CLBI = min_byte_idx;
+			set_EPCBVC_CLBI(min_byte_idx);
 		}
 		get_epc_buf()->buf_size -= (max_byte_idx - min_byte_idx);
 		line_string_delete(line, min_byte_idx, max_byte_idx - min_byte_idx);
@@ -647,9 +647,9 @@ PRIVATE void paste_cut_buf_char()
 		//  aaaaAAAA
 		//  BBBB  <== new_line
 		// >bbbb
-		EPCBVC_CURS_Y++;
+		set_EPCBVC_CURS_Y(EPCBVC_CURS_Y + 1);
 	}
-	EPCBVC_CLBI = line_strlen(new_line);
+	set_EPCBVC_CLBI(line_strlen(new_line));
 	//  aaaaAAAA
 	//  BBBB
 	//  CCCC^  <== new_line
@@ -679,13 +679,13 @@ PRIVATE void paste_cut_buf_line()
 		cut_line = NODE_NEXT(cut_line);
 		if (GET_CUR_CBUF_STATE(buf_CUT_MODE_ON_CUT) != CUT_MODE_N_LINE) {
 			// not instant cut/copy
-			EPCBVC_CURS_Y++;
+			set_EPCBVC_CURS_Y(EPCBVC_CURS_Y + 1);
 		}
 	}
 	if (GET_CUR_CBUF_STATE(buf_CUT_MODE_ON_CUT) == CUT_MODE_N_LINE) {
 		// instant cut/copy
-		EPCBVC_CL = NODE_PREV(EPCBVC_CL);
-		EPCBVC_CLBI = LIM_MAX(EPCBVC_CLBI, line_strlen(EPCBVC_CL));	// limit cursor pos
+		set_EPCBVC_CL(NODE_PREV(EPCBVC_CL));
+		set_EPCBVC_CLBI(LIM_MAX(EPCBVC_CLBI, line_strlen(EPCBVC_CL)));	// limit cursor pos
 	}
 }
 // paste data into edit buffer rectangular
@@ -716,16 +716,16 @@ PRIVATE void paste_cut_buf_rect()
 	for (be_line_t *cut_line = NEWEST_CUT_BUF_TOP_LINE; IS_NODE_INT(cut_line); ) {
 		if (IS_NODE_BOT_ANCH(EPCBVC_CL)) {
 			// if no more lines in edit buffer, append line automatically
-			EPCBVC_CL = line_insert_with_string(EPCBVC_CL, INSERT_BEFORE, "");
+			set_EPCBVC_CL(line_insert_with_string(EPCBVC_CL, INSERT_BEFORE, ""));
 		}
-		EPCBVC_CLBI = byte_idx_from_col_idx(EPCBVC_CL->data, cur_line_col_idx,
-		 CHAR_LEFT, NULL);
+		set_EPCBVC_CLBI(byte_idx_from_col_idx(EPCBVC_CL->data, cur_line_col_idx,
+		 CHAR_LEFT, NULL));
 		line_string_replace(EPCBVC_CL, EPCBVC_CLBI, 0, cut_line->data, -1);
-		EPCBVC_CLBI += line_strlen(cut_line);
+		set_EPCBVC_CLBI(EPCBVC_CLBI + line_strlen(cut_line));
 		cut_line = NODE_NEXT(cut_line);
 		if (IS_NODE_BOT_ANCH(cut_line))
 			break;
-		EPCBVC_CL = NODE_NEXT(EPCBVC_CL);
+		set_EPCBVC_CL(NODE_NEXT(EPCBVC_CL));
 	}
 }
 //------------------------------------------------------------------------------

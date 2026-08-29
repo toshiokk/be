@@ -637,10 +637,8 @@ PRIVATE void disp_status_bar_editor(s_b_d_t status_bar)
 	char buf_char_code[UTF8_CODE_LEN+1] = "";		// "00-00-00-00-00-00(U+xxxxxxxx)"
 	unsigned long xx;
 	unsigned long disp_len;
-#define SEL_LINES_COLS_LEN		(1+1+4+10+1+5+4+1)		// " (LNS:9999999999 COLS:9999)"
-	char buf_lines_sel[SEL_LINES_COLS_LEN+1] = "";
-#define ENC_EOL_LEN		(3+2+6+1+5+5)					// "ENC: EUC-JP EOL: CR+LF"
-	char buf_enc_eol[ENC_EOL_LEN+1] = "";
+	char buf_lines_sel[MAX_EDIT_LINE_LEN+1] = "";
+	char buf_enc_eol[MAX_EDIT_LINE_LEN+1] = "";
 	char buf_line_col_size_char[MAX_EDIT_LINE_LEN+1] = "";
 	char buffer[MAX_EDIT_LINE_LEN+1] = "";
 
@@ -661,7 +659,7 @@ PRIVATE void disp_status_bar_editor(s_b_d_t status_bar)
 	 "(%d)", utf8c_columns(&EPCBVC_CL->data[EPCBVC_CLBI]));
 
 	if (IS_MARK_SET(GET_CUR_EBUF_STATE(buf_CUT_MODE))) {
-		snprintf(buf_lines_sel, SEL_LINES_COLS_LEN+1, " (LNS:%2d COLS:%2d)",
+		snprintf(buf_lines_sel, MAX_EDIT_LINE_LEN, " (LNS:%2d COLS:%2d)",
 		 get_lines_selected_in_cut_region(), get_columns_selected_in_cut_region());
 	}
 
@@ -670,13 +668,15 @@ PRIVATE void disp_status_bar_editor(s_b_d_t status_bar)
 	 EPCBVC_CL->line_num, get_epc_buf()->buf_lines, xx, disp_len,
 	 get_epc_buf()->buf_size, buf_lines_sel, buf_char_code);
 
-	snprintf(buf_enc_eol, ENC_EOL_LEN+1, _("ENC:%s EOL:%s"),
+	snprintf(buf_enc_eol, MAX_EDIT_LINE_LEN, _("ENC:%s EOL:%s"),
 	 buf_enc_str(get_epc_buf()), buf_eol_str(get_epc_buf()));
 
 	int cols_line_col_size_char = col_idx_from_byte_idx(buf_line_col_size_char, INT_MAX);
 	int cols_enc_eol = col_idx_from_byte_idx(buf_enc_eol, INT_MAX);
 
 	int spaces = LIM_MIN(1, sub_win_get_columns() - (cols_line_col_size_char + cols_enc_eol));
+flf_dprintf("left-space-right: %d (%d %d %d)\n", sub_win_get_columns(), cols_line_col_size_char, spaces, cols_enc_eol);
+flf_dprintf("[%s] [%s]\n", buf_line_col_size_char, buf_enc_eol);
 	snprintf(buffer, MAX_EDIT_LINE_LEN, "%s%*s%s",
 	 buf_line_col_size_char, spaces, "", buf_enc_eol);
 	adjust_str_columns(buffer, sub_win_get_columns());

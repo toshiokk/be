@@ -169,7 +169,7 @@ int get_fv_file_info_entries(filer_view_t *fv)
 file_info_t *get_fv_file_info(filer_view_t *fv, int file_idx)
 {
 	GET_FV_FILE_IDX(fv)
-	if ((file_idx < 0) || (get_fv_file_info_entries(fv) < file_idx)) {
+	if ((file_idx < 0) || (get_fv_file_info_entries(fv) <= file_idx)) {
 		_PROGERR_
 		file_idx = 0;
 	}
@@ -178,12 +178,13 @@ file_info_t *get_fv_file_info(filer_view_t *fv, int file_idx)
 
 file_info_t *get_cfv_file_info(int file_idx)
 {
-	GET_CFV_FILE_IDX()
-	if (file_idx < 0 || get_cfv_file_info_entries() < file_idx) {
-		_PROGERR_
-		file_idx = 0;
-	}
-	return &(get_cfv_file_info_array()[file_idx]);
+	return get_fv_file_info(get_fv_from_cur_pane(), file_idx);
+/////	GET_CFV_FILE_IDX()
+/////	if (file_idx < 0 || get_cfv_file_info_entries() <= file_idx) {
+/////		_PROGERR_
+/////		file_idx = 0;
+/////	}
+/////	return &(get_cfv_file_info_array()[file_idx]);
 }
 const char *get_cfv_file_name(int file_idx)
 {

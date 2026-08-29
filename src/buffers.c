@@ -21,8 +21,6 @@
 
 #include "headers.h"
 
-editor_panes_t *cur_editor_panes = NULL;	// Current Editor Panes
-
 // collection of collections of buffers
 be_bufss_t all_bufferss;
 
@@ -142,16 +140,20 @@ int free_edit_buf(be_buf_t *buf)
 	buf_unlink_free(buf);
 	return ret;		// 0: no buffer remains
 }
+
 //------------------------------------------------------------------------------
-// cur_editor_panes->bufs[0]->buf_views[0]
-// cur_editor_panes->bufs[1]->buf_views[1]
+
+// cur_editor_panes->bufs[0]->buf_views[0]		normally accessed
+// cur_editor_panes->bufs[0]->buf_views[1]		normally never accessed
+// cur_editor_panes->bufs[1]->buf_views[0]		normally never accessed
+// cur_editor_panes->bufs[1]->buf_views[1]		normally accessed
 
 void buf_avoid_wild_ptr_cur(be_buf_t *buf)
 {
 	// avoid cur_editor_panes->bufs[0] becoming wild-pointer 
-	buf_avoid_wild_ptr(buf, &(cur_editor_panes->bufs[0]));
+	buf_avoid_wild_ptr(buf, get_ptr_epx_buf(0));
 	// avoid cur_editor_panes->bufs[1] becoming wild-pointer 
-	buf_avoid_wild_ptr(buf, &(cur_editor_panes->bufs[1]));
+	buf_avoid_wild_ptr(buf, get_ptr_epx_buf(1));
 }
 void buf_avoid_wild_ptr(be_buf_t *buf, be_buf_t **buf_ptr)
 {
@@ -185,6 +187,8 @@ void line_avoid_wild_ptr(be_line_t **line_ptr, be_line_t *line)
 //------------------------------------------------------------------------------
 // Editor view management
 
+PRIVATE editor_panes_t *cur_editor_panes = NULL;	// Current Editor Panes
+
 void set_cur_editor_panes(editor_panes_t *editor_panes)
 {
 	cur_editor_panes = editor_panes;
@@ -203,7 +207,7 @@ void init_editor_panes(editor_panes_t *eps)
 }
 void inherit_editor_panes(editor_panes_t *eps, be_buf_t *buf)
 {
-	editor_panes_t *prev_eps = cur_editor_panes;
+	editor_panes_t *prev_eps = get_cur_editor_panes();
 	set_cur_editor_panes(eps);
 	if (prev_eps == NULL) {
 		// No prev_eps, this means 'eps' is the root view. set default initial values.
@@ -212,7 +216,7 @@ void inherit_editor_panes(editor_panes_t *eps, be_buf_t *buf)
 		}
 	} else {
 		// There is prev_eps, copy it.
-		copy_editor_panes(cur_editor_panes, prev_eps);
+		copy_editor_panes(get_cur_editor_panes(), prev_eps);
 	}
 	if (buf) {
 		set_epx_buf(-1, buf);	// set a buffer only to the current pane
@@ -227,6 +231,13 @@ void copy_editor_panes(editor_panes_t *dest, editor_panes_t *src)
 	memcpy__(dest, src, sizeof(*src));
 }
 
+be_buf_view_t *get_epc_buf_view()
+{
+	int pane_idx = get_editor_cur_pane_idx();
+	return &(get_epx_buf(pane_idx)->buf_views[pane_idx]);
+/////	return &(get_epc_buf()->buf_views[get_editor_cur_pane_idx()]);
+}
+
 void set_epc_buf(be_buf_t *buf)	// set edit buffer to current pane
 {
 	set_epx_buf(-1, buf);
@@ -235,18 +246,13 @@ be_buf_t *get_epc_buf()
 {
 	return get_epx_buf(-1);
 }
-be_buf_view_t *get_epc_buf_view()
-{
-	return &(get_epc_buf()->buf_views[get_editor_cur_pane_idx()]);
-}
-
 void set_epx_buf(int pane_idx, be_buf_t *buf)
 {
 	if (pane_idx < 0) {
 		pane_idx = get_editor_cur_pane_idx();
 	}
 	if (buf) {
-		cur_editor_panes->bufs[pane_idx] = buf;
+		get_cur_editor_panes()->bufs[pane_idx] = buf;
 	}
 	buf_fix_cur_line(buf);
 }
@@ -256,7 +262,114 @@ be_buf_t *get_epx_buf(int pane_idx)
 	if (pane_idx < 0) {
 		pane_idx = get_editor_cur_pane_idx();
 	}
-	return cur_editor_panes->bufs[pane_idx];
+	return get_cur_editor_panes()->bufs[pane_idx];
+}
+be_buf_t **get_ptr_epx_buf(int pane_idx)
+{
+	if (pane_idx < 0) {
+		pane_idx = get_editor_cur_pane_idx();
+	}
+	return &(get_cur_editor_panes()->bufs[pane_idx]);
+}
+
+//------------------------------------------------------------------------------
+void set_EPCBVC_CL(be_line_t *line)
+{
+	EPCBVC_CL = line;
+}
+void set_EPCBVC_CL_DATA(char *data)
+{
+	EPCBVC_CL_DATA = data;
+}
+void set_EPCBVC_CLBI(int line_byte_idx)
+{
+	EPCBVC_CLBI = line_byte_idx;
+}
+void set_EPCBVC_CURS_Y(int line_y)
+{
+	EPCBVC_CURS_Y = line_y;
+}
+void set_EPCBVC_CURS_X_TO_KEEP(int cursor_x)
+{
+	EPCBVC_CURS_X_TO_KEEP = cursor_x;
+}
+void set_EPCBVC_MIN_TEXT_X_TO_KEEP(int text_x)
+{
+	EPCBVC_MIN_TEXT_X_TO_KEEP = text_x;
+}
+
+void set_EPCB_ML(be_line_t *line)
+{
+	EPCB_ML = line;
+}
+void set_EPCB_MLBI(int line_byte_idx)
+{
+	EPCB_MLBI = line_byte_idx;
+}
+
+void set_EPCBVX_CL(int pane_idx, be_line_t *line)
+{
+	EPCBVX_CL(pane_idx) = line;
+}
+
+void set_EPCBVX_CLBI(int pane_idx, int line_byte_idx)
+{
+	EPCBVX_CLBI(pane_idx) = line_byte_idx;
+}
+void set_EPCBV0_CLBI(int line_byte_idx)
+{
+	EPCBVX_CLBI(0) = line_byte_idx;
+}
+void set_EPCBV1_CLBI(int line_byte_idx)
+{
+	EPCBVX_CLBI(1) = line_byte_idx;
+}
+
+void set_BV_CL(be_buf_view_t *bv, be_line_t *line)
+{
+	BV_CL(bv) = line;
+}
+void set_BV_CLBI(be_buf_view_t *bv, int byte_idx)
+{
+	BV_CLBI(bv) = byte_idx;
+}
+void set_BV_CURS_Y(be_buf_view_t *bv, int line_y)
+{
+	BV_CURS_Y(bv) = line_y;
+}
+void set_BV_CURS_X_TO_KEEP(be_buf_view_t *bv, int cursor_x)
+{
+	BV_CURS_X_TO_KEEP(bv) = cursor_x;
+}
+void set_BV_MIN_TEXT_X_TO_KEEP(be_buf_view_t *bv, int text_x)
+{
+	BV_MIN_TEXT_X_TO_KEEP(bv) = text_x;
+}
+
+void set_BV0_CL(be_buf_t *buf, be_line_t *line)
+{
+	BV0_CL(buf) = line;
+}
+void set_BV1_CL(be_buf_t *buf, be_line_t *line)
+{
+	BV1_CL(buf) = line;
+}
+void set_BV0_CLBI(be_buf_t *buf, int byte_idx)
+{
+	BV0_CLBI(buf) = byte_idx;
+}
+void set_BV1_CLBI(be_buf_t *buf, int byte_idx)
+{
+	BV1_CLBI(buf) = byte_idx;
+}
+
+void set_BVX_CL(be_buf_t *buf, int pane_idx, be_line_t *line)
+{
+	BVX_CL(buf, pane_idx) = line;
+}
+void set_BVX_CLBI(be_buf_t *buf, int pane_idx, int byte_idx)
+{
+	BVX_CLBI(buf, pane_idx) = byte_idx;
 }
 
 //--------------------------------------
@@ -448,7 +561,7 @@ void dump_editor_panes(editor_panes_t *eps)
 {
 	flf_dprintf("{{ %p\n", eps);
 	if (eps == NULL) {
-		eps = cur_editor_panes;
+		eps = get_cur_editor_panes();
 	}
 	flf_dprintf("cur_pane_idx: %d\n", get_editor_cur_pane_idx());
 	dump_buf_views(eps->bufs[get_editor_cur_pane_idx()]);
@@ -505,13 +618,13 @@ void create_edit_buf(const char *full_path)
 #ifdef USE_NKF
 	SET_CUR_EBUF_STATE(buf_ENCODE, GET_BUF_STATE(EDIT_BUFS_BOT_ANCH, buf_ENCODE));
 #endif // USE_NKF
-	if (IS_NODE_INT(cur_editor_panes->bufs[0]) == 0) {
+	if (IS_NODE_INT(get_epx_buf(0)) == 0) {
 		// If view-0 does not point a valid buffer, set valid buf to view-0 buffer pointer
-		cur_editor_panes->bufs[0] = buf;
+		set_epx_buf(0, buf);
 	}
-	if (IS_NODE_INT(cur_editor_panes->bufs[1]) == 0) {
+	if (IS_NODE_INT(get_epx_buf(1)) == 0) {
 		// If view-0 does not point a valid buffer, set valid buf to view-0 buffer pointer
-		cur_editor_panes->bufs[1] = buf;
+		set_epx_buf(1, buf);
 	}
 }
 
@@ -799,7 +912,7 @@ void doe_tog_buf_line_wrap()
 {
 	tog_buf_line_wrap_mode();
 	SHOW_MODE("Line-wrap mode", get_str_buf_line_wrap());
-	EPCBVC_MIN_TEXT_X_TO_KEEP = 0;
+	set_EPCBVC_MIN_TEXT_X_TO_KEEP(0);
 	post_cmd_processing(NULL, CURS_MOVE_HORIZ, LOCATE_CURS_NONE, UPDATE_SCRN_ALL_SOON);
 }
 void doe_tog_buf_tab_size()

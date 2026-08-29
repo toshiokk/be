@@ -322,24 +322,12 @@ const char *get_history_file_name(int hist_type_idx)
 	const char *file;
 	switch (hist_type_idx) {
 	default:
-	case HISTORY_TYPE_IDX_DIR:
-		file = DIR_HISTORY_FILE_NAME;
-		break;
-	case HISTORY_TYPE_IDX_FILE:
-		file = FILE_HISTORY_FILE_NAME;
-		break;
-	case HISTORY_TYPE_IDX_SEARCH:
-		file = SEARCH_HISTORY_FILE_NAME;
-		break;
-	case HISTORY_TYPE_IDX_EXEC:
-		file = EXEC_HISTORY_FILE_NAME;
-		break;
-	case HISTORY_TYPE_IDX_KEYMACRO:
-		file = KEYMACRO_HISTORY_FILE_NAME;
-		break;
-	case HISTORY_TYPE_IDX_SHELL:
-		file = BASH_HISTORY_FILE_NAME;
-		break;
+	case HISTORY_TYPE_IDX_DIR:			file = DIR_HISTORY_FILE_NAME;		break;
+	case HISTORY_TYPE_IDX_FILE:			file = FILE_HISTORY_FILE_NAME;		break;
+	case HISTORY_TYPE_IDX_SEARCH:		file = SEARCH_HISTORY_FILE_NAME;	break;
+	case HISTORY_TYPE_IDX_EXEC:			file = EXEC_HISTORY_FILE_NAME;		break;
+	case HISTORY_TYPE_IDX_KEYMACRO:		file = KEYMACRO_HISTORY_FILE_NAME;	break;
+	case HISTORY_TYPE_IDX_SHELL:		file = BASH_HISTORY_FILE_NAME;		break;
 	}
 	return file;
 }
@@ -348,24 +336,12 @@ PRIVATE int get_history_max_lines(int hist_type_idx)
 	int lines = 0;
 	switch (hist_type_idx) {
 	default:
-	case HISTORY_TYPE_IDX_DIR:
-		lines = MAX_HISTORY_LINES;
-		break;
-	case HISTORY_TYPE_IDX_FILE:
-		lines = MAX_HISTORY_LINES_9999;
-		break;
-	case HISTORY_TYPE_IDX_SEARCH:
-		lines = MAX_HISTORY_LINES;
-		break;
-	case HISTORY_TYPE_IDX_EXEC:
-		lines = MAX_HISTORY_LINES;
-		break;
-	case HISTORY_TYPE_IDX_KEYMACRO:
-		lines = MAX_HISTORY_LINES_99;
-		break;
-	case HISTORY_TYPE_IDX_SHELL:
-		lines = MAX_HISTORY_LINES;
-		break;
+	case HISTORY_TYPE_IDX_DIR:			lines = MAX_HISTORY_LINES;			break;
+	case HISTORY_TYPE_IDX_FILE:			lines = MAX_HISTORY_LINES_9999;		break;
+	case HISTORY_TYPE_IDX_SEARCH:		lines = MAX_HISTORY_LINES;			break;
+	case HISTORY_TYPE_IDX_EXEC:			lines = MAX_HISTORY_LINES;			break;
+	case HISTORY_TYPE_IDX_KEYMACRO:		lines = MAX_HISTORY_LINES_99;		break;
+	case HISTORY_TYPE_IDX_SHELL:		lines = MAX_HISTORY_LINES;			break;
 	}
 	return lines;
 }

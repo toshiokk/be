@@ -137,7 +137,7 @@ void locate_curs_y_in_edit_win(locate_cursor_to_t locate_curs)
 		disp_y_preferred = LIM_MIN(0, edit_win_get_text_lines() - 1);
 		break;
 	}
-	EPCBVC_CURS_Y = disp_y_preferred;
+	set_EPCBVC_CURS_Y(disp_y_preferred);
 	fix_cursor_y_keeping_vert_scroll_margin();
 }
 
@@ -167,7 +167,7 @@ void fix_cursor_y_keeping_vert_scroll_margin()
 			break;
 		}
 	}
-	EPCBVC_CURS_Y = lines_go_up;
+	set_EPCBVC_CURS_Y(lines_go_up);
 }
 
 PRIVATE be_line_t *prev_cur_line = NULL;	// Previous EPCBVC_CL
@@ -252,15 +252,15 @@ void update_text_x_to_keep_after_cursor_move(cursor_horiz_vert_move_t cursor_mov
 	if ((cursor_move == CURS_MOVE_HORIZ) || (cursor_move == CURS_MOVE_JUMP)) {
 		// update `buf_view->cursor_x_to_keep`
 		// and    `buf_view->min_text_x_to_keep`
-		EPCBVC_CURS_X_TO_KEEP = start_col_idx_of_wrap_line(
-		 EPCBVC_CL->data, EPCBVC_CLBI, -1);
+		set_EPCBVC_CURS_X_TO_KEEP(start_col_idx_of_wrap_line(
+		 EPCBVC_CL->data, EPCBVC_CLBI, -1));
 		update_min_text_x_to_keep(EPCBVC_CURS_X_TO_KEEP);
 	} else {
 		// not update `buf_view->cursor_x_to_keep`
 		// and update `buf_view->min_text_x_to_keep`
 		int wl_idx = start_wl_idx_of_wrap_line(EPCBVC_CL->data, EPCBVC_CLBI, -1);
-		EPCBVC_CLBI = end_byte_idx_of_wrap_line_le(EPCBVC_CL->data, wl_idx,
-		 EPCBVC_CURS_X_TO_KEEP, -1);
+		set_EPCBVC_CLBI(end_byte_idx_of_wrap_line_le(EPCBVC_CL->data, wl_idx,
+		 EPCBVC_CURS_X_TO_KEEP, -1));
 		int cursor_x_in_text = start_col_idx_of_wrap_line(
 		 EPCBVC_CL->data, EPCBVC_CLBI, -1);
 		update_min_text_x_to_keep(cursor_x_in_text);
@@ -285,7 +285,7 @@ void update_min_text_x_to_keep(int text_x)
 {
 	int min_text_x_to_keep = calc_min_text_x_to_keep();
 	if (min_text_x_to_keep != EPCBVC_MIN_TEXT_X_TO_KEEP) {
-		EPCBVC_MIN_TEXT_X_TO_KEEP = min_text_x_to_keep;
+		set_EPCBVC_MIN_TEXT_X_TO_KEEP(min_text_x_to_keep);
 		set_edit_win_update_needed(UPDATE_SCRN_ALL);
 	}
 }

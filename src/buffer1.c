@@ -58,7 +58,7 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path, UINT8 buf_mode_)
 
 	buf_init_anchors(buf, buf->file_path_);
 
-	buf_views_init(buf);
+	buf_init_views(buf);
 
 	buf->mark_line = NODES_BOT_ANCH(buf);
 	buf->mark_line_byte_idx = 0;
@@ -68,43 +68,48 @@ be_buf_t *buf_init(be_buf_t *buf, const char *full_path, UINT8 buf_mode_)
 	return buf;
 }
 
-PRIVATE void buf_view_init(be_buf_view_t *bv, be_buf_t *buf);
-PRIVATE void buf_view_set_cur_line(be_buf_view_t *bv, be_buf_t *buf);
-void buf_views_init(be_buf_t *buf)
+PRIVATE void buf_init_view_x(be_buf_t *buf, int pane_idx);
+PRIVATE void buf_init_view_cur_line(be_buf_t *buf, int pane_idx);
+void buf_init_views(be_buf_t *buf)
 {
-	buf_view_init(&(buf->buf_views[0]), buf);
-	buf_view_init(&(buf->buf_views[1]), buf);
+	buf_init_view_x(buf, 0);
+	buf_init_view_x(buf, 1);
 }
-PRIVATE void buf_view_init(be_buf_view_t *bv, be_buf_t *buf)
+PRIVATE void buf_init_view_x(be_buf_t *buf, int pane_idx)
 {
-	buf_view_set_cur_line(bv, buf);
-	BV_CLBI(bv) = 0;
-	BV_CURS_Y(bv) = MAX_SCRN_LINES;
-	BV_CURS_X_TO_KEEP(bv) = 0;
-	BV_MIN_TEXT_X_TO_KEEP(bv) = 0;
+	buf_init_view_cur_line(buf, pane_idx);
+	be_buf_view_t *bv = &(buf->buf_views[pane_idx]);
+	set_BV_CLBI(bv, 0);
+	set_BV_CURS_Y(bv, MAX_SCRN_LINES);
+	set_BV_CURS_X_TO_KEEP(bv, 0);
+	set_BV_MIN_TEXT_X_TO_KEEP(bv, 0);
 }
-void buf_views_set_cur_line(be_buf_t *buf)
+void buf_init_views_cur_line(be_buf_t *buf)
 {
-	buf_view_set_cur_line(&(buf->buf_views[0]), buf);
-	buf_view_set_cur_line(&(buf->buf_views[1]), buf);
+	buf_init_view_cur_line(buf, 0);
+	buf_init_view_cur_line(buf, 1);
 }
-PRIVATE void buf_view_set_cur_line(be_buf_view_t *bv, be_buf_t *buf)
+PRIVATE void buf_init_view_cur_line(be_buf_t *buf, int pane_idx)
 {
-	BV_CL(bv) = NODES_TOP_NODE(buf);
+	be_buf_view_t *bv = &(buf->buf_views[pane_idx]);
+	set_BV_CL(bv, NODES_TOP_NODE(buf));
 }
 
 void buf_view_copy(be_buf_view_t *dest, be_buf_view_t *src)
 {
 	memcpy__(dest, src, sizeof(be_buf_view_t));
 }
-void buf_set_view_x_cur_line(be_buf_t *buf, int pane_idx, be_line_t *line)
+void buf_set_views_cur_line(be_buf_t *buf, be_line_t *line, int line_byte_idx)
 {
 #ifdef ENABLE_DEBUG
 	if (buf_check_line_is_in_buf(buf, line) == 0) {
 		warning_printf("line:[%s] is not in buf[%s] !!!!\n", line->data, buf->file_path_);
 	}
 #endif // ENABLE_DEBUG
-	BVX_CL(buf, pane_idx) = line;
+	set_BV0_CL(buf, line);
+	set_BV0_CLBI(buf, line_byte_idx);
+	set_BV1_CL(buf, line);
+	set_BV1_CLBI(buf, line_byte_idx);
 }
 
 be_buf_t *buf_init_anchors(be_buf_t *buf, char *initial_data)
@@ -278,10 +283,16 @@ int buf_append_magic_line_if_necessary(be_buf_t *buf)
 }
 be_line_t *buf_append_string_to_buf(be_buf_t *buf, const char *string)
 {
-	BVX_CL(buf, 0) = BVX_CL(buf, 1) = line_insert_with_string(NODES_BOT_ANCH(buf), INSERT_BEFORE,
-	 string);
-	BVX_CLBI(buf, 0) = BVX_CLBI(buf, 1) = 0;
-	return EPCBVC_CL;
+	be_line_t *line = line_insert_with_string(NODES_BOT_ANCH(buf), INSERT_BEFORE, string);
+	if (BVX_CL(buf, 0) == NULL) {
+		set_BVX_CL(buf, 0, line);
+		set_BVX_CLBI(buf, 0, 0);
+	}
+	if (BVX_CL(buf, 1) == NULL) {
+		set_BVX_CL(buf, 1, line);
+		set_BVX_CLBI(buf, 1, 0);
+	}
+	return line;
 }
 
 be_line_t *buf_append_line_to_bottom(be_buf_t *buf, be_line_t *line)
@@ -414,23 +425,25 @@ const char *get_cut_mode_str(int buf_CUT_MODE)
 void buf_fix_cur_line(be_buf_t *buf)
 {
 	if (IS_NODE_INT(BV0_CL(buf)) == 0) {
-		BV0_CL(buf) = NODES_TOP_NODE(buf);
-		BV0_CLBI(buf) = MIN_MAX_(0, BV0_CLBI(buf), line_strlen(BV0_CL(buf)));
+		set_BV0_CL(buf, NODES_TOP_NODE(buf));
+		set_BV0_CLBI(buf, MIN_MAX_(0, BV0_CLBI(buf), line_strlen(BV0_CL(buf))));
 	}
 	if (IS_NODE_INT(BV1_CL(buf)) == 0) {
-		BV1_CL(buf) = NODES_TOP_NODE(buf);
-		BV1_CLBI(buf) = MIN_MAX_(0, BV1_CLBI(buf), line_strlen(BV1_CL(buf)));
+		set_BV1_CL(buf, NODES_TOP_NODE(buf));
+		set_BV1_CLBI(buf, MIN_MAX_(0, BV1_CLBI(buf), line_strlen(BV1_CL(buf))));
 	}
 }
 be_line_t *buf_set_cur_line(be_buf_t *buf, be_line_t *line)
 {
-	return BV0_CL(buf) = BV1_CL(buf) = line;
+	set_BV0_CL(buf, line);
+	set_BV1_CL(buf, line);
+	return line;
 }
 be_line_t *buf_move_cur_line_to_prev(be_buf_t *buf)
 {
 	be_line_t *line = BV0_CL(buf);
 	if (IS_NODE_INT(line)) {
-		BV0_CL(buf) = NODE_PREV(line);
+		set_BV0_CL(buf, NODE_PREV(line));
 		return line;	// return previous current line
 	}
 	// do not move and return NULL
@@ -440,7 +453,7 @@ be_line_t *buf_move_cur_line_to_next(be_buf_t *buf)
 {
 	be_line_t *line = BV0_CL(buf);
 	if (IS_NODE_INT(line)) {
-		BV0_CL(buf) = NODE_NEXT(line);
+		set_BV0_CL(buf, NODE_NEXT(line));
 		return line;	// return previous current line
 	}
 	// do not move and return NULL

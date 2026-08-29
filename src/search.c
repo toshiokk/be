@@ -367,7 +367,7 @@ int replace_str_loop(const char *needle, const char *replace_to, int *num_replac
 				// text, so searching will resume after the replacement text. */
 				if (GET_APPMD(ed_REVERSE_SEARCH) == 0) {
 					// forward search
-					EPCBVC_CLBI += matches_match_len(&matches__) + length_change;
+					set_EPCBVC_CLBI(EPCBVC_CLBI + matches_match_len(&matches__) + length_change);
 					skip_here = NO_SKIP_HERE;	// EPCBVC_CLBI already forwarded to skip word
 				} else {
 					// backward search
@@ -515,8 +515,8 @@ PRIVATE int _doe_find_bracket(int single1_multi2, int rev_pairing, int jump)
 	if (depth == 0) {
 		// found peer bracket
 		if (jump) {
-			EPCBVC_CL = line;
-			EPCBVC_CLBI = byte_idx;
+			set_EPCBVC_CL(line);
+			set_EPCBVC_CLBI(byte_idx);
 			// cursor jumped to the peer bracket and the search direction needs reversed
 			search_set_mode(&search__, single1_multi2, - search_dir, 0);
 		}

@@ -118,13 +118,13 @@ void disp_edit_win(int cur_pane)
 	}
 
 	// make cursor position within the screen after resizing screen
-	EPCBVC_CURS_Y = MIN_MAX_(0, EPCBVC_CURS_Y, bottom_scroll_margin_y());
-	EPCBVC_CURS_Y = MIN_MAX_(0, EPCBVC_CURS_Y, 
-	 get_edit_win_screen_top(EPCBVC_CL, EPCBVC_CLBI, EPCBVC_CURS_Y, &line, &byte_idx));
+	set_EPCBVC_CURS_Y(MIN_MAX_(0, EPCBVC_CURS_Y, bottom_scroll_margin_y()));
+	set_EPCBVC_CURS_Y(MIN_MAX_(0, EPCBVC_CURS_Y, 
+	 get_edit_win_screen_top(EPCBVC_CL, EPCBVC_CLBI, EPCBVC_CURS_Y, &line, &byte_idx)));
 	for (yy = 0; yy < edit_win_get_text_lines(); ) {
 		disp_edit_line_blank(yy, line);
 		if (IS_NODE_INT(line) == 0) {
-			EPCBVC_CURS_Y = MIN_MAX_(0, EPCBVC_CURS_Y, LIM_MIN(0, yy-1));
+			set_EPCBVC_CURS_Y(MIN_MAX_(0, EPCBVC_CURS_Y, LIM_MIN(0, yy-1)));
 			if (yy == 0) {
 				output_edit_line_num(yy, NULL);	// "     "
 				set_item_color_by_idx(ITEM_COLOR_IDX_TEXT_NORMAL, 0);
